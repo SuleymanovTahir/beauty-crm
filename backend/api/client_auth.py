@@ -40,6 +40,13 @@ class PasswordReset(BaseModel):
     token: str
     new_password: str
 
+class VerifyClientEmailRequest(BaseModel):
+    email: str
+    code: str
+
+class ResendCodeRequest(BaseModel):
+    email: str
+
 # ============================================================================
 # HELPERS
 # ============================================================================
@@ -103,10 +110,11 @@ async def register_client(data: ClientRegister):
     c = conn.cursor()
 
     try:
-        # Проверяем, существует ли уже клиент с таким email
-        c.execute("SELECT email FROM clients WHERE email = %s", (data.email,))
-        if c.fetchone():
-            raise HTTPException(status_code=400, detail="Email уже зарегистрирован")
+        # Проверяем, существует ли уже клиент с таким email (case-insensitive)
+        c.execute("SELECT email FROM clients WHERE LOWER(email) = LOWER(%s)", (data.email,))
+        existing = c.fetchone()
+        if existing:
+            raise HTTPException(status_code=400, detail=f"Клиент с email '{data.email}' уже зарегистрирован")
 
         # Хэшируем пароль
         password_hash = hash_password(data.password)
@@ -114,48 +122,97 @@ async def register_client(data: ClientRegister):
         # Генерируем уникальный instagram_id для новых клиентов (без Instagram)
         instagram_id = f"web_{secrets.token_urlsafe(16)}"
 
+        # Генерируем код верификации (6 цифр)
+        from utils.email_service import generate_verification_code, get_code_expiry
+        verification_code = generate_verification_code()
+        code_expires = get_code_expiry()
+
         now = datetime.now().isoformat()
 
-        # Создаем нового клиента
+        # Создаем нового клиента с is_verified=False
+        # Проверяем есть ли колонка verification_code в clients
         c.execute("""
-            INSERT INTO clients
-            (instagram_id, email, password_hash, name, phone, birthday,
-             created_at, first_contact, last_contact, status, labels)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            instagram_id,
-            data.email,
-            password_hash,
-            data.name,
-            data.phone,
-            data.birthday,
-            now,
-            now,
-            now,
-            'new',
-            'Веб-регистрация'
-        ))
+            SELECT column_name FROM information_schema.columns 
+            WHERE table_name='clients' AND column_name='verification_code'
+        """)
+        has_verification_column = c.fetchone() is not None
 
-        # Add Welcome Bonus (100 points)
-        c.execute("""
-            INSERT INTO loyalty_transactions (client_id, points, reason, transaction_type)
-            VALUES (%s, 100, 'Приветственный бонус за регистрацию', 'system')
-        """, (instagram_id,))
-        
-        c.execute("UPDATE clients SET loyalty_points = loyalty_points + 100 WHERE instagram_id = %s", (instagram_id,))
+        if has_verification_column:
+            # Если колонки есть - используем их
+            c.execute("""
+                INSERT INTO clients
+                (instagram_id, email, password_hash, name, phone, birthday,
+                 created_at, first_contact, last_contact, status, labels,
+                 is_verified, verification_code, verification_code_expires)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                instagram_id,
+                data.email,
+                password_hash,
+                data.name,
+                data.phone,
+                data.birthday,
+                now,
+                now,
+                now,
+                'new',
+                'Веб-регистрация',
+                False,  # is_verified
+                verification_code,
+                code_expires
+            ))
+        else:
+            # Используем отдельную таблицу client_email_verifications
+            c.execute("""
+                INSERT INTO clients
+                (instagram_id, email, password_hash, name, phone, birthday,
+                 created_at, first_contact, last_contact, status, labels)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                instagram_id,
+                data.email,
+                password_hash,
+                data.name,
+                data.phone,
+                data.birthday,
+                now,
+                now,
+                now,
+                'new',
+                'Веб-регистрация'
+            ))
+            
+            # Записываем код в отдельную таблицу
+            c.execute("""
+                INSERT INTO client_email_verifications (email, code, expires_at)
+                VALUES (%s, %s, %s)
+            """, (data.email, verification_code, code_expires))
 
-        # Add Welcome Notification
-        c.execute("""
-            INSERT INTO client_notifications (client_instagram_id, notification_type, title, message, sent_at)
-            VALUES (%s, 'welcome', 'Добро пожаловать!', 'Мы рады видеть вас! Вам начислено 100 приветственных бонусов.', %s)
-        """, (instagram_id, now))
+        # НЕ добавляем бонусы до подтверждения email
+        # Бонусы будут добавлены после verify_email
 
         conn.commit()
+        
+        # Отправляем email с кодом верификации
+        from utils.email_service import send_verification_code_email
+        email_sent = send_verification_code_email(data.email, verification_code, data.name or 'Клиент', 'client')
+        
+        import os
+        if not email_sent and os.getenv('ENVIRONMENT') != 'production':
+            # В development показываем код в ответе
+            return {
+                "success": True,
+                "message": f"Регистрация успешна! Ваш код верификации: {verification_code}",
+                "client_id": instagram_id,
+                "verification_code": verification_code,
+                "email_sent": False
+            }
 
         return {
             "success": True,
-            "message": "Регистрация успешна",
-            "client_id": instagram_id
+            "message": "Регистрация успешна! Код верификации отправлен на вашу почту.",
+            "client_id": instagram_id,
+            "email_sent": email_sent
         }
 
     except HTTPException:

@@ -48,6 +48,92 @@ async def send_contact_message(form: ContactForm, background_tasks: BackgroundTa
     # Сразу возвращаем успешный ответ
     return {"success": True, "message": "Message sent successfully"}
 
+@router.post("/bookings")
+async def create_public_booking(data: BookingCreate, background_tasks: BackgroundTasks):
+    """
+    Создать заявку на запись (публично).
+    Статус автоматически устанавливается в 'pending_confirmation'.
+    """
+    from db.bookings import save_booking
+    from utils.logger import log_info, log_error
+    
+    # 1. Сохраняем в БД со статусом pending_confirmation
+    # Формируем datetime string
+    datetime_str = f"{data.date} {data.time}"
+    
+    # Получаем имя мастера если есть ID
+    master_name = None
+    if data.employee_id:
+        from db.employees import get_employee_by_id
+        emp = get_employee_by_id(data.employee_id)
+        if emp:
+            master_name = emp['full_name']
+
+    try:
+        booking_id = save_booking(
+            instagram_id=data.phone, # Используем телефон как ID для публичных
+            service=str(data.service_id), # Пока передаем ID, возможно нужно имя
+            datetime_str=datetime_str,
+            phone=data.phone,
+            name=data.name,
+            master=master_name,
+            status='pending_confirmation',
+            source='website'
+        )
+        
+        # 2. Логирование
+        log_info(f"📅 New public booking: {data.name} ({data.phone})", "public_api")
+        
+        # 3. Уведомление администратора
+        background_tasks.add_task(notify_admin_new_booking, data, booking_id)
+        
+        return {"success": True, "booking_id": booking_id, "message": "Booking request received"}
+        
+    except Exception as e:
+        log_error(f"Error creating public booking: {e}", "public_api")
+        return JSONResponse({"error": "Failed to create booking", "detail": str(e)}, status_code=500)
+
+def notify_admin_new_booking(data: BookingCreate, booking_id: int):
+    """Уведомить админа о новой заявке"""
+    from utils.email import send_email_sync
+    from integrations.telegram_bot import send_telegram_alert
+    import os
+    import asyncio
+    
+    admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USERNAME')
+    
+    subject = f"📅 Новая заявка на запись: {data.name}"
+    message = (
+        f"Имя: {data.name}\n"
+        f"Телефон: {data.phone}\n"
+        f"Дата: {data.date} {data.time}\n"
+        f"Источник: Сайт\n"
+        f"Статус: Ожидает подтверждения"
+    )
+    
+    # Email
+    if admin_email:
+        try:
+             send_email_sync([admin_email], subject, message)
+        except Exception as e:
+             print(f"Error sending email: {e}")
+             
+    # Telegram
+    try:
+        tg_msg = (
+            f"📅 <b>Новая заявка на запись!</b>\n\n"
+            f"👤 <b>Имя:</b> {data.name}\n"
+            f"📞 <b>Телефон:</b> {data.phone}\n"
+            f"🕒 <b>Время:</b> {data.date} {data.time}\n"
+            f"⚠️ <b>Статус:</b> Ожидает подтверждения"
+        )
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(send_telegram_alert(tg_msg))
+        loop.close()
+    except Exception as e:
+        print(f"Error sending telegram: {e}")
+
 def process_contact_notifications(form: ContactForm):
     """Обработка уведомлений в фоновом режиме"""
     from utils.logger import log_info, log_error

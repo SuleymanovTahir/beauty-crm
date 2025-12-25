@@ -80,6 +80,14 @@ export default function Login() {
         return;
       }
 
+      // Проверяем, ожидает ли пользователь одобрения админа
+      if (err.error_type === "not_approved") {
+        console.log("User not approved yet");
+        setError("Ваш аккаунт ожидает одобрения администратора");
+        toast.error("Ваша регистрация ожидает одобрения администратора. Вы получите email когда ваш аккаунт будет активирован.");
+        return;
+      }
+
       const message = err instanceof Error ? err.message : t('login:login_error');
 
       if (message.includes(t('login:unauthorized')) || message.includes(t('login:401'))) {

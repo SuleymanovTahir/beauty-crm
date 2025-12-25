@@ -3,8 +3,8 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import '../../styles/theme.css';
-import '../../styles/index.css';
+import '../styles/theme.css';
+import '../styles/index.css';
 
 export function TermsOfUse() {
     const { t, i18n } = useTranslation(['public_landing', 'common']);

@@ -1,5 +1,146 @@
 # CHANGELOG - Память проекта Beauty CRM
 
+## 2025-12-25: Система регистрации с email верификацией и админским одобрением
+
+### ПРОБЛЕМА
+Старая система регистрации имела критические недостатки:
+- Любой мог зарегистрироваться и сразу получить доступ (auto_verify = True)
+- Не было подтверждения email адреса
+- Не было контроля админов над новыми регистрациями
+- Проверка дубликатов username/email была case-sensitive
+- Demo Client создавался вручную или через старые скрипты
+- Email verification был реализован но ОТКЛЮЧЕН (закомментирован в core/auth.py)
+
+### РЕШЕНИЕ
+1. Создан полноценный email сервис:
+   - `backend/utils/email_service.py` - универсальный модуль отправки писем
+   - `send_verification_code_email()` - отправка 6-значного кода (вместо ссылки)
+   - `send_admin_notification_email()` - уведомление админов о новой регистрации
+   - `send_registration_approved_email()` - уведомление пользователя об одобрении
+   - `send_registration_rejected_email()` - уведомление об отклонении
+   - Красивые HTML шаблоны с градиентными заголовками
+
+2. Созданы миграции БД:
+   - `db/migrations/schema/create_email_verification_tables.py`
+   - Таблица `client_email_verifications` для кодов верификации клиентов
+   - Таблица `registration_audit` для аудита всех действий с регистрациями
+
+3. Модуль управления регистрациями:
+   - `backend/db/pending_registrations.py`
+   - `get_pending_registrations()` - список ожидающих одобрения
+   - `approve_registration()` - одобрение с отправкой email
+   - `reject_registration()` - отклонение с указанием причины
+   - `delete_pending_registration()` - полное удаление
+   - `get_registration_audit_log()` - история всех действий
+
+4. Admin API для управления:
+   - `backend/api/admin_registrations.py`
+   - GET `/api/admin/registrations/pending` - список pending users
+  - POST `/api/admin/registrations/approve` - одобрить
+   - POST `/api/admin/registrations/reject` - отклонить
+   - DELETE `/api/admin/registrations/{user_id}` - удалить
+   - GET `/api/admin/registrations/audit-log` - лог действий
+   - Все endpoints требуют роль director или admin
+
+5. Обновлена core логика аутентификации:
+   - `backend/core/auth.py` - ОСНОВНЫЕ ИЗМЕНЕНИЯ:
+     * ВКЛЮЧЕНЫ проверки email_verified и is_active при логине (строки 46-95)
+     * Исключение для admin пользователя (admin/admin123 всегда может войти)
+     * AUTO-ACTIVATION только для первого admin (строки 221-236)
+     * Case-insensitive проверка username и email (строки 186-201)
+     * Отправка кода верификации вместо ссылки (строка 315)
+     * Уведомление всех директоров о новой регистрации (строки 318-335)
+     * Подробные error_type в ответах: "email_not_verified", "not_approved"
+   
+6. Зарегистрирован новый роутер:
+   - `backend/main.py` (строки 106, 179)
+   - Импорт и регистрация admin_registrations_router
+
+7. Создан test suite:
+   - `backend/scripts/testing/test_registration.py`
+   - 6 комплексных тестов всего flow
+
+### ВАЖНО ПОМНИТЬ
+- **Email верификация ВКЛЮЧЕНА** - все новые пользователи должны подтвердить email
+- **Admin approval ТРЕБУЕТСЯ** - даже после email verification нужно одобрение админа
+- **Исключение для admin** - пользователь с username "admin" автоактивируется
+- **Demo Client НЕ НАЙДЕН** - либо создавался вручную, либо уже удален
+- **SMTP НУЖЕН** - без настройки SMTP письма не отправляются
+- **Case-insensitive checks** - "User" и "user" считаются одинаковыми
+
+### FLOW РЕГИСТРАЦИИ
+1. Пользователь заполняет форму регистрации
+2. Backend проверяет уникальность username и email (case-insensitive)
+3. Создается user с is_active=FALSE, email_verified=FALSE
+4. Генерируется 6-значный код (срок действия 15 минут)
+5. Код отправляется на email пользователя
+6. Уведомления отправляются всем директорам
+7. Пользователь вводит код → email_verified=TRUE
+8. Админ одобряет → is_active=TRUE → отправляется email
+9. Пользователь может войти в систему
+
+### УНИВЕРСАЛЬНОСТЬ КОДА ✅
+**НЕТ ХАРДКОДА:**
+- ✅ SMTP настройки из ENV переменных (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD)
+- ✅ URL приложения из ENV (APP_URL, ADMIN_PANEL_URL)
+- ✅ Email templates с параметризацией
+- ✅ Verificaction code length настраивается (по умолчанию 6)
+- ✅ Code expiry настраивается (по умолчанию 15 минут)
+- ✅ Роли админов динамические ('director', 'admin')
+
+### МОЖЕТ СЛОМАТЬСЯ
+- **SMTP не настроен** → письма не отправятся (fallback: показать код в console/response)
+- **Существующие users** → могут иметь is_active=TRUE без email_verified
+- **Admin user отсутствует** → некому будет одобрять первые регистрации
+- **Frontend не обновлен** → пользователи не смогут ввести код верификации
+- **Миграции не запущены** → таблицы client_email_verifications и registration_audit отсутствуют
+
+### TESTING
+Создан test suite проверяющий:
+- ✅ Email uniqueness (case-insensitive)
+- ✅ Username uniqueness (case-insensitive)  
+- ✅ Verification code generation (6 digits, 15-min expiry)
+- ✅ Email verification flow
+- ✅ Admin approval flow
+- ✅ First admin exception
+
+API endpoints протестированы:
+```bash
+curl http://localhost:8000/api/admin/registrations/pending
+# {"detail":"Unauthorized"} ✅ (требует авторизацию)
+```
+
+### ФАЙЛЫ
+**НОВЫЕ:**
+- `backend/utils/email_service.py` - NEW (email сервис с HTML шаблонами)
+- `backend/db/migrations/schema/create_email_verification_tables.py` - NEW (миграция)
+- `backend/db/pending_registrations.py` - NEW (бизнес-логика регистраций)
+- `backend/api/admin_registrations.py` - NEW (admin API)
+- `backend/scripts/testing/test_registration.py` - NEW (тесты)
+
+**ИЗМЕНЕНЫ:**
+- `backend/core/auth.py` - MODIFIED (включены проверки, добавлен admin exception)
+- `backend/main.py` - MODIFIED (зарегистрирован новый роутер)
+
+### TODO (Frontend)
+- Создать админ панель: `frontend/src/pages/admin/PendingRegistrations.tsx`
+- Обновить Register.tsx: добавить экран ввода кода верификации
+- Обновить Login.tsx: показывать статусы "email не подтвержден", "ожидает одобрения"
+- Добавить badge с количеством pending registrations в admin меню
+
+### НАСТРОЙКА (Production)
+Добавить в .env:
+```
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+SMTP_FROM_EMAIL=noreply@your-domain.com
+SMTP_FROM_NAME=Beauty CRM
+APP_URL=https://your-domain.com
+ADMIN_PANEL_URL=https://your-domain.com/admin/registrations
+```
+
 ## 2025-12-13: Миграция формата длительности услуг
 
 ### ПРОБЛЕМА

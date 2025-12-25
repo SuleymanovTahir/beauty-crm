@@ -35,53 +35,53 @@ export function LandingPage() {
           <About />
         </Suspense>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="services">
+        <div id="services">
+          <Suspense fallback={<LoadingSpinner />}>
             <Services />
-          </div>
-        </Suspense>
+          </Suspense>
+        </div>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="portfolio">
+        <div id="portfolio">
+          <Suspense fallback={<LoadingSpinner />}>
             <Portfolio />
-          </div>
-        </Suspense>
+          </Suspense>
+        </div>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="team">
+        <div id="team">
+          <Suspense fallback={<LoadingSpinner />}>
             <TeamSection />
-          </div>
-        </Suspense>
+          </Suspense>
+        </div>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="testimonials">
+        <div id="testimonials">
+          <Suspense fallback={<LoadingSpinner />}>
             <ReviewsSection />
-          </div>
-        </Suspense>
+          </Suspense>
+        </div>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="gallery">
+        <div id="gallery">
+          <Suspense fallback={<LoadingSpinner />}>
             <Gallery />
-          </div>
-        </Suspense>
+          </Suspense>
+        </div>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="faq">
+        <div id="faq">
+          <Suspense fallback={<LoadingSpinner />}>
             <FAQ />
-          </div>
-        </Suspense>
+          </Suspense>
+        </div>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="map-section">
+        <div id="map-section">
+          <Suspense fallback={<LoadingSpinner />}>
             <MapSection />
-          </div>
-        </Suspense>
+          </Suspense>
+        </div>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <div id="booking">
+        <div id="booking">
+          <Suspense fallback={<LoadingSpinner />}>
             <BookingSection />
-          </div>
-        </Suspense>
+          </Suspense>
+        </div>
       </main>
 
       <Footer />
