@@ -832,6 +832,54 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
                         "type": "general"
                     })
 
+        # 8. Active Referral Campaign
+        c.execute("""
+            SELECT bonus_points, referrer_bonus, name, description
+            FROM referral_campaigns
+            WHERE is_active = TRUE
+            ORDER BY created_at DESC LIMIT 1
+        """)
+        rc_row = c.fetchone()
+        active_campaign = {
+            "bonus_points": rc_row[0],
+            "referrer_bonus": rc_row[1],
+            "name": rc_row[2],
+            "description": rc_row[3]
+        } if rc_row else {
+            "bonus_points": 200,
+            "referrer_bonus": 200,
+            "name": "Приведи друга",
+            "description": "Пригласите друга и получите баллы"
+        }
+
+        # 9. Special Offers (Personalized packages)
+        c.execute("""
+            SELECT id, name_ru, description_ru, special_price, original_price, valid_until
+            FROM special_packages
+            WHERE is_active = TRUE
+            ORDER BY created_at DESC LIMIT 2
+        """)
+        offers_rows = c.fetchall()
+        special_offers = []
+        for offer in offers_rows:
+            # Calculate days left
+            days_left = 7
+            if offer[5]:
+                try:
+                    expiry = datetime.strptime(offer[5], '%Y-%m-%d')
+                    days_left = (expiry - datetime.now()).days
+                except:
+                    pass
+            
+            special_offers.append({
+                "id": offer[0],
+                "title": offer[1],
+                "description": offer[2],
+                "price": offer[3],
+                "original_price": offer[4],
+                "days_left": max(0, days_left)
+            })
+
         return {
             "success": True,
             "loyalty": loyalty,
@@ -843,8 +891,11 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             },
             "streak": streak,
             "analytics": analytics,
-            "recommendations": recommendations[:3]  # Limit to 3
+            "recommendations": recommendations[:3],
+            "referral_campaign": active_campaign,
+            "special_offers": special_offers
         }
+
     finally:
         conn.close()
 
