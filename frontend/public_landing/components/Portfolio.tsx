@@ -57,19 +57,7 @@ export function Portfolio() {
     fetchPortfolio();
   }, [i18n.language]);
 
-  const filteredPortfolio = portfolio.filter(item => {
-    // Exact match for category
-    if (item.category === selectedCategory) return true;
-
-    // Fallback: Check if title/desc contains the tag (copied from Ref)
-    const searchStr = (item.title + " " + item.description).toLowerCase();
-    if (selectedCategory === 'face' && (searchStr.includes('face') || searchStr.includes('лиц') || searchStr.includes('чист') || searchStr.includes('уход'))) return true;
-    if (selectedCategory === 'hair' && (searchStr.includes('hair') || searchStr.includes('волос') || searchStr.includes('стриж') || searchStr.includes('окраш'))) return true;
-    if (selectedCategory === 'nails' && (searchStr.includes('nail') || searchStr.includes('ногт') || searchStr.includes('маник') || searchStr.includes('педик'))) return true;
-    if (selectedCategory === 'body' && (searchStr.includes('body') || searchStr.includes('тел') || searchStr.includes('массаж') || searchStr.includes('spa'))) return true;
-
-    return false;
-  });
+  const filteredPortfolio = portfolio.filter(item => item.category === selectedCategory);
 
   const displayedItems = filteredPortfolio.slice(0, displayCount);
 
