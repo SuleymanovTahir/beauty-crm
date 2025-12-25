@@ -57,7 +57,7 @@ export default function AdminDashboard() {
         api.getStats(),
         api.getBookings(),
         api.getClients(),
-        api.get('/bot-analytics?days=30').catch(() => null),
+        api.get('/api/bot-analytics?days=30').catch(() => null),
       ]);
 
       setStats(statsData);

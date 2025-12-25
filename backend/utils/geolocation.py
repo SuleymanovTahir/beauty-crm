@@ -7,7 +7,7 @@ import math
 from typing import Optional, Dict, Tuple
 from utils.logger import log_info, log_error
 
-# Salon location (M.Le Diamant Beauty Lounge, JBR, Dubai)
+# Salon location (M Le Diamant, JBR, Dubai)
 SALON_LAT = 25.2048
 SALON_LON = 55.2708
 

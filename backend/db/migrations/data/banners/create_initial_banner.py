@@ -1,7 +1,7 @@
 from pathlib import Path
 from db.connection import get_db_connection
 
-def create_initial_banner(db_path="salon_bot.db"):
+def create_initial_banner():
     """Create initial banner with hero image"""
     conn = get_db_connection()
     c = conn.cursor()

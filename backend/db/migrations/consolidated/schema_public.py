@@ -4,7 +4,7 @@ All schema changes for public content (banners, reviews, faq, gallery)
 """
 from db.connection import get_db_connection
 
-def migrate_public_schema(db_path="salon_bot.db"):
+def migrate_public_schema():
     """
     Apply all public content schema changes
     """

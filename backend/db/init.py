@@ -486,7 +486,10 @@ def init_database():
 
     for column_name, column_type in user_migrations.items():
         if column_name not in user_columns:
-            c.execute(f"ALTER TABLE users ADD COLUMN {column_name} {column_type}")
+            try:
+                c.execute(f"ALTER TABLE users ADD COLUMN {column_name} {column_type}")
+            except Exception as e:
+                log_warning(f"⚠️ Could not add column {column_name} to users: {e}", "db")
 
     # Таблица сессий
     c.execute('''CREATE TABLE IF NOT EXISTS sessions
@@ -605,17 +608,20 @@ def init_database():
 
         notif_columns = []
     notif_migrations = {
-        'birthday_reminders': 'BOOLEAN DEFAULT 1',
+        'birthday_reminders': 'BOOLEAN DEFAULT TRUE',
         'birthday_days_advance': 'INTEGER DEFAULT 7',
         'chat_notifications': 'INTEGER DEFAULT 1',
         'daily_report': 'INTEGER DEFAULT 1',
         'report_time': "TEXT DEFAULT '09:00'",
-        'telegram_notifications': 'BOOLEAN DEFAULT 0',
+        'telegram_notifications': 'BOOLEAN DEFAULT FALSE',
         'updated_at': 'TEXT DEFAULT CURRENT_TIMESTAMP'
     }
     for col, col_type in notif_migrations.items():
         if col not in notif_columns:
-            c.execute(f"ALTER TABLE notification_settings ADD COLUMN {col} {col_type}")
+            try:
+                c.execute(f"ALTER TABLE notification_settings ADD COLUMN {col} {col_type}")
+            except Exception as e:
+                log_warning(f"⚠️ Could not add column {col} to notification_settings: {e}", "db")
             
     # Таблица выплат (Payroll History)
     c.execute('''CREATE TABLE IF NOT EXISTS payroll_payments (
@@ -843,7 +849,7 @@ def init_database():
                       city, country, timezone, currency, 
                       latitude, longitude, logo_url, base_url, updated_at)
                      VALUES (1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                  ("M.Le Diamant Beauty Lounge",
+                  ("M Le Diamant",
                    "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
                    "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
                    "Daily 10:30 - 21:00",
@@ -854,9 +860,9 @@ def init_database():
                    "mladiamontuae@gmail.com",  # email
                    "www.instagram.com/mlediamant/",  # instagram
                    "+971526961100",  # whatsapp
-                   "M.Le Diamant Assistant",
-                   "M.Le Diamant Assistant",
-                   "مساعد M.Le Diamant",
+                   "M Le Diamant Assistant",
+                   "M Le Diamant Assistant",
+                   "مساعد M Le Diamant",
                    "Dubai",
                    "UAE",
                    "Asia/Dubai",
@@ -1504,7 +1510,7 @@ def init_database():
             c.execute("ALTER TABLE booking_reminder_settings ADD COLUMN name TEXT DEFAULT 'Default Reminder'")
     
     # Ensure client columns exist
-    from .clients import ensure_client_columns
+    from db.clients import ensure_client_columns
     ensure_client_columns(conn)
     
     
@@ -1657,3 +1663,6 @@ def init_database():
         log_warning(f"⚠️ Public content migration warning: {e}", "db")
     
     log_info("✅ База данных инициализирована", "db")
+
+if __name__ == "__main__":
+    init_database()

@@ -5,7 +5,7 @@ All schema changes for users table in one place
 from db.connection import get_db_connection
 from datetime import datetime
 
-def migrate_users_schema(db_path="salon_bot.db"):
+def migrate_users_schema():
     """
     Apply all users table schema changes
     """

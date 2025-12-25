@@ -16,7 +16,7 @@ import sys
 # Добавляем путь к backend для импортов
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
-DB_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../salon_bot.db'))
+from db.connection import get_db_connection
 SOURCE_LANG = 'ru'
 TARGET_LANGS = ['en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
 RETRY_COUNT = 3
@@ -242,11 +242,7 @@ def translate_services(conn):
             conn.commit()
 
 def main():
-    if not os.path.exists(DB_PATH):
-        print(f"❌ База данных не найдена: {DB_PATH}")
-        return
-        
-    print(f"🔌 Подключение к БД: {DB_PATH}")
+    print(f"🔌 Подключение к БД: PostgreSQL")
     conn = get_db_connection()
     
     try:

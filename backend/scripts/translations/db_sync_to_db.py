@@ -19,7 +19,6 @@ from config import (
     TRANSLATE_OUTPUT,
     LANGUAGES,
     SOURCE_LANGUAGE,
-    DATABASE_PATH,
     TRANSLATION_CONFIG
 )
 

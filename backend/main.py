@@ -33,7 +33,6 @@ import time
 import os
 
 from utils.logger import logger, log_info, log_error, log_critical,log_warning
-from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from db import init_database
 from db.settings import get_salon_settings

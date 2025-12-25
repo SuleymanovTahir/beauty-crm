@@ -45,6 +45,7 @@ async def get_public_employees(
                 photo,
                 experience,
                 years_of_experience,
+                birthday,
                 NULL as instagram,
                 public_page_order as sort_order
             FROM users
@@ -59,6 +60,24 @@ async def get_public_employees(
         columns = [desc[0] for desc in cursor.description]
         employees = []
         
+        from datetime import date, datetime
+
+        def calculate_age(birthday_str):
+            if not birthday_str:
+                return None
+            try:
+                # Try common formats
+                for fmt in ('%Y-%m-%d', '%d.%m.%Y', '%d/%m/%Y'):
+                    try:
+                        birth_date = datetime.strptime(birthday_str, fmt).date()
+                        today = date.today()
+                        return today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+                    except ValueError:
+                        continue
+                return None
+            except:
+                return None
+
         def get_russian_plural(number, one, two, five):
             n = abs(number) % 100
             n1 = n % 10
@@ -90,6 +109,9 @@ async def get_public_employees(
                 plural = get_russian_plural(years, "год", "года", "лет")
                 exp_text = f"{years} {plural} опыта"
 
+            # Calculate age
+            age = calculate_age(row_dict.get("birthday"))
+
             employees.append({
                 "id": row_dict["id"],
                 "name": row_dict["full_name"],
@@ -97,6 +119,7 @@ async def get_public_employees(
                 "specialty": row_dict["specialization"] or row_dict["bio"] or "",
                 "image": row_dict["photo"] or "/static/avatars/default_female.webp",
                 "experience": (exp_text or "").strip(),
+                "age": age,
                 "instagram": row_dict["instagram"] or ""
             })
         
@@ -150,7 +173,8 @@ async def get_salon_info(
                 city,
                 country,
                 timezone_offset,
-                currency
+                currency,
+                logo_url
             FROM salon_settings
             WHERE id = 1
         """
@@ -178,7 +202,8 @@ async def get_salon_info(
                 "city": row_dict["city"],
                 "country": row_dict["country"],
                 "timezone_offset": row_dict["timezone_offset"],
-                "currency": row_dict["currency"]
+                "currency": row_dict["currency"],
+                "logo_url": row_dict["logo_url"]
             }
         else:
             return {}

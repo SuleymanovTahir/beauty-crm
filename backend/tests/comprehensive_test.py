@@ -102,12 +102,6 @@ class ComprehensiveTest:
 
     def connect_db(self) -> Any:
         """Подключение к базе данных"""
-        if not os.path.exists(self.db_path):
-            raise FileNotFoundError(f"❌ База данных не найдена: {self.db_path}")
-
-        if os.path.getsize(self.db_path) == 0:
-            raise ValueError(f"❌ База данных пустая (0 байт): {self.db_path}")
-
         conn = get_db_connection()
         return conn
 
@@ -115,35 +109,18 @@ class ComprehensiveTest:
     # ТЕСТЫ БАЗЫ ДАННЫХ
     # ========================================================================
 
-    def test_database_exists(self) -> TestResult:
-        """1. Проверка существования базы данных"""
-        result = TestResult("База данных существует", "Database")
+    def test_database_connection(self) -> TestResult:
+        """1. Проверка подключения к базе данных"""
+        result = TestResult("Подключение к базе данных успешно", "Database")
 
         try:
-            if not os.path.exists(self.db_path):
-                result.fail(f"Файл базы данных не найден: {self.db_path}", [
-                    f"❌ Путь: {os.path.abspath(self.db_path)}",
-                    f"❌ Директория существует: {os.path.exists(os.path.dirname(self.db_path))}",
-                    "💡 Решение: Запустите приложение чтобы создать базу данных"
-                ])
-                return result
-
-            size = os.path.getsize(self.db_path)
-            if size == 0:
-                result.fail("База данных пустая (0 байт)", [
-                    f"❌ Размер: {size} байт",
-                    "💡 Решение: База создана но не инициализирована. Перезапустите приложение."
-                ])
-                return result
-
-            result.success(f"База данных найдена и заполнена ({size} байт)", {
-                "path": self.db_path,
-                "size_bytes": size,
-                "size_mb": round(size / 1024 / 1024, 2)
-            })
-
+            conn = self.connect_db()
+            cursor = conn.cursor()
+            cursor.execute("SELECT 1")
+            result.success("Подключение к PostgreSQL установлено")
+            conn.close()
         except Exception as e:
-            result.fail(f"Неожиданная ошибка: {str(e)}", [
+            result.fail(f"Не удалось подключиться к базе данных: {str(e)}", [
                 f"❌ Traceback:\n{traceback.format_exc()}"
             ])
 
@@ -162,11 +139,11 @@ class ComprehensiveTest:
             conn = self.connect_db()
             cursor = conn.cursor()
 
-            cursor.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public'")
-            existing_tables = {row['name'] for row in cursor.fetchall()}
+            cursor.execute("SELECT tablename FROM pg_tables WHERE schemaname='public'")
+            existing_tables = {row[0] for row in cursor.fetchall()}
 
             missing_tables = set(required_tables) - existing_tables
-            extra_tables = existing_tables - set(required_tables) - {'sqlite_sequence'}
+            extra_tables = existing_tables - set(required_tables)
 
             if missing_tables:
                 result.fail(f"Отсутствуют таблицы: {', '.join(missing_tables)}", [
@@ -203,9 +180,9 @@ class ComprehensiveTest:
             conn = self.connect_db()
             cursor = conn.cursor()
 
-            cursor.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name='users'")
+            cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='users'")
             columns_info = cursor.fetchall()
-            existing_columns = {row['name'] for row in columns_info}
+            existing_columns = {row[0] for row in columns_info}
 
             missing_columns = required_columns - existing_columns
 
@@ -918,7 +895,7 @@ class ComprehensiveTest:
         all_tests = [
             # Database
             ("🗄️  БАЗА ДАННЫХ", [
-                self.test_database_exists,
+                self.test_database_connection,
                 self.test_tables_exist,
                 self.test_users_table_structure,
             ]),

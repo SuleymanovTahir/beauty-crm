@@ -41,9 +41,6 @@ TRANSLATION_CONFIG = {
     }
 }
 
-# Database path
-DATABASE_PATH = "salon_bot.db"
-
 # Translation cache directory
 CACHE_DIR = "scripts/translations/.cache"
 

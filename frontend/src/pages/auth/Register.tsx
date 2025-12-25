@@ -31,20 +31,23 @@ export default function Register() {
   const [error, setError] = useState("");
   const [step, setStep] = useState<"register" | "verify" | "success">("register");
   const [positions, setPositions] = useState<any[]>([]);
+  const [salonSettings, setSalonSettings] = useState<any>(null);
 
-  // Загружаем список должностей при монтировании
+  // Load positions and salon settings
   React.useEffect(() => {
-    const loadPositions = async () => {
+    const loadData = async () => {
       try {
-        const response = await api.getPositions();
-        if (response.positions) {
-          setPositions(response.positions);
-        }
+        const [posRes, salonRes] = await Promise.all([
+          api.getPositions(),
+          api.getSalonSettings()
+        ]);
+        if (posRes.positions) setPositions(posRes.positions);
+        setSalonSettings(salonRes);
       } catch (err) {
-        console.error("Error loading positions:", err);
+        console.error("Error loading register data:", err);
       }
     };
-    loadPositions();
+    loadData();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -309,10 +312,22 @@ export default function Register() {
 
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-            <UserPlus className="w-10 h-10 text-white" />
+          <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg overflow-hidden p-0.5">
+            {salonSettings?.logo_url ? (
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+                <img
+                  src={salonSettings.logo_url}
+                  alt={salonSettings.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <UserPlus className="w-10 h-10 text-white" />
+            )}
           </div>
-          <h1 className="text-4xl text-gray-900 mb-2">{t('register_title')}</h1>
+          <h1 className="text-4xl text-gray-900 mb-2">
+            {salonSettings?.name ? `${t('register_title')} ${salonSettings.name}` : t('register_title')}
+          </h1>
           <p className="text-gray-600">{t('register_subtitle')}</p>
         </div>
 

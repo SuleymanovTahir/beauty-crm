@@ -22,7 +22,9 @@ async def calculate_payroll(
     current_user: dict = Depends(get_current_user)
 ):
     """Рассчитать зарплату сотрудника за период"""
-    if current_user["role"] not in ["admin", "director"]:
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    if current_user.get("role") not in ["admin", "director"]:
         raise HTTPException(status_code=403, detail="Forbidden")
 
     conn = get_db_connection()
@@ -30,12 +32,17 @@ async def calculate_payroll(
 
     try:
         # 1. Получаем настройки сотрудника (оклад и % комиссии)
-        c.execute("SELECT full_name, base_salary, commission_rate, currency FROM users WHERE id = %s", (data.employee_id,))
+        c.execute("SELECT full_name, base_salary, commission_rate FROM users WHERE id = %s", (data.employee_id,))
         emp_row = c.fetchone()
         if not emp_row:
             raise HTTPException(status_code=404, detail="Employee not found")
         
-        full_name, base_salary, commission_rate, default_currency = emp_row
+        full_name, base_salary, commission_rate = emp_row
+        
+        # Get currency from salon settings
+        c.execute("SELECT currency FROM salon_settings WHERE id = 1")
+        salon_row = c.fetchone()
+        default_currency = salon_row[0] if salon_row else "AED"
         
         # 2. Получаем все завершенные записи этого мастера за период
         # Примечание: предполагается, что в bookings.datetime хранится "YYYY-MM-DD HH:MM"
@@ -96,7 +103,9 @@ async def record_payment(
     current_user: dict = Depends(get_current_user)
 ):
     """Записать факт выплаты зарплаты в историю"""
-    if current_user["role"] not in ["admin", "director"]:
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    if current_user.get("role") not in ["admin", "director"]:
         raise HTTPException(status_code=403, detail="Forbidden")
 
     conn = get_db_connection()
@@ -127,7 +136,9 @@ async def get_payroll_history(
     current_user: dict = Depends(get_current_user)
 ):
     """Получить историю реальных выплат сотруднику"""
-    if current_user["role"] not in ["admin", "director"] and current_user["id"] != employee_id:
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    if current_user.get("role") not in ["admin", "director"] and current_user.get("id") != employee_id:
         raise HTTPException(status_code=403, detail="Forbidden")
     
     conn = get_db_connection()
@@ -159,5 +170,37 @@ async def get_payroll_history(
     except Exception as e:
         log_error(f"Error fetching payroll history: {e}", "api")
         return []
+    finally:
+        conn.close()
+
+class PayrollStatusUpdateRequest(BaseModel):
+    payment_id: int
+    status: str  # pending, paid, cancelled
+
+@router.post("/payroll/update-status")
+async def update_payment_status(
+    data: PayrollStatusUpdateRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Обновить статус выплаты"""
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    if current_user.get("role") not in ["admin", "director"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    
+    valid_statuses = ["pending", "paid", "cancelled"]
+    if data.status not in valid_statuses:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {valid_statuses}")
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        c.execute("UPDATE payroll_payments SET status = %s WHERE id = %s", (data.status, data.payment_id))
+        conn.commit()
+        return {"success": True, "message": f"Status updated to {data.status}"}
+    except Exception as e:
+        log_error(f"Error updating payment status: {e}", "api")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()

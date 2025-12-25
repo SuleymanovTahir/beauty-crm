@@ -54,9 +54,9 @@ def update_bot_settings_with_variables():
         changes.append("booking_time_logic: время работы → {hours_weekdays}")
     
     # 3. Заменяем название салона
-    if bot_name and "M.Le Diamant" in bot_name:
-        bot_name = bot_name.replace("M.Le Diamant", "{salon_name}")
-        changes.append("bot_name: M.Le Diamant → {salon_name}")
+    if bot_name and "M Le Diamant" in bot_name:
+        bot_name = bot_name.replace("M Le Diamant", "{salon_name}")
+        changes.append("bot_name: M Le Diamant → {salon_name}")
     
     # 4. Заменяем Dubai на переменную
     if safety_guidelines and "Dubai" in safety_guidelines:

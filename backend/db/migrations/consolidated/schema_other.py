@@ -4,7 +4,7 @@ All schema changes for other tables (notifications, chat, permissions, etc.)
 """
 from db.connection import get_db_connection
 
-def migrate_other_schema(db_path="salon_bot.db"):
+def migrate_other_schema():
     """
     Apply all other table schema changes
     """
