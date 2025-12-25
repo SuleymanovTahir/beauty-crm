@@ -47,6 +47,180 @@
   @apply bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200;
 }
 
+.glass-panel {
+  @apply bg-muted/40 backdrop-blur-sm rounded-lg sm:rounded-xl;
+}
+
+/* FAQ Styles */
+.faq-accordion-item {
+  @apply bg-background border-2 border-primary/30 rounded-lg sm:rounded-xl px-3 sm:px-4 lg:px-6 transition-all;
+}
+
+.faq-accordion-item[data-state="open"] {
+  @apply shadow-lg border-primary;
+}
+
+.faq-divider {
+  @apply w-20 h-0.5 bg-primary/20 mb-3 rounded;
+}
+
+/* Form Styles */
+.form-input-custom {
+  @apply bg-muted/20 border-primary/20 focus:border-primary focus:ring-1 focus:ring-primary transition-all;
+}
+
+.form-label-custom {
+  @apply block text-sm font-medium mb-2;
+}
+
+/* Reviews Styles */
+.review-card {
+  @apply bg-background rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm border border-primary/10 h-full flex flex-col;
+}
+
+.review-nav-button {
+  @apply absolute top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 bg-background rounded-full shadow-lg flex items-center justify-center text-primary border border-primary/10 transition-all hover:bg-primary/5;
+}
+
+.review-star {
+  @apply w-3 h-3 sm:w-4 sm:h-4 transition-colors;
+}
+
+.review-star-active {
+  @apply text-primary;
+}
+
+.review-star-inactive {
+  @apply text-muted;
+}
+
+.pagination-dot {
+  @apply cursor-pointer rounded-full transition-all bg-muted-foreground/30 w-2 h-2 sm:w-3 sm:h-3;
+}
+
+.pagination-dot-active {
+  @apply bg-primary w-6 h-2 sm:w-8 sm:h-3;
+}
+
+/* Hero Styles */
+.hero-overlay {
+  @apply absolute inset-0 bg-gradient-to-r from-background/95 via-background/50 to-background/10;
+}
+
+.hero-title {
+  @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-primary leading-tight;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.hero-subtitle {
+  @apply text-primary/80;
+}
+
+.hero-description {
+  @apply text-sm sm:text-base lg:text-lg text-foreground opacity-80 leading-relaxed font-medium;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.hero-stat-value {
+  @apply text-2xl sm:text-3xl text-primary mb-1;
+}
+
+/* Team Styles */
+.team-card {
+  @apply relative overflow-hidden rounded-lg sm:rounded-xl bg-background border border-primary/5;
+}
+
+.team-card img {
+  @apply transition-transform duration-500;
+}
+
+.team-card:hover img {
+  @apply scale-110;
+}
+
+.team-card-overlay {
+  @apply absolute inset-0 bg-gradient-to-t from-primary/70 via-primary/20 to-transparent opacity-0 transition-opacity duration-300;
+}
+
+.team-card:hover .team-card-overlay {
+  @apply opacity-100;
+}
+
+/* About Styles */
+.about-feature-icon-wrapper {
+  @apply bg-primary/5 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-2 sm:mb-3 transition-colors duration-300;
+}
+
+.about-feature:hover .about-feature-icon-wrapper {
+  @apply bg-primary/10;
+}
+
+/* Portfolio Styles */
+.portfolio-filter-button {
+  @apply px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all text-sm sm:text-base bg-background border border-primary/20 text-primary hover:bg-primary/10;
+}
+
+.portfolio-filter-button-active {
+  @apply bg-primary text-primary-foreground shadow-lg border-primary;
+}
+
+.portfolio-item {
+  @apply relative aspect-square rounded-lg sm:rounded-xl lg:rounded-2xl overflow-hidden cursor-pointer bg-muted;
+}
+
+.portfolio-item img {
+  @apply w-full h-full object-cover transition-transform duration-500;
+}
+
+.portfolio-item:hover img {
+  @apply scale-110;
+}
+
+.portfolio-overlay {
+  @apply absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 transition-opacity duration-300;
+}
+
+.portfolio-item:hover .portfolio-overlay {
+  @apply opacity-100;
+}
+
+/* Services Styles */
+.service-card {
+  @apply bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 transition-all border border-primary/20 shadow-sm duration-300;
+}
+
+.service-card:hover {
+  @apply bg-primary/5 shadow-xl border-primary/40;
+}
+
+.service-card h3 {
+  @apply text-[var(--heading)] transition-colors duration-300;
+}
+
+.service-badge {
+  @apply flex items-center text-primary bg-primary/10 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors duration-300;
+}
+
+.service-card:hover .service-badge {
+  @apply bg-primary text-primary-foreground;
+}
+
+.service-meta {
+  @apply flex items-center text-muted-foreground text-xs sm:text-sm transition-colors duration-300;
+}
+
+.service-meta svg {
+  @apply text-primary/60 transition-colors duration-300;
+}
+
+.service-footer {
+  @apply flex justify-between items-center mt-4 pt-3 border-t border-border/50 transition-colors duration-300;
+}
+
+.service-card:hover .service-footer {
+  @apply border-primary/20;
+}
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;

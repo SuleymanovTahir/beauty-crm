@@ -94,7 +94,7 @@ export function ReviewsSection() {
             {t('testimonialsOverline', { defaultValue: 'Отзывы' })}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('testimonialsTitlePart1', { defaultValue: 'Отзывы наших' })} <span className="text-pink-600">{t('testimonialsTitlePart2', { defaultValue: 'клиентов' })}</span>
+            {t('testimonialsTitlePart1', { defaultValue: 'Отзывы наших' })} <span className="text-primary">{t('testimonialsTitlePart2', { defaultValue: 'клиентов' })}</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
             {t('testimonialsDesc', { defaultValue: 'Мы гордимся доверием наших клиентов' })}
@@ -104,7 +104,7 @@ export function ReviewsSection() {
         <div className="relative mb-8 max-w-7xl mx-auto">
           <button
             onClick={prevReview}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 bg-background rounded-full shadow-lg flex items-center justify-center text-pink-600 border border-primary/10"
+            className="review-nav-button left-0"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -112,13 +112,13 @@ export function ReviewsSection() {
           <div className="flex justify-center gap-3 sm:gap-4 px-10 sm:px-14">
             {getVisibleReviews().map((review, index) => (
               <div key={`${review.id}-${index}`} className="flex-1 max-w-xs">
-                <div className="bg-card rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm border border-border h-full flex flex-col">
+                <div className="review-card">
                   <div className="flex gap-1 mb-3 sm:mb-4">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
                         fill={i < review.rating ? "currentColor" : "none"}
-                        className={`w-3 h-3 sm:w-4 sm:h-4 ${i < review.rating ? 'text-pink-600' : 'text-muted'}`}
+                        className={`review-star ${i < review.rating ? 'review-star-active' : 'review-star-inactive'}`}
                       />
                     ))}
                   </div>
@@ -135,7 +135,7 @@ export function ReviewsSection() {
                         }}
                       />
                     ) : null}
-                    <div className={`w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-bold text-sm ${review.avatar_url ? 'hidden' : ''}`}>
+                    <div className={`w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-primary font-bold text-sm ${review.avatar_url ? 'hidden' : ''}`}>
                       {review.name.charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0">
@@ -150,7 +150,7 @@ export function ReviewsSection() {
 
           <button
             onClick={nextReview}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 bg-background rounded-full shadow-lg flex items-center justify-center text-pink-600 border border-primary/10"
+            className="review-nav-button right-0"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -161,10 +161,7 @@ export function ReviewsSection() {
             <div
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`cursor-pointer rounded-full transition-all ${index === currentIndex % reviews.length
-                ? 'bg-primary w-6 h-2 sm:w-8 sm:h-3'
-                : 'bg-muted-foreground/30 w-2 h-2 sm:w-3 sm:h-3'
-                }`}
+              className={index === currentIndex % reviews.length ? "pagination-dot pagination-dot-active" : "pagination-dot"}
             />
           ))}
         </div>

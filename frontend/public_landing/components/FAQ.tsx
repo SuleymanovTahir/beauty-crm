@@ -84,13 +84,13 @@ export function FAQ() {
               <AccordionItem
                 key={faq.id}
                 value={`item-${index}`}
-                className="bg-card border-2 border-primary/20 rounded-lg sm:rounded-xl px-3 sm:px-4 lg:px-6 data-[state=open]:shadow-lg data-[state=open]:border-primary/50 transition-all"
+                className="faq-accordion-item"
               >
                 <AccordionTrigger className="text-left hover:no-underline py-3 sm:py-4 lg:py-6">
                   <span className="text-sm sm:text-base text-[var(--heading)] pr-4">{faq.question}</span>
                 </AccordionTrigger>
                 <AccordionContent className="pb-3 sm:pb-4 lg:pb-6 text-xs sm:text-sm text-foreground/70">
-                  <div className="w-20 h-0.5 bg-primary/20 mb-3 rounded" />
+                  <div className="faq-divider" />
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -102,7 +102,7 @@ export function FAQ() {
           </div>
         )}
 
-        <div className="mt-6 sm:mt-8 lg:mt-12 text-center space-y-4 p-4 sm:p-6 lg:p-8 bg-card rounded-lg sm:rounded-xl border border-border transition-colors">
+        <div className="mt-6 sm:mt-8 lg:mt-12 text-center space-y-4 p-4 sm:p-6 lg:p-8 glass-panel transition-colors">
           <p className="text-sm sm:text-base text-foreground/70">
             {t('faqContactPrompt', { defaultValue: 'Не нашли ответ на свой вопрос?' })}
           </p>

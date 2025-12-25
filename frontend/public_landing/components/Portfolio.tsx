@@ -105,10 +105,7 @@ export function Portfolio() {
                 setSelectedCategory(category.id);
                 setDisplayCount(12);
               }}
-              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all text-sm sm:text-base ${selectedCategory === category.id
-                ? 'bg-primary text-primary-foreground shadow-lg'
-                : 'bg-background border border-primary/20 text-primary hover:bg-primary/10'
-                }`}
+              className={`portfolio-filter-button ${selectedCategory === category.id ? 'portfolio-filter-button-active' : ''}`}
             >
               {category.label}
             </button>
@@ -125,15 +122,15 @@ export function Portfolio() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ delay: index * 0.02 }}
-                className="group relative aspect-square rounded-lg sm:rounded-xl lg:rounded-2xl overflow-hidden cursor-pointer bg-muted"
+                className="portfolio-item"
               >
                 <img
                   src={item.image_path}
                   alt={item.title}
                   loading="lazy"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="portfolio-overlay">
                   <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3 lg:p-4">
                     <h3 className="text-primary-foreground text-xs sm:text-sm lg:text-base line-clamp-2">{item.title}</h3>
                   </div>

@@ -4,14 +4,14 @@
 @theme inline {
   --font-size: 16px;
   /* Original Pink Color Palette from public_landing */
-  --background: #f8fafc; /* Light blueish tint - user preferred global background */
-  --foreground: oklch(0.145 0 0); /* Near black */
-  --heading: oklch(0.145 0 0); /* Near black for headings */
+  --background: #bad1f7; /* Deep New Year Blue */
+  --foreground: #0f172a;
+  --heading: #0f172a;
 
-  --card: #f8fafc;
+  --card: #bad1f7;
   --card-foreground: #0f172a;
 
-  --popover: #f8fafc;
+  --popover: #bad1f7;
   --popover-foreground: #0f172a;
 
   /* Vibrant Pink Primary */
@@ -49,7 +49,7 @@
 
   --radius: 0.625rem;
 
-  --sidebar: #f8fafc;
+  --sidebar: #bad1f7;
   --sidebar-foreground: #0f172a;
   --sidebar-primary: #db2777;
   --sidebar-primary-foreground: #ffffff;
@@ -57,6 +57,9 @@
   --sidebar-accent-foreground: #db2777;
   --sidebar-border: #e2e8f0;
   --sidebar-ring: #db2777;
+
+  --whatsapp: #22c55e;
+  --whatsapp-hover: #16a34a;
 
   /* Additional Tailwind v4 theme mappings */
   --color-background: var(--background);
@@ -97,6 +100,9 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-whatsapp: var(--whatsapp);
+  --color-whatsapp-hover: var(--whatsapp-hover);
 }
 
 @custom-variant dark (&:is(.dark *));

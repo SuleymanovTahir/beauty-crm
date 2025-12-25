@@ -187,21 +187,21 @@ export const BookingSection = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-background rounded-lg sm:rounded-xl lg:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-border/50 space-y-4 sm:space-y-6">
+        <form onSubmit={handleSubmit} className="glass-panel lg:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xl border border-primary/20 space-y-4 sm:space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2">{t('formName', { defaultValue: 'Имя' })}</label>
+            <label className="form-label-custom">{t('formName', { defaultValue: 'Имя' })}</label>
             <Input
               type="text"
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder={t('formNamePlaceholder', { defaultValue: 'Ваше имя' })}
-              className="h-10 sm:h-11 bg-slate-50 border-primary/20"
+              className="h-10 sm:h-11 form-input-custom"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">{t('formPhone', { defaultValue: 'Телефон' })}</label>
+            <label className="form-label-custom">{t('formPhone', { defaultValue: 'Телефон' })}</label>
             <PhoneInputWithSearch
               defaultCountry={defaultCountry}
               value={formData.phone}
@@ -211,14 +211,14 @@ export const BookingSection = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">{t('formService', { defaultValue: 'Услуга' })}</label>
+            <label className="form-label-custom">{t('formService', { defaultValue: 'Услуга' })}</label>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   role="combobox"
                   aria-expanded={open}
-                  className="w-full justify-between h-10 sm:h-11 px-3 bg-slate-50 hover:bg-slate-100 text-left font-normal border-primary/20"
+                  className="w-full justify-between h-10 sm:h-11 px-3 bg-muted/20 hover:bg-muted/30 text-left font-normal border-primary/20"
                 >
                   {formData.service
                     ? availableServices.find((s) => s.id.toString() === formData.service.toString())?.[`name_${i18n.language}`] ||
@@ -262,7 +262,7 @@ export const BookingSection = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2">{t('formDate', { defaultValue: 'Дата' })}</label>
+              <label className="form-label-custom">{t('formDate', { defaultValue: 'Дата' })}</label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -270,13 +270,13 @@ export const BookingSection = () => {
                   required
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="h-10 sm:h-11 pl-10 bg-slate-50 border-primary/20"
+                  className="h-10 sm:h-11 pl-10 form-input-custom"
                   min={new Date().toISOString().split('T')[0]}
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">{t('formTime', { defaultValue: 'Время' })}</label>
+              <label className="form-label-custom">{t('formTime', { defaultValue: 'Время' })}</label>
               <div className="relative">
                 <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -284,7 +284,7 @@ export const BookingSection = () => {
                   required
                   value={formData.time}
                   onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                  className="h-10 sm:h-11 pl-10 bg-slate-50 border-primary/20"
+                  className="h-10 sm:h-11 pl-10 form-input-custom"
                 />
               </div>
             </div>

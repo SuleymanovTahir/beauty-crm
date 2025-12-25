@@ -52,15 +52,15 @@ export function Footer() {
     <>
       <div className="bg-muted/30 py-12">
         <div className="max-w-2xl mx-auto px-6 text-center">
-          <h3 className="text-2xl font-bold mb-4">{t('subscribeTitle', { defaultValue: 'Подпишитесь на новости' })}</h3>
-          <p className="text-muted-foreground mb-6">{t('subscribeDesc', { defaultValue: 'Получайте информацию о специальных предложениях первыми' })}</p>
+          <h3 className="text-2xl font-bold mb-4 text-foreground">{t('subscribeTitle', { defaultValue: 'Подпишитесь на новости' })}</h3>
+          <p className="text-foreground/80 mb-6">{t('subscribeDesc', { defaultValue: 'Получайте информацию о специальных предложениях первыми' })}</p>
           <form onSubmit={handleSubscribe} className="flex gap-2 max-w-md mx-auto">
             <input
               type="email"
               name="email"
               required
               placeholder={t('emailPlaceholder', { defaultValue: 'Ваш Email' })}
-              className="flex-1 h-10 px-3 rounded-md border border-primary/20 bg-slate-50"
+              className="flex-1 h-10 px-3 rounded-md border border-primary/20 bg-muted/20"
             />
             <button type="submit" className="h-10 px-4 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90">
               {t('subscribe', { defaultValue: 'Подписаться' })}

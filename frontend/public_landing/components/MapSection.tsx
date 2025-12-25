@@ -28,7 +28,7 @@ export function MapSection() {
   const workingHours = salonInfo?.hours || "";
 
   return (
-    <section id="map-section" className="py-12 sm:py-16 bg-muted/30">
+    <section id="map-section" className="py-12 sm:py-16 bg-background">
       <div className="container mx-auto max-w-7xl px-3 sm:px-4 lg:px-6">
         <div className="text-center mb-8 sm:mb-12">
           <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-3">
@@ -43,8 +43,8 @@ export function MapSection() {
           <div className="space-y-3 sm:space-y-4">
             <div className="bg-card rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 shadow-sm hover:shadow-md transition-all border border-border/50">
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Phone className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-green-600" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+                  <Phone className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-primary" />
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">{t('phone', { defaultValue: 'Телефон' })}</h3>
@@ -57,8 +57,8 @@ export function MapSection() {
 
             <div className="bg-card rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 shadow-sm hover:shadow-md transition-all border border-border/50">
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Mail className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-blue-600" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-primary" />
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">Email</h3>
@@ -71,8 +71,8 @@ export function MapSection() {
 
             <div className="bg-card rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 shadow-sm hover:shadow-md transition-all border border-border/50">
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-red-600" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-primary" />
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">{t('address', { defaultValue: 'Адрес' })}</h3>
@@ -83,8 +83,8 @@ export function MapSection() {
 
             <div className="bg-card rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 shadow-sm hover:shadow-md transition-all border border-border/50">
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-purple-600" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-primary" />
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">{t('workingHours', { defaultValue: 'Часы работы' })}</h3>
@@ -110,7 +110,7 @@ export function MapSection() {
             </div>
           </div>
 
-          <div className="w-full h-[400px] sm:h-[500px] lg:h-auto lg:min-h-[600px] rounded-lg sm:rounded-xl overflow-hidden shadow-lg bg-gray-200 border border-border/50">
+          <div className="w-full h-[400px] sm:h-[500px] lg:h-auto lg:min-h-[600px] rounded-lg sm:rounded-xl overflow-hidden shadow-lg bg-muted border border-border/50">
             <iframe
               className="w-full h-full"
               src={salonInfo?.google_maps_embed_url ||

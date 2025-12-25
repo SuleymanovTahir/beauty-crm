@@ -68,21 +68,21 @@ export function Hero() {
           />
         )}
         {/* Overlay - pure white to match production */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/50 to-background/10" />
+        <div className="hero-overlay" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 w-full flex-grow flex flex-col justify-center">
         <div className="w-full max-w-2xl pt-8 sm:pt-12 lg:pt-16 space-y-6 sm:space-y-8">
           <div className="space-y-4 sm:space-y-6">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-primary animate-fade-in-up leading-tight">
+            <h1 className="hero-title">
               {getTranslatedText(heroBanner, 'title')}
               <br />
-              <span className="text-primary/80">
+              <span className="hero-subtitle">
                 {getTranslatedText(heroBanner, 'subtitle')}
               </span>
             </h1>
 
-            <p className="text-sm sm:text-base lg:text-lg text-[oklch(0.145_0_0)] opacity-80 animate-fade-in-up leading-relaxed font-medium">
+            <p className="hero-description">
               {t('heroDescription', { ns: 'public_landing' }) || "Discover the world of exquisite beauty in an atmosphere of luxury and comfort."}
             </p>
           </div>
@@ -115,15 +115,15 @@ export function Hero() {
 
           <div className="flex flex-wrap justify-start gap-6 sm:gap-8 lg:gap-12 pt-4 sm:pt-6 border-t border-border/30 animate-fade-in">
             <div className="flex flex-col items-start">
-              <span className="text-2xl sm:text-3xl text-primary mb-1">10+</span>
+              <span className="hero-stat-value">10+</span>
               <span className="text-xs sm:text-sm text-muted-foreground">{t('common:yearsExperience') || 'лет опыта'}</span>
             </div>
             <div className="flex flex-col items-start">
-              <span className="text-2xl sm:text-3xl text-primary mb-1">5000+</span>
+              <span className="hero-stat-value">5000+</span>
               <span className="text-xs sm:text-sm text-muted-foreground">{t('common:happyClients') || 'довольных клиентов'}</span>
             </div>
             <div className="flex flex-col items-start">
-              <span className="text-2xl sm:text-3xl text-primary mb-1">100%</span>
+              <span className="hero-stat-value">100%</span>
               <span className="text-xs sm:text-sm text-muted-foreground">{t('common:qualityGuarantee') || 'гарантия качества'}</span>
             </div>
           </div>
