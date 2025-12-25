@@ -23,7 +23,7 @@ def fix_employee_photos():
         log_error(f"❌ Could not find employee photos source directory: {source_dir}", "fix")
         return
 
-    target_dir = os.path.join(UPLOAD_DIR, "images")
+    target_dir = os.path.join(UPLOAD_DIR, "images", "employees")
     os.makedirs(target_dir, exist_ok=True)
     
     photo_mapping = {
@@ -37,11 +37,10 @@ def fix_employee_photos():
     for username, source_filename in photo_mapping.items():
         source_path = os.path.join(source_dir, source_filename)
         if os.path.exists(source_path):
-            ext = os.path.splitext(source_filename)[1].lower()
-            new_filename = f"{username}{ext}"
-            target_path = os.path.join(target_dir, new_filename)
+            # Using original source_filename (Russian) instead of new_filename (English)
+            target_path = os.path.join(target_dir, source_filename)
             shutil.copy2(source_path, target_path)
-            log_info(f"✅ Restored: {new_filename}", "fix")
+            log_info(f"✅ Restored: {source_filename}", "fix")
         else:
             log_error(f"❌ File not found: {source_filename}", "fix")
 
@@ -52,15 +51,16 @@ def fix_banner_path():
     
     try:
         # 1. Update DB paths
-        updates = [
-            ('/static/uploads/faces/Мароканская баня.webp', '/static/uploads/images/Мароканская баня.webp'),
-            ('/static/uploads/faces/banner2.webp', '/static/uploads/images/banner2.webp')
-        ]
+        # Update DB: Use RELATIVE paths
+        image_names = ["Мароканская баня.webp", "banner2.webp"]
         
-        for new_path, old_path in updates:
-            c.execute("UPDATE public_banners SET image_url = %s WHERE image_url = %s", (new_path, old_path))
+        for image_name in image_names:
+            db_path = f"/static/uploads/images/faces/{image_name}"
+            # Update where the image_url contains the image_name, or where it was previously in /uploads/faces/
+            c.execute("UPDATE public_banners SET image_url = %s WHERE image_url LIKE %s OR image_url LIKE %s", 
+                      (db_path, f"%{image_name}%", f"%/uploads/faces/{image_name}"))
             if c.rowcount > 0:
-                log_info(f"✅ Updated banner path: {old_path} -> {new_path}", "fix")
+                log_info(f"✅ Updated banner path for {image_name}", "fix")
 
         conn.commit()
         
@@ -70,7 +70,7 @@ def fix_banner_path():
         
         # Source: Красивые лица -> faces
         source_dir = os.path.join(project_root, "frontend", "public_landing", "styles", "img", "Красивые лица")
-        target_dir = os.path.join(UPLOAD_DIR, "faces")
+        target_dir = os.path.join(UPLOAD_DIR, "images", "faces")
         os.makedirs(target_dir, exist_ok=True)
         
         if os.path.exists(source_dir):

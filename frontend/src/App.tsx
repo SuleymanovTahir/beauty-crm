@@ -213,18 +213,18 @@ export default function App() {
                 <Route path="clients/:id" element={<ClientDetail />} />
                 <Route path="chat" element={<Chat />} />
                 <Route path="users" element={<Users />} />
-                <Route path="users/:id" element={<EmployeeDetail />} />
-                <Route path="employees" element={<EmployeeManagement />} />
-                <Route path="employees/:id" element={<EmployeeManagement />} />
                 <Route path="users/create" element={<CreateUser />} />
                 <Route path="users/pending" element={<PendingRegistrations />} />
                 <Route path="users/permissions" element={<PermissionManagement />} />
                 <Route path="users/:identifier/edit" element={<EditUser />} />
+                <Route path="users/:id/:tab?" element={<EmployeeDetail />} />
+                <Route path="employees" element={<EmployeeManagement />} />
+                <Route path="employees/:id" element={<EmployeeManagement />} />
                 <Route path="plans" element={<PlansManagement />} />
                 <Route path="calendar" element={<Calendar />} />
-                <Route path="settings" element={<Settings />} />
-                <Route path="bot-settings" element={<BotSettings />} />
-                <Route path="public-content" element={<PublicContent />} />
+                <Route path="settings/:tab?" element={<Settings />} />
+                <Route path="bot-settings/:tab?" element={<BotSettings />} />
+                <Route path="public-content/:tab?" element={<PublicContent />} />
                 <Route path="visitor-analytics" element={<VisitorAnalytics />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>

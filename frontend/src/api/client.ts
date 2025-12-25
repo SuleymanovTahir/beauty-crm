@@ -359,10 +359,14 @@ export const apiClient = {
     }),
 
   // ===== UPLOADS =====
-  uploadFile: (file: File) => {
+  uploadFile: (file: File, subfolder?: string) => {
     const formData = new FormData();
     formData.append('file', file);
-    return fetch(`${BASE_URL}/api/upload`, {
+    const url = subfolder
+      ? `${BASE_URL}/api/upload?subfolder=${encodeURIComponent(subfolder)}`
+      : `${BASE_URL}/api/upload`;
+
+    return fetch(url, {
       method: 'POST',
       body: formData,
     }).then(r => r.json());

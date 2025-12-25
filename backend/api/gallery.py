@@ -202,20 +202,20 @@ async def upload_gallery_image(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     try:
-        # Создаём папку если не существует
-        BASE_DIR = Path(__file__).resolve().parent.parent
-        upload_dir = BASE_DIR / "static" / "uploads" / category
-        upload_dir.mkdir(parents=True, exist_ok=True)
+        # Используем центральный UPLOAD_DIR из конфига
+        from core.config import UPLOAD_DIR
+        target_dir = Path(UPLOAD_DIR) / "images" / category
+        target_dir.mkdir(parents=True, exist_ok=True)
         
         # Сохраняем файл
-        file_path = upload_dir / file.filename
+        file_path = target_dir / file.filename
         with open(file_path, "wb") as f:
             content = await file.read()
             f.write(content)
         
-        # Добавляем в БД
         # URL должен начинаться с /static, так как мы маунтим static папку
-        image_path = f"/static/uploads/{category}/{file.filename}"
+        # Путь теперь вложен в /images/
+        image_path = f"/static/uploads/images/{category}/{file.filename}"
         
         conn = get_db_connection()
         c = conn.cursor()

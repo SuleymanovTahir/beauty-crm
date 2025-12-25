@@ -32,7 +32,7 @@ def import_gallery_photos():
             "Красивые лица": "faces",
             "Фото салона": "salon",
             "Услуги": "services",
-            "Сотрудники": "images"
+            "Сотрудники": "employees"
         }
         
         imported_count = 0
