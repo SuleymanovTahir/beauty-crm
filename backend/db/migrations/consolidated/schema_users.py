@@ -72,6 +72,24 @@ def migrate_users_schema(db_path="salon_bot.db"):
             print(f"\n✅ Added {added_count} columns to users table")
         else:
             print("\n✅ All columns already exist")
+
+        # Create registration_audit table if not exists
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS registration_audit (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL,
+                action VARCHAR(50) NOT NULL,
+                approved_by INTEGER,
+                reason TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (approved_by) REFERENCES users(id) ON DELETE SET NULL
+            )
+        """)
+        c.execute("CREATE INDEX IF NOT EXISTS idx_reg_audit_user_id ON registration_audit (user_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_reg_audit_action ON registration_audit (action)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_reg_audit_created ON registration_audit (created_at)")
+        print("  ✅ registration_audit table ensured")
         
         conn.commit()
         return True
