@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Request,Cookie
 from pydantic import BaseModel
 from typing import Optional
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from core.config import (
     DATABASE_NAME,
@@ -400,3 +400,251 @@ async def get_salon_working_hours():
         log_error(f"Error getting salon working hours: {e}", "settings")
         # Fallback
         return get_default_working_hours_response()  # ✅ Используем функцию
+
+# ===== REFERRAL CAMPAIGNS =====
+import json
+from typing import List
+
+class ReferralCampaignCreate(BaseModel):
+    """Model for creating a referral campaign"""
+    name: str
+    description: Optional[str] = None
+    bonus_points: int = 200
+    referrer_bonus: int = 200
+    is_active: bool = True
+    target_type: str = 'all'  # all, specific_users, by_master, by_service, by_inactivity
+    target_criteria: Optional[dict] = None  # {user_ids: [], master_id: int, service_ids: [], days_inactive: int}
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+
+@router.get("/referral-campaigns")
+async def get_referral_campaigns():
+    """Получить список реферальных кампаний"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        c.execute("""
+            SELECT id, name, description, bonus_points, referrer_bonus, is_active,
+                   target_type, target_criteria, start_date, end_date, created_at
+            FROM referral_campaigns
+            ORDER BY created_at DESC
+        """)
+        
+        campaigns = []
+        for row in c.fetchall():
+            criteria = None
+            if row[7]:
+                try:
+                    criteria = json.loads(row[7])
+                except:
+                    criteria = {}
+            campaigns.append({
+                "id": row[0],
+                "name": row[1],
+                "description": row[2],
+                "bonus_points": row[3],
+                "referrer_bonus": row[4],
+                "is_active": row[5],
+                "target_type": row[6],
+                "target_criteria": criteria,
+                "start_date": row[8],
+                "end_date": row[9],
+                "created_at": row[10]
+            })
+        
+        conn.close()
+        return {"campaigns": campaigns}
+    except Exception as e:
+        log_error(f"Error loading referral campaigns: {e}", "settings")
+        return {"campaigns": [], "error": str(e)}
+
+@router.post("/referral-campaigns")
+async def create_referral_campaign(campaign: ReferralCampaignCreate):
+    """Создать реферальную кампанию"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        criteria_json = json.dumps(campaign.target_criteria) if campaign.target_criteria else None
+        
+        c.execute("""
+            INSERT INTO referral_campaigns 
+            (name, description, bonus_points, referrer_bonus, is_active, target_type, target_criteria, start_date, end_date)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+        """, (
+            campaign.name,
+            campaign.description,
+            campaign.bonus_points,
+            campaign.referrer_bonus,
+            campaign.is_active,
+            campaign.target_type,
+            criteria_json,
+            campaign.start_date,
+            campaign.end_date
+        ))
+        
+        campaign_id = c.fetchone()[0]
+        
+        # If targeting specific users, add them to referral_campaign_users
+        if campaign.target_type == 'specific_users' and campaign.target_criteria:
+            user_ids = campaign.target_criteria.get('user_ids', [])
+            for user_id in user_ids:
+                c.execute("""
+                    INSERT INTO referral_campaign_users (campaign_id, client_id)
+                    VALUES (%s, %s)
+                    ON CONFLICT DO NOTHING
+                """, (campaign_id, user_id))
+        
+        conn.commit()
+        conn.close()
+        
+        log_info(f"Referral campaign created: {campaign.name}", "settings")
+        return {"success": True, "id": campaign_id}
+    except Exception as e:
+        log_error(f"Error creating referral campaign: {e}", "settings")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.put("/referral-campaigns/{campaign_id}")
+async def update_referral_campaign(campaign_id: int, campaign: ReferralCampaignCreate):
+    """Обновить реферальную кампанию"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        criteria_json = json.dumps(campaign.target_criteria) if campaign.target_criteria else None
+        
+        c.execute("""
+            UPDATE referral_campaigns 
+            SET name = %s, description = %s, bonus_points = %s, referrer_bonus = %s,
+                is_active = %s, target_type = %s, target_criteria = %s,
+                start_date = %s, end_date = %s, updated_at = CURRENT_TIMESTAMP
+            WHERE id = %s
+        """, (
+            campaign.name,
+            campaign.description,
+            campaign.bonus_points,
+            campaign.referrer_bonus,
+            campaign.is_active,
+            campaign.target_type,
+            criteria_json,
+            campaign.start_date,
+            campaign.end_date,
+            campaign_id
+        ))
+        
+        # Update targeted users if needed
+        if campaign.target_type == 'specific_users' and campaign.target_criteria:
+            # Remove old assignments
+            c.execute("DELETE FROM referral_campaign_users WHERE campaign_id = %s", (campaign_id,))
+            # Add new ones
+            user_ids = campaign.target_criteria.get('user_ids', [])
+            for user_id in user_ids:
+                c.execute("""
+                    INSERT INTO referral_campaign_users (campaign_id, client_id)
+                    VALUES (%s, %s)
+                """, (campaign_id, user_id))
+        
+        conn.commit()
+        conn.close()
+        
+        log_info(f"Referral campaign updated: {campaign_id}", "settings")
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error updating referral campaign: {e}", "settings")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/referral-campaigns/{campaign_id}")
+async def delete_referral_campaign(campaign_id: int):
+    """Удалить реферальную кампанию"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Delete user assignments first
+        c.execute("DELETE FROM referral_campaign_users WHERE campaign_id = %s", (campaign_id,))
+        # Delete campaign
+        c.execute("DELETE FROM referral_campaigns WHERE id = %s", (campaign_id,))
+        
+        conn.commit()
+        conn.close()
+        
+        log_info(f"Referral campaign deleted: {campaign_id}", "settings")
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error deleting referral campaign: {e}", "settings")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/referral-campaigns/{campaign_id}/eligible-users")
+async def get_eligible_users_for_campaign(campaign_id: int):
+    """Получить список клиентов, подходящих под критерии кампании"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Get campaign
+        c.execute("SELECT target_type, target_criteria FROM referral_campaigns WHERE id = %s", (campaign_id,))
+        row = c.fetchone()
+        if not row:
+            conn.close()
+            return {"users": [], "error": "Campaign not found"}
+        
+        target_type, criteria_str = row
+        criteria = json.loads(criteria_str) if criteria_str else {}
+        
+        users = []
+        
+        if target_type == 'all':
+            c.execute("SELECT instagram_id, name, email, phone FROM clients LIMIT 100")
+        elif target_type == 'specific_users':
+            user_ids = criteria.get('user_ids', [])
+            if user_ids:
+                placeholders = ','.join(['%s'] * len(user_ids))
+                c.execute(f"SELECT instagram_id, name, email, phone FROM clients WHERE instagram_id IN ({placeholders})", tuple(user_ids))
+        elif target_type == 'by_master':
+            master_id = criteria.get('master_id')
+            if master_id:
+                c.execute("""
+                    SELECT DISTINCT c.instagram_id, c.name, c.email, c.phone 
+                    FROM clients c
+                    JOIN bookings b ON c.instagram_id = b.instagram_id
+                    JOIN users u ON b.master = u.full_name
+                    WHERE u.id = %s
+                """, (master_id,))
+        elif target_type == 'by_service':
+            service_ids = criteria.get('service_ids', [])
+            if service_ids:
+                placeholders = ','.join(['%s'] * len(service_ids))
+                c.execute(f"""
+                    SELECT DISTINCT c.instagram_id, c.name, c.email, c.phone 
+                    FROM clients c
+                    JOIN bookings b ON c.instagram_id = b.instagram_id
+                    WHERE b.service_name IN (
+                        SELECT name FROM services WHERE id IN ({placeholders})
+                    )
+                """, tuple(service_ids))
+        elif target_type == 'by_inactivity':
+            days = criteria.get('days_inactive', 30)
+            c.execute("""
+                SELECT c.instagram_id, c.name, c.email, c.phone 
+                FROM clients c
+                WHERE c.instagram_id NOT IN (
+                    SELECT DISTINCT instagram_id FROM bookings 
+                    WHERE datetime > %s
+                )
+            """, ((datetime.now() - timedelta(days=days)).isoformat(),))
+        
+        for row in c.fetchall():
+            users.append({
+                "id": row[0],
+                "name": row[1],
+                "email": row[2],
+                "phone": row[3]
+            })
+        
+        conn.close()
+        return {"users": users, "count": len(users)}
+    except Exception as e:
+        log_error(f"Error getting eligible users: {e}", "settings")
+        return {"users": [], "error": str(e)}

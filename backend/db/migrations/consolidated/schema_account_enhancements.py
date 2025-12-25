@@ -226,6 +226,50 @@ def migrate_account_enhancements():
         
         log_info(f"➕ Seeded {len(default_achievements)} default achievement templates", "db")
     
+    # === 8. Create referral_campaigns table ===
+    c.execute('''CREATE TABLE IF NOT EXISTS referral_campaigns (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        description TEXT,
+        bonus_points INTEGER DEFAULT 200,
+        referrer_bonus INTEGER DEFAULT 200,
+        is_active BOOLEAN DEFAULT TRUE,
+        target_type TEXT DEFAULT 'all',
+        target_criteria TEXT,
+        start_date TEXT,
+        end_date TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''')
+    log_info("✅ Table referral_campaigns created/verified", "db")
+    
+    # === 9. Create referral_campaign_users table (for specific user targeting) ===
+    c.execute('''CREATE TABLE IF NOT EXISTS referral_campaign_users (
+        id SERIAL PRIMARY KEY,
+        campaign_id INTEGER NOT NULL,
+        client_id TEXT NOT NULL,
+        is_eligible BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (campaign_id) REFERENCES referral_campaigns(id),
+        FOREIGN KEY (client_id) REFERENCES clients(instagram_id)
+    )''')
+    log_info("✅ Table referral_campaign_users created/verified", "db")
+    
+    # === 10. Create client_referral_usage table (track who invited whom) ===
+    c.execute('''CREATE TABLE IF NOT EXISTS client_referral_usage (
+        id SERIAL PRIMARY KEY,
+        referrer_id TEXT NOT NULL,
+        referred_id TEXT NOT NULL,
+        campaign_id INTEGER,
+        referral_code TEXT,
+        bonus_given BOOLEAN DEFAULT FALSE,
+        used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (referrer_id) REFERENCES clients(instagram_id),
+        FOREIGN KEY (referred_id) REFERENCES clients(instagram_id),
+        FOREIGN KEY (campaign_id) REFERENCES referral_campaigns(id)
+    )''')
+    log_info("✅ Table client_referral_usage created/verified", "db")
+    
     conn.commit()
     log_info("✅ Account enhancements migration completed", "db")
 
