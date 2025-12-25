@@ -144,11 +144,11 @@ def import_gallery_images(db_path=DATABASE_NAME):
         log_info("📦 Импортируем изображения из папок...", "migration")
         
         # Импортируем portfolio
-        portfolio_dir = Path('static/uploads/portfolio')
+        portfolio_dir = Path('static/uploads/images/portfolio')
         if portfolio_dir.exists():
             portfolio_images = sorted(portfolio_dir.glob('*.webp'))
             for idx, img_file in enumerate(portfolio_images, 1):
-                image_path = f'/static/uploads/portfolio/{img_file.name}'
+                image_path = f'/static/uploads/images/portfolio/{img_file.name}'
                 title = img_file.stem
                 c.execute('''
                     INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
@@ -157,11 +157,11 @@ def import_gallery_images(db_path=DATABASE_NAME):
             log_info(f"✅ Импортировано {len(portfolio_images)} portfolio изображений", "migration")
         
         # Импортируем salon
-        salon_dir = Path('static/uploads/salon')
+        salon_dir = Path('static/uploads/images/salon')
         if salon_dir.exists():
             salon_images = sorted(salon_dir.glob('*.webp'))
             for idx, img_file in enumerate(salon_images, 1):
-                image_path = f'/static/uploads/salon/{img_file.name}'
+                image_path = f'/static/uploads/images/salon/{img_file.name}'
                 title = img_file.stem
                 c.execute('''
                     INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
@@ -170,11 +170,11 @@ def import_gallery_images(db_path=DATABASE_NAME):
             log_info(f"✅ Импортировано {len(salon_images)} salon изображений", "migration")
         
         # Импортируем services
-        services_dir = Path('static/uploads/services')
+        services_dir = Path('static/uploads/images/services')
         if services_dir.exists():
             services_images = sorted(services_dir.glob('*.webp'))
             for idx, img_file in enumerate(services_images, 1):
-                image_path = f'/static/uploads/services/{img_file.name}'
+                image_path = f'/static/uploads/images/services/{img_file.name}'
                 title = img_file.stem
                 c.execute('''
                     INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)

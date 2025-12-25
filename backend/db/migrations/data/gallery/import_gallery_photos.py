@@ -14,19 +14,10 @@ def import_gallery_photos():
     conn = get_db_connection()
     c = conn.cursor()
     
+    from core.config import UPLOAD_DIR, BASE_DIR
+    project_root = Path(BASE_DIR).parent
+    
     try:
-        # Get project root
-        current_file = Path(__file__).resolve()
-        project_root = current_file.parent.parent.parent.parent.parent.parent
-        
-        # Verify project root
-        if not (project_root / "frontend").exists():
-             cwd = Path.cwd()
-             if (cwd / "frontend").exists():
-                 project_root = cwd
-             else:
-                 project_root = Path("/Users/tahir/Desktop/beauty-crm")
-        
         print(f"📂 Project root: {project_root}")
         
         # Базовая папка с картинками
@@ -54,8 +45,8 @@ def import_gallery_photos():
             folder_name = source_dir.name
             category = category_mapping.get(folder_name, folder_name.lower())
             
-            # Целевая папка в backend/static/uploads/
-            dest_dir = project_root / "backend/static/uploads" / category
+            # Целевая папка в backend/static/uploads/images/
+            dest_dir = Path(UPLOAD_DIR) / "images" / category
             dest_dir.mkdir(parents=True, exist_ok=True)
             
             print(f"\n📂 Обработка папки: {folder_name} (Категория: {category})")
@@ -77,7 +68,7 @@ def import_gallery_photos():
                 # Добавляем в базу данных (для галереи используем gallery_images)
                 # Только если это не "images" (сотрудники), так как они в таблице users
                 if category != "images":
-                    image_path = f"/static/uploads/{category}/{img_file.name}"
+                    image_path = f"/static/uploads/images/{category}/{img_file.name}"
                     
                     c.execute("SELECT id FROM gallery_images WHERE image_path = %s", (image_path,))
                     if not c.fetchone():
@@ -99,7 +90,7 @@ def import_gallery_photos():
                 continue
                 
             category = "other"
-            dest_dir = project_root / "backend/static/uploads" / category
+            dest_dir = Path(UPLOAD_DIR) / "images" / category
             dest_dir.mkdir(parents=True, exist_ok=True)
             
             dest_file = dest_dir / img_file.name
@@ -107,7 +98,7 @@ def import_gallery_photos():
                 shutil.copy2(img_file, dest_file)
                 print(f"  📋 Скопировано (root): {img_file.name}")
                 
-            image_path = f"/static/uploads/{category}/{img_file.name}"
+            image_path = f"/static/uploads/images/{category}/{img_file.name}"
             c.execute("SELECT id FROM gallery_images WHERE image_path = %s", (image_path,))
             if not c.fetchone():
                 c.execute("""

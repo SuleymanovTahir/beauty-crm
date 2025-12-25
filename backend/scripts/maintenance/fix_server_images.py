@@ -13,9 +13,8 @@ from utils.logger import log_info, log_error
 def fix_employee_photos():
     log_info("🔧 Fixing employee photos...", "fix")
     
-    # Logic from db/init.py (updated)
-    backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    project_root = os.path.dirname(backend_dir)
+    from core.config import UPLOAD_DIR, BASE_DIR
+    project_root = os.path.dirname(BASE_DIR)
     
     # Универсальный путь
     source_dir = os.path.join(project_root, "frontend", "public_landing", "styles", "img", "Сотрудники")
@@ -24,7 +23,7 @@ def fix_employee_photos():
         log_error(f"❌ Could not find employee photos source directory: {source_dir}", "fix")
         return
 
-    target_dir = os.path.join(backend_dir, "static", "uploads", "images")
+    target_dir = os.path.join(UPLOAD_DIR, "images")
     os.makedirs(target_dir, exist_ok=True)
     
     photo_mapping = {
@@ -66,12 +65,12 @@ def fix_banner_path():
         conn.commit()
         
         # 2. Ensure files exist in faces directory
-        backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        project_root = os.path.dirname(backend_dir)
+        from core.config import UPLOAD_DIR, BASE_DIR
+        project_root = os.path.dirname(BASE_DIR)
         
         # Source: Красивые лица -> faces
         source_dir = os.path.join(project_root, "frontend", "public_landing", "styles", "img", "Красивые лица")
-        target_dir = os.path.join(backend_dir, "static", "uploads", "faces")
+        target_dir = os.path.join(UPLOAD_DIR, "faces")
         os.makedirs(target_dir, exist_ok=True)
         
         if os.path.exists(source_dir):
