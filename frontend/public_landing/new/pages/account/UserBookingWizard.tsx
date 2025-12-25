@@ -1,14 +1,15 @@
+///pages/account/UserBookingWizard.tsx
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { ru, enUS, ar } from 'date-fns/locale';
 import { ArrowLeft, Calendar as CalendarIcon, Check, ChevronRight, Clock, Info, List, MapPin, Search, Star, User, X, Home, Loader2, Edit2 } from 'lucide-react';
-import { Calendar } from '../ui/calendar';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Card, CardContent } from '../ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Calendar } from '../../components/ui/calendar';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Card, CardContent } from '../../components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { api } from '../../../../src/services/api';
 import { toast } from 'sonner';
 import { useAuth } from '../../../../src/contexts/AuthContext';
