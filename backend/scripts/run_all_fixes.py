@@ -18,11 +18,11 @@ async def main():
     try:
         # 1. Fix Data (General maintenance)
         log_info("1️⃣  Запуск fix_data.py...", "run_all_fixes")
-        from scripts.maintenance.fix_data import fix_all_data
-        # fix_all_data is likely synchronous, but let's check if we can run it
+        from scripts.maintenance.fix_data import run_all_fixes
+        # run_all_fixes is likely synchronous, but let's check if we can run it
         # If it's sync, we can run it directly.
         try:
-            fix_all_data() 
+            run_all_fixes() 
             log_info("✅ fix_data.py выполнен успешно", "run_all_fixes")
         except Exception as e:
             log_error(f"❌ Ошибка в fix_data.py: {e}", "run_all_fixes")

@@ -117,6 +117,15 @@ def run_all_tests():
     print_header("ЗАПУСК ВСЕХ ТЕСТОВ BEAUTY CRM")
     print(f"Дата: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
+    # 0. Подготовка данных
+    print_header("ПОДГОТОВКА ДАННЫХ ПЕРЕД ТЕСТАМИ")
+    try:
+        from scripts.maintenance.fix_data import run_all_fixes
+        run_all_fixes()
+        print("✅ Данные подготовлены")
+    except Exception as e:
+        print(f"⚠️  Предупреждение при подготовке данных: {e}")
+
     results = []
 
     # 1. Основные тесты (теперь тихие если PASS)

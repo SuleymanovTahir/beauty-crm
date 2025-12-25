@@ -90,8 +90,9 @@ export default function CreateUser() {
         position: selectedPositions.join(' / ')
       };
 
+      const baseUrl = (window as any).VITE_API_URL || import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? `${window.location.protocol}//${window.location.hostname}:8000` : window.location.origin);
       const response = await fetch(
-        `${(window as any).VITE_API_URL || 'http://localhost:8000'}/api/users`,
+        `${baseUrl}/api/users`,
         {
           method: 'POST',
           headers: {

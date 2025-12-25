@@ -29,6 +29,11 @@ interface Employee {
     bio?: string;
     photo?: string;
     is_service_provider: boolean;
+    years_of_experience?: string | number;
+    specialization?: string;
+    about_me?: string;
+    base_salary?: number;
+    commission_rate?: number;
 }
 
 export default function EmployeeDetail() {
@@ -85,6 +90,10 @@ export default function EmployeeDetail() {
         try {
             setLoading(true);
             const data = await api.get(`/api/users/${id}`);
+            // Map bio to about_me for EmployeeInformation
+            if (data && data.bio && !data.about_me) {
+                data.about_me = data.bio;
+            }
             setEmployee(data);
         } catch (error) {
             console.error('Error loading employee:', error);

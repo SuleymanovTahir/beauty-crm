@@ -64,17 +64,17 @@ export default defineConfig({
     // Proxy для API запросов (пересылаем на backend)
     proxy: {
       "/api": {
-        target: "http://localhost:8000",
+        target: process.env.VITE_API_URL || "http://localhost:8000",
         changeOrigin: true,
         // Сохраняет /api в пути (не переписывает)
         rewrite: (path) => path,
       },
       "/webhook": {
-        target: "http://localhost:8000",
+        target: process.env.VITE_API_URL || "http://localhost:8000",
         changeOrigin: true,
       },
       "/static": {
-        target: "http://localhost:8000",
+        target: process.env.VITE_API_URL || "http://localhost:8000",
         changeOrigin: true,
       },
     },

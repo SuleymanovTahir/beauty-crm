@@ -37,11 +37,7 @@ export default function VerifyEmail() {
       setLoading(true);
 
       try {
-        const response = await fetch(`http://localhost:8000/api/verify-email-token?token=${tokenFromUrl}`, {
-          credentials: 'include'
-        });
-
-        const data = await response.json();
+        const data = await api.verifyEmailToken(tokenFromUrl);
 
         if (data.success && data.token && data.user) {
           console.log("Token verification successful, logging in");

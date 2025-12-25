@@ -1,5 +1,4 @@
 // /frontend/src/pages/admin/EditUser.tsx
-// frontend/src/pages/admin/EditUser.tsx
 import React, { useState, useEffect } from 'react';
 import { UserCog, ArrowLeft, Loader, Key, User as UserIcon, Shield } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -26,7 +25,13 @@ export default function EditUser() {
     username: '',
     full_name: '',
     email: '',
-    photo: ''
+    photo: '',
+    position: '',
+    years_of_experience: '',
+    specialization: '',
+    about_me: '',
+    phone_number: '',
+    birth_date: ''
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -63,9 +68,15 @@ export default function EditUser() {
         username: data.username,
         full_name: data.full_name,
         email: data.email || '',
-        photo: photoUrl || ''
+        photo: photoUrl || '',
+        position: data.position || '',
+        years_of_experience: String(data.years_of_experience || ''),
+        specialization: data.specialization || '',
+        about_me: data.bio || data.about_me || '',
+        phone_number: data.phone || data.phone_number || '',
+        birth_date: data.birthday || data.birth_date || ''
       });
-    } catch (err) {
+    } catch (err: any) {
       toast.error(t('users:error_loading_profile'));
       console.error(err);
     } finally {
@@ -220,6 +231,80 @@ export default function EditUser() {
                   </p>
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="phone_number">{t('users:phone_number', 'Телефон')}</Label>
+                    <Input
+                      id="phone_number"
+                      disabled={saving}
+                      value={profileData.phone_number}
+                      onChange={(e) => setProfileData({ ...profileData, phone_number: e.target.value })}
+                      placeholder="+971..."
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="birth_date">{t('users:birth_date', 'Дата рождения')}</Label>
+                    <Input
+                      id="birth_date"
+                      type="date"
+                      disabled={saving}
+                      value={profileData.birth_date}
+                      onChange={(e) => setProfileData({ ...profileData, birth_date: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="position">{t('users:position', 'Должность')}</Label>
+                    <Input
+                      id="position"
+                      disabled={saving}
+                      value={profileData.position}
+                      onChange={(e) => setProfileData({ ...profileData, position: e.target.value })}
+                      placeholder="Stylist"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="years_of_experience">{t('users:years_of_experience', 'Опыт (лет)')}</Label>
+                    <Input
+                      id="years_of_experience"
+                      type="number"
+                      min="0"
+                      disabled={saving}
+                      value={profileData.years_of_experience}
+                      onChange={(e) => setProfileData({ ...profileData, years_of_experience: e.target.value })}
+                      placeholder="5"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="specialization">{t('users:specialization', 'Специализация')}</Label>
+                  <Input
+                    id="specialization"
+                    disabled={saving}
+                    value={profileData.specialization}
+                    onChange={(e) => setProfileData({ ...profileData, specialization: e.target.value })}
+                    placeholder="Hair, Nails..."
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="about_me">{t('users:about_me', 'О себе')}</Label>
+                  <textarea
+                    id="about_me"
+                    rows={4}
+                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={saving}
+                    value={profileData.about_me}
+                    onChange={(e) => setProfileData({ ...profileData, about_me: e.target.value })}
+                    placeholder="..."
+                  />
+                </div>
+
                 <div>
                   <Label htmlFor="photo">{t('users:photo')}</Label>
                   <div className="flex items-center gap-4 mt-2">
@@ -235,7 +320,7 @@ export default function EditUser() {
                       type="file"
                       accept="image/*"
                       disabled={saving}
-                      onChange={async (e) => {
+                      onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
                         const file = e.target.files?.[0];
                         if (!file) return;
 
@@ -267,7 +352,7 @@ export default function EditUser() {
                           });
 
                           toast.success(t('users:photo_uploaded'));
-                        } catch (err) {
+                        } catch (err: any) {
                           console.error(err);
                           toast.error(t('users:error_uploading_photo'));
                         } finally {
