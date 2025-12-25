@@ -87,9 +87,10 @@ def run_all_migrations():
         migrate_gallery_schema,
         migrate_public_schema,
         add_show_on_public_page_to_users,
-        add_show_on_public_page_to_users,
         import_gallery_images,
+        migrate_account_enhancements,
     )
+
     
     # Import new schemas locally to register them
     # Since they are not in the 'consolidated/__init__.py' exports yet, we might need to modify that file too,
@@ -185,6 +186,12 @@ def run_all_migrations():
         migrate_holidays_schema,
         "Таблица salon_holidays (праздничные дни)"
     )
+
+    results["consolidated/account_enhancements"] = run_migration_function(
+        migrate_account_enhancements,
+        "Расширение ЛК (рефералки, галерея, достижения, избранные мастера)"
+    )
+
 
     results["consolidated/holidays"] = run_migration_function(
         migrate_holidays_schema,

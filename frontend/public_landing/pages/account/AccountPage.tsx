@@ -1,256 +1,167 @@
-import { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../../../src/contexts/AuthContext';
-import { api } from '../../../src/services/api';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { ru, enUS, ar } from 'date-fns/locale';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Input } from "../../components/ui/input";
-import { Button } from "../../components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Label } from "../../components/ui/label";
+import { useAuth } from '../../../src/contexts/AuthContext';
+import { api } from '../../../src/services/api';
+import { toast } from 'sonner';
 import {
-  Bell, Calendar, User, Gift, LogOut, Camera, Plus, Loader2, XCircle,
-  Sparkles, Trophy, Crown, Zap, Heart, Star, TrendingUp, Award,
-  Clock, MapPin, Phone, Mail, Cake, Edit, Check, X, ChevronRight,
-  Target, Flame, Scissors, Droplet, Palette, Settings, ShoppingBag
+  Calendar,
+  MapPin,
+  Phone,
+  Star,
+  Award,
+  Gift,
+  Camera,
+  Bell,
+  Settings,
+  MessageCircle,
+  User,
+  Heart,
+  Sparkles,
+  ChevronRight,
+  Plus,
+  X,
+  Check,
+  Repeat,
+  ImageIcon,
+  Users,
+  Trophy,
+  Upload,
+  QrCode,
+  Wallet,
+  Clock,
+  LogOut,
+  Loader2,
+  Share2
 } from 'lucide-react';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../../components/ui/alert-dialog";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "../../components/ui/dialog";
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { UserBookingWizard } from './UserBookingWizard';
-import { Progress } from "../../components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import './AccountPage.css';
 
-interface Booking {
-  id: number;
-  service_name: string;
-  start_time: string;
-  status: string;
-  master_name?: string;
-  price?: number;
-  phone?: string;
-}
+// Utility Components
+const TabButton: React.FC<{ active: boolean; onClick: () => void; icon: React.ReactNode; label: string; hasBadge?: boolean; badgeCount?: number }> = ({ active, onClick, icon, label, hasBadge, badgeCount }) => (
+  <div className="relative">
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all whitespace-nowrap font-medium ${active
+        ? 'account-tab-active shadow-sm'
+        : 'account-tab-inactive'
+        }`}
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+    {hasBadge && badgeCount !== undefined && badgeCount > 0 && (
+      <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-white rounded-full flex items-center justify-center text-[10px] text-white font-bold">
+        {badgeCount}
+      </div>
+    )}
+  </div>
+);
 
-interface Notification {
-  id: number;
-  title: string;
-  message: string;
-  created_at: string;
-  read_at: string | null;
-}
+const ProgressBar: React.FC<{ value: number; max: number; color?: string }> = ({ value, max, color = 'bg-gray-900' }) => {
+  const percentage = Math.min((value / max) * 100, 100);
+  return (
+    <div className="w-full bg-gray-100 rounded-full h-2">
+      <div className={`${color} h-2 rounded-full transition-all duration-300`} style={{ width: `${percentage}%` }} />
+    </div>
+  );
+};
 
-interface LoyaltyInfo {
-  points: number;
-  level: string;
-  history: any[];
-}
+const EmptyState: React.FC<{ icon: React.ReactNode; title: string; description: string; action?: { label: string; onClick: () => void } }> = ({ icon, title, description, action }) => (
+  <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400">
+      {icon}
+    </div>
+    <h3 className="text-lg mb-2 text-gray-900">{title}</h3>
+    <p className="text-gray-500 mb-6 max-w-sm">{description}</p>
+    {action && (
+      <button
+        onClick={action.onClick}
+        className="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+      >
+        {action.label}
+      </button>
+    )}
+  </div>
+);
 
-// Character System Types
-interface CharacterState {
-  hair: number; // 0-100
-  skin: number;
-  nails: number;
-  energy: number;
-  lastVisit?: string;
-  outfit: string;
-  gender: 'male' | 'female' | 'neutral';
-  age: number;
-}
-
-interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  icon: any;
-  unlocked: boolean;
-  progress: number;
-  maxProgress: number;
-}
-
-export const AccountPage = () => {
+export default function AccountPage() {
   const { user, logout, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation(['account', 'common']);
+  const { i18n } = useTranslation(['account', 'common']);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [loading, setLoading] = useState(false);
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loyalty, setLoyalty] = useState<LoyaltyInfo>({ points: 0, level: 'Bronze', history: [] });
+  const [loading, setLoading] = useState(true);
+
+  // States
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [appointmentsView, setAppointmentsView] = useState('upcoming');
+  const [galleryFilter, setGalleryFilter] = useState('all');
+  const [showAllMasters, setShowAllMasters] = useState(false);
+  const [comparePhotos, setComparePhotos] = useState<{ before: string; after: string } | null>(null);
+  const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
+
+  // Data States
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [gallery, setGallery] = useState<any[]>([]);
+  const [achievements, setAchievements] = useState<any[]>([]);
+  const [masters, setMasters] = useState<any[]>([]);
+  const [metrics, setMetrics] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [loyalty, setLoyalty] = useState<any>(null);
 
   const isBooking = searchParams.get('booking') === 'true';
   const openBooking = () => setSearchParams({ booking: 'true' });
   const closeBooking = () => setSearchParams({});
 
-  const currentUser = user as any;
-
-  // Character State
-  const [character, setCharacter] = useState<CharacterState>({
-    hair: 85,
-    skin: 90,
-    nails: 80,
-    energy: 75,
-    outfit: 'casual',
-    gender: 'neutral',
-    age: 25
-  });
-
-  const [achievements, setAchievements] = useState<Achievement[]>([
-    { id: 'first_visit', title: 'First Steps', description: 'Complete your first booking', icon: Star, unlocked: false, progress: 0, maxProgress: 1 },
-    { id: 'regular', title: 'Regular Client', description: 'Visit 5 times', icon: Heart, unlocked: false, progress: 0, maxProgress: 5 },
-    { id: 'beauty_guru', title: 'Beauty Guru', description: 'Try 10 different services', icon: Sparkles, unlocked: false, progress: 0, maxProgress: 10 },
-    { id: 'loyal', title: 'Loyal Customer', description: 'Earn 1000 points', icon: Crown, unlocked: false, progress: 0, maxProgress: 1000 },
-    { id: 'streak', title: 'On Fire!', description: 'Visit 3 months in a row', icon: Flame, unlocked: false, progress: 0, maxProgress: 3 },
-  ]);
-
-  const [showCharacterEditor, setShowCharacterEditor] = useState(false);
-
-  // Profile Form State
-  const [profileForm, setProfileForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    birth_date: '',
-    gender: '',
-    new_password: '',
-    notification_preferences: {
-      sms: true,
-      email: true,
-      push: true
-    }
-  });
-
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [bookingToCancel, setBookingToCancel] = useState<number | null>(null);
-  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/login');
     } else if (user) {
-      setProfileForm(prev => ({
-        ...prev,
-        name: user.full_name || '',
-        email: user.email || '',
-        phone: user.phone || '',
-        birth_date: currentUser.birthday || currentUser.birth_date || '',
-        gender: currentUser.gender || 'neutral',
-      }));
-
-      // Load character from localStorage or init
-      const savedChar = localStorage.getItem(`character_${user.id}`);
-      if (savedChar) {
-        setCharacter(JSON.parse(savedChar));
-      }
+      loadAllData();
     }
   }, [user, navigate, authLoading]);
 
-  useEffect(() => {
-    if (user) {
-      loadData();
-    }
-  }, [user]);
-
-  // Save character to localStorage when changed
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem(`character_${user.id}`, JSON.stringify(character));
-    }
-  }, [character, user]);
-
-  // Update character based on service history
-  useEffect(() => {
-    if (bookings.length > 0) {
-      updateCharacterFromBookings();
-      updateAchievements();
-    }
-  }, [bookings]);
-
-  const updateCharacterFromBookings = () => {
-    const completedBookings = bookings.filter(b => b.status === 'completed' || b.status === 'confirmed');
-
-    if (completedBookings.length === 0) return;
-
-    const lastBooking = completedBookings[0];
-    const lastVisitDate = new Date(lastBooking.start_time);
-    const daysSinceLastVisit = Math.floor((Date.now() - lastVisitDate.getTime()) / (1000 * 60 * 60 * 24));
-
-    // Degrade character based on days since last visit
-    const degradeRate = Math.min(daysSinceLastVisit * 0.5, 30);
-
-    setCharacter(prev => ({
-      ...prev,
-      hair: Math.max(prev.hair - (degradeRate * 0.3), 0),
-      skin: Math.max(prev.skin - (degradeRate * 0.2), 0),
-      nails: Math.max(prev.nails - (degradeRate * 0.4), 0),
-      energy: Math.max(prev.energy - (degradeRate * 0.1), 0),
-      lastVisit: lastBooking.start_time
-    }));
-  };
-
-  const updateAchievements = () => {
-    const completed = bookings.filter(b => b.status === 'completed' || b.status === 'confirmed');
-    const uniqueServices = new Set(completed.map(b => b.service_name)).size;
-
-    setAchievements(prev => prev.map(ach => {
-      if (ach.id === 'first_visit') {
-        return { ...ach, progress: Math.min(completed.length, 1), unlocked: completed.length >= 1 };
-      }
-      if (ach.id === 'regular') {
-        return { ...ach, progress: Math.min(completed.length, 5), unlocked: completed.length >= 5 };
-      }
-      if (ach.id === 'beauty_guru') {
-        return { ...ach, progress: Math.min(uniqueServices, 10), unlocked: uniqueServices >= 10 };
-      }
-      if (ach.id === 'loyal') {
-        return { ...ach, progress: Math.min(loyalty.points, 1000), unlocked: loyalty.points >= 1000 };
-      }
-      return ach;
-    }));
-  };
-
-  const getDateLocale = () => {
-    switch (i18n.language) {
-      case 'ru': return ru;
-      case 'ar': return ar;
-      default: return enUS;
-    }
-  };
-
-  const loadData = async () => {
+  const loadAllData = async () => {
     setLoading(true);
     try {
-      try {
-        const bookingsData = await api.getClientBookings();
-        setBookings(bookingsData.bookings);
-      } catch (e) {
-        console.error("Bookings error", e);
-      }
+      const [
+        dashboardRes,
+        bookingsRes,
+        galleryRes,
+        achievementsRes,
+        mastersRes,
+        metricsRes,
+        notifsRes,
+        loyaltyRes
+      ] = await Promise.allSettled([
+        api.getClientDashboard(),
+        api.getClientBookings(),
+        api.getClientGallery(),
+        api.getClientAchievements(),
+        api.getClientFavoriteMasters(),
+        api.getClientBeautyMetrics(),
+        api.getClientNotifications(),
+        api.getClientLoyalty()
+      ]);
 
-      try {
-        const API_URL = import.meta.env.VITE_API_URL || '';
-        const res = await fetch(`${API_URL}/api/client/my-notifications?client_id=${user?.id}`);
-        if (res.ok) {
-          const data = await res.json();
-          setNotifications(data.notifications || []);
-        }
-      } catch (e) {
-        console.error("Notifs error", e);
-      }
-
-      try {
-        const API_URL = import.meta.env.VITE_API_URL || '';
-        const res = await fetch(`${API_URL}/api/client/loyalty?client_id=${user?.id}`);
-        if (res.ok) {
-          const data = await res.json();
-          setLoyalty(data);
-        }
-      } catch (e) {
-        console.error("Loyalty error", e);
-      }
+      if (dashboardRes.status === 'fulfilled') setDashboardData(dashboardRes.value);
+      if (bookingsRes.status === 'fulfilled') setBookings(bookingsRes.value.bookings || []);
+      if (galleryRes.status === 'fulfilled') setGallery(galleryRes.value.gallery || []);
+      if (achievementsRes.status === 'fulfilled') setAchievements(achievementsRes.value.achievements || []);
+      if (mastersRes.status === 'fulfilled') setMasters(mastersRes.value.masters || []);
+      if (metricsRes.status === 'fulfilled') setMetrics(metricsRes.value.metrics || []);
+      if (notifsRes.status === 'fulfilled') setNotifications(notifsRes.value.notifications || []);
+      if (loyaltyRes.status === 'fulfilled') setLoyalty(loyaltyRes.value);
     } catch (error) {
       console.error('Error loading account data', error);
+      toast.error('Ошибка загрузки данных');
     } finally {
       setLoading(false);
     }
@@ -261,6 +172,16 @@ export const AccountPage = () => {
     navigate('/');
   };
 
+  const handleToggleFavoriteMaster = async (masterId: number, isFavoriteNow: boolean) => {
+    try {
+      await api.toggleFavoriteMaster(masterId, !isFavoriteNow);
+      toast.success(!isFavoriteNow ? 'Мастер добавлен в избранное' : 'Мастер удален из избранного');
+      setMasters(prev => prev.map(m => m.id === masterId ? { ...m, is_favorite: !isFavoriteNow } : m));
+    } catch (e) {
+      toast.error('Ошибка обновления');
+    }
+  };
+
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -269,1012 +190,481 @@ export const AccountPage = () => {
     formData.append('file', file);
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || '';
-      const res = await fetch(`${API_URL}/api/client/upload-avatar`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/client/upload-avatar`, {
         method: 'POST',
         body: formData
       });
       const data = await res.json();
       if (data.success) {
-        await handleProfileUpdate({ avatar_url: data.url });
+        await api.updateClientProfile({ client_id: user?.id, avatar_url: data.url });
+        toast.success('Аватар обновлен');
+        window.location.reload();
       }
     } catch (error) {
-      console.error("Avatar upload failed", error);
+      toast.error("Ошибка загрузки аватара");
     }
   };
 
-  const handleProfileUpdate = async (updates: any = {}) => {
-    try {
-      const payload = {
-        client_id: user?.id,
-        ...profileForm,
-        ...updates
-      };
-      if (profileForm.new_password) {
-        payload.password = profileForm.new_password;
-      }
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Доброе утро';
+    if (hour < 18) return 'Добрый день';
+    return 'Добрый вечер';
+  };
 
-      const API_URL = import.meta.env.VITE_API_URL || '';
-      const res = await fetch(`${API_URL}/api/client/profile`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.client) {
-          alert("Profile updated!");
-          window.location.reload();
-        }
-      }
-    } catch (error) {
-      alert("Profile update error");
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case 'ru': return ru;
+      case 'ar': return ar;
+      default: return enUS;
     }
   };
 
-  const handleCancelClick = (id: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setBookingToCancel(id);
-  };
+  const currentLoyaltyLevel = loyalty?.current_level;
+  const nextLoyaltyLevel = loyalty?.next_level;
 
-  const confirmCancel = async () => {
-    if (!bookingToCancel) return;
-    try {
-      await api.cancelBooking(bookingToCancel);
-      loadData();
-    } catch (e: any) {
-      console.error(e);
-      alert(e.message || "Cancellation error");
-    } finally {
-      setBookingToCancel(null);
-    }
-  };
-
-  const handleDetailsClick = (booking: Booking) => {
-    setSelectedBooking(booking);
-  };
-
-  const getLevelInfo = () => {
-    const levels = [
-      { name: 'Bronze', min: 0, max: 499, color: '#CD7F32', icon: Award },
-      { name: 'Silver', min: 500, max: 999, color: '#C0C0C0', icon: Trophy },
-      { name: 'Gold', min: 1000, max: 2499, color: '#FFD700', icon: Crown },
-      { name: 'Platinum', min: 2500, max: 4999, color: '#E5E4E2', icon: Sparkles },
-      { name: 'Diamond', min: 5000, max: Infinity, color: '#B9F2FF', icon: Zap }
-    ];
-
-    const currentLevel = levels.find(l => loyalty.points >= l.min && loyalty.points <= l.max) || levels[0];
-    const nextLevel = levels.find(l => l.min > loyalty.points) || currentLevel;
-    const progress = currentLevel === nextLevel ? 100 : ((loyalty.points - currentLevel.min) / (nextLevel.min - currentLevel.min)) * 100;
-
-    return { currentLevel, nextLevel, progress, levels };
-  };
-
-  const getCharacterColor = (value: number) => {
-    if (value >= 80) return 'text-green-500';
-    if (value >= 50) return 'text-yellow-500';
-    return 'text-red-500';
-  };
-
-  const getCharacterEmoji = () => {
-    const avg = (character.hair + character.skin + character.nails + character.energy) / 4;
-    if (avg >= 80) return '✨';
-    if (avg >= 60) return '😊';
-    if (avg >= 40) return '😐';
-    return '😔';
-  };
-
-  if (authLoading || !user) {
+  if (loading || authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5">
-        <div className="text-center space-y-4">
-          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="w-8 h-8 animate-spin text-gray-900" />
       </div>
     );
   }
 
-  if (isBooking) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-20 pb-12 px-4">
-        <div className="max-w-2xl mx-auto">
-          <UserBookingWizard onClose={closeBooking} onSuccess={() => { closeBooking(); loadData(); }} />
-        </div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5">
-        <div className="text-center space-y-4">
-          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
-          <p className="text-muted-foreground">Loading your profile...</p>
-        </div>
-      </div>
-    );
-  }
-
-  const levelInfo = getLevelInfo();
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-20 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-
-        {/* Hero Header with Character */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-black via-gray-900 to-black rounded-3xl shadow-2xl border border-white/10">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4wNSIvPjwvZz48L3N2Zz4=')] opacity-20"></div>
-
-          <div className="relative p-6 md:p-8">
-            <div className="grid md:grid-cols-2 gap-8">
-
-              {/* Left: User Info */}
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="relative group">
-                    <Avatar className="w-20 h-20 md:w-24 md:h-24 border-4 border-white/20 shadow-2xl ring-4 ring-white/10">
-                      <AvatarImage src={currentUser.avatar_url} />
-                      <AvatarFallback className="bg-gradient-to-br from-primary to-purple-600 text-white text-2xl">
-                        {user.full_name?.[0]?.toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div
-                      onClick={() => fileInputRef.current?.click()}
-                      className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
-                    >
-                      <Camera className="w-6 h-6 text-white" />
-                    </div>
-                    <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
-                  </div>
-
-                  <div className="flex-1">
-                    <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">{user.full_name}</h1>
-                    <p className="text-white/60 text-sm mb-3">{user.phone || user.email}</p>
-
-                    <div className="flex flex-wrap gap-2">
-                      <div className="flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1.5 rounded-full border border-white/20">
-                        <levelInfo.currentLevel.icon className="w-4 h-4" style={{ color: levelInfo.currentLevel.color }} />
-                        <span className="text-white font-semibold text-sm">{levelInfo.currentLevel.name}</span>
-                      </div>
-                      <div className="flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1.5 rounded-full border border-white/20">
-                        <Sparkles className="w-4 h-4 text-yellow-400" />
-                        <span className="text-white font-semibold text-sm">{loyalty.points} pts</span>
-                      </div>
-                    </div>
-
-                    {/* Level Progress */}
-                    <div className="mt-4 space-y-2">
-                      <div className="flex justify-between text-xs text-white/60">
-                        <span>{levelInfo.currentLevel.name}</span>
-                        <span>{levelInfo.nextLevel.name}</span>
-                      </div>
-                      <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-500 transition-all duration-500 rounded-full"
-                          style={{ width: `${levelInfo.progress}%` }}
-                        />
-                      </div>
-                      <p className="text-xs text-white/60">
-                        {levelInfo.nextLevel.min - loyalty.points} points to {levelInfo.nextLevel.name}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <Button
-                    onClick={openBooking}
-                    className="flex-1 bg-white text-black hover:bg-white/90 shadow-lg h-12 text-base font-semibold"
-                  >
-                    <Plus className="w-5 h-5 mr-2" />
-                    New Booking
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={handleLogout}
-                    className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-12"
-                  >
-                    <LogOut className="w-5 h-5" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Right: Character Display */}
-              <div className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-white font-semibold flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-yellow-400" />
-                    Your Character
-                  </h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowCharacterEditor(true)}
-                    className="text-white/60 hover:text-white hover:bg-white/10"
-                  >
-                    <Settings className="w-4 h-4 mr-2" />
-                    Edit
-                  </Button>
-                </div>
-
-                {/* Character Avatar */}
-                <div className="flex justify-center mb-6">
-                  <div className="relative">
-                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 flex items-center justify-center text-6xl shadow-2xl">
-                      {getCharacterEmoji()}
-                    </div>
-                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur px-3 py-1 rounded-full border border-white/20">
-                      <span className="text-white text-xs font-semibold">Age {character.age}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Character Stats */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-white/60 flex items-center gap-1">
-                        <Scissors className="w-3 h-3" /> Hair
-                      </span>
-                      <span className={`font-semibold ${getCharacterColor(character.hair)}`}>
-                        {Math.round(character.hair)}%
-                      </span>
-                    </div>
-                    <Progress value={character.hair} className="h-1.5" />
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-white/60 flex items-center gap-1">
-                        <Droplet className="w-3 h-3" /> Skin
-                      </span>
-                      <span className={`font-semibold ${getCharacterColor(character.skin)}`}>
-                        {Math.round(character.skin)}%
-                      </span>
-                    </div>
-                    <Progress value={character.skin} className="h-1.5" />
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-white/60 flex items-center gap-1">
-                        <Palette className="w-3 h-3" /> Nails
-                      </span>
-                      <span className={`font-semibold ${getCharacterColor(character.nails)}`}>
-                        {Math.round(character.nails)}%
-                      </span>
-                    </div>
-                    <Progress value={character.nails} className="h-1.5" />
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-white/60 flex items-center gap-1">
-                        <Zap className="w-3 h-3" /> Energy
-                      </span>
-                      <span className={`font-semibold ${getCharacterColor(character.energy)}`}>
-                        {Math.round(character.energy)}%
-                      </span>
-                    </div>
-                    <Progress value={character.energy} className="h-1.5" />
-                  </div>
-                </div>
-
-                {character.lastVisit && (
-                  <p className="text-xs text-white/40 text-center mt-4">
-                    Last visit: {format(new Date(character.lastVisit), 'd MMM yyyy')}
-                  </p>
-                )}
-              </div>
-            </div>
+  // Dashboard Content
+  const renderDashboard = () => (
+    <div className="space-y-6">
+      {/* Welcome Section */}
+      <div className="welcome-card-bg text-white p-8 rounded-2xl shadow-lg relative overflow-hidden">
+        <div className="relative z-10 flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">{getGreeting()}, {user?.full_name || 'Гость'}! 👋</h1>
+            <p className="text-gray-300 text-lg">Вы выглядите великолепно! Время позаботиться о себе.</p>
+          </div>
+          <div className="relative group">
+            <Avatar className="w-24 h-24 border-4 border-white/20 shadow-xl cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+              <AvatarImage src={(user as any)?.avatar_url || ''} className="object-cover" />
+              <AvatarFallback className="bg-gray-800 text-2xl">{user?.full_name?.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-500/20 hover:shadow-lg hover:shadow-purple-500/10 transition-all">
-            <CardContent className="p-4 md:p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-purple-500" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{bookings.length}</p>
-                  <p className="text-xs text-muted-foreground">Total Visits</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20 hover:shadow-lg hover:shadow-blue-500/10 transition-all">
-            <CardContent className="p-4 md:p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center">
-                  <Trophy className="w-6 h-6 text-blue-500" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{achievements.filter(a => a.unlocked).length}</p>
-                  <p className="text-xs text-muted-foreground">Achievements</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 border-green-500/20 hover:shadow-lg hover:shadow-green-500/10 transition-all">
-            <CardContent className="p-4 md:p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-green-500/20 flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-green-500" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{loyalty.points}</p>
-                  <p className="text-xs text-muted-foreground">Points</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-orange-500/10 to-orange-600/5 border-orange-500/20 hover:shadow-lg hover:shadow-orange-500/10 transition-all">
-            <CardContent className="p-4 md:p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-orange-500/20 flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-orange-500" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{levelInfo.currentLevel.name}</p>
-                  <p className="text-xs text-muted-foreground">Level</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-3 gap-8 mt-8 border-t border-white/10 pt-8">
+          <div className="text-center group cursor-pointer">
+            <p className="text-4xl font-bold mb-1 group-hover:scale-110 transition-transform">{dashboardData?.total_visits || 0}</p>
+            <p className="text-gray-400 text-sm uppercase tracking-wider">Визитов</p>
+          </div>
+          <div className="text-center group cursor-pointer">
+            <p className="text-4xl font-bold mb-1 group-hover:scale-110 transition-transform">{dashboardData?.loyalty_points || 0}</p>
+            <p className="text-gray-400 text-sm uppercase tracking-wider">Баллов</p>
+          </div>
+          <div className="text-center group cursor-pointer">
+            <p className="text-4xl font-bold mb-1 group-hover:scale-110 transition-transform">{dashboardData?.current_discount || 0}%</p>
+            <p className="text-gray-400 text-sm uppercase tracking-wider">Скидка</p>
+          </div>
         </div>
+      </div>
 
-        {/* Main Content Tabs */}
-        <Tabs defaultValue="bookings" className="w-full">
-          <div className="bg-card rounded-2xl shadow-sm border border-border/50 p-2 mb-6">
-            <TabsList className="w-full grid grid-cols-2 md:grid-cols-5 gap-2 bg-transparent h-auto p-0">
-              <TabsTrigger
-                value="bookings"
-                className="data-[state=active]:bg-black data-[state=active]:text-white rounded-xl py-3 text-sm md:text-base"
-              >
-                <Calendar className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Bookings</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="profile"
-                className="data-[state=active]:bg-black data-[state=active]:text-white rounded-xl py-3 text-sm md:text-base"
-              >
-                <User className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Profile</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="rewards"
-                className="data-[state=active]:bg-black data-[state=active]:text-white rounded-xl py-3 text-sm md:text-base relative"
-              >
-                <Gift className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Rewards</span>
-                {loyalty.points > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    {loyalty.points > 99 ? '99+' : loyalty.points}
-                  </span>
-                )}
-              </TabsTrigger>
-              <TabsTrigger
-                value="achievements"
-                className="data-[state=active]:bg-black data-[state=active]:text-white rounded-xl py-3 text-sm md:text-base"
-              >
-                <Trophy className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Achievements</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="notifications"
-                className="data-[state=active]:bg-black data-[state=active]:text-white rounded-xl py-3 text-sm md:text-base relative"
-              >
-                <Bell className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Notifications</span>
-                {notifications.filter(n => !n.read_at).length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    {notifications.filter(n => !n.read_at).length}
-                  </span>
-                )}
-              </TabsTrigger>
-            </TabsList>
+      {/* Next Appointment */}
+      {dashboardData?.next_booking && (
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold">Следующая запись</h2>
+            <span className="px-4 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-semibold animate-pulse">
+              Через {Math.ceil((new Date(dashboardData.next_booking.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} дней
+            </span>
           </div>
 
-          {/* Bookings Tab */}
-          <TabsContent value="bookings" className="space-y-4 mt-0">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl md:text-2xl font-bold">My Appointments</h2>
-              <Button onClick={openBooking} size="sm" className="bg-black text-white hover:bg-black/90">
-                <Plus className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">New Booking</span>
-              </Button>
+          <div className="flex gap-6 mb-6">
+            <img
+              src={dashboardData.next_booking.master_photo}
+              className="w-24 h-24 rounded-2xl object-cover shadow-md"
+            />
+            <div className="flex-1">
+              <h3 className="text-lg font-bold mb-1">{dashboardData.next_booking.master_name}</h3>
+              <p className="text-sm text-gray-500 mb-3">{dashboardData.next_booking.master_specialty}</p>
+              <div className="inline-block px-3 py-1 bg-gray-100 rounded-lg text-gray-900 font-medium">
+                {dashboardData.next_booking.service_name}
+              </div>
             </div>
+          </div>
 
-            {bookings.length > 0 ? (
-              <div className="grid gap-4">
-                {bookings.map(booking => (
-                  <Card
-                    key={booking.id}
-                    className="hover:shadow-xl hover:shadow-primary/5 transition-all cursor-pointer border-l-4 border-l-primary overflow-hidden group"
-                    onClick={() => handleDetailsClick(booking)}
-                  >
-                    <CardContent className="p-0">
-                      <div className="flex flex-col sm:flex-row">
-                        <div className="flex-1 p-4 md:p-6">
-                          <div className="flex items-start justify-between mb-3">
-                            <h3 className="font-bold text-lg md:text-xl">{booking.service_name}</h3>
-                            <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider whitespace-nowrap ml-2 ${booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
-                                booking.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                                  'bg-yellow-100 text-yellow-700'
-                              }`}>
-                              {booking.status}
-                            </span>
-                          </div>
-
-                          <div className="grid sm:grid-cols-2 gap-3 text-sm">
-                            <div className="flex items-center gap-2 text-muted-foreground">
-                              <Calendar className="w-4 h-4 text-primary" />
-                              <span>{format(new Date(booking.start_time), "d MMMM yyyy", { locale: getDateLocale() })}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-muted-foreground">
-                              <Clock className="w-4 h-4 text-primary" />
-                              <span>{format(new Date(booking.start_time), "HH:mm")}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-muted-foreground">
-                              <User className="w-4 h-4 text-primary" />
-                              <span>{booking.master_name || "Not selected"}</span>
-                            </div>
-                            {booking.price && (
-                              <div className="flex items-center gap-2 text-muted-foreground">
-                                <span className="font-bold text-foreground">{booking.price} AED</span>
-                              </div>
-                            )}
-                          </div>
-
-                          {(booking.status === 'pending' || booking.status === 'confirmed') && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="mt-4 text-red-600 hover:text-red-700 hover:bg-red-50"
-                              onClick={(e) => handleCancelClick(booking.id, e)}
-                            >
-                              <XCircle className="w-4 h-4 mr-2" />
-                              Cancel Booking
-                            </Button>
-                          )}
-                        </div>
-
-                        <div className="w-full sm:w-2 bg-gradient-to-b from-primary via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="flex items-center gap-3 text-gray-600 bg-gray-50 p-4 rounded-xl">
+              <div className="p-2 bg-white rounded-lg shadow-sm">
+                <Calendar className="w-5 h-5 text-gray-900" />
               </div>
-            ) : (
-              <Card className="border-dashed border-2">
-                <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                  <Calendar className="w-16 h-16 text-muted-foreground/50 mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No bookings yet</h3>
-                  <p className="text-muted-foreground mb-6 max-w-sm">
-                    Start your beauty journey by booking your first appointment!
-                  </p>
-                  <Button onClick={openBooking} className="bg-black text-white hover:bg-black/90">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Book Now
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
+              <span className="font-medium text-sm">{format(new Date(dashboardData.next_booking.date), "EEEE, d MMMM", { locale: getDateLocale() })}</span>
+            </div>
+            <div className="flex items-center gap-3 text-gray-600 bg-gray-50 p-4 rounded-xl">
+              <div className="p-2 bg-white rounded-lg shadow-sm">
+                <Clock className="w-5 h-5 text-gray-900" />
+              </div>
+              <span className="font-medium text-sm">{format(new Date(dashboardData.next_booking.date), "HH:mm", { locale: getDateLocale() })} ({dashboardData.next_booking.duration || 180} мин)</span>
+            </div>
+            <div className="flex items-center gap-3 text-gray-600 bg-gray-50 p-4 rounded-xl">
+              <div className="p-2 bg-white rounded-lg shadow-sm">
+                <MapPin className="w-5 h-5 text-gray-900" />
+              </div>
+              <div className="flex-1 text-xs">
+                <p className="font-bold">Dubai Marina, Marina Plaza, Office 302</p>
+                <p className="text-gray-400">Бесплатная парковка 2 часа</p>
+              </div>
+            </div>
+          </div>
 
-          {/* Profile Tab */}
-          <TabsContent value="profile" className="mt-0">
-            <Card className="border-0 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-primary/10 to-purple-500/10 border-b">
-                <CardTitle className="text-2xl">Profile Settings</CardTitle>
-                <CardDescription>Manage your personal information</CardDescription>
-              </CardHeader>
-              <CardContent className="p-6 md:p-8 space-y-8">
-                <div>
-                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <User className="w-5 h-5 text-primary" />
-                    Personal Information
-                  </h3>
-                  <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Full Name</Label>
-                      <Input
-                        value={profileForm.name}
-                        onChange={e => setProfileForm({ ...profileForm, name: e.target.value })}
-                        className="h-11"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Phone Number</Label>
-                      <Input
-                        value={profileForm.phone}
-                        onChange={e => setProfileForm({ ...profileForm, phone: e.target.value })}
-                        className="h-11"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Email</Label>
-                      <Input
-                        type="email"
-                        value={profileForm.email}
-                        onChange={e => setProfileForm({ ...profileForm, email: e.target.value })}
-                        className="h-11"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Date of Birth</Label>
-                      <Input
-                        type="date"
-                        value={profileForm.birth_date}
-                        onChange={e => setProfileForm({ ...profileForm, birth_date: e.target.value })}
-                        className="h-11"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Gender</Label>
-                      <Select
-                        value={profileForm.gender}
-                        onValueChange={(value) => setProfileForm({ ...profileForm, gender: value })}
-                      >
-                        <SelectTrigger className="h-11">
-                          <SelectValue placeholder="Select gender" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                          <SelectItem value="neutral">Prefer not to say</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+          <div className="flex gap-3">
+            <button className="flex-1 px-6 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-all shadow-md">
+              В календарь
+            </button>
+            <button className="px-6 py-3 bg-white border border-gray-200 text-gray-900 rounded-xl font-bold hover:bg-gray-50 transition-all">
+              Перенести
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <button onClick={() => openBooking()} className="p-6 bg-gray-900 text-white rounded-2xl hover:bg-gray-800 transition-all flex flex-col items-center gap-3 shadow-md group">
+          <div className="p-3 bg-white/10 rounded-xl group-hover:scale-110 transition-transform">
+            <Plus className="w-6 h-6" />
+          </div>
+          <span className="font-bold">Новая запись</span>
+        </button>
+        <button onClick={() => openBooking()} className="p-6 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all flex flex-col items-center gap-3 shadow-sm group">
+          <div className="p-3 bg-gray-50 rounded-xl group-hover:scale-110 transition-transform">
+            <Repeat className="w-6 h-6 text-gray-900" />
+          </div>
+          <span className="font-bold text-gray-900">Повторить</span>
+        </button>
+        <button onClick={() => setActiveTab('masters')} className="p-6 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all flex flex-col items-center gap-3 shadow-sm group">
+          <div className="p-3 bg-gray-50 rounded-xl group-hover:scale-110 transition-transform">
+            <Heart className="w-6 h-6 text-gray-900" />
+          </div>
+          <span className="font-bold text-gray-900">Мои мастера</span>
+        </button>
+        <button onClick={() => setActiveTab('chat')} className="p-6 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all flex flex-col items-center gap-3 shadow-sm group">
+          <div className="p-3 bg-gray-50 rounded-xl group-hover:scale-110 transition-transform">
+            <MessageCircle className="w-6 h-6 text-gray-900" />
+          </div>
+          <span className="font-bold text-gray-900">Поддержка</span>
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderAppointments = () => (
+    <div className="space-y-6">
+      <div className="flex gap-2 p-1 bg-gray-100 rounded-xl w-fit">
+        <button onClick={() => setAppointmentsView('upcoming')} className={`px-6 py-2 rounded-lg font-bold transition-all ${appointmentsView === 'upcoming' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+          Предстоящие
+        </button>
+        <button onClick={() => setAppointmentsView('history')} className={`px-6 py-2 rounded-lg font-bold transition-all ${appointmentsView === 'history' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+          История
+        </button>
+      </div>
+
+      <div className="space-y-4">
+        {bookings.filter(b => appointmentsView === 'upcoming' ? new Date(b.date) >= new Date() : new Date(b.date) < new Date()).map(apt => (
+          <div key={apt.id} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-gray-300 transition-all">
+            <div className="flex gap-6">
+              <img src={apt.master_photo} className="w-20 h-20 rounded-xl object-cover shadow-sm" />
+              <div className="flex-1">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-lg font-bold text-gray-900">{apt.service_name}</h3>
+                  <span className="text-xl font-bold">{apt.price} AED</span>
                 </div>
-
-                <div className="border-t pt-6">
-                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <Settings className="w-5 h-5 text-primary" />
-                    Security
-                  </h3>
-                  <div className="space-y-2 max-w-md">
-                    <Label className="text-sm font-medium">New Password</Label>
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      value={profileForm.new_password}
-                      onChange={e => setProfileForm({ ...profileForm, new_password: e.target.value })}
-                      className="h-11"
-                    />
-                    <p className="text-xs text-muted-foreground">Leave empty if you don't want to change</p>
+                <p className="text-gray-500 mb-4">{apt.master_name}</p>
+                <div className="flex gap-4 text-sm font-medium text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    {format(new Date(apt.date), "d MMMM", { locale: getDateLocale() })}
                   </div>
-                </div>
-
-                <div className="flex justify-end pt-6 border-t">
-                  <Button
-                    onClick={() => handleProfileUpdate()}
-                    className="bg-black text-white hover:bg-black/90 px-8 h-11"
-                  >
-                    <Check className="w-4 h-4 mr-2" />
-                    Save Changes
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Rewards Tab */}
-          <TabsContent value="rewards" className="space-y-6 mt-0">
-            {/* Points Balance */}
-            <Card className="border-0 shadow-xl overflow-hidden">
-              <div className="bg-gradient-to-br from-yellow-400 via-orange-400 to-pink-500 p-8 md:p-12 text-white">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                  <div>
-                    <p className="text-white/80 text-sm uppercase tracking-wider mb-2">Your Balance</p>
-                    <h2 className="text-5xl md:text-6xl font-bold mb-4">{loyalty.points}</h2>
-                    <p className="text-white/80">points available</p>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    {format(new Date(apt.date), "HH:mm", { locale: getDateLocale() })}
                   </div>
-                  <div className="bg-white/20 backdrop-blur rounded-2xl p-6 text-center">
-                    <levelInfo.currentLevel.icon className="w-12 h-12 mx-auto mb-2" />
-                    <p className="font-bold text-lg">{levelInfo.currentLevel.name}</p>
-                    <p className="text-sm text-white/80">Member</p>
-                  </div>
-                </div>
-
-                <div className="mt-8 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Progress to {levelInfo.nextLevel.name}</span>
-                    <span>{Math.round(levelInfo.progress)}%</span>
-                  </div>
-                  <div className="h-3 bg-white/20 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-white transition-all duration-500"
-                      style={{ width: `${levelInfo.progress}%` }}
-                    />
-                  </div>
-                  <p className="text-sm text-white/80">
-                    {levelInfo.nextLevel.min - loyalty.points} more points needed
-                  </p>
                 </div>
               </div>
-            </Card>
+            </div>
+            <div className="flex gap-3 mt-6 pt-6 border-t border-gray-100">
+              <button className="flex-1 py-2.5 bg-gray-50 text-gray-900 rounded-xl font-bold hover:bg-gray-100 transition-all">
+                Подробнее
+              </button>
+              <button className="px-6 py-2.5 bg-white border border-gray-200 text-gray-900 rounded-xl font-bold hover:bg-gray-50 transition-all">
+                Повторить
+              </button>
+            </div>
+          </div>
+        ))}
+        {bookings.length === 0 && (
+          <EmptyState icon={<Calendar className="w-12 h-12" />} title="Записей пока нет" description="Ваша история посещений пуста. Самое время это исправить!" action={{ label: "Записаться", onClick: openBooking }} />
+        )}
+      </div>
+    </div>
+  );
 
-            {/* Membership Tiers */}
+  const renderGallery = () => (
+    <div className="space-y-6">
+      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        {['all', 'hair', 'nails', 'face', 'body'].map(f => (
+          <button key={f} onClick={() => setGalleryFilter(f)} className={`px-6 py-2 rounded-full font-bold whitespace-nowrap transition-all ${galleryFilter === f ? 'bg-gray-900 text-white shadow-md' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+            {f === 'all' ? 'Все' : f === 'hair' ? 'Волосы' : f === 'nails' ? 'Ногти' : f === 'face' ? 'Лицо' : 'Тело'}
+          </button>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {gallery.map(item => (
+          <div key={item.id} className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm overflow-hidden group">
+            <div className="grid grid-cols-2 gap-2 mb-4 h-64">
+              <div className="relative overflow-hidden rounded-xl">
+                <img src={item.before_url} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                <span className="absolute top-2 left-2 px-2 py-1 bg-black/50 text-white text-[10px] font-bold rounded uppercase">До</span>
+              </div>
+              <div className="relative overflow-hidden rounded-xl">
+                <img src={item.after_url} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                <span className="absolute top-2 left-2 px-2 py-1 bg-green-500/80 text-white text-[10px] font-bold rounded uppercase">После</span>
+              </div>
+            </div>
+            <h3 className="font-bold text-gray-900 mb-1">{item.service_name}</h3>
+            <p className="text-sm text-gray-500">{item.master_name} • {format(new Date(item.created_at), "d MMMM yyyy", { locale: getDateLocale() })}</p>
+            <div className="flex gap-2 mt-4">
+              <button onClick={() => setComparePhotos({ before: item.before_url, after: item.after_url })} className="flex-1 py-2 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-gray-800 transition-all">
+                Сравнить
+              </button>
+              <button className="p-2 bg-gray-100 text-gray-900 rounded-xl hover:bg-gray-200 transition-all"><Share2 className="w-4 h-4" /></button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderLoyalty = () => (
+    <div className="space-y-6">
+      <div className="bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 text-white p-8 rounded-2xl shadow-xl relative overflow-hidden">
+        <div className="relative z-10">
+          <div className="flex justify-between items-start mb-8">
             <div>
-              <h3 className="text-xl font-bold mb-4">Membership Tiers</h3>
-              <div className="grid md:grid-cols-5 gap-4">
-                {levelInfo.levels.map((level, idx) => (
-                  <Card
-                    key={level.name}
-                    className={`relative overflow-hidden transition-all ${level.name === levelInfo.currentLevel.name
-                        ? 'ring-2 ring-primary shadow-lg scale-105'
-                        : 'opacity-60 hover:opacity-100'
-                      }`}
-                  >
-                    <CardContent className="p-4 md:p-6 text-center">
-                      <level.icon className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3" style={{ color: level.color }} />
-                      <h4 className="font-bold text-base md:text-lg mb-1">{level.name}</h4>
-                      <p className="text-xs text-muted-foreground">
-                        {level.min === 0 ? '0' : level.min}+ points
-                      </p>
-                      {level.name === levelInfo.currentLevel.name && (
-                        <div className="absolute top-2 right-2">
-                          <Crown className="w-5 h-5 text-primary" />
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <p className="text-white/60 text-sm font-bold uppercase tracking-widest mb-1">Ваш статус</p>
+              <h2 className="text-4xl font-extrabold">{loyalty?.current_level?.name || 'Standard'}</h2>
             </div>
-
-            {/* Points History */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Points History</CardTitle>
-                <CardDescription>Track your earned and spent points</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {loyalty.history.length > 0 ? (
-                  <div className="space-y-3">
-                    {loyalty.history.map((h: any, i: number) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${h.amount > 0 ? 'bg-green-100' : 'bg-red-100'
-                            }`}>
-                            {h.amount > 0 ? (
-                              <Plus className="w-5 h-5 text-green-600" />
-                            ) : (
-                              <ShoppingBag className="w-5 h-5 text-red-600" />
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-medium">{h.reason}</p>
-                            <p className="text-xs text-muted-foreground">{h.date}</p>
-                          </div>
-                        </div>
-                        <span className={`font-bold text-lg ${h.amount > 0 ? 'text-green-600' : 'text-red-600'
-                          }`}>
-                          {h.amount > 0 ? '+' : ''}{h.amount}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Gift className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>No transaction history yet</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Achievements Tab */}
-          <TabsContent value="achievements" className="space-y-4 mt-0">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold mb-2">Your Achievements</h2>
-              <p className="text-muted-foreground">
-                Unlock rewards by completing challenges
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              {achievements.map(achievement => (
-                <Card
-                  key={achievement.id}
-                  className={`relative overflow-hidden transition-all ${achievement.unlocked
-                      ? 'bg-gradient-to-br from-primary/10 to-purple-500/5 border-primary/30 shadow-lg'
-                      : 'opacity-60 hover:opacity-100'
-                    }`}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 ${achievement.unlocked
-                          ? 'bg-gradient-to-br from-primary to-purple-600'
-                          : 'bg-muted'
-                        }`}>
-                        <achievement.icon className={`w-8 h-8 ${achievement.unlocked ? 'text-white' : 'text-muted-foreground'
-                          }`} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-lg mb-1">{achievement.title}</h3>
-                        <p className="text-sm text-muted-foreground mb-3">{achievement.description}</p>
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-xs">
-                            <span className="text-muted-foreground">Progress</span>
-                            <span className="font-semibold">
-                              {achievement.progress} / {achievement.maxProgress}
-                            </span>
-                          </div>
-                          <Progress
-                            value={(achievement.progress / achievement.maxProgress) * 100}
-                            className="h-2"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    {achievement.unlocked && (
-                      <div className="absolute top-4 right-4">
-                        <div className="bg-green-500 text-white rounded-full p-1">
-                          <Check className="w-4 h-4" />
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          {/* Notifications Tab */}
-          <TabsContent value="notifications" className="mt-0">
-            <Card>
-              <CardHeader className="border-b">
-                <CardTitle>Notifications</CardTitle>
-                <CardDescription>Stay updated with your appointments and offers</CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
-                {notifications.length > 0 ? (
-                  <div className="divide-y">
-                    {notifications.map(n => (
-                      <div
-                        key={n.id}
-                        className={`p-4 md:p-6 transition-colors ${!n.read_at
-                            ? 'bg-primary/5 hover:bg-primary/10'
-                            : 'hover:bg-muted/50'
-                          }`}
-                      >
-                        <div className="flex gap-4">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${!n.read_at ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
-                            }`}>
-                            <Bell className="w-5 h-5" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2 mb-1">
-                              <h4 className="font-semibold">{n.title}</h4>
-                              {!n.read_at && (
-                                <span className="w-2 h-2 bg-primary rounded-full flex-shrink-0 mt-2" />
-                              )}
-                            </div>
-                            <p className="text-sm text-muted-foreground mb-2">{n.message}</p>
-                            <span className="text-xs text-muted-foreground">
-                              {format(new Date(n.created_at), 'd MMM yyyy, HH:mm')}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-16">
-                    <Bell className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">No notifications</h3>
-                    <p className="text-muted-foreground">You're all caught up!</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      {/* Character Editor Dialog */}
-      <Dialog open={showCharacterEditor} onOpenChange={setShowCharacterEditor}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">Customize Your Character</DialogTitle>
-            <DialogDescription>
-              Personalize your virtual avatar
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-6 py-4">
-            {/* Character Preview */}
-            <div className="flex justify-center">
-              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 flex items-center justify-center text-6xl shadow-xl">
-                {getCharacterEmoji()}
-              </div>
-            </div>
-
-            {/* Gender */}
-            <div className="space-y-2">
-              <Label>Gender</Label>
-              <div className="grid grid-cols-3 gap-2">
-                {(['male', 'female', 'neutral'] as const).map(gender => (
-                  <Button
-                    key={gender}
-                    variant={character.gender === gender ? 'default' : 'outline'}
-                    onClick={() => setCharacter({ ...character, gender })}
-                    className="capitalize"
-                  >
-                    {gender}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {/* Age */}
-            <div className="space-y-2">
-              <Label>Age: {character.age}</Label>
-              <input
-                type="range"
-                min="18"
-                max="80"
-                value={character.age}
-                onChange={(e) => setCharacter({ ...character, age: parseInt(e.target.value) })}
-                className="w-full"
-              />
-            </div>
-
-            {/* Outfit */}
-            <div className="space-y-2">
-              <Label>Outfit Style</Label>
-              <div className="grid grid-cols-3 gap-2">
-                {['casual', 'elegant', 'sporty', 'business', 'party', 'beach'].map(outfit => (
-                  <Button
-                    key={outfit}
-                    variant={character.outfit === outfit ? 'default' : 'outline'}
-                    onClick={() => setCharacter({ ...character, outfit })}
-                    className="capitalize"
-                    size="sm"
-                  >
-                    {outfit}
-                  </Button>
-                ))}
-              </div>
+            <div className="text-right">
+              <p className="text-white/60 text-sm font-bold uppercase tracking-widest mb-1">Бонусные баллы</p>
+              <p className="text-5xl font-black">{loyalty?.total_points || 0}</p>
             </div>
           </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCharacterEditor(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                setShowCharacterEditor(false);
-                // Character auto-saves via useEffect
-              }}
-              className="bg-black text-white hover:bg-black/90"
-            >
-              <Check className="w-4 h-4 mr-2" />
-              Save Character
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Cancel Booking Dialog */}
-      <AlertDialog open={!!bookingToCancel} onOpenChange={(open) => !open && setBookingToCancel(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Cancel Booking?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to cancel this appointment? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Keep Booking</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmCancel}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Yes, Cancel
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Booking Details Dialog */}
-      <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">Booking Details</DialogTitle>
-            <DialogDescription>
-              Complete information about your appointment
-            </DialogDescription>
-          </DialogHeader>
-
-          {selectedBooking && (
-            <div className="space-y-4 py-4">
-              <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 p-4 rounded-lg">
-                <h3 className="font-bold text-xl mb-2">{selectedBooking.service_name}</h3>
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold uppercase ${selectedBooking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
-                    selectedBooking.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                      'bg-yellow-100 text-yellow-700'
-                  }`}>
-                  {selectedBooking.status}
-                </span>
+          {loyalty?.next_level && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-end text-sm font-bold">
+                <span>До уровня {loyalty.next_level.name}</span>
+                <span>{loyalty.next_level.min_points - (loyalty.total_points || 0)} баллов</span>
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                  <Calendar className="w-5 h-5 text-primary" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">Date</p>
-                    <p className="font-semibold">
-                      {format(new Date(selectedBooking.start_time), "d MMM yyyy", { locale: getDateLocale() })}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                  <Clock className="w-5 h-5 text-primary" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">Time</p>
-                    <p className="font-semibold">
-                      {format(new Date(selectedBooking.start_time), "HH:mm")}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                  <User className="w-5 h-5 text-primary" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">Master</p>
-                    <p className="font-semibold">{selectedBooking.master_name || "Not selected"}</p>
-                  </div>
-                </div>
-
-                {selectedBooking.price && (
-                  <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                    <Gift className="w-5 h-5 text-primary" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Price</p>
-                      <p className="font-semibold">{selectedBooking.price} AED</p>
-                    </div>
-                  </div>
-                )}
+              <div className="h-3 bg-black/20 rounded-full overflow-hidden">
+                <div className="h-full bg-white transition-all duration-1000" style={{ width: `${Math.min(((loyalty.total_points || 0) / loyalty.next_level.min_points) * 100, 100)}%` }} />
               </div>
             </div>
           )}
-
-          <DialogFooter>
-            {selectedBooking && (selectedBooking.status === 'pending' || selectedBooking.status === 'confirmed') && (
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  setBookingToCancel(selectedBooking.id);
-                  setSelectedBooking(null);
-                }}
-              >
-                Cancel Booking
-              </Button>
-            )}
-            <Button variant="outline" onClick={() => setSelectedBooking(null)}>
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </div>
     </div>
   );
-};
+
+  const renderHeader = () => (
+    <div className="mb-10 flex justify-between items-end">
+      <div>
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-2">Личный кабинет</h1>
+        <p className="text-gray-500 text-lg font-medium">Ваша территория красоты и комфорта</p>
+      </div>
+      <button onClick={handleLogout} className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 text-red-600 rounded-xl font-bold hover:bg-red-50 hover:border-red-100 transition-all shadow-sm">
+        <LogOut className="w-5 h-5" />
+        Выйти
+      </button>
+    </div>
+  );
+
+  return (
+    <div className="account-page-container min-h-screen bg-gray-50 p-4 md:p-10">
+      <div className="max-w-7xl mx-auto">
+        {renderHeader()}
+
+        <div className="flex gap-2 overflow-x-auto pb-6 scrollbar-hide mb-8">
+          <TabButton active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} icon={<Sparkles className="w-5 h-5" />} label="Главная" />
+          <TabButton active={activeTab === 'appointments'} onClick={() => setActiveTab('appointments')} icon={<Calendar className="w-5 h-5" />} label="Записи" />
+          <TabButton active={activeTab === 'gallery'} onClick={() => setActiveTab('gallery')} icon={<ImageIcon className="w-5 h-5" />} label="Галерея" />
+          <TabButton active={activeTab === 'loyalty'} onClick={() => setActiveTab('loyalty')} icon={<Award className="w-5 h-5" />} label="Лояльность" />
+          <TabButton active={activeTab === 'achievements'} onClick={() => setActiveTab('achievements')} icon={<Trophy className="w-5 h-5" />} label="Достижения" />
+          <TabButton active={activeTab === 'masters'} onClick={() => setActiveTab('masters')} icon={<Users className="w-5 h-5" />} label="Мастера" />
+          <TabButton active={activeTab === 'beauty'} onClick={() => setActiveTab('beauty')} icon={<Sparkles className="w-5 h-5" />} label="Beauty-профиль" />
+          <TabButton active={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')} icon={<Bell className="w-5 h-5" />} label="Уведомления" hasBadge badgeCount={notifications.filter(n => !n.is_read).length} />
+          <TabButton active={activeTab === 'chat'} onClick={() => setActiveTab('chat')} icon={<MessageCircle className="w-5 h-5" />} label="Связь" />
+          <TabButton active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={<Settings className="w-5 h-5" />} label="Настройки" />
+        </div>
+
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          {activeTab === 'dashboard' && renderDashboard()}
+          {activeTab === 'appointments' && renderAppointments()}
+          {activeTab === 'gallery' && renderGallery()}
+          {activeTab === 'loyalty' && renderLoyalty()}
+          {activeTab === 'achievements' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {achievements.map(a => (
+                <div key={a.id} className={`p-6 rounded-2xl border-2 transition-all ${a.is_unlocked ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200 shadow-sm' : 'bg-white border-gray-100 grayscale opacity-60'}`}>
+                  <div className="text-5xl mb-4">{a.icon || '🏆'}</div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">{a.title}</h3>
+                  <p className="text-sm text-gray-500 mb-4">{a.description}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="px-3 py-1 bg-white/50 rounded-full text-xs font-bold text-gray-600">+{a.points_reward} баллов</span>
+                    {a.is_unlocked && <Check className="w-5 h-5 text-green-600" />}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {activeTab === 'masters' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {masters.map(m => (
+                <div key={m.id} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm relative group overflow-hidden">
+                  <div className="flex items-center gap-4 mb-6">
+                    <img src={m.photo} className="w-20 h-20 rounded-2xl object-cover shadow-md" />
+                    <div>
+                      <h3 className="font-bold text-lg text-gray-900">{m.name}</h3>
+                      <p className="text-sm text-gray-500 mb-2">{m.specialty}</p>
+                      <div className="flex items-center gap-1 text-yellow-500">
+                        <Star className="w-4 h-4 fill-current" />
+                        <span className="text-sm font-bold">{m.rating || 5.0}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button onClick={() => handleToggleFavoriteMaster(m.id, m.is_favorite)} className="absolute top-4 right-4 p-2 rounded-xl bg-gray-50 hover:bg-red-50 transition-all">
+                    <Heart className={`w-5 h-5 ${m.is_favorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+                  </button>
+                  <button onClick={() => openBooking()} className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-all">Записаться</button>
+                </div>
+              ))}
+            </div>
+          )}
+          {activeTab === 'beauty' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-br from-pink-500 to-purple-600 text-white p-10 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div className="relative z-10 flex justify-between items-center">
+                  <div>
+                    <h2 className="text-3xl font-black mb-2 uppercase tracking-tighter">Your Beauty Score</h2>
+                    <p className="text-white/70 text-lg">Комплексный анализ здоровья и красоты ваших волос и кожи</p>
+                  </div>
+                  <div className="w-32 h-32 rounded-full bg-white/10 backdrop-blur-md border-4 border-white/20 flex items-center justify-center">
+                    <span className="text-5xl font-black">88%</span>
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {metrics.map(m => (
+                  <div key={m.name} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                    <div className="flex justify-between items-center mb-4">
+                      <h4 className="font-bold text-gray-900">{m.name}</h4>
+                      <span className="text-sm font-bold text-green-600">Отлично</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full mb-4">
+                      <div className="h-full bg-gray-900 rounded-full" style={{ width: `${m.score_value}%` }} />
+                    </div>
+                    <p className="text-xs text-gray-500">Последнее обновление: {format(new Date(m.last_assessment), "d MMMM", { locale: getDateLocale() })}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {activeTab === 'notifications' && (
+            <div className="max-w-3xl mx-auto space-y-4">
+              {notifications.map(n => (
+                <div key={n.id} className={`p-6 rounded-2xl border transition-all ${n.is_read ? 'bg-white border-gray-100' : 'bg-blue-50/50 border-blue-100 shadow-sm'}`}>
+                  <div className="flex gap-4">
+                    <div className={`p-3 rounded-xl ${n.type === 'booking' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
+                      {n.type === 'booking' ? <Calendar className="w-6 h-6" /> : <Bell className="w-6 h-6" />}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-bold text-gray-900 mb-1">{n.title}</h4>
+                      <p className="text-gray-600 text-sm leading-relaxed mb-2">{n.message}</p>
+                      <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">{format(new Date(n.created_at), "d MMMM HH:mm", { locale: getDateLocale() })}</p>
+                    </div>
+                    {!n.is_read && <div className="w-2 h-2 bg-blue-600 rounded-full mt-2" />}
+                  </div>
+                </div>
+              ))}
+              {notifications.length === 0 && <EmptyState icon={<Bell className="w-12 h-12" />} title="Нет уведомлений" description="Здесь будут появляться важные сообщения от салона" />}
+            </div>
+          )}
+          {activeTab === 'chat' && (
+            <div className="max-w-2xl mx-auto text-center py-20 px-6 bg-white rounded-3xl border border-dashed border-gray-300">
+              <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <MessageCircle className="w-10 h-10 text-gray-400" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Чат с администратором</h2>
+              <p className="text-gray-500 mb-8 max-w-sm mx-auto">Эта функция находится в разработке. Скоро вы сможете общаться с нами напрямую!</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="tel:+971501234567" className="px-8 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-all">Позвонить</a>
+                <a href="https://wa.me/971501234567" className="px-8 py-3 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 transition-all">WhatsApp</a>
+              </div>
+            </div>
+          )}
+          {activeTab === 'settings' && (
+            <div className="max-w-4xl mx-auto space-y-8">
+              <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
+                <h3 className="text-2xl font-bold mb-8">Настройки профиля</h3>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-gray-500 uppercase tracking-widest ml-1">Имя</label>
+                      <div className="relative">
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input type="text" defaultValue={user?.full_name} className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all font-medium" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-gray-500 uppercase tracking-widest ml-1">Телефон</label>
+                      <div className="relative">
+                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input type="tel" defaultValue={user?.phone} className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all font-medium" />
+                      </div>
+                    </div>
+                  </div>
+                  <button className="w-full py-4 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-all shadow-lg active:scale-[0.98]">Сохранить изменения</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {isBooking && (
+        <UserBookingWizard onClose={closeBooking} />
+      )}
+
+      {comparePhotos && (
+        <div className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-4 backdrop-blur-xl transition-all animate-in fade-in" onClick={() => setComparePhotos(null)}>
+          <div className="bg-white rounded-3xl p-8 max-w-6xl w-full shadow-2xl relative" onClick={e => e.stopPropagation()}>
+            <button onClick={() => setComparePhotos(null)} className="absolute -top-4 -right-4 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-2xl hover:bg-gray-50 transition-all border border-gray-100">
+              <X className="w-6 h-6 text-gray-900" />
+            </button>
+            <h3 className="text-2xl font-black mb-8 text-center uppercase tracking-tighter">Сравнение результата</h3>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <p className="text-center font-black text-gray-400 uppercase tracking-widest text-xs">До процедуры</p>
+                <div className="aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-4 border-gray-100">
+                  <img src={comparePhotos.before} className="w-full h-full object-cover" />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <p className="text-center font-black text-green-500 uppercase tracking-widest text-xs">После процедуры</p>
+                <div className="aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-4 border-green-50">
+                  <img src={comparePhotos.after} className="w-full h-full object-cover" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
