@@ -105,7 +105,9 @@ async def get_user_by_id(
             SELECT
                 id, username, full_name, email, role, position, 
                 phone, bio, photo, is_active, is_service_provider,
-                position_ru, position_ar, created_at
+                position_ru, position_ar, created_at,
+                years_of_experience, specialization, telegram_username,
+                base_salary, commission_rate
             FROM users
             WHERE id = %s
         """, (user_id,))
@@ -130,7 +132,12 @@ async def get_user_by_id(
             "is_service_provider": bool(row[10]),
             "position_ru": row[11],
             "position_ar": row[12],
-            "created_at": row[13]
+            "created_at": row[13],
+            "years_of_experience": row[14],
+            "specialization": row[15],
+            "telegram": row[16], # Frontend expects telegram or messenger
+            "base_salary": row[17],
+            "commission_rate": row[18]
         }
 
         return user_data
@@ -424,7 +431,9 @@ async def get_user_profile(
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo
+    c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo,
+                        years_of_experience, bio, specialization, phone, birthday, position,
+                        base_salary, commission_rate
                  FROM users WHERE id = %s""", (user_id,))
     
     result = c.fetchone()
@@ -441,7 +450,15 @@ async def get_user_profile(
         "role": result[4],
         "created_at": result[5],
         "last_login": result[6],
-        "photo": result[7]
+        "photo": result[7],
+        "years_of_experience": result[8],
+        "bio": result[9],
+        "specialization": result[10],
+        "phone": result[11],
+        "birthday": result[12],
+        "position": result[13],
+        "base_salary": result[14],
+        "commission_rate": result[15]
     }
 
 @router.get("/users/by-username/{username}/profile")
@@ -457,7 +474,8 @@ async def get_user_profile_by_username(
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo
+    c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo,
+                        years_of_experience, bio, specialization, phone, birthday, position
                  FROM users WHERE username = %s""", (username,))
     
     result = c.fetchone()
@@ -478,7 +496,13 @@ async def get_user_profile_by_username(
         "role": result[4],
         "created_at": result[5],
         "last_login": result[6],
-        "photo": result[7]
+        "photo": result[7],
+        "years_of_experience": result[8],
+        "bio": result[9],
+        "specialization": result[10],
+        "phone": result[11],
+        "birthday": result[12],
+        "position": result[13]
     }
 
 @router.post("/users/{user_id}/change-password")
@@ -595,17 +619,39 @@ async def update_user_profile(
 
         # Обновляем профиль
         photo = data.get('photo')
+        bio = data.get('about_me')
+        specialization = data.get('specialization')
+        years_of_experience = data.get('years_of_experience')
+        phone = data.get('phone_number')
+        birthday = data.get('birth_date')
+        base_salary = data.get('base_salary')
+        commission_rate = data.get('commission_rate')
         
+        # Convert years_of_experience to int if possible
+        try:
+            if years_of_experience is not None and years_of_experience != '':
+                years_of_experience = int(years_of_experience)
+            else:
+                years_of_experience = None
+        except (ValueError, TypeError):
+            years_of_experience = None
+
         if photo is not None:
              c.execute("""UPDATE users
-                    SET username = %s, full_name = %s, email = %s, position = %s, photo = %s
+                    SET username = %s, full_name = %s, email = %s, position = %s, photo = %s,
+                        bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
+                        base_salary = %s, commission_rate = %s
                     WHERE id = %s""",
-                 (username, full_name, email, position, photo, user_id))
+                 (username, full_name, email, position, photo, bio, specialization, years_of_experience, phone, birthday, 
+                  base_salary, commission_rate, user_id))
         else:
             c.execute("""UPDATE users
-                        SET username = %s, full_name = %s, email = %s, position = %s
+                        SET username = %s, full_name = %s, email = %s, position = %s,
+                            bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
+                            base_salary = %s, commission_rate = %s
                         WHERE id = %s""",
-                    (username, full_name, email, position, user_id))
+                    (username, full_name, email, position, bio, specialization, years_of_experience, phone, birthday, 
+                     base_salary, commission_rate, user_id))
         conn.commit()
         
         log_activity(user["id"], "update_profile", "user", str(user_id), 
@@ -630,7 +676,6 @@ async def get_user_notification_settings(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    # Пользователь может смотреть только свои настройки или админ любые
     if user["id"] != user_id and user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
@@ -638,30 +683,41 @@ async def get_user_notification_settings(
         conn = get_db_connection()
         c = conn.cursor()
 
+        # Пробуем получить из специальной таблицы
         c.execute("""
-            SELECT notify_telegram, notify_email, notify_whatsapp,
-                   notify_on_new_booking, notify_on_booking_change, notify_on_booking_cancel,
-                   telegram_chat_id, email, phone
-            FROM users
-            WHERE id = %s
+            SELECT email_notifications, sms_notifications, booking_notifications, 
+                   birthday_reminders, chat_notifications, telegram_notifications
+            FROM notification_settings
+            WHERE user_id = %s
         """, (user_id,))
+        
+        res = c.fetchone()
+        
+        # Если настроек нет - создаем дефолтные
+        if not res:
+            c.execute("""
+                INSERT INTO notification_settings (user_id) VALUES (%s)
+                RETURNING email_notifications, sms_notifications, booking_notifications, 
+                          birthday_reminders, chat_notifications, telegram_notifications
+            """, (user_id,))
+            res = c.fetchone()
+            conn.commit()
 
-        result = c.fetchone()
+        # Также проверим наличие telegram_chat_id в таблице users
+        c.execute("SELECT telegram_chat_id, email, phone FROM users WHERE id = %s", (user_id,))
+        user_data = c.fetchone()
         conn.close()
 
-        if not result:
-            return JSONResponse({"error": "User not found"}, status_code=404)
-
         return {
-            "notify_telegram": bool(result[0]) if result[0] is not None else True,
-            "notify_email": bool(result[1]) if result[1] is not None else True,
-            "notify_whatsapp": bool(result[2]) if result[2] is not None else False,
-            "notify_on_new_booking": bool(result[3]) if result[3] is not None else True,
-            "notify_on_booking_change": bool(result[4]) if result[4] is not None else True,
-            "notify_on_booking_cancel": bool(result[5]) if result[5] is not None else True,
-            "has_telegram": result[6] is not None and result[6] != "",
-            "has_email": result[7] is not None and result[7] != "",
-            "has_whatsapp": result[8] is not None and result[8] != "",
+            "notify_email": bool(res[0]),
+            "notify_sms": bool(res[1]),
+            "notify_on_booking": bool(res[2]),
+            "notify_birthday": bool(res[3]),
+            "notify_chat": bool(res[4]),
+            "notify_telegram": bool(res[5]),
+            "has_telegram": bool(user_data[0]) if user_data else False,
+            "has_email": bool(user_data[1]) if user_data else False,
+            "has_phone": bool(user_data[2]) if user_data else False
         }
 
     except Exception as e:
@@ -679,7 +735,6 @@ async def update_user_notification_settings(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    # Пользователь может менять только свои настройки или админ любые
     if user["id"] != user_id and user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
@@ -689,24 +744,30 @@ async def update_user_notification_settings(
         conn = get_db_connection()
         c = conn.cursor()
 
-        # Обновляем настройки
+        # Используем INSERT ... ON CONFLICT для PostgreSQL (UPSERT)
+        # Но в нашей схеме UNIQUE(user_id) уже есть
         c.execute("""
-            UPDATE users
-            SET notify_telegram = %s,
-                notify_email = %s,
-                notify_whatsapp = %s,
-                notify_on_new_booking = %s,
-                notify_on_booking_change = %s,
-                notify_on_booking_cancel = %s
-            WHERE id = %s
+            INSERT INTO notification_settings (
+                user_id, email_notifications, sms_notifications, booking_notifications,
+                birthday_reminders, chat_notifications, telegram_notifications
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (user_id) DO UPDATE SET
+                email_notifications = EXCLUDED.email_notifications,
+                sms_notifications = EXCLUDED.sms_notifications,
+                booking_notifications = EXCLUDED.booking_notifications,
+                birthday_reminders = EXCLUDED.birthday_reminders,
+                chat_notifications = EXCLUDED.chat_notifications,
+                telegram_notifications = EXCLUDED.telegram_notifications,
+                updated_at = CURRENT_TIMESTAMP
         """, (
-            True if data.get('notify_telegram', True) else False,
-            True if data.get('notify_email', True) else False,
-            True if data.get('notify_whatsapp', False) else False,
-            True if data.get('notify_on_new_booking', True) else False,
-            True if data.get('notify_on_booking_change', True) else False,
-            True if data.get('notify_on_booking_cancel', True) else False,
-            user_id
+            user_id,
+            bool(data.get('notify_email', True)),
+            bool(data.get('notify_sms', False)),
+            bool(data.get('notify_on_booking', True)),
+            bool(data.get('notify_birthday', True)),
+            bool(data.get('notify_chat', True)),
+            bool(data.get('notify_telegram', False))
         ))
 
         conn.commit()

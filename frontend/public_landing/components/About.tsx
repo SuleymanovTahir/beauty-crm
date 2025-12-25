@@ -35,7 +35,7 @@ export function About() {
             {t('aboutTag', { defaultValue: 'О нас' })}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('aboutTitle', { defaultValue: 'Искусство красоты в каждой детали' })}
+            {t('aboutTitlePart1', { defaultValue: 'Искусство красоты' })} <span className="text-primary">{t('aboutTitlePart2', { defaultValue: 'в каждой детали' })}</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
             {t('aboutDesc', { defaultValue: 'Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.' })}

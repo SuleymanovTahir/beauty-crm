@@ -15,7 +15,7 @@ import { Pagination } from '../../components/shared/Pagination';
 
 
 const api = {
-  baseURL: 'http://localhost:8000',
+  baseURL: import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? `${window.location.protocol}//${window.location.hostname}:8000` : window.location.origin),
 
   async getBookings() {
     const res = await fetch(`${this.baseURL}/api/bookings`, { credentials: 'include' });
@@ -476,6 +476,7 @@ export default function Bookings() {
       time: time,
       revenue: booking.revenue || 0,
       master: booking.master || '',
+      status: booking.status || 'confirmed'
     });
 
     // Открываем диалог
@@ -487,7 +488,7 @@ export default function Bookings() {
     setServiceSearch('');
     setSelectedClient(null);
     setSelectedService(null);
-    setAddForm({ phone: '', date: '', time: '', revenue: 0, master: '' });
+    setAddForm({ phone: '', date: '', time: '', revenue: 0, master: '', status: 'confirmed' });
     setEditingBooking(null);
   };
 

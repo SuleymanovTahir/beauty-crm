@@ -78,7 +78,7 @@ export function Portfolio() {
             {t('portfolioTag', { defaultValue: 'Наши работы' })}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('portfolioTitle', { defaultValue: 'Примеры преображения' })}
+            {t('portfolioTitlePart1', { defaultValue: 'Примеры' })} <span className="text-primary">{t('portfolioTitlePart2', { defaultValue: 'преображения' })}</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
             {t('portfolioDesc', { defaultValue: 'Вдохновитесь результатами наших мастеров' })}

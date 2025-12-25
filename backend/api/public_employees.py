@@ -40,7 +40,8 @@ async def get_public_employees(
                 id,
                 COALESCE({name_field}, full_name) as full_name,
                 COALESCE({position_field}, position) as position,
-                COALESCE({bio_field}, bio) as bio,
+                bio,
+                specialization,
                 photo,
                 experience,
                 years_of_experience,
@@ -58,28 +59,44 @@ async def get_public_employees(
         columns = [desc[0] for desc in cursor.description]
         employees = []
         
+        def get_russian_plural(number, one, two, five):
+            n = abs(number) % 100
+            n1 = n % 10
+            if n > 10 and n < 20: return five
+            if n1 > 1 and n1 < 5: return two
+            if n1 == 1: return one
+            return five
+
         for row in rows:
             row_dict = dict(zip(columns, row))
             
             # Handle experience fallback
             exp_text = row_dict.get("experience")
-            if not exp_text and row_dict.get("years_of_experience"):
-                years = row_dict["years_of_experience"]
+            years = row_dict.get("years_of_experience")
+            
+            if (not exp_text or not str(exp_text).strip()) and years:
                 # Basic localization for experience
                 if language == 'ru':
-                    exp_text = f"{years} лет опыта"
+                    plural = get_russian_plural(years, "год", "года", "лет")
+                    exp_text = f"{years} {plural} опыта"
                 elif language == 'ar':
                     exp_text = f"{years} سنوات خبرة"
                 else:
                     exp_text = f"{years} years experience"
+            elif exp_text and years and language == 'ru':
+                # Even if exp_text exists, we might want to re-format it if it's just a number
+                # but for now let's stick to the plan: fallback only if empty or specifically requested.
+                # The user asked for pluralization, so let's make sure it's correct for Mestan too.
+                plural = get_russian_plural(years, "год", "года", "лет")
+                exp_text = f"{years} {plural} опыта"
 
             employees.append({
                 "id": row_dict["id"],
                 "name": row_dict["full_name"],
                 "role": row_dict["position"] or "Специалист",
-                "specialty": row_dict["bio"] or "",
+                "specialty": row_dict["specialization"] or row_dict["bio"] or "",
                 "image": row_dict["photo"] or "/static/avatars/default_female.webp",
-                "experience": exp_text or "",
+                "experience": (exp_text or "").strip(),
                 "instagram": row_dict["instagram"] or ""
             })
         

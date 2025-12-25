@@ -1,7 +1,34 @@
 // /frontend/src/pages/admin/Settings.tsx
 import React, { useState, useEffect } from 'react';
-
-import { Settings as SettingsIcon, Globe, Bell, Shield, Mail, Smartphone, Bot, Plus, Edit, Trash2, Loader, AlertCircle, User, Lock, Camera, Save, Send, MessageCircle, Instagram, Users, Eye, History, Phone, Calendar, Briefcase, Award, Star, FileText, Upload } from 'lucide-react';
+import {
+  Settings as SettingsIcon,
+  AlertCircle,
+  Bell,
+  Globe,
+  Camera,
+  MessageCircle,
+  Instagram,
+  Mail,
+  Smartphone,
+  Calendar,
+  Briefcase,
+  Award,
+  Star,
+  FileText,
+  Plus,
+  Trash2,
+  Edit,
+  Save,
+  Users,
+  Send,
+  Eye,
+  History,
+  Loader,
+  Bot,
+  BookOpen,
+  Shield,
+  User,
+} from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -58,7 +85,6 @@ export default function AdminSettings() {
   });
 
   // Profile state
-  const [profile, setProfile] = useState(null);
   const [profileForm, setProfileForm] = useState({
     username: '',
     full_name: '',
@@ -75,11 +101,10 @@ export default function AdminSettings() {
     current_password: '',
     new_password: '',
     confirm_password: '',
+    photo: '',
   });
   const [savingProfile, setSavingProfile] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [certificates, setCertificates] = useState<Array<{ id?: number, name: string, url: string }>>([]);
-  const [uploadingCertificate, setUploadingCertificate] = useState(false);
 
   // Subscriptions state
   const [subscriptions, setSubscriptions] = useState<Record<string, {
@@ -233,23 +258,23 @@ export default function AdminSettings() {
       console.log('✅ [Profile] Ответ получен:', response);
 
       if (response.success && response.profile) {
-        setProfile(response.profile);
         setProfileForm({
-          username: response.profile.username,
-          full_name: response.profile.full_name,
+          username: response.profile.username || '',
+          full_name: response.profile.full_name || '',
           email: response.profile.email || '',
-          phone_number: response.profile.phone_number || '',
+          phone_number: response.profile.phone || response.profile.phone_number || '',
           position: response.profile.position || '',
-          birth_date: response.profile.birth_date || '',
+          birth_date: response.profile.birthday || response.profile.birth_date || '',
           instagram_link: response.profile.instagram_link || '',
           whatsapp: response.profile.whatsapp || '',
           telegram: response.profile.telegram || '',
-          about_me: response.profile.about_me || '',
+          about_me: response.profile.about_me || response.profile.bio || '',
           specialization: response.profile.specialization || '',
-          years_of_experience: response.profile.years_of_experience || '',
+          years_of_experience: String(response.profile.years_of_experience || ''),
           current_password: '',
           new_password: '',
           confirm_password: '',
+          photo: response.profile.photo || '',
         });
         console.log('✅ [Profile] Профиль успешно загружен');
       } else {
@@ -266,7 +291,7 @@ export default function AdminSettings() {
         console.warn('⚠️ [Profile] Пользователь не привязан к сотруднику (employee_id отсутствует)');
         toast.error(t('profile_not_available_not_linked'));
       } else {
-        toast.error(`${t('error_loading_profile')}: ${err.message || t('unknown_error')}`);
+        toast.error(`${t('error_loading_profile')}: ${err.message || t('unknown_error')} `);
       }
     }
   };
@@ -291,7 +316,7 @@ export default function AdminSettings() {
     }
   };
 
-  const handlePhotoUpload = async (e) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -311,11 +336,10 @@ export default function AdminSettings() {
       if (uploadResponse.url) {
         const response = await api.updateMyProfile({ photo_url: uploadResponse.url });
         if (response.success) {
-          setProfile(response.profile);
           toast.success(t('photo_updated'));
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err.message || t('error_photo_upload'));
     } finally {
       setUploadingPhoto(false);
@@ -358,10 +382,20 @@ export default function AdminSettings() {
     try {
       setSavingProfile(true);
 
-      const updateData = {
+      const updateData: any = {
         username: profileForm.username,
         full_name: profileForm.full_name,
         email: profileForm.email,
+        phone_number: profileForm.phone_number,
+        position: profileForm.position,
+        birth_date: profileForm.birth_date,
+        instagram_link: profileForm.instagram_link,
+        whatsapp: profileForm.whatsapp,
+        telegram: profileForm.telegram,
+        about_me: profileForm.about_me,
+        specialization: profileForm.specialization,
+        years_of_experience: profileForm.years_of_experience,
+        photo: profileForm.photo,
       };
 
       if (profileForm.new_password) {
@@ -372,7 +406,6 @@ export default function AdminSettings() {
       const response = await api.updateMyProfile(updateData);
 
       if (response.success) {
-        setProfile(response.profile);
         toast.success(t('profile_updated'));
         setProfileForm({
           ...profileForm,
@@ -392,7 +425,7 @@ export default function AdminSettings() {
       } else {
         toast.error(response.error || t('error_update_profile'));
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err.message || t('error_update_profile'));
     } finally {
       setSavingProfile(false);
@@ -752,7 +785,7 @@ export default function AdminSettings() {
   const handleToggleMessenger = async (messengerType: string, currentState: boolean) => {
     try {
       await api.updateMessengerSetting(messengerType, { is_enabled: !currentState });
-      toast.success(`${messengerType} ${!currentState ? t('settings:enabled') : t('settings:disabled')}`);
+      toast.success(`${messengerType} ${!currentState ? t('settings:enabled') : t('settings:disabled')} `);
       loadMessengerSettings();
       // Отправляем событие для обновления меню мессенджеров
       window.dispatchEvent(new Event('messengers-updated'));
@@ -797,13 +830,6 @@ export default function AdminSettings() {
     }
   };
 
-  const handleSelectAllBroadcastUsers = () => {
-    if ((broadcastForm.user_ids || []).length === broadcastUsers.length) {
-      setBroadcastForm({ ...broadcastForm, user_ids: [] });
-    } else {
-      setBroadcastForm({ ...broadcastForm, user_ids: broadcastUsers.map(u => u.id) });
-    }
-  };
 
   const handleBroadcastChannelToggle = (channel: string) => {
     if (broadcastForm.channels.includes(channel)) {
@@ -828,7 +854,7 @@ export default function AdminSettings() {
       setLoadingBroadcastPreview(true);
       const data = await api.previewBroadcast(broadcastForm);
       setBroadcastPreview(data);
-      toast.success(`${t('common:found')} ${data.total_users} ${t('common:recipients')}`);
+      toast.success(`${t('common:found')} ${data.total_users} ${t('common:recipients')} `);
     } catch (err: any) {
       toast.error(err.message || t('settings:preview_error'));
     } finally {
@@ -942,7 +968,7 @@ export default function AdminSettings() {
   const activeTab = tab || 'general';
 
   const handleTabChange = (value: string) => {
-    navigate(`/admin/settings/${value}`);
+    navigate(`/ admin / settings / ${value} `);
   };
 
   return (
@@ -972,6 +998,11 @@ export default function AdminSettings() {
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
         <TabsList className="flex flex-wrap w-full lg:w-auto gap-1">
+
+          <TabsTrigger key="profile" value="profile" className="flex items-center gap-2">
+            <User className="w-4 h-4" />
+            <span className="hidden sm:inline">{t('settings:profile', 'Profile')}</span>
+          </TabsTrigger>
 
           <TabsTrigger key="general" value="general" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
@@ -1013,6 +1044,246 @@ export default function AdminSettings() {
         </TabsList>
 
         {/* General Settings */}
+        <TabsContent value="profile">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl text-[var(--heading)] flex items-center gap-3">
+                <User className="w-6 h-6 text-primary" />
+                {t('settings:personal_information', 'Личная информация')}
+              </h2>
+              <Button
+                onClick={() => handleSaveProfile()}
+                disabled={savingProfile}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
+                {savingProfile ? (
+                  <>
+                    <Loader className="w-4 h-4 mr-2 animate-spin" />
+                    {t('common:saving', 'Сохранение...')}
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    {t('common:save', 'Сохранить')}
+                  </>
+                )}
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Photo Upload Section */}
+              <div className="flex flex-col items-center p-6 bg-muted/30 rounded-xl border border-border/50 h-fit">
+                <div className="relative group mb-4">
+                  <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-background shadow-lg">
+                    {profileForm.photo ? (
+                      <img
+                        src={profileForm.photo}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-primary/10 flex items-center justify-center">
+                        <User className="w-16 h-16 text-primary/40" />
+                      </div>
+                    )}
+                  </div>
+                  <label className="absolute bottom-1 right-1 p-2 bg-primary text-primary-foreground rounded-full cursor-pointer shadow-lg hover:bg-primary/90 transition-all scale-90 hover:scale-100">
+                    <Camera className="w-4 h-4" />
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      disabled={uploadingPhoto}
+                    />
+                  </label>
+                </div>
+                <h4 className="text-sm font-medium text-gray-900 mb-1">{profileForm.full_name || 'User'}</h4>
+                <p className="text-xs text-muted-foreground mb-4 uppercase tracking-wider">{profileForm.position || t('settings:no_position', 'Сотрудник')}</p>
+                {uploadingPhoto && (
+                  <div className="flex items-center gap-2 text-xs text-primary animate-pulse">
+                    <Loader className="w-3 h-3 animate-spin" />
+                    {t('common:uploading', 'Загрузка...')}
+                  </div>
+                )}
+              </div>
+
+              {/* Main Info Form */}
+              <div className="lg:col-span-2 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="full_name" className="flex items-center gap-2">
+                      <User className="w-3.5 h-3.5 text-muted-foreground" />
+                      {t('settings:full_name', 'Полное имя')} *
+                    </Label>
+                    <Input
+                      id="full_name"
+                      value={profileForm.full_name}
+                      onChange={(e) => setProfileForm({ ...profileForm, full_name: e.target.value })}
+                      placeholder={t('settings:placeholder_full_name', 'Имя Фамилия')}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="username" className="flex items-center gap-2">
+                      <Briefcase className="w-3.5 h-3.5 text-muted-foreground" />
+                      {t('settings:username', 'Логин')} *
+                    </Label>
+                    <Input
+                      id="username"
+                      value={profileForm.username}
+                      onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })}
+                      placeholder="username"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="flex items-center gap-2">
+                      <Mail className="w-3.5 h-3.5 text-muted-foreground" />
+                      Email *
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={profileForm.email}
+                      onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
+                      placeholder="email@example.com"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phone_number" className="flex items-center gap-2">
+                      <Smartphone className="w-3.5 h-3.5 text-muted-foreground" />
+                      {t('settings:phone_number', 'Номер телефона')}
+                    </Label>
+                    <Input
+                      id="phone_number"
+                      value={profileForm.phone_number}
+                      onChange={(e) => setProfileForm({ ...profileForm, phone_number: e.target.value })}
+                      placeholder="+7 (___) ___-__-__"
+                    />
+                  </div>
+                </div>
+
+                <div className="border-t border-border/50 pt-6">
+                  <h3 className="text-lg font-medium text-[var(--heading)] mb-4 flex items-center gap-2">
+                    <Briefcase className="w-5 h-5 text-primary" />
+                    {t('settings:professional_profile', 'Профессиональный профиль')}
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="position" className="flex items-center gap-2">
+                        <Award className="w-3.5 h-3.5 text-muted-foreground" />
+                        {t('settings:position', 'Должность')}
+                      </Label>
+                      <Input
+                        id="position"
+                        value={profileForm.position}
+                        onChange={(e) => setProfileForm({ ...profileForm, position: e.target.value })}
+                        placeholder={t('settings:placeholder_position', 'Например: Топ-стилист')}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="years_of_experience" className="flex items-center gap-2">
+                        <Star className="w-3.5 h-3.5 text-muted-foreground" />
+                        {t('settings:years_of_experience', 'Стаж (лет)')}
+                      </Label>
+                      <Input
+                        id="years_of_experience"
+                        type="number"
+                        min="0"
+                        value={profileForm.years_of_experience}
+                        onChange={(e) => setProfileForm({ ...profileForm, years_of_experience: e.target.value })}
+                        placeholder="0"
+                      />
+                    </div>
+
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="specialization" className="flex items-center gap-2">
+                        <BookOpen className="w-3.5 h-3.5 text-muted-foreground" />
+                        {t('settings:specialization', 'Специализация')}
+                      </Label>
+                      <Input
+                        id="specialization"
+                        value={profileForm.specialization}
+                        onChange={(e) => setProfileForm({ ...profileForm, specialization: e.target.value })}
+                        placeholder={t('settings:placeholder_specialization', 'Перечислите основные направления через запятую')}
+                      />
+                    </div>
+
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="about_me" className="flex items-center gap-2">
+                        <FileText className="w-3.5 h-3.5 text-muted-foreground" />
+                        {t('settings:about_me', 'О себе')}
+                      </Label>
+                      <Textarea
+                        id="about_me"
+                        rows={4}
+                        value={profileForm.about_me}
+                        onChange={(e) => setProfileForm({ ...profileForm, about_me: e.target.value })}
+                        placeholder={t('settings:placeholder_about_me', 'Расскажите о своем опыте и подходе к работе...')}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-border/50 pt-6">
+                  <h3 className="text-lg font-medium text-[var(--heading)] mb-4 flex items-center gap-2">
+                    <Globe className="w-5 h-5 text-primary" />
+                    {t('settings:social_links', 'Социальные сети')}
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="instagram" className="flex items-center gap-2">
+                        <Instagram className="w-3.5 h-3.5 text-pink-600" />
+                        Instagram
+                      </Label>
+                      <Input
+                        id="instagram"
+                        value={profileForm.instagram_link}
+                        onChange={(e) => setProfileForm({ ...profileForm, instagram_link: e.target.value })}
+                        placeholder="@username"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="whatsapp" className="flex items-center gap-2">
+                        <MessageCircle className="w-3.5 h-3.5 text-green-600" />
+                        WhatsApp
+                      </Label>
+                      <Input
+                        id="whatsapp"
+                        value={profileForm.whatsapp}
+                        onChange={(e) => setProfileForm({ ...profileForm, whatsapp: e.target.value })}
+                        placeholder="+7..."
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="telegram" className="flex items-center gap-2">
+                        <Smartphone className="w-3.5 h-3.5 text-blue-500" />
+                        Telegram
+                      </Label>
+                      <Input
+                        id="telegram"
+                        value={profileForm.telegram}
+                        onChange={(e) => setProfileForm({ ...profileForm, telegram: e.target.value })}
+                        placeholder="@username"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
         <TabsContent value="general">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6">{t('settings:general_settings')}</h2>
@@ -1421,10 +1692,10 @@ export default function AdminSettings() {
                         className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <Bell className={`w-5 h-5 ${setting.is_enabled ? 'text-pink-600' : 'text-gray-400'}`} />
+                          <Bell className={`w - 5 h - 5 ${setting.is_enabled ? 'text-pink-600' : 'text-gray-400'} `} />
                           <div>
                             <p className="text-sm font-medium text-gray-900">
-                              {t('settings:reminder_label')} {setting.days_before > 0 && `${setting.days_before} ${t('settings:days')}`}{setting.days_before > 0 && setting.hours_before > 0 && ' '}{setting.hours_before > 0 && `${setting.hours_before} ${t('settings:hours')}`}
+                              {t('settings:reminder_label')} {setting.days_before > 0 && `${setting.days_before} ${t('settings:days')} `}{setting.days_before > 0 && setting.hours_before > 0 && ' '}{setting.hours_before > 0 && `${setting.hours_before} ${t('settings:hours')} `}
                             </p>
                             <p className="text-xs text-gray-600">
                               {t('settings:before_booking')} · {setting.notification_type === 'email' ? 'Email' : 'SMS'}
@@ -1728,7 +1999,7 @@ export default function AdminSettings() {
                     } else {
                       toast.warning(
                         `${t('settings:issues_found')}: ${issues.length}. 
-                        ${t('settings:check_console')}`
+                        ${t('settings:check_console')} `
                       );
                     }
 
@@ -1778,8 +2049,8 @@ export default function AdminSettings() {
                       {/* Main Subscription Toggle */}
                       <div className="flex items-start justify-between p-4 bg-gray-50">
                         <div className="flex-1">
-                          <h3 className="font-medium text-gray-900">{t(`settings:${info.name}`)}</h3>
-                          <p className="text-sm text-gray-600 mt-1">{t(`settings:${info.description}`)}</p>
+                          <h3 className="font-medium text-gray-900">{t(`settings:${info.name} `)}</h3>
+                          <p className="text-sm text-gray-600 mt-1">{t(`settings:${info.description} `)}</p>
                         </div>
                         <Switch
                           checked={sub.is_subscribed}
@@ -1896,10 +2167,10 @@ export default function AdminSettings() {
                           <button
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('email')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('email')
+                            className={`flex items - center gap - 2 px - 4 py - 2 rounded - lg border - 2 transition - all ${broadcastForm.channels.includes('email')
                               ? 'border-blue-500 bg-blue-50 text-blue-700'
                               : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                              }`}
+                              } `}
                           >
                             <Mail className="w-5 h-5" />
                             Email
@@ -1908,10 +2179,10 @@ export default function AdminSettings() {
                           <button
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('telegram')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('telegram')
+                            className={`flex items - center gap - 2 px - 4 py - 2 rounded - lg border - 2 transition - all ${broadcastForm.channels.includes('telegram')
                               ? 'border-green-500 bg-green-50 text-green-700'
                               : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                              }`}
+                              } `}
                           >
                             <MessageCircle className="w-5 h-5" />
                             Telegram
@@ -1920,10 +2191,10 @@ export default function AdminSettings() {
                           <button
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('instagram')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('instagram')
+                            className={`flex items - center gap - 2 px - 4 py - 2 rounded - lg border - 2 transition - all ${broadcastForm.channels.includes('instagram')
                               ? 'border-purple-500 bg-purple-50 text-purple-700'
                               : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                              }`}
+                              } `}
                           >
                             <Instagram className="w-5 h-5" />
                             Instagram
@@ -1972,7 +2243,7 @@ export default function AdminSettings() {
                                 <span className="text-sm text-gray-700">
                                   {(broadcastForm.user_ids || []).length === 0
                                     ? t('settings:all_subscribed_users')
-                                    : `${t('settings:selected')}: ${(broadcastForm.user_ids || []).length} из ${filteredUsers.length}`}
+                                    : `${t('settings:selected')}: ${(broadcastForm.user_ids || []).length} из ${filteredUsers.length} `}
                                 </span>
                               );
                             })()}
@@ -2288,18 +2559,18 @@ export default function AdminSettings() {
                 {messengerSettings.map((messenger) => (
                   <div
                     key={messenger.messenger_type}
-                    className={`border-2 rounded-xl p-6 transition-all ${messenger.is_enabled
+                    className={`border - 2 rounded - xl p - 6 transition - all ${messenger.is_enabled
                       ? 'border-pink-300 bg-pink-50'
                       : 'border-gray-200 bg-white'
-                      }`}
+                      } `}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${messenger.messenger_type === 'instagram' ? 'bg-gradient-to-r from-pink-500 to-purple-600' :
+                        <div className={`w - 12 h - 12 rounded - lg flex items - center justify - center ${messenger.messenger_type === 'instagram' ? 'bg-gradient-to-r from-pink-500 to-purple-600' :
                           messenger.messenger_type === 'whatsapp' ? 'bg-green-500' :
                             messenger.messenger_type === 'telegram' ? 'bg-blue-500' :
                               'bg-black'
-                          }`}>
+                          } `}>
                           {messenger.messenger_type === 'instagram' ? (
                             <Instagram className="w-6 h-6 text-white" />
                           ) : (
@@ -2329,11 +2600,11 @@ export default function AdminSettings() {
                           <div className="space-y-3">
                             {messenger.messenger_type !== 'instagram' && (
                               <div>
-                                <Label htmlFor={`${messenger.messenger_type}-token`}>
+                                <Label htmlFor={`${messenger.messenger_type} -token`}>
                                   API Token {messenger.messenger_type === 'telegram' ? t('settings:telegram_bot_token_hint') : ''}
                                 </Label>
                                 <Input
-                                  id={`${messenger.messenger_type}-token`}
+                                  id={`${messenger.messenger_type} -token`}
                                   type="password"
                                   value={messengerForm.api_token}
                                   onChange={(e) =>
@@ -2683,7 +2954,7 @@ export default function AdminSettings() {
                         <tr key={key} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="p-3 text-sm font-medium text-gray-900">{name as string}</td>
                           {['can_view', 'can_create', 'can_edit', 'can_delete'].map(action => (
-                            <td key={`${key}-${action}`} className="p-3 text-center">
+                            <td key={`${key} -${action} `} className="p-3 text-center">
                               <input
                                 type="checkbox"
                                 checked={
