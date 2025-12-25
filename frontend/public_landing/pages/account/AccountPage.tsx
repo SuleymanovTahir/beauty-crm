@@ -10,9 +10,12 @@ import {
   Calendar,
   Clock,
   MapPin,
+  Phone,
   Star,
   TrendingUp,
   Award,
+  Gift,
+  Camera,
   Bell,
   Settings,
   MessageCircle,
@@ -28,10 +31,17 @@ import {
   Navigation,
   Image as ImageIcon,
   Users,
+  Mail,
+  Lock as LockIcon,
   Eye,
   Upload,
   Trophy,
-  Lock as LockIcon,
+  Target,
+  Flame,
+  Zap,
+  QrCode,
+  Wallet,
+  AlertCircle,
   Loader2,
   LogOut
 } from 'lucide-react';
@@ -124,6 +134,7 @@ export function AccountPage() {
   const [galleryFilter, setGalleryFilter] = useState('all');
   const [showAllMasters, setShowAllMasters] = useState(false);
   const [comparePhotos, setComparePhotos] = useState<{ before: string; after: string } | null>(null);
+  const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
 
   // Data States
   const [dashboardData, setDashboardData] = useState<any>(null);
@@ -294,6 +305,16 @@ export function AccountPage() {
 
   const handleSharePhoto = (_photoId?: string) => {
     toast.success('Ссылка для шаринга скопирована');
+  };
+
+  const handleFavoritePhoto = (photoId?: string) => {
+    if (selectedPhotoId === photoId) {
+      setSelectedPhotoId(null);
+      toast.info('Удалено из избранного');
+    } else {
+      setSelectedPhotoId(photoId || null);
+      toast.success('Добавлено в избранное');
+    }
   };
 
   const handleShareReferral = (platform: string) => {
@@ -529,6 +550,7 @@ export function AccountPage() {
         </div>
       )}
 
+
       {/* Insights */}
       <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-100">
         <div className="flex items-center gap-2 mb-4">
@@ -547,6 +569,59 @@ export function AccountPage() {
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm">⭐</div>
             <p className="text-gray-700 flex-1">Вы посетили нас {dashboardData?.total_visits || 0} раз - это больше, чем у 80% клиентов!</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Special Offers */}
+      <div className="bg-white p-6 rounded-2xl border border-gray-200">
+        <div className="flex items-center gap-2 mb-4">
+          <Gift className="w-5 h-5" />
+          <h2 className="text-xl">Специальные предложения</h2>
+        </div>
+        <div className="space-y-3">
+          <div className="p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border border-pink-200">
+            <div className="flex items-start justify-between mb-2">
+              <h3 className="text-gray-900">Только для вас: 20% на уход за лицом</h3>
+              <span className="px-2 py-1 bg-red-100 text-red-600 rounded text-xs whitespace-nowrap">Осталось 2 дня</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Персональное предложение на основе вашей истории</p>
+            <button
+              onClick={openBooking}
+              className="w-full px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Записаться
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Smart Recommendations */}
+      <div className="bg-white p-6 rounded-2xl border border-gray-200">
+        <div className="flex items-center gap-2 mb-4">
+          <Zap className="w-5 h-5 text-yellow-500" />
+          <h2 className="text-xl">Умные рекомендации</h2>
+        </div>
+        <div className="space-y-3">
+          <div className="p-4 bg-yellow-50 rounded-xl border border-yellow-200">
+            <p className="text-gray-900 mb-2">Вы обычно делаете маникюр каждые 3 недели - пора записаться?</p>
+            <button
+              onClick={openBooking}
+              className="text-sm text-gray-900 hover:underline flex items-center gap-1"
+            >
+              Записаться на маникюр
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
+            <p className="text-gray-900 mb-2">Прошло 5 недель с последнего окрашивания</p>
+            <button
+              onClick={openBooking}
+              className="text-sm text-gray-900 hover:underline flex items-center gap-1"
+            >
+              Записаться на окрашивание
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -570,6 +645,13 @@ export function AccountPage() {
             }`}
         >
           История
+        </button>
+        <button
+          onClick={() => setAppointmentsView('recurring')}
+          className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${appointmentsView === 'recurring' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200'
+            }`}
+        >
+          Повторяющиеся
         </button>
       </div>
 
@@ -612,6 +694,41 @@ export function AccountPage() {
             action={{ label: "Записаться", onClick: openBooking }}
           />
         )}
+      </div>
+
+      {appointmentsView === 'recurring' && (
+        <EmptyState
+          icon={<Repeat className="w-8 h-8" />}
+          title="Нет повторяющихся записей"
+          description="Создайте автоматическую запись, чтобы не забывать о регулярных процедурах"
+          action={{
+            label: 'Создать автозапись',
+            onClick: () => toast.info('Функция в разработке')
+          }}
+        />
+      )}
+
+      {/* Statistics */}
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h3 className="text-lg mb-4">Статистика посещений</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-sm text-gray-500 mb-1">Всего визитов</p>
+            <p className="text-2xl">{dashboardData?.total_visits || 0}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 mb-1">Средняя частота</p>
+            <p className="text-2xl">2 недели</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 mb-1">Любимая услуга</p>
+            <p className="text-lg">Маникюр</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 mb-1">Любимый мастер</p>
+            <p className="text-lg">Мария</p>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -686,6 +803,12 @@ export function AccountPage() {
                   >
                     <Share2 className="w-4 h-4" />
                   </button>
+                  <button
+                    onClick={() => handleFavoritePhoto(photo.id)}
+                    className="px-3 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    <Heart className={`w-4 h-4 ${selectedPhotoId === photo.id ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+                  </button>
                 </div>
               </div>
             ))}
@@ -744,8 +867,49 @@ export function AccountPage() {
         )}
       </div>
 
+      {/* Streak */}
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Flame className="w-5 h-5 text-orange-500" />
+            <h3 className="text-lg">Серия посещений</h3>
+          </div>
+          <span className="text-2xl font-bold">3🔥</span>
+        </div>
+        <div className="flex gap-2 mb-4">
+          {[1, 2, 3, 4, 5].map((step) => (
+            <div
+              key={step}
+              className={`flex-1 h-2 rounded-full ${step <= 3 ? 'bg-orange-500' : 'bg-gray-100'
+                }`}
+            />
+          ))}
+        </div>
+        <p className="text-sm text-gray-500">Еще 2 визита до бонуса 500 баллов!</p>
+      </div>
+
       <div className="bg-white p-6 rounded-xl border border-gray-200">
         <h3 className="text-lg mb-4">Аналитика расходов</h3>
+        <div className="h-64 mb-6">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={[
+              { month: 'Июл', amount: 280 },
+              { month: 'Авг', amount: 350 },
+              { month: 'Сен', amount: 420 },
+              { month: 'Окт', amount: 380 },
+              { month: 'Ноя', amount: 520 },
+              { month: 'Дек', amount: 850 }
+            ]}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+              <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+              <Tooltip
+                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+              />
+              <Bar dataKey="amount" fill="#1f2937" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="text-center">
             <p className="text-2xl mb-1">{loyalty?.total_spent || 0} AED</p>
@@ -755,6 +919,110 @@ export function AccountPage() {
             <p className="text-2xl mb-1">{dashboardData?.total_saved || 0} AED</p>
             <p className="text-sm text-gray-500">Сэкономлено</p>
           </div>
+          <div className="text-center">
+            <p className="text-2xl mb-1">350 AED</p>
+            <p className="text-sm text-gray-500">Средний чек</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl mb-1">Декабрь</p>
+            <p className="text-sm text-gray-500">Самый активный</p>
+          </div>
+        </div>
+
+        <h4 className="mb-3">Распределение по услугам</h4>
+        <div className="flex items-center gap-6">
+          <div className="w-40 h-40">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Волосы', value: 45, color: '#9333ea' },
+                    { name: 'Ногти', value: 30, color: '#ec4899' },
+                    { name: 'Лицо', value: 15, color: '#3b82f6' },
+                    { name: 'Другое', value: 10, color: '#10b981' }
+                  ]}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={40}
+                  outerRadius={60}
+                >
+                  {[
+                    { color: '#9333ea' },
+                    { color: '#ec4899' },
+                    { color: '#3b82f6' },
+                    { color: '#10b981' }
+                  ].map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex-1 space-y-2">
+            {[
+              { name: 'Волосы', value: 45, color: '#9333ea' },
+              { name: 'Ногти', value: 30, color: '#ec4899' },
+              { name: 'Лицо', value: 15, color: '#3b82f6' },
+              { name: 'Другое', value: 10, color: '#10b981' }
+            ].map(service => (
+              <div key={service.name} className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: service.color }} />
+                  <span className="text-sm">{service.name}</span>
+                </div>
+                <span className="text-sm">{service.value}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Virtual Card */}
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h3 className="text-lg mb-4">Виртуальная карта лояльности</h3>
+        <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 text-white p-6 rounded-xl mb-4">
+          <div className="flex items-start justify-between mb-6">
+            <div>
+              <p className="text-yellow-100 text-sm mb-1">Beauty Studio Dubai</p>
+              <h4 className="text-2xl mb-1">{user?.full_name}</h4>
+              <p className="text-yellow-100">{loyalty?.current_level?.name || 'Standard'} Member</p>
+            </div>
+            <div className="w-20 h-20 bg-white rounded-lg p-2">
+              <QrCode className="w-full h-full text-gray-900" />
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <p className="text-yellow-100 text-xs mb-1">Баллы</p>
+              <p className="text-xl">{loyalty?.total_points || 0}</p>
+            </div>
+            <div>
+              <p className="text-yellow-100 text-xs mb-1">Скидка</p>
+              <p className="text-xl">{loyalty?.current_level?.discount_percent || 0}%</p>
+            </div>
+            <div>
+              <p className="text-yellow-100 text-xs mb-1">ID</p>
+              <p className="text-sm">#{(user?.id || 0).toString().padStart(6, '0')}</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => toast.info('Функция добавления в Wallet скоро будет доступна')}
+            className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+          >
+            <Wallet className="w-4 h-4" />
+            Добавить в Wallet
+          </button>
+          <button
+            onClick={() => toast.success('QR-код сохранен')}
+            className="px-4 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            <Download className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
@@ -838,6 +1106,33 @@ export function AccountPage() {
           </div>
         ))}
       </div>
+
+      {/* Active Challenges */}
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="p-2 bg-purple-100 text-purple-600 rounded-lg">
+            <Target className="w-5 h-5" />
+          </div>
+          <h3 className="text-lg">Активные челленджи</h3>
+        </div>
+        <div className="space-y-3">
+          <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+            <div className="flex items-start justify-between mb-2">
+              <div>
+                <h4 className="mb-1">Запишитесь на этой неделе</h4>
+                <p className="text-sm text-gray-600">Получите 50 бонусных баллов</p>
+              </div>
+              <span className="px-2 py-1 bg-blue-100 text-blue-600 rounded text-xs">5 дней</span>
+            </div>
+            <button
+              onClick={openBooking}
+              className="w-full mt-3 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Выполнить
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 
@@ -894,42 +1189,116 @@ export function AccountPage() {
   );
 
   // Beauty Profile Content
-  const renderBeautyProfile = () => (
-    <div className="space-y-6">
-      <div className="bg-gradient-to-br from-pink-500 to-purple-600 text-white p-6 rounded-2xl">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-2xl mb-1">Beauty Score</h2>
-            <p className="text-purple-100">Общий уровень ухоженности</p>
-          </div>
-          <div className="text-center">
-            <div className="w-24 h-24 rounded-full border-4 border-white/30 flex items-center justify-center bg-white/10">
-              <span className="text-4xl">85%</span>
+  const renderBeautyProfile = () => {
+    const getStatusColor = (status: string) => {
+      switch (status) {
+        case 'perfect': return 'text-green-600';
+        case 'good': return 'text-blue-600';
+        case 'attention': return 'text-orange-600';
+        default: return 'text-gray-600';
+      }
+    };
+
+    const getStatusText = (status: string) => {
+      switch (status) {
+        case 'perfect': return 'Всё отлично';
+        case 'good': return 'Хорошо';
+        case 'attention': return 'Нужно внимание';
+        default: return '';
+      }
+    };
+
+    const averageBeautyScore = metrics.length > 0
+      ? Math.round(metrics.reduce((acc, m) => acc + m.score_value, 0) / metrics.length)
+      : 85;
+
+    return (
+      <div className="space-y-6">
+        {/* Overall Score */}
+        <div className="bg-gradient-to-br from-pink-500 to-purple-600 text-white p-6 rounded-2xl">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-2xl mb-1">Beauty Score</h2>
+              <p className="text-purple-100">Общий уровень ухоженности</p>
+            </div>
+            <div className="text-center">
+              <div className="w-24 h-24 rounded-full border-4 border-white/30 flex items-center justify-center bg-white/10">
+                <span className="text-4xl">{averageBeautyScore}%</span>
+              </div>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5" />
+            <span>Великолепно! Так держать!</span>
+          </div>
         </div>
-      </div>
 
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
-        <h3 className="text-lg mb-4">Показатели здоровья</h3>
-        <div className="space-y-4">
-          {metrics.map(metric => (
-            <div key={metric.name}>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex-1">
-                  <h4 className="mb-1">{metric.name}</h4>
-                  <p className="text-sm text-gray-500">
-                    {format(new Date(metric.last_assessment), "d MMMM yyyy", { locale: getDateLocale() })}
-                  </p>
+        {/* Metrics */}
+        <div className="bg-white p-6 rounded-xl border border-gray-200">
+          <h3 className="text-lg mb-4">Показатели здоровья</h3>
+          <div className="space-y-4">
+            {metrics.map(metric => (
+              <div key={metric.name}>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex-1">
+                    <h4 className="mb-1">{metric.name}</h4>
+                    <p className="text-sm text-gray-500">
+                      {format(new Date(metric.last_assessment), "d MMMM yyyy", { locale: getDateLocale() })}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-sm ${getStatusColor(metric.score_value > 80 ? 'perfect' : metric.score_value > 50 ? 'good' : 'attention')}`}>
+                      {getStatusText(metric.score_value > 80 ? 'perfect' : metric.score_value > 50 ? 'good' : 'attention')}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <ProgressBar
+                      value={metric.score_value}
+                      max={100}
+                      color={metric.score_value < 50 ? 'bg-orange-500' : metric.score_value > 80 ? 'bg-green-500' : 'bg-blue-500'}
+                    />
+                  </div>
+                  <span className="text-sm w-12 text-right">{metric.score_value}%</span>
+                  <button
+                    onClick={openBooking}
+                    className="px-3 py-1 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                  >
+                    Записаться
+                  </button>
                 </div>
               </div>
-              <ProgressBar value={metric.score_value} max={100} />
+            ))}
+          </div>
+        </div>
+
+        {/* Calendar */}
+        <div className="bg-white p-6 rounded-xl border border-gray-200">
+          <div className="flex items-center gap-2 mb-4">
+            <Calendar className="w-5 h-5" />
+            <h3 className="text-lg">Персональный календарь красоты</h3>
+          </div>
+          <div className="space-y-3">
+            <div className="p-4 bg-yellow-50 rounded-xl border border-yellow-200 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
+              <div className="flex-1">
+                <h4 className="mb-1 text-gray-900">Рекомендуем записаться</h4>
+                <p className="text-sm text-gray-600 mb-2">Брови: прошло слишком много времени с последней коррекции</p>
+                <button
+                  onClick={openBooking}
+                  className="text-sm text-gray-900 hover:underline flex items-center gap-1"
+                >
+                  Записаться на коррекцию бровей
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // Notifications Content
   const renderNotifications = () => (
@@ -1205,13 +1574,95 @@ export function AccountPage() {
           {activeTab === 'beauty' && renderBeautyProfile()}
           {activeTab === 'notifications' && renderNotifications()}
           {activeTab === 'chat' && (
-            <div className="bg-white p-6 rounded-xl border border-gray-200">
-              <EmptyState
-                icon={<MessageCircle className="w-8 h-8" />}
-                title="Нет сообщений"
-                description="Начните общение с администратором салона"
-                action={{ label: 'Написать сообщение', onClick: () => handleContactSalon('WhatsApp') }}
-              />
+            <div className="space-y-6">
+              <div className="bg-white p-6 rounded-xl border border-gray-200">
+                <div className="flex items-center gap-2 mb-4">
+                  <MessageCircle className="w-5 h-5" />
+                  <h3 className="text-lg">Чат с салоном</h3>
+                </div>
+                <EmptyState
+                  icon={<MessageCircle className="w-8 h-8" />}
+                  title="Нет сообщений"
+                  description="Начните общение с администратором салона"
+                  action={{ label: 'Написать сообщение', onClick: () => handleContactSalon('WhatsApp') }}
+                />
+              </div>
+
+              {/* Contact Info */}
+              <div className="bg-white p-6 rounded-xl border border-gray-200">
+                <h3 className="text-lg mb-4">Контакты</h3>
+                <div className="space-y-3">
+                  <a
+                    href="tel:+97150123456"
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <Phone className="w-5 h-5 text-gray-600" />
+                    <div>
+                      <p className="text-sm text-gray-500">Телефон</p>
+                      <p>+971 50 123 4567</p>
+                    </div>
+                  </a>
+                  <a
+                    href="mailto:info@beautystudio.ae"
+                    className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <Mail className="w-5 h-5 text-gray-600" />
+                    <div>
+                      <p className="text-sm text-gray-500">Email</p>
+                      <p>info@beautystudio.ae</p>
+                    </div>
+                  </a>
+                  <div className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg">
+                    <MapPin className="w-5 h-5 text-gray-600 mt-1" />
+                    <div>
+                      <p className="text-sm text-gray-500">Адрес</p>
+                      <p>Dubai Marina, Marina Plaza, Office 302</p>
+                      <button
+                        onClick={handleNavigate}
+                        className="text-sm text-gray-900 hover:underline mt-1 flex items-center gap-1"
+                      >
+                        Построить маршрут
+                        <Navigation className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Contact Buttons */}
+              <div className="bg-white p-6 rounded-xl border border-gray-200">
+                <h3 className="text-lg mb-4">Быстрая связь</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    onClick={() => handleContactSalon('phone')}
+                    className="flex items-center justify-center gap-3 p-4 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors"
+                  >
+                    <Phone className="w-5 h-5" />
+                    <span>Позвонить</span>
+                  </button>
+                  <button
+                    onClick={() => handleContactSalon('email')}
+                    className="flex items-center justify-center gap-3 p-4 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
+                  >
+                    <Mail className="w-5 h-5" />
+                    <span>Написать Email</span>
+                  </button>
+                  <button
+                    onClick={() => handleContactSalon('WhatsApp')}
+                    className="flex items-center justify-center gap-3 p-4 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    <span>WhatsApp</span>
+                  </button>
+                  <button
+                    onClick={() => handleContactSalon('Instagram')}
+                    className="flex items-center justify-center gap-3 p-4 bg-pink-50 text-pink-700 rounded-lg hover:bg-pink-100 transition-colors"
+                  >
+                    <Camera className="w-5 h-5" />
+                    <span>Instagram</span>
+                  </button>
+                </div>
+              </div>
             </div>
           )}
           {activeTab === 'settings' && renderSettings()}
