@@ -48,8 +48,10 @@ import {
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { UserBookingWizard } from './UserBookingWizard';
 
-// Import original prototype styles
-import '../../new_admin/src/styles/index.css';
+// Import styles
+import './AccountPage.css';
+// // import '../../new_admin/src/styles/index.css';
+// Using local AccountPage.css for styles to avoid global conflicts
 
 // Utility Components
 const TabButton: React.FC<{ active: boolean; onClick: () => void; icon: React.ReactNode; label: string; hasBadge?: boolean; badgeCount?: number }> = ({ active, onClick, icon, label, hasBadge, badgeCount }) => (
@@ -1243,7 +1245,7 @@ export function AccountPage() {
                   <div className="flex-1">
                     <h4 className="mb-1">{metric.name}</h4>
                     <p className="text-sm text-gray-500">
-                      {format(new Date(metric.last_assessment), "d MMMM yyyy", { locale: getDateLocale() })}
+                      {metric.last_assessment ? format(new Date(metric.last_assessment), "d MMMM yyyy", { locale: getDateLocale() }) : '—'}
                     </p>
                   </div>
                   <div className="text-right">
@@ -1667,9 +1669,9 @@ export function AccountPage() {
           )}
           {activeTab === 'settings' && renderSettings()}
         </div>
-      </div>
 
-      {isBooking && <UserBookingWizard onClose={closeBooking} />}
+        {isBooking && <UserBookingWizard onClose={closeBooking} />}
+      </div>
     </div>
   );
 }
