@@ -57,14 +57,14 @@ const EditUser = React.lazy(() => import('./pages/admin/EditUser'));
 
 // New Public Landing Pages
 // New Public Landing Pages - Lazy Loaded
-const LandingPage = React.lazy(() => import('../public_landing/new/pages/LandingPage').then(module => ({ default: module.LandingPage })));
-const PrivacyPolicyNew = React.lazy(() => import('../public_landing/new/pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
-const TermsOfUseNew = React.lazy(() => import('../public_landing/new/pages/TermsOfUse').then(module => ({ default: module.TermsOfUse })));
-const ServiceDetail = React.lazy(() => import('../public_landing/new/pages/ServiceDetail').then(module => ({ default: module.ServiceDetail })));
-const AccountPage = React.lazy(() => import('../public_landing/new/pages/account/AccountPage').then(module => ({ default: module.AccountPage })));
+const LandingPage = React.lazy(() => import('../public_landing/pages/LandingPage').then(module => ({ default: module.LandingPage })));
+const PrivacyPolicyNew = React.lazy(() => import('../public_landing/pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
+const TermsOfUseNew = React.lazy(() => import('../public_landing/pages/TermsOfUse').then(module => ({ default: module.TermsOfUse })));
+const ServiceDetail = React.lazy(() => import('../public_landing/pages/ServiceDetail').then(module => ({ default: module.ServiceDetail })));
+const AccountPage = React.lazy(() => import('../public_landing/pages/account/AccountPage').then(module => ({ default: module.AccountPage })));
 const DataDeletionNew = React.lazy(() => import('../public_landing/pages/DataDeletion'));
 
-const Login = React.lazy(() => import('../public_landing/new/pages/LoginPage').then(module => ({ default: module.LoginPage })));
+const Login = React.lazy(() => import('../public_landing/pages/LoginPage').then(module => ({ default: module.LoginPage })));
 // const Register = React.lazy(() => import('./pages/auth/Register'));
 const VerifyEmail = React.lazy(() => import('./pages/auth/VerifyEmail'));
 const ForgotPassword = React.lazy(() => import('./pages/auth/ForgotPassword'));
