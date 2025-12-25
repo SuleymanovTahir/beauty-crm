@@ -1,4 +1,4 @@
-//new/pages/account/AccountPage.tsx
+//pages/account/AccountPage.tsx
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import { api } from '../../../../src/services/api';
@@ -31,7 +31,7 @@ import {
   DialogTitle,
   DialogFooter
 } from "../../components/ui/dialog";
-import { UserBookingWizard } from '../../components/booking/UserBookingWizard';
+import { UserBookingWizard } from '../../pages/account/UserBookingWizard';
 
 interface Booking {
   id: number;

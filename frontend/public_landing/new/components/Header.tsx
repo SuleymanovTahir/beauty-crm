@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from '../../../src/contexts/AuthContext';
-import logo from "../../../../assets/logo.png";
+import logo from "../../assets/logo.png";
 
 const navigation = [
   { name: "Главная", href: "#home", key: "homeTag", defaultText: "Главная" },
