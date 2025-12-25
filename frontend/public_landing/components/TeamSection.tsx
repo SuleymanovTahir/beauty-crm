@@ -17,6 +17,11 @@ export function TeamSection() {
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [displayCount, setDisplayCount] = useState(8);
 
+  // Helper function to capitalize names (ALL CAPS -> Title Case)
+  const capitalizeName = (name: string) => {
+    return name.toLowerCase().replace(/(^|\s)\S/g, (l) => l.toUpperCase());
+  };
+
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -27,7 +32,7 @@ export function TeamSection() {
         if (Array.isArray(data)) {
           const teamMembers = data.map((emp: any) => ({
             id: emp.id,
-            name: emp.name,
+            name: capitalizeName(emp.name),
             role: emp.role || "",
             specialty: emp.specialty || "",
             // Experience from backend might be number or string. 
@@ -81,12 +86,14 @@ export function TeamSection() {
                   loading="lazy"
                   className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3">
-                    <div className="flex items-center gap-1.5 text-white mb-1">
-                      <Award className="w-3 h-3" />
-                      <span className="text-xs">{member.experience} {t('yearsExp', { defaultValue: 'лет' })}</span>
-                    </div>
+                    {Boolean(member.experience && member.experience !== 0 && member.experience !== "0") && (
+                      <div className="flex items-center gap-1.5 text-white mb-1">
+                        <Award className="w-3 h-3" />
+                        <span className="text-xs">{member.experience} {t('yearsExp', { defaultValue: 'лет' })}</span>
+                      </div>
+                    )}
                     <p className="text-white text-xs line-clamp-2">{member.specialty}</p>
                   </div>
                 </div>

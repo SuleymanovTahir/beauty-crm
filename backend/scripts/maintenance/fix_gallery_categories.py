@@ -24,7 +24,7 @@ def fix_gallery_categories():
         
     print(f"📂 Project root: {project_root}")
         
-    faces_source = project_root / "frontend/public_landing/styles/M le Diamant  портфолио/Красивые лица"
+    faces_source = project_root / "frontend/public_landing/styles/img/Красивые лица"
     portfolio_dir = project_root / "backend/static/uploads/portfolio"
     faces_dir = project_root / "backend/static/uploads/faces"
     

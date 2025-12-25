@@ -104,7 +104,7 @@ export function ReviewsSection() {
         <div className="relative mb-8 max-w-7xl mx-auto">
           <button
             onClick={prevReview}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-pink-600"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 bg-background rounded-full shadow-lg flex items-center justify-center text-pink-600 border border-primary/10"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -150,7 +150,7 @@ export function ReviewsSection() {
 
           <button
             onClick={nextReview}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-pink-600"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 bg-background rounded-full shadow-lg flex items-center justify-center text-pink-600 border border-primary/10"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -162,8 +162,8 @@ export function ReviewsSection() {
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`cursor-pointer rounded-full transition-all ${index === currentIndex % reviews.length
-                ? 'bg-pink-600 w-6 h-2 sm:w-8 sm:h-3'
-                : 'bg-gray-400 w-2 h-2 sm:w-3 sm:h-3'
+                ? 'bg-primary w-6 h-2 sm:w-8 sm:h-3'
+                : 'bg-muted-foreground/30 w-2 h-2 sm:w-3 sm:h-3'
                 }`}
             />
           ))}

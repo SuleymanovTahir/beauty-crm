@@ -15,81 +15,70 @@ def import_gallery_photos():
     c = conn.cursor()
     
     try:
-        # Get project root (backend/db/migrations/data/gallery -> 5 levels up to project root)
-        # File is at: backend/db/migrations/data/gallery/import_gallery_photos.py
-        # We need to go up: gallery(1) -> data(2) -> migrations(3) -> db(4) -> backend(5) -> project_root
+        # Get project root
         current_file = Path(__file__).resolve()
         project_root = current_file.parent.parent.parent.parent.parent.parent
         
-        # Verify project root by checking if 'frontend' exists
+        # Verify project root
         if not (project_root / "frontend").exists():
-             # Fallback: try to find based on CWD if script is run from root
              cwd = Path.cwd()
              if (cwd / "frontend").exists():
                  project_root = cwd
              else:
-                 # Hardcode for this environment if all else fails
                  project_root = Path("/Users/tahir/Desktop/beauty-crm")
         
         print(f"📂 Project root: {project_root}")
         
-        # Создаем папки назначения если их нет
-        (project_root / "backend/static/uploads/portfolio").mkdir(parents=True, exist_ok=True)
-        (project_root / "backend/static/uploads/salon").mkdir(parents=True, exist_ok=True)
-        (project_root / "backend/static/uploads/portfolio").mkdir(parents=True, exist_ok=True)
-        (project_root / "backend/static/uploads/salon").mkdir(parents=True, exist_ok=True)
-        (project_root / "backend/static/uploads/services").mkdir(parents=True, exist_ok=True)
-        (project_root / "backend/static/uploads/faces").mkdir(parents=True, exist_ok=True)
+        # Базовая папка с картинками
+        base_img_dir = project_root / "frontend/public_landing/styles/img"
+        if not base_img_dir.exists():
+            print(f"❌ Папка не найдена: {base_img_dir}")
+            return
+
+        # Маппинг папок в категории БД
+        category_mapping = {
+            "Портфолио": "portfolio",
+            "Красивые лица": "faces",
+            "Фото салона": "salon",
+            "Услуги": "services",
+            "Сотрудники": "images"
+        }
         
         imported_count = 0
         
-        # Источники фото
-        sources = [
-            {
-                'source': project_root / "frontend/public_landing/styles/M le Diamant  портфолио/Портфолио",
-                'dest': project_root / "backend/static/uploads/portfolio",
-                'category': 'portfolio'
-            },
-            {
-                'source': project_root / "frontend/public_landing/styles/M le Diamant  портфолио/Красивые лица",
-                'dest': project_root / "backend/static/uploads/faces",
-                'category': 'faces'
-            },
-            {
-                'source': project_root / "frontend/public_landing/styles/M le Diamant  портфолио/Фото салона",
-                'dest': project_root / "backend/static/uploads/salon",
-                'category': 'salon'
-            },
-            {
-                'source': project_root / "frontend/public_landing/styles/M le Diamant  портфолио/Услуги",
-                'dest': project_root / "backend/static/uploads/services",
-                'category': 'services'
-            }
-        ]
-        
-        for source_info in sources:
-            source_dir = source_info['source']
-            dest_dir = source_info['dest']
-            category = source_info['category']
-            
-            if not source_dir.exists():
-                print(f"⚠️  Папка не найдена: {source_dir}")
+        # Сканируем все подпапки в img
+        for source_dir in base_img_dir.iterdir():
+            if not source_dir.is_dir():
                 continue
                 
-            print(f"\n📂 Импорт из {source_dir}...")
+            folder_name = source_dir.name
+            category = category_mapping.get(folder_name, folder_name.lower())
             
+            # Целевая папка в backend/static/uploads/
+            dest_dir = project_root / "backend/static/uploads" / category
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            
+            print(f"\n📂 Обработка папки: {folder_name} (Категория: {category})")
+            
+            # Сканируем картинки в папке
             for idx, img_file in enumerate(sorted(source_dir.glob("*.*"))):
-                if img_file.suffix.lower() in ['.jpg', '.jpeg', '.png', '.webp', '.gif']:
-                    # Копируем файл в папку назначения
-                    dest_file = dest_dir / img_file.name
-                    if not dest_file.exists():
-                        shutil.copy2(img_file, dest_file)
-                        print(f"  📋 Скопировано: {img_file.name}")
+                # Пропускаем logo.png и не-картинки
+                if img_file.name.lower() == "logo.png":
+                    continue
+                if img_file.suffix.lower() not in ['.jpg', '.jpeg', '.png', '.webp', '.gif']:
+                    continue
                     
-                    # Добавляем в базу данных
+                # Копируем файл
+                dest_file = dest_dir / img_file.name
+                if not dest_file.exists():
+                    shutil.copy2(img_file, dest_file)
+                    print(f"  📋 Скопировано: {img_file.name}")
+                
+                # Добавляем в базу данных (для галереи используем gallery_images)
+                # Только если это не "images" (сотрудники), так как они в таблице users
+                if category != "images":
                     image_path = f"/static/uploads/{category}/{img_file.name}"
                     
-                    # Проверяем, не импортировано ли уже
                     c.execute("SELECT id FROM gallery_images WHERE image_path = %s", (image_path,))
                     if not c.fetchone():
                         c.execute("""
@@ -99,8 +88,37 @@ def import_gallery_photos():
                         imported_count += 1
                         print(f"  ✅ Импортировано в БД: {img_file.name}")
         
+        # Сканируем картинки в корне img (категория: other)
+        print(f"\n📂 Проверка файлов в корне: {base_img_dir}")
+        for img_file in base_img_dir.glob("*.*"):
+            if img_file.is_dir():
+                continue
+            if img_file.name.lower() == "logo.png":
+                continue
+            if img_file.suffix.lower() not in ['.jpg', '.jpeg', '.png', '.webp', '.gif']:
+                continue
+                
+            category = "other"
+            dest_dir = project_root / "backend/static/uploads" / category
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            
+            dest_file = dest_dir / img_file.name
+            if not dest_file.exists():
+                shutil.copy2(img_file, dest_file)
+                print(f"  📋 Скопировано (root): {img_file.name}")
+                
+            image_path = f"/static/uploads/{category}/{img_file.name}"
+            c.execute("SELECT id FROM gallery_images WHERE image_path = %s", (image_path,))
+            if not c.fetchone():
+                c.execute("""
+                    INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
+                    VALUES (%s, %s, %s, 999, TRUE)
+                """, (category, image_path, img_file.stem))
+                imported_count += 1
+                print(f"  ✅ Импортировано в БД (root): {img_file.name}")
+        
         conn.commit()
-        print(f"\n✅ Всего импортировано {imported_count} фото")
+        print(f"\n✅ Всего импортировано в галерею: {imported_count} фото")
         
     except Exception as e:
         conn.rollback()

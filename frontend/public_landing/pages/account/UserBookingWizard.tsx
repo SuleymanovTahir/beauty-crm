@@ -265,7 +265,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                                 </Button>
                             )}
                             <Button
-                                className={`h - 12 text - lg hero - button - primary bg - black text - white hover: bg - black / 90 ${!draftConfig.master ? 'flex-1' : 'w-full'} `}
+                                className={`h-12 text-lg hero-button-primary bg-black text-background hover:bg-black/90 ${!draftConfig.master ? 'flex-1' : 'w-full'}`}
                                 onClick={() => updateStep('services')}
                             >
                                 {t('chooseServices', 'Select Services')}
@@ -323,7 +323,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     <Button
                         onClick={() => updateStep('confirm')}
                         className="w-full h-12 text-lg hero-button-primary hover:bg-black/90"
-                        style={{ backgroundColor: 'black', color: 'white' }}
+                        style={{ backgroundColor: 'black', color: 'var(--background)' }}
                     >
                         {t('confirmBooking', 'Записаться')}
                     </Button>
@@ -353,7 +353,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     <Button
                         variant="default"
                         className="flex-[2] h-12"
-                        style={{ backgroundColor: 'black', color: 'white' }}
+                        style={{ backgroundColor: 'black', color: 'var(--background)' }}
                         onClick={() => {
                             setCurrentServiceId(String(incompleteService.id));
                             updateStep(nextField.step);

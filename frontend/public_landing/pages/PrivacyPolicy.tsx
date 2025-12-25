@@ -2,8 +2,7 @@
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { useTranslation } from "react-i18next";
-import '../styles/theme.css';
-import '../styles/index.css';
+import '../styles/css/index.css';
 
 export function PrivacyPolicy() {
     const { t } = useTranslation(['public_landing', 'common']);

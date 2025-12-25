@@ -60,7 +60,7 @@ export function Footer() {
               name="email"
               required
               placeholder={t('emailPlaceholder', { defaultValue: 'Ваш Email' })}
-              className="flex-1 h-10 px-3 rounded-md border border-input bg-background"
+              className="flex-1 h-10 px-3 rounded-md border border-primary/20 bg-slate-50"
             />
             <button type="submit" className="h-10 px-4 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90">
               {t('subscribe', { defaultValue: 'Подписаться' })}

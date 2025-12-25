@@ -1507,7 +1507,7 @@ def init_database():
         project_root = os.path.dirname(backend_dir)
         
         # Универсальный путь, который работает везде, где сохранена структура проекта
-        source_dir = os.path.join(project_root, "frontend", "public_landing", "styles", "M le Diamant  портфолио", "Сотрудники")
+        source_dir = os.path.join(project_root, "frontend", "public_landing", "styles", "img", "Сотрудники")
         
         target_dir = os.path.join(backend_dir, "static", "uploads", "images")
         

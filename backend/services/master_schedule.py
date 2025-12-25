@@ -372,6 +372,19 @@ class MasterScheduleService:
                 if not start_time_str or not end_time_str:
                     return []
 
+            # ✅ Parse hours and minutes for optimization logic
+            try:
+                start_hour, start_minute = map(int, start_time_str.split(':'))
+                end_hour, end_minute = map(int, end_time_str.split(':'))
+            except:
+                from core.config import DEFAULT_HOURS_START, DEFAULT_HOURS_END
+                try:
+                    start_hour, start_minute = map(int, DEFAULT_HOURS_START.split(':'))
+                    end_hour, end_minute = map(int, DEFAULT_HOURS_END.split(':'))
+                except:
+                    start_hour, start_minute = 10, 30
+                    end_hour, end_minute = 21, 0
+
             # 🛠️ LUNCH BREAK LOGIC (Dynamic from Settings)
             from db.settings import get_salon_settings
             settings = get_salon_settings()
@@ -406,6 +419,31 @@ class MasterScheduleService:
             # Если есть перекрытие на весь рабочий день - возвращаем пусто
             # Для простоты, если есть любое отсутствие в этот день, нужно проверять слоты детально
             
+            # ✅ Initialize variables for optimization logic
+            booked_times = set()
+            held_times = set()
+            
+            # Fetch booked times (start times) for simple check
+            c.execute("""
+                SELECT TO_CHAR(datetime, 'HH24:MI') FROM bookings 
+                WHERE master = %s AND DATE(datetime) = %s AND status != 'cancelled'
+            """, (master_name, date))
+            booked_times = {r[0] for r in c.fetchall()}
+            
+            # Fetch held slots (drafts)
+            c.execute("""
+                SELECT TO_CHAR(datetime, 'HH24:MI') FROM booking_drafts 
+                WHERE master = %s AND expires_at > NOW()
+            """, (master_name,))
+            held_times = {r[0] for r in c.fetchall()}
+
+            # Setup time loop variables
+            current_dt = datetime.combine(dt.date(), dt_time(start_hour, start_minute))
+            end_working_dt = datetime.combine(dt.date(), dt_time(end_hour, end_minute))
+            
+            is_today = date == get_current_time().strftime('%Y-%m-%d')
+            min_booking_time = get_current_time() + timedelta(minutes=30)
+
             # ✅ 5. Smart Slot Logic (Optimization)
             # Find gap boundaries (start/end of shift, start/end of bookings)
             boundaries = set()
@@ -481,7 +519,7 @@ class MasterScheduleService:
 
             smart_slots = []
             
-            while current_dt < end_dt:
+            while current_dt < end_working_dt:
                 time_str = current_dt.strftime('%H:%M')
                 slot_end_dt = current_dt + timedelta(minutes=duration_minutes)
                 

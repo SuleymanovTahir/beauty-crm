@@ -1,16 +1,17 @@
-/* styles/theme.css */
+@import "tailwindcss";
+@import "./landing.css";
 
-:root {
+@theme inline {
   --font-size: 16px;
   /* Original Pink Color Palette from public_landing */
-  --background: #faf8f6; /* Soft warm white - same as production */
+  --background: #f8fafc; /* Light blueish tint - user preferred global background */
   --foreground: oklch(0.145 0 0); /* Near black */
   --heading: oklch(0.145 0 0); /* Near black for headings */
 
-  --card: #ffffff;
+  --card: #f8fafc;
   --card-foreground: #0f172a;
 
-  --popover: #ffffff;
+  --popover: #f8fafc;
   --popover-foreground: #0f172a;
 
   /* Vibrant Pink Primary */
@@ -32,7 +33,7 @@
 
   --border: rgba(44, 36, 32, 0.08);
   --input: #e2e8f0;
-  --input-background: #ffffff;
+  --input-background: #f8fafc; /* Slate-50 - user preferred light blueish background */
   --switch-background: #e2e8f0;
 
   --font-weight-medium: 500;
@@ -48,7 +49,7 @@
 
   --radius: 0.625rem;
 
-  --sidebar: #ffffff;
+  --sidebar: #f8fafc;
   --sidebar-foreground: #0f172a;
   --sidebar-primary: #db2777;
   --sidebar-primary-foreground: #ffffff;
@@ -56,46 +57,8 @@
   --sidebar-accent-foreground: #db2777;
   --sidebar-border: #e2e8f0;
   --sidebar-ring: #db2777;
-}
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --font-weight-medium: 500;
-  --font-weight-normal: 400;
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
-}
-
-@theme inline {
+  /* Additional Tailwind v4 theme mappings */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -136,6 +99,9 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@custom-variant dark (&:is(.dark *));
+@source "../../**/*.{js,ts,jsx,tsx}";
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -144,11 +110,6 @@
   body {
     @apply bg-background text-foreground;
   }
-
-  /**
-  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
-  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
-  */
 
   html {
     font-size: var(--font-size);
