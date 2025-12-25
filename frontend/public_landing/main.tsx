@@ -1,7 +1,7 @@
-// /frontend/public_landing/main.tsx
 
-import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
-import "./public_landing.css";
+  import { createRoot } from "react-dom/client";
+  import App from "./App.tsx";
+  import "./styles/index.css";
 
-createRoot(document.getElementById("root")!).render(<App />);
+  createRoot(document.getElementById("root")!).render(<App />);
+  

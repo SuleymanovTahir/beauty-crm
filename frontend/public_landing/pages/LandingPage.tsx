@@ -1,74 +1,91 @@
-// /frontend/public_landing/pages/LandingPage.tsx
-import { Header } from "../components/Header";
-import "../public_landing.css";
-import "../styles/public_landing_globals.css";
-import { Hero } from "../components/Hero";
-import { About } from "../components/About";
-import { Services } from "../components/Services";
-import { Portfolio } from "../components/Portfolio";
-import { ReviewsSection } from "../components/ReviewsSection";
-import { Gallery } from "../components/Gallery";
-import { FAQ } from "../components/FAQ";
-import { Footer } from "../components/Footer";
-import { TeamSection } from "../components/TeamSection";
-import { MapSection } from "../MapSection";
-import { BookingSection } from "../BookingSection";
+//new/pages/LandingPage.tsx
+import { Suspense, lazy } from 'react';
+import { Header } from '../components/Header';
+import { Hero } from '../components/Hero';
+import { CookieConsent } from '../components/CookieConsent';
+import { Footer } from '../components/Footer';
+import '../styles/theme.css';
+import '../styles/index.css';
 
-import { useState, useEffect } from "react";
-import { apiClient } from "../../src/api/client";
-import { useTranslation } from "react-i18next";
+// Lazy load components for better performance
+const About = lazy(() => import('../components/About').then(m => ({ default: m.About })));
+const Services = lazy(() => import('../components/Services').then(m => ({ default: m.Services })));
+const Portfolio = lazy(() => import('../components/Portfolio').then(m => ({ default: m.Portfolio })));
+const TeamSection = lazy(() => import('../components/TeamSection').then(m => ({ default: m.TeamSection })));
+const ReviewsSection = lazy(() => import('../components/ReviewsSection').then(m => ({ default: m.ReviewsSection })));
+const Gallery = lazy(() => import('../components/Gallery').then(m => ({ default: m.Gallery })));
+const FAQ = lazy(() => import('../components/FAQ').then(m => ({ default: m.FAQ })));
+const MapSection = lazy(() => import('../components/MapSection').then(m => ({ default: m.MapSection })));
+const BookingSection = lazy(() => import('../components/BookingSection').then(m => ({ default: m.BookingSection })));
+
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center py-12">
+    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+  </div>
+);
 
 export function LandingPage() {
-    const { i18n } = useTranslation();
-    const language = i18n.language;
-    const [salonInfo, setSalonInfo] = useState<any>({});
-    const [services, setServices] = useState<any[]>([]);
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main>
+        <Hero />
 
-    useEffect(() => {
-        // Load salon info with language support
-        fetch(`/api/public/salon-info?language=${language}`)
-            .then(res => res.json())
-            .then(setSalonInfo)
-            .catch(err => console.error('Error loading salon info:', err));
+        <Suspense fallback={<LoadingSpinner />}>
+          <About />
+        </Suspense>
 
-        // Load services
-        apiClient.getPublicServices()
-            .then(setServices)
-            .catch(err => console.error('Error loading services:', err));
-    }, [language]);
-
-    return (
-        <div className="min-h-screen bg-background">
-            <Header salonInfo={salonInfo} />
-            <main>
-                <Hero />
-                <About />
-                <div id="services">
-                    <Services />
-                </div>
-                <div id="portfolio">
-                    <Portfolio />
-                </div>
-                <div id="team">
-                    <TeamSection />
-                </div>
-                <div id="testimonials">
-                    <ReviewsSection />
-                </div>
-                <div id="gallery">
-                    <Gallery />
-                </div>
-                <div id="faq">
-                    <FAQ />
-                </div>
-                <div id="map-section">
-                    <MapSection salonInfo={salonInfo} />
-                </div>
-                <div id="booking">
-                    <BookingSection services={services} />
-                </div>
-            </main>
-            <Footer salonInfo={salonInfo} />
+        <div id="services">
+          <Suspense fallback={<LoadingSpinner />}>
+            <Services />
+          </Suspense>
         </div>
-    );
+
+        <div id="portfolio">
+          <Suspense fallback={<LoadingSpinner />}>
+            <Portfolio />
+          </Suspense>
+        </div>
+
+        <div id="team">
+          <Suspense fallback={<LoadingSpinner />}>
+            <TeamSection />
+          </Suspense>
+        </div>
+
+        <div id="testimonials">
+          <Suspense fallback={<LoadingSpinner />}>
+            <ReviewsSection />
+          </Suspense>
+        </div>
+
+        <div id="gallery">
+          <Suspense fallback={<LoadingSpinner />}>
+            <Gallery />
+          </Suspense>
+        </div>
+
+        <div id="faq">
+          <Suspense fallback={<LoadingSpinner />}>
+            <FAQ />
+          </Suspense>
+        </div>
+
+        <div id="map-section">
+          <Suspense fallback={<LoadingSpinner />}>
+            <MapSection />
+          </Suspense>
+        </div>
+
+        <div id="booking">
+          <Suspense fallback={<LoadingSpinner />}>
+            <BookingSection />
+          </Suspense>
+        </div>
+      </main>
+
+      <Footer />
+      <CookieConsent />
+    </div>
+  );
 }
