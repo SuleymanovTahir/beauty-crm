@@ -78,23 +78,23 @@ export function TeamSection() {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 max-w-6xl mx-auto">
           {displayedMembers.map((member) => (
-            <div key={member.id} className="group relative overflow-hidden rounded-lg sm:rounded-xl bg-card">
+            <div key={member.id} className="team-card">
               <div className="aspect-[3/4] overflow-hidden relative">
                 <img
                   src={member.image}
                   alt={member.name}
                   loading="lazy"
-                  className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover object-top"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="team-card-overlay">
                   <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3">
                     {Boolean(member.experience && member.experience !== 0 && member.experience !== "0") && (
-                      <div className="flex items-center gap-1.5 text-white mb-1">
+                      <div className="flex items-center gap-1.5 text-primary-foreground mb-1">
                         <Award className="w-3 h-3" />
                         <span className="text-xs">{member.experience} {t('yearsExp', { defaultValue: 'лет' })}</span>
                       </div>
                     )}
-                    <p className="text-white text-xs line-clamp-2">{member.specialty}</p>
+                    <p className="text-primary-foreground text-xs line-clamp-2">{member.specialty}</p>
                   </div>
                 </div>
               </div>

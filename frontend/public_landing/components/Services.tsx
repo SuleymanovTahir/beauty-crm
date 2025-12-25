@@ -92,7 +92,7 @@ export function Services() {
   const activeCategoryLabel = categories.find(c => c.id === activeCategory)?.label || t('allServices', { defaultValue: 'Все услуги' });
 
   return (
-    <section id="services" className="py-12 sm:py-16 lg:py-20 bg-slate-50">
+    <section id="services" className="py-12 sm:py-16 lg:py-20 bg-background">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
           <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-2 sm:mb-3">
@@ -107,7 +107,7 @@ export function Services() {
         <div className="flex flex-col sm:flex-row gap-3 mb-8 max-w-2xl mx-auto">
           {/* Search Input */}
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
             <input
               type="text"
               placeholder={t('searchServices', { defaultValue: 'Поиск услуг...' })}
@@ -176,24 +176,24 @@ export function Services() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2 }}
                 key={service.id}
-                className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 transition-all border border-primary/20 group hover:bg-primary shadow-sm hover:shadow-xl"
+                className="service-card"
               >
                 <div className="flex justify-between items-start mb-3 sm:mb-4">
-                  <h3 className="text-lg sm:text-xl font-medium text-[var(--heading)] group-hover:text-background transition-colors">
+                  <h3 className="text-lg sm:text-xl font-medium">
                     {service[`name_${i18n.language}` as keyof Service] || service.name_ru || service.name}
                   </h3>
-                  <div className="flex items-center text-primary bg-primary/10 group-hover:bg-background group-hover:text-primary px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors">
+                  <div className="service-badge">
                     {service.price} {t('currency', { defaultValue: 'AED' })}
                   </div>
                 </div>
-                <div className="flex justify-between items-center mt-4 pt-3 border-t border-border/50 group-hover:border-white/20">
-                  <div className="flex items-center text-muted-foreground group-hover:text-white/90 text-xs sm:text-sm transition-colors">
-                    <Clock className="w-4 h-4 mr-2 text-primary/60 group-hover:text-white/80 transition-colors" />
-                    {service.duration} {t('min', { defaultValue: 'мин' })}
+                <div className="service-footer">
+                  <div className="service-meta">
+                    <Clock className="w-4 h-4 mr-2" />
+                    {service.duration && service.duration !== 0 ? `${service.duration} ` : ""}{t('min', { defaultValue: 'мин' })}
                   </div>
                   <Button
                     size="sm"
-                    className="rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-background group-hover:bg-background group-hover:text-primary transition-colors h-7 text-xs px-4"
+                    className="rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground h-7 text-xs px-4"
                     onClick={() => {
                       window.location.hash = `booking?service=${service.id}`;
                       document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
@@ -225,6 +225,6 @@ export function Services() {
           </div>
         )}
       </div>
-    </section>
+    </section >
   );
 }

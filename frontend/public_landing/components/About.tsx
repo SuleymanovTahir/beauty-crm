@@ -46,13 +46,13 @@ export function About() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="text-center group"
+              className="text-center about-feature"
             >
-              <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-pink-100 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
-                <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-pink-600" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 about-feature-icon-wrapper">
+                <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-primary" />
               </div>
               <h3 className="text-sm sm:text-base lg:text-lg mb-1 sm:mb-2 text-[var(--heading)] px-1">{feature.title}</h3>
-              <p className="text-xs sm:text-sm text-[#717182] px-1">{feature.description}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground px-1">{feature.description}</p>
             </div>
           ))}
         </div>
