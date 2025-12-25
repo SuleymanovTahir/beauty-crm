@@ -1,248 +1,228 @@
-// /frontend/public_landing/components/Services.tsx
-import { useState, useMemo, useEffect } from 'react';
-import { motion } from 'motion/react';
-import {
-  Search, Clock, Sparkles, Heart, Gift, Hand, Scissors, User,
-  X
-} from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { Button } from '../../src/components/ui/button';
-import { Input } from '../../src/components/ui/input';
-import { Card } from '../../src/components/ui/card';
-import { apiClient } from '../../src/api/client';
+import { useState, useEffect, useRef } from "react";
+import { Search, Clock, ChevronDown, X } from "lucide-react";
+import { Button } from "./ui/button";
+import { motion, AnimatePresence } from "motion/react";
+import { useTranslation } from "react-i18next";
 
 interface Service {
   id: number;
   name: string;
+  name_ru?: string;
+  name_en?: string;
   price: number;
-  currency: string;
-  duration?: number;
+  duration: number;
   category: string;
-  description?: string;
-  min_price?: number;
-  max_price?: number;
 }
 
-const CATEGORY_ICONS: Record<string, any> = {
-  'nails': Hand,
-  'hair': Scissors,
-  'makeup': Sparkles,
-  'brows': Sparkles,
-  'face': Sparkles,
-  'body': User,
-  'depilation': Sparkles,
-  'manicure': Hand,
-  'pedicure': Hand,
-  'brows & lashes': Sparkles,
-  'cosmetology': Heart,
-  'other': Gift
-};
-
-const getCategoryIcon = (category: string) => {
-  const norm = category?.toLowerCase() || 'other';
-  if (norm.includes('nail') || norm.includes('manicure') || norm.includes('pedicure')) return Hand;
-  if (norm.includes('hair') || norm.includes('cut') || norm.includes('color')) return Scissors;
-  if (norm.includes('brow') || norm.includes('lash')) return Sparkles;
-  if (norm.includes('face') || norm.includes('cosmetology') || norm.includes('skin')) return Heart;
-  if (norm.includes('body') || norm.includes('massage')) return User;
-  return Sparkles;
-};
-
 export function Services() {
-  const { t, i18n } = useTranslation(['public_landing/services', 'public_landing', 'common']);
-  const [loading, setLoading] = useState(true);
+  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [displayCount, setDisplayCount] = useState(12);
   const [services, setServices] = useState<Service[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [categories, setCategories] = useState<{ id: string, label: string }[]>([]);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsCategoryDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchServices = async () => {
-      setLoading(true);
       try {
-        const data = await apiClient.getPublicServices(i18n.language);
-        setServices(data || []);
+        const res = await fetch(`/api/public/services?language=${i18n.language}`);
+        const data = await res.json();
+
+        if (Array.isArray(data)) {
+          setServices(data);
+
+          const uniqueCategories = new Set(data.map((item: any) => item.category));
+          const cats = [{ id: "all", label: t('allServices', { defaultValue: 'Все услуги' }) }];
+
+          uniqueCategories.forEach(cat => {
+            if (cat) {
+              const catId = String(cat).toLowerCase();
+              let label = t(catId, { defaultValue: catId.charAt(0).toUpperCase() + catId.slice(1) });
+              if (!cats.find(c => c.id === cat)) {
+                cats.push({ id: cat, label: label });
+              }
+            }
+          });
+          setCategories(cats);
+        } else if (data.categories) {
+          const flatServices: Service[] = [];
+          const cats = [{ id: "all", label: t('allServices', { defaultValue: 'Все услуги' }) }];
+
+          data.categories.forEach((cat: any) => {
+            cats.push({ id: cat.id, label: cat.title });
+            if (cat.items) {
+              flatServices.push(...cat.items.map((item: any) => ({
+                ...item,
+                category: cat.id
+              })));
+            }
+          });
+          setServices(flatServices);
+          setCategories(cats);
+        }
       } catch (error) {
-        console.error("Failed to fetch services", error);
-      } finally {
-        setLoading(false);
+        console.error("Error loading services:", error);
       }
     };
-
     fetchServices();
   }, [i18n.language]);
 
-  const categories = useMemo(() => {
-    const cats = new Set(services.map(s => s.category));
-    return Array.from(cats).sort((a, b) => a.localeCompare(b));
-  }, [services]);
+  const filteredServices = services.filter((service) => {
+    const matchesCategory = activeCategory === "all" || service.category === activeCategory;
+    const serviceName = (service[`name_${i18n.language}` as keyof Service] || service.name_ru || service.name || "") as string;
+    const matchesSearch = serviceName.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
-  useEffect(() => {
-    if (categories.length > 0 && selectedCategory === '') {
-      setSelectedCategory(categories[0]);
-    }
-  }, [categories, selectedCategory]);
+  const displayedServices = filteredServices.slice(0, displayCount);
 
-  const filteredServices = useMemo(() => {
-    return services.filter(service => {
-      const matchesSearch = service.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = selectedCategory === '' || service.category === selectedCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [searchQuery, selectedCategory, services]);
-
-  const handleBookClick = () => {
-    document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  if (loading) {
-    return <div className="py-24 text-center">Loading services...</div>;
-  }
+  const activeCategoryLabel = categories.find(c => c.id === activeCategory)?.label || t('allServices', { defaultValue: 'Все услуги' });
 
   return (
-    <section id="services" className="py-20 bg-white">
-      <div className="container mx-auto px-4 max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4 text-primary">
-            {t('servicesTag', { ns: 'public_landing' }) || "Our Services"}
+    <section id="services" className="py-12 sm:py-16 lg:py-20 bg-muted/30">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+          <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-2 sm:mb-3">
+            {t('servicesTag', { defaultValue: 'УСЛУГИ' })}
           </p>
-          <h2 className="text-4xl font-bold mb-4 text-[var(--heading)]">
-            {t('servicesTitle', { ns: 'public_landing' }) || "Choose Your Service"}
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
+            {t('servicesTitle', { defaultValue: 'Что мы предлагаем' })}
           </h2>
-          <p className="text-lg text-gray-600">
-            {t('servicesDesc', { ns: 'public_landing' }) || "We offer a wide range of premium beauty services."}
-          </p>
-        </motion.div>
+        </div>
 
-        {/* Search and Filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-12"
-        >
-          {/* Using Card component as requested (Boxed Design) */}
-          <Card className="p-4 md:p-6 border-pink-100 shadow-lg">
-            {/* 
-               SEARCH BAR:
-               Using 'max-w-2xl' as per user preference for "normal size",
-               centered horizontally.
-            */}
-            <div className="flex flex-col items-center gap-4 mb-6">
-              <div className="relative w-full max-w-2xl">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder={t('searchPlaceholder', { ns: 'public_landing' }) || "Search service..."}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 border-pink-200 focus:border-primary w-full rounded-full"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2"
-                  >
-                    <X className="w-4 h-4 text-gray-400 hover:text-gray-600" />
-                  </button>
-                )}
-              </div>
-            </div>
+        {/* Search and Category Filter Row */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-8 max-w-2xl mx-auto">
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder={t('searchServices', { defaultValue: 'Поиск услуг...' })}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-12 pl-11 pr-4 rounded-full border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
 
-            {/* Category Pills */}
-            <div className="flex overflow-x-auto md:flex-wrap justify-center gap-2 pb-2 md:pb-0 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
-              {categories.map((category) => {
-                const Icon = getCategoryIcon(category);
-                const label = category.charAt(0).toUpperCase() + category.slice(1);
-
-                return (
-                  <Button
-                    key={category}
-                    variant={selectedCategory === category ? "default" : "outline"}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`
-                      whitespace-nowrap flex-shrink-0
-                      ${selectedCategory === category
-                        ? "bg-primary hover:bg-primary/90 text-primary-foreground border-0"
-                        : "border-pink-200 text-gray-700 hover:bg-pink-50"}
-                    `}
-                  >
-                    <Icon className="w-4 h-4 mr-2" />
-                    {label}
-                  </Button>
-                );
-              })}
-            </div>
-
-            {/* Results count */}
-            <div className="mt-4 text-sm text-gray-600 text-center">
-              {t('foundServices', { ns: 'public_landing' }) || "Found services"}: <span className="font-semibold text-primary">{filteredServices.length}</span>
-            </div>
-          </Card>
-        </motion.div>
-
-        {/* Services List */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-        >
-          {filteredServices.map((service) => (
-            <motion.div
-              key={service.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="p-4 rounded-xl border border-pink-100 hover:border-pink-300 hover:shadow-lg transition-all bg-white group flex flex-row justify-between items-start gap-3"
+          {/* Category Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+              className="flex items-center justify-between gap-2 h-12 px-5 rounded-full border border-primary bg-background text-primary font-medium text-sm min-w-[180px] hover:bg-primary/5 transition-colors"
             >
-              <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-base group-hover:text-primary transition-colors truncate pr-2">
-                  {service.name}
-                </h4>
-                {service.description && (
-                  <p className="text-xs text-gray-600 mt-1 line-clamp-3">{service.description}</p>
-                )}
-                {service.duration && (
-                  <div className="text-xs text-gray-500 flex items-center gap-1 mt-2">
-                    <Clock className="w-3 h-3" />
-                    <span>{service.duration} min</span>
-                  </div>
-                )}
-              </div>
+              <span className="truncate">{activeCategoryLabel}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-              <div className="flex flex-col items-end gap-2 min-w-[30%]">
-                <div className="text-lg font-bold text-primary whitespace-nowrap">
-                  {service.min_price && service.max_price ?
-                    `${service.min_price} - ${service.max_price}` :
-                    service.price} {service.currency}
+            {isCategoryDropdownOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute top-full mt-2 left-0 right-0 bg-background border border-border rounded-2xl shadow-lg overflow-hidden z-50"
+              >
+                <div className="max-h-64 overflow-y-auto py-2">
+                  {categories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => {
+                        setActiveCategory(category.id);
+                        setIsCategoryDropdownOpen(false);
+                        setDisplayCount(12);
+                      }}
+                      className={`w-full text-left px-4 py-3 text-sm transition-colors ${activeCategory === category.id
+                        ? 'bg-primary text-primary-foreground'
+                        : 'hover:bg-muted text-foreground'
+                        }`}
+                    >
+                      {category.label}
+                    </button>
+                  ))}
                 </div>
-                <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground w-full max-w-[120px]" onClick={handleBookClick}>
-                  {t('bookBtn', { ns: 'public_landing' }) || "Book"}
-                </Button>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+              </motion.div>
+            )}
+          </div>
+        </div>
 
-        {filteredServices.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-16"
-            key="empty-state"
-          >
-            <div className="w-24 h-24 mx-auto mb-6 bg-pink-100 rounded-full flex items-center justify-center">
-              <Search className="w-12 h-12 text-primary/50" />
-            </div>
-            <h3 className="text-2xl font-semibold mb-2">{t('noServicesFound', { ns: 'public_landing' }) || "No services found"}</h3>
-            <p className="text-gray-600 mb-6">{t('tryChangingFilters', { ns: 'public_landing' }) || "Try changing your search parameters"}</p>
-            <Button onClick={() => { setSearchQuery(''); if (categories.length > 0) setSelectedCategory(categories[0]); }} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              {t('resetFilters', { ns: 'public_landing' }) || "Reset Filters"}
+        {/* Services Grid - Original Card Design */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <AnimatePresence mode="popLayout">
+            {displayedServices.map((service) => (
+              <motion.div
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.2 }}
+                key={service.id}
+                className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:shadow-lg transition-shadow border border-border/50 group"
+              >
+                <div className="flex justify-between items-start mb-3 sm:mb-4">
+                  <h3 className="text-lg sm:text-xl font-medium text-[var(--heading)] group-hover:text-primary transition-colors">
+                    {service[`name_${i18n.language}` as keyof Service] || service.name_ru || service.name}
+                  </h3>
+                  <div className="flex items-center text-primary bg-primary/10 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap">
+                    {service.price} {t('currency', { defaultValue: 'AED' })}
+                  </div>
+                </div>
+                <div className="flex justify-between items-center mt-4 pt-3 border-t border-border/50">
+                  <div className="flex items-center text-muted-foreground text-xs sm:text-sm">
+                    <Clock className="w-4 h-4 mr-2 text-primary/60" />
+                    {service.duration} {t('min', { defaultValue: 'мин' })}
+                  </div>
+                  <Button
+                    size="sm"
+                    className="rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors h-7 text-xs px-4"
+                    onClick={() => {
+                      window.location.hash = `booking?service=${service.id}`;
+                      document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                  >
+                    {t('book', { defaultValue: 'Записаться' })}
+                  </Button>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+
+        {displayedServices.length === 0 && (
+          <div className="text-center py-12 text-muted-foreground">
+            {t('noServicesFound', { defaultValue: 'Услуги не найдены' })}
+          </div>
+        )}
+
+        {displayCount < filteredServices.length && (
+          <div className="text-center mt-8 sm:mt-12">
+            <Button
+              variant="outline"
+              onClick={() => setDisplayCount((prev) => prev + 12)}
+              className="rounded-full px-8 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+            >
+              {t('showMore', { defaultValue: 'Показать еще' })} ({filteredServices.length - displayCount})
             </Button>
-          </motion.div>
+          </div>
         )}
       </div>
     </section>
