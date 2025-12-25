@@ -1,97 +1,73 @@
-import sys
-from pathlib import Path
-import shutil
 import os
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from dotenv import load_dotenv
 
-# Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+# Load .env
+load_dotenv('backend/.env')
 
-from db.connection import get_db_connection
-
-def fix_gallery_categories():
-    print("🔧 Fixing gallery categories...")
+def run_fix():
+    print("🔧 Starting Gallery Categories Fix...")
     
-    # Setup paths
-    # backend/scripts/maintenance/fix_gallery_categories.py
-    current_file = Path(__file__).resolve()
-    # Go up to project root: maintenance -> scripts -> backend -> beauty-crm
-    project_root = current_file.parent.parent.parent.parent
+    conn = psycopg2.connect(
+        host=os.getenv('POSTGRES_HOST', 'localhost'),
+        port=os.getenv('POSTGRES_PORT', '5432'),
+        database=os.getenv('POSTGRES_DB', 'beauty_crm'),
+        user=os.getenv('POSTGRES_USER', 'beauty_crm_user'),
+        password=os.getenv('POSTGRES_PASSWORD', 'local_password')
+    )
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
     
-    # Verify root
-    if not (project_root / "frontend").exists():
-        # Fallback for dev environment
-        project_root = Path("/Users/tahir/Desktop/beauty-crm")
+    try:
+        # 1. Map images to categories based on path and filename
+        cursor.execute("SELECT id, image_path, category FROM gallery_images")
+        rows = cursor.fetchall()
         
-    print(f"📂 Project root: {project_root}")
-        
-    faces_source = project_root / "frontend/public_landing/styles/img/Красивые лица"
-    portfolio_dir = project_root / "backend/static/uploads/portfolio"
-    faces_dir = project_root / "backend/static/uploads/faces"
-    
-    faces_dir.mkdir(parents=True, exist_ok=True)
-    
-    conn = get_db_connection()
-    c = conn.cursor()
-    
-    processed_count = 0
-    
-    if not faces_source.exists():
-        print(f"❌ Source directory not found: {faces_source}")
-        return
-
-    print(f"📂 Scanning {faces_source}...")
-    
-    for img_file in faces_source.glob("*.*"):
-        if img_file.suffix.lower() not in ['.jpg', '.jpeg', '.png', '.webp', '.gif']:
-            continue
+        updates = 0
+        for row in rows:
+            path = row['image_path'].lower()
+            old_category = row['category']
+            new_category = old_category
             
-        filename = img_file.name
-        old_path = portfolio_dir / filename
-        new_path = faces_dir / filename
+            # Rule 1: Salon folder -> salon category
+            if '/salon/' in path:
+                new_category = 'salon'
+            # Rule 2: Services folder -> services category (not shown in portfolio)
+            elif '/services/' in path:
+                new_category = 'services'
+            # Rule 3: Faces folder -> face category
+            elif '/faces/' in path:
+                new_category = 'face'
+            # Rule 4: Portfolio folder -> map to hair, nails, body, face
+            elif '/portfolio/' in path:
+                if any(x in path for x in ['маник', 'ногт', 'педик', 'nail']):
+                    new_category = 'nails'
+                elif any(x in path for x in ['волос', 'стриж', 'окраш', 'кератин', 'hair']):
+                    new_category = 'hair'
+                elif any(x in path for x in ['спа', 'spa', 'массаж', 'body', 'тел', 'воксинг']):
+                    new_category = 'body'
+                elif any(x in path for x in ['лиц', 'face', 'перманент']):
+                    new_category = 'face'
+                else:
+                    new_category = 'other'
+
+            if new_category != old_category:
+                cursor.execute(
+                    "UPDATE gallery_images SET category = %s WHERE id = %s",
+                    (new_category, row['id'])
+                )
+                print(f"✅ Updated ID {row['id']}: {old_category} -> {new_category} ({path})")
+                updates += 1
         
-        # 1. Move file if it exists in portfolio
-        if old_path.exists():
-            shutil.move(str(old_path), str(new_path))
-            print(f"  📦 Moved {filename} to faces folder")
-        elif not new_path.exists():
-            # If not in portfolio but in source, copy to faces
-            shutil.copy2(img_file, new_path)
-            print(f"  📋 Copied {filename} to faces folder")
-        else:
-            print(f"  ✅ File {filename} already in faces folder")
-            
-        # 2. Update Database
-        # Check if it exists as portfolio
-        old_db_path = f"/static/uploads/portfolio/{filename}"
-        new_db_path = f"/static/uploads/faces/{filename}"
+        conn.commit()
+        print(f"✨ Finished. Total updates: {updates}")
         
-        c.execute("SELECT id FROM gallery_images WHERE image_path = %s", (old_db_path,))
-        row = c.fetchone()
-        
-        if row:
-            # Update existing record
-            c.execute("""
-                UPDATE gallery_images 
-                SET category = 'faces', image_path = %s 
-                WHERE id = %s
-            """, (new_db_path, row[0]))
-            print(f"  🔄 Updated DB record for {filename}")
-            processed_count += 1
-        else:
-            # Check if already in faces
-            c.execute("SELECT id FROM gallery_images WHERE image_path = %s", (new_db_path,))
-            if not c.fetchone():
-                # Insert new record
-                c.execute("""
-                    INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
-                    VALUES ('faces', %s, %s, 0, TRUE)
-                """, (new_db_path, img_file.stem))
-                print(f"  ➕ Inserted new record for {filename}")
-                processed_count += 1
-                
-    conn.commit()
-    conn.close()
-    print(f"✅ Finished. Processed {processed_count} images.")
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        conn.rollback()
+    finally:
+        cursor.close()
+        conn.close()
 
 if __name__ == "__main__":
-    fix_gallery_categories()
+    run_fix()

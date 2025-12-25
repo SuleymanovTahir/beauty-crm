@@ -10,8 +10,8 @@ export function Hero() {
   const [heroBanner, setHeroBanner] = useState<any>(null);
 
   useEffect(() => {
-    const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-    fetch(`${API_URL}/api/public/banners`)
+    const api_url = import.meta.env.VITE_API_URL || window.location.origin;
+    fetch(`${api_url}/api/public/banners`)
       .then(res => res.json())
       .then(data => {
         if (data.banners && data.banners.length > 0) {
@@ -26,7 +26,11 @@ export function Hero() {
     return banner[`${field}_${language}`] || banner[`${field}_en`] || banner[`${field}_ru`] || '';
   };
 
-  const backgroundImage = heroBanner?.image_url;
+  const API_URL_VAR = import.meta.env.VITE_API_URL || window.location.origin;
+  const rawImageUrl = heroBanner?.image_url;
+  const backgroundImage = rawImageUrl && !rawImageUrl.startsWith('http')
+    ? `${API_URL_VAR}${rawImageUrl}`
+    : rawImageUrl;
 
   // Invert coordinates when image is flipped
   const isFlippedH = heroBanner?.is_flipped_horizontal === 1 || heroBanner?.is_flipped_horizontal === true;

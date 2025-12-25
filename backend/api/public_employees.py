@@ -43,6 +43,7 @@ async def get_public_employees(
                 COALESCE({bio_field}, bio) as bio,
                 photo,
                 experience,
+                years_of_experience,
                 NULL as instagram,
                 public_page_order as sort_order
             FROM users
@@ -59,13 +60,26 @@ async def get_public_employees(
         
         for row in rows:
             row_dict = dict(zip(columns, row))
+            
+            # Handle experience fallback
+            exp_text = row_dict.get("experience")
+            if not exp_text and row_dict.get("years_of_experience"):
+                years = row_dict["years_of_experience"]
+                # Basic localization for experience
+                if language == 'ru':
+                    exp_text = f"{years} лет опыта"
+                elif language == 'ar':
+                    exp_text = f"{years} سنوات خبرة"
+                else:
+                    exp_text = f"{years} years experience"
+
             employees.append({
                 "id": row_dict["id"],
                 "name": row_dict["full_name"],
                 "role": row_dict["position"] or "Специалист",
                 "specialty": row_dict["bio"] or "",
                 "image": row_dict["photo"] or "/static/avatars/default_female.webp",
-                "experience": row_dict["experience"] or "",
+                "experience": exp_text or "",
                 "instagram": row_dict["instagram"] or ""
             })
         

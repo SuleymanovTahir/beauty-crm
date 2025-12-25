@@ -116,6 +116,9 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
         top: offsetPosition,
         behavior: "smooth"
       });
+
+      // Update URL hash without jumping
+      window.history.pushState(null, '', href);
     }
   };
 
