@@ -15,13 +15,19 @@ from utils.logger import log_info, log_error, log_debug
 
 # ===== ДИРЕКТОРИИ И ФАЙЛЫ =====
 
+from core.config import UPLOAD_DIR, BASE_DIR
+
 def ensure_upload_directories():
     """Создать все необходимые директории для загрузок"""
     directories = [
-        "static/uploads/images",
-        "static/uploads/files",
-        "static/uploads/voice",
-        "logs"
+        os.path.join(UPLOAD_DIR, "images"),
+        os.path.join(UPLOAD_DIR, "images", "portfolio"),
+        os.path.join(UPLOAD_DIR, "images", "faces"),
+        os.path.join(UPLOAD_DIR, "images", "salon"),
+        os.path.join(UPLOAD_DIR, "images", "services"),
+        os.path.join(UPLOAD_DIR, "files"),
+        os.path.join(UPLOAD_DIR, "voice"),
+        os.path.join(BASE_DIR, "logs")
     ]
     for directory in directories:
         os.makedirs(directory, exist_ok=True)

@@ -8,30 +8,22 @@ router = APIRouter(tags=["Upload"])
 
 # ✅ Универсальное определение PUBLIC_URL
 # Приоритет: переменная окружения > автоопределение по localhost
+from core.config import UPLOAD_DIR, BASE_DIR, is_localhost
+
 if os.getenv("PUBLIC_URL"):
     PUBLIC_URL = os.getenv("PUBLIC_URL")
+elif is_localhost():
+    PUBLIC_URL = "http://localhost:8000"
 else:
-    # Импортируем функцию определения localhost из config
-    from core.config import is_localhost
-    
-    if is_localhost():
-        # Development окружение (localhost)
-        PUBLIC_URL = "http://localhost:8000"
-    else:
-        # Production окружение (сервер)
-        PUBLIC_URL = "https://mlediamant.com"
+    PUBLIC_URL = "https://mlediamant.com"
 
 print(f"📸 PUBLIC_URL: {PUBLIC_URL}")
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-UPLOAD_DIR = BASE_DIR / "static" / "uploads"
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+UPLOAD_DIR_PATH = Path(UPLOAD_DIR)
 
-# Создаем подпапки
-(UPLOAD_DIR / "images").mkdir(exist_ok=True)
-(UPLOAD_DIR / "videos").mkdir(exist_ok=True)
-(UPLOAD_DIR / "audio").mkdir(exist_ok=True)
-(UPLOAD_DIR / "files").mkdir(exist_ok=True)
+# Создаем подпапки если их нет
+for subdir in ["images", "videos", "audio", "files"]:
+    (UPLOAD_DIR_PATH / subdir).mkdir(parents=True, exist_ok=True)
 
 def get_file_category(content_type: str) -> str:
     """Определить категорию файла по MIME типу"""
@@ -75,7 +67,7 @@ async def upload_file(file: UploadFile = File(...)):
         filename = file.filename or 'uploaded_file'
         
         # Полный путь для сохранения
-        file_path = UPLOAD_DIR / category / filename
+        file_path = UPLOAD_DIR_PATH / category / filename
         
         # Сохраняем файл (перезаписываем если существует)
         with open(file_path, 'wb') as f:
@@ -118,11 +110,13 @@ def delete_upload_file(file_path: str) -> bool:
         return False
     
     try:
-        # Remove leading slash to make it relative
+        # Remove leading slash and static/ prefix if present to find file relative to BASE_DIR/static
+        # Actually, it's safer to just join with BASE_DIR
         rel_path = file_path.lstrip('/')
         
-        # Construct full path from backend root
-        full_path = os.path.join("backend", rel_path)
+        # If the path starts with static/uploads, it's already Correct
+        # If it doesn't, we assume it's relative to static
+        full_path = os.path.join(BASE_DIR, rel_path)
         
         if os.path.exists(full_path):
             os.remove(full_path)
