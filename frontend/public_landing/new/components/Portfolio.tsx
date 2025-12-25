@@ -106,8 +106,8 @@ export function Portfolio() {
                 setDisplayCount(12);
               }}
               className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all text-sm sm:text-base ${selectedCategory === category.id
-                  ? 'bg-primary text-primary-foreground shadow-lg'
-                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                ? 'bg-primary text-primary-foreground shadow-lg'
+                : 'bg-background border border-primary text-primary hover:bg-primary/10'
                 }`}
             >
               {category.label}

@@ -20,13 +20,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "./ui/popover";
-import { PhoneInput } from 'react-international-phone';
-import 'react-international-phone/style.css';
+import { PhoneInputWithSearch } from './ui/PhoneInputWithSearch';
 
 export const BookingSection = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
+  const [defaultCountry, setDefaultCountry] = useState<string>('ae');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -38,6 +38,34 @@ export const BookingSection = () => {
   const [availableServices, setAvailableServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Detect country from geolocation or use saved preference
+  useEffect(() => {
+    const savedCountry = localStorage.getItem('preferred_phone_country');
+    if (savedCountry) {
+      setDefaultCountry(savedCountry.toLowerCase());
+    } else {
+      // Try to detect country from IP
+      fetch('https://ipapi.co/json/')
+        .then(res => res.json())
+        .then(data => {
+          if (data.country_code) {
+            const countryCode = data.country_code.toLowerCase();
+            setDefaultCountry(countryCode);
+            localStorage.setItem('preferred_phone_country', countryCode);
+          }
+        })
+        .catch(() => {
+          // Default to UAE if detection fails
+          setDefaultCountry('ae');
+        });
+    }
+  }, []);
+
+  // Handle phone change
+  const handlePhoneChange = (phone: string) => {
+    setFormData({ ...formData, phone });
+  };
+
   useEffect(() => {
     // Pre-fill user data
     if (user) {
@@ -48,6 +76,22 @@ export const BookingSection = () => {
       }));
     }
   }, [user]);
+
+  // Listen for service selection from URL hash
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      const match = hash.match(/booking\?service=(\d+)/);
+      if (match && match[1]) {
+        setFormData(prev => ({ ...prev, service: match[1] }));
+        // Clean the hash
+        window.history.replaceState(null, '', '#booking');
+      }
+    };
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   useEffect(() => {
     // Fetch services for dropdown
@@ -158,12 +202,11 @@ export const BookingSection = () => {
 
           <div>
             <label className="block text-sm font-medium mb-2">{t('formPhone', { defaultValue: 'Телефон' })}</label>
-            <PhoneInput
-              defaultCountry="ae"
+            <PhoneInputWithSearch
+              defaultCountry={defaultCountry}
               value={formData.phone}
-              onChange={(phone) => setFormData({ ...formData, phone })}
-              inputClassName="w-full h-10 sm:h-11 px-3 rounded-md border border-input bg-input-background text-sm"
-              forceDialCode
+              onChange={handlePhoneChange}
+              searchPlaceholder={t('searchCountry', { defaultValue: 'Поиск страны...' })}
             />
           </div>
 

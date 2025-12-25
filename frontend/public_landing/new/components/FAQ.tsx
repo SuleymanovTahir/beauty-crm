@@ -110,7 +110,7 @@ export function FAQ() {
             <Button
               variant="outline"
               onClick={() => window.location.href = `tel:${salonPhone}`}
-              className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground h-10 text-sm"
+              className="w-full bg-background border-primary text-primary hover:bg-primary hover:text-primary-foreground h-10 text-sm"
             >
               <Phone className="w-4 h-4 mr-2" />
               {t('callUs', { defaultValue: 'Позвонить' })}
