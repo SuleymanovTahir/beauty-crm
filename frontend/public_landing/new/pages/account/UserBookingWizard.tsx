@@ -99,6 +99,9 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     const [showSelectedModal, setShowSelectedModal] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
+    // Salon Info
+    const [salonInfo, setSalonInfo] = useState<{ name?: string; address?: string }>({});
+
     // Navigation History for Back Button
     const [history, setHistory] = useState<string[]>([]);
 
@@ -291,25 +294,25 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             step: typeof step;
             label: string;
         }[] = [
-            {
-                key: 'master',
-                isMissing: cfg => !cfg || !cfg.master,
-                step: 'professional',
-                label: t('chooseMaster', 'Выбрать мастера'),
-            },
-            {
-                key: 'date',
-                isMissing: cfg => !cfg || !cfg.date,
-                step: 'datetime',
-                label: t('chooseDate', 'Выбрать дату'),
-            },
-            {
-                key: 'time',
-                isMissing: cfg => !cfg || !cfg.time,
-                step: 'datetime',
-                label: t('chooseTime', 'Выбрать время'),
-            },
-        ];
+                {
+                    key: 'master',
+                    isMissing: cfg => !cfg || !cfg.master,
+                    step: 'professional',
+                    label: t('chooseMaster', 'Выбрать мастера'),
+                },
+                {
+                    key: 'date',
+                    isMissing: cfg => !cfg || !cfg.date,
+                    step: 'datetime',
+                    label: t('chooseDate', 'Выбрать дату'),
+                },
+                {
+                    key: 'time',
+                    isMissing: cfg => !cfg || !cfg.time,
+                    step: 'datetime',
+                    label: t('chooseTime', 'Выбрать время'),
+                },
+            ];
 
         // Если все услуги полностью настроены — показываем финальную кнопку "Записаться"
         const nextField = incompleteService ? fieldFlow.find(f => f.isMissing(config)) : undefined;
@@ -635,6 +638,17 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         const loadInitialData = async () => {
             try {
                 setLoading(true);
+
+                // Load Salon Info
+                try {
+                    const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+                    const salonRes = await fetch(`${API_URL}/api/public/salon-info?language=${i18n.language}`);
+                    const salonData = await salonRes.json();
+                    setSalonInfo({ name: salonData.name, address: salonData.address });
+                } catch (err) {
+                    console.error("Error loading salon info", err);
+                }
+
                 // Load Masters
                 let employees: Master[] = [];
                 try {
@@ -922,11 +936,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 <div className="flex items-start justify-between">
                     <div>
                         <h1 className="text-2xl font-bold flex items-center gap-2">
-                            M Le Diamant
+                            {salonInfo.name || 'Салон красоты'}
                         </h1>
                         <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
                             <MapPin className="w-3 h-3" />
-                            Shop 13, Amwaj 2, Plaza Level, JBR - Dubai
+                            {salonInfo.address || ''}
                         </p>
                     </div>
                     {onClose && (

@@ -111,3 +111,45 @@ img[loading="lazy"] {
     max-width: 100vw;
   }
 }
+
+/* Phone Input Styling */
+.phone-input-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.phone-input-container .PhoneInputCountry {
+  padding: 0.75rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  background: hsl(var(--background));
+}
+
+.phone-input-container .PhoneInputCountrySelect {
+  background: transparent;
+  border: none;
+  font-size: 0.875rem;
+}
+
+.phone-input-container .PhoneInputInput {
+  flex: 1;
+  height: 2.75rem;
+  padding: 0 0.75rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  background: hsl(var(--background));
+  font-size: 0.875rem;
+  color: hsl(var(--foreground));
+}
+
+.phone-input-container .PhoneInputInput:focus {
+  outline: none;
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 2px hsla(var(--primary), 0.1);
+}
+
+.phone-input-container .PhoneInputCountrySelectArrow {
+  margin-left: 0.25rem;
+  opacity: 0.6;
+}
