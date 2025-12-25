@@ -114,7 +114,7 @@ export function MapSection() {
             <iframe
               className="w-full h-full"
               src={salonInfo?.google_maps_embed_url ||
-                `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(salonInfo?.address || 'M Le Diamant Beauty Lounge JBR Dubai')}&zoom=15`}
+                `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(salonInfo?.address || 'M Le Diamant JBR Dubai')}&zoom=15`}
               loading="lazy"
               title="Salon Location"
               allowFullScreen

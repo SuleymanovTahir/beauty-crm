@@ -158,11 +158,11 @@ def process_contact_notifications(form: ContactForm):
     
     # 3. Отправляем подтверждение пользователю
     if form.email:
-        user_subject = "Ваша заявка принята | M.Le Diamant"
+        user_subject = "Ваша заявка принята | M Le Diamant"
         user_message = (
             f"Здравствуйте, {form.name}!\n\n"
             f"Спасибо за ваше обращение. Мы получили вашу заявку и свяжемся с вами в ближайшее время.\n\n"
-            f"С уважением,\nКоманда M.Le Diamant"
+            f"С уважением,\nКоманда M Le Diamant"
         )
         send_email_sync([form.email], user_subject, user_message)
     

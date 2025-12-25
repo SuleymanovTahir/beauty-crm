@@ -308,7 +308,7 @@ export default function EmployeeDetail() {
                         </TabsContent>
 
                         <TabsContent value="payroll" className="mt-0">
-                            <EmployeePayroll employeeId={employee.id} />
+                            <EmployeePayroll employeeId={employee.id} employee={employee} onUpdate={loadEmployee} />
                         </TabsContent>
                     </div>
                 </Tabs>

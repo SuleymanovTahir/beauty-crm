@@ -15,10 +15,10 @@ def migrate():
     c = conn.cursor()
     
     try:
-        # Проверяем существует ли таблица
+        # Проверяем существует ли таблица в PostgreSQL
         c.execute("""
-            SELECT name FROM sqlite_master 
-            WHERE type='table' AND name='user_permissions'
+            SELECT table_name FROM information_schema.tables 
+            WHERE table_name='user_permissions'
         """)
         
         if c.fetchone():

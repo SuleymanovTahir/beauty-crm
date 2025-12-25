@@ -101,7 +101,7 @@ python3 -c "from db.migrations.run_all_migrations import run_all_migrations; run
 
 ```bash
 curl http://localhost:8000/
-# {"status":"✅ CRM работает!","salon":"M.Le Diamant Beauty Lounge",...}
+# {"status":"✅ CRM работает!","salon":"M Le Diamant",...}
 ```
 
 ### Таблицы

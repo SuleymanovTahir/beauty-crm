@@ -193,16 +193,16 @@
   @apply bg-primary/5 shadow-xl border-primary/40;
 }
 
+.service-card:hover .service-badge {
+  @apply bg-primary/10 text-primary;
+}
+
 .service-card h3 {
   @apply text-[var(--heading)] transition-colors duration-300;
 }
 
 .service-badge {
   @apply flex items-center text-primary bg-primary/10 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors duration-300;
-}
-
-.service-card:hover .service-badge {
-  @apply bg-primary text-primary-foreground;
 }
 
 .service-meta {

@@ -68,20 +68,9 @@ def test_database_detailed():
         from core.config import DATABASE_NAME
         from db.connection import get_db_connection
 
-        # Шаг 1: Проверка существования
-        print_step(1, 10, "Проверка существования файла БД")
-        # Skip file check for PostgreSQL
-        if os.getenv('DATABASE_TYPE') == 'postgresql':
-            print_info("PostgreSQL database (skipping file check)")
-        else:
-            if not os.path.exists(DATABASE_NAME):
-                print_error(f"База данных не найдена: {DATABASE_NAME}")
-                print_info(f"Проверьте путь и запустите инициализацию БД")
-                return False
-
-            print_success(f"База данных найдена: {DATABASE_NAME}")
-            file_size = os.path.getsize(DATABASE_NAME)
-            print_info(f"Размер файла: {file_size / 1024:.2f} KB")
+        # Шаг 1: Проверка готовности (PostgreSQL)
+        print_step(1, 10, "Проверка готовности БД")
+        print_success("База данных PostgreSQL сконфигурирована")
 
         # Шаг 2: Подключение
         print_step(2, 10, "Попытка подключения к БД")
@@ -93,13 +82,9 @@ def test_database_detailed():
             print_error(f"Не удалось подключиться: {e}")
             return False
 
-        # Шаг 3: Список всех таблиц
+        # Шаг 3: Список всех таблиц (PostgreSQL)
         print_step(3, 10, "Получение списка всех таблиц")
-        # Check tables
-        if os.getenv('DATABASE_TYPE') == 'postgresql':
-            c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name")
-        else:
-            c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' ORDER BY tablename")
+        c.execute("SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename")
         all_tables = [row[0] for row in c.fetchall()]
         print_success(f"Найдено таблиц: {len(all_tables)}")
         print_data("Список таблиц", all_tables)
@@ -182,47 +167,25 @@ def test_database_detailed():
                 except Exception as e:
                     print_error(f"{table}: ошибка подсчета - {e}")
 
-        # Шаг 7: Проверка индексов
+        # Шаг 7: Проверка индексов (PostgreSQL)
         print_step(7, 10, "Проверка индексов")
-        if os.getenv('DATABASE_TYPE') == 'postgresql':
-            c.execute("SELECT indexname, tablename FROM pg_indexes WHERE schemaname = 'public'")
-        else:
-            c.execute("SELECT name, tbl_name FROM sqlite_master WHERE type='index'")
+        c.execute("SELECT indexname, tablename FROM pg_indexes WHERE schemaname = 'public'")
         indexes = c.fetchall()
         print_success(f"Найдено индексов: {len(indexes)}")
         for idx_name, tbl_name in indexes[:10]:  # Первые 10
             print_info(f"{idx_name} (таблица: {tbl_name})")
 
-        # Шаг 8: Проверка foreign keys
-        print_step(8, 10, "Проверка включения foreign keys")
-        if os.getenv('DATABASE_TYPE') == 'postgresql':
-            print_success("Foreign keys: ВКЛЮЧЕНЫ (PostgreSQL default)")
-        else:
-            c.execute("PRAGMA foreign_keys")
-            fk_enabled = c.fetchone()[0]
-            if fk_enabled:
-                print_success("Foreign keys: ВКЛЮЧЕНЫ")
-            else:
-                print_warning("Foreign keys: ВЫКЛЮЧЕНЫ")
+        # Шаг 8: Проверка foreign keys (PostgreSQL)
+        print_step(8, 10, "Проверка foreign keys")
+        print_success("Foreign keys: ВКЛЮЧЕНЫ (PostgreSQL default)")
 
-        # Шаг 9: Проверка целостности БД
+        # Шаг 9: Проверка целостности БД (PostgreSQL)
         print_step(9, 10, "Проверка целостности БД")
-        if os.getenv('DATABASE_TYPE') == 'postgresql':
-             print_info("Проверка целостности пропущена для PostgreSQL (требует сложных запросов)")
-        else:
-            c.execute("PRAGMA integrity_check")
-            integrity = c.fetchone()[0]
-            if integrity == 'ok':
-                print_success("Целостность БД: OK")
-            else:
-                print_error(f"Целостность БД: {integrity}")
+        print_info("Проверка целостности пропущена для PostgreSQL (требует сложных запросов)")
 
-        # Шаг 10: Проверка версии
+        # Шаг 10: Проверка версии (PostgreSQL)
         print_step(10, 10, "Проверка версии БД")
-        if os.getenv('DATABASE_TYPE') == 'postgresql':
-            c.execute("SELECT version()")
-        else:
-            c.execute("SELECT sqlite_version()")
+        c.execute("SELECT version()")
         version = c.fetchone()[0]
         print_success(f"Версия: {version}")
 

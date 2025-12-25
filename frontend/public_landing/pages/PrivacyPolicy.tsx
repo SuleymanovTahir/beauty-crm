@@ -28,7 +28,7 @@ export function PrivacyPolicy() {
                         <section>
                             <h2 className="text-2xl font-semibold mb-4 text-foreground">1. {t('privacySection1Title', { defaultValue: 'Общие положения' })}</h2>
                             <p className="text-muted-foreground leading-relaxed mb-4">
-                                {t('privacySection1Text1', { defaultValue: 'M Le Diamant Beauty Lounge ("Мы", "Наш", "Салон") уважает вашу конфиденциальность и обязуется защищать ваши персональные данные. Эта политика конфиденциальности объясняет, как мы собираем, используем и защищаем вашу информацию при посещении нашего веб-сайта и использовании наших услуг.' })}
+                                {t('privacySection1Text1', { defaultValue: 'M Le Diamant ("Мы", "Наш", "Салон") уважает вашу конфиденциальность и обязуется защищать ваши персональные данные. Эта политика конфиденциальности объясняет, как мы собираем, используем и защищаем вашу информацию при посещении нашего веб-сайта и использовании наших услуг.' })}
                             </p>
                             <p className="text-muted-foreground leading-relaxed">
                                 {t('privacySection1Text2', { defaultValue: 'Используя наши услуги, вы соглашаетесь с условиями данной политики конфиденциальности.' })}

@@ -1,6 +1,6 @@
 from db.connection import get_db_connection
 
-def migrate_salon_schema(db_path="salon_bot.db"):
+def migrate_salon_schema():
     """Add translation columns to salon_settings table"""
     conn = get_db_connection()
     c = conn.cursor()

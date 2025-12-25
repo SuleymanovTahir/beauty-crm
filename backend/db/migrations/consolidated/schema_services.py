@@ -4,7 +4,7 @@ All schema changes for services table in one place
 """
 from db.connection import get_db_connection
 
-def migrate_services_schema(db_path="salon_bot.db"):
+def migrate_services_schema():
     """
     Apply all services table schema changes
     """

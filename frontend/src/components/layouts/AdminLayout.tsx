@@ -1,6 +1,7 @@
 // /frontend/src/components/layouts/AdminLayout.tsx
 import { useEffect, useState, useMemo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { getDynamicAvatar } from '../../utils/avatarUtils';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import {
@@ -27,6 +28,7 @@ import {
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { usePermissions } from '../../utils/permissions';
+import { getPhotoUrl } from '../../utils/photoUtils';
 
 interface AdminLayoutProps {
   user: { id: number; role: string; full_name: string } | null;
@@ -44,6 +46,8 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [notifCount, setNotifCount] = useState(0);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+  const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   // Используем централизованную систему прав
   const permissions = usePermissions(user?.role || 'employee');
@@ -52,6 +56,8 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     loadUnreadCount();
     loadEnabledMessengers();
     loadNotifications();
+    loadSalonSettings();
+    loadUserProfile();
     const unreadInterval = setInterval(loadUnreadCount, 10000);
     const notifInterval = setInterval(loadNotifications, 30000);
 
@@ -59,12 +65,17 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     const handleMessengersUpdate = () => {
       loadEnabledMessengers();
     };
+    const handleProfileUpdate = () => {
+      loadUserProfile();
+    };
     window.addEventListener('messengers-updated', handleMessengersUpdate);
+    window.addEventListener('profile-updated', handleProfileUpdate);
 
     return () => {
       clearInterval(unreadInterval);
       clearInterval(notifInterval);
       window.removeEventListener('messengers-updated', handleMessengersUpdate);
+      window.removeEventListener('profile-updated', handleProfileUpdate);
     };
   }, []);
 
@@ -74,6 +85,26 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       setEnabledMessengers(response.enabled_messengers);
     } catch (err) {
       console.error('Failed to load enabled messengers:', err);
+    }
+  };
+
+  const loadSalonSettings = async () => {
+    try {
+      const settings = await api.getSalonSettings();
+      setSalonSettings(settings);
+    } catch (err) {
+      console.error('Failed to load salon settings:', err);
+    }
+  };
+
+  const loadUserProfile = async () => {
+    if (user?.id) {
+      try {
+        const profile = await api.getUserProfile(user.id);
+        setUserProfile(profile);
+      } catch (err) {
+        console.error('Failed to load user profile:', err);
+      }
     }
   };
 
@@ -230,11 +261,27 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
           {/* Header */}
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center text-xl">
-                <span className="text-white">💎</span>
+              <div className="flex-shrink-0">
+                <img
+                  src={salonSettings?.logo_url || '/logo.webp'}
+                  alt={salonSettings?.name || 'Logo'}
+                  className="w-10 h-10 rounded-lg object-contain shadow-sm"
+                  onError={(e) => {
+                    const img = e.target as HTMLImageElement;
+                    if (img.src.includes('/logo.webp')) {
+                      img.src = '/logo.png';
+                    } else if (img.src.includes('/logo.png')) {
+                      img.src = 'https://img.icons8.com/color/96/diamond.png';
+                    } else {
+                      img.src = '/logo.webp';
+                    }
+                  }}
+                />
               </div>
-              <div>
-                <span className="text-sm text-gray-900 block">{t('crm')}</span>
+              <div className="min-w-0">
+                <span className="text-sm text-gray-900 block font-semibold truncate leading-tight">
+                  {salonSettings?.name || 'CRM Панель'}
+                </span>
                 <span className="text-xs text-gray-500">{t('admin')}</span>
               </div>
             </div>
@@ -325,12 +372,27 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
           {/* User Profile */}
           <div className="p-4 border-t border-gray-200">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm">
-                {user?.full_name?.charAt(0).toUpperCase() || 'A'}
-              </div>
-              <div className="flex-1">
-                <span className="text-sm text-gray-900 block">{user?.full_name || 'Администратор'}</span>
-                <span className="text-xs text-gray-500 capitalize">{user?.role || 'admin'}</span>
+              {userProfile?.photo ? (
+                <img
+                  src={getPhotoUrl(userProfile.photo) || ''}
+                  alt={userProfile.full_name}
+                  className="w-10 h-10 rounded-full object-cover border-2 border-purple-100 shadow-sm"
+                />
+              ) : (
+                <img
+                  src={getDynamicAvatar(userProfile?.full_name || user?.full_name || 'Admin', 'warm', user?.role === 'employee' ? 'female' : 'male')}
+                  alt={userProfile?.full_name}
+                  className="w-10 h-10 rounded-full object-cover border-2 border-purple-100 shadow-sm"
+                />
+              )}
+              <div className="flex-1 overflow-hidden">
+                <span className="text-sm font-semibold text-gray-900 block truncate">{userProfile?.full_name || user?.full_name || 'Администратор'}</span>
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-gray-500 capitalize leading-tight">{user?.role || 'admin'}</span>
+                  {userProfile?.specialization && (
+                    <span className="text-[10px] text-purple-600 font-medium truncate leading-tight">{userProfile.specialization}</span>
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2">

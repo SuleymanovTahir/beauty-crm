@@ -46,7 +46,7 @@ export function TermsOfUse() {
                         <section>
                             <h2 className="text-2xl font-semibold mb-4 text-foreground">1. {t('termsSection1Title', { defaultValue: 'Принятие условий' })}</h2>
                             <p className="text-muted-foreground leading-relaxed">
-                                {t('termsSection1Text', { defaultValue: 'Добро пожаловать на веб-сайт M Le Diamant Beauty Lounge. Используя наш веб-сайт и услуги, вы соглашаетесь соблюдать и быть связанными настоящими Условиями использования. Если вы не согласны с любой частью этих условий, пожалуйста, не используйте наш веб-сайт.' })}
+                                {t('termsSection1Text', { defaultValue: 'Добро пожаловать на веб-сайт M Le Diamant. Используя наш веб-сайт и услуги, вы соглашаетесь соблюдать и быть связанными настоящими Условиями использования. Если вы не согласны с любой частью этих условий, пожалуйста, не используйте наш веб-сайт.' })}
                             </p>
                         </section>
 

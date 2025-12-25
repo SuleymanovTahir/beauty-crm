@@ -7,8 +7,6 @@ from db.connection import get_db_connection
 import re
 import psycopg2
 
-DATABASE_NAME = "salon_bot.db"
-
 def fix_localhost_urls():
     """Исправить все localhost URL на относительные пути"""
     conn = get_db_connection()

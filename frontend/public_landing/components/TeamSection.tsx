@@ -9,6 +9,7 @@ interface TeamMember {
   specialty: string;
   image: string;
   experience: number | string;
+  age?: number | null;
 }
 
 export function TeamSection() {
@@ -20,6 +21,18 @@ export function TeamSection() {
   // Helper function to capitalize names (ALL CAPS -> Title Case)
   const capitalizeName = (name: string) => {
     return name.toLowerCase().replace(/(^|\s)\S/g, (l) => l.toUpperCase());
+  };
+
+  const getAgeLabel = (age: number) => {
+    if (language === 'ru') {
+      const n = Math.abs(age) % 100;
+      const n1 = n % 10;
+      if (n > 10 && n < 20) return `${age} лет`;
+      if (n1 > 1 && n1 < 5) return `${age} года`;
+      if (n1 === 1) return `${age} год`;
+      return `${age} лет`;
+    }
+    return `${age} years old`;
   };
 
   useEffect(() => {
@@ -37,7 +50,7 @@ export function TeamSection() {
             specialty: emp.specialty || "",
             // Experience from backend might be number or string. 
             experience: emp.experience || 0,
-            // Check if image is full URL or needs prefix. Usually backend sends filename.
+            age: emp.age,
             // Check if image is full URL or needs prefix. Usually backend sends filename.
             image: emp.image ? (
               emp.image.startsWith('http') ? emp.image :
@@ -88,10 +101,19 @@ export function TeamSection() {
                 />
                 <div className="team-card-overlay">
                   <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3">
-                    {Boolean(member.experience && member.experience !== 0 && member.experience !== "0") && (
-                      <div className="flex items-center gap-1.5 text-primary-foreground mb-1">
-                        <Award className="w-3 h-3" />
-                        <span className="text-xs">{member.experience}</span>
+                    {(Boolean(member.experience && member.experience !== 0 && member.experience !== "0") || member.age) && (
+                      <div className="flex flex-wrap items-center gap-1.5 text-primary-foreground mb-1">
+                        {Boolean(member.experience && member.experience !== 0 && member.experience !== "0") && (
+                          <>
+                            <Award className="w-3 h-3" />
+                            <span className="text-xs">{member.experience}</span>
+                          </>
+                        )}
+                        {member.age && (
+                          <span className="text-xs opacity-90 border-l border-white/30 pl-1.5 ml-1">
+                            {getAgeLabel(member.age)}
+                          </span>
+                        )}
                       </div>
                     )}
                     <p className="text-primary-foreground text-xs line-clamp-2">{member.specialty}</p>

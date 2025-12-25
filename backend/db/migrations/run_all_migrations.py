@@ -12,7 +12,8 @@ backend_dir = os.path.abspath(os.path.join(current_dir, '../../'))
 if backend_dir not in sys.path:
     sys.path.insert(0, backend_dir)
 
-from core.config import DATABASE_NAME
+
+from core.config import DATABASE_TYPE
 
 def print_header(text):
     print("\n" + "="*80)
@@ -24,7 +25,7 @@ def run_migration_function(func, description):
     try:
         print(f"\n📄 Миграция: {description}")
         print("-"*80)
-        result = func(DATABASE_NAME)
+        result = func()
         return result if result is not None else True
     except Exception as e:
         print(f"❌ Ошибка: {e}")
@@ -36,7 +37,7 @@ def run_all_migrations():
     """Run all consolidated migrations"""
     print_header("ЗАПУСК ВСЕХ МИГРАЦИЙ CRM (КОНСОЛИДИРОВАННЫЕ)")
     print(f"Дата: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"База данных: {DATABASE_NAME}")
+    print(f"База данных: PostgreSQL")
 
     # ========================================================================
     # СОЗДАНИЕ БАЗЫ ДАННЫХ ЕСЛИ НЕ СУЩЕСТВУЕТ
