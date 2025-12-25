@@ -186,6 +186,30 @@ def run_all_migrations():
     )
 
     # ========================================================================
+    # EMAIL VERIFICATION TABLES (Authentication System)
+    # ========================================================================
+    print_header("EMAIL VERIFICATION TABLES")
+    try:
+        from db.migrations.schema.create_email_verification_tables import (
+            create_client_email_verifications_table,
+            create_registration_audit_table
+        )
+        
+        results["schema/client_email_verifications"] = run_migration_function(
+            lambda db_name: create_client_email_verifications_table(),
+            "Таблица client_email_verifications (коды верификации клиентов)"
+        )
+        
+        results["schema/registration_audit"] = run_migration_function(
+            lambda db_name: create_registration_audit_table(),
+            "Таблица registration_audit (аудит регистраций)"
+        )
+        print("✅ Email verification tables created")
+    except Exception as e:
+        print(f"⚠️  Email verification tables already exist or error: {e}")
+        results["schema/email_verification"] = False
+
+    # ========================================================================
     # MIGRATION: CLIENT PREFERENCES & CONVERSATION CONTEXT
     # ========================================================================
     try:
