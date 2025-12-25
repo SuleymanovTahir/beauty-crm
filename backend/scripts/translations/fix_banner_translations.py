@@ -8,7 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from translator import Translator
-from config import LANGUAGES, DATABASE_PATH
+from config import LANGUAGES
 
 def fix_banner_translations():
     print("🔧 Fixing banner translations...")

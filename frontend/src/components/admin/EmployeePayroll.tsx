@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Loader2, Calculator, Calendar, DollarSign, TrendingUp, Save } from 'lucide-react';
+import { Loader2, Calculator, Calendar, DollarSign, TrendingUp, Save, Percent } from 'lucide-react';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
 import {
@@ -16,8 +16,17 @@ import {
     TableRow,
 } from '../ui/table';
 
+interface Employee {
+    id: number;
+    full_name: string;
+    base_salary?: number;
+    commission_rate?: number;
+}
+
 interface EmployeePayrollProps {
     employeeId: number;
+    employee: Employee;
+    onUpdate: () => void;
 }
 
 interface PayrollSummary {
@@ -43,7 +52,7 @@ interface PayrollHistoryItem {
 
 
 
-export function EmployeePayroll({ employeeId }: EmployeePayrollProps) {
+export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayrollProps) {
     const { t } = useTranslation(['admin/users', 'common']);
 
     // Default to current month
@@ -55,8 +64,21 @@ export function EmployeePayroll({ employeeId }: EmployeePayrollProps) {
     const [endDate, setEndDate] = useState(lastDay);
     const [loading, setLoading] = useState(false);
     const [recording, setRecording] = useState(false);
+    const [savingSettings, setSavingSettings] = useState(false);
     const [summary, setSummary] = useState<PayrollSummary | null>(null);
     const [history, setHistory] = useState<PayrollHistoryItem[]>([]);
+
+    const [salarySettings, setSalarySettings] = useState({
+        base_salary: employee?.base_salary || 0,
+        commission_rate: employee?.commission_rate || 0
+    });
+
+    useEffect(() => {
+        setSalarySettings({
+            base_salary: employee?.base_salary || 0,
+            commission_rate: employee?.commission_rate || 0
+        });
+    }, [employee]);
 
     useEffect(() => {
         loadHistory();
@@ -112,9 +134,88 @@ export function EmployeePayroll({ employeeId }: EmployeePayrollProps) {
         }
     };
 
+    const handleSaveSettings = async () => {
+        try {
+            setSavingSettings(true);
+            await api.post(`/api/users/${employeeId}/update-profile`, {
+                base_salary: salarySettings.base_salary,
+                commission_rate: salarySettings.commission_rate
+            });
+            toast.success(t('settings_saved', 'Settings saved'));
+            onUpdate();
+        } catch (error) {
+            console.error('Error saving settings:', error);
+            toast.error(t('error_saving_settings', 'Error saving settings'));
+        } finally {
+            setSavingSettings(false);
+        }
+    };
+
+    const handleStatusChange = async (paymentId: number, newStatus: string) => {
+        try {
+            await api.post(`/api/payroll/update-status`, {
+                payment_id: paymentId,
+                status: newStatus
+            });
+            toast.success(t('status_updated', 'Status updated'));
+            loadHistory();
+        } catch (error) {
+            console.error('Error updating status:', error);
+            toast.error(t('error_updating_status', 'Error updating status'));
+        }
+    };
+
     return (
         <div className="space-y-6">
-            {/* Controls */}
+            {/* Salary Settings Card */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <DollarSign className="h-5 w-5" />
+                        {t('payroll_settings', 'Payroll Settings')}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">{t('base_salary', 'Base Salary')}</label>
+                            <div className="relative">
+                                <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                <Input
+                                    type="number"
+                                    value={salarySettings.base_salary}
+                                    onChange={(e) => setSalarySettings(prev => ({ ...prev, base_salary: parseFloat(e.target.value) || 0 }))}
+                                    className="pl-8"
+                                    placeholder="0"
+                                />
+                            </div>
+                            <p className="text-xs text-gray-500">{t('base_salary_hint', 'Fixed monthly salary')}</p>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">{t('commission_rate', 'Commission Rate (%)')}</label>
+                            <div className="relative">
+                                <Percent className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                <Input
+                                    type="number"
+                                    value={salarySettings.commission_rate}
+                                    onChange={(e) => setSalarySettings(prev => ({ ...prev, commission_rate: parseFloat(e.target.value) || 0 }))}
+                                    className="pl-8"
+                                    placeholder="0"
+                                    min="0"
+                                    max="100"
+                                />
+                            </div>
+                            <p className="text-xs text-gray-500">{t('commission_rate_hint', 'Percentage of revenue')}</p>
+                        </div>
+                    </div>
+                    <Button onClick={handleSaveSettings} disabled={savingSettings}>
+                        {savingSettings ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                        {t('save_settings', 'Save Settings')}
+                    </Button>
+                </CardContent>
+            </Card>
+
+            {/* Date Range Controls */}
             <div className="flex flex-wrap items-end gap-4 bg-white p-4 rounded-lg border">
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">{t('start_date', 'Start Date')}</label>
@@ -240,9 +341,18 @@ export function EmployeePayroll({ employeeId }: EmployeePayrollProps) {
                                             {item.total_amount} {item.currency}
                                         </TableCell>
                                         <TableCell>
-                                            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
-                                                {item.status || 'paid'}
-                                            </span>
+                                            <select
+                                                value={item.status || 'paid'}
+                                                onChange={(e) => handleStatusChange(item.id, e.target.value)}
+                                                className={`px-2 py-1 rounded text-xs font-semibold border-0 cursor-pointer ${item.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                    item.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                                                        'bg-green-100 text-green-700'
+                                                    }`}
+                                            >
+                                                <option value="pending">{t('status_pending', 'Pending')}</option>
+                                                <option value="paid">{t('status_paid', 'Paid')}</option>
+                                                <option value="cancelled">{t('status_cancelled', 'Cancelled')}</option>
+                                            </select>
                                         </TableCell>
                                         <TableCell className="text-gray-500">
                                             {new Date(item.created_at).toLocaleDateString()}

@@ -9,14 +9,9 @@ import os
 import sys
 from datetime import datetime
 
-DATABASE_NAME = "salon_bot.db"
 
 def check_database():
     """Проверить состояние БД"""
-    if not os.path.exists(DATABASE_NAME):
-        print(f"❌ БД не найдена: {DATABASE_NAME}")
-        return False
-    
     try:
         conn = get_db_connection()
         c = conn.cursor()
@@ -27,7 +22,7 @@ def check_database():
         print()
         
         # 1. Проверяем таблицы
-        c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' ORDER BY tablename")
+        c.execute("SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename")
         tables = [row[0] for row in c.fetchall()]
         
         print(f"📋 ТАБЛИЦЫ ({len(tables)} шт):")

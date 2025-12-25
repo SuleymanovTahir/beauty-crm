@@ -24,6 +24,19 @@ export default function Login() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [salonSettings, setSalonSettings] = useState<any>(null);
+
+  React.useEffect(() => {
+    const fetchSalonSettings = async () => {
+      try {
+        const response = await api.getSalonSettings();
+        setSalonSettings(response);
+      } catch (err) {
+        console.error("Error fetching salon settings:", err);
+      }
+    };
+    fetchSalonSettings();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,18 +124,32 @@ export default function Login() {
       </div>
 
       <div className="w-full max-w-md">
-        {/* Icon Circle - сверху над карточкой */}
+        {/* Icon Circle or Logo - сверху над карточкой */}
         <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-            <Lock className="w-8 h-8 text-white" />
+          <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg overflow-hidden p-0.5">
+            {salonSettings?.logo_url ? (
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+                <img
+                  src={salonSettings.logo_url}
+                  alt={salonSettings.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <Lock className="w-10 h-10 text-white" />
+            )}
           </div>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
           {/* Header */}
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-gray-900">{t('login:login_title')}</h1>
-            <p className="text-sm text-gray-600">{t('login:crm_system_management')}</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {salonSettings?.name || t('login:login_title')}
+            </h1>
+            <p className="text-sm text-gray-600">
+              {salonSettings?.name ? t('login:management_system') : t('login:crm_system_management')}
+            </p>
           </div>
 
           {error && (

@@ -65,7 +65,8 @@ const AccountPage = React.lazy(() => import('../public_landing/pages/account/Acc
 const DataDeletionNew = React.lazy(() => import('../public_landing/pages/DataDeletion'));
 
 const Login = React.lazy(() => import('../public_landing/pages/LoginPage').then(module => ({ default: module.LoginPage })));
-// const Register = React.lazy(() => import('./pages/auth/Register'));
+const AdminLogin = React.lazy(() => import('./pages/auth/Login'));
+const AdminRegister = React.lazy(() => import('./pages/auth/Register'));
 const VerifyEmail = React.lazy(() => import('./pages/auth/VerifyEmail'));
 const ForgotPassword = React.lazy(() => import('./pages/auth/ForgotPassword'));
 const ResetPassword = React.lazy(() => import('./pages/auth/ResetPassword'));
@@ -167,6 +168,28 @@ export default function App() {
                     <Navigate to="/admin/dashboard" replace />
                   ) : (
                     <Login initialView="register" />
+                  )
+                }
+              />
+
+              <Route
+                path="/admin/login"
+                element={
+                  currentUser ? (
+                    <Navigate to="/admin/dashboard" replace />
+                  ) : (
+                    <AdminLogin />
+                  )
+                }
+              />
+
+              <Route
+                path="/admin/register"
+                element={
+                  currentUser ? (
+                    <Navigate to="/admin/dashboard" replace />
+                  ) : (
+                    <AdminRegister />
                   )
                 }
               />

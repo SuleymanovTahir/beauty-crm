@@ -134,7 +134,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
               <a href="/" className="block">
                 {/* <div className="text-xl sm:text-2xl font-bold text-primary">Beauty Salon</div> */}
                 <img
-                  src={logo} // Use imported logo
+                  src={salonInfo?.logo_url || logo} // Use dynamic logo if available, fallback to imported logo
                   alt={salonInfo?.name || "M Le Diamant"}
                   className="h-10 sm:h-12 w-auto object-contain"
                 />

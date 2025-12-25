@@ -4,7 +4,7 @@ Consolidated Bot Analytics Schema Migration
 """
 from db.connection import get_db_connection
 
-def migrate_bot_analytics_schema(db_path="salon_bot.db"):
+def migrate_bot_analytics_schema():
     """
     Apply all bot_analytics table schema changes
     """

@@ -1,13 +1,12 @@
 // /frontend/src/components/admin/EmployeeInformation.tsx
 import { useState, useEffect } from 'react';
-import { User, Mail, Phone, Send, Instagram, MessageCircle, Briefcase, Award, Star, FileText, Lock, Camera, Loader, Upload, Trash2 } from 'lucide-react';
+import { User, Mail, Phone, Send, Instagram, MessageCircle, Briefcase, Award, Star, Lock, Camera, Loader, Pencil } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
-import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { getPhotoUrl } from '../../utils/photoUtils';
 
 interface Employee {
@@ -102,6 +101,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                     photo: uploadResponse.url,
                 } as any);
                 toast.success(t('photo_updated', 'Photo updated'));
+                window.dispatchEvent(new CustomEvent('profile-updated'));
                 onUpdate();
             }
         } catch (err: any) {
@@ -169,6 +169,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
 
             await api.updateUserProfile(employee.id, updateData);
             toast.success(t('profile_updated', 'Profile updated'));
+            window.dispatchEvent(new CustomEvent('profile-updated'));
             setForm({
                 ...form,
                 current_password: '',
@@ -355,38 +356,101 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                         <Label className="text-sm font-medium text-gray-700 mb-3 block">
                             {t('social_links', 'Social Links')}
                         </Label>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="relative">
-                                <Instagram className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <Input
-                                    id="instagram_link"
-                                    value={form.instagram_link}
-                                    onChange={(e) => setForm({ ...form, instagram_link: e.target.value })}
-                                    className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
-                                    placeholder="@username"
-                                />
+                        <div className="flex flex-wrap gap-3">
+                            {/* Instagram */}
+                            <div className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg border border-pink-200 group">
+                                <Instagram className="w-5 h-5 text-pink-600" />
+                                {form.instagram_link ? (
+                                    <a
+                                        href={`https://instagram.com/${form.instagram_link.replace('@', '')}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-sm font-medium text-gray-700 hover:text-pink-600 transition-colors"
+                                    >
+                                        {form.instagram_link}
+                                    </a>
+                                ) : (
+                                    <Input
+                                        value={form.instagram_link}
+                                        onChange={(e) => setForm({ ...form, instagram_link: e.target.value })}
+                                        className="h-7 w-28 text-sm bg-transparent border-0 p-0 focus:ring-0"
+                                        placeholder="@username"
+                                    />
+                                )}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const newValue = prompt(t('enter_instagram', 'Enter Instagram username'), form.instagram_link);
+                                        if (newValue !== null) setForm({ ...form, instagram_link: newValue });
+                                    }}
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-pink-100 rounded"
+                                >
+                                    <Pencil className="w-3.5 h-3.5 text-pink-500" />
+                                </button>
                             </div>
 
-                            <div className="relative">
-                                <MessageCircle className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <Input
-                                    id="whatsapp"
-                                    value={form.whatsapp}
-                                    onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-                                    className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
-                                    placeholder="+971501234567"
-                                />
+                            {/* WhatsApp */}
+                            <div className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200 group">
+                                <MessageCircle className="w-5 h-5 text-green-600" />
+                                {form.whatsapp ? (
+                                    <a
+                                        href={`https://wa.me/${form.whatsapp.replace(/[^0-9]/g, '')}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-sm font-medium text-gray-700 hover:text-green-600 transition-colors"
+                                    >
+                                        {form.whatsapp}
+                                    </a>
+                                ) : (
+                                    <Input
+                                        value={form.whatsapp}
+                                        onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
+                                        className="h-7 w-32 text-sm bg-transparent border-0 p-0 focus:ring-0"
+                                        placeholder="+971..."
+                                    />
+                                )}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const newValue = prompt('WhatsApp', form.whatsapp);
+                                        if (newValue !== null) setForm({ ...form, whatsapp: newValue });
+                                    }}
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-green-100 rounded"
+                                >
+                                    <Pencil className="w-3.5 h-3.5 text-green-500" />
+                                </button>
                             </div>
 
-                            <div className="relative">
-                                <Send className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <Input
-                                    id="telegram"
-                                    value={form.telegram}
-                                    onChange={(e) => setForm({ ...form, telegram: e.target.value })}
-                                    className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
-                                    placeholder="@username"
-                                />
+                            {/* Telegram */}
+                            <div className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200 group">
+                                <Send className="w-5 h-5 text-blue-600" />
+                                {form.telegram ? (
+                                    <a
+                                        href={`https://t.me/${form.telegram.replace('@', '')}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+                                    >
+                                        {form.telegram}
+                                    </a>
+                                ) : (
+                                    <Input
+                                        value={form.telegram}
+                                        onChange={(e) => setForm({ ...form, telegram: e.target.value })}
+                                        className="h-7 w-28 text-sm bg-transparent border-0 p-0 focus:ring-0"
+                                        placeholder="@username"
+                                    />
+                                )}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const newValue = prompt('Telegram', form.telegram);
+                                        if (newValue !== null) setForm({ ...form, telegram: newValue });
+                                    }}
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-blue-100 rounded"
+                                >
+                                    <Pencil className="w-3.5 h-3.5 text-blue-500" />
+                                </button>
                             </div>
                         </div>
                     </div>

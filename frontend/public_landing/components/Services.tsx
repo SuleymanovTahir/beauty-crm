@@ -176,10 +176,10 @@ export function Services() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2 }}
                 key={service.id}
-                className="service-card"
+                className="service-card group cursor-pointer"
               >
                 <div className="flex justify-between items-start mb-3 sm:mb-4">
-                  <h3 className="text-lg sm:text-xl font-medium">
+                  <h3 className="text-[13px] sm:text-base font-medium group-hover:text-primary transition-colors">
                     {service[`name_${i18n.language}` as keyof Service] || service.name_ru || service.name}
                   </h3>
                   <div className="service-badge">
@@ -193,7 +193,7 @@ export function Services() {
                   </div>
                   <Button
                     size="sm"
-                    className="rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground h-7 text-xs px-4"
+                    className="rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground h-7 text-xs px-4 transition-all duration-300"
                     onClick={() => {
                       window.location.hash = `booking?service=${service.id}`;
                       document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });

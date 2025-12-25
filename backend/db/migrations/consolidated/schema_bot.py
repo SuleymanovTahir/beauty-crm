@@ -4,7 +4,7 @@ All schema changes for bot_settings table in one place
 """
 from db.connection import get_db_connection
 
-def migrate_bot_schema(db_path="salon_bot.db"):
+def migrate_bot_schema():
     """
     Apply all bot_settings table schema changes
     """

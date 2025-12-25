@@ -1,93 +1,6 @@
 {
   "users": [
     {
-      "id": 2,
-      "fields": {
-        "full_name": {
-          "ru": "SIMO",
-          "key": "users.2.full_name.3bfe88dd",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "position": {
-          "ru": "Hair Stylist",
-          "key": "users.2.position.18612649",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 3,
-      "fields": {
-        "full_name": {
-          "ru": "MESTAN",
-          "key": "users.3.full_name.6b69b58c",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "position": {
-          "ru": "Hair Stylist",
-          "key": "users.3.position.18612649",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 4,
-      "fields": {
-        "full_name": {
-          "ru": "LYAZZAT",
-          "key": "users.4.full_name.cff5b0c9",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "position": {
-          "ru": "Nail Master",
-          "key": "users.4.position.1c34eb1b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
       "id": 5,
       "fields": {
         "full_name": {
@@ -105,6 +18,18 @@
         "position": {
           "ru": "Nail/Waxing",
           "key": "users.5.position.0e33fa6b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "bio": {
+          "ru": "Нежные руки для самой чувствительной кожи. Депиляция без боли — моя фишка! Маникюр с заботой о ногтях. После моих процедур хочется возвращаться снова и снова.",
+          "key": "users.5.bio.9b89472d",
           "en": null,
           "ar": null,
           "es": null,
@@ -134,6 +59,18 @@
         "position": {
           "ru": "Nail Master/Massages",
           "key": "users.6.position.d68a2270",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "bio": {
+          "ru": "Руки, которые творят волшебство. Spa-педикюр как в раю, массаж от которого улетаешь. Пришла на маникюр — вышла другим человеком. Говорю на трёх языках, понимаю женщин с полуслова!",
+          "key": "users.6.bio.9ddfd547",
           "en": null,
           "ar": null,
           "es": null,
@@ -173,6 +110,129 @@
           "pt": null
         }
       }
+    },
+    {
+      "id": 4,
+      "fields": {
+        "full_name": {
+          "ru": "LYAZZAT",
+          "key": "users.4.full_name.cff5b0c9",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "position": {
+          "ru": "Nail Master",
+          "key": "users.4.position.1c34eb1b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "bio": {
+          "ru": "Ногти — это ювелирная работа. Мой маникюр держится как влитой, дизайны — настоящие произведения искусства. Реснички тоже умею делать так, что глаза не оторвать!",
+          "key": "users.4.bio.40eb89ab",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "full_name": {
+          "ru": "SIMO",
+          "key": "users.2.full_name.3bfe88dd",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "position": {
+          "ru": "Hair Stylist",
+          "key": "users.2.position.18612649",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "bio": {
+          "ru": "Ваши волосы — моя страсть! Создаю сложные окрашивания, которыми хочется хвастаться в Instagram. Балаяж, шатуш, омбре — любой каприз. Волосы после кератина как шёлк. Обучался в Европе, работаю только с премиум-брендами.",
+          "key": "users.2.bio.da41f199",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "full_name": {
+          "ru": "MESTAN",
+          "key": "users.3.full_name.6b69b58c",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "position": {
+          "ru": "Hair Stylist",
+          "key": "users.3.position.18612649",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "bio": {
+          "ru": "Мастер, которому доверяют самое важное — лицо! Идеальные брови, пушистые ресницы, безупречный цвет волос. Тот самый свежий образ, когда все спрашивают: Что ты с собой сделала?!",
+          "key": "users.3.bio.926195df",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
     }
   ],
   "public_reviews": [
@@ -194,6 +254,18 @@
         "author_name": {
           "ru": "Anna Petrova",
           "key": "public_reviews.1.author_name.73217063",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Permanent Makeup",
+          "key": "public_reviews.1.employee_position.4075aad3",
           "en": null,
           "ar": null,
           "es": null,
@@ -231,6 +303,18 @@
           "hi": null,
           "kk": null,
           "pt": null
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.2.employee_position.5b1b1d5e",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
         }
       }
     },
@@ -252,6 +336,18 @@
         "author_name": {
           "ru": "Elena Smirnova",
           "key": "public_reviews.3.author_name.cafa8492",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Manicure & Pedicure",
+          "key": "public_reviews.3.employee_position.8e5cfdfa",
           "en": null,
           "ar": null,
           "es": null,
@@ -289,6 +385,18 @@
           "hi": null,
           "kk": null,
           "pt": null
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.4.employee_position.9a3a91ca",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
         }
       }
     },
@@ -310,6 +418,18 @@
         "author_name": {
           "ru": "Fatima Al-Sayed",
           "key": "public_reviews.5.author_name.f26d4aa2",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.5.employee_position.65d6c03d",
           "en": null,
           "ar": null,
           "es": null,
@@ -703,35 +823,11 @@
       }
     },
     {
-      "id": 11,
+      "id": 60,
       "fields": {
-        "name_ru": {
-          "ru": "Руки полностью",
-          "key": "services.11.name_ru.fac91d90",
-          "en": "Full hands",
-          "ar": "أيدي كاملة",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Полная эпиляция рук",
-          "key": "services.11.description_ru.7168d5eb",
-          "en": "Full arm hair removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
-          "ru": "1h",
-          "key": "services.11.duration.7c68645d",
+          "ru": "60",
+          "key": "services.60.duration.072b030b",
           "en": null,
           "ar": null,
           "es": null,
@@ -744,35 +840,11 @@
       }
     },
     {
-      "id": 12,
+      "id": 61,
       "fields": {
-        "name_ru": {
-          "ru": "Руки до локтя",
-          "key": "services.12.name_ru.7fb86af9",
-          "en": "Hands to elbows",
-          "ar": "الأيدي إلى المرفقين",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Эпиляция рук до локтя",
-          "key": "services.12.description_ru.e9cb16e1",
-          "en": "Epilation of arms up to the elbow",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
-          "ru": "1h",
-          "key": "services.12.duration.7c68645d",
+          "ru": "60",
+          "key": "services.61.duration.072b030b",
           "en": null,
           "ar": null,
           "es": null,
@@ -785,35 +857,11 @@
       }
     },
     {
-      "id": 13,
+      "id": 62,
       "fields": {
-        "name_ru": {
-          "ru": "Эпиляция всего тела",
-          "key": "services.13.name_ru.7b40c2d8",
-          "en": "Full body hair removal",
-          "ar": "إزالة شعر الجسم بالكامل",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Полная эпиляция тела",
-          "key": "services.13.description_ru.187ce3b9",
-          "en": "Full body hair removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
-          "ru": "1h",
-          "key": "services.13.duration.7c68645d",
+          "ru": "60",
+          "key": "services.62.duration.072b030b",
           "en": null,
           "ar": null,
           "es": null,
@@ -826,35 +874,11 @@
       }
     },
     {
-      "id": 14,
+      "id": 63,
       "fields": {
-        "name_ru": {
-          "ru": "Подмышки",
-          "key": "services.14.name_ru.4da5bc5b",
-          "en": "Armpits",
-          "ar": "الإبطين",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Эпиляция подмышек",
-          "key": "services.14.description_ru.3186a3c3",
-          "en": "Armpit hair removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
-          "ru": "1h",
-          "key": "services.14.duration.7c68645d",
+          "ru": "60",
+          "key": "services.63.duration.072b030b",
           "en": null,
           "ar": null,
           "es": null,
@@ -867,35 +891,11 @@
       }
     },
     {
-      "id": 15,
+      "id": 64,
       "fields": {
-        "name_ru": {
-          "ru": "Лицо полностью",
-          "key": "services.15.name_ru.c6f390eb",
-          "en": "Full face",
-          "ar": "وجه كامل",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Полная эпиляция лица",
-          "key": "services.15.description_ru.67086220",
-          "en": "Full facial hair removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
-          "ru": "1h",
-          "key": "services.15.duration.7c68645d",
+          "ru": "60",
+          "key": "services.64.duration.072b030b",
           "en": null,
           "ar": null,
           "es": null,
@@ -908,35 +908,11 @@
       }
     },
     {
-      "id": 16,
+      "id": 65,
       "fields": {
-        "name_ru": {
-          "ru": "Верхняя губа",
-          "key": "services.16.name_ru.9a3255a9",
-          "en": "Upper lip",
-          "ar": "الشفة العليا",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Эпиляция верхней губы",
-          "key": "services.16.description_ru.c364dec1",
-          "en": "Upper lip epilation",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
-          "ru": "1h",
-          "key": "services.16.duration.7c68645d",
+          "ru": "60",
+          "key": "services.65.duration.072b030b",
           "en": null,
           "ar": null,
           "es": null,
@@ -949,35 +925,11 @@
       }
     },
     {
-      "id": 17,
+      "id": 66,
       "fields": {
-        "name_ru": {
-          "ru": "Подбородок",
-          "key": "services.17.name_ru.d2c6f434",
-          "en": "Chin",
-          "ar": "الذقن",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Эпиляция подбородка",
-          "key": "services.17.description_ru.3e342887",
-          "en": "Chin hair removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
-          "ru": "1h",
-          "key": "services.17.duration.7c68645d",
+          "ru": "60",
+          "key": "services.66.duration.072b030b",
           "en": null,
           "ar": null,
           "es": null,
@@ -990,93 +942,11 @@
       }
     },
     {
-      "id": 18,
+      "id": 67,
       "fields": {
-        "name_ru": {
-          "ru": "Ровный срез кончиков",
-          "key": "services.18.name_ru.d588be99",
-          "en": "Even cut ends",
-          "ar": "أطراف متساوية",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Простой срез без мытья",
-          "key": "services.18.description_ru.6a0312d4",
-          "en": "Easy cutting without washing",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 19,
-      "fields": {
-        "name_ru": {
-          "ru": "Стрижка + Укладка",
-          "key": "services.19.name_ru.68ef3fa2",
-          "en": "Haircut + Styling",
-          "ar": "قص شعر + تصفيف",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Профессиональная стрижка с укладкой",
-          "key": "services.19.description_ru.5d2597e1",
-          "en": "Professional haircut with styling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 20,
-      "fields": {
-        "name_ru": {
-          "ru": "Укладка",
-          "key": "services.20.name_ru.3fd3ef81",
-          "en": "Styling",
-          "ar": "التصميم",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Профессиональная укладка волос",
-          "key": "services.20.description_ru.7cbd9728",
-          "en": "Professional hair styling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
-          "ru": "1h",
-          "key": "services.20.duration.7c68645d",
+          "ru": "60",
+          "key": "services.67.duration.072b030b",
           "en": null,
           "ar": null,
           "es": null,
@@ -1089,64 +959,11 @@
       }
     },
     {
-      "id": 21,
+      "id": 68,
       "fields": {
-        "name_ru": {
-          "ru": "Детская стрижка",
-          "key": "services.21.name_ru.fe5b249b",
-          "en": "Children's haircut",
-          "ar": "قص شعر الأطفال",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Стрижка для детей",
-          "key": "services.21.description_ru.aaee775a",
-          "en": "Haircut for children",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 22,
-      "fields": {
-        "name_ru": {
-          "ru": "Окрашивание корней + Укладка",
-          "key": "services.22.name_ru.34258f73",
-          "en": "Root coloring + Styling",
-          "ar": "تلوين الجذر + التصميم",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Окрашивание корней с укладкой",
-          "key": "services.22.description_ru.2ad52607",
-          "en": "Root coloring with styling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
-          "ru": "1h",
-          "key": "services.22.duration.7c68645d",
+          "ru": "60",
+          "key": "services.68.duration.072b030b",
           "en": null,
           "ar": null,
           "es": null,
@@ -1159,939 +976,12 @@
       }
     },
     {
-      "id": 23,
+      "id": 69,
       "fields": {
-        "name_ru": {
-          "ru": "Осветление корней + Укладка",
-          "key": "services.23.name_ru.3caf9ba3",
-          "en": "Root Lightening + Styling",
-          "ar": "تفتيح الجذور + التصفيف",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Осветление корней с укладкой",
-          "key": "services.23.description_ru.785f83b1",
-          "en": "Root lightening with styling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 24,
-      "fields": {
-        "name_ru": {
-          "ru": "Тонирование + Укладка",
-          "key": "services.24.name_ru.60be0b49",
-          "en": "Toning + Styling",
-          "ar": "التنغيم + التصميم",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Тонирование волос с укладкой",
-          "key": "services.24.description_ru.837dbffc",
-          "en": "Hair tinting with styling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 25,
-      "fields": {
-        "name_ru": {
-          "ru": "Окрашивание в один тон + Укладка",
-          "key": "services.25.name_ru.841add1a",
-          "en": "One tone coloring + Styling",
-          "ar": "تلوين لهجة واحدة + التصميم",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Полное окрашивание с укладкой",
-          "key": "services.25.description_ru.d5d8904e",
-          "en": "Full coloring with styling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
-          "ru": "2h",
-          "key": "services.25.duration.2bdde03f",
+          "ru": "60",
+          "key": "services.69.duration.072b030b",
           "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 26,
-      "fields": {
-        "name_ru": {
-          "ru": "Балаяж",
-          "key": "services.26.name_ru.abc5305a",
-          "en": "Balayage",
-          "ar": "بالاياج",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Техника балаяж",
-          "key": "services.26.description_ru.0d9921e5",
-          "en": "Balayage technique",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "2h",
-          "key": "services.26.duration.2bdde03f",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 27,
-      "fields": {
-        "name_ru": {
-          "ru": "Омбре/Шатуш/Аиртач",
-          "key": "services.27.name_ru.dffc4fe7",
-          "en": "Ombre/Shatush/Airtach",
-          "ar": "أومبير/شاتوش/إيرتاش",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Техники градиентного окрашивания",
-          "key": "services.27.description_ru.596e8006",
-          "en": "Gradient coloring techniques",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "2h",
-          "key": "services.27.duration.2bdde03f",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 28,
-      "fields": {
-        "name_ru": {
-          "ru": "Выход из черного",
-          "key": "services.28.name_ru.1b90012d",
-          "en": "Beauty Salon Service Coming Out of the Black",
-          "ar": "الخروج من الأسود",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Коррекция цвета из темного",
-          "key": "services.28.description_ru.32fb73b4",
-          "en": "Color correction from dark",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 29,
-      "fields": {
-        "name_ru": {
-          "ru": "Натуральный уход",
-          "key": "services.29.name_ru.04259ed1",
-          "en": "Natural care",
-          "ar": "العناية الطبيعية",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Натуральный уход за волосами",
-          "key": "services.29.description_ru.2777cc29",
-          "en": "Natural hair care",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.29.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 30,
-      "fields": {
-        "name_ru": {
-          "ru": "Наращивание волос за капсулу",
-          "key": "services.30.name_ru.ab1edd95",
-          "en": "Hair extensions per capsule",
-          "ar": "وصلات شعر لكل كبسولة",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Наращивание за капсулу",
-          "key": "services.30.description_ru.7295515b",
-          "en": "Extensions per capsule",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 31,
-      "fields": {
-        "name_ru": {
-          "ru": "Классический объем ресниц",
-          "key": "services.31.name_ru.d85c8406",
-          "en": "Classic eyelash volume",
-          "ar": "حجم رموش كلاسيكي",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Натуральное наращивание ресниц",
-          "key": "services.31.description_ru.1cb01f28",
-          "en": "Natural eyelash extensions",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 32,
-      "fields": {
-        "name_ru": {
-          "ru": "2D объем ресниц",
-          "key": "services.32.name_ru.6dc0aef0",
-          "en": "2D eyelash volume",
-          "ar": "حجم رموش ثنائي الأبعاد",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Наращивание 2D",
-          "key": "services.32.description_ru.b4b7781e",
-          "en": "2D extensions",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 33,
-      "fields": {
-        "name_ru": {
-          "ru": "3D объем ресниц",
-          "key": "services.33.name_ru.3276ee2f",
-          "en": "3D eyelash volume",
-          "ar": "حجم رموش ثلاثي الأبعاد",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Наращивание 3D",
-          "key": "services.33.description_ru.9088ab16",
-          "en": "3D extensions",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 34,
-      "fields": {
-        "name_ru": {
-          "ru": "4-5D объем (Мега)",
-          "key": "services.34.name_ru.b156e5fd",
-          "en": "4-5D volume (Mega)",
-          "ar": "حجم 4-5D (ميجا)",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Мега объем ресниц",
-          "key": "services.34.description_ru.0a54c5b1",
-          "en": "Mega volume eyelashes",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 35,
-      "fields": {
-        "name_ru": {
-          "ru": "ML завиток / Стиль Ким",
-          "key": "services.35.name_ru.c64091d8",
-          "en": "ML curl / Kim style",
-          "ar": "ML حليقة / أسلوب كيم",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Специальный изгиб",
-          "key": "services.35.description_ru.cc8b3435",
-          "en": "Special bend",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 36,
-      "fields": {
-        "name_ru": {
-          "ru": "Снятие ресниц",
-          "key": "services.36.name_ru.89cf60fb",
-          "en": "Eyelash removal",
-          "ar": "إزالة الرموش",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Безопасное снятие",
-          "key": "services.36.description_ru.4610f41a",
-          "en": "Safe removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.36.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 1,
-      "fields": {
-        "name_ru": {
-          "ru": "Перманентный макияж губ",
-          "key": "services.1.name_ru.0988ebc3",
-          "en": "Permanent lip makeup",
-          "ar": "مكياج الشفاه الدائم",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Стойкий цвет губ",
-          "key": "services.1.description_ru.2c7149ec",
-          "en": "Long-lasting lip color",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 2,
-      "fields": {
-        "name_ru": {
-          "ru": "Перманентный макияж бровей",
-          "key": "services.2.name_ru.e14e4ffc",
-          "en": "Permanent eyebrow makeup",
-          "ar": "مكياج حواجب دائم",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Микроблейдинг или пудровые брови",
-          "key": "services.2.description_ru.d9f305a2",
-          "en": "Microblading or powder eyebrows",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 3,
-      "fields": {
-        "name_ru": {
-          "ru": "Межресничная стрелка",
-          "key": "services.3.name_ru.faaa31cf",
-          "en": "Interlash line",
-          "ar": "خط إنترلاش",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Подчеркивание линии роста ресниц",
-          "key": "services.3.description_ru.b4db8982",
-          "en": "Emphasizing the lash line",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 5,
-      "fields": {
-        "name_ru": {
-          "ru": "Коррекция перманентного макияжа",
-          "key": "services.5.name_ru.58ddfb6f",
-          "en": "Permanent makeup correction",
-          "ar": "تصحيح المكياج الدائم",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Коррекция существующего перманента",
-          "key": "services.5.description_ru.c816bc6a",
-          "en": "Correction of an existing permanent",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 6,
-      "fields": {
-        "name_ru": {
-          "ru": "Глубокое бикини",
-          "key": "services.6.name_ru.7945c923",
-          "en": "Deep bikini",
-          "ar": "بيكيني عميق",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Полная эпиляция зоны бикини",
-          "key": "services.6.description_ru.568f1503",
-          "en": "Complete epilation of the bikini area",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.6.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 7,
-      "fields": {
-        "name_ru": {
-          "ru": "Линия бикини",
-          "key": "services.7.name_ru.5c761657",
-          "en": "Bikini line",
-          "ar": "خط بيكيني",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Эпиляция по линии бикини",
-          "key": "services.7.description_ru.078dcd37",
-          "en": "Epilation along the bikini line",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.7.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 8,
-      "fields": {
-        "name_ru": {
-          "ru": "Бразильское бикини",
-          "key": "services.8.name_ru.cd80affa",
-          "en": "Brazilian bikini",
-          "ar": "بيكيني برازيلي",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Бразильская эпиляция бикини",
-          "key": "services.8.description_ru.199d9108",
-          "en": "Brazilian bikini hair removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.8.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 9,
-      "fields": {
-        "name_ru": {
-          "ru": "Ноги полностью",
-          "key": "services.9.name_ru.3b3453b2",
-          "en": "Full legs",
-          "ar": "أرجل كاملة",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Полная эпиляция ног",
-          "key": "services.9.description_ru.0ccc7a02",
-          "en": "Full leg hair removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.9.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 10,
-      "fields": {
-        "name_ru": {
-          "ru": "Ноги до колен",
-          "key": "services.10.name_ru.65796548",
-          "en": "Legs to knees",
-          "ar": "من الساقين إلى الركبتين",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Эпиляция ног до колен",
-          "key": "services.10.description_ru.3bad9c89",
-          "en": "Epilation of legs up to the knees",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.10.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 37,
-      "fields": {
-        "name_ru": {
-          "ru": "Ламинирование бровей",
-          "key": "services.37.name_ru.c66b6652",
-          "en": "Eyebrow lamination",
-          "ar": "تصفيح الحواجب",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Ламинирование бровей",
-          "key": "services.37.description_ru.c66b6652",
-          "en": "Eyebrow lamination",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 38,
-      "fields": {
-        "name_ru": {
-          "ru": "Ламинирование ресниц",
-          "key": "services.38.name_ru.6a9d6c82",
-          "en": "Eyelash lamination",
-          "ar": "تصفيح الرموش",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Ламинирование ресниц",
-          "key": "services.38.description_ru.6a9d6c82",
-          "en": "Eyelash lamination",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 39,
-      "fields": {
-        "name_ru": {
-          "ru": "Ламинирование бровей и ресниц",
-          "key": "services.39.name_ru.429e7def",
-          "en": "Lamination of eyebrows and eyelashes",
-          "ar": "تصفيح الحواجب والرموش",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Комбо ламинирование",
-          "key": "services.39.description_ru.c37d7e65",
-          "en": "Combo lamination",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 40,
-      "fields": {
-        "name_ru": {
-          "ru": "Окрашивание бровей",
-          "key": "services.40.name_ru.b0898877",
-          "en": "Eyebrow tinting",
-          "ar": "تلوين الحواجب",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Профессиональное окрашивание",
-          "key": "services.40.description_ru.fcb57901",
-          "en": "Professional coloring",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.40.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 41,
-      "fields": {
-        "name_ru": {
-          "ru": "Оформление бровей",
-          "key": "services.41.name_ru.221b64b3",
-          "en": "Eyebrow shaping",
-          "ar": "تشكيل الحواجب",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Профессиональное оформление",
-          "key": "services.41.description_ru.dd9e95fb",
-          "en": "Professional decoration",
           "ar": null,
           "es": null,
           "de": null,
@@ -2494,734 +1384,6 @@
       }
     },
     {
-      "id": 53,
-      "fields": {
-        "duration": {
-          "ru": "30",
-          "key": "services.53.duration.34173cb3",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 54,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.54.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 55,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.55.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 56,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.56.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 57,
-      "fields": {
-        "duration": {
-          "ru": "180",
-          "key": "services.57.duration.045117b0",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 58,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.58.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 59,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.59.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 60,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.60.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 61,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.61.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 62,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.62.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 63,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.63.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 64,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.64.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 65,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.65.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 66,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.66.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 67,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.67.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 68,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.68.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 69,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.69.duration.072b030b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 42,
-      "fields": {
-        "name_ru": {
-          "ru": "Глубокая чистка лица",
-          "key": "services.42.name_ru.f5d3906b",
-          "en": "Deep facial cleansing",
-          "ar": "تنظيف عميق للوجه",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Профессиональная глубокая чистка",
-          "key": "services.42.description_ru.964e86eb",
-          "en": "Professional deep cleaning",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.42.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 43,
-      "fields": {
-        "name_ru": {
-          "ru": "Медицинская чистка для проблемной кожи",
-          "key": "services.43.name_ru.a6e366dc",
-          "en": "Medical cleansing for problem skin",
-          "ar": "التطهير الطبي للبشرة المشكلة",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Медицинская чистка",
-          "key": "services.43.description_ru.1340aaab",
-          "en": "Medical cleaning",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.43.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 44,
-      "fields": {
-        "name_ru": {
-          "ru": "Подтягивающий массаж лица с маской",
-          "key": "services.44.name_ru.01f63d74",
-          "en": "Firming facial massage with mask",
-          "ar": "ثبات تدليك الوجه بالقناع",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Подтягивающий массаж",
-          "key": "services.44.description_ru.da76e7a6",
-          "en": "Tightening massage",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "30min",
-          "key": "services.44.duration.0d3f22e5",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 45,
-      "fields": {
-        "name_ru": {
-          "ru": "Пилинг",
-          "key": "services.45.name_ru.349ad56c",
-          "en": "Peeling",
-          "ar": "تقشير",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Химический пилинг",
-          "key": "services.45.description_ru.8dea543f",
-          "en": "Chemical peeling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.45.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 46,
-      "fields": {
-        "name_ru": {
-          "ru": "Маникюр без покрытия",
-          "key": "services.46.name_ru.9ce5aa82",
-          "en": "Manicure without coating",
-          "ar": "مانيكير بدون طلاء",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Базовый маникюр",
-          "key": "services.46.description_ru.0079cd02",
-          "en": "Basic manicure",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.46.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 47,
-      "fields": {
-        "name_ru": {
-          "ru": "Спа маникюр",
-          "key": "services.47.name_ru.8deff1c9",
-          "en": "Spa manicure",
-          "ar": "مانيكير سبا",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Спа маникюр",
-          "key": "services.47.description_ru.8deff1c9",
-          "en": "Spa manicure",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.47.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 48,
-      "fields": {
-        "name_ru": {
-          "ru": "Маникюр с обычным покрытием",
-          "key": "services.48.name_ru.7d31de2e",
-          "en": "Manicure with regular finish",
-          "ar": "مانيكير مع لمسة نهائية عادية",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Маникюр с обычным лаком",
-          "key": "services.48.description_ru.b2902707",
-          "en": "Manicure with regular polish",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.48.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 49,
-      "fields": {
-        "name_ru": {
-          "ru": "Маникюр гель-лак",
-          "key": "services.49.name_ru.14c0870e",
-          "en": "Manicure gel polish",
-          "ar": "طلاء جل للأظافر",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Маникюр с гель-лаком",
-          "key": "services.49.description_ru.eb95d49c",
-          "en": "Manicure with gel polish",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h",
-          "key": "services.49.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 50,
-      "fields": {
-        "name_ru": {
-          "ru": "Японский маникюр",
-          "key": "services.50.name_ru.4fec55b5",
-          "en": "Japanese manicure",
-          "ar": "مانيكير ياباني",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Японский маникюр",
-          "key": "services.50.description_ru.4fec55b5",
-          "en": "Japanese manicure",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "1h 30min",
-          "key": "services.50.duration.d7cc86dd",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 51,
-      "fields": {
-        "name_ru": {
-          "ru": "Детский маникюр",
-          "key": "services.51.name_ru.d83a8c76",
-          "en": "Children's manicure",
-          "ar": "مانيكير الأطفال",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Маникюр для детей",
-          "key": "services.51.description_ru.650bd84f",
-          "en": "Manicure for children",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 52,
-      "fields": {
-        "name_ru": {
-          "ru": "Смена обычного лака",
-          "key": "services.52.name_ru.9e0c18fa",
-          "en": "Changing regular nail polish",
-          "ar": "تغيير طلاء الأظافر العادي",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Смена обычного лака",
-          "key": "services.52.description_ru.9e0c18fa",
-          "en": "Changing regular nail polish",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "30min",
-          "key": "services.52.duration.0d3f22e5",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
       "id": 93,
       "fields": {
         "duration": {
@@ -3339,6 +1501,1964 @@
           "pt": null
         }
       }
+    },
+    {
+      "id": 1,
+      "fields": {
+        "name_ru": {
+          "ru": "Перманентный макияж губ",
+          "key": "services.1.name_ru.0988ebc3",
+          "en": "Permanent lip makeup",
+          "ar": "مكياج الشفاه الدائم",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Стойкий цвет губ",
+          "key": "services.1.description_ru.2c7149ec",
+          "en": "Long-lasting lip color",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "name_ru": {
+          "ru": "Перманентный макияж бровей",
+          "key": "services.2.name_ru.e14e4ffc",
+          "en": "Permanent eyebrow makeup",
+          "ar": "مكياج حواجب دائم",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Микроблейдинг или пудровые брови",
+          "key": "services.2.description_ru.d9f305a2",
+          "en": "Microblading or powder eyebrows",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "name_ru": {
+          "ru": "Межресничная стрелка",
+          "key": "services.3.name_ru.faaa31cf",
+          "en": "Interlash line",
+          "ar": "خط إنترلاش",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Подчеркивание линии роста ресниц",
+          "key": "services.3.description_ru.b4db8982",
+          "en": "Emphasizing the lash line",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 5,
+      "fields": {
+        "name_ru": {
+          "ru": "Коррекция перманентного макияжа",
+          "key": "services.5.name_ru.58ddfb6f",
+          "en": "Permanent makeup correction",
+          "ar": "تصحيح المكياج الدائم",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Коррекция существующего перманента",
+          "key": "services.5.description_ru.c816bc6a",
+          "en": "Correction of an existing permanent",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "name_ru": {
+          "ru": "Глубокое бикини",
+          "key": "services.6.name_ru.7945c923",
+          "en": "Deep bikini",
+          "ar": "بيكيني عميق",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция зоны бикини",
+          "key": "services.6.description_ru.568f1503",
+          "en": "Complete epilation of the bikini area",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.6.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 7,
+      "fields": {
+        "name_ru": {
+          "ru": "Линия бикини",
+          "key": "services.7.name_ru.5c761657",
+          "en": "Bikini line",
+          "ar": "خط بيكيني",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Эпиляция по линии бикини",
+          "key": "services.7.description_ru.078dcd37",
+          "en": "Epilation along the bikini line",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.7.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 8,
+      "fields": {
+        "name_ru": {
+          "ru": "Бразильское бикини",
+          "key": "services.8.name_ru.cd80affa",
+          "en": "Brazilian bikini",
+          "ar": "بيكيني برازيلي",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Бразильская эпиляция бикини",
+          "key": "services.8.description_ru.199d9108",
+          "en": "Brazilian bikini hair removal",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.8.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 9,
+      "fields": {
+        "name_ru": {
+          "ru": "Ноги полностью",
+          "key": "services.9.name_ru.3b3453b2",
+          "en": "Full legs",
+          "ar": "أرجل كاملة",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция ног",
+          "key": "services.9.description_ru.0ccc7a02",
+          "en": "Full leg hair removal",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.9.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 10,
+      "fields": {
+        "name_ru": {
+          "ru": "Ноги до колен",
+          "key": "services.10.name_ru.65796548",
+          "en": "Legs to knees",
+          "ar": "من الساقين إلى الركبتين",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Эпиляция ног до колен",
+          "key": "services.10.description_ru.3bad9c89",
+          "en": "Epilation of legs up to the knees",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.10.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 22,
+      "fields": {
+        "name_ru": {
+          "ru": "Окрашивание корней + Укладка",
+          "key": "services.22.name_ru.34258f73",
+          "en": "Root coloring + Styling",
+          "ar": "تلوين الجذر + التصميم",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Окрашивание корней с укладкой",
+          "key": "services.22.description_ru.2ad52607",
+          "en": "Root coloring with styling",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.22.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 25,
+      "fields": {
+        "name_ru": {
+          "ru": "Окрашивание в один тон + Укладка",
+          "key": "services.25.name_ru.841add1a",
+          "en": "One tone coloring + Styling",
+          "ar": "تلوين لهجة واحدة + التصميم",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Полное окрашивание с укладкой",
+          "key": "services.25.description_ru.d5d8904e",
+          "en": "Full coloring with styling",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "120",
+          "key": "services.25.duration.da4fb5c6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 54,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.54.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 55,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.55.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 56,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.56.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 57,
+      "fields": {
+        "duration": {
+          "ru": "180",
+          "key": "services.57.duration.045117b0",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 58,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.58.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 59,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.59.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 49,
+      "fields": {
+        "name_ru": {
+          "ru": "Маникюр гель-лак",
+          "key": "services.49.name_ru.14c0870e",
+          "en": "Manicure gel polish",
+          "ar": "طلاء جل للأظافر",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Маникюр с гель-лаком",
+          "key": "services.49.description_ru.eb95d49c",
+          "en": "Manicure with gel polish",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.49.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 50,
+      "fields": {
+        "name_ru": {
+          "ru": "Японский маникюр",
+          "key": "services.50.name_ru.4fec55b5",
+          "en": "Japanese manicure",
+          "ar": "مانيكير ياباني",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Японский маникюр",
+          "key": "services.50.description_ru.4fec55b5",
+          "en": "Japanese manicure",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "90",
+          "key": "services.50.duration.8613985e",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 52,
+      "fields": {
+        "name_ru": {
+          "ru": "Смена обычного лака",
+          "key": "services.52.name_ru.9e0c18fa",
+          "en": "Changing regular nail polish",
+          "ar": "تغيير طلاء الأظافر العادي",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Смена обычного лака",
+          "key": "services.52.description_ru.9e0c18fa",
+          "en": "Changing regular nail polish",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "30",
+          "key": "services.52.duration.34173cb3",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 18,
+      "fields": {
+        "name_ru": {
+          "ru": "Ровный срез кончиков",
+          "key": "services.18.name_ru.d588be99",
+          "en": "Even cut ends",
+          "ar": "أطراف متساوية",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Простой срез без мытья",
+          "key": "services.18.description_ru.6a0312d4",
+          "en": "Easy cutting without washing",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 19,
+      "fields": {
+        "name_ru": {
+          "ru": "Стрижка + Укладка",
+          "key": "services.19.name_ru.68ef3fa2",
+          "en": "Haircut + Styling",
+          "ar": "قص شعر + تصفيف",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Профессиональная стрижка с укладкой",
+          "key": "services.19.description_ru.5d2597e1",
+          "en": "Professional haircut with styling",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 21,
+      "fields": {
+        "name_ru": {
+          "ru": "Детская стрижка",
+          "key": "services.21.name_ru.fe5b249b",
+          "en": "Children's haircut",
+          "ar": "قص شعر الأطفال",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Стрижка для детей",
+          "key": "services.21.description_ru.aaee775a",
+          "en": "Haircut for children",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 23,
+      "fields": {
+        "name_ru": {
+          "ru": "Осветление корней + Укладка",
+          "key": "services.23.name_ru.3caf9ba3",
+          "en": "Root Lightening + Styling",
+          "ar": "تفتيح الجذور + التصفيف",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Осветление корней с укладкой",
+          "key": "services.23.description_ru.785f83b1",
+          "en": "Root lightening with styling",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 24,
+      "fields": {
+        "name_ru": {
+          "ru": "Тонирование + Укладка",
+          "key": "services.24.name_ru.60be0b49",
+          "en": "Toning + Styling",
+          "ar": "التنغيم + التصميم",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Тонирование волос с укладкой",
+          "key": "services.24.description_ru.837dbffc",
+          "en": "Hair tinting with styling",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 11,
+      "fields": {
+        "name_ru": {
+          "ru": "Руки полностью",
+          "key": "services.11.name_ru.fac91d90",
+          "en": "Full hands",
+          "ar": "أيدي كاملة",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция рук",
+          "key": "services.11.description_ru.7168d5eb",
+          "en": "Full arm hair removal",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.11.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 12,
+      "fields": {
+        "name_ru": {
+          "ru": "Руки до локтя",
+          "key": "services.12.name_ru.7fb86af9",
+          "en": "Hands to elbows",
+          "ar": "الأيدي إلى المرفقين",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Эпиляция рук до локтя",
+          "key": "services.12.description_ru.e9cb16e1",
+          "en": "Epilation of arms up to the elbow",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.12.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 13,
+      "fields": {
+        "name_ru": {
+          "ru": "Эпиляция всего тела",
+          "key": "services.13.name_ru.7b40c2d8",
+          "en": "Full body hair removal",
+          "ar": "إزالة شعر الجسم بالكامل",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция тела",
+          "key": "services.13.description_ru.187ce3b9",
+          "en": "Full body hair removal",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.13.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 14,
+      "fields": {
+        "name_ru": {
+          "ru": "Подмышки",
+          "key": "services.14.name_ru.4da5bc5b",
+          "en": "Armpits",
+          "ar": "الإبطين",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Эпиляция подмышек",
+          "key": "services.14.description_ru.3186a3c3",
+          "en": "Armpit hair removal",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.14.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 15,
+      "fields": {
+        "name_ru": {
+          "ru": "Лицо полностью",
+          "key": "services.15.name_ru.c6f390eb",
+          "en": "Full face",
+          "ar": "وجه كامل",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция лица",
+          "key": "services.15.description_ru.67086220",
+          "en": "Full facial hair removal",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.15.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 16,
+      "fields": {
+        "name_ru": {
+          "ru": "Верхняя губа",
+          "key": "services.16.name_ru.9a3255a9",
+          "en": "Upper lip",
+          "ar": "الشفة العليا",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Эпиляция верхней губы",
+          "key": "services.16.description_ru.c364dec1",
+          "en": "Upper lip epilation",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.16.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 17,
+      "fields": {
+        "name_ru": {
+          "ru": "Подбородок",
+          "key": "services.17.name_ru.d2c6f434",
+          "en": "Chin",
+          "ar": "الذقن",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Эпиляция подбородка",
+          "key": "services.17.description_ru.3e342887",
+          "en": "Chin hair removal",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.17.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 20,
+      "fields": {
+        "name_ru": {
+          "ru": "Укладка",
+          "key": "services.20.name_ru.3fd3ef81",
+          "en": "Styling",
+          "ar": "التصميم",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Профессиональная укладка волос",
+          "key": "services.20.description_ru.7cbd9728",
+          "en": "Professional hair styling",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.20.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 28,
+      "fields": {
+        "name_ru": {
+          "ru": "Выход из черного",
+          "key": "services.28.name_ru.1b90012d",
+          "en": "Beauty Salon Service Coming Out of the Black",
+          "ar": "الخروج من الأسود",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Коррекция цвета из темного",
+          "key": "services.28.description_ru.32fb73b4",
+          "en": "Color correction from dark",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 30,
+      "fields": {
+        "name_ru": {
+          "ru": "Наращивание волос за капсулу",
+          "key": "services.30.name_ru.ab1edd95",
+          "en": "Hair extensions per capsule",
+          "ar": "وصلات شعر لكل كبسولة",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Наращивание за капсулу",
+          "key": "services.30.description_ru.7295515b",
+          "en": "Extensions per capsule",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 31,
+      "fields": {
+        "name_ru": {
+          "ru": "Классический объем ресниц",
+          "key": "services.31.name_ru.d85c8406",
+          "en": "Classic eyelash volume",
+          "ar": "حجم رموش كلاسيكي",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Натуральное наращивание ресниц",
+          "key": "services.31.description_ru.1cb01f28",
+          "en": "Natural eyelash extensions",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 32,
+      "fields": {
+        "name_ru": {
+          "ru": "2D объем ресниц",
+          "key": "services.32.name_ru.6dc0aef0",
+          "en": "2D eyelash volume",
+          "ar": "حجم رموش ثنائي الأبعاد",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Наращивание 2D",
+          "key": "services.32.description_ru.b4b7781e",
+          "en": "2D extensions",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 33,
+      "fields": {
+        "name_ru": {
+          "ru": "3D объем ресниц",
+          "key": "services.33.name_ru.3276ee2f",
+          "en": "3D eyelash volume",
+          "ar": "حجم رموش ثلاثي الأبعاد",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Наращивание 3D",
+          "key": "services.33.description_ru.9088ab16",
+          "en": "3D extensions",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 34,
+      "fields": {
+        "name_ru": {
+          "ru": "4-5D объем (Мега)",
+          "key": "services.34.name_ru.b156e5fd",
+          "en": "4-5D volume (Mega)",
+          "ar": "حجم 4-5D (ميجا)",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Мега объем ресниц",
+          "key": "services.34.description_ru.0a54c5b1",
+          "en": "Mega volume eyelashes",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 35,
+      "fields": {
+        "name_ru": {
+          "ru": "ML завиток / Стиль Ким",
+          "key": "services.35.name_ru.c64091d8",
+          "en": "ML curl / Kim style",
+          "ar": "ML حليقة / أسلوب كيم",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Специальный изгиб",
+          "key": "services.35.description_ru.cc8b3435",
+          "en": "Special bend",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 37,
+      "fields": {
+        "name_ru": {
+          "ru": "Ламинирование бровей",
+          "key": "services.37.name_ru.c66b6652",
+          "en": "Eyebrow lamination",
+          "ar": "تصفيح الحواجب",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Ламинирование бровей",
+          "key": "services.37.description_ru.c66b6652",
+          "en": "Eyebrow lamination",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 38,
+      "fields": {
+        "name_ru": {
+          "ru": "Ламинирование ресниц",
+          "key": "services.38.name_ru.6a9d6c82",
+          "en": "Eyelash lamination",
+          "ar": "تصفيح الرموش",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Ламинирование ресниц",
+          "key": "services.38.description_ru.6a9d6c82",
+          "en": "Eyelash lamination",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 39,
+      "fields": {
+        "name_ru": {
+          "ru": "Ламинирование бровей и ресниц",
+          "key": "services.39.name_ru.429e7def",
+          "en": "Lamination of eyebrows and eyelashes",
+          "ar": "تصفيح الحواجب والرموش",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Комбо ламинирование",
+          "key": "services.39.description_ru.c37d7e65",
+          "en": "Combo lamination",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 41,
+      "fields": {
+        "name_ru": {
+          "ru": "Оформление бровей",
+          "key": "services.41.name_ru.221b64b3",
+          "en": "Eyebrow shaping",
+          "ar": "تشكيل الحواجب",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Профессиональное оформление",
+          "key": "services.41.description_ru.dd9e95fb",
+          "en": "Professional decoration",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 51,
+      "fields": {
+        "name_ru": {
+          "ru": "Детский маникюр",
+          "key": "services.51.name_ru.d83a8c76",
+          "en": "Children's manicure",
+          "ar": "مانيكير الأطفال",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Маникюр для детей",
+          "key": "services.51.description_ru.650bd84f",
+          "en": "Manicure for children",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 53,
+      "fields": {
+        "duration": {
+          "ru": "30",
+          "key": "services.53.duration.34173cb3",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 26,
+      "fields": {
+        "name_ru": {
+          "ru": "Балаяж",
+          "key": "services.26.name_ru.abc5305a",
+          "en": "Balayage",
+          "ar": "بالاياج",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Техника балаяж",
+          "key": "services.26.description_ru.0d9921e5",
+          "en": "Balayage technique",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "120",
+          "key": "services.26.duration.da4fb5c6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 27,
+      "fields": {
+        "name_ru": {
+          "ru": "Омбре/Шатуш/Аиртач",
+          "key": "services.27.name_ru.dffc4fe7",
+          "en": "Ombre/Shatush/Airtach",
+          "ar": "أومبير/شاتوش/إيرتاش",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Техники градиентного окрашивания",
+          "key": "services.27.description_ru.596e8006",
+          "en": "Gradient coloring techniques",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "120",
+          "key": "services.27.duration.da4fb5c6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 45,
+      "fields": {
+        "name_ru": {
+          "ru": "Пилинг",
+          "key": "services.45.name_ru.349ad56c",
+          "en": "Peeling",
+          "ar": "تقشير",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Химический пилинг",
+          "key": "services.45.description_ru.8dea543f",
+          "en": "Chemical peeling",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.45.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 29,
+      "fields": {
+        "name_ru": {
+          "ru": "Натуральный уход",
+          "key": "services.29.name_ru.04259ed1",
+          "en": "Natural care",
+          "ar": "العناية الطبيعية",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Натуральный уход за волосами",
+          "key": "services.29.description_ru.2777cc29",
+          "en": "Natural hair care",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.29.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 36,
+      "fields": {
+        "name_ru": {
+          "ru": "Снятие ресниц",
+          "key": "services.36.name_ru.89cf60fb",
+          "en": "Eyelash removal",
+          "ar": "إزالة الرموش",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Безопасное снятие",
+          "key": "services.36.description_ru.4610f41a",
+          "en": "Safe removal",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.36.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 40,
+      "fields": {
+        "name_ru": {
+          "ru": "Окрашивание бровей",
+          "key": "services.40.name_ru.b0898877",
+          "en": "Eyebrow tinting",
+          "ar": "تلوين الحواجب",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Профессиональное окрашивание",
+          "key": "services.40.description_ru.fcb57901",
+          "en": "Professional coloring",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.40.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 42,
+      "fields": {
+        "name_ru": {
+          "ru": "Глубокая чистка лица",
+          "key": "services.42.name_ru.f5d3906b",
+          "en": "Deep facial cleansing",
+          "ar": "تنظيف عميق للوجه",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Профессиональная глубокая чистка",
+          "key": "services.42.description_ru.964e86eb",
+          "en": "Professional deep cleaning",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.42.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 43,
+      "fields": {
+        "name_ru": {
+          "ru": "Медицинская чистка для проблемной кожи",
+          "key": "services.43.name_ru.a6e366dc",
+          "en": "Medical cleansing for problem skin",
+          "ar": "التطهير الطبي للبشرة المشكلة",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Медицинская чистка",
+          "key": "services.43.description_ru.1340aaab",
+          "en": "Medical cleaning",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.43.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 44,
+      "fields": {
+        "name_ru": {
+          "ru": "Подтягивающий массаж лица с маской",
+          "key": "services.44.name_ru.01f63d74",
+          "en": "Firming facial massage with mask",
+          "ar": "ثبات تدليك الوجه بالقناع",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Подтягивающий массаж",
+          "key": "services.44.description_ru.da76e7a6",
+          "en": "Tightening massage",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "30",
+          "key": "services.44.duration.34173cb3",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 46,
+      "fields": {
+        "name_ru": {
+          "ru": "Маникюр без покрытия",
+          "key": "services.46.name_ru.9ce5aa82",
+          "en": "Manicure without coating",
+          "ar": "مانيكير بدون طلاء",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Базовый маникюр",
+          "key": "services.46.description_ru.0079cd02",
+          "en": "Basic manicure",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.46.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 47,
+      "fields": {
+        "name_ru": {
+          "ru": "Спа маникюр",
+          "key": "services.47.name_ru.8deff1c9",
+          "en": "Spa manicure",
+          "ar": "مانيكير سبا",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Спа маникюр",
+          "key": "services.47.description_ru.8deff1c9",
+          "en": "Spa manicure",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.47.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 48,
+      "fields": {
+        "name_ru": {
+          "ru": "Маникюр с обычным покрытием",
+          "key": "services.48.name_ru.7d31de2e",
+          "en": "Manicure with regular finish",
+          "ar": "مانيكير مع لمسة نهائية عادية",
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Маникюр с обычным лаком",
+          "key": "services.48.description_ru.b2902707",
+          "en": "Manicure with regular polish",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "60",
+          "key": "services.48.duration.072b030b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
     }
   ],
   "salon_settings": [
@@ -3386,42 +3506,13 @@
   ],
   "public_banners": [
     {
-      "id": 1,
-      "fields": {
-        "title_ru": {
-          "ru": "Красота и Элегантность",
-          "key": "public_banners.1.title_ru.0b52ad71",
-          "en": "Beauty and Elegance",
-          "ar": "الجمال والأناقة",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "subtitle_ru": {
-          "ru": "Профессиональные услуги красоты",
-          "key": "public_banners.1.subtitle_ru.a02f5b36",
-          "en": "Professional beauty services",
-          "ar": "خدمات التجميل المهنية",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
       "id": 2,
       "fields": {
         "title_ru": {
-          "ru": "Скидки до 50%",
-          "key": "public_banners.2.title_ru.816f4b30",
-          "en": "Discounts up to 50%",
-          "ar": "خصومات تصل إلى 50%",
+          "ru": "Получите скидку до 50% на все услуги в нашем салоне красоты в Дубае",
+          "key": "public_banners.2.title_ru.92d62431",
+          "en": null,
+          "ar": null,
           "es": null,
           "de": null,
           "fr": null,

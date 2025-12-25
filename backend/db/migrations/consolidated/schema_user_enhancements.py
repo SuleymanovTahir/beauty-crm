@@ -6,7 +6,7 @@ Migration to add user profile enhancements:
 """
 from db.connection import get_db_connection
 
-def migrate_user_enhancements(db_path="salon_bot.db"):
+def migrate_user_enhancements():
     """
     Apply schema changes for user profile enhancements
     """

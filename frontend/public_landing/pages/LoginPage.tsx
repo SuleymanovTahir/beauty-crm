@@ -1,5 +1,5 @@
 //new/pages/LoginPage.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { User, Lock, Mail, AlertCircle } from 'lucide-react';
@@ -21,6 +21,11 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
   const [isLogin, setIsLogin] = useState(initialView === 'login');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
+
+  useEffect(() => {
+    api.getSalonSettings().then(setSalonSettings).catch(console.error);
+  }, []);
 
   // Form states
   const [formData, setFormData] = useState({
@@ -106,6 +111,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
         formData.password,
         formData.full_name,
         formData.email,
+        formData.phone,
         'client', // role
         '', // position
         formData.agreedToTerms,
@@ -131,7 +137,15 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">Beauty Salon</h1>
+          {salonSettings?.logo_url ? (
+            <img
+              src={salonSettings.logo_url}
+              alt={salonSettings.name || 'Logo'}
+              className="h-16 w-auto mx-auto mb-4 object-contain"
+            />
+          ) : (
+            <h1 className="text-3xl font-bold text-primary mb-2">{salonSettings?.name || 'Beauty Salon'}</h1>
+          )}
           <p className="text-muted-foreground">
             {isLogin ? t('auth/Login:login_title', 'Login to your account') : t('auth/register:register_title', 'Create new account')}
           </p>
@@ -255,8 +269,15 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
               </div>
             )}
 
-            <Button type="submit" className="w-full hero-button-primary h-11">
-              {isLogin ? 'Войти' : 'Зарегистрироваться'}
+            <Button type="submit" disabled={loading} className="w-full hero-button-primary h-11">
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>{isLogin ? 'Вход...' : 'Регистрация...'}</span>
+                </div>
+              ) : (
+                isLogin ? 'Войти' : 'Зарегистрироваться'
+              )}
             </Button>
           </form>
 

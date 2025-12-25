@@ -118,35 +118,19 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 # Get the backend directory (parent of core/)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# ===== DATABASE CONFIGURATION =====
-# Определяем тип БД из переменных окружения или автоматически
-DATABASE_TYPE = os.getenv("DATABASE_TYPE")
+# ===== DATABASE CONFIGURATION (PostgreSQL Only) =====
+# Принудительно используем PostgreSQL
+DATABASE_TYPE = "postgresql"
+DATABASE_NAME = None  # SQLite больше не используется
 
-if not DATABASE_TYPE:
-    # Автоопределение: SQLite для разработки, PostgreSQL для продакшена
-    if environment == "development":
-        DATABASE_TYPE = "postgresql"  # Changed from sqlite to postgresql to avoid legacy DB creation
-    else:
-        DATABASE_TYPE = "postgresql"
-    print(f"✅ Автоопределение типа БД: {DATABASE_TYPE}")
-else:
-    print(f"✅ Тип БД из переменной окружения: {DATABASE_TYPE}")
-
-# SQLite настройки (для разработки)
-if DATABASE_TYPE == "sqlite":
-    DATABASE_NAME = os.path.join(BASE_DIR, os.getenv("SQLITE_DB_PATH", "salon_bot.db"))
-    print(f"   SQLite Database: {DATABASE_NAME}")
-else:
-    # PostgreSQL настройки (для продакшена)
-    DATABASE_NAME = None  # Не используется для PostgreSQL
-    POSTGRES_CONFIG = {
-        'host': os.getenv('POSTGRES_HOST', 'localhost'),
-        'port': os.getenv('POSTGRES_PORT', '5432'),
-        'database': os.getenv('POSTGRES_DB', 'beauty_crm'),
-        'user': os.getenv('POSTGRES_USER', 'beauty_crm_user'),
-        'password': os.getenv('POSTGRES_PASSWORD', '')
-    }
-    print(f"   PostgreSQL Database: {POSTGRES_CONFIG['database']} @ {POSTGRES_CONFIG['host']}:{POSTGRES_CONFIG['port']}")
+POSTGRES_CONFIG = {
+    'host': os.getenv('POSTGRES_HOST', 'localhost'),
+    'port': os.getenv('POSTGRES_PORT', '5432'),
+    'database': os.getenv('POSTGRES_DB', 'beauty_crm'),
+    'user': os.getenv('POSTGRES_USER', 'beauty_crm_user'),
+    'password': os.getenv('POSTGRES_PASSWORD', '')
+}
+print(f"✅ Database: PostgreSQL ({POSTGRES_CONFIG['database']} @ {POSTGRES_CONFIG['host']})")
 
 UPLOAD_DIR = os.path.join(BASE_DIR, "static", "uploads")
 

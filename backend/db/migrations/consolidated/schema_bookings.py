@@ -4,7 +4,7 @@ All schema changes for bookings table in one place
 """
 from db.connection import get_db_connection
 
-def migrate_bookings_schema(db_path="salon_bot.db"):
+def migrate_bookings_schema():
     """
     Apply all bookings table schema changes
     """

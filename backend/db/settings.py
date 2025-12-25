@@ -94,7 +94,7 @@ def _get_default_salon_settings() -> dict:
     """Дефолтные настройки салона"""
     return {
         "id": 1,
-        "name": "M.Le Diamant Beauty Lounge",  # Fallback only
+        "name": "M Le Diamant",  # Fallback only
         "name_ar": None,
         "address": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
         "address_ar": None,
@@ -111,9 +111,9 @@ def _get_default_salon_settings() -> dict:
         "email": "mladiamontuae@gmail.com",  # Fallback only
         "instagram": "https://www.instagram.com/mlediamant/",
         "whatsapp": None,
-        "bot_name": "M.Le Diamant Assistant",
-        "bot_name_en": "M.Le Diamant Assistant",
-        "bot_name_ar": "مساعد M.Le Diamant",
+        "bot_name": "M Le Diamant Assistant",
+        "bot_name_en": "M Le Diamant Assistant",
+        "bot_name_ar": "مساعد M Le Diamant",
         "city": "Dubai",
         "country": "UAE",
         "timezone": "Asia/Dubai",
@@ -352,15 +352,15 @@ def _get_default_bot_settings() -> dict:
     
     try:
         salon = get_salon_settings()
-        bot_name = salon.get('bot_name', 'M.Le Diamant Assistant')
+        bot_name = salon.get('bot_name', 'M Le Diamant Assistant')
     except:
-        bot_name = 'M.Le Diamant Assistant'
+        bot_name = 'M Le Diamant Assistant'
 
     return {
         "id": 1,
         "bot_name": bot_name,
         "personality_traits": "Профессионал с международным опытом\nУверенный, харизматичный, НЕ навязчивый",
-        "greeting_message": "Привет! 😊 Добро пожаловать в M.Le Diamant!",
+        "greeting_message": "Привет! 😊 Добро пожаловать в M Le Diamant!",
         "farewell_message": "Спасибо! До встречи! 💖",
         "price_explanation": "Мы в премиум-сегменте 💎",
         "price_response_template": "{SERVICE} {PRICE} AED 💎\n{DESCRIPTION}\nЗаписаться%s",
