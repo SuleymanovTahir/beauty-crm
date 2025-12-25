@@ -627,11 +627,19 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         # 1. Сводка по лояльности
         c.execute("SELECT loyalty_points, referral_code, total_saved FROM clients WHERE instagram_id = %s", (client_id,))
         client_row = c.fetchone()
+        points = client_row[0] if client_row else 0
+        
+        # Calculate level
+        level = "Bronze"
+        if points > 1000: level = "Silver"
+        if points > 5000: level = "Gold"
+        if points > 10000: level = "Platinum"
+        
         loyalty = {
-            "points": client_row[0] if client_row else 0,
+            "points": points,
             "referral_code": client_row[1] if client_row else "",
             "total_saved": client_row[2] if client_row else 0,
-            "level": "Bronze" # TODO: Расширить логику уровней
+            "level": level
         }
 
         # 2. Следующая запись
@@ -671,6 +679,159 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         c.execute("SELECT COUNT(*) FROM client_achievements WHERE client_id = 'template'")
         total_templates = c.fetchone()[0]
 
+        # 5. Visit Streak Calculation (consecutive months with visits)
+        c.execute("""
+            SELECT DISTINCT TO_CHAR(TO_TIMESTAMP(datetime, 'YYYY-MM-DD HH24:MI'), 'YYYY-MM') as month
+            FROM bookings
+            WHERE instagram_id = %s AND status = 'completed'
+            ORDER BY month DESC
+        """, (client_id,))
+        months_with_visits = [row[0] for row in c.fetchall()]
+        
+        streak_count = 0
+        if months_with_visits:
+            current_month = datetime.now().strftime('%Y-%m')
+            # Check if current or last month has visits
+            check_month = current_month
+            for i in range(12):  # Check up to 12 months back
+                if check_month in months_with_visits:
+                    streak_count += 1
+                    # Go to previous month
+                    d = datetime.strptime(check_month + '-01', '%Y-%m-%d')
+                    prev = (d.replace(day=1) - timedelta(days=1))
+                    check_month = prev.strftime('%Y-%m')
+                else:
+                    break
+        
+        streak = {
+            "count": streak_count,
+            "bonus_target": 5,  # 5 consecutive months for bonus
+            "bonus_amount": 500
+        }
+
+        # 6. Spending Analytics (last 6 months)
+        c.execute("""
+            SELECT 
+                TO_CHAR(TO_TIMESTAMP(datetime, 'YYYY-MM-DD HH24:MI'), 'Mon') as month_name,
+                SUM(revenue) as total
+            FROM bookings
+            WHERE instagram_id = %s 
+            AND status = 'completed'
+            AND datetime >= %s
+            GROUP BY TO_CHAR(TO_TIMESTAMP(datetime, 'YYYY-MM-DD HH24:MI'), 'YYYY-MM'), month_name
+            ORDER BY TO_CHAR(TO_TIMESTAMP(datetime, 'YYYY-MM-DD HH24:MI'), 'YYYY-MM')
+        """, (client_id, (datetime.now() - timedelta(days=180)).isoformat()))
+        
+        monthly_spending = []
+        for row in c.fetchall():
+            monthly_spending.append({"month": row[0], "amount": float(row[1] or 0)})
+        
+        # Total spent
+        c.execute("""
+            SELECT SUM(revenue), AVG(revenue), COUNT(*)
+            FROM bookings
+            WHERE instagram_id = %s AND status = 'completed'
+        """, (client_id,))
+        stats_row = c.fetchone()
+        total_spent = float(stats_row[0] or 0)
+        avg_check = float(stats_row[1] or 0)
+        total_visits = int(stats_row[2] or 0)
+        
+        # Most active month
+        c.execute("""
+            SELECT TO_CHAR(TO_TIMESTAMP(datetime, 'YYYY-MM-DD HH24:MI'), 'Month') as month_name, COUNT(*) as cnt
+            FROM bookings
+            WHERE instagram_id = %s AND status = 'completed'
+            GROUP BY month_name
+            ORDER BY cnt DESC
+            LIMIT 1
+        """, (client_id,))
+        most_active_row = c.fetchone()
+        most_active_month = most_active_row[0].strip() if most_active_row else None
+        
+        # Service distribution
+        c.execute("""
+            SELECT 
+                CASE 
+                    WHEN LOWER(service_name) LIKE '%волос%' OR LOWER(service_name) LIKE '%hair%' OR LOWER(service_name) LIKE '%окраш%' THEN 'hair'
+                    WHEN LOWER(service_name) LIKE '%ногт%' OR LOWER(service_name) LIKE '%маник%' OR LOWER(service_name) LIKE '%педик%' OR LOWER(service_name) LIKE '%nail%' THEN 'nails'
+                    WHEN LOWER(service_name) LIKE '%лиц%' OR LOWER(service_name) LIKE '%face%' OR LOWER(service_name) LIKE '%уход%' THEN 'face'
+                    ELSE 'other'
+                END as category,
+                COUNT(*) as cnt
+            FROM bookings
+            WHERE instagram_id = %s AND status = 'completed'
+            GROUP BY category
+        """, (client_id,))
+        
+        total_for_dist = 0
+        category_counts = {}
+        for row in c.fetchall():
+            category_counts[row[0]] = row[1]
+            total_for_dist += row[1]
+        
+        service_distribution = []
+        if total_for_dist > 0:
+            for cat in ['hair', 'nails', 'face', 'other']:
+                pct = int((category_counts.get(cat, 0) / total_for_dist) * 100)
+                service_distribution.append({"category": cat, "percentage": pct})
+        
+        analytics = {
+            "monthly_spending": monthly_spending,
+            "total_spent": total_spent,
+            "total_saved": loyalty["total_saved"],
+            "avg_check": round(avg_check, 2),
+            "most_active_month": most_active_month,
+            "service_distribution": service_distribution,
+            "total_visits": total_visits
+        }
+
+        # 7. Smart Recommendations
+        recommendations = []
+        c.execute("""
+            SELECT service_name, datetime
+            FROM bookings
+            WHERE instagram_id = %s AND status = 'completed'
+            ORDER BY datetime DESC
+            LIMIT 20
+        """, (client_id,))
+        recent_bookings = c.fetchall()
+        
+        # Analyze patterns for each service type
+        service_last_dates = {}
+        for row in recent_bookings:
+            svc = row[0]
+            if svc and svc not in service_last_dates:
+                try:
+                    service_last_dates[svc] = datetime.fromisoformat(row[1].replace(' ', 'T'))
+                except:
+                    pass
+        
+        # Generate recommendations
+        now = datetime.now()
+        for svc, last_date in service_last_dates.items():
+            days_since = (now - last_date).days
+            if days_since >= 21:  # 3 weeks
+                weeks = days_since // 7
+                if 'маник' in svc.lower() or 'nail' in svc.lower():
+                    recommendations.append({
+                        "service": svc,
+                        "message": f"Прошло {weeks} недель с последнего маникюра",
+                        "type": "manicure"
+                    })
+                elif 'окраш' in svc.lower() or 'color' in svc.lower() or 'hair' in svc.lower():
+                    recommendations.append({
+                        "service": svc,
+                        "message": f"Прошло {weeks} недель с последнего окрашивания",
+                        "type": "coloring"
+                    })
+                elif days_since >= 28:
+                    recommendations.append({
+                        "service": svc,
+                        "message": f"Прошло {weeks} недель с последней процедуры",
+                        "type": "general"
+                    })
+
         return {
             "success": True,
             "loyalty": loyalty,
@@ -679,7 +840,10 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             "achievements_summary": {
                 "unlocked": unlocked_count,
                 "total": total_templates
-            }
+            },
+            "streak": streak,
+            "analytics": analytics,
+            "recommendations": recommendations[:3]  # Limit to 3
         }
     finally:
         conn.close()

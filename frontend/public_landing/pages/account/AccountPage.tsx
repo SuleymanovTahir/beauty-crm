@@ -885,31 +885,30 @@ export function AccountPage() {
             <Flame className="w-5 h-5 streak-flame" />
             <h3 className="text-lg">Серия посещений</h3>
           </div>
-          <span className="text-2xl font-bold">3🔥</span>
+          <span className="text-2xl font-bold">{dashboardData?.streak?.count || 0}🔥</span>
         </div>
         <div className="flex gap-2 mb-4">
           {[1, 2, 3, 4, 5].map((step) => (
             <div
               key={step}
-              className={`streak-bar ${step <= 3 ? 'streak-bar-active' : ''}`}
+              className={`streak-bar ${step <= (dashboardData?.streak?.count || 0) ? 'streak-bar-active' : ''}`}
             />
           ))}
         </div>
-        <p className="text-sm text-gray-500">Еще 2 визита до бонуса 500 баллов!</p>
+        <p className="text-sm text-gray-500">
+          {(dashboardData?.streak?.bonus_target || 5) - (dashboardData?.streak?.count || 0) > 0
+            ? `Еще ${(dashboardData?.streak?.bonus_target || 5) - (dashboardData?.streak?.count || 0)} визита до бонуса ${dashboardData?.streak?.bonus_amount || 500} баллов!`
+            : `Бонус ${dashboardData?.streak?.bonus_amount || 500} баллов получен!`}
+        </p>
       </div>
 
       <div className="bg-white p-6 rounded-xl border border-gray-200">
         <h3 className="text-lg mb-4">Аналитика расходов</h3>
         <div className="h-64 mb-6">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[
-              { month: 'Июл', amount: 280 },
-              { month: 'Авг', amount: 350 },
-              { month: 'Сен', amount: 420 },
-              { month: 'Окт', amount: 380 },
-              { month: 'Ноя', amount: 520 },
-              { month: 'Дек', amount: 850 }
-            ]}>
+            <BarChart data={dashboardData?.analytics?.monthly_spending?.length > 0
+              ? dashboardData.analytics.monthly_spending
+              : [{ month: '-', amount: 0 }]}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
               <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
               <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
@@ -922,19 +921,19 @@ export function AccountPage() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="text-center">
-            <p className="text-2xl mb-1">{loyalty?.total_spent || 0} AED</p>
+            <p className="text-2xl mb-1">{dashboardData?.analytics?.total_spent || 0} AED</p>
             <p className="text-sm text-gray-500">Всего потрачено</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl mb-1">{dashboardData?.total_saved || 0} AED</p>
+            <p className="text-2xl mb-1">{dashboardData?.analytics?.total_saved || 0} AED</p>
             <p className="text-sm text-gray-500">Сэкономлено</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl mb-1">350 AED</p>
+            <p className="text-2xl mb-1">{dashboardData?.analytics?.avg_check || 0} AED</p>
             <p className="text-sm text-gray-500">Средний чек</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl mb-1">Декабрь</p>
+            <p className="text-2xl mb-1">{dashboardData?.analytics?.most_active_month || '-'}</p>
             <p className="text-sm text-gray-500">Самый активный</p>
           </div>
         </div>
@@ -945,12 +944,14 @@ export function AccountPage() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={[
-                    { name: 'Волосы', value: 45, color: '#9333ea' },
-                    { name: 'Ногти', value: 30, color: '#ec4899' },
-                    { name: 'Лицо', value: 15, color: '#3b82f6' },
-                    { name: 'Другое', value: 10, color: '#10b981' }
-                  ]}
+                  data={(() => {
+                    const dist = dashboardData?.analytics?.service_distribution || [];
+                    const colors = { hair: '#9333ea', nails: '#ec4899', face: '#3b82f6', other: '#10b981' };
+                    const names = { hair: 'Волосы', nails: 'Ногти', face: 'Лицо', other: 'Другое' };
+                    return dist.length > 0
+                      ? dist.map((d: any) => ({ name: names[d.category as keyof typeof names] || d.category, value: d.percentage, color: colors[d.category as keyof typeof colors] || '#6b7280' }))
+                      : [{ name: '-', value: 100, color: '#e5e7eb' }];
+                  })()}
                   dataKey="value"
                   nameKey="name"
                   cx="50%"
@@ -972,20 +973,23 @@ export function AccountPage() {
             </ResponsiveContainer>
           </div>
           <div className="flex-1 space-y-2">
-            {[
-              { name: 'Волосы', value: 45, color: '#9333ea' },
-              { name: 'Ногти', value: 30, color: '#ec4899' },
-              { name: 'Лицо', value: 15, color: '#3b82f6' },
-              { name: 'Другое', value: 10, color: '#10b981' }
-            ].map(service => (
-              <div key={service.name} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: service.color }} />
-                  <span className="text-sm">{service.name}</span>
+            {(() => {
+              const dist = dashboardData?.analytics?.service_distribution || [];
+              const colors = { hair: '#9333ea', nails: '#ec4899', face: '#3b82f6', other: '#10b981' };
+              const names = { hair: 'Волосы', nails: 'Ногти', face: 'Лицо', other: 'Другое' };
+              const items = dist.length > 0
+                ? dist.map((d: any) => ({ name: names[d.category as keyof typeof names] || d.category, value: d.percentage, color: colors[d.category as keyof typeof colors] || '#6b7280' }))
+                : [];
+              return items.map((service: any) => (
+                <div key={service.name} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: service.color }} />
+                    <span className="text-sm">{service.name}</span>
+                  </div>
+                  <span className="text-sm">{service.value}%</span>
                 </div>
-                <span className="text-sm">{service.value}%</span>
-              </div>
-            ))}
+              ));
+            })()}
           </div>
         </div>
       </div>
@@ -996,7 +1000,7 @@ export function AccountPage() {
         <div className="loyalty-card-gold mb-4">
           <div className="flex items-start justify-between mb-6">
             <div>
-              <p className="loyalty-gold-text text-sm mb-1">Beauty Studio Dubai</p>
+              <p className="loyalty-gold-text text-sm mb-1">{salonSettings?.name || 'Beauty Studio'}</p>
               <h4 className="text-2xl mb-1">{user?.full_name}</h4>
               <p className="loyalty-gold-text">{loyalty?.current_level?.name || 'Standard'} Member</p>
             </div>
