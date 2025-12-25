@@ -2,11 +2,12 @@
 Управление расписанием мастеров
 """
 from datetime import datetime, timedelta, time as dt_time
+from zoneinfo import ZoneInfo
 from typing import Dict, List, Any, Optional
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
-from utils.datetime_utils import get_current_time
+from utils.datetime_utils import get_current_time, get_salon_timezone
 from core.config import (
     DEFAULT_HOURS_WEEKDAYS,
     DEFAULT_HOURS_WEEKENDS,
@@ -322,8 +323,9 @@ class MasterScheduleService:
         self,
         master_name: str,
         date: str,
-        duration_minutes: int = 60
-    ) -> List[str]:
+        duration_minutes: int = 60,
+        return_metadata: bool = False
+    ) -> List[Any]:
         """
         Получить все доступные слоты на день
         """
@@ -425,21 +427,22 @@ class MasterScheduleService:
             
             # Fetch booked times (start times) for simple check
             c.execute("""
-                SELECT TO_CHAR(datetime, 'HH24:MI') FROM bookings 
-                WHERE master = %s AND DATE(datetime) = %s AND status != 'cancelled'
+                SELECT TO_CHAR(datetime::timestamp, 'HH24:MI') FROM bookings 
+                WHERE master = %s AND DATE(datetime::timestamp) = %s AND status != 'cancelled'
             """, (master_name, date))
             booked_times = {r[0] for r in c.fetchall()}
             
             # Fetch held slots (drafts)
             c.execute("""
-                SELECT TO_CHAR(datetime, 'HH24:MI') FROM booking_drafts 
+                SELECT TO_CHAR(datetime::timestamp, 'HH24:MI') FROM booking_drafts 
                 WHERE master = %s AND expires_at > NOW()
             """, (master_name,))
             held_times = {r[0] for r in c.fetchall()}
 
             # Setup time loop variables
-            current_dt = datetime.combine(dt.date(), dt_time(start_hour, start_minute))
-            end_working_dt = datetime.combine(dt.date(), dt_time(end_hour, end_minute))
+            tz = ZoneInfo(get_salon_timezone())
+            current_dt = datetime.combine(dt.date(), dt_time(start_hour, start_minute), tzinfo=tz)
+            end_working_dt = datetime.combine(dt.date(), dt_time(end_hour, end_minute), tzinfo=tz)
             
             is_today = date == get_current_time().strftime('%Y-%m-%d')
             min_booking_time = get_current_time() + timedelta(minutes=30)
@@ -478,9 +481,9 @@ class MasterScheduleService:
             c.execute("""
                 SELECT b.datetime, s.duration
                 FROM bookings b
-                LEFT JOIN services s ON b.service_id = s.id
+                LEFT JOIN services s ON b.service_name = s.name
                 WHERE UPPER(b.master) = UPPER(%s)
-                AND DATE(b.datetime) = %s
+                AND DATE(b.datetime::timestamp) = %s
                 AND b.status != 'cancelled'
             """, (master_name, date))
             
@@ -529,7 +532,7 @@ class MasterScheduleService:
                     continue
                 
                 # 1. Check fitting
-                if slot_end_dt > end_dt:
+                if slot_end_dt > end_working_dt:
                     break
                 
                 # 2. Booked check
@@ -576,10 +579,13 @@ class MasterScheduleService:
                 if slot_end_minutes in booking_boundaries_end:
                     is_optimal = True
 
-                smart_slots.append({
-                    "time": time_str,
-                    "is_optimal": is_optimal
-                })
+                if return_metadata:
+                    smart_slots.append({
+                        "time": time_str,
+                        "is_optimal": is_optimal
+                    })
+                else:
+                    smart_slots.append(time_str)
 
                 current_dt += timedelta(minutes=30)
 
@@ -591,7 +597,7 @@ class MasterScheduleService:
         finally:
             conn.close()
 
-    def get_all_masters_availability(self, date: str) -> Dict[str, List[str]]:
+    def get_all_masters_availability(self, date: str, return_metadata: bool = False) -> Dict[str, List[Any]]:
         """Получить доступность всех мастеров на день"""
         conn = get_db_connection()
         c = conn.cursor()
@@ -607,17 +613,18 @@ class MasterScheduleService:
                   AND u.role NOT IN ('director', 'admin', 'manager')
             """)
 
-            masters = [row[0] for row in c.fetchall()]
+            active_masters = [row[0] for row in c.fetchall()]
             
-            print(f"   👥 Found {len(masters)} active masters: {[m for m in masters[:5]]}...")
+            print(f"   👥 Found {len(active_masters)} active masters: {[m for m in active_masters[:5]]}...")
 
+            # Для каждого активного мастера получаем слоты
             availability = {}
-            for master in masters:
-                slots = self.get_available_slots(master, date)
-                if slots:  # ✅ Только добавляем если есть слоты
-                    availability[master] = slots
-                    print(f"   📅 {master}: {len(slots)} slots (first: {slots[0] if slots else 'none'})")
-
+            for master_name in active_masters:
+                slots = self.get_available_slots(master_name, date, return_metadata=return_metadata)
+                if slots:
+                    availability[master_name] = slots
+                    print(f"   📅 {master_name}: {len(slots)} slots (first: {slots[0] if slots else 'none'})")
+            
             print(f"   ✅ Total masters with availability: {len(availability)}")
             return availability
 

@@ -1,5 +1,49 @@
 # CHANGELOG - Память проекта Beauty CRM
 
+## 2025-12-25: Исправление PostgreSQL синтаксиса и рефакторинг тестов
+
+### ПРОБЛЕМА
+1. **PostgreSQL Syntax Error**: В файле `master_schedule.py` использовались функции `TO_CHAR` и `DATE` к колонкам типа `TEXT` (колонки `datetime` в таблицах `bookings` и `booking_drafts`), что приводило к ошибке: `function to_char(text, unknown) does not exist`.
+2. **Schema Mismatch**: Таблица `booking_drafts` не имела колонок `datetime`, `master` и `expires_at`, которые запрашивались в `master_schedule.py`.
+3. **Verbose Tests**: Скрипт `run_all_tests.py` выводил слишком много лишней информации при успешном прохождении тестов, что затрудняло поиск ошибок.
+
+### РЕШЕНИЕ
+1. **SQL Fixes**:
+   - В `backend/services/master_schedule.py` добавлено явное приведение типов: `datetime::timestamp`.
+   - Исправлен SQL-запрос в `get_available_slots`: JOIN таблицы `services` теперь корректно использует `service_name` вместо отсутствующей колонки `service_id`.
+   - Исправлена ошибка `NameError: end_dt` и конфликты типов datetime (naive/aware).
+   - В метод `get_available_slots` добавлен флаг `return_metadata=False` для обеспечения обратной совместимости (возврат списка строк по умолчанию).
+   - Исправлены запросы к таблицам `bookings` и `booking_drafts`.
+
+2. **Database Schema Update**:
+   - Обновлена миграция `backend/db/migrations/consolidated/schema_bookings.py`: в таблицу `booking_drafts` добавлены колонки `datetime`, `master` и `expires_at`.
+   - Обновлен метод `update_booking_progress` в `backend/db/bookings.py` для автоматического извлечения данных из JSON и заполнения новых колонок.
+   - Установлено время истечения черновика (expires_at) — 30 минут.
+
+3. **Test Orchestrator Refactoring**:
+   - `backend/tests/run_all_tests.py` полностью переписан.
+   - Введена вспомогательная функция `run_suite` для запуска тестов.
+   - Реализовано подавление вывода (stdout/stderr) для успешных тестов. Вывод показывается только в случае провала (FAIL).
+   - Добавлен финальный детальный отчет со статистикой.
+   - Добавлен автоматический запуск проверки услуг без мастеров.
+
+### ВАЖНО ПОМНИТЬ
+- **Explicit Casting**: В PostgreSQL при использовании функций даты/времени к текстовым полям ВСЕГДА использовать `::timestamp`.
+- **SSOT Schema**: Все изменения схем должны отражаться в `consolidated` миграциях.
+- **Test Output Control**: Для поддержания чистоты логов в CI/CD и при разработке, успешные тесты не должны засорять консоль.
+
+### TESTING
+- ✅ Запущен полный цикл тестов (10/10 пройдены).
+- ✅ Проверена работа `master_schedule.py` с PostgreSQL.
+- ✅ Проверена автоматическая очистка данных после тестов.
+
+### ФАЙЛЫ
+**ИЗМЕНЕНЫ:**
+- `backend/services/master_schedule.py` — исправлен SQL синтаксис.
+- `backend/db/migrations/consolidated/schema_bookings.py` — обновлена схема `booking_drafts`.
+- `backend/db/bookings.py` — обновлена логика сохранения черновиков.
+- `backend/tests/run_all_tests.py` — полная переработка оркестратора тестов.
+
 ## 2025-12-25: Система регистрации с email верификацией и админским одобрением
 
 ### ПРОБЛЕМА

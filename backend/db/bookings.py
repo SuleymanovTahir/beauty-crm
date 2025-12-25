@@ -309,10 +309,28 @@ def update_booking_progress(instagram_id: str, data: Dict):
         current = get_booking_progress(instagram_id) or {}
         current.update(data)
         
+        # Extract fields for database columns
+        # Drafts expire in 30 minutes
+        expires_at = get_current_time() + timedelta(minutes=30)
+        
+        # We need to handle time and date carefully
+        # If both are present, we can form a datetime string
+        dt_str = None
+        if current.get('date') and current.get('time'):
+            dt_str = f"{current['date']} {current['time']}"
+        
+        master = current.get('master')
+        
         c.execute("""
-            INSERT INTO booking_drafts (instagram_id, data, updated_at)
-            VALUES (%s, %s, CURRENT_TIMESTAMP)
-        """, (instagram_id, json.dumps(current)))
+            INSERT INTO booking_drafts (instagram_id, data, datetime, master, expires_at, updated_at)
+            VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
+            ON CONFLICT (instagram_id) DO UPDATE SET
+                data = EXCLUDED.data,
+                datetime = EXCLUDED.datetime,
+                master = EXCLUDED.master,
+                expires_at = EXCLUDED.expires_at,
+                updated_at = EXCLUDED.updated_at
+        """, (instagram_id, json.dumps(current), dt_str, master, expires_at))
         conn.commit()
     except Exception as e:
         print(f"Error updating booking progress: {e}")
