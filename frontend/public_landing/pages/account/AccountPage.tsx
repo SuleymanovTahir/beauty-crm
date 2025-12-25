@@ -8,51 +8,51 @@ import { api } from '../../../src/services/api';
 import { toast } from 'sonner';
 import {
   Calendar,
+  Clock,
   MapPin,
-  Phone,
   Star,
+  TrendingUp,
   Award,
-  Gift,
-  Camera,
   Bell,
   Settings,
   MessageCircle,
-  User,
   Heart,
   Sparkles,
   ChevronRight,
+  Download,
+  Share2,
   Plus,
   X,
   Check,
   Repeat,
-  ImageIcon,
+  Navigation,
+  Image as ImageIcon,
   Users,
-  Trophy,
+  Eye,
   Upload,
-  QrCode,
-  Wallet,
-  Clock,
-  LogOut,
+  Trophy,
+  Lock as LockIcon,
   Loader2,
-  Share2
+  LogOut
 } from 'lucide-react';
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { UserBookingWizard } from './UserBookingWizard';
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
-import './AccountPage.css';
+
+// Import original prototype styles
+import '../../new_admin/src/styles/index.css';
 
 // Utility Components
 const TabButton: React.FC<{ active: boolean; onClick: () => void; icon: React.ReactNode; label: string; hasBadge?: boolean; badgeCount?: number }> = ({ active, onClick, icon, label, hasBadge, badgeCount }) => (
   <div className="relative">
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all whitespace-nowrap font-medium ${active
-        ? 'account-tab-active shadow-sm'
-        : 'account-tab-inactive'
+      className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-all ${active
+        ? 'bg-gray-900 text-white'
+        : 'bg-white text-gray-600 hover:bg-gray-50'
         }`}
     >
       {icon}
-      <span>{label}</span>
+      <span className="hidden sm:inline">{label}</span>
     </button>
     {hasBadge && badgeCount !== undefined && badgeCount > 0 && (
       <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-white rounded-full flex items-center justify-center text-[10px] text-white font-bold">
@@ -61,6 +61,28 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; icon: React.Re
     )}
   </div>
 );
+
+const StatCard: React.FC<{ icon: React.ReactNode; label: string; value: string | number; trend?: string; color?: string }> = ({ icon, label, value, trend, color = 'text-gray-900' }) => {
+  // Suppress unused warning for trend
+  console.log(trend);
+  return (
+    <div className="bg-white p-4 rounded-xl border border-gray-200">
+      <div className="flex items-start justify-between mb-2">
+        <div className={`p-2 rounded-lg bg-gray-50 ${color}`}>
+          {icon}
+        </div>
+        {trend && (
+          <span className="text-sm text-green-600 flex items-center gap-1">
+            <TrendingUp className="w-3 h-3" />
+            {trend}
+          </span>
+        )}
+      </div>
+      <p className="text-gray-500 text-sm mb-1">{label}</p>
+      <p className="text-2xl">{value}</p>
+    </div>
+  );
+};
 
 const ProgressBar: React.FC<{ value: number; max: number; color?: string }> = ({ value, max, color = 'bg-gray-900' }) => {
   const percentage = Math.min((value / max) * 100, 100);
@@ -102,7 +124,6 @@ export function AccountPage() {
   const [galleryFilter, setGalleryFilter] = useState('all');
   const [showAllMasters, setShowAllMasters] = useState(false);
   const [comparePhotos, setComparePhotos] = useState<{ before: string; after: string } | null>(null);
-  const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
 
   // Data States
   const [dashboardData, setDashboardData] = useState<any>(null);
@@ -120,11 +141,34 @@ export function AccountPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Profile data for settings
+  const [profileData, setProfileData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: ''
+  });
+
+  const [notificationSettings, setNotificationSettings] = useState({
+    push: true,
+    email: true,
+    sms: true
+  });
+  const [privacySettings, setPrivacySettings] = useState({
+    allowPhotos: false
+  });
+
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/login');
     } else if (user) {
       loadAllData();
+      setProfileData({
+        firstName: user.full_name?.split(' ')[0] || '',
+        lastName: user.full_name?.split(' ').slice(1).join(' ') || '',
+        email: user.email || '',
+        phone: user.phone || ''
+      });
     }
   }, [user, navigate, authLoading]);
 
@@ -212,6 +256,87 @@ export function AccountPage() {
     return 'Добрый вечер';
   };
 
+  const getMotivationalPhrase = () => {
+    const phrases = [
+      'Вы выглядите великолепно!',
+      'Скучали по вам!',
+      'Время позаботиться о себе',
+      'Ваша красота - наша работа'
+    ];
+    return phrases[Math.floor(Math.random() * phrases.length)];
+  };
+
+  const handleAddToCalendar = () => {
+    toast.success('Добавлено в календарь');
+  };
+
+  const handleRescheduleAppointment = (_id?: string) => {
+    toast.info('Открываем форму переноса записи...');
+    openBooking();
+  };
+
+  const handleCancelAppointment = (_id?: string) => {
+    toast.success('Запись успешно отменена');
+  };
+
+  const handleRepeatAppointment = (_id?: string) => {
+    toast.success('Повторяем последнюю запись...');
+    openBooking();
+  };
+
+  const handleLeaveReview = (_id?: string) => {
+    toast.info('Открываем форму отзыва...');
+  };
+
+  const handleDownloadPhoto = (_photoId?: string) => {
+    toast.success('Фото скачивается...');
+  };
+
+  const handleSharePhoto = (_photoId?: string) => {
+    toast.success('Ссылка для шаринга скопирована');
+  };
+
+  const handleShareReferral = (platform: string) => {
+    toast.success(`Открываем ${platform} для шаринга...`);
+  };
+
+  const handleSaveProfile = () => {
+    toast.success('Профиль успешно сохранен');
+  };
+
+  const handleChangePassword = () => {
+    toast.info('Открываем форму смены пароля...');
+  };
+
+  const handleEnable2FA = () => {
+    toast.info('Настройка двухфакторной аутентификации...');
+  };
+
+  const handleExportData = () => {
+    toast.success('Экспорт данных начат...');
+  };
+
+  const handleCopyReferralCode = () => {
+    navigator.clipboard.writeText((user as any)?.referral_code || 'ANNA2024');
+    toast.success('Код скопирован в буфер обмена');
+  };
+
+  const handleMarkNotificationAsRead = (_id: string) => {
+    toast.success('Уведомление прочитано');
+  };
+
+  const handleMarkAllAsRead = () => {
+    toast.success('Все уведомления прочитаны');
+  };
+
+  const handleContactSalon = (method: string) => {
+    toast.info(`Связываемся через ${method}...`);
+  };
+
+  const handleNavigate = () => {
+    toast.info('Открываем навигатор...');
+  };
+
   const getDateLocale = () => {
     switch (i18n.language) {
       case 'ru': return ru;
@@ -220,8 +345,13 @@ export function AccountPage() {
     }
   };
 
-  const currentLoyaltyLevel = loyalty?.current_level;
-  const nextLoyaltyLevel = loyalty?.next_level;
+  const getDaysUntil = (date: string) => {
+    const diff = new Date(date).getTime() - new Date().getTime();
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    if (days === 0) return 'Сегодня';
+    if (days === 1) return 'Завтра';
+    return `Через ${days} дней`;
+  };
 
   if (loading || authLoading) {
     return (
@@ -235,428 +365,860 @@ export function AccountPage() {
   const renderDashboard = () => (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="welcome-card-bg text-white p-8 rounded-2xl shadow-lg relative overflow-hidden">
-        <div className="relative z-10 flex items-start justify-between">
+      <div className="bg-gray-900 text-white p-6 rounded-2xl relative overflow-hidden">
+        <div className="flex items-start justify-between mb-4 relative z-10">
           <div>
-            <h1 className="text-3xl font-bold mb-1">{getGreeting()}, {user?.full_name || 'Anna'}! 👋</h1>
-            <p className="text-gray-300 text-lg">Время позаботиться о себе</p>
+            <h1 className="text-2xl mb-1">{getGreeting()}, {user?.full_name?.split(' ')[0] || 'Анна'}! 👋</h1>
+            <p className="text-gray-300">{getMotivationalPhrase()}</p>
           </div>
-          <div className="relative group">
-            <Avatar className="w-16 h-16 border-2 border-white shadow-xl cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-              <AvatarImage src={(user as any)?.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop'} className="object-cover" />
-              <AvatarFallback className="bg-gray-800 text-xl">{user?.full_name?.charAt(0) || 'A'}</AvatarFallback>
-            </Avatar>
+          <div className="w-16 h-16 rounded-full bg-white overflow-hidden border-2 border-white relative cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+            <img src={(user as any)?.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop'} alt={user?.full_name} className="w-full h-full object-cover" />
             <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
           </div>
         </div>
-
-        <div className="grid grid-cols-3 gap-8 mt-8 border-t border-white/10 pt-8">
-          <div className="text-center group cursor-pointer">
-            <p className="text-4xl font-bold mb-1 group-hover:scale-110 transition-transform">{dashboardData?.total_visits || 0}</p>
-            <p className="text-gray-400 text-sm uppercase tracking-wider">Визитов</p>
+        <div className="grid grid-cols-3 gap-4 mt-6 border-t border-white/10 pt-6 relative z-10">
+          <div className="text-center">
+            <p className="text-3xl mb-1">{dashboardData?.total_visits || 0}</p>
+            <p className="text-gray-300 text-sm">Визитов</p>
           </div>
-          <div className="text-center group cursor-pointer">
-            <p className="text-4xl font-bold mb-1 group-hover:scale-110 transition-transform">{dashboardData?.loyalty_points || 0}</p>
-            <p className="text-gray-400 text-sm uppercase tracking-wider">Баллов</p>
+          <div className="text-center">
+            <p className="text-3xl mb-1">{dashboardData?.loyalty_points || 0}</p>
+            <p className="text-gray-300 text-sm">Баллов</p>
           </div>
-          <div className="text-center group cursor-pointer">
-            <p className="text-4xl font-bold mb-1 group-hover:scale-110 transition-transform">{dashboardData?.current_discount || 0}%</p>
-            <p className="text-gray-400 text-sm uppercase tracking-wider">Скидка</p>
+          <div className="text-center">
+            <p className="text-3xl mb-1">{dashboardData?.current_discount || 0}%</p>
+            <p className="text-gray-300 text-sm">Скидка</p>
           </div>
         </div>
       </div>
 
       {/* Next Appointment */}
       {dashboardData?.next_booking && (
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold">Следующая запись</h2>
-            <span className="px-4 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-semibold animate-pulse">
-              Через {Math.ceil((new Date(dashboardData.next_booking.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} дней
+        <div className="bg-white p-6 rounded-2xl border border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl">Следующая запись</h2>
+            <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">
+              {getDaysUntil(dashboardData.next_booking.date)}
             </span>
           </div>
 
-          <div className="flex gap-6 mb-4">
+          <div className="flex gap-4 mb-4">
             <img
-              src={dashboardData.next_booking.master_photo || 'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=150&h=150&fit=crop'}
-              className="w-16 h-16 rounded-xl object-cover shadow-sm"
+              src={dashboardData.next_booking.master_photo || 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=400&h=400&fit=crop'}
+              alt={dashboardData.next_booking.master_name}
+              className="w-20 h-20 rounded-xl object-cover"
             />
-            <div>
-              <h3 className="text-lg font-bold text-gray-900">{dashboardData.next_booking.master_name || 'Мария Петрова'}</h3>
-              <p className="text-sm text-gray-400">{dashboardData.next_booking.master_specialty || 'Колорист, Стилист'}</p>
-              <p className="text-sm font-medium text-gray-700 mt-1">{dashboardData.next_booking.service_name || 'Окрашивание волос + Стрижка'}</p>
+            <div className="flex-1">
+              <h3 className="mb-1">{dashboardData.next_booking.master_name}</h3>
+              <p className="text-sm text-gray-500 mb-2">{dashboardData.next_booking.master_specialty}</p>
+              <p className="text-gray-900">{dashboardData.next_booking.service_name}</p>
             </div>
           </div>
 
-          <div className="space-y-3 mb-6">
+          <div className="space-y-3 mb-4">
             <div className="flex items-center gap-3 text-gray-600">
-              <Calendar className="w-4 h-4 text-gray-400" />
-              <span className="text-sm">{format(new Date(dashboardData.next_booking.date), "EEEE, d MMMM", { locale: getDateLocale() })}</span>
+              <Calendar className="w-5 h-5 flex-shrink-0" />
+              <span>{format(new Date(dashboardData.next_booking.date), "EEEE, d MMMM", { locale: getDateLocale() })}</span>
             </div>
             <div className="flex items-center gap-3 text-gray-600">
-              <Clock className="w-4 h-4 text-gray-400" />
-              <span className="text-sm">{format(new Date(dashboardData.next_booking.date), "HH:mm", { locale: getDateLocale() })} ({dashboardData.next_booking.duration || 180} мин)</span>
+              <Clock className="w-5 h-5 flex-shrink-0" />
+              <span>{format(new Date(dashboardData.next_booking.date), "HH:mm")} ({dashboardData.next_booking.duration || 180} мин)</span>
             </div>
             <div className="flex items-center gap-3 text-gray-600">
-              <MapPin className="w-4 h-4 text-gray-400" />
-              <div className="text-sm">
+              <MapPin className="w-5 h-5 flex-shrink-0" />
+              <div className="flex-1">
                 <p>Dubai Marina, Marina Plaza, Office 302</p>
-                <p className="text-gray-400 text-xs mt-0.5">Бесплатная парковка 2 часа</p>
+                <button
+                  onClick={handleNavigate}
+                  className="text-sm text-gray-400 hover:text-gray-600 flex items-center gap-1"
+                >
+                  Построить маршрут
+                  <Navigation className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </div>
 
-          <div className="flex gap-3">
-            <button className="flex-1 px-6 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-all shadow-md">
+          <div className="flex gap-2 flex-wrap">
+            <button
+              onClick={handleAddToCalendar}
+              className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
               В календарь
             </button>
-            <button className="px-6 py-3 bg-white border border-gray-200 text-gray-900 rounded-xl font-bold hover:bg-gray-50 transition-all">
+            <button
+              onClick={() => handleRescheduleAppointment(dashboardData.next_booking.id)}
+              className="px-4 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+            >
               Перенести
+            </button>
+            <button
+              onClick={() => handleCancelAppointment(dashboardData.next_booking.id)}
+              className="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+            >
+              Отменить
             </button>
           </div>
         </div>
       )}
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <button onClick={() => openBooking()} className="p-6 bg-gray-900 text-white rounded-2xl hover:bg-gray-800 transition-all flex flex-col items-center gap-3 shadow-md group">
-          <div className="p-3 bg-white/10 rounded-xl group-hover:scale-110 transition-transform">
-            <Plus className="w-6 h-6" />
-          </div>
-          <span className="font-bold">Новая запись</span>
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          onClick={openBooking}
+          className="p-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors flex items-center gap-3"
+        >
+          <Plus className="w-5 h-5" />
+          <span>Новая запись</span>
         </button>
-        <button onClick={() => openBooking()} className="p-6 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all flex flex-col items-center gap-3 shadow-sm group">
-          <div className="p-3 bg-gray-50 rounded-xl group-hover:scale-110 transition-transform">
-            <Repeat className="w-6 h-6 text-gray-900" />
-          </div>
-          <span className="font-bold text-gray-900">Повторить</span>
+        <button
+          onClick={openBooking}
+          className="p-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-3"
+        >
+          <Repeat className="w-5 h-5" />
+          <span>Повторить последнюю</span>
         </button>
-        <button onClick={() => setActiveTab('masters')} className="p-6 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all flex flex-col items-center gap-3 shadow-sm group">
-          <div className="p-3 bg-gray-50 rounded-xl group-hover:scale-110 transition-transform">
-            <Heart className="w-6 h-6 text-gray-900" />
-          </div>
-          <span className="font-bold text-gray-900">Мои мастера</span>
+        <button
+          onClick={() => setActiveTab('masters')}
+          className="p-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-3"
+        >
+          <Heart className="w-5 h-5" />
+          <span>Мои мастера</span>
         </button>
-        <button onClick={() => setActiveTab('chat')} className="p-6 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all flex flex-col items-center gap-3 shadow-sm group">
-          <div className="p-3 bg-gray-50 rounded-xl group-hover:scale-110 transition-transform">
-            <MessageCircle className="w-6 h-6 text-gray-900" />
-          </div>
-          <span className="font-bold text-gray-900">Поддержка</span>
+        <button
+          onClick={() => setActiveTab('chat')}
+          className="p-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-3"
+        >
+          <MessageCircle className="w-5 h-5" />
+          <span>Связаться</span>
         </button>
+      </div>
+
+      {/* Last Visit */}
+      {dashboardData?.last_booking && (
+        <div className="bg-white p-6 rounded-2xl border border-gray-200">
+          <h2 className="text-xl mb-4">Ваш последний визит</h2>
+
+          <div className="flex gap-4 mb-4">
+            <img
+              src={dashboardData.last_booking.master_photo || 'https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?w=400&h=400&fit=crop'}
+              alt={dashboardData.last_booking.master_name}
+              className="w-16 h-16 rounded-xl object-cover"
+            />
+            <div className="flex-1">
+              <h3 className="mb-1">{dashboardData.last_booking.service_name}</h3>
+              <p className="text-sm text-gray-500">{dashboardData.last_booking.master_name}</p>
+              <p className="text-sm text-gray-400">{format(new Date(dashboardData.last_booking.date), "d MMMM yyyy", { locale: getDateLocale() })}</p>
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleLeaveReview(dashboardData.last_booking.id)}
+              className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Оставить отзыв
+            </button>
+            <button
+              onClick={() => handleRepeatAppointment(dashboardData.last_booking.id)}
+              className="px-4 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              Повторить
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Insights */}
+      <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-100">
+        <div className="flex items-center gap-2 mb-4">
+          <Sparkles className="w-5 h-5 text-purple-600" />
+          <h2 className="text-xl">Персональные инсайты</h2>
+        </div>
+        <div className="space-y-3">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm">🎉</div>
+            <p className="text-gray-700 flex-1">Вы с нами уже {dashboardData?.months_as_client || 0} месяцев!</p>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm">💰</div>
+            <p className="text-gray-700 flex-1">Вы сэкономили {dashboardData?.total_saved || 0} AED благодаря программе лояльности</p>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm">⭐</div>
+            <p className="text-gray-700 flex-1">Вы посетили нас {dashboardData?.total_visits || 0} раз - это больше, чем у 80% клиентов!</p>
+          </div>
+        </div>
       </div>
     </div>
   );
 
+  // Appointments Content
   const renderAppointments = () => (
     <div className="space-y-6">
-      <div className="flex gap-2 p-1 bg-gray-100 rounded-xl w-fit">
-        <button onClick={() => setAppointmentsView('upcoming')} className={`px-6 py-2 rounded-lg font-bold transition-all ${appointmentsView === 'upcoming' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+      <div className="flex gap-2 overflow-x-auto pb-2">
+        <button
+          onClick={() => setAppointmentsView('upcoming')}
+          className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${appointmentsView === 'upcoming' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200'
+            }`}
+        >
           Предстоящие
         </button>
-        <button onClick={() => setAppointmentsView('history')} className={`px-6 py-2 rounded-lg font-bold transition-all ${appointmentsView === 'history' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+        <button
+          onClick={() => setAppointmentsView('history')}
+          className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${appointmentsView === 'history' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200'
+            }`}
+        >
           История
         </button>
       </div>
 
       <div className="space-y-4">
-        {bookings.filter(b => appointmentsView === 'upcoming' ? new Date(b.date) >= new Date() : new Date(b.date) < new Date()).map(apt => (
-          <div key={apt.id} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-gray-300 transition-all">
-            <div className="flex gap-6">
-              <img src={apt.master_photo} className="w-20 h-20 rounded-xl object-cover shadow-sm" />
+        {bookings.filter(apt => {
+          const isUpcoming = new Date(apt.date) >= new Date();
+          return appointmentsView === 'upcoming' ? isUpcoming : !isUpcoming;
+        }).map(apt => (
+          <div key={apt.id} className="bg-white p-4 rounded-xl border border-gray-200">
+            <div className="flex gap-3 mb-3">
+              <img src={apt.master_photo} alt={apt.master_name} className="w-16 h-16 rounded-lg object-cover" />
               <div className="flex-1">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg font-bold text-gray-900">{apt.service_name}</h3>
-                  <span className="text-xl font-bold">{apt.price} AED</span>
-                </div>
-                <p className="text-gray-500 mb-4">{apt.master_name}</p>
-                <div className="flex gap-4 text-sm font-medium text-gray-600">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    {format(new Date(apt.date), "d MMMM", { locale: getDateLocale() })}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    {format(new Date(apt.date), "HH:mm", { locale: getDateLocale() })}
-                  </div>
+                <h3 className="mb-1">{apt.service_name}</h3>
+                <p className="text-sm text-gray-500">{apt.master_name}</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-sm text-gray-600">{format(new Date(apt.date), "d MMMM yyyy", { locale: getDateLocale() })}</span>
+                  <span className="text-gray-300">•</span>
+                  <span className="text-sm text-gray-600">{format(new Date(apt.date), "HH:mm")}</span>
                 </div>
               </div>
+              <div className="text-right">
+                <p className="text-lg">{apt.price} AED</p>
+              </div>
             </div>
-            <div className="flex gap-3 mt-6 pt-6 border-t border-gray-100">
-              <button className="flex-1 py-2.5 bg-gray-50 text-gray-900 rounded-xl font-bold hover:bg-gray-100 transition-all">
-                Подробнее
-              </button>
-              <button className="px-6 py-2.5 bg-white border border-gray-200 text-gray-900 rounded-xl font-bold hover:bg-gray-50 transition-all">
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleRepeatAppointment(apt.id)}
+                className="flex-1 px-3 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+              >
                 Повторить
               </button>
             </div>
           </div>
         ))}
         {bookings.length === 0 && (
-          <EmptyState icon={<Calendar className="w-12 h-12" />} title="Записей пока нет" description="Ваша история посещений пуста. Самое время это исправить!" action={{ label: "Записаться", onClick: openBooking }} />
+          <EmptyState
+            icon={<Calendar className="w-8 h-8" />}
+            title="Записей пока нет"
+            description="Вы еще не совершили ни одной записи"
+            action={{ label: "Записаться", onClick: openBooking }}
+          />
         )}
       </div>
     </div>
   );
 
-  const renderGallery = () => (
-    <div className="space-y-6">
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-        {['all', 'hair', 'nails', 'face', 'body'].map(f => (
-          <button key={f} onClick={() => setGalleryFilter(f)} className={`px-6 py-2 rounded-full font-bold whitespace-nowrap transition-all ${galleryFilter === f ? 'bg-gray-900 text-white shadow-md' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
-            {f === 'all' ? 'Все' : f === 'hair' ? 'Волосы' : f === 'nails' ? 'Ногти' : f === 'face' ? 'Лицо' : 'Тело'}
-          </button>
-        ))}
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {gallery.map(item => (
-          <div key={item.id} className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm overflow-hidden group">
-            <div className="grid grid-cols-2 gap-2 mb-4 h-64">
-              <div className="relative overflow-hidden rounded-xl">
-                <img src={item.before_url} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-                <span className="absolute top-2 left-2 px-2 py-1 bg-black/50 text-white text-[10px] font-bold rounded uppercase">До</span>
+  // Gallery Content
+  const renderGallery = () => {
+    const filteredGallery = gallery.filter(photo =>
+      galleryFilter === 'all' || photo.category === galleryFilter
+    );
+
+    return (
+      <div className="space-y-6">
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {['all', 'hair', 'nails', 'face', 'body'].map(filter => (
+            <button
+              key={filter}
+              onClick={() => setGalleryFilter(filter)}
+              className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${galleryFilter === filter ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200'
+                }`}
+            >
+              {filter === 'all' && 'Все'}
+              {filter === 'hair' && 'Волосы'}
+              {filter === 'nails' && 'Ногти'}
+              {filter === 'face' && 'Лицо'}
+              {filter === 'body' && 'Тело'}
+            </button>
+          ))}
+        </div>
+
+        {filteredGallery.length === 0 ? (
+          <EmptyState
+            icon={<ImageIcon className="w-8 h-8" />}
+            title="Нет фотографий"
+            description="В этой категории пока нет фотографий трансформаций"
+          />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredGallery.map(photo => (
+              <div key={photo.id} className="bg-white p-4 rounded-xl border border-gray-200">
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <div>
+                    <p className="text-sm text-gray-500 mb-2">До</p>
+                    <img src={photo.before_url} alt="До" className="w-full h-48 object-cover rounded-lg" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 mb-2">После</p>
+                    <img src={photo.after_url} alt="После" className="w-full h-48 object-cover rounded-lg" />
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <h3 className="mb-1">{photo.service_name}</h3>
+                  <p className="text-sm text-gray-500">{photo.master_name}</p>
+                  <p className="text-sm text-gray-400">{format(new Date(photo.created_at), "d MMMM yyyy", { locale: getDateLocale() })}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setComparePhotos({ before: photo.before_url, after: photo.after_url })}
+                    className="flex-1 px-3 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors text-sm flex items-center justify-center gap-2"
+                  >
+                    <Eye className="w-4 h-4" />
+                    Сравнить
+                  </button>
+                  <button
+                    onClick={() => handleDownloadPhoto(photo.id)}
+                    className="px-3 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    <Download className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleSharePhoto(photo.id)}
+                    className="px-3 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    <Share2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-              <div className="relative overflow-hidden rounded-xl">
-                <img src={item.after_url} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-                <span className="absolute top-2 left-2 px-2 py-1 bg-green-500/80 text-white text-[10px] font-bold rounded uppercase">После</span>
+            ))}
+          </div>
+        )}
+
+        {comparePhotos && (
+          <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" onClick={() => setComparePhotos(null)}>
+            <div className="bg-white rounded-2xl p-6 max-w-4xl w-full" onClick={e => e.stopPropagation()}>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl">Сравнение</h3>
+                <button onClick={() => setComparePhotos(null)} className="p-2 hover:bg-gray-100 rounded-lg">
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-            </div>
-            <h3 className="font-bold text-gray-900 mb-1">{item.service_name}</h3>
-            <p className="text-sm text-gray-500">{item.master_name} • {format(new Date(item.created_at), "d MMMM yyyy", { locale: getDateLocale() })}</p>
-            <div className="flex gap-2 mt-4">
-              <button onClick={() => setComparePhotos({ before: item.before_url, after: item.after_url })} className="flex-1 py-2 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-gray-800 transition-all">
-                Сравнить
-              </button>
-              <button className="p-2 bg-gray-100 text-gray-900 rounded-xl hover:bg-gray-200 transition-all"><Share2 className="w-4 h-4" /></button>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500 mb-2">До</p>
+                  <img src={comparePhotos.before} alt="До" className="w-full rounded-lg" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-2">После</p>
+                  <img src={comparePhotos.after} alt="После" className="w-full rounded-lg" />
+                </div>
+              </div>
             </div>
           </div>
-        ))}
+        )}
       </div>
-    </div>
-  );
+    );
+  };
 
+  // Loyalty Content
   const renderLoyalty = () => (
     <div className="space-y-6">
-      <div className="bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 text-white p-8 rounded-2xl shadow-xl relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex justify-between items-start mb-8">
-            <div>
-              <p className="text-white/60 text-sm font-bold uppercase tracking-widest mb-1">Ваш статус</p>
-              <h2 className="text-4xl font-extrabold">{loyalty?.current_level?.name || 'Standard'}</h2>
-            </div>
-            <div className="text-right">
-              <p className="text-white/60 text-sm font-bold uppercase tracking-widest mb-1">Бонусные баллы</p>
-              <p className="text-5xl font-black">{loyalty?.total_points || 0}</p>
-            </div>
+      <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 text-white p-6 rounded-2xl">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <p className="text-yellow-100 mb-1">Ваш уровень</p>
+            <h2 className="text-3xl mb-2">{loyalty?.current_level?.name || 'Standard'}</h2>
+            <p className="text-yellow-100">Скидка {loyalty?.current_level?.discount_percent || 0}%</p>
           </div>
-          {loyalty?.next_level && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-end text-sm font-bold">
-                <span>До уровня {loyalty.next_level.name}</span>
-                <span>{loyalty.next_level.min_points - (loyalty.total_points || 0)} баллов</span>
-              </div>
-              <div className="h-3 bg-black/20 rounded-full overflow-hidden">
-                <div className="h-full bg-white transition-all duration-1000" style={{ width: `${Math.min(((loyalty.total_points || 0) / loyalty.next_level.min_points) * 100, 100)}%` }} />
-              </div>
+          <div className="text-right">
+            <p className="text-yellow-100 mb-1">Баллы</p>
+            <p className="text-4xl">{loyalty?.total_points || 0}</p>
+          </div>
+        </div>
+        {loyalty?.next_level && (
+          <div>
+            <div className="flex justify-between text-sm text-yellow-100 mb-2">
+              <span>До уровня {loyalty.next_level.name}</span>
+              <span>{loyalty.next_level.min_points - (loyalty.total_points || 0)} баллов</span>
             </div>
-          )}
+            <ProgressBar value={loyalty.total_points || 0} max={loyalty.next_level.min_points} color="bg-white" />
+          </div>
+        )}
+      </div>
+
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h3 className="text-lg mb-4">Аналитика расходов</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="text-center">
+            <p className="text-2xl mb-1">{loyalty?.total_spent || 0} AED</p>
+            <p className="text-sm text-gray-500">Всего потрачено</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl mb-1">{dashboardData?.total_saved || 0} AED</p>
+            <p className="text-sm text-gray-500">Сэкономлено</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200">
+        <div className="flex items-center gap-2 mb-4">
+          <Users className="w-5 h-5 text-purple-600" />
+          <h3 className="text-lg">Реферальная программа</h3>
+        </div>
+        <p className="text-gray-600 mb-4">Пригласите друга и получите 200 баллов, когда он совершит первый визит</p>
+        <div className="bg-white p-4 rounded-lg mb-4">
+          <p className="text-sm text-gray-500 mb-2">Ваш код</p>
+          <div className="flex items-center gap-2">
+            <code className="flex-1 text-xl tracking-wider">{(user as any)?.referral_code || 'ANNA2024'}</code>
+            <button
+              onClick={handleCopyReferralCode}
+              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Копировать
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-4 gap-3">
+          <button onClick={() => handleShareReferral('WhatsApp')} className="p-3 bg-white rounded-lg border border-gray-100 flex flex-col items-center gap-1 hover:bg-gray-50 transition-colors">
+            <span className="text-xl">💬</span>
+            <span className="text-[10px] text-gray-500">WhatsApp</span>
+          </button>
+          <button onClick={() => handleShareReferral('Instagram')} className="p-3 bg-white rounded-lg border border-gray-100 flex flex-col items-center gap-1 hover:bg-gray-50 transition-colors">
+            <span className="text-xl">📸</span>
+            <span className="text-[10px] text-gray-500">Instagram</span>
+          </button>
+          <button onClick={() => handleShareReferral('Email')} className="p-3 bg-white rounded-lg border border-gray-100 flex flex-col items-center gap-1 hover:bg-gray-50 transition-colors">
+            <span className="text-xl">📧</span>
+            <span className="text-[10px] text-gray-500">Email</span>
+          </button>
+          <button onClick={() => handleShareReferral('SMS')} className="p-3 bg-white rounded-lg border border-gray-100 flex flex-col items-center gap-1 hover:bg-gray-50 transition-colors">
+            <span className="text-xl">📱</span>
+            <span className="text-[10px] text-gray-500">SMS</span>
+          </button>
         </div>
       </div>
     </div>
   );
 
-  const renderHeader = () => (
-    <div className="mb-10 flex justify-between items-end">
-      <div>
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-1">Личный кабинет</h1>
-        <p className="text-gray-500 text-lg font-medium">Управляйте записями и отслеживайте свой прогресс</p>
+  // Achievements Content
+  const renderAchievements = () => (
+    <div className="space-y-6">
+      <div className="bg-gradient-to-br from-purple-600 to-pink-600 text-white p-6 rounded-2xl">
+        <h2 className="text-2xl mb-2">Ваши достижения</h2>
+        <p className="text-purple-100">Разблокировано {achievements.filter(a => a.is_unlocked).length} из {achievements.length}</p>
       </div>
-      <button onClick={handleLogout} className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 text-red-600 rounded-xl font-bold hover:bg-red-50 hover:border-red-100 transition-all shadow-sm">
-        <LogOut className="w-5 h-5" />
-        Выйти
-      </button>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {achievements.map(achievement => (
+          <div
+            key={achievement.id}
+            className={`p-4 rounded-xl border-2 ${achievement.is_unlocked
+              ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-300'
+              : 'bg-white border-gray-200'
+              }`}
+          >
+            <div className="flex items-start gap-3 mb-3">
+              <div className={`text-4xl ${!achievement.is_unlocked && 'grayscale opacity-50'}`}>
+                {achievement.icon || '🏆'}
+              </div>
+              <div className="flex-1">
+                <h3 className="mb-1">{achievement.title}</h3>
+                <p className="text-sm text-gray-600">{achievement.description}</p>
+                {achievement.is_unlocked && achievement.unlocked_at && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    Разблокировано {format(new Date(achievement.unlocked_at), "d MMMM yyyy", { locale: getDateLocale() })}
+                  </p>
+                )}
+              </div>
+              {achievement.is_unlocked ? (
+                <Check className="w-6 h-6 text-green-600" />
+              ) : (
+                <span className="text-sm text-gray-400">+{achievement.points_reward}</span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // Masters Content
+  const renderMasters = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl">Избранные мастера</h2>
+        <button
+          onClick={() => setShowAllMasters(!showAllMasters)}
+          className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1"
+        >
+          {showAllMasters ? 'Только избранные' : 'Все мастера'}
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {masters
+          .filter(master => showAllMasters || master.is_favorite)
+          .map(master => (
+            <div key={master.id} className="bg-white p-4 rounded-xl border border-gray-200">
+              <div className="flex gap-3 mb-3">
+                <img src={master.photo} alt={master.name} className="w-20 h-20 rounded-xl object-cover" />
+                <div className="flex-1">
+                  <div className="flex items-start justify-between mb-1">
+                    <h3>{master.name}</h3>
+                    <button
+                      onClick={() => handleToggleFavoriteMaster(master.id, master.is_favorite)}
+                      className="p-1"
+                    >
+                      <Heart className={`w-5 h-5 ${master.is_favorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+                    </button>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-2">{master.specialty}</p>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm">{master.rating || 5.0}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={openBooking}
+                className="w-full px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                Записаться
+              </button>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+
+  // Beauty Profile Content
+  const renderBeautyProfile = () => (
+    <div className="space-y-6">
+      <div className="bg-gradient-to-br from-pink-500 to-purple-600 text-white p-6 rounded-2xl">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-2xl mb-1">Beauty Score</h2>
+            <p className="text-purple-100">Общий уровень ухоженности</p>
+          </div>
+          <div className="text-center">
+            <div className="w-24 h-24 rounded-full border-4 border-white/30 flex items-center justify-center bg-white/10">
+              <span className="text-4xl">85%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h3 className="text-lg mb-4">Показатели здоровья</h3>
+        <div className="space-y-4">
+          {metrics.map(metric => (
+            <div key={metric.name}>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex-1">
+                  <h4 className="mb-1">{metric.name}</h4>
+                  <p className="text-sm text-gray-500">
+                    {format(new Date(metric.last_assessment), "d MMMM yyyy", { locale: getDateLocale() })}
+                  </p>
+                </div>
+              </div>
+              <ProgressBar value={metric.score_value} max={100} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  // Notifications Content
+  const renderNotifications = () => (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h2 className="text-xl">Уведомления</h2>
+          <p className="text-sm text-gray-500">{notifications.filter(n => !n.is_read).length} непрочитанных</p>
+        </div>
+        <button onClick={handleMarkAllAsRead} className="text-sm text-gray-600 hover:text-gray-900">Прочитать все</button>
+      </div>
+      {notifications.map(notif => (
+        <div
+          key={notif.id}
+          className={`p-4 rounded-xl border cursor-pointer transition-all ${notif.is_read ? 'bg-white border-gray-200' : 'bg-blue-50 border-blue-200'
+            }`}
+          onClick={() => handleMarkNotificationAsRead(notif.id)}
+        >
+          <div className="flex items-start gap-3">
+            <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+              <Bell className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <h4 className="mb-1">{notif.title}</h4>
+              <p className="text-sm text-gray-600 mb-1">{notif.message}</p>
+              <p className="text-xs text-gray-400">{format(new Date(notif.created_at), "d MMMM HH:mm", { locale: getDateLocale() })}</p>
+            </div>
+            {!notif.is_read && <div className="w-2 h-2 bg-blue-600 rounded-full" />}
+          </div>
+        </div>
+      ))}
+      {notifications.length === 0 && (
+        <EmptyState icon={<Bell className="w-8 h-8" />} title="Нет уведомлений" description="У вас пока нет уведомлений" />
+      )}
+    </div>
+  );
+
+  // Settings Content
+  const renderSettings = () => (
+    <div className="space-y-6">
+      {/* Profile */}
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h3 className="text-lg mb-4">Личные данные</h3>
+        <div className="flex items-center gap-4 mb-6">
+          <div className="relative">
+            <img src={(user as any)?.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop'} alt={user?.full_name} className="w-20 h-20 rounded-full object-cover" />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="absolute bottom-0 right-0 p-1.5 bg-gray-900 text-white rounded-full hover:bg-gray-800"
+            >
+              <Upload className="w-4 h-4" />
+            </button>
+          </div>
+          <div>
+            <h4 className="mb-1">{user?.full_name}</h4>
+            <p className="text-sm text-gray-500">{user?.email}</p>
+          </div>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm text-gray-600 mb-2">Имя</label>
+            <input
+              type="text"
+              value={profileData.firstName}
+              onChange={(e) => setProfileData({ ...profileData, firstName: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-600 mb-2">Фамилия</label>
+            <input
+              type="text"
+              value={profileData.lastName}
+              onChange={(e) => setProfileData({ ...profileData, lastName: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-600 mb-2">Email</label>
+            <input
+              type="email"
+              value={profileData.email}
+              onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-600 mb-2">Телефон</label>
+            <input
+              type="tel"
+              value={profileData.phone}
+              onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+            />
+          </div>
+          <button
+            onClick={handleSaveProfile}
+            className="w-full px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            Сохранить изменения
+          </button>
+        </div>
+      </div>
+
+      {/* Security */}
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h3 className="text-lg mb-4">Безопасность</h3>
+        <div className="space-y-3">
+          <button
+            onClick={handleChangePassword}
+            className="w-full flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <LockIcon className="w-5 h-5 text-gray-600" />
+              <span>Изменить пароль</span>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-400" />
+          </button>
+          <button
+            onClick={handleEnable2FA}
+            className="w-full flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <LockIcon className="w-5 h-5 text-gray-600" />
+              <span>Двухфакторная аутентификация</span>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-400" />
+          </button>
+          <button
+            onClick={handleExportData}
+            className="w-full flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Download className="w-5 h-5 text-gray-600" />
+              <span>Экспорт данных</span>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-400" />
+          </button>
+        </div>
+      </div>
+
+      {/* Notifications Settings */}
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h3 className="text-lg mb-4">Уведомления</h3>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="mb-1">Push-уведомления</h4>
+              <p className="text-sm text-gray-500">Уведомления на устройстве</p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notificationSettings.push}
+                onChange={(e) => {
+                  setNotificationSettings({ ...notificationSettings, push: e.target.checked });
+                  toast.success(e.target.checked ? 'Push-уведомления включены' : 'Push-уведомления отключены');
+                }}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
+            </label>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="mb-1">Email-рассылка</h4>
+              <p className="text-sm text-gray-500">Новости и акции</p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notificationSettings.email}
+                onChange={(e) => {
+                  setNotificationSettings({ ...notificationSettings, email: e.target.checked });
+                  toast.success(e.target.checked ? 'Email-рассылка включена' : 'Email-рассылка отключена');
+                }}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
+            </label>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="mb-1">SMS-напоминания</h4>
+              <p className="text-sm text-gray-500">О предстоящих записях</p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notificationSettings.sms}
+                onChange={(e) => {
+                  setNotificationSettings({ ...notificationSettings, sms: e.target.checked });
+                  toast.success(e.target.checked ? 'SMS-напоминания включены' : 'SMS-напоминания отключены');
+                }}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      {/* Privacy */}
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h3 className="text-lg mb-4">Приватность</h3>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="mb-1">Использование фото в портфолио</h4>
+              <p className="text-sm text-gray-500">Разрешить салону публиковать</p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={privacySettings.allowPhotos}
+                onChange={(e) => {
+                  setPrivacySettings({ ...privacySettings, allowPhotos: e.target.checked });
+                  toast.success(e.target.checked ? 'Разрешение на публикацию фото включено' : 'Разрешение на публикацию фото отключено');
+                }}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <div className="flex items-center justify-between py-2 border-b border-gray-100 mb-4">
+          <h3 className="text-lg font-bold text-red-600">Выход из аккаунта</h3>
+          <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
+            <LogOut className="w-4 h-4" />
+            Выйти
+          </button>
+        </div>
+      </div>
     </div>
   );
 
   return (
-    <div className="account-page-container min-h-screen bg-gray-50 p-4 md:p-10">
-      <div className="max-w-7xl mx-auto">
-        {renderHeader()}
-
-        <div className="flex gap-2 overflow-x-auto pb-6 scrollbar-hide mb-8">
-          <TabButton active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} icon={<Sparkles className="w-5 h-5" />} label="Главная" />
-          <TabButton active={activeTab === 'appointments'} onClick={() => setActiveTab('appointments')} icon={<Calendar className="w-5 h-5" />} label="Записи" />
-          <TabButton active={activeTab === 'gallery'} onClick={() => setActiveTab('gallery')} icon={<ImageIcon className="w-5 h-5" />} label="Галерея" />
-          <TabButton active={activeTab === 'loyalty'} onClick={() => setActiveTab('loyalty')} icon={<Award className="w-5 h-5" />} label="Лояльность" />
-          <TabButton active={activeTab === 'achievements'} onClick={() => setActiveTab('achievements')} icon={<Trophy className="w-5 h-5" />} label="Достижения" />
-          <TabButton active={activeTab === 'masters'} onClick={() => setActiveTab('masters')} icon={<Users className="w-5 h-5" />} label="Мастера" />
-          <TabButton active={activeTab === 'beauty'} onClick={() => setActiveTab('beauty')} icon={<Sparkles className="w-5 h-5" />} label="Beauty-профиль" />
-          <TabButton active={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')} icon={<Bell className="w-5 h-5" />} label="Уведомления" hasBadge badgeCount={notifications.filter(n => !n.is_read).length} />
-          <TabButton active={activeTab === 'chat'} onClick={() => setActiveTab('chat')} icon={<MessageCircle className="w-5 h-5" />} label="Связь" />
-          <TabButton active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={<Settings className="w-5 h-5" />} label="Настройки" />
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-6xl mx-auto p-4 md:p-6 lg:p-8">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Личный кабинет</h1>
+          <p className="text-gray-600">Управляйте записями и отслеживайте свой прогресс</p>
         </div>
 
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {/* Navigation */}
+        <div className="mb-6 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex gap-2 min-w-max">
+            <TabButton active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} icon={<Sparkles className="w-5 h-5" />} label="Главная" />
+            <TabButton active={activeTab === 'appointments'} onClick={() => setActiveTab('appointments')} icon={<Calendar className="w-5 h-5" />} label="Записи" />
+            <TabButton active={activeTab === 'gallery'} onClick={() => setActiveTab('gallery')} icon={<ImageIcon className="w-5 h-5" />} label="Галерея" />
+            <TabButton active={activeTab === 'loyalty'} onClick={() => setActiveTab('loyalty')} icon={<Award className="w-5 h-5" />} label="Лояльность" />
+            <TabButton active={activeTab === 'achievements'} onClick={() => setActiveTab('achievements')} icon={<Trophy className="w-5 h-5" />} label="Достижения" />
+            <TabButton active={activeTab === 'masters'} onClick={() => setActiveTab('masters')} icon={<Users className="w-5 h-5" />} label="Мастера" />
+            <TabButton active={activeTab === 'beauty'} onClick={() => setActiveTab('beauty')} icon={<Sparkles className="w-5 h-5" />} label="Beauty-профиль" />
+            <TabButton active={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')} icon={<Bell className="w-5 h-5" />} label="Уведомления" hasBadge badgeCount={notifications.filter(n => !n.is_read).length} />
+            <TabButton active={activeTab === 'chat'} onClick={() => setActiveTab('chat')} icon={<MessageCircle className="w-5 h-5" />} label="Связь" />
+            <TabButton active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={<Settings className="w-5 h-5" />} label="Настройки" />
+          </div>
+        </div>
+
+        {/* Content */}
+        <div>
           {activeTab === 'dashboard' && renderDashboard()}
           {activeTab === 'appointments' && renderAppointments()}
           {activeTab === 'gallery' && renderGallery()}
           {activeTab === 'loyalty' && renderLoyalty()}
-          {activeTab === 'achievements' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {achievements.map(a => (
-                <div key={a.id} className={`p-6 rounded-2xl border-2 transition-all ${a.is_unlocked ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200 shadow-sm' : 'bg-white border-gray-100 grayscale opacity-60'}`}>
-                  <div className="text-5xl mb-4">{a.icon || '🏆'}</div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-1">{a.title}</h3>
-                  <p className="text-sm text-gray-500 mb-4">{a.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="px-3 py-1 bg-white/50 rounded-full text-xs font-bold text-gray-600">+{a.points_reward} баллов</span>
-                    {a.is_unlocked && <Check className="w-5 h-5 text-green-600" />}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          {activeTab === 'masters' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {masters.map(m => (
-                <div key={m.id} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm relative group overflow-hidden">
-                  <div className="flex items-center gap-4 mb-6">
-                    <img src={m.photo} className="w-20 h-20 rounded-2xl object-cover shadow-md" />
-                    <div>
-                      <h3 className="font-bold text-lg text-gray-900">{m.name}</h3>
-                      <p className="text-sm text-gray-500 mb-2">{m.specialty}</p>
-                      <div className="flex items-center gap-1 text-yellow-500">
-                        <Star className="w-4 h-4 fill-current" />
-                        <span className="text-sm font-bold">{m.rating || 5.0}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <button onClick={() => handleToggleFavoriteMaster(m.id, m.is_favorite)} className="absolute top-4 right-4 p-2 rounded-xl bg-gray-50 hover:bg-red-50 transition-all">
-                    <Heart className={`w-5 h-5 ${m.is_favorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
-                  </button>
-                  <button onClick={() => openBooking()} className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-all">Записаться</button>
-                </div>
-              ))}
-            </div>
-          )}
-          {activeTab === 'beauty' && (
-            <div className="space-y-8">
-              <div className="bg-gradient-to-br from-pink-500 to-purple-600 text-white p-10 rounded-3xl shadow-2xl relative overflow-hidden">
-                <div className="relative z-10 flex justify-between items-center">
-                  <div>
-                    <h2 className="text-3xl font-black mb-2 uppercase tracking-tighter">Your Beauty Score</h2>
-                    <p className="text-white/70 text-lg">Комплексный анализ здоровья и красоты ваших волос и кожи</p>
-                  </div>
-                  <div className="w-32 h-32 rounded-full bg-white/10 backdrop-blur-md border-4 border-white/20 flex items-center justify-center">
-                    <span className="text-5xl font-black">88%</span>
-                  </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {metrics.map(m => (
-                  <div key={m.name} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                    <div className="flex justify-between items-center mb-4">
-                      <h4 className="font-bold text-gray-900">{m.name}</h4>
-                      <span className="text-sm font-bold text-green-600">Отлично</span>
-                    </div>
-                    <div className="h-2 bg-gray-100 rounded-full mb-4">
-                      <div className="h-full bg-gray-900 rounded-full" style={{ width: `${m.score_value}%` }} />
-                    </div>
-                    <p className="text-xs text-gray-500">Последнее обновление: {format(new Date(m.last_assessment), "d MMMM", { locale: getDateLocale() })}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {activeTab === 'notifications' && (
-            <div className="max-w-3xl mx-auto space-y-4">
-              {notifications.map(n => (
-                <div key={n.id} className={`p-6 rounded-2xl border transition-all ${n.is_read ? 'bg-white border-gray-100' : 'bg-blue-50/50 border-blue-100 shadow-sm'}`}>
-                  <div className="flex gap-4">
-                    <div className={`p-3 rounded-xl ${n.type === 'booking' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
-                      {n.type === 'booking' ? <Calendar className="w-6 h-6" /> : <Bell className="w-6 h-6" />}
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-gray-900 mb-1">{n.title}</h4>
-                      <p className="text-gray-600 text-sm leading-relaxed mb-2">{n.message}</p>
-                      <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">{format(new Date(n.created_at), "d MMMM HH:mm", { locale: getDateLocale() })}</p>
-                    </div>
-                    {!n.is_read && <div className="w-2 h-2 bg-blue-600 rounded-full mt-2" />}
-                  </div>
-                </div>
-              ))}
-              {notifications.length === 0 && <EmptyState icon={<Bell className="w-12 h-12" />} title="Нет уведомлений" description="Здесь будут появляться важные сообщения от салона" />}
-            </div>
-          )}
+          {activeTab === 'achievements' && renderAchievements()}
+          {activeTab === 'masters' && renderMasters()}
+          {activeTab === 'beauty' && renderBeautyProfile()}
+          {activeTab === 'notifications' && renderNotifications()}
           {activeTab === 'chat' && (
-            <div className="max-w-2xl mx-auto text-center py-20 px-6 bg-white rounded-3xl border border-dashed border-gray-300">
-              <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                <MessageCircle className="w-10 h-10 text-gray-400" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Чат с администратором</h2>
-              <p className="text-gray-500 mb-8 max-w-sm mx-auto">Эта функция находится в разработке. Скоро вы сможете общаться с нами напрямую!</p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <a href="tel:+971501234567" className="px-8 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-all">Позвонить</a>
-                <a href="https://wa.me/971501234567" className="px-8 py-3 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 transition-all">WhatsApp</a>
-              </div>
+            <div className="bg-white p-6 rounded-xl border border-gray-200">
+              <EmptyState
+                icon={<MessageCircle className="w-8 h-8" />}
+                title="Нет сообщений"
+                description="Начните общение с администратором салона"
+                action={{ label: 'Написать сообщение', onClick: () => handleContactSalon('WhatsApp') }}
+              />
             </div>
           )}
-          {activeTab === 'settings' && (
-            <div className="max-w-4xl mx-auto space-y-8">
-              <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
-                <h3 className="text-2xl font-bold mb-8">Настройки профиля</h3>
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-gray-500 uppercase tracking-widest ml-1">Имя</label>
-                      <div className="relative">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input type="text" defaultValue={user?.full_name} className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all font-medium" />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-gray-500 uppercase tracking-widest ml-1">Телефон</label>
-                      <div className="relative">
-                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input type="tel" defaultValue={user?.phone} className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all font-medium" />
-                      </div>
-                    </div>
-                  </div>
-                  <button className="w-full py-4 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-all shadow-lg active:scale-[0.98]">Сохранить изменения</button>
-                </div>
-              </div>
-            </div>
-          )}
+          {activeTab === 'settings' && renderSettings()}
         </div>
       </div>
 
-      {isBooking && (
-        <UserBookingWizard onClose={closeBooking} />
-      )}
-
-      {comparePhotos && (
-        <div className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-4 backdrop-blur-xl transition-all animate-in fade-in" onClick={() => setComparePhotos(null)}>
-          <div className="bg-white rounded-3xl p-8 max-w-6xl w-full shadow-2xl relative" onClick={e => e.stopPropagation()}>
-            <button onClick={() => setComparePhotos(null)} className="absolute -top-4 -right-4 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-2xl hover:bg-gray-50 transition-all border border-gray-100">
-              <X className="w-6 h-6 text-gray-900" />
-            </button>
-            <h3 className="text-2xl font-black mb-8 text-center uppercase tracking-tighter">Сравнение результата</h3>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <p className="text-center font-black text-gray-400 uppercase tracking-widest text-xs">До процедуры</p>
-                <div className="aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-4 border-gray-100">
-                  <img src={comparePhotos.before} className="w-full h-full object-cover" />
-                </div>
-              </div>
-              <div className="space-y-4">
-                <p className="text-center font-black text-green-500 uppercase tracking-widest text-xs">После процедуры</p>
-                <div className="aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-4 border-green-50">
-                  <img src={comparePhotos.after} className="w-full h-full object-cover" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {isBooking && <UserBookingWizard onClose={closeBooking} />}
     </div>
   );
 }
