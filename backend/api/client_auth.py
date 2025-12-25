@@ -47,6 +47,11 @@ class VerifyClientEmailRequest(BaseModel):
 class ResendCodeRequest(BaseModel):
     email: str
 
+class ToggleFavoriteMaster(BaseModel):
+    master_id: int
+    is_favorite: bool
+
+
 # ============================================================================
 # HELPERS
 # ============================================================================
@@ -602,3 +607,243 @@ async def get_loyalty_info(
         return {"points": points, "history": history, "level": level}
     finally:
         conn.close()
+
+# ============================================================================
+# ACCOUNT ENHANCEMENTS ENDPOINTS
+# ============================================================================
+
+@router.get("/dashboard")
+async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
+    """Получить сводную информацию для главной страницы ЛК"""
+    user = require_auth(session_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    client_id = user["username"]
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        # 1. Сводка по лояльности
+        c.execute("SELECT loyalty_points, referral_code, total_saved FROM clients WHERE instagram_id = %s", (client_id,))
+        client_row = c.fetchone()
+        loyalty = {
+            "points": client_row[0] if client_row else 0,
+            "referral_code": client_row[1] if client_row else "",
+            "total_saved": client_row[2] if client_row else 0,
+            "level": "Bronze" # TODO: Расширить логику уровней
+        }
+
+        # 2. Следующая запись
+        c.execute("""
+            SELECT id, service_name, datetime, master 
+            FROM bookings 
+            WHERE instagram_id = %s AND status IN ('pending', 'confirmed') 
+            AND datetime >= %s
+            ORDER BY datetime ASC LIMIT 1
+        """, (client_id, datetime.now().isoformat()))
+        next_booking_row = c.fetchone()
+        next_booking = {
+            "id": next_booking_row[0],
+            "service": next_booking_row[1],
+            "date": next_booking_row[2],
+            "master": next_booking_row[3]
+        } if next_booking_row else None
+
+        # 3. Последний визит
+        c.execute("""
+            SELECT id, service_name, datetime, master 
+            FROM bookings 
+            WHERE instagram_id = %s AND status = 'completed'
+            ORDER BY datetime DESC LIMIT 1
+        """, (client_id,))
+        last_visit_row = c.fetchone()
+        last_visit = {
+            "id": last_visit_row[0],
+            "service": last_visit_row[1],
+            "date": last_visit_row[2],
+            "master": last_visit_row[3]
+        } if last_visit_row else None
+
+        # 4. Прогресс достижений
+        c.execute("SELECT COUNT(*) FROM client_achievements WHERE client_id = %s AND unlocked_at IS NOT NULL", (client_id,))
+        unlocked_count = c.fetchone()[0]
+        c.execute("SELECT COUNT(*) FROM client_achievements WHERE client_id = 'template'")
+        total_templates = c.fetchone()[0]
+
+        return {
+            "success": True,
+            "loyalty": loyalty,
+            "next_booking": next_booking,
+            "last_visit": last_visit,
+            "achievements_summary": {
+                "unlocked": unlocked_count,
+                "total": total_templates
+            }
+        }
+    finally:
+        conn.close()
+
+@router.get("/gallery")
+async def get_client_gallery(session_token: Optional[str] = Cookie(None)):
+    """Получить фото из галереи клиента (до/после)"""
+    user = require_auth(session_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    client_id = user["username"]
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            SELECT id, before_photo, after_photo, created_at, category, notes, master_id
+            FROM client_gallery
+            WHERE client_id = %s
+            ORDER BY created_at DESC
+        """, (client_id,))
+        
+        gallery = []
+        for row in c.fetchall():
+            gallery.append({
+                "id": row[0],
+                "before": row[1],
+                "after": row[2],
+                "date": row[3],
+                "category": row[4],
+                "notes": row[5],
+                "master_id": row[6]
+            })
+        return {"success": True, "gallery": gallery}
+    finally:
+        conn.close()
+
+@router.get("/achievements")
+async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
+    """Получить список достижений клиента"""
+    user = require_auth(session_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    client_id = user["username"]
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        # Сначала получаем все шаблоны
+        c.execute("SELECT achievement_type, title_ru, description_ru, icon, points_awarded, max_progress FROM client_achievements WHERE client_id = 'template'")
+        templates = {row[0]: {"title": row[1], "description": row[2], "icon": row[3], "points": row[4], "max": row[5]} for row in c.fetchall()}
+
+        # Затем получаем прогресс клиента
+        c.execute("SELECT achievement_type, progress, unlocked_at FROM client_achievements WHERE client_id = %s", (client_id,))
+        client_data = {row[0]: {"progress": row[1], "unlocked_at": row[2]} for row in c.fetchall()}
+
+        achievements = []
+        for ach_type, info in templates.items():
+            client_ach = client_data.get(ach_type, {"progress": 0, "unlocked_at": None})
+            achievements.append({
+                "type": ach_type,
+                "title": info["title"],
+                "description": info["description"],
+                "icon": info["icon"],
+                "points": info["points"],
+                "progress": client_ach["progress"],
+                "max_progress": info["max"],
+                "unlocked_at": client_ach["unlocked_at"]
+            })
+
+        return {"success": True, "achievements": achievements}
+    finally:
+        conn.close()
+
+@router.get("/favorite-masters")
+async def get_favorite_masters(session_token: Optional[str] = Cookie(None)):
+    """Получить список избранных мастеров"""
+    user = require_auth(session_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    client_id = user["username"]
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            SELECT u.id, u.full_name, u.photo_url, u.position
+            FROM client_favorite_masters fm
+            JOIN users u ON fm.master_id = u.id
+            WHERE fm.client_id = %s
+        """, (client_id,))
+        
+        masters = []
+        for row in c.fetchall():
+            masters.append({
+                "id": row[0],
+                "name": row[1],
+                "photo": row[2],
+                "position": row[3]
+            })
+        return {"success": True, "masters": masters}
+    finally:
+        conn.close()
+
+@router.post("/favorite-masters/toggle")
+async def toggle_favorite_master(data: ToggleFavoriteMaster, session_token: Optional[str] = Cookie(None)):
+    """Добавить/удалить мастера из избранного"""
+    user = require_auth(session_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    client_id = user["username"]
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        if data.is_favorite:
+            c.execute("INSERT INTO client_favorite_masters (client_id, master_id) VALUES (%s, %s) ON CONFLICT DO NOTHING", (client_id, data.master_id))
+        else:
+            c.execute("DELETE FROM client_favorite_masters WHERE client_id = %s AND master_id = %s", (client_id, data.master_id))
+        conn.commit()
+        return {"success": True}
+    finally:
+        conn.close()
+
+@router.get("/beauty-metrics")
+async def get_beauty_metrics(session_token: Optional[str] = Cookie(None)):
+    """Получить бьюти-метрики клиента"""
+    user = require_auth(session_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    client_id = user["username"]
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            SELECT metric_name, metric_value, status, days_since_last
+            FROM client_beauty_metrics
+            WHERE client_id = %s
+        """, (client_id,))
+        
+        metrics = []
+        for row in c.fetchall():
+            metrics.append({
+                "name": row[0],
+                "value": row[1],
+                "status": row[2],
+                "days": row[3]
+            })
+            
+        # Если метрик нет - возвращаем дефолтные
+        if not metrics:
+            metrics = [
+                {"name": "Маникюр", "value": 100, "status": "good", "days": 0},
+                {"name": "Брови", "value": 100, "status": "good", "days": 0},
+                {"name": "Уход", "value": 100, "status": "good", "days": 0}
+            ]
+            
+        return {"success": True, "metrics": metrics}
+    finally:
+        conn.close()
+

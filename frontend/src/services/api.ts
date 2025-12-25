@@ -502,6 +502,49 @@ export class ApiClient {
     })
   }
 
+  // ===== CLIENT ACCOUNT ENHANCEMENTS =====
+  async getClientDashboard() {
+    return this.request<any>('/api/client/dashboard')
+  }
+
+  async getClientGallery() {
+    return this.request<any>('/api/client/gallery')
+  }
+
+  async getClientAchievements() {
+    return this.request<any>('/api/client/achievements')
+  }
+
+  async getClientFavoriteMasters() {
+    return this.request<any>('/api/client/favorite-masters')
+  }
+
+  async toggleFavoriteMaster(masterId: number, isFavorite: boolean) {
+    return this.request('/api/client/favorite-masters/toggle', {
+      method: 'POST',
+      body: JSON.stringify({ master_id: masterId, is_favorite: isFavorite }),
+    })
+  }
+
+  async getClientBeautyMetrics() {
+    return this.request<any>('/api/client/beauty-metrics')
+  }
+
+  async getClientNotifications() {
+    return this.request<any>('/api/client/my-notifications')
+  }
+
+  async getClientLoyalty() {
+    return this.request<any>('/api/client/loyalty')
+  }
+
+  async updateClientProfile(data: any) {
+    return this.request('/api/client/profile', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
   // ===== ЗАМЕТКИ КЛИЕНТА =====
   async getClientNotes(clientId: string) {
     return this.request<any>(`/api/clients/${clientId}/notes`)

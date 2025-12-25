@@ -16,6 +16,8 @@ from .schema_gallery import (
 from .schema_public import migrate_public_schema
 from .schema_bot_analytics import migrate_bot_analytics_schema
 from .schema_service_assignments import run_migration as migrate_service_assignments
+from .schema_account_enhancements import migrate_account_enhancements
+
 
 __all__ = [
     # Users
@@ -40,5 +42,8 @@ __all__ = [
     'import_gallery_images',
     # Public Content
     'migrate_public_schema',
+    # Account Enhancements
+    'migrate_account_enhancements',
 ]
+
 
