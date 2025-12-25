@@ -222,23 +222,17 @@ export default function BannersTab() {
 
         setUploading(true);
         try {
-            const response = await apiClient.uploadFile(file);
-            // Add timestamp to force refresh if URL is same
-            const newUrl = response.file_url; // + `?t=${Date.now()}`; 
-            // Actually, better to just update the state. 
-            // If the URL is exactly the same, React might not re-render the img tag if we don't change the src string.
-            // Let's append a timestamp to the src in the render method, or here.
-            // But saving the timestamp to DB is bad.
-            // We should only use timestamp for display.
+            const response = await apiClient.uploadFile(file, 'faces');
+            // We use file_url (relative path) for the database
+            const relativeUrl = response.file_url;
 
-            setFormData({ ...formData, image_url: newUrl });
+            setFormData({ ...formData, image_url: relativeUrl });
             toast.success(t('banners.file_uploaded'));
         } catch (error) {
             console.error('Upload error:', error);
             toast.error(t('banners.error_file_upload'));
         } finally {
             setUploading(false);
-            // Reset input so same file can be selected again
             e.target.value = '';
         }
     };

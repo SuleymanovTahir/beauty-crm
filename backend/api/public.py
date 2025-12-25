@@ -196,6 +196,8 @@ async def get_public_services():
 
     def sanitize_url(url):
         if not url: return None
+        if url.startswith('/static/'):
+            return f"{BASE_URL.rstrip('/')}{url}"
         if "localhost:8000" in url and "localhost" not in BASE_URL:
             return url.replace("http://localhost:8000", BASE_URL).replace("http://127.0.0.1:8000", BASE_URL)
         return url
@@ -384,6 +386,8 @@ async def get_salon_news(limit: int = 10, language: str = "ru"):
     
     def sanitize_url(url):
         if not url: return None
+        if url.startswith('/static/'):
+            return f"{BASE_URL.rstrip('/')}{url}"
         if "localhost:8000" in url and "localhost" not in BASE_URL:
             return url.replace("http://localhost:8000", BASE_URL).replace("http://127.0.0.1:8000", BASE_URL)
         return url
@@ -430,6 +434,9 @@ async def get_public_banners():
         
         def sanitize_url(url):
             if not url: return None
+            if url.startswith('/static/'):
+                # Prepend BASE_URL to relative paths
+                return f"{BASE_URL.rstrip('/')}{url}"
             if "localhost:8000" in url and "localhost" not in BASE_URL:
                 return url.replace("http://localhost:8000", BASE_URL).replace("http://127.0.0.1:8000", BASE_URL)
             return url

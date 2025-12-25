@@ -300,18 +300,37 @@ async def update_banner(banner_id: int, banner: BannerUpdate):
     c = conn.cursor()
     
     try:
+        # Получаем текущие данные баннера для проверки изменений текста
+        c.execute("SELECT title_ru, subtitle_ru FROM public_banners WHERE id = %s", (banner_id,))
+        current = c.fetchone()
+        if not current:
+            raise HTTPException(status_code=404, detail="Баннер не найден")
+            
+        current_title_ru, current_subtitle_ru = current
+        
         updates = []
         params = []
         
         if banner.title_ru is not None:
-            translations = await translate_to_all_languages(banner.title_ru)
-            updates.extend(["title_ru =%s", "title_en =%s", "title_ar =%s"])
-            params.extend([banner.title_ru, translations.get('en', ''), translations.get('ar', '')])
+            # Переводим только если текст реально изменился
+            if banner.title_ru != current_title_ru:
+                from utils.logger import log_info
+                log_info(f" Banner {banner_id} title changed, translating...", "api")
+                translations = await translate_to_all_languages(banner.title_ru)
+                updates.extend(["title_ru = %s", "title_en = %s", "title_ar = %s"])
+                params.extend([banner.title_ru, translations.get('en', ''), translations.get('ar', '')])
+            else:
+                # Если не изменился, все равно можем обновить title_ru (хотя это излишне)
+                # Но лучше не добавлять в updates чтобы сэкономить время
+                pass
             
         if banner.subtitle_ru is not None:
-            translations = await translate_to_all_languages(banner.subtitle_ru)
-            updates.extend(["subtitle_ru =%s", "subtitle_en =%s", "subtitle_ar =%s"])
-            params.extend([banner.subtitle_ru, translations.get('en', ''), translations.get('ar', '')])
+            if banner.subtitle_ru != current_subtitle_ru:
+                from utils.logger import log_info
+                log_info(f" Banner {banner_id} subtitle changed, translating...", "api")
+                translations = await translate_to_all_languages(banner.subtitle_ru)
+                updates.extend(["subtitle_ru = %s", "subtitle_en = %s", "subtitle_ar = %s"])
+                params.extend([banner.subtitle_ru, translations.get('en', ''), translations.get('ar', '')])
             
         if banner.image_url is not None:
             updates.append("image_url =%s")

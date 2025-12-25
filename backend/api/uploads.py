@@ -37,17 +37,13 @@ def get_file_category(content_type: str) -> str:
         return 'files'
 
 @router.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(
+    file: UploadFile = File(...),
+    subfolder: Optional[str] = None
+):
     """
     Загрузить файл и получить публичный URL
-    
-    Returns:
-        {
-            "file_url": "https://your-domain.com/static/uploads/images/file.jpg",
-            "filename": "file.jpg",
-            "content_type": "image/jpeg",
-            "size": 12345
-        }
+    subfolder: Опциональная подпапка внутри категории (например 'faces' для 'images')
     """
     try:
         # Проверка размера (максимум 25MB)
@@ -66,25 +62,34 @@ async def upload_file(file: UploadFile = File(...)):
         # Используем оригинальное имя файла (перезаписываем если существует)
         filename = file.filename or 'uploaded_file'
         
-        # Полный путь для сохранения
-        file_path = UPLOAD_DIR_PATH / category / filename
+        # Путь для сохранения (с учетом подпапки)
+        if subfolder and category == 'images':
+            target_dir = UPLOAD_DIR_PATH / category / subfolder
+            target_dir.mkdir(parents=True, exist_ok=True)
+            file_path = target_dir / filename
+            public_path = f"/static/uploads/{category}/{subfolder}/{filename}"
+        else:
+            file_path = UPLOAD_DIR_PATH / category / filename
+            public_path = f"/static/uploads/{category}/{filename}"
         
-        # Сохраняем файл (перезаписываем если существует)
+        # Сохраняем файл
         with open(file_path, 'wb') as f:
             f.write(contents)
         
-        # Формируем публичный URL
-        public_file_url = f"{PUBLIC_URL}/static/uploads/{category}/{filename}"
+        # Формируем публичный URL (относительный по умолчанию для DB)
+        # Мы также возвращаем полный URL для фронтенда если нужно
+        full_url = f"{PUBLIC_URL}{public_path}"
         
-        print(f"✅ File uploaded: {filename}")
-        print(f"📍 Public URL: {public_file_url}")
+        print(f"✅ File uploaded: {filename} to {public_path}")
         
         return {
-            "file_url": public_file_url,
+            "file_url": public_path, # Сохраняем относительный в БД
+            "full_url": full_url,    # Для немедленного отображения на фронте
             "filename": filename,
             "content_type": file.content_type,
             "size": file_size,
-            "category": category
+            "category": category,
+            "subfolder": subfolder
         }
         
     except HTTPException:
