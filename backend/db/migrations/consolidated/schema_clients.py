@@ -56,6 +56,23 @@ def migrate_clients_schema(db_path="salon_bot.db"):
             )
         """)
         print("  ✅ conversations table ensured")
+
+        # Create client_email_verifications table if not exists
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS client_email_verifications (
+                id SERIAL PRIMARY KEY,
+                email VARCHAR(255) NOT NULL,
+                code VARCHAR(10) NOT NULL,
+                expires_at TIMESTAMP NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                verified_at TIMESTAMP,
+                attempts INTEGER DEFAULT 0
+            )
+        """)
+        c.execute("CREATE INDEX IF NOT EXISTS idx_email_verif_email ON client_email_verifications (email)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_email_verif_code ON client_email_verifications (code)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_email_verif_expires ON client_email_verifications (expires_at)")
+        print("  ✅ client_email_verifications table ensured")
         
         if added_count > 0:
             print(f"\n✅ Added {added_count} columns to clients table")

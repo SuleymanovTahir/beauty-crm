@@ -82,10 +82,28 @@ def migrate_bookings_schema(db_path="salon_bot.db"):
             CREATE TABLE IF NOT EXISTS booking_drafts (
                 instagram_id TEXT PRIMARY KEY,
                 data TEXT,
+                datetime TEXT,
+                master TEXT,
+                expires_at TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
         print("  ✅ booking_drafts table ensured")
+        
+        # Migration: Add missing columns to booking_drafts
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='booking_drafts'")
+        draft_columns = {row[0] for row in c.fetchall()}
+        
+        draft_migrations = {
+            'datetime': 'TEXT',
+            'master': 'TEXT',
+            'expires_at': 'TIMESTAMP'
+        }
+        
+        for col, col_type in draft_migrations.items():
+            if col not in draft_columns:
+                c.execute(f"ALTER TABLE booking_drafts ADD COLUMN {col} {col_type}")
+                print(f"  ➕ Added column to booking_drafts: {col}")
         
         if added_count > 0:
             print(f"\n✅ Added {added_count} columns to bookings table")
