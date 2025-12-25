@@ -89,7 +89,7 @@ const EmptyState: React.FC<{ icon: React.ReactNode; title: string; description: 
   </div>
 );
 
-export default function AccountPage() {
+export function AccountPage() {
   const { user, logout, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { i18n } = useTranslation(['account', 'common']);
@@ -238,13 +238,13 @@ export default function AccountPage() {
       <div className="welcome-card-bg text-white p-8 rounded-2xl shadow-lg relative overflow-hidden">
         <div className="relative z-10 flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">{getGreeting()}, {user?.full_name || 'Гость'}! 👋</h1>
-            <p className="text-gray-300 text-lg">Вы выглядите великолепно! Время позаботиться о себе.</p>
+            <h1 className="text-3xl font-bold mb-1">{getGreeting()}, {user?.full_name || 'Anna'}! 👋</h1>
+            <p className="text-gray-300 text-lg">Время позаботиться о себе</p>
           </div>
           <div className="relative group">
-            <Avatar className="w-24 h-24 border-4 border-white/20 shadow-xl cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-              <AvatarImage src={(user as any)?.avatar_url || ''} className="object-cover" />
-              <AvatarFallback className="bg-gray-800 text-2xl">{user?.full_name?.charAt(0)}</AvatarFallback>
+            <Avatar className="w-16 h-16 border-2 border-white shadow-xl cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+              <AvatarImage src={(user as any)?.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop'} className="object-cover" />
+              <AvatarFallback className="bg-gray-800 text-xl">{user?.full_name?.charAt(0) || 'A'}</AvatarFallback>
             </Avatar>
             <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
           </div>
@@ -276,40 +276,32 @@ export default function AccountPage() {
             </span>
           </div>
 
-          <div className="flex gap-6 mb-6">
+          <div className="flex gap-6 mb-4">
             <img
-              src={dashboardData.next_booking.master_photo}
-              className="w-24 h-24 rounded-2xl object-cover shadow-md"
+              src={dashboardData.next_booking.master_photo || 'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=150&h=150&fit=crop'}
+              className="w-16 h-16 rounded-xl object-cover shadow-sm"
             />
-            <div className="flex-1">
-              <h3 className="text-lg font-bold mb-1">{dashboardData.next_booking.master_name}</h3>
-              <p className="text-sm text-gray-500 mb-3">{dashboardData.next_booking.master_specialty}</p>
-              <div className="inline-block px-3 py-1 bg-gray-100 rounded-lg text-gray-900 font-medium">
-                {dashboardData.next_booking.service_name}
-              </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">{dashboardData.next_booking.master_name || 'Мария Петрова'}</h3>
+              <p className="text-sm text-gray-400">{dashboardData.next_booking.master_specialty || 'Колорист, Стилист'}</p>
+              <p className="text-sm font-medium text-gray-700 mt-1">{dashboardData.next_booking.service_name || 'Окрашивание волос + Стрижка'}</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="flex items-center gap-3 text-gray-600 bg-gray-50 p-4 rounded-xl">
-              <div className="p-2 bg-white rounded-lg shadow-sm">
-                <Calendar className="w-5 h-5 text-gray-900" />
-              </div>
-              <span className="font-medium text-sm">{format(new Date(dashboardData.next_booking.date), "EEEE, d MMMM", { locale: getDateLocale() })}</span>
+          <div className="space-y-3 mb-6">
+            <div className="flex items-center gap-3 text-gray-600">
+              <Calendar className="w-4 h-4 text-gray-400" />
+              <span className="text-sm">{format(new Date(dashboardData.next_booking.date), "EEEE, d MMMM", { locale: getDateLocale() })}</span>
             </div>
-            <div className="flex items-center gap-3 text-gray-600 bg-gray-50 p-4 rounded-xl">
-              <div className="p-2 bg-white rounded-lg shadow-sm">
-                <Clock className="w-5 h-5 text-gray-900" />
-              </div>
-              <span className="font-medium text-sm">{format(new Date(dashboardData.next_booking.date), "HH:mm", { locale: getDateLocale() })} ({dashboardData.next_booking.duration || 180} мин)</span>
+            <div className="flex items-center gap-3 text-gray-600">
+              <Clock className="w-4 h-4 text-gray-400" />
+              <span className="text-sm">{format(new Date(dashboardData.next_booking.date), "HH:mm", { locale: getDateLocale() })} ({dashboardData.next_booking.duration || 180} мин)</span>
             </div>
-            <div className="flex items-center gap-3 text-gray-600 bg-gray-50 p-4 rounded-xl">
-              <div className="p-2 bg-white rounded-lg shadow-sm">
-                <MapPin className="w-5 h-5 text-gray-900" />
-              </div>
-              <div className="flex-1 text-xs">
-                <p className="font-bold">Dubai Marina, Marina Plaza, Office 302</p>
-                <p className="text-gray-400">Бесплатная парковка 2 часа</p>
+            <div className="flex items-center gap-3 text-gray-600">
+              <MapPin className="w-4 h-4 text-gray-400" />
+              <div className="text-sm">
+                <p>Dubai Marina, Marina Plaza, Office 302</p>
+                <p className="text-gray-400 text-xs mt-0.5">Бесплатная парковка 2 часа</p>
               </div>
             </div>
           </div>
@@ -475,8 +467,8 @@ export default function AccountPage() {
   const renderHeader = () => (
     <div className="mb-10 flex justify-between items-end">
       <div>
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-2">Личный кабинет</h1>
-        <p className="text-gray-500 text-lg font-medium">Ваша территория красоты и комфорта</p>
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-1">Личный кабинет</h1>
+        <p className="text-gray-500 text-lg font-medium">Управляйте записями и отслеживайте свой прогресс</p>
       </div>
       <button onClick={handleLogout} className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 text-red-600 rounded-xl font-bold hover:bg-red-50 hover:border-red-100 transition-all shadow-sm">
         <LogOut className="w-5 h-5" />
