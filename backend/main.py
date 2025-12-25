@@ -163,7 +163,8 @@ if is_module_enabled('public'):
     app.include_router(public_content_router, prefix="/api")  # Public content API
     app.include_router(public_employees_router, prefix="/api")  # Public employees API
     app.include_router(gallery_router, prefix="/api")  # Gallery API
-    # app.include_router(client_auth_router, prefix="/public")  # Moved to /api/client
+    app.include_router(client_auth_router, prefix="/api/client", tags=["client"])
+    log_info("✅ Модуль 'client' подключен: /api/client/* endpoints", "startup")
     log_info("✅ Модуль 'public' подключен: /api/public/* endpoints", "startup")
 app.include_router(holidays_router, prefix="/api/holidays", tags=["holidays"])
 # Специальные роутеры (БЕЗ /api)
