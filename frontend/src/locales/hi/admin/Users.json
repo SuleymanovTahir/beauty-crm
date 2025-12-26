@@ -222,5 +222,21 @@
   "vacation": "Vacation",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience"
+  "years_of_experience": "Years of Experience",
+  "base_salary": "न्यूनतम दर",
+  "base_salary_hint": "निश्चित मासिक वेतन",
+  "commission_rate": "कमीशन प्रतिशत (%)",
+  "commission_rate_hint": "राजस्व का प्रतिशत",
+  "save_settings": "सेटिंग्स सेव करें",
+  "settings_saved": "सेटिंग्स को सहेजा गया",
+  "error_saving_settings": "सेटिंग सहेजने में त्रुटि",
+  "record_payment": "भुगतान रिकॉर्ड करें",
+  "payment_recorded": "भुगतान दर्ज किया गया",
+  "error_recording_payment": "भुगतान रिकॉर्डिंग त्रुटि",
+  "commission": "आयोग",
+  "status_pending": "इंतज़ार में",
+  "status_paid": "चुकाया गया",
+  "status_cancelled": "रद्द कर दिया गया",
+  "status_updated": "स्थिति अद्यतन की गई",
+  "error_updating_status": "स्थिति अद्यतन त्रुटि"
 }

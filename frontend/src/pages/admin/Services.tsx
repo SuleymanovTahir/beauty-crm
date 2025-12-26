@@ -1,7 +1,7 @@
 // /frontend/src/pages/admin/Services.tsx
 // frontend/src/pages/admin/Services.tsx - С ВКЛАДКАМИ ДЛЯ СПЕЦПАКЕТОВ И НОВЫМИ ПОЛЯМИ
 import { useState, useEffect } from 'react';
-import { Scissors, Search, Plus, Edit, Trash2, Loader, AlertCircle, Gift, Tag, Calendar, Clock } from 'lucide-react';
+import { Scissors, Search, Plus, Edit, Trash2, Loader, AlertCircle, Gift, Tag, Calendar, Clock, Users, Target } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -93,7 +93,7 @@ interface SpecialPackage {
   max_usage?: number;
 }
 
-type TabType = 'services' | 'packages';
+type TabType = 'services' | 'packages' | 'referrals' | 'challenges';
 
 const categories = [
   'Permanent Makeup',
@@ -144,6 +144,43 @@ export default function Services() {
   const [packageStatusFilter, setPackageStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [isPackageModalOpen, setIsPackageModalOpen] = useState(false);
   const [editingPackage, setEditingPackage] = useState<SpecialPackage | null>(null);
+
+  // Referrals state
+  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [isReferralModalOpen, setIsReferralModalOpen] = useState(false);
+  const [editingCampaign, setEditingCampaign] = useState<any>(null);
+  const [referralFormData, setReferralFormData] = useState({
+    name: '',
+    description: '',
+    bonus_points: 200,
+    referrer_bonus: 200,
+    is_active: true,
+    target_type: 'all' as 'all' | 'specific_users' | 'by_master' | 'by_service' | 'by_inactivity',
+    days_inactive: 30,
+    start_date: '',
+    end_date: '',
+    master_id: null as number | null,
+    client_ids: [] as string[]
+  });
+
+  // Nested audience selection state
+  const [mastersList, setMastersList] = useState<Array<{ id: number; full_name: string }>>([]);
+  const [mastersLoading, setMastersLoading] = useState(false);
+  const [clientsOfMaster, setClientsOfMaster] = useState<Array<{ id: string; name: string }>>([]);
+  const [clientsLoading, setClientsLoading] = useState(false);
+
+  // Challenges state
+  const [challenges, setChallenges] = useState<any[]>([]);
+  const [isChallengeModalOpen, setIsChallengeModalOpen] = useState(false);
+  const [editingChallenge, setEditingChallenge] = useState<any>(null);
+  const [challengeFormData, setChallengeFormData] = useState({
+    title_ru: '',
+    title_en: '',
+    description_ru: '',
+    description_en: '',
+    bonus_points: 50,
+    is_active: true
+  });
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -235,9 +272,27 @@ export default function Services() {
       if (activeTab === 'services') {
         const data = await api.getServices(false);
         setServices(data.services || []);
-      } else {
+      } else if (activeTab === 'packages') {
         const data = await api.getSpecialPackages();
         setPackages(data.packages || []);
+      } else if (activeTab === 'referrals') {
+        const response = await fetch('/api/referral-campaigns');
+        const data = await response.json();
+        setCampaigns(data.campaigns || []);
+        // Load masters list for audience selection
+        setMastersLoading(true);
+        try {
+          const usersRes = await api.getUsers();
+          const serviceProviders = (usersRes.users || []).filter((u: any) => u.is_service_provider);
+          setMastersList(serviceProviders.map((u: any) => ({ id: u.id, full_name: u.full_name })));
+        } catch (e) {
+          console.error('Error loading masters:', e);
+        } finally {
+          setMastersLoading(false);
+        }
+      } else if (activeTab === 'challenges') {
+        const data = await api.getChallenges();
+        setChallenges(data.challenges || []);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Ошибка загрузки';
@@ -339,7 +394,7 @@ export default function Services() {
         serviceId = editingService.id;
         toast.success(t('services:service_updated'));
       } else {
-        const response = await api.createService(serviceData);
+        const response = await api.createService(serviceData) as any;
         serviceId = response.id;
         toast.success(t('services:service_added'));
       }
@@ -525,6 +580,38 @@ export default function Services() {
     }
   };
 
+  const handleSaveChallenge = async () => {
+    try {
+      setSaving(true);
+      if (editingChallenge) {
+        await api.updateChallenge(editingChallenge.id, challengeFormData);
+        toast.success(t('services:challenge_updated'));
+      } else {
+        await api.createChallenge(challengeFormData);
+        toast.success(t('services:challenge_created'));
+      }
+      loadData();
+      setIsChallengeModalOpen(false);
+      setEditingChallenge(null);
+      setChallengeFormData({ title_ru: '', title_en: '', description_ru: '', description_en: '', bonus_points: 50, is_active: true });
+    } catch (error) {
+      toast.error(t('services:error_saving'));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteChallenge = async (id: number) => {
+    if (!confirm(t('services:delete_challenge_confirm'))) return;
+    try {
+      await api.deleteChallenge(id);
+      setChallenges(challenges.filter(c => c.id !== id));
+      toast.success(t('services:challenge_deleted'));
+    } catch (error) {
+      toast.error(t('services:error_deleting'));
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center h-screen">
@@ -571,6 +658,26 @@ export default function Services() {
           >
             <Gift className="w-5 h-5 inline-block mr-2" />
             {t('services:special_packages')} ({filteredPackages.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('referrals')}
+            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'referrals'
+              ? 'bg-pink-100 text-pink-700'
+              : 'text-gray-600 hover:bg-gray-50'
+              }`}
+          >
+            <Users className="w-5 h-5 inline-block mr-2" />
+            Реферальная программа ({campaigns.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('challenges')}
+            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'challenges'
+              ? 'bg-pink-100 text-pink-700'
+              : 'text-gray-600 hover:bg-gray-50'
+              }`}
+          >
+            <Target className="w-5 h-5 inline-block mr-2" />
+            {t('services:challenges')} ({challenges.length})
           </button>
         </div>
       </div>
@@ -900,6 +1007,72 @@ export default function Services() {
           )}
         </>
       )}
+      {/* REFERRALS TAB */}
+      {activeTab === 'referrals' && (
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold">Реферальные кампании</h2>
+              <Button onClick={() => { setEditingCampaign(null); setIsReferralModalOpen(true); }} className="bg-purple-600 hover:bg-purple-700">
+                <Plus className="w-4 h-4 mr-2" /> Создать кампанию
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {campaigns.map(camp => (
+                <div key={camp.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <h3 className="font-bold mb-2">{camp.name}</h3>
+                  <div className="text-sm text-gray-600 mb-4">
+                    <p>Бонус приглашенному: {camp.bonus_points}</p>
+                    <p>Бонус приглашающему: {camp.referrer_bonus}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => { setEditingCampaign(camp); setIsReferralModalOpen(true); }}>
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Badge className={camp.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                      {camp.is_active ? 'Активна' : 'Неактивна'}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CHALLENGES TAB */}
+      {activeTab === 'challenges' && (
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold">{t('services:challenges')}</h2>
+              <Button onClick={() => { setEditingChallenge(null); setChallengeFormData({ title_ru: '', title_en: '', description_ru: '', description_en: '', bonus_points: 50, is_active: true }); setIsChallengeModalOpen(true); }} className="bg-pink-600 hover:bg-pink-700">
+                <Plus className="w-4 h-4 mr-2" /> {t('services:add_challenge')}
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {challenges.map(ch => (
+                <div key={ch.id} className="border rounded-lg p-4 border-pink-100 bg-pink-50/30">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-bold text-lg">{ch.title_ru}</h3>
+                    <Badge variant="outline" className="border-pink-200 text-pink-700">+{ch.bonus_points} pts</Badge>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">{ch.description_ru}</p>
+                  <div className="flex gap-2 justify-end">
+                    <Button size="sm" variant="ghost" onClick={() => { setEditingChallenge(ch); setChallengeFormData({ ...ch }); setIsChallengeModalOpen(true); }}>
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => handleDeleteChallenge(ch.id)} className="text-red-500 hover:text-red-600">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* Service Modal */}
       <Dialog open={isServiceModalOpen} onOpenChange={setIsServiceModalOpen}>
@@ -1288,6 +1461,272 @@ export default function Services() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Referral Campaigns Modal */}
+      <Dialog open={isReferralModalOpen} onOpenChange={setIsReferralModalOpen}>
+        <DialogContent className="max-w-2xl overflow-y-auto max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle>
+              {editingCampaign ? 'Редактировать кампанию' : 'Создать реферальную кампанию'}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="campaignName">Название кампании *</Label>
+              <Input
+                id="campaignName"
+                value={referralFormData.name}
+                onChange={(e) => setReferralFormData({ ...referralFormData, name: e.target.value })}
+                placeholder="Приведи друга - получи бонус"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="bonusPoints">Бонус приглашенному</Label>
+                <Input
+                  id="bonusPoints"
+                  type="number"
+                  value={referralFormData.bonus_points}
+                  onChange={(e) => setReferralFormData({ ...referralFormData, bonus_points: Number(e.target.value) })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="referrerBonus">Бонус приглашающему</Label>
+                <Input
+                  id="referrerBonus"
+                  type="number"
+                  value={referralFormData.referrer_bonus}
+                  onChange={(e) => setReferralFormData({ ...referralFormData, referrer_bonus: Number(e.target.value) })}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="targetType">Целевая аудитория</Label>
+              <Select
+                value={referralFormData.target_type}
+                onValueChange={(value: any) => setReferralFormData({ ...referralFormData, target_type: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Выберите аудиторию" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Все клиенты</SelectItem>
+                  <SelectItem value="by_inactivity">Неактивные клиенты</SelectItem>
+                  <SelectItem value="by_master">Клиенты мастера</SelectItem>
+                  <SelectItem value="by_service">Клиенты услуги</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {referralFormData.target_type === 'by_inactivity' && (
+              <div>
+                <Label htmlFor="daysInactive">{t('services:days_inactive', 'Дней без посещения')}</Label>
+                <Input
+                  id="daysInactive"
+                  type="number"
+                  value={referralFormData.days_inactive}
+                  onChange={(e) => setReferralFormData({ ...referralFormData, days_inactive: Number(e.target.value) })}
+                  placeholder="30"
+                />
+              </div>
+            )}
+
+            {referralFormData.target_type === 'by_master' && (
+              <div className="space-y-4">
+                <div>
+                  <Label>{t('services:select_master', 'Выберите мастера')}</Label>
+                  {mastersLoading ? (
+                    <div className="flex items-center gap-2 p-2 text-gray-500">
+                      <Loader className="w-4 h-4 animate-spin" /> {t('common:loading', 'Загрузка...')}
+                    </div>
+                  ) : (
+                    <Select
+                      value={referralFormData.master_id?.toString() || ''}
+                      onValueChange={async (value) => {
+                        const masterId = Number(value);
+                        setReferralFormData({ ...referralFormData, master_id: masterId, client_ids: [] });
+                        // Load clients of this master
+                        setClientsLoading(true);
+                        try {
+                          const res = await fetch(`/api/clients?master_id=${masterId}`, { credentials: 'include' });
+                          const data = await res.json();
+                          setClientsOfMaster(data.clients || []);
+                        } catch (e) {
+                          console.error('Error loading clients:', e);
+                        } finally {
+                          setClientsLoading(false);
+                        }
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('services:select_master', 'Выберите мастера')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {mastersList.map((master) => (
+                          <SelectItem key={master.id} value={master.id.toString()}>
+                            {master.full_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
+
+                {referralFormData.master_id && (
+                  <div>
+                    <Label>{t('services:clients_of_master', 'Клиенты мастера')}</Label>
+                    {clientsLoading ? (
+                      <div className="flex items-center gap-2 p-2 text-gray-500">
+                        <Loader className="w-4 h-4 animate-spin" /> {t('common:loading', 'Загрузка...')}
+                      </div>
+                    ) : clientsOfMaster.length === 0 ? (
+                      <p className="text-sm text-gray-500 p-2">{t('services:no_clients_for_master', 'У этого мастера нет клиентов')}</p>
+                    ) : (
+                      <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                        <div className="space-y-2">
+                          {clientsOfMaster.map((client) => (
+                            <label key={client.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                              <input
+                                type="checkbox"
+                                checked={referralFormData.client_ids.includes(client.id)}
+                                onChange={(e) => {
+                                  const newClientIds = e.target.checked
+                                    ? [...referralFormData.client_ids, client.id]
+                                    : referralFormData.client_ids.filter(id => id !== client.id);
+                                  setReferralFormData({ ...referralFormData, client_ids: newClientIds });
+                                }}
+                                className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                              />
+                              <span className="text-sm">{client.name || client.id}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="campaignActive"
+                checked={referralFormData.is_active}
+                onChange={(e) => setReferralFormData({ ...referralFormData, is_active: e.target.checked })}
+                className="w-4 h-4 text-purple-600 rounded"
+              />
+              <Label htmlFor="campaignActive" className="cursor-pointer">
+                Активна (клиенты могут использовать)
+              </Label>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsReferralModalOpen(false)}>
+              Отмена
+            </Button>
+            <Button
+              onClick={async () => {
+                try {
+                  const payload = {
+                    name: referralFormData.name,
+                    description: referralFormData.description,
+                    bonus_points: referralFormData.bonus_points,
+                    referrer_bonus: referralFormData.referrer_bonus,
+                    is_active: referralFormData.is_active,
+                    target_type: referralFormData.target_type,
+                    target_criteria: referralFormData.target_type === 'by_inactivity'
+                      ? { days_inactive: referralFormData.days_inactive }
+                      : null,
+                    start_date: referralFormData.start_date || null,
+                    end_date: referralFormData.end_date || null
+                  };
+
+                  if (editingCampaign) {
+                    await fetch(`/api/referral-campaigns/${editingCampaign.id}`, {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(payload)
+                    });
+                    toast.success('Кампания обновлена');
+                  } else {
+                    await fetch('/api/referral-campaigns', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(payload)
+                    });
+                    toast.success('Кампания создана');
+                  }
+
+                  const res = await fetch('/api/referral-campaigns');
+                  const data = await res.json();
+                  setCampaigns(data.campaigns || []);
+                  setIsReferralModalOpen(false);
+                } catch (e) {
+                  toast.error('Ошибка сохранения');
+                }
+              }}
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              {editingCampaign ? 'Сохранить' : 'Создать'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Challenge Modal */}
+      <Dialog open={isChallengeModalOpen} onOpenChange={setIsChallengeModalOpen}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle>{editingChallenge ? t('services:edit_challenge') : t('services:add_challenge')}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>{t('services:title_ru')}</Label>
+                <Input value={challengeFormData.title_ru} onChange={e => setChallengeFormData({ ...challengeFormData, title_ru: e.target.value })} />
+              </div>
+              <div>
+                <Label>{t('services:title_en')}</Label>
+                <Input value={challengeFormData.title_en} onChange={e => setChallengeFormData({ ...challengeFormData, title_en: e.target.value })} />
+              </div>
+            </div>
+            <div>
+              <Label>{t('services:description_ru')}</Label>
+              <Textarea value={challengeFormData.description_ru} onChange={e => setChallengeFormData({ ...challengeFormData, description_ru: e.target.value })} />
+            </div>
+            <div>
+              <Label>{t('services:description_en')}</Label>
+              <Textarea value={challengeFormData.description_en} onChange={e => setChallengeFormData({ ...challengeFormData, description_en: e.target.value })} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>{t('services:bonus_points')}</Label>
+                <Input type="number" value={challengeFormData.bonus_points} onChange={e => setChallengeFormData({ ...challengeFormData, bonus_points: Number(e.target.value) })} />
+              </div>
+              <div className="flex items-end pb-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={challengeFormData.is_active} onChange={e => setChallengeFormData({ ...challengeFormData, is_active: e.target.checked })} className="w-4 h-4" />
+                  <span className="text-sm">{t('services:active')}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsChallengeModalOpen(false)}>{t('services:cancel')}</Button>
+            <Button onClick={handleSaveChallenge} className="bg-pink-600 hover:bg-pink-700" disabled={saving}>
+              {saving ? t('services:saving') : t('services:save')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+
     </div>
   );
 }

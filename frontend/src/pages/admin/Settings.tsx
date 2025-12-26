@@ -42,6 +42,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/ta
 import { toast } from 'sonner';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
+import { languages } from '../../i18n';
 
 export default function AdminSettings() {
   const { t } = useTranslation(['admin/settings', 'common']);
@@ -1339,9 +1340,11 @@ export default function AdminSettings() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="ru">{t('settings:russian')}</SelectItem>
-                        <SelectItem value="en">{t('settings:english')}</SelectItem>
-                        <SelectItem value="ar">{t('settings:arabic')}</SelectItem>
+                        {languages.map((lang) => (
+                          <SelectItem key={lang} value={lang}>
+                            {t(`settings:${lang}`, lang.toUpperCase())}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>

@@ -472,6 +472,11 @@ def validate_password(password: str, min_length: int = 6) -> tuple:
     
     return True, None
 
+def hash_password(password: str) -> str:
+    """Хэшировать пароль (SHA256)"""
+    import hashlib
+    return hashlib.sha256(password.encode()).hexdigest()
+
 # ===== БЕЗОПАСНОСТЬ =====
 
 def escape_html(text: str) -> str:

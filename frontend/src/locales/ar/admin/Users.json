@@ -222,5 +222,21 @@
   "vacation": "Vacation",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience"
+  "years_of_experience": "Years of Experience",
+  "base_salary": "المعدل الأساسي",
+  "base_salary_hint": "راتب شهري ثابت",
+  "commission_rate": "نسبة العمولة (%)",
+  "commission_rate_hint": "نسبة الإيرادات",
+  "save_settings": "حفظ الإعدادات",
+  "settings_saved": "تم حفظ الإعدادات",
+  "error_saving_settings": "خطأ في حفظ الإعدادات",
+  "record_payment": "سجل الدفع",
+  "payment_recorded": "تم تسجيل الدفع",
+  "error_recording_payment": "خطأ في تسجيل الدفع",
+  "commission": "عمولة",
+  "status_pending": "منتظر",
+  "status_paid": "مدفوع",
+  "status_cancelled": "تم الإلغاء",
+  "status_updated": "تم تحديث الحالة",
+  "error_updating_status": "خطأ في تحديث الحالة"
 }

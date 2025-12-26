@@ -222,5 +222,21 @@
   "vacation": "Vacation",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience"
+  "years_of_experience": "Years of Experience",
+  "base_salary": "Базалық мөлшерлеме",
+  "base_salary_hint": "Тұрақты айлық жалақы",
+  "commission_rate": "Комиссия пайызы (%)",
+  "commission_rate_hint": "Табыстың пайызы",
+  "save_settings": "Параметрлерді сақтаңыз",
+  "settings_saved": "Параметрлер сақталды",
+  "error_saving_settings": "Параметрлерді сақтау кезінде қате пайда болды",
+  "record_payment": "Жазба төлем",
+  "payment_recorded": "Төлем жазылды",
+  "error_recording_payment": "Төлемді жазу қатесі",
+  "commission": "Комиссия",
+  "status_pending": "Күтуде",
+  "status_paid": "Ақылы",
+  "status_cancelled": "Болдырмады",
+  "status_updated": "Күй жаңартылды",
+  "error_updating_status": "Күйді жаңарту қатесі"
 }

@@ -90,7 +90,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [history, setHistory] = useState<string[]>([]);
-  const [mastersAvailability, setMastersAvailability] = useState<Record<string, string[]>>({});
 
   const updateStep = (newStep: typeof step) => {
     setHistory(prev => [...prev, step]);
@@ -688,39 +687,16 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     fetchAvailability();
   }, [currentMonth, currentServiceId, draftConfig.master, bookingConfigs]);
 
-  useEffect(() => {
-    const checkMasters = async () => {
-      const date = currentServiceId ? bookingConfigs[currentServiceId]?.date : draftConfig.date;
-      if (!date) {
-        setMastersAvailability({});
-        return;
-      }
 
-      try {
-        const res = await api.getAllMastersAvailability(date);
-        if (res.success && res.availability) {
-          setMastersAvailability(res.availability);
-        }
-      } catch (e) {
-        console.error("Failed to check masters availability", e);
-      }
-    };
-
-    checkMasters();
-  }, [currentServiceId, bookingConfigs, draftConfig.date]);
 
   const loadSlots = async () => {
     let dateToCheck = '';
     let masterToCheck = null;
-    let duration = 60;
-
     if (currentServiceId) {
       const config = bookingConfigs[currentServiceId];
       if (!config || !config.date) return;
       dateToCheck = config.date;
       masterToCheck = config.master;
-      const service = selectedServices.find(s => String(s.id) === currentServiceId);
-      if (service) duration = parseDuration(service.duration);
     } else {
       if (!draftConfig.date) return;
       dateToCheck = draftConfig.date;
