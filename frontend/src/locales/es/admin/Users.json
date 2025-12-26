@@ -222,5 +222,21 @@
   "vacation": "Vacation",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience"
+  "years_of_experience": "Years of Experience",
+  "base_salary": "Tarifa base",
+  "base_salary_hint": "Salario mensual fijo",
+  "commission_rate": "Porcentaje de comisión (%)",
+  "commission_rate_hint": "Porcentaje de ingresos",
+  "save_settings": "Guardar configuración",
+  "settings_saved": "Configuración guardada",
+  "error_saving_settings": "Error al guardar la configuración",
+  "record_payment": "Pago récord",
+  "payment_recorded": "Pago registrado",
+  "error_recording_payment": "Error de registro de pagos",
+  "commission": "Comisión",
+  "status_pending": "Espera",
+  "status_paid": "Pagado",
+  "status_cancelled": "Cancelado",
+  "status_updated": "Estado actualizado",
+  "error_updating_status": "Error de actualización de estado"
 }

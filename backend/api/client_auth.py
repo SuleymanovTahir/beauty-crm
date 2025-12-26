@@ -786,7 +786,83 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             "total_visits": total_visits
         }
 
-        # 7. Smart Recommendations
+        # 7. Visit Stats
+        # Favorite Service
+        c.execute("""
+            SELECT service_name, COUNT(*) as cnt
+            FROM bookings
+            WHERE instagram_id = %s AND status = 'completed'
+            GROUP BY service_name
+            ORDER BY cnt DESC
+            LIMIT 1
+        """, (client_id,))
+        fav_service_row = c.fetchone()
+        fav_service = fav_service_row[0] if fav_service_row else None
+
+        # Favorite Master
+        c.execute("""
+            SELECT master, COUNT(*) as cnt
+            FROM bookings
+            WHERE instagram_id = %s AND status = 'completed'
+            GROUP BY master
+            ORDER BY cnt DESC
+            LIMIT 1
+        """, (client_id,))
+        fav_master_row = c.fetchone()
+        fav_master = fav_master_row[0] if fav_master_row else None
+
+        # Average Frequency (days between visits)
+        c.execute("""
+            SELECT datetime
+            FROM bookings
+            WHERE instagram_id = %s AND status = 'completed'
+            ORDER BY datetime ASC
+        """, (client_id,))
+        visit_dates = []
+        for row in c.fetchall():
+            try:
+                visit_dates.append(datetime.fromisoformat(row[0].replace(' ', 'T')))
+            except:
+                pass
+
+        avg_frequency = None
+        if len(visit_dates) > 1:
+            diffs = [(visit_dates[i] - visit_dates[i-1]).days for i in range(1, len(visit_dates))]
+            avg_frequency_days = sum(diffs) / len(diffs)
+            
+            if avg_frequency_days < 7:
+                 avg_frequency = f"{int(avg_frequency_days)} days"
+            elif avg_frequency_days < 30:
+                 avg_frequency = f"{int(avg_frequency_days // 7)} weeks"
+            else:
+                 avg_frequency = f"{int(avg_frequency_days // 30)} months"
+        
+        visit_stats = {
+            "total_visits": total_visits,
+            "avg_frequency": avg_frequency,
+            "fav_service": fav_service,
+            "fav_master": fav_master
+        }
+
+        # 8. Active Challenges
+        c.execute("""
+            SELECT id, title_ru, title_en, description_ru, description_en, bonus_points
+            FROM active_challenges
+            WHERE is_active = TRUE
+            ORDER BY created_at DESC
+        """)
+        challenges = []
+        for row in c.fetchall():
+            challenges.append({
+                "id": row[0],
+                "title_ru": row[1],
+                "title_en": row[2],
+                "description_ru": row[3],
+                "description_en": row[4],
+                "bonus_points": row[5]
+            })
+
+        # 9. Smart Recommendations
         recommendations = []
         c.execute("""
             SELECT service_name, datetime
@@ -891,6 +967,8 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             },
             "streak": streak,
             "analytics": analytics,
+            "visit_stats": visit_stats,
+            "challenges": challenges,
             "recommendations": recommendations[:3],
             "referral_campaign": active_campaign,
             "special_offers": special_offers

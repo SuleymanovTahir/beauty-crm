@@ -14,7 +14,7 @@ from db import (
     delete_client, get_chat_history, get_all_bookings,
     log_activity,update_client_bot_mode
 )
-from utils.utils import require_auth, get_total_unread, get_client_display_name
+from utils.utils import require_auth, get_total_unread, get_client_display_name, hash_password
 from utils.logger import log_error,log_info
 from services.smart_assistant import SmartAssistant, get_smart_greeting, get_smart_suggestion
 
@@ -84,12 +84,28 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
 @router.get("/clients")
 async def list_clients(
     session_token: Optional[str] = Cookie(None),
-    messenger: Optional[str] = Query('instagram')
+    messenger: Optional[str] = Query('instagram'),
+    master_id: Optional[int] = Query(None)
 ):
-    """Получить всех клиентов с фильтрацией по мессенджеру"""
+    """Получить всех клиентов с фильтрацией по мессенджеру и/или мастеру"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    # If filtering by master_id, get clients who have bookings with this master
+    if master_id:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("""
+            SELECT DISTINCT c.instagram_id, c.name 
+            FROM clients c
+            JOIN bookings b ON c.instagram_id = b.instagram_id
+            JOIN users u ON b.master = u.full_name
+            WHERE u.id = %s
+        """, (master_id,))
+        clients = [{"id": row[0], "name": row[1] or row[0]} for row in c.fetchall()]
+        conn.close()
+        return {"clients": clients}
 
     # Валидируем тип мессенджера
     valid_messengers = ['instagram', 'telegram', 'whatsapp', 'tiktok']
@@ -193,13 +209,15 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
             "profile_pic": client[10] if len(client) > 10 else None,
             "notes": client[11] if len(client) > 11 else "",
             # Correct indices based on get_client_by_id query
-            "total_spend": client[14] if len(client) > 14 else 0,
-            "total_visits": client[15] if len(client) > 15 else len(bookings),
-            "discount": client[16] if len(client) > 16 else 0,
-            "card_number": client[17] if len(client) > 17 else "",
-            "gender": client[18] if len(client) > 18 else None,
-            "age": client[19] if len(client) > 19 else None,
-            "birth_date": client[20] if len(client) > 20 else None
+            "total_spend": client[16] if len(client) > 16 else 0,
+            "total_visits": client[12] if len(client) > 12 else len(bookings),
+            "discount": client[13] if len(client) > 13 else 0,
+            "card_number": client[14] if len(client) > 14 else "",
+            "temperature": client[15] if len(client) > 15 else "cold",
+            "gender": client[17] if len(client) > 17 else None,
+            "birth_date": client[18] if len(client) > 18 else None,
+            "email": client[19] if len(client) > 19 else None,
+            "referral_code": client[20] if len(client) > 20 else None
         },
         "stats": {
             "top_procedures": top_procedures,
@@ -272,6 +290,10 @@ async def update_client_api(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     data = await request.json()
+    
+    password = data.get('password')
+    password_hash = hash_password(password) if password else None
+    
     success = update_client_info(
         client_id,
         name=data.get('name'),
@@ -279,7 +301,11 @@ async def update_client_api(
         notes=data.get('notes'),
         gender=data.get('gender'),
         age=data.get('age'),
-        birth_date=data.get('birth_date')
+        birth_date=data.get('birth_date'),
+        email=data.get('email'),
+        referral_code=data.get('referral_code'),
+        discount=data.get('discount'),
+        password_hash=password_hash
     )
     
     if success:
