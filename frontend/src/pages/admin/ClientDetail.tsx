@@ -1,13 +1,15 @@
 // /frontend/src/pages/admin/ClientDetail.tsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Phone, Calendar, MessageSquare, Edit2, Save, X, Clock, Instagram, User } from 'lucide-react';
+import { ArrowLeft, Phone, Calendar, MessageSquare, Edit2, Save, X, Clock, Instagram, User, Upload, Plus, Trash2, Target, Loader } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { Badge } from '../../components/ui/badge';
 import { toast } from 'sonner';
+import { Label } from '../../components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { api } from '../../services/api';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
@@ -31,6 +33,8 @@ interface Client {
   total_spend?: number;
   gender?: string;
   birth_date?: string;
+  email?: string;
+  referral_code?: string;
 }
 
 interface ChatMessage {
@@ -65,7 +69,7 @@ export default function ClientDetail() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [enabledMessengers, setEnabledMessengers] = useState<Array<{ type: string; name: string }>>([]);
@@ -75,8 +79,25 @@ export default function ClientDetail() {
     phone: '',
     notes: '',
     gender: '',
-    birth_date: ''
+    birth_date: '',
+    email: '',
+    referral_code: '',
+    discount: 0,
+    password: ''
   });
+
+  // Gallery state
+  const [clientGallery, setClientGallery] = useState<any[]>([]);
+  const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+  const [galleryFormData, setGalleryFormData] = useState({
+    before_photo: '',
+    after_photo: '',
+    notes: '',
+    category: '',
+    master_id: 0
+  });
+  const [uploadingBefore, setUploadingBefore] = useState(false);
+  const [uploadingAfter, setUploadingAfter] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -116,17 +137,75 @@ export default function ClientDetail() {
         phone: phoneVal,
         notes: data.client?.notes || '',
         gender: data.client?.gender || '',
-        birth_date: data.client?.birth_date || ''
+        birth_date: data.client?.birth_date || '',
+        email: data.client?.email || '',
+        referral_code: data.client?.referral_code || '',
+        discount: data.client?.discount || 0,
+        password: ''
       });
 
       setMessages(data.chat_history || []);
       setBookings(data.bookings || []);
+      loadClientGallery(data.client?.instagram_id || id!);
     } catch (err) {
       toast.error(t('common:loading_error'));
       console.error('Error:', err);
       navigate('/admin/clients');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadClientGallery = async (clientId: string) => {
+    try {
+      const data = await api.getAdminClientGallery(clientId);
+      setClientGallery(data.gallery || []);
+    } catch (error) {
+      console.error('Error loading gallery:', error);
+    }
+  };
+
+  const handleUploadGalleryPhoto = async (photoType: 'before' | 'after', file: File) => {
+    if (!client) return;
+    try {
+      if (photoType === 'before') setUploadingBefore(true);
+      else setUploadingAfter(true);
+
+      const res = await api.uploadClientGalleryPhoto(client.id, photoType, file);
+      setGalleryFormData({ ...galleryFormData, [photoType === 'before' ? 'before_photo' : 'after_photo']: res.image_path });
+      toast.success(t('clientdetail:photo_uploaded'));
+    } catch (error) {
+      toast.error(t('clientdetail:upload_error'));
+    } finally {
+      if (photoType === 'before') setUploadingBefore(false);
+      else setUploadingAfter(false);
+    }
+  };
+
+  const handleSaveGalleryEntry = async () => {
+    if (!client) return;
+    try {
+      setSaving(true);
+      await api.addClientGalleryEntry({ ...galleryFormData, client_id: client.id });
+      loadClientGallery(client.id);
+      setIsGalleryModalOpen(false);
+      setGalleryFormData({ before_photo: '', after_photo: '', notes: '', category: '', master_id: 0 });
+      toast.success(t('clientdetail:gallery_entry_added'));
+    } catch (error) {
+      toast.error(t('clientdetail:save_error'));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteGalleryEntry = async (entryId: number) => {
+    if (!confirm(t('clientdetail:delete_gallery_confirm'))) return;
+    try {
+      await api.deleteClientGalleryEntry(entryId);
+      setClientGallery(clientGallery.filter(e => e.id !== entryId));
+      toast.success(t('clientdetail:gallery_entry_deleted'));
+    } catch (error) {
+      toast.error(t('clientdetail:delete_error'));
     }
   };
 
@@ -306,6 +385,43 @@ export default function ClientDetail() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:email_login')}</label>
+                    <Input
+                      value={editForm.email}
+                      onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:password')}</label>
+                    <Input
+                      type="password"
+                      placeholder={t('clientdetail:leave_blank_to_keep')}
+                      value={editForm.password}
+                      onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:special_discount')}</label>
+                    <Input
+                      type="number"
+                      value={editForm.discount}
+                      onChange={(e) => setEditForm({ ...editForm, discount: Number(e.target.value) })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:promo_code')}</label>
+                    <Input
+                      value={editForm.referral_code}
+                      onChange={(e) => setEditForm({ ...editForm, referral_code: e.target.value })}
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:notes')}</label>
                   <Textarea
@@ -377,6 +493,23 @@ export default function ClientDetail() {
                   <div>
                     <p className="text-sm text-gray-600">{t('clientdetail:total_messages')}</p>
                     <p className="text-lg text-gray-900">{client.total_messages}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-8">
+                  <div className="flex items-start gap-4">
+                    <User className="w-5 h-5 text-gray-400 mt-1" />
+                    <div>
+                      <p className="text-sm text-gray-600">{t('clientdetail:email_login')}</p>
+                      <p className="text-lg text-gray-900">{client.email || '-'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <Target className="w-5 h-5 text-gray-400 mt-1" />
+                    <div>
+                      <p className="text-sm text-gray-600">{t('clientdetail:promo_code')}</p>
+                      <p className="text-lg text-gray-900">{client.referral_code || '-'}</p>
+                    </div>
                   </div>
                 </div>
 
@@ -629,6 +762,143 @@ export default function ClientDetail() {
           <p className="text-gray-500 text-center py-8">{t('clientdetail:no_messages')}</p>
         )}
       </div>
-    </div >
+      {/* Client Gallery */}
+      <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl text-gray-900 flex items-center gap-2">
+            <Calendar className="w-6 h-6 text-pink-600" />
+            {t('clientdetail:client_gallery')}
+          </h2>
+          <Button onClick={() => setIsGalleryModalOpen(true)} className="bg-pink-600 hover:bg-pink-700">
+            <Plus className="w-4 h-4 mr-2" /> {t('clientdetail:add_work')}
+          </Button>
+        </div>
+
+        {clientGallery.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {clientGallery.map(entry => (
+              <div key={entry.id} className="bg-gray-50 rounded-xl overflow-hidden border border-gray-200 group relative">
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <button
+                    onClick={() => handleDeleteGalleryEntry(entry.id)}
+                    className="p-2 bg-white/90 hover:bg-red-50 rounded-lg text-red-600 shadow-sm"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-px bg-gray-200 h-48">
+                  <div className="relative">
+                    <img src={entry.before_photo} alt="Before" className="w-full h-full object-cover" />
+                    <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded">
+                      {t('clientdetail:before')}
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <img src={entry.after_photo} alt="After" className="w-full h-full object-cover" />
+                    <div className="absolute top-2 left-2 bg-pink-600 text-white text-[10px] px-1.5 py-0.5 rounded">
+                      {t('clientdetail:after')}
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <p className="text-xs text-gray-400 mb-1">
+                    {new Date(entry.created_at).toLocaleDateString()}
+                  </p>
+                  <p className="text-sm font-medium mb-1">{entry.category || t('clientdetail:procedure')}</p>
+                  <p className="text-xs text-gray-600 italic line-clamp-2">{entry.notes || t('clientdetail:no_notes')}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 border-2 border-dashed border-gray-100 rounded-xl">
+            <p className="text-gray-500">{t('clientdetail:no_gallery_entries')}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Gallery Entry Modal */}
+      <Dialog open={isGalleryModalOpen} onOpenChange={setIsGalleryModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{t('clientdetail:add_to_gallery')}</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-2 gap-6 py-4">
+            <div className="space-y-4">
+              <Label>{t('clientdetail:photo_before')}</Label>
+              <div className="aspect-square border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center relative overflow-hidden bg-gray-50">
+                {galleryFormData.before_photo ? (
+                  <img src={galleryFormData.before_photo} className="w-full h-full object-cover" />
+                ) : (
+                  <Upload className="w-8 h-8 text-gray-300" />
+                )}
+                <input
+                  type="file"
+                  onChange={(e) => e.target.files?.[0] && handleUploadGalleryPhoto('before', e.target.files[0])}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  disabled={uploadingBefore}
+                />
+                {uploadingBefore && (
+                  <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
+                    <Loader className="animate-spin text-pink-600" />
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="space-y-4">
+              <Label>{t('clientdetail:photo_after')}</Label>
+              <div className="aspect-square border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center relative overflow-hidden bg-gray-50">
+                {galleryFormData.after_photo ? (
+                  <img src={galleryFormData.after_photo} className="w-full h-full object-cover" />
+                ) : (
+                  <Upload className="w-8 h-8 text-gray-300" />
+                )}
+                <input
+                  type="file"
+                  onChange={(e) => e.target.files?.[0] && handleUploadGalleryPhoto('after', e.target.files[0])}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  disabled={uploadingAfter}
+                />
+                {uploadingAfter && (
+                  <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
+                    <Loader className="animate-spin text-pink-600" />
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="col-span-2 space-y-4">
+              <div>
+                <Label>{t('clientdetail:notes_description')}</Label>
+                <Input
+                  value={galleryFormData.notes}
+                  onChange={e => setGalleryFormData({ ...galleryFormData, notes: e.target.value })}
+                  placeholder={t('clientdetail:notes_placeholder')}
+                />
+              </div>
+              <div>
+                <Label>{t('clientdetail:category')}</Label>
+                <Input
+                  value={galleryFormData.category}
+                  onChange={e => setGalleryFormData({ ...galleryFormData, category: e.target.value })}
+                  placeholder={t('clientdetail:category_placeholder')}
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsGalleryModalOpen(false)}>
+              {t('common:cancel')}
+            </Button>
+            <Button
+              onClick={handleSaveGalleryEntry}
+              disabled={saving || uploadingBefore || uploadingAfter || !galleryFormData.before_photo || !galleryFormData.after_photo}
+              className="bg-pink-600"
+            >
+              {saving ? t('common:saving') : t('clientdetail:add_to_gallery')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

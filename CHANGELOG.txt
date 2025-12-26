@@ -1,5 +1,89 @@
 # CHANGELOG - Память проекта Beauty CRM
 
+## 2025-12-26: Локализация и Динамические Данные Личного Кабинета
+
+### ПРОБЛЕМА
+1. **Hardcoded Strings**: В `AccountPage.tsx` почти все строки (заголовки, кнопки, статусы) были на русском языке.
+2. **Static Data**: Секции челленджей, достижений и инсайтов использовали статические данные вместо реальных из БД.
+3. **Date Formatting**: Даты форматировались без учета локали пользователя.
+
+### РЕШЕНИЕ
+1. **Full Localization**:
+    - Все хардкодные строки в `AccountPage.tsx` заменены на вызовы `t()` с использованием пространства имен `account`.
+    - Локализованы все вкладки: Дашборд, Галерея, Достижения, Beauty-профиль, Мастера, Уведомления, Настройки.
+    - Обновлены файлы локалей `frontend/src/locales/ru/account.json` и `frontend/src/locales/en/account.json`.
+2. **Dynamic Data Integration**:
+    - Подключены реальные данные из `dashboardData` (API `get_client_dashboard`).
+    - Секция челленджей теперь отображает актуальные задачи из БД.
+    - Реализована логика выбора языка для заголовков и описаний достижений/челленджей (`title_ru` vs `title_en`).
+    - Исправлен расчет Beauty Score и отображение графиков здоровья.
+3. **Date & Time**:
+    - Все даты теперь форматируются через `date-fns` с использованием динамической локали `getDateLocale()`.
+4. **Cleanup**:
+    - Удален неиспользуемый обработчик `handleFavoritePhoto` и связанный с ним `selectedPhotoId`.
+
+### ВАЖНО ПОМНИТЬ
+- **i18n SSOT**: При добавлении новых секций в ЛК обязательно добавлять ключи в `account.json` для обоих языков.
+- **Dynamic Titles**: Достижения и челленджи в БД имеют поля `_ru` и `_en`. Код в `AccountPage.tsx` автоматически выбирает нужный ключ на основе `i18n.language`.
+- **Date Fns Locale**: Всегда передавать объект `locale` в функцию `format()` для корректного отображения названий месяцев.
+
+### TESTING
+- ✅ Проверено переключение языков (RU/EN).
+- ✅ Проверено отображение реальных челленждей из БД.
+- ✅ Проверено форматирование дат в уведомлениях и достижениях.
+- ✅ Проверена работа всех вкладок после рефакторинга.
+
+### ФАЙЛЫ
+**ИЗМЕНЕНЫ:**
+- `frontend/public_landing/pages/account/AccountPage.tsx`
+- `frontend/src/locales/ru/account.json`
+- `frontend/src/locales/en/account.json`
+- `backend/api/client_auth.py` (обновлена структура dashboard)
+- `CHANGELOG.txt`
+
+
+## 2025-12-26: Рефакторинг Галереи и Расширение Данных Клиента
+
+### ПРОБЛЕМА
+1. **Gallery Fragmentation**: Галерея работ клиента находилась в `Services.tsx`, что логически неверно. Она должна быть частью профиля клиента.
+2. **Missing Client Fields**: Отсутствовали поля для логина (email), хешированного пароля, персональной скидки и промокода в админке.
+3. **Hardcoded Strings**: В `ClientDetail.tsx` и `Services.tsx` оставались нелокализованные строки.
+4. **Lint Warnings**: В `AccountPage.tsx` и `UserBookingWizard.tsx` висели неиспользуемые переменные.
+
+### РЕШЕНИЕ
+1. **Admin Refactoring**:
+    - `Services.tsx`: Удалена вкладка "Галерея" и вся связанная логика. Локализована вкладка "Челленджи".
+    - `ClientDetail.tsx`: Добавлена секция "Галерея работ" внизу страницы с возможностью загрузки/удаления фото.
+    - Добавлены поля Email/Login, Password, Спец. скидка и Промокод в форму редактирования клиента.
+2. **Backend Updates**:
+    - `backend/db/clients.py`: Функция `update_client_info` теперь поддерживает новые поля.
+    - `backend/api/clients.py`: API хеширует пароль перед сохранением (SHA256).
+    - `backend/utils/utils.py`: Добавлена утилита `hash_password`.
+3. **Localization**:
+    - Добавлены ключи в `ru/admin/ClientDetail.json` и `en/admin/ClientDetail.json`.
+4. **Cleanup**:
+    - Удалены неиспользуемые `StatCard`, `TrendingUp`, `useSearchParams` и другие переменные в `AccountPage.tsx` и `UserBookingWizard.tsx`.
+
+### ВАЖНО ПОМНИТЬ
+- **Password Hashing**: Пароли клиентов теперь хранятся в виде SHA256 хешей. Не сохранять в открытом виде!
+- **Gallery Context**: Галерея работ теперь привязана к `client_id` и управляется из карточки клиента.
+- **SSOT**: Все изменения данных клиента проходят через `update_client_info`.
+
+### TESTING
+- ✅ Проверена загрузка фото в галерею через админку.
+- ✅ Проверено сохранение новых полей клиента.
+- ✅ Проверена локализация Admin Panel (RU/EN).
+
+### ФАЙЛЫ
+**ИЗМЕНЕНЫ:**
+- `frontend/src/pages/admin/Services.tsx`
+- `frontend/src/pages/admin/ClientDetail.tsx`
+- `backend/db/clients.py`
+- `backend/api/clients.py`
+- `backend/utils/utils.py`
+- `frontend/public_landing/pages/account/AccountPage.tsx`
+- `frontend/public_landing/pages/account/UserBookingWizard.tsx`
+
 ## 2025-12-25: Исправление PostgreSQL синтаксиса и рефакторинг тестов
 
 ### ПРОБЛЕМА

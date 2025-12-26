@@ -135,7 +135,8 @@ def update_client_info(instagram_id: str, phone: str = None, name: str = None, n
                        is_pinned: int = None, status: str = None,
                        discount: float = None, card_number: str = None,
                        gender: str = None, age: int = None, birth_date: str = None,
-                       profile_pic: str = None):
+                       profile_pic: str = None, email: str = None,
+                       referral_code: str = None, password_hash: str = None):
     """Обновить информацию о клиенте"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -176,6 +177,15 @@ def update_client_info(instagram_id: str, phone: str = None, name: str = None, n
     if profile_pic is not None:
         updates.append("profile_pic = %s")
         params.append(profile_pic)
+    if email is not None:
+        updates.append("email = %s")
+        params.append(email)
+    if referral_code is not None:
+        updates.append("referral_code = %s")
+        params.append(referral_code)
+    if password_hash is not None:
+        updates.append("password_hash = %s")
+        params.append(password_hash)
         
     try:
         if updates:

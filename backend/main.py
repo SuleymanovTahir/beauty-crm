@@ -103,6 +103,8 @@ from api.visitor_analytics import router as visitor_analytics_router
 from api.analytics import router as analytics_router
 from api.newsletter import router as newsletter_router
 from api.admin_registrations import router as admin_registrations_router
+from api.challenges import router as challenges_router
+from api.client_gallery_admin import router as client_gallery_admin_router
 
 # Создаём директории для загрузок
 ensure_upload_directories()
@@ -177,6 +179,8 @@ app.include_router(seo_metadata_router)  # для SEO метаданных (/api
 app.include_router(visitor_analytics_router, prefix="/api")  # для аналитики посетителей
 app.include_router(analytics_router, prefix="/api")  # для аналитики бота
 app.include_router(admin_registrations_router, prefix="/api")  # Admin Registrations Management
+app.include_router(challenges_router, prefix="/api")  # Challenges API
+app.include_router(client_gallery_admin_router, prefix="/api")  # Client Gallery Admin API
 
 
 # ===== MIDDLEWARE =====
@@ -227,32 +231,40 @@ async def log_requests(request: Request, call_next):
                  exc_info=True)
         raise
 
-# GZip сжатие (должно быть одним из первых)
+# ===== Middleware Layer (FastAPI Middleware Stack) =====
+# Note: Middlewares are executed in reverse order of addition (Onion model)
+
+# 1. Cache Control (Inner layer)
+app.add_middleware(CacheControlMiddleware)
+
+# 2. GZip Compression
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
-# CORS для React
+# 3. CORS Layer (Outer layer)
+allowed_origins = [
+    "https://mlediamant.com",
+    "http://mlediamant.com",
+    "http://91.201.215.32:8000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    f"http://localhost:{os.getenv('PORT', '8000')}",
+    f"http://127.0.0.1:{os.getenv('PORT', '8000')}",
+]
+
+# Add optional environment variable origin
+frontend_url = os.getenv('FRONTEND_URL')
+if frontend_url:
+    allowed_origins.append(frontend_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://mlediamant.com",
-        "http://mlediamant.com",
-        "http://91.201.215.32:8000",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:3000",
-        f"http://localhost:{os.getenv('PORT', '8000')}",
-        f"http://127.0.0.1:{os.getenv('PORT', '8000')}",
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
-
-# Cache Control для API endpoints (предотвращает кэширование на мобильных)
-app.add_middleware(CacheControlMiddleware)
-
-# GZip Compression
-app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # ===== ГЛОБАЛЬНЫЙ ОБРАБОТЧИК ОШИБОК =====
 
@@ -282,17 +294,7 @@ async def root():
         "status": "✅ CRM работает!",
         "salon": salon['name'],
         "bot": salon['bot_name'],
-        "version": "2.0.0",
-        "features": [
-            "AI-гений продаж (Gemini 2.0 Flash)",
-            "Автоматическая запись клиентов",
-            "Полноценная CRM с дашбордом",
-            "Воронка продаж с аналитикой",
-            "История диалогов",
-            "Графики и отчеты",
-            "Многоязычность (RU/EN/AR)",
-            "Прокси для изображений Instagram"  # ✅ НОВАЯ ФИЧА
-        ]
+
     }
 
 @app.get("/health")

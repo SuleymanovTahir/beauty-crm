@@ -3,7 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 // import { autoDetectAndSetLanguage } from './utils/languageDetection';
 
-const languages = ["ru", "en", "es", "ar", "hi", "kk", "pt", "fr", "de"];
+export const languages = ["ru", "en", "es", "ar", "hi", "kk", "pt", "fr", "de"];
 const namespaces = [
   'common',
   'admin-components',

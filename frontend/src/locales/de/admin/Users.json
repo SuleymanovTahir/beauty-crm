@@ -222,5 +222,21 @@
   "vacation": "Vacation",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience"
+  "years_of_experience": "Years of Experience",
+  "base_salary": "Grundpreis",
+  "base_salary_hint": "Festes monatliches Gehalt",
+  "commission_rate": "Provisionsprozentsatz (%)",
+  "commission_rate_hint": "Prozentsatz des Umsatzes",
+  "save_settings": "Einstellungen speichern",
+  "settings_saved": "Einstellungen gespeichert",
+  "error_saving_settings": "Fehler beim Speichern der Einstellungen",
+  "record_payment": "Zahlung aufzeichnen",
+  "payment_recorded": "Zahlung vermerkt",
+  "error_recording_payment": "Fehler bei der Auszahlungsaufzeichnung",
+  "commission": "Kommission",
+  "status_pending": "Warten",
+  "status_paid": "Bezahlt",
+  "status_cancelled": "Abgesagt",
+  "status_updated": "Status aktualisiert",
+  "error_updating_status": "Fehler bei der Statusaktualisierung"
 }

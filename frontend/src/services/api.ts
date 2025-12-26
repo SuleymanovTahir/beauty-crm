@@ -812,6 +812,64 @@ export class ApiClient {
     })
   }
 
+  // ===== CHALLENGES =====
+  async getChallenges() {
+    return this.request<any>('/api/challenges')
+  }
+
+  async createChallenge(data: any) {
+    return this.request('/api/challenges', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateChallenge(id: number, data: any) {
+    return this.request(`/api/challenges/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteChallenge(id: number) {
+    return this.request(`/api/challenges/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
+  // ===== ADMIN CLIENT GALLERY =====
+  async getAdminClientGallery(clientId: string) {
+    return this.request<any>(`/api/admin/client-gallery/${clientId}`)
+  }
+
+  async uploadClientGalleryPhoto(clientId: string, photoType: string, file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    // We use fetch directly for FormData to avoid complex handling in this.request if it's not set up for it
+    const response = await fetch(`${this.baseURL}/api/admin/client-gallery/upload?client_id=${clientId}&photo_type=${photoType}`, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include'
+    })
+
+    if (!response.ok) throw new Error('Upload failed')
+    return response.json()
+  }
+
+  async addClientGalleryEntry(data: any) {
+    return this.request('/api/admin/client-gallery', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteClientGalleryEntry(id: number) {
+    return this.request(`/api/admin/client-gallery/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
   // ===== РОЛИ И ПРАВА =====
 
 
