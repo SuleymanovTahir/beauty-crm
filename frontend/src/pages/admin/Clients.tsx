@@ -744,7 +744,7 @@ export default function Clients() {
                   <tr
                     key={client.id}
                     className={`hover:bg-gray-50 transition-colors cursor-pointer ${selectedClients.has(client.id) ? 'bg-pink-50' : ''}`}
-                    onClick={() => navigate(`/admin/clients/${client.id}`)}
+                    onClick={() => navigate(`/admin/clients/${encodeURIComponent(client.id)}`)}
                   >
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       <Checkbox
@@ -854,7 +854,7 @@ export default function Clients() {
                           className="h-8 w-8 p-0"
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/admin/clients/${client.id}`);
+                            navigate(`/admin/clients/${encodeURIComponent(client.id)}`);
                           }}
                         >
                           <Eye className="h-4 w-4" />

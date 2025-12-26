@@ -160,7 +160,8 @@ export default function Services() {
     start_date: '',
     end_date: '',
     master_id: null as number | null,
-    client_ids: [] as string[]
+    client_ids: [] as string[],
+    clientSearch: ''
   });
 
   // Nested audience selection state
@@ -283,8 +284,12 @@ export default function Services() {
         setMastersLoading(true);
         try {
           const usersRes = await api.getUsers();
-          const serviceProviders = (usersRes.users || []).filter((u: any) => u.is_service_provider);
-          setMastersList(serviceProviders.map((u: any) => ({ id: u.id, full_name: u.full_name })));
+          // Filter by roles that typically provide services (employee, master, specialist)
+          const serviceRoles = ['employee', 'master', 'specialist', 'senior_master'];
+          const serviceProviders = (usersRes.users || []).filter((u: any) =>
+            u.is_service_provider || serviceRoles.includes(u.role) || u.is_active
+          );
+          setMastersList(serviceProviders.map((u: any) => ({ id: u.id, full_name: u.full_name || u.username })));
         } catch (e) {
           console.error('Error loading masters:', e);
         } finally {
@@ -1585,24 +1590,62 @@ export default function Services() {
                     ) : clientsOfMaster.length === 0 ? (
                       <p className="text-sm text-gray-500 p-2">{t('services:no_clients_for_master', 'У этого мастера нет клиентов')}</p>
                     ) : (
-                      <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
-                        <div className="space-y-2">
-                          {clientsOfMaster.map((client) => (
-                            <label key={client.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
-                              <input
-                                type="checkbox"
-                                checked={referralFormData.client_ids.includes(client.id)}
-                                onChange={(e) => {
-                                  const newClientIds = e.target.checked
-                                    ? [...referralFormData.client_ids, client.id]
-                                    : referralFormData.client_ids.filter(id => id !== client.id);
-                                  setReferralFormData({ ...referralFormData, client_ids: newClientIds });
-                                }}
-                                className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
-                              />
-                              <span className="text-sm">{client.name || client.id}</span>
-                            </label>
-                          ))}
+                      <div className="space-y-2">
+                        {/* Search and Select All/None */}
+                        <div className="flex gap-2 mb-2">
+                          <Input
+                            placeholder={t('services:search_clients', 'Поиск клиентов...')}
+                            value={referralFormData.clientSearch || ''}
+                            onChange={(e) => setReferralFormData({ ...referralFormData, clientSearch: e.target.value })}
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setReferralFormData({
+                              ...referralFormData,
+                              client_ids: clientsOfMaster.map(c => c.id)
+                            })}
+                          >
+                            {t('services:select_all', 'Все')}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setReferralFormData({ ...referralFormData, client_ids: [] })}
+                          >
+                            {t('services:deselect_all', 'Сброс')}
+                          </Button>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          {t('services:selected_count', 'Выбрано')}: {referralFormData.client_ids.length} / {clientsOfMaster.length}
+                        </p>
+                        <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                          <div className="space-y-1">
+                            {clientsOfMaster
+                              .filter(client =>
+                                !referralFormData.clientSearch ||
+                                (client.name || client.id).toLowerCase().includes((referralFormData.clientSearch || '').toLowerCase())
+                              )
+                              .map((client) => (
+                                <label key={client.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                  <input
+                                    type="checkbox"
+                                    checked={referralFormData.client_ids.includes(client.id)}
+                                    onChange={(e) => {
+                                      const newClientIds = e.target.checked
+                                        ? [...referralFormData.client_ids, client.id]
+                                        : referralFormData.client_ids.filter(id => id !== client.id);
+                                      setReferralFormData({ ...referralFormData, client_ids: newClientIds });
+                                    }}
+                                    className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                                  />
+                                  <span className="text-sm">{client.name || client.id}</span>
+                                </label>
+                              ))}
+                          </div>
                         </div>
                       </div>
                     )}
