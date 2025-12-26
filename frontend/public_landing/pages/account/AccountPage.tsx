@@ -263,76 +263,76 @@ export function AccountPage() {
   };
 
   const handleAddToCalendar = () => {
-    toast.success('Добавлено в календарь');
+    toast.success(t('account:toasts.calendar_added'));
   };
 
   const handleRescheduleAppointment = (_id?: string) => {
-    toast.info('Открываем форму переноса записи...');
+    toast.info(t('account:toasts.reschedule_open'));
     openBooking();
   };
 
   const handleCancelAppointment = (_id?: string) => {
-    toast.success('Запись успешно отменена');
+    toast.success(t('account:toasts.cancel_success'));
   };
 
   const handleRepeatAppointment = (_id?: string) => {
-    toast.success('Повторяем последнюю запись...');
+    toast.success(t('account:toasts.repeat_success'));
     openBooking();
   };
 
   const handleLeaveReview = (_id?: string) => {
-    toast.info('Открываем форму отзыва...');
+    toast.info(t('account:toasts.review_open'));
   };
 
   const handleDownloadPhoto = (_photoId?: string) => {
-    toast.success('Фото скачивается...');
+    toast.success(t('account:toasts.downloading'));
   };
 
   const handleSharePhoto = (_photoId?: string) => {
-    toast.success('Ссылка для шаринга скопирована');
+    toast.success(t('account:toasts.sharing_copied'));
   };
 
 
 
   const handleShareReferral = (platform: string) => {
-    toast.success(`Открываем ${platform} для шаринга...`);
+    toast.success(t('account:toasts.sharing_open', { platform }));
   };
 
   const handleSaveProfile = () => {
-    toast.success('Профиль успешно сохранен');
+    toast.success(t('account:toasts.profile_saved'));
   };
 
   const handleChangePassword = () => {
-    toast.info('Открываем форму смены пароля...');
+    toast.info(t('account:toasts.password_form_open'));
   };
 
   const handleEnable2FA = () => {
-    toast.info('Настройка двухфакторной аутентификации...');
+    toast.info(t('account:toasts.two_factor_setup'));
   };
 
   const handleExportData = () => {
-    toast.success('Экспорт данных начат...');
+    toast.success(t('account:toasts.export_started'));
   };
 
   const handleCopyReferralCode = () => {
     navigator.clipboard.writeText((user as any)?.referral_code || 'REFCODE');
-    toast.success('Код скопирован в буфер обмена');
+    toast.success(t('account:toasts.code_copied'));
   };
 
   const handleMarkNotificationAsRead = (_id: string) => {
-    toast.success('Уведомление прочитано');
+    toast.success(t('account:toasts.notif_read'));
   };
 
   const handleMarkAllAsRead = () => {
-    toast.success('Все уведомления прочитаны');
+    toast.success(t('account:toasts.all_notif_read'));
   };
 
   const handleContactSalon = (method: string) => {
-    toast.info(`Связываемся через ${method}...`);
+    toast.info(t('account:toasts.contact_method', { method }));
   };
 
   const handleNavigate = () => {
-    toast.info('Открываем навигатор...');
+    toast.info(t('account:toasts.navigator_open'));
   };
 
   const getDateLocale = () => {
@@ -373,7 +373,13 @@ export function AccountPage() {
             <p className="opacity-90">{getMotivationalPhrase()}</p>
           </div>
           <div className="w-16 h-16 rounded-full bg-white overflow-hidden border-2 border-white relative cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-            <img src={(user as any)?.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop'} alt={user?.full_name} className="w-full h-full object-cover" />
+            {(user as any)?.avatar_url ? (
+              <img src={(user as any).avatar_url} alt={user?.full_name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-500 to-purple-500 text-white text-xl font-bold">
+                {(user?.full_name?.[0] || user?.email?.[0] || 'U').toUpperCase()}
+              </div>
+            )}
             <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
           </div>
         </div>
@@ -404,11 +410,17 @@ export function AccountPage() {
           </div>
 
           <div className="flex gap-4 mb-4">
-            <img
-              src={dashboardData.next_booking.master_photo || 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=400&h=400&fit=crop'}
-              alt={dashboardData.next_booking.master_name}
-              className="w-20 h-20 rounded-xl object-cover"
-            />
+            {dashboardData.next_booking.master_photo ? (
+              <img
+                src={dashboardData.next_booking.master_photo}
+                alt={dashboardData.next_booking.master_name}
+                className="w-20 h-20 rounded-xl object-cover"
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold">
+                {(dashboardData.next_booking.master_name?.[0] || 'M').toUpperCase()}
+              </div>
+            )}
             <div className="flex-1">
               <h3 className="mb-1">{dashboardData.next_booking.master_name}</h3>
               <p className="text-sm text-gray-500 mb-2">{dashboardData.next_booking.master_specialty}</p>
@@ -502,11 +514,17 @@ export function AccountPage() {
           <h2 className="text-xl mb-4">{t('account:dashboard.last_visit')}</h2>
 
           <div className="flex gap-4 mb-4">
-            <img
-              src={dashboardData.last_visit.master_photo || 'https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?w=400&h=400&fit=crop'}
-              alt={dashboardData.last_visit.master_name}
-              className="w-16 h-16 rounded-xl object-cover"
-            />
+            {dashboardData.last_visit.master_photo ? (
+              <img
+                src={dashboardData.last_visit.master_photo}
+                alt={dashboardData.last_visit.master_name}
+                className="w-16 h-16 rounded-xl object-cover"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center text-white text-xl font-bold">
+                {(dashboardData.last_visit.master_name?.[0] || 'M').toUpperCase()}
+              </div>
+            )}
             <div className="flex-1">
               <h3 className="mb-1">{dashboardData.last_visit.service_name}</h3>
               <p className="text-sm text-gray-500">{dashboardData.last_visit.master_name}</p>
@@ -551,10 +569,12 @@ export function AccountPage() {
               <p className="text-gray-700 flex-1">{t('account:dashboard.insight_saved', { amount: dashboardData.loyalty.total_saved })}</p>
             </div>
           )}
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm">⭐</div>
-            <p className="text-gray-700 flex-1">{t('account:dashboard.insight_visits', { count: dashboardData?.visit_stats?.total_visits || 0 })}</p>
-          </div>
+          {(dashboardData?.visit_stats?.total_visits || 0) > 0 && (
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm">🎯</div>
+              <p className="text-gray-700 flex-1">{t('account:dashboard.insight_visits', { count: dashboardData?.visit_stats?.total_visits })}</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -1376,7 +1396,13 @@ export function AccountPage() {
         <h3 className="text-lg mb-4">{t('account:settings.profile_title')}</h3>
         <div className="flex items-center gap-4 mb-6">
           <div className="relative">
-            <img src={(user as any)?.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop'} alt={user?.full_name} className="w-20 h-20 rounded-full object-cover" />
+            {(user as any)?.avatar_url ? (
+              <img src={(user as any).avatar_url} alt={user?.full_name} className="w-20 h-20 rounded-full object-cover" />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold">
+                {(user?.full_name?.[0] || user?.email?.[0] || 'U').toUpperCase()}
+              </div>
+            )}
             <button
               onClick={() => fileInputRef.current?.click()}
               className="absolute bottom-0 right-0 p-1.5 bg-gray-900 text-white rounded-full hover:bg-gray-800"
@@ -1584,25 +1610,16 @@ export function AccountPage() {
           </div>
 
           {/* Language Switcher */}
-          <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-gray-200 shadow-sm">
-            <button
-              onClick={() => i18n.changeLanguage('ru')}
-              className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${i18n.language === 'ru' ? 'bg-gray-900 text-white' : 'hover:bg-gray-100'}`}
-            >
-              RU
-            </button>
-            <button
-              onClick={() => i18n.changeLanguage('en')}
-              className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${i18n.language === 'en' ? 'bg-gray-900 text-white' : 'hover:bg-gray-100'}`}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => i18n.changeLanguage('ar')}
-              className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${i18n.language === 'ar' ? 'bg-gray-900 text-white text-right font-arabic' : 'hover:bg-gray-100'}`}
-            >
-              عربي
-            </button>
+          <div className="flex items-center gap-1 bg-white px-2 py-1 rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
+            {['ru', 'en', 'es', 'ar', 'hi', 'kk', 'pt', 'fr', 'de'].map((lang) => (
+              <button
+                key={lang}
+                onClick={() => i18n.changeLanguage(lang)}
+                className={`px-2 py-1 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${i18n.language === lang ? 'bg-gray-900 text-white' : 'hover:bg-gray-100'} ${lang === 'ar' ? 'font-arabic' : ''}`}
+              >
+                {lang.toUpperCase()}
+              </button>
+            ))}
           </div>
         </div>
 
