@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { api } from '../../src/services/api';
+import logo from '../styles/img/logo.png';
 
 interface LoginPageProps {
   initialView?: 'login' | 'register';
@@ -137,15 +138,11 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          {salonSettings?.logo_url ? (
-            <img
-              src={salonSettings.logo_url}
-              alt={salonSettings.name || 'Logo'}
-              className="h-16 w-auto mx-auto mb-4 object-contain"
-            />
-          ) : (
-            <h1 className="text-3xl font-bold text-primary mb-2">{salonSettings?.name || 'Beauty Salon'}</h1>
-          )}
+          <img
+            src={salonSettings?.logo_url || logo}
+            alt={salonSettings?.name || 'M Le Diamant'}
+            className="h-16 w-auto mx-auto mb-4 object-contain"
+          />
           <p className="text-muted-foreground">
             {isLogin ? t('auth/Login:login_title', 'Login to your account') : t('auth/register:register_title', 'Create new account')}
           </p>

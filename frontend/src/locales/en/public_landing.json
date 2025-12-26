@@ -285,5 +285,8 @@
   "womenHaircut": "Women's haircut",
   "workingHours": "Working Hours",
   "yearsExperience": "years of experience",
-  "yourName": "Your name"
+  "yourName": "Your name",
+  "cookieConsentText": "We use cookies to improve your experience. By continuing to use the site, you agree to our",
+  "accept": "Accept",
+  "decline": "Decline"
 }

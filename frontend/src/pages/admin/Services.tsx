@@ -1,6 +1,7 @@
 // /frontend/src/pages/admin/Services.tsx
 // frontend/src/pages/admin/Services.tsx - С ВКЛАДКАМИ ДЛЯ СПЕЦПАКЕТОВ И НОВЫМИ ПОЛЯМИ
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Scissors, Search, Plus, Edit, Trash2, Loader, AlertCircle, Gift, Tag, Calendar, Clock, Users, Target } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -122,11 +123,21 @@ const formatPrice = (service: Service) => {
 };
 
 export default function Services() {
-  const [activeTab, setActiveTab] = useState<TabType>('services');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState<TabType>(() => {
+    const tab = searchParams.get('tab');
+    return (tab === 'services' || tab === 'packages' || tab === 'referrals' || tab === 'challenges') ? tab : 'services';
+  });
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав
   const permissions = usePermissions(currentUser?.role || 'employee');
+
+  // Update URL when tab changes
+  const handleTabChange = (newTab: TabType) => {
+    setActiveTab(newTab);
+    setSearchParams({ tab: newTab });
+  };
 
   // Services state
   const [services, setServices] = useState<Service[]>([]);
@@ -669,7 +680,7 @@ export default function Services() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 p-1">
         <div className="flex gap-2">
           <button
-            onClick={() => setActiveTab('services')}
+            onClick={() => handleTabChange('services')}
             className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'services'
               ? 'bg-pink-100 text-pink-700'
               : 'text-gray-600 hover:bg-gray-50'
@@ -679,7 +690,7 @@ export default function Services() {
             {t('services:services')} ({filteredServices.length})
           </button>
           <button
-            onClick={() => setActiveTab('packages')}
+            onClick={() => handleTabChange('packages')}
             className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'packages'
               ? 'bg-pink-100 text-pink-700'
               : 'text-gray-600 hover:bg-gray-50'
@@ -689,7 +700,7 @@ export default function Services() {
             {t('services:special_packages')} ({filteredPackages.length})
           </button>
           <button
-            onClick={() => setActiveTab('referrals')}
+            onClick={() => handleTabChange('referrals')}
             className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'referrals'
               ? 'bg-pink-100 text-pink-700'
               : 'text-gray-600 hover:bg-gray-50'
@@ -699,7 +710,7 @@ export default function Services() {
             Реферальная программа ({campaigns.length})
           </button>
           <button
-            onClick={() => setActiveTab('challenges')}
+            onClick={() => handleTabChange('challenges')}
             className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'challenges'
               ? 'bg-pink-100 text-pink-700'
               : 'text-gray-600 hover:bg-gray-50'

@@ -285,5 +285,8 @@
   "womenHaircut": "Coupe de cheveux femme",
   "workingHours": "Horaires d'ouverture",
   "yearsExperience": "années d'expérience",
-  "yourName": "ton nom"
+  "yourName": "ton nom",
+  "cookieConsentText": "Nous utilisons des cookies pour améliorer votre expérience. En continuant à utiliser le site, vous acceptez notre",
+  "accept": "Accepter",
+  "decline": "Refuser"
 }
