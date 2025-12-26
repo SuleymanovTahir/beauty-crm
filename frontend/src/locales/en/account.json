@@ -41,7 +41,10 @@
     "insights_title": "Personal Insights",
     "insight_months": "You've been with us for {{count}} months!",
     "insight_saved": "You have saved {{amount}} AED thanks to the loyalty program",
-    "insight_visits": "You visited us {{count}} times - more than 80% of our clients!",
+    "insight_visits_0": "Welcome! We're excited to see you at our salon!",
+    "insight_visits_1_3": "Great start! You've been here {{count}} times already!",
+    "insight_visits_4_9": "You're becoming a regular! {{count}} visits - that's more than 60% of our clients!",
+    "insight_visits_10_plus": "You're a VIP client! {{count}} visits - that's more than 85% of our clients!",
     "stats": {
       "visits": "Visits",
       "points": "Points",

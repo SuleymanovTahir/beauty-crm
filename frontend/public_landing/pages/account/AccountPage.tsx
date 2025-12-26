@@ -351,6 +351,13 @@ export function AccountPage() {
     return t('account:dashboard.appointment.in_days', { count: days });
   };
 
+  const getVisitInsightText = (visitCount: number) => {
+    if (visitCount === 0) return t('account:dashboard.insight_visits_0');
+    if (visitCount >= 1 && visitCount <= 3) return t('account:dashboard.insight_visits_1_3', { count: visitCount });
+    if (visitCount >= 4 && visitCount <= 9) return t('account:dashboard.insight_visits_4_9', { count: visitCount });
+    return t('account:dashboard.insight_visits_10_plus', { count: visitCount });
+  };
+
   if (loading || authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -569,12 +576,12 @@ export function AccountPage() {
               <p className="text-gray-700 flex-1">{t('account:dashboard.insight_saved', { amount: dashboardData.loyalty.total_saved })}</p>
             </div>
           )}
-          {(dashboardData?.visit_stats?.total_visits || 0) > 0 && (
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm">🎯</div>
-              <p className="text-gray-700 flex-1">{t('account:dashboard.insight_visits', { count: dashboardData?.visit_stats?.total_visits })}</p>
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm">
+              {(dashboardData?.visit_stats?.total_visits || 0) === 0 ? '👋' : (dashboardData?.visit_stats?.total_visits || 0) >= 10 ? '⭐' : '🎯'}
             </div>
-          )}
+            <p className="text-gray-700 flex-1">{getVisitInsightText(dashboardData?.visit_stats?.total_visits || 0)}</p>
+          </div>
         </div>
       </div>
 
