@@ -1,5 +1,5 @@
 // frontend/src/services/api.ts
-const API_URL = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? `${window.location.protocol}//${window.location.hostname}:8000` : window.location.origin)
+const API_URL = import.meta.env.VITE_API_URL || window.location.origin
 
 export class ApiClient {
   private baseURL: string
