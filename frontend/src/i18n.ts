@@ -6,6 +6,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 export const languages = ["ru", "en", "es", "ar", "hi", "kk", "pt", "fr", "de"];
 const namespaces = [
   'common',
+  'account',
   'admin-components',
   'components',
   'admin/analytics',

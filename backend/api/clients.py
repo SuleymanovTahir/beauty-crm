@@ -153,19 +153,24 @@ async def get_client_messengers_api(
     messengers = get_client_messengers(client_id)
     return {"messengers": messengers}
 
-@router.get("/clients/{client_id}")
+@router.get("/clients/{client_id:path}")
 async def get_client_detail(client_id: str, session_token: Optional[str] = Cookie(None)):
     """Получить детальную информацию о клиенте"""
+    from urllib.parse import unquote
+    
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    client = get_client_by_id(client_id)
+    # Decode URL-encoded client_id (e.g., www.instagram.com%2Fmlediamant%2F -> www.instagram.com/mlediamant/)
+    decoded_client_id = unquote(client_id)
+    
+    client = get_client_by_id(decoded_client_id)
     if not client:
         return JSONResponse({"error": "Client not found"}, status_code=404)
     
-    history = get_chat_history(client_id, limit=50)
-    bookings = [b for b in get_all_bookings() if b[1] == client_id]
+    history = get_chat_history(decoded_client_id, limit=50)
+    bookings = [b for b in get_all_bookings() if b[1] == decoded_client_id]
     
     # Calculate stats
     from collections import Counter
