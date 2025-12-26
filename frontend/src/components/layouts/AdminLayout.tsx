@@ -263,17 +263,14 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
             <div className="flex items-center gap-3">
               <div className="flex-shrink-0">
                 <img
-                  src={salonSettings?.logo_url || '/logo.webp'}
+                  src={salonSettings?.logo_url || '/public_landing/styles/img/logo.png'}
                   alt={salonSettings?.name || 'Logo'}
                   className="w-10 h-10 rounded-lg object-contain shadow-sm"
                   onError={(e) => {
                     const img = e.target as HTMLImageElement;
-                    if (img.src.includes('/logo.webp')) {
-                      img.src = '/logo.png';
-                    } else if (img.src.includes('/logo.png')) {
+                    // Если основное изображение не загрузилось, используем fallback
+                    if (!img.src.includes('icons8.com')) {
                       img.src = 'https://img.icons8.com/color/96/diamond.png';
-                    } else {
-                      img.src = '/logo.webp';
                     }
                   }}
                 />

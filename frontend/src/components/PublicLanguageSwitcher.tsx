@@ -4,15 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { useState, useRef, useEffect } from 'react';
 
 const languages = [
-  { code: 'ru', flag: '🇷🇺' },
-  { code: 'en', flag: '🇬🇧' },
-  { code: 'es', flag: '🇪🇸' },
-  { code: 'ar', flag: '🇦🇪' },
-  { code: 'hi', flag: '🇮🇳' },
-  { code: 'kk', flag: '🇰🇿' },
-  { code: 'pt', flag: '🇵🇹' },
-  { code: 'fr', flag: '🇫🇷' },
-  { code: 'de', flag: '🇩🇪' }
+  { code: 'ru', flag: '🇷🇺', name: 'Русский' },
+  { code: 'en', flag: '🇬🇧', name: 'English' },
+  { code: 'es', flag: '🇪🇸', name: 'Español' },
+  { code: 'ar', flag: '🇦🇪', name: 'العربية' },
+  { code: 'hi', flag: '🇮🇳', name: 'हिन्दी' },
+  { code: 'kk', flag: '🇰🇿', name: 'Қазақша' },
+  { code: 'pt', flag: '🇵🇹', name: 'Português' },
+  { code: 'fr', flag: '🇫🇷', name: 'Français' },
+  { code: 'de', flag: '🇩🇪', name: 'Deutsch' }
 ];
 
 export default function PublicLanguageSwitcher() {
@@ -43,7 +43,7 @@ export default function PublicLanguageSwitcher() {
       </button>
 
       {open && (
-        <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[180px] z-50">
+        <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[200px] z-50">
           {languages.map(lang => (
             <button
               key={lang.code}
@@ -52,11 +52,17 @@ export default function PublicLanguageSwitcher() {
                 localStorage.setItem('i18nextLng', lang.code);
                 setOpen(false);
               }}
-              className={`w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors ${
+              className={`w-full px-4 py-2.5 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors ${
                 i18n.language === lang.code ? 'bg-purple-50 font-medium' : ''
               }`}
             >
               <span className="text-xl">{lang.flag}</span>
+              <span className={`text-sm flex-1 ${i18n.language === lang.code ? 'text-purple-700' : 'text-gray-700'}`}>
+                {lang.name}
+              </span>
+              {i18n.language === lang.code && (
+                <span className="text-purple-600 text-sm">✓</span>
+              )}
             </button>
           ))}
         </div>
