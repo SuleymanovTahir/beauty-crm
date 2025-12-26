@@ -160,6 +160,7 @@ export default function Services() {
     start_date: '',
     end_date: '',
     master_id: null as number | null,
+    service_id: null as number | null,
     client_ids: [] as string[],
     clientSearch: ''
   });
@@ -180,7 +181,15 @@ export default function Services() {
     description_ru: '',
     description_en: '',
     bonus_points: 50,
-    is_active: true
+    is_active: true,
+    target_type: 'all' as 'all' | 'specific_users' | 'by_master' | 'by_service' | 'by_inactivity',
+    days_inactive: 30,
+    start_date: '',
+    end_date: '',
+    master_id: null as number | null,
+    service_id: null as number | null,
+    client_ids: [] as string[],
+    clientSearch: ''
   });
 
   const [loading, setLoading] = useState(true);
@@ -598,7 +607,22 @@ export default function Services() {
       loadData();
       setIsChallengeModalOpen(false);
       setEditingChallenge(null);
-      setChallengeFormData({ title_ru: '', title_en: '', description_ru: '', description_en: '', bonus_points: 50, is_active: true });
+      setChallengeFormData({
+        title_ru: '',
+        title_en: '',
+        description_ru: '',
+        description_en: '',
+        bonus_points: 50,
+        is_active: true,
+        target_type: 'all',
+        days_inactive: 30,
+        start_date: '',
+        end_date: '',
+        master_id: null,
+        service_id: null,
+        client_ids: [],
+        clientSearch: ''
+      });
     } catch (error) {
       toast.error(t('services:error_saving'));
     } finally {
@@ -1051,7 +1075,26 @@ export default function Services() {
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold">{t('services:challenges')}</h2>
-              <Button onClick={() => { setEditingChallenge(null); setChallengeFormData({ title_ru: '', title_en: '', description_ru: '', description_en: '', bonus_points: 50, is_active: true }); setIsChallengeModalOpen(true); }} className="bg-pink-600 hover:bg-pink-700">
+              <Button onClick={() => {
+                setEditingChallenge(null);
+                setChallengeFormData({
+                  title_ru: '',
+                  title_en: '',
+                  description_ru: '',
+                  description_en: '',
+                  bonus_points: 50,
+                  is_active: true,
+                  target_type: 'all',
+                  days_inactive: 30,
+                  start_date: '',
+                  end_date: '',
+                  master_id: null,
+                  service_id: null,
+                  client_ids: [],
+                  clientSearch: ''
+                });
+                setIsChallengeModalOpen(true);
+              }} className="bg-pink-600 hover:bg-pink-700">
                 <Plus className="w-4 h-4 mr-2" /> {t('services:add_challenge')}
               </Button>
             </div>
@@ -1547,6 +1590,8 @@ export default function Services() {
                     <div className="flex items-center gap-2 p-2 text-gray-500">
                       <Loader className="w-4 h-4 animate-spin" /> {t('common:loading', 'Загрузка...')}
                     </div>
+                  ) : mastersList.length === 0 ? (
+                    <p className="text-sm text-gray-500 p-2">{t('services:no_masters_found', 'Мастера не найдены')}</p>
                   ) : (
                     <Select
                       value={referralFormData.master_id?.toString() || ''}
@@ -1649,6 +1694,211 @@ export default function Services() {
                         </div>
                       </div>
                     )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {referralFormData.target_type === 'by_service' && (
+              <div className="space-y-4">
+                <div>
+                  <Label>{t('services:select_service', 'Выберите услугу')}</Label>
+                  <Select
+                    value={referralFormData.service_id?.toString() || ''}
+                    onValueChange={async (value) => {
+                      const serviceId = Number(value);
+                      setReferralFormData({ ...referralFormData, service_id: serviceId, client_ids: [] });
+                      // Load clients who used this service
+                      setClientsLoading(true);
+                      try {
+                        const res = await fetch(`/api/clients?service_id=${serviceId}`, { credentials: 'include' });
+                        const data = await res.json();
+                        setClientsOfMaster(data.clients || []);
+                      } catch (e) {
+                        console.error('Error loading clients:', e);
+                      } finally {
+                        setClientsLoading(false);
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('services:select_service', 'Выберите услугу')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {services.map((service) => (
+                        <SelectItem key={service.id} value={service.id.toString()}>
+                          {i18n.language === 'ru' ? service.name_ru : service.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {referralFormData.service_id && (
+                  <div>
+                    <Label>{t('services:clients_of_service', 'Клиенты, использовавшие услугу')}</Label>
+                    {clientsLoading ? (
+                      <div className="flex items-center gap-2 p-2 text-gray-500">
+                        <Loader className="w-4 h-4 animate-spin" /> {t('common:loading', 'Загрузка...')}
+                      </div>
+                    ) : clientsOfMaster.length === 0 ? (
+                      <p className="text-sm text-gray-500 p-2">{t('services:no_clients_for_service', 'Клиенты не найдены')}</p>
+                    ) : (
+                      <div className="space-y-2">
+                        <div className="flex gap-2 mb-2">
+                          <Input
+                            placeholder={t('services:search_clients', 'Поиск клиентов...')}
+                            value={referralFormData.clientSearch || ''}
+                            onChange={(e) => setReferralFormData({ ...referralFormData, clientSearch: e.target.value })}
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setReferralFormData({
+                              ...referralFormData,
+                              client_ids: clientsOfMaster.map(c => c.id)
+                            })}
+                          >
+                            {t('services:select_all', 'Все')}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setReferralFormData({ ...referralFormData, client_ids: [] })}
+                          >
+                            {t('services:deselect_all', 'Сброс')}
+                          </Button>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          {t('services:selected_count', 'Выбрано')}: {referralFormData.client_ids.length} / {clientsOfMaster.length}
+                        </p>
+                        <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                          <div className="space-y-1">
+                            {clientsOfMaster
+                              .filter(client =>
+                                !referralFormData.clientSearch ||
+                                (client.name || client.id).toLowerCase().includes((referralFormData.clientSearch || '').toLowerCase())
+                              )
+                              .map((client) => (
+                                <label key={client.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                  <input
+                                    type="checkbox"
+                                    checked={referralFormData.client_ids.includes(client.id)}
+                                    onChange={(e) => {
+                                      const newClientIds = e.target.checked
+                                        ? [...referralFormData.client_ids, client.id]
+                                        : referralFormData.client_ids.filter(id => id !== client.id);
+                                      setReferralFormData({ ...referralFormData, client_ids: newClientIds });
+                                    }}
+                                    className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                                  />
+                                  <span className="text-sm">{client.name || client.id}</span>
+                                </label>
+                              ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {referralFormData.target_type === 'by_inactivity' && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="daysInactive">{t('services:days_inactive', 'Дней без посещения')}</Label>
+                  <Input
+                    id="daysInactive"
+                    type="number"
+                    value={referralFormData.days_inactive}
+                    onChange={(e) => setReferralFormData({ ...referralFormData, days_inactive: Number(e.target.value) })}
+                    placeholder="30"
+                  />
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={async () => {
+                    setClientsLoading(true);
+                    try {
+                      const res = await fetch(`/api/clients?inactive_days=${referralFormData.days_inactive}`, { credentials: 'include' });
+                      const data = await res.json();
+                      setClientsOfMaster(data.clients || []);
+                    } catch (e) {
+                      console.error('Error loading inactive clients:', e);
+                    } finally {
+                      setClientsLoading(false);
+                    }
+                  }}
+                >
+                  {t('services:load_inactive_clients', 'Загрузить неактивных клиентов')}
+                </Button>
+
+                {clientsOfMaster.length > 0 && (
+                  <div>
+                    <Label>{t('services:inactive_clients', 'Неактивные клиенты')}</Label>
+                    <div className="space-y-2">
+                      <div className="flex gap-2 mb-2">
+                        <Input
+                          placeholder={t('services:search_clients', 'Поиск клиентов...')}
+                          value={referralFormData.clientSearch || ''}
+                          onChange={(e) => setReferralFormData({ ...referralFormData, clientSearch: e.target.value })}
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setReferralFormData({
+                            ...referralFormData,
+                            client_ids: clientsOfMaster.map(c => c.id)
+                          })}
+                        >
+                          {t('services:select_all', 'Все')}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setReferralFormData({ ...referralFormData, client_ids: [] })}
+                        >
+                          {t('services:deselect_all', 'Сброс')}
+                        </Button>
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        {t('services:selected_count', 'Выбрано')}: {referralFormData.client_ids.length} / {clientsOfMaster.length}
+                      </p>
+                      <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                        <div className="space-y-1">
+                          {clientsOfMaster
+                            .filter(client =>
+                              !referralFormData.clientSearch ||
+                              (client.name || client.id).toLowerCase().includes((referralFormData.clientSearch || '').toLowerCase())
+                            )
+                            .map((client) => (
+                              <label key={client.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                <input
+                                  type="checkbox"
+                                  checked={referralFormData.client_ids.includes(client.id)}
+                                  onChange={(e) => {
+                                    const newClientIds = e.target.checked
+                                      ? [...referralFormData.client_ids, client.id]
+                                      : referralFormData.client_ids.filter(id => id !== client.id);
+                                    setReferralFormData({ ...referralFormData, client_ids: newClientIds });
+                                  }}
+                                  className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                                />
+                                <span className="text-sm">{client.name || client.id}</span>
+                              </label>
+                            ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -1759,6 +2009,177 @@ export default function Services() {
                 </label>
               </div>
             </div>
+
+            {/* Target Audience Selection for Challenges */}
+            <div>
+              <Label>Целевая аудитория</Label>
+              <Select value={challengeFormData.target_type} onValueChange={(value: any) => setChallengeFormData({ ...challengeFormData, target_type: value })}>
+                <SelectTrigger><SelectValue placeholder="Выберите аудиторию" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Все клиенты</SelectItem>
+                  <SelectItem value="by_inactivity">Неактивные клиенты</SelectItem>
+                  <SelectItem value="by_master">Клиенты мастера</SelectItem>
+                  <SelectItem value="by_service">Клиенты услуги</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {challengeFormData.target_type === 'by_master' && (
+              <div className="space-y-4">
+                <div>
+                  <Label>Выберите мастера</Label>
+                  {mastersLoading ? (
+                    <div className="flex items-center gap-2 p-2 text-gray-500"><Loader className="w-4 h-4 animate-spin" /> Загрузка...</div>
+                  ) : mastersList.length === 0 ? (
+                    <p className="text-sm text-gray-500 p-2">Мастера не найдены</p>
+                  ) : (
+                    <Select value={challengeFormData.master_id?.toString() || ''} onValueChange={async (value) => {
+                      const masterId = Number(value);
+                      setChallengeFormData({ ...challengeFormData, master_id: masterId, client_ids: [] });
+                      setClientsLoading(true);
+                      try {
+                        const res = await fetch(`/api/clients?master_id=${masterId}`, { credentials: 'include' });
+                        const data = await res.json();
+                        setClientsOfMaster(data.clients || []);
+                      } catch (e) {
+                        console.error('Error loading clients:', e);
+                      } finally {
+                        setClientsLoading(false);
+                      }
+                    }}>
+                      <SelectTrigger><SelectValue placeholder="Выберите мастера" /></SelectTrigger>
+                      <SelectContent>{mastersList.map((master) => (<SelectItem key={master.id} value={master.id.toString()}>{master.full_name}</SelectItem>))}</SelectContent>
+                    </Select>
+                  )}
+                </div>
+                {challengeFormData.master_id && (
+                  <div>
+                    <Label>Клиенты мастера</Label>
+                    {clientsLoading ? (<div className="flex items-center gap-2 p-2 text-gray-500"><Loader className="w-4 h-4 animate-spin" /> Загрузка...</div>
+                    ) : clientsOfMaster.length === 0 ? (<p className="text-sm text-gray-500 p-2">У этого мастера нет клиентов</p>
+                    ) : (
+                      <div className="space-y-2">
+                        <div className="flex gap-2 mb-2">
+                          <Input placeholder="Поиск клиентов..." value={challengeFormData.clientSearch || ''} onChange={(e) => setChallengeFormData({ ...challengeFormData, clientSearch: e.target.value })} className="flex-1" />
+                          <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: clientsOfMaster.map(c => c.id) })}>Все</Button>
+                          <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: [] })}>Сброс</Button>
+                        </div>
+                        <p className="text-xs text-gray-500">Выбрано: {challengeFormData.client_ids.length} / {clientsOfMaster.length}</p>
+                        <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                          <div className="space-y-1">{clientsOfMaster.filter(client => !challengeFormData.clientSearch || (client.name || client.id).toLowerCase().includes((challengeFormData.clientSearch || '').toLowerCase())).map((client) => (
+                            <label key={client.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                              <input type="checkbox" checked={challengeFormData.client_ids.includes(client.id)} onChange={(e) => {
+                                const newClientIds = e.target.checked ? [...challengeFormData.client_ids, client.id] : challengeFormData.client_ids.filter(id => id !== client.id);
+                                setChallengeFormData({ ...challengeFormData, client_ids: newClientIds });
+                              }} className="w-4 h-4 text-pink-600 rounded focus:ring-pink-500" />
+                              <span className="text-sm">{client.name || client.id}</span>
+                            </label>
+                          ))}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {challengeFormData.target_type === 'by_service' && (
+              <div className="space-y-4">
+                <div>
+                  <Label>Выберите услугу</Label>
+                  <Select value={challengeFormData.service_id?.toString() || ''} onValueChange={async (value) => {
+                    const serviceId = Number(value);
+                    setChallengeFormData({ ...challengeFormData, service_id: serviceId, client_ids: [] });
+                    setClientsLoading(true);
+                    try {
+                      const res = await fetch(`/api/clients?service_id=${serviceId}`, { credentials: 'include' });
+                      const data = await res.json();
+                      setClientsOfMaster(data.clients || []);
+                    } catch (e) {
+                      console.error('Error loading clients:', e);
+                    } finally {
+                      setClientsLoading(false);
+                    }
+                  }}>
+                    <SelectTrigger><SelectValue placeholder="Выберите услугу" /></SelectTrigger>
+                    <SelectContent>{services.map((service) => (<SelectItem key={service.id} value={service.id.toString()}>{i18n.language === 'ru' ? service.name_ru : service.name}</SelectItem>))}</SelectContent>
+                  </Select>
+                </div>
+                {challengeFormData.service_id && (
+                  <div>
+                    <Label>Клиенты, использовавшие услугу</Label>
+                    {clientsLoading ? (<div className="flex items-center gap-2 p-2 text-gray-500"><Loader className="w-4 h-4 animate-spin" /> Загрузка...</div>
+                    ) : clientsOfMaster.length === 0 ? (<p className="text-sm text-gray-500 p-2">Клиенты не найдены</p>
+                    ) : (
+                      <div className="space-y-2">
+                        <div className="flex gap-2 mb-2">
+                          <Input placeholder="Поиск клиентов..." value={challengeFormData.clientSearch || ''} onChange={(e) => setChallengeFormData({ ...challengeFormData, clientSearch: e.target.value })} className="flex-1" />
+                          <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: clientsOfMaster.map(c => c.id) })}>Все</Button>
+                          <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: [] })}>Сброс</Button>
+                        </div>
+                        <p className="text-xs text-gray-500">Выбрано: {challengeFormData.client_ids.length} / {clientsOfMaster.length}</p>
+                        <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                          <div className="space-y-1">{clientsOfMaster.filter(client => !challengeFormData.clientSearch || (client.name || client.id).toLowerCase().includes((challengeFormData.clientSearch || '').toLowerCase())).map((client) => (
+                            <label key={client.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                              <input type="checkbox" checked={challengeFormData.client_ids.includes(client.id)} onChange={(e) => {
+                                const newClientIds = e.target.checked ? [...challengeFormData.client_ids, client.id] : challengeFormData.client_ids.filter(id => id !== client.id);
+                                setChallengeFormData({ ...challengeFormData, client_ids: newClientIds });
+                              }} className="w-4 h-4 text-pink-600 rounded focus:ring-pink-500" />
+                              <span className="text-sm">{client.name || client.id}</span>
+                            </label>
+                          ))}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {challengeFormData.target_type === 'by_inactivity' && (
+              <div className="space-y-4">
+                <div>
+                  <Label>Дней без посещения</Label>
+                  <Input type="number" value={challengeFormData.days_inactive} onChange={(e) => setChallengeFormData({ ...challengeFormData, days_inactive: Number(e.target.value) })} placeholder="30" />
+                </div>
+                <Button type="button" variant="outline" onClick={async () => {
+                  setClientsLoading(true);
+                  try {
+                    const res = await fetch(`/api/clients?inactive_days=${challengeFormData.days_inactive}`, { credentials: 'include' });
+                    const data = await res.json();
+                    setClientsOfMaster(data.clients || []);
+                  } catch (e) {
+                    console.error('Error loading inactive clients:', e);
+                  } finally {
+                    setClientsLoading(false);
+                  }
+                }}>Загрузить неактивных клиентов</Button>
+                {clientsOfMaster.length > 0 && (
+                  <div>
+                    <Label>Неактивные клиенты</Label>
+                    <div className="space-y-2">
+                      <div className="flex gap-2 mb-2">
+                        <Input placeholder="Поиск клиентов..." value={challengeFormData.clientSearch || ''} onChange={(e) => setChallengeFormData({ ...challengeFormData, clientSearch: e.target.value })} className="flex-1" />
+                        <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: clientsOfMaster.map(c => c.id) })}>Все</Button>
+                        <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: [] })}>Сброс</Button>
+                      </div>
+                      <p className="text-xs text-gray-500">Выбрано: {challengeFormData.client_ids.length} / {clientsOfMaster.length}</p>
+                      <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                        <div className="space-y-1">{clientsOfMaster.filter(client => !challengeFormData.clientSearch || (client.name || client.id).toLowerCase().includes((challengeFormData.clientSearch || '').toLowerCase())).map((client) => (
+                          <label key={client.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" checked={challengeFormData.client_ids.includes(client.id)} onChange={(e) => {
+                              const newClientIds = e.target.checked ? [...challengeFormData.client_ids, client.id] : challengeFormData.client_ids.filter(id => id !== client.id);
+                              setChallengeFormData({ ...challengeFormData, client_ids: newClientIds });
+                            }} className="w-4 h-4 text-pink-600 rounded focus:ring-pink-500" />
+                            <span className="text-sm">{client.name || client.id}</span>
+                          </label>
+                        ))}</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsChallengeModalOpen(false)}>{t('services:cancel')}</Button>
