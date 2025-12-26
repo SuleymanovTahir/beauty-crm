@@ -132,11 +132,16 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
           <div className="flex justify-between items-center h-16 sm:h-20">
             <div className="flex-shrink-0">
               <a href="/" className="block">
-                {/* <div className="text-xl sm:text-2xl font-bold text-primary">Beauty Salon</div> */}
                 <img
-                  src={salonInfo?.logo_url || logo} // Use dynamic logo if available, fallback to imported logo
+                  src={salonInfo?.logo_url || logo}
                   alt={salonInfo?.name || "M Le Diamant"}
                   className="h-10 sm:h-12 w-auto object-contain"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    if (target.src !== logo) {
+                      target.src = logo;
+                    }
+                  }}
                 />
               </a>
             </div>

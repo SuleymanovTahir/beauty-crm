@@ -47,6 +47,7 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { UserBookingWizard } from './UserBookingWizard';
+import PublicLanguageSwitcher from '../../../src/components/PublicLanguageSwitcher';
 
 // Import styles
 import './AccountPage.css';
@@ -1070,10 +1071,11 @@ export function AccountPage() {
         <div className="bg-white p-4 rounded-lg mb-4">
           <p className="text-sm text-gray-500 mb-2">{t('account:referral.your_code')}</p>
           <div className="flex items-center gap-2">
-            <code className="flex-1 text-xl tracking-wider">{dashboardData?.loyalty?.referral_code || 'REFCODE'}</code>
+            <code className="flex-1 text-xl tracking-wider">{dashboardData?.loyalty?.referral_code || '—'}</code>
             <button
               onClick={handleCopyReferralCode}
-              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!dashboardData?.loyalty?.referral_code}
             >
               {t('account:referral.copy')}
             </button>
@@ -1617,17 +1619,7 @@ export function AccountPage() {
           </div>
 
           {/* Language Switcher */}
-          <div className="flex items-center gap-1 bg-white px-2 py-1 rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
-            {['ru', 'en', 'es', 'ar', 'hi', 'kk', 'pt', 'fr', 'de'].map((lang) => (
-              <button
-                key={lang}
-                onClick={() => i18n.changeLanguage(lang)}
-                className={`px-2 py-1 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${i18n.language === lang ? 'bg-gray-900 text-white' : 'hover:bg-gray-100'} ${lang === 'ar' ? 'font-arabic' : ''}`}
-              >
-                {lang.toUpperCase()}
-              </button>
-            ))}
-          </div>
+          <PublicLanguageSwitcher />
         </div>
 
         {/* Navigation */}
