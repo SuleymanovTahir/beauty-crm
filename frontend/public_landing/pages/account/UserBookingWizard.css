@@ -1,86 +1,105 @@
 /* UserBookingWizard.css */
 
-.wizard-container {
-  background: linear-gradient(to bottom right, #fff1f2, #f3e8ff, #eff6ff); /* rose-50, purple-50, blue-50 */
+/* Variables from new_admin theme */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --popover: #ffffff;
+  --popover-foreground: #171717;
+  --primary: #030213;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #18181b;
+  --radius: 0.5rem;
 }
 
-.wizard-title-gradient {
-  background: linear-gradient(to right, #9333ea, #db2777); /* purple-600, pink-600 */
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Gradients used in UserBookingWizard */
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
 }
 
-.wizard-card-highlight {
-  border-color: #a855f7; /* purple-500 */
+.from-rose-50 {
+  --tw-gradient-from: #fff1f2;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 241, 242, 0));
 }
 
-.wizard-icon-gradient-purple {
-  background: linear-gradient(to bottom right, #a855f7, #ec4899); /* purple-500, pink-500 */
+.via-purple-50 {
+  --tw-gradient-via: #f5f3ff;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(245, 243, 255, 0));
 }
 
-.wizard-icon-gradient-blue {
-  background: linear-gradient(to bottom right, #3b82f6, #06b6d4); /* blue-500, cyan-500 */
+.to-blue-50 {
+  --tw-gradient-to: #eff6ff;
 }
 
-.wizard-icon-gradient-orange {
-  background: linear-gradient(to bottom right, #f97316, #ef4444); /* orange-500, red-500 */
+.from-purple-600 {
+  --tw-gradient-from: #9333ea;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(147, 51, 234, 0));
 }
 
-.wizard-button-gradient {
-  background: linear-gradient(to right, #9333ea, #db2777); /* purple-600, pink-600 */
-  color: white;
+.to-pink-600 {
+  --tw-gradient-to: #db2777;
 }
 
-.wizard-button-gradient:hover {
-  background: linear-gradient(to right, #7e22ce, #be185d); /* purple-700, pink-700 */
+.from-purple-500 {
+  --tw-gradient-from: #a855f7;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(168, 85, 247, 0));
 }
 
-.wizard-text-purple {
-  color: #9333ea; /* purple-600 */
+.to-pink-500 {
+  --tw-gradient-to: #ec4899;
 }
 
-.wizard-bg-purple-light {
-  background-color: #f3e8ff; /* purple-100 */
+.from-blue-500 {
+  --tw-gradient-from: #3b82f6;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(59, 130, 246, 0));
 }
 
-.wizard-border-purple {
-  border-color: #a855f7; /* purple-500 */
+.to-cyan-500 {
+  --tw-gradient-to: #06b6d4;
 }
 
-.wizard-border-purple-hover:hover {
-  border-color: #a855f7;
+.from-orange-500 {
+  --tw-gradient-from: #f97316;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(249, 115, 22, 0));
 }
 
-/* Transitions */
-.wizard-card-hover:hover {
-  border-color: #a855f7;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+.to-red-500 {
+  --tw-gradient-to: #ef4444;
 }
 
-.wizard-day-selected {
-  background: linear-gradient(to bottom right, #9333ea, #db2777) !important;
-  color: white !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+/* Base styles for the wizard */
+.wizard-full-page {
+    isolation: isolate;
 }
 
-.wizard-slot-selected {
-  background: linear-gradient(to bottom right, #9333ea, #db2777) !important;
-  color: white !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+/* Ensure scrolling works */
+.wizard-scrollable {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    height: 100vh;
 }
 
-.wizard-slot-optimal {
-  background-color: #f0fdf4; /* green-50 */
-  color: #15803d; /* green-700 */
-  border: 2px solid #bbf7d0; /* green-200 */
+/* Custom transitions and breadcrumbs */
+.transition-colors {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
 }
 
-.wizard-slot-optimal:hover {
-  border-color: #4ade80; /* green-400 */
-}
-
-.wizard-badge-gradient {
-  background: linear-gradient(to right, #9333ea, #db2777);
-  color: white;
+/* Helpers for Tailwind v4 classes if needed */
+.size-full {
+    width: 100%;
+    height: 100%;
 }
