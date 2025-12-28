@@ -250,79 +250,81 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   };
 
   const renderHeader = (title: string, subtitle?: string) => (
-    <div className="sticky top-0 z-10 bg-gradient-to-br from-rose-50 via-purple-50 to-blue-50 pb-6 pt-4 px-4 overflow-x-hidden">
-      <div className="flex items-center gap-3 mb-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => {
-            if (step === 'menu') {
-              navigate('/account', { replace: true });
-            } else {
-              setStep('menu');
-            }
-          }}
-          className="rounded-full hover:bg-white/50"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-
-        {onClose && (
+    <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm pb-6 pt-4 px-4 border-b">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center gap-3 mb-4">
           <Button
             variant="ghost"
             size="icon"
-            onClick={onClose}
-            className="rounded-full hover:bg-white/50 ml-auto"
+            onClick={() => {
+              if (step === 'menu') {
+                navigate('/account', { replace: true });
+              } else {
+                setStep('menu');
+              }
+            }}
+            className="rounded-full hover:bg-black/5"
           >
-            <X className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5" />
           </Button>
-        )}
-      </div>
 
-      <div>
-        <h2 className="text-2xl md:text-3xl font-bold mb-1">{title}</h2>
-        {subtitle && <p className="text-muted-foreground text-sm">{subtitle}</p>}
-      </div>
-
-      {/* Progress breadcrumbs */}
-      {step !== 'menu' && (
-        <div className="flex items-center gap-2 mt-4 text-xs font-medium overflow-x-auto no-scrollbar whitespace-nowrap">
-          <button
-            className={`${step === 'services' ? 'text-purple-600' : 'text-muted-foreground'} transition-colors`}
-            onClick={() => setStep('services')}
-          >
-            Services
-          </button>
-          <ChevronRight className="w-3 h-3 text-muted-foreground" />
-          <button
-            className={`${step === 'professional' ? 'text-purple-600' : 'text-muted-foreground'} transition-colors`}
-            onClick={() => selectedServices.length > 0 && setStep('professional')}
-            disabled={selectedServices.length === 0}
-          >
-            Professional
-          </button>
-          <ChevronRight className="w-3 h-3 text-muted-foreground" />
-          <button
-            className={`${step === 'datetime' ? 'text-purple-600' : 'text-muted-foreground'} transition-colors`}
-            onClick={() => selectedServices.length > 0 && setStep('datetime')}
-            disabled={selectedServices.length === 0}
-          >
-            Date & Time
-          </button>
-          {step === 'confirm' && (
-            <>
-              <ChevronRight className="w-3 h-3 text-muted-foreground" />
-              <span className="text-purple-600">Confirm</span>
-            </>
+          {onClose && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="rounded-full hover:bg-black/5 ml-auto"
+            >
+              <X className="w-5 h-5" />
+            </Button>
           )}
         </div>
-      )}
+
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold mb-1">{title}</h2>
+          {subtitle && <p className="text-muted-foreground text-sm">{subtitle}</p>}
+        </div>
+
+        {/* Progress breadcrumbs */}
+        {step !== 'menu' && (
+          <div className="flex items-center gap-2 mt-4 text-xs font-medium overflow-x-auto no-scrollbar whitespace-nowrap">
+            <button
+              className={`${step === 'services' ? 'text-purple-600' : 'text-muted-foreground'} transition-colors`}
+              onClick={() => setStep('services')}
+            >
+              Services
+            </button>
+            <ChevronRight className="w-3 h-3 text-muted-foreground" />
+            <button
+              className={`${step === 'professional' ? 'text-purple-600' : 'text-muted-foreground'} transition-colors`}
+              onClick={() => selectedServices.length > 0 && setStep('professional')}
+              disabled={selectedServices.length === 0}
+            >
+              Professional
+            </button>
+            <ChevronRight className="w-3 h-3 text-muted-foreground" />
+            <button
+              className={`${step === 'datetime' ? 'text-purple-600' : 'text-muted-foreground'} transition-colors`}
+              onClick={() => selectedServices.length > 0 && setStep('datetime')}
+              disabled={selectedServices.length === 0}
+            >
+              Date & Time
+            </button>
+            {step === 'confirm' && (
+              <>
+                <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                <span className="text-purple-600">Confirm</span>
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 
   if (step === 'menu') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-purple-50 to-blue-50 pt-20 pb-12 px-4 wizard-scrollable">
+      <div className="min-h-screen bg-white pt-20 pb-12 px-4 wizard-scrollable">
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="flex items-start justify-between mb-8">
             <div>
@@ -419,7 +421,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
   if (step === 'services') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-purple-50 to-blue-50 pt-6 pb-32 px-4 wizard-scrollable">
+      <div className="min-h-screen bg-white pt-0 pb-32 px-4 wizard-scrollable">
         <div className="max-w-4xl mx-auto">
           {renderHeader('Select Services', 'Choose one or more services')}
 
@@ -534,7 +536,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
   if (step === 'professional') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-purple-50 to-blue-50 pt-6 pb-32 px-4 wizard-scrollable">
+      <div className="min-h-screen bg-white pt-0 pb-32 px-4 wizard-scrollable">
         <div className="max-w-4xl mx-auto">
           {renderHeader('Choose Professional', 'Select your preferred master or any available')}
 
@@ -644,12 +646,12 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     ].filter(g => g.slots.length > 0);
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-purple-50 to-blue-50 pt-6 pb-32 px-4 wizard-scrollable">
+      <div className="min-h-screen bg-white pt-0 pb-32 px-4 wizard-scrollable">
         <div className="max-w-4xl mx-auto">
           {renderHeader('Select Date & Time', 'Choose your preferred appointment slot')}
 
           {/* Calendar */}
-          <Card className="mb-6 overflow-hidden border-2">
+          <Card className="mb-6 overflow-hidden border-2 wizard-calendar-card">
             <CardContent className="p-6">
               {/* Month Navigation */}
               <div className="flex items-center justify-between mb-6">
@@ -789,8 +791,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
   if (step === 'confirm') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-purple-50 to-blue-50 pt-6 pb-32 px-4 wizard-scrollable">
-        <div className="max-w-2xl mx-auto">
+      <div className="min-h-screen bg-white pt-0 pb-32 px-4 wizard-scrollable">
+        <div className="max-w-4xl mx-auto">
           {renderHeader('Confirm Booking', 'Review your appointment details')}
 
           <div className="space-y-4">
@@ -880,7 +882,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
           {/* Fixed Bottom Bar */}
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-2xl p-4 z-20">
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-4xl mx-auto">
               <Button
                 size="lg"
                 className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold"
