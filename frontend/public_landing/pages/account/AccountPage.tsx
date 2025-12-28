@@ -1745,7 +1745,7 @@ export function AccountPage() {
 
         {isBooking && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/5 backdrop-blur-sm overflow-y-auto">
-            <div className="relative w-full min-h-screen bg-white shadow-2xl animate-in fade-in zoom-in duration-300">
+            <div className="relative w-full min-h-screen bg-transparent shadow-2xl animate-in fade-in zoom-in duration-300">
               <UserBookingWizard onClose={closeBooking} />
             </div>
           </div>

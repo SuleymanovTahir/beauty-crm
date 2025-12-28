@@ -1,5 +1,6 @@
 @import "tailwindcss" source(none);
 @source "./AccountPage.tsx";
+@source "./UserBookingWizard.tsx";
 
 @utility scrollbar-hide {
   -ms-overflow-style: none;
