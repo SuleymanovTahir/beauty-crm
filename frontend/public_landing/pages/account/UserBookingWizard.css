@@ -1,105 +1,95 @@
 /* UserBookingWizard.css */
 
-/* Variables from new_admin theme */
+/* Variables from AccountPage theme */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: oklch(0.145 0 0);
   --card: #ffffff;
-  --card-foreground: #171717;
+  --card-foreground: oklch(0.145 0 0);
   --popover: #ffffff;
-  --popover-foreground: #171717;
+  --popover-foreground: oklch(0.145 0 0);
   --primary: #030213;
   --primary-foreground: #ffffff;
-  --secondary: #f4f4f5;
-  --secondary-foreground: #18181b;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --accent: #f4f4f5;
-  --accent-foreground: #18181b;
-  --destructive: #ef4444;
-  --destructive-foreground: #fafafa;
-  --border: #e4e4e7;
-  --input: #e4e4e7;
-  --ring: #18181b;
-  --radius: 0.5rem;
+  --secondary: oklch(0.95 0.0058 264.53);
+  --secondary-foreground: #030213;
+  --muted: #ececf0;
+  --muted-foreground: #717182;
+  --accent: #e9ebef;
+  --accent-foreground: #030213;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --input: transparent;
+  --ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
 }
 
-/* Gradients used in UserBookingWizard */
-.bg-gradient-to-br {
-  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+/* Override containers to match main site colors */
+.bg-gradient-to-br.from-rose-50 {
+    background: var(--background) !important;
 }
 
-.from-rose-50 {
-  --tw-gradient-from: #fff1f2;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 241, 242, 0));
+.sticky.top-0.bg-gradient-to-br {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(8px);
 }
 
-.via-purple-50 {
-  --tw-gradient-via: #f5f3ff;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(245, 243, 255, 0));
+/* Constrain large screen elements */
+.wizard-content-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-.to-blue-50 {
-  --tw-gradient-to: #eff6ff;
+/* Fixed calendar size on big screens */
+.wizard-calendar-card {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.from-purple-600 {
-  --tw-gradient-from: #9333ea;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(147, 51, 234, 0));
-}
-
-.to-pink-600 {
-  --tw-gradient-to: #db2777;
-}
-
-.from-purple-500 {
-  --tw-gradient-from: #a855f7;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(168, 85, 247, 0));
-}
-
-.to-pink-500 {
-  --tw-gradient-to: #ec4899;
-}
-
-.from-blue-500 {
-  --tw-gradient-from: #3b82f6;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(59, 130, 246, 0));
-}
-
-.to-cyan-500 {
-  --tw-gradient-to: #06b6d4;
-}
-
-.from-orange-500 {
-  --tw-gradient-from: #f97316;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(249, 115, 22, 0));
-}
-
-.to-red-500 {
-  --tw-gradient-to: #ef4444;
-}
-
-/* Base styles for the wizard */
-.wizard-full-page {
-    isolation: isolate;
-}
-
-/* Ensure scrolling works */
+/* Ensure scrolling works neatly */
 .wizard-scrollable {
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
     height: 100vh;
+    background: var(--background);
+    position: relative;
+    display: block;
 }
 
-/* Custom transitions and breadcrumbs */
-.transition-colors {
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
+/* Remove weird top margin/text leaks */
+.wizard-root {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--background);
 }
 
-/* Helpers for Tailwind v4 classes if needed */
-.size-full {
-    width: 100%;
-    height: 100%;
+/* Style for progress breadcrumbs to match primary */
+.text-purple-600 {
+    color: var(--primary) !important;
+}
+
+.bg-purple-600 {
+    background-color: var(--primary) !important;
+}
+
+.border-purple-500 {
+    border-color: var(--primary) !important;
+}
+
+.focus\:border-purple-500:focus {
+    border-color: var(--primary) !important;
+}
+
+/* Fix aspect ratio for large calendars */
+@media (min-width: 768px) {
+    .aspect-square {
+        aspect-ratio: auto !important;
+        height: auto !important;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
 }
