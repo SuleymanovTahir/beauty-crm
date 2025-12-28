@@ -43,6 +43,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { languages } from '../../i18n';
+import './Settings.css';
 
 export default function AdminSettings() {
   const { t } = useTranslation(['admin/settings', 'common']);
@@ -969,14 +970,14 @@ export default function AdminSettings() {
   const activeTab = tab || 'general';
 
   const handleTabChange = (value: string) => {
-    navigate(`/ admin / settings / ${value} `);
+    navigate(`/admin/settings/${value}`);
   };
 
   return (
     <div className="p-4 md:p-8">
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-3">
-          <SettingsIcon className="w-6 h-6 md:w-8 md:h-8 text-pink-600" />
+          <SettingsIcon className="w-6 h-6 md:w-8 md:h-8 settings-icon-primary" />
           {t('settings:system_settings')}
         </h1>
         <p className="text-sm md:text-base text-gray-600">{t('settings:manage_crm_parameters')}</p>
@@ -998,47 +999,47 @@ export default function AdminSettings() {
       )}
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-        <TabsList className="flex flex-wrap w-full lg:w-auto gap-1">
+        <TabsList className="flex flex-nowrap overflow-x-auto w-full lg:w-auto gap-1 pb-1 hide-scrollbar">
 
-          <TabsTrigger key="profile" value="profile" className="flex items-center gap-2">
+          <TabsTrigger key="profile" value="profile" className="flex items-center gap-2 whitespace-nowrap settings-tab-trigger-active">
             <User className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:profile', 'Profile')}</span>
           </TabsTrigger>
 
-          <TabsTrigger key="general" value="general" className="flex items-center gap-2">
+          <TabsTrigger key="general" value="general" className="flex items-center gap-2 settings-tab-trigger-active">
             <Globe className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:general')}</span>
           </TabsTrigger>
 
-          <TabsTrigger key="notifications" value="notifications" className="flex items-center gap-2">
+          <TabsTrigger key="notifications" value="notifications" className="flex items-center gap-2 settings-tab-trigger-active">
             <Bell className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:notifications')}</span>
           </TabsTrigger>
-          <TabsTrigger key="security" value="security" className="flex items-center gap-2">
+          <TabsTrigger key="security" value="security" className="flex items-center gap-2 settings-tab-trigger-active">
             <Shield className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:security')}</span>
           </TabsTrigger>
-          <TabsTrigger key="diagnostics" value="diagnostics" className="flex items-center gap-2">
+          <TabsTrigger key="diagnostics" value="diagnostics" className="flex items-center gap-2 settings-tab-trigger-active">
             <AlertCircle className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:diagnostics')}</span>
           </TabsTrigger>
-          <TabsTrigger key="subscriptions" value="subscriptions" className="flex items-center gap-2">
+          <TabsTrigger key="subscriptions" value="subscriptions" className="flex items-center gap-2 settings-tab-trigger-active">
             <Mail className="w-4 h-4" />
             <span className="hidden sm:inline">{t('subscriptions')}</span>
           </TabsTrigger>
-          <TabsTrigger key="broadcasts" value="broadcasts" className="flex items-center gap-2">
+          <TabsTrigger key="broadcasts" value="broadcasts" className="flex items-center gap-2 settings-tab-trigger-active">
             <Send className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:broadcasts')}</span>
           </TabsTrigger>
-          <TabsTrigger key="messengers" value="messengers" className="flex items-center gap-2">
+          <TabsTrigger key="messengers" value="messengers" className="flex items-center gap-2 settings-tab-trigger-active">
             <MessageCircle className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:messengers')}</span>
           </TabsTrigger>
-          <TabsTrigger key="holidays" value="holidays" className="flex items-center gap-2">
+          <TabsTrigger key="holidays" value="holidays" className="flex items-center gap-2 settings-tab-trigger-active">
             <Calendar className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:holidays', 'Holidays')}</span>
           </TabsTrigger>
-          <TabsTrigger key="danger" value="danger" className="flex items-center gap-2">
+          <TabsTrigger key="danger" value="danger" className="flex items-center gap-2 settings-tab-trigger-active">
             <Trash2 className="w-4 h-4" />
             <span className="hidden sm:inline">{t('danger_zone')}</span>
           </TabsTrigger>
@@ -1049,13 +1050,13 @@ export default function AdminSettings() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl text-[var(--heading)] flex items-center gap-3">
-                <User className="w-6 h-6 text-primary" />
+                <User className="w-6 h-6 settings-text-primary" />
                 {t('settings:personal_information', 'Личная информация')}
               </h2>
               <Button
                 onClick={() => handleSaveProfile()}
                 disabled={savingProfile}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="settings-bg-primary settings-bg-primary-hover settings-text-primary-foreground"
               >
                 {savingProfile ? (
                   <>
@@ -1083,12 +1084,12 @@ export default function AdminSettings() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                        <User className="w-16 h-16 text-primary/40" />
+                      <div className="w-full h-full settings-bg-primary-light flex items-center justify-center">
+                        <User className="w-16 h-16 settings-text-primary-muted" />
                       </div>
                     )}
                   </div>
-                  <label className="absolute bottom-1 right-1 p-2 bg-primary text-primary-foreground rounded-full cursor-pointer shadow-lg hover:bg-primary/90 transition-all scale-90 hover:scale-100">
+                  <label className="absolute bottom-1 right-1 p-2 settings-bg-primary settings-text-primary-foreground rounded-full cursor-pointer shadow-lg settings-bg-primary-hover transition-all scale-90 hover:scale-100">
                     <Camera className="w-4 h-4" />
                     <input
                       type="file"
@@ -1102,7 +1103,7 @@ export default function AdminSettings() {
                 <h4 className="text-sm font-medium text-gray-900 mb-1">{profileForm.full_name || 'User'}</h4>
                 <p className="text-xs text-muted-foreground mb-4 uppercase tracking-wider">{profileForm.position || t('settings:no_position', 'Сотрудник')}</p>
                 {uploadingPhoto && (
-                  <div className="flex items-center gap-2 text-xs text-primary animate-pulse">
+                  <div className="flex items-center gap-2 text-xs settings-text-primary animate-pulse">
                     <Loader className="w-3 h-3 animate-spin" />
                     {t('common:uploading', 'Загрузка...')}
                   </div>
@@ -1171,7 +1172,7 @@ export default function AdminSettings() {
 
                 <div className="border-t border-border/50 pt-6">
                   <h3 className="text-lg font-medium text-[var(--heading)] mb-4 flex items-center gap-2">
-                    <Briefcase className="w-5 h-5 text-primary" />
+                    <Briefcase className="w-5 h-5 settings-text-primary" />
                     {t('settings:professional_profile', 'Профессиональный профиль')}
                   </h3>
 
@@ -1235,14 +1236,14 @@ export default function AdminSettings() {
 
                 <div className="border-t border-border/50 pt-6">
                   <h3 className="text-lg font-medium text-[var(--heading)] mb-4 flex items-center gap-2">
-                    <Globe className="w-5 h-5 text-primary" />
+                    <Globe className="w-5 h-5 settings-text-primary" />
                     {t('settings:social_links', 'Социальные сети')}
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="instagram" className="flex items-center gap-2">
-                        <Instagram className="w-3.5 h-3.5 text-pink-600" />
+                        <Instagram className="w-3.5 h-3.5 settings-text-pink" />
                         Instagram
                       </Label>
                       <Input
@@ -1288,9 +1289,9 @@ export default function AdminSettings() {
         <TabsContent value="general">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6">{t('settings:general_settings')}</h2>
-            <div className="mb-8 p-6 bg-gradient-to-r from-pink-50 to-purple-50 border-2 border-pink-200 rounded-xl">
+            <div className="mb-8 p-6 settings-card-gradient border-2 rounded-xl">
               <div className="flex items-center gap-3 mb-4">
-                <Bot className="w-6 h-6 text-pink-600" />
+                <Bot className="w-6 h-6 settings-bot-icon" />
                 <h3 className="text-lg font-bold text-gray-900">{t('settings:bot_management')}</h3>
               </div>
 
@@ -1312,7 +1313,7 @@ export default function AdminSettings() {
 
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+                <Loader className="w-8 h-8 settings-loader animate-spin" />
               </div>
             ) : (
               <form onSubmit={handleSaveGeneral} className="space-y-6">
@@ -1557,7 +1558,7 @@ export default function AdminSettings() {
 
                 <Button
                   type="submit"
-                  className="bg-gradient-to-r from-pink-500 to-purple-600"
+                  className="settings-button-gradient"
                   disabled={!userPermissions.canEditSettings}
                 >
                   {t('settings:save_changes')}
@@ -1679,7 +1680,7 @@ export default function AdminSettings() {
 
                 {loadingReminderSettings ? (
                   <div className="flex items-center justify-center py-12">
-                    <Loader className="w-6 h-6 text-pink-600 animate-spin" />
+                    <Loader className="w-6 h-6 settings-loader animate-spin" />
                   </div>
                 ) : bookingReminderSettings.length === 0 ? (
                   <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
@@ -1695,7 +1696,7 @@ export default function AdminSettings() {
                         className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <Bell className={`w - 5 h - 5 ${setting.is_enabled ? 'text-pink-600' : 'text-gray-400'} `} />
+                          <Bell className={`w - 5 h - 5 ${setting.is_enabled ? 'settings-text-pink' : 'text-gray-400'} `} />
                           <div>
                             <p className="text-sm font-medium text-gray-900">
                               {t('settings:reminder_label')} {setting.days_before > 0 && `${setting.days_before} ${t('settings:days')} `}{setting.days_before > 0 && setting.hours_before > 0 && ' '}{setting.hours_before > 0 && `${setting.hours_before} ${t('settings:hours')} `}
@@ -1715,7 +1716,7 @@ export default function AdminSettings() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteReminderSetting(setting.id)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="settings-text-red settings-text-red-hover settings-bg-red-light-hover"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -1797,7 +1798,7 @@ export default function AdminSettings() {
                         <Button
                           type="button"
                           onClick={handleCreateReminderSetting}
-                          className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600"
+                          className="flex-1 settings-button-gradient"
                         >
                           {t('settings:create')}
                         </Button>
@@ -1809,7 +1810,7 @@ export default function AdminSettings() {
 
               <Button
                 type="submit"
-                className="bg-gradient-to-r from-pink-500 to-purple-600"
+                className="settings-button-gradient"
                 disabled={!userPermissions.canEditSettings}
               >
                 {t('settings:save_notification_settings')}
@@ -1826,7 +1827,7 @@ export default function AdminSettings() {
                 <h2 className="text-2xl text-gray-900 mb-2">{t('settings:manage_roles')}</h2>
                 <p className="text-gray-600">{t('settings:create_roles_and_assign_permissions')}</p>
               </div>
-              <Button onClick={() => setShowCreateRoleDialog(true)} className="bg-pink-600 hover:bg-pink-700">
+              <Button onClick={() => setShowCreateRoleDialog(true)} className="settings-danger-button">
                 <Plus className="w-4 h-4 mr-2" />
                 {t('settings:create_role')}
               </Button>
@@ -1850,7 +1851,7 @@ export default function AdminSettings() {
             {/* Roles Grid */}
             {loadingRoles ? (
               <div className="flex items-center justify-center py-12">
-                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+                <Loader className="w-8 h-8 settings-loader animate-spin" />
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1864,7 +1865,7 @@ export default function AdminSettings() {
 
                     <div className="mb-4">
                       <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mb-4">
-                        <Shield className="w-6 h-6 text-pink-600" />
+                        <Shield className="w-6 h-6 settings-text-pink" />
                       </div>
                       <h3 className="text-lg font-bold text-gray-900 mb-2">{role.name}</h3>
                       <p className="text-sm text-gray-600 line-clamp-2">{role.description}</p>
@@ -1885,7 +1886,7 @@ export default function AdminSettings() {
                           size="sm"
                           variant="outline"
                           onClick={() => handleDeleteRole(role.key, role.name)}
-                          className="text-red-600 hover:text-red-700"
+                          className="settings-text-red settings-text-red-hover"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -1982,7 +1983,7 @@ export default function AdminSettings() {
 
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-pink-500 to-purple-600"
+                className="settings-button-gradient"
                 onClick={async () => {
                   const loadingToast = toast.loading(t('settings:starting_diagnostics'));
 
@@ -2032,7 +2033,7 @@ export default function AdminSettings() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <div className="mb-6">
               <h2 className="text-2xl text-gray-900 mb-2 flex items-center gap-3">
-                <Mail className="w-6 h-6 text-pink-600" />
+                <Mail className="w-6 h-6 settings-text-pink" />
                 {t('email_subscriptions')}
               </h2>
               <p className="text-gray-600">{t('manage_email_subscriptions')}</p>
@@ -2040,7 +2041,7 @@ export default function AdminSettings() {
 
             {loadingSubscriptions ? (
               <div className="flex items-center justify-center py-12">
-                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+                <Loader className="w-8 h-8 settings-loader animate-spin" />
               </div>
             ) : (
               <div className="space-y-6">
@@ -2118,7 +2119,7 @@ export default function AdminSettings() {
         <TabsContent value="broadcasts">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-3">
-              <Send className="w-6 h-6 text-pink-600" />
+              <Send className="w-6 h-6 settings-text-pink" />
               {t('settings:mass_broadcasts')}
             </h2>
             <p className="text-gray-600 mb-6">{t('settings:broadcast_description')}</p>
@@ -2194,10 +2195,10 @@ export default function AdminSettings() {
                           <button
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('instagram')}
-                            className={`flex items - center gap - 2 px - 4 py - 2 rounded - lg border - 2 transition - all ${broadcastForm.channels.includes('instagram')
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('instagram')
                               ? 'border-purple-500 bg-purple-50 text-purple-700'
                               : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                              } `}
+                              }`}
                           >
                             <Instagram className="w-5 h-5" />
                             Instagram
@@ -2271,7 +2272,7 @@ export default function AdminSettings() {
                                           setBroadcastForm({ ...broadcastForm, user_ids: filteredUsers.map(u => u.id) });
                                         }
                                       }}
-                                      className="w-4 h-4 text-pink-600 rounded"
+                                      className="w-4 h-4 settings-accent-pink rounded"
                                     />
                                     <span className="text-sm font-medium text-gray-700">
                                       {t('settings:select_all')} ({filteredUsers.length})
@@ -2281,7 +2282,7 @@ export default function AdminSettings() {
                                 <div className="max-h-64 overflow-y-auto">
                                   {loadingBroadcastUsers ? (
                                     <div className="flex justify-center py-8">
-                                      <Loader className="w-5 h-5 animate-spin text-pink-600" />
+                                      <Loader className="w-5 h-5 animate-spin settings-loader" />
                                     </div>
                                   ) : filteredUsers.length === 0 ? (
                                     <div className="flex justify-center py-8 text-gray-500 text-sm">
@@ -2298,7 +2299,7 @@ export default function AdminSettings() {
                                             type="checkbox"
                                             checked={(broadcastForm.user_ids || []).includes(user.id)}
                                             onChange={() => handleBroadcastUserToggle(user.id)}
-                                            className="w-4 h-4 text-pink-600 rounded"
+                                            className="w-4 h-4 settings-accent-pink rounded"
                                           />
                                           <div className="flex-1">
                                             <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
@@ -2313,7 +2314,7 @@ export default function AdminSettings() {
                                   <button
                                     type="button"
                                     onClick={() => setUserDropdownOpen(false)}
-                                    className="w-full px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-lg transition-colors"
+                                    className="w-full px-4 py-2 text-sm font-medium text-white settings-danger-button rounded-lg transition-colors"
                                   >
                                     {t('settings:done')}
                                   </button>
@@ -2378,7 +2379,7 @@ export default function AdminSettings() {
                         <Button
                           onClick={handleSendBroadcast}
                           disabled={sendingBroadcast || !broadcastPreview}
-                          className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600"
+                          className="flex-1 settings-button-gradient"
                         >
                           {sendingBroadcast ? (
                             <>
@@ -2399,7 +2400,7 @@ export default function AdminSettings() {
                   {/* Preview Panel */}
                   <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <Users className="w-5 h-5 text-pink-600" />
+                      <Users className="w-5 h-5 settings-text-pink" />
                       {t('settings:recipients')}
                     </h2>
 
@@ -2413,9 +2414,9 @@ export default function AdminSettings() {
                     ) : (
                       <div className="space-y-4">
                         {/* Total */}
-                        <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-lg p-4">
+                        <div className="settings-card-gradient border rounded-lg p-4">
                           <p className="text-sm text-gray-600 mb-1">{t('settings:total_recipients')}</p>
-                          <p className="text-3xl font-bold text-pink-600">{broadcastPreview.total_users}</p>
+                          <p className="text-3xl font-bold settings-text-pink">{broadcastPreview.total_users}</p>
                         </div>
 
                         {/* By Channel */}
@@ -2443,13 +2444,13 @@ export default function AdminSettings() {
                           )}
 
                           {broadcastPreview.by_channel.instagram > 0 && (
-                            <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
-                              <div className="flex items-center gap-2">
-                                <Instagram className="w-4 h-4 text-purple-600" />
-                                <span className="text-sm text-gray-700">{t('settings:channel_instagram')}</span>
-                              </div>
-                              <span className="font-bold text-purple-600">{broadcastPreview.by_channel.instagram}</span>
+                          <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+                            <div className="flex items-center gap-2">
+                              <Camera className="w-4 h-4 text-purple-600" />
+                              <span className="text-sm text-gray-700">{t('settings:channel_instagram')}</span>
                             </div>
+                            <span className="font-bold text-purple-600">{broadcastPreview.by_channel.instagram}</span>
+                          </div>
                           )}
                         </div>
 
@@ -2492,7 +2493,7 @@ export default function AdminSettings() {
 
                   {loadingBroadcastHistory ? (
                     <div className="flex items-center justify-center py-12">
-                      <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+                      <Loader className="w-8 h-8 settings-loader animate-spin" />
                     </div>
                   ) : broadcastHistory.length === 0 ? (
                     <div className="text-center py-12 text-gray-500">
@@ -2546,7 +2547,7 @@ export default function AdminSettings() {
         <TabsContent value="messengers">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-3">
-              <MessageCircle className="w-6 h-6 text-pink-600" />
+              <MessageCircle className="w-6 h-6 settings-text-pink" />
               {t('settings:messengers_settings')}
             </h2>
             <p className="text-gray-600 mb-6">
@@ -2555,17 +2556,17 @@ export default function AdminSettings() {
 
             {loadingMessengers ? (
               <div className="flex items-center justify-center py-12">
-                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+                <Loader className="w-8 h-8 settings-loader animate-spin" />
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {messengerSettings.map((messenger) => (
                   <div
                     key={messenger.messenger_type}
-                    className={`border - 2 rounded - xl p - 6 transition - all ${messenger.is_enabled
-                      ? 'border-pink-300 bg-pink-50'
+                    className={`border-2 rounded-xl p-6 transition-all ${messenger.is_enabled
+                      ? 'settings-border-pink-light settings-bg-pink-light'
                       : 'border-gray-200 bg-white'
-                      } `}
+                      }`}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
@@ -2640,7 +2641,7 @@ export default function AdminSettings() {
                               <Button
                                 type="button"
                                 onClick={() => handleSaveMessengerConfig(messenger.messenger_type)}
-                                className="bg-gradient-to-r from-pink-500 to-purple-600"
+                                className="settings-button-gradient"
                               >
                                 <Save className="w-4 h-4 mr-2" />
                                 {t('settings:save')}
@@ -2695,7 +2696,7 @@ export default function AdminSettings() {
               </div>
               <Button
                 onClick={() => setShowCreateHolidayDialog(true)}
-                className="bg-gradient-to-r from-pink-500 to-purple-600"
+                className="settings-button-gradient"
                 disabled={!userPermissions.canEditSettings}
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -2705,7 +2706,7 @@ export default function AdminSettings() {
 
             {loadingHolidays ? (
               <div className="flex items-center justify-center py-12">
-                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+                <Loader className="w-8 h-8 settings-loader animate-spin" />
               </div>
             ) : holidays.length === 0 ? (
               <div className="text-center py-12">
@@ -2720,7 +2721,7 @@ export default function AdminSettings() {
                     className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <Calendar className="w-5 h-5 text-pink-600" />
+                      <Calendar className="w-5 h-5 settings-text-pink" />
                       <div>
                         <p className="font-medium text-gray-900">{holiday.name}</p>
                         <p className="text-sm text-gray-600">{holiday.date}</p>
@@ -2731,7 +2732,7 @@ export default function AdminSettings() {
                       size="sm"
                       onClick={() => handleDeleteHoliday(holiday.date)}
                       disabled={!userPermissions.canEditSettings}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="settings-text-red settings-text-red-hover settings-bg-red-light-hover"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -2789,7 +2790,7 @@ export default function AdminSettings() {
                   </Button>
                   <Button
                     onClick={handleCreateHoliday}
-                    className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600"
+                    className="flex-1 settings-button-gradient"
                   >
                     {t('common:create', 'Create')}
                   </Button>
@@ -2801,18 +2802,18 @@ export default function AdminSettings() {
 
         {/* Danger Zone */}
         <TabsContent value="danger">
-          <div className="bg-white rounded-xl shadow-sm border border-red-200 p-8">
+          <div className="bg-white rounded-xl shadow-sm border settings-danger-zone p-8">
             <div className="mb-6">
               <h2 className="text-2xl text-gray-900 mb-2 flex items-center gap-3">
-                <Trash2 className="w-6 h-6 text-red-600" />
+                <Trash2 className="w-6 h-6 settings-text-red" />
                 {t('danger_zone')}
               </h2>
               <p className="text-gray-600">{t('irreversible_actions')}</p>
             </div>
 
-            <div className="bg-red-50 border-2 border-red-200 rounded-lg p-6">
-              <h3 className="text-lg font-bold text-red-900 mb-2">{t('delete_account')}</h3>
-              <p className="text-sm text-red-700 mb-6">
+            <div className="settings-bg-red-light border-2 settings-border-red rounded-lg p-6">
+              <h3 className="text-lg font-bold settings-text-red-dark mb-2">{t('delete_account')}</h3>
+              <p className="text-sm settings-text-red-dark opacity-90 mb-6">
                 {t('delete_account_warning')}
               </p>
 
@@ -2845,7 +2846,7 @@ export default function AdminSettings() {
                 <Button
                   onClick={handleDeleteAccount}
                   disabled={deletingAccount || !deletePassword || deleteConfirmText !== 'DELETE'}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white"
+                  className="w-full settings-danger-button text-white"
                 >
                   {deletingAccount ? (
                     <>
@@ -2911,7 +2912,7 @@ export default function AdminSettings() {
                 <Button variant="outline" onClick={() => setShowCreateRoleDialog(false)} className="flex-1">
                   {t('settings:cancel')}
                 </Button>
-                <Button onClick={handleCreateRole} disabled={savingRole} className="flex-1 bg-pink-600 hover:bg-pink-700">
+                <Button onClick={handleCreateRole} disabled={savingRole} className="flex-1 settings-danger-button">
                   {savingRole ? t('settings:creating') + '...' : t('settings:create')}
                 </Button>
               </div>
@@ -2970,7 +2971,7 @@ export default function AdminSettings() {
                                   )
                                 }
                                 onChange={() => handleTogglePermission(key, action)}
-                                className="w-5 h-5 cursor-pointer accent-pink-600"
+                                className="w-5 h-5 cursor-pointer settings-accent-pink"
                               />
                             </td>
                           ))}
@@ -2985,7 +2986,7 @@ export default function AdminSettings() {
                 <Button variant="outline" onClick={() => setShowPermissionsDialog(false)} className="flex-1">
                   {t('settings:cancel')}
                 </Button>
-                <Button onClick={handleSavePermissions} disabled={savingRole} className="flex-1 bg-pink-600 hover:bg-pink-700">
+                <Button onClick={handleSavePermissions} disabled={savingRole} className="flex-1 settings-danger-button">
                   {savingRole ? t('settings:saving') + '...' : t('settings:save_permissions')}
                 </Button>
               </div>

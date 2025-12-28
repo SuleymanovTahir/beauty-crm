@@ -241,15 +241,11 @@ app.add_middleware(CacheControlMiddleware)
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # 3. CORS Layer (Outer layer)
+# Продакшн домены
 allowed_origins = [
     "https://mlediamant.com",
     "http://mlediamant.com",
     "http://91.201.215.32:8000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:3000",
-    f"http://localhost:{os.getenv('PORT', '8000')}",
-    f"http://127.0.0.1:{os.getenv('PORT', '8000')}",
 ]
 
 # Add optional environment variable origin
@@ -257,9 +253,13 @@ frontend_url = os.getenv('FRONTEND_URL')
 if frontend_url:
     allowed_origins.append(frontend_url)
 
+# Regex для localhost/127.0.0.1 с любым портом (для разработки)
+localhost_regex = r"https?://(localhost|127\.0\.0\.1)(:\d+)?"
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
+    allow_origin_regex=localhost_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -626,7 +626,3 @@ if __name__ == "__main__":
         port=port,
         log_level="info"
     )
-    
-
-
-
