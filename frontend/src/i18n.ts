@@ -62,6 +62,7 @@ const namespaces = [
   'public_landing/services',
   'public_landing/faq',
   'public_landing/banners',
+  'booking',
   'dynamic'
 ];
 // Используем import.meta as any для обхода ошибки типов с Vite
