@@ -138,28 +138,33 @@ function BookingMenu({ bookingState, onNavigate, totalPrice, salonSettings }: an
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
           >
-            <div className="booking-step-card" onClick={() => onNavigate(card.value)}>
+            <div className="booking-step-card relative" onClick={() => onNavigate(card.value)}>
+              {card.isComplete && (
+                <div className="step-check-mark-abs">
+                  <Check className="w-5 h-5" />
+                </div>
+              )}
               <div className="booking-step-header-line" style={{ background: card.gradient }} />
               <div className="booking-step-content">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="step-icon-box" style={{ background: card.gradient }}>
-                    <card.icon className="w-6 h-6" />
-                  </div>
-                  {card.isComplete && (
-                    <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center shadow-lg">
-                      <Check className="w-4 h-4 text-white" />
-                    </div>
-                  )}
+                <div className="step-icon-box" style={{ background: card.gradient }}>
+                  <card.icon className="w-8 h-8" />
                 </div>
 
-                <h3 className="font-black text-xl text-gray-900 mb-1">{card.title}</h3>
-                <p className="text-gray-500 font-bold text-sm mb-4">{card.description}</p>
+                <h3 className="font-black text-2xl text-slate-900 mb-1">{card.title}</h3>
+                <p className="text-slate-500 font-bold text-sm mb-6">{card.description}</p>
 
                 <div className="flex items-center justify-between">
                   <div className={`step-status-badge ${card.isComplete ? 'step-status-complete' : 'step-status-pending'}`}>
-                    {card.isComplete ? t('booking.menu.completed', 'Completed') : t('common.select', 'Select')}
+                    {card.isComplete ? (
+                      <>
+                        <Check className="w-4 h-4 mr-2" />
+                        {t('booking.menu.completed', 'Completed')}
+                      </>
+                    ) : (
+                      t('common.select', 'Select')
+                    )}
                   </div>
-                  <ChevronRight className={`w-5 h-5 ${card.isComplete ? 'text-green-500' : 'text-gray-300'}`} />
+                  <ChevronRight className={`w-6 h-6 ${card.isComplete ? 'text-green-500' : 'text-slate-300'}`} />
                 </div>
               </div>
             </div>
@@ -255,15 +260,15 @@ function ServicesStep({ selectedServices, onServicesChange, onContinue, salonSet
   return (
     <div className="space-y-6 animate-fade-in">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl shadow-xl p-8 border border-purple-50">
-        <h2 className="text-3xl font-black text-gray-900 mb-6">{t('booking.services.title', 'Select Services')}</h2>
+        <h2 className="text-3xl font-black text-slate-900 mb-6">{t('booking.services.title', 'Select Services')}</h2>
 
         <div className="relative mb-6">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400" />
           <Input
             placeholder={t('booking.services.search', 'Search services...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-12 h-14 rounded-2xl bg-gray-50 border-none focus-visible:ring-2 focus-visible:ring-purple-400 font-bold"
+            className="pl-16 h-16 rounded-2xl bg-slate-50 border-none focus-visible:ring-2 focus-visible:ring-purple-400 font-bold text-lg"
           />
         </div>
 
@@ -301,20 +306,20 @@ function ServicesStep({ selectedServices, onServicesChange, onContinue, salonSet
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <h3 className="font-black text-lg text-gray-900 mb-1">{getLocalizedName(service, i18n.language)}</h3>
-                        <p className="text-sm text-gray-500 font-medium mb-4 line-clamp-1">{service.description || t('booking.services.noDescription', 'Professional service')}</p>
-                        <div className="flex items-center gap-4">
-                          <span className="text-xs font-black text-purple-400 flex items-center gap-1 uppercase tracking-wider">
-                            <Clock className="w-3 h-3" />
+                        <h3 className="font-black text-xl text-slate-900 mb-1">{getLocalizedName(service, i18n.language)}</h3>
+                        <p className="text-sm text-slate-400 font-bold mb-4 line-clamp-1">{service.description || t('booking.services.noDescription', 'Professional service')}</p>
+                        <div className="flex items-center gap-6">
+                          <span className="text-xs font-black text-purple-500 flex items-center gap-1.5 uppercase tracking-widest">
+                            <Clock className="w-4 h-4" />
                             {service.duration || '30'} {t('booking.min', 'min')}
                           </span>
-                          <span className="font-black text-lg text-gray-900">
+                          <span className="font-black text-xl text-slate-900">
                             {service.price} {salonSettings?.currency || 'AED'}
                           </span>
                         </div>
                       </div>
-                      <div className={`w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center ${isSelected ? 'bg-purple-600 border-purple-600 shadow-lg' : 'border-gray-200'}`}>
-                        {isSelected && <Check className="w-4 h-4 text-white" />}
+                      <div className={`w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-purple-600 border-purple-600 shadow-lg' : 'border-slate-200 bg-white'}`}>
+                        {isSelected && <Check className="w-5 h-5 text-white" />}
                       </div>
                     </div>
                   </CardContent>
@@ -379,15 +384,19 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, onProfes
           onClick={() => onProfessionalChange(null)}
         >
           <CardContent className="p-8 flex items-center gap-6">
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white shadow-xl group-hover:scale-105 transition-transform">
-              <Sparkles className="w-10 h-10" />
+            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white shadow-xl group-hover:scale-105 transition-all">
+              <Sparkles className="w-12 h-12" />
             </div>
             <div className="flex-1">
-              <h3 className="font-black text-2xl text-gray-900 flex items-center gap-3">
+              <h3 className="font-black text-3xl text-slate-900 flex items-center gap-4">
                 {t('booking.professional.anyAvailable', 'Any Available Professional')}
-                {selectedProfessional === null && professionalSelected && <CheckCircle2 className="w-6 h-6 text-green-500" />}
+                {selectedProfessional === null && professionalSelected && (
+                  <div className="bg-green-500 text-white rounded-full p-1.5 shadow-lg">
+                    <Check className="w-5 h-5" />
+                  </div>
+                )}
               </h3>
-              <p className="text-gray-500 font-bold">{t('booking.professional.firstAvailable', 'First available master will take your appointment')}</p>
+              <p className="text-slate-400 font-bold text-lg">{t('booking.professional.firstAvailable', 'First available master will take your appointment')}</p>
             </div>
           </CardContent>
         </Card>
@@ -409,27 +418,27 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, onProfes
               >
                 <CardContent className="p-6 flex items-center gap-6">
                   <div className="relative">
-                    <Avatar className="w-20 h-20 border-4 border-white shadow-xl ring-2 ring-purple-50">
+                    <Avatar className="w-20 h-20 rounded-3xl border-2 border-white shadow-xl overflow-hidden ring-4 ring-slate-50">
                       <AvatarImage src={master.photo} className="object-cover" />
-                      <AvatarFallback className="bg-gradient-to-br from-purple-100 to-pink-100 text-purple-600 font-black text-2xl">
+                      <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white font-black text-3xl">
                         {master.full_name[0]}
                       </AvatarFallback>
                     </Avatar>
                     {isSelected && (
-                      <div className="absolute -bottom-1 -right-1 bg-green-500 text-white rounded-full p-1 shadow-lg ring-2 ring-white">
+                      <div className="absolute -top-2 -right-2 bg-purple-600 text-white rounded-full p-1.5 shadow-xl border-2 border-white animate-scale-in">
                         <Check className="w-4 h-4" />
                       </div>
                     )}
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-black text-xl text-gray-900 mb-1">{master.full_name}</h3>
-                    <p className="text-sm text-purple-500 font-black uppercase tracking-wider mb-3">{master.position || t('common.professional', 'Professional')}</p>
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1.5">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="font-black text-sm text-gray-700">{master.rating || '5.0'}</span>
+                    <h3 className="font-black text-2xl text-slate-900 mb-1">{master.full_name}</h3>
+                    <p className="text-sm text-purple-500 font-black uppercase tracking-widest mb-3">{master.position || t('common.professional', 'Professional')}</p>
+                    <div className="flex items-center gap-6">
+                      <div className="flex items-center gap-2">
+                        <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                        <span className="font-black text-base text-slate-700">{master.rating || '5.0'}</span>
                       </div>
-                      <span className="text-xs text-gray-400 font-bold uppercase">({master.reviews || 0} reviews)</span>
+                      <span className="text-xs text-slate-300 font-bold uppercase tracking-tight">({master.reviews || 0} reviews)</span>
                     </div>
                   </div>
                 </CardContent>
@@ -535,35 +544,35 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
 
   return (
     <div className="space-y-8 pb-32 animate-fade-in">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl shadow-xl p-8 border border-purple-50">
-        <h2 className="text-3xl font-black text-gray-900 mb-2">{t('booking.datetime.title', 'Select Date & Time')}</h2>
-        <p className="text-purple-500 font-bold">{t('booking.duration', 'Total duration')}: {duration} {t('booking.min', 'min')}</p>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-[2.5rem] shadow-xl p-10 border border-slate-50">
+        <h2 className="text-4xl font-black text-slate-900 mb-3">{t('booking.datetime.title', 'Select Date & Time')}</h2>
+        <p className="text-purple-600 font-bold text-lg">{t('booking.totalDuration', 'Total duration')}: {duration} {t('booking.min', 'min')}</p>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Date Card */}
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="booking-calendar-card">
           <div className="calendar-header-gradient flex justify-between items-center">
-            <span className="text-xl font-black uppercase tracking-wider">{t('booking.datetime.date', 'Date')}</span>
+            <span className="text-xl font-black uppercase tracking-widest">{t('booking.datetime.date', 'Date')}</span>
             <div className="flex gap-2">
-              <Button size="icon" variant="ghost" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))} className="text-white hover:bg-white/20 rounded-xl">
+              <Button size="icon" variant="ghost" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))} className="text-white hover:bg-white/20 rounded-full w-10 h-10">
                 <ChevronLeft className="w-5 h-5" />
               </Button>
-              <Button size="icon" variant="ghost" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))} className="text-white hover:bg-white/20 rounded-xl">
+              <Button size="icon" variant="ghost" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))} className="text-white hover:bg-white/20 rounded-full w-10 h-10">
                 <ChevronRight className="w-5 h-5" />
               </Button>
             </div>
           </div>
-          <div className="p-8">
-            <div className="text-center font-black text-2xl mb-8 text-gray-900">
+          <div className="p-10">
+            <div className="text-center font-black text-3xl mb-8 text-slate-900 tracking-tight">
               {format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}
             </div>
-            <div className="grid grid-cols-7 gap-2 text-center mb-4">
-              {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(d => (
-                <div key={d} className="text-xs font-black text-gray-400 uppercase tracking-widest">{t(`common.days_short.${d.toLowerCase()}`, d)}</div>
+            <div className="grid grid-cols-7 gap-3 text-center mb-4">
+              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
+                <div key={d} className="calendar-weekday">{t(`common.days_short.${d.toLowerCase()}`, d).toUpperCase()}</div>
               ))}
             </div>
-            <div className="grid grid-cols-7 gap-2">
+            <div className="grid grid-cols-7 gap-3">
               {calendarDays.map((d, i) => {
                 const isCurrent = d.month === 'current';
                 const dateObj = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), d.day);
@@ -577,9 +586,10 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
                     key={i}
                     disabled={!isAvailable || isPast}
                     onClick={() => isAvailable && !isPast && onDateTimeChange(dateObj, null)}
-                    className={`aspect-square rounded-2xl flex items-center justify-center font-black text-lg transition-all
-                      ${!isCurrent || isPast || !isAvailable ? 'text-gray-200 cursor-not-allowed' : 'text-gray-700 hover:bg-purple-50 hover:scale-110'}
-                      ${isSelected ? 'bg-purple-600 text-white shadow-xl scale-110 ring-4 ring-purple-100' : ''}`}
+                    className={`aspect-square rounded-2xl flex items-center justify-center font-black text-xl transition-all
+                      ${!isCurrent || isPast || !isAvailable ? 'text-slate-200 cursor-not-allowed' : 'text-slate-700 hover:bg-purple-50 hover:scale-110'}
+                      ${isSelected ? 'bg-purple-600 text-white shadow-xl scale-110 ring-4 ring-purple-100' : ''}
+                      ${isSelected ? 'slot-button-selected' : ''}`}
                   >
                     {d.day}
                   </button>
@@ -611,22 +621,22 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
                 <p className="font-bold text-center">{t('booking.datetime.noSlots', 'No results for this day')}</p>
               </div>
             ) : (
-              <div className="space-y-8">
+              <div className="space-y-10">
                 {(['morning', 'afternoon', 'evening'] as const).map(period => {
                   const slots = groupedSlots[period];
                   if (slots.length === 0) return null;
                   return (
-                    <div key={period} className="space-y-4">
-                      <h4 className="text-xs font-black text-gray-400 uppercase tracking-[0.2em]">{t(`booking.datetime.${period}`, period)}</h4>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <div key={period} className="space-y-6">
+                      <h4 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em]">{t(`booking.datetime.${period}`, period)}</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         {slots.map(slot => (
                           <button
                             key={slot.time}
                             onClick={() => onDateTimeChange(selectedDate, slot.time)}
-                            className={`py-4 rounded-2xl font-black text-sm transition-all border-2 
+                            className={`slot-button py-5 rounded-2xl font-black text-lg
                               ${selectedTime === slot.time
-                                ? 'bg-purple-600 text-white border-purple-600 shadow-xl scale-105'
-                                : 'bg-white text-gray-900 border-gray-100 hover:border-purple-200 hover:bg-purple-50/50'}`}
+                                ? 'slot-button-selected bg-purple-600 text-white border-purple-600 shadow-xl'
+                                : 'bg-white text-slate-900 border-slate-100 hover:border-purple-200 hover:bg-purple-50/50'}`}
                           >
                             {slot.time}
                           </button>
@@ -842,7 +852,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const step = searchParams.get('booking') || 'menu';
-  const { t, i18n } = useTranslation(['booking', 'common']);
+  const { t } = useTranslation(['booking', 'common']);
 
   const [bookingState, setBookingState] = useState<BookingState>({
     services: [],

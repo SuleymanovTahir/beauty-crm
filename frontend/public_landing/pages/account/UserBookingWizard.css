@@ -6,16 +6,19 @@
   --gradient-rose-orange: linear-gradient(135deg, #f43f5e 0%, #f97316 100%);
   --gradient-primary: linear-gradient(90deg, #9333ea 0%, #db2777 100%);
   --bg-soft: #f8fafc;
-  --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05),
-    0 8px 10px -6px rgba(0, 0, 0, 0.05);
-  --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  --shadow-glow: 0 0 25px rgba(168, 85, 247, 0.4);
   --primary-purple: #9333ea;
   --primary-pink: #db2777;
 }
 
+.font-black {
+  font-weight: 950 !important;
+}
+
 .wizard-scrollable {
-  background: linear-gradient(135deg, #f5f3ff 0%, #fcf2f7 50%, #eff6ff 100%);
+  background: linear-gradient(135deg, #fdfbff 0%, #fffbfc 50%, #f7faff 100%);
   min-height: 100vh;
 }
 
@@ -111,38 +114,42 @@
 }
 
 .booking-step-header-line {
-  height: 6px;
+  height: 8px;
   width: 100%;
 }
 
 .booking-step-content {
-  padding: 1.5rem;
+  padding: 2.5rem;
 }
 
 .step-icon-box {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 1rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  margin-bottom: 1.25rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
 }
 
 .step-status-badge {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.4rem 0.8rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 1.25rem;
+  font-size: 0.8rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .step-status-complete {
   background: #22c55e;
   color: white;
+  box-shadow: 0 4px 12px -2px rgba(34, 197, 94, 0.4);
 }
 
 .step-status-pending {
@@ -151,35 +158,66 @@
   border: 1px solid #e2e8f0;
 }
 
+/* Step Card Completion Indicator */
+.step-check-mark-abs {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: #22c55e;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
+  z-index: 10;
+}
+
 /* Service Card */
 .service-item-card {
   border: 2px solid #f1f5f9;
-  border-radius: 1.25rem;
-  transition: all 0.2s;
+  border-radius: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+}
+
+.service-item-card:hover {
+  border-color: #e2e8f0;
+  transform: translateY(-2px);
 }
 
 .service-item-card-selected {
   border-color: #a855f7;
-  background: rgba(168, 85, 247, 0.03);
-  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.1);
+  border-width: 2px;
+  background-color: rgba(250, 245, 255, 0.5) !important;
+  box-shadow: var(--shadow-glow);
 }
 
 /* Master Card */
 .master-item-card {
   border: 2px solid #f1f5f9;
-  border-radius: 1.5rem;
-  transition: all 0.3s;
+  border-radius: 2rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+}
+
+.master-item-card:hover {
+  border-color: #e2e8f0;
+  transform: translateY(-2px);
 }
 
 .master-item-card-selected {
   border-color: #ec4899;
-  background: rgba(236, 72, 153, 0.03);
-  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.1);
+  border-width: 2px;
+  background-color: rgba(250, 245, 255, 0.5) !important;
+  box-shadow: 0 0 25px rgba(236, 72, 153, 0.4);
 }
 
 /* Calendar */
 .booking-calendar-card {
-  border-radius: 1.5rem;
+  border-radius: 2rem;
   overflow: hidden;
   box-shadow: var(--card-shadow);
   background: white;
@@ -187,16 +225,44 @@
 
 .calendar-header-gradient {
   background: var(--gradient-purple-pink);
-  padding: 1rem 1.5rem;
+  padding: 1.5rem;
   color: white;
-  font-weight: 800;
+  text-align: center;
 }
 
 .time-grid-gradient {
   background: var(--gradient-pink-rose);
-  padding: 1rem 1.5rem;
+  padding: 1.5rem;
   color: white;
-  font-weight: 800;
+  text-align: center;
+}
+
+.calendar-weekday {
+  font-size: 0.7rem;
+  font-weight: 950 !important;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-bottom: 0.5rem;
+}
+
+/* Slot Card Interaction */
+.slot-button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid #f1f5f9;
+  border-radius: 1rem;
+}
+
+.slot-button:hover:not(.slot-button-selected) {
+  border-color: #e2e8f0;
+  background: rgba(250, 245, 255, 0.5);
+}
+
+.slot-button-selected {
+  border-color: #a855f7;
+  background-color: rgba(250, 245, 255, 0.5) !important;
+  box-shadow: var(--shadow-glow);
+  transform: scale(1.05);
 }
 
 /* Bottom Bar */
