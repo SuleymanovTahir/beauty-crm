@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { AnimatePresence, motion } from 'motion/react';
-import { X, User, Calendar as CalendarIcon, ChevronRight, ChevronLeft, MapPin, Search, Clock, CheckCircle2, Star, Phone, List, Loader2, Scissors, Check, Sparkles } from 'lucide-react';
+import {
+  X, User, Calendar as CalendarIcon, ChevronRight, ChevronLeft, MapPin,
+  Search, Clock, CheckCircle2, Star, Phone, List, Loader2, Scissors,
+  Check, Sparkles, ArrowLeft, Trash2
+} from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
@@ -598,7 +602,7 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, bookingS
 
 
 
-function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServices, bookingState, onDateTimeChange, onContinue }: any) {
+function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServices, bookingState, onDateTimeChange, onContinue, salonSettings }: any) {
   const { t, i18n } = useTranslation(['booking', 'common']);
   const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
   const [availableSlots, setAvailableSlots] = useState<any[]>([]);
@@ -665,28 +669,30 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
   };
 
   return (
-    <div className="space-y-6 animate-fade-in pb-60">
-      {/* Header */}
+    <div className="space-y-8 animate-fade-in pb-40">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl shadow-lg p-6 border border-slate-50"
+        className="bg-white rounded-[2rem] shadow-xl p-8 border border-slate-50"
       >
-        <h2 className="text-2xl font-black text-gray-900 mb-2">{t('booking.datetime.title', 'Select Date & Time')}</h2>
-        <p className="text-purple-600 font-bold">
+        <h2 className="text-3xl font-black text-gray-900 mb-2">{t('booking.datetime.title', 'Select Date & Time')}</h2>
+        <p className="text-purple-600 font-bold flex items-center gap-2">
+          <Clock className="w-5 h-5" />
           {t('booking.totalDuration', 'Total duration')}: {duration} {t('booking.min', 'min')}
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Date Card */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
         >
-          <Card className="overflow-hidden border-none shadow-xl rounded-3xl">
-            <div className="bg-gradient-purple-pink p-4">
-              <h3 className="text-white font-black uppercase tracking-widest">{t('booking.datetime.date', 'Date')}</h3>
+          <Card className="modern-card">
+            <div className="bg-gradient-purple-pink p-6">
+              <h3 className="text-white font-black uppercase tracking-widest flex items-center gap-3">
+                <CalendarIcon className="w-6 h-6" />
+                {t('booking.datetime.date', 'Calendar')}
+              </h3>
             </div>
             <CardContent className="p-4 bg-white">
               <Calendar
@@ -707,64 +713,71 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
                   const dateStr = format(date, 'yyyy-MM-dd');
                   return date < today || !availableDates.has(dateStr);
                 }}
-                className="rounded-3xl border-none mx-auto"
+                className="mx-auto"
+                classNames={{
+                  day_selected: "rdp-day_selected",
+                  day_today: "rdp-day_today",
+                }}
               />
             </CardContent>
           </Card>
         </motion.div>
 
-        {/* Time Card */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
         >
-          <Card className="overflow-hidden border-none shadow-xl rounded-3xl h-full">
-            <div className="bg-gradient-pink-rose p-4">
-              <h3 className="text-white font-black uppercase tracking-widest">{t('booking.datetime.time', 'Time')}</h3>
+          <Card className="modern-card h-full">
+            <div className="bg-gradient-pink-rose p-6">
+              <h3 className="text-white font-black uppercase tracking-widest flex items-center gap-3">
+                <Sparkles className="w-6 h-6" />
+                {t('booking.datetime.time', 'Available Slots')}
+              </h3>
             </div>
-            <CardContent className="p-6 bg-white min-h-[400px]">
+            <CardContent className="p-8 bg-white min-h-[440px]">
               {!selectedDate ? (
-                <div className="flex flex-col items-center justify-center h-64 text-gray-400 gap-4">
-                  <CalendarIcon className="w-12 h-12" />
-                  <p className="font-bold text-center">{t('booking.datetime.dateFirst', 'Please select a date first')}</p>
+                <div className="flex flex-col items-center justify-center h-80 text-slate-300 gap-6">
+                  <CalendarIcon className="w-20 h-20 opacity-20" />
+                  <p className="font-bold text-center text-lg">{t('booking.datetime.dateFirst', 'Select a date to see available times')}</p>
                 </div>
               ) : loading ? (
-                <div className="flex items-center justify-center h-64">
-                  <Loader2 className="w-12 h-12 animate-spin text-purple-600" />
+                <div className="flex flex-col items-center justify-center h-80 text-purple-600 gap-4">
+                  <Loader2 className="w-12 h-12 animate-spin" />
+                  <p className="font-bold uppercase tracking-widest text-xs">{t('booking.loading', 'Syncing slots...')}</p>
                 </div>
               ) : availableSlots.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-64 text-gray-400 gap-4">
-                  <Sparkles className="w-12 h-12" />
-                  <p className="font-bold text-center">{t('booking.datetime.noSlots', 'No results for this day')}</p>
+                <div className="flex flex-col items-center justify-center h-80 text-slate-300 gap-6">
+                  <Sparkles className="w-20 h-20 opacity-20" />
+                  <p className="font-bold text-center text-lg">{t('booking.datetime.noSlots', 'No available slots for this day')}</p>
                 </div>
               ) : (
-                <ScrollArea className="h-[400px] pr-4">
-                  <div className="space-y-8">
-                    {(['morning', 'afternoon', 'evening'] as const).map(period => {
-                      const slots = groupedSlots[period];
-                      if (slots.length === 0) return null;
-                      return (
-                        <div key={period} className="space-y-4">
-                          <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">{t(`booking.datetime.${period}`, period)}</h4>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                            {slots.map(slot => (
-                              <button
-                                key={slot.time}
-                                onClick={() => onDateTimeChange(selectedDate, slot.time)}
-                                className={`slot-button py-3 px-4 rounded-xl font-black text-sm transition-all
-                                  ${selectedTime === slot.time
-                                    ? 'slot-button-selected text-white'
-                                    : 'bg-white text-slate-900 border-slate-100 hover:border-purple-200 hover:bg-purple-50/50'}`}
-                              >
-                                {slot.time}
-                              </button>
-                            ))}
-                          </div>
+                <div className="space-y-8">
+                  {(['morning', 'afternoon', 'evening'] as const).map(period => {
+                    const slots = groupedSlots[period];
+                    if (slots.length === 0) return null;
+                    return (
+                      <div key={period} className="space-y-4">
+                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
+                          <span className="w-8 h-[1px] bg-slate-100" />
+                          {t(`booking.datetime.${period}`, period)}
+                          <span className="flex-1 h-[1px] bg-slate-100" />
+                        </h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {slots.map(slot => (
+                            <button
+                              key={slot.time}
+                              onClick={() => onDateTimeChange(selectedDate, slot.time)}
+                              className={`slot-button py-4 rounded-2xl text-base shadow-sm
+                                ${selectedTime === slot.time ? 'slot-button-selected' : ''}`}
+                            >
+                              {slot.time}
+                            </button>
+                          ))}
                         </div>
-                      );
-                    })}
-                  </div>
-                </ScrollArea>
+                      </div>
+                    );
+                  })}
+                </div>
               )}
             </CardContent>
           </Card>
@@ -778,239 +791,208 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
           className="booking-footer-bar"
         >
           <div className="footer-action-container">
-            <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar py-2">
-              <Button onClick={() => onContinue('services')} variant="ghost" className={`text-gray-400 font-bold hover:text-purple-600 gap-2 px-3 ${bookingState.services.length > 0 ? 'text-purple-600' : ''}`}>
-                <Scissors className="w-4 h-4" />
-                <span className="whitespace-nowrap">{t('booking.menu.services', 'Services')}</span>
+            <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-2xl border border-slate-100">
+              <Button onClick={() => onContinue('services')} variant="ghost" className={`font-black hover:bg-white hover:text-purple-600 rounded-xl px-4 ${bookingState.services.length > 0 ? 'text-purple-600 bg-white shadow-sm' : 'text-slate-400'}`}>
+                <Scissors className="w-4 h-4 mr-2" />
+                {t('booking.menu.services', 'Services')}
               </Button>
-              <Button onClick={() => onContinue('professional')} variant="ghost" className={`text-gray-400 font-bold hover:text-purple-600 gap-2 px-3 ${bookingState.professionalSelected ? 'text-purple-600' : ''}`}>
-                <User className="w-4 h-4" />
-                <span className="whitespace-nowrap">{t('booking.menu.professional', 'Master')}</span>
+              <Button onClick={() => onContinue('professional')} variant="ghost" className={`font-black hover:bg-white hover:text-purple-600 rounded-xl px-4 ${bookingState.professionalSelected ? 'text-purple-600 bg-white shadow-sm' : 'text-slate-400'}`}>
+                <User className="w-4 h-4 mr-2" />
+                {t('booking.menu.professional', 'Master')}
               </Button>
             </div>
-            <Button onClick={() => onContinue()} className="btn-primary-gradient h-14 min-w-[140px] sm:min-w-[200px] shadow-lg">
+            <Button onClick={() => onContinue()} className="btn-primary-gradient h-16 min-w-[220px] shadow-2xl text-lg px-8">
               {(bookingState.services.length > 0 && bookingState.professionalSelected)
-                ? t('booking.confirm.title', 'Confirm Booking')
-                : t('common.next', 'Next Step')}
-              <ChevronRight className="w-5 h-5" />
+                ? t('booking.confirm.title', 'Confirm Appointment')
+                : t('common.next', 'Continue')}
+              <ChevronRight className="w-6 h-6 ml-2" />
             </Button>
           </div>
         </motion.div>
       )}
-
-
-
     </div>
   );
 }
 
-
-
-function ConfirmStep({ bookingState, totalPrice, onPhoneChange, onSuccess, salonSettings }: any) {
+function ConfirmStep({ bookingState, totalPrice, onPhoneChange, onSuccess, salonSettings, onCancel }: any) {
   const { t, i18n } = useTranslation(['booking', 'common']);
-  const { user } = useAuth();
-  const [phone, setPhone] = useState(bookingState.phone || user?.phone || '');
-  const [showPhoneModal, setShowPhoneModal] = useState(!bookingState.phone && !user?.phone);
   const [loading, setLoading] = useState(false);
-
-  const handlePhoneSubmit = () => {
-    if (!phone || phone.length < 5) {
-      toast.error(t('invalid_phone', 'Please enter a valid phone number'));
-      return;
-    }
-    onPhoneChange(phone);
-    setShowPhoneModal(false);
-  };
-
-  const handleConfirm = async () => {
-    if (!phone) { setShowPhoneModal(true); return; }
-    setLoading(true);
-    try {
-      const dateStr = bookingState.date ? format(bookingState.date, 'yyyy-MM-dd') : '';
-      for (const service of bookingState.services) {
-        await api.createBooking({
-          instagram_id: user?.username || `web_${user?.id || 'guest'}`,
-          service: getLocalizedName(service, i18n.language),
-          master: bookingState.professional?.username || 'any_professional',
-          date: dateStr,
-          time: bookingState.time || '',
-          phone,
-          name: user?.full_name
-        });
-      }
-      toast.success(t('booking.confirm.success', 'Booking confirmed!'));
-      if (onSuccess) onSuccess();
-    } catch (e) {
-      toast.error(t('booking.confirm.error', 'Error creating booking'));
-    } finally { setLoading(false); }
-  };
-
   const dateLocale = getDateLocaleCentral(i18n.language);
 
+  const handleConfirm = async () => {
+    if (!bookingState.phone || bookingState.phone.length < 5) {
+      toast.error(t('booking.confirm.phoneError', 'Please enter a valid phone number'));
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const bookingData = {
+        service_ids: bookingState.services.map((s: any) => s.id),
+        master_id: bookingState.professional?.id || null,
+        date: format(bookingState.date, 'yyyy-MM-dd'),
+        time: bookingState.time,
+        client_phone: bookingState.phone,
+        client_name: 'Guest',
+      };
+
+      const res = await api.createPublicBooking(bookingData);
+      if (res.success || res.id) {
+        toast.success(t('booking.confirm.success', 'Booking created successfully!'));
+        onSuccess();
+      } else {
+        toast.error(res.message || t('booking.confirm.error', 'Failed to create booking'));
+      }
+    } catch (e: any) {
+      toast.error(e.message || t('booking.confirm.error', 'Failed to create booking'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="space-y-6 animate-fade-in pb-60">
-      {/* Header */}
+    <div className="space-y-8 animate-fade-in pb-40">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl shadow-lg p-6 border border-slate-50"
+        className="bg-white rounded-[2rem] shadow-xl p-8 border border-slate-50"
       >
-        <h2 className="text-2xl font-black text-gray-900">{t('booking.confirm.title', 'Booking Confirmation')}</h2>
-        <p className="text-gray-500 font-bold mt-1 uppercase tracking-widest text-[10px]">{t('booking.confirm.subtitle', 'Please review your details')}</p>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={onCancel} className="rounded-full hover:bg-slate-100">
+            <ArrowLeft className="w-6 h-6 text-gray-600" />
+          </Button>
+          <h2 className="text-3xl font-black text-gray-900">{t('booking.confirm.title', 'Confirm Appointment')}</h2>
+        </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Summary */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="rounded-3xl shadow-xl border-none">
-            <div className="bg-gradient-purple-pink p-4">
-              <h3 className="text-white font-black uppercase tracking-widest flex items-center gap-2">
-                <List className="w-5 h-5" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <Card className="modern-card">
+            <div className="bg-gradient-purple-pink p-6">
+              <h3 className="text-white font-black uppercase tracking-widest flex items-center gap-3">
+                <Scissors className="w-6 h-6" />
                 {t('booking.menu.services', 'Services')}
               </h3>
             </div>
-            <CardContent className="p-6 space-y-6">
+            <CardContent className="p-8 space-y-6">
               {bookingState.services.map((service: any) => (
                 <div key={service.id} className="flex justify-between items-center group">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 transition-all">
-                      <Scissors className="w-5 h-5" />
+                  <div className="flex items-center gap-5">
+                    <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 transition-all group-hover:bg-purple-600 group-hover:text-white">
+                      <Sparkles className="w-6 h-6" />
                     </div>
                     <div>
-                      <div className="font-black text-gray-900">{getLocalizedName(service, i18n.language)}</div>
-                      <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{service.duration || '30'} {t('booking.min', 'min')}</div>
+                      <div className="font-black text-xl text-gray-900">{getLocalizedName(service, i18n.language)}</div>
+                      <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">{service.duration || '30'} {t('booking.min', 'min')}</div>
                     </div>
                   </div>
-                  <div className="font-black text-xl text-gray-900">{service.price} <span className="text-[10px] text-gray-400 font-bold uppercase">{salonSettings?.currency || 'AED'}</span></div>
+                  <div className="font-black text-2xl text-gray-900">{service.price} <span className="text-[10px] text-gray-400 font-bold uppercase">{salonSettings?.currency || 'AED'}</span></div>
                 </div>
               ))}
-              <div className="pt-6 border-t border-dashed border-gray-100 flex justify-between items-center">
-                <span className="font-black text-gray-400 uppercase tracking-widest text-xs">{t('booking.services.total', 'Amount to pay')}</span>
-                <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
-                  {totalPrice} <span className="text-sm opacity-50">{salonSettings?.currency || 'AED'}</span>
+              <div className="pt-8 border-t border-dashed border-gray-100 flex justify-between items-center">
+                <span className="font-black text-gray-400 uppercase tracking-widest text-xs">{t('booking.services.total', 'Total Investment')}</span>
+                <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 tracking-tighter">
+                  {totalPrice} <span className="text-base text-gray-400 opacity-50 ml-1">{salonSettings?.currency || 'AED'}</span>
                 </span>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Right Column: Details */}
-        <div className="space-y-6">
-          <Card className="rounded-3xl shadow-xl border-none">
-            <div className="bg-gradient-pink-rose p-4">
-              <h3 className="text-white font-black uppercase tracking-widest flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5" />
+        <div className="space-y-8">
+          <Card className="modern-card">
+            <div className="bg-gradient-pink-rose p-6">
+              <h3 className="text-white font-black uppercase tracking-widest flex items-center gap-3">
+                <CheckCircle2 className="w-6 h-6" />
                 {t('booking.confirm.details', 'Details')}
               </h3>
             </div>
-            <CardContent className="p-6 space-y-6 text-sm">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600">
-                  <User className="w-5 h-5" />
+            <CardContent className="p-8 space-y-8">
+              <div className="flex items-center gap-5">
+                <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-600 shadow-sm shadow-orange-100">
+                  <User className="w-6 h-6" />
                 </div>
                 <div>
-                  <div className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-0.5">{t('booking.menu.professional', 'Master')}</div>
-                  <div className="font-black text-gray-900">
+                  <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t('booking.menu.professional', 'Chosen Master')}</div>
+                  <div className="font-black text-lg text-gray-900 leading-tight">
                     {bookingState.professional ? bookingState.professional.full_name : (bookingState.professionalSelected ? t('booking.professional.anyAvailable', "Any Provider") : t('booking.menu.selectProfessional', "Select master"))}
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
-                  <CalendarIcon className="w-5 h-5" />
+              <div className="flex items-center gap-5">
+                <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm shadow-blue-100">
+                  <CalendarIcon className="w-6 h-6" />
                 </div>
                 <div>
-                  <div className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-0.5">{t('booking.menu.datetime', 'Time')}</div>
-                  <div className="font-black text-gray-900">
+                  <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t('booking.menu.datetime', 'Schedule')}</div>
+                  <div className="font-black text-lg text-gray-900 leading-tight">
                     {bookingState.date ? format(bookingState.date, 'EEEE, MMM dd', { locale: dateLocale }) : '--'}
-                    <span className="text-purple-600 ml-2">@ {bookingState.time}</span>
+                    <span className="text-purple-600 ml-3">@ {bookingState.time}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-600">
-                  <Phone className="w-5 h-5" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-0.5">{t('booking.confirm.phone', 'Phone')}</div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-black text-gray-900">{phone || '--'}</span>
-                    <Button variant="ghost" size="sm" onClick={() => setShowPhoneModal(true)} className="text-purple-600 font-extrabold h-auto p-0 hover:bg-transparent">
-                      {t('common.edit', 'Edit')}
-                    </Button>
-                  </div>
-                </div>
+              <div className="space-y-4">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                  <Phone className="w-4 h-4" />
+                  {t('booking.confirm.phone', 'Contact phone')}
+                </p>
+                <Input
+                  type="tel"
+                  placeholder="+971 -- --- ----"
+                  value={bookingState.phone}
+                  onChange={(e) => onPhoneChange(e.target.value)}
+                  className="h-16 rounded-2xl text-xl font-black px-6 bg-slate-50 border-slate-100 focus-visible:ring-purple-400 shadow-inner"
+                />
               </div>
 
               <Button
+                disabled={loading || !bookingState.phone}
                 onClick={handleConfirm}
-                disabled={loading || !phone}
-                className="w-full h-14 btn-primary-gradient shadow-lg"
+                className="w-full h-20 btn-primary-gradient rounded-[1.5rem] text-2xl shadow-2xl "
               >
-                {loading ? (
-                  <Loader2 className="w-6 h-6 animate-spin" />
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    {t('booking.confirm.bookNow', 'Confirm Booking')}
-                  </>
-                )}
+                {loading ? <Loader2 className="w-8 h-8 animate-spin" /> : t('booking.confirm.button', 'Book Now')}
               </Button>
             </CardContent>
           </Card>
         </div>
       </div>
-
-      <Dialog open={showPhoneModal} onOpenChange={setShowPhoneModal}>
-        <DialogContent className="p-0 border-none shadow-3xl rounded-[2.5rem] overflow-hidden max-w-[360px]">
-          <DialogHeader className="bg-gradient-purple-pink p-8 text-white">
-            <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-4 mx-auto">
-              <Phone className="w-6 h-6" />
-            </div>
-            <DialogTitle className="text-xl font-black text-center text-white">{t('booking.confirm.phone', 'Contact phone')}</DialogTitle>
-          </DialogHeader>
-          <div className="p-8 space-y-6 flex flex-col items-center">
-            <p className="text-gray-400 font-bold text-center text-[11px] uppercase tracking-wider">{t('phone_modal_desc', 'Enter your number to receive confirmation details')}</p>
-            <Input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+971"
-              className="h-14 text-xl font-black text-center bg-gray-50 border-none focus-visible:ring-4 focus-visible:ring-purple-50 rounded-2xl"
-            />
-            <div className="flex gap-3 w-full">
-              <Button variant="ghost" onClick={() => setShowPhoneModal(false)} className="flex-1 h-12 rounded-xl font-black hover:bg-gray-50">
-                {t('common.cancel', 'Cancel')}
-              </Button>
-              <Button onClick={handlePhoneSubmit} className="flex-1 h-12 rounded-xl btn-primary-gradient shadow-md text-white">
-                {t('common.save', 'Save')}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
 
-
-// --- Main Wizard ---
-
 export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const step = searchParams.get('booking') || 'menu';
+  const step = searchParams.get('step') || 'menu';
   const { t } = useTranslation(['booking', 'common']);
 
-  const [bookingState, setBookingState] = useState<BookingState>({
-    services: [],
-    professional: null,
-    professionalSelected: false,
-    date: null,
-    time: null,
-    phone: '',
+  const [bookingState, setBookingState] = useState<BookingState>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return {
+      services: [],
+      professional: null,
+      professionalSelected: false,
+      date: null,
+      time: null,
+      phone: '',
+    };
+
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed.date) parsed.date = new Date(parsed.date);
+      return parsed;
+    } catch (e) {
+      return {
+        services: [],
+        professional: null,
+        professionalSelected: false,
+        date: null,
+        time: null,
+        phone: '',
+      };
+    }
   });
 
   const [salonSettings, setSalonSettings] = useState<any>(null);
@@ -1019,7 +1001,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const setStep = (newStep: string) => {
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
-      next.set('booking', newStep);
+      next.set('step', newStep);
       return next;
     }, { replace: true });
   };
@@ -1027,7 +1009,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const goBack = () => {
     if (step === 'menu') {
       if (onClose) onClose();
-      else navigate('/account');
+      else navigate('/');
     } else {
       setStep('menu');
     }
@@ -1036,89 +1018,77 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   useEffect(() => {
     const init = async () => {
       try {
-        const salonRes = await api.getSalonSettings();
+        const salonRes = await api.getPublicSalonSettings();
         setSalonSettings(salonRes);
-        const saved = sessionStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          const { state, timestamp } = JSON.parse(saved);
-          if (Date.now() - timestamp < STATE_EXPIRY_TIME) {
-            if (state.date) state.date = parseISO(state.date);
-            setBookingState(state);
-          }
-        }
       } catch (e) { } finally { setLoading(false); }
     };
     init();
   }, []);
 
   useEffect(() => {
-    if (bookingState.services.length > 0 || bookingState.professional || bookingState.date) {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-        state: { ...bookingState, date: bookingState.date ? format(bookingState.date, 'yyyy-MM-dd') : null },
-        timestamp: Date.now()
-      }));
-    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(bookingState));
   }, [bookingState]);
 
   const updateState = (updates: Partial<BookingState>) => setBookingState((prev: BookingState) => ({ ...prev, ...updates }));
   const totalPrice = bookingState.services.reduce((sum: number, s: Service) => sum + s.price, 0);
 
   if (loading) return (
-    <div className="fixed inset-0 bg-white z-[60] flex items-center justify-center">
-      <div className="w-16 h-16 border-8 border-purple-600 border-t-transparent rounded-full animate-spin" />
+    <div className="fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center gap-6">
+      <div className="w-20 h-20 border-8 border-purple-600 border-t-transparent rounded-full animate-spin" />
+      <p className="text-slate-400 font-black uppercase tracking-[0.3em] text-xs animate-pulse">Initializing studio...</p>
     </div>
   );
 
   return (
-    <div className="wizard-scrollable selection:bg-purple-100 selection:text-purple-600">
-      {/* Header Container */}
-      <header className="wizard-nav-header">
+    <div className="wizard-scrollable selection:bg-purple-100 selection:text-purple-600 bg-slate-50/50">
+      <header className="wizard-nav-header backdrop-blur-xl bg-white/80 border-b border-slate-100/50">
         <div className="wizard-nav-content">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={goBack}
-              className="wizard-nav-back group"
-            >
-              <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
-              {t('common.back', 'Back')}
-            </button>
+          <div className="flex items-center gap-6">
+            {step !== 'menu' && (
+              <button
+                onClick={goBack}
+                className="wizard-nav-back group hover:bg-slate-50 p-2 rounded-2xl transition-all"
+              >
+                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-white shadow-sm transition-all">
+                  <ChevronLeft className="w-6 h-6 transition-transform group-hover:-translate-x-1" />
+                </div>
+                <span className="font-black uppercase tracking-widest text-[10px] hidden sm:block">{t('common.back', 'Back')}</span>
+              </button>
+            )}
+            <div className="h-10 w-[1px] bg-slate-100 hidden sm:block" />
             <div>
-              <h1 className="wizard-title-main">
-                {t('booking.newBooking', 'New Booking')}
+              <h1 className="wizard-title-main text-2xl">
+                {t('booking.title', 'Booking')}
               </h1>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{salonSettings?.name || 'Live System'}</span>
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{salonSettings?.name || 'Studio'}</span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="scale-90 wizard-lang-switcher">
-              <PublicLanguageSwitcher />
-            </div>
+          <div className="flex items-center gap-4">
+            <PublicLanguageSwitcher />
             {onClose && (
               <button
                 onClick={onClose}
-                className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all"
+                className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all shadow-sm"
               >
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6" />
               </button>
             )}
           </div>
         </div>
       </header>
 
-
-      {/* Content Container */}
-      <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-8">
+      <main className="flex-1 w-full max-w-5xl mx-auto px-6 py-12">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
-            initial={{ opacity: 0, scale: 0.98, y: 10 }}
+            initial={{ opacity: 0, scale: 0.98, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.98, y: -10 }}
-            transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
+            exit={{ opacity: 0, scale: 0.98, y: -20 }}
+            transition={{ type: "spring", duration: 0.6, bounce: 0.2 }}
           >
             {step === 'menu' && (
               <BookingMenu
@@ -1135,6 +1105,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   };
                   setBookingState(emptyState);
                   localStorage.removeItem(STORAGE_KEY);
+                  toast.success(t('booking.menu.resetDone', 'Booking cleared'));
                 }}
                 totalPrice={totalPrice}
                 salonSettings={salonSettings}
@@ -1147,6 +1118,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 onServicesChange={(services: any) => updateState({ services })}
                 onContinue={(target?: string) => setStep(target || 'menu')}
                 onCancel={() => setStep('menu')}
+                salonSettings={salonSettings}
               />
             )}
             {step === 'professional' && (
@@ -1156,6 +1128,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 bookingState={bookingState}
                 onProfessionalChange={(prof: any) => updateState({ professional: prof, professionalSelected: true })}
                 onContinue={(target?: string) => setStep(target || 'menu')}
+                salonSettings={salonSettings}
               />
             )}
             {step === 'datetime' && (
@@ -1167,21 +1140,21 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 bookingState={bookingState}
                 onDateTimeChange={(date: any, time: any) => updateState({ date, time })}
                 onContinue={(target?: string) => setStep(target || 'confirm')}
+                salonSettings={salonSettings}
               />
             )}
-
-
             {step === 'confirm' && (
               <ConfirmStep
                 bookingState={bookingState}
                 totalPrice={totalPrice}
                 onPhoneChange={(phone: any) => updateState({ phone })}
                 onSuccess={() => {
-                  sessionStorage.removeItem(STORAGE_KEY);
+                  localStorage.removeItem(STORAGE_KEY);
                   if (onSuccess) onSuccess();
                   if (onClose) onClose();
                 }}
                 salonSettings={salonSettings}
+                onCancel={() => setStep('menu')}
               />
             )}
           </motion.div>
