@@ -141,17 +141,20 @@ function Calendar({
             border: none !important;
         }
 
-        /* Outside Days - Make them visible and interactive */
+        /* Outside Days - Make them visible */
         .rdp-day_outside {
-            opacity: 0.7 !important; /* Slightly distinct but visible */
-            background: transparent;
+            opacity: 1 !important; /* Fully visible */
         }
 
-        /* Ensure outside days that are NOT disabled are interactive */
+        /* Ensure outside days that are NOT disabled look like available days */
         .rdp-day_outside:not(.rdp-day_disabled) {
             cursor: pointer !important;
-            color: #64748b !important; /* Slate 500 - slightly lighter than main days */
-            font-weight: 500;
+            color: #334155 !important; /* Match standard day color (was Slate 500) */
+            font-weight: 600 !important; /* Match standard font weight */
+            background-color: #f8fafc !important; 
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 50%;
+            opacity: 1 !important;
         }
 
         /* Today - Custom Class - Strong Outline & Fill */
