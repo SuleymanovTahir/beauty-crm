@@ -138,7 +138,9 @@ export function DateTimeStep({
                 >
                     <Card className="overflow-hidden border-none shadow-xl rounded-2xl">
                         <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-5">
-                            <h3 className="text-white font-black uppercase tracking-widest text-sm">{t('booking.datetime.date', 'Select Date')}</h3>
+                            <h3 className="text-white font-black uppercase tracking-widest text-sm">
+                                {t('booking.datetime.date', 'Select Date')}
+                            </h3>
                         </div>
                         <CardContent className="p-4 bg-white">
                             <Calendar
