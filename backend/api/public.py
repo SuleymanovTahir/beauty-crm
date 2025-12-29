@@ -476,6 +476,7 @@ async def get_batch_available_slots(date: str):
         try:
             settings = get_salon_settings()
             hours_str = settings.get('hours_weekdays', "10:30 - 21:00")
+            print(f"DEBUG: get_batch_available_slots using hours: {hours_str}") 
             parts = hours_str.split('-')
             start_h, start_m = map(int, parts[0].strip().split(':'))
             end_h, end_m = map(int, parts[1].strip().split(':'))
