@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker, useNavigation } from "react-day-picker";
-import { format } from "date-fns";
+import { DayPicker } from "react-day-picker";
+import { format, addMonths, subMonths } from "date-fns";
 import { enUS, ru } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import "react-day-picker/dist/style.css";
@@ -12,28 +12,44 @@ function Calendar({
     className,
     classNames,
     showOutsideDays = true,
+    month,
+    onMonthChange,
     ...props
-}: React.ComponentProps<typeof DayPicker>) {
+}: React.ComponentProps<typeof DayPicker> & { month?: Date; onMonthChange?: (date: Date) => void }) {
     const { i18n } = useTranslation();
     const locale = i18n.language === 'ru' ? ru : enUS;
 
-    // Custom Caption: Explicitly renders [Prev Arrow] [Month Label] [Next Arrow]
-    // This guarantees the visual order the user wants.
-    const CustomCaption = ({ displayMonth }: { displayMonth: Date }) => {
-        const { goToMonth, nextMonth, previousMonth } = useNavigation();
+    // Use internal state if uncontrolled (fallback), though normally it's controlled by parent
+    const [internalMonth, setInternalMonth] = React.useState(new Date());
+    const currentMonth = month || internalMonth;
+    const handleMonthChange = onMonthChange || setInternalMonth;
 
-        return (
+    const handlePrev = () => handleMonthChange(subMonths(currentMonth, 1));
+    const handleNext = () => handleMonthChange(addMonths(currentMonth, 1));
+
+    return (
+        <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '16px',
+            boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+            width: 'fit-content',
+            margin: '0 auto',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+        }}>
+            {/* External Custom Header */}
             <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '24px',
-                padding: '16px 8px',
-                position: 'relative'
+                gap: '8px',
+                marginBottom: '10px',
+                width: '100%'
             }}>
                 <button
-                    disabled={!previousMonth}
-                    onClick={() => previousMonth && goToMonth(previousMonth)}
+                    onClick={handlePrev}
                     style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -42,11 +58,11 @@ function Calendar({
                         height: '32px',
                         border: 'none',
                         background: 'transparent',
-                        cursor: previousMonth ? 'pointer' : 'default',
-                        opacity: previousMonth ? 1 : 0.2,
+                        cursor: 'pointer',
                         color: '#2563eb'
                     }}
                     type="button"
+                    aria-label="Previous Month"
                 >
                     <ChevronLeft style={{ width: '24px', height: '24px' }} />
                 </button>
@@ -56,15 +72,16 @@ function Calendar({
                     fontWeight: 700,
                     textTransform: 'capitalize',
                     color: '#0f172a',
-                    minWidth: '140px',
-                    textAlign: 'center'
+                    padding: '0 8px',
+                    textAlign: 'center',
+                    whiteSpace: 'nowrap',
+                    minWidth: '160px' // Ensure enough space so year doesn't jump
                 }}>
-                    {format(displayMonth, 'LLLL yyyy', { locale })}
+                    {format(currentMonth, 'LLLL yyyy', { locale })}
                 </span>
 
                 <button
-                    disabled={!nextMonth}
-                    onClick={() => nextMonth && goToMonth(nextMonth)}
+                    onClick={handleNext}
                     style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -73,45 +90,38 @@ function Calendar({
                         height: '32px',
                         border: 'none',
                         background: 'transparent',
-                        cursor: nextMonth ? 'pointer' : 'default',
-                        opacity: nextMonth ? 1 : 0.2,
+                        cursor: 'pointer',
                         color: '#2563eb'
                     }}
                     type="button"
+                    aria-label="Next Month"
                 >
                     <ChevronRight style={{ width: '24px', height: '24px' }} />
                 </button>
             </div>
-        );
-    };
 
-    return (
-        <div style={{
-            background: 'white',
-            borderRadius: '16px',
-            padding: '16px',
-            boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
-            width: 'fit-content',
-            margin: '0 auto'
-        }}>
             <DayPicker
+                month={currentMonth}
+                onMonthChange={handleMonthChange}
                 showOutsideDays={showOutsideDays}
                 className={className}
                 locale={locale}
-                components={{
-                    Caption: CustomCaption
+                // Hide built-in elements since we use external header
+                modifiersStyles={{
+                    caption: { display: 'none' }
                 }}
-                // Using explicit styles object for Grid to ensure table integrity
                 styles={{
                     table: { margin: '0 auto', borderCollapse: 'collapse' },
                     head_cell: { width: '40px', height: '40px', fontWeight: 500, color: '#64748b' },
                     cell: { width: '40px', height: '40px', padding: 0 },
-                    day: { width: '40px', height: '40px', borderRadius: '50%', fontSize: '15px' }
+                    day: { width: '40px', height: '40px', borderRadius: '50%', fontSize: '15px' },
+                    caption: { display: 'none' }, // Native prop access to hide
+                    nav: { display: 'none' }      // Native prop access to hide
                 }}
-                // Minimal overrides for colors via style tag
                 {...props}
             />
             <style>{`
+        .rdp-caption, .rdp-nav { display: none !important; }
         .rdp-day_selected { 
             background-color: #2563eb !important; 
             color: white !important; 
