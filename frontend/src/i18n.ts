@@ -1,9 +1,9 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-// import { autoDetectAndSetLanguage } from './utils/languageDetection';
+import { supportedLanguages } from './utils/i18nUtils';
 
-export const languages = ["ru", "en", "es", "ar", "hi", "kk", "pt", "fr", "de"];
+export const languages = supportedLanguages.map(l => l.code);
 const namespaces = [
   'common',
   'account',
