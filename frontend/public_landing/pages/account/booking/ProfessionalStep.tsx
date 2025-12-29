@@ -107,33 +107,37 @@ export function ProfessionalStep({
             return;
         }
 
-        // Fallback: Individual fetching (LEGACY SLOW PATH)
+        // Fallback: Individual fetching (OPTIMIZED PATH)
         const fetchNextSlots = async () => {
             const today = new Date().toISOString().split('T')[0];
-            const updates: Record<number, string> = {};
+            try {
+                // Use batch endpoint instead of N requests
+                const res = await api.getPublicBatchAvailability(today);
+                if (res && res.availability) {
+                    const updates: Record<number, string> = {};
+                    const now = new Date();
+                    const currentHours = now.getHours();
+                    const currentMinutes = now.getMinutes();
 
-            await Promise.all(professionals.map(async (p) => {
-                try {
-                    const res = await api.getPublicAvailableSlots(today, p.id);
-                    if (res.slots && res.slots.length > 0) {
-                        const now = new Date();
-                        const currentHours = now.getHours();
-                        const currentMinutes = now.getMinutes();
+                    professionals.forEach(p => {
+                        const slots = res.availability[p.id] || [];
+                        if (slots.length > 0) {
+                            const available = slots.filter(time => {
+                                const [h, m] = time.split(':').map(Number);
+                                if (h < currentHours || (h === currentHours && m <= currentMinutes)) return false;
+                                return true;
+                            });
 
-                        const available = res.slots.filter((s: any) => {
-                            if (!s.available) return false;
-                            const [h, m] = s.time.split(':').map(Number);
-                            if (h < currentHours || (h === currentHours && m <= currentMinutes)) return false;
-                            return true;
-                        });
-
-                        if (available.length > 0) {
-                            updates[p.id] = available.slice(0, 4).map((s: any) => s.time).join(', ');
+                            if (available.length > 0) {
+                                updates[p.id] = available.slice(0, 4).join(', ');
+                            }
                         }
-                    }
-                } catch (e) { }
-            }));
-            setNextSlots(updates);
+                    });
+                    setNextSlots(updates);
+                }
+            } catch (e) {
+                console.error("Failed to fetch batch availability", e);
+            }
         };
         fetchNextSlots();
     }, [professionals, preloadedAvailability]);
