@@ -6,7 +6,7 @@ import { ru, enUS, ar } from 'date-fns/locale';
 import {
   ArrowLeft, Calendar as CalendarIcon, Check, ChevronRight, Clock,
   List, MapPin, Search, Star, User, X, Loader2, Edit2,
-  Sparkles, CheckCircle2, Users
+  Sparkles, CheckCircle2, Users, Globe
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -19,6 +19,7 @@ import { Badge } from '../../components/ui/badge';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScrollArea } from '../../components/ui/scroll-area';
 import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../../../src/components/LanguageSwitcher';
 import './UserBookingWizard.css';
 
 interface Service {
@@ -90,7 +91,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const [stepHistory, setStepHistory] = useState<string[]>([]);
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [showPhoneModal, setShowPhoneModal] = useState(false);
-  const [masterNextSlots, setMasterNextSlots] = useState<Record<number, string>>({});
+  const [masterNextSlots, setMasterNextSlots] = useState<Record<number, string[]>>({});
 
   useEffect(() => {
     if (step !== 'menu' && !stepHistory.includes(step)) {
@@ -264,14 +265,15 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
     const fetchMasterNextSlots = async () => {
       const today = format(new Date(), 'yyyy-MM-dd');
-      const nextSlots: Record<number, string> = {};
+      const nextSlots: Record<number, string[]> = {};
 
       await Promise.all(masters.map(async (master) => {
         try {
           const res = await api.getPublicAvailableSlots(today, master.id);
           const available = (res.slots || []).filter((s: any) => s.available);
           if (available.length > 0) {
-            nextSlots[master.id] = available[0].time;
+            // Get up to 4 preview slots
+            nextSlots[master.id] = available.slice(0, 4).map((s: any) => s.time);
           }
         } catch (e) {
           // Ignore errors for individual masters
@@ -424,21 +426,26 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 setStep('menu');
               }
             }}
-            className="rounded-full hover:bg-black/5"
+            className="rounded-full hover:bg-pink-100"
           >
             <ArrowLeft className="w-5 h-5 text-primary" />
           </Button>
 
-          {onClose && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="rounded-full hover:bg-black/5 ml-auto"
-            >
-              <X className="w-5 h-5 text-primary" />
-            </Button>
-          )}
+          <div className="ml-auto flex items-center gap-2">
+            <div className="w-10 h-10">
+              <LanguageSwitcher />
+            </div>
+            {onClose && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                className="rounded-full hover:bg-pink-100"
+              >
+                <X className="w-5 h-5 text-primary" />
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="mb-4">
@@ -491,7 +498,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     const allComplete = hasServices && hasMaster && hasDateTime;
 
     return (
-      <div className="min-h-screen bg-white wizard-scrollable">
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-purple-50 to-blue-50 wizard-scrollable">
         <div className="wizard-container space-y-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
             <div className="space-y-2">
@@ -798,18 +805,26 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                           {isSelected && <CheckCircle2 className="w-5 h-5 text-primary" />}
                         </div>
                         <p className="text-sm text-muted-foreground font-medium mb-2">{master.position}</p>
-                        <div className="flex items-center gap-3 flex-wrap">
-                          <div className="flex items-center gap-1 text-primary">
-                            <Star className="w-4 h-4 fill-primary" />
-                            <span className="font-black text-sm">{master.rating || '5.0'}</span>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-3 flex-wrap">
+                            <div className="flex items-center gap-1 text-primary">
+                              <Star className="w-4 h-4 fill-primary" />
+                              <span className="font-black text-sm">{master.rating || '5.0'}</span>
+                            </div>
+                            {master.reviews && master.reviews > 0 && (
+                              <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">({master.reviews} reviews)</span>
+                            )}
                           </div>
-                          {master.reviews && master.reviews > 0 && (
-                            <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">({master.reviews} reviews)</span>
-                          )}
-                          {masterNextSlots[master.id] && (
-                            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-50 border border-green-200">
-                              <Clock className="w-3 h-3 text-green-600" />
-                              <span className="text-xs font-bold text-green-700">Next: {masterNextSlots[master.id]}</span>
+                          {masterNextSlots[master.id] && Array.isArray(masterNextSlots[master.id]) && masterNextSlots[master.id].length > 0 && (
+                            <div className="space-y-1">
+                              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Available today:</p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {masterNextSlots[master.id].map(time => (
+                                  <div key={time} className="px-2 py-1 rounded-md bg-pink-50 border border-pink-200">
+                                    <span className="text-xs font-bold text-pink-700">{time}</span>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           )}
                         </div>

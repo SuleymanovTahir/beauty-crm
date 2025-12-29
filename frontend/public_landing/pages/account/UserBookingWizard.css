@@ -1,15 +1,16 @@
 /* UserBookingWizard.css */
 
 :root {
-  --background: #ffffff;
-  --primary: #030213;
-  --primary-foreground: #ffffff;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #f8fafc;
-  --border: rgba(3, 2, 19, 0.1);
-  --radius: 1rem;
-  --shadow: 0 4px 20px -2px rgba(3, 2, 19, 0.08);
+  --wizard-background: #ffffff;
+  --wizard-primary: #db2777;
+  --wizard-primary-hover: #be185d;
+  --wizard-primary-foreground: #ffffff;
+  --wizard-muted: #fdf2f8;
+  --wizard-muted-foreground: #6b7280;
+  --wizard-accent: #fbcfe8;
+  --wizard-border: rgba(219, 39, 119, 0.1);
+  --wizard-radius: 1rem;
+  --wizard-shadow: 0 4px 20px -2px rgba(219, 39, 119, 0.1);
 }
 
 .wizard-root {
