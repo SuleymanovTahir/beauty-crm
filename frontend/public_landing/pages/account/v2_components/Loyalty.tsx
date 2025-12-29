@@ -1,14 +1,23 @@
 import { useState } from 'react';
-import { Star, TrendingUp, Flame, QrCode, Gift, Share2, Copy } from 'lucide-react';
+import { Star, Flame, QrCode, Gift, Share2, Copy } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { currentUser, spendingData, categorySpending, referralCode } from '../data/mockData';
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+// import { currentUser, spendingData } from '../data/mockData';egorySpending, referralCode } from '../data/mockData';
 import { toast } from 'sonner';
 
-export function Loyalty() {
+export function Loyalty({ loyalty, user }: any) {
+  // Map prop to local structure if needed, or use directly.
+  // Assuming loyalty prop has { points, tier, history }
+  const currentUser = user || {};
+  const points = loyalty?.points || 0;
+
+  const spendingData = loyalty?.spendingData || [];
+  const categorySpending = loyalty?.categorySpending || [];
+  const referralCode = currentUser?.referralCode || 'REF123';
+  const tier = loyalty?.tier || 'Bronze';
+  // const history = loyalty?.history || []; // map real history
   const tiers = [
     { name: 'Bronze', points: 0, discount: 5, color: '#CD7F32' },
     { name: 'Silver', points: 1000, discount: 10, color: '#C0C0C0' },
@@ -16,12 +25,12 @@ export function Loyalty() {
     { name: 'Platinum', points: 5000, discount: 25, color: '#E5E4E2' },
   ];
 
-  const currentTierIndex = tiers.findIndex(t => t.name.toLowerCase() === currentUser.currentTier);
-  const currentTierData = tiers[currentTierIndex];
+  const currentTierIndex = tiers.findIndex(t => t.name.toLowerCase() === String(tier).toLowerCase());
+  const currentTierData = tiers[currentTierIndex] || tiers[0];
   const nextTierData = tiers[currentTierIndex + 1];
 
   const progressToNext = nextTierData
-    ? ((currentUser.loyaltyPoints - currentTierData.points) / (nextTierData.points - currentTierData.points)) * 100
+    ? ((points - currentTierData.points) / (nextTierData.points - currentTierData.points)) * 100
     : 100;
 
   const handleCopyReferral = () => {
@@ -55,7 +64,7 @@ export function Loyalty() {
                 {currentTierData.name} статус
               </CardTitle>
               <CardDescription className="mt-2">
-                {currentUser.loyaltyPoints} баллов • {currentUser.currentDiscount}% скидка
+                {points} баллов • {currentTierData.discount}% скидка
               </CardDescription>
             </div>
             <div className="text-right">
@@ -73,7 +82,7 @@ export function Loyalty() {
                 <div className="flex justify-between text-sm">
                   <span>До {nextTierData.name} уровня</span>
                   <span className="font-semibold">
-                    {nextTierData.points - currentUser.loyaltyPoints} баллов
+                    {nextTierData.points - points} баллов
                   </span>
                 </div>
                 <Progress value={progressToNext} className="h-2" />
@@ -140,7 +149,7 @@ export function Loyalty() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={(entry) => entry.category}
+                  label={(entry: any) => entry.category}
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
@@ -171,19 +180,19 @@ export function Loyalty() {
                 </div>
                 <Star className="w-8 h-8" style={{ color: currentTierData.color }} />
               </div>
-              
+
               <div className="space-y-1">
                 <div className="text-sm opacity-80">Владелец карты</div>
                 <div className="font-semibold">{currentUser.name}</div>
               </div>
-              
+
               <div className="flex justify-between items-end">
                 <div>
                   <div className="text-sm opacity-80">ID клиента</div>
-                  <div className="font-mono">{currentUser.id.padStart(8, '0')}</div>
+                  <div className="font-mono">{String(currentUser.id || '').padStart(8, '0')}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold">{currentUser.currentDiscount}%</div>
+                  <div className="text-2xl font-bold">{currentTierData.discount}%</div>
                   <div className="text-xs opacity-80">скидка</div>
                 </div>
               </div>

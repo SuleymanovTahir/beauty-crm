@@ -3,14 +3,12 @@ import { Bell, Calendar, Tag, Award, Check, CheckCheck } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { notifications as initialNotifications } from '../data/mockData';
 import { toast } from 'sonner';
 
-export function Notifications() {
-  const [notifications, setNotifications] = useState(initialNotifications);
+export function Notifications({ notifications: propNotifications }: any) {
+  const [notifications, setNotifications] = useState<any[]>(Array.isArray(propNotifications) ? propNotifications : []);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-
+  const unreadCount = notifications.filter((n: any) => !n.read).length;
   const getIcon = (type: string) => {
     switch (type) {
       case 'appointment':
@@ -118,11 +116,10 @@ export function Notifications() {
             return (
               <Card
                 key={notification.id}
-                className={`${
-                  !notification.read
-                    ? 'border-l-4 border-l-blue-500 bg-blue-50/50'
-                    : ''
-                } cursor-pointer hover:shadow-md transition-shadow`}
+                className={`${!notification.read
+                  ? 'border-l-4 border-l-blue-500 bg-blue-50/50'
+                  : ''
+                  } cursor-pointer hover:shadow-md transition-shadow`}
                 onClick={() => !notification.read && markAsRead(notification.id)}
               >
                 <CardContent className="p-4">

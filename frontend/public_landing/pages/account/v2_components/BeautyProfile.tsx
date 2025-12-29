@@ -1,14 +1,20 @@
+
 import { Sparkles, TrendingUp, Calendar, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { beautyMetrics, nextProcedures } from '../data/mockData';
+// import { beautyMetrics as mockMetrics } from '../data/mockData';
 
-export function BeautyProfile() {
-  const overallScore = Math.round(
-    beautyMetrics.reduce((sum, m) => sum + m.score, 0) / beautyMetrics.length
-  );
+export function BeautyProfile({ metrics }: any) {
+  // Map metrics prop to beautyMetrics structure
+  const beautyMetrics = metrics || [];
+  const nextProcedures: any[] = [];
+  // If metrics is empty, UI handles it or shows empty
+
+  const overallScore = beautyMetrics.length > 0 ? Math.round(
+    beautyMetrics.reduce((sum: any, m: any) => sum + m.score, 0) / beautyMetrics.length
+  ) : 0;
 
   return (
     <div className="space-y-6 pb-8">
@@ -38,9 +44,8 @@ export function BeautyProfile() {
               <div
                 className="absolute inset-0 rounded-full border-8 border-purple-500"
                 style={{
-                  clipPath: `polygon(50% 50%, 50% 0%, ${
-                    50 + 50 * Math.cos((overallScore / 100) * 2 * Math.PI - Math.PI / 2)
-                  }% ${50 + 50 * Math.sin((overallScore / 100) * 2 * Math.PI - Math.PI / 2)}%, 50% 50%)`,
+                  clipPath: `polygon(50 % 50 %, 50 % 0 %, ${50 + 50 * Math.cos((overallScore / 100) * 2 * Math.PI - Math.PI / 2)
+                    } % ${50 + 50 * Math.sin((overallScore / 100) * 2 * Math.PI - Math.PI / 2)} %, 50 % 50 %)`,
                 }}
               />
             </div>
@@ -74,11 +79,11 @@ export function BeautyProfile() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Progress 
-                  value={metric.score} 
+                <Progress
+                  value={metric.score}
                   className="h-3"
-                  style={{ 
-                    '--progress-background': metric.color 
+                  style={{
+                    '--progress-background': metric.color
                   } as any}
                 />
                 <div className="mt-2 text-sm text-muted-foreground">
@@ -109,11 +114,10 @@ export function BeautyProfile() {
             {nextProcedures.map((procedure, index) => (
               <div
                 key={index}
-                className={`flex items-center justify-between p-4 rounded-lg border ${
-                  procedure.recommended
-                    ? 'bg-orange-50 border-orange-200'
-                    : 'bg-gray-50 border-gray-200'
-                }`}
+                className={`flex items - center justify - between p - 4 rounded - lg border ${procedure.recommended
+                  ? 'bg-orange-50 border-orange-200'
+                  : 'bg-gray-50 border-gray-200'
+                  } `}
               >
                 <div className="flex items-center gap-3">
                   {procedure.recommended && (
@@ -163,7 +167,7 @@ export function BeautyProfile() {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
                 2
@@ -175,7 +179,7 @@ export function BeautyProfile() {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
                 3

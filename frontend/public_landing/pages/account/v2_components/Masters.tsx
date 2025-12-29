@@ -6,18 +6,20 @@ import { Badge } from './ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
-import { masters } from '../data/mockData';
+// import { masters } from '../data/mockData';
 import { toast } from 'sonner';
 
-export function Masters() {
+export function Masters({ masters = [] }: any) {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [favoriteMasters, setFavoriteMasters] = useState(
-    masters.filter(m => m.isFavorite).map(m => m.id)
-  );
+  const [favoriteMasters, setFavoriteMasters] = useState<string[]>([]);
+
+  // Initialize favorites from masters if needed, or manage separately. 
+  // For now assuming isFavorite property exists on masters.
+  // Using useEffect to sync if masters change or simply rendering.
 
   const toggleFavorite = (masterId: string) => {
-    setFavoriteMasters(prev => 
-      prev.includes(masterId) 
+    setFavoriteMasters(prev =>
+      prev.includes(masterId)
         ? prev.filter(id => id !== masterId)
         : [...prev, masterId]
     );
@@ -69,9 +71,8 @@ export function Masters() {
             return (
               <Card
                 key={master.id}
-                className={`overflow-hidden ${
-                  isFavorite ? 'border-pink-200 bg-gradient-to-br from-pink-50 to-purple-50' : ''
-                }`}
+                className={`overflow-hidden ${isFavorite ? 'border-pink-200 bg-gradient-to-br from-pink-50 to-purple-50' : ''
+                  }`}
               >
                 <CardHeader className="p-0">
                   <div className="aspect-square relative">
@@ -83,11 +84,10 @@ export function Masters() {
                     <Button
                       size="icon"
                       variant="secondary"
-                      className={`absolute top-4 right-4 ${
-                        isFavorite
-                          ? 'bg-pink-500 hover:bg-pink-600 text-white'
-                          : 'bg-white/90 hover:bg-white'
-                      }`}
+                      className={`absolute top-4 right-4 ${isFavorite
+                        ? 'bg-pink-500 hover:bg-pink-600 text-white'
+                        : 'bg-white/90 hover:bg-white'
+                        }`}
                       onClick={() => toggleFavorite(master.id)}
                     >
                       <Heart

@@ -2,7 +2,7 @@ import { Star, Heart, Award, Flame, Crown, Gem, Trophy, Lock } from 'lucide-reac
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { achievements, challenges } from '../data/mockData';
+// import { achievements as initialAchievements } from '../data/mockData';
 
 const iconMap: Record<string, any> = {
   Star,
@@ -12,11 +12,14 @@ const iconMap: Record<string, any> = {
   Crown,
   Gem,
   Trophy,
+  Lock,
 };
 
-export function Achievements() {
-  const unlockedCount = achievements.filter(a => a.unlocked).length;
-  const totalCount = achievements.length;
+export function Achievements({ achievements }: any) {
+  // achievements prop is array of { id, title, description, icon, is_unlocked, ... }
+  const challenges: any[] = []; // Placeholder for future implementation
+  const unlockedCount = achievements?.filter((a: any) => a.is_unlocked || a.unlocked)?.length || 0;
+  const totalCount = achievements?.length || 0;
 
   const getDaysLeft = (deadline: string) => {
     const days = Math.ceil((new Date(deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
@@ -46,7 +49,7 @@ export function Achievements() {
               <span>Разблокировано достижений</span>
               <span className="font-semibold">{unlockedCount} / {totalCount}</span>
             </div>
-            <Progress value={(unlockedCount / totalCount) * 100} className="h-3" />
+            <Progress value={totalCount > 0 ? (unlockedCount / totalCount) * 100 : 0} className="h-3" />
           </div>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
@@ -59,7 +62,7 @@ export function Achievements() {
             </div>
             <div>
               <div className="text-2xl font-bold text-purple-600">
-                {Math.round((unlockedCount / totalCount) * 100)}%
+                {totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0}%
               </div>
               <div className="text-xs text-muted-foreground">Завершено</div>
             </div>
@@ -71,7 +74,7 @@ export function Achievements() {
       <div className="space-y-4">
         <h2>Все достижения</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {achievements.map((achievement) => {
+          {achievements?.map((achievement: any, index: number) => {
             const Icon = iconMap[achievement.icon] || Star;
             const hasProgress = achievement.maxProgress !== undefined;
             const progress = hasProgress && achievement.progress
@@ -80,21 +83,19 @@ export function Achievements() {
 
             return (
               <Card
-                key={achievement.id}
-                className={`${
-                  achievement.unlocked
-                    ? 'border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50'
-                    : 'opacity-60'
-                }`}
+                key={achievement.id || index}
+                className={`${achievement.unlocked
+                  ? 'border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50'
+                  : 'opacity-60'
+                  }`}
               >
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div
-                      className={`p-3 rounded-full ${
-                        achievement.unlocked
-                          ? 'bg-yellow-500 text-white'
-                          : 'bg-gray-200 text-gray-400'
-                      }`}
+                      className={`p-3 rounded-full ${achievement.unlocked
+                        ? 'bg-yellow-500 text-white'
+                        : 'bg-gray-200 text-gray-400'
+                        }`}
                     >
                       {achievement.unlocked ? (
                         <Icon className="w-6 h-6" />
