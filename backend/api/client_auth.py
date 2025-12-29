@@ -66,9 +66,9 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         }
 
         c.execute("""
-            SELECT b.id, b.service_name, b.datetime, b.master, u.photo_url 
+            SELECT b.id, b.service_name, b.datetime, b.master, COALESCE(u.photo, u.photo_url) 
             FROM bookings b 
-            LEFT JOIN users u ON b.master = u.full_name 
+            LEFT JOIN users u ON LOWER(b.master) = LOWER(u.full_name) 
             WHERE b.instagram_id = %s 
             AND b.status IN ('pending', 'confirmed') 
             AND b.datetime >= %s 
@@ -78,9 +78,9 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         next_booking = {"id": row[0], "service": row[1], "date": row[2], "master": row[3], "master_photo": row[4]} if row else None
 
         c.execute("""
-            SELECT b.id, b.service_name, b.datetime, b.master, u.photo_url 
+            SELECT b.id, b.service_name, b.datetime, b.master, COALESCE(u.photo, u.photo_url) 
             FROM bookings b 
-            LEFT JOIN users u ON b.master = u.full_name 
+            LEFT JOIN users u ON LOWER(b.master) = LOWER(u.full_name) 
             WHERE b.instagram_id = %s 
             AND b.status = 'completed' 
             ORDER BY b.datetime DESC LIMIT 1
