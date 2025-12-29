@@ -286,12 +286,26 @@ async def get_available_slots(
     # Генерируем слоты с 10:00 до 20:00 с интервалом 30 минут
     slots = []
 
-    start_hour = 10
-    end_hour = 20
-    interval_minutes = 30
+    # Fetch salon settings for hours
+    try:
+        settings = get_salon_settings()
+        hours_str = settings.get('hours_weekdays', "10:30 - 21:00")
+        
+        parts = hours_str.split('-')
+        start_time_str = parts[0].strip()
+        end_time_str = parts[1].strip()
+        
+        start_h, start_m = map(int, start_time_str.split(':'))
+        end_h, end_m = map(int, end_time_str.split(':'))
+    except Exception:
+        # Fallback to defaults
+        start_h, start_m = 10, 30
+        end_h, end_m = 21, 0
 
-    current_hour = start_hour
-    current_minute = 0
+    interval_minutes = 30
+    
+    current_hour = start_h
+    current_minute = start_m
 
     # Logic to filter past times if today
     from utils.datetime_utils import get_current_time
@@ -299,7 +313,7 @@ async def get_available_slots(
     is_today = date == current_dt.strftime('%Y-%m-%d')
     min_booking_time_str = (current_dt + timedelta(minutes=30)).strftime('%H:%M')
 
-    while current_hour < end_hour or (current_hour == end_hour and current_minute == 0):
+    while current_hour < end_h or (current_hour == end_h and current_minute < end_m):
         time_slot = f"{current_hour:02d}:{current_minute:02d}"
 
         # Simple check: if today and slot is in the past (with buffer), skip
@@ -457,9 +471,18 @@ async def get_batch_available_slots(date: str):
                 busy_map[b_master] = set()
             busy_map[b_master].add(time_part)
             
-        # Standard slots definition
-        start_hour = 10
-        end_hour = 20
+        # Standard slots definition - DYNAMIC
+        from db.settings import get_salon_settings
+        try:
+            settings = get_salon_settings()
+            hours_str = settings.get('hours_weekdays', "10:30 - 21:00")
+            parts = hours_str.split('-')
+            start_h, start_m = map(int, parts[0].strip().split(':'))
+            end_h, end_m = map(int, parts[1].strip().split(':'))
+        except:
+            start_h, start_m = 10, 30
+            end_h, end_m = 21, 0
+            
         interval_minutes = 30
         
         # Logic to filter past times if today
@@ -470,8 +493,8 @@ async def get_batch_available_slots(date: str):
         
         # Generate standard time slots
         standard_slots = []
-        curr_h, curr_m = start_hour, 0
-        while curr_h < end_hour or (curr_h == end_hour and curr_m == 0):
+        curr_h, curr_m = start_h, start_m
+        while curr_h < end_h or (curr_h == end_h and curr_m < end_m):
             slot_time = f"{curr_h:02d}:{curr_m:02d}"
             
             # Simple check: if today and slot is in the past (with buffer), skip
