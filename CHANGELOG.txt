@@ -251,13 +251,34 @@
 - ✅ Code expiry настраивается (по умолчанию 15 минут)
 - ✅ Роли админов динамические ('director', 'admin')
 
+**Примеры универсальности:**
+```python
+# Backend поддерживает все языки
+parse_duration_to_minutes("1h 30min")    # → 90 (английский)
+parse_duration_to_minutes("1ч 30мин")    # → 90 (русский)
+parse_duration_to_minutes("2 Std 15 Min") # → 135 (немецкий)
+
+format_duration_display(90, 'ru')  # → "1ч 30мин"
+format_duration_display(90, 'de')  # → "1Std 30Min"
+format_duration_display(90, 'hi')  # → "1घंटा 30मिनट"
+```
+
 ### МОЖЕТ СЛОМАТЬСЯ
 - **SMTP не настроен** → письма не отправятся (fallback: показать код в console/response)
 - **Существующие users** → могут иметь is_active=TRUE без email_verified
 - **Admin user отсутствует** → некому будет одобрять первые регистрации
 - **Frontend не обновлен** → пользователи не смогут ввести код верификации
-- **Миграции не запущены** → таблицы client_email_verifications и registration_audit отсутствуют
-
+- **Миграции не запущены** →
+### [2024-05-22] Full High-Fidelity Design Refresh (Round 2)
+- ✅ Implemented complete redesign of `UserBookingWizard.tsx` matching `new_admin` aesthetics.
+- ✅ Integrated premium design tokens (gradients, shadows, blurs) into `UserBookingWizard.css`.
+- ✅ Redesigned `BookingMenu` with modern step cards and session summary.
+- ✅ Modernized `ServicesStep` with search, category pills, and premium service cards.
+- ✅ Updated `ProfessionalStep` with large avatars, ratings, and bottom persistence bar.
+- ✅ Polished `DateTimeStep` calendar and time slot selection grid (preserving core logic).
+- ✅ Refined `ConfirmStep` summary and verification modal.
+- ✅ Fixed several lint warnings and ensured full mobile responsiveness.
+- ⚠️ **IMPORTANT**: Existing backend logic and API calls were strictly preserved as requested.
 ### TESTING
 Создан test suite проверяющий:
 - ✅ Email uniqueness (case-insensitive)
