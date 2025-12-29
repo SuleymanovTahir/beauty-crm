@@ -106,8 +106,11 @@ function Calendar({
                 showOutsideDays={showOutsideDays}
                 className={className}
                 locale={locale}
+                modifiersClassNames={{
+                    today: 'today-day'
+                }}
                 styles={{
-                    table: { margin: '0 auto', borderCollapse: 'collapse' },
+                    table: { margin: '0 auto', borderCollapse: 'separate', borderSpacing: '4px' }, // Separate to show rounded shapes
                     head_cell: { width: '40px', height: '40px', fontWeight: 500, color: '#64748b' },
                     cell: { width: '40px', height: '40px', padding: 0 },
                     day: { width: '40px', height: '40px', borderRadius: '50%', fontSize: '15px' },
@@ -122,7 +125,7 @@ function Calendar({
         .DayPicker-Caption, .DayPicker-NavBar { display: none !important; }
 
         /* Available Days (Base) - Highlighting slightly as requested */
-        .rdp-day:not(.rdp-day_disabled):not(.rdp-day_selected):not(.rdp-day_today) {
+        .rdp-day:not(.rdp-day_disabled):not(.rdp-day_selected):not(.today-day) {
             font-weight: 600;
             color: #334155; /* Slate 700 */
             background-color: #f8fafc; /* Very subtle background */
@@ -138,18 +141,19 @@ function Calendar({
             border: none !important;
         }
 
-        /* Today - Strong Outline */
-        .rdp-day_today:not(.rdp-day_selected) {
-            color: #7c3aed; /* Violet 600 */
-            font-weight: 900;
-            background: transparent;
-            border: 2px solid #7c3aed; /* Explicit outline */
-            border-radius: 50%;
+        /* Today - Custom Class - Strong Outline & Fill */
+        .today-day:not(.rdp-day_selected) {
+            color: #7c3aed !important; /* Violet 600 */
+            font-weight: 900 !important;
+            background-color: #ede9fe !important; /* Violet 100 - Distinct fill */
+            border: 2px solid #7c3aed !important; /* Explicit outline */
+            border-radius: 50% !important;
+            opacity: 1 !important;
         }
 
         /* Selected - Solid */
         .rdp-day_selected { 
-            background-color: #7c3aed !important; /* Violet 600 to match theme better */
+            background-color: #7c3aed !important; /* Violet 600 */
             color: white !important; 
             font-weight: bold;
             border-radius: 50%;
