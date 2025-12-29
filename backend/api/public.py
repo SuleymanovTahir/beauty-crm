@@ -293,8 +293,31 @@ async def get_available_slots(
     current_hour = start_hour
     current_minute = 0
 
+    # Logic to filter past times if today
+    from utils.datetime_utils import get_current_time
+    current_dt = get_current_time()
+    is_today = date == current_dt.strftime('%Y-%m-%d')
+    min_booking_time_str = (current_dt + timedelta(minutes=30)).strftime('%H:%M')
+
     while current_hour < end_hour or (current_hour == end_hour and current_minute == 0):
         time_slot = f"{current_hour:02d}:{current_minute:02d}"
+
+        # Simple check: if today and slot is in the past (with buffer), skip
+        if is_today and time_slot < min_booking_time_str:
+            # Skip this slot, mark as unavailable or just don't append?
+            # Existing code appends explicit available=False only if check_slot_availability fails.
+            # If we skip, it won't be in the list at all? 
+            # The logic below appends available=False. 
+            # Let's append it as available=False to be safe, or just skip it?
+            # If we skip, the frontend might not render it (which is what we want: "hide" it).
+            # "пусть показывает только доступное время" -> Hide it.
+            
+            # Переход к следующему слоту match existing logic
+            current_minute += interval_minutes
+            if current_minute >= 60:
+                current_minute = 0
+                current_hour += 1
+            continue
 
         # Проверяем, занят ли этот слот
         is_available = check_slot_availability(date, time_slot, employee_id)
@@ -439,11 +462,27 @@ async def get_batch_available_slots(date: str):
         end_hour = 20
         interval_minutes = 30
         
+        # Logic to filter past times if today
+        from utils.datetime_utils import get_current_time
+        current_dt = get_current_time()
+        is_today = date == current_dt.strftime('%Y-%m-%d')
+        min_booking_time_str = (current_dt + timedelta(minutes=30)).strftime('%H:%M')
+        
         # Generate standard time slots
         standard_slots = []
         curr_h, curr_m = start_hour, 0
         while curr_h < end_hour or (curr_h == end_hour and curr_m == 0):
-            standard_slots.append(f"{curr_h:02d}:{curr_m:02d}")
+            slot_time = f"{curr_h:02d}:{curr_m:02d}"
+            
+            # Simple check: if today and slot is in the past (with buffer), skip
+            if is_today and slot_time < min_booking_time_str:
+                curr_m += interval_minutes
+                if curr_m >= 60:
+                    curr_m = 0
+                    curr_h += 1
+                continue
+                
+            standard_slots.append(slot_time)
             curr_m += interval_minutes
             if curr_m >= 60:
                 curr_m = 0
