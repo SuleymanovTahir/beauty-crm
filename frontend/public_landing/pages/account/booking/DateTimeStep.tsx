@@ -124,9 +124,9 @@ export function DateTimeStep({
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white rounded-2xl shadow-lg p-6"
             >
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('booking.datetime.title', 'Date & Time')}</h2>
-                <p className="text-gray-600 font-medium">
-                    {t('booking.services.duration', 'Duration')}: {totalDuration} {t('booking.min', 'min')}
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('booking.datetime.title')}</h2>
+                <p className="text-gray-600">
+                    {t('booking.services.duration')}: {totalDuration} {t('booking.min')}
                 </p>
             </motion.div>
 
@@ -137,11 +137,11 @@ export function DateTimeStep({
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
                 >
-                    <Card className="overflow-hidden border-none shadow-xl rounded-2xl">
-                        <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-5">
-                            <h3 className="text-white font-black uppercase tracking-widest text-sm">{t('booking.datetime.date', 'Select Date')}</h3>
+                    <Card className="overflow-hidden">
+                        <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4">
+                            <h3 className="text-white font-semibold">{t('booking.datetime.date')}</h3>
                         </div>
-                        <CardContent className="p-4 bg-white">
+                        <CardContent className="p-4">
                             <Calendar
                                 mode="single"
                                 selected={selectedDate || undefined}
@@ -154,7 +154,7 @@ export function DateTimeStep({
                                     const dateStr = format(date, 'yyyy-MM-dd');
                                     return date < today || !availableDates.has(dateStr);
                                 }}
-                                className="rounded-xl border-none w-full"
+                                className="rounded-md border-none"
                             />
                         </CardContent>
                     </Card>
@@ -166,57 +166,48 @@ export function DateTimeStep({
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2 }}
                 >
-                    <Card className="overflow-hidden border-none shadow-xl rounded-2xl h-full">
-                        <div className="bg-gradient-to-r from-pink-500 to-rose-500 p-5">
-                            <h3 className="text-white font-black uppercase tracking-widest text-sm">{t('booking.datetime.time', 'Pick Time')}</h3>
+                    <Card className="overflow-hidden">
+                        <div className="bg-gradient-to-r from-pink-500 to-rose-500 p-4">
+                            <h3 className="text-white font-semibold">{t('booking.datetime.time')}</h3>
                         </div>
-                        <CardContent className="p-6 bg-white">
+                        <CardContent className="p-4">
                             {!selectedDate ? (
-                                <div className="text-center py-24 text-gray-400">
-                                    <Clock className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                                    <p className="font-bold uppercase tracking-widest text-xs">
-                                        {t('booking.datetime.selectDateFirst', 'Select a date first')}
-                                    </p>
-                                    {selectedServices.length > 0 && (
-                                        <p className="text-[10px] mt-2 opacity-50">
-                                            {selectedServices.length} {t('booking.services.selected', 'services')}
-                                        </p>
-                                    )}
+                                <div className="text-center py-12 text-gray-500">
+                                    {t('booking.datetime.selectDateFirst', 'Select a date first')}
                                 </div>
                             ) : loading ? (
-                                <div className="text-center py-24">
-                                    <div className="w-12 h-12 border-8 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                                    <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">{t('booking.loading', 'Syncing slots...')}</p>
+                                <div className="text-center py-12">
+                                    <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                                    <p className="text-gray-600">{t('booking.loading')}</p>
                                 </div>
                             ) : timeSlots.length === 0 ? (
-                                <div className="text-center py-24 text-gray-400">
-                                    <p className="font-bold uppercase tracking-widest text-xs">{t('booking.datetime.noSlots', 'No slots available')}</p>
+                                <div className="text-center py-12 text-gray-500">
+                                    {t('booking.datetime.noSlots', 'No slots available')}
                                 </div>
                             ) : (
-                                <div className="space-y-8 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                                <div className="space-y-6 max-h-96 overflow-y-auto pr-2">
                                     {(['morning', 'afternoon', 'evening'] as const).map((period) => {
                                         const periodSlots = groupedSlots[period];
                                         if (periodSlots.length === 0) return null;
 
                                         return (
                                             <div key={period}>
-                                                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-3">
-                                                    <span className="w-8 h-[1px] bg-gray-100" />
-                                                    {t(`booking.datetime.${period}`, period.toUpperCase())}
+                                                <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                                                    {t(`booking.datetime.${period}`)}
                                                 </h4>
-                                                <div className="grid grid-cols-3 gap-3">
+                                                <div className="grid grid-cols-3 gap-2">
                                                     {periodSlots.map((slot) => (
                                                         <Button
                                                             key={slot.time}
                                                             variant={selectedTime === slot.time ? 'default' : 'outline'}
-                                                            className={`h-12 rounded-xl text-sm font-bold transition-all relative ${selectedTime === slot.time
-                                                                ? 'bg-gradient-to-r from-purple-600 to-pink-600 border-none shadow-lg scale-105'
-                                                                : 'hover:border-purple-200 hover:bg-purple-50/50'
+                                                            className={`relative ${selectedTime === slot.time
+                                                                ? 'bg-gradient-to-r from-purple-600 to-pink-600'
+                                                                : ''
                                                                 }`}
                                                             onClick={() => handleTimeSelect(slot.time)}
                                                         >
                                                             {slot.isOptimal && (
-                                                                <Sparkles className="absolute -top-1 -right-1 w-3.5 h-3.5 text-yellow-500 fill-yellow-500 animate-pulse" />
+                                                                <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-400 fill-yellow-400" />
                                                             )}
                                                             {slot.time}
                                                         </Button>
@@ -235,17 +226,16 @@ export function DateTimeStep({
             {/* Continue Button */}
             {selectedDate && selectedTime && (
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="flex justify-end mt-10"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex justify-end"
                 >
                     <Button
                         onClick={onContinue}
-                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 h-16 px-16 rounded-2xl text-xl font-black shadow-2xl transition-all hover:scale-105"
+                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                         size="lg"
                     >
-                        {t('common.continue', 'Next step')}
-                        <ChevronRight className="w-6 h-6 ml-2" />
+                        {t('booking.datetime.continue')}
                     </Button>
                 </motion.div>
             )}
