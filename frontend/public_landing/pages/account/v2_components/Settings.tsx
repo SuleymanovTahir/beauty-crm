@@ -8,11 +8,17 @@ import { Switch } from './ui/switch';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Separator } from './ui/separator';
-import { currentUser } from '../data/mockData';
 import { toast } from 'sonner';
 
-export function Settings() {
-  const [profile, setProfile] = useState(currentUser);
+export function Settings({ user }: any) {
+
+  // Use user prop for default values
+  const [formData, setFormData] = useState({
+    name: user?.full_name || '',
+    phone: user?.phone || '',
+    email: user?.email || '',
+    birthday: user?.birthday || '',
+  });
   const [notifications, setNotifications] = useState({
     push: true,
     email: true,
@@ -84,8 +90,8 @@ export function Settings() {
             <CardContent className="space-y-6">
               <div className="flex items-center gap-6">
                 <Avatar className="w-24 h-24">
-                  <AvatarImage src={profile.avatar} alt={profile.name} />
-                  <AvatarFallback>{profile.name[0]}</AvatarFallback>
+                  <AvatarImage src={user?.avatar_url} alt={formData.name} />
+                  <AvatarFallback>{formData.name?.[0]}</AvatarFallback>
                 </Avatar>
                 <div className="space-y-2">
                   <Button variant="outline">Изменить фото</Button>
@@ -102,8 +108,8 @@ export function Settings() {
                   <Label htmlFor="name">Имя</Label>
                   <Input
                     id="name"
-                    value={profile.name}
-                    onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   />
                 </div>
 
@@ -112,8 +118,8 @@ export function Settings() {
                   <Input
                     id="email"
                     type="email"
-                    value={profile.email}
-                    onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
                 </div>
 
@@ -122,8 +128,8 @@ export function Settings() {
                   <Input
                     id="phone"
                     type="tel"
-                    value={profile.phone}
-                    onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   />
                 </div>
 
@@ -131,7 +137,7 @@ export function Settings() {
                   <Label htmlFor="member-since">Клиент с</Label>
                   <Input
                     id="member-since"
-                    value={new Date(profile.memberSince).toLocaleDateString('ru-RU')}
+                    value={user?.created_at ? new Date(user.created_at).toLocaleDateString('ru-RU') : ''}
                     disabled
                   />
                 </div>

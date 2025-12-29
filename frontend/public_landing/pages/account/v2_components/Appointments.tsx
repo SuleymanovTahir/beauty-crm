@@ -1,17 +1,19 @@
+
 import { useState } from 'react';
-import { Calendar, Clock, Repeat, CheckCircle, XCircle } from 'lucide-react';
+import { Calendar, Clock, MapPin, Repeat, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import { format } from 'date-fns';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { appointments, masters } from '../data/mockData';
+// import { bookings as initialBookings, masters } from '../data/mockData';
 
-export function Appointments() {
+export function Appointments({ bookings, masters }: any) {
   const [filter, setFilter] = useState<'upcoming' | 'history' | 'recurring'>('upcoming');
 
-  const upcomingAppointments = appointments.filter(a => a.status === 'upcoming');
-  const historyAppointments = appointments.filter(a => a.status === 'completed' || a.status === 'cancelled');
+  const upcomingAppointments = bookings?.filter((a: any) => ['pending', 'confirmed'].includes(a.status)) || [];
+  const historyAppointments = bookings?.filter((a: any) => ['completed', 'cancelled'].includes(a.status)) || [];
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -26,34 +28,40 @@ export function Appointments() {
     }
   };
 
-  const renderAppointment = (appointment: typeof appointments[0]) => {
-    const master = masters.find(m => m.id === appointment.masterId);
-    if (!master) return null;
+  const safeDate = (dateStr: any) => {
+    if (!dateStr) return new Date();
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? new Date() : d;
+  };
+
+  const renderAppointment = (appointment: any) => {
+    const master = masters?.find((m: any) => m.id === appointment.master_id);
+    // if (!master) return null; // Don't return null, show what we have
 
     return (
       <Card key={appointment.id}>
         <CardContent className="p-6">
           <div className="flex items-start gap-4">
             <Avatar className="w-16 h-16">
-              <AvatarImage src={master.avatar} alt={master.name} />
-              <AvatarFallback>{master.name[0]}</AvatarFallback>
+              <AvatarImage src={master?.photo || master?.avatar_url} alt={master?.name} />
+              <AvatarFallback>{master?.name?.[0]}</AvatarFallback>
             </Avatar>
-            
+
             <div className="flex-1 space-y-2">
               <div className="flex items-start justify-between">
                 <div>
-                  <div className="font-semibold">{master.name}</div>
-                  <div className="text-sm text-muted-foreground">{master.specialty}</div>
+                  <div className="font-semibold">{master?.name || 'Мастер'}</div>
+                  <div className="text-sm text-muted-foreground">{master?.specialty || master?.job_title}</div>
                 </div>
                 {getStatusBadge(appointment.status)}
               </div>
-              
-              <div className="text-sm font-medium">{appointment.service}</div>
-              
+
+              <div className="text-sm font-medium">{appointment.service_name}</div>
+
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  {new Date(appointment.date).toLocaleDateString('ru-RU', {
+                  {safeDate(appointment.date || appointment.datetime).toLocaleDateString('ru-RU', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric'
@@ -61,20 +69,20 @@ export function Appointments() {
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
-                  {appointment.time}
+                  {format(safeDate(appointment.date || appointment.datetime), 'HH:mm')}
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between pt-2">
                 <div className="font-bold">{appointment.price} AED</div>
-                
+
                 {appointment.status === 'completed' && (
                   <Button size="sm" variant="outline">
                     <Repeat className="w-4 h-4 mr-2" />
                     Повторить
                   </Button>
                 )}
-                
+
                 {appointment.status === 'upcoming' && (
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline">Изменить</Button>

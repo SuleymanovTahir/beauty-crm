@@ -4,12 +4,12 @@ import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import { galleryItems, masters } from '../data/mockData';
 import { toast } from 'sonner';
 
-export function Gallery() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState<typeof galleryItems[0] | null>(null);
+export function Gallery({ gallery, masters }: any) {
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const items = gallery || [];
+  const [selectedItem, setSelectedItem] = useState<typeof items[0] | null>(null);
   const [showBefore, setShowBefore] = useState(true);
 
   const categories = [
@@ -19,9 +19,9 @@ export function Gallery() {
     { id: 'body', label: 'Тело', color: 'bg-green-500' },
   ];
 
-  const filteredItems = selectedCategory
-    ? galleryItems.filter(item => item.category === selectedCategory)
-    : galleryItems;
+  const filteredItems = selectedCategory === 'all'
+    ? items
+    : items.filter((item: any) => item.category === selectedCategory);
 
   const handleDownload = () => {
     toast.success('Фото сохранено в галерею');
@@ -34,7 +34,7 @@ export function Gallery() {
   const navigateItem = (direction: 'prev' | 'next') => {
     if (!selectedItem) return;
     const currentIndex = filteredItems.findIndex(item => item.id === selectedItem.id);
-    const newIndex = direction === 'prev' 
+    const newIndex = direction === 'prev'
       ? (currentIndex - 1 + filteredItems.length) % filteredItems.length
       : (currentIndex + 1) % filteredItems.length;
     setSelectedItem(filteredItems[newIndex]);
@@ -51,9 +51,9 @@ export function Gallery() {
       {/* Фильтры */}
       <div className="flex flex-wrap gap-2">
         <Button
-          variant={selectedCategory === null ? 'default' : 'outline'}
+          variant={selectedCategory === 'all' ? 'default' : 'outline'}
           size="sm"
-          onClick={() => setSelectedCategory(null)}
+          onClick={() => setSelectedCategory('all')}
         >
           Все
         </Button>
@@ -74,16 +74,16 @@ export function Gallery() {
         {filteredItems.map((item) => {
           const master = masters.find(m => m.id === item.masterId);
           const category = categories.find(c => c.id === item.category);
-          
+
           return (
-            <Card 
-              key={item.id} 
+            <Card
+              key={item.id}
               className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
               onClick={() => setSelectedItem(item)}
             >
               <div className="aspect-square relative group">
-                <img 
-                  src={item.after} 
+                <img
+                  src={item.after}
                   alt={item.service}
                   className="w-full h-full object-cover"
                 />
