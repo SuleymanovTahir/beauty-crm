@@ -2,15 +2,14 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { AnimatePresence, motion } from 'motion/react';
-import { X, User, Calendar as CalendarIcon, ChevronRight, ChevronLeft, MapPin, Search, Clock, CheckCircle2, Star, Phone, Users, List, Loader2, Scissors } from 'lucide-react';
+import { X, User, Calendar as CalendarIcon, ChevronRight, ChevronLeft, MapPin, Search, Clock, CheckCircle2, Star, Phone, List, Loader2, Scissors, Check, Sparkles } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Input } from '../../components/ui/input';
-import { Checkbox } from '../../components/ui/checkbox';
 import { ScrollArea } from '../../components/ui/scroll-area';
 import { Avatar, AvatarImage, AvatarFallback } from '../../components/ui/avatar';
-import { Dialog, DialogContent, DialogTitle } from '../../components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogHeader } from '../../components/ui/dialog';
 import { Toaster } from '../../components/ui/sonner';
 import { toast } from 'sonner';
 import { api } from '../../../src/services/api';
@@ -62,7 +61,7 @@ interface Props {
   onSuccess?: () => void;
 }
 
-// --- Components ---
+// --- Helper Components ---
 
 function BookingMenu({ bookingState, onNavigate, totalPrice, salonSettings }: any) {
   const { t, i18n } = useTranslation(['booking', 'common']);
@@ -71,16 +70,18 @@ function BookingMenu({ bookingState, onNavigate, totalPrice, salonSettings }: an
   const isServicesComplete = bookingState.services.length > 0;
   const isProfessionalComplete = bookingState.professional !== null || bookingState.professionalSelected;
   const isDateTimeComplete = bookingState.date !== null && bookingState.time !== null;
+  const isAllComplete = isServicesComplete && isProfessionalComplete && isDateTimeComplete;
+
+  const totalDuration = bookingState.services.reduce((sum: number, s: Service) => sum + parseInt(s.duration || '0'), 0);
 
   const cards = [
     {
       value: 'services',
-      icon: List,
+      icon: Scissors,
       title: t('booking.menu.services', 'Select Services'),
       description: isServicesComplete
         ? `${bookingState.services.length} selected`
         : t('booking.menu.selectServices', "Pick treatment"),
-      badge: isServicesComplete ? `${totalPrice} ${salonSettings?.currency || 'AED'}` : null,
       isComplete: isServicesComplete,
       gradient: 'var(--gradient-purple-pink)',
     },
@@ -91,9 +92,8 @@ function BookingMenu({ bookingState, onNavigate, totalPrice, salonSettings }: an
       description: bookingState.professional
         ? bookingState.professional.full_name
         : (bookingState.professionalSelected ? t('booking.professional.anyAvailable', "Any Available") : t('booking.menu.selectProfessional', "Select master")),
-      badge: isProfessionalComplete ? t('booking.menu.completed', "Selected") : null,
       isComplete: isProfessionalComplete,
-      gradient: 'var(--gradient-pink-red)',
+      gradient: 'var(--gradient-pink-rose)',
     },
     {
       value: 'datetime',
@@ -102,29 +102,32 @@ function BookingMenu({ bookingState, onNavigate, totalPrice, salonSettings }: an
       description: isDateTimeComplete
         ? `${format(bookingState.date!, 'MMM dd', { locale: dateLocale })} @ ${bookingState.time}`
         : t('booking.menu.selectDateTime', "Pick time slot"),
-      badge: isDateTimeComplete ? t('booking.menu.completed', "Set") : null,
       isComplete: isDateTimeComplete,
-      gradient: 'var(--gradient-red-orange)',
+      gradient: 'var(--gradient-rose-orange)',
     },
   ];
 
   return (
-    <div className="wizard-container space-y-8">
-      {/* Top Info Card */}
-      <div className="top-info-card">
-        <div className="top-info-icon-wrapper">
+    <div className="space-y-8 animate-fade-in">
+      {/* Salon Info Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="salon-info-card"
+      >
+        <div className="salon-icon-wrapper">
           <Scissors className="w-8 h-8" />
         </div>
-        <div>
-          <h1 className="text-4xl font-black text-gray-900 tracking-tight">
+        <div className="flex-1">
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">
             {salonSettings?.name || 'Beauty Salon'}
           </h1>
           <p className="text-gray-500 flex items-center gap-2 font-bold mt-1">
-            <MapPin className="w-4 h-4" />
+            <MapPin className="w-4 h-4 text-purple-500" />
             {salonSettings?.address || 'Address'}
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Steps Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -135,30 +138,81 @@ function BookingMenu({ bookingState, onNavigate, totalPrice, salonSettings }: an
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
           >
-            <div className="category-card" onClick={() => onNavigate(card.value)}>
-              <div className="category-card-header-bar" style={{ background: card.gradient }} />
-              <div className="category-card-content">
-                <div className="category-icon-bg">
-                  <card.icon className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="font-black text-2xl text-gray-900">{card.title}</h3>
-                  <p className="text-gray-500 font-bold">{card.description}</p>
-                </div>
-                {card.badge && (
-                  <div className="category-select-btn category-select-btn-active">
-                    {card.badge}
+            <div className="booking-step-card" onClick={() => onNavigate(card.value)}>
+              <div className="booking-step-header-line" style={{ background: card.gradient }} />
+              <div className="booking-step-content">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="step-icon-box" style={{ background: card.gradient }}>
+                    <card.icon className="w-6 h-6" />
                   </div>
-                )}
-                <div className="category-select-btn mt-4 group cursor-pointer">
-                  {t('common.select', 'Select')}
-                  <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  {card.isComplete && (
+                    <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center shadow-lg">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                </div>
+
+                <h3 className="font-black text-xl text-gray-900 mb-1">{card.title}</h3>
+                <p className="text-gray-500 font-bold text-sm mb-4">{card.description}</p>
+
+                <div className="flex items-center justify-between">
+                  <div className={`step-status-badge ${card.isComplete ? 'step-status-complete' : 'step-status-pending'}`}>
+                    {card.isComplete ? t('booking.menu.completed', 'Completed') : t('common.select', 'Select')}
+                  </div>
+                  <ChevronRight className={`w-5 h-5 ${card.isComplete ? 'text-green-500' : 'text-gray-300'}`} />
                 </div>
               </div>
             </div>
           </motion.div>
         ))}
       </div>
+
+      {/* Summary Section */}
+      {isServicesComplete && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-white rounded-3xl shadow-xl p-8 border border-purple-100"
+        >
+          <h3 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-2">
+            <List className="w-6 h-6 text-purple-500" />
+            {t('booking.confirm.summary', 'Booking Summary')}
+          </h3>
+
+          <div className="space-y-4 mb-8">
+            {bookingState.services.map((service: Service) => (
+              <div key={service.id} className="flex justify-between items-center group">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-purple-400 group-hover:scale-125 transition-transform" />
+                  <span className="font-bold text-gray-700">{getLocalizedName(service, i18n.language)}</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm font-bold text-gray-400">{service.duration} {t('booking.min', 'min')}</span>
+                  <span className="font-black text-gray-900">{service.price} {salonSettings?.currency || 'AED'}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="border-t border-dashed border-gray-200 pt-6 flex justify-between items-end mb-8">
+            <div>
+              <p className="text-gray-400 font-bold uppercase text-xs tracking-widest mb-1">{t('booking.services.total', 'Total Amount')}</p>
+              <p className="text-sm font-bold text-purple-400">{totalDuration} {t('booking.min', 'min')}</p>
+            </div>
+            <p className="text-4xl font-black text-gray-900">{totalPrice} <span className="text-xl text-gray-400">{salonSettings?.currency || 'AED'}</span></p>
+          </div>
+
+          {isAllComplete && (
+            <Button
+              onClick={() => onNavigate('confirm')}
+              className="w-full h-16 btn-primary-gradient text-xl"
+            >
+              <CheckCircle2 className="w-6 h-6" />
+              {t('booking.services.continue', 'Complete Booking')}
+            </Button>
+          )}
+        </motion.div>
+      )}
     </div>
   );
 }
@@ -196,56 +250,95 @@ function ServicesStep({ selectedServices, onServicesChange, onContinue, salonSet
     else onServicesChange([...selectedServices, service]);
   };
 
-  if (loading) return <div className="flex justify-center py-20"><div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex justify-center py-20"><div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
-    <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('booking.services.title', 'Select Services')}</h2>
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <Input placeholder={t('booking.services.search', 'Search services...')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
+    <div className="space-y-6 animate-fade-in">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl shadow-xl p-8 border border-purple-50">
+        <h2 className="text-3xl font-black text-gray-900 mb-6">{t('booking.services.title', 'Select Services')}</h2>
+
+        <div className="relative mb-6">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Input
+            placeholder={t('booking.services.search', 'Search services...')}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-12 h-14 rounded-2xl bg-gray-50 border-none focus-visible:ring-2 focus-visible:ring-purple-400 font-bold"
+          />
         </div>
+
         <ScrollArea className="w-full whitespace-nowrap pb-2">
           <div className="flex gap-2">
             {categories.map((cat) => (
-              <Badge key={cat} variant={selectedCategory === cat ? 'default' : 'outline'} className="cursor-pointer" onClick={() => setSelectedCategory(cat)}>{cat}</Badge>
+              <Badge
+                key={cat}
+                variant={selectedCategory === cat ? 'default' : 'outline'}
+                className={`px-4 py-2 rounded-xl cursor-pointer text-sm font-bold transition-all ${selectedCategory === cat ? 'bg-purple-600 shadow-lg scale-105' : 'hover:bg-purple-50'}`}
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat}
+              </Badge>
             ))}
           </div>
         </ScrollArea>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filteredServices.map((service) => {
-          const isSelected = selectedServices.some((s: any) => s.id === service.id);
-          return (
-            <Card key={service.id} className={`cursor-pointer transition-all border ${isSelected ? 'border-purple-500 bg-purple-50/10' : 'border-gray-100'}`} onClick={() => toggleService(service)}>
-              <CardContent className="p-5">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h3 className="font-bold text-gray-900">{getLocalizedName(service, i18n.language)}</h3>
-                    <div className="flex items-center gap-4 mt-2">
-                      <span className="text-xs text-gray-400 flex items-center gap-1"><Clock className="w-3 h-3" />{service.duration || '30'} {t('booking.min', 'min')}</span>
-                      <span className="font-bold text-gray-900">{service.price} {salonSettings?.currency || 'AED'}</span>
+        <AnimatePresence>
+          {filteredServices.map((service, idx) => {
+            const isSelected = selectedServices.some((s: any) => s.id === service.id);
+            return (
+              <motion.div
+                key={service.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.05 }}
+              >
+                <Card
+                  className={`cursor-pointer service-item-card ${isSelected ? 'service-item-card-selected' : ''}`}
+                  onClick={() => toggleService(service)}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="font-black text-lg text-gray-900 mb-1">{getLocalizedName(service, i18n.language)}</h3>
+                        <p className="text-sm text-gray-500 font-medium mb-4 line-clamp-1">{service.description || t('booking.services.noDescription', 'Professional service')}</p>
+                        <div className="flex items-center gap-4">
+                          <span className="text-xs font-black text-purple-400 flex items-center gap-1 uppercase tracking-wider">
+                            <Clock className="w-3 h-3" />
+                            {service.duration || '30'} {t('booking.min', 'min')}
+                          </span>
+                          <span className="font-black text-lg text-gray-900">
+                            {service.price} {salonSettings?.currency || 'AED'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className={`w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center ${isSelected ? 'bg-purple-600 border-purple-600 shadow-lg' : 'border-gray-200'}`}>
+                        {isSelected && <Check className="w-4 h-4 text-white" />}
+                      </div>
                     </div>
-                  </div>
-                  <Checkbox checked={isSelected} onCheckedChange={() => toggleService(service)} />
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
       </div>
 
       {selectedServices.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-2xl bg-white border border-gray-100 shadow-xl rounded-2xl p-4 z-40 flex items-center justify-between">
-          <div className="text-sm">
-            <p className="font-bold text-gray-900">{selectedServices.length} {t('booking.menu.selected', 'selected')}</p>
-            <p className="text-gray-500">{selectedServices.reduce((sum: number, s: any) => sum + s.price, 0)} {salonSettings?.currency || 'AED'}</p>
+        <div className="booking-footer-bar">
+          <div className="footer-action-container">
+            <div>
+              <p className="font-black text-gray-900 text-lg">{selectedServices.length} {t('booking.menu.selected', 'Selected')}</p>
+              <p className="text-purple-500 font-bold">
+                {selectedServices.reduce((sum: number, s: any) => sum + s.price, 0)} {salonSettings?.currency || 'AED'}
+              </p>
+            </div>
+            <Button onClick={onContinue} className="btn-primary-gradient h-14">
+              {t('booking.services.continue', 'Continue')}
+              <ChevronRight className="w-5 h-5" />
+            </Button>
           </div>
-          <Button onClick={onContinue} className="bg-purple-600 hover:bg-purple-700 h-10 px-6 rounded-xl">
-            {t('booking.services.continue', 'Continue')}
-          </Button>
         </div>
       )}
     </div>
@@ -268,61 +361,75 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, onProfes
     loadMasters();
   }, []);
 
-  if (loading) return <div className="flex justify-center py-20"><div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex justify-center py-20"><div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
-    <div className="wizard-container space-y-6">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+    <div className="space-y-6 animate-fade-in">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl shadow-xl p-8 border border-purple-50">
+        <h2 className="text-3xl font-black text-gray-900">{t('booking.professional.title', 'Select Professional')}</h2>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
         <Card
-          className={`group cursor-pointer wizard-card ${selectedProfessional === null && professionalSelected ? 'wizard-card-selected' : ''}`}
+          className={`cursor-pointer master-item-card group ${selectedProfessional === null && professionalSelected ? 'master-item-card-selected' : ''}`}
           onClick={() => onProfessionalChange(null)}
         >
           <CardContent className="p-8 flex items-center gap-6">
-            <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center text-white shadow-xl">
-              <Users className="w-8 h-8" />
+            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white shadow-xl group-hover:scale-105 transition-transform">
+              <Sparkles className="w-10 h-10" />
             </div>
             <div className="flex-1">
-              <h3 className="font-black text-xl text-primary flex items-center gap-2">
+              <h3 className="font-black text-2xl text-gray-900 flex items-center gap-3">
                 {t('booking.professional.anyAvailable', 'Any Available Professional')}
-                {selectedProfessional === null && professionalSelected && <CheckCircle2 className="w-5 h-5 text-primary" />}
+                {selectedProfessional === null && professionalSelected && <CheckCircle2 className="w-6 h-6 text-green-500" />}
               </h3>
-              <p className="text-sm text-muted-foreground font-medium">{t('booking.professional.firstAvailable', 'First available master will take your appointment')}</p>
+              <p className="text-gray-500 font-bold">{t('booking.professional.firstAvailable', 'First available master will take your appointment')}</p>
             </div>
           </CardContent>
         </Card>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {masters.map((master, idx) => {
           const isSelected = selectedProfessional?.id === master.id;
           return (
             <motion.div
               key={master.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: (idx + 1) * 0.1 }}
             >
               <Card
-                className={`cursor-pointer wizard-card ${isSelected ? 'wizard-card-selected' : ''}`}
+                className={`cursor-pointer master-item-card group ${isSelected ? 'master-item-card-selected' : ''}`}
                 onClick={() => onProfessionalChange(master)}
               >
                 <CardContent className="p-6 flex items-center gap-6">
-                  <Avatar className="w-16 h-16 border-2 border-primary/5 shadow-inner">
-                    <AvatarImage src={master.photo} className="object-cover" />
-                    <AvatarFallback className="bg-muted text-primary font-bold">{master.full_name[0]}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <h3 className="font-black text-lg text-primary">{master.full_name}</h3>
-                      {isSelected && <CheckCircle2 className="w-5 h-5 text-primary" />}
-                    </div>
-                    <p className="text-sm text-muted-foreground font-medium mb-2">{master.position}</p>
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1 text-primary">
-                        <Star className="w-4 h-4 fill-primary" />
-                        <span className="font-black text-sm">{master.rating || '5.0'}</span>
+                  <div className="relative">
+                    <Avatar className="w-20 h-20 border-4 border-white shadow-xl ring-2 ring-purple-50">
+                      <AvatarImage src={master.photo} className="object-cover" />
+                      <AvatarFallback className="bg-gradient-to-br from-purple-100 to-pink-100 text-purple-600 font-black text-2xl">
+                        {master.full_name[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                    {isSelected && (
+                      <div className="absolute -bottom-1 -right-1 bg-green-500 text-white rounded-full p-1 shadow-lg ring-2 ring-white">
+                        <Check className="w-4 h-4" />
                       </div>
-                      <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">({master.reviews || 0} reviews)</span>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-black text-xl text-gray-900 mb-1">{master.full_name}</h3>
+                    <p className="text-sm text-purple-500 font-black uppercase tracking-wider mb-3">{master.position || t('common.professional', 'Professional')}</p>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1.5">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span className="font-black text-sm text-gray-700">{master.rating || '5.0'}</span>
+                      </div>
+                      <span className="text-xs text-gray-400 font-bold uppercase">({master.reviews || 0} reviews)</span>
                     </div>
                   </div>
                 </CardContent>
@@ -333,14 +440,14 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, onProfes
       </div>
 
       {(selectedProfessional !== null || professionalSelected) && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl">
-          <div className="max-w-4xl mx-auto">
+        <div className="booking-footer-bar">
+          <div className="footer-action-container justify-center">
             <Button
-              size="lg"
-              className="w-full h-16 bg-primary text-white font-black rounded-2xl shadow-xl"
               onClick={onContinue}
+              className="btn-primary-gradient h-14 w-full max-w-lg"
             >
-              {t('common.continue', 'Continue')}
+              {t('common.continue', 'Continue to Date & Time')}
+              <ChevronRight className="w-5 h-5" />
             </Button>
           </div>
         </div>
@@ -409,26 +516,16 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
     fetchSlots();
   }, [selectedDate, selectedMaster]);
 
-  // Calendar Helpers
   const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
-  const startOffset = (firstDayOfMonth + 6) % 7; // Monday start
+  const startOffset = (firstDayOfMonth + 6) % 7;
   const prevMonthLastDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0).getDate();
 
   const calendarDays = [];
-  // Prev month padding
-  for (let i = startOffset - 1; i >= 0; i--) {
-    calendarDays.push({ day: prevMonthLastDay - i, month: 'prev' });
-  }
-  // Current month
-  for (let i = 1; i <= daysInMonth; i++) {
-    calendarDays.push({ day: i, month: 'current' });
-  }
-  // Next month padding
+  for (let i = startOffset - 1; i >= 0; i--) calendarDays.push({ day: prevMonthLastDay - i, month: 'prev' });
+  for (let i = 1; i <= daysInMonth; i++) calendarDays.push({ day: i, month: 'current' });
   const totalCells = Math.ceil(calendarDays.length / 7) * 7;
-  for (let i = 1; calendarDays.length < totalCells; i++) {
-    calendarDays.push({ day: i, month: 'next' });
-  }
+  for (let i = 1; calendarDays.length < totalCells; i++) calendarDays.push({ day: i, month: 'next' });
 
   const groupedSlots = {
     morning: availableSlots.filter(s => s.period === 'morning'),
@@ -437,96 +534,99 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
   };
 
   return (
-    <div className="wizard-container space-y-8 pb-32">
-      {/* Top Info Card */}
-      <div className="top-info-card">
-        <div className="top-info-icon-wrapper">
-          <CalendarIcon className="w-8 h-8" />
-        </div>
-        <div>
-          <h2 className="text-3xl font-black text-gray-900">{t('booking.datetime.title', 'Select Date & Time')}</h2>
-          <p className="text-gray-500 font-bold mt-1">{t('booking.duration', 'Duration')}: {duration} {t('booking.min', 'min')}</p>
-        </div>
-      </div>
+    <div className="space-y-8 pb-32 animate-fade-in">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl shadow-xl p-8 border border-purple-50">
+        <h2 className="text-3xl font-black text-gray-900 mb-2">{t('booking.datetime.title', 'Select Date & Time')}</h2>
+        <p className="text-purple-500 font-bold">{t('booking.duration', 'Total duration')}: {duration} {t('booking.min', 'min')}</p>
+      </motion.div>
 
-      <div className="step-split-container">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Date Card */}
-        <div className="split-card">
-          <div className="split-card-header" style={{ background: 'var(--gradient-purple-pink)' }}>
-            {t('booking.datetime.date', 'Date')}
-          </div>
-          <div className="split-card-body">
-            <div className="simple-calendar-container">
-              <div className="calendar-header">
-                <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))} className="p-2 hover:bg-gray-100 rounded-full">
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <div className="calendar-month-label">
-                  {format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}
-                </div>
-                <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))} className="p-2 hover:bg-gray-100 rounded-full">
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="calendar-grid-header">
-                {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(d => (
-                  <div key={d} className="calendar-weekday">{t(`common.days_short.${d.toLowerCase()}`, d)}</div>
-                ))}
-              </div>
-
-              <div className="calendar-grid-days">
-                {calendarDays.map((d, i) => {
-                  const isCurrent = d.month === 'current';
-                  const dateObj = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), d.day);
-                  const dateStr = format(dateObj, 'yyyy-MM-dd');
-                  const isAvailable = isCurrent && availableDates.has(dateStr);
-                  const isSelected = selectedDate && format(selectedDate, 'yyyy-MM-dd') === dateStr;
-                  const isPast = isCurrent && dateObj < new Date(new Date().setHours(0, 0, 0, 0));
-
-                  return (
-                    <div
-                      key={i}
-                      onClick={() => isAvailable && !isPast && onDateTimeChange(dateObj, null)}
-                      className={`calendar-day ${!isCurrent || isPast || !isAvailable ? 'calendar-day-disabled' : ''} ${isSelected ? 'calendar-day-selected ring-2 ring-primary ring-offset-2' : ''} hover:bg-gray-100`}
-                    >
-                      {d.day}
-                    </div>
-                  );
-                })}
-              </div>
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="booking-calendar-card">
+          <div className="calendar-header-gradient flex justify-between items-center">
+            <span className="text-xl font-black uppercase tracking-wider">{t('booking.datetime.date', 'Date')}</span>
+            <div className="flex gap-2">
+              <Button size="icon" variant="ghost" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))} className="text-white hover:bg-white/20 rounded-xl">
+                <ChevronLeft className="w-5 h-5" />
+              </Button>
+              <Button size="icon" variant="ghost" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))} className="text-white hover:bg-white/20 rounded-xl">
+                <ChevronRight className="w-5 h-5" />
+              </Button>
             </div>
           </div>
-        </div>
+          <div className="p-8">
+            <div className="text-center font-black text-2xl mb-8 text-gray-900">
+              {format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}
+            </div>
+            <div className="grid grid-cols-7 gap-2 text-center mb-4">
+              {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(d => (
+                <div key={d} className="text-xs font-black text-gray-400 uppercase tracking-widest">{t(`common.days_short.${d.toLowerCase()}`, d)}</div>
+              ))}
+            </div>
+            <div className="grid grid-cols-7 gap-2">
+              {calendarDays.map((d, i) => {
+                const isCurrent = d.month === 'current';
+                const dateObj = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), d.day);
+                const dateStr = format(dateObj, 'yyyy-MM-dd');
+                const isAvailable = isCurrent && availableDates.has(dateStr);
+                const isSelected = selectedDate && format(selectedDate, 'yyyy-MM-dd') === dateStr;
+                const isPast = isCurrent && dateObj < new Date(new Date().setHours(0, 0, 0, 0));
+
+                return (
+                  <button
+                    key={i}
+                    disabled={!isAvailable || isPast}
+                    onClick={() => isAvailable && !isPast && onDateTimeChange(dateObj, null)}
+                    className={`aspect-square rounded-2xl flex items-center justify-center font-black text-lg transition-all
+                      ${!isCurrent || isPast || !isAvailable ? 'text-gray-200 cursor-not-allowed' : 'text-gray-700 hover:bg-purple-50 hover:scale-110'}
+                      ${isSelected ? 'bg-purple-600 text-white shadow-xl scale-110 ring-4 ring-purple-100' : ''}`}
+                  >
+                    {d.day}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
 
         {/* Time Card */}
-        <div className="split-card">
-          <div className="split-card-header" style={{ background: 'var(--gradient-pink-red)' }}>
-            {t('booking.datetime.time', 'Time')}
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="booking-calendar-card">
+          <div className="time-grid-gradient flex justify-between items-center">
+            <span className="text-xl font-black uppercase tracking-wider">{t('booking.datetime.time', 'Time')}</span>
+            <Clock className="w-6 h-6 text-white" />
           </div>
-          <div className="split-card-body">
+          <div className="p-8">
             {!selectedDate ? (
-              <div className="time-slot-placeholder">
-                {t('booking.datetime.dateFirst', 'Date first')}
+              <div className="flex flex-col items-center justify-center h-64 text-gray-400 gap-4">
+                <CalendarIcon className="w-12 h-12" />
+                <p className="font-bold text-center">{t('booking.datetime.dateFirst', 'Please select a date first')}</p>
               </div>
             ) : loading ? (
-              <div className="flex justify-center py-20"><Loader2 className="w-10 h-10 animate-spin text-primary" /></div>
+              <div className="flex items-center justify-center h-64">
+                <Loader2 className="w-12 h-12 animate-spin text-purple-600" />
+              </div>
             ) : availableSlots.length === 0 ? (
-              <div className="text-center py-20 text-gray-500 font-bold">{t('booking.datetime.noSlots', 'No available slots')}</div>
+              <div className="flex flex-col items-center justify-center h-64 text-gray-400 gap-4">
+                <Sparkles className="w-12 h-12" />
+                <p className="font-bold text-center">{t('booking.datetime.noSlots', 'No results for this day')}</p>
+              </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {(['morning', 'afternoon', 'evening'] as const).map(period => {
                   const slots = groupedSlots[period];
                   if (slots.length === 0) return null;
                   return (
-                    <div key={period} className="space-y-3">
-                      <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t(`booking.datetime.${period}`, period)}</h4>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div key={period} className="space-y-4">
+                      <h4 className="text-xs font-black text-gray-400 uppercase tracking-[0.2em]">{t(`booking.datetime.${period}`, period)}</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {slots.map(slot => (
                           <button
                             key={slot.time}
                             onClick={() => onDateTimeChange(selectedDate, slot.time)}
-                            className={`py-3 px-2 rounded-xl font-bold text-sm transition-all border ${selectedTime === slot.time ? 'bg-primary text-white border-primary shadow-lg' : 'bg-white text-gray-900 border-gray-100 hover:border-primary/20 hover:bg-gray-50'}`}
+                            className={`py-4 rounded-2xl font-black text-sm transition-all border-2 
+                              ${selectedTime === slot.time
+                                ? 'bg-purple-600 text-white border-purple-600 shadow-xl scale-105'
+                                : 'bg-white text-gray-900 border-gray-100 hover:border-purple-200 hover:bg-purple-50/50'}`}
                           >
                             {slot.time}
                           </button>
@@ -538,16 +638,17 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Fixed Bottom Continue Bar */}
       {selectedDate && selectedTime && (
-        <div className="bottom-bar">
-          <button onClick={onContinue} className="btn-continue">
-            {t('common.continue', 'Continue')}
-            <ChevronRight className="w-5 h-5" />
-          </button>
+        <div className="booking-footer-bar">
+          <div className="footer-action-container justify-center">
+            <Button onClick={onContinue} className="btn-primary-gradient h-14 w-full max-w-lg">
+              {t('common.continue', 'Continue to Review')}
+              <ChevronRight className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       )}
     </div>
@@ -596,112 +697,136 @@ function ConfirmStep({ bookingState, totalPrice, onPhoneChange, onSuccess, salon
   const dateLocale = getDateLocaleCentral(i18n.language);
 
   return (
-    <div className="wizard-container space-y-6">
-      <Card className="wizard-card p-4">
-        <CardContent className="p-4 space-y-8">
-          {/* Summary Section */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <List className="w-6 h-6 text-primary" />
-              <h3 className="font-black text-xl text-primary">{t('booking.confirm.summary', 'Summary')}</h3>
-            </div>
-            <div className="space-y-4 divide-y divide-primary/5">
+    <div className="space-y-8 pb-32 animate-fade-in">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl shadow-xl p-8 border border-purple-50">
+        <h2 className="text-3xl font-black text-gray-900">{t('booking.confirm.title', 'Booking Confirmation')}</h2>
+        <p className="text-gray-500 font-bold mt-1 uppercase tracking-widest text-xs">{t('booking.confirm.subtitle', 'Please review your details')}</p>
+      </motion.div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Col: Services & Total */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-3xl shadow-xl p-8 border border-purple-50">
+            <h3 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-2">
+              <List className="w-6 h-6 text-purple-500" />
+              {t('booking.menu.services', 'Services')}
+            </h3>
+            <div className="space-y-6">
               {bookingState.services.map((service: any) => (
-                <div key={service.id} className="flex justify-between items-center pt-4">
-                  <div>
-                    <div className="font-black text-lg text-primary">{getLocalizedName(service, i18n.language)}</div>
-                    <div className="text-sm text-muted-foreground font-bold">{service.duration || '30'} {t('booking.min', 'min')}</div>
+                <div key={service.id} className="flex justify-between items-center group">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all">
+                      <Scissors className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-black text-lg text-gray-900">{getLocalizedName(service, i18n.language)}</div>
+                      <div className="text-sm font-bold text-gray-400 uppercase tracking-wider">{service.duration || '30'} {t('booking.min', 'min')}</div>
+                    </div>
                   </div>
-                  <div className="font-black text-xl text-primary">{service.price} {salonSettings?.currency || 'AED'}</div>
+                  <div className="font-black text-2xl text-gray-900">{service.price} <span className="text-sm text-gray-400 font-bold uppercase">{salonSettings?.currency || 'AED'}</span></div>
                 </div>
               ))}
-              <div className="flex justify-between items-center pt-6">
-                <div className="font-black text-xl text-primary uppercase tracking-tighter">{t('booking.services.total', 'Total')}</div>
-                <div className="font-black text-3xl text-primary">{totalPrice} {salonSettings?.currency || 'AED'}</div>
+              <div className="pt-6 border-t border-dashed border-gray-200 flex justify-between items-end">
+                <span className="font-black text-gray-400 uppercase tracking-widest">{t('booking.services.total', 'Amount to pay')}</span>
+                <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+                  {totalPrice} <span className="text-xl opacity-50">{salonSettings?.currency || 'AED'}</span>
+                </span>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Details Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-            <div className="p-6 rounded-2xl bg-muted/30 border border-primary/5 flex items-center gap-4">
-              <User className="w-6 h-6 text-primary" />
-              <div>
-                <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{t('booking.menu.professional', 'Professional')}</div>
-                <div className="font-black text-primary">
-                  {bookingState.professional ? bookingState.professional.full_name : t('booking.professional.anyAvailable', "Any Provider")}
+        {/* Right Col: Details & Booking Button */}
+        <div className="space-y-6 text-center lg:text-left">
+          <div className="bg-white rounded-3xl shadow-xl p-8 border border-purple-50 space-y-8">
+            <h3 className="text-xl font-black text-gray-900 flex items-center gap-2 justify-center lg:justify-start">
+              <CheckCircle2 className="w-6 h-6 text-green-500" />
+              {t('booking.confirm.details', 'Details')}
+            </h3>
+
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-600">
+                  <User className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">{t('booking.menu.professional', 'Master')}</div>
+                  <div className="font-black text-gray-900">
+                    {bookingState.professional ? bookingState.professional.full_name : t('booking.professional.anyAvailable', "Any Provider")}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
+                  <CalendarIcon className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">{t('booking.menu.datetime', 'Time')}</div>
+                  <div className="font-black text-gray-900">
+                    {bookingState.date ? format(bookingState.date, 'EEEE, MMM dd', { locale: dateLocale }) : '--'}
+                    <span className="text-purple-600 ml-2">@ {bookingState.time}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600">
+                  <Phone className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">{t('booking.confirm.phone', 'Phone')}</div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-black text-gray-900">{phone || '--'}</span>
+                    <Button variant="ghost" size="sm" onClick={() => setShowPhoneModal(true)} className="text-purple-600 font-black hover:bg-purple-50">
+                      Edit
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="p-6 rounded-2xl bg-muted/30 border border-primary/5 flex items-center gap-4">
-              <CalendarIcon className="w-6 h-6 text-primary" />
-              <div>
-                <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{t('booking.menu.datetime', 'Appointment at')}</div>
-                <div className="font-black text-primary">
-                  {bookingState.date ? format(bookingState.date, 'EEEE, MMM dd', { locale: dateLocale }) : '--'} at {bookingState.time}
-                </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Contact Section */}
-          <div className="p-6 rounded-2xl bg-muted/30 border border-primary/5 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <Phone className="w-6 h-6 text-primary" />
-              <div>
-                <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{t('booking.confirm.phone', 'Contact Phone')}</div>
-                <div className="font-black text-primary">{phone || t('phone_required', 'Not set')}</div>
-              </div>
-            </div>
-            <Button variant="ghost" size="sm" onClick={() => setShowPhoneModal(true)} className="font-black text-primary hover:bg-primary/5">
-              {t('common.change', 'Change')}
+            <Button
+              onClick={handleConfirm}
+              disabled={loading || !phone}
+              className="w-full h-20 btn-primary-gradient text-2xl"
+            >
+              {loading ? (
+                <Loader2 className="w-8 h-8 animate-spin" />
+              ) : (
+                <>
+                  <Sparkles className="w-8 h-8 mr-3" />
+                  {t('booking.confirm.bookNow', 'Confirm')}
+                </>
+              )}
             </Button>
           </div>
+        </div>
+      </div>
 
-          <Button
-            size="lg"
-            className="w-full h-20 btn-book-now text-2xl font-black rounded-3xl shadow-2xl transition-all mt-8"
-            onClick={handleConfirm}
-            disabled={loading || !phone}
-          >
-            {loading ? (
-              <Loader2 className="w-8 h-8 animate-spin" />
-            ) : (
-              <>
-                <CheckCircle2 className="w-8 h-8 mr-3" />
-                {t('booking.confirm.bookNow', 'Book Now')}
-              </>
-            )}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Phone Modal */}
       <Dialog open={showPhoneModal} onOpenChange={setShowPhoneModal}>
-        <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden border-none shadow-2xl">
-          <div className="bg-primary p-8 text-white text-center">
-            <Phone className="w-12 h-12 mx-auto mb-4" />
-            <DialogTitle className="text-2xl font-black">
-              {t('booking.confirm.phone', 'Contact Info')}
-            </DialogTitle>
-            <p className="text-white/70 text-sm mt-2 font-medium">
-              {t('phone_modal_desc', 'Enter your phone to confirm')}
-            </p>
-          </div>
-          <div className="p-8 space-y-6">
+        <DialogContent className="p-0 border-none shadow-3xl rounded-[2rem] overflow-hidden max-w-sm">
+          <DialogHeader className="bg-gradient-to-br from-purple-600 to-pink-600 p-8 text-white">
+            <div className="w-16 h-16 rounded-3xl bg-white/20 flex items-center justify-center mb-6 mx-auto">
+              <Phone className="w-8 h-8" />
+            </div>
+            <DialogTitle className="text-2xl font-black text-center text-white">{t('booking.confirm.phone', 'Contact phone')}</DialogTitle>
+          </DialogHeader>
+          <div className="p-8 space-y-6 flex flex-col items-center">
+            <p className="text-gray-500 font-bold text-center text-sm">{t('phone_modal_desc', 'Enter your number to receive confirmation details')}</p>
             <Input
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+971"
-              className="h-16 text-2xl font-black text-center bg-muted/30 border-none focus:ring-2 focus:ring-primary rounded-2xl"
+              className="h-16 text-2xl font-black text-center bg-gray-50 border-none focus-visible:ring-4 focus-visible:ring-purple-100 rounded-3xl"
             />
-            <div className="flex gap-4">
-              <Button variant="ghost" onClick={() => setShowPhoneModal(false)} className="flex-1 h-14 rounded-xl font-bold">
-                {t('common.cancel', 'Cancel')}
+            <div className="flex gap-4 w-full">
+              <Button variant="ghost" onClick={() => setShowPhoneModal(false)} className="flex-1 h-14 rounded-2xl font-black hover:bg-gray-50">
+                Cancel
               </Button>
-              <Button onClick={handlePhoneSubmit} className="flex-1 h-14 rounded-xl bg-primary text-white font-black shadow-lg">
-                {t('common.save', 'Save')}
+              <Button onClick={handlePhoneSubmit} className="flex-1 h-14 rounded-2xl btn-primary-gradient shadow-lg">
+                Save
               </Button>
             </div>
           </div>
@@ -717,7 +842,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const step = searchParams.get('booking') || 'menu';
-  const { t } = useTranslation(['booking', 'common']);
+  const { t, i18n } = useTranslation(['booking', 'common']);
 
   const [bookingState, setBookingState] = useState<BookingState>({
     services: [],
@@ -778,44 +903,107 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const updateState = (updates: Partial<BookingState>) => setBookingState((prev: BookingState) => ({ ...prev, ...updates }));
   const totalPrice = bookingState.services.reduce((sum: number, s: Service) => sum + s.price, 0);
 
-  if (loading) return <div className="fixed inset-0 bg-white z-50 flex items-center justify-center"><div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="fixed inset-0 bg-white z-[60] flex items-center justify-center animate-pulse"><div className="w-16 h-16 border-8 border-purple-600 border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
-    <div className="min-h-screen wizard-scrollable flex flex-col">
-      {/* Custom Nav Header */}
-      <div className="bg-white border-b sticky top-0 z-50">
-        <div className="wizard-container py-4 flex items-center justify-between">
-          <button onClick={goBack} className="wizard-nav-back group">
-            <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
-            {t('common.back', 'Back')}
-          </button>
-
-          <h2 className="text-xl font-black wizard-title-pink">
-            {t('booking.newBooking', 'New Booking')}
-          </h2>
+    <div className="min-h-screen bg-gray-50 flex flex-col font-sans selection:bg-purple-100 selection:text-purple-600">
+      {/* Premium Header */}
+      <header className="bg-white/80 backdrop-blur-2xl border-b border-gray-100 sticky top-0 z-50">
+        <div className="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <button
+              onClick={goBack}
+              className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-purple-50 hover:text-purple-600 transition-all group"
+            >
+              <ChevronLeft className="w-6 h-6 transition-transform group-hover:-translate-x-1" />
+            </button>
+            <div>
+              <h1 className="text-xl font-black text-gray-900 tracking-tight">
+                {t('booking.newBooking', 'New Booking')}
+              </h1>
+              <div className="flex items-center gap-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{salonSettings?.name || 'Live System'}</span>
+              </div>
+            </div>
+          </div>
 
           <div className="flex items-center gap-4">
-            <PublicLanguageSwitcher />
+            <div className="hidden md:block">
+              <PublicLanguageSwitcher />
+            </div>
             {onClose && (
-              <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
-                <X className="w-5 h-5" />
+              <button
+                onClick={onClose}
+                className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all"
+              >
+                <X className="w-6 h-6" />
               </button>
             )}
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="flex-1 py-8">
+      <main className="flex-1 w-full max-w-5xl mx-auto px-6 py-10">
         <AnimatePresence mode="wait">
-          <motion.div key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-            {step === 'menu' && <BookingMenu bookingState={bookingState} onNavigate={setStep} totalPrice={totalPrice} salonSettings={salonSettings} />}
-            {step === 'services' && <ServicesStep selectedServices={bookingState.services} onServicesChange={(services: any) => updateState({ services })} onContinue={() => setStep('menu')} salonSettings={salonSettings} />}
-            {step === 'professional' && <ProfessionalStep selectedMaster={bookingState.professional} professionalSelected={bookingState.professionalSelected} onMasterSelect={(master: any) => updateState({ professional: master, professionalSelected: true })} onContinue={() => setStep('menu')} />}
-            {step === 'datetime' && <DateTimeStep selectedDate={bookingState.date} selectedTime={bookingState.time} selectedMaster={bookingState.professional} selectedServices={bookingState.services} onDateTimeChange={(date: any, time: any) => updateState({ date, time })} onContinue={() => setStep('confirm')} />}
-            {step === 'confirm' && <ConfirmStep bookingState={bookingState} totalPrice={totalPrice} onPhoneChange={(phone: any) => updateState({ phone })} onSuccess={() => { sessionStorage.removeItem(STORAGE_KEY); if (onSuccess) onSuccess(); if (onClose) onClose(); }} salonSettings={salonSettings} />}
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, scale: 0.98, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.98, y: -10 }}
+            transition={{ type: "spring", duration: 0.5 }}
+          >
+            {step === 'menu' && (
+              <BookingMenu
+                bookingState={bookingState}
+                onNavigate={setStep}
+                totalPrice={totalPrice}
+                salonSettings={salonSettings}
+              />
+            )}
+            {step === 'services' && (
+              <ServicesStep
+                selectedServices={bookingState.services}
+                onServicesChange={(services: any) => updateState({ services })}
+                onContinue={() => setStep('menu')}
+                salonSettings={salonSettings}
+              />
+            )}
+            {step === 'professional' && (
+              <ProfessionalStep
+                selectedProfessional={bookingState.professional}
+                professionalSelected={bookingState.professionalSelected}
+                onProfessionalChange={(prof: any) => updateState({ professional: prof, professionalSelected: true })}
+                onContinue={() => setStep('menu')}
+              />
+            )}
+            {step === 'datetime' && (
+              <DateTimeStep
+                selectedDate={bookingState.date}
+                selectedTime={bookingState.time}
+                selectedMaster={bookingState.professional}
+                selectedServices={bookingState.services}
+                onDateTimeChange={(date: any, time: any) => updateState({ date, time })}
+                onContinue={() => setStep('confirm')}
+              />
+            )}
+            {step === 'confirm' && (
+              <ConfirmStep
+                bookingState={bookingState}
+                totalPrice={totalPrice}
+                onPhoneChange={(phone: any) => updateState({ phone })}
+                onSuccess={() => {
+                  sessionStorage.removeItem(STORAGE_KEY);
+                  if (onSuccess) onSuccess();
+                  if (onClose) onClose();
+                }}
+                salonSettings={salonSettings}
+              />
+            )}
           </motion.div>
         </AnimatePresence>
-      </div>
+      </main>
+
       <Toaster position="top-center" richColors />
     </div>
   );
