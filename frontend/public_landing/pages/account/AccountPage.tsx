@@ -444,16 +444,22 @@ export function AccountPage() {
                 <div className="font-bold">{dashboardData.next_booking.price} AED</div>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Button size="sm" variant="outline" className="w-full sm:flex-1 bg-white hover:bg-white/90" onClick={handleAddToCalendar}>
-                <Calendar className="w-4 h-4 mr-2" />
-                {t('account:dashboard.appointment.add_to_calendar')}
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="outline" className="flex-1 min-w-[30%] h-auto py-2 flex-col gap-1 whitespace-normal bg-white hover:bg-white/90" onClick={handleAddToCalendar}>
+                <Calendar className="w-4 h-4" />
+                <span className="text-xs text-center leading-tight">
+                  {t('account:dashboard.appointment.add_to_calendar')}
+                </span>
               </Button>
-              <Button size="sm" variant="outline" className="w-full sm:w-auto bg-white hover:bg-white/90" onClick={() => handleRescheduleAppointment(dashboardData.next_booking.id)}>
-                {t('account:dashboard.appointment.reschedule')}
+              <Button size="sm" variant="outline" className="flex-1 min-w-[30%] h-auto py-2 flex-col gap-1 whitespace-normal bg-white hover:bg-white/90" onClick={() => handleRescheduleAppointment(dashboardData.next_booking.id)}>
+                <span className="text-xs text-center leading-tight">
+                  {t('account:dashboard.appointment.reschedule')}
+                </span>
               </Button>
-              <Button size="sm" variant="destructive" className="w-full sm:w-auto" onClick={() => handleCancelAppointment(dashboardData.next_booking.id)}>
-                {t('account:dashboard.appointment.cancel')}
+              <Button size="sm" variant="destructive" className="flex-1 min-w-[30%] h-auto py-2 flex-col gap-1 whitespace-normal" onClick={() => handleCancelAppointment(dashboardData.next_booking.id)}>
+                <span className="text-xs text-center leading-tight">
+                  {t('account:dashboard.appointment.cancel')}
+                </span>
               </Button>
             </div>
           </CardContent>
