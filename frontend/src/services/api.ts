@@ -359,6 +359,10 @@ export class ApiClient {
     return this.request<any>('/api/salon-settings')
   }
 
+  async getPublicSalonSettings() {
+    return this.request<any>('/api/public/salon-settings')
+  }
+
   async updateSalonSettings(data: any) {
     return this.request('/api/salon-settings', {
       method: 'POST',

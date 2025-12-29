@@ -1,157 +1,114 @@
-/* UserBookingWizard.css */
+/* UserBookingWizard.css - Cleaner, minimalist styles matching new_admin */
 
-:root {
-  --wizard-background: #ffffff;
-  --wizard-primary: #db2777;
-  --wizard-primary-hover: #be185d;
-  --wizard-primary-foreground: #ffffff;
-  --wizard-muted: #fdf2f8;
-  --wizard-muted-foreground: #6b7280;
-  --wizard-accent: #fbcfe8;
-  --wizard-border: rgba(219, 39, 119, 0.1);
-  --wizard-radius: 1rem;
-  --wizard-shadow: 0 4px 20px -2px rgba(219, 39, 119, 0.1);
+.welcome-card {
+  background: white;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  border: 1px solid #f3f4f6;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
-.wizard-root {
-    background: var(--background);
+.welcome-bg-pattern {
+  display: none;
 }
 
-.wizard-scrollable {
-    overflow-y: auto !important;
-    height: 100vh;
-    background: var(--background);
+.badge-success {
+  background-color: #ecfdf5;
+  color: #059669;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
-/* Header styling */
-.wizard-header {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    z-index: 50;
+.btn-primary {
+  background-color: #9333ea;
+  color: white;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.2s;
 }
 
-/* Breadcrumbs */
-.wizard-breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0;
+.btn-primary:hover {
+  background-color: #7e22ce;
+  transform: translateY(-1px);
 }
 
-.wizard-breadcrumb-item {
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 0.2rem 0.6rem;
-    border-radius: 9999px;
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
+.btn-secondary {
+  background-color: #f3f4f6;
+  color: #374151;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.2s;
 }
 
-.wizard-breadcrumb-active {
-    background: var(--primary);
-    color: white;
+.btn-outline {
+  background-color: white;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.2s;
 }
 
-.wizard-breadcrumb-inactive {
-    color: var(--muted-foreground);
-    background: var(--muted);
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Card Design */
-.wizard-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 1.5rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+.step-content {
+  animation: fadeIn 0.3s ease-out;
 }
 
-.wizard-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px -5px rgba(3, 2, 19, 0.1);
-    border-color: var(--primary);
+/* Calendar Overrides */
+.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: #9333ea;
+  --rdp-background-color: #f3e8ff;
+  margin: 0;
 }
 
-.wizard-card-selected {
-    border-color: var(--primary) !important;
-    border-width: 2px !important;
-    background: #fafafa;
+.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+  background-color: #f3f4f6;
 }
 
-/* Calendar styling - Fixed proportions */
-.wizard-calendar-grid {
-    display: grid;
-    grid-template-cols: repeat(7, 1fr);
-    gap: 4px;
-    max-width: 350px;
-    margin: 0 auto;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.wizard-calendar-day {
-    aspect-ratio: 1 / 1;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-weight: 700;
-    font-size: 0.8rem;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    margin: 0 auto;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.wizard-calendar-day:hover:not(:disabled) {
-    background: #f0f0f0;
+::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 10px;
 }
 
-.wizard-calendar-day-selected {
-    background: var(--primary) !important;
-    color: white !important;
-    box-shadow: 0 4px 12px rgba(3, 2, 19, 0.25);
+::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
 }
 
-.wizard-calendar-day:disabled {
-    opacity: 0.15;
-    cursor: not-allowed;
-    background: transparent !important;
+.btn-book-now {
+  background: linear-gradient(to right, #9333ea, #db2777);
+  color: white;
+  border: none;
 }
 
-.wizard-calendar-today {
-    box-shadow: inset 0 0 0 2px var(--primary);
-}
-
-/* Buttons */
-.wizard-btn-primary {
-    background: var(--primary);
-    color: white;
-    border-radius: 1.25rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-/* Layout constraints */
-.wizard-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
-}
-
-.wizard-calendar-card {
-    max-width: 450px;
-    margin: 0 auto;
-    padding: 2rem;
-    border-radius: 2rem;
-}
-
-/* Scrollbar hide */
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-.no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+.btn-book-now:hover {
+  background: linear-gradient(to right, #7e22ce, #c026d3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(147, 51, 234, 0.4);
 }
