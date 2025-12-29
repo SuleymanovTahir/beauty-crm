@@ -65,13 +65,28 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             "total_saved": client_row[2] if client_row else 0
         }
 
-        c.execute("SELECT id, service_name, datetime, master FROM bookings WHERE instagram_id = %s AND status IN ('pending', 'confirmed') AND datetime >= %s ORDER BY datetime ASC LIMIT 1", (client_id, datetime.now().isoformat()))
+        c.execute("""
+            SELECT b.id, b.service_name, b.datetime, b.master, u.photo_url 
+            FROM bookings b 
+            LEFT JOIN users u ON b.master = u.full_name 
+            WHERE b.instagram_id = %s 
+            AND b.status IN ('pending', 'confirmed') 
+            AND b.datetime >= %s 
+            ORDER BY b.datetime ASC LIMIT 1
+        """, (client_id, datetime.now().isoformat()))
         row = c.fetchone()
-        next_booking = {"id": row[0], "service": row[1], "date": row[2], "master": row[3]} if row else None
+        next_booking = {"id": row[0], "service": row[1], "date": row[2], "master": row[3], "master_photo": row[4]} if row else None
 
-        c.execute("SELECT id, service_name, datetime, master FROM bookings WHERE instagram_id = %s AND status = 'completed' ORDER BY datetime DESC LIMIT 1", (client_id,))
+        c.execute("""
+            SELECT b.id, b.service_name, b.datetime, b.master, u.photo_url 
+            FROM bookings b 
+            LEFT JOIN users u ON b.master = u.full_name 
+            WHERE b.instagram_id = %s 
+            AND b.status = 'completed' 
+            ORDER BY b.datetime DESC LIMIT 1
+        """, (client_id,))
         row = c.fetchone()
-        last_visit = {"id": row[0], "service": row[1], "date": row[2], "master": row[3]} if row else None
+        last_visit = {"id": row[0], "service": row[1], "date": row[2], "master": row[3], "master_photo": row[4]} if row else None
 
         c.execute("SELECT COUNT(*) FROM client_achievements WHERE client_id = %s AND unlocked_at IS NOT NULL", (client_id,))
         unlocked = c.fetchone()[0]
