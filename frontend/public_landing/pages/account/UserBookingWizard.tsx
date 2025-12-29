@@ -15,7 +15,7 @@ import { ProfessionalStep } from './booking/ProfessionalStep';
 import { DateTimeStep } from './booking/DateTimeStep';
 import { ConfirmStep } from './booking/ConfirmStep';
 
-import '../../styles/css/index.css';
+
 import './UserBookingWizard.css';
 
 const STORAGE_KEY = 'booking-state-v2';

@@ -62,6 +62,7 @@ const PrivacyPolicyNew = React.lazy(() => import('../public_landing/pages/Privac
 const TermsOfUseNew = React.lazy(() => import('../public_landing/pages/TermsOfUse').then(module => ({ default: module.TermsOfUse })));
 const ServiceDetail = React.lazy(() => import('../public_landing/pages/ServiceDetail').then(module => ({ default: module.ServiceDetail })));
 const AccountPage = React.lazy(() => import('../public_landing/pages/account/AccountPage').then(module => ({ default: module.AccountPage })));
+const UserBookingWizard = React.lazy(() => import('../public_landing/pages/account/UserBookingWizard').then(module => ({ default: module.UserBookingWizard })));
 const DataDeletionNew = React.lazy(() => import('../public_landing/pages/DataDeletion'));
 
 const Login = React.lazy(() => import('../public_landing/pages/LoginPage').then(module => ({ default: module.LoginPage })));
@@ -356,6 +357,7 @@ export default function App() {
                 <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
                 <Route path="/data-deletion" element={<DataDeletionNew />} />
                 <Route path="/account" element={<AccountPage />} />
+                <Route path="/new-booking" element={<UserBookingWizard />} />
               </Route>
 
               {/* Public Routes using PublicLayout - COMMENTED OUT: files don't exist */}

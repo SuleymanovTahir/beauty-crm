@@ -5,6 +5,8 @@ import { AccountPage } from './pages/account/AccountPage';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfUse } from './pages/TermsOfUse';
 
+import { UserBookingWizard } from './pages/account/UserBookingWizard';
+
 export default function App() {
   return (
     <Router>
@@ -12,6 +14,7 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/account" element={<AccountPage />} />
+        <Route path="/new-booking" element={<UserBookingWizard />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfUse />} />
         {/* Fallback for unknown routes */}
