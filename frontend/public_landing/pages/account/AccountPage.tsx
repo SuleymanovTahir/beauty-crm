@@ -128,9 +128,9 @@ export function AccountPage() {
   const [loyalty, setLoyalty] = useState<any>(null);
   const [salonSettings, setSalonSettings] = useState<any>(null);
 
-  const isBooking = searchParams.get('booking') === 'true';
-  const openBooking = () => setSearchParams({ tab: activeTab, booking: 'true' });
-  const closeBooking = () => setSearchParams({ tab: activeTab });
+  const isBooking = !!searchParams.get('booking');
+  const openBooking = () => setSearchParams({ booking: 'menu' });
+  const closeBooking = () => navigate('/account', { replace: true });
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -1744,10 +1744,8 @@ export function AccountPage() {
         </div>
 
         {isBooking && (
-          <div className="fixed inset-0 z-50 bg-white overflow-y-auto wizard-scrollable">
-            <div className="w-full min-h-full bg-white shadow-2xl animate-in fade-in zoom-in duration-300">
-              <UserBookingWizard onClose={closeBooking} />
-            </div>
+          <div className="fixed inset-0 z-50 bg-white shadow-2xl animate-in fade-in duration-300 overflow-hidden">
+            <UserBookingWizard onClose={closeBooking} />
           </div>
         )}
       </div>
