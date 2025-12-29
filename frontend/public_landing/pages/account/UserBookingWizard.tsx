@@ -539,29 +539,52 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, bookingS
 
       {(selectedProfessional !== null || professionalSelected) && (
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 100 }}
           animate={{ opacity: 1, y: 0 }}
           className="booking-footer-bar"
         >
-          <div className="footer-action-container">
-            <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar py-2">
-              <Button onClick={() => onContinue('services')} variant="ghost" className={`text-gray-400 font-bold hover:text-purple-600 gap-2 px-3 ${bookingState.services.length > 0 ? 'text-purple-600' : ''}`}>
-                <Scissors className="w-4 h-4" />
-                <span className="whitespace-nowrap">{t('booking.menu.services', 'Services')}</span>
-              </Button>
-              <Button onClick={() => onContinue('datetime')} variant="ghost" className={`text-gray-400 font-bold hover:text-purple-600 gap-2 px-3 ${bookingState.date && bookingState.time ? 'text-purple-600' : ''}`}>
-                <CalendarIcon className="w-4 h-4" />
-                <span className="whitespace-nowrap">{t('booking.menu.datetime', 'Date & Time')}</span>
-              </Button>
+          <div className="footer-action-container container-blur">
+            <div className="flex items-center gap-10">
+              <div className="hidden lg:block border-r border-slate-100 pr-10">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-purple-50/50 flex items-center justify-center overflow-hidden">
+                    {selectedProfessional ? (
+                      <img src={selectedProfessional.photo} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <Sparkles className="w-6 h-6 text-purple-600" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-black text-slate-900 text-lg leading-none mb-1 uppercase tracking-tighter">
+                      {selectedProfessional ? selectedProfessional.full_name : t('booking.professional.anyAvailable', 'Flexible Master')}
+                    </p>
+                    <p className="text-purple-500 font-bold text-xs uppercase tracking-widest">
+                      {t('booking.menu.professional', 'Selection Confirmed')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Button onClick={() => onContinue('services')} variant="ghost" className={`footer-step-btn ${bookingState.services.length > 0 ? 'active' : ''}`}>
+                  <Scissors className="w-5 h-5 text-slate-600" />
+                  <span className="hidden sm:block">{t('booking.menu.services', 'SERVICES')}</span>
+                </Button>
+                <Button onClick={() => onContinue('datetime')} variant="ghost" className={`footer-step-btn ${bookingState.date && bookingState.time ? 'active' : ''}`}>
+                  <CalendarIcon className="w-5 h-5 text-slate-600" />
+                  <span className="hidden sm:block">{t('booking.menu.datetime', 'SCHEDULE')}</span>
+                </Button>
+              </div>
             </div>
+
             <Button
               onClick={() => onContinue()}
-              className="btn-primary-gradient h-14 min-w-[140px] sm:min-w-[200px] shadow-lg"
+              className="btn-primary-gradient h-16 min-w-[240px] shadow-2xl text-lg px-10 group"
             >
               {(bookingState.services.length > 0 && bookingState.date && bookingState.time)
-                ? t('booking.confirm.title', 'Confirm Booking')
-                : t('common.next', 'Next Step')}
-              <ChevronRight className="w-5 h-5" />
+                ? t('booking.confirm.title', 'VERIFY SESSION')
+                : t('common.next', 'NEXT PHASE')}
+              <ChevronRight className="w-6 h-6 ml-2 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
         </motion.div>
