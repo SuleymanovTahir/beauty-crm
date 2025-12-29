@@ -1,7 +1,9 @@
 /* UserBookingWizard.css - High-fidelity design matching new_admin */
 
 :root {
-  --gradient-purple-pink: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  --purple-gradient: linear-gradient(135deg, #a855f7 0%, #d946ef 100%);
+  --purple-600: #9333ea;
+  --purple-500: #a855f7;
   --gradient-pink-rose: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
   --gradient-rose-orange: linear-gradient(135deg, #f43f5e 0%, #f97316 100%);
   --gradient-primary: linear-gradient(90deg, #9333ea 0%, #db2777 100%);
@@ -23,7 +25,7 @@
 }
 
 .bg-gradient-purple-pink {
-  background: var(--gradient-purple-pink);
+  background: var(--purple-gradient);
 }
 
 .bg-gradient-pink-rose {
@@ -63,6 +65,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .wizard-nav-back {
@@ -105,7 +115,7 @@
   width: 4rem;
   height: 4rem;
   border-radius: calc(var(--radius) - 0.5rem);
-  background: var(--gradient-purple-pink);
+  background: var(--purple-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -114,6 +124,35 @@
 }
 
 /* Booking Cards */
+/* --- Language Switcher Fix --- */
+.no-double-border button {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.no-double-border .wizard-lang-switcher {
+  border: none !important;
+}
+
+/* --- Services Step Improvements --- */
+.service-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.service-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+}
+
+.service-card.selected {
+  border: 2px solid var(--purple-500);
+  background: linear-gradient(to bottom right, rgba(168, 85, 247, 0.05), white);
+}
+
 .booking-step-card {
   background: white;
   border-radius: var(--radius);
@@ -263,7 +302,7 @@
 }
 
 .calendar-header-gradient {
-  background: var(--gradient-purple-pink);
+  background: var(--purple-gradient);
   padding: 1.5rem;
   color: white;
   text-align: center;
@@ -287,29 +326,21 @@
   text-align: center;
 }
 
-/* Fix for shadcn calendar headers - Use standard table layout for better alignment */
+/* Fix for shadcn calendar headers - Respect the flex layout from the component */
 .rdp-head_cell {
-  font-weight: 950 !important;
-  color: var(--text-main) !important;
-  opacity: 0.8;
+  font-weight: 800 !important;
+  color: #94a3b8 !important;
   text-transform: uppercase;
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   padding: 0.5rem 0;
   text-align: center;
+  width: 2.5rem;
 }
 
-.rdp-head_row {
-  display: table-row !important;
-}
-
-.rdp-table {
-  width: 100% !important;
-  border-collapse: separate !important;
-  border-spacing: 0 !important;
-}
-
+.rdp-head_row,
 .rdp-row {
-  display: table-row !important;
+  display: flex !important;
+  justify-content: center;
 }
 
 .rdp-cell {
@@ -340,24 +371,42 @@
   transform: scale(1.05);
 }
 
-/* Style for available days in calendar */
-.day-available:not(.rdp-day_selected) {
-  color: var(--primary-purple) !important;
-  font-weight: 950 !important;
-  background: rgba(168, 85, 247, 0.05);
-  border-radius: 12px;
+/* --- Calendar Markers --- */
+.rdp-day_selected {
+  background: var(--purple-gradient) !important;
+  color: white !important;
+  font-weight: 900 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
+}
+
+.rdp-day_today {
+  color: var(--purple-600) !important;
+  font-weight: 900 !important;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.rdp-day_today:not(.rdp-day_selected) {
+  background: rgba(168, 85, 247, 0.1) !important;
+}
+
+.day-available {
+  color: var(--purple-600);
+  font-weight: 700;
 }
 
 /* Bottom Bar */
+/* --- Sticky Footer --- */
 .booking-footer-bar {
-  position: fixed;
+  position: sticky;
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
-  padding: 1.5rem;
   border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 1rem;
   z-index: 50;
   box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.05);
 }
