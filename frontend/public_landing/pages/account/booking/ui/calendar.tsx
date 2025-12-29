@@ -147,7 +147,7 @@ function Calendar({
             font-weight: 900 !important;
             background-color: #ede9fe !important; /* Violet 100 - Distinct fill */
             border: 2px solid #7c3aed !important; /* Explicit outline */
-            border-radius: 50% !important;
+            // border-radius: 50% !important;
             opacity: 1 !important;
         }
 
