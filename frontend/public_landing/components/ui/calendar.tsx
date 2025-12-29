@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-// import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 
 import { cn } from "./utils";
@@ -51,29 +51,22 @@ function Calendar({
         day_selected:
           "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
         day_today: "bg-accent text-accent-foreground",
-        // Дни из других месяцев не серые: пусть выглядят как обычные доступные даты.
-        // Реально недоступные дни помечаются через модификатор disabled.
         day_outside:
-          "day-outside text-foreground opacity-100 aria-selected:text-foreground",
+          "day-outside text-muted-foreground aria-selected:text-muted-foreground",
         day_disabled: "text-muted-foreground opacity-50",
         day_range_middle:
           "aria-selected:bg-accent aria-selected:text-accent-foreground",
         day_hidden: "invisible",
-        // Compatibility for react-day-picker v9
-        day_button: cn(
-          buttonVariants({ variant: "ghost" }),
-          "h-8 w-8 p-0 font-normal aria-selected:opacity-100",
-        ),
         ...classNames,
       }}
-      // components={{
-      //   IconLeft: ({ className, ...props }) => (
-      //     <ChevronLeft className={cn("h-4 w-4", className)} {...props} />
-      //   ),
-      //   IconRight: ({ className, ...props }) => (
-      //     <ChevronRight className={cn("h-4 w-4", className)} {...props} />
-      //   ),
-      // }}
+      components={{
+        IconLeft: ({ className, ...props }) => (
+          <ChevronLeft className={cn("h-4 w-4", className)} {...props} />
+        ),
+        IconRight: ({ className, ...props }) => (
+          <ChevronRight className={cn("h-4 w-4", className)} {...props} />
+        ),
+      }}
       {...props}
     />
   );

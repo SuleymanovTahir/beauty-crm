@@ -232,7 +232,7 @@ function BookingMenu({ bookingState, onNavigate, onReset, totalPrice, salonSetti
 
 
 
-function ServicesStep({ selectedServices, onServicesChange, onContinue, salonSettings }: any) {
+function ServicesStep({ selectedServices, onServicesChange, onContinue, onCancel, salonSettings }: any) {
   const { t, i18n } = useTranslation(['booking', 'common']);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -377,26 +377,41 @@ function ServicesStep({ selectedServices, onServicesChange, onContinue, salonSet
           className="booking-footer-bar"
         >
           <div className="footer-action-container">
-            <div>
-              <p className="font-black text-gray-900 text-lg">
-                {selectedServices.length} {t('booking.menu.selected', 'Selected')}
-              </p>
-              <p className="text-purple-500 font-bold">
-                {totalDuration} {t('booking.min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}
-              </p>
+            <div className="flex items-center gap-6">
+              <div className="hidden sm:block">
+                <p className="font-black text-gray-900 text-sm">
+                  {selectedServices.length} {t('booking.menu.selected', 'Selected')}
+                </p>
+                <p className="text-purple-500 font-bold text-xs">
+                  {totalDuration} {t('booking.min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}
+                </p>
+              </div>
+              <Button onClick={() => onContinue('professional')} variant="ghost" className="text-gray-400 font-bold hover:text-purple-600 gap-2">
+                <User className="w-4 h-4" />
+                {t('booking.menu.professional', 'Professional')}
+              </Button>
             </div>
             <div className="flex items-center gap-4">
-              <Button onClick={() => onContinue()} variant="ghost" className="hidden sm:flex text-gray-400 font-bold hover:text-purple-600">
+              <Button
+                variant="ghost"
+                onClick={onCancel}
+                className="text-gray-400 font-bold hover:text-red-500"
+              >
                 {t('common.cancel', 'Cancel')}
               </Button>
-              <Button onClick={onContinue} className="btn-primary-gradient h-14">
-                {t('booking.services.continue', 'Continue')}
+              <Button
+                onClick={() => onContinue()}
+                className="btn-primary-gradient h-14 min-w-[180px]"
+              >
+                {t('common.continue', 'Continue')}
                 <ChevronRight className="w-5 h-5" />
               </Button>
             </div>
           </div>
         </motion.div>
       )}
+
+
     </div>
   );
 }
@@ -536,17 +551,24 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, onProfes
           animate={{ opacity: 1, y: 0 }}
           className="booking-footer-bar"
         >
-          <div className="footer-action-container justify-center">
+          <div className="footer-action-container">
+            <div className="flex items-center gap-4">
+              <Button onClick={() => onContinue('services')} variant="ghost" className="text-gray-400 font-bold hover:text-purple-600 gap-2">
+                <Scissors className="w-4 h-4" />
+                {t('booking.menu.services', 'Services')}
+              </Button>
+            </div>
             <Button
-              onClick={onContinue}
-              className="btn-primary-gradient h-14 w-full max-w-lg"
+              onClick={() => onContinue()}
+              className="btn-primary-gradient h-14 min-w-[200px]"
             >
-              {t('common.continue', 'Continue to Date & Time')}
+              {t('common.continue', 'Continue')}
               <ChevronRight className="w-5 h-5" />
             </Button>
           </div>
         </motion.div>
       )}
+
     </div>
   );
 }
@@ -732,14 +754,25 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
           animate={{ opacity: 1, y: 0 }}
           className="booking-footer-bar"
         >
-          <div className="footer-action-container justify-center">
-            <Button onClick={onContinue} className="btn-primary-gradient h-14 w-full max-w-lg">
-              {t('common.continue', 'Continue to Review')}
+          <div className="footer-action-container">
+            <div className="flex items-center gap-4">
+              <Button onClick={() => onContinue('services')} variant="ghost" className="text-gray-400 font-bold hover:text-purple-600 gap-2">
+                <Scissors className="w-4 h-4" />
+                {t('booking.menu.services', 'Services')}
+              </Button>
+              <Button onClick={() => onContinue('professional')} variant="ghost" className="text-gray-400 font-bold hover:text-purple-600 gap-2">
+                <User className="w-4 h-4" />
+                {t('booking.menu.professional', 'Professional')}
+              </Button>
+            </div>
+            <Button onClick={() => onContinue()} className="btn-primary-gradient h-14 min-w-[200px]">
+              {t('common.continue', 'Continue')}
               <ChevronRight className="w-5 h-5" />
             </Button>
           </div>
         </motion.div>
       )}
+
     </div>
   );
 }
@@ -1084,8 +1117,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               <ServicesStep
                 selectedServices={bookingState.services}
                 onServicesChange={(services: any) => updateState({ services })}
-                onContinue={() => setStep('menu')}
-                salonSettings={salonSettings}
+                onContinue={(target?: string) => setStep(target || 'menu')}
+                onCancel={() => setStep('menu')}
               />
             )}
             {step === 'professional' && (
@@ -1093,7 +1126,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 selectedProfessional={bookingState.professional}
                 professionalSelected={bookingState.professionalSelected}
                 onProfessionalChange={(prof: any) => updateState({ professional: prof, professionalSelected: true })}
-                onContinue={() => setStep('menu')}
+                onContinue={(target?: string) => setStep(target || 'menu')}
               />
             )}
             {step === 'datetime' && (
@@ -1103,9 +1136,10 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 selectedMaster={bookingState.professional}
                 selectedServices={bookingState.services}
                 onDateTimeChange={(date: any, time: any) => updateState({ date, time })}
-                onContinue={() => setStep('confirm')}
+                onContinue={(target?: string) => setStep(target || 'confirm')}
               />
             )}
+
             {step === 'confirm' && (
               <ConfirmStep
                 bookingState={bookingState}
