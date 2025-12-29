@@ -261,7 +261,8 @@ def init_database():
                   completed_at TEXT,
                   revenue REAL DEFAULT 0,
                   notes TEXT,
-                  special_package_id INTEGER)''')
+                  special_package_id INTEGER,
+                  source TEXT DEFAULT 'manual')''')
 
     # Таблица настроек напоминаний о записях
     c.execute('''CREATE TABLE IF NOT EXISTS booking_reminder_settings
@@ -1110,7 +1111,7 @@ def init_database():
 
 Первое сообщение: более развернутое приветствие
 Повторное обращение: Рада видеть вас снова!''',
-            'manager_consultation_prompt': '''Ты - опытный консультант для менеджеров салона красоты. Твоя задача - помогать менеджерам вести диалог с клиентами эффективно.
+            'manager_consultation_prompt': '''Ты - опытный консультант для менеджеров салона красоты. Твоя задача - п��могать менеджерам вести диалог с клиентами эффективно.
 
 ТВОЯ РОЛЬ:
 - Анализируй контекст диалога
