@@ -24,7 +24,6 @@ import {
   ChevronRight,
   Download,
   Share2,
-  Plus,
   X,
   Check,
   Repeat,
@@ -43,11 +42,19 @@ import {
   Wallet,
   AlertCircle,
   Loader2,
-  LogOut
+  LogOut,
+  TrendingUp,
+  ArrowRight
 } from 'lucide-react';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { UserBookingWizard } from './UserBookingWizard';
 import PublicLanguageSwitcher from '../../../src/components/PublicLanguageSwitcher';
+
+// UI Components
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../src/components/ui/card';
+import { Button } from '../../../src/components/ui/button';
+import { Badge } from '../../../src/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '../../../src/components/ui/avatar';
 
 // Import styles
 import './AccountPage.css';
@@ -338,13 +345,7 @@ export function AccountPage() {
 
   const getDateLocale = () => getDateLocaleCentral(i18n.language);
 
-  const getDaysUntil = (date: string) => {
-    const diff = new Date(date).getTime() - new Date().getTime();
-    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    if (days === 0) return t('account:dashboard.appointment.today');
-    if (days === 1) return t('account:dashboard.appointment.tomorrow');
-    return t('account:dashboard.appointment.in_days', { count: days });
-  };
+
 
   const getVisitInsightText = (visitCount: number) => {
     if (visitCount === 0) return t('account:dashboard.insight_visits_0');
@@ -363,288 +364,254 @@ export function AccountPage() {
 
   // Dashboard Content
   const renderDashboard = () => (
-    <div className="space-y-6">
-      {/* Welcome Section */}
-      <div className="welcome-card">
-        <div className="welcome-bg-pattern">
-          <Sparkles className="w-full h-full" />
-        </div>
-        <div className="flex items-start justify-between mb-4 relative z-10">
-          <div>
-            <h1 className="text-2xl mb-1">{getGreeting()}, {user?.full_name?.split(' ')[0] || ''}! 👋</h1>
-            <p className="opacity-90">{getMotivationalPhrase()}</p>
-          </div>
-          <div className="w-16 h-16 rounded-full bg-white overflow-hidden border-2 border-white relative cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-            {(user as any)?.avatar_url ? (
-              <img src={(user as any).avatar_url} alt={user?.full_name} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-500 to-purple-500 text-white text-xl font-bold">
-                {(user?.full_name?.[0] || user?.email?.[0] || 'U').toUpperCase()}
-              </div>
-            )}
-            <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-4 mt-6 border-t border-white/10 pt-6 relative z-10">
-          <div className="text-center">
-            <p className="text-3xl mb-1">{dashboardData?.visit_stats?.total_visits || 0}</p>
-            <p className="opacity-80 text-sm">{t('account:dashboard.stats.visits')}</p>
-          </div>
-          <div className="text-center">
-            <p className="text-3xl mb-1">{dashboardData?.loyalty?.points || 0}</p>
-            <p className="opacity-80 text-sm">{t('account:dashboard.stats.points')}</p>
-          </div>
-          <div className="text-center">
-            <p className="text-3xl mb-1">{dashboardData?.loyalty?.current_discount || 0}%</p>
-            <p className="opacity-80 text-sm">{t('account:dashboard.stats.discount')}</p>
-          </div>
-        </div>
+    <div className="space-y-6 pb-8">
+      {/* Приветствие */}
+      <div className="space-y-2">
+        <h1 className="flex items-center gap-2 text-2xl font-bold">
+          {getGreeting()}, {user?.full_name?.split(' ')[0]}! <Sparkles className="w-6 h-6 text-pink-500" />
+        </h1>
+        <p className="text-muted-foreground">{getMotivationalPhrase()}</p>
       </div>
 
-      {/* Next Appointment */}
+      {/* Ключевые метрики */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('account:dashboard.stats.visits')}</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{dashboardData?.visit_stats?.total_visits || 0}</div>
+            <p className="text-xs text-muted-foreground">
+              {getVisitInsightText(dashboardData?.visit_stats?.total_visits || 0)}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('account:dashboard.stats.points')}</CardTitle>
+            <Star className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{dashboardData?.loyalty?.points || 0}</div>
+            <p className="text-xs text-muted-foreground">
+              {dashboardData?.loyalty?.current_level_name || 'Silver'} {t('account:loyalty.level')}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('account:dashboard.stats.discount')}</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{dashboardData?.loyalty?.current_discount || 0}%</div>
+            <p className="text-xs text-muted-foreground">{t('account:dashboard.stats.discount_desc')}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Ближайшая запись */}
       {dashboardData?.next_booking && (
-        <div className="appointment-card space-y-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl">{t('account:dashboard.next_appointment')}</h2>
-            <span className="badge-success">
-              {getDaysUntil(dashboardData.next_booking.date)}
-            </span>
-          </div>
-
-          <div className="flex gap-4 mb-4">
-            {dashboardData.next_booking.master_photo ? (
-              <img
-                src={dashboardData.next_booking.master_photo}
-                alt={dashboardData.next_booking.master_name}
-                className="w-20 h-20 rounded-xl object-cover"
-              />
-            ) : (
-              <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold">
-                {(dashboardData.next_booking.master_name?.[0] || 'M').toUpperCase()}
-              </div>
-            )}
-            <div className="flex-1">
-              <h3 className="mb-1">{dashboardData.next_booking.master_name}</h3>
-              <p className="text-sm text-gray-500 mb-2">{dashboardData.next_booking.master_specialty}</p>
-              <p className="text-gray-900">{dashboardData.next_booking.service_name}</p>
-            </div>
-          </div>
-
-          <div className="space-y-3 mb-4">
-            <div className="flex items-center gap-3 text-gray-600">
-              <Calendar className="w-5 h-5 flex-shrink-0" />
-              <span>{format(new Date(dashboardData.next_booking.date), "EEEE, d MMMM", { locale: getDateLocale() })}</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600">
-              <Clock className="w-5 h-5 flex-shrink-0" />
-              <span>{format(new Date(dashboardData.next_booking.date), "HH:mm")} ({dashboardData.next_booking.duration || 60} {t('account:dashboard.appointment.minutes_short')})</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600">
-              <MapPin className="w-5 h-5 flex-shrink-0" />
+        <Card className="border-pink-200 bg-gradient-to-r from-pink-50 to-purple-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="w-5 h-5" />
+              {t('account:dashboard.next_appointment')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-4">
+              <Avatar className="w-16 h-16">
+                <AvatarImage src={dashboardData.next_booking.master_photo} alt={dashboardData.next_booking.master_name} />
+                <AvatarFallback>{dashboardData.next_booking.master_name?.[0]}</AvatarFallback>
+              </Avatar>
               <div className="flex-1">
-                <p>{salonSettings?.address || 'Dubai Marina, Marina Plaza, Office 302'}</p>
-                <button
-                  onClick={handleNavigate}
-                  className="text-sm text-gray-400 hover:text-gray-600 flex items-center gap-1"
-                >
-                  {t('account:dashboard.appointment.get_directions')}
-                  <Navigation className="w-4 h-4" />
-                </button>
+                <div className="font-semibold">{dashboardData.next_booking.master_name}</div>
+                <div className="text-sm text-muted-foreground">{dashboardData.next_booking.service_name}</div>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="outline" className="bg-white/50">
+                    {format(new Date(dashboardData.next_booking.date), "d MMMM", { locale: getDateLocale() })}
+                  </Badge>
+                  <Badge variant="outline" className="bg-white/50">
+                    {format(new Date(dashboardData.next_booking.date), "HH:mm")}
+                  </Badge>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="font-bold">{dashboardData.next_booking.price} AED</div>
               </div>
             </div>
-          </div>
-
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={handleAddToCalendar}
-              className="btn-primary flex-1"
-            >
-              {t('account:dashboard.appointment.add_to_calendar')}
-            </button>
-            <button
-              onClick={() => handleRescheduleAppointment(dashboardData.next_booking.id)}
-              className="btn-secondary"
-            >
-              {t('account:dashboard.appointment.reschedule')}
-            </button>
-            <button
-              onClick={() => handleCancelAppointment(dashboardData.next_booking.id)}
-              className="btn-destructive"
-            >
-              {t('account:dashboard.appointment.cancel')}
-            </button>
-          </div>
-        </div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button size="sm" variant="outline" className="w-full sm:flex-1 bg-white hover:bg-white/90" onClick={handleAddToCalendar}>
+                <Calendar className="w-4 h-4 mr-2" />
+                {t('account:dashboard.appointment.add_to_calendar')}
+              </Button>
+              <Button size="sm" variant="outline" className="w-full sm:w-auto bg-white hover:bg-white/90" onClick={() => handleRescheduleAppointment(dashboardData.next_booking.id)}>
+                {t('account:dashboard.appointment.reschedule')}
+              </Button>
+              <Button size="sm" variant="destructive" className="w-full sm:w-auto" onClick={() => handleCancelAppointment(dashboardData.next_booking.id)}>
+                {t('account:dashboard.appointment.cancel')}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Quick Actions */}
       <h2 className="text-xl mb-4 mt-6">{t('account:dashboard.quick_actions')}</h2>
-      <div className="grid grid-cols-2 gap-3">
-        <button
-          onClick={openBooking}
-          className="btn-primary h-auto p-4 justify-start"
-        >
-          <Plus className="w-5 h-5" />
-          <span>{t('account:dashboard.book_now')}</span>
-        </button>
-        <button
-          onClick={() => dashboardData?.last_visit && handleRepeatAppointment(dashboardData.last_visit.id)}
-          className="btn-outline h-auto p-4 justify-start"
-        >
-          <Repeat className="w-5 h-5" />
-          <span>{t('account:dashboard.repeat_last')}</span>
-        </button>
-        <button
-          onClick={() => handleTabChange('masters')}
-          className="btn-outline h-auto p-4 justify-start"
-        >
-          <Heart className="w-5 h-5" />
-          <span>{t('account:dashboard.my_masters')}</span>
-        </button>
-        <button
-          onClick={() => handleTabChange('chat')}
-          className="btn-outline h-auto p-4 justify-start"
-        >
-          <MessageCircle className="w-5 h-5" />
-          <span>{t('account:dashboard.contact_us')}</span>
-        </button>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Button variant="outline" className="h-auto min-h-[5rem] flex-col gap-2 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-200 transition-all" onClick={openBooking}>
+          <Calendar className="w-5 h-5 shrink-0" />
+          <span className="text-sm text-center whitespace-normal">{t('account:dashboard.book_now')}</span>
+        </Button>
+        <Button variant="outline" className="h-auto min-h-[5rem] flex-col gap-2 hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200 transition-all" onClick={() => dashboardData?.last_visit && handleRepeatAppointment(dashboardData.last_visit.id)}>
+          <Repeat className="w-5 h-5 shrink-0" />
+          <span className="text-sm text-center whitespace-normal">{t('account:dashboard.repeat_last')}</span>
+        </Button>
+        <Button variant="outline" className="h-auto min-h-[5rem] flex-col gap-2 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all" onClick={() => handleTabChange('masters')}>
+          <Users className="w-5 h-5 shrink-0" />
+          <span className="text-sm text-center whitespace-normal">{t('account:dashboard.my_masters')}</span>
+        </Button>
+        <Button variant="outline" className="h-auto min-h-[5rem] flex-col gap-2 hover:bg-green-50 hover:text-green-600 hover:border-green-200 transition-all" onClick={() => handleContactSalon('whatsapp')}>
+          <MessageCircle className="w-5 h-5 shrink-0" />
+          <span className="text-sm text-center whitespace-normal">{t('account:dashboard.contact_us')}</span>
+        </Button>
       </div>
 
-      {/* Last Visit */}
+      {/* Последний визит */}
       {dashboardData?.last_visit && (
-        <div className="account-card">
-          <h2 className="text-xl mb-4">{t('account:dashboard.last_visit')}</h2>
-
-          <div className="flex gap-4 mb-4">
-            {dashboardData.last_visit.master_photo ? (
-              <img
-                src={dashboardData.last_visit.master_photo}
-                alt={dashboardData.last_visit.master_name}
-                className="w-16 h-16 rounded-xl object-cover"
-              />
-            ) : (
-              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center text-white text-xl font-bold">
-                {(dashboardData.last_visit.master_name?.[0] || 'M').toUpperCase()}
-              </div>
-            )}
-            <div className="flex-1">
-              <h3 className="mb-1">{dashboardData.last_visit.service_name}</h3>
-              <p className="text-sm text-gray-500">{dashboardData.last_visit.master_name}</p>
-              <p className="text-sm text-gray-400">{format(new Date(dashboardData.last_visit.date), "d MMMM yyyy", { locale: getDateLocale() })}</p>
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            <button
-              onClick={() => handleLeaveReview(dashboardData.last_visit.id)}
-              className="btn-primary flex-1"
-            >
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('account:dashboard.last_visit')}</CardTitle>
+            <CardDescription>
+              {format(new Date(dashboardData.last_visit.date), "d MMMM yyyy", { locale: getDateLocale() })} - {dashboardData.last_visit.service_name}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex gap-2">
+            <Button variant="outline" className="flex-1" onClick={() => handleLeaveReview(dashboardData.last_visit.id)}>
+              <Star className="w-4 h-4 mr-2" />
               {t('account:dashboard.appointment.leave_review')}
-            </button>
-            <button
-              onClick={() => handleRepeatAppointment(dashboardData.last_visit.id)}
-              className="btn-secondary"
-            >
+            </Button>
+            <Button variant="outline" className="flex-1" onClick={() => handleRepeatAppointment(dashboardData.last_visit.id)}>
+              <Repeat className="w-4 h-4 mr-2" />
               {t('account:dashboard.appointment.repeat')}
-            </button>
-          </div>
-        </div>
+            </Button>
+          </CardContent>
+        </Card>
       )}
 
+      {/* Инсайты */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="bg-gradient-to-br from-purple-50 to-pink-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-500" />
+              {t('account:dashboard.insights_title')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/50 rounded-lg">
+                <Calendar className="w-4 h-4 text-purple-600" />
+              </div>
+              <span className="font-medium text-purple-900">
+                {t('account:dashboard.insight_months', { count: dashboardData?.visit_stats?.months_as_client || 0 })}
+              </span>
+            </div>
 
-      {/* Insights */}
-      <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-100">
-        <div className="flex items-center gap-2 mb-4">
-          <Sparkles className="w-5 h-5 text-purple-600" />
-          <h2 className="text-xl">{t('account:dashboard.insights_title')}</h2>
-        </div>
-        <div className="space-y-3">
-          {dashboardData?.visit_stats?.months_as_client > 0 && (
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm">🎉</div>
-              <p className="text-gray-700 flex-1">{t('account:dashboard.insight_months', { count: dashboardData.visit_stats.months_as_client })}</p>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">{t('account:loyalty.saved')}</span>
+              <span className="font-bold text-lg text-green-600">{dashboardData?.loyalty?.total_saved || 0} AED</span>
             </div>
-          )}
-          {dashboardData?.loyalty?.total_saved > 0 && (
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm">💰</div>
-              <p className="text-gray-700 flex-1">{t('account:dashboard.insight_saved', { amount: dashboardData.loyalty.total_saved })}</p>
+
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">{t('account:loyalty.streak_title')}</span>
+              <span className="font-bold flex items-center gap-1 text-lg">
+                <Zap className="w-4 h-4 text-orange-500" />
+                {dashboardData?.visit_stats?.streak || 0} {t('account:common.days')}
+              </span>
             </div>
-          )}
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm">
-              {(dashboardData?.visit_stats?.total_visits || 0) === 0 ? '👋' : (dashboardData?.visit_stats?.total_visits || 0) >= 10 ? '⭐' : '🎯'}
-            </div>
-            <p className="text-gray-700 flex-1">{getVisitInsightText(dashboardData?.visit_stats?.total_visits || 0)}</p>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
+
+        {dashboardData?.recommendations?.length > 0 && (
+          <Card className="bg-gradient-to-br from-blue-50 to-cyan-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-blue-500" />
+                {t('account:dashboard.smart_recommendations')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="space-y-1">
+                <div className="font-medium">{dashboardData.recommendations[0].text}</div>
+                <p className="text-sm text-muted-foreground">
+                  {t('account:dashboard.recommendation_sub')}
+                </p>
+              </div>
+              <Button size="sm" className="w-full" onClick={openBooking}>
+                {t('account:common.book')}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
-      {/* Special Offers */}
-      <div className="bg-white p-6 rounded-2xl border border-gray-200">
-        <div className="flex items-center gap-2 mb-4">
-          <Gift className="w-5 h-5 text-pink-500" />
-          <h2 className="text-xl">{t('account:dashboard.special_offers')}</h2>
-        </div>
-        <div className="space-y-3">
-          {(dashboardData as any)?.special_offers?.length > 0 ? (
-            (dashboardData as any).special_offers.map((offer: any) => (
-              <div key={offer.id} className="p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border border-pink-200">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-gray-900 font-medium">{offer.title}</h3>
-                  <span className="px-2 py-1 bg-red-100 text-red-600 rounded text-xs whitespace-nowrap">
+      {/* Специальные предложения */}
+      <div className="space-y-4">
+        <h2 className="flex items-center gap-2 text-xl font-bold">
+          <Sparkles className="w-5 h-5 text-pink-500" />
+          {t('account:dashboard.special_offers')}
+        </h2>
+        {dashboardData?.special_offers?.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {dashboardData.special_offers.map((offer: any) => (
+              <Card key={offer.id} className="overflow-hidden">
+                <div className="aspect-video relative bg-gray-100 flex items-center justify-center">
+                  {offer.image ? (
+                    <img
+                      src={offer.image}
+                      alt={offer.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Gift className="w-12 h-12 text-pink-300" />
+                  )}
+                  <Badge className="absolute top-2 right-2 bg-red-500">
                     {t('account:dashboard.days_left', { days: offer.days_left })}
-                  </span>
+                  </Badge>
                 </div>
-                <p className="text-sm text-gray-600 mb-3">{offer.description}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-bold text-pink-600">{offer.price} AED</span>
+                <CardHeader>
+                  <CardTitle className="text-lg">{offer.title}</CardTitle>
+                  <CardDescription>{offer.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center gap-2">
                     {offer.original_price > offer.price && (
-                      <span className="text-sm text-gray-400 line-through">{offer.original_price} AED</span>
+                      <span className="text-sm text-muted-foreground line-through">
+                        {offer.original_price} AED
+                      </span>
                     )}
+                    <span className="text-xl font-bold text-pink-600">
+                      {offer.price} AED
+                    </span>
                   </div>
-                  <button
-                    onClick={openBooking}
-                    className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm"
-                  >
-                    {t('account:common.book')}
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="p-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-300">
-              <Sparkles className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-              <p className="text-gray-500 text-sm">{t('account:dashboard.no_offers')}</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Smart Recommendations */}
-      {dashboardData?.recommendations?.length > 0 && (
-        <div className="bg-white p-6 rounded-2xl border border-gray-200">
-          <div className="flex items-center gap-2 mb-4">
-            <Zap className="w-5 h-5 text-yellow-500" />
-            <h2 className="text-xl">{t('account:dashboard.smart_recommendations')}</h2>
-          </div>
-          <div className="space-y-3">
-            {dashboardData.recommendations.map((rec: any, idx: number) => (
-              <div key={idx} className={`p-4 rounded-xl border ${idx % 2 === 0 ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200'}`}>
-                <p className="text-gray-900 mb-2">{rec.text}</p>
-                <button
-                  onClick={openBooking}
-                  className="text-sm text-gray-900 hover:underline flex items-center gap-1 font-medium"
-                >
-                  {t('account:common.book')}
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
+                  <Button className="w-full" onClick={openBooking}>{t('account:common.book')}</Button>
+                </CardContent>
+              </Card>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="p-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-300">
+            <Sparkles className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+            <p className="text-gray-500 text-sm">{t('account:dashboard.no_offers')}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 
@@ -1412,6 +1379,7 @@ export function AccountPage() {
             >
               <Upload className="w-4 h-4" />
             </button>
+            <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
           </div>
           <div>
             <h4 className="font-bold mb-1">{user?.full_name}</h4>
