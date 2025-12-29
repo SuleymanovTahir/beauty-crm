@@ -145,7 +145,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   if (loading) return (
     <div className="fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center gap-6">
       <div className="w-20 h-20 border-8 border-purple-600 border-t-transparent rounded-full animate-spin" />
-      <p className="text-slate-400 font-black uppercase tracking-[0.3em] text-xs animate-pulse">Initializing Studio</p>
+      <p className="text-slate-400 font-black uppercase tracking-[0.3em] text-xs animate-pulse">{t('loading', 'Initializing Studio')}</p>
     </div>
   );
 
@@ -160,7 +160,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 variant="outline"
                 size="sm"
                 onClick={goBack}
-                className="gap-2 rounded-xl border-slate-200 shadow-sm hover:bg-slate-50 transition-all font-bold group"
+                className="gap-2 rounded-xl border-slate-300 shadow-sm hover:bg-slate-50 hover:border-slate-800 transition-all font-bold group"
               >
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
                 {t('common.back', 'Back')}
@@ -178,7 +178,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="w-8 h-8 rounded-xl border border-slate-200 hover:bg-white hover:text-red-500 hover:border-red-200 hover:shadow-sm transition-all text-slate-400"
+              className="w-8 h-8 rounded-xl border border-slate-300 hover:bg-white hover:text-red-500 hover:border-slate-800 hover:shadow-sm transition-all text-slate-400"
             >
               <X className="w-4 h-4" />
             </Button>

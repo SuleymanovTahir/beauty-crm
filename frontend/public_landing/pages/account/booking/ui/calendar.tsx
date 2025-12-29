@@ -16,20 +16,20 @@ function Calendar({
     return (
         <DayPicker
             showOutsideDays={showOutsideDays}
-            className={cn("p-2", className)}
+            className={cn("p-3", className)}
             classNames={{
-                months: "flex flex-col sm:flex-row gap-2 justify-center",
-                month: "flex flex-col gap-4 relative",
-                month_caption: "flex justify-center pt-2 relative items-center w-full mb-8 px-12 h-8", // Increased height and mb
-                caption_label: "text-sm font-black text-gray-900 uppercase tracking-widest", // More aggressive font
-                nav: "absolute top-2 left-0 right-0 flex items-center justify-between w-full px-2 z-50 pointer-events-none",
+                months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+                month: "space-y-4 relative w-full",
+                month_caption: "flex justify-center pt-2 relative items-center h-10 mb-4",
+                caption_label: "text-sm font-black text-gray-900 uppercase tracking-widest px-8",
+                nav: "flex items-center",
                 button_previous: cn(
                     buttonVariants({ variant: "outline" }),
-                    "h-8 w-8 bg-white p-0 hover:bg-slate-50 border border-slate-200 shadow-sm rounded-lg flex items-center justify-center opacity-100 !visible pointer-events-auto transition-all active:scale-95 z-50"
+                    "h-8 w-8 bg-white p-0 hover:bg-slate-50 border border-slate-200 shadow-sm rounded-lg flex items-center justify-center absolute left-0 z-50 transition-all active:scale-95"
                 ),
                 button_next: cn(
                     buttonVariants({ variant: "outline" }),
-                    "h-8 w-8 bg-white p-0 hover:bg-slate-50 border border-slate-200 shadow-sm rounded-lg flex items-center justify-center opacity-100 !visible pointer-events-auto transition-all active:scale-95 z-50"
+                    "h-8 w-8 bg-white p-0 hover:bg-slate-50 border border-slate-200 shadow-sm rounded-lg flex items-center justify-center absolute right-0 z-50 transition-all active:scale-95"
                 ),
                 month_grid: "w-full border-collapse",
                 weekdays: "grid grid-cols-7 w-full mb-4",
@@ -43,8 +43,8 @@ function Calendar({
                 ),
                 selected: "bg-purple-600 !text-white rounded-xl font-black shadow-lg shadow-purple-100",
                 today: "bg-slate-100 text-slate-900 rounded-xl",
-                outside: "text-slate-400 opacity-50", // Higher visibility
-                disabled: "text-slate-300 opacity-40 cursor-not-allowed", // Higher visibility
+                outside: "text-slate-400 opacity-50",
+                disabled: "text-slate-300 opacity-40 cursor-not-allowed",
                 range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
                 hidden: "invisible",
                 ...classNames,
