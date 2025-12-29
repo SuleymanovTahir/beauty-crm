@@ -287,28 +287,34 @@
   text-align: center;
 }
 
-/* Fix for shadcn calendar headers */
+/* Fix for shadcn calendar headers - Use standard table layout for better alignment */
 .rdp-head_cell {
-  flex: 1; /* Ensure headers distribute evenly */
   font-weight: 950 !important;
   color: var(--text-main) !important;
   opacity: 0.8;
   text-transform: uppercase;
   font-size: 0.65rem;
-  padding-bottom: 1rem;
+  padding: 0.5rem 0;
   text-align: center;
-  min-width: 2.5rem;
 }
 
 .rdp-head_row {
-  display: flex !important;
-  width: 100%;
+  display: table-row !important;
 }
 
 .rdp-table {
   width: 100% !important;
-  border-spacing: 0.5rem !important;
   border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.rdp-row {
+  display: table-row !important;
+}
+
+.rdp-cell {
+  display: table-cell !important;
+  padding: 0.25rem !important;
 }
 
 /* Slot Card Interaction */
