@@ -121,31 +121,35 @@ function Calendar({
         .rdp-caption, .rdp-caption_label, .rdp-nav, .rdp-month_caption { display: none !important; }
         .DayPicker-Caption, .DayPicker-NavBar { display: none !important; }
 
-        /* Available Days (Base) */
-        .rdp-day {
-            font-weight: 500;
-            color: #1e293b; /* Slate 800 */
+        /* Available Days (Base) - Highlighting slightly as requested */
+        .rdp-day:not(.rdp-day_disabled):not(.rdp-day_selected):not(.rdp-day_today) {
+            font-weight: 600;
+            color: #334155; /* Slate 700 */
+            background-color: #f8fafc; /* Very subtle background */
+            border: 1px solid #e2e8f0; /* Subtle border */
+            border-radius: 50%;
         }
 
         /* Unavailable/Disabled - Very faint */
         .rdp-day_disabled {
-            color: #94a3b8 !important; /* Slate 400 */
-            opacity: 0.25 !important;
+            color: #cbd5e1 !important; /* Slate 300 */
+            opacity: 0.3 !important;
             background: transparent !important;
+            border: none !important;
         }
 
-        /* Today - Distinct Ring */
+        /* Today - Strong Outline */
         .rdp-day_today:not(.rdp-day_selected) {
-            color: #2563eb; /* Blue 600 */
+            color: #7c3aed; /* Violet 600 */
             font-weight: 900;
-            background: #eff6ff; /* Blue 50 */
-            border: 2px solid #2563eb;
+            background: transparent;
+            border: 2px solid #7c3aed; /* Explicit outline */
             border-radius: 50%;
         }
 
-        /* Selected - Solid Blue */
+        /* Selected - Solid */
         .rdp-day_selected { 
-            background-color: #2563eb !important; 
+            background-color: #7c3aed !important; /* Violet 600 to match theme better */
             color: white !important; 
             font-weight: bold;
             border-radius: 50%;
@@ -154,8 +158,9 @@ function Calendar({
 
         /* Hover for available */
         .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-            background-color: #dbeafe !important;
-            color: #1d4ed8 !important;
+            background-color: #f3e8ff !important; /* Violet 50 */
+            color: #7c3aed !important;
+            border-color: #d8b4fe !important;
             font-weight: bold;
             border-radius: 50%;
         }
