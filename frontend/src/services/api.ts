@@ -1452,6 +1452,13 @@ export class ApiClient {
       slots: { time: string; available: boolean }[];
     }>(`/api/public/available-slots?${params.toString()}`);
   }
+
+  async getPublicBatchAvailability(date: string) {
+    return this.request<{
+      date: string;
+      availability: Record<number, string[]>;
+    }>(`/api/public/available-slots/batch?date=${date}`);
+  }
 }
 
 export const api = new ApiClient()

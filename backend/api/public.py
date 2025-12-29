@@ -381,7 +381,98 @@ def check_slot_availability(date: str, time: str, employee_id: Optional[int] = N
         free_masters = [m for m in all_masters if m not in busy_masters]
         return len(free_masters) > 0
 
-# ... (create_booking is unchanged) ...
+# ... (existing code)
+
+@router.get("/available-slots/batch")
+async def get_batch_available_slots(date: str):
+    """
+    Get available slots for ALL active masters on a specific date.
+    Optimized for single-request loading.
+    
+    Returns:
+        {
+            "date": "YYYY-MM-DD",
+            "availability": {
+                master_id: ["10:00", "10:30", ...],
+                ...
+            }
+        }
+    """
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        # 1. Get all active masters
+        c.execute("""
+            SELECT id, full_name FROM users 
+            WHERE is_service_provider = TRUE AND is_active = TRUE
+        """)
+        masters = c.fetchall() # [(id, name), ...]
+        
+        # 2. Get ALL bookings for this date (for any master)
+        # We need bookings that are NOT cancelled
+        # datetime format in DB is "YYYY-MM-DD HH:MM"
+        # We'll filter by the date part string matching
+        
+        search_pattern = f"{date}%"
+        c.execute("""
+            SELECT master, datetime FROM bookings
+            WHERE datetime LIKE %s AND status NOT IN ('cancelled', 'no_show')
+        """, (search_pattern,))
+        bookings = c.fetchall() # [(master_name, "2023-10-27 10:00"), ...]
+        
+        # 3. Calculate slots in memory
+        result = {}
+        
+        # Helper: Set of busy slots per master_name
+        busy_map = {} # { "Master Name": Set("10:00", "10:30") }
+        
+        for b_master, b_datetime in bookings:
+            if not b_master: continue
+            time_part = b_datetime.split(' ')[1] # Extract HH:MM
+            if b_master not in busy_map:
+                busy_map[b_master] = set()
+            busy_map[b_master].add(time_part)
+            
+        # Standard slots definition
+        start_hour = 10
+        end_hour = 20
+        interval_minutes = 30
+        
+        # Generate standard time slots
+        standard_slots = []
+        curr_h, curr_m = start_hour, 0
+        while curr_h < end_hour or (curr_h == end_hour and curr_m == 0):
+            standard_slots.append(f"{curr_h:02d}:{curr_m:02d}")
+            curr_m += interval_minutes
+            if curr_m >= 60:
+                curr_m = 0
+                curr_h += 1
+                
+        # 4. Build result for each master ID
+        for m_id, m_name in masters:
+            master_busy_slots = busy_map.get(m_name, set())
+            
+            available_slots = []
+            for slot in standard_slots:
+                if slot not in master_busy_slots:
+                    available_slots.append(slot)
+            
+            result[m_id] = available_slots
+            
+        return {
+            "date": date,
+            "availability": result
+        }
+        
+    except Exception as e:
+        from utils.logger import log_error
+        log_error(f"Error in batch availability: {e}", "public_api")
+        return {"error": str(e), "availability": {}}
+    finally:
+        conn.close()
+
+# ... (rest of the file)
 
 
 @router.get("/reviews")
