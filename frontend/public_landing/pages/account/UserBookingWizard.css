@@ -11,6 +11,11 @@
   --shadow-glow: 0 0 25px rgba(168, 85, 247, 0.4);
   --primary-purple: #9333ea;
   --primary-pink: #db2777;
+  --text-main: #030213;
+  --text-secondary: #717182;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --input-bg: #f3f3f5;
+  --radius: 1.25rem;
 }
 
 .font-black {
@@ -18,7 +23,7 @@
 }
 
 .wizard-scrollable {
-  background: linear-gradient(135deg, #fdfbff 0%, #fffbfc 50%, #f7faff 100%);
+  background: var(--bg-soft);
   min-height: 100vh;
 }
 
@@ -75,18 +80,18 @@
 /* Salon Info Card */
 .salon-info-card {
   background: white;
-  border-radius: 1.5rem;
-  padding: 2rem;
+  border-radius: var(--radius);
+  padding: 1.5rem;
   box-shadow: var(--card-shadow);
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .salon-icon-wrapper {
   width: 4rem;
   height: 4rem;
-  border-radius: 1.25rem;
+  border-radius: calc(var(--radius) - 0.5rem);
   background: var(--gradient-purple-pink);
   display: flex;
   align-items: center;
@@ -98,7 +103,7 @@
 /* Booking Cards */
 .booking-step-card {
   background: white;
-  border-radius: 1.25rem;
+  border-radius: var(--radius);
   border: 2px solid transparent;
   transition: all 0.3s ease;
   overflow: hidden;
@@ -114,23 +119,23 @@
 }
 
 .booking-step-header-line {
-  height: 8px;
+  height: 0.5rem;
   width: 100%;
 }
 
 .booking-step-content {
-  padding: 2.5rem;
+  padding: 1.5rem;
 }
 
 .step-icon-box {
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 1.25rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: calc(var(--radius) - 0.75rem);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
 }
 
@@ -177,8 +182,8 @@
 
 /* Service Card */
 .service-item-card {
-  border: 2px solid #f1f5f9;
-  border-radius: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: white;
 }
@@ -197,8 +202,8 @@
 
 /* Master Card */
 .master-item-card {
-  border: 2px solid #f1f5f9;
-  border-radius: 2rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: white;
 }
@@ -244,13 +249,42 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding-bottom: 0.5rem;
+  width: 2.5rem;
+  text-align: center;
+}
+
+/* Fix for shadcn calendar headers */
+.rdp-head_cell {
+  flex: 1; /* Ensure headers distribute evenly */
+  font-weight: 950 !important;
+  color: var(--text-main) !important;
+  opacity: 0.8;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  padding-bottom: 1rem;
+  text-align: center;
+  min-width: 2.5rem;
+}
+
+.rdp-head_row {
+  display: flex !important;
+  width: 100%;
+}
+
+.rdp-table {
+  width: 100% !important;
+  border-spacing: 0.5rem !important;
+  border-collapse: separate !important;
 }
 
 /* Slot Card Interaction */
 .slot-button {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid #f1f5f9;
-  border-radius: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: calc(var(--radius) - 0.5rem);
+  padding: 0.5rem 0.25rem !important; /* Further reduced padding */
+  height: auto !important;
+  font-size: 0.8rem;
 }
 
 .slot-button:hover:not(.slot-button-selected) {
@@ -260,9 +294,18 @@
 
 .slot-button-selected {
   border-color: #a855f7;
-  background-color: rgba(250, 245, 255, 0.5) !important;
+  background: var(--gradient-primary) !important;
+  color: white !important;
   box-shadow: var(--shadow-glow);
   transform: scale(1.05);
+}
+
+/* Style for available days in calendar */
+.day-available:not(.rdp-day_selected) {
+  color: var(--primary-purple) !important;
+  font-weight: 950 !important;
+  background: rgba(168, 85, 247, 0.05);
+  border-radius: 12px;
 }
 
 /* Bottom Bar */
