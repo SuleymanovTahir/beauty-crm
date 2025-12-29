@@ -147,6 +147,7 @@ export function DateTimeStep({
                                 mode="single"
                                 selected={selectedDate || undefined}
                                 onSelect={handleDateSelect}
+                                month={currentMonth}
                                 onMonthChange={setCurrentMonth}
                                 locale={dateLocale}
                                 disabled={(date) => {
