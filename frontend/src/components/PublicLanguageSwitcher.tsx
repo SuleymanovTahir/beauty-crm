@@ -3,17 +3,7 @@ import { Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useState, useRef, useEffect } from 'react';
 
-const languages = [
-  { code: 'ru', flag: '🇷🇺', name: 'Русский' },
-  { code: 'en', flag: '🇬🇧', name: 'English' },
-  { code: 'es', flag: '🇪🇸', name: 'Español' },
-  { code: 'ar', flag: '🇦🇪', name: 'العربية' },
-  { code: 'hi', flag: '🇮🇳', name: 'हिन्दी' },
-  { code: 'kk', flag: '🇰🇿', name: 'Қазақша' },
-  { code: 'pt', flag: '🇵🇹', name: 'Português' },
-  { code: 'fr', flag: '🇫🇷', name: 'Français' },
-  { code: 'de', flag: '🇩🇪', name: 'Deutsch' }
-];
+import { supportedLanguages as languages } from '../utils/i18nUtils';
 
 export default function PublicLanguageSwitcher() {
   const { i18n } = useTranslation();
@@ -52,9 +42,8 @@ export default function PublicLanguageSwitcher() {
                 localStorage.setItem('i18nextLng', lang.code);
                 setOpen(false);
               }}
-              className={`w-full px-4 py-2.5 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors ${
-                i18n.language === lang.code ? 'bg-purple-50 font-medium' : ''
-              }`}
+              className={`w-full px-4 py-2.5 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors ${i18n.language === lang.code ? 'bg-purple-50 font-medium' : ''
+                }`}
             >
               <span className="text-xl">{lang.flag}</span>
               <span className={`text-sm flex-1 ${i18n.language === lang.code ? 'text-purple-700' : 'text-gray-700'}`}>
