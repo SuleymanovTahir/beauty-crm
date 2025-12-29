@@ -28,7 +28,8 @@ export function ServicesStep({ selectedServices, onServicesChange, onContinue, s
         const fetchServices = async () => {
             setLoading(true);
             try {
-                const data = await api.getServices();
+                const res = await api.getServices();
+                const data = Array.isArray(res) ? res : (res.services || []);
                 setServices(data || []);
             } catch (error) {
                 console.error('Failed to fetch services:', error);
