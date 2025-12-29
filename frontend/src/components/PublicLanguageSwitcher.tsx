@@ -26,10 +26,11 @@ export default function PublicLanguageSwitcher() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+        className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-all h-10 shadow-sm"
       >
-        <Globe className="w-5 h-5 text-gray-600" />
-        <span className="text-xl">{currentLang.flag}</span>
+        <Globe className="w-4 h-4 text-slate-500" />
+        <span className="text-lg">{currentLang.flag}</span>
+        <span className="text-sm font-bold text-slate-700 hidden sm:inline">{currentLang.name}</span>
       </button>
 
       {open && (
