@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
-import { ru, enUS, ar } from 'date-fns/locale';
+import { getDateLocale as getDateLocaleCentral } from '../../../src/utils/i18nUtils';
 import { useAuth } from '../../../src/contexts/AuthContext';
 import { api } from '../../../src/services/api';
 import { toast } from 'sonner';
@@ -336,13 +336,7 @@ export function AccountPage() {
     toast.info(t('account:toasts.navigator_open'));
   };
 
-  const getDateLocale = () => {
-    switch (i18n.language) {
-      case 'ru': return ru;
-      case 'ar': return ar;
-      default: return enUS;
-    }
-  };
+  const getDateLocale = () => getDateLocaleCentral(i18n.language);
 
   const getDaysUntil = (date: string) => {
     const diff = new Date(date).getTime() - new Date().getTime();
