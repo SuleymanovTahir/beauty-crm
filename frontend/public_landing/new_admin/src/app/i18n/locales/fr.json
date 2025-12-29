@@ -1,0 +1,77 @@
+{
+  "booking": {
+    "title": "Nouvelle Réservation",
+    "menu": {
+      "title": "Menu de Réservation",
+      "services": "Services",
+      "professional": "Professionnel",
+      "datetime": "Date et Heure",
+      "continue": "Continuer vers la Confirmation",
+      "selectServices": "Sélectionner les services",
+      "selectProfessional": "Sélectionner un professionnel",
+      "selectDateTime": "Sélectionner date et heure",
+      "completed": "Terminé"
+    },
+    "services": {
+      "title": "Sélectionner les Services",
+      "search": "Rechercher des services...",
+      "category": "Catégorie",
+      "allCategories": "Toutes les Catégories",
+      "selected": "Sélectionné",
+      "total": "Total",
+      "duration": "Durée",
+      "continue": "Continuer"
+    },
+    "professional": {
+      "title": "Sélectionner un Professionnel",
+      "anyAvailable": "Tout Professionnel Disponible",
+      "rating": "note",
+      "reviews": "avis",
+      "availableToday": "Disponible aujourd'hui",
+      "continue": "Continuer"
+    },
+    "datetime": {
+      "title": "Sélectionner Date et Heure",
+      "date": "Date",
+      "time": "Heure",
+      "morning": "Matin",
+      "afternoon": "Après-midi",
+      "evening": "Soir",
+      "optimal": "Heure optimale",
+      "continue": "Continuer"
+    },
+    "confirm": {
+      "title": "Confirmation",
+      "summary": "Résumé de la Réservation",
+      "professional": "Professionnel",
+      "anyProfessional": "Tout Disponible",
+      "date": "Date",
+      "time": "Heure",
+      "duration": "Durée",
+      "total": "Total",
+      "phone": "Numéro de Téléphone",
+      "phonePlaceholder": "Entrez votre numéro de téléphone",
+      "confirm": "Confirmer la Réservation",
+      "success": "Réservation confirmée!",
+      "error": "Échec de la création de la réservation"
+    },
+    "back": "Retour",
+    "loading": "Chargement...",
+    "min": "min"
+  },
+  "salon": {
+    "name": "Salon de Beauté",
+    "address": "Adresse"
+  },
+  "languages": {
+    "en": "English",
+    "ru": "Русский",
+    "es": "Español",
+    "ar": "العربية",
+    "hi": "हिन्दी",
+    "kk": "Қазақша",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
+}

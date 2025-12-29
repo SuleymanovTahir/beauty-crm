@@ -1,0 +1,77 @@
+{
+  "booking": {
+    "title": "Neue Buchung",
+    "menu": {
+      "title": "Buchungsmenü",
+      "services": "Dienstleistungen",
+      "professional": "Fachkraft",
+      "datetime": "Datum und Uhrzeit",
+      "continue": "Zur Bestätigung fortfahren",
+      "selectServices": "Dienstleistungen auswählen",
+      "selectProfessional": "Fachkraft auswählen",
+      "selectDateTime": "Datum und Uhrzeit auswählen",
+      "completed": "Abgeschlossen"
+    },
+    "services": {
+      "title": "Dienstleistungen auswählen",
+      "search": "Dienstleistungen suchen...",
+      "category": "Kategorie",
+      "allCategories": "Alle Kategorien",
+      "selected": "Ausgewählt",
+      "total": "Gesamt",
+      "duration": "Dauer",
+      "continue": "Fortfahren"
+    },
+    "professional": {
+      "title": "Fachkraft auswählen",
+      "anyAvailable": "Jede verfügbare Fachkraft",
+      "rating": "Bewertung",
+      "reviews": "Bewertungen",
+      "availableToday": "Heute verfügbar",
+      "continue": "Fortfahren"
+    },
+    "datetime": {
+      "title": "Datum und Uhrzeit auswählen",
+      "date": "Datum",
+      "time": "Uhrzeit",
+      "morning": "Morgen",
+      "afternoon": "Nachmittag",
+      "evening": "Abend",
+      "optimal": "Optimale Zeit",
+      "continue": "Fortfahren"
+    },
+    "confirm": {
+      "title": "Bestätigung",
+      "summary": "Buchungszusammenfassung",
+      "professional": "Fachkraft",
+      "anyProfessional": "Jede Verfügbare",
+      "date": "Datum",
+      "time": "Uhrzeit",
+      "duration": "Dauer",
+      "total": "Gesamt",
+      "phone": "Telefonnummer",
+      "phonePlaceholder": "Geben Sie Ihre Telefonnummer ein",
+      "confirm": "Buchung bestätigen",
+      "success": "Buchung bestätigt!",
+      "error": "Buchung konnte nicht erstellt werden"
+    },
+    "back": "Zurück",
+    "loading": "Laden...",
+    "min": "Min"
+  },
+  "salon": {
+    "name": "Schönheitssalon",
+    "address": "Adresse"
+  },
+  "languages": {
+    "en": "English",
+    "ru": "Русский",
+    "es": "Español",
+    "ar": "العربية",
+    "hi": "हिन्दी",
+    "kk": "Қазақша",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
+}

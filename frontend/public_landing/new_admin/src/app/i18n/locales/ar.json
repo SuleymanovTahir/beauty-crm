@@ -1,0 +1,77 @@
+{
+  "booking": {
+    "title": "حجز جديد",
+    "menu": {
+      "title": "قائمة الحجز",
+      "services": "الخدمات",
+      "professional": "المحترف",
+      "datetime": "التاريخ والوقت",
+      "continue": "متابعة للتأكيد",
+      "selectServices": "اختر الخدمات",
+      "selectProfessional": "اختر المحترف",
+      "selectDateTime": "اختر التاريخ والوقت",
+      "completed": "مكتمل"
+    },
+    "services": {
+      "title": "اختيار الخدمات",
+      "search": "بحث عن الخدمات...",
+      "category": "الفئة",
+      "allCategories": "جميع الفئات",
+      "selected": "محدد",
+      "total": "المجموع",
+      "duration": "المدة",
+      "continue": "متابعة"
+    },
+    "professional": {
+      "title": "اختيار المحترف",
+      "anyAvailable": "أي محترف متاح",
+      "rating": "التقييم",
+      "reviews": "المراجعات",
+      "availableToday": "متاح اليوم",
+      "continue": "متابعة"
+    },
+    "datetime": {
+      "title": "اختيار التاريخ والوقت",
+      "date": "التاريخ",
+      "time": "الوقت",
+      "morning": "الصباح",
+      "afternoon": "بعد الظهر",
+      "evening": "المساء",
+      "optimal": "الوقت الأمثل",
+      "continue": "متابعة"
+    },
+    "confirm": {
+      "title": "التأكيد",
+      "summary": "ملخص الحجز",
+      "professional": "المحترف",
+      "anyProfessional": "أي متاح",
+      "date": "التاريخ",
+      "time": "الوقت",
+      "duration": "المدة",
+      "total": "المجموع",
+      "phone": "رقم الهاتف",
+      "phonePlaceholder": "أدخل رقم هاتفك",
+      "confirm": "تأكيد الحجز",
+      "success": "تم تأكيد الحجز!",
+      "error": "فشل إنشاء الحجز"
+    },
+    "back": "رجوع",
+    "loading": "جار التحميل...",
+    "min": "د"
+  },
+  "salon": {
+    "name": "صالون التجميل",
+    "address": "العنوان"
+  },
+  "languages": {
+    "en": "English",
+    "ru": "Русский",
+    "es": "Español",
+    "ar": "العربية",
+    "hi": "हिन्दी",
+    "kk": "Қазақша",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
+}
