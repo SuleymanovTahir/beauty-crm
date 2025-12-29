@@ -31,141 +31,92 @@ export function Masters({ masters = [] }: any) {
     : masters;
 
   return (
-    <div className="space-y-6 pb-8">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1>Наши мастера</h1>
-          <p className="text-muted-foreground">
-            {masters.length} специалистов • {favoriteMasters.length} в избранном
+          <h1 className="text-3xl font-bold text-gray-900">Наши мастера</h1>
+          <p className="text-muted-foreground mt-1 text-lg">
+            {masters.length} лучших специалистов • {favoriteMasters.length} в избранном
           </p>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3 bg-white p-2 rounded-xl border border-gray-100 shadow-sm">
           <Switch
             id="favorites-only"
             checked={showFavoritesOnly}
             onCheckedChange={setShowFavoritesOnly}
           />
-          <Label htmlFor="favorites-only">Только избранные</Label>
+          <Label htmlFor="favorites-only" className="cursor-pointer font-medium text-gray-700">Только избранные</Label>
         </div>
       </div>
 
       {filteredMasters.length === 0 ? (
-        <Card>
-          <CardContent className="p-12 text-center">
-            <Heart className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="mb-2">Нет избранных мастеров</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Добавьте мастеров в избранное, нажав на иконку сердца
-            </p>
-            <Button onClick={() => setShowFavoritesOnly(false)}>
-              Показать всех мастеров
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+          <Heart className="w-16 h-16 text-pink-200 mb-6" />
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Нет избранных мастеров</h3>
+          <p className="text-gray-500 mb-6 text-center max-w-md">
+            Отмечайте мастеров сердечком, чтобы они появились в этом списке для быстрой записи
+          </p>
+          <Button onClick={() => setShowFavoritesOnly(false)} variant="outline" className="border-pink-200 text-pink-600 hover:bg-pink-50">
+            Показать всех
+          </Button>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredMasters.map((master) => {
             const isFavorite = favoriteMasters.includes(master.id);
 
             return (
-              <Card
+              <div
                 key={master.id}
-                className={`overflow-hidden ${isFavorite ? 'border-pink-200 bg-gradient-to-br from-pink-50 to-purple-50' : ''
-                  }`}
+                className="group relative bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
               >
-                <CardHeader className="p-0">
-                  <div className="aspect-square relative">
-                    <img
-                      src={master.avatar}
-                      alt={master.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <Button
-                      size="icon"
-                      variant="secondary"
-                      className={`absolute top-4 right-4 ${isFavorite
-                        ? 'bg-pink-500 hover:bg-pink-600 text-white'
-                        : 'bg-white/90 hover:bg-white'
-                        }`}
-                      onClick={() => toggleFavorite(master.id)}
-                    >
-                      <Heart
-                        className={`w-5 h-5 ${isFavorite ? 'fill-white' : ''}`}
-                      />
-                    </Button>
+                {/* Image & Favorite Button */}
+                <div className="h-64 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+                  <img
+                    src={master.avatar}
+                    alt={master.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <Button
+                    size="icon"
+                    className={`absolute top-4 right-4 z-20 rounded-full w-10 h-10 shadow-lg transition-transform active:scale-95 ${isFavorite
+                      ? 'bg-pink-500 hover:bg-pink-600 text-white'
+                      : 'bg-white/90 hover:bg-white text-gray-500 hover:text-pink-500'
+                      }`}
+                    onClick={() => toggleFavorite(master.id)}
+                  >
+                    <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+                  </Button>
+
+                  <div className="absolute bottom-4 left-4 right-4 z-20">
+                    <h3 className="text-xl font-bold text-white">{master.name}</h3>
+                    <p className="text-white/80">{master.job_title || 'Специалист'}</p>
                   </div>
-                </CardHeader>
-                <CardContent className="p-6 space-y-4">
-                  <div>
-                    <CardTitle className="mb-2">{master.name}</CardTitle>
-                    <CardDescription>{master.specialty}</CardDescription>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 space-y-4">
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="flex items-center text-yellow-500 font-bold bg-yellow-50 px-2 py-1 rounded-md">
+                      <Star className="w-4 h-4 fill-current mr-1" />
+                      {master.rating || '5.0'}
+                    </div>
+                    <span className="text-gray-300">•</span>
+                    <span className="text-gray-500">{master.reviews_count || 120} отзывов</span>
                   </div>
 
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold">{master.rating}</span>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {master.reviews} отзывов
-                    </div>
+                  <div className="pt-2 flex gap-3">
+                    <Button className="flex-1 bg-gray-900 text-white hover:bg-gray-800 rounded-xl">Записаться</Button>
+                    <Button variant="outline" className="rounded-xl border-gray-200">Профиль</Button>
                   </div>
-
-                  <div className="flex gap-2">
-                    <Button className="flex-1">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      Записаться
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             );
           })}
         </div>
       )}
-
-      {/* Дополнительная информация */}
-      <Card className="bg-gradient-to-r from-blue-50 to-cyan-50">
-        <CardHeader>
-          <CardTitle>Выбор мастера</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex items-start gap-3">
-            <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">
-              1
-            </div>
-            <div>
-              <div className="font-semibold">��росматривайте профили</div>
-              <p className="text-sm text-muted-foreground">
-                Изучите специализацию и рейтинг каждого мастера
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">
-              2
-            </div>
-            <div>
-              <div className="font-semibold">Добавляйте в избранное</div>
-              <p className="text-sm text-muted-foreground">
-                Сохраните понравившихся мастеров для быстрой записи
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">
-              3
-            </div>
-            <div>
-              <div className="font-semibold">Записывайтесь онлайн</div>
-              <p className="text-sm text-muted-foreground">
-                Выбирайте удобное время и подтверждайте запись
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

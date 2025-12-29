@@ -48,52 +48,56 @@ export function Loyalty({ loyalty, user }: any) {
   };
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-8 animate-in fade-in duration-500">
       <div>
-        <h1>Лояльность и Бонусы</h1>
-        <p className="text-muted-foreground">Ваши привилегии и награды</p>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent inline-block">
+          Лояльность и Бонусы
+        </h1>
+        <p className="text-muted-foreground mt-1 text-lg">Ваши привилегии и награды</p>
       </div>
 
       {/* Текущий статус */}
-      <Card className="border-2" style={{ borderColor: currentTierData.color }}>
-        <CardHeader>
-          <div className="flex items-center justify-between">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900 to-gray-800 text-white shadow-2xl p-8">
+        <div className="absolute top-0 right-0 -mt-20 -mr-20 h-80 w-80 rounded-full bg-yellow-400/20 blur-3xl" />
+        <div className="absolute bottom-0 left-0 -mb-20 -ml-20 h-80 w-80 rounded-full bg-purple-500/20 blur-3xl" />
+
+        <div className="relative z-10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
             <div>
-              <CardTitle className="flex items-center gap-2">
-                <Star className="w-6 h-6" style={{ color: currentTierData.color }} />
-                {currentTierData.name} статус
-              </CardTitle>
-              <CardDescription className="mt-2">
-                {points} баллов • {currentTierData.discount}% скидка
-              </CardDescription>
-            </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold" style={{ color: currentTierData.color }}>
-                {currentUser.loyaltyPoints}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-sm font-medium text-yellow-300 mb-2">
+                <Star className="w-4 h-4 fill-yellow-300" /> {currentTierData.name} уровень
               </div>
-              <div className="text-sm text-muted-foreground">баллов</div>
+              <h2 className="text-4xl font-bold">{currentUser.loyaltyPoints} <span className="text-2xl font-normal text-white/60">баллов</span></h2>
+              <p className="text-gray-300 mt-1">Ваша персональная скидка: <span className="text-white font-bold">{currentTierData.discount}%</span></p>
+            </div>
+
+            <div className="w-full md:w-1/2 bg-white/5 rounded-2xl p-4 border border-white/5 backdrop-blur-sm">
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-gray-300">До уровня {nextTierData?.name || 'MAX'}</span>
+                <span className="font-bold text-white">{nextTierData ? nextTierData.points - points : 0} баллов</span>
+              </div>
+              <Progress value={progressToNext} className="h-3 bg-white/10" indicatorClassName="bg-gradient-to-r from-yellow-400 to-amber-500" />
+              {nextTierData && (
+                <p className="text-xs text-gray-400 mt-2 text-right">
+                  На {nextTierData.name} скидка будет {nextTierData.discount}%
+                </p>
+              )}
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {nextTierData && (
-            <>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>До {nextTierData.name} уровня</span>
-                  <span className="font-semibold">
-                    {nextTierData.points - points} баллов
-                  </span>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {tiers.map((t) => {
+              const isActive = t.name === currentTierData.name;
+              return (
+                <div key={t.name} className={`rounded-xl p-3 text-center transition-all ${isActive ? 'bg-white/20 shadow-lg scale-105 border border-white/20' : 'bg-white/5 opacity-60'}`}>
+                  <div className="font-bold text-sm" style={{ color: isActive ? '#fff' : t.color }}>{t.name}</div>
+                  <div className="text-xs text-gray-300">{t.discount}%</div>
                 </div>
-                <Progress value={progressToNext} className="h-2" />
-              </div>
-              <div className="text-sm text-muted-foreground">
-                При достижении {nextTierData.name} уровня ваша скидка составит {nextTierData.discount}%
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+              )
+            })}
+          </div>
+        </div>
+      </div>
 
       {/* Streak геймификация */}
       <Card className="bg-gradient-to-r from-orange-50 to-red-50">
