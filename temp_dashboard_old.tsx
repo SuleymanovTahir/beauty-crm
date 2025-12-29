@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
-
 export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onNavigate }: any) {
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -29,7 +28,7 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
   const discount = loyalty?.discount_percent || 0;
 
   // Bookings mapping
-  const upcomingAppointment = bookings?.find((a: any) => a.status === 'confirmed' || a.status === 'pending');
+  const upcomingAppointment = bookings?.find((a: any) => a.status === 'confirmed' || a.status === 'pending'); // Assuming status
   // Sorting bookings to find last completed
   const lastAppointment = bookings
     ?.filter((a: any) => a.status === 'completed')
@@ -41,29 +40,9 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
     (new Date().getTime() - new Date(user.created_at).getTime()) / (1000 * 60 * 60 * 24 * 30)
   ) : 0;
 
-  // Hybrid Dashboard:
-  // 1. Gradient Hero & Greeting (User Liked)
-  // 2. Quick Actions (User Liked)
-  // 3. Status/Loyalty Card (User Liked)
-  // 4. Upcoming Appointment (Clean / New Admin Style)
-  // 5. Special Offers (Clean / New Admin Style)
+  // const totalSpent = 0; // Not available in current API response?
+  const streak = 0; // Not available?
 
-  // Navigate handler for booking
-  // We should rely on onNavigate prop being passed a handler that wraps navigate() or checks window location;
-  // BUT the user specifically asked "Why does 'Book' not lead to UserBookingWizard".
-  // Assuming onNavigate might just change tabs, we should use direct navigation for booking if it's a separate route.
-  const handleBooking = () => {
-    // If we are in SPA, we should use navigate hook ideally, but here we can just use window.location if router context is not passed or just link
-    // However, onNavigate is likely for internal tabs.
-    // Let's use window.location.href = '/new-booking' as it was, but fix the link if broken.
-    // The previous code had window.location.href = '/new-booking'.
-    // If that didn't work, maybe the router is intercepting?
-    // Let's try to assume onNavigate handles 'new-booking' OR we use window.location properly.
-    // The user said "why does it not lead...".
-    // I will try to use the hook if I can, but I can't add hooks inside this function if it's not a proper component definition change (it is).
-    // Oh wait, I am replacing the FILE CONTENT so I can use hooks.
-    // BUT I don't see useNavigate imported in the top level. I should add it.
-  };
 
   return (
     <div className="space-y-8 pb-12 animate-in fade-in duration-500">
@@ -115,14 +94,17 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Быстрые действия</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { label: 'Записаться', icon: Calendar, color: 'text-pink-600', bg: 'bg-pink-50', action: () => window.location.href = '/new-booking' },
-                { label: 'Повторить', icon: Repeat, color: 'text-violet-600', bg: 'bg-violet-50', action: () => { } },
-                { label: 'Мастера', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', action: () => onNavigate && onNavigate('masters') },
-                { label: 'Поддержка', icon: MessageCircle, color: 'text-green-600', bg: 'bg-green-50', action: () => onNavigate && onNavigate('support') },
+                { label: 'Записаться', icon: Calendar, color: 'text-pink-600', bg: 'bg-pink-50', link: '/new-booking' },
+                { label: 'Повторить', icon: Repeat, color: 'text-violet-600', bg: 'bg-violet-50', action: 'repeat' },
+                { label: 'Мастера', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', nav: 'masters' },
+                { label: 'Поддержка', icon: MessageCircle, color: 'text-green-600', bg: 'bg-green-50', nav: 'support' },
               ].map((action, i) => (
                 <button
                   key={i}
-                  onClick={action.action}
+                  onClick={() => {
+                    if (action.link) window.location.href = action.link;
+                    if (action.nav && onNavigate) onNavigate(action.nav);
+                  }}
                   className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200 group"
                 >
                   <div className={`w-12 h-12 rounded-full ${action.bg} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>

@@ -1,19 +1,23 @@
 import { useState } from 'react';
-import { Star, Heart, Search, Users } from 'lucide-react';
-import { Card, CardContent } from './ui/card';
+import { Star, Heart, Calendar } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Input } from './ui/input';
-// import { masters } from '../data/mockData';
+import { Avatar } from './ui/avatar';
+import { Switch } from './ui/switch';
+import { Label } from './ui/label';
 import { toast } from 'sonner';
 
-export function Masters({ masters = [] }: any) {
+export function Masters({ masters }: any) {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [favoriteMasters, setFavoriteMasters] = useState<string[]>([]);
 
-  // Initialize favorites from masters if needed, or manage separately. 
-  // For now assuming isFavorite property exists on masters.
-  // Using useEffect to sync if masters change or simply rendering.
+  // Use masters prop or default empty array
+  const masterList = masters || [];
+
+  // Manage favorites locally for now (replace with actual API later)
+  // Assuming 'isFavorite' might come from API or defaults to false
+  const [favoriteMasters, setFavoriteMasters] = useState<string[]>(
+    masterList.filter((m: any) => m.isFavorite).map((m: any) => m.id)
+  );
 
   const toggleFavorite = (masterId: string) => {
     setFavoriteMasters(prev =>
@@ -21,102 +25,152 @@ export function Masters({ masters = [] }: any) {
         ? prev.filter(id => id !== masterId)
         : [...prev, masterId]
     );
+    // In real app, call API here
     toast.success('Избранное обновлено');
   };
 
   const filteredMasters = showFavoritesOnly
-    ? masters.filter(m => favoriteMasters.includes(m.id))
-    : masters;
+    ? masterList.filter((m: any) => favoriteMasters.includes(m.id))
+    : masterList;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-6 pb-8">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent inline-block">
-            Наши мастера
-          </h1>
-          <p className="text-muted-foreground mt-1 text-lg">Профессионалы, готовые подчеркнуть вашу красоту</p>
+          <h1 className="text-3xl font-bold tracking-tight">Наши мастера</h1>
+          <p className="text-muted-foreground">
+            {masterList.length} специалистов • {favoriteMasters.length} в избранном
+          </p>
         </div>
-      </div>
 
-      <div className="flex items-center gap-4 bg-gray-50/50 p-2 rounded-2xl border border-gray-100 w-full md:w-fit">
-        <Button
-          variant={showFavoritesOnly ? "ghost" : "default"}
-          onClick={() => setShowFavoritesOnly(false)}
-          className={`rounded-xl flex-1 md:flex-none ${!showFavoritesOnly ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:bg-white/50'}`}
-        >
-          Все мастера
-        </Button>
-        <Button
-          variant={showFavoritesOnly ? "default" : "ghost"}
-          onClick={() => setShowFavoritesOnly(true)}
-          className={`rounded-xl flex-1 md:flex-none ${showFavoritesOnly ? 'bg-pink-50 text-pink-600 shadow-sm border border-pink-100' : 'text-gray-500 hover:bg-white/50'}`}
-        >
-          <Heart className={`w-4 h-4 mr-2 ${showFavoritesOnly ? 'fill-pink-600' : ''}`} />
-          Избранные
-        </Button>
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="favorites-only"
+            checked={showFavoritesOnly}
+            onCheckedChange={setShowFavoritesOnly}
+          />
+          <Label htmlFor="favorites-only">Только избранные</Label>
+        </div>
       </div>
 
       {filteredMasters.length === 0 ? (
-        <div className="text-center py-20 bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
-          <div className="bg-white p-4 rounded-full inline-block shadow-sm mb-4">
-            <Users className="w-8 h-8 text-gray-400" />
-          </div>
-          <h3 className="text-xl font-medium text-gray-900">Мастера не найдены</h3>
-          <p className="text-gray-500 mt-2">Попробуйте изменить параметры поиска</p>
-        </div>
+        <Card>
+          <CardContent className="p-12 text-center">
+            <Heart className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="mb-2">Нет мастеров</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              {showFavoritesOnly ? 'Добавьте мастеров в избранное' : 'Список мастеров пуст'}
+            </p>
+            {showFavoritesOnly && (
+              <Button onClick={() => setShowFavoritesOnly(false)}>
+                Показать всех мастеров
+              </Button>
+            )}
+          </CardContent>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredMasters.map((master: any) => {
+            const isFavorite = favoriteMasters.includes(master.id);
+
             return (
-              <div
+              <Card
                 key={master.id}
-                className="group bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center relative overflow-hidden"
+                className={`overflow-hidden ${isFavorite ? 'border-pink-200 bg-gradient-to-br from-pink-50 to-purple-50' : ''
+                  }`}
               >
-                <div className="absolute top-4 right-4 z-10">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-full hover:bg-pink-50 text-gray-400 hover:text-pink-500"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavorite(master.id);
-                    }}
-                  >
-                    <Heart className={`w-5 h-5 ${favoriteMasters.includes(master.id) ? 'fill-pink-500 text-pink-500' : ''}`} />
-                  </Button>
-                </div>
-
-                <div className="mb-4 relative">
-                  <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-gray-50 shadow-inner">
+                <CardHeader className="p-0">
+                  <div className="aspect-square relative">
                     <img
-                      src={master.photo || master.avatar_url}
+                      src={master.avatar || `https://ui-avatars.com/api/?name=${master.name}&background=random`}
                       alt={master.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-cover"
                     />
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className={`absolute top-4 right-4 ${isFavorite
+                          ? 'bg-pink-500 hover:bg-pink-600 text-white'
+                          : 'bg-white/90 hover:bg-white'
+                        }`}
+                      onClick={() => toggleFavorite(master.id)}
+                    >
+                      <Heart
+                        className={`w-5 h-5 ${isFavorite ? 'fill-white' : ''}`}
+                      />
+                    </Button>
                   </div>
-                  <div className="absolute -bottom-2 -right-2 bg-white rounded-full px-2 py-0.5 shadow-sm border border-gray-100 flex items-center gap-1 text-xs font-bold text-gray-900">
-                    <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                    {master.rating || '5.0'}
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <div>
+                    <CardTitle className="mb-2">{master.name}</CardTitle>
+                    <CardDescription>{master.specialty || 'Мастер'}</CardDescription>
                   </div>
-                </div>
 
-                <h3 className="text-lg font-bold text-gray-900">{master.name}</h3>
-                <p className="text-sm text-gray-500 mb-4">{master.specialty}</p>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-semibold">{master.rating || '5.0'}</span>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {master.reviews || 0} отзывов
+                    </div>
+                  </div>
 
-                <div className="w-full mt-auto space-y-3">
-                  <Button className="w-full bg-gray-900 text-white hover:bg-gray-800 rounded-xl py-6 shadow-lg shadow-gray-200 group-hover:shadow-xl transition-all">
-                    Записаться
-                  </Button>
-                  <Button variant="ghost" className="w-full text-gray-500 hover:bg-gray-50 rounded-xl">
-                    Подробнее
-                  </Button>
-                </div>
-              </div>
+                  <div className="flex gap-2">
+                    <Button className="flex-1">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Записаться
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             );
           })}
         </div>
       )}
+
+      {/* Дополнительная информация */}
+      <Card className="bg-gradient-to-r from-blue-50 to-cyan-50">
+        <CardHeader>
+          <CardTitle>Выбор мастера</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-start gap-3">
+            <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">
+              1
+            </div>
+            <div>
+              <div className="font-semibold">Просматривайте профили</div>
+              <p className="text-sm text-muted-foreground">
+                Изучите специализацию и рейтинг каждого мастера
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">
+              2
+            </div>
+            <div>
+              <div className="font-semibold">Добавляйте в избранное</div>
+              <p className="text-sm text-muted-foreground">
+                Сохраните понравившихся мастеров для быстрой записи
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">
+              3
+            </div>
+            <div>
+              <div className="font-semibold">Записывайтесь онлайн</div>
+              <p className="text-sm text-muted-foreground">
+                Выбирайте удобное время и подтверждайте запись
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
