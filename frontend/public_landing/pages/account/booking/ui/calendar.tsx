@@ -32,14 +32,14 @@ function Calendar({
                     "h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-1 z-10 rounded-lg"
                 ),
                 month_grid: "w-full border-collapse",
-                weekdays: "flex justify-between",
-                weekday: "text-muted-foreground w-10 font-medium text-[0.8rem] text-center",
-                weeks: "flex flex-col gap-1 mt-2",
-                week: "flex w-full justify-between",
-                day: "h-10 w-10 text-center text-sm p-0 relative flex items-center justify-center",
+                weekdays: "grid grid-cols-7 w-full mb-4",
+                weekday: "text-muted-foreground font-bold text-[0.7rem] uppercase text-center",
+                weeks: "flex flex-col gap-1 w-full",
+                week: "grid grid-cols-7 w-full gap-1",
+                day: "flex items-center justify-center p-0",
                 day_button: cn(
                     buttonVariants({ variant: "ghost" }),
-                    "h-10 w-10 p-0 font-normal rounded-xl aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:opacity-100"
+                    "h-10 w-10 p-0 font-medium rounded-xl transition-all hover:bg-purple-50 aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:opacity-100"
                 ),
                 selected: "bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl",
                 today: "bg-accent text-accent-foreground rounded-xl",
