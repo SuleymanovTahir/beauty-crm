@@ -311,7 +311,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
       </main>
 
       {/* Sticky Bottom Navigator for Steps */}
-      {step !== 'menu' && step !== 'confirm' && bookingState.services.length > 0 && (
+      {step !== 'menu' && step !== 'confirm' && (
         <motion.div
           initial={{ y: 100 }}
           animate={{ y: 0 }}
