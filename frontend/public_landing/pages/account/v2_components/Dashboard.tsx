@@ -47,7 +47,7 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
   return (
     <div className="space-y-8 pb-12 animate-in fade-in duration-500">
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-violet-600 to-indigo-600 p-8 text-white shadow-2xl">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-600 to-blue-600 p-8 text-white shadow-2xl">
         <div className="absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-64 w-64 rounded-full bg-pink-500/20 blur-3xl" />
 
@@ -55,26 +55,26 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
           <h1 className="text-3xl font-bold md:text-4xl flex items-center gap-2">
             {getGreeting()}, {user?.full_name?.split(' ')[0]}! <Sparkles className="w-8 h-8 text-yellow-300 animate-pulse" />
           </h1>
-          <p className="mt-2 text-indigo-100 text-lg opacity-90">{getMotivation()}</p>
+          <p className="mt-2 text-blue-100 text-lg opacity-90">{getMotivation()}</p>
 
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
-              <div className="text-sm text-indigo-200">Всего визитов</div>
+              <div className="text-sm text-blue-100">Всего визитов</div>
               <div className="mt-1 text-2xl font-bold flex items-center gap-2">
                 {stats.total_visits} <Calendar className="h-4 w-4 opacity-70" />
               </div>
             </div>
             <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
-              <div className="text-sm text-indigo-200">Баллы лояльности</div>
+              <div className="text-sm text-blue-100">Баллы лояльности</div>
               <div className="mt-1 text-2xl font-bold flex items-center gap-2">
                 {points} <Star className="h-4 w-4 text-yellow-300 fill-yellow-300" />
               </div>
-              <div className="text-xs text-indigo-200 mt-1 bg-white/20 inline-block px-2 py-0.5 rounded-full capitalize">
+              <div className="text-xs text-blue-100 mt-1 bg-white/20 inline-block px-2 py-0.5 rounded-full capitalize">
                 {tier} уровень
               </div>
             </div>
             <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
-              <div className="text-sm text-indigo-200">Ваша скидка</div>
+              <div className="text-sm text-blue-100">Ваша скидка</div>
               <div className="mt-1 text-2xl font-bold flex items-center gap-2">
                 {discount}% <TrendingUp className="h-4 w-4 text-green-300" />
               </div>
