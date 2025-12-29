@@ -297,7 +297,12 @@ async def get_available_slots(
         
         start_h, start_m = map(int, start_time_str.split(':'))
         end_h, end_m = map(int, end_time_str.split(':'))
-    except Exception:
+        
+        # DEBUG LOGGING FOR TIME SLOT ISSUE
+        print(f"DEBUG_SLOTS: hours_str='{hours_str}', start={start_h}:{start_m}, end={end_h}:{end_m}")
+
+    except Exception as e:
+        print(f"DEBUG_SLOTS: Error parsing hours '{hours_str}': {e}")
         # Fallback to defaults
         start_h, start_m = 10, 30
         end_h, end_m = 21, 0
@@ -480,7 +485,9 @@ async def get_batch_available_slots(date: str):
             parts = hours_str.split('-')
             start_h, start_m = map(int, parts[0].strip().split(':'))
             end_h, end_m = map(int, parts[1].strip().split(':'))
-        except:
+            print(f"DEBUG_BATCH: hours='{hours_str}', start={start_h}:{start_m}")
+        except Exception as e:
+            print(f"DEBUG_BATCH: Error: {e}")
             start_h, start_m = 10, 30
             end_h, end_m = 21, 0
             
