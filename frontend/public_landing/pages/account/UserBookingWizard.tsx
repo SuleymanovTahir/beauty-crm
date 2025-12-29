@@ -232,7 +232,7 @@ function BookingMenu({ bookingState, onNavigate, onReset, totalPrice, salonSetti
 
 
 
-function ServicesStep({ selectedServices, onServicesChange, onContinue, onCancel, salonSettings }: any) {
+function ServicesStep({ selectedServices, bookingState, onServicesChange, onContinue, onCancel, salonSettings }: any) {
   const { t, i18n } = useTranslation(['booking', 'common']);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -377,33 +377,24 @@ function ServicesStep({ selectedServices, onServicesChange, onContinue, onCancel
           className="booking-footer-bar"
         >
           <div className="footer-action-container">
-            <div className="flex items-center gap-6">
-              <div className="hidden sm:block">
-                <p className="font-black text-gray-900 text-sm">
-                  {selectedServices.length} {t('booking.menu.selected', 'Selected')}
-                </p>
-                <p className="text-purple-500 font-bold text-xs">
-                  {totalDuration} {t('booking.min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}
-                </p>
-              </div>
-              <Button onClick={() => onContinue('professional')} variant="ghost" className="text-gray-400 font-bold hover:text-purple-600 gap-2">
+            <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar py-2">
+              <Button onClick={() => onContinue('professional')} variant="ghost" className={`text-gray-400 font-bold hover:text-purple-600 gap-2 px-3 ${bookingState.professionalSelected ? 'text-purple-600' : ''}`}>
                 <User className="w-4 h-4" />
-                {t('booking.menu.professional', 'Professional')}
+                <span className="whitespace-nowrap">{t('booking.menu.professional', 'Master')}</span>
+              </Button>
+              <Button onClick={() => onContinue('datetime')} variant="ghost" className={`text-gray-400 font-bold hover:text-purple-600 gap-2 px-3 ${bookingState.date && bookingState.time ? 'text-purple-600' : ''}`}>
+                <CalendarIcon className="w-4 h-4" />
+                <span className="whitespace-nowrap">{t('booking.menu.datetime', 'Date & Time')}</span>
               </Button>
             </div>
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                onClick={onCancel}
-                className="text-gray-400 font-bold hover:text-red-500"
-              >
-                {t('common.cancel', 'Cancel')}
-              </Button>
+            <div className="flex items-center gap-2 sm:gap-4">
               <Button
                 onClick={() => onContinue()}
-                className="btn-primary-gradient h-14 min-w-[180px]"
+                className="btn-primary-gradient h-14 min-w-[140px] sm:min-w-[180px] shadow-lg"
               >
-                {t('common.continue', 'Continue')}
+                {(bookingState.professionalSelected && bookingState.date && bookingState.time)
+                  ? t('booking.confirm.title', 'Confirm Booking')
+                  : t('common.next', 'Next Step')}
                 <ChevronRight className="w-5 h-5" />
               </Button>
             </div>
@@ -412,13 +403,14 @@ function ServicesStep({ selectedServices, onServicesChange, onContinue, onCancel
       )}
 
 
+
     </div>
   );
 }
 
 
 
-function ProfessionalStep({ selectedProfessional, professionalSelected, onProfessionalChange, onContinue }: any) {
+function ProfessionalStep({ selectedProfessional, professionalSelected, bookingState, onProfessionalChange, onContinue }: any) {
   const { t } = useTranslation(['booking', 'common']);
   const [masters, setMasters] = useState<Master[]>([]);
   const [loading, setLoading] = useState(true);
@@ -552,22 +544,30 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, onProfes
           className="booking-footer-bar"
         >
           <div className="footer-action-container">
-            <div className="flex items-center gap-4">
-              <Button onClick={() => onContinue('services')} variant="ghost" className="text-gray-400 font-bold hover:text-purple-600 gap-2">
+            <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar py-2">
+              <Button onClick={() => onContinue('services')} variant="ghost" className={`text-gray-400 font-bold hover:text-purple-600 gap-2 px-3 ${bookingState.services.length > 0 ? 'text-purple-600' : ''}`}>
                 <Scissors className="w-4 h-4" />
-                {t('booking.menu.services', 'Services')}
+                <span className="whitespace-nowrap">{t('booking.menu.services', 'Services')}</span>
+              </Button>
+              <Button onClick={() => onContinue('datetime')} variant="ghost" className={`text-gray-400 font-bold hover:text-purple-600 gap-2 px-3 ${bookingState.date && bookingState.time ? 'text-purple-600' : ''}`}>
+                <CalendarIcon className="w-4 h-4" />
+                <span className="whitespace-nowrap">{t('booking.menu.datetime', 'Date & Time')}</span>
               </Button>
             </div>
             <Button
               onClick={() => onContinue()}
-              className="btn-primary-gradient h-14 min-w-[200px]"
+              className="btn-primary-gradient h-14 min-w-[140px] sm:min-w-[200px] shadow-lg"
             >
-              {t('common.continue', 'Continue')}
+              {(bookingState.services.length > 0 && bookingState.date && bookingState.time)
+                ? t('booking.confirm.title', 'Confirm Booking')
+                : t('common.next', 'Next Step')}
               <ChevronRight className="w-5 h-5" />
             </Button>
           </div>
         </motion.div>
       )}
+
+
 
     </div>
   );
@@ -575,7 +575,7 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, onProfes
 
 
 
-function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServices, onDateTimeChange, onContinue }: any) {
+function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServices, bookingState, onDateTimeChange, onContinue }: any) {
   const { t, i18n } = useTranslation(['booking', 'common']);
   const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
   const [availableSlots, setAvailableSlots] = useState<any[]>([]);
@@ -755,23 +755,27 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
           className="booking-footer-bar"
         >
           <div className="footer-action-container">
-            <div className="flex items-center gap-4">
-              <Button onClick={() => onContinue('services')} variant="ghost" className="text-gray-400 font-bold hover:text-purple-600 gap-2">
+            <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar py-2">
+              <Button onClick={() => onContinue('services')} variant="ghost" className={`text-gray-400 font-bold hover:text-purple-600 gap-2 px-3 ${bookingState.services.length > 0 ? 'text-purple-600' : ''}`}>
                 <Scissors className="w-4 h-4" />
-                {t('booking.menu.services', 'Services')}
+                <span className="whitespace-nowrap">{t('booking.menu.services', 'Services')}</span>
               </Button>
-              <Button onClick={() => onContinue('professional')} variant="ghost" className="text-gray-400 font-bold hover:text-purple-600 gap-2">
+              <Button onClick={() => onContinue('professional')} variant="ghost" className={`text-gray-400 font-bold hover:text-purple-600 gap-2 px-3 ${bookingState.professionalSelected ? 'text-purple-600' : ''}`}>
                 <User className="w-4 h-4" />
-                {t('booking.menu.professional', 'Professional')}
+                <span className="whitespace-nowrap">{t('booking.menu.professional', 'Master')}</span>
               </Button>
             </div>
-            <Button onClick={() => onContinue()} className="btn-primary-gradient h-14 min-w-[200px]">
-              {t('common.continue', 'Continue')}
+            <Button onClick={() => onContinue()} className="btn-primary-gradient h-14 min-w-[140px] sm:min-w-[200px] shadow-lg">
+              {(bookingState.services.length > 0 && bookingState.professionalSelected)
+                ? t('booking.confirm.title', 'Confirm Booking')
+                : t('common.next', 'Next Step')}
               <ChevronRight className="w-5 h-5" />
             </Button>
           </div>
         </motion.div>
       )}
+
+
 
     </div>
   );
@@ -1116,6 +1120,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             {step === 'services' && (
               <ServicesStep
                 selectedServices={bookingState.services}
+                bookingState={bookingState}
                 onServicesChange={(services: any) => updateState({ services })}
                 onContinue={(target?: string) => setStep(target || 'menu')}
                 onCancel={() => setStep('menu')}
@@ -1125,6 +1130,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               <ProfessionalStep
                 selectedProfessional={bookingState.professional}
                 professionalSelected={bookingState.professionalSelected}
+                bookingState={bookingState}
                 onProfessionalChange={(prof: any) => updateState({ professional: prof, professionalSelected: true })}
                 onContinue={(target?: string) => setStep(target || 'menu')}
               />
@@ -1135,10 +1141,12 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 selectedTime={bookingState.time}
                 selectedMaster={bookingState.professional}
                 selectedServices={bookingState.services}
+                bookingState={bookingState}
                 onDateTimeChange={(date: any, time: any) => updateState({ date, time })}
                 onContinue={(target?: string) => setStep(target || 'confirm')}
               />
             )}
+
 
             {step === 'confirm' && (
               <ConfirmStep
