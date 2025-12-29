@@ -3,10 +3,10 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker, useNavigation } from "react-day-picker";
-import "react-day-picker/dist/style.css";
 import { format } from "date-fns";
 import { enUS, ru } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
+import "react-day-picker/dist/style.css";
 
 function Calendar({
     className,
@@ -17,7 +17,8 @@ function Calendar({
     const { i18n } = useTranslation();
     const locale = i18n.language === 'ru' ? ru : enUS;
 
-    // Custom Caption Component with INLINE STYLES to guarantee layout
+    // Custom Caption: Explicitly renders [Prev Arrow] [Month Label] [Next Arrow]
+    // This guarantees the visual order the user wants.
     const CustomCaption = ({ displayMonth }: { displayMonth: Date }) => {
         const { goToMonth, nextMonth, previousMonth } = useNavigation();
 
@@ -25,10 +26,9 @@ function Calendar({
             <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center', /* Center everything: arrow - title - arrow */
-                gap: '24px', /* Space between arrow and text */
-                padding: '0 8px 16px 8px',
-                width: '100%',
+                justifyContent: 'center',
+                gap: '24px',
+                padding: '16px 8px',
                 position: 'relative'
             }}>
                 <button
@@ -40,16 +40,15 @@ function Calendar({
                         justifyContent: 'center',
                         width: '32px',
                         height: '32px',
-                        borderRadius: '50%',
-                        border: 'none', // Removed border as per 'good' screenshot usually has clean look or subtle
+                        border: 'none',
                         background: 'transparent',
                         cursor: previousMonth ? 'pointer' : 'default',
-                        opacity: previousMonth ? 1 : 0.3,
-                        color: '#64748b'
+                        opacity: previousMonth ? 1 : 0.2,
+                        color: '#2563eb'
                     }}
-                    className="hover:bg-slate-100 transition-colors"
+                    type="button"
                 >
-                    <ChevronLeft style={{ width: '20px', height: '20px', strokeWidth: 2.5, color: '#2563eb' }} /> {/* Blue color like in screenshot */}
+                    <ChevronLeft style={{ width: '24px', height: '24px' }} />
                 </button>
 
                 <span style={{
@@ -57,8 +56,8 @@ function Calendar({
                     fontWeight: 700,
                     textTransform: 'capitalize',
                     color: '#0f172a',
-                    textAlign: 'center',
-                    minWidth: '130px' // Prevent layout shift
+                    minWidth: '140px',
+                    textAlign: 'center'
                 }}>
                     {format(displayMonth, 'LLLL yyyy', { locale })}
                 </span>
@@ -72,23 +71,29 @@ function Calendar({
                         justifyContent: 'center',
                         width: '32px',
                         height: '32px',
-                        borderRadius: '50%',
                         border: 'none',
                         background: 'transparent',
                         cursor: nextMonth ? 'pointer' : 'default',
-                        opacity: nextMonth ? 1 : 0.3,
-                        color: '#64748b'
+                        opacity: nextMonth ? 1 : 0.2,
+                        color: '#2563eb'
                     }}
-                    className="hover:bg-slate-100 transition-colors"
+                    type="button"
                 >
-                    <ChevronRight style={{ width: '20px', height: '20px', strokeWidth: 2.5, color: '#2563eb' }} />
+                    <ChevronRight style={{ width: '24px', height: '24px' }} />
                 </button>
             </div>
         );
     };
 
     return (
-        <div style={{ padding: '16px', background: 'white', borderRadius: '16px', boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)' }}>
+        <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '16px',
+            boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+            width: 'fit-content',
+            margin: '0 auto'
+        }}>
             <DayPicker
                 showOutsideDays={showOutsideDays}
                 className={className}
@@ -96,32 +101,30 @@ function Calendar({
                 components={{
                     Caption: CustomCaption
                 }}
-                // Using inline styles for inner elements via matching classNames to empty strings 
-                // and relying on style injection or native RDP styles where possible, 
-                // but overriding specific parts with styles prop
+                // Using explicit styles object for Grid to ensure table integrity
                 styles={{
-                    head_cell: { textTransform: 'lowercase', color: '#64748b', fontSize: '0.9rem', fontWeight: 500, paddingBottom: '8px' },
-                    cell: { fontSize: '0.95rem', height: '40px', width: '40px' },
-                    day: { borderRadius: '50%', height: '40px', width: '40px' },
-                    table: { margin: '0 auto' } // Center the table itself
+                    table: { margin: '0 auto', borderCollapse: 'collapse' },
+                    head_cell: { width: '40px', height: '40px', fontWeight: 500, color: '#64748b' },
+                    cell: { width: '40px', height: '40px', padding: 0 },
+                    day: { width: '40px', height: '40px', borderRadius: '50%', fontSize: '15px' }
                 }}
+                // Minimal overrides for colors via style tag
                 {...props}
             />
-            {/* Fallback styles for selected state if Tailwind fails - enhanced for newer look */}
             <style>{`
         .rdp-day_selected { 
-            background-color: #2563eb !important; /* Blue primary color */
-            color: white !important;
+            background-color: #2563eb !important; 
+            color: white !important; 
             font-weight: bold;
         }
-        .rdp-day_today:not(.rdp-day_selected) { 
+        .rdp-day_today:not(.rdp-day_selected) {
             background-color: #f1f5f9;
-            font-weight: bold; 
             color: #2563eb;
+            font-weight: bold;
         }
         .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-            background-color: #eff6ff;
-            color: #2563eb;
+            background-color: #eff6ff !important;
+            color: #2563eb !important;
         }
       `}</style>
         </div>

@@ -11,20 +11,57 @@ interface ProfessionalStepProps {
     professionalSelected: boolean;
     onProfessionalChange: (professional: any | null) => void;
     salonSettings: any;
+    preloadedProfessionals?: any[];
+    preloadedAvailability?: Record<number, string[]>;
 }
 
 export function ProfessionalStep({
     selectedProfessionalId,
     professionalSelected,
     onProfessionalChange,
-    salonSettings
+    salonSettings,
+    preloadedProfessionals,
+    preloadedAvailability
 }: ProfessionalStepProps) {
     const { t } = useTranslation(['booking', 'common']);
-    const [professionals, setProfessionals] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [nextSlots, setNextSlots] = useState<Record<number, string>>({});
+    const [professionals, setProfessionals] = useState<any[]>(preloadedProfessionals || []);
+    // No loading spinner if data is preloaded
+    const [loading, setLoading] = useState(false);
+    // Initialize nextSlots synchronously to avoid "pop-in" effect
+    const [nextSlots, setNextSlots] = useState<Record<number, string>>(() => {
+        if (preloadedAvailability && Object.keys(preloadedAvailability).length > 0 && preloadedProfessionals) {
+            const updates: Record<number, string> = {};
+            const now = new Date();
+            const currentHours = now.getHours();
+            const currentMinutes = now.getMinutes();
+
+            preloadedProfessionals.forEach(p => {
+                const slots = preloadedAvailability[p.id] || [];
+                if (slots.length > 0) {
+                    const available = slots.filter(time => {
+                        const [h, m] = time.split(':').map(Number);
+                        // Filter past times
+                        if (h < currentHours || (h === currentHours && m <= currentMinutes)) return false;
+                        return true;
+                    });
+
+                    if (available.length > 0) {
+                        updates[p.id] = available.slice(0, 4).join(', ');
+                    }
+                }
+            });
+            return updates;
+        }
+        return {};
+    });
 
     useEffect(() => {
+        if (preloadedProfessionals && preloadedProfessionals.length > 0) {
+            setProfessionals(preloadedProfessionals);
+            return;
+        }
+
+        // Fallback fetch
         const fetchProfessionals = async () => {
             setLoading(true);
             try {
@@ -39,18 +76,44 @@ export function ProfessionalStep({
             }
         };
         fetchProfessionals();
-    }, []);
+    }, [preloadedProfessionals]);
 
     useEffect(() => {
         if (professionals.length === 0) return;
 
+        // Optimization: Use preloaded batch availability if present
+        if (preloadedAvailability && Object.keys(preloadedAvailability).length > 0) {
+            const updates: Record<number, string> = {};
+            const now = new Date();
+            const currentHours = now.getHours();
+            const currentMinutes = now.getMinutes();
+
+            professionals.forEach(p => {
+                const slots = preloadedAvailability[p.id] || [];
+                if (slots.length > 0) {
+                    const available = slots.filter(time => {
+                        const [h, m] = time.split(':').map(Number);
+                        // Filter past times
+                        if (h < currentHours || (h === currentHours && m <= currentMinutes)) return false;
+                        return true;
+                    });
+
+                    if (available.length > 0) {
+                        updates[p.id] = available.slice(0, 4).join(', ');
+                    }
+                }
+            });
+            setNextSlots(updates);
+            return;
+        }
+
+        // Fallback: Individual fetching (LEGACY SLOW PATH)
         const fetchNextSlots = async () => {
             const today = new Date().toISOString().split('T')[0];
             const updates: Record<number, string> = {};
 
             await Promise.all(professionals.map(async (p) => {
                 try {
-                    // We check today only as per "Available Today" request logic
                     const res = await api.getPublicAvailableSlots(today, p.id);
                     if (res.slots && res.slots.length > 0) {
                         const now = new Date();
@@ -59,17 +122,13 @@ export function ProfessionalStep({
 
                         const available = res.slots.filter((s: any) => {
                             if (!s.available) return false;
-                            // Parse time "HH:MM"
                             const [h, m] = s.time.split(':').map(Number);
-                            // Filter past times
                             if (h < currentHours || (h === currentHours && m <= currentMinutes)) return false;
                             return true;
                         });
 
                         if (available.length > 0) {
-                            // Take up to 4 slots
-                            const slotsToShow = available.slice(0, 4).map((s: any) => s.time);
-                            updates[p.id] = slotsToShow.join(', ');
+                            updates[p.id] = available.slice(0, 4).map((s: any) => s.time).join(', ');
                         }
                     }
                 } catch (e) { }
@@ -77,7 +136,7 @@ export function ProfessionalStep({
             setNextSlots(updates);
         };
         fetchNextSlots();
-    }, [professionals]);
+    }, [professionals, preloadedAvailability]);
 
     if (loading) {
         return (
