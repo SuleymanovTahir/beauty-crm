@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, Share2, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Share2, Download, ZoomIn, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -78,36 +78,41 @@ export function Gallery({ gallery, masters }: any) {
       </div>
 
       {/* Галерея */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredItems.map((item) => {
-          const master = masters.find(m => m.id === item.masterId);
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredItems.map((item: any, index: number) => {
+          const m = masters?.find((master: any) => master.id === item.masterId);
           const category = categories.find(c => c.id === item.category);
 
           return (
             <div
-              key={item.id}
-              className="group relative overflow-hidden rounded-3xl bg-white shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
+              key={item.id || index}
+              className="group relative cursor-pointer overflow-hidden rounded-2xl bg-gray-100 aspect-square"
               onClick={() => setSelectedItem(item)}
             >
-              <div className="aspect-[4/5] relative overflow-hidden">
-                <img
-                  src={item.after}
-                  alt={item.service}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                  <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                    <p className="text-white font-medium text-lg mb-1">{item.service}</p>
-                    <p className="text-white/80 text-sm flex items-center gap-2">
-                      Посмотреть До/После <ChevronRight className="w-4 h-4" />
-                    </p>
+              <img
+                src={item.after}
+                alt={item.service}
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  {category && (
+                    <Badge className="mb-2 bg-white/20 hover:bg-white/30 text-white backdrop-blur-md border-none">
+                      {category.label}
+                    </Badge>
+                  )}
+                  <h3 className="font-bold text-white text-lg">{item.service}</h3>
+                  <div className="flex items-center gap-2 mt-2 text-white/80 text-sm">
+                    <span>{m?.name || 'Мастер'}</span>
+                    <span>•</span>
+                    <span>{new Date(item.date).toLocaleDateString('ru-RU')}</span>
                   </div>
                 </div>
-                {category && (
-                  <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold text-white shadow-lg backdrop-blur-md ${category.color.replace('bg-', 'bg-opacity-90 bg-')}`}>
-                    {category.label}
-                  </div>
-                )}
+              </div>
+              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="bg-white/20 backdrop-blur-md p-2 rounded-full text-white hover:bg-white hover:text-pink-600 transition-colors">
+                  <ArrowRight className="w-5 h-5" />
+                </div>
               </div>
             </div>
           );
