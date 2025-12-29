@@ -107,6 +107,8 @@ export function Achievements({ achievements }: any) {
           {achievements?.map((achievement: any, index: number) => {
             const Icon = iconMap[achievement.icon] || Star;
             const isUnlocked = achievement.unlocked || achievement.is_unlocked;
+            const hasProgress = achievement.progress !== undefined && achievement.maxProgress !== undefined;
+            const progress = hasProgress ? Math.min(100, (achievement.progress / achievement.maxProgress) * 100) : 0;
 
             return (
               <Card
