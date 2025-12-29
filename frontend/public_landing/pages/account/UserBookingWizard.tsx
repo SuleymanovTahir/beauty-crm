@@ -64,7 +64,17 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const step = searchParams.get('booking') || 'menu';
-  const { t } = useTranslation(['booking', 'common']);
+  const { t, i18n } = useTranslation(['booking', 'common']);
+
+  // Helper for Russian pluralization
+  const getPluralForm = (count: number, one: string, few: string, many: string) => {
+    if (i18n.language !== 'ru') return one;
+    const mod10 = count % 10;
+    const mod100 = count % 100;
+    if (mod10 === 1 && mod100 !== 11) return one;
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return few;
+    return many;
+  };
 
   const [bookingState, setBookingState] = useState<BookingState>(() => {
     const saved = sessionStorage.getItem(STORAGE_KEY);
@@ -276,7 +286,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
       </main>
 
       {/* Sticky Bottom Navigator for Steps */}
-      {step !== 'menu' && step !== 'confirm' && (
+      {step !== 'menu' && step !== 'confirm' && bookingState.services.length > 0 && (
         <motion.div
           initial={{ y: 100 }}
           animate={{ y: 0 }}
@@ -288,7 +298,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               <div className="flex items-center justify-between px-2">
                 <div className="flex flex-col">
                   <p className="text-sm font-black text-gray-900 uppercase tracking-tighter">
-                    {bookingState.services.length} {t('services.selected', 'Selected')}
+                    {bookingState.services.length} {getPluralForm(bookingState.services.length, 'услуга', 'услуги', 'услуг')} {t('services.selected', 'выбрано').toLowerCase()}
                   </p>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                     {totalDuration} {t('min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}

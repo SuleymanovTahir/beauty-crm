@@ -22,6 +22,7 @@ export function ProfessionalStep({
     const { t } = useTranslation(['booking', 'common']);
     const [professionals, setProfessionals] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [nextSlots, setNextSlots] = useState<Record<number, string>>({});
 
     useEffect(() => {
         const fetchProfessionals = async () => {
@@ -39,6 +40,44 @@ export function ProfessionalStep({
         };
         fetchProfessionals();
     }, []);
+
+    useEffect(() => {
+        if (professionals.length === 0) return;
+
+        const fetchNextSlots = async () => {
+            const today = new Date().toISOString().split('T')[0];
+            const updates: Record<number, string> = {};
+
+            await Promise.all(professionals.map(async (p) => {
+                try {
+                    // We check today only as per "Available Today" request logic
+                    const res = await api.getPublicAvailableSlots(today, p.id);
+                    if (res.slots && res.slots.length > 0) {
+                        const now = new Date();
+                        const currentHours = now.getHours();
+                        const currentMinutes = now.getMinutes();
+
+                        const available = res.slots.filter((s: any) => {
+                            if (!s.available) return false;
+                            // Parse time "HH:MM"
+                            const [h, m] = s.time.split(':').map(Number);
+                            // Filter past times
+                            if (h < currentHours || (h === currentHours && m <= currentMinutes)) return false;
+                            return true;
+                        });
+
+                        if (available.length > 0) {
+                            // Take up to 4 slots
+                            const slotsToShow = available.slice(0, 4).map((s: any) => s.time);
+                            updates[p.id] = slotsToShow.join(', ');
+                        }
+                    }
+                } catch (e) { }
+            }));
+            setNextSlots(updates);
+        };
+        fetchNextSlots();
+    }, [professionals]);
 
     if (loading) {
         return (
@@ -130,14 +169,30 @@ export function ProfessionalStep({
                                                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                                                     <span className="text-sm font-bold text-yellow-700">{professional.rating || '5.0'}</span>
                                                 </div>
-                                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">({professional.reviews || 0} {t('professional.reviews', 'Reviews')})</span>
+                                                {professional.reviews > 0 && (
+                                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">({professional.reviews} {t('professional.reviews', 'Reviews')})</span>
+                                                )}
                                             </div>
 
-                                            <div className="flex items-center gap-2 text-green-600 bg-green-50 w-fit px-3 py-1 rounded-full">
-                                                <Clock className="w-3.5 h-3.5" />
-                                                <span className="text-[10px] font-black uppercase tracking-widest leading-none">
-                                                    {salonSettings?.timezone ? t('professional.ready', 'Ready') : t('professional.availableToday', 'Available Today')}
-                                                </span>
+                                            <div className="flex flex-col gap-1.5 mt-2">
+                                                <div className="flex items-center gap-2 text-green-600 bg-green-50 w-fit px-3 py-1 rounded-full border border-green-100/50">
+                                                    <Clock className="w-3.5 h-3.5" />
+                                                    <span className="text-[10px] font-black uppercase tracking-widest leading-none">
+                                                        {salonSettings?.timezone ? t('professional.ready', 'Ready') : t('professional.availableToday', 'Available Today')}
+                                                    </span>
+                                                </div>
+                                                {!salonSettings?.timezone && nextSlots[professional.id] && (
+                                                    <div className="flex flex-wrap gap-1.5 mt-1">
+                                                        {nextSlots[professional.id].split(', ').map((time: string, idx: number) => (
+                                                            <span
+                                                                key={idx}
+                                                                className="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold tracking-wide hover:bg-slate-100 transition-colors"
+                                                            >
+                                                                {time}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

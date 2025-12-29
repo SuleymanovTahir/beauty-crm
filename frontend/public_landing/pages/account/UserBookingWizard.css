@@ -1,4 +1,9 @@
 /* UserBookingWizard.css - Exact port of new_admin theme */
+@import "tailwindcss" source(none);
+@source './**/*.{ts,tsx}';
+
+@plugin 'tailwindcss-animate';
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
