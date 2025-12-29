@@ -3,9 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
-import { currentUser, appointments, masters, promotions } from '../data/mockData';
-
-export function Dashboard() {
+export function Dashboard({ user, dashboardData, loyalty, bookings, masters }: any) {
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Доброе утро';
@@ -23,25 +21,35 @@ export function Dashboard() {
     return phrases[Math.floor(Math.random() * phrases.length)];
   };
 
-  const upcomingAppointment = appointments.find(a => a.status === 'upcoming');
-  const lastAppointment = appointments
-    .filter(a => a.status === 'completed')
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-  
-  const master = upcomingAppointment ? masters.find(m => m.id === upcomingAppointment.masterId) : null;
+  // Safe defaults
+  const stats = dashboardData?.stats || { total_visits: 0 };
+  const points = loyalty?.points || 0;
+  const tier = loyalty?.tier || 'Bronze';
+  const discount = loyalty?.discount_percent || 0;
 
-  const monthsSince = Math.floor(
-    (new Date().getTime() - new Date(currentUser.memberSince).getTime()) / (1000 * 60 * 60 * 24 * 30)
-  );
+  // Bookings mapping
+  const upcomingAppointment = bookings?.find((a: any) => a.status === 'confirmed' || a.status === 'pending'); // Assuming status
+  // Sorting bookings to find last completed
+  const lastAppointment = bookings
+    ?.filter((a: any) => a.status === 'completed')
+    .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
 
-  const totalSpent = 4360; // Mock
+  const master = upcomingAppointment ? masters?.find((m: any) => m.id === upcomingAppointment.master_id) : null;
+
+  const monthsSince = user?.created_at ? Math.floor(
+    (new Date().getTime() - new Date(user.created_at).getTime()) / (1000 * 60 * 60 * 24 * 30)
+  ) : 0;
+
+  const totalSpent = 0; // Not available in current API response?
+  const streak = 0; // Not available?
+
 
   return (
     <div className="space-y-6 pb-8">
       {/* Приветствие */}
       <div className="space-y-2">
         <h1 className="flex items-center gap-2">
-          {getGreeting()}, {currentUser.name.split(' ')[0]}! <Sparkles className="w-6 h-6 text-pink-500" />
+          {getGreeting()}, {user?.full_name?.split(' ')[0]}! <Sparkles className="w-6 h-6 text-pink-500" />
         </h1>
         <p className="text-muted-foreground">{getMotivation()}</p>
       </div>
@@ -54,8 +62,8 @@ export function Dashboard() {
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{currentUser.totalVisits}</div>
-            <p className="text-xs text-muted-foreground">+3 за этот месяц</p>
+            <div className="text-2xl font-bold">{stats.total_visits}</div>
+            <p className="text-xs text-muted-foreground">+0 за этот месяц</p>
           </CardContent>
         </Card>
 
@@ -65,9 +73,9 @@ export function Dashboard() {
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{currentUser.loyaltyPoints}</div>
+            <div className="text-2xl font-bold">{points}</div>
             <p className="text-xs text-muted-foreground">
-              {currentUser.currentTier === 'gold' ? 'Gold' : currentUser.currentTier} уровень
+              {tier === 'gold' ? 'Gold' : tier} уровень
             </p>
           </CardContent>
         </Card>
@@ -78,14 +86,14 @@ export function Dashboard() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{currentUser.currentDiscount}%</div>
+            <div className="text-2xl font-bold">{discount}%</div>
             <p className="text-xs text-muted-foreground">Доступна на все услуги</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Ближайшая запись */}
-      {upcomingAppointment && master && (
+      {upcomingAppointment && (
         <Card className="border-pink-200 bg-gradient-to-r from-pink-50 to-purple-50">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -96,24 +104,24 @@ export function Dashboard() {
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
               <Avatar className="w-16 h-16">
-                <AvatarImage src={master.avatar} alt={master.name} />
-                <AvatarFallback>{master.name[0]}</AvatarFallback>
+                <AvatarImage src={master?.avatar_url} alt={master?.name} />
+                <AvatarFallback>{master?.name?.[0]}</AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <div className="font-semibold">{master.name}</div>
-                <div className="text-sm text-muted-foreground">{upcomingAppointment.service}</div>
+                <div className="font-semibold">{master?.name || 'Мастер'}</div>
+                <div className="text-sm text-muted-foreground">{upcomingAppointment.service_name || upcomingAppointment.services?.[0]?.name}</div>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge variant="outline">
-                    {new Date(upcomingAppointment.date).toLocaleDateString('ru-RU', { 
-                      day: 'numeric', 
-                      month: 'long' 
+                    {new Date(upcomingAppointment.date).toLocaleDateString('ru-RU', {
+                      day: 'numeric',
+                      month: 'long'
                     })}
                   </Badge>
-                  <Badge variant="outline">{upcomingAppointment.time}</Badge>
+                  <Badge variant="outline">{upcomingAppointment.time_start || upcomingAppointment.time}</Badge>
                 </div>
               </div>
               <div className="text-right">
-                <div className="font-bold">{upcomingAppointment.price} AED</div>
+                <div className="font-bold">{upcomingAppointment.total_price || upcomingAppointment.price} AED</div>
               </div>
             </div>
             <div className="flex gap-2">
@@ -130,7 +138,7 @@ export function Dashboard() {
 
       {/* Быстрые действия */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Button variant="outline" className="h-20 flex-col gap-2">
+        <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => window.location.href = '/new-booking'}>
           <Calendar className="w-5 h-5" />
           <span className="text-sm">Записаться</span>
         </Button>
@@ -154,20 +162,18 @@ export function Dashboard() {
           <CardHeader>
             <CardTitle>Последний визит</CardTitle>
             <CardDescription>
-              {new Date(lastAppointment.date).toLocaleDateString('ru-RU', { 
-                day: 'numeric', 
+              {new Date(lastAppointment.date).toLocaleDateString('ru-RU', {
+                day: 'numeric',
                 month: 'long',
                 year: 'numeric'
-              })} - {lastAppointment.service}
+              })} - {lastAppointment.service_name}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex gap-2">
-            {lastAppointment.canReview && (
-              <Button variant="outline">
-                <Star className="w-4 h-4 mr-2" />
-                Оставить отзыв
-              </Button>
-            )}
+            <Button variant="outline">
+              <Star className="w-4 h-4 mr-2" />
+              Оставить отзыв
+            </Button>
             <Button variant="outline">
               <Repeat className="w-4 h-4 mr-2" />
               Повторить услугу
@@ -192,13 +198,13 @@ export function Dashboard() {
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Сэкономили</span>
-              <span className="font-semibold text-green-600">{Math.round(totalSpent * currentUser.currentDiscount / 100)} AED</span>
+              <span className="font-semibold text-green-600">0 AED</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Серия визитов</span>
               <span className="font-semibold flex items-center gap-1">
                 <Zap className="w-4 h-4 text-orange-500" />
-                {currentUser.streak} дней
+                {streak} дней
               </span>
             </div>
           </CardContent>
@@ -233,11 +239,11 @@ export function Dashboard() {
           Специальные предложения
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {promotions.map((promo) => (
+          {dashboardData?.special_offers?.map((promo: any) => (
             <Card key={promo.id} className="overflow-hidden">
               <div className="aspect-video relative">
-                <img 
-                  src={promo.image} 
+                <img
+                  src={promo.image_url || promo.image}
                   alt={promo.title}
                   className="w-full h-full object-cover"
                 />
@@ -252,10 +258,10 @@ export function Dashboard() {
               <CardContent className="space-y-3">
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground line-through">
-                    {promo.oldPrice} AED
+                    {promo.old_price || promo.oldPrice} AED
                   </span>
                   <span className="text-xl font-bold text-pink-600">
-                    {promo.newPrice} AED
+                    {promo.new_price || promo.newPrice} AED
                   </span>
                 </div>
                 <Button className="w-full">Записаться</Button>

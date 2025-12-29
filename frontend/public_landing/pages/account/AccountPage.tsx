@@ -5,8 +5,8 @@ import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
 import { getDateLocale as getDateLocaleCentral } from '../../../src/utils/i18nUtils';
-import { useAuth } from '../../../src/contexts/AuthContext';
-import { api } from '../../../src/services/api';
+import { useAuth } from '../../../contexts/AuthContext';
+import { api } from '../../../api';
 import { toast } from 'sonner';
 import {
   Calendar,
@@ -50,16 +50,25 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+import { PublicLanguageSwitcher } from '../../../components/shared/PublicLanguageSwitcher';
 
-
-import PublicLanguageSwitcher from '../../../src/components/PublicLanguageSwitcher';
+// V2 Imports
+import { Dashboard } from './v2_components/Dashboard';
+import { Appointments } from './v2_components/Appointments';
+import { Gallery } from './v2_components/Gallery';
+import { Loyalty } from './v2_components/Loyalty';
+import { Achievements } from './v2_components/Achievements';
+import { Masters } from './v2_components/Masters';
+import { BeautyProfile } from './v2_components/BeautyProfile';
+import { Notifications } from './v2_components/Notifications';
+import { Settings } from './v2_components/Settings';
 
 // UI Components
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../../../src/components/ui/card';
-import { Button } from '../../../src/components/ui/button';
-import { Badge } from '../../../src/components/ui/badge';
-import { Avatar, AvatarImage, AvatarFallback } from '../../../src/components/ui/avatar';
-import { Sheet, SheetContent, SheetTrigger } from '../../../src/components/ui/sheet';
+import { Button } from './v2_components/ui/button';
+import { Badge } from './v2_components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from './v2_components/ui/avatar';
+import { Sheet, SheetContent, SheetTrigger } from './v2_components/ui/sheet';
 
 // Import styles
 import './AccountPage.css';
@@ -94,9 +103,12 @@ export function AccountPage() {
 
   // States
   const initialTab = searchParams.get('tab') || 'dashboard';
-  const [activeTab, setActiveTab] = useState(initialTab);
   const [appointmentsView, setAppointmentsView] = useState('upcoming');
   // Data States
+  // V2 State
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab as Tab); // Use initialTab here
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [bookings, setBookings] = useState<any[]>([]);
   const [gallery, setGallery] = useState<any[]>([]);
