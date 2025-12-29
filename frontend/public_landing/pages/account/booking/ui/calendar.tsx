@@ -106,22 +106,20 @@ function Calendar({
                 showOutsideDays={showOutsideDays}
                 className={className}
                 locale={locale}
-                // Hide built-in elements since we use external header
-                modifiersStyles={{
-                    caption: { display: 'none' }
-                }}
                 styles={{
                     table: { margin: '0 auto', borderCollapse: 'collapse' },
                     head_cell: { width: '40px', height: '40px', fontWeight: 500, color: '#64748b' },
                     cell: { width: '40px', height: '40px', padding: 0 },
                     day: { width: '40px', height: '40px', borderRadius: '50%', fontSize: '15px' },
-                    caption: { display: 'none' }, // Native prop access to hide
-                    nav: { display: 'none' }      // Native prop access to hide
+                    caption: { display: 'none' },
+                    caption_label: { display: 'none' }, // Disable caption label specifically
+                    nav: { display: 'none' }
                 }}
                 {...props}
             />
             <style>{`
-        .rdp-caption, .rdp-nav { display: none !important; }
+        .rdp-caption, .rdp-caption_label, .rdp-nav { display: none !important; }
+        .DayPicker-Caption, .DayPicker-NavBar { display: none !important; } /* Legacy support */
         .rdp-day_selected { 
             background-color: #2563eb !important; 
             color: white !important; 
