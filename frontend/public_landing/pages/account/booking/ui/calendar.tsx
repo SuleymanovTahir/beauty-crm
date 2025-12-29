@@ -18,42 +18,34 @@ function Calendar({
             showOutsideDays={showOutsideDays}
             className={cn("p-3", className)}
             classNames={{
-                months: "flex flex-col sm:flex-row gap-2",
-                month: "flex flex-col gap-4",
-                month_caption: "flex justify-center pt-1 relative items-center w-full",
-                caption_label: "text-sm font-medium",
+                months: "flex flex-col sm:flex-row gap-2 justify-center",
+                month: "flex flex-col gap-4 w-full",
+                month_caption: "flex justify-center pt-1 relative items-center w-full mb-4",
+                caption_label: "text-base font-bold text-gray-900",
                 nav: "flex items-center gap-1",
                 button_previous: cn(
                     buttonVariants({ variant: "outline" }),
-                    "absolute left-1 size-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+                    "h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-1 z-10 rounded-lg"
                 ),
                 button_next: cn(
                     buttonVariants({ variant: "outline" }),
-                    "absolute right-1 size-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+                    "h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-1 z-10 rounded-lg"
                 ),
-                month_grid: "w-full border-collapse space-x-1",
-                weekdays: "flex",
-                weekday:
-                    "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]",
-                weeks: "w-full mt-2",
-                week: "flex w-full mt-2",
-                day: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20",
+                month_grid: "w-full border-collapse",
+                weekdays: "flex justify-between",
+                weekday: "text-muted-foreground w-10 font-medium text-[0.8rem] text-center",
+                weeks: "flex flex-col gap-1 mt-2",
+                week: "flex w-full justify-between",
+                day: "h-10 w-10 text-center text-sm p-0 relative flex items-center justify-center",
                 day_button: cn(
                     buttonVariants({ variant: "ghost" }),
-                    "size-8 p-0 font-normal aria-selected:opacity-100",
+                    "h-10 w-10 p-0 font-normal rounded-xl aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:opacity-100"
                 ),
-                range_start:
-                    "day-range-start aria-selected:bg-primary aria-selected:text-primary-foreground",
-                range_end:
-                    "day-range-end aria-selected:bg-primary aria-selected:text-primary-foreground",
-                selected:
-                    "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-                today: "bg-accent text-accent-foreground",
-                outside:
-                    "day-outside text-muted-foreground aria-selected:text-muted-foreground",
-                disabled: "text-muted-foreground opacity-50",
-                range_middle:
-                    "aria-selected:bg-accent aria-selected:text-accent-foreground",
+                selected: "bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl",
+                today: "bg-accent text-accent-foreground rounded-xl",
+                outside: "text-muted-foreground/30 opacity-50",
+                disabled: "text-muted-foreground/20 opacity-30 cursor-not-allowed",
+                range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
                 hidden: "invisible",
                 ...classNames,
             }}
