@@ -22,9 +22,22 @@
   font-weight: 950 !important;
 }
 
+.bg-gradient-purple-pink {
+  background: var(--gradient-purple-pink);
+}
+
+.bg-gradient-pink-rose {
+  background: var(--gradient-pink-rose);
+}
+
+.bg-gradient-rose-orange {
+  background: var(--gradient-rose-orange);
+}
+
 .wizard-scrollable {
   background: var(--bg-soft);
   min-height: 100vh;
+  overflow-y: auto;
 }
 
 .wizard-container {

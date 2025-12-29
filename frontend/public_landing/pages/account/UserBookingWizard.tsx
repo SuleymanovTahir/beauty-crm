@@ -81,10 +81,10 @@ function BookingMenu({ bookingState, onNavigate, onReset, totalPrice, salonSetti
       icon: Scissors,
       title: t('booking.menu.services', 'Select Services'),
       description: isServicesComplete
-        ? `${bookingState.services.length} selected`
+        ? `${bookingState.services.length} ${t('booking.menu.selected', 'selected')}`
         : t('booking.menu.selectServices', "Pick treatment"),
       isComplete: isServicesComplete,
-      gradient: 'var(--gradient-purple-pink)',
+      gradientClass: 'bg-gradient-purple-pink',
     },
     {
       id: 'professional',
@@ -94,7 +94,7 @@ function BookingMenu({ bookingState, onNavigate, onReset, totalPrice, salonSetti
         ? bookingState.professional.full_name
         : (bookingState.professionalSelected ? t('booking.professional.anyAvailable', "Any Available") : t('booking.menu.selectProfessional', "Select master")),
       isComplete: isProfessionalComplete,
-      gradient: 'var(--gradient-pink-rose)',
+      gradientClass: 'bg-gradient-pink-rose',
     },
     {
       id: 'datetime',
@@ -104,7 +104,7 @@ function BookingMenu({ bookingState, onNavigate, onReset, totalPrice, salonSetti
         ? `${format(bookingState.date!, 'MMM dd', { locale: dateLocale })} @ ${bookingState.time}`
         : t('booking.menu.selectDateTime', "Pick time slot"),
       isComplete: isDateTimeComplete,
-      gradient: 'var(--gradient-rose-orange)',
+      gradientClass: 'bg-gradient-rose-orange',
     },
   ];
 
@@ -117,15 +117,15 @@ function BookingMenu({ bookingState, onNavigate, onReset, totalPrice, salonSetti
         className="salon-info-card"
       >
         <div className="salon-icon-wrapper">
-          <Scissors className="w-8 h-8" />
+          <Scissors className="w-8 h-8 text-white" />
         </div>
         <div className="flex-1">
           <h2 className="text-2xl font-black text-gray-900 tracking-tight">
-            {salonSettings?.name || 'Beauty Salon'}
+            {salonSettings?.name || t('salon.name', 'Beauty Salon')}
           </h2>
           <p className="text-gray-500 flex items-center gap-2 font-bold mt-1">
             <MapPin className="w-4 h-4 text-purple-500" />
-            {salonSettings?.address || 'Address'}
+            {salonSettings?.address || t('salon.address', 'Address')}
           </p>
         </div>
         <Button
@@ -151,11 +151,11 @@ function BookingMenu({ bookingState, onNavigate, onReset, totalPrice, salonSetti
               transition={{ delay: idx * 0.1 }}
             >
               <div className="booking-step-card relative" onClick={() => onNavigate(card.id)}>
-                <div className="booking-step-header-line" style={{ background: card.gradient }} />
+                <div className={`booking-step-header-line ${card.gradientClass}`} />
                 <div className="booking-step-content">
                   <div className="flex items-start justify-between mb-4">
-                    <div className="step-icon-box" style={{ background: card.gradient }}>
-                      <Icon className="w-6 h-6" />
+                    <div className={`step-icon-box ${card.gradientClass}`}>
+                      <Icon className="w-6 h-6 text-white" />
                     </div>
                     {card.isComplete && (
                       <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center shadow-lg">
@@ -169,9 +169,9 @@ function BookingMenu({ bookingState, onNavigate, onReset, totalPrice, salonSetti
 
                   <div className="flex items-center justify-between">
                     <div className={`step-status-badge ${card.isComplete ? 'step-status-complete' : 'step-status-pending'}`}>
-                      {card.isComplete ? t('booking.menu.completed', 'Completed') : 'Select'}
+                      {card.isComplete ? t('booking.menu.completed', 'Completed') : t('common.select', 'Select')}
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 transition-colors" />
                   </div>
                 </div>
               </div>
@@ -231,6 +231,7 @@ function BookingMenu({ bookingState, onNavigate, onReset, totalPrice, salonSetti
 }
 
 
+
 function ServicesStep({ selectedServices, onServicesChange, onContinue, salonSettings }: any) {
   const { t, i18n } = useTranslation(['booking', 'common']);
   const [services, setServices] = useState<Service[]>([]);
@@ -245,7 +246,11 @@ function ServicesStep({ selectedServices, onServicesChange, onContinue, salonSet
         const servicesRes = await api.getServices();
         const data = Array.isArray(servicesRes) ? servicesRes : (servicesRes.services || []);
         setServices(data);
-      } catch (e) { console.error(e); } finally { setLoading(false); }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
     };
     loadServices();
   }, []);
@@ -305,7 +310,7 @@ function ServicesStep({ selectedServices, onServicesChange, onContinue, salonSet
               <Badge
                 key={cat}
                 variant={selectedCategory === cat ? 'default' : 'outline'}
-                className={`px-4 py-2 rounded-xl cursor-pointer text-sm font-bold transition-all ${selectedCategory === cat ? 'bg-purple-600 shadow-md transform scale-105' : 'hover:bg-purple-50'
+                className={`px-4 py-2 rounded-xl cursor-pointer text-sm font-bold transition-all ${selectedCategory === cat ? 'bg-purple-600 shadow-md transform scale-105 border-transparent text-white' : 'hover:bg-purple-50 text-gray-600'
                   }`}
                 onClick={() => setSelectedCategory(cat)}
               >
@@ -380,16 +385,22 @@ function ServicesStep({ selectedServices, onServicesChange, onContinue, salonSet
                 {totalDuration} {t('booking.min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}
               </p>
             </div>
-            <Button onClick={onContinue} className="btn-primary-gradient h-14">
-              {t('booking.services.continue', 'Continue')}
-              <ChevronRight className="w-5 h-5" />
-            </Button>
+            <div className="flex items-center gap-4">
+              <Button onClick={() => onContinue()} variant="ghost" className="hidden sm:flex text-gray-400 font-bold hover:text-purple-600">
+                {t('common.cancel', 'Cancel')}
+              </Button>
+              <Button onClick={onContinue} className="btn-primary-gradient h-14">
+                {t('booking.services.continue', 'Continue')}
+                <ChevronRight className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
         </motion.div>
       )}
     </div>
   );
 }
+
 
 
 function ProfessionalStep({ selectedProfessional, professionalSelected, onProfessionalChange, onContinue }: any) {
@@ -403,7 +414,10 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, onProfes
         const usersRes = await api.getUsers();
         const users = Array.isArray(usersRes) ? usersRes : (usersRes.users || []);
         setMasters(users.filter((u: any) => u.role === 'employee' || u.is_service_provider));
-      } catch (e) { } finally { setLoading(false); }
+      } catch (e) {
+      } finally {
+        setLoading(false);
+      }
     };
     loadMasters();
   }, []);
@@ -440,7 +454,7 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, onProfes
         >
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-2xl shadow-lg">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-purple-pink flex items-center justify-center text-2xl shadow-lg">
                 ✨
               </div>
               <div className="flex-1">
@@ -481,7 +495,7 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, onProfes
                     <div className="relative">
                       <Avatar className="w-16 h-16 rounded-2xl border-2 border-white shadow-md overflow-hidden">
                         <AvatarImage src={master.photo} className="object-cover" />
-                        <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white font-black text-xl">
+                        <AvatarFallback className="bg-gradient-purple-pink text-white font-black text-xl">
                           {master.full_name[0]}
                         </AvatarFallback>
                       </Avatar>
@@ -503,7 +517,7 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, onProfes
                         </div>
                         {master.reviews !== undefined && master.reviews > 0 && (
                           <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
-                            ({master.reviews} reviews)
+                            ({master.reviews} {t('booking.professional.reviews', 'reviews')})
                           </span>
                         )}
                       </div>
@@ -536,6 +550,7 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, onProfes
     </div>
   );
 }
+
 
 
 function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServices, onDateTimeChange, onContinue }: any) {
@@ -625,7 +640,7 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
           animate={{ opacity: 1, x: 0 }}
         >
           <Card className="overflow-hidden border-none shadow-xl rounded-3xl">
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4">
+            <div className="bg-gradient-purple-pink p-4">
               <h3 className="text-white font-black uppercase tracking-widest">{t('booking.datetime.date', 'Date')}</h3>
             </div>
             <CardContent className="p-4 bg-white">
@@ -659,7 +674,7 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
           animate={{ opacity: 1, x: 0 }}
         >
           <Card className="overflow-hidden border-none shadow-xl rounded-3xl h-full">
-            <div className="bg-gradient-to-r from-pink-500 to-rose-500 p-4">
+            <div className="bg-gradient-pink-rose p-4">
               <h3 className="text-white font-black uppercase tracking-widest">{t('booking.datetime.time', 'Time')}</h3>
             </div>
             <CardContent className="p-6 bg-white min-h-[400px]">
@@ -693,7 +708,7 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
                                 onClick={() => onDateTimeChange(selectedDate, slot.time)}
                                 className={`slot-button py-3 px-4 rounded-xl font-black text-sm transition-all
                                   ${selectedTime === slot.time
-                                    ? 'slot-button-selected bg-purple-600 text-white border-purple-600 shadow-lg'
+                                    ? 'slot-button-selected text-white'
                                     : 'bg-white text-slate-900 border-slate-100 hover:border-purple-200 hover:bg-purple-50/50'}`}
                               >
                                 {slot.time}
@@ -728,6 +743,7 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
     </div>
   );
 }
+
 
 
 function ConfirmStep({ bookingState, totalPrice, onPhoneChange, onSuccess, salonSettings }: any) {
@@ -787,7 +803,7 @@ function ConfirmStep({ bookingState, totalPrice, onPhoneChange, onSuccess, salon
         {/* Left Column: Summary */}
         <div className="lg:col-span-2 space-y-6">
           <Card className="rounded-3xl shadow-xl border-none">
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4">
+            <div className="bg-gradient-purple-pink p-4">
               <h3 className="text-white font-black uppercase tracking-widest flex items-center gap-2">
                 <List className="w-5 h-5" />
                 {t('booking.menu.services', 'Services')}
@@ -821,7 +837,7 @@ function ConfirmStep({ bookingState, totalPrice, onPhoneChange, onSuccess, salon
         {/* Right Column: Details */}
         <div className="space-y-6">
           <Card className="rounded-3xl shadow-xl border-none">
-            <div className="bg-gradient-to-r from-pink-500 to-rose-500 p-4">
+            <div className="bg-gradient-pink-rose p-4">
               <h3 className="text-white font-black uppercase tracking-widest flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5" />
                 {t('booking.confirm.details', 'Details')}
@@ -835,7 +851,7 @@ function ConfirmStep({ bookingState, totalPrice, onPhoneChange, onSuccess, salon
                 <div>
                   <div className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-0.5">{t('booking.menu.professional', 'Master')}</div>
                   <div className="font-black text-gray-900">
-                    {bookingState.professional ? bookingState.professional.full_name : t('booking.professional.anyAvailable', "Any Provider")}
+                    {bookingState.professional ? bookingState.professional.full_name : (bookingState.professionalSelected ? t('booking.professional.anyAvailable', "Any Provider") : t('booking.menu.selectProfessional', "Select master"))}
                   </div>
                 </div>
               </div>
@@ -862,7 +878,7 @@ function ConfirmStep({ bookingState, totalPrice, onPhoneChange, onSuccess, salon
                   <div className="flex items-center justify-between">
                     <span className="font-black text-gray-900">{phone || '--'}</span>
                     <Button variant="ghost" size="sm" onClick={() => setShowPhoneModal(true)} className="text-purple-600 font-extrabold h-auto p-0 hover:bg-transparent">
-                      Edit
+                      {t('common.edit', 'Edit')}
                     </Button>
                   </div>
                 </div>
@@ -889,7 +905,7 @@ function ConfirmStep({ bookingState, totalPrice, onPhoneChange, onSuccess, salon
 
       <Dialog open={showPhoneModal} onOpenChange={setShowPhoneModal}>
         <DialogContent className="p-0 border-none shadow-3xl rounded-[2.5rem] overflow-hidden max-w-[360px]">
-          <DialogHeader className="bg-gradient-to-br from-purple-600 to-pink-600 p-8 text-white">
+          <DialogHeader className="bg-gradient-purple-pink p-8 text-white">
             <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-4 mx-auto">
               <Phone className="w-6 h-6" />
             </div>
@@ -906,10 +922,10 @@ function ConfirmStep({ bookingState, totalPrice, onPhoneChange, onSuccess, salon
             />
             <div className="flex gap-3 w-full">
               <Button variant="ghost" onClick={() => setShowPhoneModal(false)} className="flex-1 h-12 rounded-xl font-black hover:bg-gray-50">
-                Cancel
+                {t('common.cancel', 'Cancel')}
               </Button>
-              <Button onClick={handlePhoneSubmit} className="flex-1 h-12 rounded-xl btn-primary-gradient shadow-md">
-                Save
+              <Button onClick={handlePhoneSubmit} className="flex-1 h-12 rounded-xl btn-primary-gradient shadow-md text-white">
+                {t('common.save', 'Save')}
               </Button>
             </div>
           </div>
@@ -918,6 +934,7 @@ function ConfirmStep({ bookingState, totalPrice, onPhoneChange, onSuccess, salon
     </div>
   );
 }
+
 
 // --- Main Wizard ---
 
@@ -993,19 +1010,20 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-purple-100 selection:text-purple-600 overflow-y-auto">
+    <div className="wizard-scrollable selection:bg-purple-100 selection:text-purple-600">
       {/* Header Container */}
-      <header className="bg-white/80 backdrop-blur-2xl border-b border-gray-100 sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+      <header className="wizard-nav-header">
+        <div className="wizard-nav-content">
           <div className="flex items-center gap-4">
             <button
               onClick={goBack}
-              className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-purple-50 hover:text-purple-600 transition-all group"
+              className="wizard-nav-back group"
             >
               <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+              {t('common.back', 'Back')}
             </button>
             <div>
-              <h1 className="text-lg font-black text-gray-900 tracking-tight">
+              <h1 className="wizard-title-main">
                 {t('booking.newBooking', 'New Booking')}
               </h1>
               <div className="flex items-center gap-1.5">
@@ -1016,7 +1034,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="scale-90">
+            <div className="scale-90 wizard-lang-switcher">
               <PublicLanguageSwitcher />
             </div>
             {onClose && (
@@ -1030,6 +1048,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           </div>
         </div>
       </header>
+
 
       {/* Content Container */}
       <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-8">
