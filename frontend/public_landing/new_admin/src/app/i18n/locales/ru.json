@@ -1,0 +1,77 @@
+{
+  "booking": {
+    "title": "Новое бронирование",
+    "menu": {
+      "title": "Меню бронирования",
+      "services": "Услуги",
+      "professional": "Мастер",
+      "datetime": "Дата и время",
+      "continue": "Продолжить к подтверждению",
+      "selectServices": "Выберите услуги",
+      "selectProfessional": "Выберите мастера",
+      "selectDateTime": "Выберите дату и время",
+      "completed": "Завершено"
+    },
+    "services": {
+      "title": "Выбор услуг",
+      "search": "Поиск услуг...",
+      "category": "Категория",
+      "allCategories": "Все категории",
+      "selected": "Выбрано",
+      "total": "Итого",
+      "duration": "Длительность",
+      "continue": "Продолжить"
+    },
+    "professional": {
+      "title": "Выбор мастера",
+      "anyAvailable": "Любой доступный мастер",
+      "rating": "рейтинг",
+      "reviews": "отзывов",
+      "availableToday": "Доступен сегодня",
+      "continue": "Продолжить"
+    },
+    "datetime": {
+      "title": "Выбор даты и времени",
+      "date": "Дата",
+      "time": "Время",
+      "morning": "Утро",
+      "afternoon": "День",
+      "evening": "Вечер",
+      "optimal": "Оптимальное время",
+      "continue": "Продолжить"
+    },
+    "confirm": {
+      "title": "Подтверждение",
+      "summary": "Сводка бронирования",
+      "professional": "Мастер",
+      "anyProfessional": "Любой доступный",
+      "date": "Дата",
+      "time": "Время",
+      "duration": "Длительность",
+      "total": "Итого",
+      "phone": "Номер телефона",
+      "phonePlaceholder": "Введите номер телефона",
+      "confirm": "Подтвердить бронирование",
+      "success": "Бронирование подтверждено!",
+      "error": "Не удалось создать бронирование"
+    },
+    "back": "Назад",
+    "loading": "Загрузка...",
+    "min": "мин"
+  },
+  "salon": {
+    "name": "Салон красоты",
+    "address": "Адрес"
+  },
+  "languages": {
+    "en": "English",
+    "ru": "Русский",
+    "es": "Español",
+    "ar": "العربية",
+    "hi": "हिन्दी",
+    "kk": "Қазақша",
+    "pt": "Português",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
+}
