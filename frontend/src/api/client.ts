@@ -372,3 +372,11 @@ export const apiClient = {
     }).then(r => r.json());
   },
 }
+
+export const api = {
+  get: (url: string) => apiCall(url),
+  post: (url: string, body?: any) => apiCall(url, { method: 'POST', body }),
+  put: (url: string, body?: any) => apiCall(url, { method: 'PUT', body }),
+  delete: (url: string) => apiCall(url, { method: 'DELETE' }),
+  patch: (url: string, body?: any) => apiCall(url, { method: 'PATCH', body }),
+}
