@@ -119,20 +119,45 @@ function Calendar({
             />
             <style>{`
         .rdp-caption, .rdp-caption_label, .rdp-nav, .rdp-month_caption { display: none !important; }
-        .DayPicker-Caption, .DayPicker-NavBar { display: none !important; } /* Legacy support */
+        .DayPicker-Caption, .DayPicker-NavBar { display: none !important; }
+
+        /* Available Days (Base) */
+        .rdp-day {
+            font-weight: 500;
+            color: #1e293b; /* Slate 800 */
+        }
+
+        /* Unavailable/Disabled - Very faint */
+        .rdp-day_disabled {
+            color: #94a3b8 !important; /* Slate 400 */
+            opacity: 0.25 !important;
+            background: transparent !important;
+        }
+
+        /* Today - Distinct Ring */
+        .rdp-day_today:not(.rdp-day_selected) {
+            color: #2563eb; /* Blue 600 */
+            font-weight: 900;
+            background: #eff6ff; /* Blue 50 */
+            border: 2px solid #2563eb;
+            border-radius: 50%;
+        }
+
+        /* Selected - Solid Blue */
         .rdp-day_selected { 
             background-color: #2563eb !important; 
             color: white !important; 
             font-weight: bold;
+            border-radius: 50%;
+            border: none;
         }
-        .rdp-day_today:not(.rdp-day_selected) {
-            background-color: #f1f5f9;
-            color: #2563eb;
-            font-weight: bold;
-        }
+
+        /* Hover for available */
         .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-            background-color: #eff6ff !important;
-            color: #2563eb !important;
+            background-color: #dbeafe !important;
+            color: #1d4ed8 !important;
+            font-weight: bold;
+            border-radius: 50%;
         }
       `}</style>
         </div>
