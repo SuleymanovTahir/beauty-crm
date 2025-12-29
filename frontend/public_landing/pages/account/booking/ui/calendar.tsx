@@ -45,7 +45,7 @@ function Calendar({
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                marginBottom: '10px',
+                marginBottom: '10px', // Reduced from 10px to bring closer to calendar
                 width: '100%'
             }}>
                 <button
@@ -118,7 +118,7 @@ function Calendar({
                 {...props}
             />
             <style>{`
-        .rdp-caption, .rdp-caption_label, .rdp-nav { display: none !important; }
+        .rdp-caption, .rdp-caption_label, .rdp-nav, .rdp-month_caption { display: none !important; }
         .DayPicker-Caption, .DayPicker-NavBar { display: none !important; } /* Legacy support */
         .rdp-day_selected { 
             background-color: #2563eb !important; 
