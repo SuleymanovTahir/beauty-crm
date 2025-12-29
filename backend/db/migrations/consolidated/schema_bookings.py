@@ -35,6 +35,7 @@ def migrate_bookings_schema():
             'feedback_requested': 'BOOLEAN DEFAULT FALSE',
             'feedback_rating': 'INTEGER',
             'feedback_comment': 'TEXT',
+            'source': "TEXT DEFAULT 'manual'",
         }
         
         # Add missing columns
