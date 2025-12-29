@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from './ui/card';
-import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { Checkbox } from './ui/checkbox';
@@ -13,11 +12,10 @@ import { getLocalizedName } from '../../../../src/utils/i18nUtils';
 interface ServicesStepProps {
     selectedServices: any[];
     onServicesChange: (services: any[]) => void;
-    onContinue: () => void;
     salonSettings: any;
 }
 
-export function ServicesStep({ selectedServices, onServicesChange, onContinue, salonSettings }: ServicesStepProps) {
+export function ServicesStep({ selectedServices, onServicesChange, salonSettings }: ServicesStepProps) {
     const { t, i18n } = useTranslation(['booking', 'common']);
     const [services, setServices] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -58,15 +56,15 @@ export function ServicesStep({ selectedServices, onServicesChange, onContinue, s
         }
     };
 
-    const totalDuration = selectedServices.reduce((sum, s) => sum + parseInt(s.duration || '0'), 0);
-    const totalPrice = selectedServices.reduce((sum, s) => sum + s.price, 0);
+    // const totalDuration = selectedServices.reduce((sum, s) => sum + parseInt(s.duration || '0'), 0);
+    // const totalPrice = selectedServices.reduce((sum, s) => sum + s.price, 0);
 
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
                 <div className="text-center">
                     <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                    <p className="text-gray-600">{t('booking.loading', 'Loading services...')}</p>
+                    <p className="text-gray-600">{t('loading', 'Loading services...')}</p>
                 </div>
             </div>
         );
@@ -80,13 +78,13 @@ export function ServicesStep({ selectedServices, onServicesChange, onContinue, s
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white rounded-2xl shadow-lg p-6"
             >
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('booking.services.title', 'Select Services')}</h2>
+                <h2 className="text-2xl font-black text-gray-900 mb-6 uppercase tracking-tighter">{t('services.title', 'Select Services')}</h2>
 
                 {/* Search */}
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <Input
-                        placeholder={t('booking.services.search', 'Search services...')}
+                        placeholder={t('services.search', 'Search services...')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-10 h-12 text-lg rounded-xl"
@@ -103,7 +101,7 @@ export function ServicesStep({ selectedServices, onServicesChange, onContinue, s
                                 }`}
                             onClick={() => setSelectedCategory(category)}
                         >
-                            {category === 'all' ? t('booking.services.allCategories', 'All') : category}
+                            {category === 'all' ? t('services.allCategories', 'All') : category}
                         </Badge>
                     ))}
                 </div>
@@ -141,7 +139,7 @@ export function ServicesStep({ selectedServices, onServicesChange, onContinue, s
                                                 <div className="flex items-center gap-4 text-sm font-medium text-gray-500">
                                                     <div className="flex items-center gap-1">
                                                         <Clock className="w-4 h-4" />
-                                                        <span>{service.duration} {t('booking.min', 'min')}</span>
+                                                        <span>{service.duration} {t('min', 'min')}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1 text-purple-600">
                                                         <DollarSign className="w-4 h-4" />
@@ -163,32 +161,6 @@ export function ServicesStep({ selectedServices, onServicesChange, onContinue, s
                 </AnimatePresence>
             </div>
 
-            {/* Bottom Bar */}
-            {selectedServices.length > 0 && (
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t shadow-2xl p-6 z-50"
-                >
-                    <div className="max-w-4xl mx-auto flex items-center justify-between">
-                        <div>
-                            <p className="font-black text-gray-900 text-xl tracking-tight">
-                                {selectedServices.length} {t('booking.services.selected', 'Selected')}
-                            </p>
-                            <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">
-                                {totalDuration} {t('booking.min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}
-                            </p>
-                        </div>
-                        <Button
-                            onClick={onContinue}
-                            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 h-14 px-10 rounded-2xl text-lg font-black shadow-xl transition-all hover:scale-105 active:scale-95"
-                            size="lg"
-                        >
-                            {t('booking.services.continue', 'Next step')}
-                        </Button>
-                    </div>
-                </motion.div>
-            )}
         </div>
     );
 }

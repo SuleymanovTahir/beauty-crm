@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { AnimatePresence, motion } from 'motion/react';
-import { X } from 'lucide-react';
+import { X, Scissors, User, Calendar as CalendarIcon } from 'lucide-react';
 import { Toaster } from '../../components/ui/sonner';
 import { api } from '../../../src/services/api';
 import PublicLanguageSwitcher from '../../../src/components/PublicLanguageSwitcher';
@@ -63,7 +63,7 @@ import { ArrowLeft } from 'lucide-react';
 export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const step = searchParams.get('step') || 'menu';
+  const step = searchParams.get('booking') || 'menu';
   const { t } = useTranslation(['booking', 'common']);
 
   const [bookingState, setBookingState] = useState<BookingState>(() => {
@@ -93,9 +93,23 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const setStep = (newStep: string) => {
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
-      next.set('step', newStep);
+      next.set('booking', newStep);
       return next;
     }, { replace: true });
+  };
+
+  const resetBooking = () => {
+    const initialState = {
+      services: [],
+      professional: null,
+      professionalSelected: false,
+      date: null,
+      time: null,
+      phone: '',
+    };
+    setBookingState(initialState);
+    sessionStorage.removeItem(STORAGE_KEY);
+    setStep('menu');
   };
 
   const goBack = () => {
@@ -143,32 +157,31 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           <div className="flex items-center gap-4">
             {step !== 'menu' && (
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={goBack}
-                className="gap-2"
+                className="gap-2 rounded-xl border-slate-200 shadow-sm hover:bg-slate-50 transition-all font-bold group"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
                 {t('common.back', 'Back')}
               </Button>
             )}
             <h1 className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              {t('booking.newBooking', 'Reservation')}
+              {t('newBooking', 'Reservation')}
             </h1>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 bg-slate-100/50 p-1 rounded-2xl border border-slate-200/60 shadow-sm transition-all hover:bg-slate-100/80">
             <PublicLanguageSwitcher />
-            {onClose && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onClose}
-                className="rounded-full hover:bg-red-50 hover:text-red-500 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            )}
+            <div className="w-[1px] h-4 bg-slate-200/80 mx-1" />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="w-8 h-8 rounded-xl border border-slate-200 hover:bg-white hover:text-red-500 hover:border-red-200 hover:shadow-sm transition-all text-slate-400"
+            >
+              <X className="w-4 h-4" />
+            </Button>
           </div>
         </div>
       </div>
@@ -186,6 +199,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               <BookingMenu
                 bookingState={bookingState}
                 onNavigate={setStep}
+                onReset={resetBooking}
                 totalPrice={totalPrice}
                 totalDuration={totalDuration}
                 salonSettings={salonSettings}
@@ -195,7 +209,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               <ServicesStep
                 selectedServices={bookingState.services}
                 onServicesChange={(services: any) => updateState({ services })}
-                onContinue={() => setStep('menu')}
                 salonSettings={salonSettings}
               />
             )}
@@ -203,8 +216,13 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               <ProfessionalStep
                 selectedProfessionalId={bookingState.professional?.id || null}
                 professionalSelected={bookingState.professionalSelected}
-                onProfessionalChange={(prof: any) => updateState({ professional: prof, professionalSelected: true })}
-                onContinue={() => setStep('menu')}
+                onProfessionalChange={(prof: any) => {
+                  if (bookingState.professional?.id === prof?.id && (prof !== null || bookingState.professionalSelected)) {
+                    updateState({ professional: null, professionalSelected: false });
+                  } else {
+                    updateState({ professional: prof, professionalSelected: true });
+                  }
+                }}
                 salonSettings={salonSettings}
               />
             )}
@@ -216,7 +234,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 selectedServices={bookingState.services}
                 totalDuration={totalDuration}
                 onDateTimeChange={(date: any, time: any) => updateState({ date, time })}
-                onContinue={() => setStep('confirm')}
               />
             )}
             {step === 'confirm' && (
@@ -235,6 +252,96 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           </motion.div>
         </AnimatePresence>
       </main>
+
+      {/* Sticky Bottom Navigator for Steps */}
+      {step !== 'menu' && step !== 'confirm' && (
+        <motion.div
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-100 p-4 z-[55] shadow-[0_-20px_40px_rgba(0,0,0,0.1)] pt-6 pb-safe"
+        >
+          <div className="max-w-4xl mx-auto space-y-4">
+            {/* Selection Mini-Summary */}
+            {bookingState.services.length > 0 && (
+              <div className="flex items-center justify-between px-2">
+                <div className="flex flex-col">
+                  <p className="text-sm font-black text-gray-900 uppercase tracking-tighter">
+                    {bookingState.services.length} {t('services.selected', 'Selected')}
+                  </p>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    {totalDuration} {t('min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}
+                  </p>
+                </div>
+                <div className="flex -space-x-2">
+                  {bookingState.services.slice(0, 3).map((s, i) => (
+                    <div key={s.id} className="w-6 h-6 rounded-full bg-purple-500 border-2 border-white flex items-center justify-center text-[8px] text-white font-black" style={{ zIndex: 10 - i }}>
+                      {s.name[0]}
+                    </div>
+                  ))}
+                  {bookingState.services.length > 3 && (
+                    <div className="w-6 h-6 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[8px] text-slate-400 font-bold z-0">
+                      +{bookingState.services.length - 3}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              {step !== 'services' && (
+                <Button
+                  variant="outline"
+                  onClick={() => setStep('services')}
+                  className="flex-1 h-11 rounded-xl border border-slate-200 font-bold uppercase tracking-wider text-[9px] gap-2 hover:bg-slate-50 transition-all shadow-sm"
+                >
+                  <Scissors className="w-3.5 h-3.5 text-purple-600" />
+                  {t('menu.services', 'Select Services')}
+                </Button>
+              )}
+              {step !== 'professional' && (
+                <Button
+                  variant="outline"
+                  onClick={() => setStep('professional')}
+                  className="flex-1 h-11 rounded-xl border border-slate-200 font-bold uppercase tracking-wider text-[9px] gap-2 hover:bg-slate-50 transition-all shadow-sm"
+                >
+                  <User className="w-3.5 h-3.5 text-pink-600" />
+                  {t('menu.professional', 'Select Master')}
+                </Button>
+              )}
+              {step !== 'datetime' && (
+                <Button
+                  variant="outline"
+                  onClick={() => setStep('datetime')}
+                  className="flex-1 h-11 rounded-xl border border-slate-200 font-bold uppercase tracking-wider text-[9px] gap-2 hover:bg-slate-50 transition-all shadow-sm"
+                >
+                  <CalendarIcon className="w-3.5 h-3.5 text-rose-600" />
+                  {t('menu.datetime', 'Select Time')}
+                </Button>
+              )}
+
+              {/* The "Primary" action for the current step (Commented out as requested) */}
+              {/* 
+                <Button
+                  onClick={() => {
+                    if (step === 'services') setStep('menu');
+                    if (step === 'professional') setStep('menu');
+                    if (step === 'datetime') setStep('confirm');
+                  }}
+                  className="flex-1 h-11 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 font-black uppercase tracking-widest text-[9px] text-white shadow-lg shadow-purple-100 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  disabled={
+                    (step === 'services' && bookingState.services.length === 0) ||
+                    (step === 'datetime' && (!bookingState.date || !bookingState.time))
+                  }
+                >
+                  {step === 'datetime' ? t('common.next', 'Confirm') : t('common.back', 'Ready')}
+                  <ChevronRight className="w-3.5 h-3.5 ml-1" />
+                </Button>
+                */}
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       <Toaster />
     </div>
   );

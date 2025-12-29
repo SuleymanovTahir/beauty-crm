@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from './ui/card';
-import { Button } from './ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Star, Clock } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -11,7 +10,6 @@ interface ProfessionalStepProps {
     selectedProfessionalId: number | null;
     professionalSelected: boolean;
     onProfessionalChange: (professional: any | null) => void;
-    onContinue: () => void;
     salonSettings: any;
 }
 
@@ -19,7 +17,6 @@ export function ProfessionalStep({
     selectedProfessionalId,
     professionalSelected,
     onProfessionalChange,
-    onContinue,
     salonSettings
 }: ProfessionalStepProps) {
     const { t } = useTranslation(['booking', 'common']);
@@ -48,7 +45,7 @@ export function ProfessionalStep({
             <div className="flex items-center justify-center h-64">
                 <div className="text-center">
                     <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                    <p className="text-gray-600 font-medium tracking-tight">{t('booking.loading', 'Syncing masters...')}</p>
+                    <p className="text-gray-600 font-medium tracking-tight">{t('loading', 'Syncing masters...')}</p>
                 </div>
             </div>
         );
@@ -64,7 +61,7 @@ export function ProfessionalStep({
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white rounded-2xl shadow-lg p-6"
             >
-                <h2 className="text-2xl font-bold text-gray-900 leading-none">{t('booking.professional.title', 'Choose Master')}</h2>
+                <h2 className="text-2xl font-black text-gray-900 leading-none uppercase tracking-tighter">{t('professional.title', 'Choose Master')}</h2>
             </motion.div>
 
             {/* Any Professional Option */}
@@ -87,10 +84,10 @@ export function ProfessionalStep({
                             </div>
                             <div className="flex-1">
                                 <h3 className="text-lg font-bold text-gray-900 leading-none mb-2">
-                                    {t('booking.professional.anyAvailable', 'Flexible Match')}
+                                    {t('professional.anyAvailable', 'Flexible Match')}
                                 </h3>
                                 <p className="text-sm font-medium text-gray-500">
-                                    {t('booking.professional.anyDesc', 'We\'ll match you with the best available professional')}
+                                    {t('professional.anyDesc', 'We\'ll match you with the best available professional')}
                                 </p>
                             </div>
                         </div>
@@ -133,13 +130,13 @@ export function ProfessionalStep({
                                                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                                                     <span className="text-sm font-bold text-yellow-700">{professional.rating || '5.0'}</span>
                                                 </div>
-                                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">({professional.reviews || 0} {t('booking.professional.reviews', 'Reviews')})</span>
+                                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">({professional.reviews || 0} {t('professional.reviews', 'Reviews')})</span>
                                             </div>
 
                                             <div className="flex items-center gap-2 text-green-600 bg-green-50 w-fit px-3 py-1 rounded-full">
                                                 <Clock className="w-3.5 h-3.5" />
                                                 <span className="text-[10px] font-black uppercase tracking-widest leading-none">
-                                                    {salonSettings?.timezone ? t('booking.professional.ready', 'Ready') : t('booking.professional.availableToday', 'Available Today')}
+                                                    {salonSettings?.timezone ? t('professional.ready', 'Ready') : t('professional.availableToday', 'Available Today')}
                                                 </span>
                                             </div>
                                         </div>
@@ -151,7 +148,7 @@ export function ProfessionalStep({
                 })}
             </div>
 
-            {/* Continue Button */}
+            {/* Continue Button commented out as per global wizard design
             {(selectedProfessionalId !== null || professionalSelected) && (
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -167,6 +164,7 @@ export function ProfessionalStep({
                     </Button>
                 </motion.div>
             )}
+            */}
         </div>
     );
 }
