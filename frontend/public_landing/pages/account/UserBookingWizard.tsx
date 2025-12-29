@@ -6,7 +6,7 @@ import { ru, enUS, ar, es, fr, de, pt, hi, kk } from 'date-fns/locale';
 import {
   ArrowLeft, Calendar as CalendarIcon, ChevronRight, Clock,
   List, MapPin, Search, Star, User, X, Loader2,
-  Sparkles, CheckCircle2, Users, ChevronDown
+  Sparkles, CheckCircle2, Users
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -19,26 +19,12 @@ import { Badge } from '../../components/ui/badge';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScrollArea } from '../../components/ui/scroll-area';
 import { useTranslation } from 'react-i18next';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../../components/ui/dropdown-menu';
+import PublicLanguageSwitcher from '../../../src/components/PublicLanguageSwitcher';
+
 import './UserBookingWizard.css';
 
 // Language configurations
-const LANGUAGES = [
-  { code: 'ru', name: 'Русский', flag: '🇷🇺', locale: ru },
-  { code: 'en', name: 'English', flag: '🇬🇧', locale: enUS },
-  { code: 'es', name: 'Español', flag: '🇪🇸', locale: es },
-  { code: 'ar', name: 'العربية', flag: '🇦🇪', locale: ar },
-  { code: 'hi', name: 'हिन्दी', flag: '🇮🇳', locale: hi },
-  { code: 'kk', name: 'Қазақша', flag: '🇰🇿', locale: kk },
-  { code: 'pt', name: 'Português', flag: '🇵🇹', locale: pt },
-  { code: 'fr', name: 'Français', flag: '🇫🇷', locale: fr },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪', locale: de },
-];
+
 
 interface Service {
   id: number;
@@ -86,8 +72,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const currentLang = LANGUAGES.find(lang => lang.code === i18n.language) || LANGUAGES[0];
-
   const step = (searchParams.get('booking') as any) || 'menu';
   const setStep = (newStep: string) => {
     setSearchParams(prev => {
@@ -118,7 +102,19 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [showPhoneModal, setShowPhoneModal] = useState(false);
   const [masterNextSlots, setMasterNextSlots] = useState<Record<number, string[]>>({});
-
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case 'ru': return ru;
+      case 'ar': return ar;
+      case 'es': return es;
+      case 'fr': return fr;
+      case 'de': return de;
+      case 'pt': return pt;
+      case 'hi': return hi;
+      case 'kk': return kk;
+      default: return enUS;
+    }
+  };
   useEffect(() => {
     if (step !== 'menu' && !stepHistory.includes(step)) {
       setStepHistory(prev => [...prev, step]);
@@ -404,7 +400,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
       }
 
       toast.success('Booking confirmed successfully!', {
-        description: `${format(selectedDate, 'MMMM dd, yyyy', { locale: currentLang.locale })} at ${selectedTime}`
+        description: `${format(selectedDate, 'MMMM dd, yyyy', { locale: getDateLocale() })} at ${selectedTime}`
+
       });
 
       sessionStorage.removeItem('booking-state');
@@ -438,26 +435,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
         <div className="flex-1" />
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-2 rounded-full hover:bg-white/50 h-9">
-              <span className="text-base">{currentLang.flag}</span>
-              <ChevronDown className="w-3 h-3" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
-            {LANGUAGES.map(lang => (
-              <DropdownMenuItem
-                key={lang.code}
-                onClick={() => i18n.changeLanguage(lang.code)}
-                className={i18n.language === lang.code ? 'bg-purple-50' : ''}
-              >
-                <span className="mr-2">{lang.flag}</span>
-                <span className="text-sm">{lang.name}</span>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <PublicLanguageSwitcher />
 
         {onClose && (
           <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:bg-white/50 h-9 w-9">
@@ -526,26 +504,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-1 rounded-full h-9">
-                    <span className="text-base">{currentLang.flag}</span>
-                    <ChevronDown className="w-3 h-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-40">
-                  {LANGUAGES.map(lang => (
-                    <DropdownMenuItem
-                      key={lang.code}
-                      onClick={() => i18n.changeLanguage(lang.code)}
-                      className={i18n.language === lang.code ? 'bg-purple-50' : ''}
-                    >
-                      <span className="mr-2">{lang.flag}</span>
-                      <span className="text-sm">{lang.name}</span>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <PublicLanguageSwitcher />
 
               {onClose && (
                 <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full h-9 w-9">
@@ -578,7 +537,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 icon: CalendarIcon,
                 title: t('select_date_time', 'Select Date & Time'),
                 description: selectedDate && selectedTime
-                  ? `${format(selectedDate, 'MMM dd', { locale: currentLang.locale })} at ${selectedTime}`
+                  ? `${format(selectedDate, 'MMM dd', { locale: getDateLocale() })} at ${selectedTime}`
                   : t('pick_slot', "Pick your appointment slot"),
                 gradient: 'from-orange-500 to-red-500'
               }
@@ -653,11 +612,10 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   variant={selectedCategory === cat ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSelectedCategory(cat)}
-                  className={`rounded-full whitespace-nowrap text-xs h-7 px-3 ${
-                    selectedCategory === cat
+                  className={`rounded-full whitespace-nowrap text-xs h-7 px-3 ${selectedCategory === cat
                       ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md'
                       : 'bg-white hover:bg-purple-50'
-                  }`}
+                    }`}
                 >
                   {cat}
                 </Button>
@@ -679,9 +637,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     transition={{ delay: idx * 0.02 }}
                   >
                     <Card
-                      className={`cursor-pointer transition-all hover:shadow-md bg-white ${
-                        isSelected ? 'border-2 border-purple-500 shadow-sm' : 'border-2 border-transparent hover:border-purple-200'
-                      }`}
+                      className={`cursor-pointer transition-all hover:shadow-md bg-white ${isSelected ? 'border-2 border-purple-500 shadow-sm' : 'border-2 border-transparent hover:border-purple-200'
+                        }`}
                       onClick={() => handleServiceSelect(service)}
                     >
                       <CardContent className="p-3">
@@ -747,9 +704,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           <div className="space-y-2.5">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Card
-                className={`cursor-pointer transition-all hover:shadow-md bg-white ${
-                  selectedMaster === null && professionalSelected ? 'border-2 border-purple-500 shadow-sm' : 'border-2 border-transparent hover:border-purple-200'
-                }`}
+                className={`cursor-pointer transition-all hover:shadow-md bg-white ${selectedMaster === null && professionalSelected ? 'border-2 border-purple-500 shadow-sm' : 'border-2 border-transparent hover:border-purple-200'
+                  }`}
                 onClick={() => handleMasterSelect(null)}
               >
                 <CardContent className="p-3">
@@ -781,9 +737,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   transition={{ delay: (idx + 1) * 0.04 }}
                 >
                   <Card
-                    className={`cursor-pointer transition-all hover:shadow-md bg-white ${
-                      isSelected ? 'border-2 border-purple-500 shadow-sm' : 'border-2 border-transparent hover:border-purple-200'
-                    }`}
+                    className={`cursor-pointer transition-all hover:shadow-md bg-white ${isSelected ? 'border-2 border-purple-500 shadow-sm' : 'border-2 border-transparent hover:border-purple-200'
+                      }`}
                     onClick={() => handleMasterSelect(master)}
                   >
                     <CardContent className="p-3">
@@ -882,7 +837,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   <ArrowLeft className="w-3.5 h-3.5" />
                 </Button>
                 <h3 className="font-bold text-sm">
-                  {format(currentMonth, 'MMMM yyyy', { locale: currentLang.locale })}
+                  {format(currentMonth, 'MMMM yyyy', { locale: getDateLocale() })}
                 </h3>
                 <Button
                   variant="ghost"
@@ -1081,7 +1036,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     <div className="space-y-1">
                       <div className="flex justify-between">
                         <span className="text-xs text-muted-foreground">{t('date', 'Date')}</span>
-                        <span className="font-medium text-sm">{format(selectedDate, 'EEEE, MMMM dd, yyyy', { locale: currentLang.locale })}</span>
+                        <span className="font-medium text-sm">{format(selectedDate, 'EEEE, MMMM dd, yyyy', { locale: getDateLocale() })}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-xs text-muted-foreground">{t('time', 'Time')}</span>
