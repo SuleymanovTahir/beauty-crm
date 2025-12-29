@@ -1,33 +1,47 @@
-import { useState } from 'react';
-import { Star, Flame, QrCode, Gift, Share2, Copy } from 'lucide-react';
+import { Star, TrendingUp, Flame, QrCode, Gift, Share2, Copy } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
+import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-// import { currentUser, spendingData } from '../data/mockData';egorySpending, referralCode } from '../data/mockData';
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { toast } from 'sonner';
 
-export function Loyalty({ loyalty, user }: any) {
-  // Map prop to local structure if needed, or use directly.
-  // Assuming loyalty prop has { points, tier, history }
-  const currentUser = user || {};
+export function Loyalty({ loyalty }: any) {
+  // Use loyalty prop data mixed with defaults
   const points = loyalty?.points || 0;
+  const currentTier = loyalty?.tier || 'Bronze';
+  const history = loyalty?.history || [];
 
-  const spendingData = loyalty?.spendingData || [];
-  const categorySpending = loyalty?.categorySpending || [];
-  const referralCode = currentUser?.referralCode || 'REF123';
-  const tier = loyalty?.tier || 'Bronze';
-  // const history = loyalty?.history || []; // map real history
+  // Mock data for graphs if not provided
+  const spendingData = [
+    { month: 'Янв', amount: 5000 },
+    { month: 'Фев', amount: 7500 },
+    { month: 'Мар', amount: 3000 },
+    { month: 'Апр', amount: 12000 },
+    { month: 'Май', amount: 8000 },
+    { month: 'Июн', amount: 6500 },
+  ];
+
+  const categorySpending = [
+    { name: 'Волосы', value: 4000, fill: '#FF6B9D' },
+    { name: 'Ногти', value: 3000, fill: '#FF9EBB' },
+    { name: 'Лицо', value: 2000, fill: '#FFC4D6' },
+    { name: 'Тело', value: 1000, fill: '#FFE1EA' },
+  ];
+  const referralCode = 'REF123';
+
   const tiers = [
     { name: 'Bronze', points: 0, discount: 5, color: '#CD7F32' },
     { name: 'Silver', points: 1000, discount: 10, color: '#C0C0C0' },
-    { name: 'Gold', points: 2000, discount: 15, color: '#FFD700' },
-    { name: 'Platinum', points: 5000, discount: 25, color: '#E5E4E2' },
+    { name: 'Gold', points: 5000, discount: 15, color: '#FFD700' },
+    { name: 'Platinum', points: 10000, discount: 25, color: '#E5E4E2' },
   ];
 
-  const currentTierIndex = tiers.findIndex(t => t.name.toLowerCase() === String(tier).toLowerCase());
-  const currentTierData = tiers[currentTierIndex] || tiers[0];
-  const nextTierData = tiers[currentTierIndex + 1];
+  const currentTierIndex = tiers.findIndex(t => t.name.toLowerCase() === currentTier.toLowerCase());
+  // Find safe index, default to 0
+  const safeIndex = currentTierIndex >= 0 ? currentTierIndex : 0;
+  const currentTierData = tiers[safeIndex];
+  const nextTierData = tiers[safeIndex + 1];
 
   const progressToNext = nextTierData
     ? ((points - currentTierData.points) / (nextTierData.points - currentTierData.points)) * 100
@@ -48,56 +62,52 @@ export function Loyalty({ loyalty, user }: any) {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-6 pb-8">
       <div>
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent inline-block">
-          Лояльность и Бонусы
-        </h1>
-        <p className="text-muted-foreground mt-1 text-lg">Ваши привилегии и награды</p>
+        <h1 className="text-3xl font-bold tracking-tight">Лояльность и Бонусы</h1>
+        <p className="text-muted-foreground">Ваши привилегии и награды</p>
       </div>
 
       {/* Текущий статус */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900 to-gray-800 text-white shadow-2xl p-8">
-        <div className="absolute top-0 right-0 -mt-20 -mr-20 h-80 w-80 rounded-full bg-yellow-400/20 blur-3xl" />
-        <div className="absolute bottom-0 left-0 -mb-20 -ml-20 h-80 w-80 rounded-full bg-purple-500/20 blur-3xl" />
-
-        <div className="relative z-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+      <Card className="border-2" style={{ borderColor: currentTierData.color }}>
+        <CardHeader>
+          <div className="flex items-center justify-between">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-sm font-medium text-yellow-300 mb-2">
-                <Star className="w-4 h-4 fill-yellow-300" /> {currentTierData.name} уровень
-              </div>
-              <h2 className="text-4xl font-bold">{currentUser.loyaltyPoints} <span className="text-2xl font-normal text-white/60">баллов</span></h2>
-              <p className="text-gray-300 mt-1">Ваша персональная скидка: <span className="text-white font-bold">{currentTierData.discount}%</span></p>
+              <CardTitle className="flex items-center gap-2">
+                <Star className="w-6 h-6" style={{ color: currentTierData.color }} />
+                {currentTierData.name} статус
+              </CardTitle>
+              <CardDescription className="mt-2">
+                {points} баллов • {currentTierData.discount}% скидка
+              </CardDescription>
             </div>
-
-            <div className="w-full md:w-1/2 bg-white/5 rounded-2xl p-4 border border-white/5 backdrop-blur-sm">
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-300">До уровня {nextTierData?.name || 'MAX'}</span>
-                <span className="font-bold text-white">{nextTierData ? nextTierData.points - points : 0} баллов</span>
+            <div className="text-right">
+              <div className="text-3xl font-bold" style={{ color: currentTierData.color }}>
+                {points}
               </div>
-              <Progress value={progressToNext} className="h-3 bg-white/10" indicatorClassName="bg-gradient-to-r from-yellow-400 to-amber-500" />
-              {nextTierData && (
-                <p className="text-xs text-gray-400 mt-2 text-right">
-                  На {nextTierData.name} скидка будет {nextTierData.discount}%
-                </p>
-              )}
+              <div className="text-sm text-muted-foreground">баллов</div>
             </div>
           </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {tiers.map((t) => {
-              const isActive = t.name === currentTierData.name;
-              return (
-                <div key={t.name} className={`rounded-xl p-3 text-center transition-all ${isActive ? 'bg-white/20 shadow-lg scale-105 border border-white/20' : 'bg-white/5 opacity-60'}`}>
-                  <div className="font-bold text-sm" style={{ color: isActive ? '#fff' : t.color }}>{t.name}</div>
-                  <div className="text-xs text-gray-300">{t.discount}%</div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {nextTierData && (
+            <>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>До {nextTierData.name} уровня</span>
+                  <span className="font-semibold">
+                    {Math.max(0, nextTierData.points - points)} баллов
+                  </span>
                 </div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
+                <Progress value={progressToNext} className="h-2" />
+              </div>
+              <div className="text-sm text-muted-foreground">
+                При достижении {nextTierData.name} уровня ваша скидка составит {nextTierData.discount}%
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Streak геймификация */}
       <Card className="bg-gradient-to-r from-orange-50 to-red-50">
@@ -109,7 +119,7 @@ export function Loyalty({ loyalty, user }: any) {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
-            <div className="text-5xl font-bold text-orange-500">{currentUser.streak}</div>
+            <div className="text-5xl font-bold text-orange-500">3</div>
             <div className="flex-1">
               <div className="font-semibold">дней подряд!</div>
               <p className="text-sm text-muted-foreground">
@@ -153,7 +163,7 @@ export function Loyalty({ loyalty, user }: any) {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={(entry: any) => entry.category}
+                  label={(entry) => entry.name}
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
@@ -187,13 +197,13 @@ export function Loyalty({ loyalty, user }: any) {
 
               <div className="space-y-1">
                 <div className="text-sm opacity-80">Владелец карты</div>
-                <div className="font-semibold">{currentUser.name}</div>
+                <div className="font-semibold">Tahir Suleymanov</div>
               </div>
 
               <div className="flex justify-between items-end">
                 <div>
                   <div className="text-sm opacity-80">ID клиента</div>
-                  <div className="font-mono">{String(currentUser.id || '').padStart(8, '0')}</div>
+                  <div className="font-mono">00012345</div>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold">{currentTierData.discount}%</div>
