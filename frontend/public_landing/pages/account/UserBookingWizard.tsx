@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowLeft, X, User, Calendar as CalendarIcon, ChevronRight, MapPin, Search, Clock, CheckCircle2, Star, Sparkles, Phone, Users, List, Loader2 } from 'lucide-react';
+import { X, User, Calendar as CalendarIcon, ChevronRight, ChevronLeft, MapPin, Search, Clock, CheckCircle2, Star, Phone, Users, List, Loader2, Scissors } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
@@ -10,7 +10,6 @@ import { Input } from '../../components/ui/input';
 import { Checkbox } from '../../components/ui/checkbox';
 import { ScrollArea } from '../../components/ui/scroll-area';
 import { Avatar, AvatarImage, AvatarFallback } from '../../components/ui/avatar';
-import { Calendar } from '../../components/ui/calendar';
 import { Dialog, DialogContent, DialogTitle } from '../../components/ui/dialog';
 import { Toaster } from '../../components/ui/sonner';
 import { toast } from 'sonner';
@@ -79,10 +78,11 @@ function BookingMenu({ bookingState, onNavigate, totalPrice, salonSettings }: an
       icon: List,
       title: t('booking.menu.services', 'Select Services'),
       description: isServicesComplete
-        ? `${bookingState.services.length} ${t('booking.menu.selected', 'selected')}`
+        ? `${bookingState.services.length} selected`
         : t('booking.menu.selectServices', "Pick treatment"),
       badge: isServicesComplete ? `${totalPrice} ${salonSettings?.currency || 'AED'}` : null,
       isComplete: isServicesComplete,
+      gradient: 'var(--gradient-purple-pink)',
     },
     {
       value: 'professional',
@@ -93,6 +93,7 @@ function BookingMenu({ bookingState, onNavigate, totalPrice, salonSettings }: an
         : (bookingState.professionalSelected ? t('booking.professional.anyAvailable', "Any Available") : t('booking.menu.selectProfessional', "Select master")),
       badge: isProfessionalComplete ? t('booking.menu.completed', "Selected") : null,
       isComplete: isProfessionalComplete,
+      gradient: 'var(--gradient-pink-red)',
     },
     {
       value: 'datetime',
@@ -103,23 +104,29 @@ function BookingMenu({ bookingState, onNavigate, totalPrice, salonSettings }: an
         : t('booking.menu.selectDateTime', "Pick time slot"),
       badge: isDateTimeComplete ? t('booking.menu.completed', "Set") : null,
       isComplete: isDateTimeComplete,
+      gradient: 'var(--gradient-red-orange)',
     },
   ];
 
   return (
     <div className="wizard-container space-y-8">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-        <div className="space-y-2">
-          <h1 className="text-4xl md:text-5xl font-black text-primary tracking-tight">
-            {salonSettings?.name || 'M Le Diamant'}
+      {/* Top Info Card */}
+      <div className="top-info-card">
+        <div className="top-info-icon-wrapper">
+          <Scissors className="w-8 h-8" />
+        </div>
+        <div>
+          <h1 className="text-4xl font-black text-gray-900 tracking-tight">
+            {salonSettings?.name || 'Beauty Salon'}
           </h1>
-          <p className="text-sm text-muted-foreground flex items-center gap-2 font-medium">
-            <MapPin className="w-4 h-4 text-primary" />
-            {salonSettings?.address || 'Shop 13, Amwaj 2, Plaza Level, JBR - Dubai'}
+          <p className="text-gray-500 flex items-center gap-2 font-bold mt-1">
+            <MapPin className="w-4 h-4" />
+            {salonSettings?.address || 'Address'}
           </p>
         </div>
       </div>
 
+      {/* Steps Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {cards.map((card, idx) => (
           <motion.div
@@ -128,23 +135,27 @@ function BookingMenu({ bookingState, onNavigate, totalPrice, salonSettings }: an
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
           >
-            <Card
-              className="group cursor-pointer wizard-card hover:shadow-xl transition-all duration-300"
-              onClick={() => onNavigate(card.value)}
-            >
-              <CardContent className="p-8 flex flex-col gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+            <div className="category-card" onClick={() => onNavigate(card.value)}>
+              <div className="category-card-header-bar" style={{ background: card.gradient }} />
+              <div className="category-card-content">
+                <div className="category-icon-bg">
                   <card.icon className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-black text-xl text-primary">{card.title}</h3>
-                  <p className="text-sm text-muted-foreground font-medium">{card.description}</p>
+                  <h3 className="font-black text-2xl text-gray-900">{card.title}</h3>
+                  <p className="text-gray-500 font-bold">{card.description}</p>
                 </div>
                 {card.badge && (
-                  <Badge className="bg-primary text-white w-fit">{card.badge}</Badge>
+                  <div className="category-select-btn category-select-btn-active">
+                    {card.badge}
+                  </div>
                 )}
-              </CardContent>
-            </Card>
+                <div className="category-select-btn mt-4 group cursor-pointer">
+                  {t('common.select', 'Select')}
+                  <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </div>
+              </div>
+            </div>
           </motion.div>
         ))}
       </div>
@@ -346,18 +357,18 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const dateLocale = getDateLocaleCentral(i18n.language);
+  const duration = selectedServices.reduce((sum: number, s: any) => sum + parseInt(s.duration || '30'), 0) || 0;
 
   useEffect(() => {
     const fetchDates = async () => {
       let masterName = selectedMaster ? (selectedMaster.full_name || selectedMaster.username) : 'any';
-      let duration = selectedServices.reduce((sum: number, s: any) => sum + parseInt(s.duration || '30'), 0) || 60;
       try {
-        const res = await api.getAvailableDates(masterName, currentMonth.getFullYear(), currentMonth.getMonth() + 1, duration);
+        const res = await api.getAvailableDates(masterName, currentMonth.getFullYear(), currentMonth.getMonth() + 1, duration || 60);
         if (res.available_dates) setAvailableDates(new Set(res.available_dates));
       } catch (e) { }
     };
     fetchDates();
-  }, [currentMonth, selectedMaster, selectedServices]);
+  }, [currentMonth, selectedMaster, selectedServices, duration]);
 
   useEffect(() => {
     if (!selectedDate) return;
@@ -366,13 +377,12 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
       const dateStr = format(selectedDate, 'yyyy-MM-dd');
       try {
         let rawSlots: any[] = [];
-        const usersRes = await api.getUsers();
-        const masters = (Array.isArray(usersRes) ? usersRes : (usersRes.users || [])).filter((u: any) => u.role === 'employee' || u.is_service_provider);
-
         if (selectedMaster) {
           const res = await api.getPublicAvailableSlots(dateStr, selectedMaster.id);
           rawSlots = (res.slots || []).filter((s: any) => s.available);
         } else {
+          const usersRes = await api.getUsers();
+          const masters = (Array.isArray(usersRes) ? usersRes : (usersRes.users || [])).filter((u: any) => u.role === 'employee' || u.is_service_provider);
           const results = await Promise.all(masters.map((m: any) =>
             api.getPublicAvailableSlots(dateStr, m.id).then(r => r.slots || []).catch(() => [])
           ));
@@ -399,6 +409,27 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
     fetchSlots();
   }, [selectedDate, selectedMaster]);
 
+  // Calendar Helpers
+  const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+  const firstDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
+  const startOffset = (firstDayOfMonth + 6) % 7; // Monday start
+  const prevMonthLastDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0).getDate();
+
+  const calendarDays = [];
+  // Prev month padding
+  for (let i = startOffset - 1; i >= 0; i--) {
+    calendarDays.push({ day: prevMonthLastDay - i, month: 'prev' });
+  }
+  // Current month
+  for (let i = 1; i <= daysInMonth; i++) {
+    calendarDays.push({ day: i, month: 'current' });
+  }
+  // Next month padding
+  const totalCells = Math.ceil(calendarDays.length / 7) * 7;
+  for (let i = 1; calendarDays.length < totalCells; i++) {
+    calendarDays.push({ day: i, month: 'next' });
+  }
+
   const groupedSlots = {
     morning: availableSlots.filter(s => s.period === 'morning'),
     afternoon: availableSlots.filter(s => s.period === 'afternoon'),
@@ -406,106 +437,124 @@ function DateTimeStep({ selectedDate, selectedTime, selectedMaster, selectedServ
   };
 
   return (
-    <div className="space-y-12 pb-32">
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-        <Card className="lg:col-span-2 border-none shadow-xl bg-white rounded-3xl overflow-hidden h-fit">
-          <div className="bg-primary p-6 text-white">
-            <h3 className="text-xl font-black flex items-center gap-2">
-              <CalendarIcon className="w-6 h-6" />
-              {t('booking.datetime.calendar', 'Calendar')}
-            </h3>
-            <p className="text-white/70 text-sm font-medium mt-1">
-              {selectedDate ? format(selectedDate, 'EEEE, MMM dd', { locale: dateLocale }) : t('booking.datetime.selectDate', 'Pick a date')}
-            </p>
-          </div>
-          <Calendar
-            mode="single"
-            selected={selectedDate || undefined}
-            onSelect={(date) => onDateTimeChange(date || null, null)}
-            onMonthChange={setCurrentMonth}
-            disabled={(date) => {
-              const str = format(date, 'yyyy-MM-dd');
-              return date < new Date(new Date().setHours(0, 0, 0, 0)) || !availableDates.has(str);
-            }}
-            locale={dateLocale}
-            className="p-4"
-          />
-        </Card>
-
-        <div className="lg:col-span-3 space-y-8">
-          {!selectedDate ? (
-            <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-white rounded-3xl border-2 border-dashed border-gray-100">
-              <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
-                <CalendarIcon className="w-10 h-10 text-muted-foreground/40" />
-              </div>
-              <h3 className="text-2xl font-black text-primary mb-2">{t('booking.datetime.selectDateFirst', 'Select a Date')}</h3>
-              <p className="text-muted-foreground font-medium max-w-xs">{t('booking.datetime.selectDateDesc', 'To see available time slots, please choose a day on the calendar')}</p>
-            </div>
-          ) : loading ? (
-            <div className="h-full flex items-center justify-center py-20">
-              <Loader2 className="w-12 h-12 animate-spin text-primary" />
-            </div>
-          ) : (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
-              {(['morning', 'afternoon', 'evening'] as const).map(period => {
-                const slots = groupedSlots[period];
-                if (slots.length === 0) return null;
-                return (
-                  <div key={period} className="space-y-4">
-                    <h4 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] px-2">{t(`booking.datetime.${period}`, period)}</h4>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-                      {slots.map(slot => (
-                        <button
-                          key={slot.time}
-                          onClick={() => onDateTimeChange(selectedDate, slot.time)}
-                          className={`
-                            relative py-4 px-2 rounded-2xl font-black text-sm transition-all border-2
-                            ${selectedTime === slot.time
-                              ? 'bg-primary text-white border-primary shadow-xl scale-105'
-                              : 'bg-white text-primary border-primary/5 hover:border-primary/20 hover:bg-muted/30'
-                            }
-                          `}
-                        >
-                          {slot.time}
-                          {slot.is_optimal && selectedTime !== slot.time && (
-                            <Sparkles className="w-3 h-3 absolute top-2 right-2 text-primary/40" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-              {availableSlots.length === 0 && (
-                <div className="text-center py-20 bg-muted/30 rounded-3xl border border-primary/5">
-                  <Clock className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
-                  <p className="text-muted-foreground font-medium italic">{t('booking.datetime.noSlots', 'No slots available for this date')}</p>
-                </div>
-              )}
-            </motion.div>
-          )}
+    <div className="wizard-container space-y-8 pb-32">
+      {/* Top Info Card */}
+      <div className="top-info-card">
+        <div className="top-info-icon-wrapper">
+          <CalendarIcon className="w-8 h-8" />
+        </div>
+        <div>
+          <h2 className="text-3xl font-black text-gray-900">{t('booking.datetime.title', 'Select Date & Time')}</h2>
+          <p className="text-gray-500 font-bold mt-1">{t('booking.duration', 'Duration')}: {duration} {t('booking.min', 'min')}</p>
         </div>
       </div>
 
-      {selectedDate && selectedTime && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl">
-          <div className="max-w-4xl mx-auto">
-            <Button
-              size="lg"
-              className="w-full h-16 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg font-black rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
-              onClick={onContinue}
-            >
-              {t('booking.datetime.continue', 'Continue')}
-              <ChevronRight className="w-6 h-6 ml-2" />
-            </Button>
+      <div className="step-split-container">
+        {/* Date Card */}
+        <div className="split-card">
+          <div className="split-card-header" style={{ background: 'var(--gradient-purple-pink)' }}>
+            {t('booking.datetime.date', 'Date')}
           </div>
+          <div className="split-card-body">
+            <div className="simple-calendar-container">
+              <div className="calendar-header">
+                <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))} className="p-2 hover:bg-gray-100 rounded-full">
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <div className="calendar-month-label">
+                  {format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}
+                </div>
+                <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))} className="p-2 hover:bg-gray-100 rounded-full">
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="calendar-grid-header">
+                {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(d => (
+                  <div key={d} className="calendar-weekday">{t(`common.days_short.${d.toLowerCase()}`, d)}</div>
+                ))}
+              </div>
+
+              <div className="calendar-grid-days">
+                {calendarDays.map((d, i) => {
+                  const isCurrent = d.month === 'current';
+                  const dateObj = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), d.day);
+                  const dateStr = format(dateObj, 'yyyy-MM-dd');
+                  const isAvailable = isCurrent && availableDates.has(dateStr);
+                  const isSelected = selectedDate && format(selectedDate, 'yyyy-MM-dd') === dateStr;
+                  const isPast = isCurrent && dateObj < new Date(new Date().setHours(0, 0, 0, 0));
+
+                  return (
+                    <div
+                      key={i}
+                      onClick={() => isAvailable && !isPast && onDateTimeChange(dateObj, null)}
+                      className={`calendar-day ${!isCurrent || isPast || !isAvailable ? 'calendar-day-disabled' : ''} ${isSelected ? 'calendar-day-selected ring-2 ring-primary ring-offset-2' : ''} hover:bg-gray-100`}
+                    >
+                      {d.day}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Time Card */}
+        <div className="split-card">
+          <div className="split-card-header" style={{ background: 'var(--gradient-pink-red)' }}>
+            {t('booking.datetime.time', 'Time')}
+          </div>
+          <div className="split-card-body">
+            {!selectedDate ? (
+              <div className="time-slot-placeholder">
+                {t('booking.datetime.dateFirst', 'Date first')}
+              </div>
+            ) : loading ? (
+              <div className="flex justify-center py-20"><Loader2 className="w-10 h-10 animate-spin text-primary" /></div>
+            ) : availableSlots.length === 0 ? (
+              <div className="text-center py-20 text-gray-500 font-bold">{t('booking.datetime.noSlots', 'No available slots')}</div>
+            ) : (
+              <div className="space-y-6">
+                {(['morning', 'afternoon', 'evening'] as const).map(period => {
+                  const slots = groupedSlots[period];
+                  if (slots.length === 0) return null;
+                  return (
+                    <div key={period} className="space-y-3">
+                      <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t(`booking.datetime.${period}`, period)}</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {slots.map(slot => (
+                          <button
+                            key={slot.time}
+                            onClick={() => onDateTimeChange(selectedDate, slot.time)}
+                            className={`py-3 px-2 rounded-xl font-bold text-sm transition-all border ${selectedTime === slot.time ? 'bg-primary text-white border-primary shadow-lg' : 'bg-white text-gray-900 border-gray-100 hover:border-primary/20 hover:bg-gray-50'}`}
+                          >
+                            {slot.time}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Fixed Bottom Continue Bar */}
+      {selectedDate && selectedTime && (
+        <div className="bottom-bar">
+          <button onClick={onContinue} className="btn-continue">
+            {t('common.continue', 'Continue')}
+            <ChevronRight className="w-5 h-5" />
+          </button>
         </div>
       )}
     </div>
   );
 }
 
-function ConfirmStep({ bookingState, totalDuration, totalPrice, onPhoneChange, onSuccess, salonSettings }: any) {
+function ConfirmStep({ bookingState, totalPrice, onPhoneChange, onSuccess, salonSettings }: any) {
   const { t, i18n } = useTranslation(['booking', 'common']);
   const { user } = useAuth();
   const [phone, setPhone] = useState(bookingState.phone || user?.phone || '');
@@ -668,6 +717,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const step = searchParams.get('booking') || 'menu';
+  const { t } = useTranslation(['booking', 'common']);
 
   const [bookingState, setBookingState] = useState<BookingState>({
     services: [],
@@ -701,7 +751,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   useEffect(() => {
     const init = async () => {
       try {
-        const salonRes = await api.getPublicSalonSettings();
+        const salonRes = await api.getSalonSettings();
         setSalonSettings(salonRes);
         const saved = sessionStorage.getItem(STORAGE_KEY);
         if (saved) {
@@ -726,36 +776,43 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   }, [bookingState]);
 
   const updateState = (updates: Partial<BookingState>) => setBookingState((prev: BookingState) => ({ ...prev, ...updates }));
-  const totalDuration = bookingState.services.reduce((sum: number, s: Service) => sum + parseInt(s.duration || '0'), 0);
   const totalPrice = bookingState.services.reduce((sum: number, s: Service) => sum + s.price, 0);
 
   if (loading) return <div className="fixed inset-0 bg-white z-50 flex items-center justify-center"><div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
-      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={goBack} className="rounded-full"><ArrowLeft className="w-5 h-5" /></Button>
-            <span className="text-xs font-black uppercase tracking-widest text-gray-300">
-              {step === 'menu' ? 'Booking' : step}
-            </span>
-          </div>
+    <div className="min-h-screen wizard-scrollable flex flex-col">
+      {/* Custom Nav Header */}
+      <div className="bg-white border-b sticky top-0 z-50">
+        <div className="wizard-container py-4 flex items-center justify-between">
+          <button onClick={goBack} className="wizard-nav-back group">
+            <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+            {t('common.back', 'Back')}
+          </button>
+
+          <h2 className="text-xl font-black wizard-title-pink">
+            {t('booking.newBooking', 'New Booking')}
+          </h2>
+
           <div className="flex items-center gap-4">
             <PublicLanguageSwitcher />
-            {onClose && <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full text-gray-400 hover:text-red-500"><X className="w-5 h-5" /></Button>}
+            {onClose && (
+              <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
+                <X className="w-5 h-5" />
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="flex-1 py-8">
         <AnimatePresence mode="wait">
           <motion.div key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
             {step === 'menu' && <BookingMenu bookingState={bookingState} onNavigate={setStep} totalPrice={totalPrice} salonSettings={salonSettings} />}
             {step === 'services' && <ServicesStep selectedServices={bookingState.services} onServicesChange={(services: any) => updateState({ services })} onContinue={() => setStep('menu')} salonSettings={salonSettings} />}
-            {step === 'professional' && <ProfessionalStep selectedProfessional={bookingState.professional} professionalSelected={bookingState.professionalSelected} onProfessionalChange={(professional: any) => updateState({ professional, professionalSelected: true })} onContinue={() => setStep('menu')} />}
-            {step === 'datetime' && <DateTimeStep selectedDate={bookingState.date} selectedTime={bookingState.time} selectedMaster={bookingState.professional} selectedServices={bookingState.services} onDateTimeChange={(date: any, time: any) => updateState({ date, time })} onContinue={() => setStep('menu')} />}
-            {step === 'confirm' && <ConfirmStep bookingState={bookingState} totalDuration={totalDuration} totalPrice={totalPrice} onPhoneChange={(phone: any) => updateState({ phone })} onSuccess={() => { sessionStorage.removeItem(STORAGE_KEY); if (onSuccess) onSuccess(); if (onClose) onClose(); }} salonSettings={salonSettings} />}
+            {step === 'professional' && <ProfessionalStep selectedMaster={bookingState.professional} professionalSelected={bookingState.professionalSelected} onMasterSelect={(master: any) => updateState({ professional: master, professionalSelected: true })} onContinue={() => setStep('menu')} />}
+            {step === 'datetime' && <DateTimeStep selectedDate={bookingState.date} selectedTime={bookingState.time} selectedMaster={bookingState.professional} selectedServices={bookingState.services} onDateTimeChange={(date: any, time: any) => updateState({ date, time })} onContinue={() => setStep('confirm')} />}
+            {step === 'confirm' && <ConfirmStep bookingState={bookingState} totalPrice={totalPrice} onPhoneChange={(phone: any) => updateState({ phone })} onSuccess={() => { sessionStorage.removeItem(STORAGE_KEY); if (onSuccess) onSuccess(); if (onClose) onClose(); }} salonSettings={salonSettings} />}
           </motion.div>
         </AnimatePresence>
       </div>
