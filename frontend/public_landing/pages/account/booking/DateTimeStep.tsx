@@ -65,19 +65,9 @@ export function DateTimeStep({
                     const res = await api.getPublicAvailableSlots(dateStr, selectedMaster.id);
                     rawSlots = (res.slots || []).filter((s: any) => s.available);
                 } else {
-                    const usersRes = await api.getUsers();
-                    const masters = (Array.isArray(usersRes) ? usersRes : (usersRes.users || [])).filter((u: any) => u.role === 'employee' || u.is_service_provider);
-                    const results = await Promise.all(masters.map((m: any) =>
-                        api.getPublicAvailableSlots(dateStr, m.id).then(r => r.slots || []).catch(() => [])
-                    ));
-                    const seen = new Set<string>();
-                    rawSlots = results.flat().filter(s => {
-                        if (s.available && !seen.has(s.time)) {
-                            seen.add(s.time);
-                            return true;
-                        }
-                        return false;
-                    }).sort((a, b) => a.time.localeCompare(b.time));
+                    // Optimization: Single request for "Any Master" instead of N requests
+                    const res = await api.getPublicAvailableSlots(dateStr);
+                    rawSlots = (res.slots || []).filter((s: any) => s.available);
                 }
 
                 const processed = rawSlots.map(s => {

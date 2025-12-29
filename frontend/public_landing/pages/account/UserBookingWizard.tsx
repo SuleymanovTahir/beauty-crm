@@ -99,6 +99,9 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   });
 
   const [salonSettings, setSalonSettings] = useState<any>(null);
+  const [initialServices, setInitialServices] = useState<any[]>([]);
+  const [initialMasters, setInitialMasters] = useState<any[]>([]);
+  const [initialAvailability, setInitialAvailability] = useState<Record<number, string[]>>({});
   const [loading, setLoading] = useState(true);
 
   const setStep = (newStep: string) => {
@@ -126,14 +129,9 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
   const handleGlobalBack = () => {
     if (step === 'menu') {
-      // Logic for "Back" from the main menu
-      // Heuristic: If history is long, go back (Cabinet). If short, probably direct (Stay or go to Landing).
-      // Since "Back" implies "Previous Page", navigate(-1) is safest IF we are not at the root entry.
-      // But user asked: "If from cabinet... Back -> previous page".
       if (window.history.length > 2) {
         navigate(-1);
       } else {
-        // Direct link: Back might not make sense, but we can redirect to landing
         window.location.href = 'http://localhost:5173';
       }
     } else {
@@ -146,25 +144,48 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
       onClose();
       return;
     }
-
-    // Heuristic for "Direct Link" vs "Cabinet"
-    // If we have history state or length > 2, assume internal navigation (Cabinet)
-    // Otherwise, assume direct link -> Go to Landing
     if (window.history.length > 2) {
-      navigate('/account'); // Home (Cabinet)
+      navigate('/account');
     } else {
-      window.location.href = 'http://localhost:5173'; // Close site / Landing
+      window.location.href = 'http://localhost:5173';
     }
   };
 
   useEffect(() => {
-    const init = async () => {
+    const initCorrect = async () => {
       try {
-        const salonRes = await api.getPublicSalonSettings();
-        setSalonSettings(salonRes);
-      } catch (e) { } finally { setLoading(false); }
-    };
-    init();
+        setLoading(true);
+        const today = new Date().toISOString().split('T')[0];
+
+        // PARALLEL DATA FETCHING: Settings, Active Services, All Masters, Batch Availability
+        const [settingsRes, servicesRes, usersRes, availabilityRes] = await Promise.all([
+          api.getPublicSalonSettings(),
+          api.getServices(true),
+          api.getUsers(),
+          api.getPublicBatchAvailability(today)
+        ]);
+
+        setSalonSettings(settingsRes);
+
+        const servicesData = Array.isArray(servicesRes) ? servicesRes : (servicesRes.services || []);
+        setInitialServices(servicesData);
+
+        const usersData = Array.isArray(usersRes) ? usersRes : (usersRes.users || []);
+        const masters = usersData.filter((u: any) => u.role === 'employee' || u.is_service_provider);
+        setInitialMasters(masters);
+
+        if (availabilityRes && availabilityRes.availability) {
+          setInitialAvailability(availabilityRes.availability);
+        }
+
+      } catch (e) {
+        console.error("Failed to load initial data", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    initCorrect();
   }, []);
 
   useEffect(() => {
@@ -243,6 +264,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 selectedServices={bookingState.services}
                 onServicesChange={(services: any) => updateState({ services })}
                 salonSettings={salonSettings}
+                preloadedServices={initialServices}
               />
             )}
             {step === 'professional' && (
@@ -257,6 +279,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   }
                 }}
                 salonSettings={salonSettings}
+                preloadedProfessionals={initialMasters}
+                preloadedAvailability={initialAvailability}
               />
             )}
             {step === 'datetime' && (

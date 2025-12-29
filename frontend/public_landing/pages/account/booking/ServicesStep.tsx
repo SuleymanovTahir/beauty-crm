@@ -13,16 +13,26 @@ interface ServicesStepProps {
     selectedServices: any[];
     onServicesChange: (services: any[]) => void;
     salonSettings: any;
+    preloadedServices?: any[];
 }
 
-export function ServicesStep({ selectedServices, onServicesChange, salonSettings }: ServicesStepProps) {
+export function ServicesStep({ selectedServices, onServicesChange, salonSettings, preloadedServices }: ServicesStepProps) {
     const { t, i18n } = useTranslation(['booking', 'common']);
-    const [services, setServices] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    // Use preloaded services if available, otherwise empty (or start fetch)
+    const [services, setServices] = useState<any[]>(preloadedServices || []);
+    // Only show loading if we DON'T have preloaded services AND we are fetching (fallback)
+    // Since we expect preloadedServices to be passed from parent who handles loading, init with false if preloaded exists
+    const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
     useEffect(() => {
+        if (preloadedServices && preloadedServices.length > 0) {
+            setServices(preloadedServices);
+            return;
+        }
+
+        // Fallback: Fetch if not provided (shouldn't happen in main flow but good for isolation)
         const fetchServices = async () => {
             setLoading(true);
             try {
@@ -36,7 +46,7 @@ export function ServicesStep({ selectedServices, onServicesChange, salonSettings
             }
         };
         fetchServices();
-    }, []);
+    }, [preloadedServices]);
 
     const categories = ['all', ...Array.from(new Set(services.map((s) => s.category)))];
 
