@@ -64,28 +64,56 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const step = (searchParams.get('booking') as any) || 'menu';
   const setStep = (newStep: string) => {
     setSearchParams(prev => {
-        const next = new URLSearchParams(prev);
-        next.set('booking', newStep);
-        return next;
+      const next = new URLSearchParams(prev);
+      next.set('booking', newStep);
+      return next;
     }, { replace: true });
   };
-  
+
   const [loading, setLoading] = useState(false);
   const [masters, setMasters] = useState<Master[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [salonSettings, setSalonSettings] = useState<any>(null);
-  
+
   const [selectedServices, setSelectedServices] = useState<Service[]>([]);
   const [selectedMaster, setSelectedMaster] = useState<Master | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>('');
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  
+
   const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
   const [availableSlots, setAvailableSlots] = useState<Slot[]>([]);
+  const [professionalSelected, setProfessionalSelected] = useState(false);
+  const [stepHistory, setStepHistory] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (step !== 'menu' && !stepHistory.includes(step)) {
+      setStepHistory(prev => [...prev, step]);
+    }
+  }, [step]);
+  // Сброс при обновлении страницы
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      sessionStorage.setItem('booking-reset', 'true');
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    if (sessionStorage.getItem('booking-reset') === 'true') {
+      setSelectedServices([]);
+      setSelectedMaster(null);
+      setProfessionalSelected(false);
+      setSelectedDate(null);
+      setSelectedTime('');
+      setSearchParams({ booking: 'menu' }, { replace: true });
+      sessionStorage.removeItem('booking-reset');
+    }
+
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
 
   // Load initial data 
   useEffect(() => {
@@ -135,7 +163,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         if (res.success && res.available_dates) {
           setAvailableDates(new Set(res.available_dates));
         }
-      } catch (e) {}
+      } catch (e) { }
     };
     fetchAvailability();
   }, [currentMonth, selectedMaster, selectedServices]);
@@ -155,7 +183,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           const res = await api.getPublicAvailableSlots(dateStr, selectedMaster.id);
           setAvailableSlots((res.slots || []).filter(s => s.available).map(s => ({ time: s.time, is_optimal: (s as any).is_optimal || false })));
         } else {
-          const results = await Promise.all(masters.map(m => 
+          const results = await Promise.all(masters.map(m =>
             api.getPublicAvailableSlots(dateStr, m.id).then(r => r.slots || []).catch(() => [])
           ));
           const seen = new Set<string>();
@@ -166,9 +194,9 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               allSlots.push({ time: s.time, is_optimal: (s as any).is_optimal || false });
             }
           });
-          setAvailableSlots(allSlots.sort((a,b) => a.time.localeCompare(b.time)));
+          setAvailableSlots(allSlots.sort((a, b) => a.time.localeCompare(b.time)));
         }
-      } catch (e) {}
+      } catch (e) { }
       setLoading(false);
     };
     fetchSlots();
@@ -200,6 +228,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
   const handleMasterSelect = (master: Master | null) => {
     setSelectedMaster(master);
+    setProfessionalSelected(true);
   };
 
   const handleDateSelect = (date: Date) => {
@@ -231,11 +260,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           name: user?.full_name
         });
       }
-      
+
       toast.success('Booking confirmed successfully!', {
         description: `${format(selectedDate, 'MMMM dd, yyyy')} at ${selectedTime}`
       });
-      
+
       if (onSuccess) onSuccess();
       if (onClose) onClose();
     } catch (e) {
@@ -282,36 +311,19 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         </div>
 
         {/* Progress breadcrumbs Redesign */}
-        {step !== 'menu' && (
+        {step !== 'menu' && stepHistory.length > 0 && (
           <div className="wizard-breadcrumb no-scrollbar overflow-x-auto">
-            <button
-              className={`wizard-breadcrumb-item ${step === 'services' ? 'wizard-breadcrumb-active' : 'wizard-breadcrumb-inactive'}`}
-              onClick={() => setStep('services')}
-            >
-              Services
-            </button>
-            <ChevronRight className="w-3 h-3 text-muted-foreground" />
-            <button
-              className={`wizard-breadcrumb-item ${step === 'professional' ? 'wizard-breadcrumb-active' : 'wizard-breadcrumb-inactive'}`}
-              onClick={() => selectedServices.length > 0 && setStep('professional')}
-              disabled={selectedServices.length === 0}
-            >
-              Professional
-            </button>
-            <ChevronRight className="w-3 h-3 text-muted-foreground" />
-            <button
-              className={`wizard-breadcrumb-item ${step === 'datetime' ? 'wizard-breadcrumb-active' : 'wizard-breadcrumb-inactive'}`}
-              onClick={() => selectedServices.length > 0 && setStep('datetime')}
-              disabled={selectedServices.length === 0}
-            >
-              Date & Time
-            </button>
-            {step === 'confirm' && (
-                <>
-                <ChevronRight className="w-3 h-3 text-muted-foreground" />
-                <span className="wizard-breadcrumb-item wizard-breadcrumb-active">Confirm</span>
-                </>
-            )}
+            {stepHistory.map((s, idx) => (
+              <div key={s} className="flex items-center gap-2">
+                {idx > 0 && <ChevronRight className="w-3 h-3 text-muted-foreground" />}
+                <button
+                  className={`wizard-breadcrumb-item ${step === s ? 'wizard-breadcrumb-active' : 'wizard-breadcrumb-inactive'}`}
+                  onClick={() => setStep(s as any)}
+                >
+                  {s === 'services' ? 'Services' : s === 'professional' ? 'Professional' : s === 'datetime' ? 'Date & Time' : 'Confirm'}
+                </button>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -361,8 +373,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 value: 'datetime',
                 icon: CalendarIcon,
                 title: 'Date & Time',
-                description: selectedDate && selectedTime 
-                  ? `${format(selectedDate, 'MMM dd')} at ${selectedTime}` 
+                description: selectedDate && selectedTime
+                  ? `${format(selectedDate, 'MMM dd')} at ${selectedTime}`
                   : "Pick time slot",
                 badge: selectedDate && selectedTime ? "Set" : null
               }
@@ -386,31 +398,13 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                       <p className="text-sm text-muted-foreground font-medium">{card.description}</p>
                     </div>
                     {card.badge && (
-                        <Badge className="bg-primary text-white w-fit">{card.badge}</Badge>
+                      <Badge className="bg-primary text-white w-fit">{card.badge}</Badge>
                     )}
                   </CardContent>
                 </Card>
               </motion.div>
             ))}
           </div>
-
-          {selectedServices.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="pt-8"
-            >
-              <Button 
-                size="lg" 
-                className="w-full h-16 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg font-black rounded-2xl shadow-2xl transition-all"
-                onClick={() => setStep('confirm')}
-                disabled={!selectedDate || !selectedTime}
-              >
-                <CheckCircle2 className="w-6 h-6 mr-2" />
-                Continue to Confirmation
-              </Button>
-            </motion.div>
-          )}
         </div>
       </div>
     );
@@ -420,7 +414,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     return (
       <div className="min-h-screen bg-white wizard-scrollable">
         {renderHeader('Select Services', 'Choose one or more services')}
-        
+
         <div className="wizard-container">
           {/* Search */}
           <div className="mb-8">
@@ -442,11 +436,10 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
-                    selectedCategory === cat 
-                      ? 'bg-primary text-white shadow-lg' 
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                  }`}
+                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${selectedCategory === cat
+                    ? 'bg-primary text-white shadow-lg'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                    }`}
                 >
                   {cat}
                 </button>
@@ -501,26 +494,55 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           </div>
 
           {/* Fixed Bottom Bar */}
-          {selectedServices.length > 0 && (
-            <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl">
-              <div className="max-w-4xl mx-auto flex items-center justify-between gap-6">
-                <div>
-                  <div className="font-black text-2xl text-primary">{totalPrice} AED</div>
-                  <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
-                    {selectedServices.length} Selected • {totalDuration} min
+          {selectedServices.length > 0 && (() => {
+            const hasMaster = professionalSelected;
+            const hasDateTime = !!(selectedDate && selectedTime);
+            const remaining = [
+              { key: 'professional', label: 'Choose Professional', selected: hasMaster },
+              { key: 'datetime', label: 'Select Date & Time', selected: hasDateTime },
+            ].filter(item => !item.selected);
+
+            if (hasMaster && hasDateTime) {
+              return (
+                <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl">
+                  <div className="max-w-4xl mx-auto">
+                    <Button
+                      size="lg"
+                      className="w-full h-16 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-black rounded-2xl shadow-xl"
+                      onClick={() => setStep('confirm')}
+                    >
+                      Confirm Booking
+                    </Button>
                   </div>
                 </div>
-                <Button
-                  size="lg"
-                  onClick={() => setStep('professional')}
-                  className="h-14 px-8 bg-primary text-white font-black rounded-2xl shadow-xl hover:scale-105 transition-transform"
-                >
-                  Continue
-                  <ChevronRight className="w-5 h-5 ml-2" />
-                </Button>
+              );
+            }
+
+            return (
+              <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl">
+                <div className="max-w-4xl mx-auto">
+                  <div className="mb-4 text-center">
+                    <div className="font-black text-2xl text-primary">{totalPrice} AED</div>
+                    <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
+                      {selectedServices.length} Selected • {totalDuration} min
+                    </div>
+                  </div>
+                  <div className={`grid ${remaining.length === 2 ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
+                    {remaining.map(item => (
+                      <Button
+                        key={item.key}
+                        size="lg"
+                        className="h-16 bg-primary text-white font-black rounded-2xl shadow-xl"
+                        onClick={() => setStep(item.key as any)}
+                      >
+                        {item.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
       </div>
     );
@@ -554,57 +576,88 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           </motion.div>
 
           <div className="grid gap-4 mb-32">
-          {masters.map((master, idx) => {
-            const isSelected = selectedMaster?.id === master.id;
-            return (
-              <motion.div
-                key={master.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 }}
-              >
-                <Card
-                  className={`cursor-pointer wizard-card ${isSelected ? 'wizard-card-selected' : ''}`}
-                  onClick={() => handleMasterSelect(master)}
+            {masters.map((master, idx) => {
+              const isSelected = selectedMaster?.id === master.id;
+              return (
+                <motion.div
+                  key={master.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
                 >
-                  <CardContent className="p-6 flex items-center gap-6">
-                    <Avatar className="w-16 h-16 border-2 border-primary/5 shadow-inner">
-                      <AvatarImage src={master.photo} className="object-cover" />
-                      <AvatarFallback className="bg-muted text-primary font-bold">{master.full_name[0]}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3">
-                        <h3 className="font-black text-lg text-primary">{master.full_name}</h3>
-                        {isSelected && <CheckCircle2 className="w-5 h-5 text-primary" />}
-                      </div>
-                      <p className="text-sm text-muted-foreground font-medium mb-2">{master.position}</p>
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1 text-primary">
-                          <Star className="w-4 h-4 fill-primary" />
-                          <span className="font-black text-sm">{master.rating || '5.0'}</span>
+                  <Card
+                    className={`cursor-pointer wizard-card ${isSelected ? 'wizard-card-selected' : ''}`}
+                    onClick={() => handleMasterSelect(master)}
+                  >
+                    <CardContent className="p-6 flex items-center gap-6">
+                      <Avatar className="w-16 h-16 border-2 border-primary/5 shadow-inner">
+                        <AvatarImage src={master.photo} className="object-cover" />
+                        <AvatarFallback className="bg-muted text-primary font-bold">{master.full_name[0]}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <h3 className="font-black text-lg text-primary">{master.full_name}</h3>
+                          {isSelected && <CheckCircle2 className="w-5 h-5 text-primary" />}
                         </div>
-                        <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">({master.reviews || 0} reviews)</span>
+                        <p className="text-sm text-muted-foreground font-medium mb-2">{master.position}</p>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-1 text-primary">
+                            <Star className="w-4 h-4 fill-primary" />
+                            <span className="font-black text-sm">{master.rating || '5.0'}</span>
+                          </div>
+                          <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">({master.reviews || 0} reviews)</span>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl">
-            <div className="max-w-4xl mx-auto">
-              <Button
-                size="lg"
-                className="w-full h-16 bg-primary text-white font-black rounded-2xl shadow-xl hover:scale-[1.01] transition-transform"
-                onClick={() => setStep('datetime')}
-              >
-                Continue to Date & Time
-                <ChevronRight className="w-5 h-5 ml-2" />
-              </Button>
-            </div>
-          </div>
+          {(selectedMaster !== null || professionalSelected) && (() => {
+            const hasServices = selectedServices.length > 0;
+            const hasDateTime = !!(selectedDate && selectedTime);
+            const remaining = [
+              { key: 'services', label: 'Select Services', selected: hasServices },
+              { key: 'datetime', label: 'Select Date & Time', selected: hasDateTime },
+            ].filter(item => !item.selected);
+
+            if (hasServices && hasDateTime) {
+              return (
+                <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl">
+                  <div className="max-w-4xl mx-auto">
+                    <Button
+                      size="lg"
+                      className="w-full h-16 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-black rounded-2xl shadow-xl"
+                      onClick={() => setStep('confirm')}
+                    >
+                      Confirm Booking
+                    </Button>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl">
+                <div className="max-w-4xl mx-auto">
+                  <div className={`grid ${remaining.length === 2 ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
+                    {remaining.map(item => (
+                      <Button
+                        key={item.key}
+                        size="lg"
+                        className="h-16 bg-primary text-white font-black rounded-2xl shadow-xl"
+                        onClick={() => setStep(item.key as any)}
+                      >
+                        {item.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
     );
@@ -615,6 +668,9 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
       start: startOfMonth(currentMonth),
       end: endOfMonth(currentMonth)
     });
+    const firstDayOfMonth = startOfMonth(currentMonth);
+    const startDayOffset = (firstDayOfMonth.getDay() + 6) % 7; // Конвертируем Sunday=0 в Monday=0
+    const emptyDays = Array(startDayOffset).fill(null);
 
     const groupedSlots = [
       { label: 'Morning', slots: availableSlots.filter(s => parseInt(s.time) < 12) },
@@ -656,21 +712,27 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 ))}
               </div>
 
-              <div className="wizard-calendar-grid">
+              <div className="grid grid-cols-7 gap-2">
+                {emptyDays.map((_, idx) => (
+                  <div key={`empty-${idx}`} className="wizard-calendar-day" />
+                ))}
                 {monthDays.map((day, idx) => {
                   const dateStr = format(day, 'yyyy-MM-dd');
                   const isAvailable = availableDates.has(dateStr);
                   const isPast = day < new Date() && !isToday(day);
                   const isSelected = selectedDate && isSameDay(day, selectedDate);
-                  
+
                   return (
                     <button
                       key={idx}
                       onClick={() => !isPast && isAvailable && handleDateSelect(day)}
                       disabled={isPast || !isAvailable}
                       className={`
-                        wizard-calendar-day
-                        ${!isAvailable || isPast ? '' : 'bg-muted/30 text-primary'}
+                        aspect-square rounded-full p-2 text-sm font-bold transition-all flex items-center justify-center
+                        ${isPast || !isAvailable
+                          ? 'text-muted-foreground/20 cursor-not-allowed'
+                          : 'bg-muted/30 text-primary hover:bg-muted/50 cursor-pointer'
+                        }
                         ${isSelected ? 'wizard-calendar-day-selected' : ''}
                         ${isToday(day) && !isSelected ? 'wizard-calendar-today' : ''}
                       `}
@@ -727,20 +789,50 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           )}
 
           {/* Fixed Bottom Bar */}
-          {selectedDate && selectedTime && (
-            <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl font-bold">
-              <div className="max-w-4xl mx-auto">
-                <Button
-                  size="lg"
-                  className="w-full h-16 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg font-black rounded-2xl shadow-xl transition-all"
-                  onClick={() => setStep('confirm')}
-                >
-                  Confirm Booking Details
-                  <ChevronRight className="w-6 h-6 ml-2" />
-                </Button>
+          {selectedDate && selectedTime && (() => {
+            const hasServices = selectedServices.length > 0;
+            const hasMaster = professionalSelected;
+            const remaining = [
+              { key: 'services', label: 'Select Services', selected: hasServices },
+              { key: 'professional', label: 'Choose Professional', selected: hasMaster },
+            ].filter(item => !item.selected);
+
+            if (hasServices && hasMaster) {
+              return (
+                <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl">
+                  <div className="max-w-4xl mx-auto">
+                    <Button
+                      size="lg"
+                      className="w-full h-16 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg font-black rounded-2xl shadow-xl"
+                      onClick={() => setStep('confirm')}
+                    >
+                      Confirm Booking Details
+                      <ChevronRight className="w-6 h-6 ml-2" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl">
+                <div className="max-w-4xl mx-auto">
+                  <div className={`grid ${remaining.length === 2 ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
+                    {remaining.map(item => (
+                      <Button
+                        key={item.key}
+                        size="lg"
+                        className="h-16 bg-primary text-white font-black rounded-2xl shadow-xl"
+                        onClick={() => setStep(item.key as any)}
+                      >
+                        {item.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
       </div>
     );
@@ -752,66 +844,66 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         {renderHeader('Confirm Booking', 'Review your appointment details')}
 
         <div className="wizard-container space-y-6">
-            <Card className="wizard-card p-4">
-              <CardContent className="p-4 space-y-8">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <List className="w-6 h-6 text-primary" />
-                    <h3 className="font-black text-xl text-primary">Summary</h3>
-                  </div>
-                  <div className="space-y-4 divide-y divide-primary/5">
-                    {selectedServices.map(service => (
-                      <div key={service.id} className="flex justify-between items-center pt-4">
-                        <div>
-                          <div className="font-black text-lg text-primary">{getServiceName(service)}</div>
-                          <div className="text-sm text-muted-foreground font-bold">{service.duration || '30'} min</div>
-                        </div>
-                        <div className="font-black text-xl text-primary">{service.price} AED</div>
+          <Card className="wizard-card p-4">
+            <CardContent className="p-4 space-y-8">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <List className="w-6 h-6 text-primary" />
+                  <h3 className="font-black text-xl text-primary">Summary</h3>
+                </div>
+                <div className="space-y-4 divide-y divide-primary/5">
+                  {selectedServices.map(service => (
+                    <div key={service.id} className="flex justify-between items-center pt-4">
+                      <div>
+                        <div className="font-black text-lg text-primary">{getServiceName(service)}</div>
+                        <div className="text-sm text-muted-foreground font-bold">{service.duration || '30'} min</div>
                       </div>
-                    ))}
-                    <div className="flex justify-between items-center pt-6">
-                      <div className="font-black text-xl text-primary uppercase tracking-tighter">Total</div>
-                      <div className="font-black text-3xl text-primary">{totalPrice} AED</div>
+                      <div className="font-black text-xl text-primary">{service.price} AED</div>
+                    </div>
+                  ))}
+                  <div className="flex justify-between items-center pt-6">
+                    <div className="font-black text-xl text-primary uppercase tracking-tighter">Total</div>
+                    <div className="font-black text-3xl text-primary">{totalPrice} AED</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                <div className="p-6 rounded-2xl bg-muted/30 border border-primary/5 flex items-center gap-4">
+                  <User className="w-6 h-6 text-primary" />
+                  <div>
+                    <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Professional</div>
+                    <div className="font-black text-primary">{selectedMaster ? selectedMaster.full_name : "Any Provider"}</div>
+                  </div>
+                </div>
+                <div className="p-6 rounded-2xl bg-muted/30 border border-primary/5 flex items-center gap-4">
+                  <CalendarIcon className="w-6 h-6 text-primary" />
+                  <div>
+                    <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Appointment at</div>
+                    <div className="font-black text-primary">
+                      {selectedDate ? format(selectedDate, 'EEEE, MMM dd') : '--'} at {selectedTime}
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                    <div className="p-6 rounded-2xl bg-muted/30 border border-primary/5 flex items-center gap-4">
-                        <User className="w-6 h-6 text-primary" />
-                        <div>
-                            <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Professional</div>
-                            <div className="font-black text-primary">{selectedMaster ? selectedMaster.full_name : "Any Provider"}</div>
-                        </div>
-                    </div>
-                    <div className="p-6 rounded-2xl bg-muted/30 border border-primary/5 flex items-center gap-4">
-                        <CalendarIcon className="w-6 h-6 text-primary" />
-                        <div>
-                            <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Appointment at</div>
-                            <div className="font-black text-primary">
-                                {selectedDate ? format(selectedDate, 'EEEE, MMM dd') : '--'} at {selectedTime}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <Button
-                  size="lg"
-                  className="w-full h-20 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-2xl font-black rounded-2xl shadow-2xl transition-all mt-8"
-                  onClick={handleConfirmBooking}
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <Loader2 className="w-8 h-8 animate-spin" />
-                  ) : (
-                    <>
-                      <CheckCircle2 className="w-8 h-8 mr-3" />
-                      Book Now
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
+              <Button
+                size="lg"
+                className="w-full h-20 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-2xl font-black rounded-2xl shadow-2xl transition-all mt-8"
+                onClick={handleConfirmBooking}
+                disabled={loading}
+              >
+                {loading ? (
+                  <Loader2 className="w-8 h-8 animate-spin" />
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-8 h-8 mr-3" />
+                    Book Now
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
