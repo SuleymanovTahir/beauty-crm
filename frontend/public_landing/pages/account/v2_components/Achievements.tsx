@@ -27,77 +27,104 @@ export function Achievements({ achievements }: any) {
   };
 
   return (
-    <div className="space-y-6 pb-8">
-      <div>
-        <h1>Достижения</h1>
-        <p className="text-muted-foreground">
-          Ваш прогресс: {unlockedCount} из {totalCount} достижений
-        </p>
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent inline-block">
+            Достижения
+          </h1>
+          <p className="text-muted-foreground mt-1 text-lg">
+            Ваш путь к совершенству
+          </p>
+        </div>
+        <div className="text-right">
+          <span className="text-2xl font-bold text-yellow-600">{unlockedCount}</span>
+          <span className="text-muted-foreground ml-1">из {totalCount}</span>
+        </div>
       </div>
 
       {/* Общий прогресс */}
-      <Card className="bg-gradient-to-r from-yellow-50 to-orange-50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Trophy className="w-6 h-6 text-yellow-600" />
-            Общий прогресс
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Разблокировано достижений</span>
-              <span className="font-semibold">{unlockedCount} / {totalCount}</span>
+      <Card className="relative overflow-hidden border-0 shadow-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-white/20 blur-3xl opacity-50" />
+        <CardContent className="p-8 relative z-10">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="relative w-32 h-32 flex-shrink-0 flex items-center justify-center">
+              <svg className="absolute w-full h-full transform -rotate-90">
+                <circle
+                  className="text-white/20"
+                  strokeWidth="8"
+                  stroke="currentColor"
+                  fill="transparent"
+                  r="58"
+                  cx="64"
+                  cy="64"
+                />
+                <circle
+                  className="text-white transition-all duration-1000 ease-out"
+                  strokeWidth="8"
+                  strokeDasharray={365}
+                  strokeDashoffset={365 - (365 * (totalCount > 0 ? unlockedCount / totalCount : 0))}
+                  strokeLinecap="round"
+                  stroke="currentColor"
+                  fill="transparent"
+                  r="58"
+                  cx="64"
+                  cy="64"
+                />
+              </svg>
+              <Trophy className="w-12 h-12 text-white animate-bounce-slow" />
             </div>
-            <Progress value={totalCount > 0 ? (unlockedCount / totalCount) * 100 : 0} className="h-3" />
-          </div>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-yellow-600">{unlockedCount}</div>
-              <div className="text-xs text-muted-foreground">Получено</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-blue-600">{totalCount - unlockedCount}</div>
-              <div className="text-xs text-muted-foreground">Осталось</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-purple-600">
-                {totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0}%
+
+            <div className="flex-1 w-full text-center md:text-left space-y-4">
+              <div>
+                <h3 className="text-2xl font-bold mb-1">Уровень искателя красоты</h3>
+                <p className="text-orange-100">Вы открыли {Math.round((unlockedCount / totalCount) * 100) || 0}% всех достижений</p>
               </div>
-              <div className="text-xs text-muted-foreground">Завершено</div>
+
+              <div className="grid grid-cols-3 gap-4 bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">{unlockedCount}</div>
+                  <div className="text-xs text-orange-100 uppercase tracking-wider">Открыто</div>
+                </div>
+                <div className="text-center border-l border-white/20">
+                  <div className="text-2xl font-bold text-white">{totalCount - unlockedCount}</div>
+                  <div className="text-xs text-orange-100 uppercase tracking-wider">Закрыто</div>
+                </div>
+                <div className="text-center border-l border-white/20">
+                  <div className="text-2xl font-bold text-white">{challenges.length}</div>
+                  <div className="text-xs text-orange-100 uppercase tracking-wider">Задания</div>
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Список достижений */}
-      <div className="space-y-4">
-        <h2>Все достижения</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-6">
+        <h2 className="text-xl font-bold text-gray-900 border-b pb-2">Коллекция наград</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {achievements?.map((achievement: any, index: number) => {
             const Icon = iconMap[achievement.icon] || Star;
-            const hasProgress = achievement.maxProgress !== undefined;
-            const progress = hasProgress && achievement.progress
-              ? (achievement.progress / achievement.maxProgress!) * 100
-              : 0;
+            const isUnlocked = achievement.unlocked || achievement.is_unlocked;
 
             return (
               <Card
                 key={achievement.id || index}
-                className={`${achievement.unlocked
-                  ? 'border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50'
-                  : 'opacity-60'
+                className={`transition-all duration-300 hover:scale-[1.02] border ${isUnlocked
+                  ? 'border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50 shadow-md hover:shadow-yellow-100'
+                  : 'border-gray-100 bg-gray-50 opacity-80 hover:opacity-100'
                   }`}
               >
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div
-                      className={`p-3 rounded-full ${achievement.unlocked
-                        ? 'bg-yellow-500 text-white'
-                        : 'bg-gray-200 text-gray-400'
+                      className={`p-4 rounded-2xl shadow-sm ${isUnlocked
+                        ? 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white shadow-orange-200'
+                        : 'bg-white text-gray-300 border border-gray-100'
                         }`}
                     >
-                      {achievement.unlocked ? (
+                      {isUnlocked ? (
                         <Icon className="w-6 h-6" />
                       ) : (
                         <Lock className="w-6 h-6" />
