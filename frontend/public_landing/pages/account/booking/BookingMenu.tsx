@@ -8,12 +8,13 @@ import { motion } from 'motion/react';
 interface BookingMenuProps {
     bookingState: any;
     onNavigate: (step: string) => void;
+    onReset: () => void;
     totalDuration: number;
     totalPrice: number;
     salonSettings: any;
 }
 
-export function BookingMenu({ bookingState, onNavigate, totalDuration, totalPrice, salonSettings }: BookingMenuProps) {
+export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, totalPrice, salonSettings }: BookingMenuProps) {
     const { t } = useTranslation(['booking', 'common']);
 
     const isServicesComplete = bookingState.services.length > 0;
@@ -25,10 +26,10 @@ export function BookingMenu({ bookingState, onNavigate, totalDuration, totalPric
         {
             id: 'services',
             icon: Scissors,
-            title: t('booking.menu.services', 'Select Services'),
+            title: t('menu.services', 'Select Services'),
             description: isServicesComplete
-                ? `${bookingState.services.length} ${t('booking.menu.selected', 'selected').toLowerCase()}`
-                : t('booking.menu.selectServices', 'Pick treatment'),
+                ? `${bookingState.services.length} ${t('menu.selected', 'selected').toLowerCase()}`
+                : t('menu.selectServices', 'Pick treatment'),
             isComplete: isServicesComplete,
             step: 'services',
             gradient: 'from-purple-500 to-pink-500',
@@ -36,10 +37,10 @@ export function BookingMenu({ bookingState, onNavigate, totalDuration, totalPric
         {
             id: 'professional',
             icon: User,
-            title: t('booking.menu.professional', 'Professional'),
+            title: t('menu.professional', 'Professional'),
             description: isProfessionalComplete
-                ? (bookingState.professional?.full_name || t('booking.professional.anyAvailable', 'Flexible Match'))
-                : t('booking.menu.selectProfessional', 'Select master'),
+                ? (bookingState.professional?.full_name || t('professional.anyAvailable', 'Flexible Match'))
+                : t('menu.selectProfessional', 'Select master'),
             isComplete: isProfessionalComplete,
             step: 'professional',
             gradient: 'from-pink-500 to-rose-500',
@@ -47,10 +48,10 @@ export function BookingMenu({ bookingState, onNavigate, totalDuration, totalPric
         {
             id: 'datetime',
             icon: Calendar,
-            title: t('booking.menu.datetime', 'Date & Time'),
+            title: t('menu.datetime', 'Date & Time'),
             description: isDateTimeComplete
                 ? `${bookingState.time}`
-                : t('booking.menu.selectDateTime', 'Pick time slot'),
+                : t('menu.selectDateTime', 'Pick time slot'),
             isComplete: isDateTimeComplete,
             step: 'datetime',
             gradient: 'from-rose-500 to-orange-500',
@@ -76,6 +77,14 @@ export function BookingMenu({ bookingState, onNavigate, totalDuration, totalPric
                             {salonSettings?.address || t('salon.address', 'Studio Location')}
                         </p>
                     </div>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={onReset}
+                        className="text-[10px] font-black uppercase tracking-widest border-red-100 text-red-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all rounded-xl"
+                    >
+                        {t('common.reset', 'Reset All')}
+                    </Button>
                 </div>
             </motion.div>
 
@@ -112,7 +121,7 @@ export function BookingMenu({ bookingState, onNavigate, totalDuration, totalPric
 
                                     <div className="flex items-center justify-between">
                                         <Badge variant={card.isComplete ? 'default' : 'outline'} className={card.isComplete ? 'bg-green-500' : ''}>
-                                            {card.isComplete ? t('booking.menu.completed', 'Complete') : t('common.select', 'Select')}
+                                            {card.isComplete ? t('menu.completed', 'Complete') : t('common.select', 'Select')}
                                         </Badge>
                                         <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 transition-colors" />
                                     </div>
@@ -130,14 +139,14 @@ export function BookingMenu({ bookingState, onNavigate, totalDuration, totalPric
                     animate={{ opacity: 1, y: 0 }}
                     className="bg-white rounded-2xl shadow-lg p-6"
                 >
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('booking.confirm.summary', 'Selection Summary')}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('confirm.summary', 'Selection Summary')}</h3>
 
                     <div className="space-y-3 mb-6">
                         {bookingState.services.map((service: any) => (
                             <div key={service.id} className="flex justify-between items-center">
                                 <span className="text-gray-700">{service.name}</span>
                                 <div className="flex items-center gap-3">
-                                    <span className="text-sm text-gray-500">{service.duration} {t('booking.min', 'min')}</span>
+                                    <span className="text-sm text-gray-500">{service.duration} {t('min', 'min')}</span>
                                     <span className="font-medium">{service.price} {salonSettings?.currency || 'AED'}</span>
                                 </div>
                             </div>
@@ -146,8 +155,8 @@ export function BookingMenu({ bookingState, onNavigate, totalDuration, totalPric
 
                     <div className="border-t pt-4 flex justify-between items-center mb-6">
                         <div>
-                            <p className="text-gray-600">{t('booking.services.total', 'Total')}</p>
-                            <p className="text-sm text-gray-500">{totalDuration} {t('booking.min', 'min')}</p>
+                            <p className="text-gray-600">{t('services.total', 'Total')}</p>
+                            <p className="text-sm text-gray-500">{totalDuration} {t('min', 'min')}</p>
                         </div>
                         <p className="text-2xl font-bold text-purple-600">{totalPrice} {salonSettings?.currency || 'AED'}</p>
                     </div>
@@ -158,7 +167,7 @@ export function BookingMenu({ bookingState, onNavigate, totalDuration, totalPric
                             className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 h-12 text-lg font-bold"
                             size="lg"
                         >
-                            {t('booking.menu.continue', 'Finalize Booking')}
+                            {t('menu.continue', 'Finalize Booking')}
                         </Button>
                     )}
                 </motion.div>

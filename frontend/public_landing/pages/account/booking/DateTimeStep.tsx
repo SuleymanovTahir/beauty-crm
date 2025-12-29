@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Calendar } from './ui/calendar';
-import { Sparkles, Clock, ChevronRight } from 'lucide-react';
+import { Sparkles, Clock } from 'lucide-react';
 import { motion } from 'motion/react';
 import { format } from 'date-fns';
 import { api } from '../../../../src/services/api';
@@ -16,7 +16,6 @@ interface DateTimeStepProps {
     selectedServices: any[];
     totalDuration: number;
     onDateTimeChange: (date: Date | null, time: string | null) => void;
-    onContinue: () => void;
 }
 
 interface TimeSlot {
@@ -32,7 +31,6 @@ export function DateTimeStep({
     selectedMaster,
     totalDuration,
     onDateTimeChange,
-    onContinue,
 }: DateTimeStepProps) {
     const { t, i18n } = useTranslation(['booking', 'common']);
     const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
@@ -123,9 +121,9 @@ export function DateTimeStep({
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white rounded-2xl shadow-lg p-6"
             >
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('booking.datetime.title', 'Date & Time')}</h2>
-                <p className="text-gray-600 font-medium">
-                    {t('booking.services.duration', 'Duration')}: {totalDuration} {t('booking.min', 'min')}
+                <h2 className="text-2xl font-black text-gray-900 mb-2 uppercase tracking-tighter">{t('booking.datetime.title', 'Date & Time')}</h2>
+                <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">
+                    {t('booking.services.duration', 'Duration')}: <span className="text-purple-600 italic">{totalDuration} {t('booking.min', 'min')}</span>
                 </p>
             </motion.div>
 
@@ -139,7 +137,7 @@ export function DateTimeStep({
                     <Card className="overflow-hidden border-none shadow-xl rounded-2xl">
                         <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-5">
                             <h3 className="text-white font-black uppercase tracking-widest text-sm">
-                                {t('booking.datetime.date', 'Select Date')}
+                                {t('datetime.date', 'Select Date')}
                             </h3>
                         </div>
                         <CardContent className="p-4 bg-white">
@@ -177,17 +175,17 @@ export function DateTimeStep({
                                 <div className="text-center py-24 text-gray-400">
                                     <Clock className="w-12 h-12 mx-auto mb-4 opacity-20" />
                                     <p className="font-bold uppercase tracking-widest text-xs">
-                                        {t('booking.datetime.selectDateFirst', 'Select a date first')}
+                                        {t('datetime.selectDateFirst', 'Select a date first')}
                                     </p>
                                 </div>
                             ) : loading ? (
                                 <div className="text-center py-24">
                                     <div className="w-12 h-12 border-8 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                                    <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">{t('booking.loading', 'Syncing slots...')}</p>
+                                    <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">{t('loading', 'Syncing slots...')}</p>
                                 </div>
                             ) : timeSlots.length === 0 ? (
                                 <div className="text-center py-24 text-gray-400">
-                                    <p className="font-bold uppercase tracking-widest text-xs">{t('booking.datetime.noSlots', 'No slots available')}</p>
+                                    <p className="font-bold uppercase tracking-widest text-xs">{t('datetime.noSlots', 'No slots available')}</p>
                                 </div>
                             ) : (
                                 <div className="space-y-8 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
@@ -198,7 +196,7 @@ export function DateTimeStep({
                                         return (
                                             <div key={period}>
                                                 <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                                                    {t(`booking.datetime.${period}`)}
+                                                    {t(`datetime.${period}`, period.charAt(0).toUpperCase() + period.slice(1))}
                                                 </h4>
                                                 <div className="grid grid-cols-3 gap-2">
                                                     {periodSlots.map((slot) => (
@@ -227,24 +225,6 @@ export function DateTimeStep({
                     </Card>
                 </motion.div>
             </div>
-
-            {/* Continue Button */}
-            {selectedDate && selectedTime && (
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="flex justify-end mt-10"
-                >
-                    <Button
-                        onClick={onContinue}
-                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 h-16 px-16 rounded-2xl text-xl font-black shadow-2xl transition-all hover:scale-105"
-                        size="lg"
-                    >
-                        {t('common.continue', 'Next step')}
-                        <ChevronRight className="w-6 h-6 ml-2" />
-                    </Button>
-                </motion.div>
-            )}
         </div>
     );
 }
