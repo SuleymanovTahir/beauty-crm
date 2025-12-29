@@ -186,6 +186,27 @@
   border-radius: var(--radius);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: white;
+  min-height: 140px; /* Ensure some height consistency */
+}
+
+/* Make content more compact */
+.service-item-card .p-6 {
+  padding: 1.25rem !important;
+}
+
+.service-item-card h3 {
+  font-size: 1rem !important;
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+}
+
+.service-item-card p {
+  font-size: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.service-item-card .text-lg {
+  font-size: 1rem !important;
 }
 
 .service-item-card:hover {

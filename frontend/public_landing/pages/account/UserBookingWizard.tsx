@@ -64,7 +64,7 @@ interface Props {
 
 // --- Helper Components ---
 
-function BookingMenu({ bookingState, onNavigate, totalPrice, salonSettings }: any) {
+function BookingMenu({ bookingState, onNavigate, onReset, totalPrice, salonSettings }: any) {
   const { t, i18n } = useTranslation(['booking', 'common']);
   const dateLocale = getDateLocaleCentral(i18n.language);
 
@@ -128,6 +128,15 @@ function BookingMenu({ bookingState, onNavigate, totalPrice, salonSettings }: an
             {salonSettings?.address || 'Address'}
           </p>
         </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onReset}
+          className="text-gray-400 hover:text-red-500 font-bold gap-2"
+        >
+          <X className="w-4 h-4" />
+          {t('booking.menu.reset', 'Reset Selection')}
+        </Button>
       </motion.div>
 
       {/* Steps Grid */}
@@ -308,7 +317,7 @@ function ServicesStep({ selectedServices, onServicesChange, onContinue, salonSet
       </motion.div>
 
       {/* Services List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <AnimatePresence>
           {filteredServices.map((service) => {
             const isSelected = selectedServices.some((s: any) => s.id === service.id);
@@ -492,9 +501,11 @@ function ProfessionalStep({ selectedProfessional, professionalSelected, onProfes
                           <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                           <span className="font-black text-sm text-gray-700">{master.rating || '5.0'}</span>
                         </div>
-                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
-                          ({master.reviews || 0} reviews)
-                        </span>
+                        {master.reviews !== undefined && master.reviews > 0 && (
+                          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
+                            ({master.reviews} reviews)
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1034,6 +1045,18 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               <BookingMenu
                 bookingState={bookingState}
                 onNavigate={setStep}
+                onReset={() => {
+                  const emptyState = {
+                    services: [],
+                    professional: null,
+                    professionalSelected: false,
+                    date: null,
+                    time: null,
+                    phone: ''
+                  };
+                  setBookingState(emptyState);
+                  localStorage.removeItem(STORAGE_KEY);
+                }}
                 totalPrice={totalPrice}
                 salonSettings={salonSettings}
               />
