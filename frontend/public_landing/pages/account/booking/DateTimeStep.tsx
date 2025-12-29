@@ -103,7 +103,11 @@ export function DateTimeStep({
 
     const handleTimeSelect = (time: string) => {
         if (selectedDate) {
-            onDateTimeChange(selectedDate, time);
+            if (selectedTime === time) {
+                onDateTimeChange(selectedDate, null);
+            } else {
+                onDateTimeChange(selectedDate, time);
+            }
         }
     };
 
@@ -121,9 +125,9 @@ export function DateTimeStep({
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white rounded-2xl shadow-lg p-6"
             >
-                <h2 className="text-2xl font-black text-gray-900 mb-2 uppercase tracking-tighter">{t('booking.datetime.title', 'Date & Time')}</h2>
+                <h2 className="text-2xl font-black text-gray-900 mb-2 uppercase tracking-tighter">{t('datetime.title', 'Date & Time')}</h2>
                 <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">
-                    {t('booking.services.duration', 'Duration')}: <span className="text-purple-600 italic">{totalDuration} {t('booking.min', 'min')}</span>
+                    {t('totalDuration', 'Duration')}: <span className="text-purple-600 italic">{totalDuration} {t('min', 'min')}</span>
                 </p>
             </motion.div>
 
@@ -168,7 +172,7 @@ export function DateTimeStep({
                 >
                     <Card className="overflow-hidden border-none shadow-xl rounded-2xl h-full">
                         <div className="bg-gradient-to-r from-pink-500 to-rose-500 p-5">
-                            <h3 className="text-white font-black uppercase tracking-widest text-sm">{t('booking.datetime.time', 'Pick Time')}</h3>
+                            <h3 className="text-white font-black uppercase tracking-widest text-sm">{t('datetime.time', 'Pick Time')}</h3>
                         </div>
                         <CardContent className="p-6 bg-white">
                             {!selectedDate ? (

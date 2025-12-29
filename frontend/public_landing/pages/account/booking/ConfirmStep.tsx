@@ -64,13 +64,13 @@ export function ConfirmStep({
                 name: user?.full_name || user?.username || 'Guest'
             });
 
-            toast.success(t('booking.confirm.success', 'Booking confirmed!'));
+            toast.success(t('confirm.success', 'Booking confirmed!'));
             setTimeout(() => {
                 onSuccess();
             }, 2000);
         } catch (error) {
             console.error('Booking error:', error);
-            toast.error(t('booking.confirm.error', 'Error creating booking'));
+            toast.error(t('confirm.error', 'Error creating booking'));
             setLoading(false);
         }
     };
@@ -85,7 +85,7 @@ export function ConfirmStep({
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white rounded-2xl shadow-lg p-6"
             >
-                <h2 className="text-2xl font-bold text-gray-900">{t('booking.confirm.title', 'Confirm Booking')}</h2>
+                <h2 className="text-2xl font-bold text-gray-900">{t('confirm.title', 'Confirm Booking')}</h2>
             </motion.div>
 
             {/* Summary */}
@@ -98,13 +98,13 @@ export function ConfirmStep({
                     <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-5">
                         <h3 className="text-white font-black uppercase tracking-widest text-sm flex items-center gap-2">
                             <CheckCircle2 className="w-5 h-5" />
-                            {t('booking.confirm.summary', 'Order Summary')}
+                            {t('confirm.summary', 'Order Summary')}
                         </h3>
                     </div>
                     <CardContent className="p-8 space-y-8 bg-white">
                         {/* Services */}
                         <div>
-                            <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">{t('booking.menu.services', 'Services')}</h4>
+                            <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">{t('menu.services', 'Services')}</h4>
                             <div className="space-y-4">
                                 {bookingState.services.map((service: any) => (
                                     <div key={service.id} className="flex justify-between items-center group">
@@ -114,7 +114,7 @@ export function ConfirmStep({
                                         </div>
                                         <div className="flex items-center gap-4 text-sm">
                                             <span className="text-gray-400 font-bold uppercase tracking-tighter">
-                                                {service.duration} {t('booking.min', 'min')}
+                                                {service.duration} {t('min', 'min')}
                                             </span>
                                             <span className="font-black text-gray-900">{service.price} {salonSettings?.currency || 'AED'}</span>
                                         </div>
@@ -127,11 +127,11 @@ export function ConfirmStep({
                         <div className="border-t border-gray-50 pt-8">
                             <div className="flex items-center gap-2 mb-4">
                                 <User className="w-4 h-4 text-purple-600" />
-                                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('booking.confirm.professional', 'Provider')}</h4>
+                                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('confirm.professional', 'Provider')}</h4>
                             </div>
                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                 <p className="text-gray-900 font-black">
-                                    {bookingState.professional ? getLocalizedName(bookingState.professional, i18n.language) : t('booking.professional.anyAvailable', 'Flexible Match')}
+                                    {bookingState.professional ? getLocalizedName(bookingState.professional, i18n.language) : t('professional.anyAvailable', 'Flexible Match')}
                                 </p>
                             </div>
                         </div>
@@ -142,7 +142,7 @@ export function ConfirmStep({
                                 <div>
                                     <div className="flex items-center gap-2 mb-4">
                                         <Calendar className="w-4 h-4 text-purple-600" />
-                                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('booking.confirm.date', 'Date')}</h4>
+                                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('confirm.date', 'Date')}</h4>
                                     </div>
                                     <p className="text-gray-900 font-black bg-slate-50 p-4 rounded-xl border border-slate-100">
                                         {bookingState.date && format(bookingState.date, 'EEEE, MMM d', { locale: dateLocale })}
@@ -151,7 +151,7 @@ export function ConfirmStep({
                                 <div>
                                     <div className="flex items-center gap-2 mb-4">
                                         <Clock className="w-4 h-4 text-purple-600" />
-                                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('booking.confirm.time', 'Time')}</h4>
+                                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('confirm.time', 'Time')}</h4>
                                     </div>
                                     <p className="text-gray-900 font-black bg-slate-50 p-4 rounded-xl border border-slate-100">
                                         {bookingState.time}
@@ -163,7 +163,7 @@ export function ConfirmStep({
                         {/* Total */}
                         <div className="border-t border-gray-50 pt-8">
                             <div className="flex justify-between items-center bg-purple-50 p-6 rounded-2xl border border-purple-100">
-                                <span className="text-xs font-black text-purple-600 uppercase tracking-[0.2em]">{t('booking.confirm.total', 'Total Amount')}</span>
+                                <span className="text-xs font-black text-purple-600 uppercase tracking-[0.2em]">{t('confirm.total', 'Total Amount')}</span>
                                 <span className="text-3xl font-black text-gray-900">
                                     {totalPrice}
                                     <span className="text-sm font-bold text-gray-400 ml-2 uppercase">{salonSettings?.currency || 'AED'}</span>
@@ -200,12 +200,12 @@ export function ConfirmStep({
                     {loading ? (
                         <div className="flex items-center gap-3">
                             <Loader2 className="w-6 h-6 animate-spin" />
-                            <span>{t('booking.loading', 'Processing...')}</span>
+                            <span>{t('loading', 'Processing...')}</span>
                         </div>
                     ) : (
                         <>
                             <CheckCircle2 className="w-6 h-6 mr-3" />
-                            {t('booking.confirm.confirm', 'Confirm Appointment')}
+                            {t('confirm.confirm', 'Confirm Appointment')}
                         </>
                     )}
                 </Button>
@@ -220,10 +220,10 @@ export function ConfirmStep({
                                 <Phone className="w-10 h-10 text-purple-600" />
                             </div>
                             <h2 className="text-3xl font-black text-slate-900 tracking-tight uppercase">
-                                {t('booking.confirm.phoneNeeded', 'Stay Connected')}
+                                {t('confirm.phoneNeeded', 'Stay Connected')}
                             </h2>
                             <p className="text-slate-400 font-medium leading-relaxed">
-                                {t('booking.confirm.phoneDesc', 'Please provide your mobile number for appointment updates and verification.')}
+                                {t('confirm.phoneDesc', 'Please provide your mobile number for appointment updates and verification.')}
                             </p>
                         </div>
 
