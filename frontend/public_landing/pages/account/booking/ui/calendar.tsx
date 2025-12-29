@@ -133,12 +133,25 @@ function Calendar({
             border-radius: 50%;
         }
 
-        /* Unavailable/Disabled - Very faint */
+        /* Unavailable/Disabled */
         .rdp-day_disabled {
-            color: #cbd5e1 !important; /* Slate 300 */
+            color: #cbd5e1 !important;
             opacity: 0.3 !important;
             background: transparent !important;
             border: none !important;
+        }
+
+        /* Outside Days - Make them visible and interactive */
+        .rdp-day_outside {
+            opacity: 0.7 !important; /* Slightly distinct but visible */
+            background: transparent;
+        }
+
+        /* Ensure outside days that are NOT disabled are interactive */
+        .rdp-day_outside:not(.rdp-day_disabled) {
+            cursor: pointer !important;
+            color: #64748b !important; /* Slate 500 - slightly lighter than main days */
+            font-weight: 500;
         }
 
         /* Today - Custom Class - Strong Outline & Fill */
@@ -147,21 +160,21 @@ function Calendar({
             font-weight: 900 !important;
             background-color: #ede9fe !important; /* Violet 100 - Distinct fill */
             border: 2px solid #7c3aed !important; /* Explicit outline */
-            // border-radius: 50% !important;
+            /* border-radius: 50% !important; */
             opacity: 1 !important;
         }
 
         /* Selected - Solid */
-        .rdp-day_selected { 
+        .rdp-day_selected {
             background-color: #7c3aed !important; /* Violet 600 */
-            color: white !important; 
+            color: white !important;
             font-weight: bold;
             border-radius: 50%;
             border: none;
         }
 
         /* Hover for available */
-        .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+        .rdp-day:not(.rdp-day_selected):not(.rdp-day_disabled):hover {
             background-color: #f3e8ff !important; /* Violet 50 */
             color: #7c3aed !important;
             border-color: #d8b4fe !important;

@@ -40,13 +40,26 @@ export function DateTimeStep({
 
     const dateLocale = getDateLocaleCentral(i18n.language);
 
-    // Fetch available dates
+    // Fetch available dates pattern optimized
     useEffect(() => {
         const fetchDates = async () => {
             let masterName = selectedMaster ? (selectedMaster.full_name || selectedMaster.username) : 'any';
             try {
-                const res = await api.getAvailableDates(masterName, currentMonth.getFullYear(), currentMonth.getMonth() + 1, totalDuration || 60);
-                if (res.available_dates) setAvailableDates(new Set(res.available_dates));
+                // Fetch for Current Month AND Next Month to ensure outside days are clickable
+                const nextMonth = new Date(currentMonth);
+                nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+                const [currentRes, nextRes] = await Promise.all([
+                    api.getAvailableDates(masterName, currentMonth.getFullYear(), currentMonth.getMonth() + 1, totalDuration || 60),
+                    api.getAvailableDates(masterName, nextMonth.getFullYear(), nextMonth.getMonth() + 1, totalDuration || 60)
+                ]);
+
+                const combinedDates = new Set([
+                    ...(currentRes.available_dates || []),
+                    ...(nextRes.available_dates || [])
+                ]);
+
+                setAvailableDates(combinedDates);
             } catch (e) { }
         };
         fetchDates();
