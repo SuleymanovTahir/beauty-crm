@@ -61,9 +61,15 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [step, setStep] = useState<'menu' | 'services' | 'professional' | 'datetime' | 'confirm'>(
-    (searchParams.get('step') as any) || 'menu'
-  );
+  const step = (searchParams.get('booking') as any) || 'menu';
+  const setStep = (newStep: string) => {
+    setSearchParams(prev => {
+        const next = new URLSearchParams(prev);
+        next.set('booking', newStep);
+        return next;
+    }, { replace: true });
+  };
+  
   const [loading, setLoading] = useState(false);
   const [masters, setMasters] = useState<Master[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -115,16 +121,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     };
     loadInitialData();
   }, []);
-
-  // Sync URL with step
-  useEffect(() => {
-    setSearchParams(prev => {
-        const next = new URLSearchParams(prev);
-        next.set('step', step);
-        if (!next.has('booking')) next.set('booking', 'true');
-        return next;
-    }, { replace: true });
-  }, [step, setSearchParams]);
 
   // Load availability
   useEffect(() => {
@@ -250,7 +246,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   };
 
   const renderHeader = (title: string, subtitle?: string) => (
-    <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm pb-6 pt-4 px-4 border-b">
+    <div className="sticky top-0 wizard-header pb-6 pt-4 px-4 overflow-x-hidden">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-3 mb-4">
           <Button
@@ -265,7 +261,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             }}
             className="rounded-full hover:bg-black/5"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 text-primary" />
           </Button>
 
           {onClose && (
@@ -275,28 +271,28 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               onClick={onClose}
               className="rounded-full hover:bg-black/5 ml-auto"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 text-primary" />
             </Button>
           )}
         </div>
 
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold mb-1">{title}</h2>
+        <div className="mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-primary mb-1">{title}</h2>
           {subtitle && <p className="text-muted-foreground text-sm">{subtitle}</p>}
         </div>
 
-        {/* Progress breadcrumbs */}
+        {/* Progress breadcrumbs Redesign */}
         {step !== 'menu' && (
-          <div className="flex items-center gap-2 mt-4 text-xs font-medium overflow-x-auto no-scrollbar whitespace-nowrap">
+          <div className="wizard-breadcrumb no-scrollbar overflow-x-auto">
             <button
-              className={`${step === 'services' ? 'text-purple-600' : 'text-muted-foreground'} transition-colors`}
+              className={`wizard-breadcrumb-item ${step === 'services' ? 'wizard-breadcrumb-active' : 'wizard-breadcrumb-inactive'}`}
               onClick={() => setStep('services')}
             >
               Services
             </button>
             <ChevronRight className="w-3 h-3 text-muted-foreground" />
             <button
-              className={`${step === 'professional' ? 'text-purple-600' : 'text-muted-foreground'} transition-colors`}
+              className={`wizard-breadcrumb-item ${step === 'professional' ? 'wizard-breadcrumb-active' : 'wizard-breadcrumb-inactive'}`}
               onClick={() => selectedServices.length > 0 && setStep('professional')}
               disabled={selectedServices.length === 0}
             >
@@ -304,17 +300,17 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             </button>
             <ChevronRight className="w-3 h-3 text-muted-foreground" />
             <button
-              className={`${step === 'datetime' ? 'text-purple-600' : 'text-muted-foreground'} transition-colors`}
+              className={`wizard-breadcrumb-item ${step === 'datetime' ? 'wizard-breadcrumb-active' : 'wizard-breadcrumb-inactive'}`}
               onClick={() => selectedServices.length > 0 && setStep('datetime')}
               disabled={selectedServices.length === 0}
             >
               Date & Time
             </button>
             {step === 'confirm' && (
-              <>
+                <>
                 <ChevronRight className="w-3 h-3 text-muted-foreground" />
-                <span className="text-purple-600">Confirm</span>
-              </>
+                <span className="wizard-breadcrumb-item wizard-breadcrumb-active">Confirm</span>
+                </>
             )}
           </div>
         )}
@@ -324,51 +320,51 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
   if (step === 'menu') {
     return (
-      <div className="min-h-screen bg-white pt-20 pb-12 px-4 wizard-scrollable">
-        <div className="max-w-2xl mx-auto space-y-6">
-          <div className="flex items-start justify-between mb-8">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+      <div className="min-h-screen bg-white wizard-scrollable">
+        <div className="wizard-container space-y-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+            <div className="space-y-2">
+              <h1 className="text-4xl md:text-5xl font-black text-primary tracking-tight">
                 {salonSettings?.name || 'M Le Diamant'}
               </h1>
-              <p className="text-sm text-muted-foreground flex items-center gap-1">
-                <MapPin className="w-4 h-4" />
+              <p className="text-sm text-muted-foreground flex items-center gap-2 font-medium">
+                <MapPin className="w-4 h-4 text-primary" />
                 {salonSettings?.address || 'Shop 13, Amwaj 2, Plaza Level, JBR - Dubai'}
               </p>
             </div>
             {onClose && (
-              <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full">
+              <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full md:hidden">
                 <X className="w-6 h-6" />
               </Button>
             )}
           </div>
 
-          <div className="grid gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 value: 'services',
                 icon: List,
                 title: 'Select Services',
                 description: selectedServices.length > 0
-                  ? `${selectedServices.length} selected • ${totalPrice} AED`
-                  : "Choose from our menu",
-                gradient: 'from-purple-500 to-pink-500'
+                  ? `${selectedServices.length} selected`
+                  : "Pick treatment",
+                badge: selectedServices.length > 0 ? `${totalPrice} AED` : null
               },
               {
                 value: 'professional',
                 icon: User,
-                title: 'Choose Professional',
-                description: selectedMaster ? selectedMaster.full_name : "Select your preferred master",
-                gradient: 'from-blue-500 to-cyan-500'
+                title: 'Professional',
+                description: selectedMaster ? selectedMaster.full_name : "Select master",
+                badge: selectedMaster ? "Selected" : null
               },
               {
                 value: 'datetime',
                 icon: CalendarIcon,
-                title: 'Select Date & Time',
+                title: 'Date & Time',
                 description: selectedDate && selectedTime 
                   ? `${format(selectedDate, 'MMM dd')} at ${selectedTime}` 
-                  : "Pick your appointment slot",
-                gradient: 'from-orange-500 to-red-500'
+                  : "Pick time slot",
+                badge: selectedDate && selectedTime ? "Set" : null
               }
             ].map((card, idx) => (
               <motion.div
@@ -378,20 +374,20 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 transition={{ delay: idx * 0.1 }}
               >
                 <Card
-                  className="group cursor-pointer border-2 hover:border-purple-500 transition-all hover:shadow-2xl overflow-hidden"
+                  className={`group cursor-pointer wizard-card ${step === card.value ? 'wizard-card-selected' : ''}`}
                   onClick={() => setStep(card.value as any)}
                 >
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${card.gradient} flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform`}>
-                        <card.icon className="w-7 h-7" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-bold text-xl mb-1">{card.title}</h3>
-                        <p className="text-sm text-muted-foreground">{card.description}</p>
-                      </div>
-                      <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                  <CardContent className="p-8 flex flex-col gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+                      <card.icon className="w-6 h-6" />
                     </div>
+                    <div>
+                      <h3 className="font-black text-xl text-primary">{card.title}</h3>
+                      <p className="text-sm text-muted-foreground font-medium">{card.description}</p>
+                    </div>
+                    {card.badge && (
+                        <Badge className="bg-primary text-white w-fit">{card.badge}</Badge>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
@@ -400,16 +396,17 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
           {selectedServices.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="pt-8"
             >
               <Button 
                 size="lg" 
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-6 rounded-2xl shadow-xl"
+                className="w-full h-16 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg font-black rounded-2xl shadow-2xl transition-all"
                 onClick={() => setStep('confirm')}
                 disabled={!selectedDate || !selectedTime}
               >
-                <CheckCircle2 className="w-5 h-5 mr-2" />
+                <CheckCircle2 className="w-6 h-6 mr-2" />
                 Continue to Confirmation
               </Button>
             </motion.div>
@@ -421,46 +418,44 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
   if (step === 'services') {
     return (
-      <div className="min-h-screen bg-white pt-0 pb-32 px-4 wizard-scrollable">
-        <div className="max-w-4xl mx-auto">
-          {renderHeader('Select Services', 'Choose one or more services')}
-
+      <div className="min-h-screen bg-white wizard-scrollable">
+        {renderHeader('Select Services', 'Choose one or more services')}
+        
+        <div className="wizard-container">
           {/* Search */}
-          <div className="mb-6">
+          <div className="mb-8">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 placeholder="Search services..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-12 rounded-xl border-2 focus:border-purple-500"
+                className="pl-12 h-14 rounded-2xl border-primary/10 bg-muted/50 focus:bg-white focus:ring-primary/20 transition-all font-medium"
               />
             </div>
           </div>
 
           {/* Categories */}
-          <ScrollArea className="mb-6">
-            <div className="flex gap-2 pb-2">
+          <ScrollArea className="mb-8">
+            <div className="flex gap-3 pb-2">
               {categories.map(cat => (
-                <Button
+                <button
                   key={cat}
-                  variant={selectedCategory === cat ? 'default' : 'outline'}
-                  size="sm"
                   onClick={() => setSelectedCategory(cat)}
-                  className={`rounded-full whitespace-nowrap ${
+                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
                     selectedCategory === cat 
-                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
-                      : ''
+                      ? 'bg-primary text-white shadow-lg' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
                   {cat}
-                </Button>
+                </button>
               ))}
             </div>
           </ScrollArea>
 
           {/* Services Grid */}
-          <div className="grid gap-4 mb-6">
+          <div className="grid gap-4 mb-32">
             <AnimatePresence mode="popLayout">
               {filteredServices.map((service, idx) => {
                 const isSelected = selectedServices.some(s => s.id === service.id);
@@ -468,35 +463,32 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   <motion.div
                     key={service.id}
                     layout
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ delay: idx * 0.05 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
                   >
                     <Card
-                      className={`cursor-pointer transition-all hover:shadow-lg ${
-                        isSelected ? 'border-2 border-purple-500 shadow-lg' : 'border-2 border-transparent'
-                      }`}
+                      className={`cursor-pointer wizard-card ${isSelected ? 'wizard-card-selected' : ''}`}
                       onClick={() => handleServiceSelect(service)}
                     >
-                      <CardContent className="p-5">
+                      <CardContent className="p-6">
                         <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-bold text-lg">{getServiceName(service)}</h3>
+                          <div className="flex-1 space-y-2">
+                            <div className="flex items-center gap-3">
+                              <h3 className="font-black text-lg text-primary">{getServiceName(service)}</h3>
                               {isSelected && (
-                                <CheckCircle2 className="w-5 h-5 text-purple-600" />
+                                <CheckCircle2 className="w-5 h-5 text-primary" />
                               )}
                             </div>
-                            <p className="text-sm text-muted-foreground mb-3">{service.description}</p>
-                            <div className="flex items-center gap-4 text-sm">
-                              <div className="flex items-center gap-1">
-                                <Clock className="w-4 h-4 text-muted-foreground" />
+                            <p className="text-sm text-muted-foreground font-medium line-clamp-2">{service.description}</p>
+                            <div className="flex items-center gap-4 pt-2">
+                              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted text-muted-foreground text-xs font-bold">
+                                <Clock className="w-3 h-3" />
                                 <span>{service.duration || '30'} min</span>
                               </div>
-                              <Badge variant="secondary" className="font-semibold">
+                              <div className="text-primary font-black text-lg">
                                 {service.price} AED
-                              </Badge>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -510,18 +502,18 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
           {/* Fixed Bottom Bar */}
           {selectedServices.length > 0 && (
-            <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-2xl p-4 z-20">
-              <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+            <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl">
+              <div className="max-w-4xl mx-auto flex items-center justify-between gap-6">
                 <div>
-                  <div className="font-bold text-lg">{totalPrice} AED</div>
-                  <div className="text-sm text-muted-foreground">
-                    {selectedServices.length} service{selectedServices.length > 1 ? 's' : ''} • {totalDuration} min
+                  <div className="font-black text-2xl text-primary">{totalPrice} AED</div>
+                  <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
+                    {selectedServices.length} Selected • {totalDuration} min
                   </div>
                 </div>
                 <Button
                   size="lg"
                   onClick={() => setStep('professional')}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                  className="h-14 px-8 bg-primary text-white font-black rounded-2xl shadow-xl hover:scale-105 transition-transform"
                 >
                   Continue
                   <ChevronRight className="w-5 h-5 ml-2" />
@@ -536,91 +528,76 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
   if (step === 'professional') {
     return (
-      <div className="min-h-screen bg-white pt-0 pb-32 px-4 wizard-scrollable">
-        <div className="max-w-4xl mx-auto">
-          {renderHeader('Choose Professional', 'Select your preferred master or any available')}
+      <div className="min-h-screen bg-white wizard-scrollable">
+        {renderHeader('Choose Professional', 'Select your preferred master or any available')}
 
-          <div className="space-y-4">
-            {/* Any Available Option */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+        <div className="wizard-container space-y-6">
+          {/* Any Available Option */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <Card
+              className={`cursor-pointer wizard-card ${selectedMaster === null ? 'wizard-card-selected' : ''}`}
+              onClick={() => handleMasterSelect(null)}
             >
-              <Card
-                className={`cursor-pointer transition-all hover:shadow-lg ${
-                  selectedMaster === null ? 'border-2 border-purple-500 shadow-lg' : 'border-2 border-transparent'
-                }`}
-                onClick={() => handleMasterSelect(null)}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white">
-                      <Users className="w-8 h-8" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-bold text-lg mb-1 flex items-center gap-2">
-                        Any Available Professional
-                        {selectedMaster === null && <CheckCircle2 className="w-5 h-5 text-purple-600" />}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        First available master will take your appointment
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+              <CardContent className="p-8 flex items-center gap-6">
+                <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center text-white shadow-xl">
+                  <Users className="w-8 h-8" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-black text-xl text-primary flex items-center gap-2">
+                    Any Available Professional
+                    {selectedMaster === null && <CheckCircle2 className="w-5 h-5 text-primary" />}
+                  </h3>
+                  <p className="text-sm text-muted-foreground font-medium">First available master will take your appointment</p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-            {/* Masters List */}
-            {masters.map((master, idx) => {
-              const isSelected = selectedMaster?.id === master.id;
-              return (
-                <motion.div
-                  key={master.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: (idx + 1) * 0.1 }}
+          <div className="grid gap-4 mb-32">
+          {masters.map((master, idx) => {
+            const isSelected = selectedMaster?.id === master.id;
+            return (
+              <motion.div
+                key={master.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+              >
+                <Card
+                  className={`cursor-pointer wizard-card ${isSelected ? 'wizard-card-selected' : ''}`}
+                  onClick={() => handleMasterSelect(master)}
                 >
-                  <Card
-                    className={`cursor-pointer transition-all hover:shadow-lg ${
-                      isSelected ? 'border-2 border-purple-500 shadow-lg' : 'border-2 border-transparent'
-                    }`}
-                    onClick={() => handleMasterSelect(master)}
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <Avatar className="w-16 h-16 border-2 border-purple-200">
-                          <AvatarImage src={master.photo} />
-                          <AvatarFallback>{master.full_name[0]}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-bold text-lg">{master.full_name}</h3>
-                            {isSelected && <CheckCircle2 className="w-5 h-5 text-purple-600" />}
-                          </div>
-                          <p className="text-sm text-muted-foreground mb-2">{master.position}</p>
-                          <div className="flex items-center gap-2 text-sm">
-                            <div className="flex items-center gap-1">
-                              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                              <span className="font-semibold">{master.rating}</span>
-                            </div>
-                            <span className="text-muted-foreground">({master.reviews || 0} reviews)</span>
-                          </div>
-                        </div>
+                  <CardContent className="p-6 flex items-center gap-6">
+                    <Avatar className="w-16 h-16 border-2 border-primary/5 shadow-inner">
+                      <AvatarImage src={master.photo} className="object-cover" />
+                      <AvatarFallback className="bg-muted text-primary font-bold">{master.full_name[0]}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3">
+                        <h3 className="font-black text-lg text-primary">{master.full_name}</h3>
+                        {isSelected && <CheckCircle2 className="w-5 h-5 text-primary" />}
                       </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
+                      <p className="text-sm text-muted-foreground font-medium mb-2">{master.position}</p>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1 text-primary">
+                          <Star className="w-4 h-4 fill-primary" />
+                          <span className="font-black text-sm">{master.rating || '5.0'}</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">({master.reviews || 0} reviews)</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
           </div>
 
-          {/* Fixed Bottom Bar */}
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-2xl p-4 z-20">
+          <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl">
             <div className="max-w-4xl mx-auto">
               <Button
                 size="lg"
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold"
+                className="w-full h-16 bg-primary text-white font-black rounded-2xl shadow-xl hover:scale-[1.01] transition-transform"
                 onClick={() => setStep('datetime')}
               >
                 Continue to Date & Time
@@ -646,45 +623,40 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     ].filter(g => g.slots.length > 0);
 
     return (
-      <div className="min-h-screen bg-white pt-0 pb-32 px-4 wizard-scrollable">
-        <div className="max-w-4xl mx-auto">
-          {renderHeader('Select Date & Time', 'Choose your preferred appointment slot')}
+      <div className="min-h-screen bg-white wizard-scrollable">
+        {renderHeader('Select Date & Time', 'Choose your preferred appointment slot')}
 
-          {/* Calendar */}
-          <Card className="mb-6 overflow-hidden border-2 wizard-calendar-card">
-            <CardContent className="p-6">
-              {/* Month Navigation */}
-              <div className="flex items-center justify-between mb-6">
-                <Button
-                  variant="ghost"
-                  size="icon"
+        <div className="wizard-container space-y-12">
+          {/* Calendar Redesign */}
+          <Card className="wizard-card wizard-calendar-card overflow-hidden">
+            <CardContent className="p-8">
+              <div className="flex items-center justify-between mb-8">
+                <button
                   onClick={() => setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() - 1))}
+                  className="p-2 hover:bg-muted rounded-full transition-colors"
                 >
-                  <ArrowLeft className="w-5 h-5" />
-                </Button>
-                <h3 className="font-bold text-xl">
+                  <ArrowLeft className="w-6 h-6 text-primary" />
+                </button>
+                <h3 className="font-black text-2xl text-primary tracking-tight">
                   {format(currentMonth, 'MMMM yyyy')}
                 </h3>
-                <Button
-                  variant="ghost"
-                  size="icon"
+                <button
                   onClick={() => setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + 1))}
+                  className="p-2 hover:bg-muted rounded-full transition-colors"
                 >
-                  <ChevronRight className="w-5 h-5" />
-                </Button>
+                  <ChevronRight className="w-6 h-6 text-primary" />
+                </button>
               </div>
 
-              {/* Weekday Headers */}
-              <div className="grid grid-cols-7 gap-2 mb-2">
+              <div className="grid grid-cols-7 gap-2 mb-4">
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                  <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">
+                  <div key={day} className="text-center text-[10px] font-black text-muted-foreground uppercase tracking-widest py-2">
                     {day}
                   </div>
                 ))}
               </div>
 
-              {/* Calendar Days */}
-              <div className="grid grid-cols-7 gap-2">
+              <div className="wizard-calendar-grid">
                 {monthDays.map((day, idx) => {
                   const dateStr = format(day, 'yyyy-MM-dd');
                   const isAvailable = availableDates.has(dateStr);
@@ -692,27 +664,19 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   const isSelected = selectedDate && isSameDay(day, selectedDate);
                   
                   return (
-                    <motion.button
+                    <button
                       key={idx}
-                      whileHover={!isPast && isAvailable ? { scale: 1.05 } : {}}
-                      whileTap={!isPast && isAvailable ? { scale: 0.95 } : {}}
                       onClick={() => !isPast && isAvailable && handleDateSelect(day)}
                       disabled={isPast || !isAvailable}
                       className={`
-                        aspect-square rounded-xl p-2 text-sm font-medium transition-all
-                        ${!isAvailable || isPast 
-                          ? 'text-muted-foreground/30 cursor-not-allowed' 
-                          : 'hover:bg-purple-100 cursor-pointer bg-purple-50/50'
-                        }
-                        ${isSelected 
-                          ? 'bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-lg !bg-none !bg-purple-600' 
-                          : ''
-                        }
-                        ${isToday(day) && !isSelected ? 'border-2 border-purple-500' : ''}
+                        wizard-calendar-day
+                        ${!isAvailable || isPast ? '' : 'bg-muted/30 text-primary'}
+                        ${isSelected ? 'wizard-calendar-day-selected' : ''}
+                        ${isToday(day) && !isSelected ? 'wizard-calendar-today' : ''}
                       `}
                     >
-                      <div>{format(day, 'd')}</div>
-                    </motion.button>
+                      {format(day, 'd')}
+                    </button>
                   );
                 })}
               </div>
@@ -724,62 +688,55 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              className="space-y-8 pb-32"
             >
-              <Card className="border-2">
-                <CardContent className="p-6">
-                  <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-purple-600" />
-                    Available Time Slots
-                  </h3>
+              <div className="flex items-center gap-3 px-4">
+                <Clock className="w-6 h-6 text-primary" />
+                <h3 className="font-black text-2xl text-primary tracking-tight">Available Time</h3>
+              </div>
 
-                  {groupedSlots.map(group => (
-                    <div key={group.label} className="mb-6 last:mb-0">
-                      <h4 className="text-sm font-semibold text-muted-foreground mb-3">{group.label}</h4>
-                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                        {group.slots.map(slot => {
-                          const isSelected = selectedTime === slot.time;
-                          return (
-                            <motion.button
-                              key={slot.time}
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              onClick={() => handleTimeSelect(slot.time)}
-                              className={`
-                                relative py-3 px-2 rounded-lg font-medium text-sm transition-all
-                                ${isSelected
-                                  ? 'bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-lg'
-                                  : slot.is_optimal
-                                    ? 'bg-green-50 text-green-700 border-2 border-green-200 hover:border-green-400'
-                                    : 'bg-white border-2 border-gray-200 hover:border-purple-300'
-                                }
-                              `}
-                            >
-                              {slot.time}
-                              {slot.is_optimal && !isSelected && (
-                                <Sparkles className="w-3 h-3 absolute top-1 right-1 text-green-600" />
-                              )}
-                            </motion.button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
+              {groupedSlots.map(group => (
+                <div key={group.label} className="space-y-4">
+                  <h4 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] px-4">{group.label}</h4>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                    {group.slots.map(slot => {
+                      const isSelected = selectedTime === slot.time;
+                      return (
+                        <button
+                          key={slot.time}
+                          onClick={() => handleTimeSelect(slot.time)}
+                          className={`
+                            relative py-4 px-2 rounded-2xl font-black text-sm transition-all border-2
+                            ${isSelected
+                              ? 'bg-primary text-white border-primary shadow-xl scale-105'
+                              : 'bg-white text-primary border-primary/5 hover:border-primary/20 hover:bg-muted/30'
+                            }
+                          `}
+                        >
+                          {slot.time}
+                          {slot.is_optimal && !isSelected && (
+                            <Sparkles className="w-3 h-3 absolute top-2 right-2 text-primary/40" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </motion.div>
           )}
 
           {/* Fixed Bottom Bar */}
           {selectedDate && selectedTime && (
-            <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-2xl p-4 z-20">
+            <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t p-6 z-40 shadow-2xl font-bold">
               <div className="max-w-4xl mx-auto">
                 <Button
                   size="lg"
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold"
+                  className="w-full h-16 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg font-black rounded-2xl shadow-xl transition-all"
                   onClick={() => setStep('confirm')}
                 >
-                  Continue to Confirmation
-                  <ChevronRight className="w-5 h-5 ml-2" />
+                  Confirm Booking Details
+                  <ChevronRight className="w-6 h-6 ml-2" />
                 </Button>
               </div>
             </div>
@@ -791,118 +748,70 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
   if (step === 'confirm') {
     return (
-      <div className="min-h-screen bg-white pt-0 pb-32 px-4 wizard-scrollable">
-        <div className="max-w-4xl mx-auto">
-          {renderHeader('Confirm Booking', 'Review your appointment details')}
+      <div className="min-h-screen bg-white wizard-scrollable">
+        {renderHeader('Confirm Booking', 'Review your appointment details')}
 
-          <div className="space-y-4">
-            {/* Services */}
-            <Card className="border-2">
-              <CardContent className="p-6">
-                <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                  <List className="w-5 h-5 text-purple-600" />
-                  Services
-                </h3>
-                <div className="space-y-3">
-                  {selectedServices.map(service => (
-                    <div key={service.id} className="flex justify-between items-center py-2 border-b last:border-0">
-                      <div>
-                        <div className="font-medium">{getServiceName(service)}</div>
-                        <div className="text-sm text-muted-foreground">{service.duration || '30'} min</div>
+        <div className="wizard-container space-y-6">
+            <Card className="wizard-card p-4">
+              <CardContent className="p-4 space-y-8">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <List className="w-6 h-6 text-primary" />
+                    <h3 className="font-black text-xl text-primary">Summary</h3>
+                  </div>
+                  <div className="space-y-4 divide-y divide-primary/5">
+                    {selectedServices.map(service => (
+                      <div key={service.id} className="flex justify-between items-center pt-4">
+                        <div>
+                          <div className="font-black text-lg text-primary">{getServiceName(service)}</div>
+                          <div className="text-sm text-muted-foreground font-bold">{service.duration || '30'} min</div>
+                        </div>
+                        <div className="font-black text-xl text-primary">{service.price} AED</div>
                       </div>
-                      <div className="font-bold">{service.price} AED</div>
+                    ))}
+                    <div className="flex justify-between items-center pt-6">
+                      <div className="font-black text-xl text-primary uppercase tracking-tighter">Total</div>
+                      <div className="font-black text-3xl text-primary">{totalPrice} AED</div>
                     </div>
-                  ))}
-                  <div className="flex justify-between items-center pt-3 border-t-2 border-purple-200">
-                    <div className="font-bold text-lg">Total</div>
-                    <div className="font-bold text-xl text-purple-600">{totalPrice} AED</div>
                   </div>
                 </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                    <div className="p-6 rounded-2xl bg-muted/30 border border-primary/5 flex items-center gap-4">
+                        <User className="w-6 h-6 text-primary" />
+                        <div>
+                            <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Professional</div>
+                            <div className="font-black text-primary">{selectedMaster ? selectedMaster.full_name : "Any Provider"}</div>
+                        </div>
+                    </div>
+                    <div className="p-6 rounded-2xl bg-muted/30 border border-primary/5 flex items-center gap-4">
+                        <CalendarIcon className="w-6 h-6 text-primary" />
+                        <div>
+                            <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Appointment at</div>
+                            <div className="font-black text-primary">
+                                {selectedDate ? format(selectedDate, 'EEEE, MMM dd') : '--'} at {selectedTime}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <Button
+                  size="lg"
+                  className="w-full h-20 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-2xl font-black rounded-2xl shadow-2xl transition-all mt-8"
+                  onClick={handleConfirmBooking}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Loader2 className="w-8 h-8 animate-spin" />
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-8 h-8 mr-3" />
+                      Book Now
+                    </>
+                  )}
+                </Button>
               </CardContent>
             </Card>
-
-            {/* Professional */}
-            <Card className="border-2">
-              <CardContent className="p-6">
-                <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                  <User className="w-5 h-5 text-purple-600" />
-                  Professional
-                </h3>
-                {selectedMaster ? (
-                  <div className="flex items-center gap-4">
-                    <Avatar className="w-12 h-12">
-                      <AvatarImage src={selectedMaster.photo} />
-                      <AvatarFallback>{selectedMaster.full_name[0]}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-medium">{selectedMaster.full_name}</div>
-                      <div className="text-sm text-muted-foreground">{selectedMaster.position}</div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white">
-                      <Users className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <div className="font-medium">Any Available Professional</div>
-                      <div className="text-sm text-muted-foreground">First available master</div>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Date & Time */}
-            {selectedDate && selectedTime && (
-              <Card className="border-2">
-                <CardContent className="p-6">
-                  <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                    <CalendarIcon className="w-5 h-5 text-purple-600" />
-                    Date & Time
-                  </h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Date</span>
-                      <span className="font-medium">{format(selectedDate, 'EEEE, MMMM dd, yyyy')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Time</span>
-                      <span className="font-medium">{selectedTime}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Duration</span>
-                      <span className="font-medium">{totalDuration} minutes</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-
-          {/* Fixed Bottom Bar */}
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-2xl p-4 z-20">
-            <div className="max-w-4xl mx-auto">
-              <Button
-                size="lg"
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold"
-                onClick={handleConfirmBooking}
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Confirming...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-5 h-5 mr-2" />
-                    Confirm Booking
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
         </div>
       </div>
     );

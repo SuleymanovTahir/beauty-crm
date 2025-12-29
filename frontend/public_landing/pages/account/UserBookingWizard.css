@@ -1,95 +1,156 @@
 /* UserBookingWizard.css */
 
-/* Variables from AccountPage theme */
 :root {
   --background: #ffffff;
-  --foreground: oklch(0.145 0 0);
-  --card: #ffffff;
-  --card-foreground: oklch(0.145 0 0);
-  --popover: #ffffff;
-  --popover-foreground: oklch(0.145 0 0);
   --primary: #030213;
   --primary-foreground: #ffffff;
-  --secondary: oklch(0.95 0.0058 264.53);
-  --secondary-foreground: #030213;
-  --muted: #ececf0;
-  --muted-foreground: #717182;
-  --accent: #e9ebef;
-  --accent-foreground: #030213;
-  --destructive: #d4183d;
-  --destructive-foreground: #ffffff;
-  --border: rgba(0, 0, 0, 0.1);
-  --input: transparent;
-  --ring: oklch(0.708 0 0);
-  --radius: 0.625rem;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f8fafc;
+  --border: rgba(3, 2, 19, 0.1);
+  --radius: 1rem;
+  --shadow: 0 4px 20px -2px rgba(3, 2, 19, 0.08);
 }
 
-/* Override containers to match main site colors */
-.bg-gradient-to-br.from-rose-50 {
-    background: var(--background) !important;
+.wizard-root {
+    background: var(--background);
 }
 
-.sticky.top-0.bg-gradient-to-br {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(8px);
+.wizard-scrollable {
+    overflow-y: auto !important;
+    height: 100vh;
+    background: var(--background);
 }
 
-/* Constrain large screen elements */
-.wizard-content-container {
-    width: 100%;
-    max-width: 800px;
+/* Header styling */
+.wizard-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 50;
+}
+
+/* Breadcrumbs */
+.wizard-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+}
+
+.wizard-breadcrumb-item {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.wizard-breadcrumb-active {
+    background: var(--primary);
+    color: white;
+}
+
+.wizard-breadcrumb-inactive {
+    color: var(--muted-foreground);
+    background: var(--muted);
+}
+
+/* Card Design */
+.wizard-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+}
+
+.wizard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(3, 2, 19, 0.1);
+    border-color: var(--primary);
+}
+
+.wizard-card-selected {
+    border-color: var(--primary) !important;
+    border-width: 2px !important;
+    background: #fafafa;
+}
+
+/* Calendar styling - Fixed proportions */
+.wizard-calendar-grid {
+    display: grid;
+    grid-template-cols: repeat(7, 1fr);
+    gap: 4px;
+    max-width: 350px;
     margin: 0 auto;
 }
 
-/* Fixed calendar size on big screens */
+.wizard-calendar-day {
+    aspect-ratio: 1 / 1;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    margin: 0 auto;
+}
+
+.wizard-calendar-day:hover:not(:disabled) {
+    background: #f0f0f0;
+}
+
+.wizard-calendar-day-selected {
+    background: var(--primary) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(3, 2, 19, 0.25);
+}
+
+.wizard-calendar-day:disabled {
+    opacity: 0.15;
+    cursor: not-allowed;
+    background: transparent !important;
+}
+
+.wizard-calendar-today {
+    box-shadow: inset 0 0 0 2px var(--primary);
+}
+
+/* Buttons */
+.wizard-btn-primary {
+    background: var(--primary);
+    color: white;
+    border-radius: 1.25rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Layout constraints */
+.wizard-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
 .wizard-calendar-card {
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 2rem;
+    border-radius: 2rem;
 }
 
-/* Ensure scrolling works neatly */
-.wizard-scrollable {
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
-    height: 100vh;
-    background: var(--background);
-    position: relative;
-    display: block;
+/* Scrollbar hide */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
 }
-
-/* Remove weird top margin/text leaks */
-.wizard-root {
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--background);
-}
-
-/* Style for progress breadcrumbs to match primary */
-.text-purple-600 {
-    color: var(--primary) !important;
-}
-
-.bg-purple-600 {
-    background-color: var(--primary) !important;
-}
-
-.border-purple-500 {
-    border-color: var(--primary) !important;
-}
-
-.focus\:border-purple-500:focus {
-    border-color: var(--primary) !important;
-}
-
-/* Fix aspect ratio for large calendars */
-@media (min-width: 768px) {
-    .aspect-square {
-        aspect-ratio: auto !important;
-        height: auto !important;
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
