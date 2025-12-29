@@ -94,6 +94,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
       next.set('booking', newStep);
+      next.delete('step'); // Remove old step param to clean URL
       return next;
     }, { replace: true });
   };
@@ -112,12 +113,36 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     setStep('menu');
   };
 
-  const goBack = () => {
+  const handleGlobalBack = () => {
     if (step === 'menu') {
-      if (onClose) onClose();
-      else navigate('/account');
+      // Logic for "Back" from the main menu
+      // Heuristic: If history is long, go back (Cabinet). If short, probably direct (Stay or go to Landing).
+      // Since "Back" implies "Previous Page", navigate(-1) is safest IF we are not at the root entry.
+      // But user asked: "If from cabinet... Back -> previous page".
+      if (window.history.length > 2) {
+        navigate(-1);
+      } else {
+        // Direct link: Back might not make sense, but we can redirect to landing
+        window.location.href = 'http://localhost:5173';
+      }
     } else {
       setStep('menu');
+    }
+  };
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+      return;
+    }
+
+    // Heuristic for "Direct Link" vs "Cabinet"
+    // If we have history state or length > 2, assume internal navigation (Cabinet)
+    // Otherwise, assume direct link -> Go to Landing
+    if (window.history.length > 2) {
+      navigate('/account'); // Home (Cabinet)
+    } else {
+      window.location.href = 'http://localhost:5173'; // Close site / Landing
     }
   };
 
@@ -155,17 +180,14 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
       <div className="bg-white/80 backdrop-blur-sm border-b shadow-sm sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {step !== 'menu' && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={goBack}
-                className="gap-2 rounded-xl border-slate-300 shadow-sm hover:bg-slate-50 hover:border-slate-800 transition-all font-bold group"
-              >
-                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-                {t('common.back', 'Back')}
-              </Button>
-            )}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleGlobalBack}
+              className="w-10 h-10 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 text-slate-700 hover:text-purple-600 transition-all"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
             <h1 className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               {t('newBooking', 'Reservation')}
             </h1>
@@ -175,10 +197,10 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             <PublicLanguageSwitcher />
             <div className="w-[1px] h-4 bg-slate-200/80 mx-1" />
             <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="w-8 h-8 rounded-xl border border-slate-300 hover:bg-white hover:text-red-500 hover:border-slate-800 hover:shadow-sm transition-all text-slate-400"
+              variant="outline"
+              size="sm"
+              onClick={handleClose}
+              className="text-[10px] font-black uppercase tracking-widest border-red-100 text-red-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all rounded-xl h-8 px-3 gap-2"
             >
               <X className="w-4 h-4" />
             </Button>
