@@ -1,14 +1,46 @@
-import { useState } from 'react';
-import { Star, TrendingUp, Flame, QrCode, Gift, Share2, Copy } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Star, TrendingUp, Flame, QrCode, Gift, Share2, Copy, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { currentUser, spendingData, categorySpending, referralCode } from '../../../data/mockData';
+import { useTranslation } from 'react-i18next';
+import { apiClient } from '../../../../src/api/client';
 import { toast } from 'sonner';
 
 export function Loyalty() {
+  const { t } = useTranslation(['account', 'common']);
+  const [loading, setLoading] = useState(true);
+  const [loyaltyData, setLoyaltyData] = useState<any>(null);
+
+  useEffect(() => {
+    loadLoyalty();
+  }, []);
+
+  const loadLoyalty = async () => {
+    try {
+      setLoading(true);
+      const data = await apiClient.getClientLoyalty();
+      if (data.success) {
+        setLoyaltyData(data);
+      }
+    } catch (error) {
+      console.error('Error loading loyalty:', error);
+      toast.error(t('common:error_loading_data'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-pink-500" />
+      </div>
+    );
+  }
+
   const tiers = [
     { name: 'Bronze', points: 0, discount: 5, color: '#CD7F32' },
     { name: 'Silver', points: 1000, discount: 10, color: '#C0C0C0' },
@@ -16,53 +48,57 @@ export function Loyalty() {
     { name: 'Platinum', points: 5000, discount: 25, color: '#E5E4E2' },
   ];
 
-  const currentTierIndex = tiers.findIndex(t => t.name.toLowerCase() === currentUser.currentTier);
+  const { loyalty } = loyaltyData || {};
+  const currentTierIndex = tiers.findIndex(t => t.name.toLowerCase() === loyalty?.tier?.toLowerCase());
   const currentTierData = tiers[currentTierIndex];
   const nextTierData = tiers[currentTierIndex + 1];
 
   const progressToNext = nextTierData
-    ? ((currentUser.loyaltyPoints - currentTierData.points) / (nextTierData.points - currentTierData.points)) * 100
+    ? ((loyalty?.points - currentTierData.points) / (nextTierData.points - currentTierData.points)) * 100
     : 100;
 
+  const userName = localStorage.getItem('user_name') || 'Client';
+  const userId = localStorage.getItem('user_id') || '00000000';
+
   const handleCopyReferral = () => {
-    navigator.clipboard.writeText(referralCode);
-    toast.success('Промокод скопирован');
+    navigator.clipboard.writeText(loyalty?.referral_code || '');
+    toast.success(t('loyalty.code_copied', 'Промокод скопирован'));
   };
 
   const handleAddToWallet = () => {
-    toast.info('Функция добавления в Apple Wallet скоро будет доступна');
+    toast.info(t('loyalty.wallet_coming_soon', 'Функция добавления в Apple Wallet скоро будет доступна'));
   };
 
   const shareWhatsApp = () => {
-    const text = `Присоединяйся к салону красоты! Используй мой промокод ${referralCode} и получи бонусы!`;
+    const text = `${t('loyalty.share_text', 'Присоединяйся к салону красоты! Используй мой промокод')} ${loyalty?.referral_code} ${t('loyalty.share_bonus', 'и получи бонусы!')}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1>Лояльность и Бонусы</h1>
-        <p className="text-muted-foreground">Ваши привилегии и награды</p>
+        <h1>{t('loyalty.title', 'Лояльность и Бонусы')}</h1>
+        <p className="text-muted-foreground">{t('loyalty.subtitle', 'Ваши привилегии и награды')}</p>
       </div>
 
       {/* Текущий статус */}
-      <Card className="border-2" style={{ borderColor: currentTierData.color }}>
+      <Card className="border-2" style={{ borderColor: currentTierData?.color }}>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Star className="w-6 h-6" style={{ color: currentTierData.color }} />
-                {currentTierData.name} статус
+                <Star className="w-6 h-6" style={{ color: currentTierData?.color }} />
+                {currentTierData?.name} {t('loyalty.status', 'статус')}
               </CardTitle>
               <CardDescription className="mt-2">
-                {currentUser.loyaltyPoints} баллов • {currentUser.currentDiscount}% скидка
+                {loyalty?.points} {t('loyalty.points', 'баллов')} • {loyalty?.discount}% {t('loyalty.discount', 'скидка')}
               </CardDescription>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-bold" style={{ color: currentTierData.color }}>
-                {currentUser.loyaltyPoints}
+              <div className="text-3xl font-bold" style={{ color: currentTierData?.color }}>
+                {loyalty?.points}
               </div>
-              <div className="text-sm text-muted-foreground">баллов</div>
+              <div className="text-sm text-muted-foreground">{t('loyalty.points', 'баллов')}</div>
             </div>
           </div>
         </CardHeader>
@@ -71,15 +107,15 @@ export function Loyalty() {
             <>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>До {nextTierData.name} уровня</span>
+                  <span>{t('loyalty.to_next_level', 'До')} {nextTierData.name} {t('loyalty.level', 'уровня')}</span>
                   <span className="font-semibold">
-                    {nextTierData.points - currentUser.loyaltyPoints} баллов
+                    {nextTierData.points - (loyalty?.points || 0)} {t('loyalty.points', 'баллов')}
                   </span>
                 </div>
                 <Progress value={progressToNext} className="h-2" />
               </div>
               <div className="text-sm text-muted-foreground">
-                При достижении {nextTierData.name} уровня ваша скидка составит {nextTierData.discount}%
+                {t('loyalty.next_discount', 'При достижении')} {nextTierData.name} {t('loyalty.level', 'уровня')} {t('loyalty.your_discount', 'ваша скидка составит')} {nextTierData.discount}%
               </div>
             </>
           )}
@@ -91,16 +127,16 @@ export function Loyalty() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Flame className="w-6 h-6 text-orange-500" />
-            Серия визитов
+            {t('loyalty.visit_streak', 'Серия визитов')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
-            <div className="text-5xl font-bold text-orange-500">{currentUser.streak}</div>
+            <div className="text-5xl font-bold text-orange-500">{loyalty?.streak || 0}</div>
             <div className="flex-1">
-              <div className="font-semibold">дней подряд!</div>
+              <div className="font-semibold">{t('loyalty.days_in_row', 'дней подряд!')}</div>
               <p className="text-sm text-muted-foreground">
-                Продолжайте посещать салон регулярно и получайте дополнительные бонусы
+                {t('loyalty.streak_message', 'Продолжайте посещать салон регулярно и получайте дополнительные бонусы')}
               </p>
             </div>
           </div>
@@ -111,12 +147,12 @@ export function Loyalty() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Расходы по месяцам</CardTitle>
-            <CardDescription>Последние 6 месяцев</CardDescription>
+            <CardTitle>{t('loyalty.spending_by_month', 'Расходы по месяцам')}</CardTitle>
+            <CardDescription>{t('loyalty.last_six_months', 'Последние 6 месяцев')}</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={spendingData}>
+              <BarChart data={loyalty?.spending_by_month || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
@@ -129,14 +165,14 @@ export function Loyalty() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Расходы по категориям</CardTitle>
-            <CardDescription>Распределение за год</CardDescription>
+            <CardTitle>{t('loyalty.spending_by_category', 'Расходы по категориям')}</CardTitle>
+            <CardDescription>{t('loyalty.year_distribution', 'Распределение за год')}</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={categorySpending}
+                  data={loyalty?.spending_by_category || []}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -145,7 +181,7 @@ export function Loyalty() {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {categorySpending.map((entry, index) => (
+                  {(loyalty?.spending_by_category || []).map((entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={entry.fill} />
                   ))}
                 </Pie>
@@ -159,32 +195,32 @@ export function Loyalty() {
       {/* Виртуальная карта */}
       <Card>
         <CardHeader>
-          <CardTitle>Виртуальная карта лояльности</CardTitle>
+          <CardTitle>{t('loyalty.virtual_card', 'Виртуальная карта лояльности')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row gap-6 items-center">
             <div className="bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl p-8 text-white w-full md:w-96 space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="text-sm opacity-80">Карта лояльности</div>
-                  <div className="font-bold text-xl mt-1">{currentTierData.name}</div>
+                  <div className="text-sm opacity-80">{t('loyalty.loyalty_card', 'Карта лояльности')}</div>
+                  <div className="font-bold text-xl mt-1">{currentTierData?.name}</div>
                 </div>
-                <Star className="w-8 h-8" style={{ color: currentTierData.color }} />
+                <Star className="w-8 h-8" style={{ color: currentTierData?.color }} />
               </div>
-              
+
               <div className="space-y-1">
-                <div className="text-sm opacity-80">Владелец карты</div>
-                <div className="font-semibold">{currentUser.name}</div>
+                <div className="text-sm opacity-80">{t('loyalty.card_holder', 'Владелец карты')}</div>
+                <div className="font-semibold">{userName}</div>
               </div>
-              
+
               <div className="flex justify-between items-end">
                 <div>
-                  <div className="text-sm opacity-80">ID клиента</div>
-                  <div className="font-mono">{currentUser.id.padStart(8, '0')}</div>
+                  <div className="text-sm opacity-80">{t('loyalty.client_id', 'ID клиента')}</div>
+                  <div className="font-mono">{userId.padStart(8, '0')}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold">{currentUser.currentDiscount}%</div>
-                  <div className="text-xs opacity-80">скидка</div>
+                  <div className="text-2xl font-bold">{loyalty?.discount}%</div>
+                  <div className="text-xs opacity-80">{t('loyalty.discount', 'скидка')}</div>
                 </div>
               </div>
             </div>
@@ -196,12 +232,12 @@ export function Loyalty() {
                 </div>
               </div>
               <div className="text-center text-sm text-muted-foreground">
-                Покажите QR-код при посещении салона
+                {t('loyalty.show_qr', 'Покажите QR-код при посещении салона')}
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" className="flex-1" onClick={handleAddToWallet}>
                   <Gift className="w-4 h-4 mr-2" />
-                  Добавить в Wallet
+                  {t('loyalty.add_to_wallet', 'Добавить в Wallet')}
                 </Button>
               </div>
             </div>
@@ -214,17 +250,17 @@ export function Loyalty() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Gift className="w-6 h-6 text-purple-500" />
-            Реферальная программа
+            {t('loyalty.referral_program', 'Реферальная программа')}
           </CardTitle>
           <CardDescription>
-            Приглашайте друзей и получайте бонусы
+            {t('loyalty.referral_subtitle', 'Приглашайте друзей и получайте бонусы')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-white rounded-lg p-4 border-2 border-dashed border-purple-200">
-            <div className="text-sm text-muted-foreground mb-2">Ваш промокод</div>
+            <div className="text-sm text-muted-foreground mb-2">{t('loyalty.your_promo', 'Ваш промокод')}</div>
             <div className="flex items-center gap-2">
-              <code className="flex-1 text-2xl font-bold text-purple-600">{referralCode}</code>
+              <code className="flex-1 text-2xl font-bold text-purple-600">{loyalty?.referral_code || 'LOADING'}</code>
               <Button size="sm" variant="outline" onClick={handleCopyReferral}>
                 <Copy className="w-4 h-4" />
               </Button>
@@ -233,16 +269,16 @@ export function Loyalty() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600">+500</div>
-              <div className="text-sm text-muted-foreground">баллов вам</div>
+              <div className="text-3xl font-bold text-purple-600">+{loyalty?.referral_stats?.points_for_referrer || 500}</div>
+              <div className="text-sm text-muted-foreground">{t('loyalty.points_for_you', 'баллов вам')}</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-pink-600">+300</div>
-              <div className="text-sm text-muted-foreground">баллов другу</div>
+              <div className="text-3xl font-bold text-pink-600">+{loyalty?.referral_stats?.points_for_friend || 300}</div>
+              <div className="text-sm text-muted-foreground">{t('loyalty.points_for_friend', 'баллов другу')}</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">0</div>
-              <div className="text-sm text-muted-foreground">приглашений</div>
+              <div className="text-3xl font-bold text-blue-600">{loyalty?.referral_stats?.referral_count || 0}</div>
+              <div className="text-sm text-muted-foreground">{t('loyalty.invitations', 'приглашений')}</div>
             </div>
           </div>
 

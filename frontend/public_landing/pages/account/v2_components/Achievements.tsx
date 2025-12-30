@@ -1,8 +1,11 @@
-import { Star, Heart, Award, Flame, Crown, Gem, Trophy, Lock } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Star, Heart, Award, Flame, Crown, Gem, Trophy, Lock, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { achievements, challenges } from '../../../data/mockData';
+import { useTranslation } from 'react-i18next';
+import { apiClient } from '../../../../src/api/client';
+import { toast } from 'sonner';
 
 const iconMap: Record<string, any> = {
   Star,
@@ -15,7 +18,41 @@ const iconMap: Record<string, any> = {
 };
 
 export function Achievements() {
-  const unlockedCount = achievements.filter(a => a.unlocked).length;
+  const { t } = useTranslation(['account', 'common']);
+  const [loading, setLoading] = useState(true);
+  const [achievementsData, setAchievementsData] = useState<any>(null);
+
+  useEffect(() => {
+    loadAchievements();
+  }, []);
+
+  const loadAchievements = async () => {
+    try {
+      setLoading(true);
+      const data = await apiClient.getClientAchievements();
+      if (data.success) {
+        setAchievementsData(data);
+      }
+    } catch (error) {
+      console.error('Error loading achievements:', error);
+      toast.error(t('common:error_loading_data'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-pink-500" />
+      </div>
+    );
+  }
+
+  const achievements = achievementsData?.achievements || [];
+  const challenges = achievementsData?.challenges || [];
+
+  const unlockedCount = achievements.filter((a: any) => a.unlocked).length;
   const totalCount = achievements.length;
 
   const getDaysLeft = (deadline: string) => {
@@ -26,9 +63,9 @@ export function Achievements() {
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1>Достижения</h1>
+        <h1>{t('achievements.title', 'Достижения')}</h1>
         <p className="text-muted-foreground">
-          Ваш прогресс: {unlockedCount} из {totalCount} достижений
+          {t('achievements.progress', 'Ваш прогресс')}: {unlockedCount} {t('achievements.of', 'из')} {totalCount} {t('achievements.achievements', 'достижений')}
         </p>
       </div>
 
@@ -37,13 +74,13 @@ export function Achievements() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Trophy className="w-6 h-6 text-yellow-600" />
-            Общий прогресс
+            {t('achievements.overall_progress', 'Общий прогресс')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>Разблокировано достижений</span>
+              <span>{t('achievements.unlocked_achievements', 'Разблокировано достижений')}</span>
               <span className="font-semibold">{unlockedCount} / {totalCount}</span>
             </div>
             <Progress value={(unlockedCount / totalCount) * 100} className="h-3" />
@@ -51,17 +88,17 @@ export function Achievements() {
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
               <div className="text-2xl font-bold text-yellow-600">{unlockedCount}</div>
-              <div className="text-xs text-muted-foreground">Получено</div>
+              <div className="text-xs text-muted-foreground">{t('achievements.received', 'Получено')}</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-blue-600">{totalCount - unlockedCount}</div>
-              <div className="text-xs text-muted-foreground">Осталось</div>
+              <div className="text-xs text-muted-foreground">{t('achievements.remaining', 'Осталось')}</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-purple-600">
                 {Math.round((unlockedCount / totalCount) * 100)}%
               </div>
-              <div className="text-xs text-muted-foreground">Завершено</div>
+              <div className="text-xs text-muted-foreground">{t('achievements.completed', 'Завершено')}</div>
             </div>
           </div>
         </CardContent>
@@ -69,7 +106,7 @@ export function Achievements() {
 
       {/* Список достижений */}
       <div className="space-y-4">
-        <h2>Все достижения</h2>
+        <h2>{t('achievements.all_achievements', 'Все достижения')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {achievements.map((achievement) => {
             const Icon = iconMap[achievement.icon] || Star;
@@ -113,7 +150,7 @@ export function Achievements() {
                         </div>
                         {achievement.unlocked && (
                           <Badge className="bg-yellow-500">
-                            Получено
+                            {t('achievements.unlocked', 'Получено')}
                           </Badge>
                         )}
                       </div>
@@ -121,7 +158,7 @@ export function Achievements() {
                       {hasProgress && (
                         <div className="space-y-1">
                           <div className="flex justify-between text-xs text-muted-foreground">
-                            <span>Прогресс</span>
+                            <span>{t('achievements.progress_label', 'Прогресс')}</span>
                             <span>
                               {achievement.progress} / {achievement.maxProgress}
                             </span>
@@ -132,7 +169,7 @@ export function Achievements() {
 
                       {achievement.unlocked && achievement.unlockedDate && (
                         <div className="text-xs text-muted-foreground">
-                          Получено:{' '}
+                          {t('achievements.unlocked_date', 'Получено')}:{' '}
                           {new Date(achievement.unlockedDate).toLocaleDateString('ru-RU', {
                             day: 'numeric',
                             month: 'long',
