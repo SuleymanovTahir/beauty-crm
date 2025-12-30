@@ -58,7 +58,9 @@
           "all": "All clients",
           "active": "Active clients",
           "inactive": "Inactive clients",
-          "tier": "By loyalty level"
+          "tier": "By loyalty level",
+          "appointment_based": "By Appointment",
+          "service_based": "By Service"
         },
         "loyalty_tier": "Loyalty level",
         "select_tier": "Select level",
@@ -67,7 +69,31 @@
           "silver": "Silver",
           "gold": "Gold",
           "platinum": "Platinum"
-        }
+        },
+        "appointment_filter": "Appointment Filter",
+        "select_filter": "Select filter",
+        "appointment_filters": {
+          "tomorrow": "Tomorrow",
+          "specific_date": "Specific Date",
+          "date_range": "Date Range"
+        },
+        "appointment_date": "Appointment Date",
+        "start_date": "Start Date",
+        "end_date": "End Date",
+        "service_filter": "Service/Procedure",
+        "service_placeholder": "Enter service name or ID",
+        "service_hint": "Clients who booked this service will receive the notification",
+        "schedule_notification": "Schedule Notification",
+        "schedule_date": "Send Date",
+        "schedule_time": "Send Time",
+        "repeat_notification": "Repeat Notification",
+        "repeat_interval": "Repeat Interval",
+        "repeat_intervals": {
+          "daily": "Daily",
+          "weekly": "Weekly",
+          "monthly": "Monthly"
+        },
+        "repeat_end_date": "End Repeat On"
       }
     },
     "template": {

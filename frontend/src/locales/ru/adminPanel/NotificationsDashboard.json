@@ -58,7 +58,9 @@
           "all": "Все клиенты",
           "active": "Активные клиенты",
           "inactive": "Неактивные клиенты",
-          "tier": "По уровню лояльности"
+          "tier": "По уровню лояльности",
+          "appointment_based": "По записям",
+          "service_based": "По услугам"
         },
         "loyalty_tier": "Уровень лояльности",
         "select_tier": "Выберите уровень",
@@ -67,7 +69,31 @@
           "silver": "Серебро",
           "gold": "Золото",
           "platinum": "Платина"
-        }
+        },
+        "appointment_filter": "Фильтр по записям",
+        "select_filter": "Выберите фильтр",
+        "appointment_filters": {
+          "tomorrow": "Завтра",
+          "specific_date": "Конкретная дата",
+          "date_range": "Диапазон дат"
+        },
+        "appointment_date": "Дата записи",
+        "start_date": "Дата начала",
+        "end_date": "Дата окончания",
+        "service_filter": "Услуга/Процедура",
+        "service_placeholder": "Введите название или ID услуги",
+        "service_hint": "Уведомление получат клиенты, записанные на эту услугу",
+        "schedule_notification": "Запланировать уведомление",
+        "schedule_date": "Дата отправки",
+        "schedule_time": "Время отправки",
+        "repeat_notification": "Повторять уведомление",
+        "repeat_interval": "Интервал повтора",
+        "repeat_intervals": {
+          "daily": "Ежедневно",
+          "weekly": "Еженедельно",
+          "monthly": "Ежемесячно"
+        },
+        "repeat_end_date": "Завершить повтор"
       }
     },
     "template": {
