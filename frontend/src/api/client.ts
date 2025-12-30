@@ -402,6 +402,31 @@ export const apiClient = {
       method: 'POST',
       body: data,
     }),
+
+  // ===== CLIENT DASHBOARD - ADDITIONAL ENDPOINTS =====
+
+  // Notifications
+  markNotificationRead: (id: number) =>
+    apiCall(`/api/client/notifications/${id}/read`, {
+      method: 'POST',
+    }),
+
+  markAllNotificationsRead: () =>
+    apiCall('/api/client/notifications/mark-all-read', {
+      method: 'POST',
+    }),
+
+  updateNotificationPreferences: (data: any) =>
+    apiCall('/api/client/notifications/preferences', {
+      method: 'POST',
+      body: data,
+    }),
+
+  updatePrivacyPreferences: (data: any) =>
+    apiCall('/api/client/privacy/preferences', {
+      method: 'POST',
+      body: data,
+    }),
 }
 
 export const api = {
