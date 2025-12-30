@@ -43,7 +43,10 @@
         "description": "Сипаттама",
         "description_placeholder": "Фотосурет сипаттамасы",
         "category": "Санат",
-        "select_category": "Санатты таңдаңыз"
+        "select_category": "Санатты таңдаңыз",
+        "client": "Клиент",
+        "select_client": "Клиентті таңдаңыз",
+        "client_hint": "Фотосурет клиенттің галереясында қолжетімді болады"
       }
     },
     "preview": {

@@ -378,7 +378,8 @@
     "privacy_photos_disabled": "Photo usage permission disabled",
     "logout": "Log Out",
     "logout_title": "Log Out of Account",
-    "save_changes": "Save Changes"
+    "save_changes": "Save Changes",
+    "email_required_export": "Please enter your email in your profile settings to receive data export"
   },
   "common": {
     "loading": "Loading...",

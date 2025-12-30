@@ -132,6 +132,15 @@ export function Settings() {
   };
 
   const handleExportData = () => {
+    // Check if user has an email address
+    if (!profile.email || profile.email.trim() === '') {
+      toast.error(t('settings.email_required_export', 'Пожалуйста, укажите email в настройках профиля для получения экспорта данных'));
+      // Switch to profile tab
+      setActiveTab('profile');
+      setSearchParams({ tab: 'profile' });
+      return;
+    }
+
     toast.success(t('settings.export_started', 'Экспорт данных начат. Вы получите файл на email'));
   };
 

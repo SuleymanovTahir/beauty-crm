@@ -43,7 +43,10 @@
         "description": "وصف",
         "description_placeholder": "وصف الصورة",
         "category": "فئة",
-        "select_category": "اختر فئة"
+        "select_category": "اختر فئة",
+        "client": "عميل",
+        "select_client": "حدد العميل",
+        "client_hint": "ستكون الصورة متاحة في معرض العميل"
       }
     },
     "preview": {

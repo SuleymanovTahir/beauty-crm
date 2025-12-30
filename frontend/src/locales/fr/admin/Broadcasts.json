@@ -25,5 +25,7 @@
   "subtitle": "Envoi de notifications aux utilisateurs via différents canaux",
   "target_role": "Rôle cible (facultatif)",
   "title": "Envois massifs",
-  "total_recipients": "Nombre total de destinataires"
+  "total_recipients": "Nombre total de destinataires",
+  "select_subscription_type": "Sélectionnez le type d'abonnement",
+  "error_preview": "Erreur d'aperçu"
 }

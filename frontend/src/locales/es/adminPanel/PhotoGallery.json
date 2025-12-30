@@ -43,7 +43,10 @@
         "description": "Descripción",
         "description_placeholder": "Descripción de la foto",
         "category": "Categoría",
-        "select_category": "Seleccionar categoría"
+        "select_category": "Seleccionar categoría",
+        "client": "Cliente",
+        "select_client": "Seleccionar cliente",
+        "client_hint": "La foto estará disponible en la galería del cliente."
       }
     },
     "preview": {

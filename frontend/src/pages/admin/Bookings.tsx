@@ -200,6 +200,10 @@ export default function Bookings() {
     return localStorage.getItem('bookings_date_to') || '';
   });
 
+  // Sorting states
+  const [sortField, setSortField] = useState<'name' | 'service_name' | 'datetime' | 'revenue'>('datetime');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+
   useEffect(() => {
     loadData();
   }, []);
@@ -249,8 +253,39 @@ export default function Bookings() {
 
       return matchesSearch && matchesStatus && matchesDate;
     });
-    setFilteredBookings(filtered);
-  }, [searchTerm, statusFilter, bookings, period, dateFrom, dateTo]);
+
+    // Apply sorting
+    const sorted = [...filtered].sort((a, b) => {
+      let aValue, bValue;
+
+      switch (sortField) {
+        case 'name':
+          aValue = (a.name || '').toLowerCase();
+          bValue = (b.name || '').toLowerCase();
+          break;
+        case 'service_name':
+          aValue = (a.service_name || '').toLowerCase();
+          bValue = (b.service_name || '').toLowerCase();
+          break;
+        case 'datetime':
+          aValue = new Date(a.datetime || a.created_at).getTime();
+          bValue = new Date(b.datetime || b.created_at).getTime();
+          break;
+        case 'revenue':
+          aValue = parseFloat(a.revenue || 0);
+          bValue = parseFloat(b.revenue || 0);
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    setFilteredBookings(sorted);
+  }, [searchTerm, statusFilter, bookings, period, dateFrom, dateTo, sortField, sortDirection]);
 
   // Save filters to localStorage when they change
   useEffect(() => {
@@ -269,6 +304,17 @@ export default function Bookings() {
     if (dateTo) localStorage.setItem('bookings_date_to', dateTo);
   }, [dateTo]);
 
+  // Handle sorting
+  const handleSort = (field: 'name' | 'service_name' | 'datetime' | 'revenue') => {
+    if (sortField === field) {
+      // Toggle direction if clicking the same field
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Set new field and default to ascending
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
 
   // Smart filtering: load masters when service is selected
   useEffect(() => {
@@ -813,9 +859,48 @@ export default function Bookings() {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
                 <tr>
-                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:client')}</th>
-                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:service')}</th>
-                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:date')}</th>
+                  <th
+                    onClick={() => handleSort('name')}
+                    style={{
+                      padding: '1rem 1.5rem',
+                      textAlign: 'left',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#6b7280',
+                      cursor: 'pointer',
+                      userSelect: 'none'
+                    }}
+                  >
+                    {t('bookings:client')} {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </th>
+                  <th
+                    onClick={() => handleSort('service_name')}
+                    style={{
+                      padding: '1rem 1.5rem',
+                      textAlign: 'left',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#6b7280',
+                      cursor: 'pointer',
+                      userSelect: 'none'
+                    }}
+                  >
+                    {t('bookings:service')} {sortField === 'service_name' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </th>
+                  <th
+                    onClick={() => handleSort('datetime')}
+                    style={{
+                      padding: '1rem 1.5rem',
+                      textAlign: 'left',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#6b7280',
+                      cursor: 'pointer',
+                      userSelect: 'none'
+                    }}
+                  >
+                    {t('bookings:date')} {sortField === 'datetime' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:phone')}</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:status')}</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:actions')}</th>

@@ -181,7 +181,8 @@
     "privacy_photos_disabled": "تم تعطيل دقة الصورة",
     "logout": "مخرج",
     "logout_title": "تسجيل الخروج",
-    "save_changes": "حفظ التغييرات"
+    "save_changes": "حفظ التغييرات",
+    "email_required_export": "الرجاء إدخال بريدك الإلكتروني في إعدادات ملفك الشخصي لتلقي تصدير البيانات"
   },
   "common": {
     "loading": "تحميل...",
