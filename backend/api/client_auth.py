@@ -129,7 +129,64 @@ async def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None))
 async def get_client_notifications(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user: raise HTTPException(status_code=401)
-    return {"notifications": []}
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        # Get client notifications (assuming notifications table exists)
+        client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("id")
+
+        c.execute("""
+            SELECT id, title, message, created_at, is_read, action_url
+            FROM notifications
+            WHERE client_id = %s
+            ORDER BY created_at DESC
+            LIMIT 50
+        """, (client_id,))
+
+        notifications = []
+        for row in c.fetchall():
+            notifications.append({
+                "id": row[0],
+                "title": row[1],
+                "message": row[2],
+                "created_at": row[3],
+                "is_read": row[4],
+                "action_url": row[5] if len(row) > 5 else None
+            })
+
+        conn.close()
+        return {"success": True, "notifications": notifications}
+    except Exception as e:
+        log_error(f"Error loading notifications: {e}", "client_auth")
+        return {"success": True, "notifications": []}
+
+@router.post("/notifications/{notification_id}/read")
+async def mark_notification_read(notification_id: int, session_token: Optional[str] = Cookie(None)):
+    user = require_auth(session_token)
+    if not user: raise HTTPException(status_code=401)
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("id")
+
+        # Verify notification belongs to user and mark as read
+        c.execute("""
+            UPDATE notifications
+            SET is_read = TRUE
+            WHERE id = %s AND client_id = %s
+        """, (notification_id, client_id))
+
+        conn.commit()
+        conn.close()
+
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error marking notification as read: {e}", "client_auth")
+        return {"success": False, "error": str(e)}
 
 @router.get("/my-bookings")
 async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
@@ -183,6 +240,63 @@ async def get_loyalty(session_token: Optional[str] = Cookie(None)):
         }
     except Exception as e:
         log_error(f"Error in get_loyalty: {e}", "client_auth")
+        return {"success": False, "error": str(e)}
+
+@router.get("/profile")
+async def get_client_profile(session_token: Optional[str] = Cookie(None)):
+    """Get full client profile information"""
+    user = require_auth(session_token)
+    if not user: raise HTTPException(status_code=401)
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("id")
+
+        # Get client data from clients table
+        c.execute("""
+            SELECT name, phone, email, avatar, birthday, created_at
+            FROM clients
+            WHERE instagram_id = %s OR telegram_id = %s
+        """, (client_id, client_id))
+
+        client_row = c.fetchone()
+
+        if not client_row:
+            conn.close()
+            return {"success": False, "error": "Client not found"}
+
+        # Get loyalty tier
+        c.execute("""
+            SELECT loyalty_level, total_points, available_points
+            FROM client_loyalty_points
+            WHERE client_id = %s
+        """, (client_id,))
+
+        loyalty_row = c.fetchone()
+        tier = loyalty_row[0] if loyalty_row else "bronze"
+        total_points = loyalty_row[1] if loyalty_row else 0
+        available_points = loyalty_row[2] if loyalty_row else 0
+
+        conn.close()
+
+        return {
+            "success": True,
+            "profile": {
+                "name": client_row[0],
+                "phone": client_row[1],
+                "email": client_row[2],
+                "avatar": client_row[3],
+                "birthday": client_row[4],
+                "created_at": client_row[5],
+                "tier": tier,
+                "total_points": total_points,
+                "available_points": available_points
+            }
+        }
+    except Exception as e:
+        log_error(f"Error loading client profile: {e}", "client_auth")
         return {"success": False, "error": str(e)}
 
 def get_discount_for_tier(tier: str) -> int:

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Calendar, Image, Award, Trophy, Users, Sparkles, Bell, Settings as SettingsIcon, Menu, LogOut } from 'lucide-react';
+import { Home, Calendar, Image, Award, Trophy, Users, Sparkles, Bell, Settings as SettingsIcon, Menu, LogOut, X } from 'lucide-react';
 import { Toaster } from '../../components/ui/sonner';
 import { Button } from './v2_components/ui/button';
 import { Badge } from './v2_components/ui/badge';
@@ -41,6 +41,9 @@ export function AccountPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [userData, setUserData] = useState<any>(null);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+  const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
 
   // Determine active tab from URL
   const getActiveTabFromPath = (): Tab => {
@@ -54,6 +57,38 @@ export function AccountPage() {
   // Load user data and notifications count
   useEffect(() => {
     loadUserData();
+    loadNotifications();
+    loadSalonSettings();
+
+    // Set up polling for notifications every 30 seconds
+    const notifInterval = setInterval(loadNotifications, 30000);
+
+    // Window event listeners for reactive updates
+    const handleProfileUpdated = () => {
+      console.log('Profile updated event received');
+      loadUserData();
+    };
+
+    const handleMessengersUpdated = () => {
+      console.log('Messengers updated event received');
+      loadUserData();
+    };
+
+    const handleNotificationReceived = () => {
+      console.log('New notification received');
+      loadNotifications();
+    };
+
+    window.addEventListener('profile-updated', handleProfileUpdated);
+    window.addEventListener('messengers-updated', handleMessengersUpdated);
+    window.addEventListener('notification-received', handleNotificationReceived);
+
+    return () => {
+      clearInterval(notifInterval);
+      window.removeEventListener('profile-updated', handleProfileUpdated);
+      window.removeEventListener('messengers-updated', handleMessengersUpdated);
+      window.removeEventListener('notification-received', handleNotificationReceived);
+    };
   }, []);
 
   // Sync URL on mount - if user navigates to /account, redirect to /account/dashboard
@@ -65,7 +100,36 @@ export function AccountPage() {
 
   const loadUserData = async () => {
     try {
-      // Get user name from localStorage
+      // Try to load from API first
+      const profileData = await apiClient.getClientProfile();
+
+      if (profileData.success && profileData.profile) {
+        setUserData({
+          name: profileData.profile.name || 'Guest',
+          email: profileData.profile.email || '',
+          avatar: profileData.profile.avatar || '',
+          currentTier: profileData.profile.tier || 'bronze'
+        });
+
+        // Update localStorage
+        if (profileData.profile.name) localStorage.setItem('user_name', profileData.profile.name);
+        if (profileData.profile.email) localStorage.setItem('user_email', profileData.profile.email);
+      } else {
+        // Fallback to localStorage if API fails
+        const userName = localStorage.getItem('user_name') || 'Guest';
+        const userEmail = localStorage.getItem('user_email') || '';
+
+        setUserData({
+          name: userName,
+          email: userEmail,
+          avatar: '',
+          currentTier: 'bronze'
+        });
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+
+      // Fallback to localStorage
       const userName = localStorage.getItem('user_name') || 'Guest';
       const userEmail = localStorage.getItem('user_email') || '';
 
@@ -73,17 +137,46 @@ export function AccountPage() {
         name: userName,
         email: userEmail,
         avatar: '',
-        currentTier: 'Bronze'
+        currentTier: 'bronze'
       });
+    }
+  };
 
-      // Load notifications count
+  const loadNotifications = async () => {
+    try {
       const notifData = await apiClient.getClientNotifications();
       if (notifData.success) {
-        const unread = (notifData.notifications || []).filter((n: any) => !n.is_read).length;
+        const notifList = notifData.notifications || [];
+        setNotifications(notifList);
+        const unread = notifList.filter((n: any) => !n.is_read).length;
         setUnreadCount(unread);
       }
     } catch (error) {
-      console.error('Error loading user data:', error);
+      console.error('Error loading notifications:', error);
+    }
+  };
+
+  const markNotificationRead = async (notifId: number) => {
+    try {
+      const result = await apiClient.markNotificationRead(notifId);
+      if (result.success) {
+        // Update local state
+        setNotifications(prev =>
+          prev.map(n => n.id === notifId ? { ...n, is_read: true } : n)
+        );
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      }
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
+
+  const loadSalonSettings = async () => {
+    try {
+      const settings = await apiClient.getSalonSettings();
+      setSalonSettings(settings);
+    } catch (error) {
+      console.error('Error loading salon settings:', error);
     }
   };
 
@@ -95,6 +188,13 @@ export function AccountPage() {
   };
 
   const handleLogout = async () => {
+    // Confirmation dialog
+    const confirmed = window.confirm(
+      t('common:confirm_logout', 'Вы уверены, что хотите выйти из системы?')
+    );
+
+    if (!confirmed) return;
+
     try {
       await apiClient.logout();
     } catch (err) {
@@ -198,7 +298,7 @@ export function AccountPage() {
           </button>
         </div>
         <div className="text-xs text-center text-muted-foreground">
-          Beauty Salon App
+          {salonSettings?.name || 'Beauty Salon'} App
           <br />
           v1.0.0
         </div>
@@ -209,6 +309,67 @@ export function AccountPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
       <Toaster />
+
+      {/* Notification Bell - Fixed Top Right */}
+      {activeTab === 'dashboard' && (
+        <div className="fixed top-4 right-4 z-50">
+          <button
+            onClick={() => setShowNotifDropdown(!showNotifDropdown)}
+            className="relative p-2 bg-white rounded-lg shadow-lg hover:bg-gray-50 transition-colors"
+          >
+            <Bell size={24} className={unreadCount > 0 ? 'text-pink-500' : 'text-gray-600'} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-pulse">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </button>
+
+          {/* Notification Dropdown */}
+          {showNotifDropdown && (
+            <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 max-h-96 overflow-y-auto">
+              <div className="p-3 border-b border-gray-100 flex justify-between items-center">
+                <span className="font-semibold text-gray-900">🔔 {t('account:notifications.title', 'Уведомления')}</span>
+                <button onClick={() => setShowNotifDropdown(false)} className="text-gray-400 hover:text-gray-600">
+                  <X size={16} />
+                </button>
+              </div>
+              {notifications.length === 0 ? (
+                <div className="p-4 text-center text-gray-500 text-sm">
+                  {t('account:notifications.no_notifications', 'Нет новых уведомлений')}
+                </div>
+              ) : (
+                notifications.map((notif: any) => (
+                  <div
+                    key={notif.id}
+                    className={`p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer ${
+                      !notif.is_read ? 'bg-pink-50' : ''
+                    }`}
+                    onClick={() => {
+                      markNotificationRead(notif.id);
+                      if (notif.action_url) navigate(notif.action_url);
+                      setShowNotifDropdown(false);
+                    }}
+                  >
+                    <div className="flex items-start gap-2">
+                      {!notif.is_read && (
+                        <span className="w-2 h-2 bg-pink-500 rounded-full mt-2 flex-shrink-0"></span>
+                      )}
+                      <div className="flex-1">
+                        <div className="font-medium text-sm text-gray-900">{notif.title}</div>
+                        <div className="text-xs text-gray-600 mt-1 line-clamp-2">{notif.message}</div>
+                        <div className="text-xs text-gray-400 mt-1">
+                          {new Date(notif.created_at).toLocaleString('ru-RU')}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Мобильная шапка */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b">
@@ -225,8 +386,12 @@ export function AccountPage() {
           </Sheet>
 
           <div className="flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-pink-500" />
-            <span className="font-bold">Beauty Salon</span>
+            {salonSettings?.logo_url ? (
+              <img src={salonSettings.logo_url} alt={salonSettings.name} className="w-6 h-6 object-contain" />
+            ) : (
+              <Sparkles className="w-6 h-6 text-pink-500" />
+            )}
+            <span className="font-bold">{salonSettings?.name || 'Beauty Salon'}</span>
           </div>
 
           <Avatar className="w-8 h-8">
@@ -241,8 +406,12 @@ export function AccountPage() {
         <aside className="hidden lg:block w-[280px] bg-white border-r flex-shrink-0">
           <div className="p-6 border-b">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-8 h-8 text-pink-500" />
-              <span className="text-xl font-bold">Beauty Salon</span>
+              {salonSettings?.logo_url ? (
+                <img src={salonSettings.logo_url} alt={salonSettings.name} className="w-8 h-8 object-contain" />
+              ) : (
+                <Sparkles className="w-8 h-8 text-pink-500" />
+              )}
+              <span className="text-xl font-bold">{salonSettings?.name || 'Beauty Salon'}</span>
             </div>
           </div>
           <SidebarContent />

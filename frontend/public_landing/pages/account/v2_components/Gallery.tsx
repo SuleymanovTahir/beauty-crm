@@ -56,12 +56,66 @@ export function Gallery() {
     ? galleryItems.filter((item: any) => item.category === selectedCategory)
     : galleryItems;
 
-  const handleDownload = () => {
-    toast.success(t('gallery.photo_saved', 'Фото сохранено в галерею'));
+  const handleDownload = async () => {
+    if (!selectedItem) return;
+
+    try {
+      const photoUrl = showBefore ? selectedItem.before_photo : selectedItem.after_photo;
+      const fileName = `beauty-${selectedItem.service}-${showBefore ? 'before' : 'after'}-${Date.now()}.jpg`;
+
+      // Fetch the image and create a blob
+      const response = await fetch(photoUrl);
+      const blob = await response.blob();
+
+      // Create a download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success(t('gallery.photo_saved', 'Фото сохранено в галерею'));
+    } catch (error) {
+      console.error('Error downloading photo:', error);
+      toast.error(t('common:error_occurred', 'Произошла ошибка'));
+    }
   };
 
-  const handleShare = () => {
-    toast.success(t('gallery.link_copied', 'Ссылка скопирована в буфер обмена'));
+  const handleShare = async () => {
+    if (!selectedItem) return;
+
+    const photoUrl = showBefore ? selectedItem.before_photo : selectedItem.after_photo;
+    const shareData = {
+      title: `${selectedItem.service} - ${showBefore ? t('gallery.before', 'До') : t('gallery.after', 'После')}`,
+      text: `Посмотрите на результат процедуры "${selectedItem.service}" от мастера ${selectedItem.master_name}`,
+      url: photoUrl
+    };
+
+    // Check if Web Share API is available
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        toast.success(t('gallery.shared', 'Успешно поделились'));
+      } catch (error) {
+        // User cancelled or error occurred
+        if ((error as Error).name !== 'AbortError') {
+          // Fallback to clipboard
+          await navigator.clipboard.writeText(photoUrl);
+          toast.success(t('gallery.link_copied', 'Ссылка скопирована в буфер обмена'));
+        }
+      }
+    } else {
+      // Fallback to clipboard
+      try {
+        await navigator.clipboard.writeText(photoUrl);
+        toast.success(t('gallery.link_copied', 'Ссылка скопирована в буфер обмена'));
+      } catch (error) {
+        toast.error(t('common:error_occurred', 'Произошла ошибка'));
+      }
+    }
   };
 
   const navigateItem = (direction: 'prev' | 'next') => {

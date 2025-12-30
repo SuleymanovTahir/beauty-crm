@@ -66,10 +66,10 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
 
         // Redirect based on role
         if (response.user.role === 'client') {
-          // If we had a ClientCabinet, we'd go there. For now, maybe admin dashboard or home.
-          // User mentioned "client cabinet", let's assume /account path from new router or admin dashboard as fallback
-          navigate("/admin/dashboard");
+          // Redirect clients to their account dashboard
+          navigate("/account/dashboard");
         } else {
+          // Redirect staff/admin to admin dashboard
           navigate("/admin/dashboard");
         }
       } else {

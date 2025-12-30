@@ -391,6 +391,14 @@ export const apiClient = {
   getClientNotifications: () =>
     apiCall('/api/client/my-notifications'),
 
+  markNotificationRead: (notificationId: number) =>
+    apiCall(`/api/client/notifications/${notificationId}/read`, {
+      method: 'POST',
+    }),
+
+  getClientProfile: () =>
+    apiCall('/api/client/profile'),
+
   getClientBeautyMetrics: () =>
     apiCall('/api/client/beauty-metrics'),
 
@@ -404,12 +412,6 @@ export const apiClient = {
     }),
 
   // ===== CLIENT DASHBOARD - ADDITIONAL ENDPOINTS =====
-
-  // Notifications
-  markNotificationRead: (id: number) =>
-    apiCall(`/api/client/notifications/${id}/read`, {
-      method: 'POST',
-    }),
 
   markAllNotificationsRead: () =>
     apiCall('/api/client/notifications/mark-all-read', {
