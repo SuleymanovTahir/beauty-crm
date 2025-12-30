@@ -59,7 +59,7 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
 
     try:
         c.execute("""
-            SELECT loyalty_points, referral_code, total_saved FROM clients
+            SELECT loyalty_points, referral_code, total_saved, name, phone, email FROM clients
             WHERE instagram_id = %s OR telegram_id = %s
             LIMIT 1
         """, (client_id, client_id))
@@ -71,28 +71,59 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             "total_saved": client_row[2] if client_row else 0
         }
 
-        c.execute("""
-            SELECT b.id, b.service_name, b.datetime, b.master, COALESCE(u.photo, u.photo_url)
-            FROM bookings b
-            LEFT JOIN users u ON LOWER(b.master) = LOWER(u.full_name)
-            WHERE (b.instagram_id = %s OR b.telegram_id = %s OR b.client_id = %s)
-            AND b.status IN ('pending', 'confirmed')
-            AND b.datetime >= %s
-            ORDER BY b.datetime ASC LIMIT 1
-        """, (client_id, client_id, client_id, datetime.now().isoformat()))
-        row = c.fetchone()
-        next_booking = {"id": row[0], "service": row[1], "date": row[2], "master": row[3], "master_photo": row[4]} if row else None
+        client_info = {
+            "name": client_row[3] if client_row and client_row[3] else user.get("username", ""),
+            "phone": client_row[4] if client_row and client_row[4] else "",
+            "email": client_row[5] if client_row and client_row[5] else ""
+        }
 
         c.execute("""
             SELECT b.id, b.service_name, b.datetime, b.master, COALESCE(u.photo, u.photo_url)
             FROM bookings b
             LEFT JOIN users u ON LOWER(b.master) = LOWER(u.full_name)
-            WHERE (b.instagram_id = %s OR b.telegram_id = %s OR b.client_id = %s)
+            WHERE b.instagram_id = %s
+            AND b.status IN ('pending', 'confirmed')
+            AND b.datetime >= %s
+            ORDER BY b.datetime ASC LIMIT 1
+        """, (client_id, datetime.now().isoformat()))
+        row = c.fetchone()
+        next_booking = {"id": row[0], "service": row[1], "date": row[2], "master": row[3], "master_photo": row[4]} if row else None
+
+        c.execute("""
+            SELECT b.id, b.service_name, b.datetime, b.master, b.master_id, COALESCE(u.photo, u.photo_url)
+            FROM bookings b
+            LEFT JOIN users u ON LOWER(b.master) = LOWER(u.full_name)
+            WHERE b.instagram_id = %s
             AND b.status = 'completed'
             ORDER BY b.datetime DESC LIMIT 1
-        """, (client_id, client_id, client_id))
+        """, (client_id,))
         row = c.fetchone()
-        last_visit = {"id": row[0], "service": row[1], "date": row[2], "master": row[3], "master_photo": row[4]} if row else None
+        last_visit = {
+            "id": row[0],
+            "booking_id": row[0],
+            "service": row[1],
+            "service_id": None,
+            "date": row[2],
+            "master": row[3],
+            "master_id": row[4],
+            "master_photo": row[5]
+        } if row else None
+
+        # Count total visits
+        c.execute("""
+            SELECT COUNT(*) FROM bookings
+            WHERE instagram_id = %s AND status = 'completed'
+        """, (client_id,))
+        total_visits = c.fetchone()[0] or 0
+
+        # Count visits this month
+        c.execute("""
+            SELECT COUNT(*) FROM bookings
+            WHERE instagram_id = %s
+            AND status = 'completed'
+            AND datetime >= %s
+        """, (client_id, datetime.now().replace(day=1).isoformat()))
+        visits_this_month = c.fetchone()[0] or 0
 
         c.execute("SELECT COUNT(*) FROM client_achievements WHERE client_id = %s AND unlocked_at IS NOT NULL", (client_id,))
         unlocked = c.fetchone()[0]
@@ -101,11 +132,15 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
 
         return {
             "success": True,
+            "client": client_info,
             "loyalty": loyalty,
             "next_booking": next_booking,
             "last_visit": last_visit,
-            "achievements_summary": {"unlocked": unlocked, "total": total_ach},
-            "visit_stats": {"total_visits": 0} # Placeholder
+            "achievements_summary": {"unlocked": unlocked, "total": total_ach or 4},
+            "visit_stats": {
+                "total_visits": total_visits,
+                "visits_this_month": visits_this_month
+            }
         }
     except Exception as e:
         log_error(f"Error in dashboard: {e}")
@@ -117,13 +152,119 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
 async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user: raise HTTPException(status_code=401)
-    client_id = user["username"]
-    conn = get_db_connection()
-    c = conn.cursor()
-    c.execute("SELECT achievement_type, title_ru, icon, points_awarded FROM client_achievements WHERE client_id = 'template'")
-    achievements = [{"type": r[0], "title": r[1], "icon": r[2], "points": r[3], "is_unlocked": False} for r in c.fetchall()]
-    conn.close()
-    return {"success": True, "achievements": achievements}
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        client_id = user.get("instagram_id") or user.get("telegram_id") or str(user.get("id", ""))
+
+        # Get existing achievements for this client
+        c.execute("""
+            SELECT achievement_type, title_ru, icon, points_awarded, unlocked_at, progress, max_progress, description_ru
+            FROM client_achievements
+            WHERE client_id = %s
+        """, (client_id,))
+
+        existing_achievements = {}
+        achievement_id = 1
+        for row in c.fetchall():
+            existing_achievements[row[0]] = {
+                "id": achievement_id,
+                "type": row[0],
+                "title": row[1],
+                "icon": row[2],
+                "points": row[3],
+                "unlocked": row[4] is not None,
+                "unlockedDate": row[4].isoformat() if row[4] else None,
+                "progress": row[5],
+                "maxProgress": row[6],
+                "description": row[7] or ""
+            }
+            achievement_id += 1
+
+        # Get client statistics for default achievements
+        c.execute("""
+            SELECT COUNT(*) as total_visits
+            FROM bookings
+            WHERE instagram_id = %s AND status = 'completed'
+        """, (client_id,))
+        total_visits = c.fetchone()[0] or 0
+
+        c.execute("""
+            SELECT COUNT(DISTINCT service_name) as unique_services
+            FROM bookings
+            WHERE instagram_id = %s AND status = 'completed'
+        """, (client_id,))
+        unique_services = c.fetchone()[0] or 0
+
+        # Default achievement templates
+        default_achievements = [
+            {
+                "type": "first_visit",
+                "title": "Первый визит",
+                "icon": "🎉",
+                "points": 10,
+                "progress": min(total_visits, 1),
+                "maxProgress": 1,
+                "description": "Совершите свой первый визит в салон"
+            },
+            {
+                "type": "regular_client",
+                "title": "Постоянный клиент",
+                "icon": "⭐",
+                "points": 50,
+                "progress": min(total_visits, 5),
+                "maxProgress": 5,
+                "description": "Посетите салон 5 раз"
+            },
+            {
+                "type": "loyal_customer",
+                "title": "Верный поклонник",
+                "icon": "💎",
+                "points": 100,
+                "progress": min(total_visits, 10),
+                "maxProgress": 10,
+                "description": "Совершите 10 визитов"
+            },
+            {
+                "type": "service_explorer",
+                "title": "Исследователь услуг",
+                "icon": "🔍",
+                "points": 75,
+                "progress": min(unique_services, 3),
+                "maxProgress": 3,
+                "description": "Попробуйте 3 разные услуги"
+            }
+        ]
+
+        # Merge existing achievements with defaults
+        achievements = []
+        achievement_id = 1
+        for default in default_achievements:
+            if default["type"] in existing_achievements:
+                achievements.append(existing_achievements[default["type"]])
+            else:
+                is_unlocked = default["progress"] >= default["maxProgress"]
+                achievements.append({
+                    "id": achievement_id,
+                    "type": default["type"],
+                    "title": default["title"],
+                    "icon": default["icon"],
+                    "points": default["points"],
+                    "unlocked": is_unlocked,
+                    "unlockedDate": None,
+                    "progress": default["progress"],
+                    "maxProgress": default["maxProgress"],
+                    "description": default["description"]
+                })
+            achievement_id += 1
+
+        conn.close()
+        return {"success": True, "achievements": achievements}
+    except Exception as e:
+        log_error(f"Error loading achievements: {e}", "client_auth")
+        return {"success": True, "achievements": []}
 
 @router.get("/beauty-metrics")
 async def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None)):
@@ -141,7 +282,7 @@ async def get_client_notifications(session_token: Optional[str] = Cookie(None)):
         c = conn.cursor()
 
         # Get client notifications (assuming notifications table exists)
-        client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("id")
+        client_id = user.get("instagram_id") or user.get("telegram_id") or str(user.get("id", ""))
 
         c.execute("""
             SELECT id, title, message, created_at, is_read, action_url
@@ -177,7 +318,7 @@ async def mark_notification_read(notification_id: int, session_token: Optional[s
         conn = get_db_connection()
         c = conn.cursor()
 
-        client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("id")
+        client_id = user.get("instagram_id") or user.get("telegram_id") or str(user.get("id", ""))
 
         # Verify notification belongs to user and mark as read
         c.execute("""
@@ -207,9 +348,9 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
     c.execute("""
         SELECT id, service_name, datetime, status, revenue, master
         FROM bookings
-        WHERE instagram_id = %s OR telegram_id = %s OR client_id = %s
+        WHERE instagram_id = %s
         ORDER BY datetime DESC
-    """, (client_id, client_id, client_id))
+    """, (client_id,))
     items = [{"id":r[0], "service_name":r[1], "date":r[2], "status":r[3], "price":r[4], "master_name": r[5]} for r in c.fetchall()]
     conn.close()
     return {"success": True, "bookings": items}
@@ -334,7 +475,99 @@ async def get_gallery(session_token: Optional[str] = Cookie(None)):
 async def get_fav_masters(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user: raise HTTPException(status_code=401)
-    return {"success": True, "masters": []}
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        client_id = user.get("instagram_id") or user.get("telegram_id") or str(user.get("id", ""))
+
+        # Get all service providers (masters) with their favorite status and ratings
+        c.execute("""
+            SELECT
+                u.id,
+                u.full_name,
+                u.position,
+                u.photo_url,
+                u.specialization,
+                CASE WHEN cfm.master_id IS NOT NULL THEN true ELSE false END as is_favorite,
+                COALESCE(AVG(r.rating), 0) as rating,
+                COUNT(DISTINCT r.id) as reviews_count
+            FROM users u
+            LEFT JOIN client_favorite_masters cfm ON cfm.master_id = u.id AND cfm.client_id = %s
+            LEFT JOIN ratings r ON r.master_id = u.id
+            WHERE u.is_service_provider = true AND u.is_active = true
+            GROUP BY u.id, u.full_name, u.position, u.photo_url, u.specialization, cfm.master_id
+            ORDER BY is_favorite DESC, u.full_name
+        """, (client_id,))
+
+        masters = []
+        for row in c.fetchall():
+            masters.append({
+                "id": row[0],
+                "name": row[1],
+                "specialty": row[2] or "Специалист",
+                "avatar": row[3] or "/default-avatar.png",
+                "specialization": row[4],
+                "is_favorite": row[5],
+                "rating": round(row[6], 1) if row[6] else 0,
+                "reviews_count": row[7] or 0
+            })
+
+        conn.close()
+        return {"success": True, "masters": masters}
+    except Exception as e:
+        log_error(f"Error loading masters: {e}", "client_auth")
+        return {"success": True, "masters": []}
+
+@router.post("/favorite-masters")
+async def toggle_favorite_master(
+    data: dict,
+    session_token: Optional[str] = Cookie(None)
+):
+    user = require_auth(session_token)
+    if not user: raise HTTPException(status_code=401)
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        client_id = user.get("instagram_id") or user.get("telegram_id") or str(user.get("id", ""))
+        master_id = data.get("master_id")
+
+        if not master_id:
+            return {"success": False, "error": "Master ID is required"}
+
+        # Check if already favorite
+        c.execute("""
+            SELECT id FROM client_favorite_masters
+            WHERE client_id = %s AND master_id = %s
+        """, (client_id, master_id))
+
+        existing = c.fetchone()
+
+        if existing:
+            # Remove from favorites
+            c.execute("""
+                DELETE FROM client_favorite_masters
+                WHERE client_id = %s AND master_id = %s
+            """, (client_id, master_id))
+            is_favorite = False
+        else:
+            # Add to favorites
+            c.execute("""
+                INSERT INTO client_favorite_masters (client_id, master_id)
+                VALUES (%s, %s)
+            """, (client_id, master_id))
+            is_favorite = True
+
+        conn.commit()
+        conn.close()
+
+        return {"success": True, "is_favorite": is_favorite}
+    except Exception as e:
+        log_error(f"Error toggling favorite master: {e}", "client_auth")
+        return {"success": False, "error": str(e)}
 
 @router.post("/profile/update")
 async def update_profile(
