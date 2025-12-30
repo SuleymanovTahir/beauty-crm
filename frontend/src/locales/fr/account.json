@@ -68,7 +68,11 @@
       "no_recurring": "Aucune entrée en double",
       "no_recurring_desc": "Créez un enregistrement automatique pour ne pas oublier les procédures régulières",
       "create_auto": "Créer un enregistrement automatique"
-    }
+    },
+    "insight_visits_0": "Accueillir! Nous sommes heureux de vous voir dans notre salon!",
+    "insight_visits_1_3": "Bon début ! Vous êtes déjà venu avec nous {{count}} fois !",
+    "insight_visits_4_9": "Vous devenez un client régulier ! {{count}} visites : cela représente plus de 60 % de nos clients !",
+    "insight_visits_10_plus": "Vous êtes un client VIP ! {{count}} visites : cela représente plus de 85 % de nos clients !"
   },
   "loyalty": {
     "your_level": "Votre niveau",

@@ -3,9 +3,9 @@
   "employee": "Қызметкер",
   "logout": "Шығу",
   "menu": {
-    "calendar": "Күнтібзе",
-    "my_bookings": "Менің брондауларым",
-    "profile": "Қырынан бейнелеу",
+    "calendar": "Күнтізбе",
+    "my_bookings": "Менің тапсырыстарым",
+    "profile": "Профиль",
     "settings": "Параметрлер"
   }
 }

@@ -1,0 +1,104 @@
+{
+  "title": "अधिसूचना पैनल",
+  "subtitle": "ग्राहकों को सूचनाएं प्रबंधित करना और भेजना",
+  "save_template": "टेम्प्लेट सहेजें",
+  "send_notification": "अधिसूचना भेजें",
+  "stats": {
+    "total_sent": "कुल भेजा गया",
+    "email_sent": "ईमेल भेजा गया",
+    "push_sent": "पुश भेजा गया",
+    "sms_sent": "एसएमएस भेजा गया"
+  },
+  "templates": {
+    "title": "अधिसूचना टेम्पलेट्स",
+    "description": "सामान्य सूचनाओं के लिए त्वरित टेम्पलेट",
+    "use_template": "टेम्पलेट का इस्तेमाल करें"
+  },
+  "history": {
+    "title": "अधिसूचना इतिहास",
+    "description": "सभी भेजी गई और शेड्यूल की गई सूचनाएं",
+    "filters": {
+      "all": "सभी",
+      "email": "Email",
+      "push": "Push",
+      "sms": "SMS"
+    },
+    "table": {
+      "status": "स्थिति",
+      "title": "शीर्षक",
+      "type": "प्रकार",
+      "recipients": "प्राप्तकर्ता",
+      "sent_failed": "भेजा/असफल",
+      "date": "तारीख"
+    },
+    "statuses": {
+      "sent": "भेजा",
+      "pending": "इंतज़ार में",
+      "failed": "असफल"
+    },
+    "scheduled": "की योजना बनाई"
+  },
+  "types": {
+    "email": "Email",
+    "push": "Push",
+    "sms": "SMS"
+  },
+  "dialogs": {
+    "send": {
+      "title": "नई अधिसूचना भेजें",
+      "description": "अपने ग्राहकों को अधिसूचना बनाएं और भेजें",
+      "form": {
+        "notification_type": "जानकारी प्रकार",
+        "title": "शीर्षक",
+        "title_placeholder": "अधिसूचना शीर्षक",
+        "message": "संदेश",
+        "message_placeholder": "अधिसूचना पाठ",
+        "target_segment": "लक्ष्य खंड",
+        "segments": {
+          "all": "सभी ग्राहक",
+          "active": "सक्रिय ग्राहक",
+          "inactive": "निष्क्रिय ग्राहक",
+          "tier": "वफादारी के स्तर से"
+        },
+        "loyalty_tier": "वफादारी का स्तर",
+        "select_tier": "स्तर चुनें",
+        "tiers": {
+          "bronze": "पीतल",
+          "silver": "चाँदी",
+          "gold": "सोना",
+          "platinum": "प्लैटिनम"
+        }
+      }
+    },
+    "template": {
+      "title": "टेम्पलेट के रूप में सहेजें",
+      "description": "एक पुन: प्रयोज्य अधिसूचना टेम्पलेट बनाएं",
+      "form": {
+        "template_name": "टेम्पलेट का नाम",
+        "template_name_placeholder": "उदाहरण के लिए, स्वागत संदेश",
+        "title": "शीर्षक",
+        "title_placeholder": "अधिसूचना शीर्षक",
+        "message": "संदेश",
+        "message_placeholder": "गतिशील सामग्री के लिए {variable} का उपयोग करें",
+        "type": "प्रकार",
+        "types": {
+          "push": "सर्वर पुश नोटीफिकेशन",
+          "email": "Email",
+          "sms": "SMS"
+        }
+      }
+    }
+  },
+  "buttons": {
+    "cancel": "रद्द करना",
+    "send_notification": "अधिसूचना भेजें",
+    "save_template": "टेम्प्लेट सहेजें"
+  },
+  "toasts": {
+    "sent": "अधिसूचना सफलतापूर्वक भेजी गई",
+    "template_saved": "टेम्प्लेट सफलतापूर्वक सहेजा गया",
+    "failed_load": "सूचनाएं लोड करने में विफल",
+    "failed_send": "सूचना भेजने में विफल",
+    "failed_save_template": "टेम्प्लेट सहेजने में विफल"
+  }
+}

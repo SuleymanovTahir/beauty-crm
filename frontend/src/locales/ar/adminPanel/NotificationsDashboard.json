@@ -1,0 +1,104 @@
+{
+  "title": "لوحة الإخطار",
+  "subtitle": "إدارة وإرسال الإخطارات للعملاء",
+  "save_template": "حفظ القالب",
+  "send_notification": "إرسال الإخطار",
+  "stats": {
+    "total_sent": "إجمالي المرسلة",
+    "email_sent": "تم إرسال البريد الإلكتروني",
+    "push_sent": "تم إرسال الدفع",
+    "sms_sent": "تم إرسال الرسائل القصيرة"
+  },
+  "templates": {
+    "title": "قوالب الإخطار",
+    "description": "قوالب سريعة للإخطارات المشتركة",
+    "use_template": "استخدم القالب"
+  },
+  "history": {
+    "title": "تاريخ الإخطار",
+    "description": "جميع الإخطارات المرسلة والمقررة",
+    "filters": {
+      "all": "الجميع",
+      "email": "Email",
+      "push": "Push",
+      "sms": "SMS"
+    },
+    "table": {
+      "status": "حالة",
+      "title": "عنوان",
+      "type": "يكتب",
+      "recipients": "المستلمون",
+      "sent_failed": "تم الإرسال/فشل",
+      "date": "تاريخ"
+    },
+    "statuses": {
+      "sent": "مرسل",
+      "pending": "منتظر",
+      "failed": "فشل"
+    },
+    "scheduled": "المخطط لها"
+  },
+  "types": {
+    "email": "Email",
+    "push": "Push",
+    "sms": "SMS"
+  },
+  "dialogs": {
+    "send": {
+      "title": "إرسال إشعار جديد",
+      "description": "إنشاء وإرسال إشعار لعملائك",
+      "form": {
+        "notification_type": "نوع الإخطار",
+        "title": "عنوان",
+        "title_placeholder": "عنوان الإخطار",
+        "message": "رسالة",
+        "message_placeholder": "نص الإخطار",
+        "target_segment": "الشريحة المستهدفة",
+        "segments": {
+          "all": "جميع العملاء",
+          "active": "العملاء النشطين",
+          "inactive": "العملاء غير النشطين",
+          "tier": "حسب مستوى الولاء"
+        },
+        "loyalty_tier": "مستوى الولاء",
+        "select_tier": "اختر المستوى",
+        "tiers": {
+          "bronze": "برونزية",
+          "silver": "فضي",
+          "gold": "ذهب",
+          "platinum": "البلاتين"
+        }
+      }
+    },
+    "template": {
+      "title": "حفظ كقالب",
+      "description": "قم بإنشاء قالب إعلام قابل لإعادة الاستخدام",
+      "form": {
+        "template_name": "اسم القالب",
+        "template_name_placeholder": "على سبيل المثال، رسالة ترحيب",
+        "title": "عنوان",
+        "title_placeholder": "عنوان الإخطار",
+        "message": "رسالة",
+        "message_placeholder": "استخدم {variable} للمحتوى الديناميكي",
+        "type": "يكتب",
+        "types": {
+          "push": "دفع الإخطار",
+          "email": "Email",
+          "sms": "SMS"
+        }
+      }
+    }
+  },
+  "buttons": {
+    "cancel": "يلغي",
+    "send_notification": "إرسال الإخطار",
+    "save_template": "حفظ القالب"
+  },
+  "toasts": {
+    "sent": "تم إرسال الإشعار بنجاح",
+    "template_saved": "تم حفظ القالب بنجاح",
+    "failed_load": "فشل في تحميل الإخطارات",
+    "failed_send": "فشل في إرسال الإخطار",
+    "failed_save_template": "فشل حفظ القالب"
+  }
+}

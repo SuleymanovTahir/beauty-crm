@@ -1,0 +1,63 @@
+{
+  "title": "Челленджи",
+  "subtitle": "Создание и управление челленджами вовлечения",
+  "create_challenge": "Создать челлендж",
+  "stats": {
+    "active_challenges": "Активных челленджей",
+    "total_participants": "Всего участников",
+    "completions": "Завершений"
+  },
+  "types": {
+    "visits": "Визиты",
+    "spending": "Расходы",
+    "referrals": "Рефералы",
+    "services": "Услуги"
+  },
+  "statuses": {
+    "active": "Активный",
+    "upcoming": "Предстоящий",
+    "completed": "Завершен"
+  },
+  "card": {
+    "target": "Цель",
+    "reward": "Награда",
+    "progress": "Прогресс",
+    "completed": "завершено",
+    "pts": "балл"
+  },
+  "dialogs": {
+    "create": {
+      "title": "Создать новый челлендж",
+      "title_edit": "Редактировать челлендж",
+      "description": "Определите параметры челленджа и награды",
+      "form": {
+        "title": "Название",
+        "title_placeholder": "Летний челлендж красоты",
+        "description": "Описание",
+        "description_placeholder": "Посетите салон 3 раза в этом месяце",
+        "challenge_type": "Тип челленджа",
+        "target_value": "Целевое значение",
+        "target_placeholder": "3",
+        "reward_points": "Награда баллами",
+        "reward_placeholder": "1000",
+        "start_date": "Дата начала",
+        "end_date": "Дата окончания"
+      }
+    },
+    "delete": {
+      "confirm": "Вы уверены, что хотите удалить этот челлендж?"
+    }
+  },
+  "buttons": {
+    "cancel": "Отмена",
+    "create_challenge": "Создать челлендж",
+    "update_challenge": "Обновить челлендж"
+  },
+  "toasts": {
+    "created": "Челлендж успешно создан",
+    "deleted": "Челлендж успешно удален",
+    "failed_load": "Не удалось загрузить челленджи",
+    "failed_create": "Не удалось создать челлендж",
+    "failed_delete": "Не удалось удалить челлендж"
+  }
+}

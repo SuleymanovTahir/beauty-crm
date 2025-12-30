@@ -1,0 +1,47 @@
+{
+  "title": "Panneau de contrôle",
+  "subtitle": "Gestion des utilisateurs, de la fidélité et de l'engagement",
+  "quick_actions": {
+    "title": "Actions rapides",
+    "user_management": {
+      "title": "Gestion des utilisateurs",
+      "description": "Gérer les comptes d'utilisateurs et les autorisations"
+    },
+    "loyalty_management": {
+      "title": "Gestion de la fidélité",
+      "description": "Gérer les points et les niveaux de fidélité"
+    },
+    "referral_program": {
+      "title": "Programme de parrainage",
+      "description": "Afficher et gérer les références"
+    },
+    "challenges": {
+      "title": "Défis",
+      "description": "Création et gestion de challenges"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Envoi et gestion des notifications"
+    },
+    "photo_gallery": {
+      "title": "Galerie de photos",
+      "description": "Gestion de photos et portfolio clients"
+    }
+  },
+  "stats": {
+    "total_users": "Nombre total d'utilisateurs",
+    "active_challenges": "Défis actifs",
+    "loyalty_points_issued": "Points de fidélité émis",
+    "total_referrals": "Total des références",
+    "from_last_month": "du mois dernier"
+  },
+  "recent_activity": {
+    "title": "Activité récente",
+    "subtitle": "Actions récentes dans le panneau d'administration",
+    "new_tier_activated": "Nouveau niveau de fidélité activé",
+    "users_registered": "{{count}} nouveaux utilisateurs enregistrés",
+    "challenge_completed": "Défi \"{{name}}\" complété par {{count}} utilisateurs",
+    "hours_ago": "Il y a {{count}} heures",
+    "day_ago": "Il y a {{count}} jours"
+  }
+}

@@ -186,7 +186,7 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     visits_by_month = {}
     for b in bookings:
         try:
-            # b[3] is datetime string, e.g. "2025-11-06 19:30" or ISO format
+            # b[3] is datetime string, e.g. "2026-11-06 19:30" or ISO format
             date_str = b[3]
             if 'T' in date_str:
                 dt = datetime.fromisoformat(date_str)
@@ -852,3 +852,72 @@ async def get_smart_suggestion_api(
     except Exception as e:
         log_error(f"Error getting smart suggestion: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.get("/client/profile")
+async def get_current_client_profile(session_token: Optional[str] = Cookie(None)):
+    """Получить профиль текущего авторизованного клиента"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"success": False, "error": "Unauthorized"}, status_code=401)
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        # Получаем данные пользователя
+        user_id = user.get("id")
+        username = user.get("username")
+        full_name = user.get("full_name")
+        email = user.get("email")
+        phone = user.get("phone")
+
+        # Если пользователь - клиент, получаем дополнительные данные
+        if user.get("role") == "client":
+            # Получаем информацию о лояльности
+            c.execute("""
+                SELECT total_points, current_tier, total_visits, total_spent
+                FROM loyalty_program
+                WHERE client_email = %s OR client_instagram = %s
+                LIMIT 1
+            """, (email, username))
+
+            loyalty_data = c.fetchone()
+
+            if loyalty_data:
+                return {
+                    "success": True,
+                    "profile": {
+                        "id": user_id,
+                        "name": full_name or username,
+                        "email": email,
+                        "phone": phone,
+                        "username": username,
+                        "tier": loyalty_data[1] if loyalty_data[1] else "bronze",
+                        "points": loyalty_data[0] if loyalty_data[0] else 0,
+                        "visits": loyalty_data[2] if loyalty_data[2] else 0,
+                        "spent": loyalty_data[3] if loyalty_data[3] else 0
+                    }
+                }
+
+        # Для всех остальных пользователей
+        return {
+            "success": True,
+            "profile": {
+                "id": user_id,
+                "name": full_name or username,
+                "email": email,
+                "phone": phone,
+                "username": username,
+                "tier": "bronze",
+                "points": 0,
+                "visits": 0,
+                "spent": 0
+            }
+        }
+
+    except Exception as e:
+        log_error(f"Error getting client profile: {e}", "api")
+        return JSONResponse({"success": False, "error": str(e)}, status_code=500)
+    finally:
+        if 'conn' in locals():
+            conn.close()

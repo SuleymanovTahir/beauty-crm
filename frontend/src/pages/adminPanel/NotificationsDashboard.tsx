@@ -1,6 +1,7 @@
 // /frontend/src/pages/adminPanel/NotificationsDashboard.tsx
 import { useState, useEffect } from 'react';
 import { Plus, Send, Mail, Smartphone, MessageSquare, Filter, Calendar, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -47,6 +48,7 @@ interface NotificationTemplate {
 }
 
 export default function NotificationsDashboard() {
+  const { t } = useTranslation(['adminPanel/NotificationsDashboard', 'common']);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [templates, setTemplates] = useState<NotificationTemplate[]>([]);
   const [loading, setLoading] = useState(false);
@@ -89,8 +91,8 @@ export default function NotificationsDashboard() {
           sent_count: 1200,
           failed_count: 34,
           status: 'sent',
-          created_at: '2025-06-15T10:00:00Z',
-          sent_at: '2025-06-15T10:05:00Z',
+          created_at: '2026-06-15T10:00:00Z',
+          sent_at: '2026-06-15T10:05:00Z',
         },
         {
           id: '2',
@@ -101,8 +103,8 @@ export default function NotificationsDashboard() {
           sent_count: 45,
           failed_count: 0,
           status: 'sent',
-          created_at: '2025-06-14T15:00:00Z',
-          sent_at: '2025-06-14T15:02:00Z',
+          created_at: '2026-06-14T15:00:00Z',
+          sent_at: '2026-06-14T15:02:00Z',
         },
         {
           id: '3',
@@ -113,13 +115,13 @@ export default function NotificationsDashboard() {
           sent_count: 0,
           failed_count: 0,
           status: 'pending',
-          created_at: '2025-06-16T09:00:00Z',
+          created_at: '2026-06-16T09:00:00Z',
           sent_at: null,
         },
       ]);
     } catch (error) {
       console.error('Error loading notifications:', error);
-      toast.error('Failed to load notifications');
+      toast.error(t('toasts.failed_load'));
     } finally {
       setLoading(false);
     }
@@ -160,7 +162,7 @@ export default function NotificationsDashboard() {
   const handleSendNotification = async () => {
     try {
       // TODO: API call
-      toast.success('Notification sent successfully');
+      toast.success(t('toasts.sent'));
       setShowCreateDialog(false);
       setFormData({
         title: '',
@@ -171,14 +173,14 @@ export default function NotificationsDashboard() {
       });
       loadNotifications();
     } catch (error) {
-      toast.error('Failed to send notification');
+      toast.error(t('toasts.failed_send'));
     }
   };
 
   const handleSaveTemplate = async () => {
     try {
       // TODO: API call
-      toast.success('Template saved successfully');
+      toast.success(t('toasts.template_saved'));
       setShowTemplateDialog(false);
       setTemplateForm({
         name: '',
@@ -188,7 +190,7 @@ export default function NotificationsDashboard() {
       });
       loadTemplates();
     } catch (error) {
-      toast.error('Failed to save template');
+      toast.error(t('toasts.failed_save_template'));
     }
   };
 
@@ -204,28 +206,28 @@ export default function NotificationsDashboard() {
 
   const stats = [
     {
-      title: 'Total Sent',
+      title: t('stats.total_sent'),
       value: notifications.reduce((sum, n) => sum + n.sent_count, 0).toString(),
       icon: Send,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100',
     },
     {
-      title: 'Email Sent',
+      title: t('stats.email_sent'),
       value: notifications.filter(n => n.type === 'email').reduce((sum, n) => sum + n.sent_count, 0).toString(),
       icon: Mail,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
     },
     {
-      title: 'Push Sent',
+      title: t('stats.push_sent'),
       value: notifications.filter(n => n.type === 'push').reduce((sum, n) => sum + n.sent_count, 0).toString(),
       icon: Smartphone,
       color: 'text-green-600',
       bgColor: 'bg-green-100',
     },
     {
-      title: 'SMS Sent',
+      title: t('stats.sms_sent'),
       value: notifications.filter(n => n.type === 'sms').reduce((sum, n) => sum + n.sent_count, 0).toString(),
       icon: MessageSquare,
       color: 'text-orange-600',
@@ -260,16 +262,16 @@ export default function NotificationsDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Notifications Dashboard</h1>
-          <p className="text-gray-500 mt-1">Manage and send notifications to clients</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+          <p className="text-gray-500 mt-1">{t('subtitle')}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setShowTemplateDialog(true)}>
-            Save Template
+            {t('save_template')}
           </Button>
           <Button onClick={() => setShowCreateDialog(true)}>
             <Plus className="w-4 h-4 mr-2" />
-            Send Notification
+            {t('send_notification')}
           </Button>
         </div>
       </div>
@@ -299,8 +301,8 @@ export default function NotificationsDashboard() {
       {/* Templates */}
       <Card>
         <CardHeader>
-          <CardTitle>Notification Templates</CardTitle>
-          <CardDescription>Quick templates for common notifications</CardDescription>
+          <CardTitle>{t('templates.title')}</CardTitle>
+          <CardDescription>{t('templates.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -308,7 +310,7 @@ export default function NotificationsDashboard() {
               <div key={template.id} className="p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-semibold text-gray-900">{template.name}</h3>
-                  <Badge className={typeColors[template.type]}>{template.type}</Badge>
+                  <Badge className={typeColors[template.type]}>{t(`types.${template.type}`)}</Badge>
                 </div>
                 <p className="text-sm text-gray-600 mb-3">{template.title}</p>
                 <Button
@@ -317,7 +319,7 @@ export default function NotificationsDashboard() {
                   className="w-full"
                   onClick={() => handleUseTemplate(template)}
                 >
-                  Use Template
+                  {t('templates.use_template')}
                 </Button>
               </div>
             ))}
@@ -330,8 +332,8 @@ export default function NotificationsDashboard() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Notification History</CardTitle>
-              <CardDescription>All sent and scheduled notifications</CardDescription>
+              <CardTitle>{t('history.title')}</CardTitle>
+              <CardDescription>{t('history.description')}</CardDescription>
             </div>
             <div className="flex gap-2">
               <Button
@@ -339,7 +341,7 @@ export default function NotificationsDashboard() {
                 size="sm"
                 onClick={() => setSelectedType('all')}
               >
-                All
+                {t('history.filters.all')}
               </Button>
               <Button
                 variant={selectedType === 'email' ? 'default' : 'outline'}
@@ -347,7 +349,7 @@ export default function NotificationsDashboard() {
                 onClick={() => setSelectedType('email')}
               >
                 <Mail className="w-4 h-4 mr-1" />
-                Email
+                {t('history.filters.email')}
               </Button>
               <Button
                 variant={selectedType === 'push' ? 'default' : 'outline'}
@@ -355,7 +357,7 @@ export default function NotificationsDashboard() {
                 onClick={() => setSelectedType('push')}
               >
                 <Smartphone className="w-4 h-4 mr-1" />
-                Push
+                {t('history.filters.push')}
               </Button>
               <Button
                 variant={selectedType === 'sms' ? 'default' : 'outline'}
@@ -363,7 +365,7 @@ export default function NotificationsDashboard() {
                 onClick={() => setSelectedType('sms')}
               >
                 <MessageSquare className="w-4 h-4 mr-1" />
-                SMS
+                {t('history.filters.sms')}
               </Button>
             </div>
           </div>
@@ -372,12 +374,12 @@ export default function NotificationsDashboard() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Status</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Recipients</TableHead>
-                <TableHead>Sent/Failed</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>{t('history.table.status')}</TableHead>
+                <TableHead>{t('history.table.title')}</TableHead>
+                <TableHead>{t('history.table.type')}</TableHead>
+                <TableHead>{t('history.table.recipients')}</TableHead>
+                <TableHead>{t('history.table.sent_failed')}</TableHead>
+                <TableHead>{t('history.table.date')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -388,7 +390,7 @@ export default function NotificationsDashboard() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <StatusIcon className={`w-5 h-5 ${statusColors[notification.status]}`} />
-                        <span className="text-sm capitalize">{notification.status}</span>
+                        <span className="text-sm capitalize">{t(`history.statuses.${notification.status}`)}</span>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -398,7 +400,7 @@ export default function NotificationsDashboard() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={typeColors[notification.type]}>{notification.type}</Badge>
+                      <Badge className={typeColors[notification.type]}>{t(`types.${notification.type}`)}</Badge>
                     </TableCell>
                     <TableCell>{notification.recipients}</TableCell>
                     <TableCell>
@@ -416,7 +418,7 @@ export default function NotificationsDashboard() {
                       <div className="text-sm">
                         {notification.sent_at
                           ? new Date(notification.sent_at).toLocaleString()
-                          : 'Scheduled'}
+                          : t('history.scheduled')}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -431,12 +433,12 @@ export default function NotificationsDashboard() {
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Send New Notification</DialogTitle>
-            <DialogDescription>Create and send a notification to your clients</DialogDescription>
+            <DialogTitle>{t('dialogs.send.title')}</DialogTitle>
+            <DialogDescription>{t('dialogs.send.description')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label>Notification Type</Label>
+              <Label>{t('dialogs.send.form.notification_type')}</Label>
               <div className="grid grid-cols-3 gap-2 mt-2">
                 <Button
                   type="button"
@@ -444,7 +446,7 @@ export default function NotificationsDashboard() {
                   onClick={() => setFormData({ ...formData, type: 'push' })}
                 >
                   <Smartphone className="w-4 h-4 mr-2" />
-                  Push
+                  {t('types.push')}
                 </Button>
                 <Button
                   type="button"
@@ -452,7 +454,7 @@ export default function NotificationsDashboard() {
                   onClick={() => setFormData({ ...formData, type: 'email' })}
                 >
                   <Mail className="w-4 h-4 mr-2" />
-                  Email
+                  {t('types.email')}
                 </Button>
                 <Button
                   type="button"
@@ -460,22 +462,22 @@ export default function NotificationsDashboard() {
                   onClick={() => setFormData({ ...formData, type: 'sms' })}
                 >
                   <MessageSquare className="w-4 h-4 mr-2" />
-                  SMS
+                  {t('types.sms')}
                 </Button>
               </div>
             </div>
             <div>
-              <Label>Title</Label>
+              <Label>{t('dialogs.send.form.title')}</Label>
               <Input
-                placeholder="Notification title"
+                placeholder={t('dialogs.send.form.title_placeholder')}
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               />
             </div>
             <div>
-              <Label>Message</Label>
+              <Label>{t('dialogs.send.form.message')}</Label>
               <Textarea
-                placeholder="Notification message"
+                placeholder={t('dialogs.send.form.message_placeholder')}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 rows={4}
@@ -483,31 +485,31 @@ export default function NotificationsDashboard() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Target Segment</Label>
+                <Label>{t('dialogs.send.form.target_segment')}</Label>
                 <select
                   className="w-full px-3 py-2 border rounded-md"
                   value={formData.target_segment}
                   onChange={(e) => setFormData({ ...formData, target_segment: e.target.value })}
                 >
-                  <option value="all">All Clients</option>
-                  <option value="active">Active Clients</option>
-                  <option value="inactive">Inactive Clients</option>
-                  <option value="tier">By Loyalty Tier</option>
+                  <option value="all">{t('dialogs.send.form.segments.all')}</option>
+                  <option value="active">{t('dialogs.send.form.segments.active')}</option>
+                  <option value="inactive">{t('dialogs.send.form.segments.inactive')}</option>
+                  <option value="tier">{t('dialogs.send.form.segments.tier')}</option>
                 </select>
               </div>
               {formData.target_segment === 'tier' && (
                 <div>
-                  <Label>Loyalty Tier</Label>
+                  <Label>{t('dialogs.send.form.loyalty_tier')}</Label>
                   <select
                     className="w-full px-3 py-2 border rounded-md"
                     value={formData.tier_filter}
                     onChange={(e) => setFormData({ ...formData, tier_filter: e.target.value })}
                   >
-                    <option value="">Select tier</option>
-                    <option value="bronze">Bronze</option>
-                    <option value="silver">Silver</option>
-                    <option value="gold">Gold</option>
-                    <option value="platinum">Platinum</option>
+                    <option value="">{t('dialogs.send.form.select_tier')}</option>
+                    <option value="bronze">{t('dialogs.send.form.tiers.bronze')}</option>
+                    <option value="silver">{t('dialogs.send.form.tiers.silver')}</option>
+                    <option value="gold">{t('dialogs.send.form.tiers.gold')}</option>
+                    <option value="platinum">{t('dialogs.send.form.tiers.platinum')}</option>
                   </select>
                 </div>
               )}
@@ -515,11 +517,11 @@ export default function NotificationsDashboard() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
-              Cancel
+              {t('buttons.cancel')}
             </Button>
             <Button onClick={handleSendNotification}>
               <Send className="w-4 h-4 mr-2" />
-              Send Notification
+              {t('buttons.send_notification')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -529,53 +531,53 @@ export default function NotificationsDashboard() {
       <Dialog open={showTemplateDialog} onOpenChange={setShowTemplateDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Save as Template</DialogTitle>
-            <DialogDescription>Create a reusable notification template</DialogDescription>
+            <DialogTitle>{t('dialogs.template.title')}</DialogTitle>
+            <DialogDescription>{t('dialogs.template.description')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label>Template Name</Label>
+              <Label>{t('dialogs.template.form.template_name')}</Label>
               <Input
-                placeholder="e.g., Welcome Message"
+                placeholder={t('dialogs.template.form.template_name_placeholder')}
                 value={templateForm.name}
                 onChange={(e) => setTemplateForm({ ...templateForm, name: e.target.value })}
               />
             </div>
             <div>
-              <Label>Title</Label>
+              <Label>{t('dialogs.template.form.title')}</Label>
               <Input
-                placeholder="Notification title"
+                placeholder={t('dialogs.template.form.title_placeholder')}
                 value={templateForm.title}
                 onChange={(e) => setTemplateForm({ ...templateForm, title: e.target.value })}
               />
             </div>
             <div>
-              <Label>Message</Label>
+              <Label>{t('dialogs.template.form.message')}</Label>
               <Textarea
-                placeholder="Use {variable} for dynamic content"
+                placeholder={t('dialogs.template.form.message_placeholder')}
                 value={templateForm.message}
                 onChange={(e) => setTemplateForm({ ...templateForm, message: e.target.value })}
                 rows={3}
               />
             </div>
             <div>
-              <Label>Type</Label>
+              <Label>{t('dialogs.template.form.type')}</Label>
               <select
                 className="w-full px-3 py-2 border rounded-md"
                 value={templateForm.type}
                 onChange={(e) => setTemplateForm({ ...templateForm, type: e.target.value as NotificationTemplate['type'] })}
               >
-                <option value="push">Push Notification</option>
-                <option value="email">Email</option>
-                <option value="sms">SMS</option>
+                <option value="push">{t('dialogs.template.form.types.push')}</option>
+                <option value="email">{t('dialogs.template.form.types.email')}</option>
+                <option value="sms">{t('dialogs.template.form.types.sms')}</option>
               </select>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowTemplateDialog(false)}>
-              Cancel
+              {t('buttons.cancel')}
             </Button>
-            <Button onClick={handleSaveTemplate}>Save Template</Button>
+            <Button onClick={handleSaveTemplate}>{t('buttons.save_template')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

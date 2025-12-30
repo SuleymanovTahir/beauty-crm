@@ -1459,6 +1459,94 @@ export class ApiClient {
       availability: Record<number, string[]>;
     }>(`/api/public/available-slots/batch?date=${date}`);
   }
+  // ===== ADMIN PANEL =====
+  async getAdminStats() {
+    return this.request<any>('/api/admin-panel/stats')
+  }
+
+  async getLoyaltyTransactions(limit: number = 50) {
+    return this.request<any>(`/api/admin-panel/loyalty/transactions?limit=${limit}`)
+  }
+
+  async adjustLoyaltyPoints(data: { client_email: string; points: number; reason: string }) {
+    return this.request('/api/admin-panel/loyalty/adjust', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getLoyaltyStats() {
+    return this.request<any>('/api/admin-panel/loyalty/stats')
+  }
+
+  async getReferrals(limit: number = 100) {
+    return this.request<any>(`/api/admin-panel/referrals?limit=${limit}`)
+  }
+
+  async getReferralStats() {
+    return this.request<any>('/api/admin-panel/referrals/stats')
+  }
+
+  async getReferralSettings() {
+    return this.request<any>('/api/admin-panel/referrals/settings')
+  }
+
+  async updateReferralSettings(data: { referrer_bonus?: number; referred_bonus?: number; min_purchase_amount?: number }) {
+    return this.request('/api/admin-panel/referrals/settings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getAdminChallenges() {
+    return this.request<any>('/api/admin-panel/challenges')
+  }
+
+  async createAdminChallenge(data: any) {
+    return this.request('/api/admin-panel/challenges', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteAdminChallenge(challengeId: number) {
+    return this.request(`/api/admin-panel/challenges/${challengeId}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async getChallengesStats() {
+    return this.request<any>('/api/admin-panel/challenges/stats')
+  }
+
+  async getAdminNotifications(limit: number = 50) {
+    return this.request<any>(`/api/admin-panel/notifications?limit=${limit}`)
+  }
+
+  async sendAdminNotification(data: any) {
+    return this.request('/api/admin-panel/notifications', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getGalleryPhotos(category?: string) {
+    const params = category ? `?category=${category}` : ''
+    return this.request<any>(`/api/admin-panel/gallery${params}`)
+  }
+
+  async uploadGalleryPhoto(data: any) {
+    return this.request('/api/admin-panel/gallery', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteGalleryPhoto(photoId: string) {
+    return this.request(`/api/admin-panel/gallery/${photoId}`, {
+      method: 'DELETE',
+    })
+  }
 }
 
 export const api = new ApiClient()

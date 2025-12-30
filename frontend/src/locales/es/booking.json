@@ -1,0 +1,61 @@
+{
+  "menu": {
+    "services": "Elección de servicios",
+    "professional": "Maestro",
+    "datetime": "Fecha y hora",
+    "selected": "seleccionado",
+    "selectServices": "Seleccione un servicio",
+    "selectProfessional": "Seleccione un asistente",
+    "selectDateTime": "Seleccionar hora",
+    "reset": "Restablecer selección",
+    "completed": "Terminado",
+    "continue": "Confirmar entrada"
+  },
+  "datetime": {
+    "title": "Selecciona fecha y hora",
+    "date": "Fecha",
+    "time": "Tiempo",
+    "dateFirst": "Por favor seleccione una fecha primero",
+    "noSlots": "No hay tiempo disponible para este día",
+    "morning": "Mañana",
+    "afternoon": "Día",
+    "evening": "Noche",
+    "selectDateFirst": "Primero selecciona una fecha"
+  },
+  "professional": {
+    "title": "Elige un especialista",
+    "anyAvailable": "Cualquier maestro gratis",
+    "reviews": "opiniones",
+    "firstAvailable": "El primer máster disponible aceptará tu inscripción."
+  },
+  "confirm": {
+    "title": "Confirmación de entrada",
+    "subtitle": "Por favor verifique los detalles",
+    "summary": "Resumen de reserva",
+    "details": "Detalles",
+    "phone": "Teléfono",
+    "bookNow": "Libro",
+    "success": "¡Inscripción confirmada!",
+    "error": "Error al crear registro",
+    "phoneNeeded": "Mantente en contacto",
+    "phoneDesc": "Incluya su número de teléfono para confirmación y actualizaciones.",
+    "professional": "Maestro",
+    "date": "Fecha",
+    "time": "Tiempo",
+    "confirm": "Confirmar entrada",
+    "total": "Total"
+  },
+  "services": {
+    "title": "Seleccionar servicios",
+    "search": "Buscar servicios...",
+    "allCategories": "Todas las categorias",
+    "noDescription": "Servicio profesional",
+    "total": "Monto total",
+    "continue": "Continuar",
+    "selected": "Servicios seleccionados"
+  },
+  "totalDuration": "Duración total",
+  "min": "mín.",
+  "loading": "Cargando...",
+  "newBooking": "Nueva entrada"
+}

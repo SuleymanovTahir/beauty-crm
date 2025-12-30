@@ -1,13 +1,13 @@
 {
   "categories": {
-    "brows": "Қойлар",
+    "brows": "Қастар",
     "facial": "уход за лицом",
-    "hair": "Жүн",
+    "hair": "Шаш",
     "lashes": "Кірпіктер",
     "massage": "массаж",
     "nails": "Тырнақтар",
     "permanent_makeup": "Тұрақты макияж",
-    "promo": "Науқан",
+    "promo": "Промо",
     "waxing": "восковая эпиляция"
   },
   "items": {
@@ -22,8 +22,8 @@
       "category": "brows"
     },
     "combo_lamination": {
-      "name": "Қастар мен кірпіктердің ламинациясы",
-      "description": "Combo ламинациясы",
+      "name": "Қастар мен кірпіктерді ламинациялау",
+      "description": "Комбо ламинация",
       "price": 300.0,
       "min_price": null,
       "max_price": null,
@@ -32,7 +32,7 @@
       "category": "brows"
     },
     "brow_coloring": {
-      "name": "Қастарды тонау",
+      "name": "Қас бояуы",
       "description": "Кәсіби бояу",
       "price": 40.0,
       "min_price": null,
@@ -42,7 +42,7 @@
       "category": "brows"
     },
     "brow_shaping": {
-      "name": "Қас қалыптастыру",
+      "name": "Қас пішіндеу",
       "description": "Кәсіби дизайн",
       "price": 40.0,
       "min_price": null,
@@ -52,8 +52,8 @@
       "category": "brows"
     },
     "deep_facial_cleaning": {
-      "name": "Тері тазартқыш",
-      "description": "Кәсіби терең тазарту",
+      "name": "Бет терісін терең тазарту",
+      "description": "Кәсіби терең тазалау",
       "price": 400.0,
       "min_price": null,
       "max_price": null,
@@ -62,7 +62,7 @@
       "category": "facial"
     },
     "medical_facial": {
-      "name": "Проблемалық теріге арналған медициналық тазартқыш",
+      "name": "Проблемалық теріге арналған медициналық тазарту",
       "description": "Медициналық тазалау",
       "price": 450.0,
       "min_price": null,
@@ -72,8 +72,8 @@
       "category": "facial"
     },
     "peeling": {
-      "name": "Пилинг",
-      "description": "Химиялық пиллинг",
+      "name": "Пиллинг",
+      "description": "Химиялық пилинг",
       "price": 350.0,
       "min_price": 300.0,
       "max_price": 400.0,
@@ -82,8 +82,8 @@
       "category": "facial"
     },
     "face_lift_massage": {
-      "name": "Маскамен бет әлпетін қатайтыңыз",
-      "description": "Қатайтатын массаж",
+      "name": "Маскамен қатайтатын бет массажы",
+      "description": "Қатты массаж",
       "price": 250.0,
       "min_price": null,
       "max_price": null,
@@ -93,7 +93,7 @@
     },
     "balayage": {
       "name": "Alyate",
-      "description": "Балалау техникасы",
+      "description": "Балаяж техникасы",
       "price": 950.0,
       "min_price": 700.0,
       "max_price": 1200.0,
@@ -102,8 +102,8 @@
       "category": "hair"
     },
     "bleach_hair": {
-      "name": "Қара түстен шығады",
-      "description": "Қараңғыдан түс түзету",
+      "name": "Қарадан шыққан",
+      "description": "Қараңғыдан түсті түзету",
       "price": 1800.0,
       "min_price": 1300.0,
       "max_price": 2300.0,
@@ -112,8 +112,8 @@
       "category": "hair"
     },
     "baby_cut": {
-      "name": "Балалардың шаштары",
-      "description": "Балаларға арналған шаш",
+      "name": "Балалардың шаш қиюы",
+      "description": "Балаларға арналған шаш қию",
       "price": 70.0,
       "min_price": 60.0,
       "max_price": 80.0,
@@ -122,8 +122,8 @@
       "category": "hair"
     },
     "key_hair_wash": {
-      "name": "Шашты жуу",
-      "description": "Шашты жуу",
+      "name": "Шаш жуу",
+      "description": "Шаш жуу",
       "price": 60.0,
       "min_price": null,
       "max_price": null,
@@ -132,8 +132,8 @@
       "category": "hair"
     },
     "key_hair_extensions_1_can": {
-      "name": "Шаш кеңейтімі (1 капсула)",
-      "description": "Шаш кеңейтімі (1 банк)",
+      "name": "Шаш ұзарту (1 капсула)",
+      "description": "Шаш ұзарту (1 банка)",
       "price": 10.0,
       "min_price": null,
       "max_price": null,
@@ -142,8 +142,8 @@
       "category": "hair"
     },
     "hair_extension_capsule": {
-      "name": "Капсулаға арналған шаш ұзартқыштары",
-      "description": "Капсулаға қосымша",
+      "name": "Бір капсулаға шаш ұзарту",
+      "description": "Бір капсуладағы ұзарту",
       "price": 11.0,
       "min_price": 10.0,
       "max_price": 12.0,
@@ -162,8 +162,8 @@
       "category": "hair"
     },
     "full_color": {
-      "name": "Бір реңді бояу + сәндеу",
-      "description": "Сәндеумен толық бояу",
+      "name": "Бір тонды бояу + Сәндеу",
+      "description": "Сәндеу арқылы толық бояу",
       "price": 425.0,
       "min_price": 350.0,
       "max_price": 500.0,
@@ -172,8 +172,8 @@
       "category": "hair"
     },
     "roots_color": {
-      "name": "Түбір бояуы + сәндеу",
-      "description": "Тамырды сәндеумен бояу",
+      "name": "Түбірді бояу + Сәндеу",
+      "description": "Сәндеу арқылы тамырды бояу",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -182,8 +182,8 @@
       "category": "hair"
     },
     "ombre": {
-      "name": "Омбре / Шатуш / Airtach",
-      "description": "Градиент бояу техникасы",
+      "name": "Омбре/Шатуш/Айртач",
+      "description": "Градиентті бояу әдістері",
       "price": 1250.0,
       "min_price": 1000.0,
       "max_price": 1500.0,
@@ -192,8 +192,8 @@
       "category": "hair"
     },
     "roots_bleach": {
-      "name": "Тамырды жарықтандыру + сәндеу",
-      "description": "Тамырды сәндеумен жарықтандыру",
+      "name": "Түбірді жарықтандыру + Сәндеу",
+      "description": "Сәндеу арқылы тамырды жарықтандыру",
       "price": 350.0,
       "min_price": null,
       "max_price": null,
@@ -202,8 +202,8 @@
       "category": "hair"
     },
     "key_trimming_without_wash": {
-      "name": "Жуыссыз кесу",
-      "description": "Жуыссыз кесу",
+      "name": "Жуусыз кесу",
+      "description": "Жуусыз кесу",
       "price": 80.0,
       "min_price": null,
       "max_price": null,
@@ -212,8 +212,8 @@
       "category": "hair"
     },
     "hair_trim": {
-      "name": "Тіпті кесілген ұштар",
-      "description": "Жуыссыз оңай кесу",
+      "name": "Тіпті кесілген ұштары",
+      "description": "Жуусыз оңай кесу",
       "price": 90.0,
       "min_price": 80.0,
       "max_price": 100.0,
@@ -222,8 +222,8 @@
       "category": "hair"
     },
     "key_hair_extension_only_removal": {
-      "name": "Шаш кеңейтімдерін жою",
-      "description": "Шаш кеңейтімі (тек жою)",
+      "name": "Шаш ұзартуларын алып тастау",
+      "description": "Шаш ұзарту (тек алып тастау)",
       "price": 1500.0,
       "min_price": null,
       "max_price": null,
@@ -232,8 +232,8 @@
       "category": "hair"
     },
     "key_hair_cut": {
-      "name": "Шыш қою",
-      "description": "Шашты кесу",
+      "name": "Шаш қию",
+      "description": "Шаш қию",
       "price": 175.0,
       "min_price": null,
       "max_price": null,
@@ -242,8 +242,8 @@
       "category": "hair"
     },
     "hair_cut_blowdry": {
-      "name": "Шашыңыз + сәндеу",
-      "description": "Сәндеумен кәсіби шаштараз",
+      "name": "Шаш қию + Сәндеу",
+      "description": "Сәндеумен кәсіби шаш қию",
       "price": 275.0,
       "min_price": 250.0,
       "max_price": 300.0,
@@ -252,8 +252,8 @@
       "category": "hair"
     },
     "toner_blowdry": {
-      "name": "Сергітпелер + сәндеу",
-      "description": "Шашты сәндеумен тонау",
+      "name": "Тондау + Сәндеу",
+      "description": "Шашты сәндеу арқылы бояу",
       "price": 375.0,
       "min_price": 300.0,
       "max_price": 450.0,
@@ -263,7 +263,7 @@
     },
     "key_hair_style": {
       "name": "Төсеу",
-      "description": "Бапталған шаш",
+      "description": "Шаш үлгісі",
       "price": 225.0,
       "min_price": null,
       "max_price": null,
@@ -283,7 +283,7 @@
     },
     "key_hair_treatment": {
       "name": "Шаш күтімі",
-      "description": "Шаш күтімі",
+      "description": "шашты емдеу",
       "price": 600.0,
       "min_price": null,
       "max_price": null,
@@ -292,8 +292,8 @@
       "category": "hair"
     },
     "2d_volume": {
-      "name": "2D кірпіктің көлемі",
-      "description": "2D ұзартқыш",
+      "name": "2D кірпік көлемі",
+      "description": "2D кеңейтімі",
       "price": 230.0,
       "min_price": null,
       "max_price": null,
@@ -302,8 +302,8 @@
       "category": "lashes"
     },
     "3d_volume": {
-      "name": "3D кірпіктің көлемі",
-      "description": "3D ұзарту",
+      "name": "3D кірпік көлемі",
+      "description": "3D кеңейтімі",
       "price": 260.0,
       "min_price": null,
       "max_price": null,
@@ -312,8 +312,8 @@
       "category": "lashes"
     },
     "mega_volume": {
-      "name": "4-5d көлемі (мега)",
-      "description": "Мега көлемі кірпіктер",
+      "name": "4-5D көлемі (Мега)",
+      "description": "Мега көлемді кірпіктер",
       "price": 290.0,
       "min_price": null,
       "max_price": null,
@@ -322,7 +322,7 @@
       "category": "lashes"
     },
     "ml_curl": {
-      "name": "ML Curl / Ким стиліндегі",
+      "name": "ML curl / Ким стилі",
       "description": "Арнайы иілу",
       "price": 30.0,
       "min_price": null,
@@ -332,8 +332,8 @@
       "category": "lashes"
     },
     "classic_volume": {
-      "name": "Классикалық кірпіктің көлемі",
-      "description": "Табиғи кірпіш кеңейтімдері",
+      "name": "Классикалық кірпік көлемі",
+      "description": "Табиғи кірпіктерді ұзарту",
       "price": 180.0,
       "min_price": null,
       "max_price": null,
@@ -342,8 +342,8 @@
       "category": "lashes"
     },
     "lash_lamination": {
-      "name": "Кірпіктердің ламинациясы",
-      "description": "Кірпіктердің ламинациясы",
+      "name": "Кірпіктерді ламинациялау",
+      "description": "Кірпіктерді ламинациялау",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -352,7 +352,7 @@
       "category": "lashes"
     },
     "remove_lashes": {
-      "name": "Кірпіктерді жою",
+      "name": "Кірпіктерді кетіру",
       "description": "Қауіпсіз жою",
       "price": 50.0,
       "min_price": null,
@@ -363,7 +363,7 @@
     },
     "key_anticellulite_massage": {
       "name": "Целлюлитке қарсы массаж",
-      "description": "Целлюлитке қарсы уқалау",
+      "description": "Целлюлитке қарсы массаж",
       "price": 300.0,
       "min_price": null,
       "max_price": null,
@@ -382,8 +382,8 @@
       "category": "massage"
     },
     "key_moroccan_bathhouse": {
-      "name": "Мароккалық ванна",
-      "description": "Мароккалық ванна",
+      "name": "Марокко моншасы",
+      "description": "Марокко моншасы",
       "price": 250.0,
       "min_price": null,
       "max_price": null,
@@ -392,8 +392,8 @@
       "category": "massage"
     },
     "key_moroccan_bath_loofa": {
-      "name": "Мороккалық ванна",
-      "description": "Сервис: Мороккалық ванна, буна.",
+      "name": "Марокко моншасы бар люфа",
+      "description": "Қызмет: люфа қосылған Марокко моншасы.",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -412,7 +412,7 @@
       "category": "massage"
     },
     "key_head_40_min": {
-      "name": "Бас массаж",
+      "name": "Бас массажы",
       "description": "Көшбасшы 40 мин.",
       "price": 100.0,
       "min_price": null,
@@ -422,8 +422,8 @@
       "category": "massage"
     },
     "key_legfeet_hand_40_min": {
-      "name": "Аяқ / қол уқалағыш",
-      "description": "Аяқ / аяқ / қол 40 мин.",
+      "name": "Аяқ/қол массажы",
+      "description": "Аяқ/аяқ/қол 40 мин.",
       "price": 150.0,
       "min_price": null,
       "max_price": null,
@@ -432,8 +432,8 @@
       "category": "massage"
     },
     "key_back_massage_510": {
-      "name": "Артқы массаж (курс)",
-      "description": "Артқы массаж (5-10)",
+      "name": "Арқа массажы (курс)",
+      "description": "Арқа массажы (5-10)",
       "price": 540.0,
       "min_price": null,
       "max_price": null,
@@ -442,7 +442,7 @@
       "category": "massage"
     },
     "key_back_30_min": {
-      "name": "Артқы массаж 30 мин",
+      "name": "Арқа массажы 30 мин",
       "description": "Артқа 30 мин.",
       "price": 180.0,
       "min_price": null,
@@ -452,8 +452,8 @@
       "category": "massage"
     },
     "key_neck__shoulder_30_min": {
-      "name": "Мойын және иық массажы",
-      "description": "Мойын және иық 30 мин.",
+      "name": "Мойын мен иық массажы",
+      "description": "Мойын мен иық 30 мин.",
       "price": 165.0,
       "min_price": null,
       "max_price": null,
@@ -462,7 +462,7 @@
       "category": "massage"
     },
     "key_sculpture_body_massage": {
-      "name": "Мүсін массажы",
+      "name": "Мүсіндік массаж",
       "description": "Мүсіндік дене массажы.",
       "price": 370.0,
       "min_price": null,
@@ -472,7 +472,7 @@
       "category": "massage"
     },
     "key_hotstone": {
-      "name": "Тас массаж",
+      "name": "Тас массажы",
       "description": "Ыстық тас",
       "price": 310.0,
       "min_price": null,
@@ -492,8 +492,8 @@
       "category": "nails"
     },
     "baby_manicure": {
-      "name": "Балалардың маникюрі",
-      "description": "Балаларға маникюр",
+      "name": "Балалар маникюрі",
+      "description": "Балаларға арналған маникюр",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -522,7 +522,7 @@
       "category": "nails"
     },
     "key_починка_1_ноготь": {
-      "name": "Түзету 1 тырнақ",
+      "name": "Түзету 1 шеге",
       "description": "Бір тырнақты түзету",
       "price": 35.0,
       "min_price": null,
@@ -532,7 +532,7 @@
       "category": "nails"
     },
     "manicure_no_polish": {
-      "name": "Қаптаусыз маникюр",
+      "name": "Қаптамасыз маникюр",
       "description": "Негізгі маникюр",
       "price": 80.0,
       "min_price": null,
@@ -542,8 +542,8 @@
       "category": "nails"
     },
     "gelish_manicure": {
-      "name": "Маникюр Гель жылтыратқышы",
-      "description": "Гельді жылтыратқышпен маникюр",
+      "name": "Маникюрге арналған гель-лак",
+      "description": "Гель-лакпен маникюр",
       "price": 130.0,
       "min_price": null,
       "max_price": null,
@@ -552,8 +552,8 @@
       "category": "nails"
     },
     "manicure_normal": {
-      "name": "Үнемі мәре бар маникюр",
-      "description": "Үнемі полякпен маникюр",
+      "name": "Кәдімгі әрлеумен маникюр",
+      "description": "Кәдімгі лакпен маникюр",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -582,8 +582,8 @@
       "category": "nails"
     },
     "key_gel_extension": {
-      "name": "Гель кеңейтімдері",
-      "description": "Гель кеңейтімдері",
+      "name": "Гель ұзартқыштары",
+      "description": "Гель ұзартқыштары",
       "price": 350.0,
       "min_price": null,
       "max_price": null,
@@ -592,8 +592,8 @@
       "category": "nails"
     },
     "key_pedicure_gel": {
-      "name": "Гельді жылтыратқышпен педикюр",
-      "description": "Педикюр гелі",
+      "name": "Гель-лакпен педикюр",
+      "description": "Педикюрге арналған гель",
       "price": 160.0,
       "min_price": null,
       "max_price": null,
@@ -612,8 +612,8 @@
       "category": "nails"
     },
     "key_acrylic_overlay": {
-      "name": "Акрил жабындысы",
-      "description": "Акрилдің қабаттасуы",
+      "name": "Акрил жабыны",
+      "description": "Акрил қабаты",
       "price": 300.0,
       "min_price": null,
       "max_price": null,
@@ -632,7 +632,7 @@
       "category": "nails"
     },
     "key_change_gel": {
-      "name": "Гельді жылтырату",
+      "name": "Гель-лак ауыстыру",
       "description": "Гельді ауыстыру",
       "price": 100.0,
       "min_price": null,
@@ -642,8 +642,8 @@
       "category": "nails"
     },
     "change_classic_polish": {
-      "name": "Тұрақты лакты өзгерту",
-      "description": "Тұрақты лакты өзгерту",
+      "name": "Кәдімгі лак ауыстыру",
+      "description": "Кәдімгі лак ауыстыру",
       "price": 65.0,
       "min_price": 40.0,
       "max_price": 90.0,
@@ -652,8 +652,8 @@
       "category": "nails"
     },
     "key_remove_gel": {
-      "name": "Гельді жылтырату",
-      "description": "Гельді алыңыз",
+      "name": "Гель-лакты кетіру",
+      "description": "Гельді алып тастаңыз",
       "price": 25.0,
       "min_price": null,
       "max_price": null,
@@ -662,8 +662,8 @@
       "category": "nails"
     },
     "key_remove_nail_extensions": {
-      "name": "Ұзартылған тырнақтарды алу",
-      "description": "Ұзартылған тырнақтарды алу",
+      "name": "Ұзартылған тырнақтарды алып тастау",
+      "description": "Ұзартылған тырнақтарды алып тастау",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -672,8 +672,8 @@
       "category": "nails"
     },
     "key_remove_classic": {
-      "name": "Тіркелген тырнақ полякын алу",
-      "description": "Классикалық алып тастаңыз",
+      "name": "Кәдімгі тырнақ бояуын кетіру",
+      "description": "Классиканы алып тастаңыз",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -682,8 +682,8 @@
       "category": "nails"
     },
     "spa_manicure": {
-      "name": "SPA маникюр",
-      "description": "SPA маникюр",
+      "name": "СПА маникюрі",
+      "description": "СПА маникюрі",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -693,7 +693,7 @@
     },
     "key_spa_pedicure": {
       "name": "СПА педикюрі",
-      "description": "SPA педикюрін босаңсытады",
+      "description": "Тыныштандыратын СПА педикюрі",
       "price": 60.0,
       "min_price": null,
       "max_price": null,
@@ -713,7 +713,7 @@
     },
     "key_french": {
       "name": "Француз маникюрі",
-      "description": "Француз",
+      "description": "француз",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -733,43 +733,43 @@
     },
     "permanent_correction": {
       "name": "Тұрақты макияжды түзету",
-      "description": "Бар тұрақты деп түзету",
+      "description": "Бар тұрақтыны түзету",
       "price": 500.0,
       "min_price": null,
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "EndulT_MakeUp"
+      "category": "тұрақты_макияж"
     },
     "lashliner": {
-      "name": "Қоғамдық жебе",
+      "name": "Аралық көрсеткі",
       "description": "Кірпік сызығына баса назар аудару",
       "price": 500.0,
       "min_price": null,
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "EndulT_MakeUp"
+      "category": "тұрақты_макияж"
     },
     "permanent_brows": {
-      "name": "Тұрақты қастар макияжы",
-      "description": "Микроблинг немесе ұнтақ қастар",
+      "name": "Тұрақты қас макияжы",
+      "description": "Микроблейдинг немесе ұнтақ қастар",
       "price": 1100.0,
       "min_price": null,
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "EndulT_MakeUp"
+      "category": "тұрақты_макияж"
     },
     "permanent_lips": {
-      "name": "Тұрақты ерін макияжы",
-      "description": "Тұрақты ерін бояуы",
+      "name": "Ерінге тұрақты макияж",
+      "description": "Ұзақ уақытқа созылатын ерін бояуы",
       "price": 1200.0,
       "min_price": null,
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "EndulT_MakeUp"
+      "category": "тұрақты_макияж"
     },
     "eyeliner": {
       "name": "Көз контурлағышы",
@@ -779,11 +779,11 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "EndulT_MakeUp"
+      "category": "тұрақты_макияж"
     },
     "key_promotion_overlay_manicure": {
       "name": "Жарнамалық маникюр",
-      "description": "Науқан: Жалған маникюр",
+      "description": "Акция: жалған маникюр",
       "price": 145.0,
       "min_price": null,
       "max_price": null,
@@ -792,8 +792,8 @@
       "category": "promo"
     },
     "key_promo_390": {
-      "name": "Жарнамалық 390",
-      "description": "390 промо",
+      "name": "Науқан 390",
+      "description": "Науқан 390",
       "price": 390.0,
       "min_price": null,
       "max_price": null,
@@ -802,7 +802,7 @@
       "category": "promo"
     },
     "key_promo_mani_pedi_250": {
-      "name": "Маникюрге арналған жарнама + педикюр",
+      "name": "Маникюр + педикюрге арналған акция",
       "description": "Promo Manicure Pedicure 250",
       "price": 125.0,
       "min_price": null,
@@ -812,7 +812,7 @@
       "category": "promo"
     },
     "key_combo_basic_150": {
-      "name": "Combo базасы",
+      "name": "Негізгі комбинация",
       "description": "Combo Basic 150",
       "price": 75.0,
       "min_price": null,
@@ -823,7 +823,7 @@
     },
     "key_blow_dry_packages_5": {
       "name": "Сәндеуге арналған пакет (5 дана)",
-      "description": "Құрғақ сөмкелер 5",
+      "description": "Кептіргіш сөмкелер 5",
       "price": 500.0,
       "min_price": null,
       "max_price": null,
@@ -832,8 +832,8 @@
       "category": "promo"
     },
     "key_brazilian": {
-      "name": "Бразилиялық шашты кетіру",
-      "description": "Бразилиялық шашты кетіру",
+      "name": "Бразилиялық эпиляция",
+      "description": "Бразилиялық эпиляция",
       "price": 120.0,
       "min_price": null,
       "max_price": null,
@@ -843,7 +843,7 @@
     },
     "brazilian": {
       "name": "Бразилиялық бикини",
-      "description": "Бразилиялық бикини шашты кетіреді",
+      "description": "Бразилиялық бикини эпиляциясы",
       "price": 120.0,
       "min_price": null,
       "max_price": null,
@@ -853,7 +853,7 @@
     },
     "upper_lips": {
       "name": "Жоғарғы ерін",
-      "description": "Жоғарғы еріннің эпиляциясы",
+      "description": "Жоғарғы ерінге эпиляция",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -863,7 +863,7 @@
     },
     "full_bikini": {
       "name": "Терең бикини",
-      "description": "Бикини аймағының толық эпиляциясы",
+      "description": "Бикини аймағын толық эпиляциялау",
       "price": 150.0,
       "min_price": null,
       "max_price": null,
@@ -872,8 +872,8 @@
       "category": "waxing"
     },
     "bikini_line": {
-      "name": "Бикини сызығы",
-      "description": "Бикини сызығымен эпиляция",
+      "name": "Бикини желісі",
+      "description": "Бикини сызығы бойынша эпиляция",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -882,8 +882,8 @@
       "category": "waxing"
     },
     "full_face": {
-      "name": "Толық тұлға",
-      "description": "Толық бет шашын кетіру",
+      "name": "Толық бет",
+      "description": "Беттегі эпиляция",
       "price": 90.0,
       "min_price": null,
       "max_price": null,
@@ -893,7 +893,7 @@
     },
     "half_legs": {
       "name": "Аяқтар тізеге дейін",
-      "description": "Аяқтың эпиляциясы тізеге дейін",
+      "description": "Аяқтарды тізеге дейін эпиляциялау",
       "price": 80.0,
       "min_price": null,
       "max_price": null,
@@ -903,7 +903,7 @@
     },
     "full_legs": {
       "name": "Толық аяқтар",
-      "description": "Толық аяқты шашты кетіру",
+      "description": "Аяқтағы эпиляция",
       "price": 150.0,
       "min_price": null,
       "max_price": null,
@@ -912,8 +912,8 @@
       "category": "waxing"
     },
     "chin": {
-      "name": "Иек",
-      "description": "Шашты кетіру",
+      "name": "Чин",
+      "description": "Иектің эпиляциясы",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -922,8 +922,8 @@
       "category": "waxing"
     },
     "underarms": {
-      "name": "Қолтырықтар",
-      "description": "Артптаз шашты кетіру",
+      "name": "Қолтықтар",
+      "description": "Қолтықтағы эпиляция",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -933,7 +933,7 @@
     },
     "half_arms": {
       "name": "Қолдар шынтаққа дейін",
-      "description": "Қаруды шынтаққа дейін эпиляциялау",
+      "description": "Қолды шынтаққа дейін эпиляциялау",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -942,8 +942,8 @@
       "category": "waxing"
     },
     "full_arms": {
-      "name": "Толық қол",
-      "description": "Толық қолды тазарту",
+      "name": "Толық қолдар",
+      "description": "Қолды толық эпиляция",
       "price": 80.0,
       "min_price": null,
       "max_price": null,
@@ -952,8 +952,8 @@
       "category": "waxing"
     },
     "key_upper_lip": {
-      "name": "Жоғарғы еріннің эпиляциясы",
-      "description": "Жоғарғы еріннің эпиляциясы",
+      "name": "Жоғарғы ерінге эпиляция",
+      "description": "Жоғарғы ерінге эпиляция",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -962,7 +962,7 @@
       "category": "waxing"
     },
     "key_full_body": {
-      "name": "Толық дене шашты кетіру",
+      "name": "Толық дене эпиляциясы",
       "description": "Толық дене",
       "price": 400.0,
       "min_price": null,
@@ -972,8 +972,8 @@
       "category": "waxing"
     },
     "full_body": {
-      "name": "Толық дене шашты кетіру",
-      "description": "Толық дене шашты кетіру",
+      "name": "Толық дене эпиляциясы",
+      "description": "Толық дене эпиляциясы",
       "price": 400.0,
       "min_price": null,
       "max_price": null,
@@ -982,8 +982,8 @@
       "category": "waxing"
     },
     "key_under_arms": {
-      "name": "Артптаз шашты кетіру",
-      "description": "Артптаз шашты кетіру",
+      "name": "Қолтықтағы эпиляция",
+      "description": "Қолтықтағы эпиляция",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -992,8 +992,8 @@
       "category": "waxing"
     },
     "key_cheeks": {
-      "name": "Щек эпиляциясы",
-      "description": "Щек эпиляциясы",
+      "name": "Бет эпиляциясы",
+      "description": "Бет эпиляциясы",
       "price": 40.0,
       "min_price": null,
       "max_price": null,

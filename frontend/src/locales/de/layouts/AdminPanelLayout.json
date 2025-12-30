@@ -1,0 +1,14 @@
+{
+  "admin_panel": "Admin-Panel",
+  "logout": "Abmelden",
+  "go_to_crm": "Gehen Sie zu CRM",
+  "menu": {
+    "dashboard": "Bedienfeld",
+    "user_management": "Benutzerverwaltung",
+    "loyalty_management": "Treuemanagement",
+    "referral_program": "Empfehlungsprogramm",
+    "challenges": "Herausforderungen",
+    "notifications": "Benachrichtigungen",
+    "photo_gallery": "Fotogalerie"
+  }
+}

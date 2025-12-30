@@ -1,0 +1,63 @@
+{
+  "title": "Challenges",
+  "subtitle": "Creating and managing engagement challenges",
+  "create_challenge": "Create a challenge",
+  "stats": {
+    "active_challenges": "Active challenges",
+    "total_participants": "Total participants",
+    "completions": "Completion"
+  },
+  "types": {
+    "visits": "Visits",
+    "spending": "Expenses",
+    "referrals": "Referrals",
+    "services": "Services"
+  },
+  "statuses": {
+    "active": "Active",
+    "upcoming": "Upcoming",
+    "completed": "Completed"
+  },
+  "card": {
+    "target": "Target",
+    "reward": "Reward",
+    "progress": "Progress",
+    "completed": "completed",
+    "pts": "point"
+  },
+  "dialogs": {
+    "create": {
+      "title": "Create a new challenge",
+      "title_edit": "Edit challenge",
+      "description": "Define challenge parameters and rewards",
+      "form": {
+        "title": "Name",
+        "title_placeholder": "Summer beauty challenge",
+        "description": "Description",
+        "description_placeholder": "Visit the salon 3 times this month",
+        "challenge_type": "Challenge type",
+        "target_value": "Target value",
+        "target_placeholder": "3",
+        "reward_points": "Reward with points",
+        "reward_placeholder": "1000",
+        "start_date": "start date",
+        "end_date": "End date"
+      }
+    },
+    "delete": {
+      "confirm": "Are you sure you want to delete this challenge?"
+    }
+  },
+  "buttons": {
+    "cancel": "Cancel",
+    "create_challenge": "Create a challenge",
+    "update_challenge": "Update challenge"
+  },
+  "toasts": {
+    "created": "Challenge successfully created",
+    "deleted": "Challenge successfully deleted",
+    "failed_load": "Failed to load challenges",
+    "failed_create": "Failed to create challenge",
+    "failed_delete": "Failed to delete challenge"
+  }
+}

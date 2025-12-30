@@ -1,0 +1,14 @@
+{
+  "admin_panel": "لوحة الإدارة",
+  "logout": "تسجيل الخروج",
+  "go_to_crm": "انتقل إلى إدارة علاقات العملاء",
+  "menu": {
+    "dashboard": "لوحة التحكم",
+    "user_management": "إدارة المستخدم",
+    "loyalty_management": "إدارة الولاء",
+    "referral_program": "برنامج الإحالة",
+    "challenges": "التحديات",
+    "notifications": "إشعارات",
+    "photo_gallery": "معرض الصور"
+  }
+}

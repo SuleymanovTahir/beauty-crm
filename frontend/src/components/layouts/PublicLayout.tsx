@@ -232,7 +232,7 @@ export default function PublicLayout() {
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-            <p>© 2025 {salonInfo.name}. {t('public:footer.all_rights')}.</p>
+            <p>© 2026 {salonInfo.name}. {t('public:footer.all_rights')}.</p>
             <div className="flex gap-6">
               <Link to="/privacy-policy" className="hover:text-white">{t('public:footer.privacy_policy')}</Link>
               <Link to="/terms" className="hover:text-white">{t('public:footer.terms')}</Link>

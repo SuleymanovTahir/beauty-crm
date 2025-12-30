@@ -1,8 +1,8 @@
 {
   "items": [
     {
-      "title": "Красота и элегантность",
-      "subtitle": "Профессиональные косметические услуги.",
+      "title": "सुंदरता और सुंदरता",
+      "subtitle": "पेशेवर कॉस्मेटिक सेवाएँ।",
       "image_url": "/static/uploads/faces/banner2.webp",
       "link_url": "/services",
       "bg_pos_desktop_x": 50,
@@ -13,9 +13,9 @@
       "is_flipped_vertical": false
     },
     {
-      "title": "Скидки до 50%",
-      "subtitle": "На все услуги салона",
-      "image_url": "/static/uploads/faces/Мароканская баня.webp",
+      "title": "50% तक की छूट",
+      "subtitle": "सभी सैलून सेवाओं के लिए",
+      "image_url": "/स्थैतिक/अपलोड/चेहरे/मोरक्कन स्नान.वेब",
       "link_url": "/services",
       "bg_pos_desktop_x": 50,
       "bg_pos_desktop_y": 50,

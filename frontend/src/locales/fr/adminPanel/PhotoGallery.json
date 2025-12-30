@@ -1,0 +1,74 @@
+{
+  "title": "Galerie de photos",
+  "subtitle": "Gestion de photos et portfolio clients",
+  "upload_photo": "Télécharger une photo",
+  "stats": {
+    "total_photos": "Photos totales",
+    "total_views": "Vues totales",
+    "featured_photos": "Photos en vedette",
+    "recent_uploads": "Téléchargements récents"
+  },
+  "filters": {
+    "search_placeholder": "Recherche de photos...",
+    "all_categories": "Toutes les catégories"
+  },
+  "categories": {
+    "haircut": "Coupes de cheveux",
+    "coloring": "Coloration",
+    "styling": "Pose",
+    "manicure": "Manucure",
+    "makeup": "Se maquiller",
+    "other": "Autre"
+  },
+  "card": {
+    "views": "vues",
+    "featured": "Favoris",
+    "toggle_featured": "Basculer les favoris",
+    "delete": "Supprimer",
+    "uploaded_by": "Téléchargé par {{name}}"
+  },
+  "empty": {
+    "title": "Pas encore de photos",
+    "description": "Téléchargez vos premières photos dans la galerie"
+  },
+  "dialogs": {
+    "upload": {
+      "title": "Télécharger une photo",
+      "description": "Ajouter une nouvelle photo à la galerie",
+      "form": {
+        "photo": "Photo",
+        "choose_file": "Sélectionner un fichier",
+        "title": "Nom",
+        "title_placeholder": "Titre de la photo",
+        "description": "Description",
+        "description_placeholder": "Description des photos",
+        "category": "Catégorie",
+        "select_category": "Sélectionnez la catégorie"
+      }
+    },
+    "preview": {
+      "title": "Aperçu des photos",
+      "uploaded_by": "Téléchargé par {{name}}",
+      "created_at": "{{date}}",
+      "views": "{{count}} vues",
+      "category": "Catégorie : {{catégorie}}"
+    },
+    "delete": {
+      "confirm": "Êtes-vous sûr de vouloir supprimer cette photo ?"
+    }
+  },
+  "buttons": {
+    "cancel": "Annuler",
+    "upload": "Télécharger",
+    "close": "Fermer"
+  },
+  "toasts": {
+    "uploaded": "Photo téléchargée avec succès",
+    "deleted": "Photo supprimée avec succès",
+    "featured_updated": "Statut de favori mis à jour",
+    "failed_load": "Échec du téléchargement des photos",
+    "failed_upload": "Échec du téléchargement de la photo",
+    "failed_delete": "Échec de la suppression de la photo",
+    "failed_featured": "Échec de la mise à jour du statut de favori"
+  }
+}

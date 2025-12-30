@@ -1,0 +1,74 @@
+{
+  "title": "Galería de fotos",
+  "subtitle": "Gestión de fotografías y carteras de clientes.",
+  "upload_photo": "Subir foto",
+  "stats": {
+    "total_photos": "fotos totales",
+    "total_views": "Vistas totales",
+    "featured_photos": "Fotos destacadas",
+    "recent_uploads": "Descargas recientes"
+  },
+  "filters": {
+    "search_placeholder": "Buscando fotos...",
+    "all_categories": "Todas las categorias"
+  },
+  "categories": {
+    "haircut": "Cortes de pelo",
+    "coloring": "Colorante",
+    "styling": "tendido",
+    "manicure": "Manicura",
+    "makeup": "Constituir",
+    "other": "Otro"
+  },
+  "card": {
+    "views": "vistas",
+    "featured": "Favoritos",
+    "toggle_featured": "Alternar favoritos",
+    "delete": "Borrar",
+    "uploaded_by": "Subido por {{nombre}}"
+  },
+  "empty": {
+    "title": "Aún no hay fotos",
+    "description": "Sube tus primeras fotos a la galería."
+  },
+  "dialogs": {
+    "upload": {
+      "title": "Subir foto",
+      "description": "Añade una nueva foto a la galería.",
+      "form": {
+        "photo": "Foto",
+        "choose_file": "Seleccionar archivo",
+        "title": "Nombre",
+        "title_placeholder": "Título de la foto",
+        "description": "Descripción",
+        "description_placeholder": "Descripción de la foto",
+        "category": "Categoría",
+        "select_category": "Seleccionar categoría"
+      }
+    },
+    "preview": {
+      "title": "Vista previa de la foto",
+      "uploaded_by": "Subido por {{nombre}}",
+      "created_at": "{{date}}",
+      "views": "{{count}} vistas",
+      "category": "Categoría: {{categoría}}"
+    },
+    "delete": {
+      "confirm": "¿Estás seguro de que quieres eliminar esta foto?"
+    }
+  },
+  "buttons": {
+    "cancel": "Cancelar",
+    "upload": "Descargar",
+    "close": "Cerca"
+  },
+  "toasts": {
+    "uploaded": "Foto cargada exitosamente",
+    "deleted": "Foto eliminada con éxito",
+    "featured_updated": "Estado favorito actualizado",
+    "failed_load": "No se pudieron subir fotos",
+    "failed_upload": "No se pudo subir la foto",
+    "failed_delete": "No se pudo eliminar la foto",
+    "failed_featured": "No se pudo actualizar el estado favorito"
+  }
+}

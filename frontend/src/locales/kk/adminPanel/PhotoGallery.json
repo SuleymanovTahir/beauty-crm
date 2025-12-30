@@ -1,0 +1,74 @@
+{
+  "title": "Фотогалерея",
+  "subtitle": "Клиент фотосуреті мен портфолиосын басқару",
+  "upload_photo": "Фотосуретті жүктеп салу",
+  "stats": {
+    "total_photos": "Жалпы фотосуреттер",
+    "total_views": "Жалпы көру саны",
+    "featured_photos": "Таңдаулы фотосуреттер",
+    "recent_uploads": "Соңғы жүктеп алынғандар"
+  },
+  "filters": {
+    "search_placeholder": "Фотосуреттер ізделуде...",
+    "all_categories": "Барлық санаттар"
+  },
+  "categories": {
+    "haircut": "Шаш қию",
+    "coloring": "Бояу",
+    "styling": "Төсеу",
+    "manicure": "Маникюр",
+    "makeup": "Татуласу",
+    "other": "Басқа"
+  },
+  "card": {
+    "views": "көріністер",
+    "featured": "Таңдаулылар",
+    "toggle_featured": "Таңдаулыларды ауыстырып қосу",
+    "delete": "Жою",
+    "uploaded_by": "{{name}} жүктеп салған"
+  },
+  "empty": {
+    "title": "Әлі фотосуреттер жоқ",
+    "description": "Алғашқы фотосуреттеріңізді галереяға жүктеңіз"
+  },
+  "dialogs": {
+    "upload": {
+      "title": "Фотосуретті жүктеп салу",
+      "description": "Галереяға жаңа фотосурет қосыңыз",
+      "form": {
+        "photo": "Фото",
+        "choose_file": "Файлды таңдаңыз",
+        "title": "Аты",
+        "title_placeholder": "Фотосурет атауы",
+        "description": "Сипаттама",
+        "description_placeholder": "Фотосурет сипаттамасы",
+        "category": "Санат",
+        "select_category": "Санатты таңдаңыз"
+      }
+    },
+    "preview": {
+      "title": "Фотосуретті алдын ала қарау",
+      "uploaded_by": "{{name}} жүктеп салған",
+      "created_at": "{{date}}",
+      "views": "{{count}} көріністер",
+      "category": "Санат: {{category}}"
+    },
+    "delete": {
+      "confirm": "Бұл фотосуретті шынымен жойғыңыз келе ме?"
+    }
+  },
+  "buttons": {
+    "cancel": "Болдырмау",
+    "upload": "Жүктеп алу",
+    "close": "Жабу"
+  },
+  "toasts": {
+    "uploaded": "Фото жүктеп салынды",
+    "deleted": "Фотосурет сәтті жойылды",
+    "featured_updated": "Таңдаулы күй жаңартылды",
+    "failed_load": "Фотосуреттерді жүктеп салу орындалмады",
+    "failed_upload": "Фотосурет жүктеп салынбады",
+    "failed_delete": "Фотосурет жойылмады",
+    "failed_featured": "Таңдаулы күйді жаңарту мүмкін болмады"
+  }
+}

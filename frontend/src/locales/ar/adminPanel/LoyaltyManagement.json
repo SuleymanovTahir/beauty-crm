@@ -1,0 +1,66 @@
+{
+  "title": "إدارة الولاء",
+  "subtitle": "إدارة مستويات الولاء والنقاط والمعاملات",
+  "adjust_points": "ضبط النقاط",
+  "stats": {
+    "total_points_issued": "إجمالي النقاط الصادرة",
+    "points_redeemed": "تم استبدال النقاط",
+    "active_members": "المشاركون النشطون",
+    "from_last_month": "من الشهر الماضي"
+  },
+  "tiers": {
+    "title": "مستويات الولاء",
+    "description": "تحديد المستويات والفوائد",
+    "starting_level": "مستوى الدخول",
+    "from_points": "من {{نقاط}} نقطة",
+    "discount": "خصم {{percent}}%"
+  },
+  "transactions": {
+    "title": "أحدث المعاملات",
+    "description": "أحدث معاملات نقاط الولاء",
+    "search_placeholder": "البحث عن المعاملات...",
+    "table": {
+      "client": "عميل",
+      "points": "نقاط",
+      "type": "يكتب",
+      "reason": "سبب",
+      "date": "تاريخ"
+    },
+    "types": {
+      "earn": "الاستحقاق",
+      "redeem": "لا تصلح",
+      "adjust": "تعديل"
+    }
+  },
+  "dialogs": {
+    "edit_tier": {
+      "title": "تحرير المستوى",
+      "description": "تحديث إعدادات المستوى",
+      "tier_name": "اسم المستوى",
+      "min_points": "الحد الأدنى من النقاط",
+      "discount_percent": "تخفيض (٪)"
+    },
+    "adjust_points": {
+      "title": "ضبط النقاط",
+      "description": "إضافة أو خصم النقاط من حساب العميل",
+      "client_email": "البريد الإلكتروني للعميل",
+      "client_email_placeholder": "client@example.com",
+      "points": "النقاط (استخدم النقاط السلبية لاستردادها)",
+      "points_placeholder": "100",
+      "reason": "سبب",
+      "reason_placeholder": "التعديل اليدوي"
+    }
+  },
+  "buttons": {
+    "cancel": "يلغي",
+    "save_changes": "حفظ التغييرات",
+    "adjust_points": "ضبط النقاط"
+  },
+  "toasts": {
+    "tier_updated": "تم تحديث المستوى بنجاح",
+    "points_adjusted_add": "تمت إضافة {{points}} النقاط {{email}}",
+    "points_adjusted_deduct": "تم خصم {{points}} نقطة من {{email}}",
+    "failed_load": "فشل في تحميل المعاملات",
+    "failed_adjust": "فشل في تعديل النتائج"
+  }
+}

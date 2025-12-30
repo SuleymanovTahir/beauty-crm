@@ -1,0 +1,104 @@
+{
+  "title": "Хабарландыру тақтасы",
+  "subtitle": "Клиенттерге хабарламаларды басқару және жіберу",
+  "save_template": "Үлгіні сақтау",
+  "send_notification": "Хабарландыру жіберу",
+  "stats": {
+    "total_sent": "Барлығы жіберілді",
+    "email_sent": "Электрондық пошта жіберілді",
+    "push_sent": "Басу жіберілді",
+    "sms_sent": "SMS жіберілді"
+  },
+  "templates": {
+    "title": "Хабарландыру үлгілері",
+    "description": "Жалпы хабарландыруларға арналған жылдам үлгілер",
+    "use_template": "Үлгіні қолданыңыз"
+  },
+  "history": {
+    "title": "Хабарландыру тарихы",
+    "description": "Барлық жіберілген және жоспарланған хабарландырулар",
+    "filters": {
+      "all": "Барлығы",
+      "email": "Email",
+      "push": "Push",
+      "sms": "SMS"
+    },
+    "table": {
+      "status": "Күй",
+      "title": "Айдар",
+      "type": "Түр",
+      "recipients": "Алушылар",
+      "sent_failed": "Жіберілді/сәтсіз",
+      "date": "Күн"
+    },
+    "statuses": {
+      "sent": "Жіберілді",
+      "pending": "Күтуде",
+      "failed": "Сәтсіз"
+    },
+    "scheduled": "Жоспарланған"
+  },
+  "types": {
+    "email": "Email",
+    "push": "Push",
+    "sms": "SMS"
+  },
+  "dialogs": {
+    "send": {
+      "title": "Жаңа хабарландыру жіберу",
+      "description": "Клиенттеріңізге хабарландыру жасаңыз және жіберіңіз",
+      "form": {
+        "notification_type": "Хабарландыру түрі",
+        "title": "Айдар",
+        "title_placeholder": "Хабарландыру тақырыбы",
+        "message": "Хабарлама",
+        "message_placeholder": "Хабарландыру мәтіні",
+        "target_segment": "Мақсатты сегмент",
+        "segments": {
+          "all": "Барлық клиенттер",
+          "active": "Белсенді клиенттер",
+          "inactive": "Белсенді емес клиенттер",
+          "tier": "Адалдық деңгейі бойынша"
+        },
+        "loyalty_tier": "Адалдық деңгейі",
+        "select_tier": "Деңгейді таңдаңыз",
+        "tiers": {
+          "bronze": "Қола",
+          "silver": "Күміс",
+          "gold": "Алтын",
+          "platinum": "Платина"
+        }
+      }
+    },
+    "template": {
+      "title": "Үлгі ретінде сақтау",
+      "description": "Қайта пайдалануға болатын хабарландыру үлгісін жасаңыз",
+      "form": {
+        "template_name": "Үлгі атауы",
+        "template_name_placeholder": "мысалы, сәлемдесу хабары",
+        "title": "Айдар",
+        "title_placeholder": "Хабарландыру тақырыбы",
+        "message": "Хабарлама",
+        "message_placeholder": "Динамикалық мазмұн үшін {variable} пайдаланыңыз",
+        "type": "Түр",
+        "types": {
+          "push": "Push хабарландыруы",
+          "email": "Email",
+          "sms": "SMS"
+        }
+      }
+    }
+  },
+  "buttons": {
+    "cancel": "Болдырмау",
+    "send_notification": "Хабарландыру жіберу",
+    "save_template": "Үлгіні сақтау"
+  },
+  "toasts": {
+    "sent": "Хабарландыру сәтті жіберілді",
+    "template_saved": "Үлгі сәтті сақталды",
+    "failed_load": "Хабарландырулар жүктелмеді",
+    "failed_send": "Хабарландыру жіберілмеді",
+    "failed_save_template": "Үлгіні сақтау сәтсіз аяқталды"
+  }
+}

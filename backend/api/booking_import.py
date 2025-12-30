@@ -342,7 +342,7 @@ async def download_booking_template(format: str = 'csv'):
         template_data = {
             'Client': ['Anna Ivanova', 'Maria Petrova'],
             'Service': ['Manicure', 'Hair Coloring'],
-            'Date': ['2025-01-15', '2025-01-16'],
+            'Date': ['2026-01-15', '2026-01-16'],
             'Time': ['14:00', '10:00'],
             'Phone': ['971501234567', '971509876543'],
             'Master': ['Olga Masterova', 'Victoria Stylist'],

@@ -1,0 +1,14 @@
+{
+  "admin_panel": "Panel de administración",
+  "logout": "Finalizar la sesión",
+  "go_to_crm": "Ir a CRM",
+  "menu": {
+    "dashboard": "Panel de control",
+    "user_management": "Gestión de usuarios",
+    "loyalty_management": "Gestión de fidelización",
+    "referral_program": "Programa de referencia",
+    "challenges": "Desafíos",
+    "notifications": "Notificaciones",
+    "photo_gallery": "Galería de fotos"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "title": "Управление лояльностью",
+  "subtitle": "Управление уровнями лояльности, баллами и транзакциями",
+  "adjust_points": "Скорректировать баллы",
+  "stats": {
+    "total_points_issued": "Всего выдано баллов",
+    "points_redeemed": "Баллов погашено",
+    "active_members": "Активных участников",
+    "from_last_month": "от прошлого месяца"
+  },
+  "tiers": {
+    "title": "Уровни лояльности",
+    "description": "Настройка уровней и преимуществ",
+    "starting_level": "Начальный уровень",
+    "from_points": "От {{points}} баллов",
+    "discount": "{{percent}}% скидка"
+  },
+  "transactions": {
+    "title": "Последние транзакции",
+    "description": "Последние транзакции баллов лояльности",
+    "search_placeholder": "Поиск транзакций...",
+    "table": {
+      "client": "Клиент",
+      "points": "Баллы",
+      "type": "Тип",
+      "reason": "Причина",
+      "date": "Дата"
+    },
+    "types": {
+      "earn": "Начисление",
+      "redeem": "Списание",
+      "adjust": "Корректировка"
+    }
+  },
+  "dialogs": {
+    "edit_tier": {
+      "title": "Редактировать уровень",
+      "description": "Обновить настройки уровня",
+      "tier_name": "Название уровня",
+      "min_points": "Минимум баллов",
+      "discount_percent": "Скидка (%)"
+    },
+    "adjust_points": {
+      "title": "Скорректировать баллы",
+      "description": "Добавить или списать баллы с аккаунта клиента",
+      "client_email": "Email клиента",
+      "client_email_placeholder": "client@example.com",
+      "points": "Баллы (используйте отрицательные для списания)",
+      "points_placeholder": "100",
+      "reason": "Причина",
+      "reason_placeholder": "Ручная корректировка"
+    }
+  },
+  "buttons": {
+    "cancel": "Отмена",
+    "save_changes": "Сохранить изменения",
+    "adjust_points": "Скорректировать баллы"
+  },
+  "toasts": {
+    "tier_updated": "Уровень успешно обновлен",
+    "points_adjusted_add": "{{points}} баллов добавлено {{email}}",
+    "points_adjusted_deduct": "{{points}} баллов списано с {{email}}",
+    "failed_load": "Не удалось загрузить транзакции",
+    "failed_adjust": "Не удалось скорректировать баллы"
+  }
+}
