@@ -132,6 +132,32 @@ export default function Challenges() {
     }
   };
 
+  const handleCheckProgress = async (id: string) => {
+    try {
+      const response = await fetch(`/api/admin/challenges/${id}/check-progress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({}),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          toast.success(t('toasts.progress_checked', {
+            defaultValue: `Updated ${data.updated_count} clients who completed the challenge`,
+            count: data.updated_count
+          }));
+          loadChallenges();
+        }
+      } else {
+        throw new Error('Failed to check progress');
+      }
+    } catch (error) {
+      toast.error(t('toasts.failed_check_progress', { defaultValue: 'Failed to check progress' }));
+    }
+  };
+
   const stats = [
     {
       title: t('stats.active_challenges'),
@@ -268,16 +294,29 @@ export default function Challenges() {
                   <Progress value={completionRate} className="h-2" />
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>{new Date(challenge.start_date).toLocaleDateString()}</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>{new Date(challenge.start_date).toLocaleDateString()}</span>
+                    </div>
+                    <span>-</span>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>{new Date(challenge.end_date).toLocaleDateString()}</span>
+                    </div>
                   </div>
-                  <span>-</span>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>{new Date(challenge.end_date).toLocaleDateString()}</span>
-                  </div>
+                  {challenge.status === 'active' && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleCheckProgress(challenge.id)}
+                      className="ml-2"
+                    >
+                      <Trophy className="w-4 h-4 mr-1" />
+                      {t('card.check_progress', { defaultValue: 'Check Progress' })}
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>

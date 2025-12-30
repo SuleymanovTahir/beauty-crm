@@ -242,6 +242,9 @@ export default function App() {
                 <Route path="challenges" element={<Challenges />} />
                 <Route path="notifications" element={<NotificationsDashboard />} />
                 <Route path="gallery" element={<PhotoGallery />} />
+                <Route path="services" element={<Services />} />
+                <Route path="public-content/:tab?" element={<PublicContent />} />
+                <Route path="users" element={<Users />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
