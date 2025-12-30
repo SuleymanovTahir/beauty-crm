@@ -12,10 +12,13 @@ import {
   Image,
   LogOut,
   Menu,
-  X
+  X,
+  Globe,
+  Scissors
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
+import LanguageSwitcher from '../LanguageSwitcher';
 
 interface AdminPanelLayoutProps {
   user: any;
@@ -63,6 +66,16 @@ export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutPro
       label: t('menu.photo_gallery'),
       icon: Image,
       path: '/admin/gallery',
+    },
+    {
+      label: t('menu.services'),
+      icon: Scissors,
+      path: '/admin/services',
+    },
+    {
+      label: t('menu.public_content'),
+      icon: Globe,
+      path: '/admin/public-content',
     },
   ];
 
@@ -155,6 +168,11 @@ export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutPro
                 <LayoutDashboard className="w-5 h-5" />
                 <span>{t('go_to_crm')}</span>
               </Link>
+            </div>
+
+            {/* Language Switcher */}
+            <div className="px-3 py-4 border-t">
+              <LanguageSwitcher />
             </div>
 
             {/* Logout */}

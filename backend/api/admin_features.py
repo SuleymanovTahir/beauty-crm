@@ -197,6 +197,158 @@ async def delete_admin_challenge(challenge_id: int, session_token: Optional[str]
         log_error(f"Error deleting challenge: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
+@router.post("/admin/challenges/{challenge_id}/check-progress")
+async def check_challenge_progress(
+    challenge_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Проверить и обновить прогресс челленджа для всех участников"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        # Получаем информацию о челлендже
+        c.execute("""
+            SELECT challenge_type, target_value, bonus_points, start_date, end_date
+            FROM active_challenges
+            WHERE id = %s AND is_active = TRUE
+        """, (challenge_id,))
+
+        challenge = c.fetchone()
+        if not challenge:
+            raise HTTPException(status_code=404, detail="Challenge not found or inactive")
+
+        challenge_type, target_value, bonus_points, start_date, end_date = challenge
+
+        # Проверяем прогресс в зависимости от типа челленджа
+        if challenge_type == 'visits':
+            # Считаем количество визитов (завершенных броней) для каждого клиента
+            c.execute("""
+                SELECT b.client_id, COUNT(*) as visit_count
+                FROM bookings b
+                WHERE b.status = 'completed'
+                  AND (%s IS NULL OR b.booking_date >= %s)
+                  AND (%s IS NULL OR b.booking_date <= %s)
+                GROUP BY b.client_id
+                HAVING COUNT(*) >= %s
+            """, (start_date, start_date, end_date, end_date, target_value))
+
+        elif challenge_type == 'spending':
+            # Считаем общую сумму трат для каждого клиента
+            c.execute("""
+                SELECT b.client_id, COALESCE(SUM(b.total_price), 0) as total_spent
+                FROM bookings b
+                WHERE b.status = 'completed'
+                  AND (%s IS NULL OR b.booking_date >= %s)
+                  AND (%s IS NULL OR b.booking_date <= %s)
+                GROUP BY b.client_id
+                HAVING COALESCE(SUM(b.total_price), 0) >= %s
+            """, (start_date, start_date, end_date, end_date, target_value))
+
+        elif challenge_type == 'referrals':
+            # Считаем количество успешных рефералов для каждого клиента
+            c.execute("""
+                SELECT r.referrer_id as client_id, COUNT(*) as referral_count
+                FROM client_referrals r
+                WHERE r.status = 'completed'
+                  AND (%s IS NULL OR r.created_at >= %s)
+                  AND (%s IS NULL OR r.created_at <= %s)
+                GROUP BY r.referrer_id
+                HAVING COUNT(*) >= %s
+            """, (start_date, start_date, end_date, end_date, target_value))
+
+        else:
+            # Для типа 'services' нужна дополнительная логика
+            conn.close()
+            return {"success": False, "message": "Services type challenges not yet implemented"}
+
+        completed_clients = c.fetchall()
+        updated_count = 0
+
+        for client_row in completed_clients:
+            client_id = client_row[0]
+            current_value = client_row[1]
+
+            # Проверяем, есть ли уже запись прогресса
+            c.execute("""
+                SELECT id, is_completed
+                FROM challenge_progress
+                WHERE challenge_id = %s AND client_id = %s
+            """, (challenge_id, client_id))
+
+            progress = c.fetchone()
+
+            if progress:
+                progress_id, is_completed = progress
+                if not is_completed:
+                    # Обновляем прогресс и помечаем как завершенный
+                    c.execute("""
+                        UPDATE challenge_progress
+                        SET current_value = %s,
+                            is_completed = TRUE,
+                            completed_at = CURRENT_TIMESTAMP,
+                            updated_at = CURRENT_TIMESTAMP
+                        WHERE id = %s
+                    """, (current_value, progress_id))
+
+                    # Начисляем бонусные баллы клиенту
+                    c.execute("""
+                        UPDATE clients
+                        SET loyalty_points = COALESCE(loyalty_points, 0) + %s
+                        WHERE instagram_id = %s
+                    """, (bonus_points, client_id))
+
+                    # Создаем транзакцию лояльности
+                    c.execute("""
+                        INSERT INTO loyalty_transactions (client_id, points, transaction_type, reason)
+                        VALUES (%s, %s, 'earn', %s)
+                    """, (client_id, bonus_points, f"Challenge completed: {challenge_type}"))
+
+                    updated_count += 1
+            else:
+                # Создаем новую запись прогресса как завершенную
+                c.execute("""
+                    INSERT INTO challenge_progress (
+                        challenge_id, client_id, current_value,
+                        is_completed, completed_at
+                    ) VALUES (%s, %s, %s, TRUE, CURRENT_TIMESTAMP)
+                """, (challenge_id, client_id, current_value))
+
+                # Начисляем бонусные баллы
+                c.execute("""
+                    UPDATE clients
+                    SET loyalty_points = COALESCE(loyalty_points, 0) + %s
+                    WHERE instagram_id = %s
+                """, (bonus_points, client_id))
+
+                # Создаем транзакцию
+                c.execute("""
+                    INSERT INTO loyalty_transactions (client_id, points, transaction_type, reason)
+                    VALUES (%s, %s, 'earn', %s)
+                """, (client_id, bonus_points, f"Challenge completed: {challenge_type}"))
+
+                updated_count += 1
+
+        conn.commit()
+        conn.close()
+
+        return {
+            "success": True,
+            "updated_count": updated_count,
+            "message": f"Updated {updated_count} clients who completed the challenge"
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_error(f"Error checking challenge progress: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
 
 # ============================================================================
 # REFERRAL PROGRAM API
@@ -342,15 +494,15 @@ async def get_referral_stats(session_token: Optional[str] = Cookie(None)):
         c = conn.cursor()
 
         # Total referrals
-        c.execute("SELECT COUNT(*) FROM referrals")
+        c.execute("SELECT COUNT(*) FROM client_referrals")
         total_referrals = c.fetchone()[0] or 0
 
         # Completed referrals
-        c.execute("SELECT COUNT(*) FROM referrals WHERE status = 'completed'")
+        c.execute("SELECT COUNT(*) FROM client_referrals WHERE status = 'completed'")
         completed_referrals = c.fetchone()[0] or 0
 
         # Points distributed
-        c.execute("SELECT COALESCE(SUM(points_awarded), 0) FROM referrals WHERE status = 'completed'")
+        c.execute("SELECT COALESCE(SUM(points_awarded), 0) FROM client_referrals WHERE status = 'completed'")
         points_distributed = c.fetchone()[0] or 0
 
         conn.close()
@@ -486,7 +638,7 @@ async def get_loyalty_transactions(session_token: Optional[str] = Cookie(None)):
                 lt.reason,
                 lt.created_at
             FROM loyalty_transactions lt
-            LEFT JOIN clients c ON lt.client_id = c.id
+            LEFT JOIN clients c ON lt.client_id = c.instagram_id
             ORDER BY lt.created_at DESC
             LIMIT 100
         """)
@@ -522,7 +674,7 @@ async def adjust_loyalty_points(request: Request, session_token: Optional[str] =
         c = conn.cursor()
 
         # Найти клиента по email
-        c.execute("SELECT id, loyalty_points FROM clients WHERE email = %s", (data.get("client_email"),))
+        c.execute("SELECT instagram_id, loyalty_points FROM clients WHERE email = %s", (data.get("client_email"),))
         result = c.fetchone()
 
         if not result:
@@ -534,7 +686,7 @@ async def adjust_loyalty_points(request: Request, session_token: Optional[str] =
         new_points = current_points + points
 
         # Обновить баллы клиента
-        c.execute("UPDATE clients SET loyalty_points = %s WHERE id = %s", (new_points, client_id))
+        c.execute("UPDATE clients SET loyalty_points = %s WHERE instagram_id = %s", (new_points, client_id))
 
         # Создать транзакцию
         c.execute("""
@@ -717,51 +869,136 @@ async def send_notification(request: Request, session_token: Optional[str] = Coo
         target_segment = data.get("target_segment", "all")
         tier_filter = data.get("tier_filter", "")
 
+        # Новые параметры фильтрации
+        appointment_filter = data.get("appointment_filter", "")
+        appointment_date = data.get("appointment_date", "")
+        appointment_start_date = data.get("appointment_start_date", "")
+        appointment_end_date = data.get("appointment_end_date", "")
+        service_filter = data.get("service_filter", "")
+
         # Получить список клиентов
         if target_segment == "all":
-            c.execute("SELECT id FROM clients WHERE telegram_id IS NOT NULL")
+            c.execute("SELECT instagram_id FROM clients WHERE telegram_id IS NOT NULL")
         elif target_segment == "active":
-            c.execute("SELECT id FROM clients WHERE telegram_id IS NOT NULL AND is_active = TRUE")
+            c.execute("SELECT instagram_id FROM clients WHERE telegram_id IS NOT NULL AND is_active = TRUE")
         elif target_segment == "inactive":
-            c.execute("SELECT id FROM clients WHERE telegram_id IS NOT NULL AND is_active = FALSE")
+            c.execute("SELECT instagram_id FROM clients WHERE telegram_id IS NOT NULL AND is_active = FALSE")
         elif target_segment == "tier" and tier_filter:
-            # TODO: Implement tier filtering based on loyalty tier
-            c.execute("SELECT id FROM clients WHERE telegram_id IS NOT NULL")
+            c.execute("SELECT instagram_id FROM clients WHERE telegram_id IS NOT NULL AND loyalty_tier = %s", (tier_filter,))
+        elif target_segment == "appointment-based":
+            # Фильтр по датам записей
+            if appointment_filter == "tomorrow":
+                c.execute("""
+                    SELECT DISTINCT c.instagram_id
+                    FROM clients c
+                    JOIN bookings b ON c.instagram_id = b.client_id
+                    WHERE c.telegram_id IS NOT NULL
+                      AND b.booking_date = CURRENT_DATE + INTERVAL '1 day'
+                      AND b.status IN ('pending', 'confirmed')
+                """)
+            elif appointment_filter == "specific_date" and appointment_date:
+                c.execute("""
+                    SELECT DISTINCT c.instagram_id
+                    FROM clients c
+                    JOIN bookings b ON c.instagram_id = b.client_id
+                    WHERE c.telegram_id IS NOT NULL
+                      AND b.booking_date = %s
+                      AND b.status IN ('pending', 'confirmed')
+                """, (appointment_date,))
+            elif appointment_filter == "date_range" and appointment_start_date and appointment_end_date:
+                c.execute("""
+                    SELECT DISTINCT c.instagram_id
+                    FROM clients c
+                    JOIN bookings b ON c.instagram_id = b.client_id
+                    WHERE c.telegram_id IS NOT NULL
+                      AND b.booking_date BETWEEN %s AND %s
+                      AND b.status IN ('pending', 'confirmed')
+                """, (appointment_start_date, appointment_end_date))
+            else:
+                c.execute("SELECT instagram_id FROM clients WHERE telegram_id IS NOT NULL")
+        elif target_segment == "service-based" and service_filter:
+            # Фильтр по процедурам/услугам
+            c.execute("""
+                SELECT DISTINCT c.instagram_id
+                FROM clients c
+                JOIN bookings b ON c.instagram_id = b.client_id
+                WHERE c.telegram_id IS NOT NULL
+                  AND (b.service_name ILIKE %s OR b.service_id::text = %s)
+            """, (f"%{service_filter}%", service_filter))
         else:
-            c.execute("SELECT id FROM clients WHERE telegram_id IS NOT NULL")
+            c.execute("SELECT instagram_id FROM clients WHERE telegram_id IS NOT NULL")
 
         recipients = c.fetchall()
         recipients_count = len(recipients)
+
+        # Параметры планирования
+        scheduled = data.get("scheduled", False)
+        schedule_date = data.get("schedule_date", "")
+        schedule_time = data.get("schedule_time", "")
+        repeat_enabled = data.get("repeat_enabled", False)
+        repeat_interval = data.get("repeat_interval", "")
+        repeat_end_date = data.get("repeat_end_date", "")
+
+        # Подготовить datetime для планирования
+        schedule_datetime = None
+        if scheduled and schedule_date and schedule_time:
+            schedule_datetime = f"{schedule_date} {schedule_time}:00"
+
+        # Сохранить параметры фильтрации в JSON
+        filter_params = {
+            "target_segment": target_segment,
+            "tier_filter": tier_filter,
+            "appointment_filter": appointment_filter,
+            "appointment_date": appointment_date,
+            "appointment_start_date": appointment_start_date,
+            "appointment_end_date": appointment_end_date,
+            "service_filter": service_filter
+        }
+
+        # Определить статус уведомления
+        status = "pending" if scheduled else "sent"
 
         # Создать запись в истории
         c.execute("""
             INSERT INTO notification_history (
                 title, message, notification_type,
-                recipients_count, status
-            ) VALUES (%s, %s, %s, %s, %s)
+                recipients_count, status,
+                scheduled, schedule_datetime,
+                repeat_enabled, repeat_interval, repeat_end_date,
+                target_segment, filter_params
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """, (
             data.get("title"),
             data.get("message"),
             data.get("type", "push"),
             recipients_count,
-            "sent"
+            status,
+            scheduled,
+            schedule_datetime,
+            repeat_enabled,
+            repeat_interval if repeat_enabled else None,
+            repeat_end_date if repeat_enabled else None,
+            target_segment,
+            json.dumps(filter_params)
         ))
 
         notification_id = c.fetchone()[0]
 
-        # TODO: Реальная отправка уведомлений через Telegram/Email/SMS
-        # Для теста просто помечаем как отправленные
-        c.execute("""
-            UPDATE notification_history
-            SET sent_count = %s, sent_at = CURRENT_TIMESTAMP
-            WHERE id = %s
-        """, (recipients_count, notification_id))
+        # Если не запланировано - отправить сразу
+        if not scheduled:
+            # TODO: Реальная отправка уведомлений через Telegram/Email/SMS
+            # Для теста просто помечаем как отправленные
+            c.execute("""
+                UPDATE notification_history
+                SET sent_count = %s, sent_at = CURRENT_TIMESTAMP
+                WHERE id = %s
+            """, (recipients_count, notification_id))
 
         conn.commit()
         conn.close()
 
-        return {"success": True, "id": notification_id}
+        return {"success": True, "id": notification_id, "scheduled": scheduled}
     except Exception as e:
         log_error(f"Error sending notification: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
@@ -827,10 +1064,10 @@ async def get_gallery_categories(session_token: Optional[str] = Cookie(None)):
 
         # Получаем уникальные категории из services таблицы
         c.execute("""
-            SELECT DISTINCT category_ru as category
+            SELECT DISTINCT category
             FROM services
-            WHERE category_ru IS NOT NULL AND category_ru != ''
-            ORDER BY category_ru
+            WHERE category IS NOT NULL AND category != ''
+            ORDER BY category
         """)
 
         categories = []

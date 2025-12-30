@@ -39,7 +39,7 @@ async def get_admin_stats(session_token: Optional[str] = Cookie(None)):
         total_loyalty_points = c.fetchone()[0]
 
         # Total referrals
-        c.execute("SELECT COUNT(*) FROM referrals")
+        c.execute("SELECT COUNT(*) FROM client_referrals")
         total_referrals = c.fetchone()[0]
 
         conn.close()
@@ -257,15 +257,15 @@ async def get_referral_stats(session_token: Optional[str] = Cookie(None)):
         c = conn.cursor()
 
         # Total referrals
-        c.execute("SELECT COUNT(*) FROM referrals")
+        c.execute("SELECT COUNT(*) FROM client_referrals")
         total_referrals = c.fetchone()[0]
 
         # Completed referrals
-        c.execute("SELECT COUNT(*) FROM referrals WHERE status = 'completed'")
+        c.execute("SELECT COUNT(*) FROM client_referrals WHERE status = 'completed'")
         completed_referrals = c.fetchone()[0]
 
         # Total points distributed
-        c.execute("SELECT COALESCE(SUM(points_awarded), 0) FROM referrals WHERE status = 'completed'")
+        c.execute("SELECT COALESCE(SUM(points_awarded), 0) FROM client_referrals WHERE status = 'completed'")
         points_distributed = c.fetchone()[0]
 
         conn.close()
