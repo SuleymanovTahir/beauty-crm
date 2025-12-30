@@ -88,6 +88,35 @@ export function Loyalty() {
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
+  const shareInstagram = async () => {
+    const referralText = `${t('loyalty.share_text', 'Присоединяйся к салону красоты! Используй мой промокод')} ${loyaltyInfo.referral_code} ${t('loyalty.share_bonus', 'и получи бонусы!')}`;
+
+    // Try to use Web Share API if available
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Beauty Salon',
+          text: referralText,
+        });
+        toast.success(t('loyalty.shared', 'Успешно поделились'));
+      } catch (error) {
+        if ((error as Error).name !== 'AbortError') {
+          // Fallback: copy to clipboard and show Instagram instructions
+          await navigator.clipboard.writeText(`${referralText}\n\n#beautysalon #beauty`);
+          toast.success(t('loyalty.code_copied_instagram', 'Промокод скопирован! Вставьте в Instagram Stories'));
+        }
+      }
+    } else {
+      // Fallback for browsers without Web Share API
+      try {
+        await navigator.clipboard.writeText(`${referralText}\n\n#beautysalon #beauty`);
+        toast.info(t('loyalty.code_copied_instagram', 'Промокод скопирован! Вставьте в Instagram Stories'));
+      } catch (error) {
+        toast.error(t('common:error_occurred', 'Произошла ошибка'));
+      }
+    }
+  };
+
   return (
     <div className="space-y-6 pb-8">
       <div>
@@ -301,7 +330,7 @@ export function Loyalty() {
               <Share2 className="w-4 h-4 mr-2" />
               WhatsApp
             </Button>
-            <Button className="flex-1" variant="outline">
+            <Button className="flex-1" variant="outline" onClick={shareInstagram}>
               <Share2 className="w-4 h-4 mr-2" />
               Instagram
             </Button>
