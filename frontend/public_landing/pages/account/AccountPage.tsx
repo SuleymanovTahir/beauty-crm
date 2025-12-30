@@ -271,7 +271,7 @@ export function AccountPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 lg:flex">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
       {/* Мобильная шапка */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b">
         <div className="flex items-center justify-between p-4">
@@ -286,8 +286,8 @@ export function AccountPage() {
             </SheetContent>
           </Sheet>
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-pink-500" />
-            <span className="font-bold text-lg bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">Beauty CRM</span>
+            <Sparkles className="w-6 h-6 text-pink-500" />
+            <span className="font-bold">Beauty Salon</span>
           </div>
         </div>
         <Avatar className="w-8 h-8 cursor-pointer" onClick={() => setActiveTab('settings')}>
@@ -296,42 +296,35 @@ export function AccountPage() {
         </Avatar>
       </div>
 
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:block w-[280px] h-screen sticky top-0 flex-shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-40 bg-white">
-        <div className="h-full flex flex-col">
-          <div className="p-6 border-b border-gray-100 flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-pink-200">
-              <Sparkles className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="font-bold text-xl leading-none text-gray-900">Beauty CRM</h1>
-              <p className="text-xs text-gray-400 mt-1 font-medium">Client Portal</p>
+      <div className="flex h-screen pt-[73px] lg:pt-0">
+        {/* Desktop Sidebar */}
+        <aside className="hidden lg:block w-[280px] bg-white border-r flex-shrink-0">
+          <div className="p-6 border-b">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-8 h-8 text-pink-500" />
+              <span className="text-xl font-bold">Beauty Salon</span>
             </div>
           </div>
-          <div className="flex-1 overflow-hidden">
-            <SidebarContent />
-          </div>
-        </div>
-      </aside>
+          <SidebarContent />
+        </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 min-w-0 overflow-y-auto h-screen pt-[60px] lg:pt-0">
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto">
         <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-10 pb-24 lg:pb-10">
           {renderContent()}
         </div>
       </main>
 
-      {/* Mobile Floating Action Button */}
-      <div className="lg:hidden fixed bottom-6 right-6 z-40">
-        <Button
-          onClick={openBooking}
-          className="w-14 h-14 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-300 p-0 flex items-center justify-center animate-bounce-slow"
-        >
-          <Calendar className="w-6 h-6" />
-        </Button>
+        {/* Mobile Floating Action Button */}
+        <div className="lg:hidden fixed bottom-6 right-6 z-40">
+          <Button
+            onClick={openBooking}
+            className="w-14 h-14 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-300 p-0 flex items-center justify-center animate-bounce-slow"
+          >
+            <Calendar className="w-6 h-6" />
+          </Button>
+        </div>
       </div>
-
-
     </div>
   );
 }
