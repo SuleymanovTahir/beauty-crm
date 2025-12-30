@@ -1,20 +1,57 @@
-import { Sparkles, TrendingUp, Calendar, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Sparkles, TrendingUp, Calendar, AlertCircle, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { beautyMetrics, nextProcedures } from '../../../data/mockData';
+import { useTranslation } from 'react-i18next';
+import { apiClient } from '../../../../src/api/client';
+import { toast } from 'sonner';
 
 export function BeautyProfile() {
-  const overallScore = Math.round(
-    beautyMetrics.reduce((sum, m) => sum + m.score, 0) / beautyMetrics.length
-  );
+  const { t } = useTranslation(['account', 'common']);
+  const [loading, setLoading] = useState(true);
+  const [beautyData, setBeautyData] = useState<any>(null);
+
+  useEffect(() => {
+    loadBeautyMetrics();
+  }, []);
+
+  const loadBeautyMetrics = async () => {
+    try {
+      setLoading(true);
+      const data = await apiClient.getClientBeautyMetrics();
+      if (data.success) {
+        setBeautyData(data);
+      }
+    } catch (error) {
+      console.error('Error loading beauty metrics:', error);
+      toast.error(t('common:error_loading_data'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-pink-500" />
+      </div>
+    );
+  }
+
+  const beautyMetrics = beautyData?.metrics || [];
+  const nextProcedures = beautyData?.recommended_procedures || [];
+
+  const overallScore = beautyMetrics.length > 0
+    ? Math.round(beautyMetrics.reduce((sum: number, m: any) => sum + m.score, 0) / beautyMetrics.length)
+    : 0;
 
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1>Бьюти-профиль</h1>
-        <p className="text-muted-foreground">Анализ состояния и рекомендации</p>
+        <h1>{t('beauty.title', 'Бьюти-профиль')}</h1>
+        <p className="text-muted-foreground">{t('beauty.subtitle', 'Анализ состояния и рекомендации')}</p>
       </div>
 
       {/* Beauty Score */}
@@ -22,9 +59,9 @@ export function BeautyProfile() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-purple-500" />
-            Beauty Score
+            {t('beauty.beauty_score', 'Beauty Score')}
           </CardTitle>
-          <CardDescription>Общая оценка вашего состояния</CardDescription>
+          <CardDescription>{t('beauty.overall_assessment', 'Общая оценка вашего состояния')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-8">
@@ -32,7 +69,7 @@ export function BeautyProfile() {
               <div className="w-32 h-32 rounded-full border-8 border-purple-200 flex items-center justify-center">
                 <div className="text-center">
                   <div className="text-4xl font-bold text-purple-600">{overallScore}</div>
-                  <div className="text-sm text-muted-foreground">из 100</div>
+                  <div className="text-sm text-muted-foreground">{t('beauty.out_of_100', 'из 100')}</div>
                 </div>
               </div>
               <div
@@ -46,13 +83,13 @@ export function BeautyProfile() {
             </div>
 
             <div className="flex-1 space-y-2">
-              <div className="text-xl font-semibold">Отличное состояние!</div>
+              <div className="text-xl font-semibold">{t('beauty.excellent_condition', 'Отличное состояние!')}</div>
               <p className="text-sm text-muted-foreground">
-                Вы регулярно следите за собой. Продолжайте в том же духе!
+                {t('beauty.excellent_message', 'Вы регулярно следите за собой. Продолжайте в том же духе!')}
               </p>
               <div className="flex gap-2 mt-4">
-                <Badge className="bg-green-500">Активный уход</Badge>
-                <Badge className="bg-blue-500">Регулярные визиты</Badge>
+                <Badge className="bg-green-500">{t('beauty.active_care', 'Активный уход')}</Badge>
+                <Badge className="bg-blue-500">{t('beauty.regular_visits', 'Регулярные визиты')}</Badge>
               </div>
             </div>
           </div>
@@ -61,9 +98,9 @@ export function BeautyProfile() {
 
       {/* Детальные метрики */}
       <div className="space-y-4">
-        <h2>Детальная оценка</h2>
+        <h2>{t('beauty.detailed_assessment', 'Детальная оценка')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {beautyMetrics.map((metric) => (
+          {beautyMetrics.map((metric: any) => (
             <Card key={metric.category}>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center justify-between">
@@ -74,18 +111,18 @@ export function BeautyProfile() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Progress 
-                  value={metric.score} 
+                <Progress
+                  value={metric.score}
                   className="h-3"
-                  style={{ 
-                    '--progress-background': metric.color 
+                  style={{
+                    '--progress-background': metric.color
                   } as any}
                 />
                 <div className="mt-2 text-sm text-muted-foreground">
-                  {metric.score >= 90 && 'Превосходное состояние'}
-                  {metric.score >= 80 && metric.score < 90 && 'Отличное состояние'}
-                  {metric.score >= 70 && metric.score < 80 && 'Хорошее состояние'}
-                  {metric.score < 70 && 'Требует внимания'}
+                  {metric.score >= 90 && t('beauty.excellent_state', 'Превосходное состояние')}
+                  {metric.score >= 80 && metric.score < 90 && t('beauty.great_state', 'Отличное состояние')}
+                  {metric.score >= 70 && metric.score < 80 && t('beauty.good_state', 'Хорошее состояние')}
+                  {metric.score < 70 && t('beauty.needs_attention', 'Требует внимания')}
                 </div>
               </CardContent>
             </Card>
@@ -97,16 +134,16 @@ export function BeautyProfile() {
       <div className="space-y-4">
         <h2 className="flex items-center gap-2">
           <Calendar className="w-5 h-5" />
-          Календарь процедур
+          {t('beauty.procedure_calendar', 'Календарь процедур')}
         </h2>
         <Card>
           <CardHeader>
             <CardDescription>
-              Рекомендованное время для следующих процедур
+              {t('beauty.recommended_time', 'Рекомендованное время для следующих процедур')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {nextProcedures.map((procedure, index) => (
+            {nextProcedures.map((procedure: any, index: number) => (
               <div
                 key={index}
                 className={`flex items-center justify-between p-4 rounded-lg border ${
@@ -123,9 +160,9 @@ export function BeautyProfile() {
                     <div className="font-semibold">{procedure.service}</div>
                     <div className="text-sm text-muted-foreground">
                       {procedure.recommended ? (
-                        <span className="text-orange-600">Рекомендуется в ближайшее время</span>
+                        <span className="text-orange-600">{t('beauty.recommended_soon', 'Рекомендуется в ближайшее время')}</span>
                       ) : (
-                        `Через ${procedure.daysLeft} дней`
+                        `${t('beauty.in', 'Через')} ${procedure.days_left} ${t('beauty.days', 'дней')}`
                       )}
                     </div>
                   </div>
@@ -133,7 +170,7 @@ export function BeautyProfile() {
 
                 {procedure.recommended && (
                   <Button size="sm">
-                    Записаться
+                    {t('beauty.book', 'Записаться')}
                   </Button>
                 )}
               </div>
@@ -147,7 +184,7 @@ export function BeautyProfile() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-blue-500" />
-            Персональные рекомендации
+            {t('beauty.personal_recommendations', 'Персональные рекомендации')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -157,40 +194,40 @@ export function BeautyProfile() {
                 1
               </div>
               <div>
-                <div className="font-semibold">Поддерживайте регулярность</div>
+                <div className="font-semibold">{t('beauty.rec1_title', 'Поддерживайте регулярность')}</div>
                 <p className="text-sm text-muted-foreground">
-                  Запланируйте следующий визит для маникюра в течение недели
+                  {t('beauty.rec1_text', 'Запланируйте следующий визит для маникюра в течение недели')}
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
                 2
               </div>
               <div>
-                <div className="font-semibold">Попробуйте комплексный уход</div>
+                <div className="font-semibold">{t('beauty.rec2_title', 'Попробуйте комплексный уход')}</div>
                 <p className="text-sm text-muted-foreground">
-                  Сочетание чистки лица и массажа улучшит общее состояние кожи
+                  {t('beauty.rec2_text', 'Сочетание чистки лица и массажа улучшит общее состояние кожи')}
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
                 3
               </div>
               <div>
-                <div className="font-semibold">Воспользуйтесь акциями</div>
+                <div className="font-semibold">{t('beauty.rec3_title', 'Воспользуйтесь акциями')}</div>
                 <p className="text-sm text-muted-foreground">
-                  Зимний уход для лица со скидкой 30% - отличная возможность
+                  {t('beauty.rec3_text', 'Зимний уход для лица со скидкой 30% - отличная возможность')}
                 </p>
               </div>
             </div>
           </div>
 
           <Button className="w-full">
-            Посмотреть все рекомендации
+            {t('beauty.view_all_recommendations', 'Посмотреть все рекомендации')}
           </Button>
         </CardContent>
       </Card>
@@ -198,12 +235,12 @@ export function BeautyProfile() {
       {/* История изменений */}
       <Card>
         <CardHeader>
-          <CardTitle>Динамика показателей</CardTitle>
-          <CardDescription>Изменения за последние 3 месяца</CardDescription>
+          <CardTitle>{t('beauty.dynamics', 'Динамика показателей')}</CardTitle>
+          <CardDescription>{t('beauty.dynamics_period', 'Изменения за последние 3 месяца')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {beautyMetrics.map((metric) => {
+            {beautyMetrics.map((metric: any) => {
               const change = Math.floor(Math.random() * 10) - 3; // Mock
               return (
                 <div key={metric.category} className="flex items-center justify-between">

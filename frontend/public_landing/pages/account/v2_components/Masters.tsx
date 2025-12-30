@@ -163,7 +163,7 @@ export function Masters() {
       {/* Дополнительная информация */}
       <Card className="bg-gradient-to-r from-blue-50 to-cyan-50">
         <CardHeader>
-          <CardTitle>Выбор мастера</CardTitle>
+          <CardTitle>{t('masters.choosing_master', 'Выбор мастера')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-start gap-3">
@@ -171,9 +171,9 @@ export function Masters() {
               1
             </div>
             <div>
-              <div className="font-semibold">��росматривайте профили</div>
+              <div className="font-semibold">{t('masters.step1_title', 'Просматривайте профили')}</div>
               <p className="text-sm text-muted-foreground">
-                Изучите специализацию и рейтинг каждого мастера
+                {t('masters.step1_text', 'Изучите специализацию и рейтинг каждого мастера')}
               </p>
             </div>
           </div>
@@ -182,9 +182,9 @@ export function Masters() {
               2
             </div>
             <div>
-              <div className="font-semibold">Добавляйте в избранное</div>
+              <div className="font-semibold">{t('masters.step2_title', 'Добавляйте в избранное')}</div>
               <p className="text-sm text-muted-foreground">
-                Сохраните понравившихся мастеров для быстрой записи
+                {t('masters.step2_text', 'Сохраните понравившихся мастеров для быстрой записи')}
               </p>
             </div>
           </div>
@@ -193,9 +193,9 @@ export function Masters() {
               3
             </div>
             <div>
-              <div className="font-semibold">Записывайтесь онлайн</div>
+              <div className="font-semibold">{t('masters.step3_title', 'Записывайтесь онлайн')}</div>
               <p className="text-sm text-muted-foreground">
-                Выбирайте удобное время и подтверждайте запись
+                {t('masters.step3_text', 'Выбирайте удобное время и подтверждайте запись')}
               </p>
             </div>
           </div>
