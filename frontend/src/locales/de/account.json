@@ -234,7 +234,8 @@
     "privacy_photos_disabled": "Fotoauflösung deaktiviert",
     "logout": "Ausfahrt",
     "logout_title": "Abmelden",
-    "save_changes": "Änderungen speichern"
+    "save_changes": "Änderungen speichern",
+    "email_required_export": "Bitte geben Sie Ihre E-Mail-Adresse in Ihren Profileinstellungen ein, um den Datenexport zu erhalten"
   },
   "common": {
     "loading": "Laden...",

@@ -43,7 +43,10 @@
         "description": "विवरण",
         "description_placeholder": "फोटो विवरण",
         "category": "वर्ग",
-        "select_category": "श्रेणी चुनना"
+        "select_category": "श्रेणी चुनना",
+        "client": "ग्राहक",
+        "select_client": "ग्राहक का चयन करें",
+        "client_hint": "फ़ोटो ग्राहक की गैलरी में उपलब्ध होगी"
       }
     },
     "preview": {

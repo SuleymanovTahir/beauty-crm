@@ -287,6 +287,11 @@ export function AccountPage() {
     <div className="flex flex-col h-full">
       {/* Профиль */}
       <div className="p-6 border-b flex-shrink-0">
+        {salonSettings?.logo_url && (
+          <div className="flex items-center justify-center mb-4">
+            <img src={salonSettings.logo_url} alt={salonSettings.name} className="h-12 w-auto object-contain" />
+          </div>
+        )}
         <div className="flex items-center gap-3 mb-3">
           <Avatar className="w-12 h-12">
             <AvatarImage src={userData?.avatar} alt={userData?.name} />
@@ -295,10 +300,10 @@ export function AccountPage() {
           <div className="flex-1 min-w-0">
             <div className="font-semibold truncate">{userData?.name || 'Guest'}</div>
             <div className="text-xs text-muted-foreground">
-              @{localStorage.getItem('username') || localStorage.getItem('user_email')?.split('@')[0] || 'guest'}
+              @{userData?.username || localStorage.getItem('username') || userData?.email?.split('@')[0] || 'guest'}
             </div>
             <div className="text-xs text-muted-foreground capitalize">
-              {userData?.currentTier || 'Bronze'}
+              {userData?.currentTier || 'bronze'}
             </div>
           </div>
         </div>

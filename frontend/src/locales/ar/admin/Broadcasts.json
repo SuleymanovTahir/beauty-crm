@@ -25,5 +25,7 @@
   "subtitle": "إرسال الإشعارات للمستخدمين عبر قنوات مختلفة",
   "target_role": "الدور المستهدف (اختياري)",
   "title": "رسائل بريدية جماعية",
-  "total_recipients": "إجمالي المستلمين"
+  "total_recipients": "إجمالي المستلمين",
+  "select_subscription_type": "حدد نوع الاشتراك",
+  "error_preview": "خطأ في المعاينة"
 }

@@ -43,7 +43,10 @@
         "description": "Описание",
         "description_placeholder": "Описание фото",
         "category": "Категория",
-        "select_category": "Выберите категорию"
+        "select_category": "Выберите категорию",
+        "client": "Клиент",
+        "select_client": "Выберите клиента",
+        "client_hint": "Фото будет доступно в галерее клиента"
       }
     },
     "preview": {

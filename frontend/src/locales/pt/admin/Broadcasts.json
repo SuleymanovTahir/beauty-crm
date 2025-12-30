@@ -25,5 +25,7 @@
   "subtitle": "Envio de notificações aos usuários por meio de diferentes canais",
   "target_role": "Função alvo (opcional)",
   "title": "Envios em massa",
-  "total_recipients": "Total de destinatários"
+  "total_recipients": "Total de destinatários",
+  "select_subscription_type": "Selecione o tipo de assinatura",
+  "error_preview": "Erro de visualização"
 }

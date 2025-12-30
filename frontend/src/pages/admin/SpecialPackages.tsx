@@ -110,7 +110,7 @@ export default function SpecialPackages() {
       fetch('/api/referral-campaigns')
         .then(res => res.json())
         .then(data => setCampaigns(data.campaigns || []))
-        .catch(() => toast.error('Ошибка загрузки кампаний'));
+        .catch(() => toast.error(t('error_loading_campaigns')));
     }
   }, [activeSection]);
 
@@ -712,29 +712,29 @@ export default function SpecialPackages() {
                     <p className="text-sm text-gray-500">{campaign.description}</p>
                   </div>
                   <Badge className={campaign.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-                    {campaign.is_active ? 'Активна' : 'Неактивна'}
+                    {campaign.is_active ? t('campaign_active') : t('campaign_inactive')}
                   </Badge>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className="bg-purple-50 p-3 rounded-lg text-center">
                     <p className="text-2xl font-bold text-purple-600">{campaign.bonus_points}</p>
-                    <p className="text-xs text-purple-700">Бонус приглашенному</p>
+                    <p className="text-xs text-purple-700">{t('bonus_to_referee')}</p>
                   </div>
                   <div className="bg-pink-50 p-3 rounded-lg text-center">
                     <p className="text-2xl font-bold text-pink-600">{campaign.referrer_bonus}</p>
-                    <p className="text-xs text-pink-700">Бонус приглашающему</p>
+                    <p className="text-xs text-pink-700">{t('bonus_to_referrer')}</p>
                   </div>
                 </div>
 
                 <div className="mb-4">
-                  <p className="text-xs text-gray-500 mb-1">Целевая аудитория</p>
+                  <p className="text-xs text-gray-500 mb-1">{t('target_audience')}</p>
                   <Badge variant="outline">
-                    {campaign.target_type === 'all' && 'Все клиенты'}
-                    {campaign.target_type === 'specific_users' && 'Выбранные клиенты'}
-                    {campaign.target_type === 'by_master' && 'По мастеру'}
-                    {campaign.target_type === 'by_service' && 'По услуге'}
-                    {campaign.target_type === 'by_inactivity' && `Неактивные ${campaign.target_criteria?.days_inactive || 30} дней`}
+                    {campaign.target_type === 'all' && t('target_all_clients')}
+                    {campaign.target_type === 'specific_users' && t('target_specific_users')}
+                    {campaign.target_type === 'by_master' && t('target_by_master')}
+                    {campaign.target_type === 'by_service' && t('target_by_service')}
+                    {campaign.target_type === 'by_inactivity' && t('target_inactive_days', { days: campaign.target_criteria?.days_inactive || 30 })}
                   </Badge>
                 </div>
 
@@ -760,19 +760,19 @@ export default function SpecialPackages() {
                     className="flex-1"
                   >
                     <Edit className="w-4 h-4 mr-1" />
-                    Изменить
+                    {t('edit_campaign')}
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={async () => {
-                      if (!confirm('Удалить эту кампанию?')) return;
+                      if (!confirm(t('delete_campaign_confirm'))) return;
                       try {
                         await fetch(`/api/referral-campaigns/${campaign.id}`, { method: 'DELETE' });
                         setCampaigns(campaigns.filter(c => c.id !== campaign.id));
-                        toast.success('Кампания удалена');
+                        toast.success(t('campaign_deleted'));
                       } catch (e) {
-                        toast.error('Ошибка удаления');
+                        toast.error(t('error_deleting_campaign'));
                       }
                     }}
                     className="text-red-600"
@@ -802,7 +802,7 @@ export default function SpecialPackages() {
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>
-                  {editingCampaign ? 'Редактировать кампанию' : 'Создать реферальную кампанию'}
+                  {editingCampaign ? t('edit_referral_campaign') : t('create_referral_campaign')}
                 </DialogTitle>
               </DialogHeader>
 
@@ -942,14 +942,14 @@ export default function SpecialPackages() {
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify(payload)
                         });
-                        toast.success('Кампания обновлена');
+                        toast.success(t('campaign_updated'));
                       } else {
                         await fetch('/api/referral-campaigns', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify(payload)
                         });
-                        toast.success('Кампания создана');
+                        toast.success(t('campaign_created'));
                       }
 
                       // Reload campaigns
@@ -958,12 +958,12 @@ export default function SpecialPackages() {
                       setCampaigns(data.campaigns || []);
                       setIsReferralModalOpen(false);
                     } catch (e) {
-                      toast.error('Ошибка сохранения');
+                      toast.error(t('error_saving_campaign'));
                     }
                   }}
                   className="bg-purple-600 hover:bg-purple-700"
                 >
-                  {editingCampaign ? 'Сохранить' : 'Создать'}
+                  {editingCampaign ? t('save_campaign') : t('create_campaign')}
                 </Button>
               </DialogFooter>
             </DialogContent>
