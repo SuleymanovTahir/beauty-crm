@@ -56,15 +56,17 @@
     "vaul": "*"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.0",
+    "@tailwindcss/postcss": "*",
     "@types/node": "*",
     "@types/react": "*",
     "@types/react-dom": "*",
     "@vitejs/plugin-react": "*",
     "@vitejs/plugin-react-swc": "*",
+    "autoprefixer": "*",
     "i18next-parser": "^9.3.0",
     "patch-package": "*",
-    "tailwindcss": "^4.0.0",
+    "postcss": "*",
+    "tailwindcss": "*",
     "terser": "*",
     "typescript": "*",
     "vite": "*"

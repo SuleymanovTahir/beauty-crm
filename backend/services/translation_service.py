@@ -21,12 +21,10 @@ LANGUAGE_NAMES = {
     'pt': 'Portuguese'
 }
 
-# Инициализация Gemini клиента
+# Инициализация Gemini
 if GEMINI_API_KEY:
-    client = genai.Client(api_key=GEMINI_API_KEY)
     log_info("✅ Translation service: Gemini API configured", "translation")
 else:
-    client = None
     log_error("❌ Translation service: GEMINI_API_KEY not found", "translation")
 
 async def translate_text(text: str, source_lang: str = 'ru', target_lang: str = 'en') -> Optional[str]:
@@ -35,12 +33,14 @@ async def translate_text(text: str, source_lang: str = 'ru', target_lang: str = 
     """
     if not text:
         return ""
-
-    if not client:
+        
+    if not GEMINI_API_KEY:
         log_error("Cannot translate: API key missing", "translation")
         return text
 
     try:
+        client = genai.Client(api_key=GEMINI_API_KEY)
+
         source_name = LANGUAGE_NAMES.get(source_lang, source_lang)
         target_name = LANGUAGE_NAMES.get(target_lang, target_lang)
 
@@ -51,17 +51,15 @@ async def translate_text(text: str, source_lang: str = 'ru', target_lang: str = 
         Text: {text}
         """
 
-        # Запускаем синхронный вызов в thread pool
-        response = await asyncio.to_thread(
-            client.models.generate_content,
-            model=GEMINI_MODEL,
-            contents=prompt
-        )
-
+        # Запускаем вызов через новый SDK
+        def _generate():
+            return client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
+        response = await asyncio.to_thread(_generate)
+        
         if response.text:
             return response.text.strip()
         return text
-
+        
     except Exception as e:
         log_error(f"Translation error: {e}", "translation")
         return text
@@ -72,11 +70,13 @@ async def translate_to_all_languages(text: str, source_lang: str = 'ru') -> Dict
     """
     if not text:
         return {lang: "" for lang in LANGUAGE_NAMES}
-
-    if not client:
+        
+    if not GEMINI_API_KEY:
         return {lang: text for lang in LANGUAGE_NAMES}
 
     try:
+        client = genai.Client(api_key=GEMINI_API_KEY)
+
         target_langs = [lang for lang in LANGUAGE_NAMES.keys() if lang != source_lang]
         target_langs_str = ", ".join([f"{lang} ({LANGUAGE_NAMES[lang]})" for lang in target_langs])
 
@@ -88,32 +88,30 @@ async def translate_to_all_languages(text: str, source_lang: str = 'ru') -> Dict
         Text: {text}
         """
 
-        response = await asyncio.to_thread(
-            client.models.generate_content,
-            model=GEMINI_MODEL,
-            contents=prompt
-        )
-
+        def _generate():
+            return client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
+        response = await asyncio.to_thread(_generate)
+        
         result_text = response.text.strip()
         # Очистка от markdown блоков кода если есть
         if result_text.startswith("```json"):
             result_text = result_text[7:-3]
         elif result_text.startswith("```"):
             result_text = result_text[3:-3]
-
+            
         translations = json.loads(result_text)
-
+        
         # Добавляем исходный язык если нет
         if source_lang not in translations:
             translations[source_lang] = text
-
+            
         # Заполняем пропуски исходным текстом
         for lang in LANGUAGE_NAMES:
             if lang not in translations:
                 translations[lang] = text
-
+                
         return translations
-
+        
     except Exception as e:
         log_error(f"Batch translation error: {e}", "translation")
         # Fallback

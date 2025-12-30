@@ -23,12 +23,17 @@ import {
   Target,
   Globe,
   MapPinned,
-  Bell
+  Bell,
+  Sparkles
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { usePermissions } from '../../utils/permissions';
 import { getPhotoUrl } from '../../utils/photoUtils';
+import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 
 interface AdminLayoutProps {
   user: { id: number; role: string; full_name: string } | null;

@@ -5,36 +5,34 @@
 from google import genai
 from core.config import GEMINI_API_KEY, GEMINI_MODEL
 
-# Создаём клиент Gemini
-client = genai.Client(api_key=GEMINI_API_KEY)
-
 async def ask_gemini(prompt: str, context: str = "", **kwargs) -> str:
     """
     Отправить запрос к Gemini AI
-
+    
     Args:
         prompt: Основной промпт
         context: Дополнительный контекст (опционально)
         **kwargs: Дополнительные параметры генерации (max_tokens, temperature, etc.)
-
+    
     Returns:
         str: Ответ от AI или fallback сообщение при ошибке
     """
+    client = genai.Client(api_key=GEMINI_API_KEY)
     full_prompt = f"{context}\n\n{prompt}" if context else prompt
 
     # Map max_tokens to max_output_tokens for Gemini
-    config_params = {}
+    generation_config = {}
     if 'max_tokens' in kwargs:
-        config_params['max_output_tokens'] = kwargs.pop('max_tokens')
+        generation_config['max_output_tokens'] = kwargs.pop('max_tokens')
 
-    # Add any other kwargs
-    config_params.update(kwargs)
+    # Add any other kwargs to generation_config
+    generation_config.update(kwargs)
 
     try:
         response = client.models.generate_content(
             model=GEMINI_MODEL,
             contents=full_prompt,
-            config=config_params if config_params else None
+            config=generation_config if generation_config else None
         )
         return response.text.strip()
     except Exception as e:
