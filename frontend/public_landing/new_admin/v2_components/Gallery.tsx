@@ -4,12 +4,14 @@ import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import { galleryItems, masters } from '../data/mockData';
 import { toast } from 'sonner';
 
-export function Gallery() {
+export function Gallery({ gallery, masters }: any) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState<typeof galleryItems[0] | null>(null);
+  const galleryItems = gallery || []; // Use prop or empty array
+  const masterList = masters || []; // Use prop or empty array
+
+  const [selectedItem, setSelectedItem] = useState<any | null>(null);
   const [showBefore, setShowBefore] = useState(true);
 
   const categories = [
@@ -20,7 +22,7 @@ export function Gallery() {
   ];
 
   const filteredItems = selectedCategory
-    ? galleryItems.filter(item => item.category === selectedCategory)
+    ? galleryItems.filter((item: any) => item.category === selectedCategory)
     : galleryItems;
 
   const handleDownload = () => {
@@ -33,8 +35,8 @@ export function Gallery() {
 
   const navigateItem = (direction: 'prev' | 'next') => {
     if (!selectedItem) return;
-    const currentIndex = filteredItems.findIndex(item => item.id === selectedItem.id);
-    const newIndex = direction === 'prev' 
+    const currentIndex = filteredItems.findIndex((item: any) => item.id === selectedItem.id);
+    const newIndex = direction === 'prev'
       ? (currentIndex - 1 + filteredItems.length) % filteredItems.length
       : (currentIndex + 1) % filteredItems.length;
     setSelectedItem(filteredItems[newIndex]);
@@ -44,7 +46,7 @@ export function Gallery() {
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1>История красоты</h1>
+        <h1 className="text-3xl font-bold tracking-tight">История красоты</h1>
         <p className="text-muted-foreground">Ваши преображения</p>
       </div>
 
@@ -71,19 +73,19 @@ export function Gallery() {
 
       {/* Галерея */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredItems.map((item) => {
-          const master = masters.find(m => m.id === item.masterId);
+        {filteredItems.map((item: any) => {
+          const master = masterList.find((m: any) => m.id === item.masterId);
           const category = categories.find(c => c.id === item.category);
-          
+
           return (
-            <Card 
-              key={item.id} 
+            <Card
+              key={item.id}
               className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
               onClick={() => setSelectedItem(item)}
             >
               <div className="aspect-square relative group">
-                <img 
-                  src={item.after} 
+                <img
+                  src={item.after}
                   alt={item.service}
                   className="w-full h-full object-cover"
                 />
@@ -182,7 +184,7 @@ export function Gallery() {
               {/* Информация */}
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <span>
-                  {masters.find(m => m.id === selectedItem.masterId)?.name}
+                  {masterList.find((m: any) => m.id === selectedItem.masterId)?.name}
                 </span>
                 <span>
                   {new Date(selectedItem.date).toLocaleDateString('ru-RU', {

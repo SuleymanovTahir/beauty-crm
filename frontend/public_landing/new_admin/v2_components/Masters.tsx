@@ -2,39 +2,44 @@ import { useState } from 'react';
 import { Star, Heart, Calendar } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
+import { Avatar } from './ui/avatar';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
-import { masters } from '../data/mockData';
 import { toast } from 'sonner';
 
-export function Masters() {
+export function Masters({ masters }: any) {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [favoriteMasters, setFavoriteMasters] = useState(
-    masters.filter(m => m.isFavorite).map(m => m.id)
+
+  // Use masters prop or default empty array
+  const masterList = masters || [];
+
+  // Manage favorites locally for now (replace with actual API later)
+  // Assuming 'isFavorite' might come from API or defaults to false
+  const [favoriteMasters, setFavoriteMasters] = useState<string[]>(
+    masterList.filter((m: any) => m.isFavorite).map((m: any) => m.id)
   );
 
   const toggleFavorite = (masterId: string) => {
-    setFavoriteMasters(prev => 
-      prev.includes(masterId) 
+    setFavoriteMasters(prev =>
+      prev.includes(masterId)
         ? prev.filter(id => id !== masterId)
         : [...prev, masterId]
     );
+    // In real app, call API here
     toast.success('Избранное обновлено');
   };
 
   const filteredMasters = showFavoritesOnly
-    ? masters.filter(m => favoriteMasters.includes(m.id))
-    : masters;
+    ? masterList.filter((m: any) => favoriteMasters.includes(m.id))
+    : masterList;
 
   return (
     <div className="space-y-6 pb-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1>Наши мастера</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Наши мастера</h1>
           <p className="text-muted-foreground">
-            {masters.length} специалистов • {favoriteMasters.length} в избранном
+            {masterList.length} специалистов • {favoriteMasters.length} в избранном
           </p>
         </div>
 
@@ -52,42 +57,42 @@ export function Masters() {
         <Card>
           <CardContent className="p-12 text-center">
             <Heart className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="mb-2">Нет избранных мастеров</h3>
+            <h3 className="mb-2">Нет мастеров</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Добавьте мастеров в избранное, нажав на иконку сердца
+              {showFavoritesOnly ? 'Добавьте мастеров в избранное' : 'Список мастеров пуст'}
             </p>
-            <Button onClick={() => setShowFavoritesOnly(false)}>
-              Показать всех мастеров
-            </Button>
+            {showFavoritesOnly && (
+              <Button onClick={() => setShowFavoritesOnly(false)}>
+                Показать всех мастеров
+              </Button>
+            )}
           </CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredMasters.map((master) => {
+          {filteredMasters.map((master: any) => {
             const isFavorite = favoriteMasters.includes(master.id);
 
             return (
               <Card
                 key={master.id}
-                className={`overflow-hidden ${
-                  isFavorite ? 'border-pink-200 bg-gradient-to-br from-pink-50 to-purple-50' : ''
-                }`}
+                className={`overflow-hidden ${isFavorite ? 'border-pink-200 bg-gradient-to-br from-pink-50 to-purple-50' : ''
+                  }`}
               >
                 <CardHeader className="p-0">
                   <div className="aspect-square relative">
                     <img
-                      src={master.avatar}
+                      src={master.avatar || `https://ui-avatars.com/api/?name=${master.name}&background=random`}
                       alt={master.name}
                       className="w-full h-full object-cover"
                     />
                     <Button
                       size="icon"
                       variant="secondary"
-                      className={`absolute top-4 right-4 ${
-                        isFavorite
+                      className={`absolute top-4 right-4 ${isFavorite
                           ? 'bg-pink-500 hover:bg-pink-600 text-white'
                           : 'bg-white/90 hover:bg-white'
-                      }`}
+                        }`}
                       onClick={() => toggleFavorite(master.id)}
                     >
                       <Heart
@@ -99,16 +104,16 @@ export function Masters() {
                 <CardContent className="p-6 space-y-4">
                   <div>
                     <CardTitle className="mb-2">{master.name}</CardTitle>
-                    <CardDescription>{master.specialty}</CardDescription>
+                    <CardDescription>{master.specialty || 'Мастер'}</CardDescription>
                   </div>
 
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-1">
                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold">{master.rating}</span>
+                      <span className="font-semibold">{master.rating || '5.0'}</span>
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {master.reviews} отзывов
+                      {master.reviews || 0} отзывов
                     </div>
                   </div>
 
@@ -136,7 +141,7 @@ export function Masters() {
               1
             </div>
             <div>
-              <div className="font-semibold">��росматривайте профили</div>
+              <div className="font-semibold">Просматривайте профили</div>
               <p className="text-sm text-muted-foreground">
                 Изучите специализацию и рейтинг каждого мастера
               </p>

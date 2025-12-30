@@ -1,50 +1,27 @@
+import { useState } from 'react';
 import { Star, TrendingUp, Flame, QrCode, Gift, Share2, Copy } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { currentUser, spendingData, categorySpending, referralCode } from '../../../data/mockData';
 import { toast } from 'sonner';
 
-export function Loyalty({ loyalty }: any) {
-  // Use loyalty prop data mixed with defaults
-  const points = loyalty?.points || 0;
-  const currentTier = loyalty?.tier || 'Bronze';
-  const history = loyalty?.history || [];
-
-  // Mock data for graphs if not provided
-  const spendingData = [
-    { month: 'Янв', amount: 5000 },
-    { month: 'Фев', amount: 7500 },
-    { month: 'Мар', amount: 3000 },
-    { month: 'Апр', amount: 12000 },
-    { month: 'Май', amount: 8000 },
-    { month: 'Июн', amount: 6500 },
-  ];
-
-  const categorySpending = [
-    { name: 'Волосы', value: 4000, fill: '#FF6B9D' },
-    { name: 'Ногти', value: 3000, fill: '#FF9EBB' },
-    { name: 'Лицо', value: 2000, fill: '#FFC4D6' },
-    { name: 'Тело', value: 1000, fill: '#FFE1EA' },
-  ];
-  const referralCode = 'REF123';
-
+export function Loyalty() {
   const tiers = [
     { name: 'Bronze', points: 0, discount: 5, color: '#CD7F32' },
     { name: 'Silver', points: 1000, discount: 10, color: '#C0C0C0' },
-    { name: 'Gold', points: 5000, discount: 15, color: '#FFD700' },
-    { name: 'Platinum', points: 10000, discount: 25, color: '#E5E4E2' },
+    { name: 'Gold', points: 2000, discount: 15, color: '#FFD700' },
+    { name: 'Platinum', points: 5000, discount: 25, color: '#E5E4E2' },
   ];
 
-  const currentTierIndex = tiers.findIndex(t => t.name.toLowerCase() === currentTier.toLowerCase());
-  // Find safe index, default to 0
-  const safeIndex = currentTierIndex >= 0 ? currentTierIndex : 0;
-  const currentTierData = tiers[safeIndex];
-  const nextTierData = tiers[safeIndex + 1];
+  const currentTierIndex = tiers.findIndex(t => t.name.toLowerCase() === currentUser.currentTier);
+  const currentTierData = tiers[currentTierIndex];
+  const nextTierData = tiers[currentTierIndex + 1];
 
   const progressToNext = nextTierData
-    ? ((points - currentTierData.points) / (nextTierData.points - currentTierData.points)) * 100
+    ? ((currentUser.loyaltyPoints - currentTierData.points) / (nextTierData.points - currentTierData.points)) * 100
     : 100;
 
   const handleCopyReferral = () => {
@@ -64,7 +41,7 @@ export function Loyalty({ loyalty }: any) {
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Лояльность и Бонусы</h1>
+        <h1>Лояльность и Бонусы</h1>
         <p className="text-muted-foreground">Ваши привилегии и награды</p>
       </div>
 
@@ -78,12 +55,12 @@ export function Loyalty({ loyalty }: any) {
                 {currentTierData.name} статус
               </CardTitle>
               <CardDescription className="mt-2">
-                {points} баллов • {currentTierData.discount}% скидка
+                {currentUser.loyaltyPoints} баллов • {currentUser.currentDiscount}% скидка
               </CardDescription>
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold" style={{ color: currentTierData.color }}>
-                {points}
+                {currentUser.loyaltyPoints}
               </div>
               <div className="text-sm text-muted-foreground">баллов</div>
             </div>
@@ -96,7 +73,7 @@ export function Loyalty({ loyalty }: any) {
                 <div className="flex justify-between text-sm">
                   <span>До {nextTierData.name} уровня</span>
                   <span className="font-semibold">
-                    {Math.max(0, nextTierData.points - points)} баллов
+                    {nextTierData.points - currentUser.loyaltyPoints} баллов
                   </span>
                 </div>
                 <Progress value={progressToNext} className="h-2" />
@@ -119,7 +96,7 @@ export function Loyalty({ loyalty }: any) {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
-            <div className="text-5xl font-bold text-orange-500">3</div>
+            <div className="text-5xl font-bold text-orange-500">{currentUser.streak}</div>
             <div className="flex-1">
               <div className="font-semibold">дней подряд!</div>
               <p className="text-sm text-muted-foreground">
@@ -163,7 +140,7 @@ export function Loyalty({ loyalty }: any) {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={(entry) => entry.name}
+                  label={(entry) => entry.category}
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
@@ -194,19 +171,19 @@ export function Loyalty({ loyalty }: any) {
                 </div>
                 <Star className="w-8 h-8" style={{ color: currentTierData.color }} />
               </div>
-
+              
               <div className="space-y-1">
                 <div className="text-sm opacity-80">Владелец карты</div>
-                <div className="font-semibold">Tahir Suleymanov</div>
+                <div className="font-semibold">{currentUser.name}</div>
               </div>
-
+              
               <div className="flex justify-between items-end">
                 <div>
                   <div className="text-sm opacity-80">ID клиента</div>
-                  <div className="font-mono">00012345</div>
+                  <div className="font-mono">{currentUser.id.padStart(8, '0')}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold">{currentTierData.discount}%</div>
+                  <div className="text-2xl font-bold">{currentUser.currentDiscount}%</div>
                   <div className="text-xs opacity-80">скидка</div>
                 </div>
               </div>

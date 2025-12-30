@@ -5,19 +5,17 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { appointments, masters } from '../../../data/mockData';
 
-export function Appointments({ bookings, masters }: any) {
+export function Appointments() {
   const [filter, setFilter] = useState<'upcoming' | 'history' | 'recurring'>('upcoming');
-  const appointments = bookings || []; // Use prop or default
 
-  const upcomingAppointments = appointments.filter((a: any) => ['pending', 'confirmed', 'upcoming'].includes(a.status));
-  const historyAppointments = appointments.filter((a: any) => ['completed', 'cancelled'].includes(a.status));
+  const upcomingAppointments = appointments.filter(a => a.status === 'upcoming');
+  const historyAppointments = appointments.filter(a => a.status === 'completed' || a.status === 'cancelled');
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'upcoming':
-      case 'confirmed':
-      case 'pending':
         return <Badge className="bg-blue-500">Предстоящая</Badge>;
       case 'completed':
         return <Badge className="bg-green-500">Завершена</Badge>;
@@ -28,8 +26,9 @@ export function Appointments({ bookings, masters }: any) {
     }
   };
 
-  const renderAppointment = (appointment: any) => {
-    const master = masters?.find((m: any) => m.id === appointment.masterId) || { name: 'Unknown Master', specialty: 'Service', avatar: '' };
+  const renderAppointment = (appointment: typeof appointments[0]) => {
+    const master = masters.find(m => m.id === appointment.masterId);
+    if (!master) return null;
 
     return (
       <Card key={appointment.id}>
@@ -37,9 +36,9 @@ export function Appointments({ bookings, masters }: any) {
           <div className="flex items-start gap-4">
             <Avatar className="w-16 h-16">
               <AvatarImage src={master.avatar} alt={master.name} />
-              <AvatarFallback>{master.name?.[0] || '?'}</AvatarFallback>
+              <AvatarFallback>{master.name[0]}</AvatarFallback>
             </Avatar>
-
+            
             <div className="flex-1 space-y-2">
               <div className="flex items-start justify-between">
                 <div>
@@ -48,9 +47,9 @@ export function Appointments({ bookings, masters }: any) {
                 </div>
                 {getStatusBadge(appointment.status)}
               </div>
-
+              
               <div className="text-sm font-medium">{appointment.service}</div>
-
+              
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
@@ -65,18 +64,18 @@ export function Appointments({ bookings, masters }: any) {
                   {appointment.time}
                 </div>
               </div>
-
+              
               <div className="flex items-center justify-between pt-2">
                 <div className="font-bold">{appointment.price} AED</div>
-
+                
                 {appointment.status === 'completed' && (
                   <Button size="sm" variant="outline">
                     <Repeat className="w-4 h-4 mr-2" />
                     Повторить
                   </Button>
                 )}
-
-                {(appointment.status === 'upcoming' || appointment.status === 'confirmed' || appointment.status === 'pending') && (
+                
+                {appointment.status === 'upcoming' && (
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline">Изменить</Button>
                     <Button size="sm" variant="outline">Отменить</Button>
@@ -93,7 +92,7 @@ export function Appointments({ bookings, masters }: any) {
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Мои записи</h1>
+        <h1>Мои записи</h1>
         <p className="text-muted-foreground">Управляйте вашими визитами</p>
       </div>
 
@@ -101,15 +100,15 @@ export function Appointments({ bookings, masters }: any) {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="upcoming" className="flex items-center gap-2">
             <Calendar className="w-4 h-4" />
-            <span className="hidden sm:inline">Предстоящие</span>
+            Предстоящие
           </TabsTrigger>
           <TabsTrigger value="history" className="flex items-center gap-2">
             <CheckCircle className="w-4 h-4" />
-            <span className="hidden sm:inline">История</span>
+            История
           </TabsTrigger>
           <TabsTrigger value="recurring" className="flex items-center gap-2">
             <Repeat className="w-4 h-4" />
-            <span className="hidden sm:inline">Повторяющиеся</span>
+            Повторяющиеся
           </TabsTrigger>
         </TabsList>
 

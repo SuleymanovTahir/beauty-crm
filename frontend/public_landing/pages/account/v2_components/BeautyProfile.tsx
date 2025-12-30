@@ -3,21 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
+import { beautyMetrics, nextProcedures } from '../../../data/mockData';
 
 export function BeautyProfile() {
-  // Mock data
-  const beautyMetrics = [
-    { category: 'Кожа лица', score: 85, color: '#FF6B9D' },
-    { category: 'Волосы', score: 92, color: '#6B4C9A' },
-    { category: 'Ногти', score: 78, color: '#FF9EBB' },
-    { category: 'Тело', score: 88, color: '#4CC9F0' },
-  ];
-
-  const nextProcedures = [
-    { service: 'Чистка лица', daysLeft: 14, recommended: false },
-    { service: 'Маникюр', daysLeft: 3, recommended: true },
-  ];
-
   const overallScore = Math.round(
     beautyMetrics.reduce((sum, m) => sum + m.score, 0) / beautyMetrics.length
   );
@@ -25,7 +13,7 @@ export function BeautyProfile() {
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Бьюти-профиль</h1>
+        <h1>Бьюти-профиль</h1>
         <p className="text-muted-foreground">Анализ состояния и рекомендации</p>
       </div>
 
@@ -50,8 +38,9 @@ export function BeautyProfile() {
               <div
                 className="absolute inset-0 rounded-full border-8 border-purple-500"
                 style={{
-                  clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.cos((overallScore / 100) * 2 * Math.PI - Math.PI / 2)
-                    }% ${50 + 50 * Math.sin((overallScore / 100) * 2 * Math.PI - Math.PI / 2)}%, 50% 50%)`,
+                  clipPath: `polygon(50% 50%, 50% 0%, ${
+                    50 + 50 * Math.cos((overallScore / 100) * 2 * Math.PI - Math.PI / 2)
+                  }% ${50 + 50 * Math.sin((overallScore / 100) * 2 * Math.PI - Math.PI / 2)}%, 50% 50%)`,
                 }}
               />
             </div>
@@ -72,7 +61,7 @@ export function BeautyProfile() {
 
       {/* Детальные метрики */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold tracking-tight">Детальная оценка</h2>
+        <h2>Детальная оценка</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {beautyMetrics.map((metric) => (
             <Card key={metric.category}>
@@ -85,11 +74,11 @@ export function BeautyProfile() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Progress
-                  value={metric.score}
+                <Progress 
+                  value={metric.score} 
                   className="h-3"
-                  style={{
-                    '--progress-background': metric.color
+                  style={{ 
+                    '--progress-background': metric.color 
                   } as any}
                 />
                 <div className="mt-2 text-sm text-muted-foreground">
@@ -106,8 +95,8 @@ export function BeautyProfile() {
 
       {/* Календарь процедур */}
       <div className="space-y-4">
-        <h2 className="flex items-center gap-2 text-2xl font-semibold tracking-tight">
-          <Calendar className="w-6 h-6" />
+        <h2 className="flex items-center gap-2">
+          <Calendar className="w-5 h-5" />
           Календарь процедур
         </h2>
         <Card>
@@ -120,10 +109,11 @@ export function BeautyProfile() {
             {nextProcedures.map((procedure, index) => (
               <div
                 key={index}
-                className={`flex items-center justify-between p-4 rounded-lg border ${procedure.recommended
+                className={`flex items-center justify-between p-4 rounded-lg border ${
+                  procedure.recommended
                     ? 'bg-orange-50 border-orange-200'
                     : 'bg-gray-50 border-gray-200'
-                  }`}
+                }`}
               >
                 <div className="flex items-center gap-3">
                   {procedure.recommended && (
@@ -173,7 +163,7 @@ export function BeautyProfile() {
                 </p>
               </div>
             </div>
-
+            
             <div className="flex items-start gap-3">
               <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
                 2
@@ -185,7 +175,7 @@ export function BeautyProfile() {
                 </p>
               </div>
             </div>
-
+            
             <div className="flex items-start gap-3">
               <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
                 3
@@ -202,6 +192,35 @@ export function BeautyProfile() {
           <Button className="w-full">
             Посмотреть все рекомендации
           </Button>
+        </CardContent>
+      </Card>
+
+      {/* История изменений */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Динамика показателей</CardTitle>
+          <CardDescription>Изменения за последние 3 месяца</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {beautyMetrics.map((metric) => {
+              const change = Math.floor(Math.random() * 10) - 3; // Mock
+              return (
+                <div key={metric.category} className="flex items-center justify-between">
+                  <span className="text-sm">{metric.category}</span>
+                  <div className="flex items-center gap-2">
+                    <Progress value={metric.score} className="w-32 h-2" />
+                    <Badge
+                      variant={change > 0 ? 'default' : change < 0 ? 'destructive' : 'secondary'}
+                      className="w-16 justify-center"
+                    >
+                      {change > 0 ? '+' : ''}{change}
+                    </Badge>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -3,37 +3,10 @@ import { Bell, Calendar, Tag, Award, Check, CheckCheck } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import { notifications as initialNotifications } from '../../../data/mockData';
 import { toast } from 'sonner';
 
 export function Notifications() {
-  // Mock notifications since we don't have them in props yet
-  const initialNotifications = [
-    {
-      id: '1',
-      type: 'appointment',
-      title: 'Напоминание о записи',
-      message: 'Завтра в 14:00 у вас запись на стрижку к мастеру Елена',
-      date: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 mins ago
-      read: false,
-    },
-    {
-      id: '2',
-      type: 'promotion',
-      title: 'Скидка 20%',
-      message: 'Специальное предложение на маникюр только сегодня!',
-      date: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
-      read: false,
-    },
-    {
-      id: '3',
-      type: 'achievement',
-      title: 'Новое достижение!',
-      message: 'Вы получили статус "Silver"',
-      date: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(), // 2 days ago
-      read: true,
-    }
-  ];
-
   const [notifications, setNotifications] = useState(initialNotifications);
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -107,7 +80,7 @@ export function Notifications() {
     <div className="space-y-6 pb-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+          <h1 className="flex items-center gap-2">
             Уведомления
             {unreadCount > 0 && (
               <Badge className="bg-red-500">{unreadCount}</Badge>
@@ -145,10 +118,11 @@ export function Notifications() {
             return (
               <Card
                 key={notification.id}
-                className={`${!notification.read
+                className={`${
+                  !notification.read
                     ? 'border-l-4 border-l-blue-500 bg-blue-50/50'
                     : ''
-                  } cursor-pointer hover:shadow-md transition-shadow`}
+                } cursor-pointer hover:shadow-md transition-shadow`}
                 onClick={() => !notification.read && markAsRead(notification.id)}
               >
                 <CardContent className="p-4">

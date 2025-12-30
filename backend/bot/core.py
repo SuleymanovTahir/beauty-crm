@@ -74,15 +74,12 @@ class SalonBot:
                 
         print(f"🔍 API KEYS LOADED: {len(self.api_keys)}")
 
-        # Create Gemini clients for each API key
-        self.clients = []
+        # Configure initial client with first key
         if self.api_keys:
-            for key in self.api_keys:
-                self.clients.append(genai.Client(api_key=key))
+             self.client = genai.Client(api_key=self.api_keys[0])
         else:
-            print("❌ NO API KEYS FOUND!")
-
-        self.current_client = self.clients[0] if self.clients else None
+             print("❌ NO API KEYS FOUND!")
+             self.client = None
 
         self.proxy_index = 0
         self.key_index = 0
