@@ -33,7 +33,7 @@ export default function EmployeeManagement() {
     // Redirect to first employee if no ID specified
     useEffect(() => {
         if (!id && employees.length > 0) {
-            navigate(`/admin/employees/${employees[0].id}`, { replace: true });
+            navigate(`/crm/employees/${employees[0].id}`, { replace: true });
         }
     }, [id, employees, navigate]);
 
@@ -76,7 +76,7 @@ export default function EmployeeManagement() {
                     <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => navigate('/admin/dashboard')}
+                        onClick={() => navigate('/crm/dashboard')}
                         className="w-full justify-start gap-2 text-gray-600 hover:text-gray-900"
                     >
                         <ArrowLeft className="h-4 w-4" />
@@ -109,7 +109,7 @@ export default function EmployeeManagement() {
                             {filteredEmployees.map((employee) => (
                                 <Link
                                     key={employee.id}
-                                    to={`/admin/employees/${employee.id}`}
+                                    to={`/crm/employees/${employee.id}`}
                                     className={`flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors ${id === String(employee.id)
                                         ? 'bg-blue-50 hover:bg-blue-100'
                                         : ''
@@ -140,7 +140,7 @@ export default function EmployeeManagement() {
                 {/* Add team member button */}
                 <div className="p-4 border-t border-gray-200">
                     <Button
-                        onClick={() => navigate('/admin/users/create')}
+                        onClick={() => navigate('/crm/users/create')}
                         className="w-full gap-2"
                         variant="outline"
                     >

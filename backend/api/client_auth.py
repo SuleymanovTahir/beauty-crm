@@ -52,18 +52,43 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     # Get client identifier - try multiple sources
-    client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("username")
+    user_email = user.get("email")
+    user_phone = user.get("phone")
+    client_id = user.get("instagram_id") or user.get("telegram_id")
 
     conn = get_db_connection()
     c = conn.cursor()
 
     try:
-        c.execute("""
-            SELECT loyalty_points, referral_code, total_saved, name, phone, email FROM clients
-            WHERE instagram_id = %s OR telegram_id = %s
-            LIMIT 1
-        """, (client_id, client_id))
+        # Try to find client by social ID first, then by email
+        if client_id:
+            c.execute("""
+                SELECT loyalty_points, referral_code, total_saved, name, phone, email FROM clients
+                WHERE instagram_id = %s OR telegram_id = %s
+                LIMIT 1
+            """, (client_id, client_id))
+        elif user_email:
+            c.execute("""
+                SELECT loyalty_points, referral_code, total_saved, name, phone, email FROM clients
+                WHERE email = %s
+                LIMIT 1
+            """, (user_email,))
+        else:
+            c.execute("""
+                SELECT loyalty_points, referral_code, total_saved, name, phone, email FROM clients
+                WHERE phone = %s
+                LIMIT 1
+            """, (user_phone,))
+
         client_row = c.fetchone()
+
+        # If no client record exists, set client_id for other queries
+        if not client_row:
+            client_id = user_email or user_phone or str(user.get("id"))
+        elif not client_id:
+            # Found client by email/phone, so use that for subsequent queries
+            client_id = user_email or user_phone
+
         points = client_row[0] if client_row else 0
         loyalty = {
             "points": points,
@@ -72,9 +97,9 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         }
 
         client_info = {
-            "name": client_row[3] if client_row and client_row[3] else user.get("username", ""),
-            "phone": client_row[4] if client_row and client_row[4] else "",
-            "email": client_row[5] if client_row and client_row[5] else ""
+            "name": (client_row[3] if client_row and client_row[3] else user.get("full_name", "")),
+            "phone": (client_row[4] if client_row and client_row[4] else user_phone or ""),
+            "email": (client_row[5] if client_row and client_row[5] else user_email or "")
         }
 
         c.execute("""
@@ -364,7 +389,15 @@ async def get_loyalty(session_token: Optional[str] = Cookie(None)):
         from services.loyalty import LoyaltyService
         loyalty_service = LoyaltyService()
 
-        client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("id")
+        # Get client identifier - try multiple sources
+        user_email = user.get("email")
+        user_phone = user.get("phone")
+        client_id = user.get("instagram_id") or user.get("telegram_id")
+
+        # If no social ID, use email or user ID
+        if not client_id:
+            client_id = user_email or str(user.get("id"))
+
         if not client_id:
             return {"success": False, "error": "Client ID not found"}
 
@@ -376,11 +409,20 @@ async def get_loyalty(session_token: Optional[str] = Cookie(None)):
         # Get referral code from clients table
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute("SELECT referral_code FROM clients WHERE instagram_id = %s OR telegram_id = %s", (client_id, client_id))
+
+        # Try different search methods
+        social_id = user.get("instagram_id") or user.get("telegram_id")
+        if social_id:
+            c.execute("SELECT referral_code FROM clients WHERE instagram_id = %s OR telegram_id = %s", (social_id, social_id))
+        elif user_email:
+            c.execute("SELECT referral_code FROM clients WHERE email = %s", (user_email,))
+        else:
+            c.execute("SELECT referral_code FROM clients WHERE phone = %s", (user_phone,))
+
         referral_row = c.fetchone()
         conn.close()
 
-        referral_code = referral_row[0] if referral_row else f"REF{client_id[:6].upper()}"
+        referral_code = referral_row[0] if referral_row else f"REF{str(user.get('id', ''))[:6].upper()}"
 
         return {
             "success": True,
@@ -408,20 +450,58 @@ async def get_client_profile(session_token: Optional[str] = Cookie(None)):
         conn = get_db_connection()
         c = conn.cursor()
 
-        client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("id")
+        # Get user details from session
+        user_id = user.get("id")
+        user_email = user.get("email")
+        user_phone = user.get("phone")
+
+        # Try multiple ways to find client:
+        # 1. By instagram_id or telegram_id (for social login)
+        # 2. By email (for regular email/password login)
+        # 3. By phone (additional fallback)
+        client_id = user.get("instagram_id") or user.get("telegram_id")
 
         # Get client data from clients table
-        c.execute("""
-            SELECT name, phone, email, avatar, birthday, created_at
-            FROM clients
-            WHERE instagram_id = %s OR telegram_id = %s
-        """, (client_id, client_id))
+        if client_id:
+            # Social login user - search by social IDs
+            c.execute("""
+                SELECT name, phone, email, avatar, birthday, created_at
+                FROM clients
+                WHERE instagram_id = %s OR telegram_id = %s
+                LIMIT 1
+            """, (client_id, client_id))
+        elif user_email:
+            # Email/password login - search by email
+            c.execute("""
+                SELECT name, phone, email, avatar, birthday, created_at
+                FROM clients
+                WHERE email = %s
+                LIMIT 1
+            """, (user_email,))
+        else:
+            # Fallback - search by phone
+            c.execute("""
+                SELECT name, phone, email, avatar, birthday, created_at
+                FROM clients
+                WHERE phone = %s
+                LIMIT 1
+            """, (user_phone,))
 
         client_row = c.fetchone()
 
+        # If no client found in clients table, use user data from users table
         if not client_row:
-            conn.close()
-            return {"success": False, "error": "Client not found"}
+            # Create a pseudo client_row from user data
+            client_row = (
+                user.get("full_name"),  # name
+                user_phone,             # phone
+                user_email,             # email
+                None,                   # avatar
+                None,                   # birthday
+                None                    # created_at
+            )
+            # Set client_id to user_id for loyalty lookup
+            client_id = str(user_id)
 
         # Get loyalty tier
         c.execute("""

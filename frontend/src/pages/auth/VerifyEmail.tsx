@@ -51,7 +51,7 @@ export default function VerifyEmail() {
           setTimeout(() => {
             const role = data.user.role;
             if (role === 'director' || role === 'admin') {
-              navigate("/admin/dashboard");
+              navigate("/crm/dashboard");
             } else if (role === 'manager') {
               navigate("/manager/dashboard");
             } else if (role === 'employee') {

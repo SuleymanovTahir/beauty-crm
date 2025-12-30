@@ -269,7 +269,7 @@ export default function Users() {
           {permissions.canCreateUsers && (
             <Button
               className="bg-pink-600 hover:bg-pink-700"
-              onClick={() => navigate('/admin/users/create')}
+              onClick={() => navigate('/crm/users/create')}
             >
               <UserPlus className="w-4 h-4 mr-2" />
               {t('add_user')}
@@ -328,7 +328,7 @@ export default function Users() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => navigate(`/admin/users/${user.id}`)}
+                            onClick={() => navigate(`/crm/users/${user.id}`)}
                             className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                             title={t('action_edit_title')}
                           >

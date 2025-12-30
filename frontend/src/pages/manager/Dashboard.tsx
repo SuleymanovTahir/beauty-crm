@@ -125,7 +125,7 @@ export default function ManagerDashboard() {
           </div>
         </Link>
 
-        <Link to="/admin/clients" className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+        <Link to="/crm/clients" className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
             <Users className="w-6 h-6 text-green-600" />
           </div>
@@ -157,7 +157,7 @@ export default function ManagerDashboard() {
           </div>
         </Link>
 
-        <Link to="/admin/bookings" className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+        <Link to="/crm/bookings" className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mb-4">
             <LayoutDashboard className="w-6 h-6 text-pink-600" />
           </div>
@@ -210,7 +210,7 @@ export default function ManagerDashboard() {
               </Button>
             </Link>
 
-            <Link to="/admin/clients">
+            <Link to="/crm/clients">
               <Button className="w-full justify-between bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700">
                 <span className="flex items-center gap-2">
                   <Users className="w-5 h-5" />

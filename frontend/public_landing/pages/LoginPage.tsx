@@ -69,8 +69,8 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
           // Redirect clients to their account dashboard
           navigate("/account/dashboard");
         } else {
-          // Redirect staff/admin to admin dashboard
-          navigate("/admin/dashboard");
+          // Redirect staff/admin to crm dashboard
+          navigate("/crm/dashboard");
         }
       } else {
         if (response.error_type === "email_not_verified" && response.email) {

@@ -350,11 +350,13 @@ export function Loyalty() {
                 </div>
               </div>
               <div className="text-center space-y-2">
-                <div className="text-sm text-muted-foreground">
-                  {t('loyalty.show_qr', 'Покажите QR-код при посещении салона')}
+                <div className="text-sm font-semibold text-gray-900">
+                  {t('loyalty.qr_how_to_use', 'Как использовать QR-код?')}
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  {t('loyalty.qr_info', 'Сканирование автоматически применит вашу скидку')}
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <p>✓ {t('loyalty.qr_step1', 'Покажите QR-код администратору при посещении')}</p>
+                  <p>✓ {t('loyalty.qr_step2', 'Сканирование автоматически применит вашу скидку')}</p>
+                  <p>✓ {t('loyalty.qr_step3', 'Баллы будут начислены после оплаты')}</p>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -382,11 +384,17 @@ export function Loyalty() {
         <CardContent className="space-y-4">
           <div className="bg-white rounded-lg p-4 border-2 border-dashed border-purple-200">
             <div className="text-sm text-muted-foreground mb-2">{t('loyalty.your_promo', 'Ваш промокод')}</div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-3">
               <code className="flex-1 text-2xl font-bold text-purple-600">{loyaltyInfo.referral_code}</code>
               <Button size="sm" variant="outline" onClick={handleCopyReferral}>
                 <Copy className="w-4 h-4" />
               </Button>
+            </div>
+            <div className="text-xs text-muted-foreground space-y-1 border-t pt-3">
+              <p className="font-semibold text-gray-700">{t('loyalty.referral_how_it_works', 'Как это работает:')}</p>
+              <p>1️⃣ {t('loyalty.referral_step1', 'Поделитесь промокодом с другом')}</p>
+              <p>2️⃣ {t('loyalty.referral_step2', 'Друг указывает код при первой записи')}</p>
+              <p>3️⃣ {t('loyalty.referral_step3', 'Вы оба получаете бонусные баллы!')}</p>
             </div>
           </div>
 

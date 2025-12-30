@@ -228,7 +228,7 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg md:text-xl text-gray-900">{t('dashboard:recent_bookings')}</h2>
-            <Button variant="outline" size="sm" onClick={() => navigate('/admin/bookings')} className="shrink-0">
+            <Button variant="outline" size="sm" onClick={() => navigate('/crm/bookings')} className="shrink-0">
               {t('dashboard:all_bookings')}
             </Button>
           </div>
@@ -240,7 +240,7 @@ export default function AdminDashboard() {
                   <div
                     key={booking.id}
                     className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer gap-3"
-                    onClick={() => navigate(`/admin/bookings/${booking.id}`)}
+                    onClick={() => navigate(`/crm/bookings/${booking.id}`)}
                   >
                     <div className="flex items-center gap-3">
                       {(() => {
@@ -304,7 +304,7 @@ export default function AdminDashboard() {
           <div className="space-y-2">
             <Button
               className="w-full justify-start bg-pink-600 hover:bg-pink-700 h-10"
-              onClick={() => navigate('/admin/bookings')}
+              onClick={() => navigate('/crm/bookings')}
             >
               <Calendar className="w-4 h-4 mr-2" />
               {t('dashboard:create_booking')}
@@ -312,7 +312,7 @@ export default function AdminDashboard() {
             <Button
               variant="outline"
               className="w-full justify-start h-10"
-              onClick={() => navigate('/admin/clients')}
+              onClick={() => navigate('/crm/clients')}
             >
               <Users className="w-4 h-4 mr-2" />
               {t('dashboard:add_client')}
@@ -320,7 +320,7 @@ export default function AdminDashboard() {
             <Button
               variant="outline"
               className="w-full justify-start h-10"
-              onClick={() => navigate('/admin/users/create')}
+              onClick={() => navigate('/crm/users/create')}
             >
               <Users className="w-4 h-4 mr-2" />
               {t('dashboard:create_user')}
@@ -328,7 +328,7 @@ export default function AdminDashboard() {
             <Button
               variant="outline"
               className="w-full justify-start h-10"
-              onClick={() => navigate('/admin/analytics')}
+              onClick={() => navigate('/crm/analytics')}
             >
               <TrendingUp className="w-4 h-4 mr-2" />
               {t('dashboard:view_analytics')}
@@ -336,7 +336,7 @@ export default function AdminDashboard() {
             <Button
               variant="outline"
               className="w-full justify-start h-10"
-              onClick={() => navigate('/admin/calendar')}
+              onClick={() => navigate('/crm/calendar')}
             >
               <Calendar className="w-4 h-4 mr-2" />
               {t('dashboard:calendar')}

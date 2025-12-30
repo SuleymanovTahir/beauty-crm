@@ -84,7 +84,7 @@ export default function BotSettings() {
   const activeTab = (tab as TabType) || 'general';
 
   const handleTabChange = (value: TabType | string) => {
-    navigate(`/admin/bot-settings/${value}`);
+    navigate(`/crm/bot-settings/${value}`);
   };
 
   const [loading, setLoading] = useState(true);

@@ -267,7 +267,7 @@ export function AccountPage() {
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Профиль */}
-      <div className="p-6 border-b">
+      <div className="p-6 border-b flex-shrink-0">
         <div className="flex items-center gap-3">
           <Avatar className="w-12 h-12">
             <AvatarImage src={userData?.avatar} alt={userData?.name} />
@@ -285,8 +285,8 @@ export function AccountPage() {
         </div>
       </div>
 
-      {/* Меню */}
-      <nav className="flex-1 p-4 overflow-y-auto">
+      {/* Меню - Scrollable */}
+      <nav className="flex-1 p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
         <div className="space-y-1">
           {menuItems.map((item) => (
             <MenuItem key={item.id} item={item} />
@@ -294,8 +294,8 @@ export function AccountPage() {
         </div>
       </nav>
 
-      {/* Футер */}
-      <div className="p-4 border-t space-y-3">
+      {/* Футер - Fixed at bottom */}
+      <div className="p-4 border-t space-y-3 flex-shrink-0">
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <button
@@ -412,8 +412,8 @@ export function AccountPage() {
 
       <div className="flex h-screen pt-[73px] lg:pt-0">
         {/* Десктопный сайдбар */}
-        <aside className="hidden lg:block w-[280px] bg-white border-r flex-shrink-0">
-          <div className="p-6 border-b">
+        <aside className="hidden lg:flex lg:flex-col w-[280px] bg-white border-r flex-shrink-0">
+          <div className="p-6 border-b flex-shrink-0">
             <div className="flex items-center gap-2">
               {salonSettings?.logo_url ? (
                 <img src={salonSettings.logo_url} alt={salonSettings.name} className="w-8 h-8 object-contain" />
@@ -423,7 +423,9 @@ export function AccountPage() {
               <span className="text-xl font-bold">{salonSettings?.name || 'Beauty Salon'}</span>
             </div>
           </div>
-          <SidebarContent />
+          <div className="flex-1 flex flex-col min-h-0">
+            <SidebarContent />
+          </div>
         </aside>
 
         {/* Основной контент */}

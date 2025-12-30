@@ -559,7 +559,7 @@ export default function Messages() {
                     className="flex-1 min-w-0 cursor-pointer"
                     onClick={() => {
                       if (!message.archived) {
-                        navigate(`/admin/chat?client_id=${message.id}`);
+                        navigate(`/crm/chat?client_id=${message.id}`);
                       }
                     }}
                   >
