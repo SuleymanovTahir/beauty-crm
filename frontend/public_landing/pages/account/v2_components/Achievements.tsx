@@ -188,9 +188,9 @@ export function Achievements() {
 
       {/* Челленджи */}
       <div className="space-y-4">
-        <h2>Активные челленджи</h2>
+        <h2>{t('achievements.active_challenges', 'Активные челленджи')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {challenges.map((challenge) => {
+          {challenges.map((challenge: any) => {
             const daysLeft = getDaysLeft(challenge.deadline);
             const progress = (challenge.progress / challenge.maxProgress) * 100;
 
@@ -206,7 +206,7 @@ export function Achievements() {
                       variant={daysLeft <= 3 ? 'destructive' : 'default'}
                       className="ml-2"
                     >
-                      {daysLeft}д
+                      {daysLeft}{t('achievements.days_short', 'д')}
                     </Badge>
                   </div>
                   <CardDescription>{challenge.description}</CardDescription>
@@ -214,7 +214,7 @@ export function Achievements() {
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Прогресс</span>
+                      <span className="text-muted-foreground">{t('achievements.progress_label', 'Прогресс')}</span>
                       <span className="font-semibold">
                         {challenge.progress} / {challenge.maxProgress}
                       </span>
@@ -223,12 +223,12 @@ export function Achievements() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="text-sm text-muted-foreground">Награда</div>
+                    <div className="text-sm text-muted-foreground">{t('achievements.reward', 'Награда')}</div>
                     <Badge className="bg-purple-500">{challenge.reward}</Badge>
                   </div>
 
                   <div className="text-xs text-muted-foreground">
-                    До {new Date(challenge.deadline).toLocaleDateString('ru-RU', {
+                    {t('achievements.until', 'До')} {new Date(challenge.deadline).toLocaleDateString('ru-RU', {
                       day: 'numeric',
                       month: 'long',
                     })}
