@@ -1,0 +1,104 @@
+{
+  "title": "Panneau de notifications",
+  "subtitle": "Gestion et envoi des notifications aux clients",
+  "save_template": "Enregistrer le modèle",
+  "send_notification": "Envoyer une notification",
+  "stats": {
+    "total_sent": "Total envoyé",
+    "email_sent": "E-mail envoyé",
+    "push_sent": "Push envoyé",
+    "sms_sent": "SMS envoyé"
+  },
+  "templates": {
+    "title": "Modèles de notifications",
+    "description": "Modèles rapides pour les notifications courantes",
+    "use_template": "Utiliser un modèle"
+  },
+  "history": {
+    "title": "Historique des notifications",
+    "description": "Toutes les notifications envoyées et programmées",
+    "filters": {
+      "all": "Tous",
+      "email": "Email",
+      "push": "Push",
+      "sms": "SMS"
+    },
+    "table": {
+      "status": "Statut",
+      "title": "Titre",
+      "type": "Taper",
+      "recipients": "Destinataires",
+      "sent_failed": "Envoyé/Échec",
+      "date": "Date"
+    },
+    "statuses": {
+      "sent": "Envoyé",
+      "pending": "En attendant",
+      "failed": "Échoué"
+    },
+    "scheduled": "Prévu"
+  },
+  "types": {
+    "email": "Email",
+    "push": "Push",
+    "sms": "SMS"
+  },
+  "dialogs": {
+    "send": {
+      "title": "Envoyer une nouvelle notification",
+      "description": "Créez et envoyez des notifications à vos clients",
+      "form": {
+        "notification_type": "Type de notification",
+        "title": "Titre",
+        "title_placeholder": "Titre de la notification",
+        "message": "Message",
+        "message_placeholder": "Texte de notification",
+        "target_segment": "Segment cible",
+        "segments": {
+          "all": "Tous les clients",
+          "active": "Clients actifs",
+          "inactive": "Clients inactifs",
+          "tier": "Par niveau de fidélité"
+        },
+        "loyalty_tier": "Niveau de fidélité",
+        "select_tier": "Sélectionnez le niveau",
+        "tiers": {
+          "bronze": "Bronze",
+          "silver": "Argent",
+          "gold": "Or",
+          "platinum": "Platine"
+        }
+      }
+    },
+    "template": {
+      "title": "Enregistrer comme modèle",
+      "description": "Créer un modèle de notification réutilisable",
+      "form": {
+        "template_name": "Nom du modèle",
+        "template_name_placeholder": "par exemple, message de bienvenue",
+        "title": "Titre",
+        "title_placeholder": "Titre de la notification",
+        "message": "Message",
+        "message_placeholder": "Utilisez {variable} pour le contenu dynamique",
+        "type": "Taper",
+        "types": {
+          "push": "Notification poussée",
+          "email": "Email",
+          "sms": "SMS"
+        }
+      }
+    }
+  },
+  "buttons": {
+    "cancel": "Annuler",
+    "send_notification": "Envoyer une notification",
+    "save_template": "Enregistrer le modèle"
+  },
+  "toasts": {
+    "sent": "Notification envoyée avec succès",
+    "template_saved": "Modèle enregistré avec succès",
+    "failed_load": "Échec du chargement des notifications",
+    "failed_send": "Échec de l'envoi de la notification",
+    "failed_save_template": "Échec de l'enregistrement du modèle"
+  }
+}

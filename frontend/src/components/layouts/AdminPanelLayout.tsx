@@ -1,6 +1,7 @@
 // /frontend/src/components/layouts/AdminPanelLayout.tsx
 import { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard,
   Users,
@@ -8,6 +9,7 @@ import {
   Award,
   Target,
   Bell,
+  Image,
   LogOut,
   Menu,
   X
@@ -23,38 +25,44 @@ interface AdminPanelLayoutProps {
 export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation(['layouts/adminpanellayout', 'common']);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const menuItems = [
     {
-      label: 'Dashboard',
+      label: t('menu.dashboard'),
       icon: LayoutDashboard,
       path: '/admin/dashboard',
     },
     {
-      label: 'User Management',
+      label: t('menu.user_management'),
       icon: Users,
       path: '/admin/users',
     },
     {
-      label: 'Loyalty Management',
+      label: t('menu.loyalty_management'),
       icon: Gift,
       path: '/admin/loyalty',
     },
     {
-      label: 'Referral Program',
+      label: t('menu.referral_program'),
       icon: Award,
       path: '/admin/referrals',
     },
     {
-      label: 'Challenges',
+      label: t('menu.challenges'),
       icon: Target,
       path: '/admin/challenges',
     },
     {
-      label: 'Notifications',
+      label: t('menu.notifications'),
       icon: Bell,
       path: '/admin/notifications',
+    },
+    {
+      label: t('menu.photo_gallery'),
+      icon: Image,
+      path: '/admin/gallery',
     },
   ];
 
@@ -68,7 +76,7 @@ export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutPro
       {/* Mobile header */}
       <div className="lg:hidden bg-white border-b px-4 py-3 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-2">
-          <h1 className="text-xl font-bold text-purple-600">Admin Panel</h1>
+          <h1 className="text-xl font-bold text-purple-600">{t('admin_panel')}</h1>
         </div>
         <Button
           variant="ghost"
@@ -93,7 +101,7 @@ export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutPro
               <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                 <LayoutDashboard className="w-5 h-5 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
+              <h1 className="text-xl font-bold text-gray-900">{t('admin_panel')}</h1>
             </div>
 
             {/* User info */}
@@ -145,7 +153,7 @@ export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutPro
                 className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
               >
                 <LayoutDashboard className="w-5 h-5" />
-                <span>Go to CRM</span>
+                <span>{t('go_to_crm')}</span>
               </Link>
             </div>
 
@@ -157,7 +165,7 @@ export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutPro
                 onClick={handleLogout}
               >
                 <LogOut className="w-5 h-5 mr-3" />
-                <span>Logout</span>
+                <span>{t('logout')}</span>
               </Button>
             </div>
           </div>

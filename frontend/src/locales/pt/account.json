@@ -68,7 +68,11 @@
       "no_recurring": "Nenhuma entrada duplicada",
       "no_recurring_desc": "Crie uma gravação automática para não se esquecer dos procedimentos regulares",
       "create_auto": "Criar gravação automática"
-    }
+    },
+    "insight_visits_0": "Bem-vindo! Estamos felizes em vê-lo em nosso salão!",
+    "insight_visits_1_3": "Ótimo começo! Você já esteve conosco {{count}} vezes!",
+    "insight_visits_4_9": "Você se torna um cliente regular! {{count}} visitas - isso representa mais de 60% dos nossos clientes!",
+    "insight_visits_10_plus": "Você é um cliente VIP! {{count}} visitas - isso representa mais de 85% dos nossos clientes!"
   },
   "loyalty": {
     "your_level": "Seu nível",

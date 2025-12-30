@@ -1,0 +1,63 @@
+{
+  "title": "चुनौतियां",
+  "subtitle": "सहभागिता चुनौतियाँ बनाना और प्रबंधित करना",
+  "create_challenge": "एक चुनौती बनाएँ",
+  "stats": {
+    "active_challenges": "सक्रिय चुनौतियाँ",
+    "total_participants": "कुल प्रतिभागी",
+    "completions": "समापन"
+  },
+  "types": {
+    "visits": "दौरा",
+    "spending": "खर्च",
+    "referrals": "रेफरल",
+    "services": "सेवाएं"
+  },
+  "statuses": {
+    "active": "सक्रिय",
+    "upcoming": "आगामी",
+    "completed": "पुरा होना।"
+  },
+  "card": {
+    "target": "लक्ष्य",
+    "reward": "इनाम",
+    "progress": "प्रगति",
+    "completed": "पुरा होना",
+    "pts": "बिंदु"
+  },
+  "dialogs": {
+    "create": {
+      "title": "एक नई चुनौती बनाएँ",
+      "title_edit": "चुनौती संपादित करें",
+      "description": "चुनौती मापदंडों और पुरस्कारों को परिभाषित करें",
+      "form": {
+        "title": "नाम",
+        "title_placeholder": "ग्रीष्मकालीन सौंदर्य चुनौती",
+        "description": "विवरण",
+        "description_placeholder": "इस महीने 3 बार सैलून जाएं",
+        "challenge_type": "चुनौती प्रकार",
+        "target_value": "लक्ष्य मान",
+        "target_placeholder": "3",
+        "reward_points": "अंकों के साथ पुरस्कृत करें",
+        "reward_placeholder": "1000",
+        "start_date": "आरंभ करने की तिथि",
+        "end_date": "अंतिम तिथि"
+      }
+    },
+    "delete": {
+      "confirm": "क्या आप वाकई इस चुनौती को हटाना चाहते हैं?"
+    }
+  },
+  "buttons": {
+    "cancel": "रद्द करना",
+    "create_challenge": "एक चुनौती बनाएँ",
+    "update_challenge": "अद्यतन चुनौती"
+  },
+  "toasts": {
+    "created": "चुनौती सफलतापूर्वक बनाई गई",
+    "deleted": "चुनौती सफलतापूर्वक हटा दी गई",
+    "failed_load": "चुनौतियाँ लोड करने में विफल",
+    "failed_create": "चुनौती पैदा करने में विफल",
+    "failed_delete": "चुनौती हटाने में विफल"
+  }
+}

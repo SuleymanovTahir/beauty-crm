@@ -51,10 +51,11 @@ const namespaces = [
   'auth/login',
   'auth/register',
   'auth/forgotpassword',
-  'layouts/adminlayout',
-  'layouts/employeelayout',
-  'layouts/managerlayout',
-  'layouts/publiclayout',
+  'layouts/AdminLayout',
+  'layouts/AdminPanelLayout',
+  'layouts/EmployeeLayout',
+  'layouts/ManagerLayout',
+  'layouts/PublicLayout',
   'components/languageswitcher',
   'components/employeelayout',
   'components/publiclanguageswitcher',
@@ -63,7 +64,13 @@ const namespaces = [
   'public_landing/faq',
   'public_landing/banners',
   'booking',
-  'dynamic'
+  'dynamic',
+  'adminPanel/Dashboard',
+  'adminPanel/LoyaltyManagement',
+  'adminPanel/ReferralProgram',
+  'adminPanel/Challenges',
+  'adminPanel/NotificationsDashboard',
+  'adminPanel/PhotoGallery'
 ];
 // Используем import.meta as any для обхода ошибки типов с Vite
 const localeFiles = (import.meta as any).glob('./locales/**/*.json', { eager: true });
@@ -148,10 +155,16 @@ for (const lang of languages) {
   resources[lang]['cta'] = resources[lang]['public/about']; // CTA is in About page
 
   // Layouts
-  resources[lang]['adminLayout'] = resources[lang]['layouts/adminlayout'];
-  resources[lang]['employeeLayout'] = resources[lang]['layouts/employeelayout'];
-  resources[lang]['managerLayout'] = resources[lang]['layouts/managerlayout'];
-  resources[lang]['publicLayout'] = resources[lang]['layouts/publiclayout'];
+  resources[lang]['adminLayout'] = resources[lang]['layouts/AdminLayout'];
+  resources[lang]['layouts/adminlayout'] = resources[lang]['layouts/AdminLayout']; // backward compatibility
+  resources[lang]['adminPanelLayout'] = resources[lang]['layouts/AdminPanelLayout'];
+  resources[lang]['layouts/adminpanellayout'] = resources[lang]['layouts/AdminPanelLayout']; // backward compatibility
+  resources[lang]['employeeLayout'] = resources[lang]['layouts/EmployeeLayout'];
+  resources[lang]['layouts/employeelayout'] = resources[lang]['layouts/EmployeeLayout']; // backward compatibility
+  resources[lang]['managerLayout'] = resources[lang]['layouts/ManagerLayout'];
+  resources[lang]['layouts/managerlayout'] = resources[lang]['layouts/ManagerLayout']; // backward compatibility
+  resources[lang]['publicLayout'] = resources[lang]['layouts/PublicLayout'];
+  resources[lang]['layouts/publiclayout'] = resources[lang]['layouts/PublicLayout']; // backward compatibility
 
   // Components
   resources[lang]['languageSwitcher'] = resources[lang]['components/languageswitcher'];

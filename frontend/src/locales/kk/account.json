@@ -1,6 +1,6 @@
 {
   "title": "Жеке кабинет",
-  "subtitle": "Жазбаларды басқарыңыз және үлгеріміңізді қадағалаңыз",
+  "subtitle": "Жазбаларды басқарыңыз және үлгеріміңізді бақылаңыз",
   "tabs": {
     "dashboard": "Үй",
     "appointments": "bookings",
@@ -39,28 +39,28 @@
     "no_offers": "Жеке ұсыныстар бірінші сапардан кейін пайда болады",
     "days_left": "{{days}} күн қалды.",
     "insights_title": "Жеке түсініктер",
-    "insight_months": "Сіз {{count}} ай бойы бізбен бірге болдыңыз!",
+    "insight_months": "Сіз бізбен {{count}} ай болдыңыз!",
     "insight_saved": "Сіз адалдық бағдарламасының арқасында {{amount}} AED үнемдедіңіз",
     "insight_visits": "Сіз бізге {{count}} рет бардыңыз - бұл клиенттердің 80%-нан жақсы!",
     "stats": {
       "visits": "Сапарлар",
       "points": "Ұпайлар",
-      "discount": "Бағалар"
+      "discount": "Жеңілдік"
     },
     "appointment": {
-      "get_directions": "Маршрут салу",
+      "get_directions": "Маршрутты құру",
       "add_to_calendar": "Күнтізбеге",
       "reschedule": "Кейінге қалдыру",
-      "cancel": "Бас тарту",
+      "cancel": "Болдырмау",
       "leave_review": "Пікір қалдыру",
       "repeat": "Қайталау",
       "today": "Бүгін",
       "tomorrow": "Ертең",
-      "in_days": "{{count}} күннен кейін",
+      "in_days": "{{count}} күн ішінде",
       "minutes_short": "мин",
       "tabs": {
         "upcoming": "Алдағы",
-        "history": "Қабат",
+        "history": "Әңгіме",
         "recurring": "Қайталанатын"
       },
       "no_appointments": "Әзірге посттар жоқ",
@@ -68,16 +68,20 @@
       "no_recurring": "Қайталанатын жазбалар жоқ",
       "no_recurring_desc": "Тұрақты процедураларды ұмытпау үшін автоматты жазба жасаңыз",
       "create_auto": "Автоматты жазуды жасаңыз"
-    }
+    },
+    "insight_visits_0": "Қош келдіңіз! Сіздерді біздің салонымызда көргенімізге қуаныштымыз!",
+    "insight_visits_1_3": "Керемет бастама! Сіз бізге {{count}} рет келдіңіз!",
+    "insight_visits_4_9": "Сіз тұрақты тұтынушы боласыз! {{count}} келулер біздің клиенттеріміздің 60%-дан астамын құрайды!",
+    "insight_visits_10_plus": "Сіз VIP клиентсіз! {{count}} келулер біздің клиенттеріміздің 85%-дан астамын құрайды!"
   },
   "loyalty": {
     "your_level": "Сіздің деңгейіңіз",
-    "discount": "{{percent}}% жеңілдік",
+    "discount": "Жеңілдік {{percent}}%",
     "points": "Ұпайлар",
     "next_level": "{{name}} деңгейіне дейін",
     "points_to_go": "{{count}} ұпай",
     "streak_title": "Сапарлар сериясы",
-    "streak_message": "{{amount}} бонус ұпайын алғанға дейін тағы {{count}} барыңыз!",
+    "streak_message": "Бонус {{amount}} ұпайлар алдында тағы {{count}} бару!",
     "streak_bonus_received": "Бонус {{amount}} ұпай алды!",
     "analytics_title": "Шығындарды талдау",
     "total_spent": "Жалпы жұмсалған",
@@ -98,7 +102,7 @@
     "fav_master": "Сүйікті шебері"
   },
   "toasts": {
-    "load_error": "Деректерді жүктеу кезінде қате пайда болды",
+    "load_error": "Деректерді жүктеу қатесі",
     "master_fav_added": "Шебер таңдаулыларға қосылды",
     "master_fav_removed": "Мастер таңдаулылардан жойылды",
     "update_error": "Жаңарту қатесі",
@@ -111,7 +115,7 @@
     "review_open": "Тексеру формасы ашылуда...",
     "downloading": "Фото жүктеп алынуда...",
     "sharing_copied": "Бөлісу сілтемесі көшірілді",
-    "sharing_open": "Бөлісу үшін {{платформа}} ашыңыз...",
+    "sharing_open": "Бөлісу үшін {{platform}} ашыңыз...",
     "profile_saved": "Профиль сәтті сақталды",
     "password_form_open": "Құпия сөзді өзгерту пішінін ашыңыз...",
     "two_factor_setup": "Екі факторлы аутентификация орнатылуда...",
@@ -128,11 +132,11 @@
     "no_photos": "Фотосуреттер жоқ",
     "no_photos_desc": "Бұл санатта трансформация фотосуреттері әлі жоқ",
     "compare": "Салыстыру",
-    "before": "Қарай",
+    "before": "Кімге",
     "after": "Кейін",
     "categories": {
-      "all": "Бірі",
-      "hair": "Жүн",
+      "all": "Барлығы",
+      "hair": "Шаш",
       "nails": "Тырнақтар",
       "face": "Бет",
       "body": "Дене"
@@ -140,7 +144,7 @@
   },
   "achievements": {
     "title": "Сіздің жетістіктеріңіз",
-    "unlocked_phrase": "{{total}} ішінен {{count}} құлпы ашылды",
+    "unlocked_phrase": "{{total}} бастап {{count}} құлпы ашылды",
     "unlocked_on": "{{date}} құлпы ашылды",
     "challenges_title": "Белсенді сынақтар",
     "complete_challenge": "Орындау",
@@ -151,9 +155,9 @@
     "your_code": "Сіздің кодыңыз",
     "copy": "Көшіру",
     "copied": "Код көшірілді",
-    "message": "Досыңызға ұсыныңыз және ол бірінші рет келгенде {{referrer_bonus}} ұпай алыңыз. Сіздің досыңыз да {{bonus_points}} сәлемдесу ұпайына ие болады!",
+    "message": "Досыңызға хабарласыңыз және олар бірінші рет келгенде {{referrer_bonus}} ұпайларын алыңыз. Сіздің досыңыз да {{bonus_points}} сәлемдесу ұпайларын алады!",
     "whatsapp": "whatsapp",
-    "instagram": "Инстаграм",
+    "instagram": "Instagram",
     "email": "Электрондық пошта",
     "sms": "SMS"
   },
@@ -166,16 +170,16 @@
     "score_title": "Сұлулық ұпайы",
     "score_subtitle": "Жалпы күтім деңгейі",
     "status_perfect_label": "Бәрі жақсы",
-    "status_good_label": "Айыппұл",
+    "status_good_label": "Жақсы",
     "status_attention_label": "Назар аудару керек",
     "status_perfect": "Керемет! Жалғастырыңыз!",
     "status_good": "Жарайды, жалғастыр",
-    "status_attention": "Кішкене назар аудару керек",
+    "status_attention": "Кішкене көңіл бөлу керек",
     "health_metrics": "Денсаулық көрсеткіштері",
-    "last_assessment": "Соңғы рет көрген: {{date}}",
+    "last_assessment": "Соңғы тексеру: {{date}}",
     "recommend_booking": "Тіркелуді ұсынамыз",
     "recommend_desc": "Соңғы түзетуден бері тым көп уақыт өтті",
-    "recommend_action": "Процедураға тіркелу",
+    "recommend_action": "Процедураға жазылыңыз",
     "calendar_title": "Жеке сұлулық күнтізбесі"
   },
   "notifications": {
@@ -190,7 +194,7 @@
     "no_messages": "Хабарламалар жоқ",
     "no_messages_desc": "Салон әкімшісімен сөйлесуді бастаңыз",
     "write_message": "Хабарлама жазыңыз",
-    "contacts_title": "Байланыстар",
+    "contacts_title": "Контактілер",
     "quick_contact": "Жылдам байланыс",
     "call": "Қоңырау",
     "write_email": "Электрондық поштаны жазыңыз"
@@ -202,7 +206,7 @@
   },
   "settings": {
     "profile_title": "Жеке ақпарат",
-    "first_name": "Есім",
+    "first_name": "Аты",
     "last_name": "Тегі",
     "email": "Электрондық пошта",
     "phone": "Телефон",
@@ -230,13 +234,13 @@
     "privacy_photos_disabled": "Фотосурет ажыратымдылығы өшірілген",
     "logout": "Шығу",
     "logout_title": "Шығу",
-    "save_changes": "Өзгерістерді сақтаңыз"
+    "save_changes": "Өзгерістерді сақтау"
   },
   "common": {
-    "loading": "Жүктеу ...",
+    "loading": "Жүктелуде...",
     "error": "Қате орын алды",
-    "cancel": "Күшін жою",
-    "save": "Жинау",
+    "cancel": "Болдырмау",
+    "save": "Сақтау",
     "book": "Тіркелу"
   }
 }

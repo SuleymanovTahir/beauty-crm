@@ -12,7 +12,7 @@ from backend.services.master_schedule import MasterScheduleService
 from datetime import datetime
 
 def debug_availability():
-    print(f"Checking availability for 2025-11-26 (Wednesday)")
+    print(f"Checking availability for 2026-11-26 (Wednesday)")
     conn = get_db_connection()
     c = conn.cursor()
 
@@ -57,10 +57,10 @@ def debug_availability():
             print(f"  Time Offs: {time_offs}")
 
         # Check Bookings
-        c.execute("SELECT datetime, status FROM bookings WHERE master = %s AND datetime LIKE '2025-11-26%'", (m[1],))
+        c.execute("SELECT datetime, status FROM bookings WHERE master = %s AND datetime LIKE '2026-11-26%'", (m[1],))
         bookings = c.fetchall()
         if bookings:
-            print(f"  Bookings on 2025-11-26: {bookings}")
+            print(f"  Bookings on 2026-11-26: {bookings}")
 
     # 2. Run Tool
     print("\n--- Tool Result ---")
@@ -78,14 +78,14 @@ def debug_availability():
     else:
         print("  No service found for 'маникюр'")
 
-    print("\nCalling get_available_time_slots('2025-11-26', service_name='маникюр')...")
-    slots = get_available_time_slots("2025-11-26", service_name="маникюр")
+    print("\nCalling get_available_time_slots('2026-11-26', service_name='маникюр')...")
+    slots = get_available_time_slots("2026-11-26", service_name="маникюр")
     print(f"Slots found: {len(slots)}")
     for s in slots:
         print(s)
 
-    print("\nCalling get_available_time_slots('2025-11-26', service_name=None) (ANY SERVICE)...")
-    slots_any = get_available_time_slots("2025-11-26", service_name=None)
+    print("\nCalling get_available_time_slots('2026-11-26', service_name=None) (ANY SERVICE)...")
+    slots_any = get_available_time_slots("2026-11-26", service_name=None)
     print(f"Slots found (any): {len(slots_any)}")
     for s in slots_any[:5]:
         print(s)
@@ -100,7 +100,7 @@ def debug_availability():
     user_id = service._get_user_id(m_name)
     print(f"  _get_user_id('{m_name}') -> {user_id}")
     
-    slots = service.get_available_slots(m_name, "2025-11-26", duration_minutes=60)
+    slots = service.get_available_slots(m_name, "2026-11-26", duration_minutes=60)
     print(f"  get_available_slots -> {len(slots)} slots")
     print(f"  Slots: {slots}")
 

@@ -1,0 +1,47 @@
+{
+  "title": "Painel de controle",
+  "subtitle": "Gestão de usuários, fidelidade e engajamento",
+  "quick_actions": {
+    "title": "Ações rápidas",
+    "user_management": {
+      "title": "Gerenciamento de usuários",
+      "description": "Gerenciar contas e permissões de usuários"
+    },
+    "loyalty_management": {
+      "title": "Gestão de fidelidade",
+      "description": "Gerenciar pontos e níveis de fidelidade"
+    },
+    "referral_program": {
+      "title": "Programa de referência",
+      "description": "Visualizar e gerenciar referências"
+    },
+    "challenges": {
+      "title": "Desafios",
+      "description": "Criação e gestão de desafios"
+    },
+    "notifications": {
+      "title": "Notificações",
+      "description": "Envio e gerenciamento de notificações"
+    },
+    "photo_gallery": {
+      "title": "Galeria de fotos",
+      "description": "Gerenciamento de fotos e portfólio do cliente"
+    }
+  },
+  "stats": {
+    "total_users": "Total de usuários",
+    "active_challenges": "Desafios ativos",
+    "loyalty_points_issued": "Pontos de fidelidade emitidos",
+    "total_referrals": "Total de referências",
+    "from_last_month": "do mês passado"
+  },
+  "recent_activity": {
+    "title": "Atividade recente",
+    "subtitle": "Ações recentes no painel de administração",
+    "new_tier_activated": "Novo nível de fidelidade ativado",
+    "users_registered": "{{count}} novos usuários registrados",
+    "challenge_completed": "Desafio \"{{name}}\" concluído por {{count}} usuários",
+    "hours_ago": "{{count}} horas atrás",
+    "day_ago": "{{count}} dia atrás"
+  }
+}

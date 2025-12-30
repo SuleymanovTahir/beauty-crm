@@ -1,0 +1,55 @@
+{
+  "title": "Programa de referencia",
+  "subtitle": "Gestión de referencias y seguimiento de la eficacia del programa.",
+  "settings": "Ajustes",
+  "stats": {
+    "total_referrals": "Referencias totales",
+    "completed_referrals": "Referencias completadas",
+    "points_distributed": "Puntos distribuidos",
+    "from_last_month": "del mes pasado"
+  },
+  "current_settings": {
+    "title": "Configuración de bonificación actual",
+    "referrer_bonus": "El referente recibe <strong>{{points}} puntos</strong> cuando un amigo realiza su primera compra.",
+    "referred_bonus": "El amigo invitado recibe <strong>{{points}} puntos</strong> al registrarse",
+    "min_purchase": "Importe mínimo de compra: <strong>{{amount}} AED</strong>",
+    "edit": "Editar"
+  },
+  "table": {
+    "title": "Todas las referencias",
+    "description": "Seguimiento del estado de referidos y distribución de puntos.",
+    "search_placeholder": "Buscar referencias...",
+    "columns": {
+      "referrer": "referente",
+      "referred_friend": "amigo invitado",
+      "status": "Estado",
+      "points_awarded": "Puntos otorgados",
+      "date": "Fecha"
+    },
+    "statuses": {
+      "pending": "Espera",
+      "completed": "Terminado",
+      "cancelled": "Cancelado"
+    }
+  },
+  "dialogs": {
+    "settings": {
+      "title": "Configuración del programa de referencias",
+      "description": "Configurar puntos de bonificación y requisitos",
+      "referrer_bonus": "Puntos de bonificación por referente",
+      "referrer_bonus_help": "Puntos otorgados al referente cuando un amigo realiza su primera compra",
+      "referred_bonus": "Puntos de bonificación de amigos recomendados",
+      "referred_bonus_help": "Puntos otorgados a un amigo al registrarse",
+      "min_purchase_amount": "Importe mínimo de compra (AED)",
+      "min_purchase_help": "Monto mínimo que debe gastar un amigo para activar el bono por recomendación (0 = sin mínimo)"
+    }
+  },
+  "buttons": {
+    "cancel": "Cancelar",
+    "save_changes": "Guardar cambios"
+  },
+  "toasts": {
+    "settings_saved": "Configuración guardada exitosamente",
+    "failed_load": "No se pudieron cargar las referencias"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "menu": {
+    "services": "اختيار الخدمات",
+    "professional": "يتقن",
+    "datetime": "التاريخ والوقت",
+    "selected": "مختارة",
+    "selectServices": "اختر خدمة",
+    "selectProfessional": "حدد المعالج",
+    "selectDateTime": "حدد الوقت",
+    "reset": "إعادة تعيين التحديد",
+    "completed": "مكتمل",
+    "continue": "تأكيد الدخول"
+  },
+  "datetime": {
+    "title": "حدد التاريخ والوقت",
+    "date": "تاريخ",
+    "time": "وقت",
+    "dateFirst": "الرجاء تحديد تاريخ أولا",
+    "noSlots": "لا يوجد وقت متاح لهذا اليوم",
+    "morning": "صباح",
+    "afternoon": "يوم",
+    "evening": "مساء",
+    "selectDateFirst": "أولا حدد التاريخ"
+  },
+  "professional": {
+    "title": "اختر متخصصًا",
+    "anyAvailable": "أي سيد حر",
+    "reviews": "المراجعات",
+    "firstAvailable": "سيقبل أول سيد متاح دخولك"
+  },
+  "confirm": {
+    "title": "تأكيد الدخول",
+    "subtitle": "يرجى التحقق من التفاصيل",
+    "summary": "ملخص الحجز",
+    "details": "تفاصيل",
+    "phone": "هاتف",
+    "bookNow": "كتاب",
+    "success": "تم تأكيد التسجيل!",
+    "error": "حدث خطأ أثناء إنشاء السجل",
+    "phoneNeeded": "ابق على اتصال",
+    "phoneDesc": "يرجى إدراج رقم هاتفك للتأكيد والتحديثات.",
+    "professional": "يتقن",
+    "date": "تاريخ",
+    "time": "وقت",
+    "confirm": "تأكيد الدخول",
+    "total": "المجموع"
+  },
+  "services": {
+    "title": "اختر الخدمات",
+    "search": "البحث عن الخدمات...",
+    "allCategories": "جميع الفئات",
+    "noDescription": "خدمة احترافية",
+    "total": "المبلغ الإجمالي",
+    "continue": "يكمل",
+    "selected": "الخدمات المختارة"
+  },
+  "totalDuration": "المدة الإجمالية",
+  "min": "دقيقة",
+  "loading": "تحميل...",
+  "newBooking": "دخول جديد"
+}

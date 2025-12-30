@@ -191,7 +191,7 @@ describe('APIClient', () => {
         client_id: 1,
         service_id: 1,
         employee_id: 1,
-        date: '2025-01-15',
+        date: '2026-01-15',
         time: '14:00',
         status: 'confirmed'
       };
@@ -204,7 +204,7 @@ describe('APIClient', () => {
       const bookingData = {
         service_id: 1,
         employee_id: 1,
-        date: '2025-01-15',
+        date: '2026-01-15',
         time: '14:00',
         name: 'John Doe',
         phone: '+971501234567',

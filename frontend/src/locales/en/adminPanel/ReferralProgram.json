@@ -1,0 +1,55 @@
+{
+  "title": "Referral program",
+  "subtitle": "Managing referrals and tracking program effectiveness",
+  "settings": "Settings",
+  "stats": {
+    "total_referrals": "Total referrals",
+    "completed_referrals": "Completed referrals",
+    "points_distributed": "Points distributed",
+    "from_last_month": "from last month"
+  },
+  "current_settings": {
+    "title": "Current bonus configuration",
+    "referrer_bonus": "The referrer receives <strong>{{points}} points</strong>when a friend makes their first purchase",
+    "referred_bonus": "The invited friend receives <strong>{{points}} points</strong> upon registration",
+    "min_purchase": "Minimum purchase amount: <strong>{{amount}} AED</strong>",
+    "edit": "Edit"
+  },
+  "table": {
+    "title": "All referrals",
+    "description": "Tracking the status of referrals and distribution of points",
+    "search_placeholder": "Search for referrals...",
+    "columns": {
+      "referrer": "Referrer",
+      "referred_friend": "Invited friend",
+      "status": "Status",
+      "points_awarded": "Points awarded",
+      "date": "Date"
+    },
+    "statuses": {
+      "pending": "Waiting",
+      "completed": "Completed",
+      "cancelled": "Canceled"
+    }
+  },
+  "dialogs": {
+    "settings": {
+      "title": "Referral program settings",
+      "description": "Set up bonus points and requirements",
+      "referrer_bonus": "Referrer bonus points",
+      "referrer_bonus_help": "Points awarded to the referrer when a friend makes their first purchase",
+      "referred_bonus": "Referred Friend Bonus Points",
+      "referred_bonus_help": "Points awarded to a friend upon registration",
+      "min_purchase_amount": "Minimum purchase amount (AED)",
+      "min_purchase_help": "Minimum amount a friend must spend to activate the referral bonus (0 = no minimum)"
+    }
+  },
+  "buttons": {
+    "cancel": "Cancel",
+    "save_changes": "Save changes"
+  },
+  "toasts": {
+    "settings_saved": "Settings saved successfully",
+    "failed_load": "Failed to load referrals"
+  }
+}

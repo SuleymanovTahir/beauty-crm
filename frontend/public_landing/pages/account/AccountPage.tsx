@@ -107,6 +107,7 @@ export function AccountPage() {
         setUserData({
           name: profileData.profile.name || 'Guest',
           email: profileData.profile.email || '',
+          username: profileData.profile.username || '',
           avatar: profileData.profile.avatar || '',
           currentTier: profileData.profile.tier || 'bronze'
         });
@@ -114,6 +115,7 @@ export function AccountPage() {
         // Update localStorage
         if (profileData.profile.name) localStorage.setItem('user_name', profileData.profile.name);
         if (profileData.profile.email) localStorage.setItem('user_email', profileData.profile.email);
+        if (profileData.profile.username) localStorage.setItem('username', profileData.profile.username);
       } else {
         // Fallback to localStorage if API fails
         const userName = localStorage.getItem('user_name') || 'Guest';
@@ -193,6 +195,23 @@ export function AccountPage() {
     setMobileMenuOpen(false);
   };
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return t('account:dashboard.good_morning', 'Good morning');
+    if (hour < 18) return t('account:dashboard.good_afternoon', 'Good afternoon');
+    return t('account:dashboard.good_evening', 'Good evening');
+  };
+
+  const getMotivation = () => {
+    const phrases = [
+      t('account:dashboard.motivation_1', "You're shining!"),
+      t('account:dashboard.motivation_2', "You're beautiful!"),
+      t('account:dashboard.motivation_3', 'Every day is a new opportunity!'),
+      t('account:dashboard.motivation_4', 'Be yourself, be beautiful!'),
+    ];
+    return phrases[Math.floor(Math.random() * phrases.length)];
+  };
+
   const handleLogout = async () => {
     // Confirmation dialog
     const confirmed = window.confirm(
@@ -268,7 +287,7 @@ export function AccountPage() {
     <div className="flex flex-col h-full">
       {/* Профиль */}
       <div className="p-6 border-b flex-shrink-0">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mb-3">
           <Avatar className="w-12 h-12">
             <AvatarImage src={userData?.avatar} alt={userData?.name} />
             <AvatarFallback>{userData?.name?.[0] || 'G'}</AvatarFallback>
@@ -282,6 +301,12 @@ export function AccountPage() {
               {userData?.currentTier || 'Bronze'}
             </div>
           </div>
+        </div>
+        <div className="text-sm">
+          <div className="font-medium text-gray-700">
+            {getGreeting()}, {userData?.name?.split(' ')[0] || 'Guest'}!
+          </div>
+          <div className="text-xs text-muted-foreground mt-1">{getMotivation()}</div>
         </div>
       </div>
 

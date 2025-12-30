@@ -26,10 +26,10 @@
     "motivation_3": "Every day is a new opportunity!",
     "motivation_4": "Be yourself, be beautiful!",
     "motivation": [
-      "You look amazing!",
-      "We missed you!",
-      "Time to take care of yourself",
-      "Your beauty is our work"
+      "Вы выглядите великолепно!",
+      "Скучали по вам!",
+      "Время позаботиться о себе",
+      "Ваша красота - наша работа"
     ],
     "total_visits": "Total Visits",
     "this_month": "this month",
@@ -72,7 +72,7 @@
     "insight_visits_0": "Welcome! We're excited to see you at our salon!",
     "insight_visits_1_3": "Great start! You've been here {{count}} times already!",
     "insight_visits_4_9": "You're becoming a regular! {{count}} visits - that's more than 60% of our clients!",
-    "insight_visits_10_plus": "You're a VIP client! {{count}} visits - that's more than 85% of our clients!",
+    "insight_visits_10_plus": "You are a VIP client! ",
     "stats": {
       "visits": "Visits",
       "points": "Points",

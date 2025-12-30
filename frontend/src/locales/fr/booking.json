@@ -1,0 +1,61 @@
+{
+  "menu": {
+    "services": "Choix des prestations",
+    "professional": "Maître",
+    "datetime": "Date et heure",
+    "selected": "choisi",
+    "selectServices": "Sélectionnez une prestation",
+    "selectProfessional": "Sélectionnez un assistant",
+    "selectDateTime": "Sélectionnez l'heure",
+    "reset": "Réinitialiser la sélection",
+    "completed": "Complété",
+    "continue": "Confirmer l'entrée"
+  },
+  "datetime": {
+    "title": "Sélectionnez la date et l'heure",
+    "date": "Date",
+    "time": "Temps",
+    "dateFirst": "Veuillez d'abord sélectionner une date",
+    "noSlots": "Pas de temps disponible pour cette journée",
+    "morning": "Matin",
+    "afternoon": "Jour",
+    "evening": "Soirée",
+    "selectDateFirst": "Sélectionnez d'abord une date"
+  },
+  "professional": {
+    "title": "Choisissez un spécialiste",
+    "anyAvailable": "N'importe quel maître gratuit",
+    "reviews": "avis",
+    "firstAvailable": "Le premier maître disponible acceptera votre entrée"
+  },
+  "confirm": {
+    "title": "Confirmation d'entrée",
+    "subtitle": "Veuillez vérifier les détails",
+    "summary": "Récapitulatif de la réservation",
+    "details": "Détails",
+    "phone": "Téléphone",
+    "bookNow": "Livre",
+    "success": "Inscription confirmée !",
+    "error": "Erreur lors de la création de l'enregistrement",
+    "phoneNeeded": "Rester en contact",
+    "phoneDesc": "Veuillez inclure votre numéro de téléphone pour confirmation et mises à jour.",
+    "professional": "Maître",
+    "date": "Date",
+    "time": "Temps",
+    "confirm": "Confirmer l'entrée",
+    "total": "Total"
+  },
+  "services": {
+    "title": "Sélectionnez les prestations",
+    "search": "Rechercher des prestations...",
+    "allCategories": "Toutes les catégories",
+    "noDescription": "Service professionnel",
+    "total": "Montant total",
+    "continue": "Continuer",
+    "selected": "Prestations sélectionnées"
+  },
+  "totalDuration": "Durée totale",
+  "min": "min",
+  "loading": "Chargement...",
+  "newBooking": "Nouvelle entrée"
+}

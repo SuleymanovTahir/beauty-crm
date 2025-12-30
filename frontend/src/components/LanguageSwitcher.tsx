@@ -83,16 +83,18 @@ export default function LanguageSwitcher() {
               key={lang.code}
               onClick={() => handleLanguageChange(lang.code)}
               type="button"
-              className={`w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 transition-all ${
+              className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center justify-between gap-3 transition-all ${
                 i18n.language === lang.code
                   ? 'bg-purple-50 text-purple-700 font-medium'
                   : ''
               }`}
             >
-              <span className="text-xl">{lang.flag}</span>
-              <span className="text-sm">{lang.name}</span>
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <span className="text-xl flex-shrink-0">{lang.flag}</span>
+                <span className="text-sm truncate">{lang.name}</span>
+              </div>
               {i18n.language === lang.code && (
-                <span className="ml-auto text-purple-600">✓</span>
+                <span className="text-purple-600 flex-shrink-0">✓</span>
               )}
             </button>
           ))}

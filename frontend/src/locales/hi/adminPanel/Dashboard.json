@@ -1,0 +1,47 @@
+{
+  "title": "कंट्रोल पैनल",
+  "subtitle": "उपयोगकर्ता, निष्ठा और सहभागिता प्रबंधन",
+  "quick_actions": {
+    "title": "त्वरित कार्रवाई",
+    "user_management": {
+      "title": "प्रयोक्ता प्रबंधन",
+      "description": "उपयोगकर्ता खाते और अनुमतियाँ प्रबंधित करें"
+    },
+    "loyalty_management": {
+      "title": "वफादारी प्रबंधन",
+      "description": "वफादारी अंक और स्तर प्रबंधित करें"
+    },
+    "referral_program": {
+      "title": "नाम लेने का कार्यक्रम",
+      "description": "रेफरल देखें और प्रबंधित करें"
+    },
+    "challenges": {
+      "title": "चुनौतियां",
+      "description": "चुनौतियों का निर्माण और प्रबंधन"
+    },
+    "notifications": {
+      "title": "सूचनाएं",
+      "description": "सूचनाएं भेजना और प्रबंधित करना"
+    },
+    "photo_gallery": {
+      "title": "फोटो गैलरी",
+      "description": "ग्राहक फोटो और पोर्टफोलियो प्रबंधन"
+    }
+  },
+  "stats": {
+    "total_users": "कुल उपयोगकर्ता",
+    "active_challenges": "सक्रिय चुनौतियाँ",
+    "loyalty_points_issued": "वफादारी अंक जारी किए गए",
+    "total_referrals": "कुल रेफरल",
+    "from_last_month": "पिछले महीने से"
+  },
+  "recent_activity": {
+    "title": "हाल की गतिविधि",
+    "subtitle": "व्यवस्थापक पैनल में हाल की कार्रवाइयां",
+    "new_tier_activated": "नया लॉयल्टी स्तर सक्रिय किया गया",
+    "users_registered": "{{गिनती}} नए उपयोगकर्ता पंजीकृत",
+    "challenge_completed": "चुनौती \"{{नाम}}\" को {{गिनती}} उपयोगकर्ताओं द्वारा पूरा किया गया",
+    "hours_ago": "{{गिनती}} घंटे पहले",
+    "day_ago": "{{गिनती}} दिन पहले"
+  }
+}

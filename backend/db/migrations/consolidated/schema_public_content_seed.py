@@ -59,9 +59,9 @@ def seed_public_content(db_path=DATABASE_NAME):
     import random
     from datetime import datetime, timedelta
 
-    def get_random_date_2025():
-        start_date = datetime(2025, 1, 1)
-        end_date = datetime(2025, 12, 12) # Up to roughly now-ish or end of year
+    def get_random_date_2026():
+        start_date = datetime(2026, 1, 1)
+        end_date = datetime(2026, 12, 12) # Up to roughly now-ish or end of year
         time_between_dates = end_date - start_date
         days_between_dates = time_between_dates.days
         random_number_of_days = random.randrange(days_between_dates)
@@ -70,7 +70,7 @@ def seed_public_content(db_path=DATABASE_NAME):
 
     for i, (author, rating, text, avatar, service) in enumerate(reviews):
         # Generate random date for every iteration
-        created_at = get_random_date_2025()
+        created_at = get_random_date_2026()
         
         # Check if exists
         c.execute("SELECT id FROM public_reviews WHERE author_name = %s AND text_ru = %s", (author, text))

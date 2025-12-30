@@ -1,0 +1,66 @@
+{
+  "title": "वफादारी प्रबंधन",
+  "subtitle": "वफादारी स्तर, अंक और लेनदेन प्रबंधित करें",
+  "adjust_points": "अंक समायोजित करें",
+  "stats": {
+    "total_points_issued": "जारी किए गए कुल अंक",
+    "points_redeemed": "अंक भुनाए गए",
+    "active_members": "सक्रिय भागीदार",
+    "from_last_month": "पिछले महीने से"
+  },
+  "tiers": {
+    "title": "वफादारी का स्तर",
+    "description": "स्तर और लाभ स्थापित करना",
+    "starting_level": "प्रवेश के स्तर पर",
+    "from_points": "{{अंक}} अंक से",
+    "discount": "{{प्रतिशत}}% छूट"
+  },
+  "transactions": {
+    "title": "नवीनतम लेनदेन",
+    "description": "नवीनतम लॉयल्टी प्वाइंट लेनदेन",
+    "search_placeholder": "लेन-देन खोजें...",
+    "table": {
+      "client": "ग्राहक",
+      "points": "अंक",
+      "type": "प्रकार",
+      "reason": "कारण",
+      "date": "तारीख"
+    },
+    "types": {
+      "earn": "प्रोद्भवन",
+      "redeem": "ख़ारिज करना",
+      "adjust": "समायोजन"
+    }
+  },
+  "dialogs": {
+    "edit_tier": {
+      "title": "संपादन स्तर",
+      "description": "लेवल सेटिंग अपडेट करें",
+      "tier_name": "स्तर का नाम",
+      "min_points": "न्यूनतम अंक",
+      "discount_percent": "छूट (%)"
+    },
+    "adjust_points": {
+      "title": "अंक समायोजित करें",
+      "description": "ग्राहक खाते से अंक जोड़ें या डेबिट करें",
+      "client_email": "ग्राहक ईमेल",
+      "client_email_placeholder": "client@example.com",
+      "points": "अंक (भुगतान करने के लिए नकारात्मक अंक का उपयोग करें)",
+      "points_placeholder": "100",
+      "reason": "कारण",
+      "reason_placeholder": "मैन्युअल समायोजन"
+    }
+  },
+  "buttons": {
+    "cancel": "रद्द करना",
+    "save_changes": "परिवर्तनों को सुरक्षित करें",
+    "adjust_points": "अंक समायोजित करें"
+  },
+  "toasts": {
+    "tier_updated": "स्तर सफलतापूर्वक अद्यतन किया गया",
+    "points_adjusted_add": "{{अंक}} अंक जोड़े गए {{ईमेल}}",
+    "points_adjusted_deduct": "{{ईमेल}} से {{अंक}} अंक डेबिट किए गए",
+    "failed_load": "लेन-देन लोड करने में विफल",
+    "failed_adjust": "स्कोर समायोजित करने में विफल"
+  }
+}

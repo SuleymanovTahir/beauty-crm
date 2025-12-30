@@ -1,0 +1,104 @@
+{
+  "title": "Painel de notificação",
+  "subtitle": "Gerenciar e enviar notificações aos clientes",
+  "save_template": "Salvar modelo",
+  "send_notification": "Enviar notificação",
+  "stats": {
+    "total_sent": "Total enviado",
+    "email_sent": "E-mail enviado",
+    "push_sent": "Push enviado",
+    "sms_sent": "SMS enviado"
+  },
+  "templates": {
+    "title": "Modelos de notificação",
+    "description": "Modelos rápidos para notificações comuns",
+    "use_template": "Usar modelo"
+  },
+  "history": {
+    "title": "Histórico de notificações",
+    "description": "Todas as notificações enviadas e programadas",
+    "filters": {
+      "all": "Todos",
+      "email": "Email",
+      "push": "Push",
+      "sms": "SMS"
+    },
+    "table": {
+      "status": "Status",
+      "title": "Cabeçalho",
+      "type": "Tipo",
+      "recipients": "Destinatários",
+      "sent_failed": "Enviado/Falha",
+      "date": "Data"
+    },
+    "statuses": {
+      "sent": "Enviado",
+      "pending": "Esperando",
+      "failed": "Fracassado"
+    },
+    "scheduled": "Planejado"
+  },
+  "types": {
+    "email": "Email",
+    "push": "Push",
+    "sms": "SMS"
+  },
+  "dialogs": {
+    "send": {
+      "title": "Enviar nova notificação",
+      "description": "Crie e envie notificações para seus clientes",
+      "form": {
+        "notification_type": "Tipo de notificação",
+        "title": "Cabeçalho",
+        "title_placeholder": "Título da notificação",
+        "message": "Mensagem",
+        "message_placeholder": "Texto de notificação",
+        "target_segment": "Segmento alvo",
+        "segments": {
+          "all": "Todos os clientes",
+          "active": "Clientes ativos",
+          "inactive": "Clientes inativos",
+          "tier": "Por nível de fidelidade"
+        },
+        "loyalty_tier": "Nível de fidelidade",
+        "select_tier": "Selecione o nível",
+        "tiers": {
+          "bronze": "Bronze",
+          "silver": "Prata",
+          "gold": "Ouro",
+          "platinum": "Platina"
+        }
+      }
+    },
+    "template": {
+      "title": "Salvar como modelo",
+      "description": "Crie um modelo de notificação reutilizável",
+      "form": {
+        "template_name": "Nome do modelo",
+        "template_name_placeholder": "por exemplo, mensagem de boas-vindas",
+        "title": "Cabeçalho",
+        "title_placeholder": "Título da notificação",
+        "message": "Mensagem",
+        "message_placeholder": "Use {variable} para conteúdo dinâmico",
+        "type": "Tipo",
+        "types": {
+          "push": "Notificação push",
+          "email": "Email",
+          "sms": "SMS"
+        }
+      }
+    }
+  },
+  "buttons": {
+    "cancel": "Cancelar",
+    "send_notification": "Enviar notificação",
+    "save_template": "Salvar modelo"
+  },
+  "toasts": {
+    "sent": "Notificação enviada com sucesso",
+    "template_saved": "Modelo salvo com sucesso",
+    "failed_load": "Falha ao carregar notificações",
+    "failed_send": "Falha ao enviar notificação",
+    "failed_save_template": "Falha ao salvar o modelo"
+  }
+}

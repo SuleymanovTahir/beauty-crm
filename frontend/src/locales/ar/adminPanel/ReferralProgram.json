@@ -1,0 +1,55 @@
+{
+  "title": "برنامج الإحالة",
+  "subtitle": "إدارة الإحالات وتتبع فعالية البرنامج",
+  "settings": "إعدادات",
+  "stats": {
+    "total_referrals": "إجمالي الإحالات",
+    "completed_referrals": "الإحالات المكتملة",
+    "points_distributed": "النقاط الموزعة",
+    "from_last_month": "من الشهر الماضي"
+  },
+  "current_settings": {
+    "title": "تكوين المكافأة الحالية",
+    "referrer_bonus": "يتلقى المُحيل <strong>{{points}} نقطة</strong>عندما يقوم أحد الأصدقاء بإجراء أول عملية شراء له",
+    "referred_bonus": "يتلقى الصديق المدعو <strong>{{points}} نقطة</strong> عند التسجيل",
+    "min_purchase": "الحد الأدنى لمبلغ الشراء: <strong>{{amount}} AED</strong>",
+    "edit": "يحرر"
+  },
+  "table": {
+    "title": "جميع الإحالات",
+    "description": "تتبع حالة الإحالات وتوزيع النقاط",
+    "search_placeholder": "البحث عن الإحالات...",
+    "columns": {
+      "referrer": "المُحيل",
+      "referred_friend": "صديق مدعو",
+      "status": "حالة",
+      "points_awarded": "النقاط الممنوحة",
+      "date": "تاريخ"
+    },
+    "statuses": {
+      "pending": "منتظر",
+      "completed": "مكتمل",
+      "cancelled": "تم الإلغاء"
+    }
+  },
+  "dialogs": {
+    "settings": {
+      "title": "إعدادات برنامج الإحالة",
+      "description": "قم بإعداد نقاط المكافأة والمتطلبات",
+      "referrer_bonus": "نقاط المكافأة المرجعية",
+      "referrer_bonus_help": "النقاط الممنوحة للمُحيل عندما يقوم أحد الأصدقاء بإجراء أول عملية شراء له",
+      "referred_bonus": "نقاط مكافأة الصديق المُحالة",
+      "referred_bonus_help": "النقاط الممنوحة لصديق عند التسجيل",
+      "min_purchase_amount": "الحد الأدنى لمبلغ الشراء (درهم)",
+      "min_purchase_help": "الحد الأدنى للمبلغ الذي يجب على الصديق إنفاقه لتفعيل مكافأة الإحالة (0 = لا يوجد حد أدنى)"
+    }
+  },
+  "buttons": {
+    "cancel": "يلغي",
+    "save_changes": "حفظ التغييرات"
+  },
+  "toasts": {
+    "settings_saved": "تم حفظ الإعدادات بنجاح",
+    "failed_load": "فشل تحميل الإحالات"
+  }
+}

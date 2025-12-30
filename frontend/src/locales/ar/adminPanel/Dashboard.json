@@ -1,0 +1,47 @@
+{
+  "title": "لوحة التحكم",
+  "subtitle": "إدارة المستخدم والولاء والمشاركة",
+  "quick_actions": {
+    "title": "إجراءات سريعة",
+    "user_management": {
+      "title": "إدارة المستخدم",
+      "description": "إدارة حسابات المستخدمين والأذونات"
+    },
+    "loyalty_management": {
+      "title": "إدارة الولاء",
+      "description": "إدارة نقاط الولاء والمستويات"
+    },
+    "referral_program": {
+      "title": "برنامج الإحالة",
+      "description": "عرض وإدارة الإحالات"
+    },
+    "challenges": {
+      "title": "التحديات",
+      "description": "خلق وإدارة التحديات"
+    },
+    "notifications": {
+      "title": "إشعارات",
+      "description": "إرسال وإدارة الإخطارات"
+    },
+    "photo_gallery": {
+      "title": "معرض الصور",
+      "description": "صورة العميل وإدارة المحفظة"
+    }
+  },
+  "stats": {
+    "total_users": "إجمالي المستخدمين",
+    "active_challenges": "التحديات النشطة",
+    "loyalty_points_issued": "نقاط الولاء الصادرة",
+    "total_referrals": "إجمالي الإحالات",
+    "from_last_month": "من الشهر الماضي"
+  },
+  "recent_activity": {
+    "title": "النشاط الأخير",
+    "subtitle": "الإجراءات الأخيرة في لوحة الإدارة",
+    "new_tier_activated": "تم تفعيل مستوى الولاء الجديد",
+    "users_registered": "تم تسجيل {{count}} مستخدمين جدد",
+    "challenge_completed": "تم إكمال التحدي \"{{name}}\" بواسطة {{count}} من المستخدمين",
+    "hours_ago": "قبل {{count}} ساعات",
+    "day_ago": "{{count}} قبل يوم"
+  }
+}

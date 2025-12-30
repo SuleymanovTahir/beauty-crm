@@ -224,23 +224,40 @@ class Translator:
         Translate text from source language to target language
         Uses LibreTranslate for short phrases (≤10 chars) to avoid Google's context issues
         Uses Google Translate for longer text
-        
+
         Args:
             text: Text to translate
             source: Source language code (e.g., 'ru')
             target: Target language code (e.g., 'en')
             use_context: Whether to inject context (only for Google Translate)
-            
+
         Returns:
             Translated text, or original text if translation fails
         """
         # Return original if same language
         if source == target:
             return text
-        
+
         # Return empty if input is empty
         if not text or not text.strip():
             return text
+
+        # Protect interpolation variables {{variable}} from translation
+        import re
+        variable_pattern = r'\{\{([^}]+)\}\}'
+        variables = re.findall(variable_pattern, text)
+
+        # Replace variables with placeholders before translation
+        text_to_translate = text
+        variable_placeholders = {}
+        for i, var in enumerate(variables):
+            placeholder = f"___VAR{i}___"
+            variable_placeholders[placeholder] = f"{{{{{var}}}}}"
+            text_to_translate = text_to_translate.replace(f"{{{{{var}}}}}", placeholder)
+
+        # Store original text for variable restoration
+        original_text = text
+        text = text_to_translate
         
         # Exclusions - never translate these
         EXCLUSIONS = {
@@ -282,6 +299,9 @@ class Translator:
                 if translated and translated != text:
                     # Check if translation needs correction based on terminology
                     translated = self._apply_terminology_corrections(translated, target)
+                    # Restore interpolation variables
+                    for placeholder, original_var in variable_placeholders.items():
+                        translated = translated.replace(placeholder, original_var)
                     self._save_to_cache(text + cache_key_suffix, source, target, translated)
                     time.sleep(0.01)  # Minimal delay
                     return translated
@@ -305,12 +325,16 @@ class Translator:
         
         # Apply terminology corrections to the translation
         translated = self._apply_terminology_corrections(translated, target)
-        
+
+        # Restore interpolation variables
+        for placeholder, original_var in variable_placeholders.items():
+            translated = translated.replace(placeholder, original_var)
+
         self._save_to_cache(text + cache_key_suffix, source, target, translated)
-        
+
         # Minimal delay to avoid rate limiting
         time.sleep(0.01)
-        
+
         return translated
     
     def _apply_terminology_corrections(self, text: str, target_lang: str) -> str:

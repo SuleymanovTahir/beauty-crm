@@ -39,6 +39,7 @@ from .bookings import (
     # ✅ ДОБАВЬ ЭТИ НОВЫЕ ФУНКЦИИ:
     get_bookings_by_phone,                # ✅ NEW
     get_bookings_by_client,               # ✅ NEW - Robust fetch
+    get_bookings_by_master,               # ✅ NEW - For employee dashboard
     get_incomplete_booking,               # #4
     mark_booking_incomplete,              # #4
     get_client_usual_booking_pattern,     # #7
@@ -169,7 +170,8 @@ __all__ = [
     "get_upcoming_bookings",
     "get_bookings_by_phone",
     "get_bookings_by_client",
-    
+    "get_bookings_by_master",
+
     # Services
     "get_all_services",
     "get_service_by_key",

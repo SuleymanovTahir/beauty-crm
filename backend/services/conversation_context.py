@@ -339,7 +339,7 @@ def example_waiting_for_confirmation():
             "booking_details": {
                 "service": "Маникюр",
                 "master": "Jennifer",
-                "date": "2025-11-25",
+                "date": "2026-11-25",
                 "time": "15:00"
             },
             "expected_response": ["да", "yes", "подтверждаю", "записывай"]

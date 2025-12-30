@@ -61,5 +61,64 @@
   "salon": {
     "name": "Beauty Salon",
     "address": "Address"
-  }
+  },
+  "menu": {
+    "services": "Choice of services",
+    "professional": "Master",
+    "datetime": "Date and time",
+    "selected": "selected",
+    "selectServices": "Select a service",
+    "selectProfessional": "Select a wizard",
+    "selectDateTime": "Select time",
+    "reset": "Reset selection",
+    "completed": "Completed",
+    "continue": "Confirm booking"
+  },
+  "datetime": {
+    "title": "Select date and time",
+    "date": "Date",
+    "time": "Time",
+    "dateFirst": "Please select a date first",
+    "noSlots": "No time available for this day",
+    "morning": "Morning",
+    "afternoon": "Day",
+    "evening": "Evening",
+    "selectDateFirst": "First select a date"
+  },
+  "professional": {
+    "title": "Choose a specialist",
+    "anyAvailable": "Any free master",
+    "reviews": "reviews",
+    "firstAvailable": "The first available master will accept your booking"
+  },
+  "confirm": {
+    "title": "Confirmation of booking",
+    "subtitle": "Please check details",
+    "summary": "Booking summary",
+    "details": "Details",
+    "phone": "Telephone",
+    "bookNow": "Book",
+    "success": "Registration confirmed!",
+    "error": "Error creating booking",
+    "phoneNeeded": "Stay in touch",
+    "phoneDesc": "Please include your phone number for confirmation and updates.",
+    "professional": "Master",
+    "date": "Date",
+    "time": "Time",
+    "confirm": "Confirm booking",
+    "total": "Total"
+  },
+  "services": {
+    "title": "Select services",
+    "search": "Search for services...",
+    "allCategories": "All categories",
+    "noDescription": "Professional service",
+    "total": "Total amount",
+    "continue": "Continue",
+    "selected": "Services selected"
+  },
+  "totalDuration": "Total duration",
+  "min": "min",
+  "loading": "Loading...",
+  "newBooking": "New booking"
 }
