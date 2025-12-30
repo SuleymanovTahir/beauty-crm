@@ -1,7 +1,7 @@
 // /frontend/src/pages/admin/Dashboard.tsx
 //src/pages/Dashboard.tsx
 import { useEffect, useState } from 'react';
-import { Users, Loader, AlertCircle, Crown, UserPlus, UserCheck, TrendingUp, Calendar, CheckCircle } from 'lucide-react';
+import { Users, Loader, AlertCircle, Crown, UserPlus, UserCheck, TrendingUp, Calendar, CheckCircle, DollarSign, Percent, Star, XCircle, Clock, Filter } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,7 @@ interface Stats {
   total_bookings: number;
   completed_bookings: number;
   pending_bookings: number;
+  cancelled_bookings?: number;
   total_revenue: number;
   conversion_rate: number;
   new_clients: number;
@@ -23,6 +24,9 @@ interface Stats {
   total_bot_messages: number;
   vip_clients: number;
   active_clients: number;
+  avg_booking_value?: number;
+  cancellation_rate?: number;
+  top_services?: Array<{ name: string; count: number; revenue: number }>;
   growth?: {
     total_clients: { percentage: number; trend: 'up' | 'down' | 'stable' };
     vip_clients: { percentage: number; trend: 'up' | 'down' | 'stable' };
@@ -32,6 +36,13 @@ interface Stats {
     pending_bookings: { percentage: number; trend: 'up' | 'down' | 'stable' };
   };
   comparison_context?: string;
+}
+
+type DateFilter = 'today' | 'yesterday' | 'last7days' | 'last30days' | 'thisMonth' | 'lastMonth' | 'custom';
+
+interface DateRange {
+  start: string;
+  end: string;
 }
 
 export default function AdminDashboard() {
