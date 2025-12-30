@@ -1,4 +1,4 @@
-import { Calendar, Clock, Star, TrendingUp, Zap, Repeat, Users, MessageCircle, ArrowRight, Sparkles, ChevronRight, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, Star, TrendingUp, Repeat, Users, MessageCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -48,21 +48,11 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
   // 4. Upcoming Appointment (Clean / New Admin Style)
   // 5. Special Offers (Clean / New Admin Style)
 
-  // Navigate handler for booking
-  // We should rely on onNavigate prop being passed a handler that wraps navigate() or checks window location;
-  // BUT the user specifically asked "Why does 'Book' not lead to UserBookingWizard".
-  // Assuming onNavigate might just change tabs, we should use direct navigation for booking if it's a separate route.
+  // Handler for booking navigation
+  // onNavigate might be passed from parent for internal tab switching
+  // but for 'New Booking' we usually want to go to the route /new-booking
   const handleBooking = () => {
-    // If we are in SPA, we should use navigate hook ideally, but here we can just use window.location if router context is not passed or just link
-    // However, onNavigate is likely for internal tabs.
-    // Let's use window.location.href = '/new-booking' as it was, but fix the link if broken.
-    // The previous code had window.location.href = '/new-booking'.
-    // If that didn't work, maybe the router is intercepting?
-    // Let's try to assume onNavigate handles 'new-booking' OR we use window.location properly.
-    // The user said "why does it not lead...".
-    // I will try to use the hook if I can, but I can't add hooks inside this function if it's not a proper component definition change (it is).
-    // Oh wait, I am replacing the FILE CONTENT so I can use hooks.
-    // BUT I don't see useNavigate imported in the top level. I should add it.
+    window.location.href = '/new-booking';
   };
 
   return (
@@ -115,7 +105,7 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Быстрые действия</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { label: 'Записаться', icon: Calendar, color: 'text-pink-600', bg: 'bg-pink-50', action: () => window.location.href = '/new-booking' },
+                { label: 'Записаться', icon: Calendar, color: 'text-pink-600', bg: 'bg-pink-50', action: handleBooking },
                 { label: 'Повторить', icon: Repeat, color: 'text-violet-600', bg: 'bg-violet-50', action: () => { } },
                 { label: 'Мастера', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', action: () => onNavigate && onNavigate('masters') },
                 { label: 'Поддержка', icon: MessageCircle, color: 'text-green-600', bg: 'bg-green-50', action: () => onNavigate && onNavigate('support') },
@@ -145,38 +135,40 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col sm:flex-row items-center gap-6">
-                  <div className="relative">
-                    <Avatar className="w-20 h-20 border-4 border-white shadow-md">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                  <div className="relative shrink-0">
+                    <Avatar className="w-16 h-16 md:w-20 md:h-20 border-4 border-white shadow-md">
                       <AvatarImage src={master?.avatar_url} alt={master?.name} />
                       <AvatarFallback>{master?.name?.[0]}</AvatarFallback>
                     </Avatar>
                     <Badge className="absolute -bottom-2 -right-2 bg-green-500 border-2 border-white">Confirmed</Badge>
                   </div>
 
-                  <div className="flex-1 text-center sm:text-left space-y-1">
-                    <h3 className="text-lg font-bold text-gray-900">{master?.name || 'Мастер'}</h3>
-                    <p className="text-muted-foreground font-medium">{upcomingAppointment.service_name || upcomingAppointment.services?.[0]?.name}</p>
+                  <div className="flex-1 text-center md:text-left space-y-2 w-full">
+                    <h3 className="text-lg font-bold text-gray-900 truncate">{master?.name || 'Мастер'}</h3>
+                    <p className="text-muted-foreground font-medium text-sm md:text-base line-clamp-2">
+                      {upcomingAppointment.service_name || upcomingAppointment.services?.[0]?.name}
+                    </p>
 
-                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-3">
-                      <Badge variant="secondary" className="px-3 py-1 bg-white/80 backdrop-blur">
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-2">
+                      <Badge variant="secondary" className="px-3 py-1 bg-white/80 backdrop-blur whitespace-nowrap">
                         {new Date(upcomingAppointment.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
                       </Badge>
-                      <Badge variant="secondary" className="px-3 py-1 bg-white/80 backdrop-blur">
+                      <Badge variant="secondary" className="px-3 py-1 bg-white/80 backdrop-blur whitespace-nowrap">
                         {upcomingAppointment.time_start || upcomingAppointment.time}
                       </Badge>
-                      <span className="font-bold text-pink-600 text-lg ml-auto">
+                      <span className="font-bold text-pink-600 text-lg ml-auto whitespace-nowrap">
                         {upcomingAppointment.total_price || upcomingAppointment.price} AED
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-6 flex gap-3">
-                  <Button className="flex-1 bg-pink-600 hover:bg-pink-700 text-white shadow-md shadow-pink-200">
+                <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                  <Button className="flex-1 bg-pink-600 hover:bg-pink-700 text-white shadow-md shadow-pink-200 w-full">
                     Управление записью
                   </Button>
-                  <Button variant="outline" className="flex-1 border-pink-200 text-pink-700 hover:bg-pink-50">
+                  <Button variant="outline" className="flex-1 border-pink-200 text-pink-700 hover:bg-pink-50 w-full" onClick={() => onNavigate && onNavigate('appointments')}>
                     В календарь
                   </Button>
                 </div>
@@ -201,7 +193,7 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
             <CardHeader>
               <CardTitle className="text-base flex items-center justify-between">
                 <span>Последний визит</span>
-                <ChevronRight className="w-4 h-4 text-gray-400" />
+                <ArrowRight className="w-4 h-4 text-gray-400" />
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -209,7 +201,7 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
-                      <CheckCircle className="w-5 h-5" />
+                      <Repeat className="w-5 h-5" />
                     </div>
                     <div>
                       <div className="font-medium text-gray-900">{lastAppointment.service_name}</div>
@@ -280,7 +272,7 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
                 <CardTitle className="text-lg">{promo.title}</CardTitle>
                 <CardDescription>{promo.description}</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4 pb-6">
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground line-through">
                     {promo.old_price || promo.oldPrice} AED
