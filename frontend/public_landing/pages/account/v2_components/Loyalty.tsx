@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Star, TrendingUp, Flame, QrCode, Gift, Share2, Copy, Loader2 } from 'lucide-react';
+import { Star, TrendingUp, Flame, Gift, Share2, Copy, Loader2 } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -165,6 +166,61 @@ export function Loyalty() {
         </CardContent>
       </Card>
 
+      {/* Информация об уровнях лояльности */}
+      <Card className="bg-gradient-to-r from-blue-50 to-purple-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-blue-500" />
+            {t('loyalty.tier_system', 'Система уровней')}
+          </CardTitle>
+          <CardDescription>{t('loyalty.tier_explanation', 'Накапливайте баллы и получайте больше привилегий')}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {tiers.map((tier) => (
+            <div
+              key={tier.name}
+              className={`p-4 rounded-lg border-2 ${
+                tier.name === currentTierData?.name
+                  ? 'bg-white border-current'
+                  : 'border-gray-200'
+              }`}
+              style={tier.name === currentTierData?.name ? { borderColor: tier.color } : {}}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: tier.color }}
+                  />
+                  <div>
+                    <div className="font-semibold flex items-center gap-2">
+                      {tier.name}
+                      {tier.name === currentTierData?.name && (
+                        <Badge className="text-xs" style={{ backgroundColor: tier.color }}>
+                          {t('loyalty.current', 'Текущий')}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {tier.points === 0
+                        ? t('loyalty.starting_level', 'Начальный уровень')
+                        : `${t('loyalty.from', 'От')} ${tier.points} ${t('loyalty.points', 'баллов')}`
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-bold text-lg" style={{ color: tier.color }}>
+                    {tier.discount}%
+                  </div>
+                  <div className="text-xs text-muted-foreground">{t('loyalty.discount', 'скидка')}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
       {/* Streak геймификация */}
       <Card className="bg-gradient-to-r from-orange-50 to-red-50">
         <CardHeader>
@@ -186,54 +242,61 @@ export function Loyalty() {
         </CardContent>
       </Card>
 
-      {/* Аналитика трат */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('loyalty.spending_by_month', 'Расходы по месяцам')}</CardTitle>
-            <CardDescription>{t('loyalty.last_six_months', 'Последние 6 месяцев')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={loyalty?.spending_by_month || []}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="amount" fill="#FF6B9D" radius={[8, 8, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+      {/* Аналитика трат - показывать только если есть данные */}
+      {((loyalty?.spending_by_month && loyalty.spending_by_month.length > 0) ||
+        (loyalty?.spending_by_category && loyalty.spending_by_category.length > 0)) && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {loyalty?.spending_by_month && loyalty.spending_by_month.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('loyalty.spending_by_month', 'Расходы по месяцам')}</CardTitle>
+                <CardDescription>{t('loyalty.last_six_months', 'Последние 6 месяцев')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={loyalty.spending_by_month}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="amount" fill="#FF6B9D" radius={[8, 8, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          )}
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('loyalty.spending_by_category', 'Расходы по категориям')}</CardTitle>
-            <CardDescription>{t('loyalty.year_distribution', 'Распределение за год')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={loyalty?.spending_by_category || []}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={(entry) => entry.category}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {(loyalty?.spending_by_category || []).map((entry: any, index: number) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
+          {loyalty?.spending_by_category && loyalty.spending_by_category.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('loyalty.spending_by_category', 'Расходы по категориям')}</CardTitle>
+                <CardDescription>{t('loyalty.year_distribution', 'Распределение за год')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={loyalty.spending_by_category}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={(entry) => entry.category}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {loyalty.spending_by_category.map((entry: any, index: number) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
 
       {/* Виртуальная карта */}
       <Card>
@@ -270,12 +333,29 @@ export function Loyalty() {
 
             <div className="flex-1 space-y-4">
               <div className="flex justify-center">
-                <div className="bg-white p-4 rounded-lg border-2 border-dashed">
-                  <QrCode className="w-32 h-32 text-gray-400" />
+                <div className="bg-white p-4 rounded-lg border-2 border-purple-200 shadow-sm">
+                  <QRCodeSVG
+                    value={JSON.stringify({
+                      type: 'loyalty_card',
+                      client_id: userId,
+                      tier: loyaltyInfo.tier,
+                      discount: loyaltyInfo.discount,
+                      points: loyaltyInfo.points,
+                      generated_at: new Date().toISOString()
+                    })}
+                    size={128}
+                    level="H"
+                    includeMargin={false}
+                  />
                 </div>
               </div>
-              <div className="text-center text-sm text-muted-foreground">
-                {t('loyalty.show_qr', 'Покажите QR-код при посещении салона')}
+              <div className="text-center space-y-2">
+                <div className="text-sm text-muted-foreground">
+                  {t('loyalty.show_qr', 'Покажите QR-код при посещении салона')}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {t('loyalty.qr_info', 'Сканирование автоматически применит вашу скидку')}
+                </div>
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" className="flex-1" onClick={handleAddToWallet}>

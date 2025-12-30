@@ -39,7 +39,7 @@ export function Masters() {
 
   const toggleFavorite = async (masterId: number) => {
     try {
-      const result = await apiClient.toggleFavoriteMaster(masterId);
+      const result = await apiClient.toggleFavoriteMaster({ master_id: masterId, is_favorite: false });
       if (result.success) {
         await loadMasters(); // Reload data
         toast.success(t('masters.favorite_updated', 'Избранное обновлено'));

@@ -130,35 +130,45 @@ export function Achievements() {
       </div>
 
       {/* Общий прогресс */}
-      <Card className="bg-gradient-to-r from-yellow-50 to-orange-50">
+      <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 via-pink-50 to-yellow-50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Trophy className="w-6 h-6 text-yellow-600" />
+            <Trophy className="w-6 h-6 text-purple-600" />
             {t('achievements.overall_progress', 'Общий прогресс')}
           </CardTitle>
+          <CardDescription>
+            {unlockedCount > 0
+              ? t('achievements.keep_going', 'Отличная работа! Продолжайте в том же духе')
+              : t('achievements.get_started', 'Начните собирать достижения уже сегодня!')
+            }
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>{t('achievements.unlocked_achievements', 'Разблокировано достижений')}</span>
-              <span className="font-semibold">{unlockedCount} / {totalCount}</span>
+        <CardContent className="space-y-6">
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="font-medium">{t('achievements.unlocked_achievements', 'Разблокировано достижений')}</span>
+              <span className="text-2xl font-bold text-purple-600">{unlockedCount} / {totalCount}</span>
             </div>
-            <Progress value={(unlockedCount / totalCount) * 100} className="h-3" />
+            <Progress value={(unlockedCount / totalCount) * 100} className="h-4 bg-purple-100" />
           </div>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-yellow-600">{unlockedCount}</div>
-              <div className="text-xs text-muted-foreground">{t('achievements.received', 'Получено')}</div>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="bg-white/80 backdrop-blur rounded-lg p-4 text-center border border-purple-100">
+              <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                {unlockedCount}
+              </div>
+              <div className="text-sm font-medium text-gray-600 mt-1">{t('achievements.received', 'Получено')}</div>
             </div>
-            <div>
-              <div className="text-2xl font-bold text-blue-600">{totalCount - unlockedCount}</div>
-              <div className="text-xs text-muted-foreground">{t('achievements.remaining', 'Осталось')}</div>
+            <div className="bg-white/80 backdrop-blur rounded-lg p-4 text-center border border-blue-100">
+              <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                {totalCount - unlockedCount}
+              </div>
+              <div className="text-sm font-medium text-gray-600 mt-1">{t('achievements.remaining', 'Осталось')}</div>
             </div>
-            <div>
-              <div className="text-2xl font-bold text-purple-600">
+            <div className="bg-white/80 backdrop-blur rounded-lg p-4 text-center border border-green-100">
+              <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 {Math.round((unlockedCount / totalCount) * 100)}%
               </div>
-              <div className="text-xs text-muted-foreground">{t('achievements.completed', 'Завершено')}</div>
+              <div className="text-sm font-medium text-gray-600 mt-1">{t('achievements.completed', 'Завершено')}</div>
             </div>
           </div>
         </CardContent>
@@ -168,7 +178,7 @@ export function Achievements() {
       <div className="space-y-4">
         <h2>{t('achievements.all_achievements', 'Все достижения')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {achievements.map((achievement) => {
+          {achievements.map((achievement: any) => {
             const Icon = iconMap[achievement.icon] || Star;
             const hasProgress = achievement.maxProgress !== undefined;
             const progress = hasProgress && achievement.progress

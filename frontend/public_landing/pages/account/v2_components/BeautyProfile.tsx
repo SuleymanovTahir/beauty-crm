@@ -43,6 +43,15 @@ export function BeautyProfile() {
     toast.success(t('beauty.consultation_requested', 'Запрос на консультацию отправлен'));
   };
 
+  const viewAllRecommendations = () => {
+    const phone = localStorage.getItem('salon_phone') || '+971501234567';
+    const message = encodeURIComponent(
+      t('beauty.recommendations_message', 'Здравствуйте! Я хотел(а) бы получить полный список персональных рекомендаций по уходу.')
+    );
+    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+    toast.success(t('beauty.recommendations_requested', 'Запрос отправлен'));
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -57,6 +66,46 @@ export function BeautyProfile() {
   const overallScore = beautyMetrics.length > 0
     ? Math.round(beautyMetrics.reduce((sum: number, m: any) => sum + m.score, 0) / beautyMetrics.length)
     : 0;
+
+  // Определяем статус на основе score
+  const getStatusInfo = (score: number) => {
+    if (score >= 90) {
+      return {
+        title: t('beauty.excellent_condition', 'Превосходное состояние!'),
+        message: t('beauty.excellent_message', 'Вы регулярно следите за собой. Продолжайте в том же духе!'),
+        badges: [
+          { text: t('beauty.active_care', 'Активный уход'), color: 'bg-green-500' },
+          { text: t('beauty.regular_visits', 'Регулярные визиты'), color: 'bg-blue-500' }
+        ]
+      };
+    } else if (score >= 70) {
+      return {
+        title: t('beauty.good_condition', 'Хорошее состояние'),
+        message: t('beauty.good_message', 'Вы на правильном пути! Рекомендуем поддерживать регулярность процедур.'),
+        badges: [
+          { text: t('beauty.good_care', 'Хороший уход'), color: 'bg-blue-500' }
+        ]
+      };
+    } else if (score >= 40) {
+      return {
+        title: t('beauty.needs_attention', 'Требует внимания'),
+        message: t('beauty.needs_attention_message', 'Рекомендуем уделить больше времени уходу за собой.'),
+        badges: [
+          { text: t('beauty.improvement_needed', 'Есть над чем работать'), color: 'bg-yellow-500' }
+        ]
+      };
+    } else {
+      return {
+        title: t('beauty.start_caring', 'Начните заботиться о себе!'),
+        message: t('beauty.start_caring_message', 'Запишитесь на процедуры и начните свой путь к красоте.'),
+        badges: [
+          { text: t('beauty.new_client', 'Новый клиент'), color: 'bg-gray-500' }
+        ]
+      };
+    }
+  };
+
+  const statusInfo = getStatusInfo(overallScore);
 
   return (
     <div className="space-y-6 pb-8">
@@ -100,13 +149,14 @@ export function BeautyProfile() {
             </div>
 
             <div className="flex-1 space-y-2">
-              <div className="text-xl font-semibold">{t('beauty.excellent_condition', 'Отличное состояние!')}</div>
+              <div className="text-xl font-semibold">{statusInfo.title}</div>
               <p className="text-sm text-muted-foreground">
-                {t('beauty.excellent_message', 'Вы регулярно следите за собой. Продолжайте в том же духе!')}
+                {statusInfo.message}
               </p>
               <div className="flex gap-2 mt-4">
-                <Badge className="bg-green-500">{t('beauty.active_care', 'Активный уход')}</Badge>
-                <Badge className="bg-blue-500">{t('beauty.regular_visits', 'Регулярные визиты')}</Badge>
+                {statusInfo.badges.map((badge, index) => (
+                  <Badge key={index} className={badge.color}>{badge.text}</Badge>
+                ))}
               </div>
             </div>
           </div>
@@ -243,7 +293,7 @@ export function BeautyProfile() {
             </div>
           </div>
 
-          <Button className="w-full">
+          <Button className="w-full" onClick={viewAllRecommendations}>
             {t('beauty.view_all_recommendations', 'Посмотреть все рекомендации')}
           </Button>
         </CardContent>

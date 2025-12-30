@@ -104,8 +104,8 @@ export function Dashboard() {
     );
   }
 
-  const { loyalty, next_booking, last_visit, achievements_summary, visit_stats } = dashboardData || {};
-  const userName = localStorage.getItem('user_name') || 'Гость';
+  const { client, loyalty, next_booking, last_visit, achievements_summary, visit_stats } = dashboardData || {};
+  const userName = client?.name || localStorage.getItem('user_name') || 'Гость';
 
   return (
     <div className="space-y-6 pb-8">
@@ -126,7 +126,11 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{visit_stats?.total_visits || 0}</div>
-            <p className="text-xs text-muted-foreground">{t('dashboard.this_month', '+3 за этот месяц')}</p>
+            <p className="text-xs text-muted-foreground">
+              {visit_stats?.visits_this_month > 0
+                ? `+${visit_stats.visits_this_month} ${t('dashboard.this_month', 'за этот месяц')}`
+                : t('dashboard.no_visits_this_month', 'Нет визитов в этом месяце')}
+            </p>
           </CardContent>
         </Card>
 

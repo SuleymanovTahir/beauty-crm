@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { User, Lock, Bell, Eye, Download, Smartphone, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -14,8 +15,10 @@ import { apiClient } from '../../../../src/api/client';
 
 export function Settings() {
   const { t } = useTranslation(['account', 'common']);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'profile');
   const [notifications, setNotifications] = useState({
     push: true,
     email: true,
@@ -155,7 +158,14 @@ export function Settings() {
         <p className="text-muted-foreground">{t('settings.subtitle', 'Управление профилем и приватностью')}</p>
       </div>
 
-      <Tabs defaultValue="profile" className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => {
+          setActiveTab(value);
+          setSearchParams({ tab: value });
+        }}
+        className="w-full"
+      >
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="profile">
             <User className="w-4 h-4 mr-2" />

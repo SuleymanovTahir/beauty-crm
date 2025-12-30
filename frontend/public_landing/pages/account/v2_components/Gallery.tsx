@@ -177,44 +177,108 @@ export function Gallery() {
       </div>
 
       {/* Галерея */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredItems.map((item: any) => {
-          const category = categories.find(c => c.id === item.category);
+      {filteredItems.length === 0 ? (
+        <Card className="bg-gradient-to-br from-pink-50 to-purple-50">
+          <CardContent className="p-12 text-center space-y-4">
+            <div className="w-20 h-20 mx-auto rounded-full bg-pink-100 flex items-center justify-center">
+              <Download className="w-10 h-10 text-pink-500" />
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-2">
+                {t('gallery.no_photos', 'Фотографии отсутствуют')}
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                {t('gallery.no_photos_description', 'Ваша личная галерея красоты пока пуста')}
+              </p>
+            </div>
 
-          return (
-            <Card
-              key={item.id}
-              className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
-              onClick={() => setSelectedItem(item)}
-            >
-              <div className="aspect-square relative group">
-                <img
-                  src={item.after_photo}
-                  alt={item.service}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <div className="text-white text-center">
-                    <div className="text-lg font-semibold mb-2">{t('gallery.before_after', 'До/После')}</div>
-                    <div className="text-sm">{t('gallery.click_to_view', 'Нажмите для просмотра')}</div>
-                  </div>
+            <div className="bg-white rounded-lg p-6 text-left max-w-2xl mx-auto space-y-3">
+              <h4 className="font-semibold text-lg mb-3">
+                {t('gallery.how_photos_added', 'Как добавляются фото:')}
+              </h4>
+
+              <div className="flex items-start gap-3">
+                <div className="bg-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  1
                 </div>
-                {category && (
-                  <Badge className={`absolute top-2 right-2 ${category.color}`}>
-                    {category.label}
-                  </Badge>
-                )}
+                <div>
+                  <div className="font-medium">{t('gallery.step1_title', 'После посещения процедуры')}</div>
+                  <p className="text-sm text-muted-foreground">
+                    {t('gallery.step1_text', 'Ваш мастер делает фотографии "до" и "после" процедуры')}
+                  </p>
+                </div>
               </div>
-              <CardContent className="p-4">
-                <div className="font-semibold">{item.service}</div>
-                <div className="text-sm text-muted-foreground">
-                  {item.master_name} • {new Date(item.date).toLocaleDateString('ru-RU')}
+
+              <div className="flex items-start gap-3">
+                <div className="bg-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  2
                 </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+                <div>
+                  <div className="font-medium">{t('gallery.step2_title', 'Мастер загружает в CRM')}</div>
+                  <p className="text-sm text-muted-foreground">
+                    {t('gallery.step2_text', 'Фотографии автоматически добавляются в систему и привязываются к вашему профилю')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="bg-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  3
+                </div>
+                <div>
+                  <div className="font-medium">{t('gallery.step3_title', 'Доступно в вашем кабинете')}</div>
+                  <p className="text-sm text-muted-foreground">
+                    {t('gallery.step3_text', 'Вы можете просматривать, скачивать и делиться своими преображениями')}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-sm text-muted-foreground italic">
+              {t('gallery.privacy_note', '💡 Все фотографии конфиденциальны и видны только вам и вашим мастерам')}
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredItems.map((item: any) => {
+            const category = categories.find(c => c.id === item.category);
+
+            return (
+              <Card
+                key={item.id}
+                className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => setSelectedItem(item)}
+              >
+                <div className="aspect-square relative group">
+                  <img
+                    src={item.after_photo}
+                    alt={item.service}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="text-white text-center">
+                      <div className="text-lg font-semibold mb-2">{t('gallery.before_after', 'До/После')}</div>
+                      <div className="text-sm">{t('gallery.click_to_view', 'Нажмите для просмотра')}</div>
+                    </div>
+                  </div>
+                  {category && (
+                    <Badge className={`absolute top-2 right-2 ${category.color}`}>
+                      {category.label}
+                    </Badge>
+                  )}
+                </div>
+                <CardContent className="p-4">
+                  <div className="font-semibold">{item.service}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {item.master_name} • {new Date(item.date).toLocaleDateString('ru-RU')}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
 
       {/* Модальное окно до/после */}
       <Dialog open={selectedItem !== null} onOpenChange={() => setSelectedItem(null)}>
