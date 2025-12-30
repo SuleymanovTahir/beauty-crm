@@ -234,7 +234,8 @@
     "privacy_photos_disabled": "Résolution photo désactivée",
     "logout": "Sortie",
     "logout_title": "Déconnexion",
-    "save_changes": "Enregistrer les modifications"
+    "save_changes": "Enregistrer les modifications",
+    "email_required_export": "Veuillez entrer votre email dans les paramètres de votre profil pour recevoir l'exportation de données"
   },
   "common": {
     "loading": "Chargement...",

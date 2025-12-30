@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
+import { useTranslation } from 'react-i18next';
 
 interface BroadcastForm {
   subscription_type: string;
@@ -35,6 +36,7 @@ interface PreviewData {
 }
 
 export default function Broadcasts() {
+  const { t } = useTranslation(['admin/Broadcasts', 'common']);
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав
@@ -128,12 +130,12 @@ export default function Broadcasts() {
 
   const handlePreview = async () => {
     if (!form.subscription_type) {
-      toast.error('Выберите тип подписки');
+      toast.error(t('select_subscription_type'));
       return;
     }
 
     if (form.channels.length === 0) {
-      toast.error('Выберите хотя бы один канал');
+      toast.error(t('select_channel_error'));
       return;
     }
 
@@ -141,9 +143,9 @@ export default function Broadcasts() {
       setLoadingPreview(true);
       const data = await api.previewBroadcast(form);
       setPreview(data);
-      toast.success(`Найдено ${data.total_users} получателей`);
+      toast.success(t('preview_found', { count: data.total_users }).replace('{count}', data.total_users.toString()));
     } catch (err: any) {
-      toast.error(err.message || 'Ошибка предпросмотра');
+      toast.error(err.message || t('error_preview'));
     } finally {
       setLoadingPreview(false);
     }
@@ -151,16 +153,16 @@ export default function Broadcasts() {
 
   const handleSend = async () => {
     if (!form.subscription_type || !form.subject || !form.message) {
-      toast.error('Заполните все обязательные поля');
+      toast.error(t('fill_required_fields'));
       return;
     }
 
     if (form.channels.length === 0) {
-      toast.error('Выберите хотя бы один канал');
+      toast.error(t('select_channel_error'));
       return;
     }
 
-    if (!window.confirm('Вы уверены, что хотите отправить рассылку?')) {
+    if (!window.confirm(t('confirm_send'))) {
       return;
     }
 

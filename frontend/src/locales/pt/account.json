@@ -234,7 +234,8 @@
     "privacy_photos_disabled": "Resolução da foto desativada",
     "logout": "Saída",
     "logout_title": "Sair",
-    "save_changes": "Salvar alterações"
+    "save_changes": "Salvar alterações",
+    "email_required_export": "Por favor, insira seu e-mail nas configurações do seu perfil para receber a exportação de dados"
   },
   "common": {
     "loading": "Carregando...",

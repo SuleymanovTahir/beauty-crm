@@ -56,14 +56,33 @@ export default function PhotoGallery() {
     description: '',
     category: 'other' as GalleryPhoto['category'],
     is_featured: false,
+    client_id: '',
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [clients, setClients] = useState<Array<{ id: number; name: string; instagram_id: string }>>([]);
 
   useEffect(() => {
     loadPhotos();
     loadStats();
+    loadClients();
   }, []);
+
+  const loadClients = async () => {
+    try {
+      const response = await fetch('/api/clients', {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.clients) {
+          setClients(data.clients);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading clients:', error);
+    }
+  };
 
   const loadPhotos = async () => {
     try {
@@ -194,6 +213,7 @@ export default function PhotoGallery() {
         description: '',
         category: 'other',
         is_featured: false,
+        client_id: '',
       });
       setSelectedFile(null);
       setPreviewUrl('');
@@ -483,6 +503,24 @@ export default function PhotoGallery() {
                 <option value="makeup">{t('categories.makeup')}</option>
                 <option value="other">{t('categories.other')}</option>
               </select>
+            </div>
+            <div>
+              <Label>{t('dialogs.upload.form.client', 'Клиент')}</Label>
+              <select
+                className="w-full px-3 py-2 border rounded-md"
+                value={uploadForm.client_id}
+                onChange={(e) => setUploadForm({ ...uploadForm, client_id: e.target.value })}
+              >
+                <option value="">{t('dialogs.upload.form.select_client', 'Выберите клиента')}</option>
+                {clients.map((client) => (
+                  <option key={client.id} value={client.id}>
+                    {client.name} {client.instagram_id ? `(@${client.instagram_id})` : ''}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">
+                {t('dialogs.upload.form.client_hint', 'Фото будет доступно в галерее клиента')}
+              </p>
             </div>
             <div className="flex items-center gap-2">
               <input

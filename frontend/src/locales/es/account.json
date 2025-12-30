@@ -234,7 +234,8 @@
     "privacy_photos_disabled": "Resolución de fotos deshabilitada",
     "logout": "Salida",
     "logout_title": "Cerrar sesión",
-    "save_changes": "Guardar cambios"
+    "save_changes": "Guardar cambios",
+    "email_required_export": "Ingrese su correo electrónico en la configuración de su perfil para recibir la exportación de datos."
   },
   "common": {
     "loading": "Cargando...",
