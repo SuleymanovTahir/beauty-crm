@@ -40,6 +40,7 @@
     "lucide-react": "*",
     "motion": "^12.23.26",
     "next-themes": "*",
+    "qrcode.react": "^4.2.0",
     "react": "*",
     "react-day-picker": "*",
     "react-dom": "*",
