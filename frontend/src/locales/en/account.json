@@ -134,7 +134,15 @@
     "qr_scan_description": "Scanning automatically applies your discount",
     "spending_by_month": "Spending by Month",
     "spending_by_category": "Spending by Category",
-    "no_spending_data": "No spending data yet"
+    "no_spending_data": "No spending data yet",
+    "qr_how_to_use": "How to use the QR code?",
+    "qr_step1": "Show the QR code to the administrator at your visit",
+    "qr_step2": "Scanning automatically applies your discount",
+    "qr_step3": "Points will be credited after payment",
+    "referral_how_it_works": "How it works:",
+    "referral_step1": "Share your promo code with a friend",
+    "referral_step2": "Friend enters the code at first booking",
+    "referral_step3": "You both receive bonus points!"
   },
   "stats": {
     "title": "Visit Statistics",
