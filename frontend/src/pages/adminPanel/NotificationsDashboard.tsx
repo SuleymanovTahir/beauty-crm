@@ -60,8 +60,21 @@ export default function NotificationsDashboard() {
     title: '',
     message: '',
     type: 'push' as Notification['type'],
-    target_segment: 'all', // all, active, inactive, tier-specific
+    target_segment: 'all', // all, active, inactive, tier-specific, appointment-based, service-based
     tier_filter: '', // bronze, silver, gold, platinum
+    // Новые поля для расширенной фильтрации
+    appointment_filter: '', // tomorrow, date_range, specific_date
+    appointment_date: '', // для specific_date
+    appointment_start_date: '', // для date_range
+    appointment_end_date: '', // для date_range
+    service_filter: '', // ID услуги для фильтрации по процедурам
+    // Поля для планирования
+    scheduled: false,
+    schedule_date: '',
+    schedule_time: '',
+    repeat_enabled: false,
+    repeat_interval: 'daily', // daily, weekly, monthly
+    repeat_end_date: '',
   });
 
   const [templateForm, setTemplateForm] = useState({
@@ -472,6 +485,8 @@ export default function NotificationsDashboard() {
                   <option value="active">{t('dialogs.send.form.segments.active')}</option>
                   <option value="inactive">{t('dialogs.send.form.segments.inactive')}</option>
                   <option value="tier">{t('dialogs.send.form.segments.tier')}</option>
+                  <option value="appointment-based">{t('dialogs.send.form.segments.appointment_based', { defaultValue: 'By Appointment' })}</option>
+                  <option value="service-based">{t('dialogs.send.form.segments.service_based', { defaultValue: 'By Service' })}</option>
                 </select>
               </div>
               {formData.target_segment === 'tier' && (
@@ -489,6 +504,151 @@ export default function NotificationsDashboard() {
                     <option value="platinum">{t('dialogs.send.form.tiers.platinum')}</option>
                   </select>
                 </div>
+              )}
+            </div>
+
+            {/* Appointment-based filtering */}
+            {formData.target_segment === 'appointment-based' && (
+              <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+                <div>
+                  <Label>{t('dialogs.send.form.appointment_filter', { defaultValue: 'Appointment Filter' })}</Label>
+                  <select
+                    className="w-full px-3 py-2 border rounded-md"
+                    value={formData.appointment_filter}
+                    onChange={(e) => setFormData({ ...formData, appointment_filter: e.target.value })}
+                  >
+                    <option value="">{t('dialogs.send.form.select_filter', { defaultValue: 'Select filter' })}</option>
+                    <option value="tomorrow">{t('dialogs.send.form.appointment_filters.tomorrow', { defaultValue: 'Tomorrow' })}</option>
+                    <option value="specific_date">{t('dialogs.send.form.appointment_filters.specific_date', { defaultValue: 'Specific Date' })}</option>
+                    <option value="date_range">{t('dialogs.send.form.appointment_filters.date_range', { defaultValue: 'Date Range' })}</option>
+                  </select>
+                </div>
+
+                {formData.appointment_filter === 'specific_date' && (
+                  <div>
+                    <Label>{t('dialogs.send.form.appointment_date', { defaultValue: 'Appointment Date' })}</Label>
+                    <Input
+                      type="date"
+                      value={formData.appointment_date}
+                      onChange={(e) => setFormData({ ...formData, appointment_date: e.target.value })}
+                    />
+                  </div>
+                )}
+
+                {formData.appointment_filter === 'date_range' && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>{t('dialogs.send.form.start_date', { defaultValue: 'Start Date' })}</Label>
+                      <Input
+                        type="date"
+                        value={formData.appointment_start_date}
+                        onChange={(e) => setFormData({ ...formData, appointment_start_date: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label>{t('dialogs.send.form.end_date', { defaultValue: 'End Date' })}</Label>
+                      <Input
+                        type="date"
+                        value={formData.appointment_end_date}
+                        onChange={(e) => setFormData({ ...formData, appointment_end_date: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Service-based filtering */}
+            {formData.target_segment === 'service-based' && (
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <div>
+                  <Label>{t('dialogs.send.form.service_filter', { defaultValue: 'Service/Procedure' })}</Label>
+                  <Input
+                    placeholder={t('dialogs.send.form.service_placeholder', { defaultValue: 'Enter service name or ID' })}
+                    value={formData.service_filter}
+                    onChange={(e) => setFormData({ ...formData, service_filter: e.target.value })}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {t('dialogs.send.form.service_hint', { defaultValue: 'Clients who booked this service will receive the notification' })}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Scheduling section */}
+            <div className="space-y-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="scheduled"
+                  checked={formData.scheduled}
+                  onChange={(e) => setFormData({ ...formData, scheduled: e.target.checked })}
+                  className="w-4 h-4"
+                />
+                <Label htmlFor="scheduled" className="cursor-pointer">
+                  {t('dialogs.send.form.schedule_notification', { defaultValue: 'Schedule Notification' })}
+                </Label>
+              </div>
+
+              {formData.scheduled && (
+                <>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>{t('dialogs.send.form.schedule_date', { defaultValue: 'Send Date' })}</Label>
+                      <Input
+                        type="date"
+                        value={formData.schedule_date}
+                        onChange={(e) => setFormData({ ...formData, schedule_date: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label>{t('dialogs.send.form.schedule_time', { defaultValue: 'Send Time' })}</Label>
+                      <Input
+                        type="time"
+                        value={formData.schedule_time}
+                        onChange={(e) => setFormData({ ...formData, schedule_time: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="repeat_enabled"
+                      checked={formData.repeat_enabled}
+                      onChange={(e) => setFormData({ ...formData, repeat_enabled: e.target.checked })}
+                      className="w-4 h-4"
+                    />
+                    <Label htmlFor="repeat_enabled" className="cursor-pointer">
+                      {t('dialogs.send.form.repeat_notification', { defaultValue: 'Repeat Notification' })}
+                    </Label>
+                  </div>
+
+                  {formData.repeat_enabled && (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>{t('dialogs.send.form.repeat_interval', { defaultValue: 'Repeat Interval' })}</Label>
+                        <select
+                          className="w-full px-3 py-2 border rounded-md"
+                          value={formData.repeat_interval}
+                          onChange={(e) => setFormData({ ...formData, repeat_interval: e.target.value })}
+                        >
+                          <option value="daily">{t('dialogs.send.form.repeat_intervals.daily', { defaultValue: 'Daily' })}</option>
+                          <option value="weekly">{t('dialogs.send.form.repeat_intervals.weekly', { defaultValue: 'Weekly' })}</option>
+                          <option value="monthly">{t('dialogs.send.form.repeat_intervals.monthly', { defaultValue: 'Monthly' })}</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label>{t('dialogs.send.form.repeat_end_date', { defaultValue: 'End Repeat On' })}</Label>
+                        <Input
+                          type="date"
+                          value={formData.repeat_end_date}
+                          onChange={(e) => setFormData({ ...formData, repeat_end_date: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>

@@ -25,18 +25,22 @@ export default function AdminDashboard() {
   const loadStats = async () => {
     try {
       setLoading(true);
-      // TODO: Create API endpoint for admin stats
-      // const response = await api.getAdminStats();
-      // setStats(response);
-
-      // Mock data for now
-      setStats({
-        total_users: 1234,
-        active_challenges: 5,
-        total_loyalty_points: 125000,
-        total_referrals: 89,
-        pending_notifications: 12,
+      const response = await fetch('/api/admin-panel/stats', {
+        credentials: 'include',
       });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.stats) {
+          setStats({
+            total_users: data.stats.total_users || 0,
+            active_challenges: data.stats.active_challenges || 0,
+            total_loyalty_points: data.stats.total_loyalty_points || 0,
+            total_referrals: data.stats.total_referrals || 0,
+            pending_notifications: 0, // TODO: Add to backend
+          });
+        }
+      }
     } catch (error) {
       console.error('Error loading stats:', error);
     } finally {
