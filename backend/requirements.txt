@@ -2,7 +2,7 @@ fastapi
 uvicorn
 h11
 httpx
-google-generativeai
+google-genai
 python-multipart
 jinja2
 gunicorn

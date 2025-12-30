@@ -1,6 +1,6 @@
 # backend/bot/core.py
 
-import google.generativeai as genai
+from google import genai
 import httpx
 import os
 import asyncio
@@ -74,13 +74,15 @@ class SalonBot:
                 
         print(f"🔍 API KEYS LOADED: {len(self.api_keys)}")
 
-        # Configure initial model with first key
+        # Create Gemini clients for each API key
+        self.clients = []
         if self.api_keys:
-             genai.configure(api_key=self.api_keys[0])
+            for key in self.api_keys:
+                self.clients.append(genai.Client(api_key=key))
         else:
-             print("❌ NO API KEYS FOUND!")
-             
-        self.model = genai.GenerativeModel(GEMINI_MODEL)
+            print("❌ NO API KEYS FOUND!")
+
+        self.current_client = self.clients[0] if self.clients else None
 
         self.proxy_index = 0
         self.key_index = 0
