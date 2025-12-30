@@ -1,0 +1,104 @@
+{
+  "title": "Benachrichtigungsfeld",
+  "subtitle": "Verwalten und Versenden von Benachrichtigungen an Kunden",
+  "save_template": "Vorlage speichern",
+  "send_notification": "Benachrichtigung senden",
+  "stats": {
+    "total_sent": "Insgesamt gesendet",
+    "email_sent": "E-Mail gesendet",
+    "push_sent": "Push gesendet",
+    "sms_sent": "SMS gesendet"
+  },
+  "templates": {
+    "title": "Benachrichtigungsvorlagen",
+    "description": "Schnelle Vorlagen für allgemeine Benachrichtigungen",
+    "use_template": "Vorlage verwenden"
+  },
+  "history": {
+    "title": "Benachrichtigungsverlauf",
+    "description": "Alle gesendeten und geplanten Benachrichtigungen",
+    "filters": {
+      "all": "Alle",
+      "email": "Email",
+      "push": "Push",
+      "sms": "SMS"
+    },
+    "table": {
+      "status": "Status",
+      "title": "Überschrift",
+      "type": "Typ",
+      "recipients": "Empfänger",
+      "sent_failed": "Gesendet/fehlgeschlagen",
+      "date": "Datum"
+    },
+    "statuses": {
+      "sent": "Gesendet",
+      "pending": "Warten",
+      "failed": "Fehlgeschlagen"
+    },
+    "scheduled": "Geplant"
+  },
+  "types": {
+    "email": "Email",
+    "push": "Push",
+    "sms": "SMS"
+  },
+  "dialogs": {
+    "send": {
+      "title": "Neue Benachrichtigung senden",
+      "description": "Erstellen Sie eine Benachrichtigung und senden Sie sie an Ihre Kunden",
+      "form": {
+        "notification_type": "Benachrichtigungstyp",
+        "title": "Überschrift",
+        "title_placeholder": "Titel der Benachrichtigung",
+        "message": "Nachricht",
+        "message_placeholder": "Benachrichtigungstext",
+        "target_segment": "Zielsegment",
+        "segments": {
+          "all": "Alle Kunden",
+          "active": "Aktive Kunden",
+          "inactive": "Inaktive Kunden",
+          "tier": "Nach Treuestufe"
+        },
+        "loyalty_tier": "Treueniveau",
+        "select_tier": "Ebene auswählen",
+        "tiers": {
+          "bronze": "Bronze",
+          "silver": "Silber",
+          "gold": "Gold",
+          "platinum": "Platin"
+        }
+      }
+    },
+    "template": {
+      "title": "Als Vorlage speichern",
+      "description": "Erstellen Sie eine wiederverwendbare Benachrichtigungsvorlage",
+      "form": {
+        "template_name": "Vorlagenname",
+        "template_name_placeholder": "zum Beispiel Willkommensnachricht",
+        "title": "Überschrift",
+        "title_placeholder": "Titel der Benachrichtigung",
+        "message": "Nachricht",
+        "message_placeholder": "Verwenden Sie {variable} für dynamische Inhalte",
+        "type": "Typ",
+        "types": {
+          "push": "Push-Benachrichtigung",
+          "email": "Email",
+          "sms": "SMS"
+        }
+      }
+    }
+  },
+  "buttons": {
+    "cancel": "Stornieren",
+    "send_notification": "Benachrichtigung senden",
+    "save_template": "Vorlage speichern"
+  },
+  "toasts": {
+    "sent": "Benachrichtigung erfolgreich gesendet",
+    "template_saved": "Vorlage erfolgreich gespeichert",
+    "failed_load": "Benachrichtigungen konnten nicht geladen werden",
+    "failed_send": "Benachrichtigung konnte nicht gesendet werden",
+    "failed_save_template": "Vorlage konnte nicht gespeichert werden"
+  }
+}

@@ -1431,7 +1431,7 @@ export default function Services() {
                   id="promoCode"
                   value={packageFormData.promo_code}
                   onChange={(e) => setPackageFormData({ ...packageFormData, promo_code: e.target.value.toUpperCase() })}
-                  placeholder={t('services:summer2025')}
+                  placeholder={t('services:summer2026')}
                 />
               </div>
               <div>

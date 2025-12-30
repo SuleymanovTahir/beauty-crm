@@ -1,0 +1,14 @@
+{
+  "admin_panel": "Әкімші панелі",
+  "logout": "Шығу",
+  "go_to_crm": "CRM жүйесіне өтіңіз",
+  "menu": {
+    "dashboard": "Басқару тақтасы",
+    "user_management": "Пайдаланушыны басқару",
+    "loyalty_management": "Адалдықты басқару",
+    "referral_program": "Реферат бағдарламасы",
+    "challenges": "Қиындықтар",
+    "notifications": "Хабарландырулар",
+    "photo_gallery": "Фотогалерея"
+  }
+}

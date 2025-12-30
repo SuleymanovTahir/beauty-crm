@@ -1,0 +1,14 @@
+{
+  "admin_panel": "Admin panel",
+  "logout": "Log out",
+  "go_to_crm": "Go to CRM",
+  "menu": {
+    "dashboard": "Control Panel",
+    "user_management": "User management",
+    "loyalty_management": "Loyalty management",
+    "referral_program": "Referral program",
+    "challenges": "Challenges",
+    "notifications": "Notifications",
+    "photo_gallery": "Photo gallery"
+  }
+}

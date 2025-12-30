@@ -1,0 +1,66 @@
+{
+  "title": "Loyalty management",
+  "subtitle": "Manage loyalty levels, points and transactions",
+  "adjust_points": "Adjust points",
+  "stats": {
+    "total_points_issued": "Total points issued",
+    "points_redeemed": "Points redeemed",
+    "active_members": "Active participants",
+    "from_last_month": "from last month"
+  },
+  "tiers": {
+    "title": "Loyalty levels",
+    "description": "Setting up levels and benefits",
+    "starting_level": "booking level",
+    "from_points": "From {{points}} points",
+    "discount": "{{percent}}% discount"
+  },
+  "transactions": {
+    "title": "Latest Transactions",
+    "description": "Latest Loyalty Point Transactions",
+    "search_placeholder": "Search for transactions...",
+    "table": {
+      "client": "Client",
+      "points": "Points",
+      "type": "Type",
+      "reason": "Cause",
+      "date": "Date"
+    },
+    "types": {
+      "earn": "Accrual",
+      "redeem": "Write-off",
+      "adjust": "Adjustment"
+    }
+  },
+  "dialogs": {
+    "edit_tier": {
+      "title": "Edit level",
+      "description": "Update level settings",
+      "tier_name": "Level name",
+      "min_points": "Minimum points",
+      "discount_percent": "Discount (%)"
+    },
+    "adjust_points": {
+      "title": "Adjust points",
+      "description": "Add or debit points from a customer account",
+      "client_email": "Client email",
+      "client_email_placeholder": "client@example.com",
+      "points": "Points (use negative ones to redeem)",
+      "points_placeholder": "100",
+      "reason": "Cause",
+      "reason_placeholder": "Manual adjustment"
+    }
+  },
+  "buttons": {
+    "cancel": "Cancel",
+    "save_changes": "Save changes",
+    "adjust_points": "Adjust points"
+  },
+  "toasts": {
+    "tier_updated": "Level updated successfully",
+    "points_adjusted_add": "{{points}} points added {{email}}",
+    "points_adjusted_deduct": "{{points}} points debited from {{email}}",
+    "failed_load": "Failed to load transactions",
+    "failed_adjust": "Failed to adjust scores"
+  }
+}

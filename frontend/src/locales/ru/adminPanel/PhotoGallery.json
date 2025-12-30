@@ -1,0 +1,74 @@
+{
+  "title": "Фото галерея",
+  "subtitle": "Управление фотографиями клиентов и портфолио",
+  "upload_photo": "Загрузить фото",
+  "stats": {
+    "total_photos": "Всего фото",
+    "total_views": "Всего просмотров",
+    "featured_photos": "Избранных фото",
+    "recent_uploads": "Недавних загрузок"
+  },
+  "filters": {
+    "search_placeholder": "Поиск фотографий...",
+    "all_categories": "Все категории"
+  },
+  "categories": {
+    "haircut": "Стрижки",
+    "coloring": "Окрашивание",
+    "styling": "Укладка",
+    "manicure": "Маникюр",
+    "makeup": "Макияж",
+    "other": "Другое"
+  },
+  "card": {
+    "views": "просмотров",
+    "featured": "Избранное",
+    "toggle_featured": "Переключить избранное",
+    "delete": "Удалить",
+    "uploaded_by": "Загружено {{name}}"
+  },
+  "empty": {
+    "title": "Фотографий пока нет",
+    "description": "Загрузите первые фотографии в галерею"
+  },
+  "dialogs": {
+    "upload": {
+      "title": "Загрузить фото",
+      "description": "Добавить новое фото в галерею",
+      "form": {
+        "photo": "Фото",
+        "choose_file": "Выберите файл",
+        "title": "Название",
+        "title_placeholder": "Название фото",
+        "description": "Описание",
+        "description_placeholder": "Описание фото",
+        "category": "Категория",
+        "select_category": "Выберите категорию"
+      }
+    },
+    "preview": {
+      "title": "Предварительный просмотр фото",
+      "uploaded_by": "Загружено {{name}}",
+      "created_at": "{{date}}",
+      "views": "{{count}} просмотров",
+      "category": "Категория: {{category}}"
+    },
+    "delete": {
+      "confirm": "Вы уверены, что хотите удалить это фото?"
+    }
+  },
+  "buttons": {
+    "cancel": "Отмена",
+    "upload": "Загрузить",
+    "close": "Закрыть"
+  },
+  "toasts": {
+    "uploaded": "Фото успешно загружено",
+    "deleted": "Фото успешно удалено",
+    "featured_updated": "Статус избранного обновлен",
+    "failed_load": "Не удалось загрузить фотографии",
+    "failed_upload": "Не удалось загрузить фото",
+    "failed_delete": "Не удалось удалить фото",
+    "failed_featured": "Не удалось обновить статус избранного"
+  }
+}

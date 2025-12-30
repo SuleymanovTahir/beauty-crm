@@ -1,0 +1,61 @@
+{
+  "menu": {
+    "services": "Auswahl an Dienstleistungen",
+    "professional": "Master",
+    "datetime": "Datum und Uhrzeit",
+    "selected": "ausgewählt",
+    "selectServices": "Wählen Sie einen Dienst aus",
+    "selectProfessional": "Wählen Sie einen Assistenten aus",
+    "selectDateTime": "Wählen Sie die Uhrzeit aus",
+    "reset": "Auswahl zurücksetzen",
+    "completed": "Vollendet",
+    "continue": "Eingabe bestätigen"
+  },
+  "datetime": {
+    "title": "Wählen Sie Datum und Uhrzeit aus",
+    "date": "Datum",
+    "time": "Zeit",
+    "dateFirst": "Bitte wählen Sie zunächst ein Datum aus",
+    "noSlots": "Für diesen Tag ist keine Zeit verfügbar",
+    "morning": "Morgen",
+    "afternoon": "Tag",
+    "evening": "Abend",
+    "selectDateFirst": "Wählen Sie zunächst ein Datum aus"
+  },
+  "professional": {
+    "title": "Wählen Sie einen Spezialisten",
+    "anyAvailable": "Jeder freie Meister",
+    "reviews": "Bewertungen",
+    "firstAvailable": "Der erste verfügbare Master nimmt Ihre Eingabe entgegen"
+  },
+  "confirm": {
+    "title": "Einreisebestätigung",
+    "subtitle": "Bitte überprüfen Sie die Details",
+    "summary": "Buchungsübersicht",
+    "details": "Details",
+    "phone": "Telefon",
+    "bookNow": "Buch",
+    "success": "Anmeldung bestätigt!",
+    "error": "Fehler beim Erstellen des Datensatzes",
+    "phoneNeeded": "Bleiben Sie in Kontakt",
+    "phoneDesc": "Bitte geben Sie Ihre Telefonnummer für Bestätigungen und Aktualisierungen an.",
+    "professional": "Master",
+    "date": "Datum",
+    "time": "Zeit",
+    "confirm": "Eingabe bestätigen",
+    "total": "Gesamt"
+  },
+  "services": {
+    "title": "Wählen Sie Dienste aus",
+    "search": "Nach Dienstleistungen suchen...",
+    "allCategories": "Alle Kategorien",
+    "noDescription": "Professioneller Service",
+    "total": "Gesamtbetrag",
+    "continue": "Weitermachen",
+    "selected": "Dienste ausgewählt"
+  },
+  "totalDuration": "Gesamtdauer",
+  "min": "min",
+  "loading": "Laden...",
+  "newBooking": "Neuer Eintrag"
+}

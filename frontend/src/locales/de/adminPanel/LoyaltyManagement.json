@@ -1,0 +1,66 @@
+{
+  "title": "Treuemanagement",
+  "subtitle": "Verwalten Sie Treuestufen, Punkte und Transaktionen",
+  "adjust_points": "Punkte anpassen",
+  "stats": {
+    "total_points_issued": "Gesamtpunktzahl vergeben",
+    "points_redeemed": "Punkte eingelöst",
+    "active_members": "Aktive Teilnehmer",
+    "from_last_month": "vom letzten Monat"
+  },
+  "tiers": {
+    "title": "Treuestufen",
+    "description": "Einrichten von Stufen und Vorteilen",
+    "starting_level": "Einstiegsniveau",
+    "from_points": "Ab {{points}} Punkten",
+    "discount": "{{percent}}% Rabatt"
+  },
+  "transactions": {
+    "title": "Neueste Transaktionen",
+    "description": "Aktuelle Treuepunkte-Transaktionen",
+    "search_placeholder": "Nach Transaktionen suchen...",
+    "table": {
+      "client": "Kunde",
+      "points": "Punkte",
+      "type": "Typ",
+      "reason": "Ursache",
+      "date": "Datum"
+    },
+    "types": {
+      "earn": "Rückstellung",
+      "redeem": "Abschreibung",
+      "adjust": "Einstellung"
+    }
+  },
+  "dialogs": {
+    "edit_tier": {
+      "title": "Ebene bearbeiten",
+      "description": "Ebeneneinstellungen aktualisieren",
+      "tier_name": "Levelname",
+      "min_points": "Mindestpunktzahl",
+      "discount_percent": "Rabatt (%)"
+    },
+    "adjust_points": {
+      "title": "Punkte anpassen",
+      "description": "Punkte einem Kundenkonto hinzufügen oder abbuchen",
+      "client_email": "Kunden-E-Mail",
+      "client_email_placeholder": "client@example.com",
+      "points": "Punkte (negative Punkte zum Einlösen verwenden)",
+      "points_placeholder": "100",
+      "reason": "Ursache",
+      "reason_placeholder": "Manuelle Einstellung"
+    }
+  },
+  "buttons": {
+    "cancel": "Stornieren",
+    "save_changes": "Änderungen speichern",
+    "adjust_points": "Punkte anpassen"
+  },
+  "toasts": {
+    "tier_updated": "Level erfolgreich aktualisiert",
+    "points_adjusted_add": "{{points}} Punkte hinzugefügt {{email}}",
+    "points_adjusted_deduct": "{{points}} Punkte wurden von {{email}} abgebucht",
+    "failed_load": "Transaktionen konnten nicht geladen werden",
+    "failed_adjust": "Punkte konnten nicht angepasst werden"
+  }
+}

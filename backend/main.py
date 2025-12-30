@@ -98,6 +98,7 @@ from api.sitemap import router as sitemap_router
 from api.feedback import router as feedback_router
 from api.sitemap import router as sitemap_router
 from api.seo_metadata import router as seo_metadata_router
+from api.admin_panel import router as admin_panel_router
 from api.holidays import router as holidays_router
 from api.visitor_analytics import router as visitor_analytics_router
 from api.analytics import router as analytics_router
@@ -181,6 +182,7 @@ app.include_router(analytics_router, prefix="/api")  # для аналитики
 app.include_router(admin_registrations_router, prefix="/api")  # Admin Registrations Management
 app.include_router(challenges_router, prefix="/api")  # Challenges API
 app.include_router(client_gallery_admin_router, prefix="/api")  # Client Gallery Admin API
+app.include_router(admin_panel_router, prefix="/api")  # Admin Panel API
 
 
 # ===== MIDDLEWARE =====

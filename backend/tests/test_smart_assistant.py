@@ -107,7 +107,7 @@ def test_smart_assistant():
         test_booking = {
             'service': 'Маникюр',
             'master': 'Jennifer',
-            'datetime': '2025-11-20 15:00',
+            'datetime': '2026-11-20 15:00',
             'phone': '+1234567890',
             'name': 'Анна'
         }

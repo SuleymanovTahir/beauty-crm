@@ -32,6 +32,32 @@ def get_all_bookings():
     conn.close()
     return bookings
 
+def get_bookings_by_master(master_name: str):
+    """Получить записи по имени мастера"""
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            SELECT id, instagram_id, service_name, datetime, phone,
+                   name, status, created_at, revenue, master
+            FROM bookings
+            WHERE master = %s
+            ORDER BY datetime DESC
+        """, (master_name,))
+    except psycopg2.OperationalError:
+        # Fallback для старой схемы без master
+        c.execute("""
+            SELECT id, instagram_id, service_name, datetime, phone,
+                   name, status, created_at, revenue, NULL as master
+            FROM bookings
+            WHERE 1=0
+        """)
+
+    bookings = c.fetchall()
+    conn.close()
+    return bookings
+
 def get_bookings_by_client(instagram_id: str, phone: str = None):
     """
     Получить записи клиента по Instagram ID или телефону.
@@ -45,7 +71,7 @@ def get_bookings_by_client(instagram_id: str, phone: str = None):
         query = """
             SELECT id, instagram_id, service_name, datetime, phone,
                    name, status, created_at, revenue, master
-            FROM bookings 
+            FROM bookings
             WHERE instagram_id = %s
         """
         params = [instagram_id]
@@ -53,16 +79,16 @@ def get_bookings_by_client(instagram_id: str, phone: str = None):
         if phone:
             query += " OR phone = %s"
             params.append(phone)
-            
+
         query += " ORDER BY created_at DESC"
-        
+
         c.execute(query, tuple(params))
     except psycopg2.OperationalError:
          # Fallback (без master)
         query = """
             SELECT id, instagram_id, service_name, datetime, phone,
                    name, status, created_at, revenue, NULL as master
-            FROM bookings 
+            FROM bookings
             WHERE instagram_id = %s
         """
         params = [instagram_id]
@@ -70,11 +96,11 @@ def get_bookings_by_client(instagram_id: str, phone: str = None):
         if phone:
             query += " OR phone = %s"
             params.append(phone)
-            
+
         query += " ORDER BY created_at DESC"
-        
+
         c.execute(query, tuple(params))
-        
+
     bookings = c.fetchall()
     conn.close()
     

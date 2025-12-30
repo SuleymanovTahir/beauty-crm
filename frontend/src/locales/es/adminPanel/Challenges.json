@@ -1,0 +1,63 @@
+{
+  "title": "Desafíos",
+  "subtitle": "Crear y gestionar desafíos de participación",
+  "create_challenge": "Crea un desafío",
+  "stats": {
+    "active_challenges": "Retos activos",
+    "total_participants": "Total de participantes",
+    "completions": "Terminación"
+  },
+  "types": {
+    "visits": "Visitas",
+    "spending": "Gastos",
+    "referrals": "Referencias",
+    "services": "Servicios"
+  },
+  "statuses": {
+    "active": "Activo",
+    "upcoming": "Próximo",
+    "completed": "Terminado"
+  },
+  "card": {
+    "target": "Objetivo",
+    "reward": "Premio",
+    "progress": "Progreso",
+    "completed": "terminado",
+    "pts": "punto"
+  },
+  "dialogs": {
+    "create": {
+      "title": "Crea un nuevo desafío",
+      "title_edit": "Editar desafío",
+      "description": "Definir parámetros de desafío y recompensas.",
+      "form": {
+        "title": "Nombre",
+        "title_placeholder": "Reto de belleza de verano",
+        "description": "Descripción",
+        "description_placeholder": "Visita el salón 3 veces este mes.",
+        "challenge_type": "Tipo de desafío",
+        "target_value": "Valor objetivo",
+        "target_placeholder": "3",
+        "reward_points": "Recompensa con puntos",
+        "reward_placeholder": "1000",
+        "start_date": "fecha de inicio",
+        "end_date": "Fecha de finalización"
+      }
+    },
+    "delete": {
+      "confirm": "¿Estás seguro de que quieres eliminar este desafío?"
+    }
+  },
+  "buttons": {
+    "cancel": "Cancelar",
+    "create_challenge": "Crea un desafío",
+    "update_challenge": "Desafío de actualización"
+  },
+  "toasts": {
+    "created": "Reto creado exitosamente",
+    "deleted": "Desafío eliminado exitosamente",
+    "failed_load": "No se pudieron cargar los desafíos",
+    "failed_create": "No se pudo crear el desafío",
+    "failed_delete": "No se pudo eliminar el desafío"
+  }
+}

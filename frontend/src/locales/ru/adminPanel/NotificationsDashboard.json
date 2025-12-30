@@ -1,0 +1,104 @@
+{
+  "title": "Панель уведомлений",
+  "subtitle": "Управление и отправка уведомлений клиентам",
+  "save_template": "Сохранить шаблон",
+  "send_notification": "Отправить уведомление",
+  "stats": {
+    "total_sent": "Всего отправлено",
+    "email_sent": "Email отправлено",
+    "push_sent": "Push отправлено",
+    "sms_sent": "SMS отправлено"
+  },
+  "templates": {
+    "title": "Шаблоны уведомлений",
+    "description": "Быстрые шаблоны для распространенных уведомлений",
+    "use_template": "Использовать шаблон"
+  },
+  "history": {
+    "title": "История уведомлений",
+    "description": "Все отправленные и запланированные уведомления",
+    "filters": {
+      "all": "Все",
+      "email": "Email",
+      "push": "Push",
+      "sms": "SMS"
+    },
+    "table": {
+      "status": "Статус",
+      "title": "Заголовок",
+      "type": "Тип",
+      "recipients": "Получатели",
+      "sent_failed": "Отправлено/Не удалось",
+      "date": "Дата"
+    },
+    "statuses": {
+      "sent": "Отправлено",
+      "pending": "В ожидании",
+      "failed": "Не удалось"
+    },
+    "scheduled": "Запланировано"
+  },
+  "types": {
+    "email": "Email",
+    "push": "Push",
+    "sms": "SMS"
+  },
+  "dialogs": {
+    "send": {
+      "title": "Отправить новое уведомление",
+      "description": "Создать и отправить уведомление вашим клиентам",
+      "form": {
+        "notification_type": "Тип уведомления",
+        "title": "Заголовок",
+        "title_placeholder": "Заголовок уведомления",
+        "message": "Сообщение",
+        "message_placeholder": "Текст уведомления",
+        "target_segment": "Целевой сегмент",
+        "segments": {
+          "all": "Все клиенты",
+          "active": "Активные клиенты",
+          "inactive": "Неактивные клиенты",
+          "tier": "По уровню лояльности"
+        },
+        "loyalty_tier": "Уровень лояльности",
+        "select_tier": "Выберите уровень",
+        "tiers": {
+          "bronze": "Бронза",
+          "silver": "Серебро",
+          "gold": "Золото",
+          "platinum": "Платина"
+        }
+      }
+    },
+    "template": {
+      "title": "Сохранить как шаблон",
+      "description": "Создать многоразовый шаблон уведомления",
+      "form": {
+        "template_name": "Название шаблона",
+        "template_name_placeholder": "например, Приветственное сообщение",
+        "title": "Заголовок",
+        "title_placeholder": "Заголовок уведомления",
+        "message": "Сообщение",
+        "message_placeholder": "Используйте {переменная} для динамического контента",
+        "type": "Тип",
+        "types": {
+          "push": "Push-уведомление",
+          "email": "Email",
+          "sms": "SMS"
+        }
+      }
+    }
+  },
+  "buttons": {
+    "cancel": "Отмена",
+    "send_notification": "Отправить уведомление",
+    "save_template": "Сохранить шаблон"
+  },
+  "toasts": {
+    "sent": "Уведомление успешно отправлено",
+    "template_saved": "Шаблон успешно сохранен",
+    "failed_load": "Не удалось загрузить уведомления",
+    "failed_send": "Не удалось отправить уведомление",
+    "failed_save_template": "Не удалось сохранить шаблон"
+  }
+}

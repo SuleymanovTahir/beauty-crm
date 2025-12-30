@@ -13,6 +13,7 @@ from db import (
     get_or_create_client, update_client_info, log_activity,
     get_bookings_by_phone,
     get_bookings_by_client,
+    get_bookings_by_master,
     get_booking_progress,
     update_booking_progress,
 )
@@ -57,14 +58,46 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
-    # Try to find by both Instagram ID (username) and Phone
-    # This handles cases where phone is missing or mismatching
+
+    user_id = user.get("id")
     instagram_id = user.get("username")
     phone = user.get("phone")
-    
-    # Fix for legacy or web-only users without phone
-    bookings = get_bookings_by_client(instagram_id, phone)
+    full_name = user.get("full_name")
+
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        # Primary: Search by user_id (most reliable)
+        c.execute("""
+            SELECT id, instagram_id, service_name, datetime, phone,
+                   name, status, created_at, revenue, master
+            FROM bookings
+            WHERE user_id = %s
+            ORDER BY datetime DESC
+        """, (user_id,))
+        bookings = c.fetchall()
+
+        # Fallback: If no bookings found by user_id, try other methods
+        if len(bookings) == 0:
+            # Try by username/phone/name
+            c.execute("""
+                SELECT id, instagram_id, service_name, datetime, phone,
+                       name, status, created_at, revenue, master
+                FROM bookings
+                WHERE instagram_id = %s
+                   OR (phone IS NOT NULL AND phone = %s)
+                   OR (name IS NOT NULL AND LOWER(name) = LOWER(%s))
+                ORDER BY datetime DESC
+            """, (instagram_id, phone or '', full_name or ''))
+            bookings = c.fetchall()
+
+    except Exception as e:
+        from utils.logger import log_error
+        log_error(f"Error fetching client bookings: {e}", "bookings")
+        bookings = []
+    finally:
+        conn.close()
     
     # Format dates
     formatted_bookings = []
@@ -89,7 +122,7 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
 
 @router.get("/bookings")
 async def list_bookings(session_token: Optional[str] = Cookie(None)):
-    """Получить все записи"""
+    """Получить все записи (или записи конкретного мастера для employees)"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
@@ -98,8 +131,13 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
     if user["role"] == "client":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
-
-    bookings = get_all_bookings()
+    # Если сотрудник - показываем только его записи
+    if user["role"] == "employee":
+        full_name = user.get("full_name", "")
+        bookings = get_bookings_by_master(full_name)
+    else:
+        # Админ/менеджер видят все записи
+        bookings = get_all_bookings()
 
     # Добавляем информацию о мессенджерах для каждой записи
     bookings_with_messengers = []

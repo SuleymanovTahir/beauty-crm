@@ -62,7 +62,7 @@ def format_date_for_display(dt: Optional[datetime] = None) -> str:
         dt: datetime object (по умолчанию текущее время)
     
     Returns:
-        Строка вида "2025-11-26"
+        Строка вида "2026-11-26"
     """
     if dt is None:
         dt = get_current_time()
@@ -76,7 +76,7 @@ def format_datetime_for_display(dt: Optional[datetime] = None) -> str:
         dt: datetime object (по умолчанию текущее время)
     
     Returns:
-        Строка вида "2025-11-26 18:13"
+        Строка вида "2026-11-26 18:13"
     """
     if dt is None:
         dt = get_current_time()

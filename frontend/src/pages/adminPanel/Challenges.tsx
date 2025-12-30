@@ -1,6 +1,7 @@
 // /frontend/src/pages/adminPanel/Challenges.tsx
 import { useState, useEffect } from 'react';
 import { Plus, Target, Calendar, Trophy, Users, Edit, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -33,6 +34,7 @@ interface Challenge {
 }
 
 export default function Challenges() {
+  const { t } = useTranslation(['adminPanel/Challenges', 'common']);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -65,8 +67,8 @@ export default function Challenges() {
           type: 'visits',
           target_value: 3,
           reward_points: 1000,
-          start_date: '2025-06-01',
-          end_date: '2025-06-30',
+          start_date: '2026-06-01',
+          end_date: '2026-06-30',
           status: 'active',
           participants: 45,
           completions: 12,
@@ -78,8 +80,8 @@ export default function Challenges() {
           type: 'referrals',
           target_value: 2,
           reward_points: 1500,
-          start_date: '2025-06-01',
-          end_date: '2025-12-31',
+          start_date: '2026-06-01',
+          end_date: '2026-12-31',
           status: 'active',
           participants: 28,
           completions: 5,
@@ -87,7 +89,7 @@ export default function Challenges() {
       ]);
     } catch (error) {
       console.error('Error loading challenges:', error);
-      toast.error('Failed to load challenges');
+      toast.error(t('toasts.failed_load'));
     } finally {
       setLoading(false);
     }
@@ -96,7 +98,7 @@ export default function Challenges() {
   const handleCreateChallenge = async () => {
     try {
       // TODO: API call
-      toast.success('Challenge created successfully');
+      toast.success(t('toasts.created'));
       setShowCreateDialog(false);
       setFormData({
         title: '',
@@ -109,39 +111,39 @@ export default function Challenges() {
       });
       loadChallenges();
     } catch (error) {
-      toast.error('Failed to create challenge');
+      toast.error(t('toasts.failed_create'));
     }
   };
 
   const handleDeleteChallenge = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this challenge?')) return;
+    if (!confirm(t('dialogs.delete.confirm'))) return;
 
     try {
       // TODO: API call
-      toast.success('Challenge deleted successfully');
+      toast.success(t('toasts.deleted'));
       loadChallenges();
     } catch (error) {
-      toast.error('Failed to delete challenge');
+      toast.error(t('toasts.failed_delete'));
     }
   };
 
   const stats = [
     {
-      title: 'Active Challenges',
+      title: t('stats.active_challenges'),
       value: challenges.filter(c => c.status === 'active').length.toString(),
       icon: Target,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
     },
     {
-      title: 'Total Participants',
+      title: t('stats.total_participants'),
       value: challenges.reduce((sum, c) => sum + c.participants, 0).toString(),
       icon: Users,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100',
     },
     {
-      title: 'Completions',
+      title: t('stats.completions'),
       value: challenges.reduce((sum, c) => sum + c.completions, 0).toString(),
       icon: Trophy,
       color: 'text-yellow-600',
@@ -150,10 +152,10 @@ export default function Challenges() {
   ];
 
   const typeLabels: Record<Challenge['type'], string> = {
-    visits: 'Visits',
-    spending: 'Spending',
-    referrals: 'Referrals',
-    services: 'Services',
+    visits: t('types.visits'),
+    spending: t('types.spending'),
+    referrals: t('types.referrals'),
+    services: t('types.services'),
   };
 
   const statusColors: Record<Challenge['status'], string> = {
@@ -167,12 +169,12 @@ export default function Challenges() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Challenges</h1>
-          <p className="text-gray-500 mt-1">Create and manage engagement challenges</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+          <p className="text-gray-500 mt-1">{t('subtitle')}</p>
         </div>
         <Button onClick={() => setShowCreateDialog(true)}>
           <Plus className="w-4 h-4 mr-2" />
-          Create Challenge
+          {t('create_challenge')}
         </Button>
       </div>
 
@@ -212,7 +214,7 @@ export default function Challenges() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <Badge className={statusColors[challenge.status]}>
-                        {challenge.status}
+                        {t(`statuses.${challenge.status}`)}
                       </Badge>
                       <Badge variant="outline">{typeLabels[challenge.type]}</Badge>
                     </div>
@@ -244,19 +246,19 @@ export default function Challenges() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <div className="text-sm text-gray-500">Target</div>
+                    <div className="text-sm text-gray-500">{t('card.target')}</div>
                     <div className="text-lg font-semibold">{challenge.target_value} {typeLabels[challenge.type].toLowerCase()}</div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500">Reward</div>
-                    <div className="text-lg font-semibold text-purple-600">{challenge.reward_points} pts</div>
+                    <div className="text-sm text-gray-500">{t('card.reward')}</div>
+                    <div className="text-lg font-semibold text-purple-600">{challenge.reward_points} {t('card.pts')}</div>
                   </div>
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-gray-500">Progress</span>
-                    <span className="font-medium">{challenge.completions}/{challenge.participants} completed</span>
+                    <span className="text-gray-500">{t('card.progress')}</span>
+                    <span className="font-medium">{challenge.completions}/{challenge.participants} {t('card.completed')}</span>
                   </div>
                   <Progress value={completionRate} className="h-2" />
                 </div>
@@ -282,62 +284,62 @@ export default function Challenges() {
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{editingChallenge ? 'Edit Challenge' : 'Create New Challenge'}</DialogTitle>
-            <DialogDescription>Define challenge parameters and rewards</DialogDescription>
+            <DialogTitle>{editingChallenge ? t('dialogs.create.title_edit') : t('dialogs.create.title')}</DialogTitle>
+            <DialogDescription>{t('dialogs.create.description')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label>Title</Label>
+              <Label>{t('dialogs.create.form.title')}</Label>
               <Input
-                placeholder="Summer Glow Challenge"
+                placeholder={t('dialogs.create.form.title_placeholder')}
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               />
             </div>
             <div>
-              <Label>Description</Label>
+              <Label>{t('dialogs.create.form.description')}</Label>
               <Textarea
-                placeholder="Visit the salon 3 times this month"
+                placeholder={t('dialogs.create.form.description_placeholder')}
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Challenge Type</Label>
+                <Label>{t('dialogs.create.form.challenge_type')}</Label>
                 <select
                   className="w-full px-3 py-2 border rounded-md"
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value as Challenge['type'] })}
                 >
-                  <option value="visits">Visits</option>
-                  <option value="spending">Spending</option>
-                  <option value="referrals">Referrals</option>
-                  <option value="services">Services</option>
+                  <option value="visits">{t('types.visits')}</option>
+                  <option value="spending">{t('types.spending')}</option>
+                  <option value="referrals">{t('types.referrals')}</option>
+                  <option value="services">{t('types.services')}</option>
                 </select>
               </div>
               <div>
-                <Label>Target Value</Label>
+                <Label>{t('dialogs.create.form.target_value')}</Label>
                 <Input
                   type="number"
-                  placeholder="3"
+                  placeholder={t('dialogs.create.form.target_placeholder')}
                   value={formData.target_value}
                   onChange={(e) => setFormData({ ...formData, target_value: parseInt(e.target.value) })}
                 />
               </div>
             </div>
             <div>
-              <Label>Reward Points</Label>
+              <Label>{t('dialogs.create.form.reward_points')}</Label>
               <Input
                 type="number"
-                placeholder="1000"
+                placeholder={t('dialogs.create.form.reward_placeholder')}
                 value={formData.reward_points}
                 onChange={(e) => setFormData({ ...formData, reward_points: parseInt(e.target.value) })}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Start Date</Label>
+                <Label>{t('dialogs.create.form.start_date')}</Label>
                 <Input
                   type="date"
                   value={formData.start_date}
@@ -345,7 +347,7 @@ export default function Challenges() {
                 />
               </div>
               <div>
-                <Label>End Date</Label>
+                <Label>{t('dialogs.create.form.end_date')}</Label>
                 <Input
                   type="date"
                   value={formData.end_date}
@@ -356,10 +358,10 @@ export default function Challenges() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
-              Cancel
+              {t('buttons.cancel')}
             </Button>
             <Button onClick={handleCreateChallenge}>
-              {editingChallenge ? 'Update Challenge' : 'Create Challenge'}
+              {editingChallenge ? t('buttons.update_challenge') : t('buttons.create_challenge')}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,0 +1,104 @@
+{
+  "title": "Notification panel",
+  "subtitle": "Managing and sending notifications to clients",
+  "save_template": "Save template",
+  "send_notification": "Send notification",
+  "stats": {
+    "total_sent": "Total sent",
+    "email_sent": "Email sent",
+    "push_sent": "Push sent",
+    "sms_sent": "SMS sent"
+  },
+  "templates": {
+    "title": "Notification templates",
+    "description": "Quick templates for common notifications",
+    "use_template": "Use template"
+  },
+  "history": {
+    "title": "Notification history",
+    "description": "All sent and scheduled notifications",
+    "filters": {
+      "all": "All",
+      "email": "Email",
+      "push": "Push",
+      "sms": "SMS"
+    },
+    "table": {
+      "status": "Status",
+      "title": "Heading",
+      "type": "Type",
+      "recipients": "Recipients",
+      "sent_failed": "Sent/Failed",
+      "date": "Date"
+    },
+    "statuses": {
+      "sent": "Sent",
+      "pending": "Waiting",
+      "failed": "Failed"
+    },
+    "scheduled": "Planned"
+  },
+  "types": {
+    "email": "Email",
+    "push": "Push",
+    "sms": "SMS"
+  },
+  "dialogs": {
+    "send": {
+      "title": "Send new notification",
+      "description": "Create and send notification to your customers",
+      "form": {
+        "notification_type": "Notification type",
+        "title": "Heading",
+        "title_placeholder": "Notification title",
+        "message": "Message",
+        "message_placeholder": "Notification text",
+        "target_segment": "Target segment",
+        "segments": {
+          "all": "All clients",
+          "active": "Active clients",
+          "inactive": "Inactive clients",
+          "tier": "By loyalty level"
+        },
+        "loyalty_tier": "Loyalty level",
+        "select_tier": "Select level",
+        "tiers": {
+          "bronze": "Bronze",
+          "silver": "Silver",
+          "gold": "Gold",
+          "platinum": "Platinum"
+        }
+      }
+    },
+    "template": {
+      "title": "Save as template",
+      "description": "Create a reusable notification template",
+      "form": {
+        "template_name": "Template name",
+        "template_name_placeholder": "for example, Welcome message",
+        "title": "Heading",
+        "title_placeholder": "Notification title",
+        "message": "Message",
+        "message_placeholder": "Use {variable} for dynamic content",
+        "type": "Type",
+        "types": {
+          "push": "Push notification",
+          "email": "Email",
+          "sms": "SMS"
+        }
+      }
+    }
+  },
+  "buttons": {
+    "cancel": "Cancel",
+    "send_notification": "Send notification",
+    "save_template": "Save template"
+  },
+  "toasts": {
+    "sent": "Notification sent successfully",
+    "template_saved": "Template saved successfully",
+    "failed_load": "Failed to load notifications",
+    "failed_send": "Failed to send notification",
+    "failed_save_template": "Failed to save template"
+  }
+}

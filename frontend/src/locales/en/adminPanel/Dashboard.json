@@ -1,0 +1,47 @@
+{
+  "title": "Control Panel",
+  "subtitle": "User, loyalty and engagement management",
+  "quick_actions": {
+    "title": "Quick Actions",
+    "user_management": {
+      "title": "User management",
+      "description": "Manage user accounts and permissions"
+    },
+    "loyalty_management": {
+      "title": "Loyalty management",
+      "description": "Manage loyalty points and levels"
+    },
+    "referral_program": {
+      "title": "Referral program",
+      "description": "View and manage referrals"
+    },
+    "challenges": {
+      "title": "Challenges",
+      "description": "Creation and management of challenges"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Sending and managing notifications"
+    },
+    "photo_gallery": {
+      "title": "Photo gallery",
+      "description": "Client photo and portfolio management"
+    }
+  },
+  "stats": {
+    "total_users": "Total users",
+    "active_challenges": "Active challenges",
+    "loyalty_points_issued": "Loyalty points issued",
+    "total_referrals": "Total referrals",
+    "from_last_month": "from last month"
+  },
+  "recent_activity": {
+    "title": "Recent Activity",
+    "subtitle": "Recent actions in the admin panel",
+    "new_tier_activated": "New loyalty level activated",
+    "users_registered": "{{count}} new users registered",
+    "challenge_completed": "Challenge \"{{name}}\" completed by {{count}} users",
+    "hours_ago": "{{count}} hours ago",
+    "day_ago": "{{count}} day ago"
+  }
+}

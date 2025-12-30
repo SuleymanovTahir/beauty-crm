@@ -1,0 +1,66 @@
+{
+  "title": "Gestión de fidelización",
+  "subtitle": "Gestionar niveles de fidelidad, puntos y transacciones.",
+  "adjust_points": "Ajustar puntos",
+  "stats": {
+    "total_points_issued": "Puntos totales emitidos",
+    "points_redeemed": "Puntos canjeados",
+    "active_members": "Participantes activos",
+    "from_last_month": "del mes pasado"
+  },
+  "tiers": {
+    "title": "Niveles de fidelidad",
+    "description": "Configuración de niveles y beneficios",
+    "starting_level": "Nivel de entrada",
+    "from_points": "Desde {{points}} puntos",
+    "discount": "{{percent}}% de descuento"
+  },
+  "transactions": {
+    "title": "Últimas transacciones",
+    "description": "Últimas transacciones de puntos de fidelidad",
+    "search_placeholder": "Buscar transacciones...",
+    "table": {
+      "client": "Cliente",
+      "points": "Agujas",
+      "type": "Tipo",
+      "reason": "Causa",
+      "date": "Fecha"
+    },
+    "types": {
+      "earn": "Devengo",
+      "redeem": "Pedir por escrito",
+      "adjust": "Ajuste"
+    }
+  },
+  "dialogs": {
+    "edit_tier": {
+      "title": "Editar nivel",
+      "description": "Configuración del nivel de actualización",
+      "tier_name": "Nombre del nivel",
+      "min_points": "Puntos minimos",
+      "discount_percent": "Descuento (%)"
+    },
+    "adjust_points": {
+      "title": "Ajustar puntos",
+      "description": "Agregar o debitar puntos de una cuenta de cliente",
+      "client_email": "Correo electrónico del cliente",
+      "client_email_placeholder": "client@example.com",
+      "points": "Puntos (use los negativos para canjear)",
+      "points_placeholder": "100",
+      "reason": "Causa",
+      "reason_placeholder": "Ajuste manual"
+    }
+  },
+  "buttons": {
+    "cancel": "Cancelar",
+    "save_changes": "Guardar cambios",
+    "adjust_points": "Ajustar puntos"
+  },
+  "toasts": {
+    "tier_updated": "Nivel actualizado exitosamente",
+    "points_adjusted_add": "{{points}} puntos agregados {{email}}",
+    "points_adjusted_deduct": "{{points}} puntos debitados de {{email}}",
+    "failed_load": "No se pudieron cargar las transacciones",
+    "failed_adjust": "No se pudieron ajustar las puntuaciones"
+  }
+}

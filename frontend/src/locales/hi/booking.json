@@ -1,0 +1,61 @@
+{
+  "menu": {
+    "services": "सेवाओं का चयन",
+    "professional": "मालिक",
+    "datetime": "तिथि और समय",
+    "selected": "चयनित",
+    "selectServices": "एक सेवा चुनें",
+    "selectProfessional": "एक विज़ार्ड चुनें",
+    "selectDateTime": "समय चुनें",
+    "reset": "चयन रीसेट करें",
+    "completed": "पुरा होना।",
+    "continue": "प्रवेश की पुष्टि करें"
+  },
+  "datetime": {
+    "title": "दिनांक और समय चुनें",
+    "date": "तारीख",
+    "time": "समय",
+    "dateFirst": "कृपया पहले एक तारीख चुनें",
+    "noSlots": "इस दिन के लिए कोई समय उपलब्ध नहीं है",
+    "morning": "सुबह",
+    "afternoon": "दिन",
+    "evening": "शाम",
+    "selectDateFirst": "सबसे पहले एक तारीख चुनें"
+  },
+  "professional": {
+    "title": "एक विशेषज्ञ चुनें",
+    "anyAvailable": "कोई भी स्वतंत्र गुरु",
+    "reviews": "समीक्षा",
+    "firstAvailable": "पहला उपलब्ध मास्टर आपकी प्रविष्टि स्वीकार करेगा"
+  },
+  "confirm": {
+    "title": "प्रवेश की पुष्टि",
+    "subtitle": "कृपया विवरण जांचें",
+    "summary": "बुकिंग सारांश",
+    "details": "विवरण",
+    "phone": "टेलीफ़ोन",
+    "bookNow": "किताब",
+    "success": "पंजीकरण की पुष्टि!",
+    "error": "रिकॉर्ड बनाने में त्रुटि",
+    "phoneNeeded": "संपर्क में रहना",
+    "phoneDesc": "कृपया पुष्टि और अपडेट के लिए अपना फ़ोन नंबर शामिल करें।",
+    "professional": "मालिक",
+    "date": "तारीख",
+    "time": "समय",
+    "confirm": "प्रवेश की पुष्टि करें",
+    "total": "कुल"
+  },
+  "services": {
+    "title": "सेवाएँ चुनें",
+    "search": "सेवाएँ खोजें...",
+    "allCategories": "सभी श्रेणियां",
+    "noDescription": "व्यावसायिक सेवा",
+    "total": "कुल राशि",
+    "continue": "जारी रखना",
+    "selected": "सेवाएँ चयनित"
+  },
+  "totalDuration": "कुल अवधि",
+  "min": "मिन",
+  "loading": "लोड हो रहा है...",
+  "newBooking": "नई प्रविष्टि"
+}

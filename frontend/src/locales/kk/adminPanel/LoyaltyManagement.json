@@ -1,0 +1,66 @@
+{
+  "title": "Адалдықты басқару",
+  "subtitle": "Адалдық деңгейлерін, ұпайларды және транзакцияларды басқарыңыз",
+  "adjust_points": "Нүктелерді реттеңіз",
+  "stats": {
+    "total_points_issued": "Берілген ұпайлардың жалпы саны",
+    "points_redeemed": "Ұпайлар белсендірілді",
+    "active_members": "Белсенді қатысушылар",
+    "from_last_month": "өткен айдан бастап"
+  },
+  "tiers": {
+    "title": "Адалдық деңгейлері",
+    "description": "Деңгейлер мен артықшылықтарды орнату",
+    "starting_level": "Кіру деңгейі",
+    "from_points": "{{points}} ұпайдан",
+    "discount": "{{percent}}% жеңілдік"
+  },
+  "transactions": {
+    "title": "Соңғы транзакциялар",
+    "description": "Ең соңғы адалдық ұпай транзакциялары",
+    "search_placeholder": "Транзакцияларды іздеу...",
+    "table": {
+      "client": "Клиент",
+      "points": "Ұпайлар",
+      "type": "Түр",
+      "reason": "Себеп",
+      "date": "Күн"
+    },
+    "types": {
+      "earn": "Есептеу",
+      "redeem": "Есеп шоттан шығарып тастау",
+      "adjust": "Реттеу"
+    }
+  },
+  "dialogs": {
+    "edit_tier": {
+      "title": "Деңгейді өңдеу",
+      "description": "Деңгей параметрлерін жаңарту",
+      "tier_name": "Деңгей атауы",
+      "min_points": "Минималды ұпайлар",
+      "discount_percent": "Жеңілдік (%)"
+    },
+    "adjust_points": {
+      "title": "Нүктелерді реттеңіз",
+      "description": "Тұтынушы шотынан ұпайларды қосыңыз немесе есептеңіз",
+      "client_email": "Клиенттің электрондық поштасы",
+      "client_email_placeholder": "client@example.com",
+      "points": "Ұпайлар (қайта алу үшін теріс ұпайларды пайдаланыңыз)",
+      "points_placeholder": "100",
+      "reason": "Себеп",
+      "reason_placeholder": "Қолмен реттеу"
+    }
+  },
+  "buttons": {
+    "cancel": "Болдырмау",
+    "save_changes": "Өзгерістерді сақтау",
+    "adjust_points": "Нүктелерді реттеңіз"
+  },
+  "toasts": {
+    "tier_updated": "Деңгей сәтті жаңартылды",
+    "points_adjusted_add": "{{points}} ұпай қосылды {{email}}",
+    "points_adjusted_deduct": "{{email}} бастап есептен шығарылған {{points}} ұпай",
+    "failed_load": "Транзакциялар жүктелмеді",
+    "failed_adjust": "Ұпайларды реттеу мүмкін болмады"
+  }
+}

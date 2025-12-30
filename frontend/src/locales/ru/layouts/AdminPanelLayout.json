@@ -1,0 +1,14 @@
+{
+  "admin_panel": "Админ панель",
+  "logout": "Выйти",
+  "go_to_crm": "Перейти в CRM",
+  "menu": {
+    "dashboard": "Панель управления",
+    "user_management": "Управление пользователями",
+    "loyalty_management": "Управление лояльностью",
+    "referral_program": "Реферальная программа",
+    "challenges": "Челленджи",
+    "notifications": "Уведомления",
+    "photo_gallery": "Фото галерея"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "title": "Gestão de fidelidade",
+  "subtitle": "Gerencie níveis de fidelidade, pontos e transações",
+  "adjust_points": "Ajustar pontos",
+  "stats": {
+    "total_points_issued": "Total de pontos emitidos",
+    "points_redeemed": "Pontos resgatados",
+    "active_members": "Participantes ativos",
+    "from_last_month": "do mês passado"
+  },
+  "tiers": {
+    "title": "Níveis de fidelidade",
+    "description": "Configurando níveis e benefícios",
+    "starting_level": "Nível de entrada",
+    "from_points": "De {{pontos}} pontos",
+    "discount": "{{percent}}% de desconto"
+  },
+  "transactions": {
+    "title": "Últimas transações",
+    "description": "Últimas transações de pontos de fidelidade",
+    "search_placeholder": "Pesquisar transações...",
+    "table": {
+      "client": "Cliente",
+      "points": "Pontos",
+      "type": "Tipo",
+      "reason": "Causa",
+      "date": "Data"
+    },
+    "types": {
+      "earn": "Acumulação",
+      "redeem": "Eliminar",
+      "adjust": "Ajuste"
+    }
+  },
+  "dialogs": {
+    "edit_tier": {
+      "title": "Editar nível",
+      "description": "Atualizar configurações de nível",
+      "tier_name": "Nome do nível",
+      "min_points": "Pontos mínimos",
+      "discount_percent": "Desconto (%)"
+    },
+    "adjust_points": {
+      "title": "Ajustar pontos",
+      "description": "Adicionar ou debitar pontos de uma conta de cliente",
+      "client_email": "E-mail do cliente",
+      "client_email_placeholder": "client@example.com",
+      "points": "Pontos (use os negativos para resgatar)",
+      "points_placeholder": "100",
+      "reason": "Causa",
+      "reason_placeholder": "Ajuste manual"
+    }
+  },
+  "buttons": {
+    "cancel": "Cancelar",
+    "save_changes": "Salvar alterações",
+    "adjust_points": "Ajustar pontos"
+  },
+  "toasts": {
+    "tier_updated": "Nível atualizado com sucesso",
+    "points_adjusted_add": "{{pontos}} pontos adicionados {{email}}",
+    "points_adjusted_deduct": "{{pontos}} pontos debitados de {{email}}",
+    "failed_load": "Falha ao carregar transações",
+    "failed_adjust": "Falha ao ajustar pontuações"
+  }
+}

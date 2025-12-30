@@ -1,12 +1,14 @@
 // /frontend/src/pages/adminPanel/Dashboard.tsx
 import { useEffect, useState } from 'react';
-import { Users, Gift, Award, Target, Bell, TrendingUp, ArrowRight } from 'lucide-react';
+import { Users, Gift, Award, Target, Bell, Image, TrendingUp, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { api } from '../../services/api';
 
 export default function AdminDashboard() {
+  const { t } = useTranslation(['adminPanel/Dashboard', 'common']);
   const [stats, setStats] = useState({
     total_users: 0,
     active_challenges: 0,
@@ -44,66 +46,73 @@ export default function AdminDashboard() {
 
   const quickActions = [
     {
-      title: 'User Management',
-      description: 'Manage user accounts and permissions',
+      title: t('quick_actions.user_management.title'),
+      description: t('quick_actions.user_management.description'),
       icon: Users,
       path: '/admin/users',
       color: 'from-blue-500 to-cyan-500',
     },
     {
-      title: 'Loyalty Management',
-      description: 'Manage loyalty points and tiers',
+      title: t('quick_actions.loyalty_management.title'),
+      description: t('quick_actions.loyalty_management.description'),
       icon: Gift,
       path: '/admin/loyalty',
       color: 'from-purple-500 to-pink-500',
     },
     {
-      title: 'Referral Program',
-      description: 'View and manage referrals',
+      title: t('quick_actions.referral_program.title'),
+      description: t('quick_actions.referral_program.description'),
       icon: Award,
       path: '/admin/referrals',
       color: 'from-orange-500 to-red-500',
     },
     {
-      title: 'Challenges',
-      description: 'Create and manage challenges',
+      title: t('quick_actions.challenges.title'),
+      description: t('quick_actions.challenges.description'),
       icon: Target,
       path: '/admin/challenges',
       color: 'from-green-500 to-emerald-500',
     },
     {
-      title: 'Notifications',
-      description: 'Send and manage notifications',
+      title: t('quick_actions.notifications.title'),
+      description: t('quick_actions.notifications.description'),
       icon: Bell,
       path: '/admin/notifications',
       color: 'from-indigo-500 to-purple-500',
+    },
+    {
+      title: t('quick_actions.photo_gallery.title'),
+      description: t('quick_actions.photo_gallery.description'),
+      icon: Image,
+      path: '/admin/gallery',
+      color: 'from-pink-500 to-rose-500',
     },
   ];
 
   const statCards = [
     {
-      title: 'Total Users',
+      title: t('stats.total_users'),
       value: stats.total_users.toLocaleString(),
       icon: Users,
       change: '+12%',
       changeType: 'increase' as const,
     },
     {
-      title: 'Active Challenges',
+      title: t('stats.active_challenges'),
       value: stats.active_challenges.toString(),
       icon: Target,
       change: '+2',
       changeType: 'increase' as const,
     },
     {
-      title: 'Loyalty Points Issued',
+      title: t('stats.loyalty_points_issued'),
       value: stats.total_loyalty_points.toLocaleString(),
       icon: Gift,
       change: '+8%',
       changeType: 'increase' as const,
     },
     {
-      title: 'Total Referrals',
+      title: t('stats.total_referrals'),
       value: stats.total_referrals.toString(),
       icon: Award,
       change: '+15%',
@@ -123,8 +132,8 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="text-gray-500 mt-1">Manage users, loyalty, and engagement</p>
+        <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+        <p className="text-gray-500 mt-1">{t('subtitle')}</p>
       </div>
 
       {/* Stats Grid */}
@@ -144,7 +153,7 @@ export default function AdminDashboard() {
                 <div className="flex items-center gap-1 mt-1">
                   <TrendingUp className="w-4 h-4 text-green-500" />
                   <span className="text-xs text-green-600 font-medium">
-                    {stat.change} from last month
+                    {stat.change} {t('stats.from_last_month')}
                   </span>
                 </div>
               </CardContent>
@@ -155,7 +164,7 @@ export default function AdminDashboard() {
 
       {/* Quick Actions */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('quick_actions.title')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {quickActions.map((action) => {
             const Icon = action.icon;
@@ -186,8 +195,8 @@ export default function AdminDashboard() {
       {/* Recent Activity */}
       <Card>
         <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-          <CardDescription>Latest actions in the admin panel</CardDescription>
+          <CardTitle>{t('recent_activity.title')}</CardTitle>
+          <CardDescription>{t('recent_activity.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -197,9 +206,9 @@ export default function AdminDashboard() {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-900">
-                  New loyalty tier activated
+                  {t('recent_activity.new_tier_activated')}
                 </p>
-                <p className="text-xs text-gray-500">2 hours ago</p>
+                <p className="text-xs text-gray-500">{t('recent_activity.hours_ago', { count: 2 })}</p>
               </div>
             </div>
             <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
@@ -208,9 +217,9 @@ export default function AdminDashboard() {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-900">
-                  15 new users registered
+                  {t('recent_activity.users_registered', { count: 15 })}
                 </p>
-                <p className="text-xs text-gray-500">5 hours ago</p>
+                <p className="text-xs text-gray-500">{t('recent_activity.hours_ago', { count: 5 })}</p>
               </div>
             </div>
             <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
@@ -219,9 +228,9 @@ export default function AdminDashboard() {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-900">
-                  Challenge "Summer Glow" completed by 23 users
+                  {t('recent_activity.challenge_completed', { name: 'Summer Glow', count: 23 })}
                 </p>
-                <p className="text-xs text-gray-500">1 day ago</p>
+                <p className="text-xs text-gray-500">{t('recent_activity.day_ago', { count: 1 })}</p>
               </div>
             </div>
           </div>

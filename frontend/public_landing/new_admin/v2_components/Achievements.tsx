@@ -24,8 +24,8 @@ export function Achievements({ achievements }: any) {
 
   // Mock challenges data
   const challenges = [
-    { id: 1, title: 'Весеннее обновление', description: 'Сделайте маникюр и педикюр в марте', progress: 1, maxProgress: 2, deadline: '2025-03-31', reward: '+300 баллов' },
-    { id: 2, title: 'Уход за волосами', description: 'Запишитесь на стрижку и уход', progress: 0, maxProgress: 2, deadline: '2025-04-15', reward: '+200 баллов' },
+    { id: 1, title: 'Весеннее обновление', description: 'Сделайте маникюр и педикюр в марте', progress: 1, maxProgress: 2, deadline: '2026-03-31', reward: '+300 баллов' },
+    { id: 2, title: 'Уход за волосами', description: 'Запишитесь на стрижку и уход', progress: 0, maxProgress: 2, deadline: '2026-04-15', reward: '+200 баллов' },
   ];
 
   const unlockedCount = achievementList.filter((a: any) => a.unlocked).length;

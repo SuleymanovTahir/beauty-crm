@@ -1065,7 +1065,7 @@ export default function Bookings() {
                       <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>{t('bookings:file_format')}:</p>
                       <ul style={{ marginLeft: '1rem', listStyle: 'disc' }}>
                         <li>{t('bookings:columns')}: {t('bookings:columns_description')}</li>
-                        <li>{t('bookings:date_format')}: YYYY-MM-DD HH:MM ({t('bookings:example')}: 2025-01-15 14:00)</li>
+                        <li>{t('bookings:date_format')}: YYYY-MM-DD HH:MM ({t('bookings:example')}: 2026-01-15 14:00)</li>
                         <li>{t('bookings:supported_formats')}</li>
                       </ul>
                     </div>

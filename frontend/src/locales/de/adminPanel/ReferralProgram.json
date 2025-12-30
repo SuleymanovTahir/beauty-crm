@@ -1,0 +1,55 @@
+{
+  "title": "Empfehlungsprogramm",
+  "subtitle": "Verwalten von Empfehlungen und Verfolgen der Programmwirksamkeit",
+  "settings": "Einstellungen",
+  "stats": {
+    "total_referrals": "Gesamtzahl der Empfehlungen",
+    "completed_referrals": "Abgeschlossene Empfehlungen",
+    "points_distributed": "Punkte verteilt",
+    "from_last_month": "vom letzten Monat"
+  },
+  "current_settings": {
+    "title": "Aktuelle Bonuskonfiguration",
+    "referrer_bonus": "Der Empfehlungsgeber erhält <strong>{{points}} Punkte</strong>, wenn ein Freund seinen ersten Einkauf tätigt",
+    "referred_bonus": "Der eingeladene Freund erhält bei der Registrierung <strong>{{points}} Punkte</strong>",
+    "min_purchase": "Mindestkaufbetrag: <strong>{{amount}} AED</strong>",
+    "edit": "Bearbeiten"
+  },
+  "table": {
+    "title": "Alle Empfehlungen",
+    "description": "Verfolgung des Empfehlungsstatus und der Punkteverteilung",
+    "search_placeholder": "Nach Empfehlungen suchen...",
+    "columns": {
+      "referrer": "Referrer",
+      "referred_friend": "Eingeladener Freund",
+      "status": "Status",
+      "points_awarded": "Punkte vergeben",
+      "date": "Datum"
+    },
+    "statuses": {
+      "pending": "Warten",
+      "completed": "Vollendet",
+      "cancelled": "Abgesagt"
+    }
+  },
+  "dialogs": {
+    "settings": {
+      "title": "Einstellungen des Empfehlungsprogramms",
+      "description": "Richten Sie Bonuspunkte und Anforderungen ein",
+      "referrer_bonus": "Empfehlungsbonuspunkte",
+      "referrer_bonus_help": "Punkte, die dem Empfehlungsgeber gutgeschrieben werden, wenn ein Freund seinen ersten Einkauf tätigt",
+      "referred_bonus": "Bonuspunkte für empfohlene Freunde",
+      "referred_bonus_help": "Bei der Registrierung werden einem Freund Punkte gutgeschrieben",
+      "min_purchase_amount": "Mindestkaufbetrag (AED)",
+      "min_purchase_help": "Mindestbetrag, den ein Freund ausgeben muss, um den Empfehlungsbonus zu aktivieren (0 = kein Mindestbetrag)"
+    }
+  },
+  "buttons": {
+    "cancel": "Stornieren",
+    "save_changes": "Änderungen speichern"
+  },
+  "toasts": {
+    "settings_saved": "Einstellungen erfolgreich gespeichert",
+    "failed_load": "Empfehlungen konnten nicht geladen werden"
+  }
+}

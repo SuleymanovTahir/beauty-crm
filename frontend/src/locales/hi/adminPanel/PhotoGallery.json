@@ -1,0 +1,74 @@
+{
+  "title": "फोटो गैलरी",
+  "subtitle": "ग्राहक फोटो और पोर्टफोलियो प्रबंधन",
+  "upload_photo": "फोटो अपलोड करें",
+  "stats": {
+    "total_photos": "कुल तस्वीरें",
+    "total_views": "कुल दृश्य",
+    "featured_photos": "चुनिंदा तस्वीरें",
+    "recent_uploads": "हाल के डाउनलोड"
+  },
+  "filters": {
+    "search_placeholder": "फ़ोटो खोज रहे हैं...",
+    "all_categories": "सभी श्रेणियां"
+  },
+  "categories": {
+    "haircut": "बाल कटाने",
+    "coloring": "रंग",
+    "styling": "बिछाना",
+    "manicure": "मैनीक्योर",
+    "makeup": "पूरा करना",
+    "other": "अन्य"
+  },
+  "card": {
+    "views": "दृश्य",
+    "featured": "पसंदीदा",
+    "toggle_featured": "पसंदीदा टॉगल करें",
+    "delete": "मिटाना",
+    "uploaded_by": "{{नाम}} द्वारा अपलोड किया गया"
+  },
+  "empty": {
+    "title": "अभी तक कोई फ़ोटो नहीं",
+    "description": "गैलरी में अपनी पहली तस्वीरें अपलोड करें"
+  },
+  "dialogs": {
+    "upload": {
+      "title": "फोटो अपलोड करें",
+      "description": "गैलरी में एक नई फ़ोटो जोड़ें",
+      "form": {
+        "photo": "तस्वीर",
+        "choose_file": "फ़ाइल चुनें",
+        "title": "नाम",
+        "title_placeholder": "फोटो शीर्षक",
+        "description": "विवरण",
+        "description_placeholder": "फोटो विवरण",
+        "category": "वर्ग",
+        "select_category": "श्रेणी चुनना"
+      }
+    },
+    "preview": {
+      "title": "फ़ोटो पूर्वावलोकन",
+      "uploaded_by": "{{नाम}} द्वारा अपलोड किया गया",
+      "created_at": "{{date}}",
+      "views": "{{गिनती}} दृश्य",
+      "category": "श्रेणी: {{श्रेणी}}"
+    },
+    "delete": {
+      "confirm": "क्या आप निश्चित हैं कि आप इस फ़ोटो को हटाना चाहते हैं?"
+    }
+  },
+  "buttons": {
+    "cancel": "रद्द करना",
+    "upload": "डाउनलोड करना",
+    "close": "बंद करना"
+  },
+  "toasts": {
+    "uploaded": "फोटो सफलतापूर्वक अपलोड हो गया",
+    "deleted": "फ़ोटो सफलतापूर्वक हटा दी गई",
+    "featured_updated": "पसंदीदा स्थिति अपडेट की गई",
+    "failed_load": "फ़ोटो अपलोड करने में विफल",
+    "failed_upload": "फ़ोटो अपलोड करने में विफल",
+    "failed_delete": "फ़ोटो हटाने में विफल",
+    "failed_featured": "पसंदीदा स्थिति अपडेट करने में विफल"
+  }
+}

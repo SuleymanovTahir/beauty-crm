@@ -1,0 +1,74 @@
+{
+  "title": "معرض الصور",
+  "subtitle": "صورة العميل وإدارة المحفظة",
+  "upload_photo": "تحميل الصورة",
+  "stats": {
+    "total_photos": "مجموع الصور",
+    "total_views": "إجمالي المشاهدات",
+    "featured_photos": "صور مميزة",
+    "recent_uploads": "التنزيلات الأخيرة"
+  },
+  "filters": {
+    "search_placeholder": "جارٍ البحث عن الصور...",
+    "all_categories": "جميع الفئات"
+  },
+  "categories": {
+    "haircut": "حلاقة الشعر",
+    "coloring": "تلوين",
+    "styling": "وضع",
+    "manicure": "مانيكير",
+    "makeup": "ماكياج",
+    "other": "آخر"
+  },
+  "card": {
+    "views": "وجهات النظر",
+    "featured": "المفضلة",
+    "toggle_featured": "تبديل المفضلة",
+    "delete": "يمسح",
+    "uploaded_by": "تم الرفع بواسطة {{name}}"
+  },
+  "empty": {
+    "title": "لا توجد صور بعد",
+    "description": "قم بتحميل صورك الأولى إلى المعرض"
+  },
+  "dialogs": {
+    "upload": {
+      "title": "تحميل الصورة",
+      "description": "إضافة صورة جديدة إلى المعرض",
+      "form": {
+        "photo": "صورة",
+        "choose_file": "حدد الملف",
+        "title": "اسم",
+        "title_placeholder": "عنوان الصورة",
+        "description": "وصف",
+        "description_placeholder": "وصف الصورة",
+        "category": "فئة",
+        "select_category": "اختر فئة"
+      }
+    },
+    "preview": {
+      "title": "معاينة الصورة",
+      "uploaded_by": "تم الرفع بواسطة {{name}}",
+      "created_at": "{{date}}",
+      "views": "{{عدد}} مشاهدة",
+      "category": "الفئة: {{فئة}}"
+    },
+    "delete": {
+      "confirm": "هل أنت متأكد أنك تريد حذف هذه الصورة؟"
+    }
+  },
+  "buttons": {
+    "cancel": "يلغي",
+    "upload": "تحميل",
+    "close": "يغلق"
+  },
+  "toasts": {
+    "uploaded": "تم تحميل الصورة بنجاح",
+    "deleted": "تم حذف الصورة بنجاح",
+    "featured_updated": "تم تحديث الحالة المفضلة",
+    "failed_load": "فشل تحميل الصور",
+    "failed_upload": "فشل تحميل الصورة",
+    "failed_delete": "فشل حذف الصورة",
+    "failed_featured": "فشل في تحديث الحالة المفضلة"
+  }
+}

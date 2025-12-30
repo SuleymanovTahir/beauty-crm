@@ -1,14 +1,14 @@
 {
-  "create_permission": "Жаратылыс",
+  "create_permission": "Жасалу",
   "delete_permission": "Жою",
   "edit_permission": "Өңдеу",
-  "permission_granted": "Дұрыс берілген",
-  "permission_revoked": "Дұрыс күші жойылды",
-  "permissions_for_user": "Рұқсаттар: {Атау}",
-  "permissions_subtitle": "Пайдаланушыларға жеке құқықтарды орнатыңыз",
-  "permissions_title": "Қол жеткізу құқығын басқару",
-  "role_label": "Рөлі:",
+  "permission_granted": "Құқық берілді",
+  "permission_revoked": "Құқық күші жойылды",
+  "permissions_for_user": "Рұқсаттар: {name}",
+  "permissions_subtitle": "Пайдаланушылар үшін жеке құқықтарды орнатыңыз",
+  "permissions_title": "Қол жеткізу құқықтарын басқару",
+  "role_label": "Рөл:",
   "select_user_prompt": "Пайдаланушыны таңдаңыз",
   "users_list_title": "Пайдаланушылар",
-  "view_permission": "Көзқарас"
+  "view_permission": "Көру"
 }
