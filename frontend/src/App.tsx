@@ -28,6 +28,14 @@ const EmployeeDetail = React.lazy(() => import('./pages/admin/EmployeeDetail'));
 const EmployeeManagement = React.lazy(() => import('./pages/admin/EmployeeManagement'));
 const VisitorAnalytics = React.lazy(() => import('./pages/admin/VisitorAnalytics'));
 
+// Admin Panel pages
+const AdminPanelLayout = React.lazy(() => import('./components/layouts/AdminPanelLayout'));
+const AdminPanelDashboard = React.lazy(() => import('./pages/adminPanel/Dashboard'));
+const LoyaltyManagement = React.lazy(() => import('./pages/adminPanel/LoyaltyManagement'));
+const ReferralProgram = React.lazy(() => import('./pages/adminPanel/ReferralProgram'));
+const Challenges = React.lazy(() => import('./pages/adminPanel/Challenges'));
+const NotificationsDashboard = React.lazy(() => import('./pages/adminPanel/NotificationsDashboard'));
+
 const ManagerLayout = React.lazy(() => import('./components/layouts/ManagerLayout'));
 const ManagerDashboard = React.lazy(() => import('./pages/manager/Dashboard'));
 const Chat = React.lazy(() => import('./pages/manager/Chat'));
@@ -89,16 +97,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/login" replace />;
   }
 
-  // Разрешаем директору заходить на /admin
+  // Разрешаем директору заходить на /crm
   const allowedRoles = requiredRole ? [requiredRole] : [];
   if (requiredRole === 'admin') {
-    allowedRoles.push('director'); // Директор имеет доступ к admin панели
+    allowedRoles.push('director'); // Директор имеет доступ к crm панели
   }
 
   if (requiredRole && !allowedRoles.includes(currentRole || '')) {
     // Редирект на панель в зависимости от роли
-    if (currentRole === 'director') return <Navigate to="/admin/dashboard" replace />;
-    if (currentRole === 'admin') return <Navigate to="/admin/dashboard" replace />;
+    if (currentRole === 'director') return <Navigate to="/crm/dashboard" replace />;
+    if (currentRole === 'admin') return <Navigate to="/crm/dashboard" replace />;
     if (currentRole === 'manager') return <Navigate to="/manager/dashboard" replace />;
     if (currentRole === 'sales') return <Navigate to="/sales/clients" replace />;
     if (currentRole === 'employee') return <Navigate to="/employee/dashboard" replace />;
@@ -149,8 +157,8 @@ export default function App() {
                 element={
                   currentUser ? (
                     // ✅ ОБНОВИ РЕДИРЕКТ
-                    currentUser.role === 'director' ? <Navigate to="/admin/dashboard" replace /> :
-                      currentUser.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
+                    currentUser.role === 'director' ? <Navigate to="/crm/dashboard" replace /> :
+                      currentUser.role === 'admin' ? <Navigate to="/crm/dashboard" replace /> :
                         currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
                           currentUser.role === 'sales' ? <Navigate to="/sales/clients" replace /> :
                             currentUser.role === 'marketer' ? <Navigate to="/marketer/analytics" replace /> :
@@ -166,7 +174,7 @@ export default function App() {
                 path="/register"
                 element={
                   currentUser ? (
-                    <Navigate to="/admin/dashboard" replace />
+                    <Navigate to="/crm/dashboard" replace />
                   ) : (
                     <Login initialView="register" />
                   )
@@ -174,10 +182,10 @@ export default function App() {
               />
 
               <Route
-                path="/admin/login"
+                path="/crm/login"
                 element={
                   currentUser ? (
-                    <Navigate to="/admin/dashboard" replace />
+                    <Navigate to="/crm/dashboard" replace />
                   ) : (
                     <AdminLogin />
                   )
@@ -185,10 +193,10 @@ export default function App() {
               />
 
               <Route
-                path="/admin/register"
+                path="/crm/register"
                 element={
                   currentUser ? (
-                    <Navigate to="/admin/dashboard" replace />
+                    <Navigate to="/crm/dashboard" replace />
                   ) : (
                     <AdminRegister />
                   )
@@ -210,9 +218,34 @@ export default function App() {
                 element={<ResetPassword />}
               />
 
-              {/* Admin Routes - Protected */}
+              {/* Admin Panel Routes - For managing users/loyalty */}
               <Route
                 path="/admin/*"
+                element={
+                  <ProtectedRoute
+                    isAuthenticated={!!currentUser}
+                    requiredRole="admin"
+                    currentRole={currentUser?.role}
+                    element={
+                      <AdminPanelLayout
+                        user={currentUser}
+                        onLogout={handleLogout}
+                      />
+                    }
+                  />
+                }
+              >
+                <Route path="dashboard" element={<AdminPanelDashboard />} />
+                <Route path="loyalty" element={<LoyaltyManagement />} />
+                <Route path="referrals" element={<ReferralProgram />} />
+                <Route path="challenges" element={<Challenges />} />
+                <Route path="notifications" element={<NotificationsDashboard />} />
+                <Route path="" element={<Navigate to="dashboard" replace />} />
+              </Route>
+
+              {/* CRM Routes - Protected */}
+              <Route
+                path="/crm/*"
                 element={
                   <ProtectedRoute
                     isAuthenticated={!!currentUser}
@@ -376,7 +409,7 @@ export default function App() {
                   path="cabinet"
                   element={
                     currentUser ? (
-                      currentUser.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
+                      currentUser.role === 'admin' ? <Navigate to="/crm/dashboard" replace /> :
                         currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
                           currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
                             <Navigate to="/" replace />

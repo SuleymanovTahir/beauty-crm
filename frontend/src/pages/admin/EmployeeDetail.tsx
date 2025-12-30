@@ -44,7 +44,7 @@ export default function EmployeeDetail() {
     const activeTab = tab || 'information';
 
     const handleTabChange = (value: string) => {
-        navigate(`/admin/users/${id}/${value}`);
+        navigate(`/crm/users/${id}/${value}`);
     };
 
     const [employee, setEmployee] = useState<Employee | null>(null);
@@ -118,7 +118,7 @@ export default function EmployeeDetail() {
         try {
             await api.post(`/api/users/${id}/delete`);
             toast.success(t('employee_deleted'));
-            navigate('/admin/users');
+            navigate('/crm/users');
         } catch (error) {
             console.error('Error deleting employee:', error);
             toast.error(t('error_deleting_employee'));
@@ -137,7 +137,7 @@ export default function EmployeeDetail() {
         return (
             <div className="text-center py-12">
                 <p className="text-gray-500">{t('employee_not_found')}</p>
-                <Button onClick={() => navigate('/admin/users')} className="mt-4">
+                <Button onClick={() => navigate('/crm/users')} className="mt-4">
                     {t('back_to_list')}
                 </Button>
             </div>
@@ -152,7 +152,7 @@ export default function EmployeeDetail() {
                 <div className="p-4 border-b border-gray-200">
                     <Button
                         variant="ghost"
-                        onClick={() => navigate('/admin/users')}
+                        onClick={() => navigate('/crm/users')}
                         className="w-full justify-start text-gray-600 hover:text-gray-900"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2" />
@@ -179,7 +179,7 @@ export default function EmployeeDetail() {
                     {filteredEmployees.map((emp) => (
                         <button
                             key={emp.id}
-                            onClick={() => navigate(`/admin/users/${emp.id}/${activeTab}`)}
+                            onClick={() => navigate(`/crm/users/${emp.id}/${activeTab}`)}
                             className={`w-full p-3 flex items-center gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 ${emp.id === employee.id ? 'bg-gray-100' : ''
                                 }`}
                         >
@@ -200,7 +200,7 @@ export default function EmployeeDetail() {
                 <div className="p-4 border-t border-gray-200">
                     <Button
                         variant="outline"
-                        onClick={() => navigate('/admin/users/create')}
+                        onClick={() => navigate('/crm/users/create')}
                         className="w-full text-sm"
                     >
                         + {t('add_team_member', 'Add team member')}

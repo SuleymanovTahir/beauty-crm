@@ -150,7 +150,7 @@ export default function EditUser() {
       <Button
         variant="ghost"
         className="mb-6"
-        onClick={() => navigate('/admin/users')}
+        onClick={() => navigate('/crm/users')}
         disabled={saving}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />

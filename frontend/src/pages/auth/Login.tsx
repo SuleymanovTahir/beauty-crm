@@ -62,7 +62,7 @@ export default function Login() {
           `${t('login:welcome')} ${response.user.full_name || response.user.username
           }!`
         );
-        navigate("/admin/dashboard");
+        navigate("/crm/dashboard");
       } else {
         // Проверяем, не подтвержден ли email
         if (response.error_type === "email_not_verified" && response.email) {

@@ -970,7 +970,7 @@ export default function AdminSettings() {
   const activeTab = tab || 'general';
 
   const handleTabChange = (value: string) => {
-    navigate(`/admin/settings/${value}`);
+    navigate(`/crm/settings/${value}`);
   };
 
   return (

@@ -45,7 +45,7 @@ export default function BookingDetail() {
         setNewStatus(found.status);
       } else {
         toast.error(t('bookingdetail:not_found'));
-        navigate('/admin/bookings');
+        navigate('/crm/bookings');
       }
     } catch (err) {
       console.error('Error loading booking:', err);
@@ -87,7 +87,7 @@ export default function BookingDetail() {
       <div className="p-8">
         <div className="text-center">
           <p className="text-gray-600 mb-4">{t('not_found')}</p>
-          <Button onClick={() => navigate('/admin/bookings')}>
+          <Button onClick={() => navigate('/crm/bookings')}>
             ← {t('common:back_to_bookings')}
           </Button>
         </div>
@@ -114,7 +114,7 @@ export default function BookingDetail() {
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <button
-          onClick={() => navigate('/admin/bookings')}
+          onClick={() => navigate('/crm/bookings')}
           className="p-2 hover:bg-gray-100 rounded-lg"
         >
           <ArrowLeft className="w-6 h-6" />
@@ -141,7 +141,7 @@ export default function BookingDetail() {
                   <p className="text-sm text-gray-600">{t('client')}</p>
                   <p className="text-lg text-gray-900 font-medium">{booking.name}</p>
                   <button
-                    onClick={() => navigate(`/admin/clients/${booking.client_id}`)}
+                    onClick={() => navigate(`/crm/clients/${booking.client_id}`)}
                     className="text-sm text-pink-600 hover:underline mt-1"
                   >
                     {t('client_profile')}
@@ -270,7 +270,7 @@ export default function BookingDetail() {
           <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h3 className="text-lg text-gray-900 mb-4">{t('actions')}</h3>
             <Button
-              onClick={() => navigate(`/admin/chat?client_id=${booking.client_id}`)}
+              onClick={() => navigate(`/crm/chat?client_id=${booking.client_id}`)}
               variant="outline"
               className="w-full"
             >

@@ -113,9 +113,9 @@ export default function CreateUser() {
 
       // Redirect to the new user's detail page, Services tab
       if (result.user_id) {
-        navigate(`/admin/users/${result.user_id}?tab=services`);
+        navigate(`/crm/users/${result.user_id}?tab=services`);
       } else {
-        navigate('/admin/users');
+        navigate('/crm/users');
       }
 
     } catch (err) {
@@ -132,7 +132,7 @@ export default function CreateUser() {
       <Button
         variant="ghost"
         className="mb-6"
-        onClick={() => navigate('/admin/users')}
+        onClick={() => navigate('/crm/users')}
         disabled={loading}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />

@@ -150,7 +150,7 @@ export default function ClientDetail() {
     } catch (err) {
       toast.error(t('common:loading_error'));
       console.error('Error:', err);
-      navigate('/admin/clients');
+      navigate('/crm/clients');
     } finally {
       setLoading(false);
     }
@@ -262,7 +262,7 @@ export default function ClientDetail() {
   if (!client) {
     return (
       <div className="p-8">
-        <Button onClick={() => navigate('/admin/clients')} variant="ghost">
+        <Button onClick={() => navigate('/crm/clients')} variant="ghost">
           ← {t('common:back_to_clients')}
         </Button>
         <p className="text-gray-600 mt-4">{t('clientdetail:not_found')}</p>
@@ -275,7 +275,7 @@ export default function ClientDetail() {
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <button
-          onClick={() => navigate('/admin/clients')}
+          onClick={() => navigate('/crm/clients')}
           className="p-2 hover:bg-gray-100 rounded-lg"
         >
           <ArrowLeft className="w-6 h-6" />
@@ -633,7 +633,7 @@ export default function ClientDetail() {
                     key={messenger.type}
                     onClick={() => {
                       if (messenger.type === 'instagram') {
-                        navigate(`/admin/chat?client_id=${client.id}`);
+                        navigate(`/crm/chat?client_id=${client.id}`);
                       } else if (messenger.type === 'whatsapp') {
                         const phone = client.phone?.replace(/[^0-9]/g, '');
                         if (phone) {
@@ -642,7 +642,7 @@ export default function ClientDetail() {
                           toast.error('Номер телефона не указан');
                         }
                       } else if (messenger.type === 'telegram') {
-                        navigate(`/admin/chat?messenger=telegram&client_id=${client.id}`);
+                        navigate(`/crm/chat?messenger=telegram&client_id=${client.id}`);
                       } else if (messenger.type === 'tiktok') {
                         toast.info('TikTok интеграция в разработке');
                       }

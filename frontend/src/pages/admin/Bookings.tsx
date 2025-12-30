@@ -925,7 +925,7 @@ export default function Bookings() {
                       <td style={{ padding: '1rem 1.5rem' }}>
                         <div style={{ display: 'flex', gap: '0.75rem' }}>
                           <button
-                            onClick={() => navigate(`/admin/bookings/${booking.id}`)}
+                            onClick={() => navigate(`/crm/bookings/${booking.id}`)}
                             style={{
                               padding: '0.375rem 0.75rem',
                               backgroundColor: '#fff',
@@ -961,7 +961,7 @@ export default function Bookings() {
                               const messenger = booking.messengers && booking.messengers.length > 0
                                 ? booking.messengers[0]
                                 : 'instagram';
-                              navigate(`/admin/chat?client_id=${booking.client_id}&messenger=${messenger}`);
+                              navigate(`/crm/chat?client_id=${booking.client_id}&messenger=${messenger}`);
                             }}
                             style={{
                               padding: '0.375rem 0.75rem',

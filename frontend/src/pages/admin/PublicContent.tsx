@@ -19,7 +19,7 @@ export default function PublicContent() {
     const activeTab = tab || 'reviews';
 
     const handleTabChange = (value: string) => {
-        navigate(`/admin/public-content/${value}`);
+        navigate(`/crm/public-content/${value}`);
     };
 
     return (

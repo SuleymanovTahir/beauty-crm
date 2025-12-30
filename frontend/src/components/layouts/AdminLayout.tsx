@@ -161,19 +161,19 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   // Фильтруем пункты меню на основе прав пользователя
   const menuItems = useMemo(() => {
     const allItems = [
-      { icon: LayoutDashboard, label: t('menu.dashboard'), path: '/admin/dashboard', requirePermission: () => true },
-      { icon: FileText, label: t('menu.bookings'), path: '/admin/bookings', requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings },
-      { icon: Users, label: t('menu.clients'), path: '/admin/clients', requirePermission: () => permissions.canViewAllClients },
-      { icon: MessageSquare, label: t('menu.chat'), path: '/admin/chat', badge: unreadCount, hasSubmenu: true, requirePermission: () => true },
-      { icon: BarChart3, label: t('menu.analytics'), path: '/admin/analytics', requirePermission: () => permissions.canViewAnalytics },
-      { icon: Target, label: t('menu.plans'), path: '/admin/plans', requirePermission: () => permissions.canViewAnalytics },
-      { icon: Scissors, label: t('menu.services'), path: '/admin/services', requirePermission: () => permissions.canViewServices },
-      { icon: Calendar, label: t('menu.calendar'), path: '/admin/calendar', requirePermission: () => permissions.canViewAllCalendars },
-      { icon: UserCog, label: t('menu.users'), path: '/admin/users', requirePermission: () => permissions.canViewAllUsers },
-      { icon: Globe, label: t('menu.public_content'), path: '/admin/public-content', requirePermission: () => permissions.canViewSettings },
-      { icon: MapPinned, label: t('menu.visitors'), path: '/admin/visitor-analytics', requirePermission: () => permissions.canViewAnalytics },
-      { icon: Settings, label: t('menu.settings'), path: '/admin/settings', requirePermission: () => permissions.canViewSettings },
-      { icon: Bot, label: t('menu.bot_settings'), path: '/admin/bot-settings', requirePermission: () => permissions.canViewBotSettings },
+      { icon: LayoutDashboard, label: t('menu.dashboard'), path: '/crm/dashboard', requirePermission: () => true },
+      { icon: FileText, label: t('menu.bookings'), path: '/crm/bookings', requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings },
+      { icon: Users, label: t('menu.clients'), path: '/crm/clients', requirePermission: () => permissions.canViewAllClients },
+      { icon: MessageSquare, label: t('menu.chat'), path: '/crm/chat', badge: unreadCount, hasSubmenu: true, requirePermission: () => true },
+      { icon: BarChart3, label: t('menu.analytics'), path: '/crm/analytics', requirePermission: () => permissions.canViewAnalytics },
+      { icon: Target, label: t('menu.plans'), path: '/crm/plans', requirePermission: () => permissions.canViewAnalytics },
+      { icon: Scissors, label: t('menu.services'), path: '/crm/services', requirePermission: () => permissions.canViewServices },
+      { icon: Calendar, label: t('menu.calendar'), path: '/crm/calendar', requirePermission: () => permissions.canViewAllCalendars },
+      { icon: UserCog, label: t('menu.users'), path: '/crm/users', requirePermission: () => permissions.canViewAllUsers },
+      { icon: Globe, label: t('menu.public_content'), path: '/crm/public-content', requirePermission: () => permissions.canViewSettings },
+      { icon: MapPinned, label: t('menu.visitors'), path: '/crm/visitor-analytics', requirePermission: () => permissions.canViewAnalytics },
+      { icon: Settings, label: t('menu.settings'), path: '/crm/settings', requirePermission: () => permissions.canViewSettings },
+      { icon: Bot, label: t('menu.bot_settings'), path: '/crm/bot-settings', requirePermission: () => permissions.canViewBotSettings },
     ];
 
     // Фильтруем только те пункты, к которым есть доступ
@@ -183,7 +183,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const chatSubmenuItems = enabledMessengers.map(messenger => ({
     icon: messenger.type === 'instagram' ? Instagram : MessageSquare,
     label: messenger.name,
-    path: messenger.type === 'instagram' ? '/admin/chat' : `/admin/chat?messenger=${messenger.type}`,
+    path: messenger.type === 'instagram' ? '/crm/chat' : `/crm/chat?messenger=${messenger.type}`,
     color: messenger.type === 'instagram' ? 'from-pink-500 to-purple-600' :
       messenger.type === 'whatsapp' ? 'from-green-500 to-green-600' :
         messenger.type === 'telegram' ? 'from-blue-500 to-blue-600' :
@@ -201,7 +201,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       </button>
 
       {/* Notification Bell - Fixed Top Right (Only on Dashboard) */}
-      {location.pathname === '/admin/dashboard' && (
+      {location.pathname === '/crm/dashboard' && (
         <div className="fixed top-4 right-4 z-50">
           <button
             onClick={() => setShowNotifDropdown(!showNotifDropdown)}
