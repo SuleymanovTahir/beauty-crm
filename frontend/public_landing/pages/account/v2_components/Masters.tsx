@@ -1,40 +1,75 @@
-import { useState } from 'react';
-import { Star, Heart, Calendar } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Star, Heart, Calendar, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
-import { masters } from '../../../data/mockData';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { apiClient } from '../../../../src/api/client';
 
 export function Masters() {
+  const { t } = useTranslation(['account', 'common']);
+  const [loading, setLoading] = useState(true);
+  const [mastersData, setMastersData] = useState<any>(null);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [favoriteMasters, setFavoriteMasters] = useState(
-    masters.filter(m => m.isFavorite).map(m => m.id)
-  );
 
-  const toggleFavorite = (masterId: string) => {
-    setFavoriteMasters(prev => 
-      prev.includes(masterId) 
-        ? prev.filter(id => id !== masterId)
-        : [...prev, masterId]
-    );
-    toast.success('Избранное обновлено');
+  useEffect(() => {
+    loadMasters();
+  }, []);
+
+  const loadMasters = async () => {
+    try {
+      setLoading(true);
+      const data = await apiClient.getFavoriteMasters();
+      if (data.success) {
+        setMastersData(data);
+      }
+    } catch (error) {
+      console.error('Error loading masters:', error);
+      toast.error(t('common:error_loading_data'));
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const toggleFavorite = async (masterId: number) => {
+    try {
+      const result = await apiClient.toggleFavoriteMaster(masterId);
+      if (result.success) {
+        await loadMasters(); // Reload data
+        toast.success(t('masters.favorite_updated', 'Избранное обновлено'));
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      toast.error(t('common:error_occurred'));
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-pink-500" />
+      </div>
+    );
+  }
+
+  const masters = mastersData?.masters || [];
+  const favoriteMasters = masters.filter((m: any) => m.is_favorite);
+
   const filteredMasters = showFavoritesOnly
-    ? masters.filter(m => favoriteMasters.includes(m.id))
+    ? favoriteMasters
     : masters;
 
   return (
     <div className="space-y-6 pb-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1>Наши мастера</h1>
+          <h1>{t('masters.title', 'Наши мастера')}</h1>
           <p className="text-muted-foreground">
-            {masters.length} специалистов • {favoriteMasters.length} в избранном
+            {masters.length} {t('masters.specialists', 'специалистов')} • {favoriteMasters.length} {t('masters.in_favorites', 'в избранном')}
           </p>
         </div>
 
@@ -44,7 +79,7 @@ export function Masters() {
             checked={showFavoritesOnly}
             onCheckedChange={setShowFavoritesOnly}
           />
-          <Label htmlFor="favorites-only">Только избранные</Label>
+          <Label htmlFor="favorites-only">{t('masters.favorites_only', 'Только избранные')}</Label>
         </div>
       </div>
 
@@ -52,19 +87,19 @@ export function Masters() {
         <Card>
           <CardContent className="p-12 text-center">
             <Heart className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="mb-2">Нет избранных мастеров</h3>
+            <h3 className="mb-2">{t('masters.no_favorites', 'Нет избранных мастеров')}</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Добавьте мастеров в избранное, нажав на иконку сердца
+              {t('masters.add_favorites_hint', 'Добавьте мастеров в избранное, нажав на иконку сердца')}
             </p>
             <Button onClick={() => setShowFavoritesOnly(false)}>
-              Показать всех мастеров
+              {t('masters.show_all', 'Показать всех мастеров')}
             </Button>
           </CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredMasters.map((master) => {
-            const isFavorite = favoriteMasters.includes(master.id);
+          {filteredMasters.map((master: any) => {
+            const isFavorite = master.is_favorite;
 
             return (
               <Card
@@ -108,14 +143,14 @@ export function Masters() {
                       <span className="font-semibold">{master.rating}</span>
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {master.reviews} отзывов
+                      {master.reviews_count} {t('masters.reviews', 'отзывов')}
                     </div>
                   </div>
 
                   <div className="flex gap-2">
                     <Button className="flex-1">
                       <Calendar className="w-4 h-4 mr-2" />
-                      Записаться
+                      {t('masters.book', 'Записаться')}
                     </Button>
                   </div>
                 </CardContent>
