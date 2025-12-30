@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Star, Heart, Award, Flame, Crown, Gem, Trophy, Lock, Loader2 } from 'lucide-react';
+import { Star, Heart, Award, Flame, Crown, Gem, Trophy, Lock, Loader2, Share2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
@@ -21,6 +21,7 @@ export function Achievements() {
   const { t } = useTranslation(['account', 'common']);
   const [loading, setLoading] = useState(true);
   const [achievementsData, setAchievementsData] = useState<any>(null);
+  const [newlyUnlocked, setNewlyUnlocked] = useState<number[]>([]);
 
   useEffect(() => {
     loadAchievements();
@@ -31,6 +32,39 @@ export function Achievements() {
       setLoading(true);
       const data = await apiClient.getClientAchievements();
       if (data.success) {
+        // Check for newly unlocked achievements
+        if (achievementsData?.achievements) {
+          const previouslyUnlocked = achievementsData.achievements
+            .filter((a: any) => a.unlocked)
+            .map((a: any) => a.id);
+          const currentlyUnlocked = data.achievements
+            .filter((a: any) => a.unlocked)
+            .map((a: any) => a.id);
+
+          const newUnlocks = currentlyUnlocked.filter(
+            (id: number) => !previouslyUnlocked.includes(id)
+          );
+
+          if (newUnlocks.length > 0) {
+            setNewlyUnlocked(newUnlocks);
+            // Show celebration toast
+            toast.success(
+              `🎉 ${t('achievements.unlocked_new', 'Разблокировано новое достижение!')}`,
+              {
+                duration: 5000,
+              }
+            );
+
+            // Remove animation after 3 seconds
+            setTimeout(() => {
+              setNewlyUnlocked([]);
+            }, 3000);
+
+            // Dispatch event for notifications
+            window.dispatchEvent(new CustomEvent('notification-received'));
+          }
+        }
+
         setAchievementsData(data);
       }
     } catch (error) {
@@ -58,6 +92,32 @@ export function Achievements() {
   const getDaysLeft = (deadline: string) => {
     const days = Math.ceil((new Date(deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
     return days;
+  };
+
+  const shareAchievement = async (achievement: any) => {
+    const shareText = `🏆 ${t('achievements.share_text', 'Я разблокировал достижение')}: "${achievement.title}"!\n\n${achievement.description}\n\n#BeautySalon #Achievement`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: t('achievements.share_title', 'Мое достижение'),
+          text: shareText,
+        });
+        toast.success(t('achievements.shared', 'Успешно поделились!'));
+      } catch (error) {
+        if ((error as Error).name !== 'AbortError') {
+          await navigator.clipboard.writeText(shareText);
+          toast.success(t('achievements.copied', 'Текст скопирован в буфер обмена'));
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        toast.success(t('achievements.copied', 'Текст скопирован в буфер обмена'));
+      } catch (error) {
+        toast.error(t('common:error_occurred', 'Произошла ошибка'));
+      }
+    }
   };
 
   return (
@@ -115,6 +175,8 @@ export function Achievements() {
               ? (achievement.progress / achievement.maxProgress!) * 100
               : 0;
 
+            const isNewlyUnlocked = newlyUnlocked.includes(achievement.id);
+
             return (
               <Card
                 key={achievement.id}
@@ -122,6 +184,8 @@ export function Achievements() {
                   achievement.unlocked
                     ? 'border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50'
                     : 'opacity-60'
+                } ${
+                  isNewlyUnlocked ? 'animate-pulse border-4 border-yellow-400' : ''
                 }`}
               >
                 <CardContent className="p-6">
@@ -131,7 +195,7 @@ export function Achievements() {
                         achievement.unlocked
                           ? 'bg-yellow-500 text-white'
                           : 'bg-gray-200 text-gray-400'
-                      }`}
+                      } ${isNewlyUnlocked ? 'animate-bounce' : ''}`}
                     >
                       {achievement.unlocked ? (
                         <Icon className="w-6 h-6" />
@@ -148,11 +212,22 @@ export function Achievements() {
                             {achievement.description}
                           </div>
                         </div>
-                        {achievement.unlocked && (
-                          <Badge className="bg-yellow-500">
-                            {t('achievements.unlocked', 'Получено')}
-                          </Badge>
-                        )}
+                        <div className="flex gap-2">
+                          {achievement.unlocked && (
+                            <>
+                              <Badge className="bg-yellow-500">
+                                {t('achievements.unlocked', 'Получено')}
+                              </Badge>
+                              <button
+                                onClick={() => shareAchievement(achievement)}
+                                className="p-1 hover:bg-yellow-100 rounded transition-colors"
+                                title={t('achievements.share', 'Поделиться')}
+                              >
+                                <Share2 className="w-4 h-4 text-yellow-600" />
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </div>
 
                       {hasProgress && (

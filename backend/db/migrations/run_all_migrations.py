@@ -199,6 +199,27 @@ def run_all_migrations():
     )
 
     # ========================================================================
+    # MIGRATION: NOTIFICATIONS TABLE
+    # ========================================================================
+    print_header("МИГРАЦИЯ: ТАБЛИЦА УВЕДОМЛЕНИЙ")
+    try:
+        result = subprocess.run(
+            [sys.executable, "db/migrations/run_migration_notifications.py"],
+            cwd=backend_dir,
+            capture_output=True,
+            text=True
+        )
+        if result.returncode == 0:
+            print("✅ Таблица notifications создана успешно")
+            results["migrations/notifications"] = True
+        else:
+            print(f"❌ Ошибка в миграции notifications:\n{result.stderr}")
+            results["migrations/notifications"] = False
+    except Exception as e:
+        print(f"❌ Ошибка запуска миграции notifications: {e}")
+        results["migrations/notifications"] = False
+
+    # ========================================================================
     # MIGRATION: CLIENT PREFERENCES & CONVERSATION CONTEXT
     # ========================================================================
     try:

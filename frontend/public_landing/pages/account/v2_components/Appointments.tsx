@@ -30,8 +30,8 @@ export function Appointments() {
       action: 'TEMPLATE',
       text: appointment.service,
       dates: `${formatDateForGoogle(startDate)}/${formatDateForGoogle(endDate)}`,
-      details: `Мастер: ${appointment.master_name}`,
-      location: 'Beauty Salon',
+      details: `${t('appointments.master', 'Мастер')}: ${appointment.master_name}`,
+      location: localStorage.getItem('salon_name') || 'Beauty Salon',
     });
 
     window.open(`https://calendar.google.com/calendar/render?${params.toString()}`, '_blank');

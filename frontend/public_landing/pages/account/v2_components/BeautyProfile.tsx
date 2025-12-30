@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, TrendingUp, Calendar, AlertCircle, Loader2 } from 'lucide-react';
+import { Sparkles, TrendingUp, Calendar, AlertCircle, Loader2, MessageCircle, Phone } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -34,6 +34,15 @@ export function BeautyProfile() {
     }
   };
 
+  const requestConsultation = () => {
+    const phone = localStorage.getItem('salon_phone') || '+971501234567';
+    const message = encodeURIComponent(
+      t('beauty.consultation_message', 'Здравствуйте! Я хотел(а) бы получить консультацию по уходу за красотой. Меня интересуют рекомендации по процедурам.')
+    );
+    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+    toast.success(t('beauty.consultation_requested', 'Запрос на консультацию отправлен'));
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -51,9 +60,15 @@ export function BeautyProfile() {
 
   return (
     <div className="space-y-6 pb-8">
-      <div>
-        <h1>{t('beauty.title', 'Бьюти-профиль')}</h1>
-        <p className="text-muted-foreground">{t('beauty.subtitle', 'Анализ состояния и рекомендации')}</p>
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h1>{t('beauty.title', 'Бьюти-профиль')}</h1>
+          <p className="text-muted-foreground">{t('beauty.subtitle', 'Анализ состояния и рекомендации')}</p>
+        </div>
+        <Button onClick={requestConsultation} className="gap-2">
+          <MessageCircle className="w-4 h-4" />
+          {t('beauty.get_consultation', 'Получить консультацию')}
+        </Button>
       </div>
 
       {/* Beauty Score */}

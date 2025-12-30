@@ -61,12 +61,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = (userData: User, token: string) => {
     localStorage.setItem('session_token', token);
     localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('username', userData.username);
+    if (userData.full_name) localStorage.setItem('user_name', userData.full_name);
+    if (userData.email) localStorage.setItem('user_email', userData.email);
+    if (userData.phone) localStorage.setItem('user_phone', userData.phone);
+    if (userData.id) localStorage.setItem('user_id', String(userData.id));
     setUser(userData);
   };
 
   const logout = () => {
     localStorage.removeItem('session_token');
     localStorage.removeItem('user');
+    localStorage.removeItem('username');
+    localStorage.removeItem('user_name');
+    localStorage.removeItem('user_email');
+    localStorage.removeItem('user_phone');
+    localStorage.removeItem('user_id');
     setUser(null);
   };
 

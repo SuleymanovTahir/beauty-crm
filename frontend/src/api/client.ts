@@ -399,6 +399,11 @@ export const apiClient = {
   getClientProfile: () =>
     apiCall('/api/client/profile'),
 
+  cancelClientBooking: (bookingId: number) =>
+    apiCall(`/api/client/bookings/${bookingId}/cancel`, {
+      method: 'POST',
+    }),
+
   getClientBeautyMetrics: () =>
     apiCall('/api/client/beauty-metrics'),
 
