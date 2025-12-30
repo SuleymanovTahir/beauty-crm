@@ -427,6 +427,31 @@ export const apiClient = {
       method: 'POST',
       body: data,
     }),
+
+  // Profile management for clients
+  updateClientProfile: (data: any) =>
+    apiCall('/api/client/profile/update', {
+      method: 'POST',
+      body: data,
+    }),
+
+  changeClientPassword: (data: { old_password: string; new_password: string }) =>
+    apiCall('/api/client/profile/change-password', {
+      method: 'POST',
+      body: data,
+    }),
+
+  // Booking management
+  cancelBooking: (bookingId: number) =>
+    apiCall(`/api/client/bookings/${bookingId}/cancel`, {
+      method: 'POST',
+    }),
+
+  updateBooking: (bookingId: number, data: any) =>
+    apiCall(`/api/client/bookings/${bookingId}/update`, {
+      method: 'POST',
+      body: data,
+    }),
 }
 
 export const api = {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Star, Heart, Calendar, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -12,6 +13,7 @@ import { apiClient } from '../../../../src/api/client';
 
 export function Masters() {
   const { t } = useTranslation(['account', 'common']);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [mastersData, setMastersData] = useState<any>(null);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
@@ -148,7 +150,10 @@ export function Masters() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button className="flex-1">
+                    <Button
+                      className="flex-1"
+                      onClick={() => navigate('/new-booking', { state: { masterId: master.id } })}
+                    >
                       <Calendar className="w-4 h-4 mr-2" />
                       {t('masters.book', 'Записаться')}
                     </Button>

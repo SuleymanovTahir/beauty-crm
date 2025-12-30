@@ -49,19 +49,33 @@ export function Loyalty() {
   ];
 
   const { loyalty } = loyaltyData || {};
-  const currentTierIndex = tiers.findIndex(t => t.name.toLowerCase() === loyalty?.tier?.toLowerCase());
-  const currentTierData = tiers[currentTierIndex];
+
+  // Default loyalty data if not available
+  const defaultLoyalty = {
+    points: 0,
+    tier: 'Bronze',
+    discount: 5,
+    total_spent: 0,
+    total_saved: 0,
+    referral_code: 'BEAUTY000',
+    tier_progress: 0
+  };
+
+  const loyaltyInfo = loyalty || defaultLoyalty;
+
+  const currentTierIndex = tiers.findIndex(t => t.name.toLowerCase() === loyaltyInfo.tier.toLowerCase());
+  const currentTierData = tiers[currentTierIndex >= 0 ? currentTierIndex : 0];
   const nextTierData = tiers[currentTierIndex + 1];
 
   const progressToNext = nextTierData
-    ? ((loyalty?.points - currentTierData.points) / (nextTierData.points - currentTierData.points)) * 100
+    ? ((loyaltyInfo.points - currentTierData.points) / (nextTierData.points - currentTierData.points)) * 100
     : 100;
 
   const userName = localStorage.getItem('user_name') || 'Client';
   const userId = localStorage.getItem('user_id') || '00000000';
 
   const handleCopyReferral = () => {
-    navigator.clipboard.writeText(loyalty?.referral_code || '');
+    navigator.clipboard.writeText(loyaltyInfo.referral_code || '');
     toast.success(t('loyalty.code_copied', 'Промокод скопирован'));
   };
 
@@ -70,7 +84,7 @@ export function Loyalty() {
   };
 
   const shareWhatsApp = () => {
-    const text = `${t('loyalty.share_text', 'Присоединяйся к салону красоты! Используй мой промокод')} ${loyalty?.referral_code} ${t('loyalty.share_bonus', 'и получи бонусы!')}`;
+    const text = `${t('loyalty.share_text', 'Присоединяйся к салону красоты! Используй мой промокод')} ${loyaltyInfo.referral_code} ${t('loyalty.share_bonus', 'и получи бонусы!')}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
@@ -91,12 +105,12 @@ export function Loyalty() {
                 {currentTierData?.name} {t('loyalty.status', 'статус')}
               </CardTitle>
               <CardDescription className="mt-2">
-                {loyalty?.points} {t('loyalty.points', 'баллов')} • {loyalty?.discount}% {t('loyalty.discount', 'скидка')}
+                {loyaltyInfo.points} {t('loyalty.points', 'баллов')} • {loyaltyInfo.discount}% {t('loyalty.discount', 'скидка')}
               </CardDescription>
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold" style={{ color: currentTierData?.color }}>
-                {loyalty?.points}
+                {loyaltyInfo.points}
               </div>
               <div className="text-sm text-muted-foreground">{t('loyalty.points', 'баллов')}</div>
             </div>
@@ -109,7 +123,7 @@ export function Loyalty() {
                 <div className="flex justify-between text-sm">
                   <span>{t('loyalty.to_next_level', 'До')} {nextTierData.name} {t('loyalty.level', 'уровня')}</span>
                   <span className="font-semibold">
-                    {nextTierData.points - (loyalty?.points || 0)} {t('loyalty.points', 'баллов')}
+                    {nextTierData.points - loyaltyInfo.points} {t('loyalty.points', 'баллов')}
                   </span>
                 </div>
                 <Progress value={progressToNext} className="h-2" />
@@ -132,7 +146,7 @@ export function Loyalty() {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
-            <div className="text-5xl font-bold text-orange-500">{loyalty?.streak || 0}</div>
+            <div className="text-5xl font-bold text-orange-500">{loyaltyInfo.streak || 0}</div>
             <div className="flex-1">
               <div className="font-semibold">{t('loyalty.days_in_row', 'дней подряд!')}</div>
               <p className="text-sm text-muted-foreground">
@@ -219,7 +233,7 @@ export function Loyalty() {
                   <div className="font-mono">{userId.padStart(8, '0')}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold">{loyalty?.discount}%</div>
+                  <div className="text-2xl font-bold">{loyaltyInfo.discount}%</div>
                   <div className="text-xs opacity-80">{t('loyalty.discount', 'скидка')}</div>
                 </div>
               </div>
@@ -260,7 +274,7 @@ export function Loyalty() {
           <div className="bg-white rounded-lg p-4 border-2 border-dashed border-purple-200">
             <div className="text-sm text-muted-foreground mb-2">{t('loyalty.your_promo', 'Ваш промокод')}</div>
             <div className="flex items-center gap-2">
-              <code className="flex-1 text-2xl font-bold text-purple-600">{loyalty?.referral_code || 'LOADING'}</code>
+              <code className="flex-1 text-2xl font-bold text-purple-600">{loyaltyInfo.referral_code}</code>
               <Button size="sm" variant="outline" onClick={handleCopyReferral}>
                 <Copy className="w-4 h-4" />
               </Button>
@@ -269,15 +283,15 @@ export function Loyalty() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600">+{loyalty?.referral_stats?.points_for_referrer || 500}</div>
+              <div className="text-3xl font-bold text-purple-600">+{loyaltyInfo.referral_stats?.points_for_referrer || 500}</div>
               <div className="text-sm text-muted-foreground">{t('loyalty.points_for_you', 'баллов вам')}</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-pink-600">+{loyalty?.referral_stats?.points_for_friend || 300}</div>
+              <div className="text-3xl font-bold text-pink-600">+{loyaltyInfo.referral_stats?.points_for_friend || 300}</div>
               <div className="text-sm text-muted-foreground">{t('loyalty.points_for_friend', 'баллов другу')}</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">{loyalty?.referral_stats?.referral_count || 0}</div>
+              <div className="text-3xl font-bold text-blue-600">{loyaltyInfo.referral_stats?.referral_count || 0}</div>
               <div className="text-sm text-muted-foreground">{t('loyalty.invitations', 'приглашений')}</div>
             </div>
           </div>

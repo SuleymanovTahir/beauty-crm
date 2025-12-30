@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, Repeat, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Calendar, Clock, Repeat, CheckCircle, XCircle, Loader2, CalendarPlus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -11,9 +12,31 @@ import { toast } from 'sonner';
 
 export function Appointments() {
   const { t } = useTranslation(['account', 'common']);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [bookings, setBookings] = useState<any[]>([]);
   const [filter, setFilter] = useState<'upcoming' | 'history' | 'recurring'>('upcoming');
+
+  // Add to Google Calendar function
+  const addToGoogleCalendar = (appointment: any) => {
+    const startDate = new Date(`${appointment.date} ${appointment.time}`);
+    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // +1 hour
+
+    const formatDateForGoogle = (date: Date) => {
+      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    };
+
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: appointment.service,
+      dates: `${formatDateForGoogle(startDate)}/${formatDateForGoogle(endDate)}`,
+      details: `Мастер: ${appointment.master_name}`,
+      location: 'Beauty Salon',
+    });
+
+    window.open(`https://calendar.google.com/calendar/render?${params.toString()}`, '_blank');
+    toast.success(t('appointments.added_to_calendar', 'Добавлено в календарь'));
+  };
 
   useEffect(() => {
     loadBookings();
@@ -32,6 +55,35 @@ export function Appointments() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancelBooking = async (bookingId: number) => {
+    if (!confirm(t('appointments.confirm_cancel', 'Вы уверены, что хотите отменить запись?'))) {
+      return;
+    }
+
+    try {
+      const result = await apiClient.cancelBooking(bookingId);
+      if (result.success) {
+        toast.success(t('appointments.cancelled', 'Запись отменена'));
+        await loadBookings(); // Reload bookings
+      }
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      toast.error(t('common:error_occurred'));
+    }
+  };
+
+  const handleEditBooking = (appointment: any) => {
+    navigate('/new-booking', {
+      state: {
+        editBookingId: appointment.id,
+        prefillMaster: appointment.master_id,
+        prefillService: appointment.service_id,
+        prefillDate: appointment.date,
+        prefillTime: appointment.time
+      }
+    });
   };
 
   const upcomingAppointments = bookings.filter(a => a.status === 'upcoming');
@@ -98,7 +150,17 @@ export function Appointments() {
                 <div className="font-bold">{appointment.price} AED</div>
 
                 {appointment.status === 'completed' && (
-                  <Button size="sm" variant="outline">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => navigate('/new-booking', {
+                      state: {
+                        prefillMaster: appointment.master_id,
+                        prefillService: appointment.service_id,
+                        repeatBooking: appointment
+                      }
+                    })}
+                  >
                     <Repeat className="w-4 h-4 mr-2" />
                     {t('appointments.repeat', 'Повторить')}
                   </Button>
@@ -106,8 +168,16 @@ export function Appointments() {
 
                 {appointment.status === 'upcoming' && (
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline">{t('appointments.edit', 'Изменить')}</Button>
-                    <Button size="sm" variant="outline">{t('appointments.cancel', 'Отменить')}</Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => addToGoogleCalendar(appointment)}
+                    >
+                      <CalendarPlus className="w-4 h-4 mr-2" />
+                      {t('appointments.add_to_calendar', 'В календарь')}
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleEditBooking(appointment)}>{t('appointments.edit', 'Изменить')}</Button>
+                    <Button size="sm" variant="destructive" onClick={() => handleCancelBooking(appointment.id)}>{t('appointments.cancel', 'Отменить')}</Button>
                   </div>
                 )}
               </div>
@@ -152,7 +222,7 @@ export function Appointments() {
                 <p className="text-sm text-muted-foreground mb-4">
                   {t('appointments.book_now_message', 'Запишитесь на услугу прямо сейчас')}
                 </p>
-                <Button>{t('appointments.book_now', 'Записаться')}</Button>
+                <Button onClick={() => navigate('/new-booking')}>{t('appointments.book_now', 'Записаться')}</Button>
               </CardContent>
             </Card>
           )}
