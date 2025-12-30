@@ -79,46 +79,18 @@ export default function NotificationsDashboard() {
   const loadNotifications = async () => {
     try {
       setLoading(true);
-      // TODO: API call
-      // Mock data
-      setNotifications([
-        {
-          id: '1',
-          title: 'Summer Sale Announcement',
-          message: 'Get 20% off all services this week!',
-          type: 'push',
-          recipients: 1234,
-          sent_count: 1200,
-          failed_count: 34,
-          status: 'sent',
-          created_at: '2026-06-15T10:00:00Z',
-          sent_at: '2026-06-15T10:05:00Z',
-        },
-        {
-          id: '2',
-          title: 'Appointment Reminder',
-          message: 'You have an appointment tomorrow at 2 PM',
-          type: 'email',
-          recipients: 45,
-          sent_count: 45,
-          failed_count: 0,
-          status: 'sent',
-          created_at: '2026-06-14T15:00:00Z',
-          sent_at: '2026-06-14T15:02:00Z',
-        },
-        {
-          id: '3',
-          title: 'New Challenge Available',
-          message: 'Complete 3 visits this month and earn 1000 points!',
-          type: 'push',
-          recipients: 800,
-          sent_count: 0,
-          failed_count: 0,
-          status: 'pending',
-          created_at: '2026-06-16T09:00:00Z',
-          sent_at: null,
-        },
-      ]);
+      const response = await fetch('/api/admin/notifications', {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.notifications) {
+          setNotifications(data.notifications);
+        }
+      } else {
+        throw new Error('Failed to load notifications');
+      }
     } catch (error) {
       console.error('Error loading notifications:', error);
       toast.error(t('toasts.failed_load'));
@@ -129,31 +101,16 @@ export default function NotificationsDashboard() {
 
   const loadTemplates = async () => {
     try {
-      // TODO: API call
-      // Mock data
-      setTemplates([
-        {
-          id: '1',
-          name: 'Welcome Message',
-          title: 'Welcome to our salon!',
-          message: 'Thank you for joining. Enjoy 10% off your first visit!',
-          type: 'email',
-        },
-        {
-          id: '2',
-          name: 'Appointment Reminder',
-          title: 'Upcoming Appointment',
-          message: 'You have an appointment on {date} at {time}',
-          type: 'sms',
-        },
-        {
-          id: '3',
-          name: 'Points Earned',
-          title: 'You earned points!',
-          message: 'Congratulations! You earned {points} loyalty points.',
-          type: 'push',
-        },
-      ]);
+      const response = await fetch('/api/admin/notifications/templates', {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.templates) {
+          setTemplates(data.templates);
+        }
+      }
     } catch (error) {
       console.error('Error loading templates:', error);
     }
@@ -161,17 +118,27 @@ export default function NotificationsDashboard() {
 
   const handleSendNotification = async () => {
     try {
-      // TODO: API call
-      toast.success(t('toasts.sent'));
-      setShowCreateDialog(false);
-      setFormData({
-        title: '',
-        message: '',
-        type: 'push',
-        target_segment: 'all',
-        tier_filter: '',
+      const response = await fetch('/api/admin/notifications/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(formData),
       });
-      loadNotifications();
+
+      if (response.ok) {
+        toast.success(t('toasts.sent'));
+        setShowCreateDialog(false);
+        setFormData({
+          title: '',
+          message: '',
+          type: 'push',
+          target_segment: 'all',
+          tier_filter: '',
+        });
+        loadNotifications();
+      } else {
+        throw new Error('Failed to send notification');
+      }
     } catch (error) {
       toast.error(t('toasts.failed_send'));
     }
@@ -179,16 +146,26 @@ export default function NotificationsDashboard() {
 
   const handleSaveTemplate = async () => {
     try {
-      // TODO: API call
-      toast.success(t('toasts.template_saved'));
-      setShowTemplateDialog(false);
-      setTemplateForm({
-        name: '',
-        title: '',
-        message: '',
-        type: 'push',
+      const response = await fetch('/api/admin/notifications/templates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(templateForm),
       });
-      loadTemplates();
+
+      if (response.ok) {
+        toast.success(t('toasts.template_saved'));
+        setShowTemplateDialog(false);
+        setTemplateForm({
+          name: '',
+          title: '',
+          message: '',
+          type: 'push',
+        });
+        loadTemplates();
+      } else {
+        throw new Error('Failed to save template');
+      }
     } catch (error) {
       toast.error(t('toasts.failed_save_template'));
     }

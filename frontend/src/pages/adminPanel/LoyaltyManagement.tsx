@@ -45,19 +45,18 @@ interface LoyaltyTransaction {
 
 export default function LoyaltyManagement() {
   const { t } = useTranslation(['adminPanel/LoyaltyManagement', 'common']);
-  const [tiers, setTiers] = useState<LoyaltyTier[]>([
-    { id: '1', name: 'Bronze', min_points: 0, discount: 0, color: '#CD7F32' },
-    { id: '2', name: 'Silver', min_points: 1000, discount: 5, color: '#C0C0C0' },
-    { id: '3', name: 'Gold', min_points: 5000, discount: 10, color: '#FFD700' },
-    { id: '4', name: 'Platinum', min_points: 10000, discount: 15, color: '#E5E4E2' },
-  ]);
-
+  const [tiers, setTiers] = useState<LoyaltyTier[]>([]);
   const [transactions, setTransactions] = useState<LoyaltyTransaction[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showTierDialog, setShowTierDialog] = useState(false);
   const [showAdjustDialog, setShowAdjustDialog] = useState(false);
   const [editingTier, setEditingTier] = useState<LoyaltyTier | null>(null);
+  const [stats, setStats] = useState({
+    total_points_issued: 0,
+    points_redeemed: 0,
+    active_members: 0,
+  });
 
   const [adjustForm, setAdjustForm] = useState({
     client_email: '',
@@ -67,33 +66,59 @@ export default function LoyaltyManagement() {
 
   useEffect(() => {
     loadTransactions();
+    loadTiers();
+    loadStats();
   }, []);
+
+  const loadTiers = async () => {
+    try {
+      const response = await fetch('/api/admin/loyalty/tiers', {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.tiers) {
+          setTiers(data.tiers);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading tiers:', error);
+    }
+  };
+
+  const loadStats = async () => {
+    try {
+      const response = await fetch('/api/admin/loyalty/stats', {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.stats) {
+          setStats(data.stats);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  };
 
   const loadTransactions = async () => {
     try {
       setLoading(true);
-      // TODO: API call
-      // Mock data
-      setTransactions([
-        {
-          id: '1',
-          client_name: 'John Doe',
-          client_email: 'john@example.com',
-          points: 500,
-          type: 'earn',
-          reason: 'Purchase',
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: '2',
-          client_name: 'Jane Smith',
-          client_email: 'jane@example.com',
-          points: -200,
-          type: 'redeem',
-          reason: 'Discount applied',
-          created_at: new Date().toISOString(),
-        },
-      ]);
+      const response = await fetch('/api/admin/loyalty/transactions', {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.transactions) {
+          setTransactions(data.transactions);
+        }
+      } else {
+        throw new Error('Failed to load transactions');
+      }
     } catch (error) {
       console.error('Error loading transactions:', error);
       toast.error(t('toasts.failed_load'));
@@ -102,10 +127,25 @@ export default function LoyaltyManagement() {
     }
   };
 
-  const handleSaveTier = () => {
+  const handleSaveTier = async () => {
     if (editingTier) {
-      setTiers(tiers.map(t => t.id === editingTier.id ? editingTier : t));
-      toast.success(t('toasts.tier_updated'));
+      try {
+        const response = await fetch(`/api/admin/loyalty/tiers/${editingTier.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(editingTier),
+        });
+
+        if (response.ok) {
+          toast.success(t('toasts.tier_updated'));
+          loadTiers();
+        } else {
+          throw new Error('Failed to update tier');
+        }
+      } catch (error) {
+        toast.error(t('toasts.failed_update'));
+      }
     }
     setShowTierDialog(false);
     setEditingTier(null);
@@ -113,40 +153,47 @@ export default function LoyaltyManagement() {
 
   const handleAdjustPoints = async () => {
     try {
-      // TODO: API call to adjust points
-      const message = adjustForm.points > 0
-        ? t('toasts.points_adjusted_add', { points: adjustForm.points, email: adjustForm.client_email })
-        : t('toasts.points_adjusted_deduct', { points: Math.abs(adjustForm.points), email: adjustForm.client_email });
-      toast.success(message);
-      setShowAdjustDialog(false);
-      setAdjustForm({ client_email: '', points: 0, reason: '' });
-      loadTransactions();
+      const response = await fetch('/api/admin/loyalty/adjust-points', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(adjustForm),
+      });
+
+      if (response.ok) {
+        const message = adjustForm.points > 0
+          ? t('toasts.points_adjusted_add', { points: adjustForm.points, email: adjustForm.client_email })
+          : t('toasts.points_adjusted_deduct', { points: Math.abs(adjustForm.points), email: adjustForm.client_email });
+        toast.success(message);
+        setShowAdjustDialog(false);
+        setAdjustForm({ client_email: '', points: 0, reason: '' });
+        loadTransactions();
+      } else {
+        throw new Error('Failed to adjust points');
+      }
     } catch (error) {
       toast.error(t('toasts.failed_adjust'));
     }
   };
 
-  const stats = [
+  const statsCards = [
     {
       title: t('stats.total_points_issued'),
-      value: '125,000',
-      change: '+12%',
+      value: stats.total_points_issued.toLocaleString(),
       icon: Gift,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
     },
     {
       title: t('stats.points_redeemed'),
-      value: '45,000',
-      change: '+8%',
+      value: stats.points_redeemed.toLocaleString(),
       icon: DollarSign,
       color: 'text-green-600',
       bgColor: 'bg-green-100',
     },
     {
       title: t('stats.active_members'),
-      value: '1,234',
-      change: '+15%',
+      value: stats.active_members.toLocaleString(),
       icon: TrendingUp,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100',
@@ -169,7 +216,7 @@ export default function LoyaltyManagement() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {stats.map((stat) => {
+        {statsCards.map((stat) => {
           const Icon = stat.icon;
           return (
             <Card key={stat.title}>
@@ -178,7 +225,6 @@ export default function LoyaltyManagement() {
                   <div>
                     <p className="text-sm text-gray-500 font-medium">{stat.title}</p>
                     <p className="text-2xl font-bold text-gray-900 mt-2">{stat.value}</p>
-                    <p className="text-xs text-green-600 font-medium mt-1">{stat.change} {t('stats.from_last_month')}</p>
                   </div>
                   <div className={`w-12 h-12 ${stat.bgColor} rounded-lg flex items-center justify-center`}>
                     <Icon className={`w-6 h-6 ${stat.color}`} />

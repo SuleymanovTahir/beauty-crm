@@ -57,36 +57,18 @@ export default function Challenges() {
   const loadChallenges = async () => {
     try {
       setLoading(true);
-      // TODO: API call
-      // Mock data
-      setChallenges([
-        {
-          id: '1',
-          title: 'Summer Glow Challenge',
-          description: 'Visit the salon 3 times this month',
-          type: 'visits',
-          target_value: 3,
-          reward_points: 1000,
-          start_date: '2026-06-01',
-          end_date: '2026-06-30',
-          status: 'active',
-          participants: 45,
-          completions: 12,
-        },
-        {
-          id: '2',
-          title: 'Refer a Friend',
-          description: 'Refer 2 friends and earn bonus points',
-          type: 'referrals',
-          target_value: 2,
-          reward_points: 1500,
-          start_date: '2026-06-01',
-          end_date: '2026-12-31',
-          status: 'active',
-          participants: 28,
-          completions: 5,
-        },
-      ]);
+      const response = await fetch('/api/admin/challenges', {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.challenges) {
+          setChallenges(data.challenges);
+        }
+      } else {
+        throw new Error('Failed to load challenges');
+      }
     } catch (error) {
       console.error('Error loading challenges:', error);
       toast.error(t('toasts.failed_load'));
@@ -97,19 +79,34 @@ export default function Challenges() {
 
   const handleCreateChallenge = async () => {
     try {
-      // TODO: API call
-      toast.success(t('toasts.created'));
-      setShowCreateDialog(false);
-      setFormData({
-        title: '',
-        description: '',
-        type: 'visits',
-        target_value: 0,
-        reward_points: 0,
-        start_date: '',
-        end_date: '',
+      const endpoint = editingChallenge
+        ? `/api/admin/challenges/${editingChallenge.id}`
+        : '/api/admin/challenges';
+
+      const response = await fetch(endpoint, {
+        method: editingChallenge ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(formData),
       });
-      loadChallenges();
+
+      if (response.ok) {
+        toast.success(t('toasts.created'));
+        setShowCreateDialog(false);
+        setFormData({
+          title: '',
+          description: '',
+          type: 'visits',
+          target_value: 0,
+          reward_points: 0,
+          start_date: '',
+          end_date: '',
+        });
+        setEditingChallenge(null);
+        loadChallenges();
+      } else {
+        throw new Error('Failed to create challenge');
+      }
     } catch (error) {
       toast.error(t('toasts.failed_create'));
     }
@@ -119,9 +116,17 @@ export default function Challenges() {
     if (!confirm(t('dialogs.delete.confirm'))) return;
 
     try {
-      // TODO: API call
-      toast.success(t('toasts.deleted'));
-      loadChallenges();
+      const response = await fetch(`/api/admin/challenges/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        toast.success(t('toasts.deleted'));
+        loadChallenges();
+      } else {
+        throw new Error('Failed to delete challenge');
+      }
     } catch (error) {
       toast.error(t('toasts.failed_delete'));
     }

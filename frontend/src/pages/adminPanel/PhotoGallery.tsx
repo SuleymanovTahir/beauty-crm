@@ -22,11 +22,14 @@ interface GalleryPhoto {
   url: string;
   title: string;
   description: string;
-  category: 'haircut' | 'coloring' | 'styling' | 'manicure' | 'makeup' | 'other';
+  category: string;
   uploaded_by: string;
   created_at: string;
   is_featured: boolean;
   views: number;
+  before_photo_url?: string;
+  after_photo_url?: string;
+  client_id?: string;
 }
 
 interface UploadStats {
@@ -36,9 +39,15 @@ interface UploadStats {
   recent_uploads: number;
 }
 
+interface Category {
+  value: string;
+  label: string;
+}
+
 export default function PhotoGallery() {
   const { t } = useTranslation(['adminPanel/PhotoGallery', 'common']);
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [stats, setStats] = useState<UploadStats>({
     total_photos: 0,
     total_views: 0,
@@ -50,22 +59,28 @@ export default function PhotoGallery() {
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<GalleryPhoto | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState<'all' | GalleryPhoto['category']>('all');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [uploadType, setUploadType] = useState<'single' | 'before_after'>('single');
   const [uploadForm, setUploadForm] = useState({
     title: '',
     description: '',
-    category: 'other' as GalleryPhoto['category'],
+    category: 'other',
     is_featured: false,
     client_id: '',
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [beforePhoto, setBeforePhoto] = useState<File | null>(null);
+  const [afterPhoto, setAfterPhoto] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [beforePreviewUrl, setBeforePreviewUrl] = useState<string>('');
+  const [afterPreviewUrl, setAfterPreviewUrl] = useState<string>('');
   const [clients, setClients] = useState<Array<{ id: number; name: string; instagram_id: string }>>([]);
 
   useEffect(() => {
     loadPhotos();
     loadStats();
     loadClients();
+    loadCategories();
   }, []);
 
   const loadClients = async () => {
@@ -84,79 +99,37 @@ export default function PhotoGallery() {
     }
   };
 
+  const loadCategories = async () => {
+    try {
+      const response = await fetch('/api/admin/gallery/categories', {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.categories) {
+          setCategories(data.categories);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    }
+  };
+
   const loadPhotos = async () => {
     try {
       setLoading(true);
-      // TODO: API call
-      // Mock data
-      setPhotos([
-        {
-          id: '1',
-          url: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
-          title: 'Современная стрижка',
-          description: 'Стильная короткая стрижка для женщин',
-          category: 'haircut',
-          uploaded_by: 'Admin',
-          created_at: '2026-06-15T10:00:00Z',
-          is_featured: true,
-          views: 245,
-        },
-        {
-          id: '2',
-          url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
-          title: 'Окрашивание балаяж',
-          description: 'Натуральное окрашивание в технике балаяж',
-          category: 'coloring',
-          uploaded_by: 'Admin',
-          created_at: '2026-06-14T15:00:00Z',
-          is_featured: true,
-          views: 189,
-        },
-        {
-          id: '3',
-          url: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=400',
-          title: 'Вечерняя укладка',
-          description: 'Элегантная укладка для особого случая',
-          category: 'styling',
-          uploaded_by: 'Admin',
-          created_at: '2026-06-13T12:00:00Z',
-          is_featured: false,
-          views: 156,
-        },
-        {
-          id: '4',
-          url: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400',
-          title: 'Маникюр с дизайном',
-          description: 'Красивый маникюр с цветочным дизайном',
-          category: 'manicure',
-          uploaded_by: 'Admin',
-          created_at: '2026-06-12T09:00:00Z',
-          is_featured: false,
-          views: 134,
-        },
-        {
-          id: '5',
-          url: 'https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=400',
-          title: 'Вечерний макияж',
-          description: 'Профессиональный вечерний макияж',
-          category: 'makeup',
-          uploaded_by: 'Admin',
-          created_at: '2026-06-11T16:00:00Z',
-          is_featured: true,
-          views: 201,
-        },
-        {
-          id: '6',
-          url: 'https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=400',
-          title: 'Мужская стрижка',
-          description: 'Классическая мужская стрижка',
-          category: 'haircut',
-          uploaded_by: 'Admin',
-          created_at: '2026-06-10T11:00:00Z',
-          is_featured: false,
-          views: 98,
-        },
-      ]);
+      const response = await fetch('/api/admin/gallery/photos', {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.photos) {
+          setPhotos(data.photos);
+        }
+      } else {
+        throw new Error('Failed to load photos');
+      }
     } catch (error) {
       console.error('Error loading photos:', error);
       toast.error(t('toasts.failed_load'));
@@ -167,13 +140,16 @@ export default function PhotoGallery() {
 
   const loadStats = async () => {
     try {
-      // TODO: API call
-      setStats({
-        total_photos: 87,
-        total_views: 3421,
-        featured_count: 12,
-        recent_uploads: 8,
+      const response = await fetch('/api/admin/gallery/stats', {
+        credentials: 'include',
       });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.stats) {
+          setStats(data.stats);
+        }
+      }
     } catch (error) {
       console.error('Error loading stats:', error);
     }
@@ -191,34 +167,88 @@ export default function PhotoGallery() {
     }
   };
 
+  const handleBeforePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setBeforePhoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBeforePreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAfterPhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAfterPhoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAfterPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleUpload = async () => {
-    if (!selectedFile) {
+    // Проверка: либо одно фото, либо фото до/после
+    if (uploadType === 'single' && !selectedFile) {
       toast.error(t('toasts.failed_upload'));
       return;
     }
 
-    try {
-      // TODO: API call to upload photo
-      // const formData = new FormData();
-      // formData.append('file', selectedFile);
-      // formData.append('title', uploadForm.title);
-      // formData.append('description', uploadForm.description);
-      // formData.append('category', uploadForm.category);
-      // formData.append('is_featured', uploadForm.is_featured.toString());
+    if (uploadType === 'before_after' && (!beforePhoto || !afterPhoto)) {
+      toast.error(t('toasts.select_both_photos', { defaultValue: 'Please select both before and after photos' }));
+      return;
+    }
 
-      toast.success(t('toasts.uploaded'));
-      setShowUploadDialog(false);
-      setUploadForm({
-        title: '',
-        description: '',
-        category: 'other',
-        is_featured: false,
-        client_id: '',
+    try {
+      const formData = new FormData();
+
+      if (uploadType === 'single' && selectedFile) {
+        formData.append('file', selectedFile);
+      } else if (uploadType === 'before_after') {
+        if (beforePhoto) formData.append('before_photo', beforePhoto);
+        if (afterPhoto) formData.append('after_photo', afterPhoto);
+      }
+
+      formData.append('title', uploadForm.title);
+      formData.append('description', uploadForm.description);
+      formData.append('category', uploadForm.category);
+      formData.append('is_featured', uploadForm.is_featured.toString());
+      if (uploadForm.client_id) {
+        formData.append('client_id', uploadForm.client_id);
+      }
+
+      const response = await fetch('/api/admin/gallery/photos', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
       });
-      setSelectedFile(null);
-      setPreviewUrl('');
-      loadPhotos();
-      loadStats();
+
+      if (response.ok) {
+        toast.success(t('toasts.uploaded'));
+        setShowUploadDialog(false);
+        setUploadForm({
+          title: '',
+          description: '',
+          category: 'other',
+          is_featured: false,
+          client_id: '',
+        });
+        setSelectedFile(null);
+        setBeforePhoto(null);
+        setAfterPhoto(null);
+        setPreviewUrl('');
+        setBeforePreviewUrl('');
+        setAfterPreviewUrl('');
+        setUploadType('single');
+        loadPhotos();
+        loadStats();
+      } else {
+        throw new Error('Failed to upload photo');
+      }
     } catch (error) {
       toast.error(t('toasts.failed_upload'));
     }
@@ -228,10 +258,18 @@ export default function PhotoGallery() {
     if (!confirm(t('dialogs.delete.confirm'))) return;
 
     try {
-      // TODO: API call
-      toast.success(t('toasts.deleted'));
-      loadPhotos();
-      loadStats();
+      const response = await fetch(`/api/admin/gallery/photos/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        toast.success(t('toasts.deleted'));
+        loadPhotos();
+        loadStats();
+      } else {
+        throw new Error('Failed to delete photo');
+      }
     } catch (error) {
       toast.error(t('toasts.failed_delete'));
     }
@@ -239,10 +277,20 @@ export default function PhotoGallery() {
 
   const handleToggleFeatured = async (id: string, currentStatus: boolean) => {
     try {
-      // TODO: API call
-      toast.success(t('toasts.featured_updated'));
-      loadPhotos();
-      loadStats();
+      const response = await fetch(`/api/admin/gallery/photos/${id}/featured`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ is_featured: !currentStatus }),
+      });
+
+      if (response.ok) {
+        toast.success(t('toasts.featured_updated'));
+        loadPhotos();
+        loadStats();
+      } else {
+        throw new Error('Failed to update featured status');
+      }
     } catch (error) {
       toast.error(t('toasts.failed_featured'));
     }
@@ -358,16 +406,15 @@ export default function PhotoGallery() {
               <Filter className="w-4 h-4 text-gray-500" />
               <select
                 value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value as typeof filterCategory)}
+                onChange={(e) => setFilterCategory(e.target.value)}
                 className="px-3 py-2 border rounded-md bg-white"
               >
                 <option value="all">{t('filters.all_categories')}</option>
-                <option value="haircut">{t('categories.haircut')}</option>
-                <option value="coloring">{t('categories.coloring')}</option>
-                <option value="styling">{t('categories.styling')}</option>
-                <option value="manicure">{t('categories.manicure')}</option>
-                <option value="makeup">{t('categories.makeup')}</option>
-                <option value="other">{t('categories.other')}</option>
+                {categories.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -454,25 +501,102 @@ export default function PhotoGallery() {
             <DialogDescription>{t('dialogs.upload.description')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
+            {/* Upload Type Selection */}
             <div>
-              <Label>{t('dialogs.upload.form.photo')}</Label>
-              <div className="mt-2">
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileSelect}
-                />
+              <Label>{t('dialogs.upload.form.upload_type', 'Тип загрузки')}</Label>
+              <div className="flex gap-4 mt-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="uploadType"
+                    value="single"
+                    checked={uploadType === 'single'}
+                    onChange={() => setUploadType('single')}
+                    className="w-4 h-4"
+                  />
+                  <span>{t('dialogs.upload.form.single_photo', 'Одно фото')}</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="uploadType"
+                    value="before_after"
+                    checked={uploadType === 'before_after'}
+                    onChange={() => setUploadType('before_after')}
+                    className="w-4 h-4"
+                  />
+                  <span>{t('dialogs.upload.form.before_after', 'До/После')}</span>
+                </label>
               </div>
-              {previewUrl && (
-                <div className="mt-4">
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="w-full max-h-64 object-contain rounded-lg border"
+            </div>
+
+            {/* Single Photo Upload */}
+            {uploadType === 'single' && (
+              <div>
+                <Label>{t('dialogs.upload.form.photo')}</Label>
+                <div className="mt-2">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
                   />
                 </div>
-              )}
-            </div>
+                {previewUrl && (
+                  <div className="mt-4">
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      className="w-full max-h-64 object-contain rounded-lg border"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Before/After Photo Upload */}
+            {uploadType === 'before_after' && (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>{t('dialogs.upload.form.before_photo', 'Фото "До"')}</Label>
+                  <div className="mt-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleBeforePhotoSelect}
+                    />
+                  </div>
+                  {beforePreviewUrl && (
+                    <div className="mt-4">
+                      <img
+                        src={beforePreviewUrl}
+                        alt="Before Preview"
+                        className="w-full max-h-48 object-contain rounded-lg border"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <Label>{t('dialogs.upload.form.after_photo', 'Фото "После"')}</Label>
+                  <div className="mt-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAfterPhotoSelect}
+                    />
+                  </div>
+                  {afterPreviewUrl && (
+                    <div className="mt-4">
+                      <img
+                        src={afterPreviewUrl}
+                        alt="After Preview"
+                        className="w-full max-h-48 object-contain rounded-lg border"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             <div>
               <Label>{t('dialogs.upload.form.title')}</Label>
               <Input
@@ -494,14 +618,13 @@ export default function PhotoGallery() {
               <select
                 className="w-full px-3 py-2 border rounded-md"
                 value={uploadForm.category}
-                onChange={(e) => setUploadForm({ ...uploadForm, category: e.target.value as GalleryPhoto['category'] })}
+                onChange={(e) => setUploadForm({ ...uploadForm, category: e.target.value })}
               >
-                <option value="haircut">{t('categories.haircut')}</option>
-                <option value="coloring">{t('categories.coloring')}</option>
-                <option value="styling">{t('categories.styling')}</option>
-                <option value="manicure">{t('categories.manicure')}</option>
-                <option value="makeup">{t('categories.makeup')}</option>
-                <option value="other">{t('categories.other')}</option>
+                {categories.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
@@ -513,7 +636,7 @@ export default function PhotoGallery() {
               >
                 <option value="">{t('dialogs.upload.form.select_client', 'Выберите клиента')}</option>
                 {clients.map((client) => (
-                  <option key={client.id} value={client.id}>
+                  <option key={client.instagram_id} value={client.instagram_id}>
                     {client.name} {client.instagram_id ? `(@${client.instagram_id})` : ''}
                   </option>
                 ))}
