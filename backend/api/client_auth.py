@@ -51,12 +51,18 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
     if not user:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    client_id = user["username"]
+    # Get client identifier - try multiple sources
+    client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("username")
+
     conn = get_db_connection()
     c = conn.cursor()
 
     try:
-        c.execute("SELECT loyalty_points, referral_code, total_saved FROM clients WHERE instagram_id = %s", (client_id,))
+        c.execute("""
+            SELECT loyalty_points, referral_code, total_saved FROM clients
+            WHERE instagram_id = %s OR telegram_id = %s
+            LIMIT 1
+        """, (client_id, client_id))
         client_row = c.fetchone()
         points = client_row[0] if client_row else 0
         loyalty = {
@@ -66,25 +72,25 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         }
 
         c.execute("""
-            SELECT b.id, b.service_name, b.datetime, b.master, COALESCE(u.photo, u.photo_url) 
-            FROM bookings b 
-            LEFT JOIN users u ON LOWER(b.master) = LOWER(u.full_name) 
-            WHERE b.instagram_id = %s 
-            AND b.status IN ('pending', 'confirmed') 
-            AND b.datetime >= %s 
+            SELECT b.id, b.service_name, b.datetime, b.master, COALESCE(u.photo, u.photo_url)
+            FROM bookings b
+            LEFT JOIN users u ON LOWER(b.master) = LOWER(u.full_name)
+            WHERE (b.instagram_id = %s OR b.telegram_id = %s OR b.client_id = %s)
+            AND b.status IN ('pending', 'confirmed')
+            AND b.datetime >= %s
             ORDER BY b.datetime ASC LIMIT 1
-        """, (client_id, datetime.now().isoformat()))
+        """, (client_id, client_id, client_id, datetime.now().isoformat()))
         row = c.fetchone()
         next_booking = {"id": row[0], "service": row[1], "date": row[2], "master": row[3], "master_photo": row[4]} if row else None
 
         c.execute("""
-            SELECT b.id, b.service_name, b.datetime, b.master, COALESCE(u.photo, u.photo_url) 
-            FROM bookings b 
-            LEFT JOIN users u ON LOWER(b.master) = LOWER(u.full_name) 
-            WHERE b.instagram_id = %s 
-            AND b.status = 'completed' 
+            SELECT b.id, b.service_name, b.datetime, b.master, COALESCE(u.photo, u.photo_url)
+            FROM bookings b
+            LEFT JOIN users u ON LOWER(b.master) = LOWER(u.full_name)
+            WHERE (b.instagram_id = %s OR b.telegram_id = %s OR b.client_id = %s)
+            AND b.status = 'completed'
             ORDER BY b.datetime DESC LIMIT 1
-        """, (client_id,))
+        """, (client_id, client_id, client_id))
         row = c.fetchone()
         last_visit = {"id": row[0], "service": row[1], "date": row[2], "master": row[3], "master_photo": row[4]} if row else None
 
@@ -192,12 +198,21 @@ async def mark_notification_read(notification_id: int, session_token: Optional[s
 async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user: raise HTTPException(status_code=401)
+
+    # Get client identifier - try multiple sources
+    client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("username")
+
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT id, service_name, datetime, status, revenue FROM bookings WHERE instagram_id = %s", (user["username"],))
-    items = [{"id":r[0], "service_name":r[1], "date":r[2], "status":r[3], "price":r[4]} for r in c.fetchall()]
+    c.execute("""
+        SELECT id, service_name, datetime, status, revenue, master
+        FROM bookings
+        WHERE instagram_id = %s OR telegram_id = %s OR client_id = %s
+        ORDER BY datetime DESC
+    """, (client_id, client_id, client_id))
+    items = [{"id":r[0], "service_name":r[1], "date":r[2], "status":r[3], "price":r[4], "master_name": r[5]} for r in c.fetchall()]
     conn.close()
-    return {"bookings": items}
+    return {"success": True, "bookings": items}
 
 @router.get("/loyalty")
 async def get_loyalty(session_token: Optional[str] = Cookie(None)):
