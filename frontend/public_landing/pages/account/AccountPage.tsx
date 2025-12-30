@@ -175,6 +175,12 @@ export function AccountPage() {
     try {
       const settings = await apiClient.getSalonSettings();
       setSalonSettings(settings);
+      if (settings?.name) {
+        localStorage.setItem('salon_name', settings.name);
+      }
+      if (settings?.phone) {
+        localStorage.setItem('salon_phone', settings.phone);
+      }
     } catch (error) {
       console.error('Error loading salon settings:', error);
     }
@@ -269,7 +275,10 @@ export function AccountPage() {
           </Avatar>
           <div className="flex-1 min-w-0">
             <div className="font-semibold truncate">{userData?.name || 'Guest'}</div>
-            <div className="text-sm text-muted-foreground capitalize">
+            <div className="text-xs text-muted-foreground">
+              @{localStorage.getItem('username') || localStorage.getItem('user_email')?.split('@')[0] || 'guest'}
+            </div>
+            <div className="text-xs text-muted-foreground capitalize">
               {userData?.currentTier || 'Bronze'}
             </div>
           </div>

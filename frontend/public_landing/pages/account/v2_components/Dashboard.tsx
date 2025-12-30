@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Clock, Star, TrendingUp, Zap, Repeat, Users, MessageCircle, ArrowRight, Sparkles, Loader2 } from 'lucide-react';
+import { Calendar, Clock, Star, TrendingUp, Zap, Repeat, Users, MessageCircle, ArrowRight, Sparkles, Loader2, X, Edit } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -63,12 +63,37 @@ export function Dashboard() {
       action: 'TEMPLATE',
       text: booking.service,
       dates: `${formatDateForGoogle(startDate)}/${formatDateForGoogle(endDate)}`,
-      details: `Мастер: ${booking.master}`,
-      location: 'Beauty Salon',
+      details: `${t('dashboard.master', 'Мастер')}: ${booking.master}`,
+      location: localStorage.getItem('salon_name') || 'Beauty Salon',
     });
 
     window.open(`https://calendar.google.com/calendar/render?${params.toString()}`, '_blank');
     toast.success(t('dashboard.added_to_calendar', 'Добавлено в календарь'));
+  };
+
+  const cancelBooking = async (bookingId: number) => {
+    const confirmed = window.confirm(
+      t('dashboard.confirm_cancel', 'Вы уверены, что хотите отменить эту запись?')
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const result = await apiClient.cancelClientBooking(bookingId);
+      if (result.success) {
+        toast.success(t('dashboard.booking_cancelled', 'Запись отменена'));
+        loadDashboard(); // Reload dashboard data
+      } else {
+        toast.error(result.error || t('common:error_occurred'));
+      }
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      toast.error(t('common:error_occurred'));
+    }
+  };
+
+  const rescheduleBooking = (bookingId: number) => {
+    navigate('/account/appointments', { state: { rescheduleBookingId: bookingId } });
   };
 
   if (loading) {
@@ -157,9 +182,17 @@ export function Dashboard() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" className="flex-1" onClick={() => addToGoogleCalendar(next_booking)}>
+              <Button size="sm" variant="outline" onClick={() => addToGoogleCalendar(next_booking)}>
                 <Calendar className="w-4 h-4 mr-2" />
                 {t('dashboard.add_to_calendar', 'В календарь')}
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => rescheduleBooking(next_booking.id)}>
+                <Edit className="w-4 h-4 mr-2" />
+                {t('dashboard.reschedule', 'Перенести')}
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => cancelBooking(next_booking.id)} className="text-red-600 hover:bg-red-50">
+                <X className="w-4 h-4 mr-2" />
+                {t('dashboard.cancel', 'Отменить')}
               </Button>
             </div>
           </CardContent>
@@ -200,8 +233,7 @@ export function Dashboard() {
           variant="outline"
           className="h-20 flex-col gap-2"
           onClick={() => {
-            // Открываем WhatsApp или Telegram чат с салоном
-            const phone = '+971501234567'; // Номер салона
+            const phone = localStorage.getItem('salon_phone') || '+971501234567';
             window.open(`https://wa.me/${phone}`, '_blank');
           }}
         >

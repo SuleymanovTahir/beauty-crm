@@ -70,6 +70,8 @@ export function Settings() {
       const result = await apiClient.updateClientProfile(profile);
       if (result.success) {
         toast.success(t('settings.profile_updated', 'Профиль обновлен'));
+        // Dispatch event to update profile across all components
+        window.dispatchEvent(new CustomEvent('profile-updated'));
       }
     } catch (error) {
       console.error('Error saving profile:', error);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Download, Share2, X, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Download, Share2, X, ChevronLeft, ChevronRight, Loader2, Trash2 } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -121,11 +121,31 @@ export function Gallery() {
   const navigateItem = (direction: 'prev' | 'next') => {
     if (!selectedItem) return;
     const currentIndex = filteredItems.findIndex(item => item.id === selectedItem.id);
-    const newIndex = direction === 'prev' 
+    const newIndex = direction === 'prev'
       ? (currentIndex - 1 + filteredItems.length) % filteredItems.length
       : (currentIndex + 1) % filteredItems.length;
     setSelectedItem(filteredItems[newIndex]);
     setShowBefore(true);
+  };
+
+  const handleDeletePhoto = async () => {
+    if (!selectedItem) return;
+
+    const confirmed = window.confirm(
+      t('gallery.confirm_delete', 'Вы уверены, что хотите удалить это фото? Это действие нельзя отменить.')
+    );
+
+    if (!confirmed) return;
+
+    try {
+      // Here you would call an API to delete the photo
+      // await apiClient.deleteGalleryPhoto(selectedItem.id);
+      toast.info(t('gallery.delete_not_implemented', 'Функция удаления будет доступна в следующей версии'));
+      setSelectedItem(null);
+    } catch (error) {
+      console.error('Error deleting photo:', error);
+      toast.error(t('common:error_occurred', 'Произошла ошибка'));
+    }
   };
 
   return (
@@ -210,6 +230,10 @@ export function Gallery() {
                 <Button size="sm" variant="outline" onClick={handleShare}>
                   <Share2 className="w-4 h-4 mr-2" />
                   {t('gallery.share', 'Поделиться')}
+                </Button>
+                <Button size="sm" variant="outline" onClick={handleDeletePhoto} className="text-red-600 hover:bg-red-50">
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  {t('gallery.delete', 'Удалить')}
                 </Button>
               </div>
             </DialogTitle>
