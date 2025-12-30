@@ -1,7 +1,7 @@
 // /frontend/src/pages/admin/Dashboard.tsx
 //src/pages/Dashboard.tsx
 import { useEffect, useState } from 'react';
-import { Users, Loader, AlertCircle, Crown, UserPlus, UserCheck, TrendingUp, Calendar, CheckCircle, DollarSign, Percent, Star, XCircle, Clock, Filter } from 'lucide-react';
+import { Users, Loader, AlertCircle, Crown, UserPlus, UserCheck, TrendingUp, Calendar, CheckCircle, DollarSign, Percent, Star, XCircle, Clock, Filter, Download, Bell, FileText } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +27,7 @@ interface Stats {
   avg_booking_value?: number;
   cancellation_rate?: number;
   top_services?: Array<{ name: string; count: number; revenue: number }>;
+  revenue_trend?: Array<{ label: string; value: number; amount: number }>;
   growth?: {
     total_clients: { percentage: number; trend: 'up' | 'down' | 'stable' };
     vip_clients: { percentage: number; trend: 'up' | 'down' | 'stable' };
@@ -53,19 +54,114 @@ export default function AdminDashboard() {
   const [botAnalytics, setBotAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dateFilter, setDateFilter] = useState<DateFilter>('last30days');
+  const [customDateRange, setCustomDateRange] = useState<DateRange>({ start: '', end: '' });
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [bookingStatusFilter, setBookingStatusFilter] = useState<string>('all');
 
   useEffect(() => {
     loadDashboardData();
-  }, []);
+  }, [dateFilter, customDateRange]);
+
+  const handleExportReport = async (format: 'pdf' | 'excel') => {
+    try {
+      const dateRange = getDateRange();
+      toast.info(t('dashboard:export_generating', `Генерируем отчёт в формате ${format.toUpperCase()}...`));
+
+      // TODO: Implement actual export API call
+      const response = await fetch('/api/admin/export-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          format,
+          start_date: dateRange.start,
+          end_date: dateRange.end,
+        })
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `dashboard-report-${new Date().toISOString().split('T')[0]}.${format === 'pdf' ? 'pdf' : 'xlsx'}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        toast.success(t('dashboard:export_success', 'Отчёт успешно экспортирован'));
+      } else {
+        throw new Error('Export failed');
+      }
+    } catch (error) {
+      toast.error(t('dashboard:export_error', 'Ошибка экспорта отчёта'));
+    }
+  };
+
+  const getDateRange = (): DateRange => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    switch (dateFilter) {
+      case 'today':
+        return {
+          start: today.toISOString(),
+          end: new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString()
+        };
+      case 'yesterday':
+        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+        return {
+          start: yesterday.toISOString(),
+          end: today.toISOString()
+        };
+      case 'last7days':
+        return {
+          start: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+          end: new Date().toISOString()
+        };
+      case 'last30days':
+        return {
+          start: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+          end: new Date().toISOString()
+        };
+      case 'thisMonth':
+        const firstDayThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        return {
+          start: firstDayThisMonth.toISOString(),
+          end: new Date().toISOString()
+        };
+      case 'lastMonth':
+        const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastDayLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        return {
+          start: firstDayLastMonth.toISOString(),
+          end: lastDayLastMonth.toISOString()
+        };
+      case 'custom':
+        return customDateRange;
+      default:
+        return {
+          start: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+          end: new Date().toISOString()
+        };
+    }
+  };
 
   const loadDashboardData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Load real data
+      const dateRange = getDateRange();
+      const params = new URLSearchParams({
+        start_date: dateRange.start,
+        end_date: dateRange.end
+      });
+
+      // Load real data with date filtering
       const [statsData, bookingsData, clientsData, botData] = await Promise.all([
-        api.getStats(),
+        api.get(`/api/stats?${params.toString()}`).catch(() => api.getStats()),
         api.getBookings(),
         api.getClients(),
         api.get('/api/bot-analytics?days=30').catch(() => null),
@@ -185,11 +281,125 @@ export default function AdminDashboard() {
     return badges[status] || { text: status, bg: 'bg-gray-100', color: 'text-gray-800' };
   };
 
+  // Filter bookings by status
+  const filteredRecentBookings = bookingStatusFilter === 'all'
+    ? recentBookings
+    : recentBookings.filter(b => b.status === bookingStatusFilter);
+
   return (
     <div className="p-4 md:p-8">
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl text-gray-900 mb-2">{t('dashboard:title')}</h1>
         <p className="text-sm md:text-base text-gray-600">{t('dashboard:welcome')}</p>
+      </div>
+
+      {/* Date Filter Section */}
+      <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <div className="flex flex-col md:flex-row md:items-center gap-3">
+          <div className="flex items-center gap-2 text-gray-700">
+            <Filter className="w-5 h-5" />
+            <span className="font-medium">{t('dashboard:date_filter', 'Период:')}</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setDateFilter('today')}
+              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                dateFilter === 'today'
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {t('dashboard:filter_today', 'Сегодня')}
+            </button>
+            <button
+              onClick={() => setDateFilter('yesterday')}
+              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                dateFilter === 'yesterday'
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {t('dashboard:filter_yesterday', 'Вчера')}
+            </button>
+            <button
+              onClick={() => setDateFilter('last7days')}
+              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                dateFilter === 'last7days'
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {t('dashboard:filter_last7days', 'Последние 7 дней')}
+            </button>
+            <button
+              onClick={() => setDateFilter('last30days')}
+              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                dateFilter === 'last30days'
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {t('dashboard:filter_last30days', 'Последние 30 дней')}
+            </button>
+            <button
+              onClick={() => setDateFilter('thisMonth')}
+              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                dateFilter === 'thisMonth'
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {t('dashboard:filter_this_month', 'Этот месяц')}
+            </button>
+            <button
+              onClick={() => setDateFilter('lastMonth')}
+              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                dateFilter === 'lastMonth'
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {t('dashboard:filter_last_month', 'Прошлый месяц')}
+            </button>
+            <button
+              onClick={() => {
+                setShowDatePicker(!showDatePicker);
+                if (!showDatePicker) setDateFilter('custom');
+              }}
+              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                dateFilter === 'custom'
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {t('dashboard:filter_custom', 'Свой период')}
+            </button>
+          </div>
+        </div>
+
+        {/* Custom Date Range Picker */}
+        {showDatePicker && dateFilter === 'custom' && (
+          <div className="mt-4 flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
+            <div className="flex-1">
+              <label className="block text-xs text-gray-600 mb-1">{t('dashboard:date_from', 'От:')}</label>
+              <input
+                type="date"
+                value={customDateRange.start.split('T')[0] || ''}
+                onChange={(e) => setCustomDateRange({ ...customDateRange, start: new Date(e.target.value).toISOString() })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-xs text-gray-600 mb-1">{t('dashboard:date_to', 'До:')}</label>
+              <input
+                type="date"
+                value={customDateRange.end.split('T')[0] || ''}
+                onChange={(e) => setCustomDateRange({ ...customDateRange, end: new Date(e.target.value).toISOString() })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Stats Grid */}
@@ -232,20 +442,178 @@ export default function AdminDashboard() {
         ))}
       </div>
 
+      {/* Additional Key Metrics */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+        {/* Total Revenue */}
+        <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-4 md:p-6 rounded-xl shadow-sm text-white hover:shadow-md transition-shadow">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-xs md:text-sm opacity-90 mb-2">{t('dashboard:total_revenue', 'Общий доход')}</p>
+              <h3 className="text-2xl md:text-3xl font-bold mb-1">
+                {stats.total_revenue?.toLocaleString() || 0} ₽
+              </h3>
+              {stats.growth?.revenue && (
+                <div className="flex items-center gap-1 text-xs opacity-90">
+                  {stats.growth.revenue.trend === 'up' && <TrendingUp className="w-4 h-4" />}
+                  {stats.growth.revenue.trend === 'down' && <TrendingUp className="w-4 h-4 rotate-180" />}
+                  <span className="font-medium">
+                    {stats.growth.revenue.percentage > 0 ? '+' : ''}{stats.growth.revenue.percentage}%
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+              <DollarSign className="w-6 h-6 md:w-7 md:h-7" />
+            </div>
+          </div>
+        </div>
+
+        {/* Average Booking Value */}
+        <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-xs md:text-sm text-gray-600 mb-2">{t('dashboard:avg_booking_value', 'Средний чек')}</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
+                {stats.avg_booking_value?.toLocaleString() || 0} ₽
+              </h3>
+              <p className="text-xs text-gray-500">{t('dashboard:per_booking', 'за запись')}</p>
+            </div>
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-indigo-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <Star className="w-6 h-6 md:w-7 md:h-7 text-indigo-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* Cancellation Rate */}
+        <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-xs md:text-sm text-gray-600 mb-2">{t('dashboard:cancellation_rate', 'Отмены')}</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
+                {stats.cancellation_rate?.toFixed(1) || 0}%
+              </h3>
+              <p className="text-xs text-gray-500">
+                {stats.cancelled_bookings || 0} {t('dashboard:cancelled', 'отменено')}
+              </p>
+            </div>
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-red-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <XCircle className="w-6 h-6 md:w-7 md:h-7 text-red-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* Conversion Rate */}
+        <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-xs md:text-sm text-gray-600 mb-2">{t('dashboard:conversion_rate', 'Конверсия')}</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
+                {stats.conversion_rate?.toFixed(1) || 0}%
+              </h3>
+              <p className="text-xs text-gray-500">{t('dashboard:lead_to_customer', 'лид → клиент')}</p>
+            </div>
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-purple-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <Percent className="w-6 h-6 md:w-7 md:h-7 text-purple-600" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      {/* Top Services */}
+      {stats.top_services && stats.top_services.length > 0 && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6 mb-6">
+          <h2 className="text-lg md:text-xl text-gray-900 mb-4">{t('dashboard:top_services', 'Топ услуги')}</h2>
+          <div className="space-y-3">
+            {stats.top_services.slice(0, 5).map((service, idx) => (
+              <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center">
+                    <span className="text-pink-600 font-bold text-sm">#{idx + 1}</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{service.name}</p>
+                    <p className="text-xs text-gray-500">{service.count} {t('dashboard:bookings_count', 'записей')}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-gray-900">{service.revenue?.toLocaleString() || 0} ₽</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Content Grid - 1 колонка на мобильных */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 md:mb-8">
         {/* Recent Bookings */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg md:text-xl text-gray-900">{t('dashboard:recent_bookings')}</h2>
-            <Button variant="outline" size="sm" onClick={() => navigate('/crm/bookings')} className="shrink-0">
-              {t('dashboard:all_bookings')}
-            </Button>
+          <div className="flex flex-col gap-4 mb-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg md:text-xl text-gray-900">{t('dashboard:recent_bookings')}</h2>
+              <Button variant="outline" size="sm" onClick={() => navigate('/crm/bookings')} className="shrink-0">
+                {t('dashboard:all_bookings')}
+              </Button>
+            </div>
+
+            {/* Status Filter */}
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setBookingStatusFilter('all')}
+                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
+                  bookingStatusFilter === 'all'
+                    ? 'bg-pink-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {t('dashboard:filter_all', 'Все')}
+              </button>
+              <button
+                onClick={() => setBookingStatusFilter('pending')}
+                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
+                  bookingStatusFilter === 'pending'
+                    ? 'bg-yellow-600 text-white'
+                    : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                }`}
+              >
+                {t('dashboard:status_pending')}
+              </button>
+              <button
+                onClick={() => setBookingStatusFilter('confirmed')}
+                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
+                  bookingStatusFilter === 'confirmed'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-green-100 text-green-800 hover:bg-green-200'
+                }`}
+              >
+                {t('dashboard:status_confirmed')}
+              </button>
+              <button
+                onClick={() => setBookingStatusFilter('completed')}
+                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
+                  bookingStatusFilter === 'completed'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                }`}
+              >
+                {t('dashboard:status_completed')}
+              </button>
+              <button
+                onClick={() => setBookingStatusFilter('cancelled')}
+                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
+                  bookingStatusFilter === 'cancelled'
+                    ? 'bg-red-600 text-white'
+                    : 'bg-red-100 text-red-800 hover:bg-red-200'
+                }`}
+              >
+                {t('dashboard:status_cancelled')}
+              </button>
+            </div>
           </div>
           <div className="space-y-4">
-            {recentBookings.length > 0 ? (
-              recentBookings.map((booking) => {
+            {filteredRecentBookings.length > 0 ? (
+              filteredRecentBookings.map((booking) => {
                 const badge = getStatusBadge(booking.status);
                 return (
                   <div
@@ -353,6 +721,116 @@ export default function AdminDashboard() {
               {t('dashboard:calendar')}
             </Button>
           </div>
+
+          {/* Export Section */}
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+              <Download className="w-4 h-4" />
+              {t('dashboard:export_reports', 'Экспорт отчётов')}
+            </h3>
+            <div className="space-y-2">
+              <Button
+                variant="outline"
+                className="w-full justify-start h-9 text-sm"
+                onClick={() => handleExportReport('pdf')}
+              >
+                <FileText className="w-3.5 h-3.5 mr-2" />
+                {t('dashboard:export_pdf', 'Скачать PDF')}
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start h-9 text-sm"
+                onClick={() => handleExportReport('excel')}
+              >
+                <FileText className="w-3.5 h-3.5 mr-2" />
+                {t('dashboard:export_excel', 'Скачать Excel')}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Notifications & Alerts */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
+          <h2 className="text-lg md:text-xl text-gray-900 mb-4 flex items-center gap-2">
+            <Bell className="w-5 h-5" />
+            {t('dashboard:notifications', 'Уведомления')}
+          </h2>
+          <div className="space-y-3">
+            {/* Pending Bookings Alert */}
+            {stats.pending_bookings > 0 && (
+              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <Clock className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-yellow-900">
+                      {t('dashboard:alert_pending_bookings', 'Ожидающие подтверждения')}
+                    </p>
+                    <p className="text-xs text-yellow-700 mt-1">
+                      {stats.pending_bookings} {t('dashboard:bookings_need_confirmation', 'записей требуют подтверждения')}
+                    </p>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="mt-2 h-7 text-xs bg-white hover:bg-yellow-50"
+                      onClick={() => navigate('/crm/bookings?status=pending')}
+                    >
+                      {t('dashboard:view_pending', 'Посмотреть')}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* New Clients Alert */}
+            {stats.new_clients > 0 && (
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <UserPlus className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-blue-900">
+                      {t('dashboard:alert_new_clients', 'Новые клиенты')}
+                    </p>
+                    <p className="text-xs text-blue-700 mt-1">
+                      +{stats.new_clients} {t('dashboard:new_clients_today', 'новых клиентов за выбранный период')}
+                    </p>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="mt-2 h-7 text-xs bg-white hover:bg-blue-50"
+                      onClick={() => navigate('/crm/clients')}
+                    >
+                      {t('dashboard:view_clients', 'Посмотреть')}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* High Cancellation Rate Alert */}
+            {stats.cancellation_rate && stats.cancellation_rate > 15 && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-red-900">
+                      {t('dashboard:alert_high_cancellations', 'Высокий процент отмен')}
+                    </p>
+                    <p className="text-xs text-red-700 mt-1">
+                      {stats.cancellation_rate.toFixed(1)}% {t('dashboard:cancellation_warning', 'записей отменено')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* No alerts state */}
+            {stats.pending_bookings === 0 && stats.new_clients === 0 && (!stats.cancellation_rate || stats.cancellation_rate <= 15) && (
+              <div className="text-center py-6 text-gray-400">
+                <CheckCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">{t('dashboard:no_alerts', 'Нет уведомлений')}</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -389,6 +867,116 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+
+      {/* Revenue Trend Chart */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6 mb-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg md:text-xl text-gray-900">{t('dashboard:revenue_trend', 'Динамика дохода')}</h2>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <TrendingUp className="w-4 h-4" />
+            {stats.growth?.revenue && (
+              <span className={stats.growth.revenue.trend === 'up' ? 'text-green-600' : stats.growth.revenue.trend === 'down' ? 'text-red-600' : 'text-gray-600'}>
+                {stats.growth.revenue.percentage > 0 ? '+' : ''}{stats.growth.revenue.percentage}%
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Simple Bar Chart */}
+        <div className="space-y-4">
+          <div className="flex items-end justify-between h-48 gap-2">
+            {stats.revenue_trend && stats.revenue_trend.length > 0 ? (
+              stats.revenue_trend.map((bar, idx) => (
+                <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+                  <div className="w-full bg-gray-100 rounded-t-lg relative group cursor-pointer hover:opacity-80 transition-opacity" style={{ height: `${bar.value}%` }}>
+                    <div className="absolute inset-0 bg-gradient-to-t from-pink-600 to-pink-400 rounded-t-lg"></div>
+                    {/* Tooltip */}
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      {bar.amount.toLocaleString()} ₽
+                    </div>
+                  </div>
+                  <span className="text-xs text-gray-600 font-medium">{bar.label}</span>
+                </div>
+              ))
+            ) : (
+              <div className="flex-1 flex items-center justify-center text-gray-400">
+                {t('dashboard:no_data', 'Нет данных')}
+              </div>
+            )}
+          </div>
+
+          {/* Legend */}
+          <div className="flex items-center justify-center gap-6 pt-4 border-t border-gray-200">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-gradient-to-t from-pink-600 to-pink-400 rounded"></div>
+              <span className="text-xs text-gray-600">{t('dashboard:revenue', 'Доход')}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-gray-900">{stats.total_revenue?.toLocaleString() || 0} ₽</span>
+              <span className="text-xs text-gray-500">{t('dashboard:total', 'всего')}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Client Activity Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Recent New Clients */}
+        <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl shadow-sm p-4 md:p-6 text-white">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <UserPlus className="w-5 h-5" />
+              {t('dashboard:new_clients_section', 'Новые клиенты')}
+            </h3>
+            <span className="text-sm opacity-80">
+              {t('dashboard:filter_' + dateFilter, dateFilter)}
+            </span>
+          </div>
+          <div className="bg-white/10 rounded-lg p-4">
+            <div className="text-center">
+              <p className="text-4xl font-bold mb-1">+{stats.new_clients || 0}</p>
+              <p className="text-sm opacity-90">{t('dashboard:new_registrations', 'новых регистраций')}</p>
+            </div>
+            {stats.growth?.new_clients && (
+              <div className="mt-3 pt-3 border-t border-white/20 flex items-center justify-center gap-2">
+                {stats.growth.new_clients.trend === 'up' && <TrendingUp className="w-4 h-4" />}
+                {stats.growth.new_clients.trend === 'down' && <TrendingUp className="w-4 h-4 rotate-180" />}
+                <span className="font-medium">
+                  {stats.growth.new_clients.percentage > 0 ? '+' : ''}{stats.growth.new_clients.percentage}%
+                </span>
+                <span className="text-sm opacity-80">{t('dashboard:vs_previous_period', 'к предыдущему периоду')}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* VIP Clients */}
+        <div className="bg-gradient-to-br from-yellow-500 to-amber-600 rounded-xl shadow-sm p-4 md:p-6 text-white">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Crown className="w-5 h-5" />
+              {t('dashboard:vip_clients_section', 'VIP клиенты')}
+            </h3>
+            <span className="text-sm opacity-80">{t('dashboard:premium_tier', 'премиум уровень')}</span>
+          </div>
+          <div className="bg-white/10 rounded-lg p-4">
+            <div className="text-center">
+              <p className="text-4xl font-bold mb-1">{stats.vip_clients || 0}</p>
+              <p className="text-sm opacity-90">{t('dashboard:vip_total', 'VIP статус')}</p>
+            </div>
+            {stats.growth?.vip_clients && (
+              <div className="mt-3 pt-3 border-t border-white/20 flex items-center justify-center gap-2">
+                {stats.growth.vip_clients.trend === 'up' && <TrendingUp className="w-4 h-4" />}
+                {stats.growth.vip_clients.trend === 'down' && <TrendingUp className="w-4 h-4 rotate-180" />}
+                <span className="font-medium">
+                  {stats.growth.vip_clients.percentage > 0 ? '+' : ''}{stats.growth.vip_clients.percentage}%
+                </span>
+                <span className="text-sm opacity-80">{t('dashboard:vs_previous_period', 'к предыдущему периоду')}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

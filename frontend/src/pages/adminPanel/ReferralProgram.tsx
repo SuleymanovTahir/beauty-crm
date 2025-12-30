@@ -41,7 +41,15 @@ export default function ReferralProgram() {
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'date' | 'points' | 'status'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
+  const [stats, setStats] = useState({
+    total_referrals: 0,
+    completed_referrals: 0,
+    points_distributed: 0,
+  });
 
   const [settings, setSettings] = useState({
     referrer_bonus: 500,
@@ -51,35 +59,32 @@ export default function ReferralProgram() {
 
   useEffect(() => {
     loadReferrals();
-  }, []);
+    loadSettings();
+    loadStats();
+  }, [statusFilter, sortBy, sortOrder]);
 
   const loadReferrals = async () => {
     try {
       setLoading(true);
-      // TODO: API call
-      // Mock data
-      setReferrals([
-        {
-          id: '1',
-          referrer_name: 'John Doe',
-          referrer_email: 'john@example.com',
-          referred_name: 'Jane Smith',
-          referred_email: 'jane@example.com',
-          status: 'completed',
-          points_awarded: 500,
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: '2',
-          referrer_name: 'Alice Johnson',
-          referrer_email: 'alice@example.com',
-          referred_name: 'Bob Williams',
-          referred_email: 'bob@example.com',
-          status: 'pending',
-          points_awarded: 0,
-          created_at: new Date().toISOString(),
-        },
-      ]);
+      const params = new URLSearchParams();
+      if (statusFilter !== 'all') {
+        params.append('status', statusFilter);
+      }
+      params.append('sort_by', sortBy);
+      params.append('order', sortOrder);
+
+      const response = await fetch(`/api/admin/referrals?${params.toString()}`, {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.referrals) {
+          setReferrals(data.referrals);
+        }
+      } else {
+        throw new Error('Failed to load referrals');
+      }
     } catch (error) {
       console.error('Error loading referrals:', error);
       toast.error(t('toasts.failed_load'));
@@ -88,33 +93,78 @@ export default function ReferralProgram() {
     }
   };
 
-  const handleSaveSettings = () => {
-    // TODO: API call to save settings
-    toast.success(t('toasts.settings_saved'));
-    setShowSettingsDialog(false);
+  const loadSettings = async () => {
+    try {
+      const response = await fetch('/api/admin/referrals/settings', {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.settings) {
+          setSettings(data.settings);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    }
   };
 
-  const stats = [
+  const loadStats = async () => {
+    try {
+      const response = await fetch('/api/admin/referrals/stats', {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.stats) {
+          setStats(data.stats);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  };
+
+  const handleSaveSettings = async () => {
+    try {
+      const response = await fetch('/api/admin/referrals/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(settings),
+      });
+
+      if (response.ok) {
+        toast.success(t('toasts.settings_saved'));
+        setShowSettingsDialog(false);
+      } else {
+        throw new Error('Failed to save settings');
+      }
+    } catch (error) {
+      toast.error(t('toasts.failed_save'));
+    }
+  };
+
+  const statsCards = [
     {
       title: t('stats.total_referrals'),
-      value: '89',
-      change: '+15%',
+      value: stats.total_referrals.toString(),
       icon: Users,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100',
     },
     {
       title: t('stats.completed_referrals'),
-      value: '67',
-      change: '+12%',
+      value: stats.completed_referrals.toString(),
       icon: TrendingUp,
       color: 'text-green-600',
       bgColor: 'bg-green-100',
     },
     {
       title: t('stats.points_distributed'),
-      value: '33,500',
-      change: '+18%',
+      value: stats.points_distributed.toLocaleString(),
       icon: Gift,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
@@ -144,7 +194,7 @@ export default function ReferralProgram() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {stats.map((stat) => {
+        {statsCards.map((stat) => {
           const Icon = stat.icon;
           return (
             <Card key={stat.title}>
@@ -153,7 +203,6 @@ export default function ReferralProgram() {
                   <div>
                     <p className="text-sm text-gray-500 font-medium">{stat.title}</p>
                     <p className="text-2xl font-bold text-gray-900 mt-2">{stat.value}</p>
-                    <p className="text-xs text-green-600 font-medium mt-1">{stat.change} {t('stats.from_last_month')}</p>
                   </div>
                   <div className={`w-12 h-12 ${stat.bgColor} rounded-lg flex items-center justify-center`}>
                     <Icon className={`w-6 h-6 ${stat.color}`} />
@@ -204,6 +253,32 @@ export default function ReferralProgram() {
               <CardDescription>{t('table.description')}</CardDescription>
             </div>
             <div className="flex gap-2">
+              <select
+                className="px-3 py-2 border rounded-md text-sm"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="all">{t('table.filters.all_statuses', { defaultValue: 'All Statuses' })}</option>
+                <option value="pending">{t('table.statuses.pending')}</option>
+                <option value="completed">{t('table.statuses.completed')}</option>
+                <option value="cancelled">{t('table.statuses.cancelled')}</option>
+              </select>
+              <select
+                className="px-3 py-2 border rounded-md text-sm"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as 'date' | 'points' | 'status')}
+              >
+                <option value="date">{t('table.sort.date', { defaultValue: 'Sort by Date' })}</option>
+                <option value="points">{t('table.sort.points', { defaultValue: 'Sort by Points' })}</option>
+                <option value="status">{t('table.sort.status', { defaultValue: 'Sort by Status' })}</option>
+              </select>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              >
+                {sortOrder === 'asc' ? '↑' : '↓'}
+              </Button>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <Input
