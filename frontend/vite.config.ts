@@ -150,6 +150,12 @@ export default defineConfig({
   // ===== ENVIRONMENT VARIABLES =====
   envPrefix: "VITE_",
 
+  // ===== CSS КОНФИГ =====
+  css: {
+    // PostCSS опции (если есть tailwind)
+    postcss: "./postcss.config.js",
+  },
+
   // ===== ОПТИМИЗАЦИЯ ЗАВИСИМОСТЕЙ =====
   optimizeDeps: {
     include: [

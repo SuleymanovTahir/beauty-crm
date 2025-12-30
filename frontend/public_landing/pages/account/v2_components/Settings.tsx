@@ -8,18 +8,11 @@ import { Switch } from './ui/switch';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Separator } from './ui/separator';
+import { currentUser } from '../../../data/mockData';
 import { toast } from 'sonner';
 
-export function Settings({ user }: any) {
-  // Adapt user prop to profile structure or use defaults
-  const [profile, setProfile] = useState({
-    name: user?.full_name || 'Tahir',
-    email: user?.email || 'tahir@example.com',
-    phone: user?.phone || '+7 (999) 000-00-00',
-    avatar: user?.avatar_url || '',
-    memberSince: user?.created_at || new Date().toISOString(),
-  });
-
+export function Settings() {
+  const [profile, setProfile] = useState(currentUser);
   const [notifications, setNotifications] = useState({
     push: true,
     email: true,
@@ -57,7 +50,7 @@ export function Settings({ user }: any) {
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Настройки</h1>
+        <h1>Настройки</h1>
         <p className="text-muted-foreground">Управление профилем и приватностью</p>
       </div>
 
@@ -65,19 +58,19 @@ export function Settings({ user }: any) {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="profile">
             <User className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Профиль</span>
+            Профиль
           </TabsTrigger>
           <TabsTrigger value="security">
             <Lock className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Безопасность</span>
+            Безопасность
           </TabsTrigger>
           <TabsTrigger value="notifications">
             <Bell className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Уведомления</span>
+            Уведомления
           </TabsTrigger>
           <TabsTrigger value="privacy">
             <Eye className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Приватность</span>
+            Приватность
           </TabsTrigger>
         </TabsList>
 
@@ -92,7 +85,7 @@ export function Settings({ user }: any) {
               <div className="flex items-center gap-6">
                 <Avatar className="w-24 h-24">
                   <AvatarImage src={profile.avatar} alt={profile.name} />
-                  <AvatarFallback>{profile.name?.[0]}</AvatarFallback>
+                  <AvatarFallback>{profile.name[0]}</AvatarFallback>
                 </Avatar>
                 <div className="space-y-2">
                   <Button variant="outline">Изменить фото</Button>

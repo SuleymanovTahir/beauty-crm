@@ -2,7 +2,6 @@ import { Star, Heart, Award, Flame, Crown, Gem, Trophy, Lock } from 'lucide-reac
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { achievements, challenges } from '../data/mockData';
 
 const iconMap: Record<string, any> = {
   Star,
@@ -14,9 +13,23 @@ const iconMap: Record<string, any> = {
   Trophy,
 };
 
-export function Achievements() {
-  const unlockedCount = achievements.filter(a => a.unlocked).length;
-  const totalCount = achievements.length;
+export function Achievements({ achievements }: any) {
+  // Use props or default mock data for achievements
+  const achievementList = achievements?.length ? achievements : [
+    { id: 1, title: 'Первые шаги', description: 'Запишитесь на первую процедуру', icon: 'Star', unlocked: true, progress: 100, maxProgress: 100, unlockedDate: '2023-11-20' },
+    { id: 2, title: 'Постоянный клиент', description: 'Посетите салон 5 раз', icon: 'Heart', unlocked: true, progress: 5, maxProgress: 5, unlockedDate: '2023-12-15' },
+    { id: 3, title: 'Бьюти-гуру', description: 'Оставьте 3 отзыва о мастерах', icon: 'Award', unlocked: false, progress: 1, maxProgress: 3 },
+    { id: 4, title: 'Экспериментатор', description: 'Попробуйте 3 разные услуги', icon: 'Gem', unlocked: false, progress: 2, maxProgress: 3 },
+  ];
+
+  // Mock challenges data
+  const challenges = [
+    { id: 1, title: 'Весеннее обновление', description: 'Сделайте маникюр и педикюр в марте', progress: 1, maxProgress: 2, deadline: '2025-03-31', reward: '+300 баллов' },
+    { id: 2, title: 'Уход за волосами', description: 'Запишитесь на стрижку и уход', progress: 0, maxProgress: 2, deadline: '2025-04-15', reward: '+200 баллов' },
+  ];
+
+  const unlockedCount = achievementList.filter((a: any) => a.unlocked).length;
+  const totalCount = achievementList.length;
 
   const getDaysLeft = (deadline: string) => {
     const days = Math.ceil((new Date(deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
@@ -26,7 +39,7 @@ export function Achievements() {
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1>Достижения</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Достижения</h1>
         <p className="text-muted-foreground">
           Ваш прогресс: {unlockedCount} из {totalCount} достижений
         </p>
@@ -69,9 +82,9 @@ export function Achievements() {
 
       {/* Список достижений */}
       <div className="space-y-4">
-        <h2>Все достижения</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">Все достижения</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {achievements.map((achievement) => {
+          {achievementList.map((achievement: any) => {
             const Icon = iconMap[achievement.icon] || Star;
             const hasProgress = achievement.maxProgress !== undefined;
             const progress = hasProgress && achievement.progress
@@ -81,20 +94,18 @@ export function Achievements() {
             return (
               <Card
                 key={achievement.id}
-                className={`${
-                  achievement.unlocked
+                className={`${achievement.unlocked
                     ? 'border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50'
                     : 'opacity-60'
-                }`}
+                  }`}
               >
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div
-                      className={`p-3 rounded-full ${
-                        achievement.unlocked
+                      className={`p-3 rounded-full ${achievement.unlocked
                           ? 'bg-yellow-500 text-white'
                           : 'bg-gray-200 text-gray-400'
-                      }`}
+                        }`}
                     >
                       {achievement.unlocked ? (
                         <Icon className="w-6 h-6" />
@@ -151,7 +162,7 @@ export function Achievements() {
 
       {/* Челленджи */}
       <div className="space-y-4">
-        <h2>Активные челленджи</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">Активные челленджи</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {challenges.map((challenge) => {
             const daysLeft = getDaysLeft(challenge.deadline);
