@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Sparkles, TrendingUp, Calendar, AlertCircle, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -10,6 +11,7 @@ import { toast } from 'sonner';
 
 export function BeautyProfile() {
   const { t } = useTranslation(['account', 'common']);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [beautyData, setBeautyData] = useState<any>(null);
 
@@ -169,7 +171,7 @@ export function BeautyProfile() {
                 </div>
 
                 {procedure.recommended && (
-                  <Button size="sm">
+                  <Button size="sm" onClick={() => navigate('/new-booking', { state: { service: procedure.service } })}>
                     {t('beauty.book', 'Записаться')}
                   </Button>
                 )}

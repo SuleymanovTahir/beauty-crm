@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { User, Lock, Bell, Eye, Download, Smartphone } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { User, Lock, Bell, Eye, Download, Smartphone, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -8,11 +8,14 @@ import { Switch } from './ui/switch';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Separator } from './ui/separator';
-import { currentUser } from '../../../data/mockData';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { apiClient } from '../../../../src/api/client';
 
 export function Settings() {
-  const [profile, setProfile] = useState(currentUser);
+  const { t } = useTranslation(['account', 'common']);
+  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<any>(null);
   const [notifications, setNotifications] = useState({
     push: true,
     email: true,
@@ -27,50 +30,146 @@ export function Settings() {
     publicProfile: false,
   });
 
-  const handleSaveProfile = () => {
-    toast.success('Профиль обновлен');
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  const loadProfile = async () => {
+    try {
+      setLoading(true);
+
+      // Get user data from localStorage
+      const userName = localStorage.getItem('user_name') || '';
+      const userEmail = localStorage.getItem('user_email') || '';
+      const userPhone = localStorage.getItem('user_phone') || '';
+
+      // Set profile with available data
+      setProfile({
+        name: userName,
+        email: userEmail,
+        phone: userPhone,
+        avatar: '',
+      });
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      toast.error(t('common:error_loading_data'));
+      setLoading(false);
+    }
   };
 
-  const handleChangePassword = () => {
-    toast.info('Функция смены пароля будет доступна в следующей версии');
+  const handleSaveProfile = async () => {
+    try {
+      const result = await apiClient.updateClientProfile(profile);
+      if (result.success) {
+        toast.success(t('settings.profile_updated', 'Профиль обновлен'));
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      toast.error(t('common:error_occurred'));
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error(t('settings.passwords_dont_match', 'Пароли не совпадают'));
+      return;
+    }
+
+    try {
+      const result = await apiClient.changeClientPassword({
+        old_password: passwordData.currentPassword,
+        new_password: passwordData.newPassword,
+      });
+      if (result.success) {
+        toast.success(t('settings.password_changed', 'Пароль изменен'));
+        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      }
+    } catch (error) {
+      console.error('Error changing password:', error);
+      toast.error(t('common:error_occurred'));
+    }
+  };
+
+  const handleSaveNotifications = async () => {
+    try {
+      const result = await apiClient.updateNotificationPreferences(notifications);
+      if (result.success) {
+        toast.success(t('settings.notifications_updated', 'Настройки уведомлений сохранены'));
+      }
+    } catch (error) {
+      console.error('Error saving notifications:', error);
+      toast.error(t('common:error_occurred'));
+    }
+  };
+
+  const handleSavePrivacy = async () => {
+    try {
+      const result = await apiClient.updatePrivacyPreferences(privacy);
+      if (result.success) {
+        toast.success(t('settings.privacy_updated', 'Настройки приватности сохранены'));
+      }
+    } catch (error) {
+      console.error('Error saving privacy:', error);
+      toast.error(t('common:error_occurred'));
+    }
   };
 
   const handleEnable2FA = () => {
-    toast.info('Двухфакторная аутентификация будет доступна в следующей версии');
+    toast.info(t('settings.2fa_coming_soon', 'Двухфакторная аутентификация будет доступна в следующей версии'));
   };
 
   const handleExportData = () => {
-    toast.success('Экспорт данных начат. Вы получите файл на email');
+    toast.success(t('settings.export_started', 'Экспорт данных начат. Вы получите файл на email'));
   };
 
   const handleDeleteAccount = () => {
-    toast.error('Для удаления аккаунта свяжитесь с поддержкой');
+    toast.error(t('settings.delete_contact_support', 'Для удаления аккаунта свяжитесь с поддержкой'));
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-pink-500" />
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return null;
+  }
 
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1>Настройки</h1>
-        <p className="text-muted-foreground">Управление профилем и приватностью</p>
+        <h1>{t('settings.title', 'Настройки')}</h1>
+        <p className="text-muted-foreground">{t('settings.subtitle', 'Управление профилем и приватностью')}</p>
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="profile">
             <User className="w-4 h-4 mr-2" />
-            Профиль
+            {t('settings.profile', 'Профиль')}
           </TabsTrigger>
           <TabsTrigger value="security">
             <Lock className="w-4 h-4 mr-2" />
-            Безопасность
+            {t('settings.security', 'Безопасность')}
           </TabsTrigger>
           <TabsTrigger value="notifications">
             <Bell className="w-4 h-4 mr-2" />
-            Уведомления
+            {t('settings.notifications', 'Уведомления')}
           </TabsTrigger>
           <TabsTrigger value="privacy">
             <Eye className="w-4 h-4 mr-2" />
-            Приватность
+            {t('settings.privacy', 'Приватность')}
           </TabsTrigger>
         </TabsList>
 
@@ -78,19 +177,19 @@ export function Settings() {
         <TabsContent value="profile" className="space-y-6 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Личная информация</CardTitle>
-              <CardDescription>Обновите ваши данные</CardDescription>
+              <CardTitle>{t('settings.personal_info', 'Личная информация')}</CardTitle>
+              <CardDescription>{t('settings.update_data', 'Обновите ваши данные')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center gap-6">
                 <Avatar className="w-24 h-24">
                   <AvatarImage src={profile.avatar} alt={profile.name} />
-                  <AvatarFallback>{profile.name[0]}</AvatarFallback>
+                  <AvatarFallback>{profile.name?.[0] || 'U'}</AvatarFallback>
                 </Avatar>
                 <div className="space-y-2">
-                  <Button variant="outline">Изменить фото</Button>
+                  <Button variant="outline">{t('settings.change_photo', 'Изменить фото')}</Button>
                   <p className="text-sm text-muted-foreground">
-                    JPG, PNG. Макс. 5MB
+                    {t('settings.photo_format', 'JPG, PNG. Макс. 5MB')}
                   </p>
                 </div>
               </div>
@@ -99,45 +198,45 @@ export function Settings() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Имя</Label>
+                  <Label htmlFor="name">{t('settings.name', 'Имя')}</Label>
                   <Input
                     id="name"
-                    value={profile.name}
+                    value={profile.name || ''}
                     onChange={(e) => setProfile({ ...profile, name: e.target.value })}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('settings.email', 'Email')}</Label>
                   <Input
                     id="email"
                     type="email"
-                    value={profile.email}
+                    value={profile.email || ''}
                     onChange={(e) => setProfile({ ...profile, email: e.target.value })}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Телефон</Label>
+                  <Label htmlFor="phone">{t('settings.phone', 'Телефон')}</Label>
                   <Input
                     id="phone"
                     type="tel"
-                    value={profile.phone}
+                    value={profile.phone || ''}
                     onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="member-since">Клиент с</Label>
+                  <Label htmlFor="member-since">{t('settings.member_since', 'Клиент с')}</Label>
                   <Input
                     id="member-since"
-                    value={new Date(profile.memberSince).toLocaleDateString('ru-RU')}
+                    value={profile.created_at ? new Date(profile.created_at).toLocaleDateString('ru-RU') : ''}
                     disabled
                   />
                 </div>
               </div>
 
-              <Button onClick={handleSaveProfile}>Сохранить изменения</Button>
+              <Button onClick={handleSaveProfile}>{t('settings.save_changes', 'Сохранить изменения')}</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -146,47 +245,62 @@ export function Settings() {
         <TabsContent value="security" className="space-y-6 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Пароль</CardTitle>
-              <CardDescription>Измените ваш пароль</CardDescription>
+              <CardTitle>{t('settings.password', 'Пароль')}</CardTitle>
+              <CardDescription>{t('settings.change_password', 'Измените ваш пароль')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="current-password">Текущий пароль</Label>
-                <Input id="current-password" type="password" />
+                <Label htmlFor="current-password">{t('settings.current_password', 'Текущий пароль')}</Label>
+                <Input
+                  id="current-password"
+                  type="password"
+                  value={passwordData.currentPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="new-password">Новый пароль</Label>
-                <Input id="new-password" type="password" />
+                <Label htmlFor="new-password">{t('settings.new_password', 'Новый пароль')}</Label>
+                <Input
+                  id="new-password"
+                  type="password"
+                  value={passwordData.newPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirm-password">Подтвердите пароль</Label>
-                <Input id="confirm-password" type="password" />
+                <Label htmlFor="confirm-password">{t('settings.confirm_password', 'Подтвердите пароль')}</Label>
+                <Input
+                  id="confirm-password"
+                  type="password"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                />
               </div>
 
-              <Button onClick={handleChangePassword}>Изменить пароль</Button>
+              <Button onClick={handleChangePassword}>{t('settings.change_password', 'Изменить пароль')}</Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Двухфакторная аутентификация (2FA)</CardTitle>
+              <CardTitle>{t('settings.2fa', 'Двухфакторная аутентификация (2FA)')}</CardTitle>
               <CardDescription>
-                Дополнительный уровень защиты вашего аккаунта
+                {t('settings.2fa_description', 'Дополнительный уровень защиты вашего аккаунта')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">SMS-код</div>
+                  <div className="font-semibold">{t('settings.sms_code', 'SMS-код')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Получайте код подтверждения на телефон
+                    {t('settings.sms_description', 'Получайте код подтверждения на телефон')}
                   </p>
                 </div>
                 <Button variant="outline" onClick={handleEnable2FA}>
                   <Smartphone className="w-4 h-4 mr-2" />
-                  Включить
+                  {t('settings.enable', 'Включить')}
                 </Button>
               </div>
             </CardContent>
@@ -194,25 +308,25 @@ export function Settings() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Экспорт данных</CardTitle>
-              <CardDescription>Скачайте копию ваших данных</CardDescription>
+              <CardTitle>{t('settings.export_data', 'Экспорт данных')}</CardTitle>
+              <CardDescription>{t('settings.download_copy', 'Скачайте копию ваших данных')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={handleExportData}>
                 <Download className="w-4 h-4 mr-2" />
-                Экспортировать данные
+                {t('settings.export_data', 'Экспортировать данные')}
               </Button>
             </CardContent>
           </Card>
 
           <Card className="border-red-200">
             <CardHeader>
-              <CardTitle className="text-red-600">Опасная зона</CardTitle>
-              <CardDescription>Необратимые действия</CardDescription>
+              <CardTitle className="text-red-600">{t('settings.danger_zone', 'Опасная зона')}</CardTitle>
+              <CardDescription>{t('settings.irreversible', 'Необратимые действия')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="destructive" onClick={handleDeleteAccount}>
-                Удалить аккаунт
+                {t('settings.delete_account', 'Удалить аккаунт')}
               </Button>
             </CardContent>
           </Card>
@@ -222,22 +336,23 @@ export function Settings() {
         <TabsContent value="notifications" className="space-y-6 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Каналы уведомлений</CardTitle>
-              <CardDescription>Выберите способы получения уведомлений</CardDescription>
+              <CardTitle>{t('settings.notification_channels', 'Каналы уведомлений')}</CardTitle>
+              <CardDescription>{t('settings.choose_channels', 'Выберите способы получения уведомлений')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Push-уведомления</div>
+                  <div className="font-semibold">{t('settings.push_notifications', 'Push-уведомления')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Получайте уведомления в приложении
+                    {t('settings.push_description', 'Получайте уведомления в приложении')}
                   </p>
                 </div>
                 <Switch
                   checked={notifications.push}
-                  onCheckedChange={(checked) =>
-                    setNotifications({ ...notifications, push: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setNotifications({ ...notifications, push: checked });
+                    handleSaveNotifications();
+                  }}
                 />
               </div>
 
@@ -245,16 +360,17 @@ export function Settings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Email</div>
+                  <div className="font-semibold">{t('settings.email', 'Email')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Отправлять уведомления на почту
+                    {t('settings.email_description', 'Отправлять уведомления на почту')}
                   </p>
                 </div>
                 <Switch
                   checked={notifications.email}
-                  onCheckedChange={(checked) =>
-                    setNotifications({ ...notifications, email: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setNotifications({ ...notifications, email: checked });
+                    handleSaveNotifications();
+                  }}
                 />
               </div>
 
@@ -262,16 +378,17 @@ export function Settings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">SMS</div>
+                  <div className="font-semibold">{t('settings.sms', 'SMS')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Получайте SMS-уведомления
+                    {t('settings.sms_notifications', 'Получайте SMS-уведомления')}
                   </p>
                 </div>
                 <Switch
                   checked={notifications.sms}
-                  onCheckedChange={(checked) =>
-                    setNotifications({ ...notifications, sms: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setNotifications({ ...notifications, sms: checked });
+                    handleSaveNotifications();
+                  }}
                 />
               </div>
             </CardContent>
@@ -279,22 +396,23 @@ export function Settings() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Типы уведомлений</CardTitle>
-              <CardDescription>Что вы хотите получать</CardDescription>
+              <CardTitle>{t('settings.notification_types', 'Типы уведомлений')}</CardTitle>
+              <CardDescription>{t('settings.what_to_receive', 'Что вы хотите получать')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Записи</div>
+                  <div className="font-semibold">{t('settings.appointments', 'Записи')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Напоминания о предстоящих визитах
+                    {t('settings.appointment_reminders', 'Напоминания о предстоящих визитах')}
                   </p>
                 </div>
                 <Switch
                   checked={notifications.appointments}
-                  onCheckedChange={(checked) =>
-                    setNotifications({ ...notifications, appointments: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setNotifications({ ...notifications, appointments: checked });
+                    handleSaveNotifications();
+                  }}
                 />
               </div>
 
@@ -302,16 +420,17 @@ export function Settings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Акции и предложения</div>
+                  <div className="font-semibold">{t('settings.promotions', 'Акции и предложения')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Специальные предложения и скидки
+                    {t('settings.special_offers', 'Специальные предложения и скидки')}
                   </p>
                 </div>
                 <Switch
                   checked={notifications.promotions}
-                  onCheckedChange={(checked) =>
-                    setNotifications({ ...notifications, promotions: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setNotifications({ ...notifications, promotions: checked });
+                    handleSaveNotifications();
+                  }}
                 />
               </div>
 
@@ -319,16 +438,17 @@ export function Settings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Достижения</div>
+                  <div className="font-semibold">{t('settings.achievements', 'Достижения')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Новые награды и челленджи
+                    {t('settings.new_achievements', 'Новые награды и челленджи')}
                   </p>
                 </div>
                 <Switch
                   checked={notifications.achievements}
-                  onCheckedChange={(checked) =>
-                    setNotifications({ ...notifications, achievements: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setNotifications({ ...notifications, achievements: checked });
+                    handleSaveNotifications();
+                  }}
                 />
               </div>
             </CardContent>
@@ -339,22 +459,23 @@ export function Settings() {
         <TabsContent value="privacy" className="space-y-6 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Настройки приватности</CardTitle>
-              <CardDescription>Контролируйте ваши данные</CardDescription>
+              <CardTitle>{t('settings.privacy_settings', 'Настройки приватности')}</CardTitle>
+              <CardDescription>{t('settings.control_data', 'Контролируйте ваши данные')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Разрешение на фото</div>
+                  <div className="font-semibold">{t('settings.photo_permission', 'Разрешение на фото')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Разрешить мастерам делать фото до/после
+                    {t('settings.allow_photos', 'Разрешить мастерам делать фото до/после')}
                   </p>
                 </div>
                 <Switch
                   checked={privacy.allowPhotos}
-                  onCheckedChange={(checked) =>
-                    setPrivacy({ ...privacy, allowPhotos: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setPrivacy({ ...privacy, allowPhotos: checked });
+                    handleSavePrivacy();
+                  }}
                 />
               </div>
 
@@ -362,16 +483,17 @@ export function Settings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Доступ мастеров</div>
+                  <div className="font-semibold">{t('settings.master_access', 'Доступ мастеров')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Делиться историей визитов с мастерами
+                    {t('settings.share_history', 'Делиться историей визитов с мастерами')}
                   </p>
                 </div>
                 <Switch
                   checked={privacy.shareWithMasters}
-                  onCheckedChange={(checked) =>
-                    setPrivacy({ ...privacy, shareWithMasters: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setPrivacy({ ...privacy, shareWithMasters: checked });
+                    handleSavePrivacy();
+                  }}
                 />
               </div>
 
@@ -379,16 +501,17 @@ export function Settings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Публичный профиль</div>
+                  <div className="font-semibold">{t('settings.public_profile', 'Публичный профиль')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Показывать ваши достижения другим клиентам
+                    {t('settings.show_achievements', 'Показывать ваши достижения другим клиентам')}
                   </p>
                 </div>
                 <Switch
                   checked={privacy.publicProfile}
-                  onCheckedChange={(checked) =>
-                    setPrivacy({ ...privacy, publicProfile: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setPrivacy({ ...privacy, publicProfile: checked });
+                    handleSavePrivacy();
+                  }}
                 />
               </div>
             </CardContent>
@@ -396,23 +519,23 @@ export function Settings() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Использование данных</CardTitle>
+              <CardTitle>{t('settings.data_usage', 'Использование данных')}</CardTitle>
               <CardDescription>
-                Как мы используем ваши данные для улучшения сервиса
+                {t('settings.how_we_use', 'Как мы используем ваши данные для улучшения сервиса')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
               <p>
-                • Ваши данные используются только для персонализации услуг
+                • {t('settings.data_usage_1', 'Ваши данные используются только для персонализации услуг')}
               </p>
               <p>
-                • Мы не передаем информацию третьим лицам без вашего согласия
+                • {t('settings.data_usage_2', 'Мы не передаем информацию третьим лицам без вашего согласия')}
               </p>
               <p>
-                • Фотографии используются только в личной галерее и для анализа
+                • {t('settings.data_usage_3', 'Фотографии используются только в личной галерее и для анализа')}
               </p>
               <p>
-                • Вы можете запросить удаление всех данных в любое время
+                • {t('settings.data_usage_4', 'Вы можете запросить удаление всех данных в любое время')}
               </p>
             </CardContent>
           </Card>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Star, TrendingUp, Zap, Repeat, Users, MessageCircle, ArrowRight, Sparkles, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -10,6 +11,7 @@ import { toast } from 'sonner';
 
 export function Dashboard() {
   const { t } = useTranslation(['account', 'common']);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<any>(null);
 
@@ -47,6 +49,26 @@ export function Dashboard() {
       t('dashboard.motivation_4', 'Будьте собой, будьте красивы!'),
     ];
     return phrases[Math.floor(Math.random() * phrases.length)];
+  };
+
+  const addToGoogleCalendar = (booking: any) => {
+    const startDate = new Date(`${booking.date} ${booking.time || '10:00'}`);
+    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // +1 hour
+
+    const formatDateForGoogle = (date: Date) => {
+      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    };
+
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: booking.service,
+      dates: `${formatDateForGoogle(startDate)}/${formatDateForGoogle(endDate)}`,
+      details: `Мастер: ${booking.master}`,
+      location: 'Beauty Salon',
+    });
+
+    window.open(`https://calendar.google.com/calendar/render?${params.toString()}`, '_blank');
+    toast.success(t('dashboard.added_to_calendar', 'Добавлено в календарь'));
   };
 
   if (loading) {
@@ -117,7 +139,7 @@ export function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
-              <Avatar className="w-16 h-16">
+              <Avatar className="w-12 h-12">
                 <AvatarImage src={next_booking.master_photo} alt={next_booking.master} />
                 <AvatarFallback>{next_booking.master?.[0]}</AvatarFallback>
               </Avatar>
@@ -135,7 +157,7 @@ export function Dashboard() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" className="flex-1">
+              <Button size="sm" variant="outline" className="flex-1" onClick={() => addToGoogleCalendar(next_booking)}>
                 <Calendar className="w-4 h-4 mr-2" />
                 {t('dashboard.add_to_calendar', 'В календарь')}
               </Button>
@@ -146,19 +168,43 @@ export function Dashboard() {
 
       {/* Быстрые действия */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Button variant="outline" className="h-20 flex-col gap-2">
+        <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => navigate('/new-booking')}>
           <Calendar className="w-5 h-5" />
           <span className="text-sm">{t('dashboard.book', 'Записаться')}</span>
         </Button>
-        <Button variant="outline" className="h-20 flex-col gap-2">
+        <Button
+          variant="outline"
+          className="h-20 flex-col gap-2"
+          onClick={() => {
+            if (last_visit) {
+              navigate('/new-booking', {
+                state: {
+                  prefillMaster: last_visit.master_id,
+                  prefillService: last_visit.service_id,
+                  repeatBooking: last_visit
+                }
+              });
+            } else {
+              navigate('/new-booking');
+            }
+          }}
+        >
           <Repeat className="w-5 h-5" />
           <span className="text-sm">{t('dashboard.repeat', 'Повторить')}</span>
         </Button>
-        <Button variant="outline" className="h-20 flex-col gap-2">
+        <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => navigate('/account/masters')}>
           <Users className="w-5 h-5" />
           <span className="text-sm">{t('dashboard.my_masters', 'Мои мастера')}</span>
         </Button>
-        <Button variant="outline" className="h-20 flex-col gap-2">
+        <Button
+          variant="outline"
+          className="h-20 flex-col gap-2"
+          onClick={() => {
+            // Открываем WhatsApp или Telegram чат с салоном
+            const phone = '+971501234567'; // Номер салона
+            window.open(`https://wa.me/${phone}`, '_blank');
+          }}
+        >
           <MessageCircle className="w-5 h-5" />
           <span className="text-sm">{t('dashboard.contact', 'Связаться')}</span>
         </Button>
@@ -178,11 +224,20 @@ export function Dashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex gap-2">
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => navigate(`/review/${last_visit.booking_id || last_visit.id}`)}>
               <Star className="w-4 h-4 mr-2" />
               {t('dashboard.leave_review', 'Оставить отзыв')}
             </Button>
-            <Button variant="outline">
+            <Button
+              variant="outline"
+              onClick={() => navigate('/new-booking', {
+                state: {
+                  prefillMaster: last_visit.master_id,
+                  prefillService: last_visit.service_id,
+                  repeatBooking: last_visit
+                }
+              })}
+            >
               <Repeat className="w-4 h-4 mr-2" />
               {t('dashboard.repeat_service', 'Повторить услугу')}
             </Button>
