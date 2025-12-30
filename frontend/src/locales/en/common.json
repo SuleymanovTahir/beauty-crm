@@ -322,5 +322,8 @@
   "upload_file": "Upload File",
   "uploading": "Uploading...",
   "choose_file": "Choose File",
-  "file_upload_error": "File upload error"
+  "file_upload_error": "File upload error",
+  "error_occurred": "An error occurred",
+  "success": "Success",
+  "error": "Error"
 }
