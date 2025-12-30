@@ -371,6 +371,37 @@ export const apiClient = {
       body: formData,
     }).then(r => r.json());
   },
+
+  // ===== CLIENT DASHBOARD =====
+  getClientDashboard: () =>
+    apiCall('/api/client/dashboard'),
+
+  getClientBookings: () =>
+    apiCall('/api/client/my-bookings'),
+
+  getClientAchievements: () =>
+    apiCall('/api/client/achievements'),
+
+  getClientLoyalty: () =>
+    apiCall('/api/client/loyalty'),
+
+  getClientGallery: () =>
+    apiCall('/api/client/gallery'),
+
+  getClientNotifications: () =>
+    apiCall('/api/client/my-notifications'),
+
+  getClientBeautyMetrics: () =>
+    apiCall('/api/client/beauty-metrics'),
+
+  getFavoriteMasters: () =>
+    apiCall('/api/client/favorite-masters'),
+
+  toggleFavoriteMaster: (data: { master_id: number; is_favorite: boolean }) =>
+    apiCall('/api/client/favorite-masters', {
+      method: 'POST',
+      body: data,
+    }),
 }
 
 export const api = {
