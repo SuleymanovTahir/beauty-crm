@@ -213,7 +213,7 @@ export function Loyalty() {
                   <div className="font-bold text-lg" style={{ color: tier.color }}>
                     {tier.discount}%
                   </div>
-                  <div className="text-xs text-muted-foreground">{t('loyalty.discount', 'скидка')}</div>
+                  <div className="text-xs text-muted-foreground">{t('loyalty.discount_short', 'скидка')}</div>
                 </div>
               </div>
             </div>
@@ -326,7 +326,7 @@ export function Loyalty() {
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold">{loyaltyInfo.discount}%</div>
-                  <div className="text-xs opacity-80">{t('loyalty.discount', 'скидка')}</div>
+                  <div className="text-xs opacity-80">{t('loyalty.discount_short', 'скидка')}</div>
                 </div>
               </div>
             </div>
