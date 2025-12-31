@@ -135,7 +135,7 @@ export function Loyalty() {
                 {currentTierData?.name} {t('loyalty.status', 'статус')}
               </CardTitle>
               <CardDescription className="mt-2">
-                {loyaltyInfo.points} {t('loyalty.points', 'баллов')} • {loyaltyInfo.discount}% {t('loyalty.discount', 'скидка')}
+                {loyaltyInfo.points} {t('loyalty.points', 'баллов')} • {t('loyalty.discount', 'Скидка {{percent}}%', { percent: loyaltyInfo.discount })}
               </CardDescription>
             </div>
             <div className="text-right">

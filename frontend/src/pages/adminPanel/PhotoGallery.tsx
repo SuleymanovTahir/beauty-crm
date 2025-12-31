@@ -296,22 +296,27 @@ export default function PhotoGallery() {
     }
   };
 
-  const categoryLabels: Record<GalleryPhoto['category'], string> = {
-    haircut: t('categories.haircut'),
-    coloring: t('categories.coloring'),
-    styling: t('categories.styling'),
-    manicure: t('categories.manicure'),
-    makeup: t('categories.makeup'),
-    other: t('categories.other'),
+  // Функция для получения label категории
+  const getCategoryLabel = (categoryValue: string): string => {
+    const category = categories.find(cat => cat.value === categoryValue);
+    return category?.label || categoryValue;
   };
 
-  const categoryColors: Record<GalleryPhoto['category'], string> = {
-    haircut: 'bg-blue-100 text-blue-700',
-    coloring: 'bg-purple-100 text-purple-700',
-    styling: 'bg-pink-100 text-pink-700',
-    manicure: 'bg-green-100 text-green-700',
-    makeup: 'bg-orange-100 text-orange-700',
-    other: 'bg-gray-100 text-gray-700',
+  // Функция для получения цвета категории
+  const getCategoryColor = (categoryValue: string): string => {
+    const colors = [
+      'bg-blue-100 text-blue-700',
+      'bg-purple-100 text-purple-700',
+      'bg-pink-100 text-pink-700',
+      'bg-green-100 text-green-700',
+      'bg-orange-100 text-orange-700',
+      'bg-indigo-100 text-indigo-700',
+      'bg-teal-100 text-teal-700',
+      'bg-gray-100 text-gray-700',
+    ];
+    // Используем хеш от значения категории для стабильного цвета
+    const hash = categoryValue.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
   };
 
   const filteredPhotos = photos
@@ -466,8 +471,8 @@ export default function PhotoGallery() {
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-2">
                 <h3 className="font-semibold text-gray-900">{photo.title}</h3>
-                <Badge className={categoryColors[photo.category]}>
-                  {categoryLabels[photo.category]}
+                <Badge className={getCategoryColor(photo.category)}>
+                  {getCategoryLabel(photo.category)}
                 </Badge>
               </div>
               <p className="text-sm text-gray-500 mb-3">{photo.description}</p>
@@ -683,8 +688,8 @@ export default function PhotoGallery() {
                 className="w-full max-h-96 object-contain rounded-lg"
               />
               <div className="flex items-center justify-between">
-                <Badge className={categoryColors[selectedPhoto.category]}>
-                  {categoryLabels[selectedPhoto.category]}
+                <Badge className={getCategoryColor(selectedPhoto.category)}>
+                  {getCategoryLabel(selectedPhoto.category)}
                 </Badge>
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <span>{t('card.uploaded_by', { name: selectedPhoto.uploaded_by })}</span>

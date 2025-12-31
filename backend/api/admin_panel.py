@@ -26,8 +26,8 @@ async def get_admin_stats(session_token: Optional[str] = Cookie(None)):
         conn = get_db_connection()
         c = conn.cursor()
 
-        # Total users
-        c.execute("SELECT COUNT(*) FROM users WHERE role NOT IN ('admin', 'director')")
+        # Total clients (not users - users are employees)
+        c.execute("SELECT COUNT(*) FROM clients")
         total_users = c.fetchone()[0]
 
         # Active challenges

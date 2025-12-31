@@ -1,5 +1,5 @@
 // /frontend/src/components/layouts/AdminPanelLayout.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,14 +14,12 @@ import {
   Menu,
   X,
   Globe,
-  Scissors,
-  Calendar,
-  ClipboardList,
-  UserCircle
+  Scissors
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
 import LanguageSwitcher from '../LanguageSwitcher';
+import { api } from '../../services/api';
 
 interface AdminPanelLayoutProps {
   user: any;
@@ -33,27 +31,26 @@ export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutPro
   const navigate = useNavigate();
   const { t } = useTranslation(['layouts/adminpanellayout', 'common']);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
+
+  useEffect(() => {
+    loadSalonSettings();
+  }, []);
+
+  const loadSalonSettings = async () => {
+    try {
+      const settings = await api.getSalonSettings();
+      setSalonSettings(settings);
+    } catch (err) {
+      console.error('Failed to load salon settings:', err);
+    }
+  };
 
   const menuItems = [
     {
       label: t('menu.dashboard'),
       icon: LayoutDashboard,
       path: '/admin/dashboard',
-    },
-    {
-      label: t('menu.bookings', { defaultValue: 'Bookings' }),
-      icon: ClipboardList,
-      path: '/admin/bookings',
-    },
-    {
-      label: t('menu.clients', { defaultValue: 'Clients' }),
-      icon: UserCircle,
-      path: '/admin/clients',
-    },
-    {
-      label: t('menu.calendar', { defaultValue: 'Calendar' }),
-      icon: Calendar,
-      path: '/admin/calendar',
     },
     {
       label: t('menu.user_management'),
@@ -129,10 +126,24 @@ export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutPro
           <div className="flex flex-col h-full">
             {/* Logo */}
             <div className="hidden lg:flex items-center gap-2 px-6 py-5 border-b">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                <LayoutDashboard className="w-5 h-5 text-white" />
-              </div>
-              <h1 className="text-xl font-bold text-gray-900">{t('admin_panel')}</h1>
+              {salonSettings?.logo_url ? (
+                <img
+                  src={salonSettings.logo_url}
+                  alt={salonSettings?.name || 'Logo'}
+                  className="w-8 h-8 rounded-lg object-contain"
+                  onError={(e) => {
+                    const img = e.target as HTMLImageElement;
+                    if (!img.src.includes('icons8.com')) {
+                      img.src = 'https://img.icons8.com/color/96/diamond.png';
+                    }
+                  }}
+                />
+              ) : (
+                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                  <LayoutDashboard className="w-5 h-5 text-white" />
+                </div>
+              )}
+              <h1 className="text-xl font-bold text-gray-900">{salonSettings?.name || t('admin_panel')}</h1>
             </div>
 
             {/* User info */}

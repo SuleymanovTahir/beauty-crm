@@ -287,31 +287,17 @@ export function AccountPage() {
     <div className="flex flex-col h-full">
       {/* Профиль */}
       <div className="p-6 border-b flex-shrink-0">
-        {salonSettings?.logo_url && (
-          <div className="flex items-center justify-center mb-4">
-            <img src={salonSettings.logo_url} alt={salonSettings.name} className="h-12 w-auto object-contain" />
-          </div>
-        )}
-        <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center gap-3">
           <Avatar className="w-12 h-12">
             <AvatarImage src={userData?.avatar} alt={userData?.name} />
             <AvatarFallback>{userData?.name?.[0] || 'G'}</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
             <div className="font-semibold truncate">{userData?.name || 'Guest'}</div>
-            <div className="text-xs text-muted-foreground">
-              @{userData?.username || localStorage.getItem('username') || userData?.email?.split('@')[0] || 'guest'}
-            </div>
-            <div className="text-xs text-muted-foreground capitalize">
+            <Badge variant="outline" className="text-xs mt-1 capitalize">
               {userData?.currentTier || 'bronze'}
-            </div>
+            </Badge>
           </div>
-        </div>
-        <div className="text-sm">
-          <div className="font-medium text-gray-700">
-            {getGreeting()}, {userData?.name?.split(' ')[0] || 'Guest'}!
-          </div>
-          <div className="text-xs text-muted-foreground mt-1">{getMotivation()}</div>
         </div>
       </div>
 
@@ -450,7 +436,7 @@ export function AccountPage() {
               ) : (
                 <Sparkles className="w-8 h-8 text-pink-500" />
               )}
-              <span className="text-xl font-bold">{salonSettings?.name || 'Beauty Salon'}</span>
+              <span className="text-sm font-semibold truncate">{salonSettings?.name || 'Beauty Salon'}</span>
             </div>
           </div>
           <div className="flex-1 flex flex-col min-h-0">

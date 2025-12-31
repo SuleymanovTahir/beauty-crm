@@ -1081,7 +1081,6 @@ async def get_gallery_categories(session_token: Optional[str] = Cookie(None)):
 
         # Добавляем дополнительные категории если нужно
         default_categories = [
-            {"value": "before_after", "label": "До/После"},
             {"value": "portfolio", "label": "Портфолио"},
             {"value": "interior", "label": "Интерьер"},
             {"value": "other", "label": "Другое"}
