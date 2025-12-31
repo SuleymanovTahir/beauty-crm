@@ -112,7 +112,13 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             ORDER BY b.datetime ASC LIMIT 1
         """, (client_id, datetime.now().isoformat()))
         row = c.fetchone()
-        next_booking = {"id": row[0], "service": row[1], "date": row[2], "master": row[3], "master_photo": row[4]} if row else None
+        if row:
+            photo = row[4]
+            if photo and photo.startswith('/static'):
+                photo = f"http://localhost:8000{photo}"
+            next_booking = {"id": row[0], "service": row[1], "date": row[2], "master": row[3], "master_photo": photo}
+        else:
+            next_booking = None
 
         c.execute("""
             SELECT b.id, b.service_name, b.datetime, b.master, b.master_id, COALESCE(u.photo, u.photo_url)
@@ -123,16 +129,22 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             ORDER BY b.datetime DESC LIMIT 1
         """, (client_id,))
         row = c.fetchone()
-        last_visit = {
-            "id": row[0],
-            "booking_id": row[0],
-            "service": row[1],
-            "service_id": None,
-            "date": row[2],
-            "master": row[3],
-            "master_id": row[4],
-            "master_photo": row[5]
-        } if row else None
+        if row:
+            photo = row[5]
+            if photo and photo.startswith('/static'):
+                photo = f"http://localhost:8000{photo}"
+            last_visit = {
+                "id": row[0],
+                "booking_id": row[0],
+                "service": row[1],
+                "service_id": None,
+                "date": row[2],
+                "master": row[3],
+                "master_id": row[4],
+                "master_photo": photo
+            }
+        else:
+            last_visit = None
 
         # Count total visits
         c.execute("""
@@ -379,16 +391,21 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
         WHERE b.instagram_id = %s
         ORDER BY b.datetime DESC
     """, (client_id,))
-    items = [{
-        "id": r[0],
-        "service_name": r[1],
-        "date": r[2],
-        "status": r[3],
-        "price": r[4],
-        "master_name": r[5],
-        "master_photo": r[6],
-        "master_id": r[7]
-    } for r in c.fetchall()]
+    items = []
+    for r in c.fetchall():
+        photo = r[6]
+        if photo and photo.startswith('/static'):
+            photo = f"http://localhost:8000{photo}"
+        items.append({
+            "id": r[0],
+            "service_name": r[1],
+            "date": r[2],
+            "status": r[3],
+            "price": r[4],
+            "master_name": r[5],
+            "master_photo": photo,
+            "master_id": r[7]
+        })
     conn.close()
     return {"success": True, "bookings": items}
 
