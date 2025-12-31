@@ -555,6 +555,31 @@ async def update_referral_campaign(campaign_id: int, campaign: ReferralCampaignC
         log_error(f"Error updating referral campaign: {e}", "settings")
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.patch("/referral-campaigns/{campaign_id}")
+async def patch_referral_campaign(campaign_id: int, request: Request):
+    """Частичное обновление реферальной кампании (например, is_active)"""
+    try:
+        data = await request.json()
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        # Поддерживаем обновление is_active
+        if 'is_active' in data:
+            c.execute("""
+                UPDATE referral_campaigns
+                SET is_active = %s, updated_at = CURRENT_TIMESTAMP
+                WHERE id = %s
+            """, (data['is_active'], campaign_id))
+
+        conn.commit()
+        conn.close()
+
+        log_info(f"Referral campaign {campaign_id} patched: {data}", "settings")
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error patching referral campaign: {e}", "settings")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.delete("/referral-campaigns/{campaign_id}")
 async def delete_referral_campaign(campaign_id: int):
     """Удалить реферальную кампанию"""

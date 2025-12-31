@@ -265,6 +265,22 @@ export default function SpecialPackages() {
     }
   };
 
+  const handleToggleCampaignActive = async (campaign: ReferralCampaign) => {
+    try {
+      await fetch(`/api/referral-campaigns/${campaign.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: !campaign.is_active })
+      });
+      setCampaigns(campaigns.map(c =>
+        c.id === campaign.id ? { ...c, is_active: !c.is_active } : c
+      ));
+      toast.success(campaign.is_active ? t('campaign_deactivated') : t('campaign_activated'));
+    } catch (err) {
+      toast.error(t('error_changing_status'));
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center h-screen">
@@ -761,6 +777,14 @@ export default function SpecialPackages() {
                   >
                     <Edit className="w-4 h-4 mr-1" />
                     {t('edit_campaign')}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleToggleCampaignActive(campaign)}
+                    className={campaign.is_active ? 'text-orange-600' : 'text-green-600'}
+                  >
+                    {campaign.is_active ? t('disable') : t('enable')}
                   </Button>
                   <Button
                     size="sm"

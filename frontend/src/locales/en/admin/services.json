@@ -120,5 +120,10 @@
   "deselect_all": "Reset",
   "selected_count": "Selected",
   "load_inactive_clients": "Load Inactive Clients",
-  "inactive_clients": "Inactive Clients"
+  "inactive_clients": "Inactive Clients",
+  "schedule_activation": "Schedule Activation",
+  "activation_date": "Activation Date",
+  "activation_time": "Activation Time",
+  "auto_activate": "Auto-activate on schedule date",
+  "auto_deactivate": "Auto-deactivate after valid_until date"
 }
