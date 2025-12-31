@@ -371,12 +371,24 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
     conn = get_db_connection()
     c = conn.cursor()
     c.execute("""
-        SELECT id, service_name, datetime, status, revenue, master
-        FROM bookings
-        WHERE instagram_id = %s
-        ORDER BY datetime DESC
+        SELECT b.id, b.service_name, b.datetime, b.status, b.revenue, b.master,
+               COALESCE(u.photo, u.photo_url) as master_photo,
+               u.id as master_id
+        FROM bookings b
+        LEFT JOIN users u ON LOWER(b.master) = LOWER(u.full_name)
+        WHERE b.instagram_id = %s
+        ORDER BY b.datetime DESC
     """, (client_id,))
-    items = [{"id":r[0], "service_name":r[1], "date":r[2], "status":r[3], "price":r[4], "master_name": r[5]} for r in c.fetchall()]
+    items = [{
+        "id": r[0],
+        "service_name": r[1],
+        "date": r[2],
+        "status": r[3],
+        "price": r[4],
+        "master_name": r[5],
+        "master_photo": r[6],
+        "master_id": r[7]
+    } for r in c.fetchall()]
     conn.close()
     return {"success": True, "bookings": items}
 

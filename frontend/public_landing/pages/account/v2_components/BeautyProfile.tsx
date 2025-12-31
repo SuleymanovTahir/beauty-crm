@@ -125,7 +125,7 @@ export function BeautyProfile() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-purple-500" />
-            {t('beauty.beauty_score', 'Beauty Score')}
+            {t('beauty.beauty_score', 'Бьюти-Скор')}
           </CardTitle>
           <CardDescription>{t('beauty.overall_assessment', 'Общая оценка вашего состояния')}</CardDescription>
         </CardHeader>

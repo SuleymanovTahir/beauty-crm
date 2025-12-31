@@ -267,18 +267,26 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center gap-3">
               <div className="flex-shrink-0">
-                <img
-                  src={salonSettings?.logo_url || '/public_landing/styles/img/logo.png'}
-                  alt={salonSettings?.name || 'Logo'}
-                  className="w-10 h-10 rounded-lg object-contain shadow-sm"
-                  onError={(e) => {
-                    const img = e.target as HTMLImageElement;
-                    // Если основное изображение не загрузилось, используем fallback
-                    if (!img.src.includes('icons8.com')) {
-                      img.src = 'https://img.icons8.com/color/96/diamond.png';
-                    }
-                  }}
-                />
+                {salonSettings?.logo_url ? (
+                  <img
+                    src={salonSettings.logo_url}
+                    alt={salonSettings?.name || 'Logo'}
+                    className="w-10 h-10 rounded-lg object-contain shadow-sm"
+                    onError={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      // Если основное изображение не загрузилось, используем fallback
+                      if (!img.src.includes('icons8.com')) {
+                        img.src = 'https://img.icons8.com/color/96/diamond.png';
+                      }
+                    }}
+                  />
+                ) : (
+                  <img
+                    src="https://img.icons8.com/color/96/diamond.png"
+                    alt="Diamond"
+                    className="w-10 h-10 rounded-lg object-contain shadow-sm"
+                  />
+                )}
               </div>
               <div className="min-w-0">
                 <span className="text-sm text-gray-900 block font-semibold truncate leading-tight">

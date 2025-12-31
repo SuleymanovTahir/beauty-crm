@@ -19,7 +19,7 @@ export function Appointments() {
 
   // Add to Google Calendar function
   const addToGoogleCalendar = (appointment: any) => {
-    const startDate = new Date(`${appointment.date} ${appointment.time}`);
+    const startDate = new Date(appointment.date);
     const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // +1 hour
 
     const formatDateForGoogle = (date: Date) => {
@@ -28,7 +28,7 @@ export function Appointments() {
 
     const params = new URLSearchParams({
       action: 'TEMPLATE',
-      text: appointment.service,
+      text: appointment.service_name,
       dates: `${formatDateForGoogle(startDate)}/${formatDateForGoogle(endDate)}`,
       details: `${t('appointments.master', 'Мастер')}: ${appointment.master_name}`,
       location: localStorage.getItem('salon_name') || 'Beauty Salon',
@@ -86,13 +86,18 @@ export function Appointments() {
     });
   };
 
-  const upcomingAppointments = bookings.filter(a => a.status === 'upcoming');
+  const upcomingAppointments = bookings.filter(a =>
+    a.status === 'upcoming' || a.status === 'confirmed' || a.status === 'pending'
+  );
   const historyAppointments = bookings.filter(a => a.status === 'completed' || a.status === 'cancelled');
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'upcoming':
+      case 'confirmed':
         return <Badge className="bg-blue-500">{t('appointments.status_upcoming', 'Предстоящая')}</Badge>;
+      case 'pending':
+        return <Badge className="bg-yellow-500">{t('appointments.status_pending', 'Ожидает')}</Badge>;
       case 'completed':
         return <Badge className="bg-green-500">{t('appointments.status_completed', 'Завершена')}</Badge>;
       case 'cancelled':
@@ -111,6 +116,10 @@ export function Appointments() {
   }
 
   const renderAppointment = (appointment: any) => {
+    // Extract time from datetime string (format: "2026-01-05T14:00")
+    const dateTime = new Date(appointment.date);
+    const timeString = dateTime.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
     return (
       <Card key={appointment.id}>
         <CardContent className="p-6">
@@ -124,17 +133,17 @@ export function Appointments() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="font-semibold">{appointment.master_name}</div>
-                  <div className="text-sm text-muted-foreground">{appointment.master_specialty}</div>
+                  <div className="text-sm text-muted-foreground">{appointment.master_specialty || t('appointments.master', 'Мастер')}</div>
                 </div>
                 {getStatusBadge(appointment.status)}
               </div>
-              
-              <div className="text-sm font-medium">{appointment.service}</div>
-              
+
+              <div className="text-sm font-medium">{appointment.service_name}</div>
+
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  {new Date(appointment.date).toLocaleDateString('ru-RU', {
+                  {dateTime.toLocaleDateString('ru-RU', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric'
@@ -142,10 +151,10 @@ export function Appointments() {
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
-                  {appointment.time}
+                  {timeString}
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between pt-2">
                 <div className="font-bold">{appointment.price} AED</div>
 
@@ -166,7 +175,7 @@ export function Appointments() {
                   </Button>
                 )}
 
-                {appointment.status === 'upcoming' && (
+                {(appointment.status === 'upcoming' || appointment.status === 'confirmed' || appointment.status === 'pending') && (
                   <div className="flex gap-2">
                     <Button
                       size="sm"
@@ -190,9 +199,15 @@ export function Appointments() {
 
   return (
     <div className="space-y-6 pb-8">
-      <div>
-        <h1>{t('appointments.title', 'Мои записи')}</h1>
-        <p className="text-muted-foreground">{t('appointments.subtitle', 'Управляйте вашими визитами')}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">{t('appointments.title', 'Мои записи')}</h1>
+          <p className="text-muted-foreground">{t('appointments.subtitle', 'Управляйте вашими визитами')}</p>
+        </div>
+        <Button onClick={() => navigate('/new-booking')}>
+          <CalendarPlus className="w-4 h-4 mr-2" />
+          {t('appointments.new_booking', 'Добавить запись')}
+        </Button>
       </div>
 
       <Tabs value={filter} onValueChange={(v) => setFilter(v as any)} className="w-full">
