@@ -1,6 +1,9 @@
 // frontend/src/services/api.ts
 const API_URL = import.meta.env.VITE_API_URL || window.location.origin
 
+console.log('🔧 [DEBUG] VITE_API_URL:', import.meta.env.VITE_API_URL)
+console.log('🔧 [DEBUG] API_URL используется:', API_URL)
+
 export class ApiClient {
   private baseURL: string
 
