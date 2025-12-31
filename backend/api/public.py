@@ -49,7 +49,8 @@ async def get_public_salon_settings():
                 "whatsapp": None,
                 "instagram": None,
                 "google_maps": None,
-                "name": None
+                "name": None,
+                "logo_url": None
             }
         
         return {
@@ -60,7 +61,8 @@ async def get_public_salon_settings():
             "instagram": settings.get("instagram"),
             "google_maps": settings.get("google_maps"),
             "name": settings.get("name"),
-            "currency": settings.get("currency", "AED")
+            "currency": settings.get("currency", "AED"),
+            "logo_url": settings.get("logo_url")
         }
     except Exception as e:
         log_error(f"Error fetching salon settings: {e}", "public_api")

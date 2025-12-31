@@ -137,7 +137,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
-        <p className="text-gray-500 mt-1">{t('subtitle')}</p>
+        <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
       </div>
 
       {/* Stats Grid */}
