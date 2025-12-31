@@ -4,11 +4,16 @@
   "go_to_crm": "Go to CRM",
   "menu": {
     "dashboard": "Control Panel",
+    "bookings": "Bookings",
+    "clients": "Clients",
+    "calendar": "Calendar",
     "user_management": "User management",
     "loyalty_management": "Loyalty management",
     "referral_program": "Referral program",
     "challenges": "Challenges",
     "notifications": "Notifications",
-    "photo_gallery": "Photo gallery"
+    "photo_gallery": "Photo gallery",
+    "services": "Services",
+    "public_content": "Public Content"
   }
 }

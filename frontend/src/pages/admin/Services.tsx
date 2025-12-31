@@ -92,9 +92,15 @@ interface SpecialPackage {
   is_active: boolean;
   usage_count: number;
   max_usage?: number;
+  // Scheduling fields
+  scheduled?: boolean;
+  schedule_date?: string;
+  schedule_time?: string;
+  auto_activate?: boolean;
+  auto_deactivate?: boolean;
 }
 
-type TabType = 'services' | 'packages' | 'referrals' | 'challenges';
+type TabType = 'services' | 'packages';
 
 const categories = [
   'Permanent Makeup',
@@ -241,7 +247,13 @@ export default function Services() {
     valid_from: '',
     valid_until: '',
     is_active: true,
-    max_usage: 0
+    max_usage: 0,
+    // Scheduling fields
+    scheduled: false,
+    schedule_date: '',
+    schedule_time: '',
+    auto_activate: false,
+    auto_deactivate: false
   });
 
   useEffect(() => {
@@ -296,28 +308,6 @@ export default function Services() {
       } else if (activeTab === 'packages') {
         const data = await api.getSpecialPackages();
         setPackages(data.packages || []);
-      } else if (activeTab === 'referrals') {
-        const response = await fetch('/api/referral-campaigns');
-        const data = await response.json();
-        setCampaigns(data.campaigns || []);
-        // Load masters list for audience selection
-        setMastersLoading(true);
-        try {
-          const usersRes = await api.getUsers();
-          // Filter by roles that typically provide services (employee, master, specialist)
-          const serviceRoles = ['employee', 'master', 'specialist', 'senior_master'];
-          const serviceProviders = (usersRes.users || []).filter((u: any) =>
-            u.is_service_provider || serviceRoles.includes(u.role) || u.is_active
-          );
-          setMastersList(serviceProviders.map((u: any) => ({ id: u.id, full_name: u.full_name || u.username })));
-        } catch (e) {
-          console.error('Error loading masters:', e);
-        } finally {
-          setMastersLoading(false);
-        }
-      } else if (activeTab === 'challenges') {
-        const data = await api.getChallenges();
-        setChallenges(data.challenges || []);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Ошибка загрузки';
@@ -499,7 +489,13 @@ export default function Services() {
       valid_from: '',
       valid_until: '',
       is_active: true,
-      max_usage: 0
+      max_usage: 0,
+      // Scheduling fields
+      scheduled: false,
+      schedule_date: '',
+      schedule_time: '',
+      auto_activate: false,
+      auto_deactivate: false
     });
     setIsPackageModalOpen(true);
   };
@@ -520,7 +516,13 @@ export default function Services() {
       valid_from: pkg.valid_from,
       valid_until: pkg.valid_until,
       is_active: pkg.is_active,
-      max_usage: pkg.max_usage || 0
+      max_usage: pkg.max_usage || 0,
+      // Scheduling fields
+      scheduled: pkg.scheduled || false,
+      schedule_date: pkg.schedule_date || '',
+      schedule_time: pkg.schedule_time || '',
+      auto_activate: pkg.auto_activate || false,
+      auto_deactivate: pkg.auto_deactivate || false
     });
     setIsPackageModalOpen(true);
   };
@@ -561,7 +563,13 @@ export default function Services() {
         valid_from: packageFormData.valid_from,
         valid_until: packageFormData.valid_until,
         is_active: packageFormData.is_active,
-        max_usage: packageFormData.max_usage || null
+        max_usage: packageFormData.max_usage || null,
+        // Scheduling fields
+        scheduled: packageFormData.scheduled,
+        schedule_date: packageFormData.schedule_date,
+        schedule_time: packageFormData.schedule_time,
+        auto_activate: packageFormData.auto_activate,
+        auto_deactivate: packageFormData.auto_deactivate
       };
 
       if (editingPackage) {
@@ -652,6 +660,18 @@ export default function Services() {
     }
   };
 
+  const handleToggleChallengeActive = async (challenge: any) => {
+    try {
+      await api.updateChallenge(challenge.id, { ...challenge, is_active: !challenge.is_active });
+      setChallenges(challenges.map(c =>
+        c.id === challenge.id ? { ...c, is_active: !c.is_active } : c
+      ));
+      toast.success(challenge.is_active ? 'Челлендж деактивирован' : 'Челлендж активирован');
+    } catch (error) {
+      toast.error('Ошибка изменения статуса');
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center h-screen">
@@ -698,26 +718,6 @@ export default function Services() {
           >
             <Gift className="w-5 h-5 inline-block mr-2" />
             {t('services:special_packages')} ({filteredPackages.length})
-          </button>
-          <button
-            onClick={() => handleTabChange('referrals')}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'referrals'
-              ? 'bg-pink-100 text-pink-700'
-              : 'text-gray-600 hover:bg-gray-50'
-              }`}
-          >
-            <Users className="w-5 h-5 inline-block mr-2" />
-            Реферальная программа ({campaigns.length})
-          </button>
-          <button
-            onClick={() => handleTabChange('challenges')}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'challenges'
-              ? 'bg-pink-100 text-pink-700'
-              : 'text-gray-600 hover:bg-gray-50'
-              }`}
-          >
-            <Target className="w-5 h-5 inline-block mr-2" />
-            {t('services:challenges')} ({challenges.length})
           </button>
         </div>
       </div>
@@ -1047,91 +1047,6 @@ export default function Services() {
           )}
         </>
       )}
-      {/* REFERRALS TAB */}
-      {activeTab === 'referrals' && (
-        <div className="space-y-6">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold">Реферальные кампании</h2>
-              <Button onClick={() => { setEditingCampaign(null); setIsReferralModalOpen(true); }} className="bg-purple-600 hover:bg-purple-700">
-                <Plus className="w-4 h-4 mr-2" /> Создать кампанию
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {campaigns.map(camp => (
-                <div key={camp.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <h3 className="font-bold mb-2">{camp.name}</h3>
-                  <div className="text-sm text-gray-600 mb-4">
-                    <p>Бонус приглашенному: {camp.bonus_points}</p>
-                    <p>Бонус приглашающему: {camp.referrer_bonus}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline" onClick={() => { setEditingCampaign(camp); setIsReferralModalOpen(true); }}>
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Badge className={camp.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-                      {camp.is_active ? 'Активна' : 'Неактивна'}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* CHALLENGES TAB */}
-      {activeTab === 'challenges' && (
-        <div className="space-y-6">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold">{t('services:challenges')}</h2>
-              <Button onClick={() => {
-                setEditingChallenge(null);
-                setChallengeFormData({
-                  title_ru: '',
-                  title_en: '',
-                  description_ru: '',
-                  description_en: '',
-                  bonus_points: 50,
-                  is_active: true,
-                  target_type: 'all',
-                  days_inactive: 30,
-                  start_date: '',
-                  end_date: '',
-                  master_id: null,
-                  service_id: null,
-                  client_ids: [],
-                  clientSearch: ''
-                });
-                setIsChallengeModalOpen(true);
-              }} className="bg-pink-600 hover:bg-pink-700">
-                <Plus className="w-4 h-4 mr-2" /> {t('services:add_challenge')}
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {challenges.map(ch => (
-                <div key={ch.id} className="border rounded-lg p-4 border-pink-100 bg-pink-50/30">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-bold text-lg">{ch.title_ru}</h3>
-                    <Badge variant="outline" className="border-pink-200 text-pink-700">+{ch.bonus_points} pts</Badge>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-4">{ch.description_ru}</p>
-                  <div className="flex gap-2 justify-end">
-                    <Button size="sm" variant="ghost" onClick={() => { setEditingChallenge(ch); setChallengeFormData({ ...ch }); setIsChallengeModalOpen(true); }}>
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button size="sm" variant="ghost" onClick={() => handleDeleteChallenge(ch.id)} className="text-red-500 hover:text-red-600">
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
 
       {/* Service Modal */}
       <Dialog open={isServiceModalOpen} onOpenChange={setIsServiceModalOpen}>
@@ -1503,6 +1418,73 @@ export default function Services() {
               <Label htmlFor="pkgActive" className="cursor-pointer">
                 {t('services:active')} ({t('services:available_for_clients')})
               </Label>
+            </div>
+
+            {/* Scheduling Section */}
+            <div className="space-y-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="pkgScheduled"
+                  checked={packageFormData.scheduled}
+                  onChange={(e) => setPackageFormData({ ...packageFormData, scheduled: e.target.checked })}
+                  className="w-4 h-4"
+                />
+                <Label htmlFor="pkgScheduled" className="cursor-pointer">
+                  {t('services:schedule_activation', { defaultValue: 'Schedule Activation' })}
+                </Label>
+              </div>
+
+              {packageFormData.scheduled && (
+                <>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>{t('services:activation_date', { defaultValue: 'Activation Date' })}</Label>
+                      <Input
+                        type="date"
+                        value={packageFormData.schedule_date}
+                        onChange={(e) => setPackageFormData({ ...packageFormData, schedule_date: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label>{t('services:activation_time', { defaultValue: 'Activation Time' })}</Label>
+                      <Input
+                        type="time"
+                        value={packageFormData.schedule_time}
+                        onChange={(e) => setPackageFormData({ ...packageFormData, schedule_time: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="pkgAutoActivate"
+                        checked={packageFormData.auto_activate}
+                        onChange={(e) => setPackageFormData({ ...packageFormData, auto_activate: e.target.checked })}
+                        className="w-4 h-4"
+                      />
+                      <Label htmlFor="pkgAutoActivate" className="cursor-pointer">
+                        {t('services:auto_activate', { defaultValue: 'Auto-activate on schedule date' })}
+                      </Label>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="pkgAutoDeactivate"
+                        checked={packageFormData.auto_deactivate}
+                        onChange={(e) => setPackageFormData({ ...packageFormData, auto_deactivate: e.target.checked })}
+                        className="w-4 h-4"
+                      />
+                      <Label htmlFor="pkgAutoDeactivate" className="cursor-pointer">
+                        {t('services:auto_deactivate', { defaultValue: 'Auto-deactivate after valid_until date' })}
+                      </Label>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 

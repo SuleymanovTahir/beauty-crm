@@ -125,6 +125,9 @@ export default function Clients() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
+  // Sorting states
+  const [sortField, setSortField] = useState<'name' | 'phone' | 'status' | 'lifetime_value' | 'last_contact' | 'first_contact'>('last_contact');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     loadClients();
@@ -153,10 +156,49 @@ export default function Clients() {
 
       return matchesSearch && matchesStatus && matchesTemperature;
     });
-    setFilteredClients(filtered);
+
+    // Apply sorting
+    const sorted = [...filtered].sort((a, b) => {
+      let aValue, bValue;
+
+      switch (sortField) {
+        case 'name':
+          aValue = (a.name || a.display_name || '').toLowerCase();
+          bValue = (b.name || b.display_name || '').toLowerCase();
+          break;
+        case 'phone':
+          aValue = (a.phone || '').toLowerCase();
+          bValue = (b.phone || '').toLowerCase();
+          break;
+        case 'status':
+          aValue = (a.status || '').toLowerCase();
+          bValue = (b.status || '').toLowerCase();
+          break;
+        case 'lifetime_value':
+          aValue = parseFloat(String(a.lifetime_value || 0));
+          bValue = parseFloat(String(b.lifetime_value || 0));
+          break;
+        case 'last_contact':
+          aValue = new Date(a.last_contact || 0).getTime();
+          bValue = new Date(b.last_contact || 0).getTime();
+          break;
+        case 'first_contact':
+          aValue = new Date(a.first_contact || 0).getTime();
+          bValue = new Date(b.first_contact || 0).getTime();
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    setFilteredClients(sorted);
     setCurrentPage(1); // Reset page on filter change
     setSelectedClients(new Set()); // Reset selection on filter change
-  }, [searchTerm, statusFilter, temperatureFilter, filteredByPeriod]);
+  }, [searchTerm, statusFilter, temperatureFilter, filteredByPeriod, sortField, sortDirection]);
 
   // Save filters to localStorage when they change
   useEffect(() => {
@@ -179,6 +221,18 @@ export default function Clients() {
     if (dateTo) localStorage.setItem('clients_date_to', dateTo);
   }, [dateTo]);
 
+
+  // Handle sorting
+  const handleSort = (field: 'name' | 'phone' | 'status' | 'lifetime_value' | 'last_contact' | 'first_contact') => {
+    if (sortField === field) {
+      // Toggle direction if clicking the same field
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Set new field and default to ascending
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
 
   // Pagination Logic
   const totalPages = Math.ceil(filteredClients.length / itemsPerPage);
@@ -728,14 +782,39 @@ export default function Clients() {
                       onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
                     />
                   </th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:client')}</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:contacts')}</th>
+                  <th
+                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort('name')}
+                  >
+                    {t('clients:client')} {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </th>
+                  <th
+                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort('phone')}
+                  >
+                    {t('clients:contacts')} {sortField === 'phone' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:messages')}</th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:bookings')}</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:ltv')}</th>
+                  <th
+                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort('lifetime_value')}
+                  >
+                    {t('clients:ltv')} {sortField === 'lifetime_value' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:temperature')}</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:last_contact')}</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:status')}</th>
+                  <th
+                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort('last_contact')}
+                  >
+                    {t('clients:last_contact')} {sortField === 'last_contact' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </th>
+                  <th
+                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort('status')}
+                  >
+                    {t('clients:status')} {sortField === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:actions')}</th>
                 </tr>
               </thead>

@@ -120,5 +120,10 @@
   "deselect_all": "Сброс",
   "selected_count": "Выбрано",
   "load_inactive_clients": "Загрузить неактивных клиентов",
-  "inactive_clients": "Неактивные клиенты"
+  "inactive_clients": "Неактивные клиенты",
+  "schedule_activation": "Запланировать активацию",
+  "activation_date": "Дата активации",
+  "activation_time": "Время активации",
+  "auto_activate": "Автоматически активировать в назначенное время",
+  "auto_deactivate": "Автоматически деактивировать после даты окончания"
 }
