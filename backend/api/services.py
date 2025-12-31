@@ -316,7 +316,12 @@ async def create_special_package_api(
             description_ru=data.get('description_ru'),
             services_included=data.get('services_included', []),
             promo_code=data.get('promo_code'),
-            max_usage=data.get('max_usage')
+            max_usage=data.get('max_usage'),
+            scheduled=data.get('scheduled', False),
+            schedule_date=data.get('schedule_date'),
+            schedule_time=data.get('schedule_time'),
+            auto_activate=data.get('auto_activate', False),
+            auto_deactivate=data.get('auto_deactivate', False)
         )
 
         if package_id:

@@ -19,14 +19,17 @@ import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { getPhotoUrl } from '../../utils/photoUtils';
 
 interface User {
-  id: number;
+  instagram_id: string;
   username: string;
-  full_name: string;
+  name: string;
+  phone: string;
   email: string;
-  role: string;
-  position?: string;
   created_at: string;
-  photo?: string;
+  total_spend: number;
+  status: string;
+  profile_pic?: string;
+  first_contact?: string;
+  last_contact?: string;
 }
 
 export default function Users() {
@@ -135,8 +138,9 @@ export default function Users() {
 
   useEffect(() => {
     const filtered = users.filter(user =>
-      (user.full_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (user.username || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.phone || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (user.email || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredUsers(filtered);
@@ -146,27 +150,26 @@ export default function Users() {
     try {
       setLoading(true);
       setError(null);
-      const response = await api.getUsers();
+      const response = await api.getClients();
 
-      console.log('📥 Received response:', response);
+      console.log('📥 Received clients:', response);
 
-      // ✅ ПРАВИЛЬНОЕ ИЗВЛЕЧЕНИЕ
-      const usersArray = Array.isArray(response)
+      // Извлечение массива клиентов
+      const clientsArray = Array.isArray(response)
         ? response
-        : (response?.users || []);
+        : (response?.clients || []);
 
-      console.log('✅ Users array:', usersArray);
-      console.log('🔍 First user photo:', usersArray[0]?.photo);
-      setUsers(usersArray);
+      console.log('✅ Clients array:', clientsArray);
+      setUsers(clientsArray);
 
-      if (usersArray.length === 0) {
-        console.warn('⚠️  Массив пользователей пуст');
+      if (clientsArray.length === 0) {
+        console.warn('⚠️  Массив клиентов пуст');
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : t('error_loading_users');
       setError(message);
       toast.error(`${t('error')}: ${message} `);
-      console.error('❌ Error loading users:', err);
+      console.error('❌ Error loading clients:', err);
     } finally {
       setLoading(false);
     }
@@ -188,10 +191,9 @@ export default function Users() {
 
   const stats = {
     total: users.length,
-    directors: users.filter(u => u.role === 'director').length,
-    admins: users.filter(u => u.role === 'admin').length,
-    managers: users.filter(u => u.role === 'manager').length,
-    others: users.filter(u => ['employee', 'sales', 'marketer'].includes(u.role)).length,
+    new: users.filter(u => u.status === 'new').length,
+    active: users.filter(u => u.status === 'active' || u.status === 'lead').length,
+    totalSpend: users.reduce((sum, u) => sum + (u.total_spend || 0), 0),
   };
 
   if (loading) {
@@ -234,22 +236,18 @@ export default function Users() {
         <p className="text-gray-600">{filteredUsers.length} {t('user_count')}</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <p className="text-gray-600 text-sm mb-2">{t('stats_total')}</p>
           <h3 className="text-3xl text-gray-900">{stats.total}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('stats_directors')}</p>
-          <h3 className="text-3xl text-red-600">{stats.directors}</h3>
+          <p className="text-gray-600 text-sm mb-2">Новые клиенты</p>
+          <h3 className="text-3xl text-green-600">{stats.new}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('stats_admins')}</p>
-          <h3 className="text-3xl text-purple-600">{stats.admins}</h3>
-        </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('stats_managers')}</p>
-          <h3 className="text-3xl text-blue-600">{stats.managers}</h3>
+          <p className="text-gray-600 text-sm mb-2">Общая сумма</p>
+          <h3 className="text-3xl text-pink-600">{stats.totalSpend.toFixed(0)} AED</h3>
         </div>
       </div>
 
@@ -284,72 +282,64 @@ export default function Users() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_user')}</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_username')}</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_email')}</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_role')}</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_position')}</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_created')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Клиент</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Телефон</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Email</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Статус</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Потрачено</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Дата создания</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={user.instagram_id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <img
-                          src={getPhotoUrl(user.photo) || getDynamicAvatar(user.full_name || user.username, 'cold')}
-                          alt={user.full_name}
+                          src={user.profile_pic || getDynamicAvatar(user.name || user.username, 'cold')}
+                          alt={user.name}
                           className="w-10 h-10 rounded-full bg-gray-100 object-cover"
                         />
                         <div>
-                          <p className="text-sm text-gray-900 font-medium">{user.full_name}</p>
-                          {/* DEBUG: Show photo URL */}
-                          <p className="text-xs text-gray-400">{user.photo ? 'Has Photo' : 'No Photo'}</p>
+                          <p className="text-sm text-gray-900 font-medium">{user.name || user.username}</p>
+                          <p className="text-xs text-gray-400">@{user.username}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{user.username}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{user.phone || '-'}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{user.email || '-'}</td>
                     <td className="px-6 py-4">
-                      <Badge className={roleConfig[user.role as keyof typeof roleConfig]?.color || 'bg-gray-100 text-gray-800'}>
-                        {roleConfig[user.role as keyof typeof roleConfig]?.label || user.role}
+                      <Badge className={
+                        user.status === 'new' ? 'bg-green-100 text-green-800' :
+                        user.status === 'active' ? 'bg-blue-100 text-blue-800' :
+                        user.status === 'lead' ? 'bg-purple-100 text-purple-800' :
+                        'bg-gray-100 text-gray-800'
+                      }>
+                        {user.status || 'новый'}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{user.position || '-'}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {new Date(user.created_at).toLocaleDateString('ru-RU')}
+                      {(user.total_spend || 0).toFixed(0)} AED
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {user.created_at ? new Date(user.created_at).toLocaleDateString('ru-RU') : '-'}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        {/* Кнопка редактирования - открывает детальную страницу */}
+                        {/* Кнопка редактирования - открывает чат с клиентом */}
                         {permissions.canEditUsers && (
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => navigate(`/crm/users/${user.id}`)}
+                            onClick={() => navigate(`/admin/chat/${user.instagram_id}`)}
                             className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                            title={t('action_edit_title')}
+                            title="Открыть чат"
                           >
                             <Edit className="w-4 h-4" />
                           </Button >
                         )}
 
-                        {/* Кнопка удаления только если есть право */}
-                        {
-                          permissions.canDeleteUsers && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                              onClick={() => handleDeleteUser(user.id)}
-                              title={t('action_delete_title')}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          )
-                        }
                       </div >
                     </td >
                   </tr >

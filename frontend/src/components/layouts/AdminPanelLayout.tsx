@@ -14,7 +14,10 @@ import {
   Menu,
   X,
   Globe,
-  Scissors
+  Scissors,
+  Calendar,
+  ClipboardList,
+  UserCircle
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
@@ -36,6 +39,21 @@ export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutPro
       label: t('menu.dashboard'),
       icon: LayoutDashboard,
       path: '/admin/dashboard',
+    },
+    {
+      label: t('menu.bookings', { defaultValue: 'Bookings' }),
+      icon: ClipboardList,
+      path: '/admin/bookings',
+    },
+    {
+      label: t('menu.clients', { defaultValue: 'Clients' }),
+      icon: UserCircle,
+      path: '/admin/clients',
+    },
+    {
+      label: t('menu.calendar', { defaultValue: 'Calendar' }),
+      icon: Calendar,
+      path: '/admin/calendar',
     },
     {
       label: t('menu.user_management'),

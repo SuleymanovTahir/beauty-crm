@@ -201,7 +201,7 @@ export default function Bookings() {
   });
 
   // Sorting states
-  const [sortField, setSortField] = useState<'name' | 'service_name' | 'datetime' | 'revenue'>('datetime');
+  const [sortField, setSortField] = useState<'name' | 'service_name' | 'datetime' | 'revenue' | 'source' | 'created_at'>('datetime');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
@@ -275,6 +275,14 @@ export default function Bookings() {
           aValue = parseFloat(a.revenue || 0);
           bValue = parseFloat(b.revenue || 0);
           break;
+        case 'source':
+          aValue = (a.source || 'manual').toLowerCase();
+          bValue = (b.source || 'manual').toLowerCase();
+          break;
+        case 'created_at':
+          aValue = new Date(a.created_at).getTime();
+          bValue = new Date(b.created_at).getTime();
+          break;
         default:
           return 0;
       }
@@ -305,7 +313,7 @@ export default function Bookings() {
   }, [dateTo]);
 
   // Handle sorting
-  const handleSort = (field: 'name' | 'service_name' | 'datetime' | 'revenue') => {
+  const handleSort = (field: 'name' | 'service_name' | 'datetime' | 'revenue' | 'source' | 'created_at') => {
     if (sortField === field) {
       // Toggle direction if clicking the same field
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -901,6 +909,48 @@ export default function Bookings() {
                   >
                     {t('bookings:date')} {sortField === 'datetime' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
+                  <th
+                    onClick={() => handleSort('source')}
+                    style={{
+                      padding: '1rem 1.5rem',
+                      textAlign: 'left',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#6b7280',
+                      cursor: 'pointer',
+                      userSelect: 'none'
+                    }}
+                  >
+                    Соц.сеть {sortField === 'source' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </th>
+                  <th
+                    onClick={() => handleSort('revenue')}
+                    style={{
+                      padding: '1rem 1.5rem',
+                      textAlign: 'left',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#6b7280',
+                      cursor: 'pointer',
+                      userSelect: 'none'
+                    }}
+                  >
+                    Сумма {sortField === 'revenue' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </th>
+                  <th
+                    onClick={() => handleSort('created_at')}
+                    style={{
+                      padding: '1rem 1.5rem',
+                      textAlign: 'left',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#6b7280',
+                      cursor: 'pointer',
+                      userSelect: 'none'
+                    }}
+                  >
+                    Создано {sortField === 'created_at' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:phone')}</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:status')}</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:actions')}</th>
@@ -999,6 +1049,18 @@ export default function Bookings() {
                       </td>
                       <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>{booking.service_name || '-'}</td>
                       <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>{formatDateTime(booking.datetime)}</td>
+                      <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>
+                        {booking.source === 'instagram' ? '📷 Instagram' :
+                         booking.source === 'telegram' ? '✈️ Telegram' :
+                         booking.source === 'whatsapp' ? '📱 WhatsApp' :
+                         booking.source || 'Manual'}
+                      </td>
+                      <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111', fontWeight: '600' }}>
+                        {booking.revenue ? `${booking.revenue} AED` : '-'}
+                      </td>
+                      <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>
+                        {booking.created_at ? new Date(booking.created_at).toLocaleDateString('ru-RU') : '-'}
+                      </td>
                       <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>{booking.phone || '-'}</td>
                       <td style={{ padding: '1rem 1.5rem' }}>
                         <StatusSelect
