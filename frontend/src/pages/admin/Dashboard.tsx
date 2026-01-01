@@ -58,6 +58,7 @@ export default function AdminDashboard() {
   const [customDateRange, setCustomDateRange] = useState<DateRange>({ start: '', end: '' });
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [bookingStatusFilter, setBookingStatusFilter] = useState<string>('all');
+  const [salonSettings, setSalonSettings] = useState<any>(null);
 
   useEffect(() => {
     loadDashboardData();
@@ -160,15 +161,17 @@ export default function AdminDashboard() {
       });
 
       // Load real data with date filtering
-      const [statsData, bookingsData, clientsData, botData] = await Promise.all([
+      const [statsData, bookingsData, clientsData, botData, settingsData] = await Promise.all([
         api.get(`/api/stats?${params.toString()}`).catch(() => api.getStats()),
         api.getBookings(),
         api.getClients(),
         api.get('/api/bot-analytics?days=30').catch(() => null),
+        api.getPublicSalonSettings().catch(() => ({ currency: 'AED' })),
       ]);
 
       setStats(statsData);
       if (botData) setBotAnalytics(botData);
+      setSalonSettings(settingsData);
 
       // Take last 3 bookings and enrich with client data
       if (bookingsData.bookings) {
@@ -450,7 +453,7 @@ export default function AdminDashboard() {
             <div className="flex-1">
               <p className="text-xs md:text-sm opacity-90 mb-2">{t('dashboard:total_revenue', 'Общий доход')}</p>
               <h3 className="text-2xl md:text-3xl font-bold mb-1">
-                {stats.total_revenue?.toLocaleString() || 0} ₽
+                {stats.total_revenue?.toLocaleString() || 0} {salonSettings?.currency || 'AED'}
               </h3>
               {stats.growth?.revenue && (
                 <div className="flex items-center gap-1 text-xs opacity-90">
@@ -474,7 +477,7 @@ export default function AdminDashboard() {
             <div className="flex-1">
               <p className="text-xs md:text-sm text-gray-600 mb-2">{t('dashboard:avg_booking_value', 'Средний чек')}</p>
               <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
-                {stats.avg_booking_value?.toLocaleString() || 0} ₽
+                {stats.avg_booking_value?.toLocaleString() || 0} {salonSettings?.currency || 'AED'}
               </h3>
               <p className="text-xs text-gray-500">{t('dashboard:per_booking', 'за запись')}</p>
             </div>
@@ -537,7 +540,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-gray-900">{service.revenue?.toLocaleString() || 0} ₽</p>
+                  <p className="text-sm font-bold text-gray-900">{service.revenue?.toLocaleString() || 0} {salonSettings?.currency || 'AED'}</p>
                 </div>
               </div>
             ))}
@@ -892,7 +895,7 @@ export default function AdminDashboard() {
                     <div className="absolute inset-0 bg-gradient-to-t from-pink-600 to-pink-400 rounded-t-lg"></div>
                     {/* Tooltip */}
                     <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                      {bar.amount.toLocaleString()} ₽
+                      {bar.amount.toLocaleString()} {salonSettings?.currency || 'AED'}
                     </div>
                   </div>
                   <span className="text-xs text-gray-600 font-medium">{bar.label}</span>
@@ -912,7 +915,7 @@ export default function AdminDashboard() {
               <span className="text-xs text-gray-600">{t('dashboard:revenue', 'Доход')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-gray-900">{stats.total_revenue?.toLocaleString() || 0} ₽</span>
+              <span className="text-sm font-bold text-gray-900">{stats.total_revenue?.toLocaleString() || 0} {salonSettings?.currency || 'AED'}</span>
               <span className="text-xs text-gray-500">{t('dashboard:total', 'всего')}</span>
             </div>
           </div>
