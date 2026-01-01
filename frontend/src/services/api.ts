@@ -604,6 +604,10 @@ export class ApiClient {
     return this.request<any>(`/api/services?active_only=${activeOnly}`)
   }
 
+  async getPublicServices() {
+    return this.request<any>('/api/public/services')
+  }
+
   async createService(data: any) {
     return this.request('/api/services', {
       method: 'POST',
@@ -1236,13 +1240,14 @@ export class ApiClient {
   }
 
   async getAvailableDates(masterName: string, year: number, month: number, duration: number = 60) {
+    // Use public endpoint to avoid auth issues
     return this.request<{
       success: boolean;
       master: string;
       year: number;
       month: number;
       available_dates: string[]; // YYYY-MM-DD
-    }>(`/api/schedule/${masterName}/available-dates?year=${year}&month=${month}&duration=${duration}`)
+    }>(`/api/public/schedule/${masterName}/available-dates?year=${year}&month=${month}&duration=${duration}`)
   }
 
   async createHold(data: { service_id: number, master_name: string, date: string, time: string, client_id: string }) {

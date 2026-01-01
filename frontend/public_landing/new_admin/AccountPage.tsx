@@ -67,6 +67,7 @@ export function AccountPage() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loyalty, setLoyalty] = useState<any>(null);
   const [achievements, setAchievements] = useState<any[]>([]);
+  const [challenges, setChallenges] = useState<any[]>([]);
   const [masters, setMasters] = useState<any[]>([]);
   const [metrics, setMetrics] = useState<any[]>([]);
 
@@ -132,6 +133,7 @@ export function AccountPage() {
       setNotifications(notifsRes.notifications || []);
       setLoyalty(loyaltyRes);
       setAchievements(achievementsRes.achievements || []);
+      setChallenges(achievementsRes.challenges || []);
       setMasters(mastersRes.masters || []);
       setMetrics(metricsRes.metrics || []);
 
@@ -163,7 +165,7 @@ export function AccountPage() {
       case 'loyalty':
         return <Loyalty loyalty={loyalty} user={user} />;
       case 'achievements':
-        return <Achievements achievements={achievements} />;
+        return <Achievements achievements={achievements} challenges={challenges} />;
       case 'masters':
         return <Masters masters={masters} />;
       case 'beauty':

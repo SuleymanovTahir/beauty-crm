@@ -242,11 +242,11 @@ export default function Users() {
           <h3 className="text-3xl text-gray-900">{stats.total}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">Новые клиенты</p>
+          <p className="text-gray-600 text-sm mb-2">{t('stats_new_clients', 'New Clients')}</p>
           <h3 className="text-3xl text-green-600">{stats.new}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">Общая сумма</p>
+          <p className="text-gray-600 text-sm mb-2">{t('stats_total_spend', 'Total Spend')}</p>
           <h3 className="text-3xl text-pink-600">{stats.totalSpend.toFixed(0)} AED</h3>
         </div>
       </div>
@@ -282,12 +282,12 @@ export default function Users() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Клиент</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Телефон</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Email</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Статус</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Потрачено</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Дата создания</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_client', 'Client')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_phone', 'Phone')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_email', 'Email')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_status', 'Status')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_spent', 'Spent')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_created', 'Created')}</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_actions')}</th>
                 </tr>
               </thead>
@@ -316,7 +316,7 @@ export default function Users() {
                         user.status === 'lead' ? 'bg-purple-100 text-purple-800' :
                         'bg-gray-100 text-gray-800'
                       }>
-                        {user.status || 'новый'}
+                        {user.status || t('status_new', 'new')}
                       </Badge>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
@@ -334,7 +334,7 @@ export default function Users() {
                             size="icon"
                             onClick={() => navigate(`/admin/chat/${user.instagram_id}`)}
                             className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                            title="Открыть чат"
+                            title={t('open_chat', 'Open chat')}
                           >
                             <Edit className="w-4 h-4" />
                           </Button >

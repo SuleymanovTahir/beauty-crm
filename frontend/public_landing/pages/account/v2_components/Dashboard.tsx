@@ -92,8 +92,16 @@ export function Dashboard() {
     }
   };
 
-  const rescheduleBooking = (bookingId: number) => {
-    navigate('/account/appointments', { state: { rescheduleBookingId: bookingId } });
+  const rescheduleBooking = (booking: any) => {
+    navigate('/new-booking', {
+      state: {
+        editBookingId: booking.id,
+        prefillMaster: booking.master_id,
+        prefillService: booking.service_id,
+        prefillDate: booking.date,
+        prefillTime: booking.time
+      }
+    });
   };
 
   if (loading) {
@@ -190,7 +198,7 @@ export function Dashboard() {
                 <Calendar className="w-4 h-4 mr-2" />
                 {t('dashboard.add_to_calendar', 'В календарь')}
               </Button>
-              <Button size="sm" variant="outline" onClick={() => rescheduleBooking(next_booking.id)}>
+              <Button size="sm" variant="outline" onClick={() => rescheduleBooking(next_booking)}>
                 <Edit className="w-4 h-4 mr-2" />
                 {t('dashboard.reschedule', 'Перенести')}
               </Button>
@@ -289,11 +297,19 @@ export function Dashboard() {
               <Sparkles className="w-5 h-5 text-purple-500" />
               {t('dashboard.achievements', 'Достижения')}
             </CardTitle>
+            <CardDescription>
+              {t('dashboard.achievements_desc', 'Получайте награды за визиты и активность')}
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="flex justify-between">
+          <CardContent className="space-y-3">
+            <div className="flex justify-between items-center">
               <span className="text-muted-foreground">{t('dashboard.unlocked', 'Разблокировано')}</span>
-              <span className="font-semibold">{achievements_summary.unlocked} / {achievements_summary.total}</span>
+              <span className="font-semibold text-lg">{achievements_summary.unlocked} / {achievements_summary.total}</span>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {achievements_summary.unlocked === 0
+                ? t('dashboard.achievements_hint', 'Совершите первый визит, чтобы получить достижения!')
+                : t('dashboard.achievements_progress', 'Продолжайте посещать салон для новых наград')}
             </div>
           </CardContent>
         </Card>

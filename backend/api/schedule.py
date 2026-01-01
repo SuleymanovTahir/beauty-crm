@@ -470,6 +470,38 @@ async def get_salon_working_hours():
         # Fallback
         return get_default_working_hours_response()  # ✅ Используем функцию
 
+@router.get("/public/schedule/{master_name}/available-dates")
+async def get_public_available_dates_api(
+    master_name: str,
+    year: int = Query(..., description="Year"),
+    month: int = Query(..., description="Month (1-12)"),
+    duration: int = Query(60, description="Slot duration in minutes")
+):
+    """
+    Публичный эндпоинт: Получить доступные даты для мастера в указанном месяце.
+    pass 'any' or 'global' as master_name to check availability across all masters.
+    """
+    try:
+        schedule_service = MasterScheduleService()
+        dates = schedule_service.get_available_dates(
+            master_name=master_name,
+            year=year,
+            month=month,
+            duration_minutes=duration
+        )
+
+        return {
+            "success": True,
+            "master": master_name,
+            "year": year,
+            "month": month,
+            "available_dates": dates
+        }
+
+    except Exception as e:
+        log_error(f"Error getting available dates: {e}", "schedule")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
 @router.get("/schedule/{master_name}/available-dates")
 async def get_available_dates_api(
     master_name: str,

@@ -4,7 +4,7 @@ import { Card, CardContent } from './ui/card';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { Checkbox } from './ui/checkbox';
-import { Search, Clock, DollarSign } from 'lucide-react';
+import { Search, Clock, Banknote } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { api } from '../../../../src/services/api';
 import { getLocalizedName } from '../../../../src/utils/i18nUtils';
@@ -27,25 +27,39 @@ export function ServicesStep({ selectedServices, onServicesChange, salonSettings
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
     useEffect(() => {
-        if (preloadedServices && preloadedServices.length > 0) {
+        console.log('[ServicesStep] Received preloadedServices:', preloadedServices?.length, preloadedServices);
+
+        // Always use preloadedServices if provided, even if it's being populated
+        if (preloadedServices) {
+            console.log('[ServicesStep] Setting services from preloaded:', preloadedServices.length);
             setServices(preloadedServices);
-            return;
+            // If preloaded is empty, it means parent is still loading, don't fetch ourselves
+            if (preloadedServices.length > 0) {
+                return;
+            }
         }
 
-        // Fallback: Fetch if not provided (shouldn't happen in main flow but good for isolation)
-        const fetchServices = async () => {
-            setLoading(true);
-            try {
-                const res = await api.getServices();
-                const data = Array.isArray(res) ? res : (res.services || []);
-                setServices(data || []);
-            } catch (error) {
-                console.error('Failed to fetch services:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchServices();
+        // Fallback: Fetch if not provided at all (preloadedServices is undefined/null)
+        // Don't fetch if preloadedServices is an empty array (parent will populate it)
+        if (preloadedServices === undefined || preloadedServices === null) {
+            console.log('[ServicesStep] No preloaded services, fetching from public API...');
+            const fetchServices = async () => {
+                setLoading(true);
+                try {
+                    // Use public services endpoint to avoid auth issues
+                    const res = await fetch('/api/public/services');
+                    const data = await res.json();
+                    const servicesArray = Array.isArray(data) ? data : (data.services || []);
+                    console.log('[ServicesStep] Fetched services:', servicesArray.length);
+                    setServices(servicesArray);
+                } catch (error) {
+                    console.error('[ServicesStep] Failed to fetch services:', error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchServices();
+        }
     }, [preloadedServices]);
 
     const categories = ['all', ...Array.from(new Set(services.map((s) => s.category)))];
@@ -147,12 +161,14 @@ export function ServicesStep({ selectedServices, onServicesChange, salonSettings
                                                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">{service.description}</p>
                                                 )}
                                                 <div className="flex items-center gap-4 text-sm font-medium text-gray-500">
-                                                    <div className="flex items-center gap-1">
-                                                        <Clock className="w-4 h-4" />
-                                                        <span>{service.duration} {t('min', 'min')}</span>
-                                                    </div>
+                                                    {service.duration && (
+                                                        <div className="flex items-center gap-1">
+                                                            <Clock className="w-4 h-4" />
+                                                            <span>{service.duration} {t('min', 'min')}</span>
+                                                        </div>
+                                                    )}
                                                     <div className="flex items-center gap-1 text-purple-600">
-                                                        <DollarSign className="w-4 h-4" />
+                                                        <Banknote className="w-4 h-4" />
                                                         <span>{service.price} {salonSettings?.currency || 'AED'}</span>
                                                     </div>
                                                 </div>

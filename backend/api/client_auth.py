@@ -52,9 +52,10 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     # Get client identifier - try multiple sources
+    # Use user ID as string for instagram_id if not present in user object
     user_email = user.get("email")
     user_phone = user.get("phone")
-    client_id = user.get("instagram_id") or user.get("telegram_id")
+    client_id = user.get("instagram_id") or user.get("telegram_id") or str(user.get("id"))
 
     conn = get_db_connection()
     c = conn.cursor()
@@ -102,6 +103,8 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             "email": (client_row[5] if client_row and client_row[5] else user_email or "")
         }
 
+        current_time = datetime.now().isoformat()
+
         c.execute("""
             SELECT b.id, b.service_name, b.datetime, b.master, COALESCE(u.photo, u.photo_url)
             FROM bookings b
@@ -110,8 +113,9 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             AND b.status IN ('pending', 'confirmed')
             AND b.datetime >= %s
             ORDER BY b.datetime ASC LIMIT 1
-        """, (client_id, datetime.now().isoformat()))
+        """, (client_id, current_time))
         row = c.fetchone()
+
         if row:
             photo = row[4]
             if photo and photo.startswith('/static'):
@@ -297,11 +301,42 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
                 })
             achievement_id += 1
 
+        # Get active challenges with localized fields
+        c.execute("""
+            SELECT id, title_ru, title_en, description_ru, description_en, bonus_points, start_date, end_date, target_value
+            FROM active_challenges
+            WHERE is_active = true
+        """)
+
+        challenges = []
+        for row in c.fetchall():
+            challenge_id, title_ru, title_en, desc_ru, desc_en, bonus_points, start_date, end_date, target_value = row
+
+            # Get user's progress for this challenge
+            c.execute("""
+                SELECT progress FROM challenge_progress
+                WHERE challenge_id = %s AND user_id = %s
+            """, (challenge_id, client_id))
+            progress_row = c.fetchone()
+            progress = progress_row[0] if progress_row else 0
+
+            challenges.append({
+                "id": challenge_id,
+                "title_ru": title_ru,
+                "title_en": title_en or title_ru,
+                "description_ru": desc_ru,
+                "description_en": desc_en or desc_ru,
+                "reward": bonus_points,
+                "progress": progress,
+                "maxProgress": target_value,
+                "deadline": end_date.isoformat() if end_date else None
+            })
+
         conn.close()
-        return {"success": True, "achievements": achievements}
+        return {"success": True, "achievements": achievements, "challenges": challenges}
     except Exception as e:
         log_error(f"Error loading achievements: {e}", "client_auth")
-        return {"success": True, "achievements": []}
+        return {"success": True, "achievements": [], "challenges": []}
 
 @router.get("/beauty-metrics")
 async def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None)):
@@ -378,7 +413,8 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
     if not user: raise HTTPException(status_code=401)
 
     # Get client identifier - try multiple sources
-    client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("username")
+    # Use user ID as string for instagram_id if not present in user object
+    client_id = user.get("instagram_id") or user.get("telegram_id") or str(user.get("id"))
 
     conn = get_db_connection()
     c = conn.cursor()
