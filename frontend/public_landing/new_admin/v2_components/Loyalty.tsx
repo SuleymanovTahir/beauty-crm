@@ -239,15 +239,15 @@ export function Loyalty({ loyalty }: any) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Gift className="w-6 h-6 text-purple-500" />
-            Реферальная программа
+            {t('referral_program')}
           </CardTitle>
           <CardDescription>
-            Приглашайте друзей и получайте бонусы
+            {t('referral_description')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-white rounded-lg p-4 border-2 border-dashed border-purple-200">
-            <div className="text-sm text-muted-foreground mb-2">Ваш промокод</div>
+            <div className="text-sm text-muted-foreground mb-2">{t('your_promo_code')}</div>
             <div className="flex items-center gap-2">
               <code className="flex-1 text-2xl font-bold text-purple-600">{referralCode}</code>
               <Button size="sm" variant="outline" onClick={handleCopyReferral}>
@@ -259,26 +259,26 @@ export function Loyalty({ loyalty }: any) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center">
               <div className="text-3xl font-bold text-purple-600">+500</div>
-              <div className="text-sm text-muted-foreground">баллов вам</div>
+              <div className="text-sm text-muted-foreground">{t('points_to_you')}</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-pink-600">+300</div>
-              <div className="text-sm text-muted-foreground">баллов другу</div>
+              <div className="text-sm text-muted-foreground">{t('points_to_friend')}</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-blue-600">0</div>
-              <div className="text-sm text-muted-foreground">приглашений</div>
+              <div className="text-sm text-muted-foreground">{t('invitations')}</div>
             </div>
           </div>
 
           <div className="flex gap-2">
             <Button className="flex-1" onClick={shareWhatsApp}>
               <Share2 className="w-4 h-4 mr-2" />
-              WhatsApp
+              {t('share_whatsapp')}
             </Button>
             <Button className="flex-1" variant="outline">
               <Share2 className="w-4 h-4 mr-2" />
-              Instagram
+              {t('share_instagram')}
             </Button>
           </div>
         </CardContent>
