@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { AnimatePresence, motion } from 'motion/react';
-import { X, Scissors, User, Calendar as CalendarIcon } from 'lucide-react';
+import { X, Scissors, User } from 'lucide-react';
 import { Toaster } from '../../components/ui/sonner';
 import { api } from '../../../src/services/api';
 import PublicLanguageSwitcher from '../../../src/components/PublicLanguageSwitcher';
@@ -358,6 +358,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   if (onClose) onClose();
                 }}
                 salonSettings={salonSettings}
+                setStep={setStep}
               />
             )}
           </motion.div>
@@ -377,9 +378,13 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               <div className="flex items-center justify-between px-2">
                 <div className="flex flex-col">
                   <p className="text-sm font-black text-gray-900 uppercase tracking-tighter">
-                    {bookingState.services.length} {getPluralForm(bookingState.services.length, 'услуга', 'услуги', 'услуг')} {t('services.selected', 'выбрано').toLowerCase()}
+                    {bookingState.services.length === 1
+                      ? getLocalizedName(bookingState.services[0], i18n.language)
+                      : `${bookingState.services.length} ${getPluralForm(bookingState.services.length, 'услуга', 'услуги', 'услуг')} ${t('services.selected', 'выбрано').toLowerCase()}`
+                    }
                   </p>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    {bookingState.professional && <span>{bookingState.professional.full_name} • </span>}
                     {totalDuration} {t('min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}
                   </p>
                 </div>
@@ -399,45 +404,27 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             )}
 
             <div className="flex gap-2">
-              {/* Back to Menu button */}
-              <Button
-                variant="outline"
-                onClick={() => setStep('menu')}
-                className="h-11 px-6 rounded-xl border border-slate-200 font-bold uppercase tracking-wider text-[9px] gap-2 hover:bg-slate-50 transition-all shadow-sm"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                {t('common.back', 'Назад')}
-              </Button>
-
-              {/* Progressive step navigation - only show completed steps */}
-              {bookingState.services.length > 0 && step !== 'services' && (
+              {/* Change service/master buttons - only on datetime step */}
+              {step === 'datetime' && bookingState.services.length > 0 && (
                 <Button
                   variant="outline"
                   onClick={() => setStep('services')}
                   className="h-11 px-4 rounded-xl border border-slate-200 font-bold text-[10px] gap-1.5 hover:bg-slate-50 transition-all shadow-sm whitespace-nowrap"
                 >
                   <Scissors className="w-3.5 h-3.5 text-purple-600" />
-                  <span className="hidden sm:inline">{t('menu.services', 'Услуги')}</span>
+                  <span className="hidden sm:inline">{t('booking:change_service', 'Изменить услугу')}</span>
+                  <span className="sm:hidden">{t('menu.services', 'Услуги')}</span>
                 </Button>
               )}
-              {bookingState.services.length > 0 && step !== 'professional' && (
+              {step === 'datetime' && bookingState.professionalSelected && (
                 <Button
                   variant="outline"
                   onClick={() => setStep('professional')}
                   className="h-11 px-4 rounded-xl border border-slate-200 font-bold text-[10px] gap-1.5 hover:bg-slate-50 transition-all shadow-sm whitespace-nowrap"
                 >
                   <User className="w-3.5 h-3.5 text-pink-600" />
-                  <span className="hidden sm:inline">{t('menu.professional', 'Мастер')}</span>
-                </Button>
-              )}
-              {bookingState.professionalSelected && step !== 'datetime' && (
-                <Button
-                  variant="outline"
-                  onClick={() => setStep('datetime')}
-                  className="h-11 px-4 rounded-xl border border-slate-200 font-bold text-[10px] gap-1.5 hover:bg-slate-50 transition-all shadow-sm whitespace-nowrap"
-                >
-                  <CalendarIcon className="w-3.5 h-3.5 text-rose-600" />
-                  <span className="hidden sm:inline">{t('datetime.date', 'Дата')}</span>
+                  <span className="hidden sm:inline">{t('booking:change_master', 'Изменить мастера')}</span>
+                  <span className="sm:hidden">{t('menu.professional', 'Мастер')}</span>
                 </Button>
               )}
 

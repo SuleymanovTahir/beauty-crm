@@ -313,6 +313,89 @@ async def create_booking_api(
         log_error(f"Booking creation error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
+async def notify_admin_booking_status_change(booking_id: int, old_status: str, new_status: str):
+    """Уведомить админа об изменении статуса записи"""
+    from utils.email import send_email_sync
+    from integrations.telegram_bot import send_telegram_alert
+    import os
+    import asyncio
+
+    try:
+        # Get booking details
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("""
+            SELECT b.instagram_id, b.service_name, b.datetime, b.master, c.name, c.phone
+            FROM bookings b
+            LEFT JOIN clients c ON b.instagram_id = c.instagram_id
+            WHERE b.id = %s
+        """, (booking_id,))
+        row = c.fetchone()
+        conn.close()
+
+        if not row:
+            return
+
+        instagram_id, service, datetime_str, master, client_name, phone = row
+        client_display = client_name or instagram_id
+
+        # Status translations
+        status_emoji = {
+            'pending': '⏳',
+            'confirmed': '✅',
+            'cancelled': '❌',
+            'completed': '✔️',
+            'no_show': '👻'
+        }
+
+        status_text = {
+            'pending': 'Ожидает подтверждения',
+            'confirmed': 'Подтверждена',
+            'cancelled': 'Отменена',
+            'completed': 'Завершена',
+            'no_show': 'Не пришел'
+        }
+
+        admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USERNAME')
+
+        subject = f"{status_emoji.get(new_status, '📝')} Изменение статуса записи: {client_display}"
+        message = (
+            f"Клиент: {client_display}\n"
+            f"Телефон: {phone or 'Не указан'}\n"
+            f"Услуга: {service}\n"
+            f"Мастер: {master or 'Любой'}\n"
+            f"Дата/Время: {datetime_str}\n"
+            f"Старый статус: {status_text.get(old_status, old_status)}\n"
+            f"Новый статус: {status_text.get(new_status, new_status)}"
+        )
+
+        # Email
+        if admin_email:
+            try:
+                send_email_sync([admin_email], subject, message)
+            except Exception as e:
+                print(f"Error sending email: {e}")
+
+        # Telegram
+        try:
+            tg_msg = (
+                f"{status_emoji.get(new_status, '📝')} <b>Изменение статуса записи</b>\n\n"
+                f"👤 <b>Клиент:</b> {client_display}\n"
+                f"📞 <b>Телефон:</b> {phone or 'Не указан'}\n"
+                f"💅 <b>Услуга:</b> {service}\n"
+                f"👨‍💼 <b>Мастер:</b> {master or 'Любой'}\n"
+                f"🕒 <b>Время:</b> {datetime_str}\n"
+                f"📊 <b>Статус:</b> {status_text.get(old_status, old_status)} → {status_text.get(new_status, new_status)}"
+            )
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(send_telegram_alert(tg_msg))
+            loop.close()
+        except Exception as e:
+            print(f"Error sending telegram: {e}")
+    except Exception as e:
+        print(f"Error notifying admin about status change: {e}")
+
 async def notify_admin_about_booking(data: dict):
     """Notify admin about new booking"""
     # Assuming send_email_sync is blocking, running it in threadpool might be safer if it were not async def.
@@ -398,14 +481,35 @@ async def update_booking_status_api(
         if not is_owner:
             return JSONResponse({"error": "Forbidden"}, status_code=403)
 
-    
+
     if not status:
         return JSONResponse({"error": "Status required"}, status_code=400)
-    
+
+    # Get old status before updating
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("SELECT status FROM bookings WHERE id = %s", (booking_id,))
+    old_status_row = c.fetchone()
+    conn.close()
+
+    old_status = old_status_row[0] if old_status_row else None
+
     success = update_booking_status(booking_id, status)
     if success:
-        log_activity(user["id"], "update_booking_status", "booking", 
+        log_activity(user["id"], "update_booking_status", "booking",
                     str(booking_id), f"Status: {status}")
+
+        # Notify admin about status change
+        if old_status and old_status != status:
+            import asyncio
+            try:
+                asyncio.create_task(notify_admin_booking_status_change(booking_id, old_status, status))
+            except:
+                # If event loop is not running, run in new loop
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop.run_until_complete(notify_admin_booking_status_change(booking_id, old_status, status))
+                loop.close()
         
         # ✅ Автоматическое начисление баллов (только при переходе в completed)
         if status == 'completed':
