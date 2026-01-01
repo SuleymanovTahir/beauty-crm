@@ -14,23 +14,24 @@ export function Loyalty({ loyalty }: any) {
   const currentTier = loyalty?.tier || 'Bronze';
   const history = loyalty?.history || [];
 
-  // Mock data for graphs if not provided
-  const spendingData = [
-    { month: t('month_jan'), amount: 5000 },
-    { month: t('month_feb'), amount: 7500 },
-    { month: t('month_mar'), amount: 3000 },
-    { month: t('month_apr'), amount: 12000 },
-    { month: t('month_may'), amount: 8000 },
-    { month: t('month_jun'), amount: 6500 },
+  // Use spending data from props or empty array
+  const spendingData = loyalty?.spendingByMonth || [
+    { month: t('month_jan'), amount: 0 },
+    { month: t('month_feb'), amount: 0 },
+    { month: t('month_mar'), amount: 0 },
+    { month: t('month_apr'), amount: 0 },
+    { month: t('month_may'), amount: 0 },
+    { month: t('month_jun'), amount: 0 },
   ];
 
-  const categorySpending = [
-    { name: t('category_hair'), value: 4000, fill: '#FF6B9D' },
-    { name: t('category_nails'), value: 3000, fill: '#FF9EBB' },
-    { name: t('category_face'), value: 2000, fill: '#FFC4D6' },
-    { name: t('category_body'), value: 1000, fill: '#FFE1EA' },
+  // Use category spending data from props or empty array
+  const categorySpending = loyalty?.categorySpending || [
+    { name: t('category_hair'), value: 0, fill: '#FF6B9D' },
+    { name: t('category_nails'), value: 0, fill: '#FF9EBB' },
+    { name: t('category_face'), value: 0, fill: '#FFC4D6' },
+    { name: t('category_body'), value: 0, fill: '#FFE1EA' },
   ];
-  const referralCode = 'REF123';
+  const referralCode = loyalty?.referralCode || 'REF123';
 
   const tiers = [
     { name: 'Bronze', points: 0, discount: 5, color: '#CD7F32' },

@@ -3,20 +3,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
+import { useTranslation } from 'react-i18next';
 
 export function BeautyProfile() {
+  const { t } = useTranslation(['account/beauty-profile', 'common']);
+
   // Mock data
   const beautyMetrics = [
-    { category: 'Кожа лица', score: 85, color: '#FF6B9D' },
-    { category: 'Волосы', score: 92, color: '#6B4C9A' },
-    { category: 'Ногти', score: 78, color: '#FF9EBB' },
-    { category: 'Тело', score: 88, color: '#4CC9F0' },
+    { category: t('category_face'), score: 85, color: '#FF6B9D' },
+    { category: t('category_hair'), score: 92, color: '#6B4C9A' },
+    { category: t('category_nails'), score: 78, color: '#FF9EBB' },
+    { category: t('category_body'), score: 88, color: '#4CC9F0' },
   ];
 
   const nextProcedures = [
     { service: 'Чистка лица', daysLeft: 14, recommended: false },
     { service: 'Маникюр', daysLeft: 3, recommended: true },
   ];
+
+  const getConditionText = (score: number) => {
+    if (score >= 90) return t('condition_excellent');
+    if (score >= 80) return t('condition_great');
+    if (score >= 70) return t('condition_good');
+    return t('condition_needs_attention');
+  };
 
   const overallScore = Math.round(
     beautyMetrics.reduce((sum, m) => sum + m.score, 0) / beautyMetrics.length
@@ -25,8 +35,8 @@ export function BeautyProfile() {
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Бьюти-профиль</h1>
-        <p className="text-muted-foreground">Анализ состояния и рекомендации</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       {/* Beauty Score */}
@@ -34,9 +44,9 @@ export function BeautyProfile() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-purple-500" />
-            Beauty Score
+            {t('beauty_score')}
           </CardTitle>
-          <CardDescription>Общая оценка вашего состояния</CardDescription>
+          <CardDescription>{t('overall_assessment')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-8">
@@ -44,7 +54,7 @@ export function BeautyProfile() {
               <div className="w-32 h-32 rounded-full border-8 border-purple-200 flex items-center justify-center">
                 <div className="text-center">
                   <div className="text-4xl font-bold text-purple-600">{overallScore}</div>
-                  <div className="text-sm text-muted-foreground">из 100</div>
+                  <div className="text-sm text-muted-foreground">{t('out_of_100')}</div>
                 </div>
               </div>
               <div
@@ -57,13 +67,13 @@ export function BeautyProfile() {
             </div>
 
             <div className="flex-1 space-y-2">
-              <div className="text-xl font-semibold">Отличное состояние!</div>
+              <div className="text-xl font-semibold">{t('excellent_condition')}</div>
               <p className="text-sm text-muted-foreground">
-                Вы регулярно следите за собой. Продолжайте в том же духе!
+                {t('keep_going')}
               </p>
               <div className="flex gap-2 mt-4">
-                <Badge className="bg-green-500">Активный уход</Badge>
-                <Badge className="bg-blue-500">Регулярные визиты</Badge>
+                <Badge className="bg-green-500">{t('active_care')}</Badge>
+                <Badge className="bg-blue-500">{t('regular_visits')}</Badge>
               </div>
             </div>
           </div>
@@ -72,7 +82,7 @@ export function BeautyProfile() {
 
       {/* Детальные метрики */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold tracking-tight">Детальная оценка</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">{t('detailed_assessment')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {beautyMetrics.map((metric) => (
             <Card key={metric.category}>
@@ -93,10 +103,7 @@ export function BeautyProfile() {
                   } as any}
                 />
                 <div className="mt-2 text-sm text-muted-foreground">
-                  {metric.score >= 90 && 'Превосходное состояние'}
-                  {metric.score >= 80 && metric.score < 90 && 'Отличное состояние'}
-                  {metric.score >= 70 && metric.score < 80 && 'Хорошее состояние'}
-                  {metric.score < 70 && 'Требует внимания'}
+                  {getConditionText(metric.score)}
                 </div>
               </CardContent>
             </Card>
@@ -108,12 +115,12 @@ export function BeautyProfile() {
       <div className="space-y-4">
         <h2 className="flex items-center gap-2 text-2xl font-semibold tracking-tight">
           <Calendar className="w-6 h-6" />
-          Календарь процедур
+          {t('procedures_calendar')}
         </h2>
         <Card>
           <CardHeader>
             <CardDescription>
-              Рекомендованное время для следующих процедур
+              {t('next_procedures_desc')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -133,9 +140,9 @@ export function BeautyProfile() {
                     <div className="font-semibold">{procedure.service}</div>
                     <div className="text-sm text-muted-foreground">
                       {procedure.recommended ? (
-                        <span className="text-orange-600">Рекомендуется в ближайшее время</span>
+                        <span className="text-orange-600">{t('recommended_soon')}</span>
                       ) : (
-                        `Через ${procedure.daysLeft} дней`
+                        t('in_days', { days: procedure.daysLeft })
                       )}
                     </div>
                   </div>
@@ -143,7 +150,7 @@ export function BeautyProfile() {
 
                 {procedure.recommended && (
                   <Button size="sm">
-                    Записаться
+                    {t('book_button')}
                   </Button>
                 )}
               </div>
@@ -157,7 +164,7 @@ export function BeautyProfile() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-blue-500" />
-            Персональные рекомендации
+            {t('recommendations_title')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -167,9 +174,9 @@ export function BeautyProfile() {
                 1
               </div>
               <div>
-                <div className="font-semibold">Поддерживайте регулярность</div>
+                <div className="font-semibold">{t('rec_1_title')}</div>
                 <p className="text-sm text-muted-foreground">
-                  Запланируйте следующий визит для маникюра в течение недели
+                  {t('rec_1_desc')}
                 </p>
               </div>
             </div>
@@ -179,9 +186,9 @@ export function BeautyProfile() {
                 2
               </div>
               <div>
-                <div className="font-semibold">Попробуйте комплексный уход</div>
+                <div className="font-semibold">{t('rec_2_title')}</div>
                 <p className="text-sm text-muted-foreground">
-                  Сочетание чистки лица и массажа улучшит общее состояние кожи
+                  {t('rec_2_desc')}
                 </p>
               </div>
             </div>
@@ -191,16 +198,16 @@ export function BeautyProfile() {
                 3
               </div>
               <div>
-                <div className="font-semibold">Воспользуйтесь акциями</div>
+                <div className="font-semibold">{t('rec_3_title')}</div>
                 <p className="text-sm text-muted-foreground">
-                  Зимний уход для лица со скидкой 30% - отличная возможность
+                  {t('rec_3_desc')}
                 </p>
               </div>
             </div>
           </div>
 
           <Button className="w-full">
-            Посмотреть все рекомендации
+            {t('view_all_recommendations')}
           </Button>
         </CardContent>
       </Card>

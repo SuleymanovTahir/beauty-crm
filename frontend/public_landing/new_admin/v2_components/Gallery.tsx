@@ -5,8 +5,10 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export function Gallery({ gallery, masters }: any) {
+  const { t } = useTranslation(['account/gallery', 'common']);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const galleryItems = gallery || []; // Use prop or empty array
   const masterList = masters || []; // Use prop or empty array
@@ -15,10 +17,10 @@ export function Gallery({ gallery, masters }: any) {
   const [showBefore, setShowBefore] = useState(true);
 
   const categories = [
-    { id: 'hair', label: 'Волосы', color: 'bg-pink-500' },
-    { id: 'nails', label: 'Ногти', color: 'bg-purple-500' },
-    { id: 'face', label: 'Лицо', color: 'bg-blue-500' },
-    { id: 'body', label: 'Тело', color: 'bg-green-500' },
+    { id: 'hair', label: t('category_hair'), color: 'bg-pink-500' },
+    { id: 'nails', label: t('category_nails'), color: 'bg-purple-500' },
+    { id: 'face', label: t('category_face'), color: 'bg-blue-500' },
+    { id: 'body', label: t('category_body'), color: 'bg-green-500' },
   ];
 
   const filteredItems = selectedCategory
@@ -26,11 +28,11 @@ export function Gallery({ gallery, masters }: any) {
     : galleryItems;
 
   const handleDownload = () => {
-    toast.success('Фото сохранено в галерею');
+    toast.success(t('photo_saved'));
   };
 
   const handleShare = () => {
-    toast.success('Ссылка скопирована в буфер обмена');
+    toast.success(t('link_copied'));
   };
 
   const navigateItem = (direction: 'prev' | 'next') => {
@@ -46,8 +48,8 @@ export function Gallery({ gallery, masters }: any) {
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">История красоты</h1>
-        <p className="text-muted-foreground">Ваши преображения</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       {/* Фильтры */}
@@ -57,7 +59,7 @@ export function Gallery({ gallery, masters }: any) {
           size="sm"
           onClick={() => setSelectedCategory(null)}
         >
-          Все
+          {t('filter_all')}
         </Button>
         {categories.map(cat => (
           <Button
@@ -91,8 +93,8 @@ export function Gallery({ gallery, masters }: any) {
                 />
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <div className="text-white text-center">
-                    <div className="text-lg font-semibold mb-2">До/После</div>
-                    <div className="text-sm">Нажмите для просмотра</div>
+                    <div className="text-lg font-semibold mb-2">{t('before_after')}</div>
+                    <div className="text-sm">{t('click_to_view')}</div>
                   </div>
                 </div>
                 {category && (
@@ -121,11 +123,11 @@ export function Gallery({ gallery, masters }: any) {
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" onClick={handleDownload}>
                   <Download className="w-4 h-4 mr-2" />
-                  Скачать
+                  {t('download')}
                 </Button>
                 <Button size="sm" variant="outline" onClick={handleShare}>
                   <Share2 className="w-4 h-4 mr-2" />
-                  Поделиться
+                  {t('share')}
                 </Button>
               </div>
             </DialogTitle>
@@ -141,7 +143,7 @@ export function Gallery({ gallery, masters }: any) {
                   onClick={() => navigateItem('prev')}
                 >
                   <ChevronLeft className="w-4 h-4 mr-2" />
-                  Предыдущее
+                  {t('previous')}
                 </Button>
                 <div className="flex gap-2">
                   <Button
@@ -149,14 +151,14 @@ export function Gallery({ gallery, masters }: any) {
                     variant={showBefore ? 'default' : 'outline'}
                     onClick={() => setShowBefore(true)}
                   >
-                    До
+                    {t('before')}
                   </Button>
                   <Button
                     size="sm"
                     variant={!showBefore ? 'default' : 'outline'}
                     onClick={() => setShowBefore(false)}
                   >
-                    После
+                    {t('after')}
                   </Button>
                 </div>
                 <Button
@@ -164,7 +166,7 @@ export function Gallery({ gallery, masters }: any) {
                   variant="outline"
                   onClick={() => navigateItem('next')}
                 >
-                  Следующее
+                  {t('next')}
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -173,11 +175,11 @@ export function Gallery({ gallery, masters }: any) {
               <div className="aspect-video relative rounded-lg overflow-hidden">
                 <img
                   src={showBefore ? selectedItem.before : selectedItem.after}
-                  alt={showBefore ? 'До' : 'После'}
+                  alt={showBefore ? t('before') : t('after')}
                   className="w-full h-full object-cover"
                 />
                 <Badge className="absolute top-4 left-4 text-lg px-4 py-2">
-                  {showBefore ? 'До' : 'После'}
+                  {showBefore ? t('before') : t('after')}
                 </Badge>
               </div>
 

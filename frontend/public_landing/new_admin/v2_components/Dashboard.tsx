@@ -3,21 +3,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
+import { useTranslation } from 'react-i18next';
 
 export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onNavigate }: any) {
+  const { t } = useTranslation(['account/dashboard', 'common']);
+
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Доброе утро';
-    if (hour < 18) return 'Добрый день';
-    return 'Добрый вечер';
+    if (hour < 12) return t('greeting_morning');
+    if (hour < 18) return t('greeting_afternoon');
+    return t('greeting_evening');
   };
 
   const getMotivation = () => {
     const phrases = [
-      'Время сиять!',
-      'Вы прекрасны!',
-      'Каждый день - новая возможность!',
-      'Будьте собой, будьте красивы!',
+      t('motivation_shine'),
+      t('motivation_beautiful'),
+      t('motivation_new_day'),
+      t('motivation_be_yourself'),
     ];
     return phrases[Math.floor(Math.random() * phrases.length)];
   };
@@ -41,16 +44,7 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
     (new Date().getTime() - new Date(user.created_at).getTime()) / (1000 * 60 * 60 * 24 * 30)
   ) : 0;
 
-  // Hybrid Dashboard:
-  // 1. Gradient Hero & Greeting (User Liked)
-  // 2. Quick Actions (User Liked)
-  // 3. Status/Loyalty Card (User Liked)
-  // 4. Upcoming Appointment (Clean / New Admin Style)
-  // 5. Special Offers (Clean / New Admin Style)
-
   // Handler for booking navigation
-  // onNavigate might be passed from parent for internal tab switching
-  // but for 'New Booking' we usually want to go to the route /new-booking
   const handleBooking = () => {
     window.location.href = '/new-booking';
   };
@@ -70,22 +64,22 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
 
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
-              <div className="text-sm text-blue-100">Всего визитов</div>
+              <div className="text-sm text-blue-100">{t('total_visits')}</div>
               <div className="mt-1 text-2xl font-bold flex items-center gap-2">
                 {stats.total_visits} <Calendar className="h-4 w-4 opacity-70" />
               </div>
             </div>
             <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
-              <div className="text-sm text-blue-100">Баллы лояльности</div>
+              <div className="text-sm text-blue-100">{t('loyalty_points')}</div>
               <div className="mt-1 text-2xl font-bold flex items-center gap-2">
                 {points} <Star className="h-4 w-4 text-yellow-300 fill-yellow-300" />
               </div>
               <div className="text-xs text-blue-100 mt-1 bg-white/20 inline-block px-2 py-0.5 rounded-full capitalize">
-                {tier} уровень
+                {t('tier_level', { tier })}
               </div>
             </div>
             <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
-              <div className="text-sm text-blue-100">Ваша скидка</div>
+              <div className="text-sm text-blue-100">{t('your_discount')}</div>
               <div className="mt-1 text-2xl font-bold flex items-center gap-2">
                 {discount}% <TrendingUp className="h-4 w-4 text-green-300" />
               </div>
@@ -102,13 +96,13 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
 
           {/* Quick Actions */}
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Быстрые действия</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('quick_actions')}</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { label: 'Записаться', icon: Calendar, color: 'text-pink-600', bg: 'bg-pink-50', action: handleBooking },
-                { label: 'Повторить', icon: Repeat, color: 'text-violet-600', bg: 'bg-violet-50', action: () => { } },
-                { label: 'Мастера', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', action: () => onNavigate && onNavigate('masters') },
-                { label: 'Поддержка', icon: MessageCircle, color: 'text-green-600', bg: 'bg-green-50', action: () => onNavigate && onNavigate('support') },
+                { label: t('action_book'), icon: Calendar, color: 'text-pink-600', bg: 'bg-pink-50', action: handleBooking },
+                { label: t('action_repeat'), icon: Repeat, color: 'text-violet-600', bg: 'bg-violet-50', action: () => { } },
+                { label: t('action_masters'), icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', action: () => onNavigate && onNavigate('masters') },
+                { label: t('action_support'), icon: MessageCircle, color: 'text-green-600', bg: 'bg-green-50', action: () => onNavigate && onNavigate('support') },
               ].map((action, i) => (
                 <button
                   key={i}
@@ -131,7 +125,7 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-pink-700">
                   <Clock className="w-5 h-5" />
-                  Ближайшая запись
+                  {t('upcoming_appointment')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -141,11 +135,11 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
                       <AvatarImage src={master?.avatar_url} alt={master?.name} />
                       <AvatarFallback>{master?.name?.[0]}</AvatarFallback>
                     </Avatar>
-                    <Badge className="absolute -bottom-2 -right-2 bg-green-500 border-2 border-white">Confirmed</Badge>
+                    <Badge className="absolute -bottom-2 -right-2 bg-green-500 border-2 border-white">{t('confirmed')}</Badge>
                   </div>
 
                   <div className="flex-1 text-center md:text-left space-y-2 w-full">
-                    <h3 className="text-lg font-bold text-gray-900 truncate">{master?.name || 'Мастер'}</h3>
+                    <h3 className="text-lg font-bold text-gray-900 truncate">{master?.name || t('master')}</h3>
                     <p className="text-muted-foreground font-medium text-sm md:text-base line-clamp-2">
                       {upcomingAppointment.service_name || upcomingAppointment.services?.[0]?.name}
                     </p>
@@ -166,10 +160,10 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
 
                 <div className="mt-6 flex flex-col sm:flex-row gap-3">
                   <Button className="flex-1 bg-pink-600 hover:bg-pink-700 text-white shadow-md shadow-pink-200 w-full">
-                    Управление записью
+                    {t('manage_appointment')}
                   </Button>
                   <Button variant="outline" className="flex-1 border-pink-200 text-pink-700 hover:bg-pink-50 w-full" onClick={() => onNavigate && onNavigate('appointments')}>
-                    В календарь
+                    {t('to_calendar')}
                   </Button>
                 </div>
               </CardContent>
@@ -177,9 +171,9 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
           ) : (
             <div className="rounded-2xl border-2 border-dashed border-gray-200 p-8 text-center hover:border-pink-300 transition-colors bg-gray-50/50">
               <Calendar className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-              <h3 className="font-semibold text-gray-900">Нет активных записей</h3>
-              <p className="text-gray-500 text-sm mb-4">Выберите удобное время и запишитесь к мастеру</p>
-              <Button onClick={() => window.location.href = '/new-booking'}>Записаться онлайн</Button>
+              <h3 className="font-semibold text-gray-900">{t('no_appointments')}</h3>
+              <p className="text-gray-500 text-sm mb-4">{t('no_appointments_desc')}</p>
+              <Button onClick={() => window.location.href = '/new-booking'}>{t('book_online')}</Button>
             </div>
           )}
 
@@ -192,7 +186,7 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
           <Card className="border shadow-sm hover:shadow-md transition-shadow">
             <CardHeader>
               <CardTitle className="text-base flex items-center justify-between">
-                <span>Последний визит</span>
+                <span>{t('last_visit')}</span>
                 <ArrowRight className="w-4 h-4 text-gray-400" />
               </CardTitle>
             </CardHeader>
@@ -211,11 +205,11 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
                     </div>
                   </div>
                   <Button variant="ghost" className="w-full justify-start text-pink-600 hover:text-pink-700 hover:bg-pink-50 p-0 h-auto font-medium">
-                    <Repeat className="w-4 h-4 mr-2" /> Повторить услугу
+                    <Repeat className="w-4 h-4 mr-2" /> {t('repeat_service')}
                   </Button>
                 </div>
               ) : (
-                <p className="text-muted-foreground text-sm">История визитов пуста</p>
+                <p className="text-muted-foreground text-sm">{t('history_empty')}</p>
               )}
             </CardContent>
           </Card>
@@ -226,18 +220,18 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-white">
                 <Sparkles className="w-5 h-5 text-yellow-300" />
-                Ваш статус
+                {t('your_status')}
               </CardTitle>
             </CardHeader>
             <CardContent className="relative z-10 space-y-4">
               <div className="flex justify-between items-center bg-white/10 p-3 rounded-xl border border-white/10">
-                <span className="text-indigo-100 text-sm">Вы с нами</span>
-                <span className="font-bold">{monthsSince} месяцев</span>
+                <span className="text-indigo-100 text-sm">{t('with_us')}</span>
+                <span className="font-bold">{monthsSince} {t('months')}</span>
               </div>
 
               <div className="pt-2">
                 <p className="text-sm text-indigo-100 mb-3">
-                  До следующего уровня осталось накопить 150 баллов.
+                  {t('next_level_message', { points: 150 })}
                 </p>
                 <div className="h-2 bg-black/20 rounded-full overflow-hidden">
                   <div className="h-full bg-yellow-300 w-[70%]" />
@@ -253,7 +247,7 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
       <div className="space-y-4">
         <h2 className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-pink-500" />
-          Специальные предложения
+          {t('special_offers')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {dashboardData?.special_offers?.map((promo: any) => (
@@ -265,7 +259,7 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
                   className="w-full h-full object-cover"
                 />
                 <Badge className="absolute top-2 right-2 bg-red-500">
-                  {promo.daysLeft} дней
+                  {promo.daysLeft} {t('days')}
                 </Badge>
               </div>
               <CardHeader>
@@ -281,7 +275,7 @@ export function Dashboard({ user, dashboardData, loyalty, bookings, masters, onN
                     {promo.new_price || promo.newPrice} AED
                   </span>
                 </div>
-                <Button className="w-full">Записаться</Button>
+                <Button className="w-full">{t('book_now')}</Button>
               </CardContent>
             </Card>
           ))}

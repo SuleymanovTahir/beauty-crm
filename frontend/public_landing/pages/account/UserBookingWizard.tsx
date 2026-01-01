@@ -7,6 +7,7 @@ import { Toaster } from '../../components/ui/sonner';
 import { api } from '../../../src/services/api';
 import PublicLanguageSwitcher from '../../../src/components/PublicLanguageSwitcher';
 import { useTranslation } from 'react-i18next';
+import { getLocalizedName } from '../../../src/utils/i18nUtils';
 
 // New Synced Components
 import { BookingMenu } from './booking/BookingMenu';
@@ -385,7 +386,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 <div className="flex -space-x-2">
                   {bookingState.services.slice(0, 3).map((s, i) => (
                     <div key={s.id} className="w-6 h-6 rounded-full bg-purple-500 border-2 border-white flex items-center justify-center text-[8px] text-white font-black" style={{ zIndex: 10 - i }}>
-                      {s.name[0]}
+                      {getLocalizedName(s, i18n.language)[0]}
                     </div>
                   ))}
                   {bookingState.services.length > 3 && (

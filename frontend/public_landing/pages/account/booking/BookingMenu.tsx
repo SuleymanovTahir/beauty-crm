@@ -164,7 +164,7 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
                     <div className="space-y-3 mb-6">
                         {bookingState.services.map((service: any) => (
                             <div key={service.id} className="flex justify-between items-center">
-                                <span className="text-gray-700">{service.name}</span>
+                                <span className="text-gray-700">{getLocalizedName(service, i18n.language)}</span>
                                 <div className="flex items-center gap-3">
                                     <span className="text-sm text-gray-500">{service.duration} {t('min', 'min')}</span>
                                     <span className="font-medium">{service.price} {salonSettings?.currency || 'AED'}</span>
