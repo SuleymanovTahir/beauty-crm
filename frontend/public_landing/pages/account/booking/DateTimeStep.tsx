@@ -51,15 +51,40 @@ export function DateTimeStep({
                 const nextMonth = new Date(currentMonth);
                 nextMonth.setMonth(nextMonth.getMonth() + 1);
 
+                console.log('[DateTimeStep] Fetching dates for:', {
+                    currentYear: currentMonth.getFullYear(),
+                    currentMonthAPI: currentMonth.getMonth() + 1,
+                    nextYear: nextMonth.getFullYear(),
+                    nextMonthAPI: nextMonth.getMonth() + 1,
+                    master: masterName,
+                    duration: totalDuration || 60
+                });
+
                 const [currentRes, nextRes] = await Promise.all([
                     api.getAvailableDates(masterName, currentMonth.getFullYear(), currentMonth.getMonth() + 1, totalDuration || 60),
                     api.getAvailableDates(masterName, nextMonth.getFullYear(), nextMonth.getMonth() + 1, totalDuration || 60)
                 ]);
 
+                console.log('[DateTimeStep] Received dates:', {
+                    currentMonthDates: currentRes.available_dates?.length || 0,
+                    nextMonthDates: nextRes.available_dates?.length || 0,
+                    sampleDates: [...(currentRes.available_dates || []).slice(0, 3), ...(nextRes.available_dates || []).slice(0, 3)]
+                });
+
                 const combinedDates = new Set([
                     ...(currentRes.available_dates || []),
                     ...(nextRes.available_dates || [])
                 ]);
+
+                console.log('[DateTimeStep] Total available dates:', combinedDates.size);
+
+                if (combinedDates.size === 0) {
+                    console.warn('[DateTimeStep] ⚠️ NO AVAILABLE DATES RETURNED! This means either:');
+                    console.warn('  1. Masters have no schedule configured for these months');
+                    console.warn('  2. All slots are booked');
+                    console.warn('  3. Current date buffer (2 hours) blocks all slots for today');
+                    console.warn('  4. Masters are on time-off/vacation');
+                }
 
                 setAvailableDates(combinedDates);
             } catch (e) {

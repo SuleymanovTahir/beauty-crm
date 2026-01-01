@@ -374,15 +374,19 @@ class MasterScheduleService:
                 if not start_time_str or not end_time_str:
                     return []
 
-            # ✅ Parse hours and minutes for optimization logic
+            # ✅ Parse hours and minutes for optimization logic (handle HH:MM and HH:MM:SS)
             try:
-                start_hour, start_minute = map(int, start_time_str.split(':'))
-                end_hour, end_minute = map(int, end_time_str.split(':'))
+                start_parts = start_time_str.split(':')
+                start_hour, start_minute = int(start_parts[0]), int(start_parts[1])
+                end_parts = end_time_str.split(':')
+                end_hour, end_minute = int(end_parts[0]), int(end_parts[1])
             except:
                 from core.config import DEFAULT_HOURS_START, DEFAULT_HOURS_END
                 try:
-                    start_hour, start_minute = map(int, DEFAULT_HOURS_START.split(':'))
-                    end_hour, end_minute = map(int, DEFAULT_HOURS_END.split(':'))
+                    start_parts = DEFAULT_HOURS_START.split(':')
+                    start_hour, start_minute = int(start_parts[0]), int(start_parts[1])
+                    end_parts = DEFAULT_HOURS_END.split(':')
+                    end_hour, end_minute = int(end_parts[0]), int(end_parts[1])
                 except:
                     start_hour, start_minute = 10, 30
                     end_hour, end_minute = 21, 0
@@ -459,7 +463,9 @@ class MasterScheduleService:
             
             # Bookings are boundaries
             for b_time in booked_times:
-                th, tm = map(int, b_time.split(':'))
+                # Handle both HH:MM and HH:MM:SS formats
+                b_parts = b_time.split(':')
+                th, tm = int(b_parts[0]), int(b_parts[1])
                 b_minutes = th * 60 + tm
                 # Start of a booking is a boundary (slot should END here)
                 # End of a booking is a boundary (slot should START here)
@@ -836,9 +842,11 @@ class MasterScheduleService:
                     # D. Slot Generation (Fast In-Memory)
                     # We only need to find ONE available slot
                     
-                    # Parse times
-                    s_h, s_m = map(int, start_time.split(':'))
-                    e_h, e_m = map(int, end_time.split(':'))
+                    # Parse times (handle both HH:MM and HH:MM:SS formats)
+                    s_parts = start_time.split(':')
+                    s_h, s_m = int(s_parts[0]), int(s_parts[1])
+                    e_parts = end_time.split(':')
+                    e_h, e_m = int(e_parts[0]), int(e_parts[1])
                     
                     current_dt = datetime.combine(date_obj, dt_time(s_h, s_m))
                     work_end_dt = datetime.combine(date_obj, dt_time(e_h, e_m))

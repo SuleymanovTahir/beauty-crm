@@ -6,8 +6,10 @@ import { Avatar } from './ui/avatar';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export function Masters({ masters }: any) {
+  const { t } = useTranslation(['account/masters', 'common']);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
   // Use masters prop or default empty array
@@ -26,7 +28,7 @@ export function Masters({ masters }: any) {
         : [...prev, masterId]
     );
     // In real app, call API here
-    toast.success('Избранное обновлено');
+    toast.success(t('favorites_updated'));
   };
 
   const filteredMasters = showFavoritesOnly
@@ -37,9 +39,9 @@ export function Masters({ masters }: any) {
     <div className="space-y-6 pb-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Наши мастера</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
           <p className="text-muted-foreground">
-            {masterList.length} специалистов • {favoriteMasters.length} в избранном
+            {t('subtitle', { count: masterList.length, favorites: favoriteMasters.length })}
           </p>
         </div>
 
@@ -49,7 +51,7 @@ export function Masters({ masters }: any) {
             checked={showFavoritesOnly}
             onCheckedChange={setShowFavoritesOnly}
           />
-          <Label htmlFor="favorites-only">Только избранные</Label>
+          <Label htmlFor="favorites-only">{t('favorites_only')}</Label>
         </div>
       </div>
 
@@ -57,13 +59,13 @@ export function Masters({ masters }: any) {
         <Card>
           <CardContent className="p-12 text-center">
             <Heart className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="mb-2">Нет мастеров</h3>
+            <h3 className="mb-2">{t('no_masters')}</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              {showFavoritesOnly ? 'Добавьте мастеров в избранное' : 'Список мастеров пуст'}
+              {showFavoritesOnly ? t('add_favorites_desc') : t('no_masters_desc')}
             </p>
             {showFavoritesOnly && (
               <Button onClick={() => setShowFavoritesOnly(false)}>
-                Показать всех мастеров
+                {t('show_all')}
               </Button>
             )}
           </CardContent>
@@ -104,7 +106,7 @@ export function Masters({ masters }: any) {
                 <CardContent className="p-6 space-y-4">
                   <div>
                     <CardTitle className="mb-2">{master.name}</CardTitle>
-                    <CardDescription>{master.specialty || 'Мастер'}</CardDescription>
+                    <CardDescription>{master.specialty || t('master_title')}</CardDescription>
                   </div>
 
                   <div className="flex items-center gap-4">
@@ -113,14 +115,14 @@ export function Masters({ masters }: any) {
                       <span className="font-semibold">{master.rating || '5.0'}</span>
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {master.reviews || 0} отзывов
+                      {master.reviews || 0} {t('reviews')}
                     </div>
                   </div>
 
                   <div className="flex gap-2">
                     <Button className="flex-1">
                       <Calendar className="w-4 h-4 mr-2" />
-                      Записаться
+                      {t('book_button')}
                     </Button>
                   </div>
                 </CardContent>
@@ -133,7 +135,7 @@ export function Masters({ masters }: any) {
       {/* Дополнительная информация */}
       <Card className="bg-gradient-to-r from-blue-50 to-cyan-50">
         <CardHeader>
-          <CardTitle>Выбор мастера</CardTitle>
+          <CardTitle>{t('choose_master_title')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-start gap-3">
@@ -141,9 +143,9 @@ export function Masters({ masters }: any) {
               1
             </div>
             <div>
-              <div className="font-semibold">Просматривайте профили</div>
+              <div className="font-semibold">{t('step_1_title')}</div>
               <p className="text-sm text-muted-foreground">
-                Изучите специализацию и рейтинг каждого мастера
+                {t('step_1_desc')}
               </p>
             </div>
           </div>
@@ -152,9 +154,9 @@ export function Masters({ masters }: any) {
               2
             </div>
             <div>
-              <div className="font-semibold">Добавляйте в избранное</div>
+              <div className="font-semibold">{t('step_2_title')}</div>
               <p className="text-sm text-muted-foreground">
-                Сохраните понравившихся мастеров для быстрой записи
+                {t('step_2_desc')}
               </p>
             </div>
           </div>
@@ -163,9 +165,9 @@ export function Masters({ masters }: any) {
               3
             </div>
             <div>
-              <div className="font-semibold">Записывайтесь онлайн</div>
+              <div className="font-semibold">{t('step_3_title')}</div>
               <p className="text-sm text-muted-foreground">
-                Выбирайте удобное время и подтверждайте запись
+                {t('step_3_desc')}
               </p>
             </div>
           </div>

@@ -9,8 +9,11 @@ import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Separator } from './ui/separator';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export function Settings({ user }: any) {
+  const { t } = useTranslation(['account/settings', 'common']);
+
   // Adapt user prop to profile structure or use defaults
   const [profile, setProfile] = useState({
     name: user?.full_name || 'Tahir',
@@ -35,49 +38,49 @@ export function Settings({ user }: any) {
   });
 
   const handleSaveProfile = () => {
-    toast.success('Профиль обновлен');
+    toast.success(t('profile_updated'));
   };
 
   const handleChangePassword = () => {
-    toast.info('Функция смены пароля будет доступна в следующей версии');
+    toast.info(t('password_coming_soon'));
   };
 
   const handleEnable2FA = () => {
-    toast.info('Двухфакторная аутентификация будет доступна в следующей версии');
+    toast.info(t('2fa_coming_soon'));
   };
 
   const handleExportData = () => {
-    toast.success('Экспорт данных начат. Вы получите файл на email');
+    toast.success(t('export_started'));
   };
 
   const handleDeleteAccount = () => {
-    toast.error('Для удаления аккаунта свяжитесь с поддержкой');
+    toast.error(t('delete_contact_support'));
   };
 
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Настройки</h1>
-        <p className="text-muted-foreground">Управление профилем и приватностью</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="profile">
             <User className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Профиль</span>
+            <span className="hidden sm:inline">{t('tab_profile')}</span>
           </TabsTrigger>
           <TabsTrigger value="security">
             <Lock className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Безопасность</span>
+            <span className="hidden sm:inline">{t('tab_security')}</span>
           </TabsTrigger>
           <TabsTrigger value="notifications">
             <Bell className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Уведомления</span>
+            <span className="hidden sm:inline">{t('tab_notifications')}</span>
           </TabsTrigger>
           <TabsTrigger value="privacy">
             <Eye className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Приватность</span>
+            <span className="hidden sm:inline">{t('tab_privacy')}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -85,8 +88,8 @@ export function Settings({ user }: any) {
         <TabsContent value="profile" className="space-y-6 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Личная информация</CardTitle>
-              <CardDescription>Обновите ваши данные</CardDescription>
+              <CardTitle>{t('personal_info_title')}</CardTitle>
+              <CardDescription>{t('personal_info_desc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center gap-6">
@@ -95,9 +98,9 @@ export function Settings({ user }: any) {
                   <AvatarFallback>{profile.name?.[0]}</AvatarFallback>
                 </Avatar>
                 <div className="space-y-2">
-                  <Button variant="outline">Изменить фото</Button>
+                  <Button variant="outline">{t('change_photo')}</Button>
                   <p className="text-sm text-muted-foreground">
-                    JPG, PNG. Макс. 5MB
+                    {t('photo_requirements')}
                   </p>
                 </div>
               </div>
@@ -106,7 +109,7 @@ export function Settings({ user }: any) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Имя</Label>
+                  <Label htmlFor="name">{t('field_name')}</Label>
                   <Input
                     id="name"
                     value={profile.name}
@@ -115,7 +118,7 @@ export function Settings({ user }: any) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('field_email')}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -125,7 +128,7 @@ export function Settings({ user }: any) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Телефон</Label>
+                  <Label htmlFor="phone">{t('field_phone')}</Label>
                   <Input
                     id="phone"
                     type="tel"
@@ -135,7 +138,7 @@ export function Settings({ user }: any) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="member-since">Клиент с</Label>
+                  <Label htmlFor="member-since">{t('field_member_since')}</Label>
                   <Input
                     id="member-since"
                     value={new Date(profile.memberSince).toLocaleDateString('ru-RU')}
@@ -144,7 +147,7 @@ export function Settings({ user }: any) {
                 </div>
               </div>
 
-              <Button onClick={handleSaveProfile}>Сохранить изменения</Button>
+              <Button onClick={handleSaveProfile}>{t('save_changes')}</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -153,47 +156,47 @@ export function Settings({ user }: any) {
         <TabsContent value="security" className="space-y-6 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Пароль</CardTitle>
-              <CardDescription>Измените ваш пароль</CardDescription>
+              <CardTitle>{t('password_title')}</CardTitle>
+              <CardDescription>{t('password_desc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="current-password">Текущий пароль</Label>
+                <Label htmlFor="current-password">{t('current_password')}</Label>
                 <Input id="current-password" type="password" />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="new-password">Новый пароль</Label>
+                <Label htmlFor="new-password">{t('new_password')}</Label>
                 <Input id="new-password" type="password" />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirm-password">Подтвердите пароль</Label>
+                <Label htmlFor="confirm-password">{t('confirm_password')}</Label>
                 <Input id="confirm-password" type="password" />
               </div>
 
-              <Button onClick={handleChangePassword}>Изменить пароль</Button>
+              <Button onClick={handleChangePassword}>{t('change_password')}</Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Двухфакторная аутентификация (2FA)</CardTitle>
+              <CardTitle>{t('2fa_title')}</CardTitle>
               <CardDescription>
-                Дополнительный уровень защиты вашего аккаунта
+                {t('2fa_desc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">SMS-код</div>
+                  <div className="font-semibold">{t('2fa_sms')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Получайте код подтверждения на телефон
+                    {t('2fa_sms_desc')}
                   </p>
                 </div>
                 <Button variant="outline" onClick={handleEnable2FA}>
                   <Smartphone className="w-4 h-4 mr-2" />
-                  Включить
+                  {t('2fa_enable')}
                 </Button>
               </div>
             </CardContent>
@@ -201,25 +204,25 @@ export function Settings({ user }: any) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Экспорт данных</CardTitle>
-              <CardDescription>Скачайте копию ваших данных</CardDescription>
+              <CardTitle>{t('export_data_title')}</CardTitle>
+              <CardDescription>{t('export_data_desc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" onClick={handleExportData}>
                 <Download className="w-4 h-4 mr-2" />
-                Экспортировать данные
+                {t('export_data_button')}
               </Button>
             </CardContent>
           </Card>
 
           <Card className="border-red-200">
             <CardHeader>
-              <CardTitle className="text-red-600">Опасная зона</CardTitle>
-              <CardDescription>Необратимые действия</CardDescription>
+              <CardTitle className="text-red-600">{t('danger_zone')}</CardTitle>
+              <CardDescription>{t('danger_zone_desc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="destructive" onClick={handleDeleteAccount}>
-                Удалить аккаунт
+                {t('delete_account')}
               </Button>
             </CardContent>
           </Card>
@@ -229,15 +232,15 @@ export function Settings({ user }: any) {
         <TabsContent value="notifications" className="space-y-6 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Каналы уведомлений</CardTitle>
-              <CardDescription>Выберите способы получения уведомлений</CardDescription>
+              <CardTitle>{t('notification_channels_title')}</CardTitle>
+              <CardDescription>{t('notification_channels_desc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Push-уведомления</div>
+                  <div className="font-semibold">{t('channel_push')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Получайте уведомления в приложении
+                    {t('channel_push_desc')}
                   </p>
                 </div>
                 <Switch
@@ -252,9 +255,9 @@ export function Settings({ user }: any) {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Email</div>
+                  <div className="font-semibold">{t('channel_email')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Отправлять уведомления на почту
+                    {t('channel_email_desc')}
                   </p>
                 </div>
                 <Switch
@@ -269,9 +272,9 @@ export function Settings({ user }: any) {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">SMS</div>
+                  <div className="font-semibold">{t('channel_sms')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Получайте SMS-уведомления
+                    {t('channel_sms_desc')}
                   </p>
                 </div>
                 <Switch
@@ -286,15 +289,15 @@ export function Settings({ user }: any) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Типы уведомлений</CardTitle>
-              <CardDescription>Что вы хотите получать</CardDescription>
+              <CardTitle>{t('notification_types_title')}</CardTitle>
+              <CardDescription>{t('notification_types_desc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Записи</div>
+                  <div className="font-semibold">{t('type_appointments')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Напоминания о предстоящих визитах
+                    {t('type_appointments_desc')}
                   </p>
                 </div>
                 <Switch
@@ -309,9 +312,9 @@ export function Settings({ user }: any) {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Акции и предложения</div>
+                  <div className="font-semibold">{t('type_promotions')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Специальные предложения и скидки
+                    {t('type_promotions_desc')}
                   </p>
                 </div>
                 <Switch
@@ -326,9 +329,9 @@ export function Settings({ user }: any) {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Достижения</div>
+                  <div className="font-semibold">{t('type_achievements')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Новые награды и челленджи
+                    {t('type_achievements_desc')}
                   </p>
                 </div>
                 <Switch
@@ -346,15 +349,15 @@ export function Settings({ user }: any) {
         <TabsContent value="privacy" className="space-y-6 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Настройки приватности</CardTitle>
-              <CardDescription>Контролируйте ваши данные</CardDescription>
+              <CardTitle>{t('privacy_settings_title')}</CardTitle>
+              <CardDescription>{t('privacy_settings_desc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Разрешение на фото</div>
+                  <div className="font-semibold">{t('privacy_photos')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Разрешить мастерам делать фото до/после
+                    {t('privacy_photos_desc')}
                   </p>
                 </div>
                 <Switch
@@ -369,9 +372,9 @@ export function Settings({ user }: any) {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Доступ мастеров</div>
+                  <div className="font-semibold">{t('privacy_masters')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Делиться историей визитов с мастерами
+                    {t('privacy_masters_desc')}
                   </p>
                 </div>
                 <Switch
@@ -386,9 +389,9 @@ export function Settings({ user }: any) {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-semibold">Публичный профиль</div>
+                  <div className="font-semibold">{t('privacy_public')}</div>
                   <p className="text-sm text-muted-foreground">
-                    Показывать ваши достижения другим клиентам
+                    {t('privacy_public_desc')}
                   </p>
                 </div>
                 <Switch
@@ -403,24 +406,16 @@ export function Settings({ user }: any) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Использование данных</CardTitle>
+              <CardTitle>{t('data_usage_title')}</CardTitle>
               <CardDescription>
-                Как мы используем ваши данные для улучшения сервиса
+                {t('data_usage_desc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
-              <p>
-                • Ваши данные используются только для персонализации услуг
-              </p>
-              <p>
-                • Мы не передаем информацию третьим лицам без вашего согласия
-              </p>
-              <p>
-                • Фотографии используются только в личной галерее и для анализа
-              </p>
-              <p>
-                • Вы можете запросить удаление всех данных в любое время
-              </p>
+              <p>{t('data_usage_1')}</p>
+              <p>{t('data_usage_2')}</p>
+              <p>{t('data_usage_3')}</p>
+              <p>{t('data_usage_4')}</p>
             </CardContent>
           </Card>
         </TabsContent>
