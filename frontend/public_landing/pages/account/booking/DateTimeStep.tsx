@@ -36,6 +36,7 @@ export function DateTimeStep({
     const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
     const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
     const [loading, setLoading] = useState(false);
+    const [loadingDates, setLoadingDates] = useState(true);
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
     const dateLocale = getDateLocaleCentral(i18n.language);
@@ -43,6 +44,7 @@ export function DateTimeStep({
     // Fetch available dates pattern optimized
     useEffect(() => {
         const fetchDates = async () => {
+            setLoadingDates(true);
             let masterName = selectedMaster ? (selectedMaster.full_name || selectedMaster.username) : 'any';
             try {
                 // Fetch for Current Month AND Next Month to ensure outside days are clickable
@@ -60,7 +62,11 @@ export function DateTimeStep({
                 ]);
 
                 setAvailableDates(combinedDates);
-            } catch (e) { }
+            } catch (e) {
+                console.error('[DateTimeStep] Failed to fetch available dates:', e);
+            } finally {
+                setLoadingDates(false);
+            }
         };
         fetchDates();
     }, [currentMonth, selectedMaster, totalDuration]);
@@ -159,6 +165,8 @@ export function DateTimeStep({
                                     const today = new Date();
                                     today.setHours(0, 0, 0, 0);
                                     const dateStr = format(date, 'yyyy-MM-dd');
+                                    // Don't disable dates while loading - prevents all dates from being disabled on initial load
+                                    if (loadingDates) return date < today;
                                     return date < today || !availableDates.has(dateStr);
                                 }}
                                 className="rounded-xl border-none w-full"

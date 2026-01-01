@@ -5,8 +5,10 @@ import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export function Loyalty({ loyalty }: any) {
+  const { t } = useTranslation(['account/loyalty', 'common']);
   // Use loyalty prop data mixed with defaults
   const points = loyalty?.points || 0;
   const currentTier = loyalty?.tier || 'Bronze';
@@ -14,19 +16,19 @@ export function Loyalty({ loyalty }: any) {
 
   // Mock data for graphs if not provided
   const spendingData = [
-    { month: 'Янв', amount: 5000 },
-    { month: 'Фев', amount: 7500 },
-    { month: 'Мар', amount: 3000 },
-    { month: 'Апр', amount: 12000 },
-    { month: 'Май', amount: 8000 },
-    { month: 'Июн', amount: 6500 },
+    { month: t('month_jan'), amount: 5000 },
+    { month: t('month_feb'), amount: 7500 },
+    { month: t('month_mar'), amount: 3000 },
+    { month: t('month_apr'), amount: 12000 },
+    { month: t('month_may'), amount: 8000 },
+    { month: t('month_jun'), amount: 6500 },
   ];
 
   const categorySpending = [
-    { name: 'Волосы', value: 4000, fill: '#FF6B9D' },
-    { name: 'Ногти', value: 3000, fill: '#FF9EBB' },
-    { name: 'Лицо', value: 2000, fill: '#FFC4D6' },
-    { name: 'Тело', value: 1000, fill: '#FFE1EA' },
+    { name: t('category_hair'), value: 4000, fill: '#FF6B9D' },
+    { name: t('category_nails'), value: 3000, fill: '#FF9EBB' },
+    { name: t('category_face'), value: 2000, fill: '#FFC4D6' },
+    { name: t('category_body'), value: 1000, fill: '#FFE1EA' },
   ];
   const referralCode = 'REF123';
 
@@ -49,11 +51,11 @@ export function Loyalty({ loyalty }: any) {
 
   const handleCopyReferral = () => {
     navigator.clipboard.writeText(referralCode);
-    toast.success('Промокод скопирован');
+    toast.success(t('promo_copied'));
   };
 
   const handleAddToWallet = () => {
-    toast.info('Функция добавления в Apple Wallet скоро будет доступна');
+    toast.info(t('wallet_coming_soon'));
   };
 
   const shareWhatsApp = () => {
@@ -64,8 +66,8 @@ export function Loyalty({ loyalty }: any) {
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Лояльность и Бонусы</h1>
-        <p className="text-muted-foreground">Ваши привилегии и награды</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       {/* Текущий статус */}
@@ -75,17 +77,17 @@ export function Loyalty({ loyalty }: any) {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Star className="w-6 h-6" style={{ color: currentTierData.color }} />
-                {currentTierData.name} статус
+                {currentTierData.name} {t('status')}
               </CardTitle>
               <CardDescription className="mt-2">
-                {points} баллов • {currentTierData.discount}% скидка
+                {points} {t('points')} • {currentTierData.discount}% {t('discount')}
               </CardDescription>
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold" style={{ color: currentTierData.color }}>
                 {points}
               </div>
-              <div className="text-sm text-muted-foreground">баллов</div>
+              <div className="text-sm text-muted-foreground">{t('points')}</div>
             </div>
           </div>
         </CardHeader>
@@ -94,15 +96,15 @@ export function Loyalty({ loyalty }: any) {
             <>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>До {nextTierData.name} уровня</span>
+                  <span>{t('to_next_tier', { tier: nextTierData.name })}</span>
                   <span className="font-semibold">
-                    {Math.max(0, nextTierData.points - points)} баллов
+                    {t('points_needed', { points: Math.max(0, nextTierData.points - points) })}
                   </span>
                 </div>
                 <Progress value={progressToNext} className="h-2" />
               </div>
               <div className="text-sm text-muted-foreground">
-                При достижении {nextTierData.name} уровня ваша скидка составит {nextTierData.discount}%
+                {t('next_tier_benefit', { tier: nextTierData.name, discount: nextTierData.discount })}
               </div>
             </>
           )}
@@ -114,16 +116,16 @@ export function Loyalty({ loyalty }: any) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Flame className="w-6 h-6 text-orange-500" />
-            Серия визитов
+            {t('visit_streak')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
             <div className="text-5xl font-bold text-orange-500">3</div>
             <div className="flex-1">
-              <div className="font-semibold">дней подряд!</div>
+              <div className="font-semibold">{t('days_in_row')}</div>
               <p className="text-sm text-muted-foreground">
-                Продолжайте посещать салон регулярно и получайте дополнительные бонусы
+                {t('streak_message')}
               </p>
             </div>
           </div>
@@ -134,8 +136,8 @@ export function Loyalty({ loyalty }: any) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Расходы по месяцам</CardTitle>
-            <CardDescription>Последние 6 месяцев</CardDescription>
+            <CardTitle>{t('spending_by_month')}</CardTitle>
+            <CardDescription>{t('last_6_months')}</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -152,8 +154,8 @@ export function Loyalty({ loyalty }: any) {
 
         <Card>
           <CardHeader>
-            <CardTitle>Расходы по категориям</CardTitle>
-            <CardDescription>Распределение за год</CardDescription>
+            <CardTitle>{t('spending_by_category')}</CardTitle>
+            <CardDescription>{t('year_distribution')}</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -182,32 +184,32 @@ export function Loyalty({ loyalty }: any) {
       {/* Виртуальная карта */}
       <Card>
         <CardHeader>
-          <CardTitle>Виртуальная карта лояльности</CardTitle>
+          <CardTitle>{t('virtual_card')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row gap-6 items-center">
             <div className="bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl p-8 text-white w-full md:w-96 space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="text-sm opacity-80">Карта лояльности</div>
+                  <div className="text-sm opacity-80">{t('loyalty_card')}</div>
                   <div className="font-bold text-xl mt-1">{currentTierData.name}</div>
                 </div>
                 <Star className="w-8 h-8" style={{ color: currentTierData.color }} />
               </div>
 
               <div className="space-y-1">
-                <div className="text-sm opacity-80">Владелец карты</div>
+                <div className="text-sm opacity-80">{t('card_holder')}</div>
                 <div className="font-semibold">Tahir Suleymanov</div>
               </div>
 
               <div className="flex justify-between items-end">
                 <div>
-                  <div className="text-sm opacity-80">ID клиента</div>
+                  <div className="text-sm opacity-80">{t('client_id')}</div>
                   <div className="font-mono">00012345</div>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold">{currentTierData.discount}%</div>
-                  <div className="text-xs opacity-80">скидка</div>
+                  <div className="text-xs opacity-80">{t('discount')}</div>
                 </div>
               </div>
             </div>
@@ -219,12 +221,12 @@ export function Loyalty({ loyalty }: any) {
                 </div>
               </div>
               <div className="text-center text-sm text-muted-foreground">
-                Покажите QR-код при посещении салона
+                {t('show_qr')}
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" className="flex-1" onClick={handleAddToWallet}>
                   <Gift className="w-4 h-4 mr-2" />
-                  Добавить в Wallet
+                  {t('add_to_wallet')}
                 </Button>
               </div>
             </div>

@@ -4,31 +4,34 @@ import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export function Notifications() {
+  const { t } = useTranslation(['account/notifications', 'common']);
+
   // Mock notifications since we don't have them in props yet
   const initialNotifications = [
     {
       id: '1',
       type: 'appointment',
-      title: 'Напоминание о записи',
-      message: 'Завтра в 14:00 у вас запись на стрижку к мастеру Елена',
+      title: t('mock_appointment_title'),
+      message: t('mock_appointment_message'),
       date: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 mins ago
       read: false,
     },
     {
       id: '2',
       type: 'promotion',
-      title: 'Скидка 20%',
-      message: 'Специальное предложение на маникюр только сегодня!',
+      title: t('mock_promotion_title'),
+      message: t('mock_promotion_message'),
       date: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
       read: false,
     },
     {
       id: '3',
       type: 'achievement',
-      title: 'Новое достижение!',
-      message: 'Вы получили статус "Silver"',
+      title: t('mock_achievement_title'),
+      message: t('mock_achievement_message'),
       date: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(), // 2 days ago
       read: true,
     }
@@ -67,15 +70,15 @@ export function Notifications() {
   const getTypeLabel = (type: string) => {
     switch (type) {
       case 'appointment':
-        return 'Запись';
+        return t('type_appointment');
       case 'promotion':
-        return 'Акция';
+        return t('type_promotion');
       case 'achievement':
-        return 'Достижение';
+        return t('type_achievement');
       case 'reminder':
-        return 'Напоминание';
+        return t('type_reminder');
       default:
-        return 'Уведомление';
+        return t('type_notification');
     }
   };
 
@@ -87,7 +90,7 @@ export function Notifications() {
 
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-    toast.success('Все уведомления отмечены как прочитанные');
+    toast.success(t('all_marked_read'));
   };
 
   const getTimeAgo = (dateString: string) => {
@@ -98,9 +101,9 @@ export function Notifications() {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 60) return `${diffMins} мин назад`;
-    if (diffHours < 24) return `${diffHours} ч назад`;
-    return `${diffDays} д назад`;
+    if (diffMins < 60) return `${diffMins} ${t('time_mins_ago')}`;
+    if (diffHours < 24) return `${diffHours} ${t('time_hours_ago')}`;
+    return `${diffDays} ${t('time_days_ago')}`;
   };
 
   return (
@@ -108,22 +111,22 @@ export function Notifications() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-            Уведомления
+            {t('title')}
             {unreadCount > 0 && (
               <Badge className="bg-red-500">{unreadCount}</Badge>
             )}
           </h1>
           <p className="text-muted-foreground">
             {unreadCount > 0
-              ? `${unreadCount} непрочитанных уведомлений`
-              : 'Все уведомления прочитаны'}
+              ? `${unreadCount} ${t('unread_count')}`
+              : t('all_read')}
           </p>
         </div>
 
         {unreadCount > 0 && (
           <Button variant="outline" onClick={markAllAsRead}>
             <CheckCheck className="w-4 h-4 mr-2" />
-            Прочитать все
+            {t('mark_all_read')}
           </Button>
         )}
       </div>
@@ -133,9 +136,9 @@ export function Notifications() {
           <Card>
             <CardContent className="p-12 text-center">
               <Bell className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="mb-2">Нет уведомлений</h3>
+              <h3 className="mb-2">{t('no_notifications')}</h3>
               <p className="text-sm text-muted-foreground">
-                Здесь будут отображаться ваши уведомления
+                {t('no_notifications_desc')}
               </p>
             </CardContent>
           </Card>
@@ -188,7 +191,7 @@ export function Notifications() {
                             }}
                           >
                             <Check className="w-4 h-4 mr-1" />
-                            Отметить прочитанным
+                            {t('mark_read')}
                           </Button>
                         )}
                       </div>

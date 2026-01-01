@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Scissors, User, Calendar, Check, ChevronRight, MapPin } from 'lucide-react';
 import { motion } from 'motion/react';
+import { getLocalizedName } from '../../../../src/utils/i18nUtils';
 
 interface BookingMenuProps {
     bookingState: any;
@@ -15,21 +16,42 @@ interface BookingMenuProps {
 }
 
 export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, totalPrice, salonSettings }: BookingMenuProps) {
-    const { t } = useTranslation(['booking', 'common']);
+    const { t, i18n } = useTranslation(['booking', 'common']);
 
     const isServicesComplete = bookingState.services.length > 0;
     const isProfessionalComplete = bookingState.professional !== null || bookingState.professionalSelected;
     const isDateTimeComplete = bookingState.date !== null && bookingState.time !== null;
     const isAllComplete = isServicesComplete && isProfessionalComplete && isDateTimeComplete;
 
+    // Helper function to get service description
+    const getServicesDescription = () => {
+        if (!isServicesComplete) return t('menu.selectServices', 'Pick treatment');
+
+        if (bookingState.services.length === 1) {
+            return getLocalizedName(bookingState.services[0], i18n.language);
+        }
+        return `${bookingState.services.length} ${t('services.selected', 'услуг выбрано')}`;
+    };
+
+    // Helper function to get date/time description
+    const getDateTimeDescription = () => {
+        if (!isDateTimeComplete) return t('menu.selectDateTime', 'Pick time slot');
+
+        const date = bookingState.date;
+        const time = bookingState.time;
+        const formattedDate = date ? new Date(date).toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'short'
+        }) : '';
+        return `${formattedDate}, ${time}`;
+    };
+
     const cards = [
         {
             id: 'services',
             icon: Scissors,
             title: t('menu.services', 'Select Services'),
-            description: isServicesComplete
-                ? `${bookingState.services.length} ${t('menu.selected', 'selected').toLowerCase()}`
-                : t('menu.selectServices', 'Pick treatment'),
+            description: getServicesDescription(),
             isComplete: isServicesComplete,
             step: 'services',
             gradient: 'from-purple-500 to-pink-500',
@@ -39,7 +61,7 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
             icon: User,
             title: t('menu.professional', 'Professional'),
             description: isProfessionalComplete
-                ? (bookingState.professional?.full_name || t('professional.anyAvailable', 'Flexible Match'))
+                ? (bookingState.professional?.full_name || bookingState.professional?.username || t('professional.anyAvailable', 'Flexible Match'))
                 : t('menu.selectProfessional', 'Select master'),
             isComplete: isProfessionalComplete,
             step: 'professional',
@@ -49,9 +71,7 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
             id: 'datetime',
             icon: Calendar,
             title: t('menu.datetime', 'Date & Time'),
-            description: isDateTimeComplete
-                ? `${bookingState.time}`
-                : t('menu.selectDateTime', 'Pick time slot'),
+            description: getDateTimeDescription(),
             isComplete: isDateTimeComplete,
             step: 'datetime',
             gradient: 'from-rose-500 to-orange-500',

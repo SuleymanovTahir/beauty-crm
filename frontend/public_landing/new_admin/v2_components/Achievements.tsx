@@ -2,6 +2,7 @@ import { Star, Heart, Award, Flame, Crown, Gem, Trophy, Lock } from 'lucide-reac
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
+import { useTranslation } from 'react-i18next';
 
 const iconMap: Record<string, any> = {
   Star,
@@ -13,19 +14,32 @@ const iconMap: Record<string, any> = {
   Trophy,
 };
 
-export function Achievements({ achievements }: any) {
+export function Achievements({ achievements, challenges: propChallenges }: any) {
+  const { t, i18n } = useTranslation(['account/achievements', 'common']);
+
   // Use props or default mock data for achievements
   const achievementList = achievements?.length ? achievements : [
-    { id: 1, title: 'Первые шаги', description: 'Запишитесь на первую процедуру', icon: 'Star', unlocked: true, progress: 100, maxProgress: 100, unlockedDate: '2023-11-20' },
-    { id: 2, title: 'Постоянный клиент', description: 'Посетите салон 5 раз', icon: 'Heart', unlocked: true, progress: 5, maxProgress: 5, unlockedDate: '2023-12-15' },
-    { id: 3, title: 'Бьюти-гуру', description: 'Оставьте 3 отзыва о мастерах', icon: 'Award', unlocked: false, progress: 1, maxProgress: 3 },
-    { id: 4, title: 'Экспериментатор', description: 'Попробуйте 3 разные услуги', icon: 'Gem', unlocked: false, progress: 2, maxProgress: 3 },
+    { id: 1, title: t('achievement_first_steps'), description: t('achievement_first_steps_desc'), icon: 'Star', unlocked: true, progress: 100, maxProgress: 100, unlockedDate: '2023-11-20' },
+    { id: 2, title: t('achievement_regular_client'), description: t('achievement_regular_client_desc'), icon: 'Heart', unlocked: true, progress: 5, maxProgress: 5, unlockedDate: '2023-12-15' },
+    { id: 3, title: t('achievement_beauty_guru'), description: t('achievement_beauty_guru_desc'), icon: 'Award', unlocked: false, progress: 1, maxProgress: 3 },
+    { id: 4, title: t('achievement_experimenter'), description: t('achievement_experimenter_desc'), icon: 'Gem', unlocked: false, progress: 2, maxProgress: 3 },
   ];
 
-  // Mock challenges data
-  const challenges = [
-    { id: 1, title: 'Весеннее обновление', description: 'Сделайте маникюр и педикюр в марте', progress: 1, maxProgress: 2, deadline: '2026-03-31', reward: '+300 баллов' },
-    { id: 2, title: 'Уход за волосами', description: 'Запишитесь на стрижку и уход', progress: 0, maxProgress: 2, deadline: '2026-04-15', reward: '+200 баллов' },
+  // Helper function to get localized field
+  const getLocalizedField = (item: any, field: string) => {
+    const lang = i18n.language;
+    return item[`${field}_${lang}`] || item[`${field}_ru`] || item[field] || '';
+  };
+
+  // Use challenges from props or fallback to mock data
+  const challenges = propChallenges?.length ? propChallenges.map((c: any) => ({
+    ...c,
+    title: getLocalizedField(c, 'title'),
+    description: getLocalizedField(c, 'description'),
+    reward: `+${c.reward} баллов`
+  })) : [
+    { id: 1, title: t('challenge_spring_update'), description: t('challenge_spring_update_desc'), progress: 1, maxProgress: 2, deadline: '2026-03-31', reward: '+300 баллов' },
+    { id: 2, title: t('challenge_hair_care'), description: t('challenge_hair_care_desc'), progress: 0, maxProgress: 2, deadline: '2026-04-15', reward: '+200 баллов' },
   ];
 
   const unlockedCount = achievementList.filter((a: any) => a.unlocked).length;
@@ -39,9 +53,9 @@ export function Achievements({ achievements }: any) {
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Достижения</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Ваш прогресс: {unlockedCount} из {totalCount} достижений
+          {t('subtitle_progress')}: {unlockedCount} {t('subtitle_of')} {totalCount} {t('subtitle_achievements')}
         </p>
       </div>
 
@@ -50,13 +64,13 @@ export function Achievements({ achievements }: any) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Trophy className="w-6 h-6 text-yellow-600" />
-            Общий прогресс
+            {t('overall_progress')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>Разблокировано достижений</span>
+              <span>{t('unlocked_achievements')}</span>
               <span className="font-semibold">{unlockedCount} / {totalCount}</span>
             </div>
             <Progress value={(unlockedCount / totalCount) * 100} className="h-3" />
@@ -64,17 +78,17 @@ export function Achievements({ achievements }: any) {
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
               <div className="text-2xl font-bold text-yellow-600">{unlockedCount}</div>
-              <div className="text-xs text-muted-foreground">Получено</div>
+              <div className="text-xs text-muted-foreground">{t('unlocked')}</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-blue-600">{totalCount - unlockedCount}</div>
-              <div className="text-xs text-muted-foreground">Осталось</div>
+              <div className="text-xs text-muted-foreground">{t('remaining')}</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-purple-600">
                 {Math.round((unlockedCount / totalCount) * 100)}%
               </div>
-              <div className="text-xs text-muted-foreground">Завершено</div>
+              <div className="text-xs text-muted-foreground">{t('completed_percent')}</div>
             </div>
           </div>
         </CardContent>
@@ -82,7 +96,7 @@ export function Achievements({ achievements }: any) {
 
       {/* Список достижений */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold tracking-tight">Все достижения</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">{t('all_achievements')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {achievementList.map((achievement: any) => {
             const Icon = iconMap[achievement.icon] || Star;
@@ -124,7 +138,7 @@ export function Achievements({ achievements }: any) {
                         </div>
                         {achievement.unlocked && (
                           <Badge className="bg-yellow-500">
-                            Получено
+                            {t('achievement_unlocked')}
                           </Badge>
                         )}
                       </div>
@@ -132,7 +146,7 @@ export function Achievements({ achievements }: any) {
                       {hasProgress && (
                         <div className="space-y-1">
                           <div className="flex justify-between text-xs text-muted-foreground">
-                            <span>Прогресс</span>
+                            <span>{t('progress')}</span>
                             <span>
                               {achievement.progress} / {achievement.maxProgress}
                             </span>
@@ -143,7 +157,7 @@ export function Achievements({ achievements }: any) {
 
                       {achievement.unlocked && achievement.unlockedDate && (
                         <div className="text-xs text-muted-foreground">
-                          Получено:{' '}
+                          {t('unlocked_date')}:{' '}
                           {new Date(achievement.unlockedDate).toLocaleDateString('ru-RU', {
                             day: 'numeric',
                             month: 'long',
@@ -162,7 +176,7 @@ export function Achievements({ achievements }: any) {
 
       {/* Челленджи */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold tracking-tight">Активные челленджи</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">{t('active_challenges')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {challenges.map((challenge) => {
             const daysLeft = getDaysLeft(challenge.deadline);
@@ -180,7 +194,7 @@ export function Achievements({ achievements }: any) {
                       variant={daysLeft <= 3 ? 'destructive' : 'default'}
                       className="ml-2"
                     >
-                      {daysLeft}д
+                      {daysLeft}{t('days_short')}
                     </Badge>
                   </div>
                   <CardDescription>{challenge.description}</CardDescription>
@@ -188,7 +202,7 @@ export function Achievements({ achievements }: any) {
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Прогресс</span>
+                      <span className="text-muted-foreground">{t('progress')}</span>
                       <span className="font-semibold">
                         {challenge.progress} / {challenge.maxProgress}
                       </span>
@@ -197,7 +211,7 @@ export function Achievements({ achievements }: any) {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="text-sm text-muted-foreground">Награда</div>
+                    <div className="text-sm text-muted-foreground">{t('reward')}</div>
                     <Badge className="bg-purple-500">{challenge.reward}</Badge>
                   </div>
 

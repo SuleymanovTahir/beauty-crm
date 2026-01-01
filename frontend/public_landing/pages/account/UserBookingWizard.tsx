@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { AnimatePresence, motion } from 'motion/react';
 import { X, Scissors, User, Calendar as CalendarIcon } from 'lucide-react';
@@ -63,6 +63,7 @@ import { ArrowLeft } from 'lucide-react';
 
 export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const step = searchParams.get('booking') || 'menu';
   const { t, i18n } = useTranslation(['booking', 'common']);
@@ -160,7 +161,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         // PARALLEL DATA FETCHING: Settings, Active Services, All Masters, Batch Availability
         const [settingsRes, servicesRes, usersRes, availabilityRes] = await Promise.all([
           api.getPublicSalonSettings(),
-          api.getServices(true),
+          api.getPublicServices(), // Use public endpoint to avoid auth issues
           api.getUsers(),
           api.getPublicBatchAvailability(today)
         ]);
@@ -168,18 +169,66 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         setSalonSettings(settingsRes);
 
         const servicesData = Array.isArray(servicesRes) ? servicesRes : (servicesRes.services || []);
+        console.log('[UserBookingWizard] Loaded services:', servicesData.length, servicesData);
         setInitialServices(servicesData);
 
         const usersData = Array.isArray(usersRes) ? usersRes : (usersRes.users || []);
         const masters = usersData.filter((u: any) => u.role === 'employee' || u.is_service_provider);
+        console.log('[UserBookingWizard] Loaded masters:', masters.length);
         setInitialMasters(masters);
 
         if (availabilityRes && availabilityRes.availability) {
           setInitialAvailability(availabilityRes.availability);
         }
 
+        // Handle prefill from location state (for reschedule/edit)
+        const state = location.state as any;
+        if (state?.editBookingId || state?.prefillMaster || state?.prefillService) {
+          const newState: Partial<BookingState> = {};
+
+          // Prefill service
+          if (state.prefillService) {
+            const service = servicesData.find((s: any) => s.id === state.prefillService);
+            if (service) {
+              newState.services = [service];
+            }
+          }
+
+          // Prefill master/professional
+          if (state.prefillMaster) {
+            const master = masters.find((m: any) => m.id === state.prefillMaster);
+            if (master) {
+              newState.professional = master;
+              newState.professionalSelected = true;
+            }
+          }
+
+          // Prefill date and time
+          if (state.prefillDate) {
+            try {
+              newState.date = new Date(state.prefillDate);
+            } catch (e) {
+              console.error('[UserBookingWizard] Failed to parse prefillDate:', e);
+            }
+          }
+
+          if (state.prefillTime) {
+            newState.time = state.prefillTime;
+          }
+
+          // Update booking state with prefilled data
+          if (Object.keys(newState).length > 0) {
+            console.log('[UserBookingWizard] Prefilling booking state:', newState);
+            setBookingState(prev => ({ ...prev, ...newState }));
+            // Start from services step if editing
+            setStep('services');
+          }
+        }
+
       } catch (e) {
-        console.error("Failed to load initial data", e);
+        console.error("[UserBookingWizard] Failed to load initial data:", e);
+        // Even on error, set loading to false so user can see the page
+        // ServicesStep will fallback to loading data itself
       } finally {
         setLoading(false);
       }
@@ -197,7 +246,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
   const updateState = (updates: Partial<BookingState>) => setBookingState((prev: BookingState) => ({ ...prev, ...updates }));
   const totalPrice = bookingState.services.reduce((sum: number, s: Service) => sum + s.price, 0);
-  const totalDuration = bookingState.services.reduce((sum: number, s: Service) => sum + parseInt(s.duration || '0'), 0);
+  const totalDuration = bookingState.services.reduce((sum: number, s: Service) => {
+    const duration = parseInt(s.duration || '0');
+    // If service has no duration, assume 60 minutes as default
+    return sum + (duration > 0 ? duration : 60);
+  }, 0);
 
   if (loading) return (
     <div className="fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center gap-6">
@@ -345,55 +398,68 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             )}
 
             <div className="flex gap-2">
-              {step !== 'services' && (
+              {/* Back to Menu button */}
+              <Button
+                variant="outline"
+                onClick={() => setStep('menu')}
+                className="h-11 px-6 rounded-xl border border-slate-200 font-bold uppercase tracking-wider text-[9px] gap-2 hover:bg-slate-50 transition-all shadow-sm"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                {t('common.back', 'Назад')}
+              </Button>
+
+              {/* Progressive step navigation - only show completed steps */}
+              {bookingState.services.length > 0 && step !== 'services' && (
                 <Button
                   variant="outline"
                   onClick={() => setStep('services')}
-                  className="flex-1 h-11 rounded-xl border border-slate-200 font-bold uppercase tracking-wider text-[9px] gap-2 hover:bg-slate-50 transition-all shadow-sm"
+                  className="h-11 px-4 rounded-xl border border-slate-200 font-bold text-[10px] gap-1.5 hover:bg-slate-50 transition-all shadow-sm whitespace-nowrap"
                 >
                   <Scissors className="w-3.5 h-3.5 text-purple-600" />
-                  {t('menu.services', 'Select Services')}
+                  <span className="hidden sm:inline">{t('menu.services', 'Услуги')}</span>
                 </Button>
               )}
-              {step !== 'professional' && (
+              {bookingState.services.length > 0 && step !== 'professional' && (
                 <Button
                   variant="outline"
                   onClick={() => setStep('professional')}
-                  className="flex-1 h-11 rounded-xl border border-slate-200 font-bold uppercase tracking-wider text-[9px] gap-2 hover:bg-slate-50 transition-all shadow-sm"
+                  className="h-11 px-4 rounded-xl border border-slate-200 font-bold text-[10px] gap-1.5 hover:bg-slate-50 transition-all shadow-sm whitespace-nowrap"
                 >
                   <User className="w-3.5 h-3.5 text-pink-600" />
-                  {t('menu.professional', 'Select Master')}
+                  <span className="hidden sm:inline">{t('menu.professional', 'Мастер')}</span>
                 </Button>
               )}
-              {step !== 'datetime' && (
+              {bookingState.professionalSelected && step !== 'datetime' && (
                 <Button
                   variant="outline"
                   onClick={() => setStep('datetime')}
-                  className="flex-1 h-11 rounded-xl border border-slate-200 font-bold uppercase tracking-wider text-[9px] gap-2 hover:bg-slate-50 transition-all shadow-sm"
+                  className="h-11 px-4 rounded-xl border border-slate-200 font-bold text-[10px] gap-1.5 hover:bg-slate-50 transition-all shadow-sm whitespace-nowrap"
                 >
                   <CalendarIcon className="w-3.5 h-3.5 text-rose-600" />
-                  {t('menu.datetime', 'Select Time')}
+                  <span className="hidden sm:inline">{t('datetime.date', 'Дата')}</span>
                 </Button>
               )}
 
-              {/* The "Primary" action for the current step (Commented out as requested) */}
-              {/* 
-                <Button
-                  onClick={() => {
-                    if (step === 'services') setStep('menu');
-                    if (step === 'professional') setStep('menu');
-                    if (step === 'datetime') setStep('confirm');
-                  }}
-                  className="flex-1 h-11 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 font-black uppercase tracking-widest text-[9px] text-white shadow-lg shadow-purple-100 hover:scale-[1.02] active:scale-[0.98] transition-all"
-                  disabled={
-                    (step === 'services' && bookingState.services.length === 0) ||
-                    (step === 'datetime' && (!bookingState.date || !bookingState.time))
+              {/* Primary "Next" action button */}
+              <Button
+                onClick={() => {
+                  if (step === 'services' && bookingState.services.length > 0) {
+                    setStep('professional');
+                  } else if (step === 'professional' && bookingState.professionalSelected) {
+                    setStep('datetime');
+                  } else if (step === 'datetime' && bookingState.date && bookingState.time) {
+                    setStep('confirm');
                   }
-                >
-                  {step === 'datetime' ? t('common.next', 'Confirm') : t('common.back', 'Ready')}
-                  <ChevronRight className="w-3.5 h-3.5 ml-1" />
-                </Button>
-                */}
+                }}
+                className="flex-1 h-11 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 font-black uppercase tracking-widest text-[9px] text-white shadow-lg shadow-purple-100 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                disabled={
+                  (step === 'services' && bookingState.services.length === 0) ||
+                  (step === 'professional' && !bookingState.professionalSelected) ||
+                  (step === 'datetime' && (!bookingState.date || !bookingState.time))
+                }
+              >
+                {step === 'datetime' ? t('confirm.title', 'Подтвердить') : t('common.next', 'Далее')}
+              </Button>
             </div>
           </div>
         </motion.div>
