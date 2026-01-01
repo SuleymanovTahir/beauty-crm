@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Scissors, User, Calendar, Check, ChevronRight, MapPin } from 'lucide-react';
+import { Scissors, User, Calendar, Check, ChevronRight, MapPin, X, Edit } from 'lucide-react';
 import { motion } from 'motion/react';
 import { getLocalizedName } from '../../../../src/utils/i18nUtils';
 
@@ -159,7 +159,29 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
                     animate={{ opacity: 1, y: 0 }}
                     className="bg-white rounded-2xl shadow-lg p-6"
                 >
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('confirm.summary', 'Selection Summary')}</h3>
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-gray-900">{t('confirm.summary', 'Selection Summary')}</h3>
+                        <div className="flex gap-2">
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => onNavigate('services')}
+                                className="h-8 w-8 rounded-lg border-purple-200 text-purple-600 hover:bg-purple-50"
+                                title={t('common.edit', 'Edit')}
+                            >
+                                <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={onReset}
+                                className="h-8 w-8 rounded-lg border-red-200 text-red-600 hover:bg-red-50"
+                                title={t('common.cancel', 'Cancel')}
+                            >
+                                <X className="w-4 h-4" />
+                            </Button>
+                        </div>
+                    </div>
 
                     <div className="space-y-3 mb-6">
                         {bookingState.services.map((service: any) => (

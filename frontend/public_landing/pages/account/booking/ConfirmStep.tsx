@@ -18,6 +18,7 @@ interface ConfirmStepProps {
     onPhoneChange: (phone: string) => void;
     onSuccess: () => void;
     salonSettings: any;
+    setStep?: (step: string) => void;
 }
 
 export function ConfirmStep({
@@ -25,7 +26,8 @@ export function ConfirmStep({
     totalPrice,
     onPhoneChange,
     onSuccess,
-    salonSettings
+    salonSettings,
+    setStep
 }: ConfirmStepProps) {
     const { t, i18n } = useTranslation(['booking', 'common']);
     const { user } = useAuth();
@@ -65,9 +67,21 @@ export function ConfirmStep({
             });
 
             toast.success(t('confirm.success', 'Booking confirmed!'));
+
+            // Save phone to user profile if logged in
+            if (user && phone && phone !== user.phone) {
+                try {
+                    await api.updateClientProfile({ phone });
+                } catch (err) {
+                    console.warn('Failed to update phone:', err);
+                }
+            }
+
+            // Redirect to appointments page after success
             setTimeout(() => {
                 onSuccess();
-            }, 2000);
+                window.location.href = '/account/appointments';
+            }, 500);
         } catch (error) {
             console.error('Booking error:', error);
             toast.error(t('confirm.error', 'Error creating booking'));
@@ -104,7 +118,19 @@ export function ConfirmStep({
                     <CardContent className="p-8 space-y-8 bg-white">
                         {/* Services */}
                         <div>
-                            <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">{t('menu.services', 'Services')}</h4>
+                            <div className="flex items-center justify-between mb-4">
+                                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('menu.services', 'Services')}</h4>
+                                {setStep && (
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => setStep('services')}
+                                        className="h-7 px-3 text-[9px] font-bold uppercase tracking-wider text-purple-600 hover:bg-purple-50 rounded-lg"
+                                    >
+                                        {t('common.edit', 'Edit')}
+                                    </Button>
+                                )}
+                            </div>
                             <div className="space-y-4">
                                 {bookingState.services.map((service: any) => (
                                     <div key={service.id} className="flex justify-between items-center group">
@@ -125,9 +151,21 @@ export function ConfirmStep({
 
                         {/* Professional */}
                         <div className="border-t border-gray-50 pt-8">
-                            <div className="flex items-center gap-2 mb-4">
-                                <User className="w-4 h-4 text-purple-600" />
-                                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('confirm.professional', 'Provider')}</h4>
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-2">
+                                    <User className="w-4 h-4 text-purple-600" />
+                                    <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('confirm.professional', 'Provider')}</h4>
+                                </div>
+                                {setStep && (
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => setStep('professional')}
+                                        className="h-7 px-3 text-[9px] font-bold uppercase tracking-wider text-purple-600 hover:bg-purple-50 rounded-lg"
+                                    >
+                                        {t('common.change', 'Change')}
+                                    </Button>
+                                )}
                             </div>
                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                 <p className="text-gray-900 font-black">
@@ -138,9 +176,22 @@ export function ConfirmStep({
 
                         {/* Date & Time */}
                         <div className="border-t border-gray-50 pt-8">
+                            <div className="flex items-center justify-between mb-4">
+                                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('confirm.dateTime', 'Date & Time')}</h4>
+                                {setStep && (
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => setStep('datetime')}
+                                        className="h-7 px-3 text-[9px] font-bold uppercase tracking-wider text-purple-600 hover:bg-purple-50 rounded-lg"
+                                    >
+                                        {t('common.reschedule', 'Reschedule')}
+                                    </Button>
+                                )}
+                            </div>
                             <div className="grid grid-cols-2 gap-6">
                                 <div>
-                                    <div className="flex items-center gap-2 mb-4">
+                                    <div className="flex items-center gap-2 mb-2">
                                         <Calendar className="w-4 h-4 text-purple-600" />
                                         <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('confirm.date', 'Date')}</h4>
                                     </div>
@@ -149,7 +200,7 @@ export function ConfirmStep({
                                     </p>
                                 </div>
                                 <div>
-                                    <div className="flex items-center gap-2 mb-4">
+                                    <div className="flex items-center gap-2 mb-2">
                                         <Clock className="w-4 h-4 text-purple-600" />
                                         <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('confirm.time', 'Time')}</h4>
                                     </div>

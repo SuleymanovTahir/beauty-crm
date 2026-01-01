@@ -39,7 +39,8 @@ def get_stats(comparison_period: str = "7days"):
     previous_period_end = period_start
     
     # === ТЕКУЩИЙ ПЕРИОД ===
-    c.execute("SELECT COUNT(*) FROM clients")
+    # Count unique clients who made bookings (not all clients in database)
+    c.execute("SELECT COUNT(DISTINCT instagram_id) FROM bookings WHERE instagram_id IS NOT NULL")
     total_clients = c.fetchone()[0]
     
     c.execute("SELECT COUNT(*) FROM bookings")
@@ -64,16 +65,42 @@ def get_stats(comparison_period: str = "7days"):
         total_revenue = 0
     
     try:
-        c.execute("SELECT COUNT(*) FROM clients WHERE status='new'")
+        # New clients: unique clients who made their first booking in the current period
+        c.execute("""
+            SELECT COUNT(DISTINCT instagram_id)
+            FROM bookings
+            WHERE created_at >= %s
+            AND instagram_id NOT IN (
+                SELECT DISTINCT instagram_id
+                FROM bookings
+                WHERE created_at < %s AND instagram_id IS NOT NULL
+            )
+        """, (period_start, period_start))
         new_clients = c.fetchone()[0]
-        
-        c.execute("SELECT COUNT(*) FROM clients WHERE status='lead'")
+
+        # Leads, customers, VIP from clients table (for those who made bookings)
+        c.execute("""
+            SELECT COUNT(DISTINCT c.instagram_id)
+            FROM clients c
+            INNER JOIN bookings b ON c.instagram_id = b.instagram_id
+            WHERE c.status='lead'
+        """)
         leads = c.fetchone()[0]
-        
-        c.execute("SELECT COUNT(*) FROM clients WHERE status='customer'")
+
+        c.execute("""
+            SELECT COUNT(DISTINCT c.instagram_id)
+            FROM clients c
+            INNER JOIN bookings b ON c.instagram_id = b.instagram_id
+            WHERE c.status='customer'
+        """)
         customers = c.fetchone()[0]
 
-        c.execute("SELECT COUNT(*) FROM clients WHERE status='vip'")
+        c.execute("""
+            SELECT COUNT(DISTINCT c.instagram_id)
+            FROM clients c
+            INNER JOIN bookings b ON c.instagram_id = b.instagram_id
+            WHERE c.status='vip'
+        """)
         vip_clients = c.fetchone()[0]
 
         # Active clients: made a booking in the last 30 days
@@ -89,22 +116,36 @@ def get_stats(comparison_period: str = "7days"):
         active_clients = 0
     
     # === ПРЕДЫДУЩИЙ ПЕРИОД (для сравнения) ===
+    # Prev new clients: unique clients who made their first booking in previous period
     c.execute("""
-        SELECT COUNT(*) FROM clients 
+        SELECT COUNT(DISTINCT instagram_id)
+        FROM bookings
         WHERE created_at >= %s AND created_at < %s
-    """, (previous_period_start, previous_period_end))
+        AND instagram_id NOT IN (
+            SELECT DISTINCT instagram_id
+            FROM bookings
+            WHERE created_at < %s AND instagram_id IS NOT NULL
+        )
+    """, (previous_period_start, previous_period_end, previous_period_start))
     prev_new_clients = c.fetchone()[0]
 
+    # Prev VIP clients who made bookings
     c.execute("""
-        SELECT COUNT(*) FROM clients 
-        WHERE status='vip' AND created_at >= %s AND created_at < %s
+        SELECT COUNT(DISTINCT c.instagram_id)
+        FROM clients c
+        INNER JOIN bookings b ON c.instagram_id = b.instagram_id
+        WHERE c.status='vip' AND b.created_at >= %s AND b.created_at < %s
     """, (previous_period_start, previous_period_end))
     prev_vip_clients = c.fetchone()[0]
+
+    # Previous total clients (unique clients who made bookings before current period)
+    c.execute("SELECT COUNT(DISTINCT instagram_id) FROM bookings WHERE created_at < %s AND instagram_id IS NOT NULL", (period_start,))
+    prev_total_clients = c.fetchone()[0]
 
     # Prev active clients (bookings in previous window)
     prev_active_threshold_start = (get_current_time() - timedelta(days=60)).isoformat()
     prev_active_threshold_end = (get_current_time() - timedelta(days=30)).isoformat()
-    c.execute("SELECT COUNT(DISTINCT instagram_id) FROM bookings WHERE created_at >= %s AND created_at < %s", 
+    c.execute("SELECT COUNT(DISTINCT instagram_id) FROM bookings WHERE created_at >= %s AND created_at < %s",
               (prev_active_threshold_start, prev_active_threshold_end))
     prev_active_clients = c.fetchone()[0]
     
@@ -137,15 +178,25 @@ def get_stats(comparison_period: str = "7days"):
         prev_revenue = 0
     
     # === ТЕКУЩИЙ ПЕРИОД (новые данные) ===
+    # Current new clients: unique clients who made their first booking in current period
     c.execute("""
-        SELECT COUNT(*) FROM clients 
+        SELECT COUNT(DISTINCT instagram_id)
+        FROM bookings
         WHERE created_at >= %s
-    """, (period_start,))
+        AND instagram_id NOT IN (
+            SELECT DISTINCT instagram_id
+            FROM bookings
+            WHERE created_at < %s AND instagram_id IS NOT NULL
+        )
+    """, (period_start, period_start))
     current_new_clients = c.fetchone()[0]
 
+    # Current VIP clients who made bookings in current period
     c.execute("""
-        SELECT COUNT(*) FROM clients 
-        WHERE status='vip' AND created_at >= %s
+        SELECT COUNT(DISTINCT c.instagram_id)
+        FROM clients c
+        INNER JOIN bookings b ON c.instagram_id = b.instagram_id
+        WHERE c.status='vip' AND b.created_at >= %s
     """, (period_start,))
     current_vip_clients = c.fetchone()[0]
 
@@ -202,6 +253,7 @@ def get_stats(comparison_period: str = "7days"):
         return round(growth, 1), direction
     
     # Расчет показателей роста
+    total_clients_growth, total_clients_trend = calculate_growth(total_clients, prev_total_clients)
     new_clients_growth, new_clients_trend = calculate_growth(current_new_clients, prev_new_clients)
     vip_clients_growth, vip_clients_trend = calculate_growth(current_vip_clients, prev_vip_clients)
     active_clients_growth, active_clients_trend = calculate_growth(current_active_clients_growth, prev_active_clients)
@@ -229,6 +281,12 @@ def get_stats(comparison_period: str = "7days"):
         
         # Индикаторы роста
         "growth": {
+            "total_clients": {
+                "current": total_clients,
+                "previous": prev_total_clients,
+                "percentage": total_clients_growth,
+                "trend": total_clients_trend
+            },
             "new_clients": {
                 "current": current_new_clients,
                 "previous": prev_new_clients,

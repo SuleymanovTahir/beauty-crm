@@ -18,6 +18,13 @@ import { getDynamicAvatar } from '../../utils/avatarUtils';
 
 import { getPhotoUrl } from '../../utils/photoUtils';
 
+type DateFilter = 'last7days' | 'last30days' | 'last90days' | 'allTime';
+
+interface DateRange {
+  start: string;
+  end: string;
+}
+
 interface User {
   instagram_id: string;
   username: string;
@@ -54,6 +61,7 @@ export default function Users() {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dateFilter, setDateFilter] = useState<DateFilter>('last30days');
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
@@ -189,9 +197,52 @@ export default function Users() {
     }
   };
 
+  const getDateRange = (): DateRange => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    switch (dateFilter) {
+      case 'last7days':
+        const sevenDaysAgo = new Date(today);
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        return {
+          start: sevenDaysAgo.toISOString(),
+          end: now.toISOString()
+        };
+      case 'last30days':
+        const thirtyDaysAgo = new Date(today);
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        return {
+          start: thirtyDaysAgo.toISOString(),
+          end: now.toISOString()
+        };
+      case 'last90days':
+        const ninetyDaysAgo = new Date(today);
+        ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+        return {
+          start: ninetyDaysAgo.toISOString(),
+          end: now.toISOString()
+        };
+      case 'allTime':
+      default:
+        return {
+          start: new Date(0).toISOString(),
+          end: now.toISOString()
+        };
+    }
+  };
+
+  const dateRange = getDateRange();
+
   const stats = {
     total: users.length,
-    new: users.filter(u => u.status === 'new').length,
+    // New clients: created within the selected period
+    new: users.filter(u => {
+      if (!u.created_at) return false;
+      const createdDate = new Date(u.created_at);
+      const periodStart = new Date(dateRange.start);
+      return createdDate >= periodStart;
+    }).length,
     active: users.filter(u => u.status === 'active' || u.status === 'lead').length,
     totalSpend: users.reduce((sum, u) => sum + (u.total_spend || 0), 0),
   };
@@ -234,6 +285,58 @@ export default function Users() {
           {t('title')}
         </h1>
         <p className="text-gray-600">{filteredUsers.length} {t('user_count')}</p>
+      </div>
+
+      {/* Date Filter Section */}
+      <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <div className="flex flex-col md:flex-row md:items-center gap-3">
+          <div className="flex items-center gap-2 text-gray-700">
+            <Filter className="w-5 h-5" />
+            <span className="font-medium">{t('period_filter', 'Период для новых клиентов:')}</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setDateFilter('last7days')}
+              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                dateFilter === 'last7days'
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {t('filter_last7days', 'Последние 7 дней')}
+            </button>
+            <button
+              onClick={() => setDateFilter('last30days')}
+              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                dateFilter === 'last30days'
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {t('filter_last30days', 'Последние 30 дней')}
+            </button>
+            <button
+              onClick={() => setDateFilter('last90days')}
+              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                dateFilter === 'last90days'
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {t('filter_last90days', 'Последние 90 дней')}
+            </button>
+            <button
+              onClick={() => setDateFilter('allTime')}
+              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                dateFilter === 'allTime'
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {t('filter_all_time', 'Все время')}
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
