@@ -1,0 +1,21 @@
+{
+  "title": "Мои записи",
+  "subtitle": "Управляйте вашими визитами",
+  "tab_upcoming": "Предстоящие",
+  "tab_history": "История",
+  "tab_recurring": "Повторяющиеся",
+  "status_upcoming": "Предстоящая",
+  "status_completed": "Завершена",
+  "status_cancelled": "Отменена",
+  "button_repeat": "Повторить",
+  "button_change": "Изменить",
+  "button_cancel": "Отменить",
+  "no_upcoming": "Нет предстоящих записей",
+  "no_upcoming_desc": "Запишитесь на услугу прямо сейчас",
+  "button_book": "Записаться",
+  "history_empty": "История пуста",
+  "history_empty_desc": "Здесь будут отображаться завершенные визиты",
+  "recurring_title": "Повторяющиеся записи",
+  "recurring_desc": "Функция в разработке. Скоро вы сможете настроить автоматические записи.",
+  "unknown_master": "Unknown Master"
+}
