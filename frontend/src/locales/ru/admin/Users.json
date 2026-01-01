@@ -256,5 +256,13 @@
   "status_paid": "Выплачено",
   "status_cancelled": "Отменено",
   "status_updated": "Статус обновлен",
-  "error_updating_status": "Ошибка обновления статуса"
+  "error_updating_status": "Ошибка обновления статуса",
+  "stats_new_clients": "Новые клиенты",
+  "stats_total_spend": "Общая сумма",
+  "table_client": "Клиент",
+  "table_phone": "Телефон",
+  "table_status": "Статус",
+  "table_spent": "Потрачено",
+  "status_new": "новый",
+  "open_chat": "Открыть чат"
 }
