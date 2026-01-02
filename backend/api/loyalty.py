@@ -7,6 +7,7 @@ from typing import Optional
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 from services.loyalty import LoyaltyService
+from services.features import FeatureService
 
 router = APIRouter(tags=["Loyalty"])
 
@@ -21,6 +22,16 @@ async def get_client_loyalty_api(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
     try:
+        # Feature Flag Check
+        feature_service = FeatureService()
+        if not feature_service.is_feature_enabled("loyalty_program"): 
+             return {
+                "success": True,
+                "client_id": client_id,
+                "loyalty": {"total_points": 0, "available_points": 0, "spent_points": 0, "loyalty_level": "bronze"},
+                "feature_disabled": True
+            }
+
         loyalty_service = LoyaltyService()
         loyalty = loyalty_service.get_client_loyalty(client_id)
 
@@ -69,6 +80,12 @@ async def earn_points_api(
             return JSONResponse({"error": "Missing required fields"}, status_code=400)
 
         loyalty_service = LoyaltyService()
+        
+        # Feature Flag Check
+        feature_service = FeatureService()
+        if not feature_service.is_feature_enabled("loyalty_program"):
+             return JSONResponse({"error": "Loyalty program is disabled"}, status_code=403)
+
         success = loyalty_service.earn_points(
             client_id=client_id,
             points=points,
@@ -261,11 +278,13 @@ async def update_loyalty_config_api(
     try:
         data = await request.json()
         rate = data.get("loyalty_points_conversion_rate")
+        expiration = data.get("points_expiration_days", 365)
+        
         if rate is None:
             return JSONResponse({"error": "Missing loyalty_points_conversion_rate"}, status_code=400)
 
         loyalty_service = LoyaltyService()
-        success = loyalty_service.update_loyalty_config(float(rate))
+        success = loyalty_service.update_loyalty_config(float(rate), int(expiration))
         return {"success": success}
     except Exception as e:
         log_error(f"Error updating loyalty config: {e}", "loyalty")

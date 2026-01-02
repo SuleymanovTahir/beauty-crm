@@ -1,66 +1,92 @@
 {
-  "title": "Gestion de la fidélité",
-  "subtitle": "Gérer les niveaux de fidélité, les points et les transactions",
   "adjust_points": "Ajuster les points",
-  "stats": {
-    "total_points_issued": "Total des points délivrés",
-    "points_redeemed": "Points échangés",
-    "active_members": "Participants actifs",
-    "from_last_month": "du mois dernier"
+  "buttons": {
+    "add_rule": "Add Rule",
+    "adjust_points": "Ajuster les points",
+    "cancel": "Annuler",
+    "save": "Save",
+    "save_changes": "Enregistrer les modifications"
   },
+  "categories": {
+    "category": "Category",
+    "description": "Set custom multipliers for services",
+    "multiplier": "Multiplier",
+    "title": "Category Multipliers"
+  },
+  "config": {
+    "conversion_rate": "Points Conversion Rate (0.1 = 1 point per 10 currency)",
+    "description": "Manage global loyalty settings",
+    "expiration_days": "Points Validity (Days)",
+    "expiration_hint": "Points earned will expire after this many days.",
+    "title": "Configuration"
+  },
+  "confirm_delete_rule": "",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "E-mail du client",
+      "client_email_placeholder": "client@example.com",
+      "description": "Ajouter ou débiter des points d'un compte client",
+      "points": "Points (utilisez les négatifs pour les échanger)",
+      "points_placeholder": "100",
+      "reason": "Cause",
+      "reason_placeholder": "Réglage manuel",
+      "title": "Ajuster les points"
+    },
+    "edit_tier": {
+      "description": "Paramètres de niveau de mise à jour",
+      "discount_percent": "Rabais (%)",
+      "min_points": "Points minimum",
+      "tier_name": "Nom du niveau",
+      "title": "Modifier le niveau"
+    },
+    "rule": {
+      "description": "Set multiplier for a service category",
+      "title": "Edit Category Rule"
+    }
+  },
+  "stats": {
+    "active_members": "Participants actifs",
+    "from_last_month": "du mois dernier",
+    "points_redeemed": "Points échangés",
+    "total_points_issued": "Total des points délivrés"
+  },
+  "subtitle": "Gérer les niveaux de fidélité, les points et les transactions",
   "tiers": {
-    "title": "Niveaux de fidélité",
     "description": "Configuration des niveaux et des avantages",
+    "discount": "{{percent}}\u00a0% de réduction",
+    "from_points": "À partir de {{points}}\u00a0points",
     "starting_level": "Niveau d'entrée",
-    "from_points": "À partir de {{points}} points",
-    "discount": "{{percent}} % de réduction"
+    "title": "Niveaux de fidélité"
+  },
+  "title": "Gestion de la fidélité",
+  "toasts": {
+    "config_updated": "",
+    "failed_adjust": "Échec de l'ajustement des scores",
+    "failed_delete": "",
+    "failed_load": "Échec du chargement des transactions",
+    "failed_save": "",
+    "failed_update": "",
+    "points_adjusted_add": "{{points}} points ajoutés {{email}}",
+    "points_adjusted_deduct": "{{points}} points débités de {{email}}",
+    "rule_deleted": "",
+    "rule_saved": "",
+    "tier_updated": "Niveau mis à jour avec succès"
   },
   "transactions": {
-    "title": "Dernières transactions",
     "description": "Dernières transactions de points de fidélité",
     "search_placeholder": "Rechercher des transactions...",
     "table": {
       "client": "Client",
+      "date": "Date",
       "points": "Points",
-      "type": "Taper",
       "reason": "Cause",
-      "date": "Date"
+      "type": "Taper"
     },
+    "title": "Dernières transactions",
     "types": {
+      "adjust": "Ajustement",
       "earn": "Accumulation",
-      "redeem": "Radier",
-      "adjust": "Ajustement"
+      "redeem": "Radier"
     }
-  },
-  "dialogs": {
-    "edit_tier": {
-      "title": "Modifier le niveau",
-      "description": "Paramètres de niveau de mise à jour",
-      "tier_name": "Nom du niveau",
-      "min_points": "Points minimum",
-      "discount_percent": "Rabais (%)"
-    },
-    "adjust_points": {
-      "title": "Ajuster les points",
-      "description": "Ajouter ou débiter des points d'un compte client",
-      "client_email": "E-mail du client",
-      "client_email_placeholder": "client@example.com",
-      "points": "Points (utilisez les négatifs pour les échanger)",
-      "points_placeholder": "100",
-      "reason": "Cause",
-      "reason_placeholder": "Réglage manuel"
-    }
-  },
-  "buttons": {
-    "cancel": "Annuler",
-    "save_changes": "Enregistrer les modifications",
-    "adjust_points": "Ajuster les points"
-  },
-  "toasts": {
-    "tier_updated": "Niveau mis à jour avec succès",
-    "points_adjusted_add": "{{points}} points ajoutés {{email}}",
-    "points_adjusted_deduct": "{{points}} points débités de {{email}}",
-    "failed_load": "Échec du chargement des transactions",
-    "failed_adjust": "Échec de l'ajustement des scores"
   }
 }

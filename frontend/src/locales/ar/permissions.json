@@ -1,0 +1,11 @@
+{
+  "create_permission": "الخلق",
+  "delete_permission": "إزالة",
+  "edit_permission": "التحرير",
+  "error_changing_permissions": "حدث خطأ أثناء تغيير الأذونات",
+  "error_loading_permissions": "خطأ في تحميل الأذونات",
+  "error_loading_users": "حدث خطأ أثناء تحميل المستخدمين",
+  "permission_granted": "الحق الممنوح",
+  "permission_revoked": "تم إبطال الحق",
+  "view_permission": "منظر"
+}

@@ -1,63 +1,68 @@
 {
-  "title": "Défis",
-  "subtitle": "Créer et gérer des défis d’engagement",
-  "create_challenge": "Créer un défi",
-  "stats": {
-    "active_challenges": "Défis actifs",
-    "total_participants": "Nombre total de participants",
-    "completions": "Achèvement"
-  },
-  "types": {
-    "visits": "Visites",
-    "spending": "Dépenses",
-    "referrals": "Références",
-    "services": "Services"
-  },
-  "statuses": {
-    "active": "Actif",
-    "upcoming": "Prochain",
-    "completed": "Complété"
-  },
-  "card": {
-    "target": "Cible",
-    "reward": "Récompense",
-    "progress": "Progrès",
-    "completed": "complété",
-    "pts": "indiquer"
-  },
-  "dialogs": {
-    "create": {
-      "title": "Créez un nouveau défi",
-      "title_edit": "Modifier le défi",
-      "description": "Définir les paramètres du défi et les récompenses",
-      "form": {
-        "title": "Nom",
-        "title_placeholder": "Défi beauté de l'été",
-        "description": "Description",
-        "description_placeholder": "Visitez le salon 3 fois ce mois",
-        "challenge_type": "Type de défi",
-        "target_value": "Valeur cible",
-        "target_placeholder": "3",
-        "reward_points": "Récompenser avec des points",
-        "reward_placeholder": "1000",
-        "start_date": "date de début",
-        "end_date": "Date de fin"
-      }
-    },
-    "delete": {
-      "confirm": "Etes-vous sûr de vouloir supprimer ce défi ?"
-    }
-  },
   "buttons": {
     "cancel": "Annuler",
     "create_challenge": "Créer un défi",
     "update_challenge": "Défi de mise à jour"
   },
+  "card": {
+    "check_progress": "Check Progress",
+    "completed": "complété",
+    "progress": "Progrès",
+    "pts": "indiquer",
+    "reward": "Récompense",
+    "target": "Cible"
+  },
+  "create_challenge": "Créer un défi",
+  "dialogs": {
+    "create": {
+      "description": "Définir les paramètres du défi et les récompenses",
+      "form": {
+        "challenge_type": "Type de défi",
+        "description": "Description",
+        "description_placeholder": "Visitez le salon 3 fois ce mois",
+        "end_date": "Date de fin",
+        "reward_placeholder": "1000",
+        "reward_points": "Récompenser avec des points",
+        "start_date": "date de début",
+        "target_placeholder": "3",
+        "target_value": "Valeur cible",
+        "title": "Nom",
+        "title_placeholder": "Défi beauté de l'été"
+      },
+      "title": "Créez un nouveau défi",
+      "title_edit": "Modifier le défi"
+    },
+    "delete": {
+      "confirm": "Etes-vous sûr de vouloir supprimer ce défi\u00a0?"
+    }
+  },
+  "stats": {
+    "active_challenges": "Défis actifs",
+    "completions": "Achèvement",
+    "total_participants": "Nombre total de participants"
+  },
+  "statuses": {
+    "active": "Actif",
+    "completed": "Complété",
+    "upcoming": "Prochain"
+  },
+  "subtitle": "Créer et gérer des défis d’engagement",
+  "title": "Défis",
   "toasts": {
     "created": "Défi créé avec succès",
     "deleted": "Défi supprimé avec succès",
-    "failed_load": "Échec du chargement des défis",
+    "failed_check_progress": "Failed to check progress",
     "failed_create": "Échec de la création du défi",
-    "failed_delete": "Échec de la suppression du défi"
+    "failed_delete": "Échec de la suppression du défi",
+    "failed_load": "Échec du chargement des défis",
+    "progress_checked_one": "",
+    "progress_checked_many": "",
+    "progress_checked_other": ""
+  },
+  "types": {
+    "referrals": "Références",
+    "services": "Services",
+    "spending": "Dépenses",
+    "visits": "Visites"
   }
 }

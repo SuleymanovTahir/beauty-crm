@@ -1,5 +1,6 @@
 {
   "401": "401",
+  "account_pending": "حسابك في انتظار موافقة المسؤول",
   "authorization_error": "خطأ في التفويض",
   "crm_system_management": "إدارة نظام CRM",
   "enter_login": "أدخل تسجيل الدخول الخاص بك",
@@ -13,10 +14,9 @@
   "login_title": "تسجيل الدخول",
   "no_account_register": "ليس لديك حساب؟ يسجل",
   "password": "كلمة المرور",
+  "registration_pending_toast": "تسجيلك في انتظار موافقة المسؤول. ستتلقى بريدًا إلكترونيًا عند تفعيل حسابك.",
   "return_to_home": "العودة إلى المنزل",
   "unauthorized": "غير مصرح به",
   "username": "اسم المستخدم",
-  "welcome": "مرحباً",
-  "account_pending": "حسابك في انتظار موافقة المسؤول",
-  "registration_pending_toast": "تسجيلك في انتظار موافقة المسؤول. ستتلقى بريدًا إلكترونيًا عند تفعيل حسابك."
+  "welcome": "مرحباً"
 }

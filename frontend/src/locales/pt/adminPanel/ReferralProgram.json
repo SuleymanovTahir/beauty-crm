@@ -1,55 +1,64 @@
 {
-  "title": "Programa de referência",
-  "subtitle": "Gerenciando referências e monitorando a eficácia do programa",
-  "settings": "Configurações",
-  "stats": {
-    "total_referrals": "Total de referências",
-    "completed_referrals": "Referências concluídas",
-    "points_distributed": "Pontos distribuídos",
-    "from_last_month": "do mês passado"
-  },
-  "current_settings": {
-    "title": "Configuração de bônus atual",
-    "referrer_bonus": "O indicador recebe <strong>{{points}} pontos</strong>quando um amigo faz sua primeira compra",
-    "referred_bonus": "O amigo convidado recebe <strong>{{points}} pontos</strong> no momento da inscrição",
-    "min_purchase": "Valor mínimo de compra: <strong>{{amount}} AED</strong>",
-    "edit": "Editar"
-  },
-  "table": {
-    "title": "Todas as referências",
-    "description": "Acompanhamento do status das referências e distribuição de pontos",
-    "search_placeholder": "Procure referências...",
-    "columns": {
-      "referrer": "Referenciador",
-      "referred_friend": "Amigo convidado",
-      "status": "Status",
-      "points_awarded": "Pontos atribuídos",
-      "date": "Data"
-    },
-    "statuses": {
-      "pending": "Esperando",
-      "completed": "Concluído",
-      "cancelled": "Cancelado"
-    }
-  },
-  "dialogs": {
-    "settings": {
-      "title": "Configurações do programa de referência",
-      "description": "Configure pontos de bônus e requisitos",
-      "referrer_bonus": "Pontos de bônus de referência",
-      "referrer_bonus_help": "Pontos concedidos ao indicador quando um amigo faz sua primeira compra",
-      "referred_bonus": "Pontos de bônus de amigos indicados",
-      "referred_bonus_help": "Pontos atribuídos a um amigo no ato da inscrição",
-      "min_purchase_amount": "Valor mínimo de compra (AED)",
-      "min_purchase_help": "Valor mínimo que um amigo deve gastar para ativar o bônus de indicação (0 = sem mínimo)"
-    }
-  },
   "buttons": {
     "cancel": "Cancelar",
     "save_changes": "Salvar alterações"
   },
+  "current_settings": {
+    "edit": "Editar",
+    "min_purchase": "Valor mínimo de compra: <strong>{{amount}} AED</strong>",
+    "referred_bonus": "O amigo convidado recebe <strong>{{points}} pontos</strong> no momento da inscrição",
+    "referrer_bonus": "O indicador recebe <strong>{{points}} pontos</strong>quando um amigo faz sua primeira compra",
+    "title": "Configuração de bônus atual"
+  },
+  "dialogs": {
+    "settings": {
+      "description": "Configure pontos de bônus e requisitos",
+      "min_purchase_amount": "Valor mínimo de compra (AED)",
+      "min_purchase_help": "Valor mínimo que um amigo deve gastar para ativar o bônus de indicação (0 = sem mínimo)",
+      "referred_bonus": "Pontos de bônus de amigos indicados",
+      "referred_bonus_help": "Pontos atribuídos a um amigo no ato da inscrição",
+      "referrer_bonus": "Pontos de bônus de referência",
+      "referrer_bonus_help": "Pontos concedidos ao indicador quando um amigo faz sua primeira compra",
+      "title": "Configurações do programa de referência"
+    }
+  },
+  "settings": "Configurações",
+  "stats": {
+    "completed_referrals": "Referências concluídas",
+    "from_last_month": "do mês passado",
+    "points_distributed": "Pontos distribuídos",
+    "total_referrals": "Total de referências"
+  },
+  "subtitle": "Gerenciando referências e monitorando a eficácia do programa",
+  "table": {
+    "columns": {
+      "date": "Data",
+      "points_awarded": "Pontos atribuídos",
+      "referred_friend": "Amigo convidado",
+      "referrer": "Referenciador",
+      "status": "Status"
+    },
+    "description": "Acompanhamento do status das referências e distribuição de pontos",
+    "filters": {
+      "all_statuses": "All Statuses"
+    },
+    "search_placeholder": "Procure referências...",
+    "sort": {
+      "date": "Sort by Date",
+      "points": "Sort by Points",
+      "status": "Sort by Status"
+    },
+    "statuses": {
+      "cancelled": "Cancelado",
+      "completed": "Concluído",
+      "pending": "Esperando"
+    },
+    "title": "Todas as referências"
+  },
+  "title": "Programa de referência",
   "toasts": {
-    "settings_saved": "Configurações salvas com sucesso",
-    "failed_load": "Falha ao carregar referências"
+    "failed_load": "Falha ao carregar referências",
+    "failed_save": "",
+    "settings_saved": "Configurações salvas com sucesso"
   }
 }

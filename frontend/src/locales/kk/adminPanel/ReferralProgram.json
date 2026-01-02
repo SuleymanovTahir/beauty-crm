@@ -1,55 +1,64 @@
 {
-  "title": "Реферат бағдарламасы",
-  "subtitle": "Рефералдарды басқару және бағдарламаның тиімділігін қадағалау",
-  "settings": "Параметрлер",
-  "stats": {
-    "total_referrals": "Жалпы сілтемелер",
-    "completed_referrals": "Аяқталған сілтемелер",
-    "points_distributed": "Ұпайлар таратылды",
-    "from_last_month": "өткен айдан бастап"
-  },
-  "current_settings": {
-    "title": "Ағымдағы бонус конфигурациясы",
-    "referrer_bonus": "Досыңыз бірінші сатып алған кезде сілтеме беруші <strong>{{points}} ұпай</strong> алады",
-    "referred_bonus": "Шақырылған дос тіркелгеннен кейін <strong>{{points}} ұпай</strong> алады",
-    "min_purchase": "Сатып алудың ең аз сомасы: <strong>{{amount}} AED</strong>",
-    "edit": "Өңдеу"
-  },
-  "table": {
-    "title": "Барлық сілтемелер",
-    "description": "Жолдамалардың күйін қадағалау және ұпайларды бөлу",
-    "search_placeholder": "Сілтемелерді іздеу...",
-    "columns": {
-      "referrer": "Реферер",
-      "referred_friend": "Шақырылған дос",
-      "status": "Күй",
-      "points_awarded": "Ұпайлар берілді",
-      "date": "Күн"
-    },
-    "statuses": {
-      "pending": "Күтуде",
-      "completed": "Аяқталды",
-      "cancelled": "Бас тартылды"
-    }
-  },
-  "dialogs": {
-    "settings": {
-      "title": "Реферат бағдарламасының параметрлері",
-      "description": "Бонустық ұпайлар мен талаптарды орнатыңыз",
-      "referrer_bonus": "Реферер бонустық ұпайлары",
-      "referrer_bonus_help": "Досыңыз бірінші сатып алуды жасаған кезде, сілтеме берушіге берілетін ұпайлар",
-      "referred_bonus": "Досқа ұсынылған бонустық ұпайлар",
-      "referred_bonus_help": "Тіркелген кезде досыңызға ұпай беріледі",
-      "min_purchase_amount": "Ең аз сатып алу сомасы (AED)",
-      "min_purchase_help": "Реферал бонусын белсендіру үшін дос жұмсауы керек ең аз сома (0 = ең аз емес)"
-    }
-  },
   "buttons": {
     "cancel": "Болдырмау",
     "save_changes": "Өзгерістерді сақтау"
   },
+  "current_settings": {
+    "edit": "Өңдеу",
+    "min_purchase": "Сатып алудың ең аз сомасы: <strong>{{amount}} AED</strong>",
+    "referred_bonus": "Шақырылған дос тіркелгеннен кейін <strong>{{points}} ұпай</strong> алады",
+    "referrer_bonus": "Досыңыз бірінші сатып алған кезде сілтеме беруші <strong>{{points}} ұпай</strong> алады",
+    "title": "Ағымдағы бонус конфигурациясы"
+  },
+  "dialogs": {
+    "settings": {
+      "description": "Бонустық ұпайлар мен талаптарды орнатыңыз",
+      "min_purchase_amount": "Ең аз сатып алу сомасы (AED)",
+      "min_purchase_help": "Реферал бонусын белсендіру үшін дос жұмсауы керек ең аз сома (0 = ең аз емес)",
+      "referred_bonus": "Досқа ұсынылған бонустық ұпайлар",
+      "referred_bonus_help": "Тіркелген кезде досыңызға ұпай беріледі",
+      "referrer_bonus": "Реферер бонустық ұпайлары",
+      "referrer_bonus_help": "Досыңыз бірінші сатып алуды жасаған кезде, сілтеме берушіге берілетін ұпайлар",
+      "title": "Реферат бағдарламасының параметрлері"
+    }
+  },
+  "settings": "Параметрлер",
+  "stats": {
+    "completed_referrals": "Аяқталған сілтемелер",
+    "from_last_month": "өткен айдан бастап",
+    "points_distributed": "Ұпайлар таратылды",
+    "total_referrals": "Жалпы сілтемелер"
+  },
+  "subtitle": "Рефералдарды басқару және бағдарламаның тиімділігін қадағалау",
+  "table": {
+    "columns": {
+      "date": "Күн",
+      "points_awarded": "Ұпайлар берілді",
+      "referred_friend": "Шақырылған дос",
+      "referrer": "Реферер",
+      "status": "Күй"
+    },
+    "description": "Жолдамалардың күйін қадағалау және ұпайларды бөлу",
+    "filters": {
+      "all_statuses": "All Statuses"
+    },
+    "search_placeholder": "Сілтемелерді іздеу...",
+    "sort": {
+      "date": "Sort by Date",
+      "points": "Sort by Points",
+      "status": "Sort by Status"
+    },
+    "statuses": {
+      "cancelled": "Бас тартылды",
+      "completed": "Аяқталды",
+      "pending": "Күтуде"
+    },
+    "title": "Барлық сілтемелер"
+  },
+  "title": "Реферат бағдарламасы",
   "toasts": {
-    "settings_saved": "Параметрлер сәтті сақталды",
-    "failed_load": "Сілтемелер жүктелмеді"
+    "failed_load": "Сілтемелер жүктелмеді",
+    "failed_save": "",
+    "settings_saved": "Параметрлер сәтті сақталды"
   }
 }

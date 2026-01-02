@@ -45,6 +45,7 @@ interface LoyaltyTransaction {
 
 interface LoyaltyConfig {
   loyalty_points_conversion_rate: number;
+  points_expiration_days: number;
 }
 
 interface CategoryRule {
@@ -56,7 +57,10 @@ export default function LoyaltyManagement() {
   const { t } = useTranslation(['adminPanel/LoyaltyManagement', 'common']);
   const [tiers, setTiers] = useState<LoyaltyTier[]>([]);
   const [transactions, setTransactions] = useState<LoyaltyTransaction[]>([]);
-  const [config, setConfig] = useState<LoyaltyConfig>({ loyalty_points_conversion_rate: 0.1 });
+  const [config, setConfig] = useState<LoyaltyConfig>({
+    loyalty_points_conversion_rate: 0.1,
+    points_expiration_days: 365
+  });
   const [categoryRules, setCategoryRules] = useState<CategoryRule[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showTierDialog, setShowTierDialog] = useState(false);
@@ -339,14 +343,28 @@ export default function LoyaltyManagement() {
         </CardHeader>
         <CardContent>
           <div className="flex items-end gap-4 max-w-md">
-            <div className="flex-1">
-              <Label>{t('config.conversion_rate', 'Points Conversion Rate (0.1 = 1 point per 10 currency)')}</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={config.loyalty_points_conversion_rate}
-                onChange={(e) => setConfig({ ...config, loyalty_points_conversion_rate: parseFloat(e.target.value) })}
-              />
+            <div className="flex-1 space-y-4">
+              <div>
+                <Label>{t('config.conversion_rate', 'Points Conversion Rate (0.1 = 1 point per 10 currency)')}</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={config.loyalty_points_conversion_rate}
+                  onChange={(e) => setConfig({ ...config, loyalty_points_conversion_rate: parseFloat(e.target.value) })}
+                />
+              </div>
+              <div>
+                <Label>{t('config.expiration_days', 'Points Validity (Days)')}</Label>
+                <Input
+                  type="number"
+                  value={config.points_expiration_days}
+                  onChange={(e) => setConfig({ ...config, points_expiration_days: parseInt(e.target.value) })}
+                  placeholder="365"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {t('config.expiration_hint', 'Points earned will expire after this many days.')}
+                </p>
+              </div>
             </div>
             <Button onClick={handleUpdateConfig}>{t('buttons.save', 'Save')}</Button>
           </div>

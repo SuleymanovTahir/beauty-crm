@@ -1,66 +1,92 @@
 {
-  "title": "Loyalty management",
-  "subtitle": "Manage loyalty levels, points and transactions",
   "adjust_points": "Adjust points",
-  "stats": {
-    "total_points_issued": "Total points issued",
-    "points_redeemed": "Points redeemed",
-    "active_members": "Active participants",
-    "from_last_month": "from last month"
+  "buttons": {
+    "add_rule": "Add Rule",
+    "adjust_points": "Adjust points",
+    "cancel": "Cancel",
+    "save": "Save",
+    "save_changes": "Save changes"
   },
+  "categories": {
+    "category": "Category",
+    "description": "Set custom multipliers for services",
+    "multiplier": "Multiplier",
+    "title": "Category Multipliers"
+  },
+  "config": {
+    "conversion_rate": "Points Conversion Rate (0.1 = 1 point per 10 currency)",
+    "description": "Manage global loyalty settings",
+    "expiration_days": "Points Validity (Days)",
+    "expiration_hint": "Points earned will expire after this many days.",
+    "title": "Configuration"
+  },
+  "confirm_delete_rule": "",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "Client email",
+      "client_email_placeholder": "client@example.com",
+      "description": "Add or debit points from a customer account",
+      "points": "Points (use negative ones to redeem)",
+      "points_placeholder": "100",
+      "reason": "Cause",
+      "reason_placeholder": "Manual adjustment",
+      "title": "Adjust points"
+    },
+    "edit_tier": {
+      "description": "Update level settings",
+      "discount_percent": "Discount (%)",
+      "min_points": "Minimum points",
+      "tier_name": "Level name",
+      "title": "Edit level"
+    },
+    "rule": {
+      "description": "Set multiplier for a service category",
+      "title": "Edit Category Rule"
+    }
+  },
+  "stats": {
+    "active_members": "Active participants",
+    "from_last_month": "from last month",
+    "points_redeemed": "Points redeemed",
+    "total_points_issued": "Total points issued"
+  },
+  "subtitle": "Manage loyalty levels, points and transactions",
   "tiers": {
-    "title": "Loyalty levels",
     "description": "Setting up levels and benefits",
-    "starting_level": "booking level",
+    "discount": "{{percent}}% discount",
     "from_points": "From {{points}} points",
-    "discount": "{{percent}}% discount"
+    "starting_level": "booking level",
+    "title": "Loyalty levels"
+  },
+  "title": "Loyalty management",
+  "toasts": {
+    "config_updated": "",
+    "failed_adjust": "Failed to adjust scores",
+    "failed_delete": "",
+    "failed_load": "Failed to load transactions",
+    "failed_save": "",
+    "failed_update": "",
+    "points_adjusted_add": "{{points}} points added {{email}}",
+    "points_adjusted_deduct": "{{points}} points debited from {{email}}",
+    "rule_deleted": "",
+    "rule_saved": "",
+    "tier_updated": "Level updated successfully"
   },
   "transactions": {
-    "title": "Latest Transactions",
     "description": "Latest Loyalty Point Transactions",
     "search_placeholder": "Search for transactions...",
     "table": {
       "client": "Client",
+      "date": "Date",
       "points": "Points",
-      "type": "Type",
       "reason": "Cause",
-      "date": "Date"
+      "type": "Type"
     },
+    "title": "Latest Transactions",
     "types": {
+      "adjust": "Adjustment",
       "earn": "Accrual",
-      "redeem": "Write-off",
-      "adjust": "Adjustment"
+      "redeem": "Write-off"
     }
-  },
-  "dialogs": {
-    "edit_tier": {
-      "title": "Edit level",
-      "description": "Update level settings",
-      "tier_name": "Level name",
-      "min_points": "Minimum points",
-      "discount_percent": "Discount (%)"
-    },
-    "adjust_points": {
-      "title": "Adjust points",
-      "description": "Add or debit points from a customer account",
-      "client_email": "Client email",
-      "client_email_placeholder": "client@example.com",
-      "points": "Points (use negative ones to redeem)",
-      "points_placeholder": "100",
-      "reason": "Cause",
-      "reason_placeholder": "Manual adjustment"
-    }
-  },
-  "buttons": {
-    "cancel": "Cancel",
-    "save_changes": "Save changes",
-    "adjust_points": "Adjust points"
-  },
-  "toasts": {
-    "tier_updated": "Level updated successfully",
-    "points_adjusted_add": "{{points}} points added {{email}}",
-    "points_adjusted_deduct": "{{points}} points debited from {{email}}",
-    "failed_load": "Failed to load transactions",
-    "failed_adjust": "Failed to adjust scores"
   }
 }

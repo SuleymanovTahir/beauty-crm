@@ -1,63 +1,67 @@
 {
-  "title": "Қиындықтар",
-  "subtitle": "Қатысу қиындықтарын жасау және басқару",
-  "create_challenge": "Қиындық жасаңыз",
-  "stats": {
-    "active_challenges": "Белсенді сынақтар",
-    "total_participants": "Жалпы қатысушылар",
-    "completions": "Аяқтау"
-  },
-  "types": {
-    "visits": "Сапарлар",
-    "spending": "Шығындар",
-    "referrals": "Референциялар",
-    "services": "Қызметтер"
-  },
-  "statuses": {
-    "active": "Белсенді",
-    "upcoming": "Алдағы",
-    "completed": "Аяқталды"
-  },
-  "card": {
-    "target": "Мақсат",
-    "reward": "Сыйақы",
-    "progress": "Прогресс",
-    "completed": "аяқталды",
-    "pts": "нүкте"
-  },
-  "dialogs": {
-    "create": {
-      "title": "Жаңа сынақ жасаңыз",
-      "title_edit": "Тапсырманы өңдеу",
-      "description": "Сынақ параметрлері мен марапаттарын анықтаңыз",
-      "form": {
-        "title": "Аты",
-        "title_placeholder": "Жазғы сұлулық сайысы",
-        "description": "Сипаттама",
-        "description_placeholder": "Осы айда 3 рет салонға барыңыз",
-        "challenge_type": "Сынақ түрі",
-        "target_value": "Мақсатты мән",
-        "target_placeholder": "3",
-        "reward_points": "Ұпайлармен марапаттау",
-        "reward_placeholder": "1000",
-        "start_date": "басталу күні",
-        "end_date": "Аяқталу күні"
-      }
-    },
-    "delete": {
-      "confirm": "Бұл сынақты шынымен жойғыңыз келе ме?"
-    }
-  },
   "buttons": {
     "cancel": "Болдырмау",
     "create_challenge": "Қиындық жасаңыз",
     "update_challenge": "Тапсырманы жаңарту"
   },
+  "card": {
+    "check_progress": "Check Progress",
+    "completed": "аяқталды",
+    "progress": "Прогресс",
+    "pts": "нүкте",
+    "reward": "Сыйақы",
+    "target": "Мақсат"
+  },
+  "create_challenge": "Қиындық жасаңыз",
+  "dialogs": {
+    "create": {
+      "description": "Сынақ параметрлері мен марапаттарын анықтаңыз",
+      "form": {
+        "challenge_type": "Сынақ түрі",
+        "description": "Сипаттама",
+        "description_placeholder": "Осы айда 3 рет салонға барыңыз",
+        "end_date": "Аяқталу күні",
+        "reward_placeholder": "1000",
+        "reward_points": "Ұпайлармен марапаттау",
+        "start_date": "басталу күні",
+        "target_placeholder": "3",
+        "target_value": "Мақсатты мән",
+        "title": "Аты",
+        "title_placeholder": "Жазғы сұлулық сайысы"
+      },
+      "title": "Жаңа сынақ жасаңыз",
+      "title_edit": "Тапсырманы өңдеу"
+    },
+    "delete": {
+      "confirm": "Бұл сынақты шынымен жойғыңыз келе ме?"
+    }
+  },
+  "stats": {
+    "active_challenges": "Белсенді сынақтар",
+    "completions": "Аяқтау",
+    "total_participants": "Жалпы қатысушылар"
+  },
+  "statuses": {
+    "active": "Белсенді",
+    "completed": "Аяқталды",
+    "upcoming": "Алдағы"
+  },
+  "subtitle": "Қатысу қиындықтарын жасау және басқару",
+  "title": "Қиындықтар",
   "toasts": {
     "created": "Сынақ сәтті жасалды",
     "deleted": "Сынақ сәтті жойылды",
-    "failed_load": "Тапсырмалар жүктелмеді",
+    "failed_check_progress": "Failed to check progress",
     "failed_create": "Сынақ жасау мүмкін болмады",
-    "failed_delete": "Сынақ жойылмады"
+    "failed_delete": "Сынақ жойылмады",
+    "failed_load": "Тапсырмалар жүктелмеді",
+    "progress_checked_one": "",
+    "progress_checked_other": ""
+  },
+  "types": {
+    "referrals": "Референциялар",
+    "services": "Қызметтер",
+    "spending": "Шығындар",
+    "visits": "Сапарлар"
   }
 }

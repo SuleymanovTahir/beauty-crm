@@ -1,55 +1,64 @@
 {
-  "title": "Referral program",
-  "subtitle": "Managing referrals and tracking program effectiveness",
-  "settings": "Settings",
-  "stats": {
-    "total_referrals": "Total referrals",
-    "completed_referrals": "Completed referrals",
-    "points_distributed": "Points distributed",
-    "from_last_month": "from last month"
-  },
-  "current_settings": {
-    "title": "Current bonus configuration",
-    "referrer_bonus": "The referrer receives <strong>{{points}} points</strong>when a friend makes their first purchase",
-    "referred_bonus": "The invited friend receives <strong>{{points}} points</strong> upon registration",
-    "min_purchase": "Minimum purchase amount: <strong>{{amount}} AED</strong>",
-    "edit": "Edit"
-  },
-  "table": {
-    "title": "All referrals",
-    "description": "Tracking the status of referrals and distribution of points",
-    "search_placeholder": "Search for referrals...",
-    "columns": {
-      "referrer": "Referrer",
-      "referred_friend": "Invited friend",
-      "status": "Status",
-      "points_awarded": "Points awarded",
-      "date": "Date"
-    },
-    "statuses": {
-      "pending": "Waiting",
-      "completed": "Completed",
-      "cancelled": "Canceled"
-    }
-  },
-  "dialogs": {
-    "settings": {
-      "title": "Referral program settings",
-      "description": "Set up bonus points and requirements",
-      "referrer_bonus": "Referrer bonus points",
-      "referrer_bonus_help": "Points awarded to the referrer when a friend makes their first purchase",
-      "referred_bonus": "Referred Friend Bonus Points",
-      "referred_bonus_help": "Points awarded to a friend upon registration",
-      "min_purchase_amount": "Minimum purchase amount (AED)",
-      "min_purchase_help": "Minimum amount a friend must spend to activate the referral bonus (0 = no minimum)"
-    }
-  },
   "buttons": {
     "cancel": "Cancel",
     "save_changes": "Save changes"
   },
+  "current_settings": {
+    "edit": "Edit",
+    "min_purchase": "Minimum purchase amount: <strong>{{amount}} AED</strong>",
+    "referred_bonus": "The invited friend receives <strong>{{points}} points</strong> upon registration",
+    "referrer_bonus": "The referrer receives <strong>{{points}} points</strong>when a friend makes their first purchase",
+    "title": "Current bonus configuration"
+  },
+  "dialogs": {
+    "settings": {
+      "description": "Set up bonus points and requirements",
+      "min_purchase_amount": "Minimum purchase amount (AED)",
+      "min_purchase_help": "Minimum amount a friend must spend to activate the referral bonus (0 = no minimum)",
+      "referred_bonus": "Referred Friend Bonus Points",
+      "referred_bonus_help": "Points awarded to a friend upon registration",
+      "referrer_bonus": "Referrer bonus points",
+      "referrer_bonus_help": "Points awarded to the referrer when a friend makes their first purchase",
+      "title": "Referral program settings"
+    }
+  },
+  "settings": "Settings",
+  "stats": {
+    "completed_referrals": "Completed referrals",
+    "from_last_month": "from last month",
+    "points_distributed": "Points distributed",
+    "total_referrals": "Total referrals"
+  },
+  "subtitle": "Managing referrals and tracking program effectiveness",
+  "table": {
+    "columns": {
+      "date": "Date",
+      "points_awarded": "Points awarded",
+      "referred_friend": "Invited friend",
+      "referrer": "Referrer",
+      "status": "Status"
+    },
+    "description": "Tracking the status of referrals and distribution of points",
+    "filters": {
+      "all_statuses": "All Statuses"
+    },
+    "search_placeholder": "Search for referrals...",
+    "sort": {
+      "date": "Sort by Date",
+      "points": "Sort by Points",
+      "status": "Sort by Status"
+    },
+    "statuses": {
+      "cancelled": "Canceled",
+      "completed": "Completed",
+      "pending": "Waiting"
+    },
+    "title": "All referrals"
+  },
+  "title": "Referral program",
   "toasts": {
-    "settings_saved": "Settings saved successfully",
-    "failed_load": "Failed to load referrals"
+    "failed_load": "Failed to load referrals",
+    "failed_save": "",
+    "settings_saved": "Settings saved successfully"
   }
 }

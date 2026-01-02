@@ -1,55 +1,64 @@
 {
-  "title": "Programme de parrainage",
-  "subtitle": "Gérer les références et suivre l’efficacité du programme",
-  "settings": "Paramètres",
-  "stats": {
-    "total_referrals": "Total des références",
-    "completed_referrals": "Références terminées",
-    "points_distributed": "Points distribués",
-    "from_last_month": "du mois dernier"
-  },
-  "current_settings": {
-    "title": "Configuration actuelle des bonus",
-    "referrer_bonus": "Le parrain reçoit <strong>{{points}} points</strong>lorsqu'un ami effectue son premier achat",
-    "referred_bonus": "L'ami invité reçoit <strong>{{points}} points</strong> lors de son inscription",
-    "min_purchase": "Montant minimum d'achat : <strong>{{amount}} AED</strong>",
-    "edit": "Modifier"
-  },
-  "table": {
-    "title": "Toutes les références",
-    "description": "Suivi de l'état des filleuls et répartition des points",
-    "search_placeholder": "Rechercher des références...",
-    "columns": {
-      "referrer": "Référent",
-      "referred_friend": "Ami invité",
-      "status": "Statut",
-      "points_awarded": "Points attribués",
-      "date": "Date"
-    },
-    "statuses": {
-      "pending": "En attendant",
-      "completed": "Complété",
-      "cancelled": "Annulé"
-    }
-  },
-  "dialogs": {
-    "settings": {
-      "title": "Paramètres du programme de parrainage",
-      "description": "Configurer les points bonus et les exigences",
-      "referrer_bonus": "Points bonus de parrainage",
-      "referrer_bonus_help": "Points attribués au parrain lors du premier achat d'un ami",
-      "referred_bonus": "Points bonus d'ami parrainé",
-      "referred_bonus_help": "Points attribués à un ami lors de son inscription",
-      "min_purchase_amount": "Montant minimum d'achat (AED)",
-      "min_purchase_help": "Montant minimum qu'un ami doit dépenser pour activer le bonus de parrainage (0 = pas de minimum)"
-    }
-  },
   "buttons": {
     "cancel": "Annuler",
     "save_changes": "Enregistrer les modifications"
   },
+  "current_settings": {
+    "edit": "Modifier",
+    "min_purchase": "Montant minimum d'achat\u00a0: <strong>{{amount}} AED</strong>",
+    "referred_bonus": "L'ami invité reçoit <strong>{{points}} points</strong> lors de son inscription",
+    "referrer_bonus": "Le parrain reçoit <strong>{{points}} points</strong>lorsqu'un ami effectue son premier achat",
+    "title": "Configuration actuelle des bonus"
+  },
+  "dialogs": {
+    "settings": {
+      "description": "Configurer les points bonus et les exigences",
+      "min_purchase_amount": "Montant minimum d'achat (AED)",
+      "min_purchase_help": "Montant minimum qu'un ami doit dépenser pour activer le bonus de parrainage (0 = pas de minimum)",
+      "referred_bonus": "Points bonus d'ami parrainé",
+      "referred_bonus_help": "Points attribués à un ami lors de son inscription",
+      "referrer_bonus": "Points bonus de parrainage",
+      "referrer_bonus_help": "Points attribués au parrain lors du premier achat d'un ami",
+      "title": "Paramètres du programme de parrainage"
+    }
+  },
+  "settings": "Paramètres",
+  "stats": {
+    "completed_referrals": "Références terminées",
+    "from_last_month": "du mois dernier",
+    "points_distributed": "Points distribués",
+    "total_referrals": "Total des références"
+  },
+  "subtitle": "Gérer les références et suivre l’efficacité du programme",
+  "table": {
+    "columns": {
+      "date": "Date",
+      "points_awarded": "Points attribués",
+      "referred_friend": "Ami invité",
+      "referrer": "Référent",
+      "status": "Statut"
+    },
+    "description": "Suivi de l'état des filleuls et répartition des points",
+    "filters": {
+      "all_statuses": "All Statuses"
+    },
+    "search_placeholder": "Rechercher des références...",
+    "sort": {
+      "date": "Sort by Date",
+      "points": "Sort by Points",
+      "status": "Sort by Status"
+    },
+    "statuses": {
+      "cancelled": "Annulé",
+      "completed": "Complété",
+      "pending": "En attendant"
+    },
+    "title": "Toutes les références"
+  },
+  "title": "Programme de parrainage",
   "toasts": {
-    "settings_saved": "Paramètres enregistrés avec succès",
-    "failed_load": "Échec du chargement des références"
+    "failed_load": "Échec du chargement des références",
+    "failed_save": "",
+    "settings_saved": "Paramètres enregistrés avec succès"
   }
 }

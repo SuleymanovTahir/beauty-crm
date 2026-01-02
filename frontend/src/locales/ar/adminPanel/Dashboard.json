@@ -1,47 +1,71 @@
 {
-  "title": "لوحة التحكم",
-  "subtitle": "إدارة المستخدم والولاء والمشاركة",
   "quick_actions": {
-    "title": "إجراءات سريعة",
-    "user_management": {
-      "title": "إدارة المستخدم",
-      "description": "إدارة حسابات المستخدمين والأذونات"
+    "challenges": {
+      "description": "خلق وإدارة التحديات",
+      "title": "التحديات"
     },
     "loyalty_management": {
-      "title": "إدارة الولاء",
-      "description": "إدارة نقاط الولاء والمستويات"
-    },
-    "referral_program": {
-      "title": "برنامج الإحالة",
-      "description": "عرض وإدارة الإحالات"
-    },
-    "challenges": {
-      "title": "التحديات",
-      "description": "خلق وإدارة التحديات"
+      "description": "إدارة نقاط الولاء والمستويات",
+      "title": "إدارة الولاء"
     },
     "notifications": {
-      "title": "إشعارات",
-      "description": "إرسال وإدارة الإخطارات"
+      "description": "إرسال وإدارة الإخطارات",
+      "title": "إشعارات"
     },
     "photo_gallery": {
-      "title": "معرض الصور",
-      "description": "صورة العميل وإدارة المحفظة"
+      "description": "صورة العميل وإدارة المحفظة",
+      "title": "معرض الصور"
+    },
+    "referral_program": {
+      "description": "عرض وإدارة الإحالات",
+      "title": "برنامج الإحالة"
+    },
+    "title": "إجراءات سريعة",
+    "user_management": {
+      "description": "إدارة حسابات المستخدمين والأذونات",
+      "title": "إدارة المستخدم"
     }
   },
+  "recent_activity": {
+    "challenge_completed": "تم إكمال التحدي \"{{name}}\" بواسطة {{count}} من المستخدمين",
+    "challenge_completed_zero": "",
+    "challenge_completed_one": "",
+    "challenge_completed_two": "",
+    "challenge_completed_few": "",
+    "challenge_completed_many": "",
+    "challenge_completed_other": "",
+    "day_ago": "{{count}} قبل يوم",
+    "day_ago_zero": "",
+    "day_ago_one": "",
+    "day_ago_two": "",
+    "day_ago_few": "",
+    "day_ago_many": "",
+    "day_ago_other": "",
+    "hours_ago": "قبل {{count}} ساعات",
+    "hours_ago_zero": "",
+    "hours_ago_one": "",
+    "hours_ago_two": "",
+    "hours_ago_few": "",
+    "hours_ago_many": "",
+    "hours_ago_other": "",
+    "new_tier_activated": "تم تفعيل مستوى الولاء الجديد",
+    "subtitle": "الإجراءات الأخيرة في لوحة الإدارة",
+    "title": "النشاط الأخير",
+    "users_registered": "تم تسجيل {{count}} مستخدمين جدد",
+    "users_registered_zero": "",
+    "users_registered_one": "",
+    "users_registered_two": "",
+    "users_registered_few": "",
+    "users_registered_many": "",
+    "users_registered_other": ""
+  },
   "stats": {
-    "total_users": "إجمالي المستخدمين",
     "active_challenges": "التحديات النشطة",
+    "from_last_month": "من الشهر الماضي",
     "loyalty_points_issued": "نقاط الولاء الصادرة",
     "total_referrals": "إجمالي الإحالات",
-    "from_last_month": "من الشهر الماضي"
+    "total_users": "إجمالي المستخدمين"
   },
-  "recent_activity": {
-    "title": "النشاط الأخير",
-    "subtitle": "الإجراءات الأخيرة في لوحة الإدارة",
-    "new_tier_activated": "تم تفعيل مستوى الولاء الجديد",
-    "users_registered": "تم تسجيل {{count}} مستخدمين جدد",
-    "challenge_completed": "تم إكمال التحدي \"{{name}}\" بواسطة {{count}} من المستخدمين",
-    "hours_ago": "قبل {{count}} ساعات",
-    "day_ago": "{{count}} قبل يوم"
-  }
+  "subtitle": "إدارة المستخدم والولاء والمشاركة",
+  "title": "لوحة التحكم"
 }

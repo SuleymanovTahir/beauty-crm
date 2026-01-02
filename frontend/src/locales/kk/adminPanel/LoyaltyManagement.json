@@ -1,66 +1,92 @@
 {
-  "title": "Адалдықты басқару",
-  "subtitle": "Адалдық деңгейлерін, ұпайларды және транзакцияларды басқарыңыз",
   "adjust_points": "Нүктелерді реттеңіз",
-  "stats": {
-    "total_points_issued": "Берілген ұпайлардың жалпы саны",
-    "points_redeemed": "Ұпайлар белсендірілді",
-    "active_members": "Белсенді қатысушылар",
-    "from_last_month": "өткен айдан бастап"
+  "buttons": {
+    "add_rule": "Add Rule",
+    "adjust_points": "Нүктелерді реттеңіз",
+    "cancel": "Болдырмау",
+    "save": "Save",
+    "save_changes": "Өзгерістерді сақтау"
   },
+  "categories": {
+    "category": "Category",
+    "description": "Set custom multipliers for services",
+    "multiplier": "Multiplier",
+    "title": "Category Multipliers"
+  },
+  "config": {
+    "conversion_rate": "Points Conversion Rate (0.1 = 1 point per 10 currency)",
+    "description": "Manage global loyalty settings",
+    "expiration_days": "Points Validity (Days)",
+    "expiration_hint": "Points earned will expire after this many days.",
+    "title": "Configuration"
+  },
+  "confirm_delete_rule": "",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "Клиенттің электрондық поштасы",
+      "client_email_placeholder": "client@example.com",
+      "description": "Тұтынушы шотынан ұпайларды қосыңыз немесе есептеңіз",
+      "points": "Ұпайлар (қайта алу үшін теріс ұпайларды пайдаланыңыз)",
+      "points_placeholder": "100",
+      "reason": "Себеп",
+      "reason_placeholder": "Қолмен реттеу",
+      "title": "Нүктелерді реттеңіз"
+    },
+    "edit_tier": {
+      "description": "Деңгей параметрлерін жаңарту",
+      "discount_percent": "Жеңілдік (%)",
+      "min_points": "Минималды ұпайлар",
+      "tier_name": "Деңгей атауы",
+      "title": "Деңгейді өңдеу"
+    },
+    "rule": {
+      "description": "Set multiplier for a service category",
+      "title": "Edit Category Rule"
+    }
+  },
+  "stats": {
+    "active_members": "Белсенді қатысушылар",
+    "from_last_month": "өткен айдан бастап",
+    "points_redeemed": "Ұпайлар белсендірілді",
+    "total_points_issued": "Берілген ұпайлардың жалпы саны"
+  },
+  "subtitle": "Адалдық деңгейлерін, ұпайларды және транзакцияларды басқарыңыз",
   "tiers": {
-    "title": "Адалдық деңгейлері",
     "description": "Деңгейлер мен артықшылықтарды орнату",
-    "starting_level": "Кіру деңгейі",
+    "discount": "{{percent}}% жеңілдік",
     "from_points": "{{points}} ұпайдан",
-    "discount": "{{percent}}% жеңілдік"
+    "starting_level": "Кіру деңгейі",
+    "title": "Адалдық деңгейлері"
+  },
+  "title": "Адалдықты басқару",
+  "toasts": {
+    "config_updated": "",
+    "failed_adjust": "Ұпайларды реттеу мүмкін болмады",
+    "failed_delete": "",
+    "failed_load": "Транзакциялар жүктелмеді",
+    "failed_save": "",
+    "failed_update": "",
+    "points_adjusted_add": "{{points}} ұпай қосылды {{email}}",
+    "points_adjusted_deduct": "{{email}} бастап есептен шығарылған {{points}} ұпай",
+    "rule_deleted": "",
+    "rule_saved": "",
+    "tier_updated": "Деңгей сәтті жаңартылды"
   },
   "transactions": {
-    "title": "Соңғы транзакциялар",
     "description": "Ең соңғы адалдық ұпай транзакциялары",
     "search_placeholder": "Транзакцияларды іздеу...",
     "table": {
       "client": "Клиент",
+      "date": "Күн",
       "points": "Ұпайлар",
-      "type": "Түр",
       "reason": "Себеп",
-      "date": "Күн"
+      "type": "Түр"
     },
+    "title": "Соңғы транзакциялар",
     "types": {
+      "adjust": "Реттеу",
       "earn": "Есептеу",
-      "redeem": "Есеп шоттан шығарып тастау",
-      "adjust": "Реттеу"
+      "redeem": "Есеп шоттан шығарып тастау"
     }
-  },
-  "dialogs": {
-    "edit_tier": {
-      "title": "Деңгейді өңдеу",
-      "description": "Деңгей параметрлерін жаңарту",
-      "tier_name": "Деңгей атауы",
-      "min_points": "Минималды ұпайлар",
-      "discount_percent": "Жеңілдік (%)"
-    },
-    "adjust_points": {
-      "title": "Нүктелерді реттеңіз",
-      "description": "Тұтынушы шотынан ұпайларды қосыңыз немесе есептеңіз",
-      "client_email": "Клиенттің электрондық поштасы",
-      "client_email_placeholder": "client@example.com",
-      "points": "Ұпайлар (қайта алу үшін теріс ұпайларды пайдаланыңыз)",
-      "points_placeholder": "100",
-      "reason": "Себеп",
-      "reason_placeholder": "Қолмен реттеу"
-    }
-  },
-  "buttons": {
-    "cancel": "Болдырмау",
-    "save_changes": "Өзгерістерді сақтау",
-    "adjust_points": "Нүктелерді реттеңіз"
-  },
-  "toasts": {
-    "tier_updated": "Деңгей сәтті жаңартылды",
-    "points_adjusted_add": "{{points}} ұпай қосылды {{email}}",
-    "points_adjusted_deduct": "{{email}} бастап есептен шығарылған {{points}} ұпай",
-    "failed_load": "Транзакциялар жүктелмеді",
-    "failed_adjust": "Ұпайларды реттеу мүмкін болмады"
   }
 }

@@ -1,47 +1,59 @@
 {
-  "title": "Panneau de contrôle",
-  "subtitle": "Gestion des utilisateurs, de la fidélité et de l'engagement",
   "quick_actions": {
-    "title": "Actions rapides",
-    "user_management": {
-      "title": "Gestion des utilisateurs",
-      "description": "Gérer les comptes d'utilisateurs et les autorisations"
+    "challenges": {
+      "description": "Création et gestion de challenges",
+      "title": "Défis"
     },
     "loyalty_management": {
-      "title": "Gestion de la fidélité",
-      "description": "Gérer les points et les niveaux de fidélité"
-    },
-    "referral_program": {
-      "title": "Programme de parrainage",
-      "description": "Afficher et gérer les références"
-    },
-    "challenges": {
-      "title": "Défis",
-      "description": "Création et gestion de challenges"
+      "description": "Gérer les points et les niveaux de fidélité",
+      "title": "Gestion de la fidélité"
     },
     "notifications": {
-      "title": "Notifications",
-      "description": "Envoi et gestion des notifications"
+      "description": "Envoi et gestion des notifications",
+      "title": "Notifications"
     },
     "photo_gallery": {
-      "title": "Galerie de photos",
-      "description": "Gestion de photos et portfolio clients"
+      "description": "Gestion de photos et portfolio clients",
+      "title": "Galerie de photos"
+    },
+    "referral_program": {
+      "description": "Afficher et gérer les références",
+      "title": "Programme de parrainage"
+    },
+    "title": "Actions rapides",
+    "user_management": {
+      "description": "Gérer les comptes d'utilisateurs et les autorisations",
+      "title": "Gestion des utilisateurs"
     }
   },
+  "recent_activity": {
+    "challenge_completed": "Défi \"{{name}}\" complété par {{count}}\u00a0utilisateurs",
+    "challenge_completed_one": "",
+    "challenge_completed_many": "",
+    "challenge_completed_other": "",
+    "day_ago": "Il y a {{count}}\u00a0jours",
+    "day_ago_one": "",
+    "day_ago_many": "",
+    "day_ago_other": "",
+    "hours_ago": "Il y a {{count}}\u00a0heures",
+    "hours_ago_one": "",
+    "hours_ago_many": "",
+    "hours_ago_other": "",
+    "new_tier_activated": "Nouveau niveau de fidélité activé",
+    "subtitle": "Actions récentes dans le panneau d'administration",
+    "title": "Activité récente",
+    "users_registered": "{{count}} nouveaux utilisateurs enregistrés",
+    "users_registered_one": "",
+    "users_registered_many": "",
+    "users_registered_other": ""
+  },
   "stats": {
-    "total_users": "Nombre total d'utilisateurs",
     "active_challenges": "Défis actifs",
+    "from_last_month": "du mois dernier",
     "loyalty_points_issued": "Points de fidélité émis",
     "total_referrals": "Total des références",
-    "from_last_month": "du mois dernier"
+    "total_users": "Nombre total d'utilisateurs"
   },
-  "recent_activity": {
-    "title": "Activité récente",
-    "subtitle": "Actions récentes dans le panneau d'administration",
-    "new_tier_activated": "Nouveau niveau de fidélité activé",
-    "users_registered": "{{count}} nouveaux utilisateurs enregistrés",
-    "challenge_completed": "Défi \"{{name}}\" complété par {{count}} utilisateurs",
-    "hours_ago": "Il y a {{count}} heures",
-    "day_ago": "Il y a {{count}} jours"
-  }
+  "subtitle": "Gestion des utilisateurs, de la fidélité et de l'engagement",
+  "title": "Panneau de contrôle"
 }

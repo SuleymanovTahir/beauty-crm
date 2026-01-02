@@ -1,77 +1,83 @@
 {
-  "title": "Photo gallery",
-  "subtitle": "Client photo and portfolio management",
-  "upload_photo": "Upload photo",
-  "stats": {
-    "total_photos": "Total photos",
-    "total_views": "Total views",
-    "featured_photos": "Featured photos",
-    "recent_uploads": "Recent downloads"
-  },
-  "filters": {
-    "search_placeholder": "Searching for photos...",
-    "all_categories": "All categories"
-  },
-  "categories": {
-    "haircut": "Haircuts",
-    "coloring": "Coloring",
-    "styling": "Laying",
-    "manicure": "Manicure",
-    "makeup": "Makeup",
-    "other": "Other"
-  },
-  "card": {
-    "views": "views",
-    "featured": "Favorites",
-    "toggle_featured": "Toggle Favorites",
-    "delete": "Delete",
-    "uploaded_by": "Uploaded by {{name}}"
-  },
-  "empty": {
-    "title": "No photos yet",
-    "description": "Upload your first photos to the gallery"
-  },
-  "dialogs": {
-    "upload": {
-      "title": "Upload photo",
-      "description": "Add a new photo to the gallery",
-      "form": {
-        "photo": "Photo",
-        "choose_file": "Select file",
-        "title": "Name",
-        "title_placeholder": "Photo title",
-        "description": "Description",
-        "description_placeholder": "Photo description",
-        "category": "Category",
-        "select_category": "Select category",
-        "client": "Client",
-        "select_client": "Select client",
-        "client_hint": "The photo will be available in the client's gallery"
-      }
-    },
-    "preview": {
-      "title": "Photo preview",
-      "uploaded_by": "Uploaded by {{name}}",
-      "created_at": "{{date}}",
-      "views": "{{count}} views",
-      "category": "Category: {{category}}"
-    },
-    "delete": {
-      "confirm": "Are you sure you want to delete this photo?"
-    }
-  },
   "buttons": {
     "cancel": "Cancel",
-    "upload": "Download",
-    "close": "Close"
+    "close": "Close",
+    "upload": "Download"
   },
+  "card": {
+    "delete": "Delete",
+    "featured": "Favorites",
+    "toggle_featured": "Toggle Favorites",
+    "uploaded_by": "Uploaded by {{name}}",
+    "views": "views"
+  },
+  "categories": {
+    "coloring": "Coloring",
+    "haircut": "Haircuts",
+    "makeup": "Makeup",
+    "manicure": "Manicure",
+    "other": "Other",
+    "styling": "Laying"
+  },
+  "dialogs": {
+    "delete": {
+      "confirm": "Are you sure you want to delete this photo?"
+    },
+    "preview": {
+      "category": "Category: {{category}}",
+      "created_at": "{{date}}",
+      "title": "Photo preview",
+      "uploaded_by": "Uploaded by {{name}}",
+      "views": "{{count}} views"
+    },
+    "upload": {
+      "description": "Add a new photo to the gallery",
+      "form": {
+        "after_photo": "Фото \"После\"",
+        "before_after": "До/После",
+        "before_photo": "Фото \"До\"",
+        "category": "Category",
+        "choose_file": "Select file",
+        "client": "Client",
+        "client_hint": "The photo will be available in the client's gallery",
+        "description": "Description",
+        "description_placeholder": "Photo description",
+        "photo": "Photo",
+        "select_category": "Select category",
+        "select_client": "Select client",
+        "single_photo": "Одно фото",
+        "title": "Name",
+        "title_placeholder": "Photo title",
+        "upload_type": "Тип загрузки"
+      },
+      "title": "Upload photo"
+    }
+  },
+  "empty": {
+    "description": "Upload your first photos to the gallery",
+    "title": "No photos yet"
+  },
+  "filters": {
+    "all_categories": "All categories",
+    "search_placeholder": "Searching for photos..."
+  },
+  "stats": {
+    "featured_photos": "Featured photos",
+    "recent_uploads": "Recent downloads",
+    "total_photos": "Total photos",
+    "total_views": "Total views"
+  },
+  "subtitle": "Client photo and portfolio management",
+  "title": "Photo gallery",
   "toasts": {
-    "uploaded": "Photo uploaded successfully",
     "deleted": "Photo deleted successfully",
-    "featured_updated": "Favorite status updated",
+    "failed_delete": "Failed to delete photo",
+    "failed_featured": "Failed to update favorite status",
     "failed_load": "Failed to upload photos",
     "failed_upload": "Failed to upload photo",
-    "failed_delete": "Failed to delete photo",
-    "failed_featured": "Failed to update favorite status"
-  }
+    "featured_updated": "Favorite status updated",
+    "select_both_photos": "Please select both before and after photos",
+    "uploaded": "Photo uploaded successfully"
+  },
+  "upload_photo": "Upload photo"
 }

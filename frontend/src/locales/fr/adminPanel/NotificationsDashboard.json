@@ -1,21 +1,82 @@
 {
-  "title": "Panneau de notifications",
-  "subtitle": "Gestion et envoi des notifications aux clients",
-  "save_template": "Enregistrer le modèle",
-  "send_notification": "Envoyer une notification",
-  "stats": {
-    "total_sent": "Total envoyé",
-    "email_sent": "E-mail envoyé",
-    "push_sent": "Push envoyé",
-    "sms_sent": "SMS envoyé"
+  "buttons": {
+    "cancel": "Annuler",
+    "save_template": "Enregistrer le modèle",
+    "send_notification": "Envoyer une notification"
   },
-  "templates": {
-    "title": "Modèles de notifications",
-    "description": "Modèles rapides pour les notifications courantes",
-    "use_template": "Utiliser un modèle"
+  "dialogs": {
+    "send": {
+      "description": "Créez et envoyez des notifications à vos clients",
+      "form": {
+        "appointment_date": "Date d'enregistrement",
+        "appointment_filter": "Filtrer par entrées",
+        "appointment_filters": {
+          "date_range": "Plage de dates",
+          "specific_date": "Date précise",
+          "tomorrow": "Demain"
+        },
+        "end_date": "Date de fin",
+        "loyalty_tier": "Niveau de fidélité",
+        "message": "Message",
+        "message_placeholder": "Texte de notification",
+        "notification_type": "Type de notification",
+        "repeat_end_date": "Terminer la rediffusion",
+        "repeat_interval": "Répéter l'intervalle",
+        "repeat_intervals": {
+          "daily": "Tous les jours",
+          "monthly": "Mensuel",
+          "weekly": "Hebdomadaire"
+        },
+        "repeat_notification": "Répéter la notification",
+        "schedule_date": "Date d'envoi",
+        "schedule_notification": "Planifier une notification",
+        "schedule_time": "Délai d'expédition",
+        "segments": {
+          "active": "Clients actifs",
+          "all": "Tous les clients",
+          "appointment_based": "D'après les dossiers",
+          "inactive": "Clients inactifs",
+          "service_based": "Par prestations",
+          "tier": "Par niveau de fidélité"
+        },
+        "select_filter": "Sélectionnez le filtre",
+        "select_tier": "Sélectionnez le niveau",
+        "service_filter": "Service/Procédure",
+        "service_hint": "Les clients inscrits à ce service recevront une notification",
+        "service_placeholder": "Entrez le nom ou l'ID du service",
+        "start_date": "date de début",
+        "target_segment": "Segment cible",
+        "tiers": {
+          "bronze": "Bronze",
+          "gold": "Or",
+          "platinum": "Platine",
+          "silver": "Argent"
+        },
+        "title": "Titre",
+        "title_placeholder": "Titre de la notification"
+      },
+      "title": "Envoyer une nouvelle notification"
+    },
+    "template": {
+      "description": "Créer un modèle de notification réutilisable",
+      "form": {
+        "message": "Message",
+        "message_placeholder": "Utilisez {variable} pour le contenu dynamique",
+        "template_name": "Nom du modèle",
+        "template_name_placeholder": "par exemple, message de bienvenue",
+        "title": "Titre",
+        "title_placeholder": "Titre de la notification",
+        "type": "Taper",
+        "types": {
+          "email": "Email",
+          "push": "Notification poussée",
+          "sms": "SMS"
+        }
+      },
+      "title": "Enregistrer comme modèle"
+    }
   },
   "history": {
-    "title": "Historique des notifications",
     "description": "Toutes les notifications envoyées et programmées",
     "filters": {
       "all": "Tous",
@@ -23,108 +84,47 @@
       "push": "Push",
       "sms": "SMS"
     },
+    "scheduled": "Prévu",
+    "statuses": {
+      "failed": "Échoué",
+      "pending": "En attendant",
+      "sent": "Envoyé"
+    },
     "table": {
-      "status": "Statut",
-      "title": "Titre",
-      "type": "Taper",
+      "date": "Date",
       "recipients": "Destinataires",
       "sent_failed": "Envoyé/Échec",
-      "date": "Date"
+      "status": "Statut",
+      "title": "Titre",
+      "type": "Taper"
     },
-    "statuses": {
-      "sent": "Envoyé",
-      "pending": "En attendant",
-      "failed": "Échoué"
-    },
-    "scheduled": "Prévu"
+    "title": "Historique des notifications"
+  },
+  "save_template": "Enregistrer le modèle",
+  "send_notification": "Envoyer une notification",
+  "stats": {
+    "email_sent": "E-mail envoyé",
+    "push_sent": "Push envoyé",
+    "sms_sent": "SMS envoyé",
+    "total_sent": "Total envoyé"
+  },
+  "subtitle": "Gestion et envoi des notifications aux clients",
+  "templates": {
+    "description": "Modèles rapides pour les notifications courantes",
+    "title": "Modèles de notifications",
+    "use_template": "Utiliser un modèle"
+  },
+  "title": "Panneau de notifications",
+  "toasts": {
+    "failed_load": "Échec du chargement des notifications",
+    "failed_save_template": "Échec de l'enregistrement du modèle",
+    "failed_send": "Échec de l'envoi de la notification",
+    "sent": "Notification envoyée avec succès",
+    "template_saved": "Modèle enregistré avec succès"
   },
   "types": {
     "email": "Email",
     "push": "Push",
     "sms": "SMS"
-  },
-  "dialogs": {
-    "send": {
-      "title": "Envoyer une nouvelle notification",
-      "description": "Créez et envoyez des notifications à vos clients",
-      "form": {
-        "notification_type": "Type de notification",
-        "title": "Titre",
-        "title_placeholder": "Titre de la notification",
-        "message": "Message",
-        "message_placeholder": "Texte de notification",
-        "target_segment": "Segment cible",
-        "segments": {
-          "all": "Tous les clients",
-          "active": "Clients actifs",
-          "inactive": "Clients inactifs",
-          "tier": "Par niveau de fidélité",
-          "appointment_based": "D'après les dossiers",
-          "service_based": "Par prestations"
-        },
-        "loyalty_tier": "Niveau de fidélité",
-        "select_tier": "Sélectionnez le niveau",
-        "tiers": {
-          "bronze": "Bronze",
-          "silver": "Argent",
-          "gold": "Or",
-          "platinum": "Platine"
-        },
-        "appointment_filter": "Filtrer par entrées",
-        "select_filter": "Sélectionnez le filtre",
-        "appointment_filters": {
-          "tomorrow": "Demain",
-          "specific_date": "Date précise",
-          "date_range": "Plage de dates"
-        },
-        "appointment_date": "Date d'enregistrement",
-        "start_date": "date de début",
-        "end_date": "Date de fin",
-        "service_filter": "Service/Procédure",
-        "service_placeholder": "Entrez le nom ou l'ID du service",
-        "service_hint": "Les clients inscrits à ce service recevront une notification",
-        "schedule_notification": "Planifier une notification",
-        "schedule_date": "Date d'envoi",
-        "schedule_time": "Délai d'expédition",
-        "repeat_notification": "Répéter la notification",
-        "repeat_interval": "Répéter l'intervalle",
-        "repeat_intervals": {
-          "daily": "Tous les jours",
-          "weekly": "Hebdomadaire",
-          "monthly": "Mensuel"
-        },
-        "repeat_end_date": "Terminer la rediffusion"
-      }
-    },
-    "template": {
-      "title": "Enregistrer comme modèle",
-      "description": "Créer un modèle de notification réutilisable",
-      "form": {
-        "template_name": "Nom du modèle",
-        "template_name_placeholder": "par exemple, message de bienvenue",
-        "title": "Titre",
-        "title_placeholder": "Titre de la notification",
-        "message": "Message",
-        "message_placeholder": "Utilisez {variable} pour le contenu dynamique",
-        "type": "Taper",
-        "types": {
-          "push": "Notification poussée",
-          "email": "Email",
-          "sms": "SMS"
-        }
-      }
-    }
-  },
-  "buttons": {
-    "cancel": "Annuler",
-    "send_notification": "Envoyer une notification",
-    "save_template": "Enregistrer le modèle"
-  },
-  "toasts": {
-    "sent": "Notification envoyée avec succès",
-    "template_saved": "Modèle enregistré avec succès",
-    "failed_load": "Échec du chargement des notifications",
-    "failed_send": "Échec de l'envoi de la notification",
-    "failed_save_template": "Échec de l'enregistrement du modèle"
   }
 }

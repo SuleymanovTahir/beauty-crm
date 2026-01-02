@@ -1,19 +1,20 @@
 {
   "admin_panel": "Admin panel",
-  "logout": "Log out",
   "go_to_crm": "Go to CRM",
+  "logout": "Log out",
   "menu": {
-    "dashboard": "Control Panel",
     "bookings": "Bookings",
-    "clients": "Clients",
     "calendar": "Calendar",
-    "user_management": "User management",
-    "loyalty_management": "Loyalty management",
-    "referral_program": "Referral program",
     "challenges": "Challenges",
+    "clients": "Clients",
+    "dashboard": "Control Panel",
+    "feature_management": "Feature Management",
+    "loyalty_management": "Loyalty management",
     "notifications": "Notifications",
     "photo_gallery": "Photo gallery",
+    "public_content": "Public Content",
+    "referral_program": "Referral program",
     "services": "Services",
-    "public_content": "Public Content"
+    "user_management": "User management"
   }
 }

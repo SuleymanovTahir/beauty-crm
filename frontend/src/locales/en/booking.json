@@ -1,136 +1,140 @@
 {
   "booking": {
-    "menu": {
-      "services": "Select Services",
-      "professional": "Professional",
-      "datetime": "Date & Time",
-      "selected": "selected",
-      "selectServices": "Pick treatment",
-      "selectProfessional": "Select master",
-      "selectDateTime": "Pick time slot",
-      "reset": "Reset Selection",
-      "completed": "Completed"
+    "confirm": {
+      "bookNow": "Book Now",
+      "details": "Details",
+      "error": "Error creating booking",
+      "phone": "Phone",
+      "subtitle": "Please review your details",
+      "success": "Booking confirmed!",
+      "summary": "Booking Summary",
+      "title": "Booking Confirmation"
     },
     "datetime": {
-      "title": "Select Date & Time",
-      "date": "Date",
-      "time": "Time",
-      "dateFirst": "Please select a date first",
-      "noSlots": "No results for this day",
-      "morning": "Morning",
       "afternoon": "Afternoon",
-      "evening": "Evening"
+      "date": "Date",
+      "dateFirst": "Please select a date first",
+      "evening": "Evening",
+      "morning": "Morning",
+      "noSlots": "No results for this day",
+      "time": "Time",
+      "title": "Select Date & Time"
     },
+    "loading": "Loading...",
+    "menu": {
+      "completed": "Completed",
+      "datetime": "Date & Time",
+      "professional": "Professional",
+      "reset": "Reset Selection",
+      "selectDateTime": "Pick time slot",
+      "selected": "selected",
+      "selectProfessional": "Select master",
+      "selectServices": "Pick treatment",
+      "services": "Select Services"
+    },
+    "min": "min",
     "professional": {
-      "title": "Select Professional",
       "anyAvailable": "Any Available Professional",
+      "firstAvailable": "First available master will take your appointment",
       "reviews": "reviews",
-      "firstAvailable": "First available master will take your appointment"
-    },
-    "confirm": {
-      "title": "Booking Confirmation",
-      "subtitle": "Please review your details",
-      "summary": "Booking Summary",
-      "details": "Details",
-      "phone": "Phone",
-      "bookNow": "Book Now",
-      "success": "Booking confirmed!",
-      "error": "Error creating booking"
+      "title": "Select Professional"
     },
     "services": {
-      "title": "Select Services",
-      "search": "Search services...",
       "allCategories": "All Categories",
+      "continue": "Complete Booking",
       "noDescription": "Professional service",
-      "total": "Total Amount",
-      "continue": "Complete Booking"
+      "search": "Search services...",
+      "title": "Select Services",
+      "total": "Total Amount"
     },
-    "totalDuration": "Total duration",
-    "min": "min",
-    "loading": "Loading..."
+    "totalDuration": "Total duration"
   },
+  "change_booking": "Change Booking",
+  "change_master": "Change Master",
+  "change_service": "Change Service",
   "common": {
-    "select": "Select",
-    "next": "Next",
+    "any_master": "Любой мастер",
     "back": "Back",
-    "edit": "Edit",
     "cancel": "Cancel",
+    "change": "Change",
+    "edit": "Edit",
+    "next": "Next",
+    "professional": "Professional",
+    "reschedule": "Reschedule",
+    "reset": "Reset All",
     "save": "Save",
-    "professional": "Professional"
-  },
-  "salon": {
-    "name": "Beauty Salon",
-    "address": "Address"
-  },
-  "menu": {
-    "services": "Choice of services",
-    "professional": "Master",
-    "datetime": "Date and time",
-    "selected": "selected",
-    "selectServices": "Select a service",
-    "selectProfessional": "Select a wizard",
-    "selectDateTime": "Select time",
-    "reset": "Reset selection",
-    "completed": "Completed",
-    "continue": "Confirm booking"
-  },
-  "datetime": {
-    "title": "Select date and time",
-    "date": "Date",
-    "time": "Time",
-    "dateFirst": "Please select a date first",
-    "noSlots": "No time available for this day",
-    "morning": "Morning",
-    "afternoon": "Day",
-    "evening": "Evening",
-    "selectDateFirst": "First select a date"
+    "select": "Select"
   },
   "confirm": {
-    "title": "Confirmation of booking",
-    "subtitle": "Please check details",
-    "summary": "Booking summary",
-    "details": "Details",
-    "phone": "Telephone",
     "bookNow": "Book",
-    "success": "Registration confirmed!",
-    "error": "Error creating booking",
-    "timeout": "Request timed out. Please try again.",
-    "phoneNeeded": "Stay in touch",
-    "phoneDesc": "Please include your phone number for confirmation and updates.",
-    "professional": "Master",
-    "dateTime": "Date & Time",
-    "date": "Date",
-    "time": "Time",
     "confirm": "Confirm booking",
+    "date": "Date",
+    "dateTime": "Date & Time",
+    "details": "Details",
+    "error": "Error creating booking",
+    "phone": "Telephone",
+    "phoneDesc": "Please include your phone number for confirmation and updates.",
+    "phoneNeeded": "Stay in touch",
+    "professional": "Master",
+    "subtitle": "Please check details",
+    "success": "Registration confirmed!",
+    "summary": "Booking summary",
+    "time": "Time",
+    "timeout": "Request timed out. Please try again.",
+    "title": "Confirmation of booking",
     "total": "Total"
   },
+  "datetime": {
+    "afternoon": "Day",
+    "date": "Date",
+    "dateFirst": "Please select a date first",
+    "evening": "Evening",
+    "morning": "Morning",
+    "noSlots": "No time available for this day",
+    "selectDateFirst": "First select a date",
+    "time": "Time",
+    "title": "Select date and time"
+  },
   "invalid_phone": "Please enter a valid phone number",
+  "loading": "Loading...",
+  "menu": {
+    "completed": "Completed",
+    "continue": "Confirm booking",
+    "datetime": "Date and time",
+    "professional": "Master",
+    "reset": "Reset selection",
+    "selectDateTime": "Select time",
+    "selected": "selected",
+    "selectProfessional": "Select a wizard",
+    "selectServices": "Select a service",
+    "services": "Choice of services"
+  },
+  "min": "min",
+  "newBooking": "New booking",
+  "professional": {
+    "anyAvailable": "Flexible Match",
+    "anyDesc": "We'll match you with the best available professional",
+    "availableOn": "Available",
+    "availableToday": "Available Today",
+    "ready": "Ready",
+    "reviews": "Reviews",
+    "title": "Choose Master"
+  },
+  "salon": {
+    "address": "Address",
+    "name": "Beauty Salon"
+  },
   "services": {
-    "title": "Select services",
-    "search": "Search for services...",
     "allCategories": "All categories",
-    "noDescription": "Professional service",
-    "total": "Total amount",
     "continue": "Continue",
+    "noDescription": "Professional service",
+    "search": "Search for services...",
     "selected": "Services selected",
     "service_one": "service",
     "service_few": "services",
-    "service_many": "services"
+    "service_many": "services",
+    "title": "Select services",
+    "total": "Total amount"
   },
-  "totalDuration": "Total duration",
-  "min": "min",
-  "loading": "Loading...",
-  "newBooking": "New booking",
-  "change_booking": "Change Booking",
-  "change_service": "Change Service",
-  "change_master": "Change Master",
-  "professional": {
-    "title": "Choose Master",
-    "anyAvailable": "Flexible Match",
-    "anyDesc": "We'll match you with the best available professional",
-    "ready": "Ready",
-    "availableToday": "Available Today",
-    "availableOn": "Available",
-    "reviews": "Reviews"
-  }
+  "totalDuration": "Total duration"
 }

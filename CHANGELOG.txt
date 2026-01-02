@@ -1,5 +1,53 @@
 # CHANGELOG - Память проекта Beauty CRM
 
+## 2026-01-02: Управление Функционалом и Валидность Баллов Лояльности
+
+### ПРОБЛЕМА
+1. **Lack of Control**: Отсутствовала возможность включать/выключать модули (Лояльность, Рефералка, Челленджи) без изменения кода.
+2. **Infinite Points**: Баллы лояльности не имели срока действия (сгорания), что создавало финансовые обязательства для салона.
+3. **Hardcoded Features**: Клиентское приложение не знало, какие фичи включены, и всегда пыталось их отображать.
+
+### РЕШЕНИЕ
+1. **Feature Management System**:
+    - Создан `FeatureService` для управления флагами функций (`loyalty_program`, `referral_program`, `challenges`).
+    - Поддержка глобального вкл/выкл, расписания (start/end date) и белых списков (whitelist) для бета-тестирования.
+    - Добавлен Admin UI: страница `FeatureManagement` для настройки флагов.
+    - Динамический API: `GET /api/public/features` отдает клиенту только доступные ему фичи.
+2. **Loyalty Expiration**:
+    - В `salon_settings` добавлено поле `points_expiration_days`.
+    - `LoyaltyService` при начислении баллов теперь рассчитывает `expires_at`.
+    - Добавлена настройка "Срок действия баллов" в `LoyaltyManagement` (Admin).
+3. **Client App Integration**:
+    - `AccountPage.tsx` теперь запрашивает доступные фичи при загрузке.
+    - Вкладки (Loyalty, Achievements/Challenges) скрываются, если фича отключена.
+4. **Localization**:
+    - Добавлены переводы для новых страниц админки (Feature Management).
+
+### ВАЖНО ПОМНИТЬ
+- **Feature Flags SSOT**: Все проверки фич должны идти через `FeatureService.is_feature_enabled()`. Не проверять JSON из БД напрямую.
+- **Whitelist Priority**: Если задан whitelist, фича доступна ТОЛЬКО указанным ID, даже если она глобально включена.
+- **Client Cache**: Клиент может кешировать состояние фич. Убедиться, что критичные действия (начисление баллов) проверяют флаг на бэкенде.
+
+### TESTING
+- ✅ Проверено глобальное отключение/включение фич через Админку.
+- ✅ Проверено скрытие вкладок в Клиентском приложении.
+- ✅ Проверено начисление баллов с корректной датой сгорания.
+- ✅ Скрипт верификации `check_features.py` отработал успешно.
+
+### ФАЙЛЫ
+**НОВЫЕ:**
+- `backend/services/features.py` - NEW (Сервис фич)
+- `frontend/src/pages/adminPanel/FeatureManagement.tsx` - NEW (UI управления)
+
+**ИЗМЕНЕНЫ:**
+- `backend/services/loyalty.py` - MODIFIED (Логика сгорания)
+- `backend/api/client_auth.py` - MODIFIED (API фич)
+- `frontend/public_landing/pages/account/AccountPage.tsx` - MODIFIED (Интеграция флагов)
+- `frontend/src/pages/adminPanel/LoyaltyManagement.tsx` - MODIFIED (Настройка сгорания)
+- `CHANGELOG.txt`
+
+# CHANGELOG - Память проекта Beauty CRM
+
 ## 2024-05-24: Финальный аудит и нормализация Личного Кабинета v2
 
 ### ПРОБЛЕМА

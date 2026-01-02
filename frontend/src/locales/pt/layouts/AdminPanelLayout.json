@@ -1,19 +1,20 @@
 {
   "admin_panel": "Painel de administração",
-  "logout": "Sair",
   "go_to_crm": "Vá para o CRM",
+  "logout": "Sair",
   "menu": {
-    "dashboard": "Painel de controle",
-    "user_management": "Gerenciamento de usuários",
-    "loyalty_management": "Gestão de fidelidade",
-    "referral_program": "Programa de referência",
+    "bookings": "bookings",
+    "calendar": "Calendário",
     "challenges": "Desafios",
+    "clients": "Clientes",
+    "dashboard": "Painel de controle",
+    "feature_management": "Feature Management",
+    "loyalty_management": "Gestão de fidelidade",
     "notifications": "Notificações",
     "photo_gallery": "Galeria de fotos",
-    "bookings": "bookings",
-    "clients": "Clientes",
-    "calendar": "Calendário",
+    "public_content": "Conteúdo Público",
+    "referral_program": "Programa de referência",
     "services": "Serviços",
-    "public_content": "Conteúdo Público"
+    "user_management": "Gerenciamento de usuários"
   }
 }

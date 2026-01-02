@@ -11,6 +11,7 @@ from typing import Optional, List
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
+from services.features import FeatureService
 import traceback
 
 # No prefix here because it's added in main.py
@@ -426,6 +427,42 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
     except Exception as e:
         log_error(f"Error loading achievements: {e}", "client_auth")
         return {"success": True, "achievements": [], "challenges": []}
+
+@router.get("/features")
+async def get_client_features(session_token: Optional[str] = Cookie(None)):
+    """Получить доступные фичи для клиента"""
+    user = require_auth(session_token)
+    # If not authenticated, we can still return general availability (without whitelist)
+    # But usually this is called by logged in client app
+    
+    user_id = user.get("id") if user else None
+    
+    # We need instagram_id for whitelist? Or user_id? 
+    # FeatureService checks user_id. 
+    # Note: clients table instagram_id is string, users table id is int. 
+    # Feature whitelist stores IDs. 
+    # Ideally should support both or map them.
+    # FeatureService.is_feature_enabled checks string conversion.
+    
+    # Let's try to get client_id if possible
+    # We can pass user_id (int) from users table. 
+    # Or we can pass client_id (str) from clients table.
+    # Let's pass user_id for now as it is more unique/stable for 'users'. 
+    # But wait, 'clients' are separate?
+    # If the user is a client, they are in `users` table with role='client'? 
+    # Or just `clients` table?
+    # Current code suggests `clients` table acts as profile for `users` table entry (sometimes linked).
+    # Let's pass user_id.
+    
+    service = FeatureService()
+    
+    # Check all known features
+    keys = ["loyalty_program", "referral_program", "challenges"]
+    features = {}
+    for k in keys:
+        features[k] = service.is_feature_enabled(k, user_id)
+        
+    return {"success": True, "features": features}
 
 @router.get("/beauty-metrics")
 async def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None)):

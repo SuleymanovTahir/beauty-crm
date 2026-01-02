@@ -1,77 +1,83 @@
 {
-  "title": "Galerie de photos",
-  "subtitle": "Gestion de photos et portfolio clients",
-  "upload_photo": "Télécharger une photo",
-  "stats": {
-    "total_photos": "Photos totales",
-    "total_views": "Vues totales",
-    "featured_photos": "Photos en vedette",
-    "recent_uploads": "Téléchargements récents"
-  },
-  "filters": {
-    "search_placeholder": "Recherche de photos...",
-    "all_categories": "Toutes les catégories"
-  },
-  "categories": {
-    "haircut": "Coupes de cheveux",
-    "coloring": "Coloration",
-    "styling": "Pose",
-    "manicure": "Manucure",
-    "makeup": "Se maquiller",
-    "other": "Autre"
-  },
-  "card": {
-    "views": "vues",
-    "featured": "Favoris",
-    "toggle_featured": "Basculer les favoris",
-    "delete": "Supprimer",
-    "uploaded_by": "Téléchargé par {{name}}"
-  },
-  "empty": {
-    "title": "Pas encore de photos",
-    "description": "Téléchargez vos premières photos dans la galerie"
-  },
-  "dialogs": {
-    "upload": {
-      "title": "Télécharger une photo",
-      "description": "Ajouter une nouvelle photo à la galerie",
-      "form": {
-        "photo": "Photo",
-        "choose_file": "Sélectionner un fichier",
-        "title": "Nom",
-        "title_placeholder": "Titre de la photo",
-        "description": "Description",
-        "description_placeholder": "Description des photos",
-        "category": "Catégorie",
-        "select_category": "Sélectionnez la catégorie",
-        "client": "Client",
-        "select_client": "Sélectionner un client",
-        "client_hint": "La photo sera disponible dans la galerie du client"
-      }
-    },
-    "preview": {
-      "title": "Aperçu des photos",
-      "uploaded_by": "Téléchargé par {{name}}",
-      "created_at": "{{date}}",
-      "views": "{{count}} vues",
-      "category": "Catégorie : {{catégorie}}"
-    },
-    "delete": {
-      "confirm": "Êtes-vous sûr de vouloir supprimer cette photo ?"
-    }
-  },
   "buttons": {
     "cancel": "Annuler",
-    "upload": "Télécharger",
-    "close": "Fermer"
+    "close": "Fermer",
+    "upload": "Télécharger"
   },
+  "card": {
+    "delete": "Supprimer",
+    "featured": "Favoris",
+    "toggle_featured": "Basculer les favoris",
+    "uploaded_by": "Téléchargé par {{name}}",
+    "views": "vues"
+  },
+  "categories": {
+    "coloring": "Coloration",
+    "haircut": "Coupes de cheveux",
+    "makeup": "Se maquiller",
+    "manicure": "Manucure",
+    "other": "Autre",
+    "styling": "Pose"
+  },
+  "dialogs": {
+    "delete": {
+      "confirm": "Êtes-vous sûr de vouloir supprimer cette photo\u00a0?"
+    },
+    "preview": {
+      "category": "Catégorie\u00a0: {{catégorie}}",
+      "created_at": "{{date}}",
+      "title": "Aperçu des photos",
+      "uploaded_by": "Téléchargé par {{name}}",
+      "views": "{{count}} vues"
+    },
+    "upload": {
+      "description": "Ajouter une nouvelle photo à la galerie",
+      "form": {
+        "after_photo": "Фото \"После\"",
+        "before_after": "До/После",
+        "before_photo": "Фото \"До\"",
+        "category": "Catégorie",
+        "choose_file": "Sélectionner un fichier",
+        "client": "Client",
+        "client_hint": "La photo sera disponible dans la galerie du client",
+        "description": "Description",
+        "description_placeholder": "Description des photos",
+        "photo": "Photo",
+        "select_category": "Sélectionnez la catégorie",
+        "select_client": "Sélectionner un client",
+        "single_photo": "Одно фото",
+        "title": "Nom",
+        "title_placeholder": "Titre de la photo",
+        "upload_type": "Тип загрузки"
+      },
+      "title": "Télécharger une photo"
+    }
+  },
+  "empty": {
+    "description": "Téléchargez vos premières photos dans la galerie",
+    "title": "Pas encore de photos"
+  },
+  "filters": {
+    "all_categories": "Toutes les catégories",
+    "search_placeholder": "Recherche de photos..."
+  },
+  "stats": {
+    "featured_photos": "Photos en vedette",
+    "recent_uploads": "Téléchargements récents",
+    "total_photos": "Photos totales",
+    "total_views": "Vues totales"
+  },
+  "subtitle": "Gestion de photos et portfolio clients",
+  "title": "Galerie de photos",
   "toasts": {
-    "uploaded": "Photo téléchargée avec succès",
     "deleted": "Photo supprimée avec succès",
-    "featured_updated": "Statut de favori mis à jour",
+    "failed_delete": "Échec de la suppression de la photo",
+    "failed_featured": "Échec de la mise à jour du statut de favori",
     "failed_load": "Échec du téléchargement des photos",
     "failed_upload": "Échec du téléchargement de la photo",
-    "failed_delete": "Échec de la suppression de la photo",
-    "failed_featured": "Échec de la mise à jour du statut de favori"
-  }
+    "featured_updated": "Statut de favori mis à jour",
+    "select_both_photos": "Please select both before and after photos",
+    "uploaded": "Photo téléchargée avec succès"
+  },
+  "upload_photo": "Télécharger une photo"
 }
