@@ -4,6 +4,7 @@ import { Shield, Loader, Check, X, Settings } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { toast } from "sonner";
 import { api } from "../../services/api";
+import { useTranslation } from "react-i18next";
 
 interface User {
   id: number;
@@ -24,30 +25,26 @@ interface Permissions {
   [resource: string]: Permission;
 }
 
-const PERMISSION_LABELS: { [key: string]: string } = {
-  clients: "Клиенты",
-  bookings: "Записи",
-  services: "Услуги",
-  analytics: "Аналитика",
-  settings: "Настройки",
-  users: "Пользователи",
-  bot_settings: "Настройки бота",
-  export_data: "Экспорт данных",
-  import_data: "Импорт данных",
-  view_contacts: "Просмотр контактов",
-  instagram_chat: "Чат Instagram",
-  internal_chat: "Внутренний чат",
-  employees: "Сотрудники",
-  reports: "Отчеты",
-  financial_data: "Финансовые данные",
-};
-
 export default function PermissionManagement() {
+  const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [permissions, setPermissions] = useState<Permissions>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  // Function to get permission label with translation
+  const getPermissionLabel = (key: string): string => {
+    return t(`permissions:perm_${key}`, key);
+  };
+
+  // List of all permission resources
+  const permissionResources = [
+    'clients', 'bookings', 'services', 'analytics', 'settings',
+    'users', 'bot_settings', 'export_data', 'import_data',
+    'view_contacts', 'instagram_chat', 'internal_chat',
+    'employees', 'reports', 'financial_data'
+  ];
 
   useEffect(() => {
     loadUsers();
@@ -69,7 +66,7 @@ export default function PermissionManagement() {
       }
     } catch (error) {
       console.error("Error loading users:", error);
-      toast.error("Ошибка загрузки пользователей");
+      toast.error(t('permissions:error_loading_users', 'Ошибка загрузки пользователей'));
     } finally {
       setLoading(false);
     }
@@ -81,7 +78,7 @@ export default function PermissionManagement() {
       setPermissions(response.permissions || {});
     } catch (error) {
       console.error("Error loading permissions:", error);
-      toast.error("Ошибка загрузки прав доступа");
+      toast.error(t('permissions:error_loading_permissions', 'Ошибка загрузки прав доступа'));
     }
   };
 
@@ -96,18 +93,18 @@ export default function PermissionManagement() {
       if (currentValue) {
         // Revoke permission
         await api.revokePermission(selectedUser.id, resource);
-        toast.success("Право отозвано");
+        toast.success(t('permissions:permission_revoked', 'Право отозвано'));
       } else {
         // Grant permission
         await api.grantPermission(selectedUser.id, resource);
-        toast.success("Право предоставлено");
+        toast.success(t('permissions:permission_granted', 'Право предоставлено'));
       }
 
       // Reload permissions
       await loadUserPermissions(selectedUser.id);
     } catch (error: any) {
       console.error("Error toggling permission:", error);
-      toast.error(error.message || "Ошибка изменения прав");
+      toast.error(error.message || t('permissions:error_changing_permissions', 'Ошибка изменения прав'));
     } finally {
       setSaving(false);
     }
@@ -176,7 +173,7 @@ export default function PermissionManagement() {
               </div>
 
               <div className="space-y-4">
-                {Object.entries(PERMISSION_LABELS).map(([resource, label]) => {
+                {permissionResources.map((resource) => {
                   const perm = permissions[resource] || {
                     view: false,
                     create: false,
@@ -192,16 +189,16 @@ export default function PermissionManagement() {
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                           <Shield className="w-5 h-5 text-gray-400" />
-                          <span className="font-medium text-gray-900">{label}</span>
+                          <span className="font-medium text-gray-900">{getPermissionLabel(resource)}</span>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                         {[
-                          { key: "view", label: "Просмотр" },
-                          { key: "create", label: "Создание" },
-                          { key: "edit", label: "Редактирование" },
-                          { key: "delete", label: "Удаление" },
+                          { key: "view", label: t('permissions:view_permission', 'Просмотр') },
+                          { key: "create", label: t('permissions:create_permission', 'Создание') },
+                          { key: "edit", label: t('permissions:edit_permission', 'Редактирование') },
+                          { key: "delete", label: t('permissions:delete_permission', 'Удаление') },
                         ].map(({ key, label: actionLabel }) => (
                           <button
                             key={key}
