@@ -1,5 +1,53 @@
 # CHANGELOG - Память проекта Beauty CRM
 
+## 2024-05-24: Финальный аудит и нормализация Личного Кабинета v2
+
+### ПРОБЛЕМА
+1. **API Inconsistency**: Разные эндпоинты использовали разные способы идентификации клиента (id vs instagram_id).
+2. **Hardcoded UI**: Компоненты Achievements, Gallery и Settings содержали хардкодные RU-локали для дат и валют.
+3. **Partial API Sync**: Настройки уведомлений и приватности не сохранялись в БД.
+4. **UX Gaps**: Отсутствовал тип уведомления в API (appointment/promo/achievement) и нормализация аватаров.
+
+### РЕШЕНИЕ
+1. **Backend Standardization**:
+    - Введена вспомогательная функция `_get_client_id(user, c)` для единого поиска `client_id` по всем эндпоинтам.
+    - Реализована динамическая логика "Real Dynamics" для Beauty-профиля (сравнение текущего периода с предыдущим).
+    - Внедрена автоматическая классификация типов уведомлений на основе содержимого сообщения.
+    - Нормализованы URL аватаров для мастеров (всегда абсолютные пути).
+    - Реализовано сохранение `notification_prefs` и `privacy_prefs` в виде JSON в таблице `clients`.
+2. **Frontend UI/UX Polish**:
+    - **Achievements & Gallery**: Форматирование дат переведено на `toLocaleDateString(undefined, ...)` для полной локалезависимости.
+    - **Settings**: Полная синхронизация с API. Инициализация состояния из БД, поддержка смены пароля и обновления профиля.
+    - **Loyalty**: Переход на динамические уровни (Tier) и валюту (Currency) из конфига салона.
+    - **Gallery**: Улучшен UI переключателя "до/после" и добавлена атрибуция мастеров.
+3. **Data Integrity**:
+    - Исправлен баг в `update_profile` с некорректной привязкой параметров в SQL запросе.
+    - Добавлен эндпоинт `mark-all-read` для уведомлений.
+
+### ВАЖНО ПОМНИТЬ
+- **SSOT Preferences**: Настройки приложения хранятся в `clients.preferences` как JSON. При добавлении новых настроек обновлять и фронт, и логику парсинга в `get_client_profile`.
+- **Absolute URLs**: Бэкенд всегда должен возвращать полные URL для статических файлов, чтобы избежать битых картинок на фронте.
+- **Client Identification**: Всегда использовать `_get_client_id` для работы с данными клиента в `client_auth.py`.
+
+### TESTING
+- ✅ Проверена синхронизация настроек (Push/Email/SMS/Privacy).
+- ✅ Проверена динамика beauty-метрик при наличии визитов.
+- ✅ Проверена локализация дат на разных языках браузера.
+- ✅ Исправлены все lint-ошибки в Masters.tsx и Settings.tsx.
+
+### ФАЙЛЫ
+**ИЗМЕНЕНЫ:**
+- `backend/api/client_auth.py` (Major Logic Update)
+- `frontend/public_landing/pages/account/v2_components/Settings.tsx`
+- `frontend/public_landing/pages/account/v2_components/Achievements.tsx`
+- `frontend/public_landing/pages/account/v2_components/Masters.tsx`
+- `frontend/public_landing/pages/account/v2_components/Gallery.tsx`
+- `frontend/public_landing/pages/account/v2_components/BeautyProfile.tsx`
+- `frontend/public_landing/pages/account/v2_components/Loyalty.tsx`
+- `frontend/public_landing/pages/account/v2_components/Dashboard.tsx`
+- `frontend/public_landing/pages/account/v2_components/Appointments.tsx`
+- `CHANGELOG.txt`
+
 ## 2025-12-28: Откат Редизайна Визарда с сохранением Улучшенного Футера
 
 ### ПРОБЛЕМА
