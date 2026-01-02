@@ -43,6 +43,7 @@ def generate_token() -> str:
 
 def _get_client_id(user: dict, cursor) -> str:
     """Универсальный помощник для получения instagram_id клиента"""
+    log_info(f"🔍 Determining client_id for user: {user.get('id')} ({user.get('username')})", "client_auth")
     # 1. Сначала пробуем социальные ID из сессии
     instagram_id = user.get("instagram_id")
     telegram_id = user.get("telegram_id")
@@ -64,7 +65,14 @@ def _get_client_id(user: dict, cursor) -> str:
         row = cursor.fetchone()
         if row: return row[0]
         
-    # 3. Крайний случай - возвращаем user_id как строку
+    # 3. Наконец, пробуем по username
+    username = user.get("username")
+    if username:
+        cursor.execute("SELECT instagram_id FROM clients WHERE instagram_id = %s LIMIT 1", (username,))
+        row = cursor.fetchone()
+        if row: return row[0]
+        
+    # 4. Крайний случай - возвращаем user_id как строку
     return str(user.get("id", ""))
 
 # ============================================================================
@@ -204,7 +212,7 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         total_saved_points = abs(c.fetchone()[0] or 0)
 
         # Fetch currency
-        c.execute("SELECT value FROM salon_settings WHERE key = 'currency' LIMIT 1")
+        c.execute("SELECT currency FROM salon_settings LIMIT 1")
         currency_row = c.fetchone()
         currency = currency_row[0] if currency_row else "AED"
 
@@ -634,7 +642,7 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
             })
 
         # Fetch currency
-        c.execute("SELECT value FROM salon_settings WHERE key = 'currency' LIMIT 1")
+        c.execute("SELECT currency FROM salon_settings LIMIT 1")
         currency_row = c.fetchone()
         currency = currency_row[0] if currency_row else "AED"
 
@@ -707,7 +715,7 @@ async def get_loyalty(session_token: Optional[str] = Cookie(None)):
             })
 
         # 4. Fetch currency
-        c.execute("SELECT value FROM salon_settings WHERE key = 'currency' LIMIT 1")
+        c.execute("SELECT currency FROM salon_settings LIMIT 1")
         currency_row = c.fetchone()
         currency = currency_row[0] if currency_row else "AED"
 
@@ -754,20 +762,26 @@ async def get_client_profile(session_token: Optional[str] = Cookie(None)):
 
         client_row = c.fetchone()
 
-        # If no client found in clients table, use user data from users table
-        if not client_row:
-            client_row = (
-                user.get("full_name"),  # name
-                user.get("phone"),       # phone
-                user.get("email"),       # email
-                None,                    # avatar
-                None,                    # birthday
-                None,                    # created_at
-                None                     # preferences
-            )
-        
+        # Extract values with safe fallbacks
+        if client_row:
+            res_name = client_row[0] or user.get("full_name", "")
+            res_phone = client_row[1] or user.get("phone", "")
+            res_email = client_row[2] or user.get("email", "")
+            res_avatar = client_row[3]
+            res_birthday = client_row[4]
+            res_created_at = client_row[5]
+            prefs_json = client_row[6]
+        else:
+            res_name = user.get("full_name", "")
+            res_phone = user.get("phone", "")
+            res_email = user.get("email", "")
+            res_avatar = None
+            res_birthday = None
+            res_created_at = None
+            prefs_json = None
+            
         import json
-        prefs = json.loads(client_row[6]) if client_row[6] else {}
+        prefs = json.loads(prefs_json) if prefs_json else {}
 
         # Get loyalty tier
         c.execute("""
@@ -784,12 +798,12 @@ async def get_client_profile(session_token: Optional[str] = Cookie(None)):
         return {
             "success": True,
             "profile": {
-                "name": client_row[0],
-                "phone": client_row[1],
-                "email": client_row[2],
-                "avatar": client_row[3],
-                "birthday": client_row[4],
-                "created_at": client_row[5],
+                "name": res_name,
+                "phone": res_phone,
+                "email": res_email,
+                "avatar": res_avatar,
+                "birthday": res_birthday,
+                "created_at": res_created_at,
                 "preferences": prefs,
                 "tier": tier,
                 "total_points": total_points,
@@ -980,28 +994,30 @@ async def update_profile(
         conn = get_db_connection()
         c = conn.cursor()
 
-        client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("id")
+        client_id = _get_client_id(user, c)
+        user_id = user.get("id")
 
-        # Update client profile
-        updates = []
-        params = []
+        # Update client profile in 'clients' table
+        from db.clients import update_client_info as db_update_client
+        
+        client_data = {}
+        if "name" in profile: client_data["name"] = profile["name"]
+        if "phone" in profile: client_data["phone"] = profile["phone"]
+        if "email" in profile: client_data["email"] = profile["email"]
+        
+        if client_data:
+            db_update_client(client_id, **client_data)
 
-        if "name" in profile:
-            updates.append("name = %s")
-            params.append(profile["name"])
-        if "phone" in profile:
-            updates.append("phone = %s")
-            params.append(profile["phone"])
-        if "email" in profile:
-            updates.append("email = %s")
-            params.append(profile["email"])
-
-        if updates:
-            params.append(client_id)
-            params.append(client_id)
-            query = f"UPDATE clients SET {', '.join(updates)} WHERE instagram_id = %s OR telegram_id = %s"
-            c.execute(query, params)
-            conn.commit()
+        # Update user profile in 'users' table
+        from db.users import update_user_info as db_update_user
+        
+        user_data = {}
+        if "name" in profile: user_data["full_name"] = profile["name"]
+        if "phone" in profile: user_data["phone"] = profile["phone"]
+        if "email" in profile: user_data["email"] = profile["email"]
+        
+        if user_data and user_id:
+            db_update_user(user_id, user_data)
 
         conn.close()
         return {"success": True}
@@ -1205,3 +1221,5 @@ async def update_booking(
     except Exception as e:
         log_error(f"Error updating booking: {e}", "client_auth")
         return {"success": False, "error": str(e)}
+
+# Phone persistence fix completed
