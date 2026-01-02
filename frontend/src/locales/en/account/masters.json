@@ -17,8 +17,8 @@
   "step_3_title": "Sign up online",
   "subtitle": "{{count}} specialists • {{favorites}} in favorites",
   "subtitle_one": "",
-  "subtitle_other": "",
-  "title": "Our masters",
   "subtitle_few": "",
-  "subtitle_many": ""
+  "subtitle_many": "",
+  "subtitle_other": "",
+  "title": "Our masters"
 }

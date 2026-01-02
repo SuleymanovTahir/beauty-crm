@@ -17,8 +17,8 @@
   "step_3_title": "Inscreva-se on-line",
   "subtitle": "{{count}} especialistas • {{favorites}} nos favoritos",
   "subtitle_one": "",
+  "subtitle_few": "",
   "subtitle_many": "",
   "subtitle_other": "",
-  "title": "Nossos mestres",
-  "subtitle_few": ""
+  "title": "Nossos mestres"
 }

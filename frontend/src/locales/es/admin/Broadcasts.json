@@ -20,6 +20,7 @@
   "preview": "Avance",
   "preview_found": "{count} destinatarios encontrados",
   "preview_found_one": "",
+  "preview_found_few": "",
   "preview_found_many": "",
   "preview_found_other": "",
   "recipients": "Destinatarios",
@@ -34,6 +35,5 @@
   "subtitle": "Envío de notificaciones a los usuarios a través de diferentes canales",
   "target_role": "Rol objetivo (opcional)",
   "title": "Envíos masivos",
-  "total_recipients": "Destinatarios totales",
-  "preview_found_few": ""
+  "total_recipients": "Destinatarios totales"
 }

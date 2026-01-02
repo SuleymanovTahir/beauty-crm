@@ -14,6 +14,8 @@
     "title": "Category Multipliers"
   },
   "config": {
+    "cashback_hint": "Example: 0.1 = 10% cashback (10 points for 100 spent)",
+    "cashback_rate": "Cashback Rate (Points per 1 Currency Unit)",
     "conversion_rate": "Points Conversion Rate (0.1 = 1 point per 10 currency)",
     "description": "Manage global loyalty settings",
     "expiration_days": "Points Validity (Days)",

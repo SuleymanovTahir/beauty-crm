@@ -20,6 +20,8 @@
   "preview": "Preview",
   "preview_found": "{count} recipients found",
   "preview_found_one": "",
+  "preview_found_few": "",
+  "preview_found_many": "",
   "preview_found_other": "",
   "recipients": "Recipients",
   "sample_recipients": "Examples of recipients:",
@@ -33,7 +35,5 @@
   "subtitle": "Sending notifications to users via different channels",
   "target_role": "Target role (optional)",
   "title": "Mass mailings",
-  "total_recipients": "Total recipients",
-  "preview_found_few": "",
-  "preview_found_many": ""
+  "total_recipients": "Total recipients"
 }
