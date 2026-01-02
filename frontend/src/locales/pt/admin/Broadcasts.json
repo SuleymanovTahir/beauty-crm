@@ -27,5 +27,9 @@
   "title": "Envios em massa",
   "total_recipients": "Total de destinatários",
   "select_subscription_type": "Selecione o tipo de assinatura",
-  "error_preview": "Erro de visualização"
+  "error_preview": "Erro de visualização",
+  "placeholder_all_users": "Todos os usuários",
+  "placeholder_subject": "Oferta especial para você!",
+  "placeholder_message": "Digite o texto da sua mensagem...",
+  "click_preview_to_see": "Clique em \"Visualizar\" para ver os destinatários"
 }

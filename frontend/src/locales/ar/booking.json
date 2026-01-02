@@ -26,7 +26,11 @@
     "title": "اختر متخصصًا",
     "anyAvailable": "أي سيد حر",
     "reviews": "المراجعات",
-    "firstAvailable": "سيقبل أول سيد متاح دخولك"
+    "firstAvailable": "سيقبل أول سيد متاح دخولك",
+    "anyDesc": "سوف نختار أفضل سيد متاح",
+    "ready": "مستعد",
+    "availableToday": "متوفر اليوم",
+    "availableOn": "متاح"
   },
   "confirm": {
     "title": "تأكيد الدخول",
@@ -43,7 +47,9 @@
     "date": "تاريخ",
     "time": "وقت",
     "confirm": "تأكيد الدخول",
-    "total": "المجموع"
+    "total": "المجموع",
+    "timeout": "لقد انتهى وقت الانتظار. حاول ثانية.",
+    "dateTime": "التاريخ والوقت"
   },
   "services": {
     "title": "اختر الخدمات",
@@ -52,10 +58,17 @@
     "noDescription": "خدمة احترافية",
     "total": "المبلغ الإجمالي",
     "continue": "يكمل",
-    "selected": "الخدمات المختارة"
+    "selected": "الخدمات المختارة",
+    "service_one": "خدمة",
+    "service_few": "خدمات",
+    "service_many": "خدمات"
   },
   "totalDuration": "المدة الإجمالية",
   "min": "دقيقة",
   "loading": "تحميل...",
-  "newBooking": "دخول جديد"
+  "newBooking": "دخول جديد",
+  "invalid_phone": "الرجاء إدخال رقم هاتف صالح",
+  "change_booking": "تحرير الإدخال",
+  "change_service": "تغيير الخدمة",
+  "change_master": "تغيير سيد"
 }

@@ -58,7 +58,9 @@
           "all": "جميع العملاء",
           "active": "العملاء النشطين",
           "inactive": "العملاء غير النشطين",
-          "tier": "حسب مستوى الولاء"
+          "tier": "حسب مستوى الولاء",
+          "appointment_based": "وفقا للسجلات",
+          "service_based": "عن طريق الخدمات"
         },
         "loyalty_tier": "مستوى الولاء",
         "select_tier": "اختر المستوى",
@@ -67,7 +69,31 @@
           "silver": "فضي",
           "gold": "ذهب",
           "platinum": "البلاتين"
-        }
+        },
+        "appointment_filter": "تصفية حسب الإدخالات",
+        "select_filter": "حدد عامل التصفية",
+        "appointment_filters": {
+          "tomorrow": "غداً",
+          "specific_date": "تاريخ محدد",
+          "date_range": "النطاق الزمني"
+        },
+        "appointment_date": "تاريخ التسجيل",
+        "start_date": "تاريخ البدء",
+        "end_date": "تاريخ الانتهاء",
+        "service_filter": "الخدمة/الإجراء",
+        "service_placeholder": "أدخل اسم الخدمة أو معرفها",
+        "service_hint": "سيتلقى العملاء المسجلون في هذه الخدمة إشعارًا",
+        "schedule_notification": "جدولة الإخطار",
+        "schedule_date": "تاريخ الإرسال",
+        "schedule_time": "وقت الإرسال",
+        "repeat_notification": "كرر الإخطار",
+        "repeat_interval": "كرر الفاصل الزمني",
+        "repeat_intervals": {
+          "daily": "يوميًا",
+          "weekly": "أسبوعي",
+          "monthly": "شهريا"
+        },
+        "repeat_end_date": "إنهاء الإعادة"
       }
     },
     "template": {

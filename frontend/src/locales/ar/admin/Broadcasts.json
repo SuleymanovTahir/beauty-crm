@@ -27,5 +27,9 @@
   "title": "رسائل بريدية جماعية",
   "total_recipients": "إجمالي المستلمين",
   "select_subscription_type": "حدد نوع الاشتراك",
-  "error_preview": "خطأ في المعاينة"
+  "error_preview": "خطأ في المعاينة",
+  "placeholder_all_users": "كافة المستخدمين",
+  "placeholder_subject": "عرض خاص لك!",
+  "placeholder_message": "أدخل نص رسالتك...",
+  "click_preview_to_see": "انقر على \"معاينة\" لرؤية المستلمين"
 }

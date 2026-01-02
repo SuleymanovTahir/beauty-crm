@@ -58,7 +58,9 @@
           "all": "Барлық клиенттер",
           "active": "Белсенді клиенттер",
           "inactive": "Белсенді емес клиенттер",
-          "tier": "Адалдық деңгейі бойынша"
+          "tier": "Адалдық деңгейі бойынша",
+          "appointment_based": "Жазбаларға сәйкес",
+          "service_based": "Қызметтер бойынша"
         },
         "loyalty_tier": "Адалдық деңгейі",
         "select_tier": "Деңгейді таңдаңыз",
@@ -67,7 +69,31 @@
           "silver": "Күміс",
           "gold": "Алтын",
           "platinum": "Платина"
-        }
+        },
+        "appointment_filter": "Жазбалар бойынша сүзгілеу",
+        "select_filter": "Сүзгіні таңдаңыз",
+        "appointment_filters": {
+          "tomorrow": "Ертең",
+          "specific_date": "Нақты күн",
+          "date_range": "Күндер ауқымы"
+        },
+        "appointment_date": "Жазу күні",
+        "start_date": "басталу күні",
+        "end_date": "Аяқталу күні",
+        "service_filter": "Қызмет/процедура",
+        "service_placeholder": "Қызмет атауын немесе идентификаторды енгізіңіз",
+        "service_hint": "Бұл қызметке тіркелген тұтынушылар хабарлама алады",
+        "schedule_notification": "Хабарландыруды жоспарлаңыз",
+        "schedule_date": "Жіберілген күні",
+        "schedule_time": "Жіберу уақыты",
+        "repeat_notification": "Хабарландыруды қайталау",
+        "repeat_interval": "Қайталау аралығы",
+        "repeat_intervals": {
+          "daily": "Күнделікті",
+          "weekly": "Апта сайын",
+          "monthly": "Ай сайын"
+        },
+        "repeat_end_date": "Қайталауды аяқтау"
       }
     },
     "template": {

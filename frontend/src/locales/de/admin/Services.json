@@ -120,5 +120,12 @@
   "deselect_all": "Zurücksetzen",
   "selected_count": "Ausgewählt",
   "load_inactive_clients": "Inaktive Kunden laden",
-  "inactive_clients": "Inaktive Kunden"
+  "inactive_clients": "Inaktive Kunden",
+  "schedule_activation": "Planen Sie die Aktivierung",
+  "activation_date": "Aktivierungsdatum",
+  "activation_time": "Aktivierungszeit",
+  "auto_activate": "Automatische Aktivierung zum vereinbarten Zeitpunkt",
+  "auto_deactivate": "Nach dem Enddatum automatisch deaktivieren",
+  "promo_placeholder": "Empfehlen Sie einen Freund – erhalten Sie einen Bonus",
+  "select_audience": "Wählen Sie Ihr Publikum aus"
 }

@@ -16,5 +16,7 @@
   "return_to_home": "Retour à la maison",
   "unauthorized": "Non autorisé",
   "username": "Nom d'utilisateur",
-  "welcome": "Accueillir"
+  "welcome": "Accueillir",
+  "account_pending": "Votre compte est en attente de l'approbation de l'administrateur",
+  "registration_pending_toast": "Votre inscription est en attente de l'approbation de l'administrateur. Vous recevrez un e-mail lorsque votre compte sera activé."
 }
