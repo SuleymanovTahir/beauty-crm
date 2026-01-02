@@ -176,7 +176,7 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         c.execute("""
             SELECT COUNT(*) FROM bookings
             WHERE (instagram_id = %s OR phone = %s OR user_id = %s) AND status = 'completed'
-        """, (str(instagram_id or user.get("id")), user_phone, user_id))
+        """, (str(client_id), user_phone, user_id))
         total_visits = c.fetchone()[0] or 0
 
         # Count visits this month
@@ -185,8 +185,28 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             WHERE (instagram_id = %s OR phone = %s OR user_id = %s)
             AND status = 'completed'
             AND datetime >= %s
-        """, (str(instagram_id or user.get("id")), user_phone, user_id, datetime.now().replace(day=1).isoformat()))
+        """, (str(client_id), user_phone, user_id, datetime.now().replace(day=1).isoformat()))
         visits_this_month = c.fetchone()[0] or 0
+
+        # Total spent (sum of revenue from completed bookings)
+        c.execute("""
+            SELECT SUM(revenue) FROM bookings 
+            WHERE (instagram_id = %s OR phone = %s OR user_id = %s)
+            AND status = 'completed'
+        """, (client_id, user_phone, user_id))
+        total_spent = c.fetchone()[0] or 0
+
+        # Total saved (sum of spent loyalty points/discounts)
+        c.execute("""
+            SELECT SUM(points) FROM loyalty_transactions 
+            WHERE client_id = %s AND transaction_type = 'spent'
+        """, (client_id,))
+        total_saved_points = abs(c.fetchone()[0] or 0)
+
+        # Fetch currency
+        c.execute("SELECT value FROM salon_settings WHERE key = 'currency' LIMIT 1")
+        currency_row = c.fetchone()
+        currency = currency_row[0] if currency_row else "AED"
 
         c.execute("SELECT COUNT(*) FROM client_achievements WHERE client_id = %s AND unlocked_at IS NOT NULL", (client_id,))
         unlocked = c.fetchone()[0]
@@ -196,14 +216,22 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         return {
             "success": True,
             "client": client_info,
-            "loyalty": loyalty,
+            "loyalty": {
+                "points": points,
+                "total_saved": total_saved_points,
+                "total_spent": total_spent,
+                "currency": currency
+            },
             "next_booking": next_booking,
             "last_visit": last_visit,
             "recent_visits": recent_visits,
-            "achievements_summary": {"unlocked": unlocked, "total": total_ach or 4},
             "visit_stats": {
                 "total_visits": total_visits,
                 "visits_this_month": visits_this_month
+            },
+            "achievements_summary": {
+                "unlocked": unlocked,
+                "total": total_ach or 4
             }
         }
     except Exception as e:
@@ -302,27 +330,57 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
             }
         ]
 
-        # Merge existing achievements with defaults
+        # Merge and auto-unlock
         achievements = []
         achievement_id = 1
+        
         for default in default_achievements:
             if default["type"] in existing_achievements:
                 achievements.append(existing_achievements[default["type"]])
+                achievement_id += 1
             else:
-                is_unlocked = default["progress"] >= default["maxProgress"]
-                achievements.append({
-                    "id": achievement_id,
-                    "type": default["type"],
-                    "title": default["title"],
-                    "icon": default["icon"],
-                    "points": default["points"],
-                    "unlocked": is_unlocked,
-                    "unlockedDate": None,
-                    "progress": default["progress"],
-                    "maxProgress": default["maxProgress"],
-                    "description": default["description"]
-                })
-            achievement_id += 1
+                # Check if it should be auto-unlocked
+                is_earned = default["progress"] >= default["maxProgress"]
+                
+                if is_earned:
+                    try:
+                        unlocked_at = datetime.now()
+                        c.execute("""
+                            INSERT INTO client_achievements 
+                            (client_id, achievement_type, title_ru, icon, points_awarded, unlocked_at, progress, max_progress, description_ru)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        """, (client_id, default["type"], default["title"], default["icon"], default["points"], 
+                              unlocked_at, default["progress"], default["maxProgress"], default["description"]))
+                        conn.commit()
+                        
+                        achievements.append({
+                            "id": achievement_id,
+                            "type": default["type"],
+                            "title": default["title"],
+                            "icon": default["icon"],
+                            "points": default["points"],
+                            "unlocked": True,
+                            "unlockedDate": unlocked_at.isoformat(),
+                            "progress": default["progress"],
+                            "maxProgress": default["maxProgress"],
+                            "description": default["description"]
+                        })
+                    except Exception as ex:
+                        log_error(f"Error auto-unlocking achievement {default['type']}: {ex}")
+                        achievements.append({
+                            "id": achievement_id,
+                            **default,
+                            "unlocked": False,
+                            "unlockedDate": None
+                        })
+                else:
+                    achievements.append({
+                        "id": achievement_id,
+                        **default,
+                        "unlocked": False,
+                        "unlockedDate": None
+                    })
+                achievement_id += 1
 
         # Get active challenges with localized fields
         c.execute("""
@@ -499,10 +557,49 @@ async def get_loyalty(session_token: Optional[str] = Cookie(None)):
 
         # Get referral code from clients table
         c.execute("SELECT referral_code FROM clients WHERE instagram_id = %s", (client_id,))
-
         referral_row = c.fetchone()
-
         referral_code = referral_row[0] if referral_row else f"REF{str(user.get('id', ''))[:6].upper()}"
+
+        # Calculate actual totals
+        user_phone = user.get("phone")
+        user_id = user.get("id")
+        
+        # 1. Total spent (sum of revenue from completed bookings)
+        c.execute("""
+            SELECT SUM(revenue) FROM bookings 
+            WHERE (instagram_id = %s OR phone = %s OR user_id = %s)
+            AND status = 'completed'
+        """, (client_id, user_phone, user_id))
+        total_spent = c.fetchone()[0] or 0
+        
+        # 2. Total saved (sum of spent loyalty points as currency)
+        c.execute("""
+            SELECT SUM(points) FROM loyalty_transactions 
+            WHERE client_id = %s AND transaction_type = 'spent'
+        """, (client_id,))
+        total_saved_points = abs(c.fetchone()[0] or 0)
+
+        # 3. Fetch all tiers
+        c.execute("""
+            SELECT level_name, min_points, discount_percent, color, benefits 
+            FROM loyalty_levels 
+            ORDER BY min_points ASC
+        """)
+        tiers_rows = c.fetchall()
+        all_tiers = []
+        for t_row in tiers_rows:
+            all_tiers.append({
+                "name": t_row[0].capitalize(),
+                "points": t_row[1],
+                "discount": t_row[2],
+                "color": t_row[3],
+                "benefits": t_row[4]
+            })
+
+        # 4. Fetch currency
+        c.execute("SELECT value FROM salon_settings WHERE key = 'currency' LIMIT 1")
+        currency_row = c.fetchone()
+        currency = currency_row[0] if currency_row else "AED"
 
         return {
             "success": True,
@@ -512,8 +609,10 @@ async def get_loyalty(session_token: Optional[str] = Cookie(None)):
                 "tier": loyalty_data.get("loyalty_level", "bronze"),
                 "discount": get_discount_for_tier(loyalty_data.get("loyalty_level", "bronze")),
                 "referral_code": referral_code,
-                "total_spent": 0,  # TODO: calculate from bookings
-                "total_saved": 0,  # TODO: calculate savings
+                "total_spent": total_spent,
+                "total_saved": total_saved_points,
+                "all_tiers": all_tiers,
+                "currency": currency
             }
         }
     except Exception as e:
@@ -612,7 +711,7 @@ async def get_gallery(session_token: Optional[str] = Cookie(None)):
         
         c.execute("""
             SELECT cg.id, cg.before_photo, cg.after_photo, cg.created_at, 
-                   s.name as service_name, u.full_name as master_name, cg.notes
+                   s.name as service_name, u.full_name as master_name, cg.notes, cg.category
             FROM client_gallery cg
             LEFT JOIN services s ON cg.service_id = s.id
             LEFT JOIN users u ON cg.master_id = u.id
@@ -622,14 +721,24 @@ async def get_gallery(session_token: Optional[str] = Cookie(None)):
         
         items = []
         for row in c.fetchall():
+            before_url = row[1]
+            after_url = row[2]
+            
+            # Ensure absolute URLs for local paths
+            if before_url and before_url.startswith('/static'):
+                before_url = f"http://localhost:8000{before_url}" # TODO: use config for base URL
+            if after_url and after_url.startswith('/static'):
+                after_url = f"http://localhost:8000{after_url}"
+                
             items.append({
                 "id": row[0],
-                "before": row[1],
-                "after": row[2],
+                "before_photo": before_url,
+                "after_photo": after_url,
                 "date": row[3].isoformat() if row[3] else None,
                 "service": row[4],
-                "master": row[5],
-                "notes": row[6]
+                "master_name": row[5],
+                "notes": row[6],
+                "category": row[7] or 'other'
             })
             
         return {"success": True, "gallery": items}

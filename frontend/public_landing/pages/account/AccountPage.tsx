@@ -196,23 +196,6 @@ export function AccountPage() {
     setMobileMenuOpen(false);
   };
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return t('account:dashboard.good_morning', 'Good morning');
-    if (hour < 18) return t('account:dashboard.good_afternoon', 'Good afternoon');
-    return t('account:dashboard.good_evening', 'Good evening');
-  };
-
-  const getMotivation = () => {
-    const phrases = [
-      t('account:dashboard.motivation_1', "You're shining!"),
-      t('account:dashboard.motivation_2', "You're beautiful!"),
-      t('account:dashboard.motivation_3', 'Every day is a new opportunity!'),
-      t('account:dashboard.motivation_4', 'Be yourself, be beautiful!'),
-    ];
-    return phrases[Math.floor(Math.random() * phrases.length)];
-  };
-
   const handleLogout = async () => {
     // Confirmation dialog
     const confirmed = window.confirm(
@@ -270,8 +253,8 @@ export function AccountPage() {
       <button
         onClick={() => handleTabChange(item.path)}
         className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
-            ? 'bg-pink-100 text-pink-600'
-            : 'text-gray-700 hover:bg-gray-100'
+          ? 'bg-pink-100 text-pink-600'
+          : 'text-gray-700 hover:bg-gray-100'
           }`}
       >
         <Icon className="w-5 h-5 flex-shrink-0" />
