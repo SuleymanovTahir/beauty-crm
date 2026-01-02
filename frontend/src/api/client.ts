@@ -14,6 +14,7 @@ async function apiCall(endpoint: string, options: FetchOptions = {}) {
     headers: {
       'Content-Type': 'application/json',
     },
+    cache: 'no-store', // Prevent caching
   }
 
   if (options.body && !(options.body instanceof FormData)) {

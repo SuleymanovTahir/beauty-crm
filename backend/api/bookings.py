@@ -971,27 +971,10 @@ async def delete_booking_api(
 
         service, datetime_str, master, name, phone = booking
 
-        # ✅ Удаляем зависимые записи из таблиц с FOREIGN KEY на bookings
-        c.execute("DELETE FROM booking_reminders_sent WHERE booking_id = %s", (booking_id,))
-        c.execute("DELETE FROM loyalty_transactions WHERE booking_id = %s", (booking_id,))
-        c.execute("DELETE FROM ratings WHERE booking_id = %s", (booking_id,))
-        c.execute("DELETE FROM reminder_logs WHERE booking_id = %s", (booking_id,))
-
-        # Удаляем запись
-        c.execute("DELETE FROM bookings WHERE id = %s", (booking_id,))
-        conn.commit()
-        conn.close()
-
-        try:
-            log_activity(user["id"], "delete_booking", "booking", str(booking_id),
-                        f"Deleted booking: {service}")
-        except Exception as log_err:
-            log_error(f"Error logging activity for booking deletion: {log_err}", "api")
-
-        # Отправляем уведомление мастеру об отмене
+        # Отправляем уведомление мастеру об отмене ПЕРЕД удалением
+        # (чтобы можно было сохранить лог уведомления)
         if master:
             try:
-
                 notification_results = await notify_master_about_booking(
                     master_name=master,
                     client_name=name,
@@ -1016,6 +999,24 @@ async def delete_booking_api(
 
             except Exception as e:
                 log_error(f"Error sending booking cancel notification: {e}", "api")
+
+        # ✅ Удаляем зависимые записи из таблиц с FOREIGN KEY на bookings
+        c.execute("DELETE FROM booking_reminders_sent WHERE booking_id = %s", (booking_id,))
+        c.execute("DELETE FROM loyalty_transactions WHERE booking_id = %s", (booking_id,))
+        c.execute("DELETE FROM ratings WHERE booking_id = %s", (booking_id,))
+        c.execute("DELETE FROM reminder_logs WHERE booking_id = %s", (booking_id,))
+        c.execute("DELETE FROM notification_logs WHERE booking_id = %s", (booking_id,))
+
+        # Удаляем запись
+        c.execute("DELETE FROM bookings WHERE id = %s", (booking_id,))
+        conn.commit()
+        conn.close()
+
+        try:
+            log_activity(user["id"], "delete_booking", "booking", str(booking_id),
+                        f"Deleted booking: {service}")
+        except Exception as log_err:
+            log_error(f"Error logging activity for booking deletion: {log_err}", "api")
 
         return {"success": True, "message": "Booking deleted"}
 
