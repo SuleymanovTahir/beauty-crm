@@ -345,7 +345,8 @@ export default function LoyaltyManagement() {
           <div className="flex items-end gap-4 max-w-md">
             <div className="flex-1 space-y-4">
               <div>
-                <Label>{t('config.conversion_rate', 'Points Conversion Rate (0.1 = 1 point per 10 currency)')}</Label>
+                <Label>{t('config.cashback_rate', 'Cashback Rate (Points per 1 Currency Unit)')}</Label>
+                <p className="text-xs text-gray-500 mb-2">{t('config.cashback_hint', 'Example: 0.1 = 10% cashback (10 points for 100 spent)')}</p>
                 <Input
                   type="number"
                   step="0.01"

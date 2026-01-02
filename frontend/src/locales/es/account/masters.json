@@ -17,8 +17,8 @@
   "step_3_title": "Regístrate en línea",
   "subtitle": "{{count}} especialistas • {{favorites}} en favoritos",
   "subtitle_one": "",
+  "subtitle_few": "",
   "subtitle_many": "",
   "subtitle_other": "",
-  "title": "Nuestros maestros",
-  "subtitle_few": ""
+  "title": "Nuestros maestros"
 }
