@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Clock, Repeat, CheckCircle, XCircle, Loader2, CalendarPlus } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Calendar, Clock, Repeat, CheckCircle, Loader2, CalendarPlus } from 'lucide-react';
+import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
@@ -15,6 +15,7 @@ export function Appointments() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [bookings, setBookings] = useState<any[]>([]);
+  const [currency, setCurrency] = useState('AED');
   const [filter, setFilter] = useState<'upcoming' | 'history' | 'recurring'>('upcoming');
 
   // Add to Google Calendar function
@@ -48,6 +49,7 @@ export function Appointments() {
       const data = await apiClient.getClientBookings();
       if (data.success) {
         setBookings(data.bookings || []);
+        if (data.currency) setCurrency(data.currency);
       }
     } catch (error) {
       console.error('Error loading bookings:', error);
@@ -118,7 +120,7 @@ export function Appointments() {
   const renderAppointment = (appointment: any) => {
     // Extract time from datetime string (format: "2026-01-05T14:00")
     const dateTime = new Date(appointment.date);
-    const timeString = dateTime.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    const timeString = dateTime.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
 
     return (
       <Card key={appointment.id}>
@@ -143,7 +145,7 @@ export function Appointments() {
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  {dateTime.toLocaleDateString('ru-RU', {
+                  {dateTime.toLocaleDateString(undefined, {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric'
@@ -156,7 +158,7 @@ export function Appointments() {
               </div>
 
               <div className="flex items-center justify-between pt-2">
-                <div className="font-bold">{appointment.price} AED</div>
+                <div className="font-bold">{appointment.price} {currency}</div>
 
                 {appointment.status === 'completed' && (
                   <Button

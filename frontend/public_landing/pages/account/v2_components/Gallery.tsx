@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Download, Share2, X, ChevronLeft, ChevronRight, Loader2, Trash2 } from 'lucide-react';
+import { Download, Share2, ChevronLeft, ChevronRight, Loader2, Trash2 } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -120,7 +120,7 @@ export function Gallery() {
 
   const navigateItem = (direction: 'prev' | 'next') => {
     if (!selectedItem) return;
-    const currentIndex = filteredItems.findIndex(item => item.id === selectedItem.id);
+    const currentIndex = filteredItems.findIndex((item: any) => item.id === selectedItem.id);
     const newIndex = direction === 'prev'
       ? (currentIndex - 1 + filteredItems.length) % filteredItems.length
       : (currentIndex + 1) % filteredItems.length;
@@ -271,7 +271,11 @@ export function Gallery() {
                 <CardContent className="p-4">
                   <div className="font-semibold">{item.service}</div>
                   <div className="text-sm text-muted-foreground">
-                    {item.master_name} • {new Date(item.date).toLocaleDateString('ru-RU')}
+                    {item.master_name} • {new Date(item.date).toLocaleDateString(undefined, {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
                   </div>
                 </CardContent>
               </Card>
@@ -315,17 +319,19 @@ export function Gallery() {
                   <ChevronLeft className="w-4 h-4 mr-2" />
                   {t('gallery.previous', 'Предыдущее')}
                 </Button>
-                <div className="flex gap-2">
+                <div className="flex bg-muted rounded-full p-1 border">
                   <Button
                     size="sm"
-                    variant={showBefore ? 'default' : 'outline'}
+                    variant={showBefore ? 'default' : 'ghost'}
+                    className="rounded-full px-4"
                     onClick={() => setShowBefore(true)}
                   >
                     {t('gallery.before', 'До')}
                   </Button>
                   <Button
                     size="sm"
-                    variant={!showBefore ? 'default' : 'outline'}
+                    variant={!showBefore ? 'default' : 'ghost'}
+                    className="rounded-full px-4"
                     onClick={() => setShowBefore(false)}
                   >
                     {t('gallery.after', 'После')}

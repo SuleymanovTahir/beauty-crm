@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; // TOUCH EDIT
 import { useSearchParams } from 'react-router-dom';
 import { User, Lock, Bell, Eye, Download, Smartphone, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
@@ -58,6 +58,17 @@ export function Settings() {
           avatar: profileData.profile.avatar || '',
           created_at: profileData.profile.created_at
         });
+
+        // Initialize preferences from API
+        if (profileData.profile.preferences) {
+          const apiPrefs = profileData.profile.preferences;
+          if (apiPrefs.notification_prefs) {
+            setNotifications(prev => ({ ...prev, ...apiPrefs.notification_prefs }));
+          }
+          if (apiPrefs.privacy_prefs) {
+            setPrivacy(prev => ({ ...prev, ...apiPrefs.privacy_prefs }));
+          }
+        }
 
         // Also sync to localStorage just in case
         if (profileData.profile.phone) localStorage.setItem('user_phone', profileData.profile.phone);
@@ -268,7 +279,11 @@ export function Settings() {
                   <Label htmlFor="member-since">{t('settings.member_since', 'Клиент с')}</Label>
                   <Input
                     id="member-since"
-                    value={profile.created_at ? new Date(profile.created_at).toLocaleDateString('ru-RU') : ''}
+                    value={profile.created_at ? new Date(profile.created_at).toLocaleDateString(undefined, {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    }) : ''}
                     disabled
                   />
                 </div>

@@ -423,7 +423,77 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
 async def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user: raise HTTPException(status_code=401)
-    return {"success": True, "metrics": []}
+    
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        client_id = _get_client_id(user, c)
+        
+        # Simple logic: higher score for more visits in category
+        user_phone = user.get("phone")
+        user_id = user.get("id")
+        
+        c.execute("""
+            SELECT s.category, COUNT(*) 
+            FROM bookings b
+            JOIN services s ON (LOWER(b.service_name) = LOWER(s.name) OR LOWER(b.service_name) = LOWER(s.name_ru))
+            WHERE (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
+            AND b.status = 'completed'
+            GROUP BY s.category
+        """, (client_id, user_phone, user_id))
+        counts = {r[0]: r[1] for r in c.fetchall()}
+
+        # Get counts for PREVIOUS 30 days to calculate REAL dynamics
+        c.execute("""
+            SELECT s.category, COUNT(*) 
+            FROM bookings b
+            JOIN services s ON (LOWER(b.service_name) = LOWER(s.name) OR LOWER(b.service_name) = LOWER(s.name_ru))
+            WHERE (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
+            AND b.status = 'completed'
+            AND b.datetime < (CURRENT_DATE - INTERVAL '30 days')
+            AND b.datetime > (CURRENT_DATE - INTERVAL '60 days')
+            GROUP BY s.category
+        """, (client_id, user_phone, user_id))
+        prev_counts = {r[0]: r[1] for r in c.fetchall()}
+        
+        # Common categories with scores
+        all_cats = [
+            ("Nails", "#4ECDC4"),
+            ("Facial", "#A061FF"),
+            ("Hair", "#FF6B9D"),
+            ("Brows", "#FFD93D"),
+            ("Lashes", "#FF9F43")
+        ]
+        
+        metrics = []
+        for cat_name, color in all_cats:
+            count = counts.get(cat_name, 0)
+            prev_count = prev_counts.get(cat_name, 0)
+            
+            # Change logic
+            change = count - prev_count
+            
+            # Base score 45, +15 per visit, max 95
+            score = 45 + min(count * 15, 50)
+            metrics.append({
+                "category": cat_name,
+                "score": score,
+                "color": color,
+                "change": change
+            })
+            
+        recommended = [
+            {"service": "Signature Manicure", "days_left": 5, "recommended": True},
+            {"service": "Facial Basic", "days_left": 14, "recommended": False},
+        ]
+        
+        return {"success": True, "metrics": metrics, "recommended_procedures": recommended}
+    except Exception as e:
+        log_error(f"Error in beauty metrics: {e}")
+        return {"success": False, "error": str(e)}
+    finally:
+        if 'conn' in locals():
+            conn.close()
 
 @router.get("/my-notifications")
 async def get_client_notifications(session_token: Optional[str] = Cookie(None)):
@@ -447,12 +517,22 @@ async def get_client_notifications(session_token: Optional[str] = Cookie(None)):
 
         notifications = []
         for row in c.fetchall():
+            msg = row[2].lower()
+            notif_type = "notification"
+            if any(x in msg for x in ["запись", "booking", "визит", "visit"]):
+                notif_type = "appointment"
+            elif any(x in msg for x in ["акция", "промо", "promotion", "скидка", "discount", "sale"]):
+                notif_type = "promotion"
+            elif any(x in msg for x in ["достижение", "achievement", "награда", "bonus", "reward"]):
+                notif_type = "achievement"
+
             notifications.append({
                 "id": row[0],
                 "title": row[1],
                 "message": row[2],
                 "created_at": row[3],
                 "is_read": row[4],
+                "type": notif_type,
                 "action_url": row[5] if len(row) > 5 else None
             })
 
@@ -490,6 +570,29 @@ async def mark_notification_read(notification_id: int, session_token: Optional[s
     finally:
         conn.close()
 
+@router.post("/notifications/mark-all-read")
+async def mark_all_notifications_read(session_token: Optional[str] = Cookie(None)):
+    user = require_auth(session_token)
+    if not user: raise HTTPException(status_code=401)
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        client_id = _get_client_id(user, c)
+
+        c.execute("""
+            UPDATE notifications
+            SET is_read = TRUE
+            WHERE client_id = %s AND is_read = FALSE
+        """, (client_id,))
+
+        conn.commit()
+        conn.close()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error marking all notifications as read: {e}", "client_auth")
+        return {"success": False, "error": str(e)}
+
 @router.get("/my-bookings")
 async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
@@ -513,6 +616,7 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
             WHERE (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
             ORDER BY b.datetime DESC
         """, (client_id, user_phone, user_id))
+        
         items = []
         for r in c.fetchall():
             photo = r[6]
@@ -523,12 +627,18 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
                 "service_name": r[1],
                 "date": r[2],
                 "status": r[3],
-                "price": r[4],
+                "price": float(r[4]) if r[4] else 0,
                 "master_name": r[8] or r[5],
                 "master_photo": photo,
                 "master_id": r[7]
             })
-        return {"success": True, "bookings": items}
+
+        # Fetch currency
+        c.execute("SELECT value FROM salon_settings WHERE key = 'currency' LIMIT 1")
+        currency_row = c.fetchone()
+        currency = currency_row[0] if currency_row else "AED"
+
+        return {"success": True, "bookings": items, "currency": currency}
     except Exception as e:
         log_error(f"Error loading bookings: {e}", "client_auth")
         return {"success": False, "error": str(e)}
@@ -636,7 +746,7 @@ async def get_client_profile(session_token: Optional[str] = Cookie(None)):
 
         # Get client data from clients table
         c.execute("""
-            SELECT name, phone, email, avatar, birthday, created_at
+            SELECT name, phone, email, avatar, birthday, created_at, preferences
             FROM clients
             WHERE instagram_id = %s
             LIMIT 1
@@ -652,8 +762,12 @@ async def get_client_profile(session_token: Optional[str] = Cookie(None)):
                 user.get("email"),       # email
                 None,                    # avatar
                 None,                    # birthday
-                None                     # created_at
+                None,                    # created_at
+                None                     # preferences
             )
+        
+        import json
+        prefs = json.loads(client_row[6]) if client_row[6] else {}
 
         # Get loyalty tier
         c.execute("""
@@ -676,6 +790,7 @@ async def get_client_profile(session_token: Optional[str] = Cookie(None)):
                 "avatar": client_row[3],
                 "birthday": client_row[4],
                 "created_at": client_row[5],
+                "preferences": prefs,
                 "tier": tier,
                 "total_points": total_points,
                 "available_points": available_points
@@ -783,11 +898,15 @@ async def get_fav_masters(session_token: Optional[str] = Cookie(None)):
 
         masters = []
         for row in c.fetchall():
+            avatar = row[3]
+            if avatar and avatar.startswith('/static'):
+                avatar = f"http://localhost:8000{avatar}"
+                
             masters.append({
                 "id": row[0],
                 "name": row[1],
                 "specialty": row[2] or "Специалист",
-                "avatar": row[3] or "/default-avatar.png",
+                "avatar": avatar or "/default-avatar.png",
                 "specialization": row[4],
                 "is_favorite": row[5],
                 "rating": round(row[6], 1) if row[6] else 0,
@@ -812,7 +931,7 @@ async def toggle_favorite_master(
         conn = get_db_connection()
         c = conn.cursor()
 
-        client_id = user.get("instagram_id") or user.get("telegram_id") or str(user.get("id", ""))
+        client_id = _get_client_id(user, c)
         master_id = data.get("master_id")
 
         if not master_id:
@@ -879,8 +998,8 @@ async def update_profile(
 
         if updates:
             params.append(client_id)
-            query = f"UPDATE clients SET {', '.join(updates)} WHERE instagram_id = %s OR telegram_id = %s"
             params.append(client_id)
+            query = f"UPDATE clients SET {', '.join(updates)} WHERE instagram_id = %s OR telegram_id = %s"
             c.execute(query, params)
             conn.commit()
 
@@ -888,6 +1007,66 @@ async def update_profile(
         return {"success": True}
     except Exception as e:
         log_error(f"Error updating profile: {e}", "client_auth")
+        return {"success": False, "error": str(e)}
+
+@router.post("/notifications/preferences")
+async def update_notification_prefs(
+    data: dict,
+    session_token: Optional[str] = Cookie(None)
+):
+    user = require_auth(session_token)
+    if not user: raise HTTPException(status_code=401)
+
+    try:
+        import json
+        conn = get_db_connection()
+        c = conn.cursor()
+        client_id = _get_client_id(user, c)
+
+        # We store these in a JSON string in the 'preferences' column of the clients table
+        c.execute("SELECT preferences FROM clients WHERE instagram_id = %s", (client_id,))
+        row = c.fetchone()
+        prefs = json.loads(row[0]) if row and row[0] else {}
+        
+        # Update with new values
+        if 'notification_prefs' not in prefs: prefs['notification_prefs'] = {}
+        prefs['notification_prefs'].update(data)
+        
+        c.execute("UPDATE clients SET preferences = %s WHERE instagram_id = %s", (json.dumps(prefs), client_id))
+        conn.commit()
+        conn.close()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error updating notification prefs: {e}", "client_auth")
+        return {"success": False, "error": str(e)}
+
+@router.post("/privacy/preferences")
+async def update_privacy_prefs(
+    data: dict,
+    session_token: Optional[str] = Cookie(None)
+):
+    user = require_auth(session_token)
+    if not user: raise HTTPException(status_code=401)
+
+    try:
+        import json
+        conn = get_db_connection()
+        c = conn.cursor()
+        client_id = _get_client_id(user, c)
+
+        c.execute("SELECT preferences FROM clients WHERE instagram_id = %s", (client_id,))
+        row = c.fetchone()
+        prefs = json.loads(row[0]) if row and row[0] else {}
+        
+        if 'privacy_prefs' not in prefs: prefs['privacy_prefs'] = {}
+        prefs['privacy_prefs'].update(data)
+        
+        c.execute("UPDATE clients SET preferences = %s WHERE instagram_id = %s", (json.dumps(prefs), client_id))
+        conn.commit()
+        conn.close()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error updating privacy prefs: {e}", "client_auth")
         return {"success": False, "error": str(e)}
 
 @router.post("/profile/change-password")

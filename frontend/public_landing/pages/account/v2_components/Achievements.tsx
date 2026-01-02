@@ -190,22 +190,19 @@ export function Achievements() {
             return (
               <Card
                 key={achievement.id}
-                className={`${
-                  achievement.unlocked
+                className={`${achievement.unlocked
                     ? 'border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50'
                     : 'opacity-60'
-                } ${
-                  isNewlyUnlocked ? 'animate-pulse border-4 border-yellow-400' : ''
-                }`}
+                  } ${isNewlyUnlocked ? 'animate-pulse border-4 border-yellow-400' : ''
+                  }`}
               >
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <div
-                      className={`p-3 rounded-full ${
-                        achievement.unlocked
+                      className={`p-3 rounded-full ${achievement.unlocked
                           ? 'bg-yellow-500 text-white'
                           : 'bg-gray-200 text-gray-400'
-                      } ${isNewlyUnlocked ? 'animate-bounce' : ''}`}
+                        } ${isNewlyUnlocked ? 'animate-bounce' : ''}`}
                     >
                       {achievement.unlocked ? (
                         <Icon className="w-6 h-6" />
@@ -255,7 +252,7 @@ export function Achievements() {
                       {achievement.unlocked && achievement.unlockedDate && (
                         <div className="text-xs text-muted-foreground">
                           {t('achievements.unlocked_date', 'Получено')}:{' '}
-                          {new Date(achievement.unlockedDate).toLocaleDateString('ru-RU', {
+                          {new Date(achievement.unlockedDate).toLocaleDateString(undefined, {
                             day: 'numeric',
                             month: 'long',
                             year: 'numeric',
@@ -313,7 +310,7 @@ export function Achievements() {
                   </div>
 
                   <div className="text-xs text-muted-foreground">
-                    {t('achievements.until', 'До')} {new Date(challenge.deadline).toLocaleDateString('ru-RU', {
+                    {t('achievements.until', 'До')} {new Date(challenge.deadline).toLocaleDateString(undefined, {
                       day: 'numeric',
                       month: 'long',
                     })}
