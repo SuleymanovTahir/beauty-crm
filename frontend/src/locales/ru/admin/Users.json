@@ -264,5 +264,19 @@
   "table_status": "Статус",
   "table_spent": "Потрачено",
   "status_new": "новый",
-  "open_chat": "Открыть чат"
+  "open_chat": "Открыть чат",
+  "tab_clients": "Клиенты",
+  "tab_employees": "Сотрудники",
+  "stats_total_employees": "Всего сотрудников",
+  "stats_active_employees": "Активных",
+  "stats_service_providers": "Мастеров",
+  "table_employee": "Сотрудник",
+  "table_is_active": "Активен",
+  "active": "Активен",
+  "inactive": "Неактивен",
+  "period_filter": "Период для новых клиентов:",
+  "filter_last7days": "Последние 7 дней",
+  "filter_last30days": "Последние 30 дней",
+  "filter_last90days": "Последние 90 дней",
+  "filter_all_time": "Все время"
 }

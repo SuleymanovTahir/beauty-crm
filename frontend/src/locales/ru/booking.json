@@ -22,12 +22,6 @@
     "evening": "Вечер",
     "selectDateFirst": "Сначала выберите дату"
   },
-  "professional": {
-    "title": "Выберите специалиста",
-    "anyAvailable": "Любой свободный мастер",
-    "reviews": "отзывов",
-    "firstAvailable": "Первый доступный мастер примет вашу запись"
-  },
   "confirm": {
     "title": "Подтверждение записи",
     "subtitle": "Пожалуйста, проверьте детали",
@@ -60,5 +54,13 @@
   "newBooking": "Новая запись",
   "change_booking": "Изменить запись",
   "change_service": "Изменить услугу",
-  "change_master": "Изменить мастера"
+  "change_master": "Изменить мастера",
+  "professional": {
+    "title": "Выберите мастера",
+    "anyAvailable": "Любой доступный",
+    "anyDesc": "Мы подберем лучшего доступного мастера",
+    "ready": "Готов",
+    "availableToday": "Доступен сегодня",
+    "reviews": "отзывов"
+  }
 }

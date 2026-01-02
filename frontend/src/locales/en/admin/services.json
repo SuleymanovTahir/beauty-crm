@@ -125,5 +125,7 @@
   "activation_date": "Activation Date",
   "activation_time": "Activation Time",
   "auto_activate": "Auto-activate on schedule date",
-  "auto_deactivate": "Auto-deactivate after valid_until date"
+  "auto_deactivate": "Auto-deactivate after valid_until date",
+  "promo_placeholder": "Refer a friend - get a bonus",
+  "select_audience": "Select audience"
 }

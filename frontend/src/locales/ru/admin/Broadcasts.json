@@ -27,5 +27,9 @@
   "title": "Массовые рассылки",
   "total_recipients": "Всего получателей",
   "select_subscription_type": "Выберите тип подписки",
-  "error_preview": "Ошибка предпросмотра"
+  "error_preview": "Ошибка предпросмотра",
+  "placeholder_all_users": "Все пользователи",
+  "placeholder_subject": "Специальное предложение для вас!",
+  "placeholder_message": "Введите текст вашего сообщения...",
+  "click_preview_to_see": "Нажмите \"Предпросмотр\" чтобы увидеть получателей"
 }
