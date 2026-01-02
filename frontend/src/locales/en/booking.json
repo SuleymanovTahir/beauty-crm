@@ -94,14 +94,17 @@
     "bookNow": "Book",
     "success": "Registration confirmed!",
     "error": "Error creating booking",
+    "timeout": "Request timed out. Please try again.",
     "phoneNeeded": "Stay in touch",
     "phoneDesc": "Please include your phone number for confirmation and updates.",
     "professional": "Master",
+    "dateTime": "Date & Time",
     "date": "Date",
     "time": "Time",
     "confirm": "Confirm booking",
     "total": "Total"
   },
+  "invalid_phone": "Please enter a valid phone number",
   "services": {
     "title": "Select services",
     "search": "Search for services...",
