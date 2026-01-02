@@ -43,14 +43,25 @@ interface LoyaltyTransaction {
   created_at: string;
 }
 
+interface LoyaltyConfig {
+  loyalty_points_conversion_rate: number;
+}
+
+interface CategoryRule {
+  category: string;
+  points_multiplier: number;
+}
+
 export default function LoyaltyManagement() {
   const { t } = useTranslation(['adminPanel/LoyaltyManagement', 'common']);
   const [tiers, setTiers] = useState<LoyaltyTier[]>([]);
   const [transactions, setTransactions] = useState<LoyaltyTransaction[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [config, setConfig] = useState<LoyaltyConfig>({ loyalty_points_conversion_rate: 0.1 });
+  const [categoryRules, setCategoryRules] = useState<CategoryRule[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showTierDialog, setShowTierDialog] = useState(false);
   const [showAdjustDialog, setShowAdjustDialog] = useState(false);
+  const [showRuleDialog, setShowRuleDialog] = useState(false);
   const [editingTier, setEditingTier] = useState<LoyaltyTier | null>(null);
   const [stats, setStats] = useState({
     total_points_issued: 0,
@@ -64,11 +75,95 @@ export default function LoyaltyManagement() {
     reason: '',
   });
 
+  const [ruleForm, setRuleForm] = useState<CategoryRule>({
+    category: '',
+    points_multiplier: 1.0
+  });
   useEffect(() => {
     loadTransactions();
     loadTiers();
     loadStats();
+    loadConfig();
+    loadCategoryRules();
   }, []);
+
+  const loadConfig = async () => {
+    try {
+      const response = await fetch('/api/admin/loyalty/config', { credentials: 'include' });
+      const data = await response.json();
+      if (data.success) {
+        setConfig(data.config);
+      }
+    } catch (error) {
+      console.error('Error loading config:', error);
+    }
+  };
+
+  const loadCategoryRules = async () => {
+    try {
+      const response = await fetch('/api/admin/loyalty/categories', { credentials: 'include' });
+      const data = await response.json();
+      if (data.success) {
+        setCategoryRules(data.rules);
+      }
+    } catch (error) {
+      console.error('Error loading category rules:', error);
+    }
+  };
+
+  const handleUpdateConfig = async () => {
+    try {
+      const response = await fetch('/api/admin/loyalty/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(config),
+      });
+      if (response.ok) {
+        toast.success(t('toasts.config_updated'));
+      } else {
+        throw new Error('Failed to update config');
+      }
+    } catch (error) {
+      toast.error(t('toasts.failed_update'));
+    }
+  };
+
+  const handleSaveRule = async () => {
+    try {
+      const response = await fetch('/api/admin/loyalty/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(ruleForm),
+      });
+      if (response.ok) {
+        toast.success(t('toasts.rule_saved'));
+        loadCategoryRules();
+        setShowRuleDialog(false);
+      } else {
+        throw new Error('Failed to save rule');
+      }
+    } catch (error) {
+      toast.error(t('toasts.failed_save'));
+    }
+  };
+
+  const handleDeleteRule = async (category: string) => {
+    if (!confirm(t('confirm_delete_rule'))) return;
+    try {
+      const response = await fetch(`/api/admin/loyalty/categories?category=${encodeURIComponent(category)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (response.ok) {
+        toast.success(t('toasts.rule_deleted'));
+        loadCategoryRules();
+      }
+    } catch (error) {
+      toast.error(t('toasts.failed_delete'));
+    }
+  };
 
   const loadTiers = async () => {
     try {
@@ -106,7 +201,6 @@ export default function LoyaltyManagement() {
 
   const loadTransactions = async () => {
     try {
-      setLoading(true);
       const response = await fetch('/api/admin/loyalty/transactions', {
         credentials: 'include',
       });
@@ -122,8 +216,6 @@ export default function LoyaltyManagement() {
     } catch (error) {
       console.error('Error loading transactions:', error);
       toast.error(t('toasts.failed_load'));
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -140,6 +232,8 @@ export default function LoyaltyManagement() {
         if (response.ok) {
           toast.success(t('toasts.tier_updated'));
           loadTiers();
+          setShowTierDialog(false);
+          setEditingTier(null);
         } else {
           throw new Error('Failed to update tier');
         }
@@ -147,8 +241,6 @@ export default function LoyaltyManagement() {
         toast.error(t('toasts.failed_update'));
       }
     }
-    setShowTierDialog(false);
-    setEditingTier(null);
   };
 
   const handleAdjustPoints = async () => {
@@ -176,6 +268,7 @@ export default function LoyaltyManagement() {
     }
   };
 
+  // ... (Stats Cards array - same as before)
   const statsCards = [
     {
       title: t('stats.total_points_issued'),
@@ -208,10 +301,12 @@ export default function LoyaltyManagement() {
           <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
           <p className="text-gray-500 mt-1">{t('subtitle')}</p>
         </div>
-        <Button onClick={() => setShowAdjustDialog(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          {t('adjust_points')}
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setShowAdjustDialog(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            {t('adjust_points')}
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -235,6 +330,77 @@ export default function LoyaltyManagement() {
           );
         })}
       </div>
+
+      {/* Global Configuration */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('config.title', 'Configuration')}</CardTitle>
+          <CardDescription>{t('config.description', 'Manage global loyalty settings')}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-end gap-4 max-w-md">
+            <div className="flex-1">
+              <Label>{t('config.conversion_rate', 'Points Conversion Rate (0.1 = 1 point per 10 currency)')}</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={config.loyalty_points_conversion_rate}
+                onChange={(e) => setConfig({ ...config, loyalty_points_conversion_rate: parseFloat(e.target.value) })}
+              />
+            </div>
+            <Button onClick={handleUpdateConfig}>{t('buttons.save', 'Save')}</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Category Rules */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>{t('categories.title', 'Category Multipliers')}</CardTitle>
+            <CardDescription>{t('categories.description', 'Set custom multipliers for services')}</CardDescription>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => {
+            setRuleForm({ category: '', points_multiplier: 1.0 });
+            setShowRuleDialog(true);
+          }}>
+            <Plus className="w-4 h-4 mr-2" />
+            {t('buttons.add_rule', 'Add Rule')}
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('categories.category', 'Category')}</TableHead>
+                <TableHead>{t('categories.multiplier', 'Multiplier')}</TableHead>
+                <TableHead className="w-[100px]"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {categoryRules.map((rule) => (
+                <TableRow key={rule.category}>
+                  <TableCell>{rule.category}</TableCell>
+                  <TableCell>x{rule.points_multiplier}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="icon" onClick={() => {
+                        setRuleForm(rule);
+                        setShowRuleDialog(true);
+                      }}>
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="text-red-500" onClick={() => handleDeleteRule(rule.category)}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
       {/* Loyalty Tiers */}
       <Card>
@@ -375,6 +541,41 @@ export default function LoyaltyManagement() {
               {t('buttons.cancel')}
             </Button>
             <Button onClick={handleSaveTier}>{t('buttons.save_changes')}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Category Rule Dialog */}
+      <Dialog open={showRuleDialog} onOpenChange={setShowRuleDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('dialogs.rule.title', 'Edit Category Rule')}</DialogTitle>
+            <DialogDescription>{t('dialogs.rule.description', 'Set multiplier for a service category')}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>{t('categories.category', 'Category')}</Label>
+              <Input
+                value={ruleForm.category}
+                onChange={(e) => setRuleForm({ ...ruleForm, category: e.target.value })}
+                placeholder="e.g. Nails"
+              />
+            </div>
+            <div>
+              <Label>{t('categories.multiplier', 'Multiplier')}</Label>
+              <Input
+                type="number"
+                step="0.1"
+                value={ruleForm.points_multiplier}
+                onChange={(e) => setRuleForm({ ...ruleForm, points_multiplier: parseFloat(e.target.value) })}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowRuleDialog(false)}>
+              {t('buttons.cancel')}
+            </Button>
+            <Button onClick={handleSaveRule}>{t('buttons.save')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
