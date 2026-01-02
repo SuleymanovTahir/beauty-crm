@@ -274,3 +274,33 @@ def log_activity(user_id: int, action: str, entity_type: str,
     
     conn.commit()
     conn.close()
+def update_user_info(user_id: int, data: dict) -> bool:
+    """Обновить информацию о пользователе"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    updates = []
+    params = []
+    
+    allowed_fields = ['full_name', 'email', 'phone', 'position', 'is_active', 'is_service_provider']
+    
+    for field in allowed_fields:
+        if field in data:
+            updates.append(f"{field} = %s")
+            params.append(data[field])
+            
+    if not updates:
+        conn.close()
+        return False
+        
+    try:
+        params.append(user_id)
+        query = f"UPDATE users SET {', '.join(updates)} WHERE id = %s"
+        c.execute(query, params)
+        conn.commit()
+        return c.rowcount > 0
+    except Exception as e:
+        print(f"❌ Ошибка обновления пользователя: {e}")
+        return False
+    finally:
+        conn.close()

@@ -20,7 +20,8 @@ export function Appointments() {
 
   // Add to Google Calendar function
   const addToGoogleCalendar = (appointment: any) => {
-    const startDate = new Date(appointment.date);
+    const startDate = new Date(appointment.date.replace(' ', 'T'));
+    if (isNaN(startDate.getTime())) return;
     const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // +1 hour
 
     const formatDateForGoogle = (date: Date) => {

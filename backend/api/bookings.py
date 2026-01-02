@@ -306,10 +306,25 @@ async def create_booking_api(
         phone = data.get('phone', '')
         name = data.get('name')
         master = data.get('master', '')
+        user_id = user["id"]
 
         # Synchronous DB Save (Required for ID)
         get_or_create_client(instagram_id, username=name)
-        save_booking(instagram_id, service, datetime_str, phone, name, master=master, user_id=user["id"])
+        save_booking(instagram_id, service, datetime_str, phone, name, master=master, user_id=user_id)
+
+        # ✅ SYNC: Update phone and name in both tables if they are new or different
+        if phone or name:
+            # 1. Update in clients table
+            update_client_info(instagram_id, phone=phone, name=name)
+            
+            # 2. Update in users table if user is authenticated
+            from db.users import update_user_info as db_update_user
+            user_updates = {}
+            if phone: user_updates['phone'] = phone
+            if name: user_updates['full_name'] = name
+            
+            if user_updates and user_id:
+                db_update_user(user_id, user_updates)
 
         # Get ID
         conn = get_db_connection()
@@ -319,11 +334,11 @@ async def create_booking_api(
         booking_id = booking_result[0] if booking_result else None
         conn.close()
 
-        log_activity(user["id"], "create_booking", "booking", instagram_id, f"Service: {service}")
+        log_activity(user_id, "create_booking", "booking", instagram_id, f"Service: {service}")
 
         # Offload slow tasks
         if booking_id:
-            background_tasks.add_task(process_booking_background_tasks, booking_id, data, user["id"])
+            background_tasks.add_task(process_booking_background_tasks, booking_id, data, user_id)
 
         return {"success": True, "message": "Booking created", "booking_id": booking_id}
     except Exception as e:

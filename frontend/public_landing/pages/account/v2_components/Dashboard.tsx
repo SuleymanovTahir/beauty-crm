@@ -53,8 +53,9 @@ export function Dashboard() {
     return phrases[Math.floor(Math.random() * phrases.length)];
   };
 
-  const addToGoogleCalendar = (booking: any) => {
-    const startDate = new Date(`${booking.date} ${booking.time || '10:00'}`);
+  const addToGoogleCalendar = (appointment: any) => {
+    const startDate = new Date(appointment.date.replace(' ', 'T'));
+    if (isNaN(startDate.getTime())) return;
     const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // +1 hour
 
     const formatDateForGoogle = (date: Date) => {
@@ -63,9 +64,9 @@ export function Dashboard() {
 
     const params = new URLSearchParams({
       action: 'TEMPLATE',
-      text: booking.service,
+      text: appointment.service,
       dates: `${formatDateForGoogle(startDate)}/${formatDateForGoogle(endDate)}`,
-      details: `${t('dashboard.master', 'Мастер')}: ${booking.master}`,
+      details: `${t('dashboard.master', 'Мастер')}: ${appointment.master}`,
       location: localStorage.getItem('salon_name') || 'Beauty Salon',
     });
 
