@@ -36,29 +36,36 @@ async def get_public_employees(
         bio_field = f'bio_{language}'
         
         query = f"""
-            SELECT 
-                id,
-                COALESCE({name_field}, full_name) as full_name,
-                COALESCE({position_field}, position) as position,
-                bio,
-                specialization,
-                photo,
-                experience,
-                years_of_experience,
-                birthday,
+            SELECT
+                u.id,
+                COALESCE(u.{name_field}, u.full_name) as full_name,
+                COALESCE(u.{position_field}, u.position) as position,
+                u.bio,
+                u.specialization,
+                u.photo,
+                u.experience,
+                u.years_of_experience,
+                u.birthday,
                 NULL as instagram,
-                public_page_order as sort_order
-            FROM users
-            WHERE is_service_provider = TRUE 
-            AND is_active = TRUE
-            AND role NOT IN ('admin', 'director')
-            ORDER BY public_page_order DESC, full_name ASC
+                u.public_page_order as sort_order
+            FROM users u
+            WHERE u.is_service_provider = TRUE
+            AND u.is_active = TRUE
+            ORDER BY u.public_page_order DESC, u.full_name ASC
         """
-        
+
         cursor.execute(query)
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
         employees = []
+
+        # Получить service_ids для каждого мастера (используем user_services, не employee_services)
+        cursor.execute("""
+            SELECT user_id, array_agg(service_id) as service_ids
+            FROM user_services
+            GROUP BY user_id
+        """)
+        employee_services_map = {row[0]: row[1] for row in cursor.fetchall()}
         
         from datetime import date, datetime
 
@@ -112,15 +119,22 @@ async def get_public_employees(
             # Calculate age
             age = calculate_age(row_dict.get("birthday"))
 
+            employee_id = row_dict["id"]
+            service_ids = employee_services_map.get(employee_id, [])
+
             employees.append({
-                "id": row_dict["id"],
+                "id": employee_id,
                 "name": row_dict["full_name"],
+                "full_name": row_dict["full_name"],  # Для совместимости с фронтендом
                 "role": row_dict["position"] or "Специалист",
+                "position": row_dict["position"] or "Специалист",  # Для совместимости с фронтендом
                 "specialty": row_dict["specialization"] or row_dict["bio"] or "",
                 "image": row_dict["photo"] or "/static/avatars/default_female.webp",
+                "photo": row_dict["photo"] or "/static/avatars/default_female.webp",  # Для совместимости с фронтендом
                 "experience": (exp_text or "").strip(),
                 "age": age,
-                "instagram": row_dict["instagram"] or ""
+                "instagram": row_dict["instagram"] or "",
+                "service_ids": service_ids  # Добавляем список ID услуг
             })
         
         log_info(f"Получено {len(employees)} сотрудников на языке {language}", "api")
