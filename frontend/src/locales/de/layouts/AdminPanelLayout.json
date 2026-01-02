@@ -9,6 +9,11 @@
     "referral_program": "Empfehlungsprogramm",
     "challenges": "Herausforderungen",
     "notifications": "Benachrichtigungen",
-    "photo_gallery": "Fotogalerie"
+    "photo_gallery": "Fotogalerie",
+    "bookings": "bookings",
+    "clients": "Kunden",
+    "calendar": "Kalender",
+    "services": "Dienstleistungen",
+    "public_content": "Öffentlicher Inhalt"
   }
 }

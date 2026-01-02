@@ -9,6 +9,11 @@
     "referral_program": "Programme de parrainage",
     "challenges": "Défis",
     "notifications": "Notifications",
-    "photo_gallery": "Galerie de photos"
+    "photo_gallery": "Galerie de photos",
+    "bookings": "bookings",
+    "clients": "Clientèle",
+    "calendar": "Calendrier",
+    "services": "Services",
+    "public_content": "Contenu public"
   }
 }

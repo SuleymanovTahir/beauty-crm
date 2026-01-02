@@ -1,0 +1,21 @@
+{
+  "title": "Minhas entradas",
+  "subtitle": "Gerencie suas visitas",
+  "tab_upcoming": "Por vir",
+  "tab_history": "História",
+  "tab_recurring": "Repetitivo",
+  "status_upcoming": "Por vir",
+  "status_completed": "Concluído",
+  "status_cancelled": "Cancelado",
+  "button_repeat": "Repita",
+  "button_change": "Mudar",
+  "button_cancel": "Cancelar",
+  "no_upcoming": "Não há postagens futuras",
+  "no_upcoming_desc": "Cadastre-se no serviço agora mesmo",
+  "button_book": "Inscrever-se",
+  "history_empty": "A história está vazia",
+  "history_empty_desc": "As visitas concluídas serão exibidas aqui",
+  "recurring_title": "Entradas duplicadas",
+  "recurring_desc": "Recurso em desenvolvimento. Em breve você poderá configurar gravações automáticas.",
+  "unknown_master": "Mestre Desconhecido"
+}

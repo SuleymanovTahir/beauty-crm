@@ -9,6 +9,11 @@
     "referral_program": "برنامج الإحالة",
     "challenges": "التحديات",
     "notifications": "إشعارات",
-    "photo_gallery": "معرض الصور"
+    "photo_gallery": "معرض الصور",
+    "bookings": "bookings",
+    "clients": "العملاء",
+    "calendar": "تقويم",
+    "services": "خدمات",
+    "public_content": "المحتوى العام"
   }
 }

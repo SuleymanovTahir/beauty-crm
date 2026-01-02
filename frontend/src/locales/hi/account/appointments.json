@@ -1,0 +1,21 @@
+{
+  "title": "मेरी प्रविष्टियाँ",
+  "subtitle": "अपनी विज़िट प्रबंधित करें",
+  "tab_upcoming": "आगामी",
+  "tab_history": "कहानी",
+  "tab_recurring": "दोहराव वाला",
+  "status_upcoming": "आगामी",
+  "status_completed": "पुरा होना।",
+  "status_cancelled": "रद्द कर दिया गया",
+  "button_repeat": "दोहराना",
+  "button_change": "परिवर्तन",
+  "button_cancel": "रद्द करना",
+  "no_upcoming": "कोई आगामी पोस्ट नहीं",
+  "no_upcoming_desc": "अभी सेवा के लिए साइन अप करें",
+  "button_book": "साइन अप करें",
+  "history_empty": "इतिहास खोखला है",
+  "history_empty_desc": "पूरी की गई विज़िट यहां प्रदर्शित की जाएंगी",
+  "recurring_title": "डुप्लिकेट प्रविष्टियाँ",
+  "recurring_desc": "सुविधा विकासाधीन है. आप जल्द ही स्वचालित रिकॉर्डिंग सेट करने में सक्षम होंगे।",
+  "unknown_master": "अज्ञात मास्टर"
+}
