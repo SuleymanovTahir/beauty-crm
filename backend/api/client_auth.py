@@ -616,11 +616,14 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
         user_id = user.get("id")
 
         c.execute("""
-            SELECT b.id, b.service_name, b.datetime, b.status, b.revenue, b.master,
+            SELECT b.id, b.service_name, b.datetime, b.status, 
+                   CASE WHEN b.revenue > 0 THEN b.revenue ELSE s.price END as final_price, 
+                   b.master,
                    COALESCE(u.photo, u.photo_url) as master_photo,
                    u.id as master_id, u.full_name
             FROM bookings b
             LEFT JOIN users u ON (LOWER(b.master) = LOWER(u.full_name) OR LOWER(b.master) = LOWER(u.username))
+            LEFT JOIN services s ON (LOWER(b.service_name) = LOWER(s.name) OR LOWER(b.service_name) = LOWER(s.name_ru))
             WHERE (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
             ORDER BY b.datetime DESC
         """, (client_id, user_phone, user_id))
@@ -795,20 +798,24 @@ async def get_client_profile(session_token: Optional[str] = Cookie(None)):
         total_points = loyalty_row[1] if loyalty_row else 0
         available_points = loyalty_row[2] if loyalty_row else 0
 
+        profile_data = {
+            "name": res_name,
+            "phone": res_phone,
+            "email": res_email,
+            "avatar": res_avatar,
+            "birthday": res_birthday,
+            "created_at": res_created_at,
+            "preferences": prefs,
+            "tier": tier,
+            "total_points": total_points,
+            "available_points": available_points
+        }
+        
+        log_info(f"✅ Returning profile for {user.get('username')}: name='{res_name}', phone='{res_phone}'", "client_auth")
+
         return {
             "success": True,
-            "profile": {
-                "name": res_name,
-                "phone": res_phone,
-                "email": res_email,
-                "avatar": res_avatar,
-                "birthday": res_birthday,
-                "created_at": res_created_at,
-                "preferences": prefs,
-                "tier": tier,
-                "total_points": total_points,
-                "available_points": available_points
-            }
+            "profile": profile_data
         }
     except Exception as e:
         log_error(f"Error loading client profile: {e}", "client_auth")
@@ -1138,13 +1145,17 @@ async def cancel_booking(
         conn = get_db_connection()
         c = conn.cursor()
 
-        client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("id")
+        client_id_val = _get_client_id(user, c)
 
         # Verify booking belongs to user
         c.execute("""
             SELECT id FROM bookings
-            WHERE id = %s AND client_id = %s
-        """, (booking_id, client_id))
+            WHERE id = %s AND (
+                instagram_id = %s OR 
+                user_id = %s OR 
+                (phone = %s AND phone IS NOT NULL AND phone != '')
+            )
+        """, (booking_id, client_id_val, user.get("id"), user.get("phone")))
 
         if not c.fetchone():
             conn.close()
