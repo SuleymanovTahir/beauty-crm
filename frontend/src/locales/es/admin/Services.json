@@ -120,5 +120,12 @@
   "deselect_all": "Restablecer",
   "selected_count": "Seleccionado",
   "load_inactive_clients": "Cargar Clientes Inactivos",
-  "inactive_clients": "Clientes Inactivos"
+  "inactive_clients": "Clientes Inactivos",
+  "schedule_activation": "Programar activación",
+  "activation_date": "Fecha de activación",
+  "activation_time": "tiempo de activación",
+  "auto_activate": "Activar automáticamente a la hora acordada",
+  "auto_deactivate": "Desactivar automáticamente después de la fecha de finalización",
+  "promo_placeholder": "Recomiende a un amigo: obtenga un bono",
+  "select_audience": "Selecciona tu audiencia"
 }

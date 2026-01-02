@@ -120,5 +120,12 @@
   "deselect_all": "Réinitialiser",
   "selected_count": "Sélectionné",
   "load_inactive_clients": "Charger les clients inactifs",
-  "inactive_clients": "Clients inactifs"
+  "inactive_clients": "Clients inactifs",
+  "schedule_activation": "Planifier l'activation",
+  "activation_date": "Date d'activation",
+  "activation_time": "Temps d'activation",
+  "auto_activate": "Activer automatiquement à l'heure convenue",
+  "auto_deactivate": "Désactiver automatiquement après la date de fin",
+  "promo_placeholder": "Parrainez un ami - obtenez un bonus",
+  "select_audience": "Sélectionnez votre public"
 }

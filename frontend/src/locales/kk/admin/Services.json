@@ -120,5 +120,12 @@
   "deselect_all": "Қалпына келтіру",
   "selected_count": "Таңдалған",
   "load_inactive_clients": "Белсенді емес клиенттерді жүктеңіз",
-  "inactive_clients": "Белсенді емес клиенттер"
+  "inactive_clients": "Белсенді емес клиенттер",
+  "schedule_activation": "Белсендіруді жоспарлау",
+  "activation_date": "Іске қосу күні",
+  "activation_time": "Іске қосу уақыты",
+  "auto_activate": "Белгіленген уақытта автоматты түрде іске қосыңыз",
+  "auto_deactivate": "Аяқталу күнінен кейін автоматты түрде өшіру",
+  "promo_placeholder": "Досыңызға хабарласыңыз - бонус алыңыз",
+  "select_audience": "Аудиторияңызды таңдаңыз"
 }

@@ -489,7 +489,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   (step === 'datetime' && (!bookingState.date || !bookingState.time))
                 }
               >
-                {step === 'datetime' ? t('confirm.title', 'Подтвердить') : t('common.next', 'Далее')}
+                {step === 'datetime' ? t('confirm.title', 'Подтвердить') : t('common:next', 'Далее')}
               </Button>
             </div>
           </div>

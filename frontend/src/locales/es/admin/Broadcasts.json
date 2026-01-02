@@ -27,5 +27,9 @@
   "title": "Envíos masivos",
   "total_recipients": "Destinatarios totales",
   "select_subscription_type": "Seleccione el tipo de suscripción",
-  "error_preview": "Error de vista previa"
+  "error_preview": "Error de vista previa",
+  "placeholder_all_users": "Todos los usuarios",
+  "placeholder_subject": "¡Oferta especial para ti!",
+  "placeholder_message": "Introduce el texto de tu mensaje...",
+  "click_preview_to_see": "Haga clic en \"Vista previa\" para ver los destinatarios"
 }

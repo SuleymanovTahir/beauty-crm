@@ -120,5 +120,12 @@
   "deselect_all": "Redefinir",
   "selected_count": "Selecionado",
   "load_inactive_clients": "Carregar Clientes Inativos",
-  "inactive_clients": "Clientes Inativos"
+  "inactive_clients": "Clientes Inativos",
+  "schedule_activation": "Agendar ativação",
+  "activation_date": "Data de ativação",
+  "activation_time": "Hora de ativação",
+  "auto_activate": "Ativar automaticamente na hora marcada",
+  "auto_deactivate": "Desativar automaticamente após a data de término",
+  "promo_placeholder": "Indique um amigo - ganhe um bônus",
+  "select_audience": "Selecione seu público"
 }

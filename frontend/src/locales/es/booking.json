@@ -26,7 +26,11 @@
     "title": "Elige un especialista",
     "anyAvailable": "Cualquier maestro gratis",
     "reviews": "opiniones",
-    "firstAvailable": "El primer máster disponible aceptará tu inscripción."
+    "firstAvailable": "El primer máster disponible aceptará tu inscripción.",
+    "anyDesc": "Seleccionaremos el mejor master disponible.",
+    "ready": "Listo",
+    "availableToday": "Disponible hoy",
+    "availableOn": "Disponible"
   },
   "confirm": {
     "title": "Confirmación de entrada",
@@ -43,7 +47,9 @@
     "date": "Fecha",
     "time": "Tiempo",
     "confirm": "Confirmar entrada",
-    "total": "Total"
+    "total": "Total",
+    "timeout": "El tiempo de espera ha expirado. Intentar otra vez.",
+    "dateTime": "Fecha y hora"
   },
   "services": {
     "title": "Seleccionar servicios",
@@ -52,10 +58,17 @@
     "noDescription": "Servicio profesional",
     "total": "Monto total",
     "continue": "Continuar",
-    "selected": "Servicios seleccionados"
+    "selected": "Servicios seleccionados",
+    "service_one": "servicio",
+    "service_few": "servicios",
+    "service_many": "servicios"
   },
   "totalDuration": "Duración total",
   "min": "mín.",
   "loading": "Cargando...",
-  "newBooking": "Nueva entrada"
+  "newBooking": "Nueva entrada",
+  "invalid_phone": "Por favor ingresa un número de teléfono válido",
+  "change_booking": "Editar entrada",
+  "change_service": "Cambiar servicio",
+  "change_master": "Cambiar maestro"
 }

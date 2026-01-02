@@ -58,7 +58,9 @@
           "all": "Alle Kunden",
           "active": "Aktive Kunden",
           "inactive": "Inaktive Kunden",
-          "tier": "Nach Treuestufe"
+          "tier": "Nach Treuestufe",
+          "appointment_based": "Laut Aufzeichnungen",
+          "service_based": "Durch Dienstleistungen"
         },
         "loyalty_tier": "Treueniveau",
         "select_tier": "Ebene auswählen",
@@ -67,7 +69,31 @@
           "silver": "Silber",
           "gold": "Gold",
           "platinum": "Platin"
-        }
+        },
+        "appointment_filter": "Nach Einträgen filtern",
+        "select_filter": "Filter auswählen",
+        "appointment_filters": {
+          "tomorrow": "Morgen",
+          "specific_date": "Spezifisches Datum",
+          "date_range": "Datumsbereich"
+        },
+        "appointment_date": "Aufnahmedatum",
+        "start_date": "Startdatum",
+        "end_date": "Enddatum",
+        "service_filter": "Service/Verfahren",
+        "service_placeholder": "Geben Sie den Dienstnamen oder die ID ein",
+        "service_hint": "Kunden, die sich für diesen Service registriert haben, erhalten eine Benachrichtigung",
+        "schedule_notification": "Planen Sie eine Benachrichtigung",
+        "schedule_date": "Sendedatum",
+        "schedule_time": "Versandzeit",
+        "repeat_notification": "Benachrichtigung wiederholen",
+        "repeat_interval": "Intervall wiederholen",
+        "repeat_intervals": {
+          "daily": "Täglich",
+          "weekly": "Wöchentlich",
+          "monthly": "Monatlich"
+        },
+        "repeat_end_date": "Wiedergabe beenden"
       }
     },
     "template": {
