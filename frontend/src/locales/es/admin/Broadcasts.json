@@ -34,5 +34,6 @@
   "subtitle": "Envío de notificaciones a los usuarios a través de diferentes canales",
   "target_role": "Rol objetivo (opcional)",
   "title": "Envíos masivos",
-  "total_recipients": "Destinatarios totales"
+  "total_recipients": "Destinatarios totales",
+  "preview_found_few": ""
 }

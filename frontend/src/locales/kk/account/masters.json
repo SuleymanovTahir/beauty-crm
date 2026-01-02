@@ -18,5 +18,7 @@
   "subtitle": "{{count}} мамандары • {{favorites}} таңдаулыларда",
   "subtitle_one": "",
   "subtitle_other": "",
-  "title": "Біздің шеберлер"
+  "title": "Біздің шеберлер",
+  "subtitle_few": "",
+  "subtitle_many": ""
 }

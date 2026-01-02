@@ -18,5 +18,7 @@
   "subtitle": "{{count}} विशेषज्ञ • पसंदीदा में {{favorites}}",
   "subtitle_one": "",
   "subtitle_other": "",
-  "title": "हमारे स्वामी"
+  "title": "हमारे स्वामी",
+  "subtitle_few": "",
+  "subtitle_many": ""
 }

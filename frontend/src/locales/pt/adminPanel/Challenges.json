@@ -57,7 +57,8 @@
     "failed_load": "Falha ao carregar desafios",
     "progress_checked_one": "",
     "progress_checked_many": "",
-    "progress_checked_other": ""
+    "progress_checked_other": "",
+    "progress_checked_few": ""
   },
   "types": {
     "referrals": "Referências",

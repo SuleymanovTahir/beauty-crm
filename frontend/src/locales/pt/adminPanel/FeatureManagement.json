@@ -23,7 +23,7 @@
     "saved": "Configuration saved successfully"
   },
   "whitelist": {
-    "hint": "Comma-separated User IDs. If set, only these users can access this feature. Leave empty to allow all eligible users.",
+    "hint": "IDs de usuário separados por vírgula. Se definido, somente esses usuários poderão acessar esse recurso. Deixe em branco para permitir todos os usuários qualificados.",
     "label": "Whitelist (Optional)",
     "placeholder": "e.g. 1, 5, 12"
   }

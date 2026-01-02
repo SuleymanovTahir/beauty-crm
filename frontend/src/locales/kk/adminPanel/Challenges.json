@@ -56,7 +56,9 @@
     "failed_delete": "Сынақ жойылмады",
     "failed_load": "Тапсырмалар жүктелмеді",
     "progress_checked_one": "",
-    "progress_checked_other": ""
+    "progress_checked_other": "",
+    "progress_checked_few": "",
+    "progress_checked_many": ""
   },
   "types": {
     "referrals": "Референциялар",

@@ -18,5 +18,7 @@
   "subtitle": "{{count}} Spezialisten • {{favorites}} in Favoriten",
   "subtitle_one": "",
   "subtitle_other": "",
-  "title": "Unsere Meister"
+  "title": "Unsere Meister",
+  "subtitle_few": "",
+  "subtitle_many": ""
 }

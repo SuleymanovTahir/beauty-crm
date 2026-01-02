@@ -3,7 +3,7 @@
   "change_master": "मास्टर बदलो",
   "change_service": "सेवा बदलें",
   "common": {
-    "any_master": "Любой мастер",
+    "any_master": "कोई गुरु",
     "cancel": "Later",
     "change": "Change",
     "edit": "Edit",
@@ -70,7 +70,7 @@
   },
   "salon": {
     "address": "Studio Location",
-    "name": "Beauty HQ"
+    "name": "सौंदर्य मुख्यालय"
   },
   "services": {
     "allCategories": "सभी श्रेणियां",

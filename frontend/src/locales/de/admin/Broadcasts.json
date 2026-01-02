@@ -33,5 +33,7 @@
   "subtitle": "Versenden von Benachrichtigungen an Benutzer über verschiedene Kanäle",
   "target_role": "Zielrolle (optional)",
   "title": "Massenmailings",
-  "total_recipients": "Gesamtzahl der Empfänger"
+  "total_recipients": "Gesamtzahl der Empfänger",
+  "preview_found_few": "",
+  "preview_found_many": ""
 }
