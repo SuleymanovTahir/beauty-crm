@@ -47,23 +47,40 @@ export function Settings() {
     try {
       setLoading(true);
 
-      // Get user data from localStorage
-      const userName = localStorage.getItem('user_name') || '';
-      const userEmail = localStorage.getItem('user_email') || '';
-      const userPhone = localStorage.getItem('user_phone') || '';
+      // Try to load from API first
+      const profileData = await apiClient.getClientProfile();
 
-      // Set profile with available data
-      setProfile({
-        name: userName,
-        email: userEmail,
-        phone: userPhone,
-        avatar: '',
-      });
+      if (profileData.success && profileData.profile) {
+        setProfile({
+          name: profileData.profile.name || localStorage.getItem('user_name') || '',
+          email: profileData.profile.email || localStorage.getItem('user_email') || '',
+          phone: profileData.profile.phone || localStorage.getItem('user_phone') || '',
+          avatar: profileData.profile.avatar || '',
+          created_at: profileData.profile.created_at
+        });
 
-      setLoading(false);
+        // Also sync to localStorage just in case
+        if (profileData.profile.phone) localStorage.setItem('user_phone', profileData.profile.phone);
+      } else {
+        // Fallback to localStorage
+        setProfile({
+          name: localStorage.getItem('user_name') || '',
+          email: localStorage.getItem('user_email') || '',
+          phone: localStorage.getItem('user_phone') || '',
+          avatar: '',
+        });
+      }
     } catch (error) {
       console.error('Error loading profile:', error);
+      // Final fallback
+      setProfile({
+        name: localStorage.getItem('user_name') || '',
+        email: localStorage.getItem('user_email') || '',
+        phone: localStorage.getItem('user_phone') || '',
+        avatar: '',
+      });
       toast.error(t('common:error_loading_data'));
+    } finally {
       setLoading(false);
     }
   };

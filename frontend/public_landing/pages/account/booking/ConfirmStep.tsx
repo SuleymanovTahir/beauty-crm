@@ -56,35 +56,50 @@ export function ConfirmStep({
             const dateStr = bookingState.date ? format(bookingState.date, 'yyyy-MM-dd') : '';
             const serviceNames = bookingState.services.map((s: any) => getLocalizedName(s, i18n.language)).join(', ');
 
-            await api.createBooking({
-                instagram_id: user?.username || `web_${user?.id || 'guest'}`,
-                service: serviceNames,
-                master: bookingState.professional?.username || 'any',
-                date: dateStr,
-                time: bookingState.time || '',
-                phone,
-                name: user?.full_name || user?.username || 'Guest'
-            });
+            // Create AbortController for timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
 
-            toast.success(t('confirm.success', 'Booking confirmed!'));
+            try {
+                await api.createBooking({
+                    instagram_id: user?.username || `web_${user?.id || 'guest'}`,
+                    service: serviceNames,
+                    master: bookingState.professional?.username || 'any',
+                    date: dateStr,
+                    time: bookingState.time || '',
+                    phone,
+                    name: user?.full_name || user?.username || 'Guest'
+                });
 
-            // Save phone to user profile if logged in
-            if (user && phone && phone !== user.phone) {
-                try {
-                    await api.updateClientProfile({ phone });
-                } catch (err) {
-                    console.warn('Failed to update phone:', err);
+                clearTimeout(timeoutId);
+                toast.success(t('confirm.success', 'Booking confirmed!'));
+
+                // Save phone to user profile if logged in
+                if (user && phone && phone !== user.phone) {
+                    try {
+                        await api.updateClientProfile({ phone });
+                    } catch (err) {
+                        console.warn('Failed to update phone:', err);
+                    }
+                }
+
+                // Redirect to appointments page after success
+                setTimeout(() => {
+                    onSuccess();
+                    window.location.href = '/account/appointments';
+                }, 500);
+            } catch (fetchError: any) {
+                clearTimeout(timeoutId);
+
+                if (fetchError.name === 'AbortError') {
+                    toast.error(t('confirm.timeout', 'Request timed out. Please try again.'));
+                } else {
+                    throw fetchError;
                 }
             }
-
-            // Redirect to appointments page after success
-            setTimeout(() => {
-                onSuccess();
-                window.location.href = '/account/appointments';
-            }, 500);
         } catch (error) {
             console.error('Booking error:', error);
-            toast.error(t('confirm.error', 'Error creating booking'));
+            toast.error(t('confirm.error', 'Error creating booking. Please try again.'));
             setLoading(false);
         }
     };

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Star, Heart, Calendar, Loader2 } from 'lucide-react';
+import { Star, Heart, Calendar, Loader2, Users } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
@@ -88,14 +87,26 @@ export function Masters() {
       {filteredMasters.length === 0 ? (
         <Card>
           <CardContent className="p-12 text-center">
-            <Heart className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="mb-2">{t('masters.no_favorites', 'Нет избранных мастеров')}</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              {t('masters.add_favorites_hint', 'Добавьте мастеров в избранное, нажав на иконку сердца')}
-            </p>
-            <Button onClick={() => setShowFavoritesOnly(false)}>
-              {t('masters.show_all', 'Показать всех мастеров')}
-            </Button>
+            {showFavoritesOnly ? (
+              <>
+                <Heart className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="mb-2">{t('masters.no_favorites', 'Нет избранных мастеров')}</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {t('masters.add_favorites_hint', 'Добавьте мастеров в избранное, нажав на иконку сердца')}
+                </p>
+                <Button onClick={() => setShowFavoritesOnly(false)}>
+                  {t('masters.show_all', 'Показать всех мастеров')}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="mb-2">{t('masters.no_masters', 'Мастера пока не добавлены')}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {t('masters.no_masters_hint', 'Скоро здесь появится список наших специалистов')}
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       ) : (
@@ -106,9 +117,8 @@ export function Masters() {
             return (
               <Card
                 key={master.id}
-                className={`overflow-hidden ${
-                  isFavorite ? 'border-pink-200 bg-gradient-to-br from-pink-50 to-purple-50' : ''
-                }`}
+                className={`overflow-hidden ${isFavorite ? 'border-pink-200 bg-gradient-to-br from-pink-50 to-purple-50' : ''
+                  }`}
               >
                 <CardHeader className="p-0">
                   <div className="aspect-square relative">
@@ -120,11 +130,10 @@ export function Masters() {
                     <Button
                       size="icon"
                       variant="secondary"
-                      className={`absolute top-4 right-4 ${
-                        isFavorite
-                          ? 'bg-pink-500 hover:bg-pink-600 text-white'
-                          : 'bg-white/90 hover:bg-white'
-                      }`}
+                      className={`absolute top-4 right-4 ${isFavorite
+                        ? 'bg-pink-500 hover:bg-pink-600 text-white'
+                        : 'bg-white/90 hover:bg-white'
+                        }`}
                       onClick={() => toggleFavorite(master.id)}
                     >
                       <Heart

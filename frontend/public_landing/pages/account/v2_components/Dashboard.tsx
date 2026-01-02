@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Clock, Star, TrendingUp, Zap, Repeat, Users, MessageCircle, ArrowRight, Sparkles, Loader2, X, Edit } from 'lucide-react';
+import { Calendar, Clock, Star, TrendingUp, Repeat, Users, MessageCircle, Sparkles, Loader2, X, Edit } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../../../src/api/client';
 import { toast } from 'sonner';
@@ -14,6 +15,7 @@ export function Dashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<any>(null);
+  const [showRepeatModal, setShowRepeatModal] = useState(false);
 
   useEffect(() => {
     loadDashboard();
@@ -92,6 +94,17 @@ export function Dashboard() {
     }
   };
 
+  const handleRepeatBooking = (booking: any) => {
+    navigate('/new-booking', {
+      state: {
+        prefillMaster: booking.master_id,
+        prefillService: booking.service_id,
+        repeatBooking: booking
+      }
+    });
+    setShowRepeatModal(false);
+  };
+
   const rescheduleBooking = (booking: any) => {
     navigate('/new-booking', {
       state: {
@@ -102,6 +115,18 @@ export function Dashboard() {
         prefillTime: booking.time
       }
     });
+  };
+
+  const onRepeatClick = () => {
+    if (dashboardData?.recent_visits?.length > 1) {
+      setShowRepeatModal(true);
+    } else if (dashboardData?.recent_visits?.length === 1) {
+      handleRepeatBooking(dashboardData.recent_visits[0]);
+    } else if (dashboardData?.last_visit) {
+      handleRepeatBooking(dashboardData.last_visit);
+    } else {
+      navigate('/new-booking');
+    }
   };
 
   if (loading) {
@@ -220,19 +245,7 @@ export function Dashboard() {
         <Button
           variant="outline"
           className="h-20 flex-col gap-2"
-          onClick={() => {
-            if (last_visit) {
-              navigate('/new-booking', {
-                state: {
-                  prefillMaster: last_visit.master_id,
-                  prefillService: last_visit.service_id,
-                  repeatBooking: last_visit
-                }
-              });
-            } else {
-              navigate('/new-booking');
-            }
-          }}
+          onClick={onRepeatClick}
         >
           <Repeat className="w-5 h-5" />
           <span className="text-sm">{t('dashboard.repeat', 'Повторить')}</span>
@@ -274,13 +287,7 @@ export function Dashboard() {
             </Button>
             <Button
               variant="outline"
-              onClick={() => navigate('/new-booking', {
-                state: {
-                  prefillMaster: last_visit.master_id,
-                  prefillService: last_visit.service_id,
-                  repeatBooking: last_visit
-                }
-              })}
+              onClick={onRepeatClick}
             >
               <Repeat className="w-4 h-4 mr-2" />
               {t('dashboard.repeat_service', 'Повторить услугу')}
@@ -291,29 +298,64 @@ export function Dashboard() {
 
       {/* Достижения */}
       {achievements_summary && (
-        <Card className="bg-gradient-to-br from-purple-50 to-pink-50">
+        <Card
+          className="bg-gradient-to-br from-purple-50 to-pink-50 cursor-pointer hover:border-purple-300 transition-all"
+          onClick={() => navigate('/account/achievements')}
+        >
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-purple-500" />
               {t('dashboard.achievements', 'Достижения')}
             </CardTitle>
             <CardDescription>
-              {t('dashboard.achievements_desc', 'Получайте награды за визиты и активность')}
+              {t('dashboard.achievements_desc', 'Коллекционируйте награды за ваше доверие')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">{t('dashboard.unlocked', 'Разблокировано')}</span>
+              <span className="text-muted-foreground">{t('dashboard.unlocked', 'Ваш прогресс')}</span>
               <span className="font-semibold text-lg">{achievements_summary.unlocked} / {achievements_summary.total}</span>
             </div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-purple-600 font-medium">
               {achievements_summary.unlocked === 0
-                ? t('dashboard.achievements_hint', 'Совершите первый визит, чтобы получить достижения!')
-                : t('dashboard.achievements_progress', 'Продолжайте посещать салон для новых наград')}
+                ? t('dashboard.achievements_hint', 'Вас ждут первые награды! Запишитесь на процедуру сегодня ✨')
+                : t('dashboard.achievements_progress', 'Вы на верном пути! Откройте новые награды при следующем визите 🎁')}
             </div>
           </CardContent>
         </Card>
       )}
+      {/* Modal for Repeat Selection */}
+      <Dialog open={showRepeatModal} onOpenChange={setShowRepeatModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('dashboard.repeat_title', 'Выберите услугу для повтора')}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 mt-4">
+            {dashboardData?.recent_visits?.map((visit: any) => (
+              <button
+                key={visit.id}
+                onClick={() => handleRepeatBooking(visit)}
+                className="w-full flex items-center gap-4 p-3 rounded-xl border border-gray-100 hover:bg-pink-50 hover:border-pink-200 transition-all text-left"
+              >
+                <Avatar className="w-10 h-10">
+                  <AvatarImage src={visit.master_photo} alt={visit.master} />
+                  <AvatarFallback>{visit.master?.[0]}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <div className="font-semibold text-sm">{visit.service}</div>
+                  <div className="text-xs text-muted-foreground">{visit.master}</div>
+                </div>
+                <div className="text-right">
+                  <div className="font-bold text-sm">{visit.price} AED</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {new Date(visit.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

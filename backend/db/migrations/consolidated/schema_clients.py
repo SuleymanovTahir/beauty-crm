@@ -22,11 +22,14 @@ def migrate_clients_schema():
         
         # Define all columns that should exist
         columns_to_add = {
+            'telegram_id': 'TEXT',
+            'referral_code': 'TEXT',
+            'total_saved': 'REAL DEFAULT 0',
             'account_balance': 'REAL DEFAULT 0',
-            'loyalty_points': 'BOOLEAN DEFAULT FALSE',
+            'loyalty_points': 'INTEGER DEFAULT 0', # Changed from BOOLEAN to match usage as points
             'notes': 'TEXT',
             'created_at': 'TEXT DEFAULT CURRENT_TIMESTAMP',
-            'preferred_messenger': "TEXT DEFAULT \'instagram\'",
+            'preferred_messenger': "TEXT DEFAULT 'instagram'",
             'preferences': 'TEXT',
             'interests': 'TEXT',
             'birthday': 'TEXT',

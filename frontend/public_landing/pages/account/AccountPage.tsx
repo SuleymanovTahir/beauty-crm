@@ -115,6 +115,7 @@ export function AccountPage() {
         // Update localStorage
         if (profileData.profile.name) localStorage.setItem('user_name', profileData.profile.name);
         if (profileData.profile.email) localStorage.setItem('user_email', profileData.profile.email);
+        if (profileData.profile.phone) localStorage.setItem('user_phone', profileData.profile.phone);
         if (profileData.profile.username) localStorage.setItem('username', profileData.profile.username);
       } else {
         // Fallback to localStorage if API fails
@@ -268,11 +269,10 @@ export function AccountPage() {
     return (
       <button
         onClick={() => handleTabChange(item.path)}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-          isActive
+        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
             ? 'bg-pink-100 text-pink-600'
             : 'text-gray-700 hover:bg-gray-100'
-        }`}
+          }`}
       >
         <Icon className="w-5 h-5 flex-shrink-0" />
         <span className="flex-1 text-left">{item.label}</span>
@@ -367,9 +367,8 @@ export function AccountPage() {
                 notifications.map((notif: any) => (
                   <div
                     key={notif.id}
-                    className={`p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer ${
-                      !notif.is_read ? 'bg-pink-50' : ''
-                    }`}
+                    className={`p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer ${!notif.is_read ? 'bg-pink-50' : ''
+                      }`}
                     onClick={() => {
                       markNotificationRead(notif.id);
                       if (notif.action_url) navigate(notif.action_url);
