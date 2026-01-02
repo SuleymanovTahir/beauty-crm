@@ -1519,7 +1519,7 @@ export default function Services() {
                 id="campaignName"
                 value={referralFormData.name}
                 onChange={(e) => setReferralFormData({ ...referralFormData, name: e.target.value })}
-                placeholder="Приведи друга - получи бонус"
+                placeholder={t('services:promo_placeholder', 'Приведи друга - получи бонус')}
               />
             </div>
 
@@ -1551,7 +1551,7 @@ export default function Services() {
                 onValueChange={(value: any) => setReferralFormData({ ...referralFormData, target_type: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Выберите аудиторию" />
+                  <SelectValue placeholder={t('services:select_audience', 'Выберите аудиторию')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Все клиенты</SelectItem>
@@ -2007,7 +2007,7 @@ export default function Services() {
             <div>
               <Label>Целевая аудитория</Label>
               <Select value={challengeFormData.target_type} onValueChange={(value: any) => setChallengeFormData({ ...challengeFormData, target_type: value })}>
-                <SelectTrigger><SelectValue placeholder="Выберите аудиторию" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t('services:select_audience', 'Выберите аудиторию')} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Все клиенты</SelectItem>
                   <SelectItem value="by_inactivity">Неактивные клиенты</SelectItem>
@@ -2040,7 +2040,7 @@ export default function Services() {
                         setClientsLoading(false);
                       }
                     }}>
-                      <SelectTrigger><SelectValue placeholder="Выберите мастера" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={t('services:select_master', 'Выберите мастера')} /></SelectTrigger>
                       <SelectContent>{mastersList.map((master) => (<SelectItem key={master.id} value={master.id.toString()}>{master.full_name}</SelectItem>))}</SelectContent>
                     </Select>
                   )}
@@ -2053,7 +2053,7 @@ export default function Services() {
                     ) : (
                       <div className="space-y-2">
                         <div className="flex gap-2 mb-2">
-                          <Input placeholder="Поиск клиентов..." value={challengeFormData.clientSearch || ''} onChange={(e) => setChallengeFormData({ ...challengeFormData, clientSearch: e.target.value })} className="flex-1" />
+                          <Input placeholder={t('services:search_clients', 'Поиск клиентов...')} value={challengeFormData.clientSearch || ''} onChange={(e) => setChallengeFormData({ ...challengeFormData, clientSearch: e.target.value })} className="flex-1" />
                           <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: clientsOfMaster.map(c => c.id) })}>Все</Button>
                           <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: [] })}>Сброс</Button>
                         </div>
@@ -2094,7 +2094,7 @@ export default function Services() {
                       setClientsLoading(false);
                     }
                   }}>
-                    <SelectTrigger><SelectValue placeholder="Выберите услугу" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t('services:select_service', 'Выберите услугу')} /></SelectTrigger>
                     <SelectContent>{services.map((service) => (<SelectItem key={service.id} value={service.id.toString()}>{i18n.language === 'ru' ? service.name_ru : service.name}</SelectItem>))}</SelectContent>
                   </Select>
                 </div>
@@ -2106,7 +2106,7 @@ export default function Services() {
                     ) : (
                       <div className="space-y-2">
                         <div className="flex gap-2 mb-2">
-                          <Input placeholder="Поиск клиентов..." value={challengeFormData.clientSearch || ''} onChange={(e) => setChallengeFormData({ ...challengeFormData, clientSearch: e.target.value })} className="flex-1" />
+                          <Input placeholder={t('services:search_clients', 'Поиск клиентов...')} value={challengeFormData.clientSearch || ''} onChange={(e) => setChallengeFormData({ ...challengeFormData, clientSearch: e.target.value })} className="flex-1" />
                           <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: clientsOfMaster.map(c => c.id) })}>Все</Button>
                           <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: [] })}>Сброс</Button>
                         </div>
@@ -2152,7 +2152,7 @@ export default function Services() {
                     <Label>Неактивные клиенты</Label>
                     <div className="space-y-2">
                       <div className="flex gap-2 mb-2">
-                        <Input placeholder="Поиск клиентов..." value={challengeFormData.clientSearch || ''} onChange={(e) => setChallengeFormData({ ...challengeFormData, clientSearch: e.target.value })} className="flex-1" />
+                        <Input placeholder={t('services:search_clients', 'Поиск клиентов...')} value={challengeFormData.clientSearch || ''} onChange={(e) => setChallengeFormData({ ...challengeFormData, clientSearch: e.target.value })} className="flex-1" />
                         <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: clientsOfMaster.map(c => c.id) })}>Все</Button>
                         <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: [] })}>Сброс</Button>
                       </div>

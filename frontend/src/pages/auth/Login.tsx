@@ -96,8 +96,8 @@ export default function Login() {
       // Проверяем, ожидает ли пользователь одобрения админа
       if (err.error_type === "not_approved") {
         console.log("User not approved yet");
-        setError("Ваш аккаунт ожидает одобрения администратора");
-        toast.error("Ваша регистрация ожидает одобрения администратора. Вы получите email когда ваш аккаунт будет активирован.");
+        setError(t('login:account_pending', "Ваш аккаунт ожидает одобрения администратора"));
+        toast.error(t('login:registration_pending_toast', "Ваша регистрация ожидает одобрения администратора. Вы получите email когда ваш аккаунт будет активирован."));
         return;
       }
 

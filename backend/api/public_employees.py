@@ -51,6 +51,7 @@ async def get_public_employees(
             FROM users u
             WHERE u.is_service_provider = TRUE
             AND u.is_active = TRUE
+            AND u.role != 'director'
             ORDER BY u.public_page_order DESC, u.full_name ASC
         """
 

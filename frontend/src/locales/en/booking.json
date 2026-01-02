@@ -85,12 +85,6 @@
     "evening": "Evening",
     "selectDateFirst": "First select a date"
   },
-  "professional": {
-    "title": "Choose a specialist",
-    "anyAvailable": "Any free master",
-    "reviews": "reviews",
-    "firstAvailable": "The first available master will accept your booking"
-  },
   "confirm": {
     "title": "Confirmation of booking",
     "subtitle": "Please check details",
@@ -123,5 +117,13 @@
   "newBooking": "New booking",
   "change_booking": "Change Booking",
   "change_service": "Change Service",
-  "change_master": "Change Master"
+  "change_master": "Change Master",
+  "professional": {
+    "title": "Choose Master",
+    "anyAvailable": "Flexible Match",
+    "anyDesc": "We'll match you with the best available professional",
+    "ready": "Ready",
+    "availableToday": "Available Today",
+    "reviews": "Reviews"
+  }
 }

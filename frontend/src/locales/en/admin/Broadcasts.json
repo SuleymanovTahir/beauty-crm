@@ -27,5 +27,9 @@
   "title": "Mass mailings",
   "total_recipients": "Total recipients",
   "select_subscription_type": "Select subscription type",
-  "error_preview": "Preview error"
+  "error_preview": "Preview error",
+  "placeholder_all_users": "All users",
+  "placeholder_subject": "Special offer for you!",
+  "placeholder_message": "Enter your message text...",
+  "click_preview_to_see": "Click \"Preview\" to see recipients"
 }
