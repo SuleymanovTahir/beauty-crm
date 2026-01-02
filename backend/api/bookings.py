@@ -552,12 +552,18 @@ async def update_booking_status_api(
                 # Получаем данные записи для начисления
                 conn = get_db_connection()
                 c = conn.cursor()
-                c.execute("SELECT instagram_id, revenue, service_name FROM bookings WHERE id = %s", (booking_id,))
+                # Join with services to get category
+                c.execute("""
+                    SELECT b.instagram_id, b.revenue, b.service_name, s.category 
+                    FROM bookings b
+                    LEFT JOIN services s ON b.service_name = s.name
+                    WHERE b.id = %s
+                """, (booking_id,))
                 b_row = c.fetchone()
                 conn.close()
 
                 if b_row:
-                    client_id, revenue, service_name = b_row
+                    client_id, revenue, service_name, category = b_row
                     revenue = revenue or 0
                     
                     from services.loyalty import LoyaltyService
@@ -565,7 +571,8 @@ async def update_booking_status_api(
                     
                     # Проверяем, не начислены ли уже баллы
                     if not loyalty.has_earned_for_booking(booking_id):
-                        points = loyalty.points_for_booking(revenue)
+                        # Pass category to calculation
+                        points = loyalty.points_for_booking(revenue, service_category=category)
                         if points > 0:
                             loyalty.earn_points(
                                 client_id=client_id,

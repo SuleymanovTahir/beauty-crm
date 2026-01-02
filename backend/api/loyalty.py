@@ -223,3 +223,113 @@ async def calculate_discount_api(
     except Exception as e:
         log_error(f"Error calculating discount: {e}", "loyalty")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+# ===== ADMIN ENDPOINTS =====
+
+@router.get("/loyalty/config")
+async def get_loyalty_config_api(
+    session_token: Optional[str] = Cookie(None)
+):
+    """
+    [Admin] Получить глобальные настройки
+    """
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    try:
+        loyalty_service = LoyaltyService()
+        config = loyalty_service.get_loyalty_config()
+        return {"success": True, "config": config}
+    except Exception as e:
+        log_error(f"Error getting loyalty config: {e}", "loyalty")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.post("/loyalty/config")
+async def update_loyalty_config_api(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """
+    [Admin] Обновить глобальные настройки
+    Body: { "loyalty_points_conversion_rate": 0.1 }
+    """
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    try:
+        data = await request.json()
+        rate = data.get("loyalty_points_conversion_rate")
+        if rate is None:
+            return JSONResponse({"error": "Missing loyalty_points_conversion_rate"}, status_code=400)
+
+        loyalty_service = LoyaltyService()
+        success = loyalty_service.update_loyalty_config(float(rate))
+        return {"success": success}
+    except Exception as e:
+        log_error(f"Error updating loyalty config: {e}", "loyalty")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.get("/loyalty/categories")
+async def get_loyalty_categories_api(
+    session_token: Optional[str] = Cookie(None)
+):
+    """[Admin] Получить правила для категорий"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    try:
+        loyalty_service = LoyaltyService()
+        rules = loyalty_service.get_category_rules()
+        return {"success": True, "rules": rules}
+    except Exception as e:
+        log_error(f"Error getting category rules: {e}", "loyalty")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.post("/loyalty/categories")
+async def update_loyalty_category_api(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """
+    [Admin] Создать/Обновить правило для категории
+    Body: { "category": "Nails", "points_multiplier": 1.5 }
+    """
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    try:
+        data = await request.json()
+        category = data.get("category")
+        multiplier = data.get("points_multiplier")
+
+        if not category or multiplier is None:
+            return JSONResponse({"error": "Missing category or points_multiplier"}, status_code=400)
+
+        loyalty_service = LoyaltyService()
+        success = loyalty_service.update_category_rule(category, float(multiplier))
+        return {"success": success}
+    except Exception as e:
+        log_error(f"Error updating category rule: {e}", "loyalty")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.delete("/loyalty/categories")
+async def delete_loyalty_category_api(
+    category: str = Query(..., description="Category to delete rule for"),
+    session_token: Optional[str] = Cookie(None)
+):
+    """[Admin] Удалить правило для категории"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    try:
+        loyalty_service = LoyaltyService()
+        success = loyalty_service.delete_category_rule(category)
+        return {"success": success}
+    except Exception as e:
+        log_error(f"Error deleting category rule: {e}", "loyalty")
+        return JSONResponse({"error": str(e)}, status_code=500)
