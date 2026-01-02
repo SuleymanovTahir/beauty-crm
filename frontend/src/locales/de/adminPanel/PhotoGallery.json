@@ -1,77 +1,83 @@
 {
-  "title": "Fotogalerie",
-  "subtitle": "Kundenfoto- und Portfoliomanagement",
-  "upload_photo": "Foto hochladen",
-  "stats": {
-    "total_photos": "Gesamtfotos",
-    "total_views": "Gesamtansichten",
-    "featured_photos": "Ausgewählte Fotos",
-    "recent_uploads": "Aktuelle Downloads"
-  },
-  "filters": {
-    "search_placeholder": "Suche nach Fotos...",
-    "all_categories": "Alle Kategorien"
-  },
-  "categories": {
-    "haircut": "Haarschnitte",
-    "coloring": "Färbung",
-    "styling": "Verlegung",
-    "manicure": "Maniküre",
-    "makeup": "Bilden",
-    "other": "Andere"
-  },
-  "card": {
-    "views": "Ansichten",
-    "featured": "Favoriten",
-    "toggle_featured": "Favoriten umschalten",
-    "delete": "Löschen",
-    "uploaded_by": "Hochgeladen von {{name}}"
-  },
-  "empty": {
-    "title": "Noch keine Fotos",
-    "description": "Laden Sie Ihre ersten Fotos in die Galerie hoch"
-  },
-  "dialogs": {
-    "upload": {
-      "title": "Foto hochladen",
-      "description": "Fügen Sie der Galerie ein neues Foto hinzu",
-      "form": {
-        "photo": "Foto",
-        "choose_file": "Datei auswählen",
-        "title": "Name",
-        "title_placeholder": "Fototitel",
-        "description": "Beschreibung",
-        "description_placeholder": "Fotobeschreibung",
-        "category": "Kategorie",
-        "select_category": "Kategorie auswählen",
-        "client": "Kunde",
-        "select_client": "Wählen Sie den Kunden aus",
-        "client_hint": "Das Foto wird in der Galerie des Kunden verfügbar sein"
-      }
-    },
-    "preview": {
-      "title": "Fotovorschau",
-      "uploaded_by": "Hochgeladen von {{name}}",
-      "created_at": "{{date}}",
-      "views": "{{count}} Aufrufe",
-      "category": "Kategorie: {{category}}"
-    },
-    "delete": {
-      "confirm": "Möchten Sie dieses Foto wirklich löschen?"
-    }
-  },
   "buttons": {
     "cancel": "Stornieren",
-    "upload": "Herunterladen",
-    "close": "Schließen"
+    "close": "Schließen",
+    "upload": "Herunterladen"
   },
+  "card": {
+    "delete": "Löschen",
+    "featured": "Favoriten",
+    "toggle_featured": "Favoriten umschalten",
+    "uploaded_by": "Hochgeladen von {{name}}",
+    "views": "Ansichten"
+  },
+  "categories": {
+    "coloring": "Färbung",
+    "haircut": "Haarschnitte",
+    "makeup": "Bilden",
+    "manicure": "Maniküre",
+    "other": "Andere",
+    "styling": "Verlegung"
+  },
+  "dialogs": {
+    "delete": {
+      "confirm": "Möchten Sie dieses Foto wirklich löschen?"
+    },
+    "preview": {
+      "category": "Kategorie: {{category}}",
+      "created_at": "{{date}}",
+      "title": "Fotovorschau",
+      "uploaded_by": "Hochgeladen von {{name}}",
+      "views": "{{count}} Aufrufe"
+    },
+    "upload": {
+      "description": "Fügen Sie der Galerie ein neues Foto hinzu",
+      "form": {
+        "after_photo": "Фото \"После\"",
+        "before_after": "До/После",
+        "before_photo": "Фото \"До\"",
+        "category": "Kategorie",
+        "choose_file": "Datei auswählen",
+        "client": "Kunde",
+        "client_hint": "Das Foto wird in der Galerie des Kunden verfügbar sein",
+        "description": "Beschreibung",
+        "description_placeholder": "Fotobeschreibung",
+        "photo": "Foto",
+        "select_category": "Kategorie auswählen",
+        "select_client": "Wählen Sie den Kunden aus",
+        "single_photo": "Одно фото",
+        "title": "Name",
+        "title_placeholder": "Fototitel",
+        "upload_type": "Тип загрузки"
+      },
+      "title": "Foto hochladen"
+    }
+  },
+  "empty": {
+    "description": "Laden Sie Ihre ersten Fotos in die Galerie hoch",
+    "title": "Noch keine Fotos"
+  },
+  "filters": {
+    "all_categories": "Alle Kategorien",
+    "search_placeholder": "Suche nach Fotos..."
+  },
+  "stats": {
+    "featured_photos": "Ausgewählte Fotos",
+    "recent_uploads": "Aktuelle Downloads",
+    "total_photos": "Gesamtfotos",
+    "total_views": "Gesamtansichten"
+  },
+  "subtitle": "Kundenfoto- und Portfoliomanagement",
+  "title": "Fotogalerie",
   "toasts": {
-    "uploaded": "Foto erfolgreich hochgeladen",
     "deleted": "Foto erfolgreich gelöscht",
-    "featured_updated": "Favoritenstatus aktualisiert",
+    "failed_delete": "Foto konnte nicht gelöscht werden",
+    "failed_featured": "Der Favoritenstatus konnte nicht aktualisiert werden",
     "failed_load": "Fotos konnten nicht hochgeladen werden",
     "failed_upload": "Foto konnte nicht hochgeladen werden",
-    "failed_delete": "Foto konnte nicht gelöscht werden",
-    "failed_featured": "Der Favoritenstatus konnte nicht aktualisiert werden"
-  }
+    "featured_updated": "Favoritenstatus aktualisiert",
+    "select_both_photos": "Please select both before and after photos",
+    "uploaded": "Foto erfolgreich hochgeladen"
+  },
+  "upload_photo": "Foto hochladen"
 }

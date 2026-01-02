@@ -14,7 +14,8 @@ import {
   Menu,
   X,
   Globe,
-  Scissors
+  Scissors,
+  Settings
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
@@ -91,6 +92,11 @@ export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutPro
       label: t('menu.public_content'),
       icon: Globe,
       path: '/admin/public-content',
+    },
+    {
+      label: t('menu.feature_management', 'Feature Management'),
+      icon: Settings,
+      path: '/admin/features',
     },
   ];
 

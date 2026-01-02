@@ -35,7 +35,9 @@ const LoyaltyManagement = React.lazy(() => import('./pages/adminPanel/LoyaltyMan
 const ReferralProgram = React.lazy(() => import('./pages/adminPanel/ReferralProgram'));
 const Challenges = React.lazy(() => import('./pages/adminPanel/Challenges'));
 const NotificationsDashboard = React.lazy(() => import('./pages/adminPanel/NotificationsDashboard'));
+
 const PhotoGallery = React.lazy(() => import('./pages/adminPanel/PhotoGallery'));
+const FeatureManagement = React.lazy(() => import('./pages/adminPanel/FeatureManagement'));
 
 const ManagerLayout = React.lazy(() => import('./components/layouts/ManagerLayout'));
 const ManagerDashboard = React.lazy(() => import('./pages/manager/Dashboard'));
@@ -255,6 +257,7 @@ export default function App() {
                 <Route path="referrals" element={<ReferralProgram />} />
                 <Route path="challenges" element={<Challenges />} />
                 <Route path="notifications" element={<NotificationsDashboard />} />
+                <Route path="features" element={<FeatureManagement />} />
                 <Route path="gallery" element={<PhotoGallery />} />
                 <Route path="services" element={<Services />} />
                 <Route path="public-content/:tab?" element={<PublicContent />} />

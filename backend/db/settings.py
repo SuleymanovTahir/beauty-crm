@@ -70,7 +70,11 @@ def get_salon_settings() -> dict:
                 "latitude": row_dict.get("latitude", 25.2048),  # JBR Dubai default
                 "longitude": row_dict.get("longitude", 55.2708),  # JBR Dubai default
                 "logo_url": row_dict.get("logo_url", "/assets/logo.webp"),
-                "base_url": row_dict.get("base_url", "https://mlediamant.com")
+                "logo_url": row_dict.get("logo_url", "/assets/logo.webp"),
+                "base_url": row_dict.get("base_url", "https://mlediamant.com"),
+                # Feature Management
+                "points_expiration_days": row_dict.get("points_expiration_days", 365),
+                "feature_flags": row_dict.get("feature_flags", "{}")
             }
         else:
             log_warning(
@@ -128,7 +132,10 @@ def _get_default_salon_settings() -> dict:
         "latitude": 25.2048,  # JBR Dubai
         "longitude": 55.2708,  # JBR Dubai
         "logo_url": "/assets/logo.webp",
-        "base_url": "https://mlediamant.com"
+        "logo_url": "/assets/logo.webp",
+        "base_url": "https://mlediamant.com",
+        "points_expiration_days": 365,
+        "feature_flags": "{}"
     }
 
 def update_salon_settings(data: dict) -> bool:
@@ -172,7 +179,9 @@ def update_salon_settings(data: dict) -> bool:
             'latitude': 'latitude',
             'longitude': 'longitude',
             'logo_url': 'logo_url',
-            'base_url': 'base_url'
+            'base_url': 'base_url',
+            'points_expiration_days': 'points_expiration_days',
+            'feature_flags': 'feature_flags'
         }
 
         # Формируем SET часть запроса только для предоставленных полей

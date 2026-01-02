@@ -1,19 +1,20 @@
 {
   "admin_panel": "Panel de administración",
-  "logout": "Finalizar la sesión",
   "go_to_crm": "Ir a CRM",
+  "logout": "Finalizar la sesión",
   "menu": {
-    "dashboard": "Panel de control",
-    "user_management": "Gestión de usuarios",
-    "loyalty_management": "Gestión de fidelización",
-    "referral_program": "Programa de referencia",
+    "bookings": "bookings",
+    "calendar": "Calendario",
     "challenges": "Desafíos",
+    "clients": "Clientela",
+    "dashboard": "Panel de control",
+    "feature_management": "Feature Management",
+    "loyalty_management": "Gestión de fidelización",
     "notifications": "Notificaciones",
     "photo_gallery": "Galería de fotos",
-    "bookings": "bookings",
-    "clients": "Clientela",
-    "calendar": "Calendario",
+    "public_content": "Contenido público",
+    "referral_program": "Programa de referencia",
     "services": "Servicios",
-    "public_content": "Contenido público"
+    "user_management": "Gestión de usuarios"
   }
 }

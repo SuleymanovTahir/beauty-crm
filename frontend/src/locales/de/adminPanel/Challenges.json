@@ -1,63 +1,67 @@
 {
-  "title": "Herausforderungen",
-  "subtitle": "Herausforderungen beim Engagement schaffen und bewältigen",
-  "create_challenge": "Erstellen Sie eine Herausforderung",
-  "stats": {
-    "active_challenges": "Aktive Herausforderungen",
-    "total_participants": "Gesamtzahl der Teilnehmer",
-    "completions": "Fertigstellung"
-  },
-  "types": {
-    "visits": "Besuche",
-    "spending": "Kosten",
-    "referrals": "Empfehlungen",
-    "services": "Dienstleistungen"
-  },
-  "statuses": {
-    "active": "Aktiv",
-    "upcoming": "Demnächst",
-    "completed": "Vollendet"
-  },
-  "card": {
-    "target": "Ziel",
-    "reward": "Belohnen",
-    "progress": "Fortschritt",
-    "completed": "vollendet",
-    "pts": "Punkt"
-  },
-  "dialogs": {
-    "create": {
-      "title": "Erstellen Sie eine neue Herausforderung",
-      "title_edit": "Herausforderung bearbeiten",
-      "description": "Definieren Sie Herausforderungsparameter und Belohnungen",
-      "form": {
-        "title": "Name",
-        "title_placeholder": "Sommer-Beauty-Challenge",
-        "description": "Beschreibung",
-        "description_placeholder": "Besuchen Sie den Salon diesen Monat dreimal",
-        "challenge_type": "Herausforderungstyp",
-        "target_value": "Zielwert",
-        "target_placeholder": "3",
-        "reward_points": "Belohnen Sie mit Punkten",
-        "reward_placeholder": "1000",
-        "start_date": "Startdatum",
-        "end_date": "Enddatum"
-      }
-    },
-    "delete": {
-      "confirm": "Sind Sie sicher, dass Sie diese Herausforderung löschen möchten?"
-    }
-  },
   "buttons": {
     "cancel": "Stornieren",
     "create_challenge": "Erstellen Sie eine Herausforderung",
     "update_challenge": "Update-Herausforderung"
   },
+  "card": {
+    "check_progress": "Check Progress",
+    "completed": "vollendet",
+    "progress": "Fortschritt",
+    "pts": "Punkt",
+    "reward": "Belohnen",
+    "target": "Ziel"
+  },
+  "create_challenge": "Erstellen Sie eine Herausforderung",
+  "dialogs": {
+    "create": {
+      "description": "Definieren Sie Herausforderungsparameter und Belohnungen",
+      "form": {
+        "challenge_type": "Herausforderungstyp",
+        "description": "Beschreibung",
+        "description_placeholder": "Besuchen Sie den Salon diesen Monat dreimal",
+        "end_date": "Enddatum",
+        "reward_placeholder": "1000",
+        "reward_points": "Belohnen Sie mit Punkten",
+        "start_date": "Startdatum",
+        "target_placeholder": "3",
+        "target_value": "Zielwert",
+        "title": "Name",
+        "title_placeholder": "Sommer-Beauty-Challenge"
+      },
+      "title": "Erstellen Sie eine neue Herausforderung",
+      "title_edit": "Herausforderung bearbeiten"
+    },
+    "delete": {
+      "confirm": "Sind Sie sicher, dass Sie diese Herausforderung löschen möchten?"
+    }
+  },
+  "stats": {
+    "active_challenges": "Aktive Herausforderungen",
+    "completions": "Fertigstellung",
+    "total_participants": "Gesamtzahl der Teilnehmer"
+  },
+  "statuses": {
+    "active": "Aktiv",
+    "completed": "Vollendet",
+    "upcoming": "Demnächst"
+  },
+  "subtitle": "Herausforderungen beim Engagement schaffen und bewältigen",
+  "title": "Herausforderungen",
   "toasts": {
     "created": "Herausforderung erfolgreich erstellt",
     "deleted": "Herausforderung erfolgreich gelöscht",
-    "failed_load": "Die Herausforderungen konnten nicht geladen werden",
+    "failed_check_progress": "Failed to check progress",
     "failed_create": "Die Herausforderung konnte nicht erstellt werden",
-    "failed_delete": "Die Herausforderung konnte nicht gelöscht werden"
+    "failed_delete": "Die Herausforderung konnte nicht gelöscht werden",
+    "failed_load": "Die Herausforderungen konnten nicht geladen werden",
+    "progress_checked_one": "",
+    "progress_checked_other": ""
+  },
+  "types": {
+    "referrals": "Empfehlungen",
+    "services": "Dienstleistungen",
+    "spending": "Kosten",
+    "visits": "Besuche"
   }
 }

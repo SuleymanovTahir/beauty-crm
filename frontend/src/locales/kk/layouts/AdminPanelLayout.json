@@ -1,19 +1,20 @@
 {
   "admin_panel": "Әкімші панелі",
-  "logout": "Шығу",
   "go_to_crm": "CRM жүйесіне өтіңіз",
+  "logout": "Шығу",
   "menu": {
-    "dashboard": "Басқару тақтасы",
-    "user_management": "Пайдаланушыны басқару",
-    "loyalty_management": "Адалдықты басқару",
-    "referral_program": "Реферат бағдарламасы",
+    "bookings": "bookings",
+    "calendar": "Күнтізбе",
     "challenges": "Қиындықтар",
+    "clients": "Клиенттер",
+    "dashboard": "Басқару тақтасы",
+    "feature_management": "Feature Management",
+    "loyalty_management": "Адалдықты басқару",
     "notifications": "Хабарландырулар",
     "photo_gallery": "Фотогалерея",
-    "bookings": "bookings",
-    "clients": "Клиенттер",
-    "calendar": "Күнтізбе",
+    "public_content": "Қоғамдық мазмұн",
+    "referral_program": "Реферат бағдарламасы",
     "services": "Қызметтер",
-    "public_content": "Қоғамдық мазмұн"
+    "user_management": "Пайдаланушыны басқару"
   }
 }

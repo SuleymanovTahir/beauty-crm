@@ -1,5 +1,6 @@
 {
   "401": "401",
+  "account_pending": "Su cuenta está esperando la aprobación del administrador",
   "authorization_error": "error de autorización",
   "crm_system_management": "Gestión del sistema CRM",
   "enter_login": "Ingrese su inicio de sesión",
@@ -13,10 +14,9 @@
   "login_title": "Acceso",
   "no_account_register": "¿No tienes una cuenta? Registro",
   "password": "Contraseña",
+  "registration_pending_toast": "Su registro está pendiente de aprobación del administrador. Recibirás un correo electrónico cuando tu cuenta esté activada.",
   "return_to_home": "volver a casa",
   "unauthorized": "No autorizado",
   "username": "Nombre de usuario",
-  "welcome": "Bienvenido",
-  "account_pending": "Su cuenta está esperando la aprobación del administrador",
-  "registration_pending_toast": "Su registro está pendiente de aprobación del administrador. Recibirás un correo electrónico cuando tu cuenta esté activada."
+  "welcome": "Bienvenido"
 }

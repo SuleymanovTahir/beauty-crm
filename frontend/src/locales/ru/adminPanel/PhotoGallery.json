@@ -1,77 +1,83 @@
 {
-  "title": "Фото галерея",
-  "subtitle": "Управление фотографиями клиентов и портфолио",
-  "upload_photo": "Загрузить фото",
-  "stats": {
-    "total_photos": "Всего фото",
-    "total_views": "Всего просмотров",
-    "featured_photos": "Избранных фото",
-    "recent_uploads": "Недавних загрузок"
-  },
-  "filters": {
-    "search_placeholder": "Поиск фотографий...",
-    "all_categories": "Все категории"
-  },
-  "categories": {
-    "haircut": "Стрижки",
-    "coloring": "Окрашивание",
-    "styling": "Укладка",
-    "manicure": "Маникюр",
-    "makeup": "Макияж",
-    "other": "Другое"
-  },
-  "card": {
-    "views": "просмотров",
-    "featured": "Избранное",
-    "toggle_featured": "Переключить избранное",
-    "delete": "Удалить",
-    "uploaded_by": "Загружено {{name}}"
-  },
-  "empty": {
-    "title": "Фотографий пока нет",
-    "description": "Загрузите первые фотографии в галерею"
-  },
-  "dialogs": {
-    "upload": {
-      "title": "Загрузить фото",
-      "description": "Добавить новое фото в галерею",
-      "form": {
-        "photo": "Фото",
-        "choose_file": "Выберите файл",
-        "title": "Название",
-        "title_placeholder": "Название фото",
-        "description": "Описание",
-        "description_placeholder": "Описание фото",
-        "category": "Категория",
-        "select_category": "Выберите категорию",
-        "client": "Клиент",
-        "select_client": "Выберите клиента",
-        "client_hint": "Фото будет доступно в галерее клиента"
-      }
-    },
-    "preview": {
-      "title": "Предварительный просмотр фото",
-      "uploaded_by": "Загружено {{name}}",
-      "created_at": "{{date}}",
-      "views": "{{count}} просмотров",
-      "category": "Категория: {{category}}"
-    },
-    "delete": {
-      "confirm": "Вы уверены, что хотите удалить это фото?"
-    }
-  },
   "buttons": {
     "cancel": "Отмена",
-    "upload": "Загрузить",
-    "close": "Закрыть"
+    "close": "Закрыть",
+    "upload": "Загрузить"
   },
+  "card": {
+    "delete": "Удалить",
+    "featured": "Избранное",
+    "toggle_featured": "Переключить избранное",
+    "uploaded_by": "Загружено {{name}}",
+    "views": "просмотров"
+  },
+  "categories": {
+    "coloring": "Окрашивание",
+    "haircut": "Стрижки",
+    "makeup": "Макияж",
+    "manicure": "Маникюр",
+    "other": "Другое",
+    "styling": "Укладка"
+  },
+  "dialogs": {
+    "delete": {
+      "confirm": "Вы уверены, что хотите удалить это фото?"
+    },
+    "preview": {
+      "category": "Категория: {{category}}",
+      "created_at": "{{date}}",
+      "title": "Предварительный просмотр фото",
+      "uploaded_by": "Загружено {{name}}",
+      "views": "{{count}} просмотров"
+    },
+    "upload": {
+      "description": "Добавить новое фото в галерею",
+      "form": {
+        "after_photo": "Фото \"После\"",
+        "before_after": "До/После",
+        "before_photo": "Фото \"До\"",
+        "category": "Категория",
+        "choose_file": "Выберите файл",
+        "client": "Клиент",
+        "client_hint": "Фото будет доступно в галерее клиента",
+        "description": "Описание",
+        "description_placeholder": "Описание фото",
+        "photo": "Фото",
+        "select_category": "Выберите категорию",
+        "select_client": "Выберите клиента",
+        "single_photo": "Одно фото",
+        "title": "Название",
+        "title_placeholder": "Название фото",
+        "upload_type": "Тип загрузки"
+      },
+      "title": "Загрузить фото"
+    }
+  },
+  "empty": {
+    "description": "Загрузите первые фотографии в галерею",
+    "title": "Фотографий пока нет"
+  },
+  "filters": {
+    "all_categories": "Все категории",
+    "search_placeholder": "Поиск фотографий..."
+  },
+  "stats": {
+    "featured_photos": "Избранных фото",
+    "recent_uploads": "Недавних загрузок",
+    "total_photos": "Всего фото",
+    "total_views": "Всего просмотров"
+  },
+  "subtitle": "Управление фотографиями клиентов и портфолио",
+  "title": "Фото галерея",
   "toasts": {
-    "uploaded": "Фото успешно загружено",
     "deleted": "Фото успешно удалено",
-    "featured_updated": "Статус избранного обновлен",
+    "failed_delete": "Не удалось удалить фото",
+    "failed_featured": "Не удалось обновить статус избранного",
     "failed_load": "Не удалось загрузить фотографии",
     "failed_upload": "Не удалось загрузить фото",
-    "failed_delete": "Не удалось удалить фото",
-    "failed_featured": "Не удалось обновить статус избранного"
-  }
+    "featured_updated": "Статус избранного обновлен",
+    "select_both_photos": "Please select both before and after photos",
+    "uploaded": "Фото успешно загружено"
+  },
+  "upload_photo": "Загрузить фото"
 }

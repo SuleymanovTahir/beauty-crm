@@ -1,47 +1,55 @@
 {
-  "title": "Control Panel",
-  "subtitle": "User, loyalty and engagement management",
   "quick_actions": {
-    "title": "Quick Actions",
-    "user_management": {
-      "title": "User management",
-      "description": "Manage user accounts and permissions"
+    "challenges": {
+      "description": "Creation and management of challenges",
+      "title": "Challenges"
     },
     "loyalty_management": {
-      "title": "Loyalty management",
-      "description": "Manage loyalty points and levels"
-    },
-    "referral_program": {
-      "title": "Referral program",
-      "description": "View and manage referrals"
-    },
-    "challenges": {
-      "title": "Challenges",
-      "description": "Creation and management of challenges"
+      "description": "Manage loyalty points and levels",
+      "title": "Loyalty management"
     },
     "notifications": {
-      "title": "Notifications",
-      "description": "Sending and managing notifications"
+      "description": "Sending and managing notifications",
+      "title": "Notifications"
     },
     "photo_gallery": {
-      "title": "Photo gallery",
-      "description": "Client photo and portfolio management"
+      "description": "Client photo and portfolio management",
+      "title": "Photo gallery"
+    },
+    "referral_program": {
+      "description": "View and manage referrals",
+      "title": "Referral program"
+    },
+    "title": "Quick Actions",
+    "user_management": {
+      "description": "Manage user accounts and permissions",
+      "title": "User management"
     }
   },
+  "recent_activity": {
+    "challenge_completed": "Challenge \"{{name}}\" completed by {{count}} users",
+    "challenge_completed_one": "",
+    "challenge_completed_other": "",
+    "day_ago": "{{count}} day ago",
+    "day_ago_one": "",
+    "day_ago_other": "",
+    "hours_ago": "{{count}} hours ago",
+    "hours_ago_one": "",
+    "hours_ago_other": "",
+    "new_tier_activated": "New loyalty level activated",
+    "subtitle": "Recent actions in the admin panel",
+    "title": "Recent Activity",
+    "users_registered": "{{count}} new users registered",
+    "users_registered_one": "",
+    "users_registered_other": ""
+  },
   "stats": {
-    "total_users": "Total users",
     "active_challenges": "Active challenges",
+    "from_last_month": "from last month",
     "loyalty_points_issued": "Loyalty points issued",
     "total_referrals": "Total referrals",
-    "from_last_month": "from last month"
+    "total_users": "Total users"
   },
-  "recent_activity": {
-    "title": "Recent Activity",
-    "subtitle": "Recent actions in the admin panel",
-    "new_tier_activated": "New loyalty level activated",
-    "users_registered": "{{count}} new users registered",
-    "challenge_completed": "Challenge \"{{name}}\" completed by {{count}} users",
-    "hours_ago": "{{count}} hours ago",
-    "day_ago": "{{count}} day ago"
-  }
+  "subtitle": "User, loyalty and engagement management",
+  "title": "Control Panel"
 }

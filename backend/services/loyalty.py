@@ -85,7 +85,7 @@ class LoyaltyService:
         points: int,
         reason: str,
         booking_id: Optional[int] = None,
-        expires_days: int = 365
+        expires_days: Optional[int] = None
     ) -> bool:
         """
         Начислить баллы клиенту
@@ -95,7 +95,7 @@ class LoyaltyService:
             points: Количество баллов
             reason: Причина начисления
             booking_id: ID записи (если применимо)
-            expires_days: Через сколько дней истекают баллы
+            expires_days: Через сколько дней истекают баллы (None = использовать настройки салона)
 
         Returns:
             bool: Успешность операции
@@ -105,6 +105,13 @@ class LoyaltyService:
 
         try:
             now = datetime.now()
+            
+            # Determine expiration days
+            if expires_days is None:
+                c.execute("SELECT points_expiration_days FROM salon_settings LIMIT 1")
+                row = c.fetchone()
+                expires_days = row[0] if row and row[0] is not None else 365
+            
             expires_at = (now + timedelta(days=expires_days)).isoformat()
 
             # Получаем текущий уровень для множителя
@@ -425,19 +432,27 @@ class LoyaltyService:
         conn = get_db_connection()
         c = conn.cursor()
         try:
-            c.execute("SELECT loyalty_points_conversion_rate FROM salon_settings LIMIT 1")
+            c.execute("SELECT loyalty_points_conversion_rate, points_expiration_days FROM salon_settings LIMIT 1")
             row = c.fetchone()
             rate = row[0] if row and row[0] is not None else 0.1
-            return {"loyalty_points_conversion_rate": rate}
+            expiration_days = row[1] if row and row[1] is not None else 365
+            return {
+                "loyalty_points_conversion_rate": rate,
+                "points_expiration_days": expiration_days
+            }
         finally:
             conn.close()
 
-    def update_loyalty_config(self, rate: float) -> bool:
-        """Обновить глобальную ставку лояльности"""
+    def update_loyalty_config(self, rate: float, points_expiration_days: int = 365) -> bool:
+        """Обновить глобальные настройки лояльности"""
         conn = get_db_connection()
         c = conn.cursor()
         try:
-            c.execute("UPDATE salon_settings SET loyalty_points_conversion_rate = %s", (rate,))
+            c.execute("""
+                UPDATE salon_settings 
+                SET loyalty_points_conversion_rate = %s,
+                    points_expiration_days = %s
+            """, (rate, points_expiration_days))
             conn.commit()
             return True
         except Exception as e:

@@ -23,6 +23,7 @@ from core.config import (
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from db.settings import get_bot_settings, update_bot_settings, get_salon_settings, update_salon_settings
+from services.features import FeatureService
 import psycopg2
 
 router = APIRouter()
@@ -400,6 +401,34 @@ async def get_salon_working_hours():
         log_error(f"Error getting salon working hours: {e}", "settings")
         # Fallback
         return get_default_working_hours_response()  # ✅ Используем функцию
+
+        return get_default_working_hours_response()  # ✅ Используем функцию
+
+# ===== FEATURE MANAGEMENT =====
+
+@router.get("/features")
+async def get_features_config():
+    """Получить конфигурацию всех фича-флагов"""
+    service = FeatureService()
+    return service.get_features_config()
+
+@router.post("/features")
+async def update_features_config(request: Request):
+    """Обновить конфигурацию фича-флагов"""
+    service = FeatureService()
+    try:
+        data = await request.json()
+        # Ensure data is a dict
+        if not isinstance(data, dict):
+             raise HTTPException(status_code=400, detail="Invalid format")
+             
+        if service.update_features_config(data):
+            return {"success": True}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to update feature flags")
+    except Exception as e:
+        log_error(f"Error updating features: {e}", "settings")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ===== REFERRAL CAMPAIGNS =====
 import json

@@ -1,47 +1,55 @@
 {
-  "title": "Bedienfeld",
-  "subtitle": "Benutzer-, Loyalitäts- und Engagement-Management",
   "quick_actions": {
-    "title": "Schnelle Aktionen",
-    "user_management": {
-      "title": "Benutzerverwaltung",
-      "description": "Benutzerkonten und Berechtigungen verwalten"
+    "challenges": {
+      "description": "Erstellung und Management von Herausforderungen",
+      "title": "Herausforderungen"
     },
     "loyalty_management": {
-      "title": "Treuemanagement",
-      "description": "Verwalten Sie Treuepunkte und -stufen"
-    },
-    "referral_program": {
-      "title": "Empfehlungsprogramm",
-      "description": "Empfehlungen anzeigen und verwalten"
-    },
-    "challenges": {
-      "title": "Herausforderungen",
-      "description": "Erstellung und Management von Herausforderungen"
+      "description": "Verwalten Sie Treuepunkte und -stufen",
+      "title": "Treuemanagement"
     },
     "notifications": {
-      "title": "Benachrichtigungen",
-      "description": "Benachrichtigungen versenden und verwalten"
+      "description": "Benachrichtigungen versenden und verwalten",
+      "title": "Benachrichtigungen"
     },
     "photo_gallery": {
-      "title": "Fotogalerie",
-      "description": "Kundenfoto- und Portfoliomanagement"
+      "description": "Kundenfoto- und Portfoliomanagement",
+      "title": "Fotogalerie"
+    },
+    "referral_program": {
+      "description": "Empfehlungen anzeigen und verwalten",
+      "title": "Empfehlungsprogramm"
+    },
+    "title": "Schnelle Aktionen",
+    "user_management": {
+      "description": "Benutzerkonten und Berechtigungen verwalten",
+      "title": "Benutzerverwaltung"
     }
   },
+  "recent_activity": {
+    "challenge_completed": "Herausforderung „{{name}}“ von {{count}} Benutzern abgeschlossen",
+    "challenge_completed_one": "",
+    "challenge_completed_other": "",
+    "day_ago": "Vor {{count}} Tag",
+    "day_ago_one": "",
+    "day_ago_other": "",
+    "hours_ago": "Vor {{count}} Stunden",
+    "hours_ago_one": "",
+    "hours_ago_other": "",
+    "new_tier_activated": "Neue Treuestufe aktiviert",
+    "subtitle": "Letzte Aktionen im Admin-Panel",
+    "title": "Letzte Aktivität",
+    "users_registered": "{{count}} neue Benutzer registriert",
+    "users_registered_one": "",
+    "users_registered_other": ""
+  },
   "stats": {
-    "total_users": "Gesamtzahl der Benutzer",
     "active_challenges": "Aktive Herausforderungen",
+    "from_last_month": "vom letzten Monat",
     "loyalty_points_issued": "Vergeben von Treuepunkten",
     "total_referrals": "Gesamtzahl der Empfehlungen",
-    "from_last_month": "vom letzten Monat"
+    "total_users": "Gesamtzahl der Benutzer"
   },
-  "recent_activity": {
-    "title": "Letzte Aktivität",
-    "subtitle": "Letzte Aktionen im Admin-Panel",
-    "new_tier_activated": "Neue Treuestufe aktiviert",
-    "users_registered": "{{count}} neue Benutzer registriert",
-    "challenge_completed": "Herausforderung „{{name}}“ von {{count}} Benutzern abgeschlossen",
-    "hours_ago": "Vor {{count}} Stunden",
-    "day_ago": "Vor {{count}} Tag"
-  }
+  "subtitle": "Benutzer-, Loyalitäts- und Engagement-Management",
+  "title": "Bedienfeld"
 }

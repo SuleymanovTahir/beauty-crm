@@ -1,47 +1,63 @@
 {
-  "title": "Панель управления",
-  "subtitle": "Управление пользователями, лояльностью и вовлеченностью",
   "quick_actions": {
-    "title": "Быстрые действия",
-    "user_management": {
-      "title": "Управление пользователями",
-      "description": "Управление учетными записями и разрешениями пользователей"
+    "challenges": {
+      "description": "Создание и управление челленджами",
+      "title": "Челленджи"
     },
     "loyalty_management": {
-      "title": "Управление лояльностью",
-      "description": "Управление баллами лояльности и уровнями"
-    },
-    "referral_program": {
-      "title": "Реферальная программа",
-      "description": "Просмотр и управление рефералами"
-    },
-    "challenges": {
-      "title": "Челленджи",
-      "description": "Создание и управление челленджами"
+      "description": "Управление баллами лояльности и уровнями",
+      "title": "Управление лояльностью"
     },
     "notifications": {
-      "title": "Уведомления",
-      "description": "Отправка и управление уведомлениями"
+      "description": "Отправка и управление уведомлениями",
+      "title": "Уведомления"
     },
     "photo_gallery": {
-      "title": "Фото галерея",
-      "description": "Управление фотографиями клиентов и портфолио"
+      "description": "Управление фотографиями клиентов и портфолио",
+      "title": "Фото галерея"
+    },
+    "referral_program": {
+      "description": "Просмотр и управление рефералами",
+      "title": "Реферальная программа"
+    },
+    "title": "Быстрые действия",
+    "user_management": {
+      "description": "Управление учетными записями и разрешениями пользователей",
+      "title": "Управление пользователями"
     }
   },
+  "recent_activity": {
+    "challenge_completed": "Челлендж \"{{name}}\" завершен {{count}} пользователями",
+    "challenge_completed_one": "",
+    "challenge_completed_few": "",
+    "challenge_completed_many": "",
+    "challenge_completed_other": "",
+    "day_ago": "{{count}} день назад",
+    "day_ago_one": "",
+    "day_ago_few": "",
+    "day_ago_many": "",
+    "day_ago_other": "",
+    "hours_ago": "{{count}} часов назад",
+    "hours_ago_one": "",
+    "hours_ago_few": "",
+    "hours_ago_many": "",
+    "hours_ago_other": "",
+    "new_tier_activated": "Новый уровень лояльности активирован",
+    "subtitle": "Последние действия в админ-панели",
+    "title": "Недавняя активность",
+    "users_registered": "{{count}} новых пользователей зарегистрировано",
+    "users_registered_one": "",
+    "users_registered_few": "",
+    "users_registered_many": "",
+    "users_registered_other": ""
+  },
   "stats": {
-    "total_users": "Всего пользователей",
     "active_challenges": "Активных челленджей",
+    "from_last_month": "от прошлого месяца",
     "loyalty_points_issued": "Выдано баллов лояльности",
     "total_referrals": "Всего рефералов",
-    "from_last_month": "от прошлого месяца"
+    "total_users": "Всего пользователей"
   },
-  "recent_activity": {
-    "title": "Недавняя активность",
-    "subtitle": "Последние действия в админ-панели",
-    "new_tier_activated": "Новый уровень лояльности активирован",
-    "users_registered": "{{count}} новых пользователей зарегистрировано",
-    "challenge_completed": "Челлендж \"{{name}}\" завершен {{count}} пользователями",
-    "hours_ago": "{{count}} часов назад",
-    "day_ago": "{{count}} день назад"
-  }
+  "subtitle": "Управление пользователями, лояльностью и вовлеченностью",
+  "title": "Панель управления"
 }

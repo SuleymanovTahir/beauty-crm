@@ -1,19 +1,20 @@
 {
   "admin_panel": "Panneau d'administration",
-  "logout": "Se déconnecter",
   "go_to_crm": "Aller au CRM",
+  "logout": "Se déconnecter",
   "menu": {
-    "dashboard": "Panneau de contrôle",
-    "user_management": "Gestion des utilisateurs",
-    "loyalty_management": "Gestion de la fidélité",
-    "referral_program": "Programme de parrainage",
+    "bookings": "bookings",
+    "calendar": "Calendrier",
     "challenges": "Défis",
+    "clients": "Clientèle",
+    "dashboard": "Panneau de contrôle",
+    "feature_management": "Feature Management",
+    "loyalty_management": "Gestion de la fidélité",
     "notifications": "Notifications",
     "photo_gallery": "Galerie de photos",
-    "bookings": "bookings",
-    "clients": "Clientèle",
-    "calendar": "Calendrier",
+    "public_content": "Contenu public",
+    "referral_program": "Programme de parrainage",
     "services": "Services",
-    "public_content": "Contenu public"
+    "user_management": "Gestion des utilisateurs"
   }
 }

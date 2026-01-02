@@ -1,19 +1,20 @@
 {
   "admin_panel": "Admin-Panel",
-  "logout": "Abmelden",
   "go_to_crm": "Gehen Sie zu CRM",
+  "logout": "Abmelden",
   "menu": {
-    "dashboard": "Bedienfeld",
-    "user_management": "Benutzerverwaltung",
-    "loyalty_management": "Treuemanagement",
-    "referral_program": "Empfehlungsprogramm",
+    "bookings": "bookings",
+    "calendar": "Kalender",
     "challenges": "Herausforderungen",
+    "clients": "Kunden",
+    "dashboard": "Bedienfeld",
+    "feature_management": "Feature Management",
+    "loyalty_management": "Treuemanagement",
     "notifications": "Benachrichtigungen",
     "photo_gallery": "Fotogalerie",
-    "bookings": "bookings",
-    "clients": "Kunden",
-    "calendar": "Kalender",
+    "public_content": "Öffentlicher Inhalt",
+    "referral_program": "Empfehlungsprogramm",
     "services": "Dienstleistungen",
-    "public_content": "Öffentlicher Inhalt"
+    "user_management": "Benutzerverwaltung"
   }
 }

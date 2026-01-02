@@ -1,21 +1,82 @@
 {
-  "title": "Panel de notificaciones",
-  "subtitle": "Gestión y envío de notificaciones a clientes.",
-  "save_template": "Guardar plantilla",
-  "send_notification": "Enviar notificación",
-  "stats": {
-    "total_sent": "Total enviado",
-    "email_sent": "Correo electrónico enviado",
-    "push_sent": "Empuje enviado",
-    "sms_sent": "SMS enviado"
+  "buttons": {
+    "cancel": "Cancelar",
+    "save_template": "Guardar plantilla",
+    "send_notification": "Enviar notificación"
   },
-  "templates": {
-    "title": "Plantillas de notificación",
-    "description": "Plantillas rápidas para notificaciones comunes",
-    "use_template": "Usar plantilla"
+  "dialogs": {
+    "send": {
+      "description": "Crea y envía notificaciones a tus clientes.",
+      "form": {
+        "appointment_date": "fecha de grabación",
+        "appointment_filter": "Filtrar por entradas",
+        "appointment_filters": {
+          "date_range": "Rango de fechas",
+          "specific_date": "fecha especifica",
+          "tomorrow": "Mañana"
+        },
+        "end_date": "Fecha de finalización",
+        "loyalty_tier": "Nivel de fidelidad",
+        "message": "Mensaje",
+        "message_placeholder": "Texto de notificación",
+        "notification_type": "Tipo de notificación",
+        "repeat_end_date": "Finalizar repetición",
+        "repeat_interval": "Intervalo de repetición",
+        "repeat_intervals": {
+          "daily": "A diario",
+          "monthly": "Mensual",
+          "weekly": "Semanalmente"
+        },
+        "repeat_notification": "Repetir notificación",
+        "schedule_date": "Fecha de envío",
+        "schedule_notification": "Programar una notificación",
+        "schedule_time": "tiempo de envío",
+        "segments": {
+          "active": "Clientes activos",
+          "all": "Todos los clientes",
+          "appointment_based": "Según registros",
+          "inactive": "Clientes inactivos",
+          "service_based": "Por servicios",
+          "tier": "Por nivel de fidelidad"
+        },
+        "select_filter": "Seleccionar filtro",
+        "select_tier": "Seleccionar nivel",
+        "service_filter": "Servicio/Procedimiento",
+        "service_hint": "Los clientes registrados en este servicio recibirán una notificación.",
+        "service_placeholder": "Ingrese el nombre o ID del servicio",
+        "start_date": "fecha de inicio",
+        "target_segment": "Segmento objetivo",
+        "tiers": {
+          "bronze": "Bronce",
+          "gold": "Oro",
+          "platinum": "Platino",
+          "silver": "Plata"
+        },
+        "title": "Título",
+        "title_placeholder": "Título de la notificación"
+      },
+      "title": "Enviar nueva notificación"
+    },
+    "template": {
+      "description": "Crear una plantilla de notificación reutilizable",
+      "form": {
+        "message": "Mensaje",
+        "message_placeholder": "Utilice {variable} para contenido dinámico",
+        "template_name": "Nombre de la plantilla",
+        "template_name_placeholder": "por ejemplo, mensaje de bienvenida",
+        "title": "Título",
+        "title_placeholder": "Título de la notificación",
+        "type": "Tipo",
+        "types": {
+          "email": "Email",
+          "push": "Notificación push",
+          "sms": "SMS"
+        }
+      },
+      "title": "Guardar como plantilla"
+    }
   },
   "history": {
-    "title": "Historial de notificaciones",
     "description": "Todas las notificaciones enviadas y programadas",
     "filters": {
       "all": "Todo",
@@ -23,108 +84,47 @@
       "push": "Push",
       "sms": "SMS"
     },
+    "scheduled": "Planificado",
+    "statuses": {
+      "failed": "Fallido",
+      "pending": "Espera",
+      "sent": "Enviado"
+    },
     "table": {
-      "status": "Estado",
-      "title": "Título",
-      "type": "Tipo",
+      "date": "Fecha",
       "recipients": "Destinatarios",
       "sent_failed": "Enviado/Error",
-      "date": "Fecha"
+      "status": "Estado",
+      "title": "Título",
+      "type": "Tipo"
     },
-    "statuses": {
-      "sent": "Enviado",
-      "pending": "Espera",
-      "failed": "Fallido"
-    },
-    "scheduled": "Planificado"
+    "title": "Historial de notificaciones"
+  },
+  "save_template": "Guardar plantilla",
+  "send_notification": "Enviar notificación",
+  "stats": {
+    "email_sent": "Correo electrónico enviado",
+    "push_sent": "Empuje enviado",
+    "sms_sent": "SMS enviado",
+    "total_sent": "Total enviado"
+  },
+  "subtitle": "Gestión y envío de notificaciones a clientes.",
+  "templates": {
+    "description": "Plantillas rápidas para notificaciones comunes",
+    "title": "Plantillas de notificación",
+    "use_template": "Usar plantilla"
+  },
+  "title": "Panel de notificaciones",
+  "toasts": {
+    "failed_load": "No se pudieron cargar las notificaciones",
+    "failed_save_template": "No se pudo guardar la plantilla",
+    "failed_send": "No se pudo enviar la notificación",
+    "sent": "Notificación enviada exitosamente",
+    "template_saved": "Plantilla guardada correctamente"
   },
   "types": {
     "email": "Email",
     "push": "Push",
     "sms": "SMS"
-  },
-  "dialogs": {
-    "send": {
-      "title": "Enviar nueva notificación",
-      "description": "Crea y envía notificaciones a tus clientes.",
-      "form": {
-        "notification_type": "Tipo de notificación",
-        "title": "Título",
-        "title_placeholder": "Título de la notificación",
-        "message": "Mensaje",
-        "message_placeholder": "Texto de notificación",
-        "target_segment": "Segmento objetivo",
-        "segments": {
-          "all": "Todos los clientes",
-          "active": "Clientes activos",
-          "inactive": "Clientes inactivos",
-          "tier": "Por nivel de fidelidad",
-          "appointment_based": "Según registros",
-          "service_based": "Por servicios"
-        },
-        "loyalty_tier": "Nivel de fidelidad",
-        "select_tier": "Seleccionar nivel",
-        "tiers": {
-          "bronze": "Bronce",
-          "silver": "Plata",
-          "gold": "Oro",
-          "platinum": "Platino"
-        },
-        "appointment_filter": "Filtrar por entradas",
-        "select_filter": "Seleccionar filtro",
-        "appointment_filters": {
-          "tomorrow": "Mañana",
-          "specific_date": "fecha especifica",
-          "date_range": "Rango de fechas"
-        },
-        "appointment_date": "fecha de grabación",
-        "start_date": "fecha de inicio",
-        "end_date": "Fecha de finalización",
-        "service_filter": "Servicio/Procedimiento",
-        "service_placeholder": "Ingrese el nombre o ID del servicio",
-        "service_hint": "Los clientes registrados en este servicio recibirán una notificación.",
-        "schedule_notification": "Programar una notificación",
-        "schedule_date": "Fecha de envío",
-        "schedule_time": "tiempo de envío",
-        "repeat_notification": "Repetir notificación",
-        "repeat_interval": "Intervalo de repetición",
-        "repeat_intervals": {
-          "daily": "A diario",
-          "weekly": "Semanalmente",
-          "monthly": "Mensual"
-        },
-        "repeat_end_date": "Finalizar repetición"
-      }
-    },
-    "template": {
-      "title": "Guardar como plantilla",
-      "description": "Crear una plantilla de notificación reutilizable",
-      "form": {
-        "template_name": "Nombre de la plantilla",
-        "template_name_placeholder": "por ejemplo, mensaje de bienvenida",
-        "title": "Título",
-        "title_placeholder": "Título de la notificación",
-        "message": "Mensaje",
-        "message_placeholder": "Utilice {variable} para contenido dinámico",
-        "type": "Tipo",
-        "types": {
-          "push": "Notificación push",
-          "email": "Email",
-          "sms": "SMS"
-        }
-      }
-    }
-  },
-  "buttons": {
-    "cancel": "Cancelar",
-    "send_notification": "Enviar notificación",
-    "save_template": "Guardar plantilla"
-  },
-  "toasts": {
-    "sent": "Notificación enviada exitosamente",
-    "template_saved": "Plantilla guardada correctamente",
-    "failed_load": "No se pudieron cargar las notificaciones",
-    "failed_send": "No se pudo enviar la notificación",
-    "failed_save_template": "No se pudo guardar la plantilla"
   }
 }

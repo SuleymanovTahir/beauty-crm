@@ -1,77 +1,83 @@
 {
-  "title": "Galeria de fotos",
-  "subtitle": "Gerenciamento de fotos e portfólio do cliente",
-  "upload_photo": "Carregar foto",
-  "stats": {
-    "total_photos": "Total de fotos",
-    "total_views": "Total de visualizações",
-    "featured_photos": "Fotos em destaque",
-    "recent_uploads": "Downloads recentes"
-  },
-  "filters": {
-    "search_placeholder": "Procurando fotos...",
-    "all_categories": "Todas as categorias"
-  },
-  "categories": {
-    "haircut": "Cortes de cabelo",
-    "coloring": "Coloração",
-    "styling": "Deitado",
-    "manicure": "Manicure",
-    "makeup": "Inventar",
-    "other": "Outro"
-  },
-  "card": {
-    "views": "visualizações",
-    "featured": "Favoritos",
-    "toggle_featured": "Alternar favoritos",
-    "delete": "Excluir",
-    "uploaded_by": "Enviado por {{nome}}"
-  },
-  "empty": {
-    "title": "Ainda não há fotos",
-    "description": "Envie suas primeiras fotos para a galeria"
-  },
-  "dialogs": {
-    "upload": {
-      "title": "Carregar foto",
-      "description": "Adicione uma nova foto à galeria",
-      "form": {
-        "photo": "Foto",
-        "choose_file": "Selecione o arquivo",
-        "title": "Nome",
-        "title_placeholder": "Título da foto",
-        "description": "Descrição",
-        "description_placeholder": "Descrição da foto",
-        "category": "Categoria",
-        "select_category": "Selecione a categoria",
-        "client": "Cliente",
-        "select_client": "Selecione o cliente",
-        "client_hint": "A foto ficará disponível na galeria do cliente"
-      }
-    },
-    "preview": {
-      "title": "Visualização da foto",
-      "uploaded_by": "Enviado por {{nome}}",
-      "created_at": "{{date}}",
-      "views": "{{contar}} visualizações",
-      "category": "Categoria: {{categoria}}"
-    },
-    "delete": {
-      "confirm": "Tem certeza de que deseja excluir esta foto?"
-    }
-  },
   "buttons": {
     "cancel": "Cancelar",
-    "upload": "Download",
-    "close": "Fechar"
+    "close": "Fechar",
+    "upload": "Download"
   },
+  "card": {
+    "delete": "Excluir",
+    "featured": "Favoritos",
+    "toggle_featured": "Alternar favoritos",
+    "uploaded_by": "Enviado por {{nome}}",
+    "views": "visualizações"
+  },
+  "categories": {
+    "coloring": "Coloração",
+    "haircut": "Cortes de cabelo",
+    "makeup": "Inventar",
+    "manicure": "Manicure",
+    "other": "Outro",
+    "styling": "Deitado"
+  },
+  "dialogs": {
+    "delete": {
+      "confirm": "Tem certeza de que deseja excluir esta foto?"
+    },
+    "preview": {
+      "category": "Categoria: {{categoria}}",
+      "created_at": "{{date}}",
+      "title": "Visualização da foto",
+      "uploaded_by": "Enviado por {{nome}}",
+      "views": "{{contar}} visualizações"
+    },
+    "upload": {
+      "description": "Adicione uma nova foto à galeria",
+      "form": {
+        "after_photo": "Фото \"После\"",
+        "before_after": "До/После",
+        "before_photo": "Фото \"До\"",
+        "category": "Categoria",
+        "choose_file": "Selecione o arquivo",
+        "client": "Cliente",
+        "client_hint": "A foto ficará disponível na galeria do cliente",
+        "description": "Descrição",
+        "description_placeholder": "Descrição da foto",
+        "photo": "Foto",
+        "select_category": "Selecione a categoria",
+        "select_client": "Selecione o cliente",
+        "single_photo": "Одно фото",
+        "title": "Nome",
+        "title_placeholder": "Título da foto",
+        "upload_type": "Тип загрузки"
+      },
+      "title": "Carregar foto"
+    }
+  },
+  "empty": {
+    "description": "Envie suas primeiras fotos para a galeria",
+    "title": "Ainda não há fotos"
+  },
+  "filters": {
+    "all_categories": "Todas as categorias",
+    "search_placeholder": "Procurando fotos..."
+  },
+  "stats": {
+    "featured_photos": "Fotos em destaque",
+    "recent_uploads": "Downloads recentes",
+    "total_photos": "Total de fotos",
+    "total_views": "Total de visualizações"
+  },
+  "subtitle": "Gerenciamento de fotos e portfólio do cliente",
+  "title": "Galeria de fotos",
   "toasts": {
-    "uploaded": "Foto enviada com sucesso",
     "deleted": "Foto excluída com sucesso",
-    "featured_updated": "Status de favorito atualizado",
+    "failed_delete": "Falha ao excluir foto",
+    "failed_featured": "Falha ao atualizar o status de favorito",
     "failed_load": "Falha ao enviar fotos",
     "failed_upload": "Falha ao enviar foto",
-    "failed_delete": "Falha ao excluir foto",
-    "failed_featured": "Falha ao atualizar o status de favorito"
-  }
+    "featured_updated": "Status de favorito atualizado",
+    "select_both_photos": "Please select both before and after photos",
+    "uploaded": "Foto enviada com sucesso"
+  },
+  "upload_photo": "Carregar foto"
 }
