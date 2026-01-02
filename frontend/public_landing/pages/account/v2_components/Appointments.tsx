@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../../../src/api/client';
 import { toast } from 'sonner';
+import { RescheduleDialog } from './RescheduleDialog';
 
 export function Appointments() {
   const { t } = useTranslation(['account', 'common']);
@@ -77,16 +78,12 @@ export function Appointments() {
     }
   };
 
+  const [rescheduleData, setRescheduleData] = useState<any>(null);
+  const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
+
   const handleEditBooking = (appointment: any) => {
-    navigate('/new-booking', {
-      state: {
-        editBookingId: appointment.id,
-        prefillMaster: appointment.master_id,
-        prefillService: appointment.service_id,
-        prefillDate: appointment.date,
-        prefillTime: appointment.time
-      }
-    });
+    setRescheduleData(appointment);
+    setIsRescheduleOpen(true);
   };
 
   const upcomingAppointments = bookings.filter(a =>
@@ -274,6 +271,11 @@ export function Appointments() {
           </Card>
         </TabsContent>
       </Tabs>
+      <RescheduleDialog
+        isOpen={isRescheduleOpen}
+        onClose={() => setIsRescheduleOpen(false)}
+        appointment={rescheduleData}
+      />
     </div>
   );
 }
