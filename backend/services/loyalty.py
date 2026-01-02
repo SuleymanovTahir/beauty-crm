@@ -389,9 +389,105 @@ class LoyaltyService:
         finally:
             conn.close()
 
-    def points_for_booking(self, revenue: float) -> int:
-        """Вычислить баллы за запись (1 балл за каждые 10 AED)"""
-        return int(revenue / 10)
+    def points_for_booking(self, revenue: float, service_category: Optional[str] = None) -> int:
+        """
+        Вычислить баллы за запись с учетом настроек и категории
+        Formula: Revenue * ConversionRate * CategoryMultiplier
+        """
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            # 1. Get global conversion rate
+            c.execute("SELECT loyalty_points_conversion_rate FROM salon_settings LIMIT 1")
+            row = c.fetchone()
+            conversion_rate = row[0] if row and row[0] is not None else 0.1
+
+            # 2. Get category multiplier if category provided
+            category_multiplier = 1.0
+            if service_category:
+                c.execute("SELECT points_multiplier FROM loyalty_category_rules WHERE category = %s", (service_category,))
+                cat_row = c.fetchone()
+                if cat_row:
+                    category_multiplier = cat_row[0]
+
+            # 3. Calculate
+            points = int(revenue * conversion_rate * category_multiplier)
+            return points
+        except Exception as e:
+            log_error(f"Error calculating points for booking: {e}", "loyalty")
+            # Fallback to default 10%
+            return int(revenue * 0.1)
+        finally:
+            conn.close()
+
+    def get_loyalty_config(self) -> Dict:
+        """Получить глобальные настройки лояльности"""
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute("SELECT loyalty_points_conversion_rate FROM salon_settings LIMIT 1")
+            row = c.fetchone()
+            rate = row[0] if row and row[0] is not None else 0.1
+            return {"loyalty_points_conversion_rate": rate}
+        finally:
+            conn.close()
+
+    def update_loyalty_config(self, rate: float) -> bool:
+        """Обновить глобальную ставку лояльности"""
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute("UPDATE salon_settings SET loyalty_points_conversion_rate = %s", (rate,))
+            conn.commit()
+            return True
+        except Exception as e:
+            log_error(f"Error updating loyalty config: {e}", "loyalty")
+            return False
+        finally:
+            conn.close()
+
+    def get_category_rules(self) -> List[Dict]:
+        """Получить правила для категорий"""
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute("SELECT category, points_multiplier FROM loyalty_category_rules ORDER BY category")
+            return [{"category": row[0], "points_multiplier": row[1]} for row in c.fetchall()]
+        finally:
+            conn.close()
+
+    def update_category_rule(self, category: str, multiplier: float) -> bool:
+        """Создать или обновить правило для категории"""
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute("""
+                INSERT INTO loyalty_category_rules (category, points_multiplier, created_at)
+                VALUES (%s, %s, CURRENT_TIMESTAMP)
+                ON CONFLICT (category) DO UPDATE SET 
+                    points_multiplier = EXCLUDED.points_multiplier
+            """, (category, multiplier))
+            conn.commit()
+            return True
+        except Exception as e:
+            log_error(f"Error updating category rule: {e}", "loyalty")
+            return False
+        finally:
+            conn.close()
+
+    def delete_category_rule(self, category: str) -> bool:
+        """Удалить правило для категории"""
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute("DELETE FROM loyalty_category_rules WHERE category = %s", (category,))
+            conn.commit()
+            return True
+        except Exception as e:
+            log_error(f"Error deleting category rule: {e}", "loyalty")
+            return False
+        finally:
+            conn.close()
 
     def has_earned_for_booking(self, booking_id: int) -> bool:
         """Проверить, были ли уже начислены баллы за эту запись"""
