@@ -27,15 +27,15 @@
     }
   },
   "recent_activity": {
-    "challenge_completed": "Défi \"{{name}}\" complété par {{count}}\u00a0utilisateurs",
+    "challenge_completed": "Défi \"{{name}}\" complété par {{count}} utilisateurs",
     "challenge_completed_one": "",
     "challenge_completed_many": "",
     "challenge_completed_other": "",
-    "day_ago": "Il y a {{count}}\u00a0jours",
+    "day_ago": "Il y a {{count}} jours",
     "day_ago_one": "",
     "day_ago_many": "",
     "day_ago_other": "",
-    "hours_ago": "Il y a {{count}}\u00a0heures",
+    "hours_ago": "Il y a {{count}} heures",
     "hours_ago_one": "",
     "hours_ago_many": "",
     "hours_ago_other": "",
@@ -45,7 +45,11 @@
     "users_registered": "{{count}} nouveaux utilisateurs enregistrés",
     "users_registered_one": "",
     "users_registered_many": "",
-    "users_registered_other": ""
+    "users_registered_other": "",
+    "challenge_completed_few": "",
+    "day_ago_few": "",
+    "hours_ago_few": "",
+    "users_registered_few": ""
   },
   "stats": {
     "active_challenges": "Défis actifs",

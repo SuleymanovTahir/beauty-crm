@@ -41,7 +41,15 @@
     "title": "Recent Activity",
     "users_registered": "{{count}} new users registered",
     "users_registered_one": "",
-    "users_registered_other": ""
+    "users_registered_other": "",
+    "challenge_completed_few": "",
+    "challenge_completed_many": "",
+    "day_ago_few": "",
+    "day_ago_many": "",
+    "hours_ago_few": "",
+    "hours_ago_many": "",
+    "users_registered_few": "",
+    "users_registered_many": ""
   },
   "stats": {
     "active_challenges": "Active challenges",

@@ -53,8 +53,8 @@
   "subtitle": "Gérer les niveaux de fidélité, les points et les transactions",
   "tiers": {
     "description": "Configuration des niveaux et des avantages",
-    "discount": "{{percent}}\u00a0% de réduction",
-    "from_points": "À partir de {{points}}\u00a0points",
+    "discount": "{{percent}} % de réduction",
+    "from_points": "À partir de {{points}} points",
     "starting_level": "Niveau d'entrée",
     "title": "Niveaux de fidélité"
   },

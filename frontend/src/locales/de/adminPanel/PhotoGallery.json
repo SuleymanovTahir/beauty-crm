@@ -33,9 +33,9 @@
     "upload": {
       "description": "Fügen Sie der Galerie ein neues Foto hinzu",
       "form": {
-        "after_photo": "Фото \"После\"",
-        "before_after": "До/После",
-        "before_photo": "Фото \"До\"",
+        "after_photo": "Foto „Nachher“",
+        "before_after": "Vorher/Nachher",
+        "before_photo": "Foto „Vorher“",
         "category": "Kategorie",
         "choose_file": "Datei auswählen",
         "client": "Kunde",
@@ -45,10 +45,10 @@
         "photo": "Foto",
         "select_category": "Kategorie auswählen",
         "select_client": "Wählen Sie den Kunden aus",
-        "single_photo": "Одно фото",
+        "single_photo": "Ein Foto",
         "title": "Name",
         "title_placeholder": "Fototitel",
-        "upload_type": "Тип загрузки"
+        "upload_type": "Lasttyp"
       },
       "title": "Foto hochladen"
     }

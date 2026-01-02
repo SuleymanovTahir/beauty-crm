@@ -300,7 +300,7 @@
       "duration": "",
       "max_price": 100,
       "min_price": 80,
-      "name": "यहां तक \u200b\u200bकि कटे हुए सिरे भी",
+      "name": "यहां तक ​​कि कटे हुए सिरे भी",
       "price": 90
     },
     "half_arms": {
@@ -1005,11 +1005,11 @@
     }
   },
   "manicurePedicure": "Manicure & Pedicure",
-  "master": "Мастер",
-  "mastersDescription": "Наши профессиональные мастера с многолетним опытом работы готовы предоставить вам услуги высочайшего качества",
-  "minutes": "мин",
-  "ourMasters": "Наши мастера",
-  "portfolioTitle": "Портфолио",
+  "master": "मालिक",
+  "mastersDescription": "कई वर्षों के अनुभव वाले हमारे पेशेवर तकनीशियन आपको उच्चतम गुणवत्ता वाली सेवाएं प्रदान करने के लिए तैयार हैं।",
+  "minutes": "मिन",
+  "ourMasters": "हमारे स्वामी",
+  "portfolioTitle": "पोर्टफोलियो",
   "service1Desc": "Professional nail care services.",
   "service2Desc": "Expert hair styling and treatments.",
   "service3Desc": "Professional makeup and brow styling.",

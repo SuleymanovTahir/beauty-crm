@@ -18,5 +18,7 @@
   "subtitle": "{{count}} specialists • {{favorites}} in favorites",
   "subtitle_one": "",
   "subtitle_other": "",
-  "title": "Our masters"
+  "title": "Our masters",
+  "subtitle_few": "",
+  "subtitle_many": ""
 }

@@ -33,9 +33,9 @@
     "upload": {
       "description": "Add a new photo to the gallery",
       "form": {
-        "after_photo": "Фото \"После\"",
-        "before_after": "До/После",
-        "before_photo": "Фото \"До\"",
+        "after_photo": "Photo \"After\"",
+        "before_after": "Before/After",
+        "before_photo": "Photo \"Before\"",
         "category": "Category",
         "choose_file": "Select file",
         "client": "Client",
@@ -45,10 +45,10 @@
         "photo": "Photo",
         "select_category": "Select category",
         "select_client": "Select client",
-        "single_photo": "Одно фото",
+        "single_photo": "One photo",
         "title": "Name",
         "title_placeholder": "Photo title",
-        "upload_type": "Тип загрузки"
+        "upload_type": "Load Type"
       },
       "title": "Upload photo"
     }

@@ -21,10 +21,10 @@
   },
   "dialogs": {
     "delete": {
-      "confirm": "Êtes-vous sûr de vouloir supprimer cette photo\u00a0?"
+      "confirm": "Êtes-vous sûr de vouloir supprimer cette photo ?"
     },
     "preview": {
-      "category": "Catégorie\u00a0: {{catégorie}}",
+      "category": "Catégorie : {{catégorie}}",
       "created_at": "{{date}}",
       "title": "Aperçu des photos",
       "uploaded_by": "Téléchargé par {{name}}",
@@ -33,9 +33,9 @@
     "upload": {
       "description": "Ajouter une nouvelle photo à la galerie",
       "form": {
-        "after_photo": "Фото \"После\"",
-        "before_after": "До/После",
-        "before_photo": "Фото \"До\"",
+        "after_photo": "Photo \"Après\"",
+        "before_after": "Avant/Après",
+        "before_photo": "Photo \"Avant\"",
         "category": "Catégorie",
         "choose_file": "Sélectionner un fichier",
         "client": "Client",
@@ -45,10 +45,10 @@
         "photo": "Photo",
         "select_category": "Sélectionnez la catégorie",
         "select_client": "Sélectionner un client",
-        "single_photo": "Одно фото",
+        "single_photo": "Une photo",
         "title": "Nom",
         "title_placeholder": "Titre de la photo",
-        "upload_type": "Тип загрузки"
+        "upload_type": "Type de charge"
       },
       "title": "Télécharger une photo"
     }
