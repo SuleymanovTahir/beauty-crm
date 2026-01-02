@@ -9,6 +9,11 @@
     "referral_program": "नाम लेने का कार्यक्रम",
     "challenges": "चुनौतियां",
     "notifications": "सूचनाएं",
-    "photo_gallery": "फोटो गैलरी"
+    "photo_gallery": "फोटो गैलरी",
+    "bookings": "bookings",
+    "clients": "ग्राहकों",
+    "calendar": "कैलेंडर",
+    "services": "सेवाएं",
+    "public_content": "सार्वजनिक सामग्री"
   }
 }

@@ -1,0 +1,21 @@
+{
+  "title": "Meine Einträge",
+  "subtitle": "Verwalten Sie Ihre Besuche",
+  "tab_upcoming": "Demnächst",
+  "tab_history": "Geschichte",
+  "tab_recurring": "Wiederholt",
+  "status_upcoming": "Demnächst",
+  "status_completed": "Vollendet",
+  "status_cancelled": "Abgesagt",
+  "button_repeat": "Wiederholen",
+  "button_change": "Ändern",
+  "button_cancel": "Stornieren",
+  "no_upcoming": "Keine bevorstehenden Beiträge",
+  "no_upcoming_desc": "Melden Sie sich jetzt für den Service an",
+  "button_book": "Melden Sie sich an",
+  "history_empty": "Die Geschichte ist leer",
+  "history_empty_desc": "Abgeschlossene Besuche werden hier angezeigt",
+  "recurring_title": "Doppelte Einträge",
+  "recurring_desc": "Funktion in Entwicklung. In Kürze können Sie automatische Aufnahmen einrichten.",
+  "unknown_master": "Unbekannter Meister"
+}
