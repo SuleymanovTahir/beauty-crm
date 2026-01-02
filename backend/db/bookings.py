@@ -58,10 +58,10 @@ def get_bookings_by_master(master_name: str):
     conn.close()
     return bookings
 
-def get_bookings_by_client(instagram_id: str, phone: str = None):
+def get_bookings_by_client(instagram_id: str = None, phone: str = None, user_id: int = None):
     """
-    Получить записи клиента по Instagram ID или телефону.
-    Приоритет: ищем по обоим полям (OR).
+    Получить записи клиента по Instagram ID, телефону или user_id.
+    Приоритет: ищем по всем непустым полям (OR).
     """
     conn = get_db_connection()
     c = conn.cursor()
@@ -70,17 +70,31 @@ def get_bookings_by_client(instagram_id: str, phone: str = None):
         # Пробуем современный запрос
         query = """
             SELECT id, instagram_id, service_name, datetime, phone,
-                   name, status, created_at, revenue, master
+                   name, status, created_at, revenue, master, user_id
             FROM bookings
-            WHERE instagram_id = %s
+            WHERE 1=1
         """
-        params = [instagram_id]
+        conditions = []
+        params = []
 
+        if instagram_id:
+            conditions.append("instagram_id = %s")
+            params.append(instagram_id)
+        
         if phone:
-            query += " OR phone = %s"
+            conditions.append("phone = %s")
             params.append(phone)
+            
+        if user_id:
+            conditions.append("user_id = %s")
+            params.append(user_id)
+        
+        if conditions:
+            query += " AND (" + " OR ".join(conditions) + ")"
+        else:
+            query += " AND 1=0" # No criteria provided
 
-        query += " ORDER BY created_at DESC"
+        query += " ORDER BY datetime DESC"
 
         c.execute(query, tuple(params))
     except psycopg2.OperationalError:
@@ -140,14 +154,22 @@ def get_bookings_by_phone(phone: str):
 
 def save_booking(instagram_id: str, service: str, datetime_str: str, 
                 phone: str, name: str, special_package_id: int = None, master: str = None,
-                status: str = 'confirmed', source: str = 'manual'):
+                status: str = 'confirmed', source: str = 'manual', user_id: int = None):
     """Сохранить завершённую запись"""
     conn = get_db_connection()
     c = conn.cursor()
     
     # ✅ КРИТИЧНО: Убедимся что клиент существует в БД
     from db import get_or_create_client
-    get_or_create_client(instagram_id)
+    get_or_create_client(instagram_id, phone=phone)
+    
+    # ✅ Попытка определить user_id если не передан
+    if user_id is None:
+        # Ищем пользователя по username = instagram_id
+        c.execute("SELECT id FROM users WHERE username = %s", (instagram_id,))
+        user_row = c.fetchone()
+        if user_row:
+            user_id = user_row[0]
     
     now = get_current_time().isoformat()
     # Ensure datetime_str is in ISO format (T separator)
@@ -156,11 +178,11 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
 
     c.execute("""INSERT INTO bookings 
              (instagram_id, service_name, datetime, phone, name, status, 
-              created_at, special_package_id, master, source)
-             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+              created_at, special_package_id, master, source, user_id)
+             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
              RETURNING id""",
           (instagram_id, service, datetime_str, phone, name, status, 
-           now, special_package_id, master, source))
+           now, special_package_id, master, source, user_id))
     
     booking_id = c.fetchone()[0]  # ✅ ПОЛУЧАЕМ ID СОЗДАННОЙ ЗАПИСИ
     

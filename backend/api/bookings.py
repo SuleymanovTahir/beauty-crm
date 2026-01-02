@@ -217,7 +217,9 @@ async def process_booking_background_tasks(
     data: dict,
     user_id: str
 ):
-    """Background task handler for new bookings"""
+    """Background task handler for new bookings with timeouts"""
+    import asyncio
+    
     try:
         instagram_id = data.get('instagram_id')
         service = data.get('service')
@@ -226,48 +228,63 @@ async def process_booking_background_tasks(
         name = data.get('name')
         master = data.get('master', '')
 
-        # 1. 🧠 Smart Assistant Learning
+        # 1. 🧠 Smart Assistant Learning (with timeout)
         try:
-            assistant = SmartAssistant(instagram_id)
-            assistant.learn_from_booking({
-                'service': service,
-                'master': master,
-                'datetime': datetime_str,
-                'phone': phone,
-                'name': name
-            })
-            log_info(f"🧠 SmartAssistant learned from booking for {instagram_id}", "bookings")
+            async def learn_task():
+                assistant = SmartAssistant(instagram_id)
+                assistant.learn_from_booking({
+                    'service': service,
+                    'master': master,
+                    'datetime': datetime_str,
+                    'phone': phone,
+                    'name': name
+                })
+                log_info(f"🧠 SmartAssistant learned from booking for {instagram_id}", "bookings")
+            
+            await asyncio.wait_for(learn_task(), timeout=5.0)
+        except asyncio.TimeoutError:
+            log_warning(f"⏱️ SmartAssistant learning timed out for {instagram_id}", "bookings")
         except Exception as e:
-            log_error(f"SmartAssistant learning failed: {e}", "bookings")
+            log_error(f"❌ SmartAssistant learning failed: {e}", "bookings")
 
-        # 2. Notify Master
+        # 2. Notify Master (with timeout)
         if master and booking_id:
             try:
-                notification_results = await notify_master_about_booking(
-                    master_name=master,
-                    client_name=name,
-                    service=service,
-                    datetime_str=datetime_str,
-                    phone=phone,
-                    booking_id=booking_id
-                )
+                async def notify_master_task():
+                    notification_results = await notify_master_about_booking(
+                        master_name=master,
+                        client_name=name,
+                        service=service,
+                        datetime_str=datetime_str,
+                        phone=phone,
+                        booking_id=booking_id
+                    )
 
-                # Log notifications
-                master_info = get_master_info(master)
-                if master_info:
-                    for notif_type, success in notification_results.items():
-                        if success:
-                            save_notification_log(master_info["id"], booking_id, notif_type, "sent")
-                        elif master_info.get(notif_type) or master_info.get(f"{notif_type}_username"):
-                            save_notification_log(master_info["id"], booking_id, notif_type, "failed")
+                    # Log notifications
+                    master_info = get_master_info(master)
+                    if master_info:
+                        for notif_type, success in notification_results.items():
+                            if success:
+                                save_notification_log(master_info["id"], booking_id, notif_type, "sent")
+                            elif master_info.get(notif_type) or master_info.get(f"{notif_type}_username"):
+                                save_notification_log(master_info["id"], booking_id, notif_type, "failed")
+                
+                await asyncio.wait_for(notify_master_task(), timeout=5.0)
+            except asyncio.TimeoutError:
+                log_warning(f"⏱️ Master notification timed out for booking {booking_id}", "bookings")
             except Exception as e:
-                log_error(f"Error sending master notification: {e}", "api")
+                log_error(f"❌ Error sending master notification: {e}", "api")
 
-        # 3. Notify Admin
-        await notify_admin_about_booking(data)
+        # 3. Notify Admin (with timeout)
+        try:
+            await asyncio.wait_for(notify_admin_about_booking(data), timeout=5.0)
+        except asyncio.TimeoutError:
+            log_warning(f"⏱️ Admin notification timed out for booking {booking_id}", "bookings")
+        except Exception as e:
+            log_error(f"❌ Error sending admin notification: {e}", "api")
         
     except Exception as e:
-        log_error(f"Background task error: {e}", "background_tasks")
+        log_error(f"❌ Background task error: {e}", "background_tasks")
 
 @router.post("/bookings")
 async def create_booking_api(
@@ -292,7 +309,7 @@ async def create_booking_api(
 
         # Synchronous DB Save (Required for ID)
         get_or_create_client(instagram_id, username=name)
-        save_booking(instagram_id, service, datetime_str, phone, name, master=master)
+        save_booking(instagram_id, service, datetime_str, phone, name, master=master, user_id=user["id"])
 
         # Get ID
         conn = get_db_connection()
@@ -397,10 +414,7 @@ async def notify_admin_booking_status_change(booking_id: int, old_status: str, n
         print(f"Error notifying admin about status change: {e}")
 
 async def notify_admin_about_booking(data: dict):
-    """Notify admin about new booking"""
-    # Assuming send_email_sync is blocking, running it in threadpool might be safer if it were not async def.
-    # Since we are in an async def (process_booking_background_tasks), we should run sync calls in run_in_executor
-    # But for now, just calling it here inside the background task is better than main request.
+    """Notify admin about new booking with timeouts"""
     from utils.email import send_email_sync
     from integrations.telegram_bot import send_telegram_alert
     import os
@@ -412,7 +426,7 @@ async def notify_admin_about_booking(data: dict):
     datetime_str = f"{data.get('date')} {data.get('time')}"
     master = data.get('master', 'Любой специалист')
     
-    # 1. Email Admin
+    # 1. Email Admin (with timeout)
     admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USERNAME')
     if admin_email:
         subject = f"📅 Новая запись: {name}"
@@ -424,13 +438,17 @@ async def notify_admin_about_booking(data: dict):
             f"Время: {datetime_str}"
         )
         try:
-            # Run sync email in thread pool to not block async event loop even in background
             loop = asyncio.get_event_loop()
-            await loop.run_in_executor(None, lambda: send_email_sync([admin_email], subject, message_text))
+            await asyncio.wait_for(
+                loop.run_in_executor(None, lambda: send_email_sync([admin_email], subject, message_text)),
+                timeout=3.0
+            )
+        except asyncio.TimeoutError:
+            log_warning(f"⏱️ Admin email timed out for booking: {name}", "notifications")
         except Exception as e:
-            print(f"Error sending admin email: {e}")
+            log_error(f"❌ Error sending admin email: {e}", "notifications")
 
-    # 2. Telegram Admin
+    # 2. Telegram Admin (with timeout)
     try:
         telegram_message = (
             f"📅 <b>Новая запись!</b>\n\n"
@@ -440,9 +458,11 @@ async def notify_admin_about_booking(data: dict):
             f"👤 <b>Мастер:</b> {master}\n"
             f"🕒 <b>Время:</b> {datetime_str}"
         )
-        await send_telegram_alert(telegram_message)
+        await asyncio.wait_for(send_telegram_alert(telegram_message), timeout=3.0)
+    except asyncio.TimeoutError:
+        log_warning(f"⏱️ Admin telegram timed out for booking: {name}", "notifications")
     except Exception as e:
-        print(f"Error sending admin telegram: {e}")
+        log_error(f"❌ Error sending admin telegram: {e}", "notifications")
 
 @router.post("/bookings/{booking_id}/status")
 async def update_booking_status_api(

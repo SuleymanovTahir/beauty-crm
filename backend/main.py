@@ -251,7 +251,6 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 allowed_origins = [
     "https://mlediamant.com",
     "http://mlediamant.com",
-    "http://91.201.215.32:8000",
 ]
 
 # Add optional environment variable origin

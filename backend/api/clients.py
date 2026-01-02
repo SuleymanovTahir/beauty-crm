@@ -62,7 +62,7 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
                     SELECT 1 FROM chat_history ch WHERE ch.instagram_id = c.instagram_id
                 ) THEN 1 ELSE 0 END as has_messages,
                 c.created_at,
-                COALESCE((SELECT SUM(total_price) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_spend
+                COALESCE((SELECT SUM(revenue) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_spend
             FROM clients c
             ORDER BY c.is_pinned DESC, has_messages DESC, c.last_contact DESC
         """)
@@ -74,7 +74,7 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
                 c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
                 c.profile_pic, c.notes, c.is_pinned, c.gender, 1 as has_messages,
                 c.created_at,
-                COALESCE((SELECT SUM(total_price) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_spend
+                COALESCE((SELECT SUM(revenue) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_spend
             FROM clients c
             JOIN messenger_messages mm ON c.instagram_id = mm.client_id
             WHERE mm.messenger_type = %s

@@ -8,8 +8,62 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 
 from db.connection import get_db_connection
 
+def merge_clients(main_id: str, redundant_id: str):
+    """Объединить двух клиентов в одного"""
+    print(f"🔗 Merging client '{redundant_id}' into '{main_id}'...")
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        # Tables to update (column names might vary, so we handle them carefully)
+        tables = [
+            ("bookings", "instagram_id"),
+            ("bot_analytics", "instagram_id"),
+            ("challenge_progress", "client_id"),
+            ("client_beauty_metrics", "client_id"),
+            ("client_favorite_masters", "client_id"),
+            ("client_gallery", "client_id"),
+            ("client_interaction_patterns", "client_id"),
+            ("client_notifications", "client_instagram_id"),
+            ("client_preferences", "client_id"),
+            ("client_referrals", "referrer_id"),
+            ("client_referrals", "referred_id"),
+            ("conversation_context", "client_id"),
+            ("conversations", "client_id"),
+            ("gallery_photos", "client_id"),
+            ("loyalty_transactions", "client_id"),
+            ("messenger_messages", "client_id"),
+            ("notifications", "client_id"),
+            ("referral_campaign_users", "client_id")
+        ]
+        
+        updated_total = 0
+        for table, col in tables:
+            try:
+                c.execute(f"UPDATE {table} SET {col} = %s WHERE {col} = %s", (main_id, redundant_id))
+                count = c.rowcount
+                if count > 0:
+                    print(f"  ✅ Updated {count} rows in {table}")
+                    updated_total += count
+            except Exception as e:
+                # Some tables might not exist or columns might be missing in some environments
+                pass
+        
+        # Finally delete redundant client
+        c.execute("DELETE FROM clients WHERE instagram_id = %s", (redundant_id,))
+        conn.commit()
+        print(f"✅ Merged {updated_total} total records. Duplicate client deleted.")
+    except Exception as e:
+        conn.rollback()
+        print(f"❌ Error merging clients: {e}")
+    finally:
+        conn.close()
+
 def run_all_fixes():
     print("🔧 Starting data fixes...")
+    
+    # 0. Merge known duplicates
+    merge_clients('admin', '1') # Tahir duplication fix
     
     conn = get_db_connection()
     c = conn.cursor()

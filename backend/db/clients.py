@@ -104,39 +104,66 @@ def get_client_by_id(instagram_id: str):
     conn.close()
     return client
 
-def get_or_create_client(instagram_id: str, username: str = None):
-    """Получить или создать клиента"""
+def get_or_create_client(instagram_id: str, username: str = None, phone: str = None, email: str = None):
+    """Получить или создать клиента с защитой от дублей"""
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("SELECT * FROM clients WHERE instagram_id = %s", (instagram_id,))
-    client = c.fetchone()
-    
-    if not client:
-        now = datetime.now().isoformat()
-        c.execute("""INSERT INTO clients 
-                     (instagram_id, username, first_contact, last_contact, 
-                      total_messages, labels, status, detected_language)
-                     VALUES (%s, %s, %s, %s, 0, %s, %s, %s)""",
-                  (instagram_id, username, now, now, "Новый клиент", "new", "ru"))
-        conn.commit()
-        print(f"✨ Новый клиент: {instagram_id}")
-    else:
-        now = datetime.now().isoformat()
-        c.execute("""UPDATE clients 
-                     SET last_contact = %s, total_messages = total_messages + 1 
-                     WHERE instagram_id = %s""",
-                  (now, instagram_id))
-        conn.commit()
-    
-    conn.close()
+    try:
+        # 1. Сначала ищем по точному instagram_id
+        c.execute("SELECT instagram_id FROM clients WHERE instagram_id = %s", (instagram_id,))
+        client = c.fetchone()
+        
+        if not client:
+            # 2. Если не нашли, ищем по телефону или email (защита от дублей при смене ID)
+            if phone or email:
+                c.execute("""
+                    SELECT instagram_id FROM clients 
+                    WHERE (phone = %s AND phone IS NOT NULL AND phone != '') 
+                    OR (email = %s AND email IS NOT NULL AND email != '')
+                    LIMIT 1
+                """, (phone, email))
+                existing = c.fetchone()
+                
+                if existing:
+                    # Если нашли по телефону/email - привязываем новый instagram_id к существующей записи
+                    existing_id = existing[0]
+                    c.execute("UPDATE clients SET instagram_id = %s, username = %s WHERE instagram_id = %s", 
+                             (instagram_id, username, existing_id))
+                    conn.commit()
+                    print(f"🔗 Связан новый ID {instagram_id} с существующим клиентом {existing_id}")
+                    return instagram_id
+        
+        # 3. Если клиента всё еще нет - создаем нового
+        if not client:
+            now = datetime.now().isoformat()
+            c.execute("""INSERT INTO clients 
+                         (instagram_id, username, phone, email, first_contact, last_contact, 
+                          total_messages, labels, status, detected_language)
+                         VALUES (%s, %s, %s, %s, %s, %s, 0, %s, %s, %s)""",
+                      (instagram_id, username, phone, email, now, now, "Новый клиент", "new", "ru"))
+            conn.commit()
+            print(f"✨ Создан новый клиент: {instagram_id} ({username or ''})")
+        else:
+            # Обновляем время контакта
+            now = datetime.now().isoformat()
+            c.execute("""UPDATE clients 
+                         SET last_contact = %s, total_messages = total_messages + 1 
+                         WHERE instagram_id = %s""",
+                      (now, instagram_id))
+            conn.commit()
+            
+        return instagram_id
+    finally:
+        conn.close()
 
 def update_client_info(instagram_id: str, phone: str = None, name: str = None, notes: str = None,
                        is_pinned: int = None, status: str = None,
                        discount: float = None, card_number: str = None,
                        gender: str = None, age: int = None, birth_date: str = None,
                        profile_pic: str = None, email: str = None,
-                       referral_code: str = None, password_hash: str = None):
+                       referral_code: str = None, password_hash: str = None,
+                       telegram_id: str = None):
     """Обновить информацию о клиенте"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -186,6 +213,9 @@ def update_client_info(instagram_id: str, phone: str = None, name: str = None, n
     if password_hash is not None:
         updates.append("password_hash = %s")
         params.append(password_hash)
+    if telegram_id is not None:
+        updates.append("telegram_id = %s")
+        params.append(telegram_id)
         
     try:
         if updates:

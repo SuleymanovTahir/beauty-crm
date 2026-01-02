@@ -221,8 +221,13 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           if (Object.keys(newState).length > 0) {
             console.log('[UserBookingWizard] Prefilling booking state:', newState);
             setBookingState(prev => ({ ...prev, ...newState }));
-            // Start from services step if editing
-            setStep('services');
+
+            // If both service and master are prefilled, skip to datetime
+            if (newState.services?.length && newState.professional) {
+              setStep('datetime');
+            } else {
+              setStep('services');
+            }
           }
         }
 
