@@ -3,7 +3,7 @@
   "change_master": "Changer de maître",
   "change_service": "Changer de service",
   "common": {
-    "any_master": "Любой мастер",
+    "any_master": "N'importe quel maître",
     "cancel": "Later",
     "change": "Change",
     "edit": "Edit",
@@ -70,7 +70,7 @@
   },
   "salon": {
     "address": "Studio Location",
-    "name": "Beauty HQ"
+    "name": "QG Beauté"
   },
   "services": {
     "allCategories": "Toutes les catégories",

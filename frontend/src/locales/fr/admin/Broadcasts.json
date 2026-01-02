@@ -3,7 +3,7 @@
   "access_denied_title": "Accès refusé",
   "all_users": "Tous les utilisateurs",
   "broadcast_params": "Paramètres d'envoi",
-  "by_channel": "Par chaînes\u00a0:",
+  "by_channel": "Par chaînes :",
   "channels": "Chaînes d'envoi *",
   "click_preview_to_see": "Cliquez sur \"Aperçu\" pour voir les destinataires",
   "confirm_send": "Etes-vous sûr de vouloir envoyer votre newsletter ?",
@@ -16,7 +16,7 @@
   "no_recipients_warning": "Il n'y a aucun utilisateur abonné pour les options sélectionnées",
   "placeholder_all_users": "Tous les utilisateurs",
   "placeholder_message": "Saisissez le texte de votre message...",
-  "placeholder_subject": "Offre spéciale pour vous\u00a0!",
+  "placeholder_subject": "Offre spéciale pour vous !",
   "preview": "Aperçu",
   "preview_found": "{count} destinataires trouvés",
   "preview_found_one": "",
@@ -28,11 +28,12 @@
   "select_subscription_type": "Sélectionnez le type d'abonnement",
   "select_type": "Sélectionnez le type",
   "send": "Envoyer",
-  "sent_count": "Envoyé\u00a0:\u00a0{count}",
+  "sent_count": "Envoyé : {count}",
   "subject": "Objet (pour e-mail) *",
   "subscription_type": "Type d'abonnement *",
   "subtitle": "Envoi de notifications aux utilisateurs via différents canaux",
   "target_role": "Rôle cible (facultatif)",
   "title": "Envois massifs",
-  "total_recipients": "Nombre total de destinataires"
+  "total_recipients": "Nombre total de destinataires",
+  "preview_found_few": ""
 }

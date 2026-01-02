@@ -33,9 +33,9 @@
     "upload": {
       "description": "Галереяға жаңа фотосурет қосыңыз",
       "form": {
-        "after_photo": "Фото \"После\"",
-        "before_after": "До/После",
-        "before_photo": "Фото \"До\"",
+        "after_photo": "Фото «Кейін»",
+        "before_after": "Бұрын/Кейін",
+        "before_photo": "«Бұрын» фотосы",
         "category": "Санат",
         "choose_file": "Файлды таңдаңыз",
         "client": "Клиент",
@@ -45,10 +45,10 @@
         "photo": "Фото",
         "select_category": "Санатты таңдаңыз",
         "select_client": "Клиентті таңдаңыз",
-        "single_photo": "Одно фото",
+        "single_photo": "Бір фото",
         "title": "Аты",
         "title_placeholder": "Фотосурет атауы",
-        "upload_type": "Тип загрузки"
+        "upload_type": "Жүктеме түрі"
       },
       "title": "Фотосуретті жүктеп салу"
     }

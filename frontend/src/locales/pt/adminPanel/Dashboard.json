@@ -45,7 +45,11 @@
     "users_registered": "{{count}} novos usuários registrados",
     "users_registered_one": "",
     "users_registered_many": "",
-    "users_registered_other": ""
+    "users_registered_other": "",
+    "challenge_completed_few": "",
+    "day_ago_few": "",
+    "hours_ago_few": "",
+    "users_registered_few": ""
   },
   "stats": {
     "active_challenges": "Desafios ativos",

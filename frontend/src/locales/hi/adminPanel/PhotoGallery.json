@@ -33,9 +33,9 @@
     "upload": {
       "description": "गैलरी में एक नई फ़ोटो जोड़ें",
       "form": {
-        "after_photo": "Фото \"После\"",
-        "before_after": "До/После",
-        "before_photo": "Фото \"До\"",
+        "after_photo": "फोटो \"बाद\"",
+        "before_after": "के बाद से पहले",
+        "before_photo": "फोटो \"पहले\"",
         "category": "वर्ग",
         "choose_file": "फ़ाइल चुनें",
         "client": "ग्राहक",
@@ -45,10 +45,10 @@
         "photo": "तस्वीर",
         "select_category": "श्रेणी चुनना",
         "select_client": "ग्राहक का चयन करें",
-        "single_photo": "Одно фото",
+        "single_photo": "एक फोटो",
         "title": "नाम",
         "title_placeholder": "फोटो शीर्षक",
-        "upload_type": "Тип загрузки"
+        "upload_type": "लोड प्रकार"
       },
       "title": "फोटो अपलोड करें"
     }

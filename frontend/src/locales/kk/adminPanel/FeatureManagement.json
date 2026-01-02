@@ -23,7 +23,7 @@
     "saved": "Configuration saved successfully"
   },
   "whitelist": {
-    "hint": "Comma-separated User IDs. If set, only these users can access this feature. Leave empty to allow all eligible users.",
+    "hint": "Үтірмен бөлінген пайдаланушы идентификаторлары. Орнатылған болса, бұл мүмкіндікке тек осы пайдаланушылар кіре алады. Барлық жарамды пайдаланушыларға рұқсат беру үшін бос қалдырыңыз.",
     "label": "Whitelist (Optional)",
     "placeholder": "e.g. 1, 5, 12"
   }

@@ -33,5 +33,7 @@
   "subtitle": "Әр түрлі арналар арқылы пайдаланушыларға хабарландырулар жіберу",
   "target_role": "Мақсатты рөл (міндетті емес)",
   "title": "Жаппай жіберулер",
-  "total_recipients": "Жалпы алушылар"
+  "total_recipients": "Жалпы алушылар",
+  "preview_found_few": "",
+  "preview_found_many": ""
 }

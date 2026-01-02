@@ -33,7 +33,7 @@
       "title_edit": "Modifier le défi"
     },
     "delete": {
-      "confirm": "Etes-vous sûr de vouloir supprimer ce défi\u00a0?"
+      "confirm": "Etes-vous sûr de vouloir supprimer ce défi ?"
     }
   },
   "stats": {
@@ -57,7 +57,8 @@
     "failed_load": "Échec du chargement des défis",
     "progress_checked_one": "",
     "progress_checked_many": "",
-    "progress_checked_other": ""
+    "progress_checked_other": "",
+    "progress_checked_few": ""
   },
   "types": {
     "referrals": "Références",
