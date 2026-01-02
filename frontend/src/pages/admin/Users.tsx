@@ -19,6 +19,7 @@ import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { getPhotoUrl } from '../../utils/photoUtils';
 
 type DateFilter = 'last7days' | 'last30days' | 'last90days' | 'allTime';
+type UserTab = 'clients' | 'employees';
 
 interface DateRange {
   start: string;
@@ -47,13 +48,14 @@ export default function Users() {
   // Используем централизованную систему прав
   const permissions = usePermissions(currentUser?.role || 'employee');
 
-  const roleConfig: Record<string, { label: string; color: string }> = {
-    director: { label: t('role_director_label'), color: 'bg-red-100 text-red-800' },
-    admin: { label: t('role_admin_label'), color: 'bg-purple-100 text-purple-800' },
-    manager: { label: t('role_manager_label'), color: 'bg-blue-100 text-blue-800' },
-    sales: { label: t('role_sales_label'), color: 'bg-green-100 text-green-800' },
-    marketer: { label: t('role_marketer_label'), color: 'bg-orange-100 text-orange-800' },
-    employee: { label: t('role_employee_label'), color: 'bg-gray-100 text-gray-800' },
+  // Цвета для ролей (статичные)
+  const roleColors: Record<string, string> = {
+    director: 'bg-red-100 text-red-800',
+    admin: 'bg-purple-100 text-purple-800',
+    manager: 'bg-blue-100 text-blue-800',
+    sales: 'bg-green-100 text-green-800',
+    marketer: 'bg-orange-100 text-orange-800',
+    employee: 'bg-gray-100 text-gray-800',
   };
 
   const [users, setUsers] = useState<User[]>([]);
@@ -62,6 +64,7 @@ export default function Users() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dateFilter, setDateFilter] = useState<DateFilter>('last30days');
+  const [activeTab, setActiveTab] = useState<UserTab>('clients');
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
@@ -86,6 +89,11 @@ export default function Users() {
     loadAvailableRoles();
   }, []);
 
+  // Reload when tab changes
+  useEffect(() => {
+    loadUsers();
+  }, [activeTab]);
+
   const loadAvailableRoles = async () => {
     try {
       setLoadingRoles(true);
@@ -97,6 +105,15 @@ export default function Users() {
       setLoadingRoles(false);
     }
   };
+
+  // Создаем roleConfig динамически из availableRoles
+  const roleConfig: Record<string, { label: string; color: string }> = {};
+  availableRoles.forEach(role => {
+    roleConfig[role.key] = {
+      label: role.name,
+      color: roleColors[role.key] || 'bg-gray-100 text-gray-800'
+    };
+  });
 
   const getRoleDescription = (roleKey: string): string => {
     const descriptions: Record<string, string> = {
@@ -158,26 +175,34 @@ export default function Users() {
     try {
       setLoading(true);
       setError(null);
-      const response = await api.getClients();
 
-      console.log('📥 Received clients:', response);
+      let response;
+      if (activeTab === 'employees') {
+        // Загружаем сотрудников через CRM API
+        response = await api.getUsers();
+      } else {
+        // Загружаем клиентов
+        response = await api.getClients();
+      }
 
-      // Извлечение массива клиентов
-      const clientsArray = Array.isArray(response)
+      console.log(`📥 Received ${activeTab}:`, response);
+
+      // Извлечение массива
+      const dataArray = Array.isArray(response)
         ? response
-        : (response?.clients || []);
+        : (response?.clients || response?.users || []);
 
-      console.log('✅ Clients array:', clientsArray);
-      setUsers(clientsArray);
+      console.log(`✅ ${activeTab} array:`, dataArray);
+      setUsers(dataArray);
 
-      if (clientsArray.length === 0) {
-        console.warn('⚠️  Массив клиентов пуст');
+      if (dataArray.length === 0) {
+        console.warn(`⚠️  Массив ${activeTab} пуст`);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : t('error_loading_users');
       setError(message);
-      toast.error(`${t('error')}: ${message} `);
-      console.error('❌ Error loading clients:', err);
+      toast.error(`${t('error')}: ${message}`);
+      console.error(`❌ Error loading ${activeTab}:`, err);
     } finally {
       setLoading(false);
     }
@@ -234,18 +259,24 @@ export default function Users() {
 
   const dateRange = getDateRange();
 
-  const stats = {
-    total: users.length,
-    // New clients: created within the selected period
-    new: users.filter(u => {
-      if (!u.created_at) return false;
-      const createdDate = new Date(u.created_at);
-      const periodStart = new Date(dateRange.start);
-      return createdDate >= periodStart;
-    }).length,
-    active: users.filter(u => u.status === 'active' || u.status === 'lead').length,
-    totalSpend: users.reduce((sum, u) => sum + (u.total_spend || 0), 0),
-  };
+  const stats = activeTab === 'employees'
+    ? {
+        total: users.length,
+        active: users.filter((u: any) => u.is_active).length,
+        serviceProviders: users.filter((u: any) => u.is_service_provider).length,
+      }
+    : {
+        total: users.length,
+        // New clients: created within the selected period
+        new: users.filter(u => {
+          if (!u.created_at) return false;
+          const createdDate = new Date(u.created_at);
+          const periodStart = new Date(dateRange.start);
+          return createdDate >= periodStart;
+        }).length,
+        active: users.filter(u => u.status === 'active' || u.status === 'lead').length,
+        totalSpend: users.reduce((sum, u) => sum + (u.total_spend || 0), 0),
+      };
 
   if (loading) {
     return (
@@ -287,8 +318,47 @@ export default function Users() {
         <p className="text-gray-600">{filteredUsers.length} {t('user_count')}</p>
       </div>
 
-      {/* Date Filter Section */}
+      {/* Tabs Section */}
       <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <div className="flex gap-2">
+          <button
+            onClick={() => setActiveTab('clients')}
+            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'clients'
+                ? 'bg-pink-600 text-white shadow-sm'
+                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <UsersIcon className="w-4 h-4" />
+              <span>{t('tab_clients', 'Клиенты')}</span>
+              {activeTab === 'clients' && (
+                <Badge className="bg-white/20 text-white border-0">{users.length}</Badge>
+              )}
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('employees')}
+            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'employees'
+                ? 'bg-pink-600 text-white shadow-sm'
+                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <Shield className="w-4 h-4" />
+              <span>{t('tab_employees', 'Сотрудники')}</span>
+              {activeTab === 'employees' && (
+                <Badge className="bg-white/20 text-white border-0">{users.length}</Badge>
+              )}
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* Date Filter Section - только для клиентов */}
+      {activeTab === 'clients' && (
+        <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
         <div className="flex flex-col md:flex-row md:items-center gap-3">
           <div className="flex items-center gap-2 text-gray-700">
             <Filter className="w-5 h-5" />
@@ -337,21 +407,40 @@ export default function Users() {
             </button>
           </div>
         </div>
-      </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('stats_total')}</p>
+          <p className="text-gray-600 text-sm mb-2">
+            {activeTab === 'employees' ? t('stats_total_employees', 'Всего сотрудников') : t('stats_total')}
+          </p>
           <h3 className="text-3xl text-gray-900">{stats.total}</h3>
         </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('stats_new_clients', 'New Clients')}</p>
-          <h3 className="text-3xl text-green-600">{stats.new}</h3>
-        </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('stats_total_spend', 'Total Spend')}</p>
-          <h3 className="text-3xl text-pink-600">{stats.totalSpend.toFixed(0)} AED</h3>
-        </div>
+
+        {activeTab === 'employees' ? (
+          <>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <p className="text-gray-600 text-sm mb-2">{t('stats_active_employees', 'Активных')}</p>
+              <h3 className="text-3xl text-green-600">{(stats as any).active}</h3>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <p className="text-gray-600 text-sm mb-2">{t('stats_service_providers', 'Мастеров')}</p>
+              <h3 className="text-3xl text-pink-600">{(stats as any).serviceProviders}</h3>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <p className="text-gray-600 text-sm mb-2">{t('stats_new_clients', 'New Clients')}</p>
+              <h3 className="text-3xl text-green-600">{(stats as any).new}</h3>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <p className="text-gray-600 text-sm mb-2">{t('stats_total_spend', 'Total Spend')}</p>
+              <h3 className="text-3xl text-pink-600">{(stats as any).totalSpend.toFixed(0)} AED</h3>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
@@ -385,69 +474,134 @@ export default function Users() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_client', 'Client')}</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_phone', 'Phone')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                    {activeTab === 'employees' ? t('table_employee', 'Сотрудник') : t('table_client', 'Client')}
+                  </th>
+                  {activeTab === 'clients' && (
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_phone', 'Phone')}</th>
+                  )}
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_email', 'Email')}</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_status', 'Status')}</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_spent', 'Spent')}</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_created', 'Created')}</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_actions')}</th>
+                  {activeTab === 'employees' ? (
+                    <>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_role', 'Роль')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_position', 'Должность')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_is_active', 'Активен')}</th>
+                    </>
+                  ) : (
+                    <>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_status', 'Status')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_spent', 'Spent')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_created', 'Created')}</th>
+                    </>
+                  )}
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_actions', 'Действия')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredUsers.map((user) => (
-                  <tr key={user.instagram_id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={(user as any).id || user.instagram_id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <img
-                          src={user.profile_pic || getDynamicAvatar(user.name || user.username, 'cold')}
-                          alt={user.name}
+                          src={
+                            activeTab === 'employees'
+                              ? getPhotoUrl((user as any).photo) || getDynamicAvatar((user as any).full_name || 'User', 'cold')
+                              : user.profile_pic || getDynamicAvatar(user.name || user.username || 'User', 'cold')
+                          }
+                          alt={activeTab === 'employees' ? (user as any).full_name : user.name}
                           className="w-10 h-10 rounded-full bg-gray-100 object-cover"
                         />
                         <div>
-                          <p className="text-sm text-gray-900 font-medium">{user.name || user.username}</p>
-                          <p className="text-xs text-gray-400">@{user.username}</p>
+                          <p className="text-sm text-gray-900 font-medium">
+                            {activeTab === 'employees' ? ((user as any).full_name || 'Без имени') : (user.name || user.username || 'Без имени')}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {activeTab === 'employees' ? ((user as any).username || '-') : `@${user.username || 'user'}`}
+                          </p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{user.phone || '-'}</td>
+                    {activeTab === 'clients' && (
+                      <td className="px-6 py-4 text-sm text-gray-900">{user.phone || '-'}</td>
+                    )}
                     <td className="px-6 py-4 text-sm text-gray-600">{user.email || '-'}</td>
+                    {activeTab === 'employees' ? (
+                      <>
+                        <td className="px-6 py-4">
+                          <Badge className={roleConfig[(user as any).role]?.color || 'bg-gray-100 text-gray-800'}>
+                            {roleConfig[(user as any).role]?.label || (user as any).role}
+                          </Badge>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{(user as any).position || '-'}</td>
+                        <td className="px-6 py-4">
+                          <Badge className={(user as any).is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                            {(user as any).is_active ? t('active', 'Активен') : t('inactive', 'Неактивен')}
+                          </Badge>
+                        </td>
+                      </>
+                    ) : (
+                      <>
+                        <td className="px-6 py-4">
+                          <Badge className={
+                            user.status === 'new' ? 'bg-green-100 text-green-800' :
+                            user.status === 'active' ? 'bg-blue-100 text-blue-800' :
+                            user.status === 'lead' ? 'bg-purple-100 text-purple-800' :
+                            'bg-gray-100 text-gray-800'
+                          }>
+                            {user.status || t('status_new', 'new')}
+                          </Badge>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">
+                          {(user.total_spend || 0).toFixed(0)} AED
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">
+                          {user.created_at ? new Date(user.created_at).toLocaleDateString('ru-RU') : '-'}
+                        </td>
+                      </>
+                    )}
                     <td className="px-6 py-4">
-                      <Badge className={
-                        user.status === 'new' ? 'bg-green-100 text-green-800' :
-                        user.status === 'active' ? 'bg-blue-100 text-blue-800' :
-                        user.status === 'lead' ? 'bg-purple-100 text-purple-800' :
-                        'bg-gray-100 text-gray-800'
-                      }>
-                        {user.status || t('status_new', 'new')}
-                      </Badge>
+                      {activeTab === 'employees' ? (
+                        <div className="flex items-center gap-2">
+                          {permissions.canEditUsers && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setEditForm({
+                                  username: (user as any).username || '',
+                                  full_name: (user as any).full_name || '',
+                                  email: user.email || '',
+                                  position: (user as any).position || ''
+                                });
+                                setShowEditDialog(true);
+                              }}
+                              className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                              title={t('edit', 'Edit')}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          {permissions.canEditUsers && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => navigate(`/admin/chat/${user.instagram_id}`)}
+                              className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                              title={t('open_chat', 'Open chat')}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+                      )}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {(user.total_spend || 0).toFixed(0)} AED
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {user.created_at ? new Date(user.created_at).toLocaleDateString('ru-RU') : '-'}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        {/* Кнопка редактирования - открывает чат с клиентом */}
-                        {permissions.canEditUsers && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => navigate(`/admin/chat/${user.instagram_id}`)}
-                            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                            title={t('open_chat', 'Open chat')}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button >
-                        )}
-
-                      </div >
-                    </td >
-                  </tr >
+                  </tr>
                 ))}
-              </tbody >
+              </tbody>
             </table >
           </div >
         ) : (
