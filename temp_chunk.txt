@@ -1,0 +1,7 @@
+        client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("id")
+
+        # Verify booking belongs to user
+        c.execute("""
+            SELECT id FROM bookings
+            WHERE id = %s AND client_id = %s
+        """, (booking_id, client_id))
