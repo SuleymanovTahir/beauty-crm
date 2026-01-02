@@ -1,0 +1,20 @@
+{
+  "title": "Nossos mestres",
+  "subtitle": "{{count}} especialistas • {{favorites}} nos favoritos",
+  "favorites_only": "Apenas os selecionados",
+  "no_masters": "Sem mestres",
+  "add_favorites_desc": "Adicione artistas aos seus favoritos",
+  "no_masters_desc": "A lista de mestres está vazia",
+  "show_all": "Mostrar todos os mestres",
+  "master_title": "Mestre",
+  "reviews": "comentários",
+  "book_button": "Inscrever-se",
+  "favorites_updated": "Favoritos atualizados",
+  "choose_master_title": "Escolha do mestre",
+  "step_1_title": "Navegar pelos perfis",
+  "step_1_desc": "Estude a especialização e classificação de cada mestre",
+  "step_2_title": "Adicionar aos favoritos",
+  "step_2_desc": "Salve seus masters favoritos para gravação rápida",
+  "step_3_title": "Inscreva-se on-line",
+  "step_3_desc": "Escolha um horário conveniente e confirme sua consulta"
+}

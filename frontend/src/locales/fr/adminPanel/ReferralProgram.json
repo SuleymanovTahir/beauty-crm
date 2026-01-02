@@ -12,7 +12,7 @@
     "title": "Configuration actuelle des bonus",
     "referrer_bonus": "Le parrain reçoit <strong>{{points}} points</strong>lorsqu'un ami effectue son premier achat",
     "referred_bonus": "L'ami invité reçoit <strong>{{points}} points</strong> lors de son inscription",
-    "min_purchase": "Montant minimum d'achat : <strong>{{amount}} AED</strong>",
+    "min_purchase": "Montant minimum d'achat : <strong>{{amount}} AED</strong>",
     "edit": "Modifier"
   },
   "table": {

@@ -72,7 +72,7 @@
     "insight_visits_0": "¡Bienvenido! ¡Nos alegra verte en nuestro salón!",
     "insight_visits_1_3": "¡Gran comienzo! ¡Ya has estado con nosotros {{count}} veces!",
     "insight_visits_4_9": "¡Te conviertes en un cliente habitual! {{count}} visitas: ¡esto es más del 60% de nuestros clientes!",
-    "insight_visits_10_plus": "¡Eres un cliente VIP! {{count}} visitas: ¡esto es más del 85% de nuestros clientes!",
+    "insight_visits_10_plus": "¡Eres un cliente VIP! {{count}} ¡las visitas son más del 85% de nuestros clientes!",
     "good_morning": "Buen día",
     "good_afternoon": "Buenas tardes",
     "good_evening": "Buenas noches",
