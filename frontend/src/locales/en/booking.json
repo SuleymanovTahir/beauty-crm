@@ -120,5 +120,8 @@
   "totalDuration": "Total duration",
   "min": "min",
   "loading": "Loading...",
-  "newBooking": "New booking"
+  "newBooking": "New booking",
+  "change_booking": "Change Booking",
+  "change_service": "Change Service",
+  "change_master": "Change Master"
 }

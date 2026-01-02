@@ -9,38 +9,41 @@ interface RescheduleDialogProps {
     isOpen: boolean;
     onClose: () => void;
     appointment: any;
+    onChangeStep?: (step: string) => void; // Опциональный callback для внутреннего использования
 }
 
-export function RescheduleDialog({ isOpen, onClose, appointment }: RescheduleDialogProps) {
+export function RescheduleDialog({ isOpen, onClose, appointment, onChangeStep }: RescheduleDialogProps) {
     const { t } = useTranslation(['account', 'common']);
     const navigate = useNavigate();
 
     if (!appointment) return null;
 
     const handleOption = (option: 'datetime' | 'master' | 'service') => {
-        const state: any = {
-            editBookingId: appointment.id,
-            prefillService: appointment.service_id,
-            prefillMaster: appointment.master_id,
-        };
+        // Если есть callback (используется внутри UserBookingWizard)
+        if (onChangeStep) {
+            if (option === 'datetime') {
+                onChangeStep('datetime');
+            } else if (option === 'master') {
+                onChangeStep('professional');
+            } else if (option === 'service') {
+                onChangeStep('services');
+            }
+        } else {
+            // Иначе используем navigate (для редактирования существующих записей)
+            const state: any = {
+                editBookingId: appointment.id,
+                prefillService: appointment.service_id,
+                prefillMaster: appointment.master_id,
+            };
 
-        // If changing time, keep master and service
-        if (option === 'datetime') {
-            state.prefillDate = appointment.date;
-            // navigate to datetime step
-            navigate('/new-booking?booking=datetime', { state });
-        }
-        // If changing master, keep service but clear master (wizard logic handles this if we don't pass prefillMaster?)
-        // Actually, the wizard logic is: if prefillMaster is present, it selects it.
-        // If we want to CHANGE it, we probably shouldn't prefill it, OR we prefill it but go to the 'professional' step.
-        else if (option === 'master') {
-            // We keep the service, but let user pick master. 
-            // We can pass prefillMaster so it's selected, but user is on 'professional' step to change it.
-            navigate('/new-booking?booking=professional', { state: { ...state, prefillDate: null } });
-        }
-        // If changing service, go to services step
-        else if (option === 'service') {
-            navigate('/new-booking?booking=services', { state: { ...state, prefillMaster: null, prefillDate: null } });
+            if (option === 'datetime') {
+                state.prefillDate = appointment.date;
+                navigate('/new-booking?booking=datetime', { state });
+            } else if (option === 'master') {
+                navigate('/new-booking?booking=professional', { state: { ...state, prefillDate: null } });
+            } else if (option === 'service') {
+                navigate('/new-booking?booking=services', { state: { ...state, prefillMaster: null, prefillDate: null } });
+            }
         }
 
         onClose();
@@ -55,20 +58,26 @@ export function RescheduleDialog({ isOpen, onClose, appointment }: RescheduleDia
 
                 <div className="space-y-4 py-4">
                     <div className="bg-muted/50 p-4 rounded-lg text-sm space-y-2">
-                        <div className="flex justify-between">
-                            <span className="text-muted-foreground">{t('appointments.current_service', 'Услуга')}:</span>
-                            <span className="font-medium">{appointment.service_name}</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-muted-foreground">{t('appointments.current_master', 'Мастер')}:</span>
-                            <span className="font-medium">{appointment.master_name}</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-muted-foreground">{t('appointments.current_time', 'Время')}:</span>
-                            <span className="font-medium">
-                                {new Date(appointment.date.replace(' ', 'T')).toLocaleDateString()} {appointment.time}
-                            </span>
-                        </div>
+                        {appointment.service_name && (
+                            <div className="flex justify-between">
+                                <span className="text-muted-foreground">{t('appointments.current_service', 'Услуга')}:</span>
+                                <span className="font-medium">{appointment.service_name}</span>
+                            </div>
+                        )}
+                        {appointment.master_name && (
+                            <div className="flex justify-between">
+                                <span className="text-muted-foreground">{t('appointments.current_master', 'Мастер')}:</span>
+                                <span className="font-medium">{appointment.master_name}</span>
+                            </div>
+                        )}
+                        {appointment.date && appointment.time && (
+                            <div className="flex justify-between">
+                                <span className="text-muted-foreground">{t('appointments.current_time', 'Время')}:</span>
+                                <span className="font-medium">
+                                    {new Date(appointment.date.replace(' ', 'T')).toLocaleDateString()} {appointment.time}
+                                </span>
+                            </div>
+                        )}
                     </div>
 
                     <div className="grid grid-cols-1 gap-3">
