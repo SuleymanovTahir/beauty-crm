@@ -294,7 +294,14 @@ export function Dashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex gap-2">
-            <Button variant="outline" onClick={() => navigate(`/review/${last_visit.booking_id || last_visit.id}`)}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                const googleReviewUrl = import.meta.env.VITE_GOOGLE_REVIEWS_URL ||
+                                       'https://www.google.com/search?q=' + encodeURIComponent((localStorage.getItem('salon_name') || 'Beauty Salon') + ' reviews');
+                window.open(googleReviewUrl, '_blank');
+              }}
+            >
               <Star className="w-4 h-4 mr-2" />
               {t('dashboard.leave_review', 'Оставить отзыв')}
             </Button>

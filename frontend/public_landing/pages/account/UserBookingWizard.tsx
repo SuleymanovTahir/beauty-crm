@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { AnimatePresence, motion } from 'motion/react';
-import { X, Scissors, User } from 'lucide-react';
+import { X, Scissors, User, Edit } from 'lucide-react';
 import { Toaster } from '../../components/ui/sonner';
 import { api } from '../../../src/services/api';
 import PublicLanguageSwitcher from '../../../src/components/PublicLanguageSwitcher';
@@ -15,6 +15,7 @@ import { ServicesStep } from './booking/ServicesStep';
 import { ProfessionalStep } from './booking/ProfessionalStep';
 import { DateTimeStep } from './booking/DateTimeStep';
 import { ConfirmStep } from './booking/ConfirmStep';
+import { RescheduleDialog } from './v2_components/RescheduleDialog';
 
 
 import './UserBookingWizard.css';
@@ -105,6 +106,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const [initialMasters, setInitialMasters] = useState<any[]>([]);
   const [initialAvailability, setInitialAvailability] = useState<Record<number, string[]>>({});
   const [loading, setLoading] = useState(true);
+  const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
 
   const setStep = (newStep: string) => {
     setSearchParams(prev => {
@@ -161,10 +163,10 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
         // PARALLEL DATA FETCHING: Settings, Active Services, All Masters
         // Removed availability fetching from critical path to speed up initial load
-        const [settingsRes, servicesRes, usersRes] = await Promise.all([
+        const [settingsRes, servicesRes, employeesRes] = await Promise.all([
           api.getPublicSalonSettings(),
           api.getPublicServices(),
-          api.getUsers()
+          api.getPublicEmployees(i18n.language)
         ]);
 
         setSalonSettings(settingsRes);
@@ -173,10 +175,10 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         console.log('[UserBookingWizard] Loaded services:', servicesData.length);
         setInitialServices(servicesData);
 
-        const usersData = Array.isArray(usersRes) ? usersRes : (usersRes.users || []);
-        const masters = usersData.filter((u: any) => u.role === 'employee' || u.is_service_provider);
-        console.log('[UserBookingWizard] Loaded masters:', masters.length);
-        setInitialMasters(masters);
+        // API возвращает массив напрямую, не объект с полем employees
+        const employeesData = Array.isArray(employeesRes) ? employeesRes : [];
+        console.log('[UserBookingWizard] Loaded employees from public API:', employeesData.length);
+        setInitialMasters(employeesData);
 
         // Fetch availability in background to not block UI
         api.getPublicBatchAvailability(today).then(res => {
@@ -253,6 +255,47 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     }));
   }, [bookingState]);
 
+  // Cascading selection logic: ensure selections are compatible
+  useEffect(() => {
+    let needsUpdate = false;
+    const updates: Partial<BookingState> = {};
+
+    // If master is selected, ensure selected services are provided by that master
+    if (bookingState.professional?.service_ids && bookingState.services.length > 0) {
+      const masterServiceIds = bookingState.professional.service_ids;
+      const validServices = bookingState.services.filter((service: Service) =>
+        !masterServiceIds || masterServiceIds.length === 0 || masterServiceIds.includes(service.id)
+      );
+
+      if (validServices.length !== bookingState.services.length) {
+        updates.services = validServices;
+        needsUpdate = true;
+      }
+    }
+
+    // If services are selected, ensure master provides at least one of them
+    if (bookingState.services.length > 0 && bookingState.professional) {
+      const serviceIds = bookingState.services.map((s: Service) => s.id);
+      const professional = bookingState.professional as any;
+
+      if (professional.service_ids && professional.service_ids.length > 0) {
+        const hasMatchingService = serviceIds.some((sid: number) =>
+          professional.service_ids.includes(sid)
+        );
+
+        if (!hasMatchingService) {
+          updates.professional = null;
+          updates.professionalSelected = false;
+          needsUpdate = true;
+        }
+      }
+    }
+
+    if (needsUpdate) {
+      setBookingState((prev: BookingState) => ({ ...prev, ...updates }));
+    }
+  }, [bookingState.services, bookingState.professional]);
+
   const updateState = (updates: Partial<BookingState>) => setBookingState((prev: BookingState) => ({ ...prev, ...updates }));
   const totalPrice = bookingState.services.reduce((sum: number, s: Service) => sum + s.price, 0);
   const totalDuration = bookingState.services.reduce((sum: number, s: Service) => {
@@ -327,6 +370,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 onServicesChange={(services: any) => updateState({ services })}
                 salonSettings={salonSettings}
                 preloadedServices={initialServices}
+                selectedProfessional={bookingState.professional}
               />
             )}
             {step === 'professional' && (
@@ -343,6 +387,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 salonSettings={salonSettings}
                 preloadedProfessionals={initialMasters}
                 preloadedAvailability={initialAvailability}
+                selectedServices={bookingState.services}
+                selectedDate={bookingState.date}
               />
             )}
             {step === 'datetime' && (
@@ -367,6 +413,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 }}
                 salonSettings={salonSettings}
                 setStep={setStep}
+                onOpenRescheduleDialog={() => setShowRescheduleDialog(true)}
               />
             )}
           </motion.div>
@@ -412,27 +459,15 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             )}
 
             <div className="flex gap-2">
-              {/* Change service/master buttons - only on datetime step */}
-              {step === 'datetime' && bookingState.services.length > 0 && (
+              {/* Edit booking button - opens reschedule dialog */}
+              {step !== 'menu' && bookingState.services.length > 0 && (
                 <Button
                   variant="outline"
-                  onClick={() => setStep('services')}
+                  onClick={() => setShowRescheduleDialog(true)}
                   className="h-11 px-4 rounded-xl border border-slate-200 font-bold text-[10px] gap-1.5 hover:bg-slate-50 transition-all shadow-sm whitespace-nowrap"
                 >
-                  <Scissors className="w-3.5 h-3.5 text-purple-600" />
-                  <span className="hidden sm:inline">{t('booking:change_service', 'Изменить услугу')}</span>
-                  <span className="sm:hidden">{t('menu.services', 'Услуги')}</span>
-                </Button>
-              )}
-              {step === 'datetime' && bookingState.professionalSelected && (
-                <Button
-                  variant="outline"
-                  onClick={() => setStep('professional')}
-                  className="h-11 px-4 rounded-xl border border-slate-200 font-bold text-[10px] gap-1.5 hover:bg-slate-50 transition-all shadow-sm whitespace-nowrap"
-                >
-                  <User className="w-3.5 h-3.5 text-pink-600" />
-                  <span className="hidden sm:inline">{t('booking:change_master', 'Изменить мастера')}</span>
-                  <span className="sm:hidden">{t('menu.professional', 'Мастер')}</span>
+                  <Edit className="w-3.5 h-3.5 text-blue-600" />
+                  <span>{t('booking:change_booking', 'Изменить запись')}</span>
                 </Button>
               )}
 
@@ -459,6 +494,24 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             </div>
           </div>
         </motion.div>
+      )}
+
+      {/* Reschedule dialog for changing booking details */}
+      {showRescheduleDialog && (
+        <RescheduleDialog
+          isOpen={showRescheduleDialog}
+          onClose={() => setShowRescheduleDialog(false)}
+          appointment={{
+            id: null, // Новая запись, не редактирование существующей
+            service_name: bookingState.services.map((s: Service) => getLocalizedName(s, i18n.language)).join(', '),
+            service_id: bookingState.services[0]?.id,
+            master_name: bookingState.professional?.full_name || t('common.any_master', 'Любой мастер'),
+            master_id: bookingState.professional?.id,
+            date: bookingState.date ? format(bookingState.date, 'yyyy-MM-dd') : '',
+            time: bookingState.time || ''
+          }}
+          onChangeStep={(newStep) => setStep(newStep)}
+        />
       )}
 
       <Toaster />

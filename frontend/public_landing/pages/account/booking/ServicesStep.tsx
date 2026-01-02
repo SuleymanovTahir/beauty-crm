@@ -14,9 +14,10 @@ interface ServicesStepProps {
     onServicesChange: (services: any[]) => void;
     salonSettings: any;
     preloadedServices?: any[];
+    selectedProfessional?: { id: number; service_ids?: number[] } | null;
 }
 
-export function ServicesStep({ selectedServices, onServicesChange, salonSettings, preloadedServices }: ServicesStepProps) {
+export function ServicesStep({ selectedServices, onServicesChange, salonSettings, preloadedServices, selectedProfessional = null }: ServicesStepProps) {
     const { t, i18n } = useTranslation(['booking', 'common']);
     // Use preloaded services if available, otherwise empty (or start fetch)
     const [services, setServices] = useState<any[]>(preloadedServices || []);
@@ -64,12 +65,19 @@ export function ServicesStep({ selectedServices, onServicesChange, salonSettings
 
     const categories = ['all', ...Array.from(new Set(services.map((s) => s.category)))];
 
-    const filteredServices = services.filter((service) => {
+    let filteredServices = services.filter((service) => {
         const name = getLocalizedName(service, i18n.language);
         const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = selectedCategory === 'all' || service.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });
+
+    // Дополнительно фильтруем по выбранному мастеру
+    if (selectedProfessional?.service_ids && selectedProfessional.service_ids.length > 0) {
+        filteredServices = filteredServices.filter((service: any) =>
+            selectedProfessional.service_ids!.includes(service.id)
+        );
+    }
 
     const toggleService = (service: any) => {
         const isSelected = selectedServices.some((s) => s.id === service.id);

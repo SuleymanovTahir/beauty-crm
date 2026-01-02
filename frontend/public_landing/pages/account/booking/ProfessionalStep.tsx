@@ -5,6 +5,7 @@ import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Star, Clock } from 'lucide-react';
 import { motion } from 'motion/react';
 import { api } from '../../../../src/services/api';
+import { format } from 'date-fns';
 
 interface ProfessionalStepProps {
     selectedProfessionalId: number | null;
@@ -13,6 +14,8 @@ interface ProfessionalStepProps {
     salonSettings: any;
     preloadedProfessionals?: any[];
     preloadedAvailability?: Record<number, string[]>;
+    selectedServices?: any[];
+    selectedDate?: Date | null;
 }
 
 export function ProfessionalStep({
@@ -21,12 +24,16 @@ export function ProfessionalStep({
     onProfessionalChange,
     salonSettings,
     preloadedProfessionals,
-    preloadedAvailability
+    preloadedAvailability,
+    selectedServices = [],
+    selectedDate = null
 }: ProfessionalStepProps) {
     const { t } = useTranslation(['booking', 'common']);
     const [professionals, setProfessionals] = useState<any[]>(preloadedProfessionals || []);
     // No loading spinner if data is preloaded
     const [loading, setLoading] = useState(false);
+    const [dateAvailability, setDateAvailability] = useState<Record<number, string[]>>({});
+    const [loadingAvailability, setLoadingAvailability] = useState(false);
     // Initialize nextSlots synchronously to avoid "pop-in" effect
     const [nextSlots, setNextSlots] = useState<Record<number, string>>(() => {
         if (preloadedAvailability && Object.keys(preloadedAvailability).length > 0 && preloadedProfessionals) {
@@ -61,14 +68,14 @@ export function ProfessionalStep({
             return;
         }
 
-        // Fallback fetch
+        // Fallback fetch - use public employees API
         const fetchProfessionals = async () => {
             setLoading(true);
             try {
-                const res = await api.getUsers();
-                const data = Array.isArray(res) ? res : (res.users || []);
-                const filtered = data.filter((u: any) => u.role === 'employee' || u.is_service_provider);
-                setProfessionals(filtered);
+                const res = await api.getPublicEmployees();
+                // API возвращает массив напрямую
+                const data = Array.isArray(res) ? res : [];
+                setProfessionals(data);
             } catch (error) {
                 console.error('Failed to fetch professionals:', error);
             } finally {
@@ -142,6 +149,27 @@ export function ProfessionalStep({
         fetchNextSlots();
     }, [professionals, preloadedAvailability]);
 
+    // Load availability for selected date
+    useEffect(() => {
+        if (selectedDate) {
+            const loadDateAvailability = async () => {
+                setLoadingAvailability(true);
+                try {
+                    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+                    const response = await api.getPublicBatchAvailability(dateStr);
+                    setDateAvailability(response.availability || {});
+                } catch (error) {
+                    console.error('Failed to load availability:', error);
+                } finally {
+                    setLoadingAvailability(false);
+                }
+            };
+            loadDateAvailability();
+        } else {
+            setDateAvailability({});
+        }
+    }, [selectedDate]);
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -151,6 +179,27 @@ export function ProfessionalStep({
                 </div>
             </div>
         );
+    }
+
+    // Фильтруем мастеров по выбранным услугам
+    const selectedServiceIds = selectedServices.map((s: any) => s.id);
+    let filteredProfessionals = selectedServiceIds.length > 0
+        ? professionals.filter((prof: any) => {
+            // Если у мастера нет service_ids или массив пустой - показываем его (совместимость)
+            if (!prof.service_ids || prof.service_ids.length === 0) {
+                return true;
+            }
+            // Проверяем, предоставляет ли мастер хотя бы одну из выбранных услуг
+            return selectedServiceIds.some((serviceId: number) => prof.service_ids.includes(serviceId));
+        })
+        : professionals;
+
+    // Дополнительно фильтруем по доступности на выбранную дату
+    if (selectedDate && Object.keys(dateAvailability).length > 0) {
+        filteredProfessionals = filteredProfessionals.filter((prof: any) => {
+            const masterAvailableSlots = dateAvailability[prof.id] || [];
+            return masterAvailableSlots.length > 0;
+        });
     }
 
     const isAnyProfessional = professionalSelected && selectedProfessionalId === null;
@@ -199,7 +248,7 @@ export function ProfessionalStep({
 
             {/* Professionals List */}
             <div className="grid md:grid-cols-2 gap-4 pb-10">
-                {professionals.map((professional, index) => {
+                {filteredProfessionals.map((professional, index) => {
                     const isSelected = selectedProfessionalId === professional.id;
                     return (
                         <motion.div

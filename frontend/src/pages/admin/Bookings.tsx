@@ -703,21 +703,21 @@ export default function Bookings() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-        <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('bookings:pending')}</p>
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <p className="text-gray-600 text-sm mb-2">{t('bookings:pending')}</p>
           <h3 className="text-3xl text-gray-900">{stats.pending}</h3>
         </div>
-        <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('bookings:completed')}</p>
-          <h3 className="text-3xl text-purple-600">{stats.completed}</h3>
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <p className="text-gray-600 text-sm mb-2">{t('bookings:completed')}</p>
+          <h3 className="text-3xl text-gray-900">{stats.completed}</h3>
         </div>
-        <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('bookings:total')}</p>
-          <h3 className="text-3xl text-green-600">{stats.total}</h3>
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <p className="text-gray-600 text-sm mb-2">{t('bookings:total')}</p>
+          <h3 className="text-3xl text-gray-900">{stats.total}</h3>
         </div>
-        <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('bookings:revenue')}</p>
-          <h3 className="text-3xl text-blue-600">{stats.revenue} {t('bookings:currency')}</h3>
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <p className="text-gray-600 text-sm mb-2">{t('bookings:revenue')}</p>
+          <h3 className="text-3xl text-gray-900">{stats.revenue} {t('bookings:currency')}</h3>
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
@@ -19,6 +19,7 @@ interface ConfirmStepProps {
     onSuccess: () => void;
     salonSettings: any;
     setStep?: (step: string) => void;
+    onOpenRescheduleDialog?: () => void;
 }
 
 export function ConfirmStep({
@@ -27,13 +28,53 @@ export function ConfirmStep({
     onPhoneChange,
     onSuccess,
     salonSettings,
-    setStep
+    setStep,
+    onOpenRescheduleDialog
 }: ConfirmStepProps) {
     const { t, i18n } = useTranslation(['booking', 'common']);
     const { user } = useAuth();
     const [phone, setPhone] = useState(bookingState.phone || user?.phone || '');
-    const [showPhoneModal, setShowPhoneModal] = useState(!bookingState.phone && !user?.phone);
+    const [showPhoneModal, setShowPhoneModal] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [profileLoaded, setProfileLoaded] = useState(false);
+
+    // Автоматическая загрузка номера телефона из профиля
+    useEffect(() => {
+        const loadUserProfile = async () => {
+            if (user && !profileLoaded) {
+                try {
+                    // Загрузить актуальный профиль пользователя
+                    const profile = await api.getClientProfile();
+
+                    // Если есть номер в профиле и его нет в bookingState
+                    if (profile.phone && !bookingState.phone) {
+                        setPhone(profile.phone);
+                        onPhoneChange(profile.phone); // Обновить в bookingState
+                    } else if (!profile.phone && !bookingState.phone) {
+                        // Нет номера ни в профиле, ни в bookingState - показать модалку
+                        setShowPhoneModal(true);
+                    }
+
+                    setProfileLoaded(true);
+                } catch (error) {
+                    console.error('Failed to load profile:', error);
+                    // Если загрузка не удалась и номера нет - показать модалку
+                    if (!bookingState.phone && !user.phone) {
+                        setShowPhoneModal(true);
+                    }
+                    setProfileLoaded(true);
+                }
+            } else if (!user && !bookingState.phone) {
+                // Неавторизованный пользователь без номера
+                setShowPhoneModal(true);
+                setProfileLoaded(true);
+            } else {
+                setProfileLoaded(true);
+            }
+        };
+
+        loadUserProfile();
+    }, [user, bookingState.phone, profileLoaded, onPhoneChange]);
 
     const handlePhoneSubmit = () => {
         if (!phone || phone.length < 5) {
@@ -135,11 +176,11 @@ export function ConfirmStep({
                         <div>
                             <div className="flex items-center justify-between mb-4">
                                 <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('menu.services', 'Services')}</h4>
-                                {setStep && (
+                                {onOpenRescheduleDialog && (
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() => setStep('services')}
+                                        onClick={onOpenRescheduleDialog}
                                         className="h-7 px-3 text-[9px] font-bold uppercase tracking-wider text-purple-600 hover:bg-purple-50 rounded-lg"
                                     >
                                         {t('common.edit', 'Edit')}

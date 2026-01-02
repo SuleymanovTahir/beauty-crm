@@ -57,5 +57,8 @@
   "totalDuration": "Общая длительность",
   "min": "мин",
   "loading": "Загрузка...",
-  "newBooking": "Новая запись"
+  "newBooking": "Новая запись",
+  "change_booking": "Изменить запись",
+  "change_service": "Изменить услугу",
+  "change_master": "Изменить мастера"
 }

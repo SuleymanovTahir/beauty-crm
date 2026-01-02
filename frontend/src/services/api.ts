@@ -642,6 +642,10 @@ export class ApiClient {
     return this.request<any>(`/api/users?_t=${Date.now()}`)
   }
 
+  async getPublicEmployees(language: string = 'ru') {
+    return this.request<any>(`/api/public/employees?language=${language}&_t=${Date.now()}`)
+  }
+
   // После getUsers() (примерно строка 150)
 
   async getRoles(): Promise<{ roles: Array<{ key: string; name: string; level: number }> }> {
