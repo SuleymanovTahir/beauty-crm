@@ -338,15 +338,15 @@ export default function LoyaltyManagement() {
       {/* Global Configuration */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('config.title', 'Configuration')}</CardTitle>
-          <CardDescription>{t('config.description', 'Manage global loyalty settings')}</CardDescription>
+          <CardTitle>{t('config.title', 'Настройки')}</CardTitle>
+          <CardDescription>{t('config.description', 'Управление глобальными настройками лояльности')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-end gap-4 max-w-md">
             <div className="flex-1 space-y-4">
               <div>
-                <Label>{t('config.cashback_rate', 'Cashback Rate (Points per 1 Currency Unit)')}</Label>
-                <p className="text-xs text-gray-500 mb-2">{t('config.cashback_hint', 'Example: 0.1 = 10% cashback (10 points for 100 spent)')}</p>
+                <Label>{t('config.cashback_rate', 'Кэшбэк (Баллы за 1 ед. валюты)')}</Label>
+                <p className="text-xs text-gray-500 mb-2">{t('config.cashback_hint', 'Пример: 0.1 = 10% кэшбэк (10 баллов за 100 потраченных)')}</p>
                 <Input
                   type="number"
                   step="0.01"
@@ -355,7 +355,7 @@ export default function LoyaltyManagement() {
                 />
               </div>
               <div>
-                <Label>{t('config.expiration_days', 'Points Validity (Days)')}</Label>
+                <Label>{t('config.expiration_days', 'Срок действия баллов (дней)')}</Label>
                 <Input
                   type="number"
                   value={config.points_expiration_days}
@@ -363,11 +363,11 @@ export default function LoyaltyManagement() {
                   placeholder="365"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  {t('config.expiration_hint', 'Points earned will expire after this many days.')}
+                  {t('config.expiration_hint', 'Начисленные баллы сгорят через указанное количество дней.')}
                 </p>
               </div>
             </div>
-            <Button onClick={handleUpdateConfig}>{t('buttons.save', 'Save')}</Button>
+            <Button onClick={handleUpdateConfig}>{t('buttons.save', 'Сохранить')}</Button>
           </div>
         </CardContent>
       </Card>
@@ -376,23 +376,23 @@ export default function LoyaltyManagement() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>{t('categories.title', 'Category Multipliers')}</CardTitle>
-            <CardDescription>{t('categories.description', 'Set custom multipliers for services')}</CardDescription>
+            <CardTitle>{t('categories.title', 'Множители категорий')}</CardTitle>
+            <CardDescription>{t('categories.description', 'Настройте множители баллов для категорий услуг')}</CardDescription>
           </div>
           <Button variant="outline" size="sm" onClick={() => {
             setRuleForm({ category: '', points_multiplier: 1.0 });
             setShowRuleDialog(true);
           }}>
             <Plus className="w-4 h-4 mr-2" />
-            {t('buttons.add_rule', 'Add Rule')}
+            {t('buttons.add_rule', 'Добавить правило')}
           </Button>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('categories.category', 'Category')}</TableHead>
-                <TableHead>{t('categories.multiplier', 'Multiplier')}</TableHead>
+                <TableHead>{t('categories.category', 'Категория')}</TableHead>
+                <TableHead>{t('categories.multiplier', 'Множитель')}</TableHead>
                 <TableHead className="w-[100px]"></TableHead>
               </TableRow>
             </TableHeader>
@@ -573,7 +573,7 @@ export default function LoyaltyManagement() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label>{t('categories.category', 'Category')}</Label>
+              <Label>{t('categories.category', 'Категория')}</Label>
               <Input
                 value={ruleForm.category}
                 onChange={(e) => setRuleForm({ ...ruleForm, category: e.target.value })}
@@ -581,7 +581,7 @@ export default function LoyaltyManagement() {
               />
             </div>
             <div>
-              <Label>{t('categories.multiplier', 'Multiplier')}</Label>
+              <Label>{t('categories.multiplier', 'Множитель')}</Label>
               <Input
                 type="number"
                 step="0.1"
