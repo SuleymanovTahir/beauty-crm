@@ -58,7 +58,9 @@
           "all": "Tous les clients",
           "active": "Clients actifs",
           "inactive": "Clients inactifs",
-          "tier": "Par niveau de fidélité"
+          "tier": "Par niveau de fidélité",
+          "appointment_based": "D'après les dossiers",
+          "service_based": "Par prestations"
         },
         "loyalty_tier": "Niveau de fidélité",
         "select_tier": "Sélectionnez le niveau",
@@ -67,7 +69,31 @@
           "silver": "Argent",
           "gold": "Or",
           "platinum": "Platine"
-        }
+        },
+        "appointment_filter": "Filtrer par entrées",
+        "select_filter": "Sélectionnez le filtre",
+        "appointment_filters": {
+          "tomorrow": "Demain",
+          "specific_date": "Date précise",
+          "date_range": "Plage de dates"
+        },
+        "appointment_date": "Date d'enregistrement",
+        "start_date": "date de début",
+        "end_date": "Date de fin",
+        "service_filter": "Service/Procédure",
+        "service_placeholder": "Entrez le nom ou l'ID du service",
+        "service_hint": "Les clients inscrits à ce service recevront une notification",
+        "schedule_notification": "Planifier une notification",
+        "schedule_date": "Date d'envoi",
+        "schedule_time": "Délai d'expédition",
+        "repeat_notification": "Répéter la notification",
+        "repeat_interval": "Répéter l'intervalle",
+        "repeat_intervals": {
+          "daily": "Tous les jours",
+          "weekly": "Hebdomadaire",
+          "monthly": "Mensuel"
+        },
+        "repeat_end_date": "Terminer la rediffusion"
       }
     },
     "template": {

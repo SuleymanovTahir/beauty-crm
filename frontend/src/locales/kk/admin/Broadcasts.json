@@ -27,5 +27,9 @@
   "title": "Жаппай жіберулер",
   "total_recipients": "Жалпы алушылар",
   "select_subscription_type": "Жазылым түрін таңдаңыз",
-  "error_preview": "Алдын ала қарау қатесі"
+  "error_preview": "Алдын ала қарау қатесі",
+  "placeholder_all_users": "Барлық пайдаланушылар",
+  "placeholder_subject": "Сізге арнайы ұсыныс!",
+  "placeholder_message": "Хабарлама мәтінін енгізіңіз...",
+  "click_preview_to_see": "Алушыларды көру үшін «Алдын ала қарау» түймесін басыңыз"
 }

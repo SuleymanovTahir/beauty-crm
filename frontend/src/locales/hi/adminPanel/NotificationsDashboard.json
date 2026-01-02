@@ -58,7 +58,9 @@
           "all": "सभी ग्राहक",
           "active": "सक्रिय ग्राहक",
           "inactive": "निष्क्रिय ग्राहक",
-          "tier": "वफादारी के स्तर से"
+          "tier": "वफादारी के स्तर से",
+          "appointment_based": "अभिलेखों के अनुसार",
+          "service_based": "सेवाओं द्वारा"
         },
         "loyalty_tier": "वफादारी का स्तर",
         "select_tier": "स्तर चुनें",
@@ -67,7 +69,31 @@
           "silver": "चाँदी",
           "gold": "सोना",
           "platinum": "प्लैटिनम"
-        }
+        },
+        "appointment_filter": "प्रविष्टियों द्वारा फ़िल्टर करें",
+        "select_filter": "फ़िल्टर चुनें",
+        "appointment_filters": {
+          "tomorrow": "कल",
+          "specific_date": "विशिष्ट तिथि",
+          "date_range": "तिथि सीमा"
+        },
+        "appointment_date": "रिकॉर्डिंग दिनांक",
+        "start_date": "आरंभ करने की तिथि",
+        "end_date": "अंतिम तिथि",
+        "service_filter": "सेवा/प्रक्रिया",
+        "service_placeholder": "सेवा का नाम या आईडी दर्ज करें",
+        "service_hint": "इस सेवा के लिए पंजीकृत ग्राहकों को एक अधिसूचना प्राप्त होगी",
+        "schedule_notification": "एक अधिसूचना शेड्यूल करें",
+        "schedule_date": "भेजने का दिनांक",
+        "schedule_time": "डिस्पैच का समय",
+        "repeat_notification": "अधिसूचना दोहराएँ",
+        "repeat_interval": "दोहराएँ अंतराल",
+        "repeat_intervals": {
+          "daily": "दैनिक",
+          "weekly": "साप्ताहिक",
+          "monthly": "महीने के"
+        },
+        "repeat_end_date": "पुनरावर्तन समाप्त करें"
       }
     },
     "template": {

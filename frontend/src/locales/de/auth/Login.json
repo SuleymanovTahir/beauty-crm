@@ -16,5 +16,7 @@
   "return_to_home": "Rückkehr nach Hause",
   "unauthorized": "Nicht autorisiert",
   "username": "Benutzername",
-  "welcome": "Willkommen"
+  "welcome": "Willkommen",
+  "account_pending": "Ihr Konto wartet auf die Genehmigung durch den Administrator",
+  "registration_pending_toast": "Ihre Registrierung wartet auf die Genehmigung durch den Administrator. Sie erhalten eine E-Mail, wenn Ihr Konto aktiviert ist."
 }

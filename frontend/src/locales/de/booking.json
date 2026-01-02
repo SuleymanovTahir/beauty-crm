@@ -26,7 +26,11 @@
     "title": "Wählen Sie einen Spezialisten",
     "anyAvailable": "Jeder freie Meister",
     "reviews": "Bewertungen",
-    "firstAvailable": "Der erste verfügbare Master nimmt Ihre Eingabe entgegen"
+    "firstAvailable": "Der erste verfügbare Master nimmt Ihre Eingabe entgegen",
+    "anyDesc": "Wir wählen den besten verfügbaren Master aus",
+    "ready": "Bereit",
+    "availableToday": "Heute verfügbar",
+    "availableOn": "Verfügbar"
   },
   "confirm": {
     "title": "Einreisebestätigung",
@@ -43,7 +47,9 @@
     "date": "Datum",
     "time": "Zeit",
     "confirm": "Eingabe bestätigen",
-    "total": "Gesamt"
+    "total": "Gesamt",
+    "timeout": "Die Wartezeit ist abgelaufen. Versuchen Sie es erneut.",
+    "dateTime": "Datum und Uhrzeit"
   },
   "services": {
     "title": "Wählen Sie Dienste aus",
@@ -52,10 +58,17 @@
     "noDescription": "Professioneller Service",
     "total": "Gesamtbetrag",
     "continue": "Weitermachen",
-    "selected": "Dienste ausgewählt"
+    "selected": "Dienste ausgewählt",
+    "service_one": "Service",
+    "service_few": "Dienstleistungen",
+    "service_many": "Dienstleistungen"
   },
   "totalDuration": "Gesamtdauer",
   "min": "min",
   "loading": "Laden...",
-  "newBooking": "Neuer Eintrag"
+  "newBooking": "Neuer Eintrag",
+  "invalid_phone": "Bitte geben Sie eine gültige Telefonnummer ein",
+  "change_booking": "Eintrag bearbeiten",
+  "change_service": "Dienst ändern",
+  "change_master": "Meister wechseln"
 }

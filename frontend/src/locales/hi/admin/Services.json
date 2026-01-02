@@ -120,5 +120,12 @@
   "deselect_all": "रीसेट",
   "selected_count": "चयनित",
   "load_inactive_clients": "निष्क्रिय ग्राहकों को लोड करें",
-  "inactive_clients": "निष्क्रिय ग्राहक"
+  "inactive_clients": "निष्क्रिय ग्राहक",
+  "schedule_activation": "सक्रियण शेड्यूल करें",
+  "activation_date": "सक्रियण तिथि",
+  "activation_time": "सक्रियण समय",
+  "auto_activate": "नियत समय पर स्वचालित रूप से सक्रिय करें",
+  "auto_deactivate": "समाप्ति तिथि के बाद स्वचालित रूप से निष्क्रिय करें",
+  "promo_placeholder": "किसी मित्र को रेफर करें - बोनस प्राप्त करें",
+  "select_audience": "अपने दर्शकों का चयन करें"
 }

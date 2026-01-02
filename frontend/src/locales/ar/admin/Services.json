@@ -120,5 +120,12 @@
   "deselect_all": "إعادة تعيين",
   "selected_count": "المحدد",
   "load_inactive_clients": "تحميل العملاء غير النشطين",
-  "inactive_clients": "العملاء غير النشطين"
+  "inactive_clients": "العملاء غير النشطين",
+  "schedule_activation": "تفعيل الجدول الزمني",
+  "activation_date": "تاريخ التفعيل",
+  "activation_time": "وقت التنشيط",
+  "auto_activate": "تفعيل تلقائيا في الوقت المحدد",
+  "auto_deactivate": "إلغاء التنشيط تلقائيًا بعد تاريخ الانتهاء",
+  "promo_placeholder": "قم بإحالة صديق - احصل على مكافأة",
+  "select_audience": "حدد جمهورك"
 }
