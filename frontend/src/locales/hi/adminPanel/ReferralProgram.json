@@ -12,7 +12,7 @@
     "title": "वर्तमान बोनस कॉन्फ़िगरेशन",
     "referrer_bonus": "जब कोई मित्र अपनी पहली खरीदारी करता है तो रेफ़रलकर्ता को <strong>{{अंक}} अंक</strong>प्राप्त होते हैं",
     "referred_bonus": "पंजीकरण पर आमंत्रित मित्र को <strong>{{अंक}} अंक</strong> प्राप्त होते हैं",
-    "min_purchase": "न्यूनतम खरीद राशि: <strong>{{राशि}} AED</strong>",
+    "min_purchase": "न्यूनतम खरीद राशि: <strong>{{amount}} AED</strong>",
     "edit": "संपादन करना"
   },
   "table": {

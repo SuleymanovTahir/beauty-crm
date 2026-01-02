@@ -12,7 +12,7 @@
     "title": "تكوين المكافأة الحالية",
     "referrer_bonus": "يتلقى المُحيل <strong>{{points}} نقطة</strong>عندما يقوم أحد الأصدقاء بإجراء أول عملية شراء له",
     "referred_bonus": "يتلقى الصديق المدعو <strong>{{points}} نقطة</strong> عند التسجيل",
-    "min_purchase": "الحد الأدنى لمبلغ الشراء: <strong>{{amount}} AED</strong>",
+    "min_purchase": "الحد الأدنى لمبلغ الشراء: <strong>{{amount}} درهم إماراتي</strong>",
     "edit": "يحرر"
   },
   "table": {
