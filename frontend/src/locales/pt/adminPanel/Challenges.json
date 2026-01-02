@@ -1,63 +1,68 @@
 {
-  "title": "Desafios",
-  "subtitle": "Criando e gerenciando desafios de engajamento",
-  "create_challenge": "Crie um desafio",
-  "stats": {
-    "active_challenges": "Desafios ativos",
-    "total_participants": "Total de participantes",
-    "completions": "Conclusão"
-  },
-  "types": {
-    "visits": "Visitas",
-    "spending": "Despesas",
-    "referrals": "Referências",
-    "services": "Serviços"
-  },
-  "statuses": {
-    "active": "Ativo",
-    "upcoming": "Por vir",
-    "completed": "Concluído"
-  },
-  "card": {
-    "target": "Alvo",
-    "reward": "Recompensa",
-    "progress": "Progresso",
-    "completed": "concluído",
-    "pts": "apontar"
-  },
-  "dialogs": {
-    "create": {
-      "title": "Crie um novo desafio",
-      "title_edit": "Editar desafio",
-      "description": "Defina parâmetros de desafio e recompensas",
-      "form": {
-        "title": "Nome",
-        "title_placeholder": "Desafio de beleza de verão",
-        "description": "Descrição",
-        "description_placeholder": "Visite o salão 3 vezes este mês",
-        "challenge_type": "Tipo de desafio",
-        "target_value": "Valor alvo",
-        "target_placeholder": "3",
-        "reward_points": "Recompensa com pontos",
-        "reward_placeholder": "1000",
-        "start_date": "data de início",
-        "end_date": "Data de término"
-      }
-    },
-    "delete": {
-      "confirm": "Tem certeza de que deseja excluir este desafio?"
-    }
-  },
   "buttons": {
     "cancel": "Cancelar",
     "create_challenge": "Crie um desafio",
     "update_challenge": "Desafio de atualização"
   },
+  "card": {
+    "check_progress": "Check Progress",
+    "completed": "concluído",
+    "progress": "Progresso",
+    "pts": "apontar",
+    "reward": "Recompensa",
+    "target": "Alvo"
+  },
+  "create_challenge": "Crie um desafio",
+  "dialogs": {
+    "create": {
+      "description": "Defina parâmetros de desafio e recompensas",
+      "form": {
+        "challenge_type": "Tipo de desafio",
+        "description": "Descrição",
+        "description_placeholder": "Visite o salão 3 vezes este mês",
+        "end_date": "Data de término",
+        "reward_placeholder": "1000",
+        "reward_points": "Recompensa com pontos",
+        "start_date": "data de início",
+        "target_placeholder": "3",
+        "target_value": "Valor alvo",
+        "title": "Nome",
+        "title_placeholder": "Desafio de beleza de verão"
+      },
+      "title": "Crie um novo desafio",
+      "title_edit": "Editar desafio"
+    },
+    "delete": {
+      "confirm": "Tem certeza de que deseja excluir este desafio?"
+    }
+  },
+  "stats": {
+    "active_challenges": "Desafios ativos",
+    "completions": "Conclusão",
+    "total_participants": "Total de participantes"
+  },
+  "statuses": {
+    "active": "Ativo",
+    "completed": "Concluído",
+    "upcoming": "Por vir"
+  },
+  "subtitle": "Criando e gerenciando desafios de engajamento",
+  "title": "Desafios",
   "toasts": {
     "created": "Desafio criado com sucesso",
     "deleted": "Desafio excluído com sucesso",
-    "failed_load": "Falha ao carregar desafios",
+    "failed_check_progress": "Failed to check progress",
     "failed_create": "Falha ao criar desafio",
-    "failed_delete": "Falha ao excluir o desafio"
+    "failed_delete": "Falha ao excluir o desafio",
+    "failed_load": "Falha ao carregar desafios",
+    "progress_checked_one": "",
+    "progress_checked_many": "",
+    "progress_checked_other": ""
+  },
+  "types": {
+    "referrals": "Referências",
+    "services": "Serviços",
+    "spending": "Despesas",
+    "visits": "Visitas"
   }
 }

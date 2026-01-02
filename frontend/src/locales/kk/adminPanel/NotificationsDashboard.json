@@ -1,21 +1,82 @@
 {
-  "title": "Хабарландыру тақтасы",
-  "subtitle": "Клиенттерге хабарламаларды басқару және жіберу",
-  "save_template": "Үлгіні сақтау",
-  "send_notification": "Хабарландыру жіберу",
-  "stats": {
-    "total_sent": "Барлығы жіберілді",
-    "email_sent": "Электрондық пошта жіберілді",
-    "push_sent": "Басу жіберілді",
-    "sms_sent": "SMS жіберілді"
+  "buttons": {
+    "cancel": "Болдырмау",
+    "save_template": "Үлгіні сақтау",
+    "send_notification": "Хабарландыру жіберу"
   },
-  "templates": {
-    "title": "Хабарландыру үлгілері",
-    "description": "Жалпы хабарландыруларға арналған жылдам үлгілер",
-    "use_template": "Үлгіні қолданыңыз"
+  "dialogs": {
+    "send": {
+      "description": "Клиенттеріңізге хабарландыру жасаңыз және жіберіңіз",
+      "form": {
+        "appointment_date": "Жазу күні",
+        "appointment_filter": "Жазбалар бойынша сүзгілеу",
+        "appointment_filters": {
+          "date_range": "Күндер ауқымы",
+          "specific_date": "Нақты күн",
+          "tomorrow": "Ертең"
+        },
+        "end_date": "Аяқталу күні",
+        "loyalty_tier": "Адалдық деңгейі",
+        "message": "Хабарлама",
+        "message_placeholder": "Хабарландыру мәтіні",
+        "notification_type": "Хабарландыру түрі",
+        "repeat_end_date": "Қайталауды аяқтау",
+        "repeat_interval": "Қайталау аралығы",
+        "repeat_intervals": {
+          "daily": "Күнделікті",
+          "monthly": "Ай сайын",
+          "weekly": "Апта сайын"
+        },
+        "repeat_notification": "Хабарландыруды қайталау",
+        "schedule_date": "Жіберілген күні",
+        "schedule_notification": "Хабарландыруды жоспарлаңыз",
+        "schedule_time": "Жіберу уақыты",
+        "segments": {
+          "active": "Белсенді клиенттер",
+          "all": "Барлық клиенттер",
+          "appointment_based": "Жазбаларға сәйкес",
+          "inactive": "Белсенді емес клиенттер",
+          "service_based": "Қызметтер бойынша",
+          "tier": "Адалдық деңгейі бойынша"
+        },
+        "select_filter": "Сүзгіні таңдаңыз",
+        "select_tier": "Деңгейді таңдаңыз",
+        "service_filter": "Қызмет/процедура",
+        "service_hint": "Бұл қызметке тіркелген тұтынушылар хабарлама алады",
+        "service_placeholder": "Қызмет атауын немесе идентификаторды енгізіңіз",
+        "start_date": "басталу күні",
+        "target_segment": "Мақсатты сегмент",
+        "tiers": {
+          "bronze": "Қола",
+          "gold": "Алтын",
+          "platinum": "Платина",
+          "silver": "Күміс"
+        },
+        "title": "Айдар",
+        "title_placeholder": "Хабарландыру тақырыбы"
+      },
+      "title": "Жаңа хабарландыру жіберу"
+    },
+    "template": {
+      "description": "Қайта пайдалануға болатын хабарландыру үлгісін жасаңыз",
+      "form": {
+        "message": "Хабарлама",
+        "message_placeholder": "Динамикалық мазмұн үшін {variable} пайдаланыңыз",
+        "template_name": "Үлгі атауы",
+        "template_name_placeholder": "мысалы, сәлемдесу хабары",
+        "title": "Айдар",
+        "title_placeholder": "Хабарландыру тақырыбы",
+        "type": "Түр",
+        "types": {
+          "email": "Email",
+          "push": "Push хабарландыруы",
+          "sms": "SMS"
+        }
+      },
+      "title": "Үлгі ретінде сақтау"
+    }
   },
   "history": {
-    "title": "Хабарландыру тарихы",
     "description": "Барлық жіберілген және жоспарланған хабарландырулар",
     "filters": {
       "all": "Барлығы",
@@ -23,108 +84,47 @@
       "push": "Push",
       "sms": "SMS"
     },
+    "scheduled": "Жоспарланған",
+    "statuses": {
+      "failed": "Сәтсіз",
+      "pending": "Күтуде",
+      "sent": "Жіберілді"
+    },
     "table": {
-      "status": "Күй",
-      "title": "Айдар",
-      "type": "Түр",
+      "date": "Күн",
       "recipients": "Алушылар",
       "sent_failed": "Жіберілді/сәтсіз",
-      "date": "Күн"
+      "status": "Күй",
+      "title": "Айдар",
+      "type": "Түр"
     },
-    "statuses": {
-      "sent": "Жіберілді",
-      "pending": "Күтуде",
-      "failed": "Сәтсіз"
-    },
-    "scheduled": "Жоспарланған"
+    "title": "Хабарландыру тарихы"
+  },
+  "save_template": "Үлгіні сақтау",
+  "send_notification": "Хабарландыру жіберу",
+  "stats": {
+    "email_sent": "Электрондық пошта жіберілді",
+    "push_sent": "Басу жіберілді",
+    "sms_sent": "SMS жіберілді",
+    "total_sent": "Барлығы жіберілді"
+  },
+  "subtitle": "Клиенттерге хабарламаларды басқару және жіберу",
+  "templates": {
+    "description": "Жалпы хабарландыруларға арналған жылдам үлгілер",
+    "title": "Хабарландыру үлгілері",
+    "use_template": "Үлгіні қолданыңыз"
+  },
+  "title": "Хабарландыру тақтасы",
+  "toasts": {
+    "failed_load": "Хабарландырулар жүктелмеді",
+    "failed_save_template": "Үлгіні сақтау сәтсіз аяқталды",
+    "failed_send": "Хабарландыру жіберілмеді",
+    "sent": "Хабарландыру сәтті жіберілді",
+    "template_saved": "Үлгі сәтті сақталды"
   },
   "types": {
     "email": "Email",
     "push": "Push",
     "sms": "SMS"
-  },
-  "dialogs": {
-    "send": {
-      "title": "Жаңа хабарландыру жіберу",
-      "description": "Клиенттеріңізге хабарландыру жасаңыз және жіберіңіз",
-      "form": {
-        "notification_type": "Хабарландыру түрі",
-        "title": "Айдар",
-        "title_placeholder": "Хабарландыру тақырыбы",
-        "message": "Хабарлама",
-        "message_placeholder": "Хабарландыру мәтіні",
-        "target_segment": "Мақсатты сегмент",
-        "segments": {
-          "all": "Барлық клиенттер",
-          "active": "Белсенді клиенттер",
-          "inactive": "Белсенді емес клиенттер",
-          "tier": "Адалдық деңгейі бойынша",
-          "appointment_based": "Жазбаларға сәйкес",
-          "service_based": "Қызметтер бойынша"
-        },
-        "loyalty_tier": "Адалдық деңгейі",
-        "select_tier": "Деңгейді таңдаңыз",
-        "tiers": {
-          "bronze": "Қола",
-          "silver": "Күміс",
-          "gold": "Алтын",
-          "platinum": "Платина"
-        },
-        "appointment_filter": "Жазбалар бойынша сүзгілеу",
-        "select_filter": "Сүзгіні таңдаңыз",
-        "appointment_filters": {
-          "tomorrow": "Ертең",
-          "specific_date": "Нақты күн",
-          "date_range": "Күндер ауқымы"
-        },
-        "appointment_date": "Жазу күні",
-        "start_date": "басталу күні",
-        "end_date": "Аяқталу күні",
-        "service_filter": "Қызмет/процедура",
-        "service_placeholder": "Қызмет атауын немесе идентификаторды енгізіңіз",
-        "service_hint": "Бұл қызметке тіркелген тұтынушылар хабарлама алады",
-        "schedule_notification": "Хабарландыруды жоспарлаңыз",
-        "schedule_date": "Жіберілген күні",
-        "schedule_time": "Жіберу уақыты",
-        "repeat_notification": "Хабарландыруды қайталау",
-        "repeat_interval": "Қайталау аралығы",
-        "repeat_intervals": {
-          "daily": "Күнделікті",
-          "weekly": "Апта сайын",
-          "monthly": "Ай сайын"
-        },
-        "repeat_end_date": "Қайталауды аяқтау"
-      }
-    },
-    "template": {
-      "title": "Үлгі ретінде сақтау",
-      "description": "Қайта пайдалануға болатын хабарландыру үлгісін жасаңыз",
-      "form": {
-        "template_name": "Үлгі атауы",
-        "template_name_placeholder": "мысалы, сәлемдесу хабары",
-        "title": "Айдар",
-        "title_placeholder": "Хабарландыру тақырыбы",
-        "message": "Хабарлама",
-        "message_placeholder": "Динамикалық мазмұн үшін {variable} пайдаланыңыз",
-        "type": "Түр",
-        "types": {
-          "push": "Push хабарландыруы",
-          "email": "Email",
-          "sms": "SMS"
-        }
-      }
-    }
-  },
-  "buttons": {
-    "cancel": "Болдырмау",
-    "send_notification": "Хабарландыру жіберу",
-    "save_template": "Үлгіні сақтау"
-  },
-  "toasts": {
-    "sent": "Хабарландыру сәтті жіберілді",
-    "template_saved": "Үлгі сәтті сақталды",
-    "failed_load": "Хабарландырулар жүктелмеді",
-    "failed_send": "Хабарландыру жіберілмеді",
-    "failed_save_template": "Үлгіні сақтау сәтсіз аяқталды"
   }
 }

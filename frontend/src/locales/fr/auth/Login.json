@@ -1,5 +1,6 @@
 {
   "401": "401",
+  "account_pending": "Votre compte est en attente de l'approbation de l'administrateur",
   "authorization_error": "Erreur d'autorisation",
   "crm_system_management": "Gestion du système CRM",
   "enter_login": "Entrez votre identifiant",
@@ -13,10 +14,9 @@
   "login_title": "Se connecter",
   "no_account_register": "Vous n'avez pas de compte ? Registre",
   "password": "Mot de passe",
+  "registration_pending_toast": "Votre inscription est en attente de l'approbation de l'administrateur. Vous recevrez un e-mail lorsque votre compte sera activé.",
   "return_to_home": "Retour à la maison",
   "unauthorized": "Non autorisé",
   "username": "Nom d'utilisateur",
-  "welcome": "Accueillir",
-  "account_pending": "Votre compte est en attente de l'approbation de l'administrateur",
-  "registration_pending_toast": "Votre inscription est en attente de l'approbation de l'administrateur. Vous recevrez un e-mail lorsque votre compte sera activé."
+  "welcome": "Accueillir"
 }

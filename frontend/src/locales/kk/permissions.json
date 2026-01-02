@@ -1,0 +1,11 @@
+{
+  "create_permission": "Жасалу",
+  "delete_permission": "Жою",
+  "edit_permission": "Өңдеу",
+  "error_changing_permissions": "Рұқсаттарды өзгерту қатесі",
+  "error_loading_permissions": "Рұқсаттарды жүктеу қатесі",
+  "error_loading_users": "Пайдаланушыларды жүктеу қатесі",
+  "permission_granted": "Құқық берілді",
+  "permission_revoked": "Құқық күші жойылды",
+  "view_permission": "Көру"
+}

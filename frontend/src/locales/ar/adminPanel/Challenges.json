@@ -1,63 +1,71 @@
 {
-  "title": "التحديات",
-  "subtitle": "إنشاء وإدارة تحديات المشاركة",
-  "create_challenge": "خلق التحدي",
-  "stats": {
-    "active_challenges": "التحديات النشطة",
-    "total_participants": "إجمالي المشاركين",
-    "completions": "انتهاء"
-  },
-  "types": {
-    "visits": "الزيارات",
-    "spending": "نفقات",
-    "referrals": "الإحالات",
-    "services": "خدمات"
-  },
-  "statuses": {
-    "active": "نشيط",
-    "upcoming": "القادمة",
-    "completed": "مكتمل"
-  },
-  "card": {
-    "target": "هدف",
-    "reward": "جائزة",
-    "progress": "تقدم",
-    "completed": "مكتمل",
-    "pts": "نقطة"
-  },
-  "dialogs": {
-    "create": {
-      "title": "خلق تحديا جديدا",
-      "title_edit": "تحرير التحدي",
-      "description": "تحديد معايير التحدي والمكافآت",
-      "form": {
-        "title": "اسم",
-        "title_placeholder": "تحدي الجمال في الصيف",
-        "description": "وصف",
-        "description_placeholder": "قم بزيارة الصالون 3 مرات هذا الشهر",
-        "challenge_type": "نوع التحدي",
-        "target_value": "القيمة المستهدفة",
-        "target_placeholder": "3",
-        "reward_points": "مكافأة بالنقاط",
-        "reward_placeholder": "1000",
-        "start_date": "تاريخ البدء",
-        "end_date": "تاريخ الانتهاء"
-      }
-    },
-    "delete": {
-      "confirm": "هل أنت متأكد أنك تريد حذف هذا التحدي؟"
-    }
-  },
   "buttons": {
     "cancel": "يلغي",
     "create_challenge": "خلق التحدي",
     "update_challenge": "تحديث التحدي"
   },
+  "card": {
+    "check_progress": "Check Progress",
+    "completed": "مكتمل",
+    "progress": "تقدم",
+    "pts": "نقطة",
+    "reward": "جائزة",
+    "target": "هدف"
+  },
+  "create_challenge": "خلق التحدي",
+  "dialogs": {
+    "create": {
+      "description": "تحديد معايير التحدي والمكافآت",
+      "form": {
+        "challenge_type": "نوع التحدي",
+        "description": "وصف",
+        "description_placeholder": "قم بزيارة الصالون 3 مرات هذا الشهر",
+        "end_date": "تاريخ الانتهاء",
+        "reward_placeholder": "1000",
+        "reward_points": "مكافأة بالنقاط",
+        "start_date": "تاريخ البدء",
+        "target_placeholder": "3",
+        "target_value": "القيمة المستهدفة",
+        "title": "اسم",
+        "title_placeholder": "تحدي الجمال في الصيف"
+      },
+      "title": "خلق تحديا جديدا",
+      "title_edit": "تحرير التحدي"
+    },
+    "delete": {
+      "confirm": "هل أنت متأكد أنك تريد حذف هذا التحدي؟"
+    }
+  },
+  "stats": {
+    "active_challenges": "التحديات النشطة",
+    "completions": "انتهاء",
+    "total_participants": "إجمالي المشاركين"
+  },
+  "statuses": {
+    "active": "نشيط",
+    "completed": "مكتمل",
+    "upcoming": "القادمة"
+  },
+  "subtitle": "إنشاء وإدارة تحديات المشاركة",
+  "title": "التحديات",
   "toasts": {
     "created": "تم إنشاء التحدي بنجاح",
     "deleted": "تم حذف التحدي بنجاح",
-    "failed_load": "فشل تحميل التحديات",
+    "failed_check_progress": "Failed to check progress",
     "failed_create": "فشل إنشاء التحدي",
-    "failed_delete": "فشل حذف التحدي"
+    "failed_delete": "فشل حذف التحدي",
+    "failed_load": "فشل تحميل التحديات",
+    "progress_checked_zero": "",
+    "progress_checked_one": "",
+    "progress_checked_two": "",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_other": ""
+  },
+  "types": {
+    "referrals": "الإحالات",
+    "services": "خدمات",
+    "spending": "نفقات",
+    "visits": "الزيارات"
   }
 }

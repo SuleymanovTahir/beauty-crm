@@ -1,5 +1,6 @@
 {
   "401": "401",
+  "account_pending": "Your account is awaiting administrator approval",
   "authorization_error": "Authorization error",
   "crm_system_management": "CRM system management",
   "enter_login": "Enter your login",
@@ -13,10 +14,9 @@
   "login_title": "Login",
   "no_account_register": "Don't have an account? Register",
   "password": "Password",
+  "registration_pending_toast": "Your registration is awaiting administrator approval. You will receive an email when your account is activated.",
   "return_to_home": "Return to home",
   "unauthorized": "Unauthorized",
   "username": "Username",
-  "welcome": "Welcome",
-  "account_pending": "Your account is awaiting administrator approval",
-  "registration_pending_toast": "Your registration is awaiting administrator approval. You will receive an email when your account is activated."
+  "welcome": "Welcome"
 }

@@ -10,996 +10,1008 @@
     "promo": "Promoción",
     "waxing": "восковая эпиляция"
   },
+  "currency": "AED",
+  "haircutsStyling": "Haircuts & Styling",
   "items": {
-    "brow_lamination": {
-      "name": "Laminación de cejas",
-      "description": "Laminación de cejas",
-      "price": 200.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "brows"
-    },
-    "combo_lamination": {
-      "name": "Laminación de cejas y pestañas.",
-      "description": "Laminación combinada",
-      "price": 300.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "brows"
-    },
-    "brow_coloring": {
-      "name": "tinte de cejas",
-      "description": "Coloración profesional",
-      "price": 40.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "brows"
-    },
-    "brow_shaping": {
-      "name": "dar forma a las cejas",
-      "description": "Diseño profesional",
-      "price": 40.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "brows"
-    },
-    "deep_facial_cleaning": {
-      "name": "Limpieza facial profunda",
-      "description": "Limpieza profunda profesional",
-      "price": 400.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "facial"
-    },
-    "medical_facial": {
-      "name": "Limpieza médica para pieles problemáticas.",
-      "description": "limpieza medica",
-      "price": 450.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "facial"
-    },
-    "peeling": {
-      "name": "Peladura",
-      "description": "peeling químico",
-      "price": 350.0,
-      "min_price": 300.0,
-      "max_price": 400.0,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "facial"
-    },
-    "face_lift_massage": {
-      "name": "Masaje facial reafirmante con mascarilla",
-      "description": "Masaje reafirmante",
-      "price": 250.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "30min",
-      "category": "facial"
-    },
-    "balayage": {
-      "name": "Balayage",
-      "description": "tecnica balayage",
-      "price": 950.0,
-      "min_price": 700.0,
-      "max_price": 1200.0,
-      "currency": "AED",
-      "duration": "2h",
-      "category": "hair"
-    },
-    "bleach_hair": {
-      "name": "Saliendo del negro",
-      "description": "Corrección de color desde la oscuridad.",
-      "price": 1800.0,
-      "min_price": 1300.0,
-      "max_price": 2300.0,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "baby_cut": {
-      "name": "corte de pelo infantil",
-      "description": "corte de pelo para niños",
-      "price": 70.0,
-      "min_price": 60.0,
-      "max_price": 80.0,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "key_hair_wash": {
-      "name": "lavado de cabello",
-      "description": "lavado de cabello",
-      "price": 60.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "30",
-      "category": "hair"
-    },
-    "key_hair_extensions_1_can": {
-      "name": "Extensiones de cabello (1 cápsula)",
-      "description": "Extensiones de cabello (1 frasco)",
-      "price": 10.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "hair"
-    },
-    "hair_extension_capsule": {
-      "name": "Extensiones de cabello por cápsula",
-      "description": "Extensión por cápsula",
-      "price": 11.0,
-      "min_price": 10.0,
-      "max_price": 12.0,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "natural_treatment": {
-      "name": "Cuidados naturales",
-      "description": "Cuidado del cabello natural",
-      "price": 200.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "hair"
-    },
-    "full_color": {
-      "name": "Coloración monotono + Peinado",
-      "description": "Coloración completa con estilo.",
-      "price": 425.0,
-      "min_price": 350.0,
-      "max_price": 500.0,
-      "currency": "AED",
-      "duration": "2h",
-      "category": "hair"
-    },
-    "roots_color": {
-      "name": "Coloración de raíces + Peinado",
-      "description": "Coloración de raíces con peinado.",
-      "price": 200.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "hair"
-    },
-    "ombre": {
-      "name": "Ombre/Shatush/Airtach",
-      "description": "Técnicas de coloración degradada.",
-      "price": 1250.0,
-      "min_price": 1000.0,
-      "max_price": 1500.0,
-      "currency": "AED",
-      "duration": "2h",
-      "category": "hair"
-    },
-    "roots_bleach": {
-      "name": "Aclaramiento de raíces + peinado",
-      "description": "Aclaramiento de raíces con peinado.",
-      "price": 350.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "key_trimming_without_wash": {
-      "name": "Recortar sin lavar",
-      "description": "Recortar sin lavar",
-      "price": 80.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "hair"
-    },
-    "hair_trim": {
-      "name": "Incluso las puntas cortadas",
-      "description": "Fácil corte sin lavado",
-      "price": 90.0,
-      "min_price": 80.0,
-      "max_price": 100.0,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "key_hair_extension_only_removal": {
-      "name": "Quitar extensiones de cabello",
-      "description": "Extensiones de cabello (solo eliminación)",
-      "price": 1500.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "hair"
-    },
-    "key_hair_cut": {
-      "name": "Corte de pelo",
-      "description": "corte de pelo",
-      "price": 175.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "hair"
-    },
-    "hair_cut_blowdry": {
-      "name": "Corte de pelo + peinado",
-      "description": "Corte de pelo profesional con peinado.",
-      "price": 275.0,
-      "min_price": 250.0,
-      "max_price": 300.0,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "toner_blowdry": {
-      "name": "Tonificación + Peinado",
-      "description": "Teñir el cabello con peinado.",
-      "price": 375.0,
-      "min_price": 300.0,
-      "max_price": 450.0,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "key_hair_style": {
-      "name": "tendido",
-      "description": "Peinado",
-      "price": 225.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "hair"
-    },
-    "blowdry": {
-      "name": "tendido",
-      "description": "Peinado profesional",
-      "price": 125.0,
-      "min_price": 100.0,
-      "max_price": 150.0,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "hair"
-    },
-    "key_hair_treatment": {
-      "name": "cuidado del cabello",
-      "description": "tratamiento capilar",
-      "price": 600.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "180",
-      "category": "hair"
-    },
     "2d_volume": {
-      "name": "Volumen de pestañas 2D",
-      "description": "extensión 2D",
-      "price": 230.0,
-      "min_price": null,
-      "max_price": null,
+      "category": "lashes",
       "currency": "AED",
+      "description": "extensión 2D",
       "duration": "",
-      "category": "lashes"
+      "max_price": null,
+      "min_price": null,
+      "name": "Volumen de pestañas 2D",
+      "price": 230
     },
     "3d_volume": {
-      "name": "Volumen de pestañas 3D",
+      "category": "lashes",
+      "currency": "AED",
       "description": "extensión 3D",
-      "price": 260.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
       "duration": "",
-      "category": "lashes"
-    },
-    "mega_volume": {
-      "name": "Volumen 4-5D (Mega)",
-      "description": "Pestañas mega volumen",
-      "price": 290.0,
-      "min_price": null,
       "max_price": null,
+      "min_price": null,
+      "name": "Volumen de pestañas 3D",
+      "price": 260
+    },
+    "baby_cut": {
+      "category": "hair",
       "currency": "AED",
+      "description": "corte de pelo para niños",
       "duration": "",
-      "category": "lashes"
-    },
-    "ml_curl": {
-      "name": "Rizo ML / estilo Kim",
-      "description": "Curva especial",
-      "price": 30.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "lashes"
-    },
-    "classic_volume": {
-      "name": "Volumen de pestañas clásico",
-      "description": "Extensiones de pestañas naturales",
-      "price": 180.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "lashes"
-    },
-    "lash_lamination": {
-      "name": "Laminación de pestañas",
-      "description": "Laminación de pestañas",
-      "price": 200.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "lashes"
-    },
-    "remove_lashes": {
-      "name": "quitar las pestañas",
-      "description": "Eliminación segura",
-      "price": 50.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "lashes"
-    },
-    "key_anticellulite_massage": {
-      "name": "Masaje anticelulítico",
-      "description": "Masaje contra la celulitis",
-      "price": 300.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "massage"
-    },
-    "key_classic_general_massage": {
-      "name": "masaje clasico",
-      "description": "Masaje general clásico.",
-      "price": 1080.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "massage"
-    },
-    "key_moroccan_bathhouse": {
-      "name": "baño marroquí",
-      "description": "baño marroquí",
-      "price": 250.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "30",
-      "category": "massage"
-    },
-    "key_moroccan_bath_loofa": {
-      "name": "Baño marroquí con esponja vegetal",
-      "description": "Servicio: Baño marroquí con esponja vegetal.",
-      "price": 50.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "30",
-      "category": "massage"
-    },
-    "key_full_body_60_min": {
-      "name": "Masaje de cuerpo completo",
-      "description": "Todo el cuerpo 60 min.",
-      "price": 260.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "massage"
-    },
-    "key_head_40_min": {
-      "name": "Masaje de cabeza",
-      "description": "Líder 40 min.",
-      "price": 100.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "massage"
-    },
-    "key_legfeet_hand_40_min": {
-      "name": "Masaje de pies/manos",
-      "description": "Pierna/pie/brazo 40 min.",
-      "price": 150.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "massage"
-    },
-    "key_back_massage_510": {
-      "name": "Masaje de espalda (curso)",
-      "description": "Masaje de espalda (5-10)",
-      "price": 540.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "massage"
-    },
-    "key_back_30_min": {
-      "name": "Masaje de espalda 30 min",
-      "description": "Regreso 30 min.",
-      "price": 180.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "massage"
-    },
-    "key_neck__shoulder_30_min": {
-      "name": "Masaje de cuello y hombros.",
-      "description": "Cuello y hombros 30 min.",
-      "price": 165.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "massage"
-    },
-    "key_sculpture_body_massage": {
-      "name": "Masaje escultura",
-      "description": "Masaje corporal escultórico.",
-      "price": 370.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "massage"
-    },
-    "key_hotstone": {
-      "name": "Masaje con piedras",
-      "description": "piedra caliente",
-      "price": 310.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "massage"
-    },
-    "key_pedicure_basic": {
-      "name": "pedicura básica",
-      "description": "pedicura básica",
-      "price": 100.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
+      "max_price": 80,
+      "min_price": 60,
+      "name": "corte de pelo infantil",
+      "price": 70
     },
     "baby_manicure": {
-      "name": "manicura infantil",
+      "category": "nails",
+      "currency": "AED",
       "description": "manicura para niños",
-      "price": 50.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
       "duration": "",
-      "category": "nails"
-    },
-    "key_nail_design": {
-      "name": "diseño de uñas",
-      "description": "Diseño artístico de uñas.",
-      "price": 30.0,
-      "min_price": null,
       "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "key_pedicure_classic": {
-      "name": "pedicura clásica",
-      "description": "pedicura clásica",
-      "price": 120.0,
       "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
+      "name": "manicura infantil",
+      "price": 50
     },
-    "key_починка_1_ноготь": {
-      "name": "Corrección 1 uña",
-      "description": "Corrección de una uña.",
-      "price": 35.0,
-      "min_price": null,
-      "max_price": null,
+    "balayage": {
+      "category": "hair",
       "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "manicure_no_polish": {
-      "name": "Manicura sin recubrimiento",
-      "description": "manicura básica",
-      "price": 80.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "nails"
-    },
-    "gelish_manicure": {
-      "name": "Esmalte en gel para manicura",
-      "description": "Manicura con esmalte en gel.",
-      "price": 130.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "nails"
-    },
-    "manicure_normal": {
-      "name": "Manicura con acabado regular.",
-      "description": "Manicura con esmalte regular.",
-      "price": 100.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "nails"
-    },
-    "key_накладные_ногти": {
-      "name": "uñas postizas",
-      "description": "uñas postizas",
-      "price": 250.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "key_acrylic_extension": {
-      "name": "Extensiones acrílicas",
-      "description": "Expansión acrílica",
-      "price": 380.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "key_gel_extension": {
-      "name": "Extensiones de gel",
-      "description": "Extensiones de gel",
-      "price": 350.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "key_pedicure_gel": {
-      "name": "Pedicura con esmalte en gel.",
-      "description": "gel de pedicura",
-      "price": 160.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "key_podology": {
-      "name": "Podología",
-      "description": "Cuidado médico de los pies",
-      "price": 200.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "key_acrylic_overlay": {
-      "name": "Recubrimiento acrílico",
-      "description": "Superposición acrílica",
-      "price": 300.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "key_gel_overlay": {
-      "name": "Recubrimiento de gel",
-      "description": "Aplicación de gel",
-      "price": 250.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "key_change_gel": {
-      "name": "Cambiar esmalte en gel",
-      "description": "Reemplazo del gel",
-      "price": 100.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "change_classic_polish": {
-      "name": "Cambiar barniz normal",
-      "description": "Cambiar barniz normal",
-      "price": 65.0,
-      "min_price": 40.0,
-      "max_price": 90.0,
-      "currency": "AED",
-      "duration": "30min",
-      "category": "nails"
-    },
-    "key_remove_gel": {
-      "name": "Quitar el esmalte en gel",
-      "description": "Quitar gel",
-      "price": 25.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "key_remove_nail_extensions": {
-      "name": "Quitar las uñas extendidas",
-      "description": "Quitar las uñas extendidas",
-      "price": 50.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "key_remove_classic": {
-      "name": "Quitar el esmalte de uñas normal",
-      "description": "Quitar clásico",
-      "price": 30.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "spa_manicure": {
-      "name": "manicura spa",
-      "description": "manicura spa",
-      "price": 50.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "nails"
-    },
-    "key_spa_pedicure": {
-      "name": "Pedicure spa",
-      "description": "Pedicura relajante SPA",
-      "price": 60.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "key_hard_gel": {
-      "name": "gel sólido",
-      "description": "gel sólido",
-      "price": 30.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "key_french": {
-      "name": "manicure francés",
-      "description": "Francés",
-      "price": 30.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "japanese_manicure": {
-      "name": "manicura japonesa",
-      "description": "manicura japonesa",
-      "price": 100.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h 30min",
-      "category": "nails"
-    },
-    "permanent_correction": {
-      "name": "Corrección de maquillaje permanente",
-      "description": "Corrección de una permanente existente.",
-      "price": 500.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "maquillaje_permanente"
-    },
-    "lashliner": {
-      "name": "flecha interciliar",
-      "description": "Destacando la línea de las pestañas",
-      "price": 500.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "maquillaje_permanente"
-    },
-    "permanent_brows": {
-      "name": "Maquillaje permanente de cejas",
-      "description": "Microblading o cejas en polvo",
-      "price": 1100.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "maquillaje_permanente"
-    },
-    "permanent_lips": {
-      "name": "Maquillaje permanente de labios",
-      "description": "Color de labios de larga duración",
-      "price": 1200.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "maquillaje_permanente"
-    },
-    "eyeliner": {
-      "name": "Lápiz de ojos",
-      "description": "Delineador de ojos permanente",
-      "price": 1000.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "maquillaje_permanente"
-    },
-    "key_promotion_overlay_manicure": {
-      "name": "manicura promocional",
-      "description": "Promoción: manicura falsa",
-      "price": 145.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "90",
-      "category": "promo"
-    },
-    "key_promo_390": {
-      "name": "Promoción 390",
-      "description": "promoción 390",
-      "price": 390.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "promo"
-    },
-    "key_promo_mani_pedi_250": {
-      "name": "Promoción para manicura + pedicura",
-      "description": "Promo manicura pedicura 250",
-      "price": 125.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "promo"
-    },
-    "key_combo_basic_150": {
-      "name": "combo básico",
-      "description": "combo básico 150",
-      "price": 75.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "promo"
-    },
-    "key_blow_dry_packages_5": {
-      "name": "Paquete de peinado (5 uds.)",
-      "description": "Bolsas para secar con secador 5",
-      "price": 500.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "promo"
-    },
-    "key_brazilian": {
-      "name": "depilación brasileña",
-      "description": "depilación brasileña",
-      "price": 120.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "waxing"
-    },
-    "brazilian": {
-      "name": "bikini brasileño",
-      "description": "Depilación del bikini brasileño",
-      "price": 120.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
-    },
-    "upper_lips": {
-      "name": "labio superior",
-      "description": "Depilación del labio superior.",
-      "price": 30.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
-    },
-    "full_bikini": {
-      "name": "bikini profundo",
-      "description": "Depilación completa de la zona del bikini.",
-      "price": 150.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
+      "description": "tecnica balayage",
+      "duration": "2h",
+      "max_price": 1200,
+      "min_price": 700,
+      "name": "Balayage",
+      "price": 950
     },
     "bikini_line": {
-      "name": "línea del bikini",
+      "category": "waxing",
+      "currency": "AED",
       "description": "Depilación a lo largo de la línea del bikini.",
-      "price": 100.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
       "duration": "1h",
-      "category": "waxing"
+      "max_price": null,
+      "min_price": null,
+      "name": "línea del bikini",
+      "price": 100
     },
-    "full_face": {
-      "name": "cara completa",
-      "description": "Depilación facial completa",
-      "price": 90.0,
-      "min_price": null,
-      "max_price": null,
+    "bleach_hair": {
+      "category": "hair",
       "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
+      "description": "Corrección de color desde la oscuridad.",
+      "duration": "",
+      "max_price": 2300,
+      "min_price": 1300,
+      "name": "Saliendo del negro",
+      "price": 1800
     },
-    "half_legs": {
-      "name": "Piernas hasta las rodillas",
-      "description": "Depilación de piernas hasta las rodillas.",
-      "price": 80.0,
-      "min_price": null,
-      "max_price": null,
+    "blowdry": {
+      "category": "hair",
       "currency": "AED",
+      "description": "Peinado profesional",
       "duration": "1h",
-      "category": "waxing"
+      "max_price": 150,
+      "min_price": 100,
+      "name": "tendido",
+      "price": 125
     },
-    "full_legs": {
-      "name": "Piernas completas",
-      "description": "Depilación de piernas completas",
-      "price": 150.0,
-      "min_price": null,
-      "max_price": null,
+    "brazilian": {
+      "category": "waxing",
       "currency": "AED",
+      "description": "Depilación del bikini brasileño",
       "duration": "1h",
-      "category": "waxing"
+      "max_price": null,
+      "min_price": null,
+      "name": "bikini brasileño",
+      "price": 120
+    },
+    "brow_coloring": {
+      "category": "brows",
+      "currency": "AED",
+      "description": "Coloración profesional",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "tinte de cejas",
+      "price": 40
+    },
+    "brow_lamination": {
+      "category": "brows",
+      "currency": "AED",
+      "description": "Laminación de cejas",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Laminación de cejas",
+      "price": 200
+    },
+    "brow_shaping": {
+      "category": "brows",
+      "currency": "AED",
+      "description": "Diseño profesional",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "dar forma a las cejas",
+      "price": 40
+    },
+    "change_classic_polish": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Cambiar barniz normal",
+      "duration": "30min",
+      "max_price": 90,
+      "min_price": 40,
+      "name": "Cambiar barniz normal",
+      "price": 65
     },
     "chin": {
-      "name": "Mentón",
+      "category": "waxing",
+      "currency": "AED",
       "description": "depilación de mentón",
-      "price": 30.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
       "duration": "1h",
-      "category": "waxing"
+      "max_price": null,
+      "min_price": null,
+      "name": "Mentón",
+      "price": 30
     },
-    "underarms": {
-      "name": "Axilas",
-      "description": "depilación de axilas",
-      "price": 50.0,
-      "min_price": null,
-      "max_price": null,
+    "classic_volume": {
+      "category": "lashes",
       "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
+      "description": "Extensiones de pestañas naturales",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Volumen de pestañas clásico",
+      "price": 180
     },
-    "half_arms": {
-      "name": "Manos hasta el codo",
-      "description": "Depilación de brazos hasta el codo.",
-      "price": 50.0,
-      "min_price": null,
-      "max_price": null,
+    "combo_lamination": {
+      "category": "brows",
       "currency": "AED",
+      "description": "Laminación combinada",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Laminación de cejas y pestañas.",
+      "price": 300
+    },
+    "deep_facial_cleaning": {
+      "category": "facial",
+      "currency": "AED",
+      "description": "Limpieza profunda profesional",
       "duration": "1h",
-      "category": "waxing"
+      "max_price": null,
+      "min_price": null,
+      "name": "Limpieza facial profunda",
+      "price": 400
+    },
+    "eyeliner": {
+      "category": "maquillaje_permanente",
+      "currency": "AED",
+      "description": "Delineador de ojos permanente",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Lápiz de ojos",
+      "price": 1000
+    },
+    "face_lift_massage": {
+      "category": "facial",
+      "currency": "AED",
+      "description": "Masaje reafirmante",
+      "duration": "30min",
+      "max_price": null,
+      "min_price": null,
+      "name": "Masaje facial reafirmante con mascarilla",
+      "price": 250
     },
     "full_arms": {
-      "name": "manos llenas",
+      "category": "waxing",
+      "currency": "AED",
       "description": "Depilación de todo el brazo",
-      "price": 80.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
       "duration": "1h",
-      "category": "waxing"
-    },
-    "key_upper_lip": {
-      "name": "Depilación del labio superior.",
-      "description": "Depilación del labio superior.",
-      "price": 30.0,
-      "min_price": null,
       "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "waxing"
-    },
-    "key_full_body": {
-      "name": "Depilación de cuerpo completo",
-      "description": "cuerpo completo",
-      "price": 400.0,
       "min_price": null,
-      "max_price": null,
+      "name": "manos llenas",
+      "price": 80
+    },
+    "full_bikini": {
+      "category": "waxing",
       "currency": "AED",
-      "duration": "60",
-      "category": "waxing"
+      "description": "Depilación completa de la zona del bikini.",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "bikini profundo",
+      "price": 150
     },
     "full_body": {
-      "name": "Depilación de cuerpo completo",
+      "category": "waxing",
+      "currency": "AED",
       "description": "Depilación de cuerpo completo",
-      "price": 400.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
       "duration": "1h",
-      "category": "waxing"
-    },
-    "key_under_arms": {
-      "name": "depilación de axilas",
-      "description": "depilación de axilas",
-      "price": 50.0,
-      "min_price": null,
       "max_price": null,
+      "min_price": null,
+      "name": "Depilación de cuerpo completo",
+      "price": 400
+    },
+    "full_color": {
+      "category": "hair",
       "currency": "AED",
+      "description": "Coloración completa con estilo.",
+      "duration": "2h",
+      "max_price": 500,
+      "min_price": 350,
+      "name": "Coloración monotono + Peinado",
+      "price": 425
+    },
+    "full_face": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "Depilación facial completa",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "cara completa",
+      "price": 90
+    },
+    "full_legs": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "Depilación de piernas completas",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Piernas completas",
+      "price": 150
+    },
+    "gelish_manicure": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Manicura con esmalte en gel.",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Esmalte en gel para manicura",
+      "price": 130
+    },
+    "hair_cut_blowdry": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Corte de pelo profesional con peinado.",
+      "duration": "",
+      "max_price": 300,
+      "min_price": 250,
+      "name": "Corte de pelo + peinado",
+      "price": 275
+    },
+    "hair_extension_capsule": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Extensión por cápsula",
+      "duration": "",
+      "max_price": 12,
+      "min_price": 10,
+      "name": "Extensiones de cabello por cápsula",
+      "price": 11
+    },
+    "hair_trim": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Fácil corte sin lavado",
+      "duration": "",
+      "max_price": 100,
+      "min_price": 80,
+      "name": "Incluso las puntas cortadas",
+      "price": 90
+    },
+    "half_arms": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "Depilación de brazos hasta el codo.",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Manos hasta el codo",
+      "price": 50
+    },
+    "half_legs": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "Depilación de piernas hasta las rodillas.",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Piernas hasta las rodillas",
+      "price": 80
+    },
+    "japanese_manicure": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "manicura japonesa",
+      "duration": "1h 30min",
+      "max_price": null,
+      "min_price": null,
+      "name": "manicura japonesa",
+      "price": 100
+    },
+    "key_acrylic_extension": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Expansión acrílica",
       "duration": "60",
-      "category": "waxing"
+      "max_price": null,
+      "min_price": null,
+      "name": "Extensiones acrílicas",
+      "price": 380
+    },
+    "key_acrylic_overlay": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Superposición acrílica",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Recubrimiento acrílico",
+      "price": 300
+    },
+    "key_anticellulite_massage": {
+      "category": "massage",
+      "currency": "AED",
+      "description": "Masaje contra la celulitis",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Masaje anticelulítico",
+      "price": 300
+    },
+    "key_back_30_min": {
+      "category": "massage",
+      "currency": "AED",
+      "description": "Regreso 30 min.",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Masaje de espalda 30 min",
+      "price": 180
+    },
+    "key_back_massage_510": {
+      "category": "massage",
+      "currency": "AED",
+      "description": "Masaje de espalda (5-10)",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Masaje de espalda (curso)",
+      "price": 540
+    },
+    "key_blow_dry_packages_5": {
+      "category": "promo",
+      "currency": "AED",
+      "description": "Bolsas para secar con secador 5",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Paquete de peinado (5 uds.)",
+      "price": 500
+    },
+    "key_brazilian": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "depilación brasileña",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "depilación brasileña",
+      "price": 120
+    },
+    "key_change_gel": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Reemplazo del gel",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Cambiar esmalte en gel",
+      "price": 100
     },
     "key_cheeks": {
-      "name": "depilación de mejillas",
-      "description": "depilación de mejillas",
-      "price": 40.0,
-      "min_price": null,
-      "max_price": null,
+      "category": "waxing",
       "currency": "AED",
+      "description": "depilación de mejillas",
       "duration": "60",
-      "category": "waxing"
+      "max_price": null,
+      "min_price": null,
+      "name": "depilación de mejillas",
+      "price": 40
+    },
+    "key_classic_general_massage": {
+      "category": "massage",
+      "currency": "AED",
+      "description": "Masaje general clásico.",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "masaje clasico",
+      "price": 1080
+    },
+    "key_combo_basic_150": {
+      "category": "promo",
+      "currency": "AED",
+      "description": "combo básico 150",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "combo básico",
+      "price": 75
+    },
+    "key_french": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Francés",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "manicure francés",
+      "price": 30
+    },
+    "key_full_body": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "cuerpo completo",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Depilación de cuerpo completo",
+      "price": 400
+    },
+    "key_full_body_60_min": {
+      "category": "massage",
+      "currency": "AED",
+      "description": "Todo el cuerpo 60 min.",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Masaje de cuerpo completo",
+      "price": 260
+    },
+    "key_gel_extension": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Extensiones de gel",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Extensiones de gel",
+      "price": 350
+    },
+    "key_gel_overlay": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Aplicación de gel",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Recubrimiento de gel",
+      "price": 250
+    },
+    "key_hair_cut": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "corte de pelo",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Corte de pelo",
+      "price": 175
+    },
+    "key_hair_extension_only_removal": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Extensiones de cabello (solo eliminación)",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Quitar extensiones de cabello",
+      "price": 1500
+    },
+    "key_hair_extensions_1_can": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Extensiones de cabello (1 frasco)",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Extensiones de cabello (1 cápsula)",
+      "price": 10
+    },
+    "key_hair_style": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Peinado",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "tendido",
+      "price": 225
+    },
+    "key_hair_treatment": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "tratamiento capilar",
+      "duration": "180",
+      "max_price": null,
+      "min_price": null,
+      "name": "cuidado del cabello",
+      "price": 600
+    },
+    "key_hair_wash": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "lavado de cabello",
+      "duration": "30",
+      "max_price": null,
+      "min_price": null,
+      "name": "lavado de cabello",
+      "price": 60
+    },
+    "key_hard_gel": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "gel sólido",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "gel sólido",
+      "price": 30
+    },
+    "key_head_40_min": {
+      "category": "massage",
+      "currency": "AED",
+      "description": "Líder 40 min.",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Masaje de cabeza",
+      "price": 100
+    },
+    "key_hotstone": {
+      "category": "massage",
+      "currency": "AED",
+      "description": "piedra caliente",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Masaje con piedras",
+      "price": 310
+    },
+    "key_legfeet_hand_40_min": {
+      "category": "massage",
+      "currency": "AED",
+      "description": "Pierna/pie/brazo 40 min.",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Masaje de pies/manos",
+      "price": 150
+    },
+    "key_moroccan_bath_loofa": {
+      "category": "massage",
+      "currency": "AED",
+      "description": "Servicio: Baño marroquí con esponja vegetal.",
+      "duration": "30",
+      "max_price": null,
+      "min_price": null,
+      "name": "Baño marroquí con esponja vegetal",
+      "price": 50
+    },
+    "key_moroccan_bathhouse": {
+      "category": "massage",
+      "currency": "AED",
+      "description": "baño marroquí",
+      "duration": "30",
+      "max_price": null,
+      "min_price": null,
+      "name": "baño marroquí",
+      "price": 250
+    },
+    "key_nail_design": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Diseño artístico de uñas.",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "diseño de uñas",
+      "price": 30
+    },
+    "key_neck__shoulder_30_min": {
+      "category": "massage",
+      "currency": "AED",
+      "description": "Cuello y hombros 30 min.",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Masaje de cuello y hombros.",
+      "price": 165
+    },
+    "key_pedicure_basic": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "pedicura básica",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "pedicura básica",
+      "price": 100
+    },
+    "key_pedicure_classic": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "pedicura clásica",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "pedicura clásica",
+      "price": 120
+    },
+    "key_pedicure_gel": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "gel de pedicura",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Pedicura con esmalte en gel.",
+      "price": 160
+    },
+    "key_podology": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Cuidado médico de los pies",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Podología",
+      "price": 200
+    },
+    "key_promo_390": {
+      "category": "promo",
+      "currency": "AED",
+      "description": "promoción 390",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Promoción 390",
+      "price": 390
+    },
+    "key_promo_mani_pedi_250": {
+      "category": "promo",
+      "currency": "AED",
+      "description": "Promo manicura pedicura 250",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Promoción para manicura + pedicura",
+      "price": 125
+    },
+    "key_promotion_overlay_manicure": {
+      "category": "promo",
+      "currency": "AED",
+      "description": "Promoción: manicura falsa",
+      "duration": "90",
+      "max_price": null,
+      "min_price": null,
+      "name": "manicura promocional",
+      "price": 145
+    },
+    "key_remove_classic": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Quitar clásico",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Quitar el esmalte de uñas normal",
+      "price": 30
+    },
+    "key_remove_gel": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Quitar gel",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Quitar el esmalte en gel",
+      "price": 25
+    },
+    "key_remove_nail_extensions": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Quitar las uñas extendidas",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Quitar las uñas extendidas",
+      "price": 50
+    },
+    "key_sculpture_body_massage": {
+      "category": "massage",
+      "currency": "AED",
+      "description": "Masaje corporal escultórico.",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Masaje escultura",
+      "price": 370
+    },
+    "key_spa_pedicure": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Pedicura relajante SPA",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Pedicure spa",
+      "price": 60
+    },
+    "key_trimming_without_wash": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Recortar sin lavar",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Recortar sin lavar",
+      "price": 80
+    },
+    "key_under_arms": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "depilación de axilas",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "depilación de axilas",
+      "price": 50
+    },
+    "key_upper_lip": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "Depilación del labio superior.",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Depilación del labio superior.",
+      "price": 30
+    },
+    "key_накладные_ногти": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "uñas postizas",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "uñas postizas",
+      "price": 250
+    },
+    "key_починка_1_ноготь": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Corrección de una uña.",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": "Corrección 1 uña",
+      "price": 35
+    },
+    "lash_lamination": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "Laminación de pestañas",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Laminación de pestañas",
+      "price": 200
+    },
+    "lashliner": {
+      "category": "maquillaje_permanente",
+      "currency": "AED",
+      "description": "Destacando la línea de las pestañas",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "flecha interciliar",
+      "price": 500
+    },
+    "manicure_no_polish": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "manicura básica",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Manicura sin recubrimiento",
+      "price": 80
+    },
+    "manicure_normal": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Manicura con esmalte regular.",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Manicura con acabado regular.",
+      "price": 100
+    },
+    "medical_facial": {
+      "category": "facial",
+      "currency": "AED",
+      "description": "limpieza medica",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Limpieza médica para pieles problemáticas.",
+      "price": 450
+    },
+    "mega_volume": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "Pestañas mega volumen",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Volumen 4-5D (Mega)",
+      "price": 290
+    },
+    "ml_curl": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "Curva especial",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Rizo ML / estilo Kim",
+      "price": 30
+    },
+    "natural_treatment": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Cuidado del cabello natural",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Cuidados naturales",
+      "price": 200
+    },
+    "ombre": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Técnicas de coloración degradada.",
+      "duration": "2h",
+      "max_price": 1500,
+      "min_price": 1000,
+      "name": "Ombre/Shatush/Airtach",
+      "price": 1250
+    },
+    "peeling": {
+      "category": "facial",
+      "currency": "AED",
+      "description": "peeling químico",
+      "duration": "1h",
+      "max_price": 400,
+      "min_price": 300,
+      "name": "Peladura",
+      "price": 350
+    },
+    "permanent_brows": {
+      "category": "maquillaje_permanente",
+      "currency": "AED",
+      "description": "Microblading o cejas en polvo",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Maquillaje permanente de cejas",
+      "price": 1100
+    },
+    "permanent_correction": {
+      "category": "maquillaje_permanente",
+      "currency": "AED",
+      "description": "Corrección de una permanente existente.",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Corrección de maquillaje permanente",
+      "price": 500
+    },
+    "permanent_lips": {
+      "category": "maquillaje_permanente",
+      "currency": "AED",
+      "description": "Color de labios de larga duración",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Maquillaje permanente de labios",
+      "price": 1200
+    },
+    "remove_lashes": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "Eliminación segura",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "quitar las pestañas",
+      "price": 50
+    },
+    "roots_bleach": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Aclaramiento de raíces con peinado.",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Aclaramiento de raíces + peinado",
+      "price": 350
+    },
+    "roots_color": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Coloración de raíces con peinado.",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Coloración de raíces + Peinado",
+      "price": 200
+    },
+    "spa_manicure": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "manicura spa",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "manicura spa",
+      "price": 50
+    },
+    "toner_blowdry": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Teñir el cabello con peinado.",
+      "duration": "",
+      "max_price": 450,
+      "min_price": 300,
+      "name": "Tonificación + Peinado",
+      "price": 375
+    },
+    "underarms": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "depilación de axilas",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Axilas",
+      "price": 50
+    },
+    "upper_lips": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "Depilación del labio superior.",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "labio superior",
+      "price": 30
     }
-  }
+  },
+  "manicurePedicure": "Manicure & Pedicure",
+  "master": "Мастер",
+  "mastersDescription": "Наши профессиональные мастера с многолетним опытом работы готовы предоставить вам услуги высочайшего качества",
+  "minutes": "мин",
+  "ourMasters": "Наши мастера",
+  "portfolioTitle": "Портфолио",
+  "service1Desc": "Professional nail care services.",
+  "service2Desc": "Expert hair styling and treatments.",
+  "service3Desc": "Professional makeup and brow styling.",
+  "service3Title": "Makeup & Brows"
 }

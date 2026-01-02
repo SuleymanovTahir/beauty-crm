@@ -1,77 +1,83 @@
 {
-  "title": "Galería de fotos",
-  "subtitle": "Gestión de fotografías y carteras de clientes.",
-  "upload_photo": "Subir foto",
-  "stats": {
-    "total_photos": "fotos totales",
-    "total_views": "Vistas totales",
-    "featured_photos": "Fotos destacadas",
-    "recent_uploads": "Descargas recientes"
-  },
-  "filters": {
-    "search_placeholder": "Buscando fotos...",
-    "all_categories": "Todas las categorias"
-  },
-  "categories": {
-    "haircut": "Cortes de pelo",
-    "coloring": "Colorante",
-    "styling": "tendido",
-    "manicure": "Manicura",
-    "makeup": "Constituir",
-    "other": "Otro"
-  },
-  "card": {
-    "views": "vistas",
-    "featured": "Favoritos",
-    "toggle_featured": "Alternar favoritos",
-    "delete": "Borrar",
-    "uploaded_by": "Subido por {{nombre}}"
-  },
-  "empty": {
-    "title": "Aún no hay fotos",
-    "description": "Sube tus primeras fotos a la galería."
-  },
-  "dialogs": {
-    "upload": {
-      "title": "Subir foto",
-      "description": "Añade una nueva foto a la galería.",
-      "form": {
-        "photo": "Foto",
-        "choose_file": "Seleccionar archivo",
-        "title": "Nombre",
-        "title_placeholder": "Título de la foto",
-        "description": "Descripción",
-        "description_placeholder": "Descripción de la foto",
-        "category": "Categoría",
-        "select_category": "Seleccionar categoría",
-        "client": "Cliente",
-        "select_client": "Seleccionar cliente",
-        "client_hint": "La foto estará disponible en la galería del cliente."
-      }
-    },
-    "preview": {
-      "title": "Vista previa de la foto",
-      "uploaded_by": "Subido por {{nombre}}",
-      "created_at": "{{date}}",
-      "views": "{{count}} vistas",
-      "category": "Categoría: {{categoría}}"
-    },
-    "delete": {
-      "confirm": "¿Estás seguro de que quieres eliminar esta foto?"
-    }
-  },
   "buttons": {
     "cancel": "Cancelar",
-    "upload": "Descargar",
-    "close": "Cerca"
+    "close": "Cerca",
+    "upload": "Descargar"
   },
+  "card": {
+    "delete": "Borrar",
+    "featured": "Favoritos",
+    "toggle_featured": "Alternar favoritos",
+    "uploaded_by": "Subido por {{nombre}}",
+    "views": "vistas"
+  },
+  "categories": {
+    "coloring": "Colorante",
+    "haircut": "Cortes de pelo",
+    "makeup": "Constituir",
+    "manicure": "Manicura",
+    "other": "Otro",
+    "styling": "tendido"
+  },
+  "dialogs": {
+    "delete": {
+      "confirm": "¿Estás seguro de que quieres eliminar esta foto?"
+    },
+    "preview": {
+      "category": "Categoría: {{categoría}}",
+      "created_at": "{{date}}",
+      "title": "Vista previa de la foto",
+      "uploaded_by": "Subido por {{nombre}}",
+      "views": "{{count}} vistas"
+    },
+    "upload": {
+      "description": "Añade una nueva foto a la galería.",
+      "form": {
+        "after_photo": "Фото \"После\"",
+        "before_after": "До/После",
+        "before_photo": "Фото \"До\"",
+        "category": "Categoría",
+        "choose_file": "Seleccionar archivo",
+        "client": "Cliente",
+        "client_hint": "La foto estará disponible en la galería del cliente.",
+        "description": "Descripción",
+        "description_placeholder": "Descripción de la foto",
+        "photo": "Foto",
+        "select_category": "Seleccionar categoría",
+        "select_client": "Seleccionar cliente",
+        "single_photo": "Одно фото",
+        "title": "Nombre",
+        "title_placeholder": "Título de la foto",
+        "upload_type": "Тип загрузки"
+      },
+      "title": "Subir foto"
+    }
+  },
+  "empty": {
+    "description": "Sube tus primeras fotos a la galería.",
+    "title": "Aún no hay fotos"
+  },
+  "filters": {
+    "all_categories": "Todas las categorias",
+    "search_placeholder": "Buscando fotos..."
+  },
+  "stats": {
+    "featured_photos": "Fotos destacadas",
+    "recent_uploads": "Descargas recientes",
+    "total_photos": "fotos totales",
+    "total_views": "Vistas totales"
+  },
+  "subtitle": "Gestión de fotografías y carteras de clientes.",
+  "title": "Galería de fotos",
   "toasts": {
-    "uploaded": "Foto cargada exitosamente",
     "deleted": "Foto eliminada con éxito",
-    "featured_updated": "Estado favorito actualizado",
+    "failed_delete": "No se pudo eliminar la foto",
+    "failed_featured": "No se pudo actualizar el estado favorito",
     "failed_load": "No se pudieron subir fotos",
     "failed_upload": "No se pudo subir la foto",
-    "failed_delete": "No se pudo eliminar la foto",
-    "failed_featured": "No se pudo actualizar el estado favorito"
-  }
+    "featured_updated": "Estado favorito actualizado",
+    "select_both_photos": "Please select both before and after photos",
+    "uploaded": "Foto cargada exitosamente"
+  },
+  "upload_photo": "Subir foto"
 }

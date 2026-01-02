@@ -1,5 +1,6 @@
 {
   "401": "401",
+  "account_pending": "Ihr Konto wartet auf die Genehmigung durch den Administrator",
   "authorization_error": "Autorisierungsfehler",
   "crm_system_management": "CRM-Systemverwaltung",
   "enter_login": "Geben Sie Ihr Login ein",
@@ -13,10 +14,9 @@
   "login_title": "Login",
   "no_account_register": "Sie haben noch kein Konto? Registrieren",
   "password": "Passwort",
+  "registration_pending_toast": "Ihre Registrierung wartet auf die Genehmigung durch den Administrator. Sie erhalten eine E-Mail, wenn Ihr Konto aktiviert ist.",
   "return_to_home": "Rückkehr nach Hause",
   "unauthorized": "Nicht autorisiert",
   "username": "Benutzername",
-  "welcome": "Willkommen",
-  "account_pending": "Ihr Konto wartet auf die Genehmigung durch den Administrator",
-  "registration_pending_toast": "Ihre Registrierung wartet auf die Genehmigung durch den Administrator. Sie erhalten eine E-Mail, wenn Ihr Konto aktiviert ist."
+  "welcome": "Willkommen"
 }

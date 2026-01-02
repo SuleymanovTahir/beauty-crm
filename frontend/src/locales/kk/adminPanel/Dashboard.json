@@ -1,47 +1,55 @@
 {
-  "title": "Басқару тақтасы",
-  "subtitle": "Пайдаланушы, адалдық және келісімді басқару",
   "quick_actions": {
-    "title": "Жылдам әрекеттер",
-    "user_management": {
-      "title": "Пайдаланушыны басқару",
-      "description": "Пайдаланушы тіркелгілері мен рұқсаттарын басқарыңыз"
+    "challenges": {
+      "description": "Қиындықтарды құру және басқару",
+      "title": "Қиындықтар"
     },
     "loyalty_management": {
-      "title": "Адалдықты басқару",
-      "description": "Адалдық ұпайлары мен деңгейлерін басқарыңыз"
-    },
-    "referral_program": {
-      "title": "Реферат бағдарламасы",
-      "description": "Рефералдарды көру және басқару"
-    },
-    "challenges": {
-      "title": "Қиындықтар",
-      "description": "Қиындықтарды құру және басқару"
+      "description": "Адалдық ұпайлары мен деңгейлерін басқарыңыз",
+      "title": "Адалдықты басқару"
     },
     "notifications": {
-      "title": "Хабарландырулар",
-      "description": "Хабарландыруларды жіберу және басқару"
+      "description": "Хабарландыруларды жіберу және басқару",
+      "title": "Хабарландырулар"
     },
     "photo_gallery": {
-      "title": "Фотогалерея",
-      "description": "Клиент фотосуреті мен портфолиосын басқару"
+      "description": "Клиент фотосуреті мен портфолиосын басқару",
+      "title": "Фотогалерея"
+    },
+    "referral_program": {
+      "description": "Рефералдарды көру және басқару",
+      "title": "Реферат бағдарламасы"
+    },
+    "title": "Жылдам әрекеттер",
+    "user_management": {
+      "description": "Пайдаланушы тіркелгілері мен рұқсаттарын басқарыңыз",
+      "title": "Пайдаланушыны басқару"
     }
   },
+  "recent_activity": {
+    "challenge_completed": "\"{{name}}\" сайысын {{count}} пайдаланушылары аяқтады",
+    "challenge_completed_one": "",
+    "challenge_completed_other": "",
+    "day_ago": "{{count}} күн бұрын",
+    "day_ago_one": "",
+    "day_ago_other": "",
+    "hours_ago": "{{count}} сағат бұрын",
+    "hours_ago_one": "",
+    "hours_ago_other": "",
+    "new_tier_activated": "Жаңа адалдық деңгейі іске қосылды",
+    "subtitle": "Әкімші тақтасындағы соңғы әрекеттер",
+    "title": "Соңғы әрекет",
+    "users_registered": "{{count}} жаңа пайдаланушылар тіркелді",
+    "users_registered_one": "",
+    "users_registered_other": ""
+  },
   "stats": {
-    "total_users": "Жалпы пайдаланушылар",
     "active_challenges": "Белсенді сынақтар",
+    "from_last_month": "өткен айдан бастап",
     "loyalty_points_issued": "Берілген адалдық ұпайлары",
     "total_referrals": "Жалпы сілтемелер",
-    "from_last_month": "өткен айдан бастап"
+    "total_users": "Жалпы пайдаланушылар"
   },
-  "recent_activity": {
-    "title": "Соңғы әрекет",
-    "subtitle": "Әкімші тақтасындағы соңғы әрекеттер",
-    "new_tier_activated": "Жаңа адалдық деңгейі іске қосылды",
-    "users_registered": "{{count}} жаңа пайдаланушылар тіркелді",
-    "challenge_completed": "\"{{name}}\" сайысын {{count}} пайдаланушылары аяқтады",
-    "hours_ago": "{{count}} сағат бұрын",
-    "day_ago": "{{count}} күн бұрын"
-  }
+  "subtitle": "Пайдаланушы, адалдық және келісімді басқару",
+  "title": "Басқару тақтасы"
 }

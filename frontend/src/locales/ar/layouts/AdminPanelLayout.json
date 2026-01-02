@@ -1,19 +1,20 @@
 {
   "admin_panel": "لوحة الإدارة",
-  "logout": "تسجيل الخروج",
   "go_to_crm": "انتقل إلى إدارة علاقات العملاء",
+  "logout": "تسجيل الخروج",
   "menu": {
-    "dashboard": "لوحة التحكم",
-    "user_management": "إدارة المستخدم",
-    "loyalty_management": "إدارة الولاء",
-    "referral_program": "برنامج الإحالة",
+    "bookings": "bookings",
+    "calendar": "تقويم",
     "challenges": "التحديات",
+    "clients": "العملاء",
+    "dashboard": "لوحة التحكم",
+    "feature_management": "Feature Management",
+    "loyalty_management": "إدارة الولاء",
     "notifications": "إشعارات",
     "photo_gallery": "معرض الصور",
-    "bookings": "bookings",
-    "clients": "العملاء",
-    "calendar": "تقويم",
+    "public_content": "المحتوى العام",
+    "referral_program": "برنامج الإحالة",
     "services": "خدمات",
-    "public_content": "المحتوى العام"
+    "user_management": "إدارة المستخدم"
   }
 }

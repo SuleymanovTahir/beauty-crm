@@ -1,66 +1,92 @@
 {
-  "title": "वफादारी प्रबंधन",
-  "subtitle": "वफादारी स्तर, अंक और लेनदेन प्रबंधित करें",
   "adjust_points": "अंक समायोजित करें",
-  "stats": {
-    "total_points_issued": "जारी किए गए कुल अंक",
-    "points_redeemed": "अंक भुनाए गए",
-    "active_members": "सक्रिय भागीदार",
-    "from_last_month": "पिछले महीने से"
+  "buttons": {
+    "add_rule": "Add Rule",
+    "adjust_points": "अंक समायोजित करें",
+    "cancel": "रद्द करना",
+    "save": "Save",
+    "save_changes": "परिवर्तनों को सुरक्षित करें"
   },
+  "categories": {
+    "category": "Category",
+    "description": "Set custom multipliers for services",
+    "multiplier": "Multiplier",
+    "title": "Category Multipliers"
+  },
+  "config": {
+    "conversion_rate": "Points Conversion Rate (0.1 = 1 point per 10 currency)",
+    "description": "Manage global loyalty settings",
+    "expiration_days": "Points Validity (Days)",
+    "expiration_hint": "Points earned will expire after this many days.",
+    "title": "Configuration"
+  },
+  "confirm_delete_rule": "",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "ग्राहक ईमेल",
+      "client_email_placeholder": "client@example.com",
+      "description": "ग्राहक खाते से अंक जोड़ें या डेबिट करें",
+      "points": "अंक (भुगतान करने के लिए नकारात्मक अंक का उपयोग करें)",
+      "points_placeholder": "100",
+      "reason": "कारण",
+      "reason_placeholder": "मैन्युअल समायोजन",
+      "title": "अंक समायोजित करें"
+    },
+    "edit_tier": {
+      "description": "लेवल सेटिंग अपडेट करें",
+      "discount_percent": "छूट (%)",
+      "min_points": "न्यूनतम अंक",
+      "tier_name": "स्तर का नाम",
+      "title": "संपादन स्तर"
+    },
+    "rule": {
+      "description": "Set multiplier for a service category",
+      "title": "Edit Category Rule"
+    }
+  },
+  "stats": {
+    "active_members": "सक्रिय भागीदार",
+    "from_last_month": "पिछले महीने से",
+    "points_redeemed": "अंक भुनाए गए",
+    "total_points_issued": "जारी किए गए कुल अंक"
+  },
+  "subtitle": "वफादारी स्तर, अंक और लेनदेन प्रबंधित करें",
   "tiers": {
-    "title": "वफादारी का स्तर",
     "description": "स्तर और लाभ स्थापित करना",
-    "starting_level": "प्रवेश के स्तर पर",
+    "discount": "{{प्रतिशत}}% छूट",
     "from_points": "{{अंक}} अंक से",
-    "discount": "{{प्रतिशत}}% छूट"
+    "starting_level": "प्रवेश के स्तर पर",
+    "title": "वफादारी का स्तर"
+  },
+  "title": "वफादारी प्रबंधन",
+  "toasts": {
+    "config_updated": "",
+    "failed_adjust": "स्कोर समायोजित करने में विफल",
+    "failed_delete": "",
+    "failed_load": "लेन-देन लोड करने में विफल",
+    "failed_save": "",
+    "failed_update": "",
+    "points_adjusted_add": "{{अंक}} अंक जोड़े गए {{ईमेल}}",
+    "points_adjusted_deduct": "{{ईमेल}} से {{अंक}} अंक डेबिट किए गए",
+    "rule_deleted": "",
+    "rule_saved": "",
+    "tier_updated": "स्तर सफलतापूर्वक अद्यतन किया गया"
   },
   "transactions": {
-    "title": "नवीनतम लेनदेन",
     "description": "नवीनतम लॉयल्टी प्वाइंट लेनदेन",
     "search_placeholder": "लेन-देन खोजें...",
     "table": {
       "client": "ग्राहक",
+      "date": "तारीख",
       "points": "अंक",
-      "type": "प्रकार",
       "reason": "कारण",
-      "date": "तारीख"
+      "type": "प्रकार"
     },
+    "title": "नवीनतम लेनदेन",
     "types": {
+      "adjust": "समायोजन",
       "earn": "प्रोद्भवन",
-      "redeem": "ख़ारिज करना",
-      "adjust": "समायोजन"
+      "redeem": "ख़ारिज करना"
     }
-  },
-  "dialogs": {
-    "edit_tier": {
-      "title": "संपादन स्तर",
-      "description": "लेवल सेटिंग अपडेट करें",
-      "tier_name": "स्तर का नाम",
-      "min_points": "न्यूनतम अंक",
-      "discount_percent": "छूट (%)"
-    },
-    "adjust_points": {
-      "title": "अंक समायोजित करें",
-      "description": "ग्राहक खाते से अंक जोड़ें या डेबिट करें",
-      "client_email": "ग्राहक ईमेल",
-      "client_email_placeholder": "client@example.com",
-      "points": "अंक (भुगतान करने के लिए नकारात्मक अंक का उपयोग करें)",
-      "points_placeholder": "100",
-      "reason": "कारण",
-      "reason_placeholder": "मैन्युअल समायोजन"
-    }
-  },
-  "buttons": {
-    "cancel": "रद्द करना",
-    "save_changes": "परिवर्तनों को सुरक्षित करें",
-    "adjust_points": "अंक समायोजित करें"
-  },
-  "toasts": {
-    "tier_updated": "स्तर सफलतापूर्वक अद्यतन किया गया",
-    "points_adjusted_add": "{{अंक}} अंक जोड़े गए {{ईमेल}}",
-    "points_adjusted_deduct": "{{ईमेल}} से {{अंक}} अंक डेबिट किए गए",
-    "failed_load": "लेन-देन लोड करने में विफल",
-    "failed_adjust": "स्कोर समायोजित करने में विफल"
   }
 }

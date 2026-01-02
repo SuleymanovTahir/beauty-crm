@@ -22,17 +22,7 @@ import { useTranslation } from 'react-i18next';
 
 type Tab = 'dashboard' | 'appointments' | 'gallery' | 'loyalty' | 'achievements' | 'masters' | 'beauty' | 'notifications' | 'settings';
 
-const menuItems = [
-  { id: 'dashboard' as Tab, label: 'Главная', icon: Home, path: '/account/dashboard' },
-  { id: 'appointments' as Tab, label: 'Записи', icon: Calendar, path: '/account/appointments' },
-  { id: 'gallery' as Tab, label: 'Галерея', icon: Image, path: '/account/gallery' },
-  { id: 'loyalty' as Tab, label: 'Лояльность', icon: Award, path: '/account/loyalty' },
-  { id: 'achievements' as Tab, label: 'Достижения', icon: Trophy, path: '/account/achievements' },
-  { id: 'masters' as Tab, label: 'Мастера', icon: Users, path: '/account/masters' },
-  { id: 'beauty' as Tab, label: 'Бьюти-профиль', icon: Sparkles, path: '/account/beauty' },
-  { id: 'notifications' as Tab, label: 'Уведомления', icon: Bell, path: '/account/notifications' },
-  { id: 'settings' as Tab, label: 'Настройки', icon: SettingsIcon, path: '/account/settings' },
-];
+
 
 export function AccountPage() {
   const { t } = useTranslation(['account', 'common']);
@@ -43,7 +33,25 @@ export function AccountPage() {
   const [userData, setUserData] = useState<any>(null);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+
   const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
+  const [features, setFeatures] = useState<Record<string, boolean>>({
+    loyalty_program: true, // default to true until loaded to avoid flickering
+    referral_program: true,
+    challenges: true
+  });
+
+  const menuItems = [
+    { id: 'dashboard' as Tab, label: t('tabs.dashboard', 'Главная'), icon: Home, path: '/account/dashboard' },
+    { id: 'appointments' as Tab, label: t('tabs.appointments', 'Записи'), icon: Calendar, path: '/account/appointments' },
+    { id: 'gallery' as Tab, label: t('tabs.gallery', 'Галерея'), icon: Image, path: '/account/gallery' },
+    { id: 'loyalty' as Tab, label: t('tabs.loyalty', 'Лояльность'), icon: Award, path: '/account/loyalty' },
+    { id: 'achievements' as Tab, label: t('tabs.achievements', 'Достижения'), icon: Trophy, path: '/account/achievements' },
+    { id: 'masters' as Tab, label: t('tabs.masters', 'Мастера'), icon: Users, path: '/account/masters' },
+    { id: 'beauty' as Tab, label: t('tabs.beauty', 'Бьюти-профиль'), icon: Sparkles, path: '/account/beauty' },
+    { id: 'notifications' as Tab, label: t('tabs.notifications', 'Уведомления'), icon: Bell, path: '/account/notifications' },
+    { id: 'settings' as Tab, label: t('tabs.settings', 'Настройки'), icon: SettingsIcon, path: '/account/settings' },
+  ];
 
   // Determine active tab from URL
   const getActiveTabFromPath = (): Tab => {
@@ -58,7 +66,9 @@ export function AccountPage() {
   useEffect(() => {
     loadUserData();
     loadNotifications();
+
     loadSalonSettings();
+    loadFeatures();
 
     // Set up polling for notifications every 30 seconds
     const notifInterval = setInterval(loadNotifications, 30000);
@@ -185,7 +195,17 @@ export function AccountPage() {
         localStorage.setItem('salon_phone', settings.phone);
       }
     } catch (error) {
-      console.error('Error loading salon settings:', error);
+    }
+  };
+
+  const loadFeatures = async () => {
+    try {
+      const data = await apiClient.getFeatures();
+      if (data.success && data.features) {
+        setFeatures(data.features);
+      }
+    } catch (error) {
+      console.error('Error loading features:', error);
     }
   };
 
@@ -244,10 +264,18 @@ export function AccountPage() {
     }
   };
 
+
+
   const MenuItem = ({ item }: { item: typeof menuItems[0] }) => {
     const Icon = item.icon;
     const isActive = location.pathname === item.path;
     const hasNotification = item.id === 'notifications' && unreadNotifications > 0;
+
+    // Check features
+    if (item.id === 'loyalty' && !features.loyalty_program) return null;
+    // Assuming 'achievements' corresponds to 'challenges' feature (or keep both? User asked for Challenges)
+    if (item.id === 'achievements' && !features.challenges) return null;
+    // If Referral is added later, check 'referral_program'
 
     return (
       <button

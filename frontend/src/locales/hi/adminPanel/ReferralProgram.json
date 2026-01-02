@@ -1,55 +1,64 @@
 {
-  "title": "नाम लेने का कार्यक्रम",
-  "subtitle": "रेफरल प्रबंधित करना और कार्यक्रम प्रभावशीलता पर नज़र रखना",
-  "settings": "सेटिंग्स",
-  "stats": {
-    "total_referrals": "कुल रेफरल",
-    "completed_referrals": "पूर्ण रेफरल",
-    "points_distributed": "अंक वितरित किये गये",
-    "from_last_month": "पिछले महीने से"
-  },
-  "current_settings": {
-    "title": "वर्तमान बोनस कॉन्फ़िगरेशन",
-    "referrer_bonus": "जब कोई मित्र अपनी पहली खरीदारी करता है तो रेफ़रलकर्ता को <strong>{{अंक}} अंक</strong>प्राप्त होते हैं",
-    "referred_bonus": "पंजीकरण पर आमंत्रित मित्र को <strong>{{अंक}} अंक</strong> प्राप्त होते हैं",
-    "min_purchase": "न्यूनतम खरीद राशि: <strong>{{amount}} AED</strong>",
-    "edit": "संपादन करना"
-  },
-  "table": {
-    "title": "सभी रेफरल",
-    "description": "रेफरल की स्थिति और अंकों के वितरण पर नज़र रखना",
-    "search_placeholder": "रेफरल खोजें...",
-    "columns": {
-      "referrer": "संदर्भ",
-      "referred_friend": "मित्र को आमंत्रित किया",
-      "status": "स्थिति",
-      "points_awarded": "अंक दिए गए",
-      "date": "तारीख"
-    },
-    "statuses": {
-      "pending": "इंतज़ार में",
-      "completed": "पुरा होना।",
-      "cancelled": "रद्द कर दिया गया"
-    }
-  },
-  "dialogs": {
-    "settings": {
-      "title": "रेफरल प्रोग्राम सेटिंग्स",
-      "description": "बोनस अंक और आवश्यकताएँ निर्धारित करें",
-      "referrer_bonus": "रेफरर बोनस अंक",
-      "referrer_bonus_help": "जब कोई मित्र अपनी पहली खरीदारी करता है तो रेफ़रलकर्ता को अंक दिए जाते हैं",
-      "referred_bonus": "संदर्भित मित्र बोनस अंक",
-      "referred_bonus_help": "पंजीकरण पर मित्र को दिए गए अंक",
-      "min_purchase_amount": "न्यूनतम खरीद राशि (एईडी)",
-      "min_purchase_help": "रेफरल बोनस को सक्रिय करने के लिए एक मित्र को न्यूनतम राशि खर्च करनी होगी (0 = कोई न्यूनतम नहीं)"
-    }
-  },
   "buttons": {
     "cancel": "रद्द करना",
     "save_changes": "परिवर्तनों को सुरक्षित करें"
   },
+  "current_settings": {
+    "edit": "संपादन करना",
+    "min_purchase": "न्यूनतम खरीद राशि: <strong>{{amount}} AED</strong>",
+    "referred_bonus": "पंजीकरण पर आमंत्रित मित्र को <strong>{{अंक}} अंक</strong> प्राप्त होते हैं",
+    "referrer_bonus": "जब कोई मित्र अपनी पहली खरीदारी करता है तो रेफ़रलकर्ता को <strong>{{अंक}} अंक</strong>प्राप्त होते हैं",
+    "title": "वर्तमान बोनस कॉन्फ़िगरेशन"
+  },
+  "dialogs": {
+    "settings": {
+      "description": "बोनस अंक और आवश्यकताएँ निर्धारित करें",
+      "min_purchase_amount": "न्यूनतम खरीद राशि (एईडी)",
+      "min_purchase_help": "रेफरल बोनस को सक्रिय करने के लिए एक मित्र को न्यूनतम राशि खर्च करनी होगी (0 = कोई न्यूनतम नहीं)",
+      "referred_bonus": "संदर्भित मित्र बोनस अंक",
+      "referred_bonus_help": "पंजीकरण पर मित्र को दिए गए अंक",
+      "referrer_bonus": "रेफरर बोनस अंक",
+      "referrer_bonus_help": "जब कोई मित्र अपनी पहली खरीदारी करता है तो रेफ़रलकर्ता को अंक दिए जाते हैं",
+      "title": "रेफरल प्रोग्राम सेटिंग्स"
+    }
+  },
+  "settings": "सेटिंग्स",
+  "stats": {
+    "completed_referrals": "पूर्ण रेफरल",
+    "from_last_month": "पिछले महीने से",
+    "points_distributed": "अंक वितरित किये गये",
+    "total_referrals": "कुल रेफरल"
+  },
+  "subtitle": "रेफरल प्रबंधित करना और कार्यक्रम प्रभावशीलता पर नज़र रखना",
+  "table": {
+    "columns": {
+      "date": "तारीख",
+      "points_awarded": "अंक दिए गए",
+      "referred_friend": "मित्र को आमंत्रित किया",
+      "referrer": "संदर्भ",
+      "status": "स्थिति"
+    },
+    "description": "रेफरल की स्थिति और अंकों के वितरण पर नज़र रखना",
+    "filters": {
+      "all_statuses": "All Statuses"
+    },
+    "search_placeholder": "रेफरल खोजें...",
+    "sort": {
+      "date": "Sort by Date",
+      "points": "Sort by Points",
+      "status": "Sort by Status"
+    },
+    "statuses": {
+      "cancelled": "रद्द कर दिया गया",
+      "completed": "पुरा होना।",
+      "pending": "इंतज़ार में"
+    },
+    "title": "सभी रेफरल"
+  },
+  "title": "नाम लेने का कार्यक्रम",
   "toasts": {
-    "settings_saved": "सेटिंग्स सफलतापूर्वक सहेजी गईं",
-    "failed_load": "रेफरल लोड करने में विफल"
+    "failed_load": "रेफरल लोड करने में विफल",
+    "failed_save": "",
+    "settings_saved": "सेटिंग्स सफलतापूर्वक सहेजी गईं"
   }
 }

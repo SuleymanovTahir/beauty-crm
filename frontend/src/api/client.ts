@@ -460,6 +460,9 @@ export const apiClient = {
       method: 'POST',
       body: data,
     }),
+  // ===== FEATURES =====
+  getFeatures: () =>
+    apiCall('/api/client/features'),
 }
 
 export const api = {

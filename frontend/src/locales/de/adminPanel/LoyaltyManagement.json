@@ -1,66 +1,92 @@
 {
-  "title": "Treuemanagement",
-  "subtitle": "Verwalten Sie Treuestufen, Punkte und Transaktionen",
   "adjust_points": "Punkte anpassen",
-  "stats": {
-    "total_points_issued": "Gesamtpunktzahl vergeben",
-    "points_redeemed": "Punkte eingelöst",
-    "active_members": "Aktive Teilnehmer",
-    "from_last_month": "vom letzten Monat"
+  "buttons": {
+    "add_rule": "Add Rule",
+    "adjust_points": "Punkte anpassen",
+    "cancel": "Stornieren",
+    "save": "Save",
+    "save_changes": "Änderungen speichern"
   },
+  "categories": {
+    "category": "Category",
+    "description": "Set custom multipliers for services",
+    "multiplier": "Multiplier",
+    "title": "Category Multipliers"
+  },
+  "config": {
+    "conversion_rate": "Points Conversion Rate (0.1 = 1 point per 10 currency)",
+    "description": "Manage global loyalty settings",
+    "expiration_days": "Points Validity (Days)",
+    "expiration_hint": "Points earned will expire after this many days.",
+    "title": "Configuration"
+  },
+  "confirm_delete_rule": "",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "Kunden-E-Mail",
+      "client_email_placeholder": "client@example.com",
+      "description": "Punkte einem Kundenkonto hinzufügen oder abbuchen",
+      "points": "Punkte (negative Punkte zum Einlösen verwenden)",
+      "points_placeholder": "100",
+      "reason": "Ursache",
+      "reason_placeholder": "Manuelle Einstellung",
+      "title": "Punkte anpassen"
+    },
+    "edit_tier": {
+      "description": "Ebeneneinstellungen aktualisieren",
+      "discount_percent": "Rabatt (%)",
+      "min_points": "Mindestpunktzahl",
+      "tier_name": "Levelname",
+      "title": "Ebene bearbeiten"
+    },
+    "rule": {
+      "description": "Set multiplier for a service category",
+      "title": "Edit Category Rule"
+    }
+  },
+  "stats": {
+    "active_members": "Aktive Teilnehmer",
+    "from_last_month": "vom letzten Monat",
+    "points_redeemed": "Punkte eingelöst",
+    "total_points_issued": "Gesamtpunktzahl vergeben"
+  },
+  "subtitle": "Verwalten Sie Treuestufen, Punkte und Transaktionen",
   "tiers": {
-    "title": "Treuestufen",
     "description": "Einrichten von Stufen und Vorteilen",
-    "starting_level": "Einstiegsniveau",
+    "discount": "{{percent}}% Rabatt",
     "from_points": "Ab {{points}} Punkten",
-    "discount": "{{percent}}% Rabatt"
+    "starting_level": "Einstiegsniveau",
+    "title": "Treuestufen"
+  },
+  "title": "Treuemanagement",
+  "toasts": {
+    "config_updated": "",
+    "failed_adjust": "Punkte konnten nicht angepasst werden",
+    "failed_delete": "",
+    "failed_load": "Transaktionen konnten nicht geladen werden",
+    "failed_save": "",
+    "failed_update": "",
+    "points_adjusted_add": "{{points}} Punkte hinzugefügt {{email}}",
+    "points_adjusted_deduct": "{{points}} Punkte wurden von {{email}} abgebucht",
+    "rule_deleted": "",
+    "rule_saved": "",
+    "tier_updated": "Level erfolgreich aktualisiert"
   },
   "transactions": {
-    "title": "Neueste Transaktionen",
     "description": "Aktuelle Treuepunkte-Transaktionen",
     "search_placeholder": "Nach Transaktionen suchen...",
     "table": {
       "client": "Kunde",
+      "date": "Datum",
       "points": "Punkte",
-      "type": "Typ",
       "reason": "Ursache",
-      "date": "Datum"
+      "type": "Typ"
     },
+    "title": "Neueste Transaktionen",
     "types": {
+      "adjust": "Einstellung",
       "earn": "Rückstellung",
-      "redeem": "Abschreibung",
-      "adjust": "Einstellung"
+      "redeem": "Abschreibung"
     }
-  },
-  "dialogs": {
-    "edit_tier": {
-      "title": "Ebene bearbeiten",
-      "description": "Ebeneneinstellungen aktualisieren",
-      "tier_name": "Levelname",
-      "min_points": "Mindestpunktzahl",
-      "discount_percent": "Rabatt (%)"
-    },
-    "adjust_points": {
-      "title": "Punkte anpassen",
-      "description": "Punkte einem Kundenkonto hinzufügen oder abbuchen",
-      "client_email": "Kunden-E-Mail",
-      "client_email_placeholder": "client@example.com",
-      "points": "Punkte (negative Punkte zum Einlösen verwenden)",
-      "points_placeholder": "100",
-      "reason": "Ursache",
-      "reason_placeholder": "Manuelle Einstellung"
-    }
-  },
-  "buttons": {
-    "cancel": "Stornieren",
-    "save_changes": "Änderungen speichern",
-    "adjust_points": "Punkte anpassen"
-  },
-  "toasts": {
-    "tier_updated": "Level erfolgreich aktualisiert",
-    "points_adjusted_add": "{{points}} Punkte hinzugefügt {{email}}",
-    "points_adjusted_deduct": "{{points}} Punkte wurden von {{email}} abgebucht",
-    "failed_load": "Transaktionen konnten nicht geladen werden",
-    "failed_adjust": "Punkte konnten nicht angepasst werden"
   }
 }
