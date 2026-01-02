@@ -1,0 +1,21 @@
+{
+  "title": "Mis entradas",
+  "subtitle": "Gestiona tus visitas",
+  "tab_upcoming": "Próximo",
+  "tab_history": "Historia",
+  "tab_recurring": "repetitivo",
+  "status_upcoming": "Próximo",
+  "status_completed": "Terminado",
+  "status_cancelled": "Cancelado",
+  "button_repeat": "Repetir",
+  "button_change": "Cambiar",
+  "button_cancel": "Cancelar",
+  "no_upcoming": "No hay publicaciones próximas",
+  "no_upcoming_desc": "Regístrese para el servicio ahora mismo",
+  "button_book": "Inscribirse",
+  "history_empty": "la historia esta vacia",
+  "history_empty_desc": "Las visitas completadas se mostrarán aquí.",
+  "recurring_title": "Entradas duplicadas",
+  "recurring_desc": "Característica en desarrollo. Pronto podrás configurar grabaciones automáticas.",
+  "unknown_master": "Maestro desconocido"
+}

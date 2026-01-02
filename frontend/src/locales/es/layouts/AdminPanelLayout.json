@@ -9,6 +9,11 @@
     "referral_program": "Programa de referencia",
     "challenges": "Desafíos",
     "notifications": "Notificaciones",
-    "photo_gallery": "Galería de fotos"
+    "photo_gallery": "Galería de fotos",
+    "bookings": "bookings",
+    "clients": "Clientela",
+    "calendar": "Calendario",
+    "services": "Servicios",
+    "public_content": "Contenido público"
   }
 }

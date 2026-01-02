@@ -9,6 +9,11 @@
     "referral_program": "Реферат бағдарламасы",
     "challenges": "Қиындықтар",
     "notifications": "Хабарландырулар",
-    "photo_gallery": "Фотогалерея"
+    "photo_gallery": "Фотогалерея",
+    "bookings": "bookings",
+    "clients": "Клиенттер",
+    "calendar": "Күнтізбе",
+    "services": "Қызметтер",
+    "public_content": "Қоғамдық мазмұн"
   }
 }

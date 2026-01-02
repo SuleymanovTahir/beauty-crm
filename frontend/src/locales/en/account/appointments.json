@@ -1,0 +1,21 @@
+{
+  "title": "My entries",
+  "subtitle": "Manage your visits",
+  "tab_upcoming": "Upcoming",
+  "tab_history": "Story",
+  "tab_recurring": "Repetitive",
+  "status_upcoming": "Upcoming",
+  "status_completed": "Completed",
+  "status_cancelled": "Canceled",
+  "button_repeat": "Repeat",
+  "button_change": "Change",
+  "button_cancel": "Cancel",
+  "no_upcoming": "No upcoming posts",
+  "no_upcoming_desc": "Sign up for the service right now",
+  "button_book": "Sign up",
+  "history_empty": "History is empty",
+  "history_empty_desc": "Completed visits will be displayed here",
+  "recurring_title": "Duplicate entries",
+  "recurring_desc": "Feature under development. ",
+  "unknown_master": "Unknown Master"
+}
