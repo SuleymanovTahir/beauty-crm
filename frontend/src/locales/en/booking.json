@@ -109,7 +109,10 @@
     "noDescription": "Professional service",
     "total": "Total amount",
     "continue": "Continue",
-    "selected": "Services selected"
+    "selected": "Services selected",
+    "service_one": "service",
+    "service_few": "services",
+    "service_many": "services"
   },
   "totalDuration": "Total duration",
   "min": "min",
@@ -124,6 +127,7 @@
     "anyDesc": "We'll match you with the best available professional",
     "ready": "Ready",
     "availableToday": "Available Today",
+    "availableOn": "Available",
     "reviews": "Reviews"
   }
 }

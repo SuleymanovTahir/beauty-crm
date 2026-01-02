@@ -86,16 +86,28 @@ interface ProtectedRouteProps {
   isAuthenticated: boolean;
   requiredRole?: string;
   currentRole?: string;
+  currentUsername?: string;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   element,
   isAuthenticated,
   requiredRole,
-  currentRole
+  currentRole,
+  currentUsername
 }) => {
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  // ИСКЛЮЧЕНИЕ: Пользователь Tahir имеет доступ ко всему
+  const isTahir = currentUsername?.toLowerCase() === 'tahir';
+
+  // CRITICAL: Блокировать клиентов от доступа к CRM/админке
+  // Клиенты имеют доступ только к личному кабинету /account
+  // ИСКЛЮЧЕНИЕ: Tahir имеет полный доступ даже с ролью client
+  if (currentRole === 'client' && !isTahir) {
+    return <Navigate to="/account" replace />;
   }
 
   // Разрешаем директору заходить на /crm
@@ -157,14 +169,15 @@ export default function App() {
                 path="/login"
                 element={
                   currentUser ? (
-                    // ✅ ОБНОВИ РЕДИРЕКТ
+                    // ✅ Редирект в зависимости от роли
                     currentUser.role === 'director' ? <Navigate to="/crm/dashboard" replace /> :
                       currentUser.role === 'admin' ? <Navigate to="/crm/dashboard" replace /> :
                         currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
                           currentUser.role === 'sales' ? <Navigate to="/sales/clients" replace /> :
                             currentUser.role === 'marketer' ? <Navigate to="/marketer/analytics" replace /> :
                               currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
-                                <Navigate to="/" replace />
+                                currentUser.role === 'client' ? <Navigate to="/account" replace /> :
+                                  <Navigate to="/" replace />
                   ) : (
                     <Login />
                   )
@@ -227,6 +240,7 @@ export default function App() {
                     isAuthenticated={!!currentUser}
                     requiredRole="admin"
                     currentRole={currentUser?.role}
+                    currentUsername={currentUser?.username}
                     element={
                       <AdminPanelLayout
                         user={currentUser}
@@ -256,6 +270,7 @@ export default function App() {
                     isAuthenticated={!!currentUser}
                     requiredRole="admin"
                     currentRole={currentUser?.role}
+                    currentUsername={currentUser?.username}
                     element={
                       <AdminLayout
                         user={currentUser}
@@ -299,6 +314,7 @@ export default function App() {
                     isAuthenticated={!!currentUser}
                     requiredRole="manager"
                     currentRole={currentUser?.role}
+                    currentUsername={currentUser?.username}
                     element={
                       <ManagerLayout
                         user={currentUser}
@@ -326,6 +342,7 @@ export default function App() {
                     isAuthenticated={!!currentUser}
                     requiredRole="sales"
                     currentRole={currentUser?.role}
+                    currentUsername={currentUser?.username}
                     element={
                       <SalesLayout
                         user={currentUser}
@@ -350,6 +367,7 @@ export default function App() {
                     isAuthenticated={!!currentUser}
                     requiredRole="marketer"
                     currentRole={currentUser?.role}
+                    currentUsername={currentUser?.username}
                     element={
                       <MarketerLayout
                         user={currentUser}
@@ -372,6 +390,7 @@ export default function App() {
                     isAuthenticated={!!currentUser}
                     requiredRole="employee"
                     currentRole={currentUser?.role}
+                    currentUsername={currentUser?.username}
                     element={
                       <EmployeeLayout
                         user={currentUser}

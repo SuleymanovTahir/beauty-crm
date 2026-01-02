@@ -46,7 +46,10 @@
     "noDescription": "Профессиональная услуга",
     "total": "Итоговая сумма",
     "continue": "Продолжить",
-    "selected": "Услуг выбрано"
+    "selected": "Услуг выбрано",
+    "service_one": "услуга",
+    "service_few": "услуги",
+    "service_many": "услуг"
   },
   "totalDuration": "Общая длительность",
   "min": "мин",
@@ -61,6 +64,7 @@
     "anyDesc": "Мы подберем лучшего доступного мастера",
     "ready": "Готов",
     "availableToday": "Доступен сегодня",
+    "availableOn": "Доступен",
     "reviews": "отзывов"
   }
 }

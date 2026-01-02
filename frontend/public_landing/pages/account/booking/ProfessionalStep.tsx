@@ -47,8 +47,11 @@ export function ProfessionalStep({
                 if (slots.length > 0) {
                     const available = slots.filter(time => {
                         const [h, m] = time.split(':').map(Number);
-                        // Filter past times
-                        if (h < currentHours || (h === currentHours && m <= currentMinutes)) return false;
+                        // Filter past times - only for today
+                        // If hour is less than current, it's in the past
+                        if (h < currentHours) return false;
+                        // If same hour, check minutes (exclude if time has already passed)
+                        if (h === currentHours && m < currentMinutes) return false;
                         return true;
                     });
 
@@ -61,6 +64,8 @@ export function ProfessionalStep({
         }
         return {};
     });
+    // Track next available date for masters with no slots today
+    const [nextAvailableDate, setNextAvailableDate] = useState<Record<number, string>>({});
 
     useEffect(() => {
         if (preloadedProfessionals && preloadedProfessionals.length > 0) {
@@ -100,8 +105,9 @@ export function ProfessionalStep({
                 if (slots.length > 0) {
                     const available = slots.filter(time => {
                         const [h, m] = time.split(':').map(Number);
-                        // Filter past times
-                        if (h < currentHours || (h === currentHours && m <= currentMinutes)) return false;
+                        // Filter past times - only for today
+                        if (h < currentHours) return false;
+                        if (h === currentHours && m < currentMinutes) return false;
                         return true;
                     });
 
@@ -131,7 +137,9 @@ export function ProfessionalStep({
                         if (slots.length > 0) {
                             const available = slots.filter(time => {
                                 const [h, m] = time.split(':').map(Number);
-                                if (h < currentHours || (h === currentHours && m <= currentMinutes)) return false;
+                                // Filter past times - only for today
+                                if (h < currentHours) return false;
+                                if (h === currentHours && m < currentMinutes) return false;
                                 return true;
                             });
 
@@ -148,6 +156,55 @@ export function ProfessionalStep({
         };
         fetchNextSlots();
     }, [professionals, preloadedAvailability]);
+
+    // Fetch next available date for masters without slots today
+    useEffect(() => {
+        if (professionals.length === 0) return;
+
+        const fetchNextAvailableDates = async () => {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth() + 1; // JavaScript months are 0-indexed
+
+            const updates: Record<number, string> = {};
+
+            for (const prof of professionals) {
+                // Only fetch if master has no slots today
+                if (!nextSlots[prof.id] || nextSlots[prof.id].trim() === '') {
+                    try {
+                        // Fetch available dates for this month using the master's full name
+                        const masterName = encodeURIComponent(prof.full_name);
+                        const response = await fetch(
+                            `/api/public/schedule/${masterName}/available-dates?year=${currentYear}&month=${currentMonth}&duration=60`
+                        );
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            const availableDates = data.available_dates || [];
+
+                            if (availableDates.length > 0) {
+                                // Find first date that's not today
+                                const today = format(now, 'yyyy-MM-dd');
+                                const nextDate = availableDates.find((date: string) => date > today);
+
+                                if (nextDate) {
+                                    // Format date nicely (e.g., "Jan 15" or "15 янв")
+                                    const dateObj = new Date(nextDate);
+                                    updates[prof.id] = format(dateObj, 'MMM d');
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Failed to fetch next available date for professional ${prof.id}:`, error);
+                    }
+                }
+            }
+
+            setNextAvailableDate(updates);
+        };
+
+        fetchNextAvailableDates();
+    }, [professionals, nextSlots]);
 
     // Load availability for selected date
     useEffect(() => {
@@ -290,7 +347,14 @@ export function ProfessionalStep({
                                                 <div className="flex items-center gap-2 text-green-600 bg-green-50 w-fit px-3 py-1 rounded-full border border-green-100/50">
                                                     <Clock className="w-3.5 h-3.5" />
                                                     <span className="text-[10px] font-black uppercase tracking-widest leading-none">
-                                                        {salonSettings?.timezone ? t('professional.ready', 'Ready') : t('professional.availableToday', 'Available Today')}
+                                                        {salonSettings?.timezone
+                                                            ? t('professional.ready', 'Ready')
+                                                            : nextSlots[professional.id]
+                                                                ? t('professional.availableToday', 'Available Today')
+                                                                : nextAvailableDate[professional.id]
+                                                                    ? `${t('professional.availableOn', 'Available')} ${nextAvailableDate[professional.id]}`
+                                                                    : t('professional.ready', 'Ready')
+                                                        }
                                                     </span>
                                                 </div>
                                                 {!salonSettings?.timezone && nextSlots[professional.id] && (
