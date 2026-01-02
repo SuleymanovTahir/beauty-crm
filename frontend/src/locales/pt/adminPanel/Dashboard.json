@@ -29,14 +29,17 @@
   "recent_activity": {
     "challenge_completed": "Desafio \"{{name}}\" concluído por {{count}} usuários",
     "challenge_completed_one": "",
+    "challenge_completed_few": "",
     "challenge_completed_many": "",
     "challenge_completed_other": "",
     "day_ago": "{{count}} dia atrás",
     "day_ago_one": "",
+    "day_ago_few": "",
     "day_ago_many": "",
     "day_ago_other": "",
     "hours_ago": "{{count}} horas atrás",
     "hours_ago_one": "",
+    "hours_ago_few": "",
     "hours_ago_many": "",
     "hours_ago_other": "",
     "new_tier_activated": "Novo nível de fidelidade ativado",
@@ -44,12 +47,9 @@
     "title": "Atividade recente",
     "users_registered": "{{count}} novos usuários registrados",
     "users_registered_one": "",
+    "users_registered_few": "",
     "users_registered_many": "",
-    "users_registered_other": "",
-    "challenge_completed_few": "",
-    "day_ago_few": "",
-    "hours_ago_few": "",
-    "users_registered_few": ""
+    "users_registered_other": ""
   },
   "stats": {
     "active_challenges": "Desafios ativos",

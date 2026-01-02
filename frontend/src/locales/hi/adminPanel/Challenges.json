@@ -56,9 +56,9 @@
     "failed_delete": "चुनौती हटाने में विफल",
     "failed_load": "चुनौतियाँ लोड करने में विफल",
     "progress_checked_one": "",
-    "progress_checked_other": "",
     "progress_checked_few": "",
-    "progress_checked_many": ""
+    "progress_checked_many": "",
+    "progress_checked_other": ""
   },
   "types": {
     "referrals": "रेफरल",

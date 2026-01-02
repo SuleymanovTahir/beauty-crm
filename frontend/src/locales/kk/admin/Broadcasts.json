@@ -20,6 +20,8 @@
   "preview": "Алдын ала қарау",
   "preview_found": "{count} алушы табылды",
   "preview_found_one": "",
+  "preview_found_few": "",
+  "preview_found_many": "",
   "preview_found_other": "",
   "recipients": "Алушылар",
   "sample_recipients": "Алушылардың мысалдары:",
@@ -33,7 +35,5 @@
   "subtitle": "Әр түрлі арналар арқылы пайдаланушыларға хабарландырулар жіберу",
   "target_role": "Мақсатты рөл (міндетті емес)",
   "title": "Жаппай жіберулер",
-  "total_recipients": "Жалпы алушылар",
-  "preview_found_few": "",
-  "preview_found_many": ""
+  "total_recipients": "Жалпы алушылар"
 }

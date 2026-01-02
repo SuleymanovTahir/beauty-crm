@@ -20,6 +20,8 @@
   "preview": "Vorschau",
   "preview_found": "{count} Empfänger gefunden",
   "preview_found_one": "",
+  "preview_found_few": "",
+  "preview_found_many": "",
   "preview_found_other": "",
   "recipients": "Empfänger",
   "sample_recipients": "Beispiele für Empfänger:",
@@ -33,7 +35,5 @@
   "subtitle": "Versenden von Benachrichtigungen an Benutzer über verschiedene Kanäle",
   "target_role": "Zielrolle (optional)",
   "title": "Massenmailings",
-  "total_recipients": "Gesamtzahl der Empfänger",
-  "preview_found_few": "",
-  "preview_found_many": ""
+  "total_recipients": "Gesamtzahl der Empfänger"
 }
