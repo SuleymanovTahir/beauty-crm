@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../../../src/api/client';
 import { toast } from 'sonner';
@@ -42,14 +42,14 @@ export function Loyalty() {
     );
   }
 
-  const tiers = [
-    { name: 'Bronze', points: 0, discount: 5, color: '#CD7F32' },
-    { name: 'Silver', points: 1000, discount: 10, color: '#C0C0C0' },
-    { name: 'Gold', points: 2000, discount: 15, color: '#FFD700' },
-    { name: 'Platinum', points: 5000, discount: 25, color: '#E5E4E2' },
-  ];
-
   const { loyalty } = loyaltyData || {};
+  const tiers = loyalty?.all_tiers || [
+    { name: 'Bronze', points: 0, discount: 0, color: '#CD7F32' },
+    { name: 'Silver', points: 1000, discount: 5, color: '#C0C0C0' },
+    { name: 'Gold', points: 5000, discount: 10, color: '#FFD700' },
+    { name: 'Platinum', points: 10000, discount: 15, color: '#E5E4E2' },
+  ];
+  const currency = loyalty?.currency || "AED";
 
   // Default loyalty data if not available
   const defaultLoyalty = {
@@ -64,7 +64,7 @@ export function Loyalty() {
 
   const loyaltyInfo = loyalty || defaultLoyalty;
 
-  const currentTierIndex = tiers.findIndex(t => t.name.toLowerCase() === loyaltyInfo.tier.toLowerCase());
+  const currentTierIndex = tiers.findIndex((t: any) => t.name.toLowerCase() === loyaltyInfo.tier.toLowerCase());
   const currentTierData = tiers[currentTierIndex >= 0 ? currentTierIndex : 0];
   const nextTierData = tiers[currentTierIndex + 1];
 
@@ -176,14 +176,13 @@ export function Loyalty() {
           <CardDescription>{t('loyalty.tier_explanation', 'Накапливайте баллы и получайте больше привилегий')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          {tiers.map((tier) => (
+          {tiers.map((tier: any) => (
             <div
               key={tier.name}
-              className={`p-4 rounded-lg border-2 ${
-                tier.name === currentTierData?.name
-                  ? 'bg-white border-current'
-                  : 'border-gray-200'
-              }`}
+              className={`p-4 rounded-lg border-2 ${tier.name === currentTierData?.name
+                ? 'bg-white border-current'
+                : 'border-gray-200'
+                }`}
               style={tier.name === currentTierData?.name ? { borderColor: tier.color } : {}}
             >
               <div className="flex items-center justify-between">
@@ -245,58 +244,58 @@ export function Loyalty() {
       {/* Аналитика трат - показывать только если есть данные */}
       {((loyalty?.spending_by_month && loyalty.spending_by_month.length > 0) ||
         (loyalty?.spending_by_category && loyalty.spending_by_category.length > 0)) && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {loyalty?.spending_by_month && loyalty.spending_by_month.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('loyalty.spending_by_month', 'Расходы по месяцам')}</CardTitle>
-                <CardDescription>{t('loyalty.last_six_months', 'Последние 6 месяцев')}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={loyalty.spending_by_month}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="amount" fill="#FF6B9D" radius={[8, 8, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          )}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {loyalty?.spending_by_month && loyalty.spending_by_month.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('loyalty.spending_by_month', 'Расходы по месяцам')}</CardTitle>
+                  <CardDescription>{t('loyalty.last_six_months', 'Последние 6 месяцев')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={loyalty.spending_by_month}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="amount" fill="#FF6B9D" radius={[8, 8, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            )}
 
-          {loyalty?.spending_by_category && loyalty.spending_by_category.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('loyalty.spending_by_category', 'Расходы по категориям')}</CardTitle>
-                <CardDescription>{t('loyalty.year_distribution', 'Распределение за год')}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={loyalty.spending_by_category}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={(entry) => entry.category}
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {loyalty.spending_by_category.map((entry: any, index: number) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      )}
+            {loyalty?.spending_by_category && loyalty.spending_by_category.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('loyalty.spending_by_category', 'Расходы по категориям')}</CardTitle>
+                  <CardDescription>{t('loyalty.year_distribution', 'Распределение за год')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={loyalty.spending_by_category}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={(entry: any) => entry.category}
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {loyalty.spending_by_category.map((entry: any, index: number) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
 
       {/* Виртуальная карта */}
       <Card>
@@ -369,6 +368,25 @@ export function Loyalty() {
           </div>
         </CardContent>
       </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">{t('loyalty.total_spent', 'Всего потрачено')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{loyaltyInfo.total_spent} {currency}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">{t('loyalty.total_saved', 'Всего сэкономлено')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{loyaltyInfo.total_saved} {currency}</div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Реферальная программа */}
       <Card className="bg-gradient-to-r from-purple-50 to-pink-50">

@@ -139,6 +139,7 @@ export function Dashboard() {
 
   const { client, loyalty, next_booking, last_visit, achievements_summary, visit_stats } = dashboardData || {};
   const userName = client?.name || localStorage.getItem('user_name') || 'Гость';
+  const currency = loyalty?.currency || "AED";
 
   return (
     <div className="space-y-6 pb-8">
@@ -151,7 +152,7 @@ export function Dashboard() {
       </div>
 
       {/* Ключевые метрики */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{t('dashboard.total_visits', 'Всего визитов')}</CardTitle>
@@ -180,11 +181,22 @@ export function Dashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('dashboard.total_saved', 'Сэкономлено')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.total_spent', 'Всего потрачено')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loyalty?.total_saved || 0} AED</div>
+            <div className="text-2xl font-bold">{loyalty?.total_spent || 0} {currency}</div>
+            <p className="text-xs text-muted-foreground">{t('dashboard.investment_in_beauty', 'Инвестиции в красоту')}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('dashboard.total_saved', 'Сэкономлено')}</CardTitle>
+            <Star className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{loyalty?.total_saved || 0} {currency}</div>
             <p className="text-xs text-muted-foreground">{t('dashboard.with_discounts', 'С программой лояльности')}</p>
           </CardContent>
         </Card>
@@ -210,7 +222,7 @@ export function Dashboard() {
                 <div className="text-sm text-muted-foreground">{next_booking.service}</div>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge variant="outline">
-                    {new Date(next_booking.date).toLocaleDateString('ru-RU', {
+                    {new Date(next_booking.date).toLocaleDateString(undefined, {
                       day: 'numeric',
                       month: 'long'
                     })}
@@ -273,7 +285,7 @@ export function Dashboard() {
           <CardHeader>
             <CardTitle>{t('dashboard.last_visit', 'Последний визит')}</CardTitle>
             <CardDescription>
-              {new Date(last_visit.date).toLocaleDateString('ru-RU', {
+              {new Date(last_visit.date).toLocaleDateString(undefined, {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
@@ -346,9 +358,9 @@ export function Dashboard() {
                   <div className="text-xs text-muted-foreground">{visit.master}</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-sm">{visit.price} AED</div>
+                  <div className="font-bold text-sm">{visit.price} {currency}</div>
                   <div className="text-[10px] text-muted-foreground">
-                    {new Date(visit.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
+                    {new Date(visit.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
                   </div>
                 </div>
               </button>
