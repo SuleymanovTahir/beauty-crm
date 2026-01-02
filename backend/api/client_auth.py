@@ -1148,6 +1148,7 @@ async def cancel_booking(
         client_id_val = _get_client_id(user, c)
 
         # Verify booking belongs to user
+        # Verify booking belongs to user
         c.execute("""
             SELECT id FROM bookings
             WHERE id = %s AND (
@@ -1159,6 +1160,7 @@ async def cancel_booking(
 
         if not c.fetchone():
             conn.close()
+            log_error(f"❌ Cancel failed: Booking {booking_id} not found/owned by user {user.get('username')}", "client_auth")
             return {"success": False, "error": "Booking not found"}
 
         # Update booking status
@@ -1167,10 +1169,12 @@ async def cancel_booking(
             SET status = 'cancelled', updated_at = %s
             WHERE id = %s
         """, (datetime.now().isoformat(), booking_id))
-
+        
+        rows_affected = c.rowcount
         conn.commit()
         conn.close()
 
+        log_info(f"✅ Cancelled booking {booking_id} for user {user.get('username')}. Rows affected: {rows_affected}", "client_auth")
         return {"success": True}
     except Exception as e:
         log_error(f"Error cancelling booking: {e}", "client_auth")

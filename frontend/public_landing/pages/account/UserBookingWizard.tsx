@@ -159,18 +159,18 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         setLoading(true);
         const today = new Date().toISOString().split('T')[0];
 
-        // PARALLEL DATA FETCHING: Settings, Active Services, All Masters, Batch Availability
-        const [settingsRes, servicesRes, usersRes, availabilityRes] = await Promise.all([
+        // PARALLEL DATA FETCHING: Settings, Active Services, All Masters
+        // Removed availability fetching from critical path to speed up initial load
+        const [settingsRes, servicesRes, usersRes] = await Promise.all([
           api.getPublicSalonSettings(),
-          api.getPublicServices(), // Use public endpoint to avoid auth issues
-          api.getUsers(),
-          api.getPublicBatchAvailability(today)
+          api.getPublicServices(),
+          api.getUsers()
         ]);
 
         setSalonSettings(settingsRes);
 
         const servicesData = Array.isArray(servicesRes) ? servicesRes : (servicesRes.services || []);
-        console.log('[UserBookingWizard] Loaded services:', servicesData.length, servicesData);
+        console.log('[UserBookingWizard] Loaded services:', servicesData.length);
         setInitialServices(servicesData);
 
         const usersData = Array.isArray(usersRes) ? usersRes : (usersRes.users || []);
@@ -178,9 +178,12 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         console.log('[UserBookingWizard] Loaded masters:', masters.length);
         setInitialMasters(masters);
 
-        if (availabilityRes && availabilityRes.availability) {
-          setInitialAvailability(availabilityRes.availability);
-        }
+        // Fetch availability in background to not block UI
+        api.getPublicBatchAvailability(today).then(res => {
+          if (res && res.availability) {
+            setInitialAvailability(res.availability);
+          }
+        }).catch(err => console.error("Background availability fetch failed", err));
 
         // Handle prefill from location state (for reschedule/edit)
         const state = location.state as any;
