@@ -435,7 +435,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   <p className="text-sm font-black text-gray-900 uppercase tracking-tighter">
                     {bookingState.services.length === 1
                       ? getLocalizedName(bookingState.services[0], i18n.language)
-                      : `${bookingState.services.length} ${getPluralForm(bookingState.services.length, 'услуга', 'услуги', 'услуг')} ${t('services.selected', 'выбрано').toLowerCase()}`
+                      : `${bookingState.services.length} ${getPluralForm(bookingState.services.length, t('services.service_one', 'service'), t('services.service_few', 'services'), t('services.service_many', 'services'))} ${t('services.selected', 'selected').toLowerCase()}`
                     }
                   </p>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
