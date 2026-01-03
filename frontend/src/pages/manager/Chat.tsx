@@ -22,6 +22,7 @@ import {
   Reply,
   Forward,
   Copy,
+  Heart,
 } from 'lucide-react';
 import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../../components/icons/SocialIcons';
 import { Button } from '../../components/ui/button';
@@ -63,6 +64,65 @@ interface Message {
   type?: string;
 }
 
+const ClientItem = React.memo(({ client, isSelected, onClick, t }: { client: Client, isSelected: boolean, onClick: () => void, t: any }) => (
+  <button
+    onClick={onClick}
+    className={`
+      w-full p-3 flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left
+      ${isSelected ? 'bg-purple-100/50 dark:bg-purple-900/10' : ''}
+    `}
+  >
+    <div className="relative flex-shrink-0">
+      {client.profile_pic && client.profile_pic.trim() !== '' ? (
+        <img
+          src={client.profile_pic}
+          alt={client.display_name}
+          className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-gray-800 shadow-md"
+          crossOrigin="anonymous"
+          onError={(e) => {
+            e.currentTarget.style.display = 'none';
+            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+            if (fallback) fallback.style.display = 'flex';
+          }}
+        />
+      ) : null}
+      <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-semibold ${client.profile_pic && client.profile_pic.trim() !== '' ? 'hidden' : ''
+        }`}>
+        {client.display_name.charAt(0).toUpperCase()}
+      </div>
+      {client.source && (
+        <div className={`absolute -bottom-1 -right-1 size-5 rounded-full flex items-center justify-center shadow-lg z-10 border-2 border-white dark:border-gray-800 ${client.source.toLowerCase() === 'instagram' ? 'bg-white' :
+          client.source.toLowerCase() === 'telegram' ? 'bg-white' :
+            client.source.toLowerCase() === 'whatsapp' ? 'bg-white' :
+              'bg-white'
+          }`}>
+          {client.source.toLowerCase() === 'instagram' && <InstagramIcon size={14} colorful={true} />}
+          {client.source.toLowerCase() === 'telegram' && <TelegramIcon size={14} colorful={true} />}
+          {client.source.toLowerCase() === 'whatsapp' && <WhatsAppIcon size={14} colorful={true} />}
+          {client.source.toLowerCase() === 'tiktok' && <TikTokIcon size={14} colorful={true} />}
+        </div>
+      )}
+      {client.unread_count && client.unread_count > 0 && (
+        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
+          {client.unread_count > 9 ? '9+' : client.unread_count}
+        </div>
+      )}
+    </div>
+    <div className="flex-1 min-w-0">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{client.display_name}</span>
+        <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
+          {new Date(client.last_contact).toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' })}
+        </span>
+      </div>
+      <span className="text-xs text-gray-500 dark:text-gray-400 truncate mb-1 block">{client.phone || t('chat:no_phone')}</span>
+      <div className="flex items-center gap-1">
+        <span className="text-xs text-gray-400">{client.total_messages} {t('chat:messages')}</span>
+      </div>
+    </div>
+  </button>
+));
+
 export default function Chat() {
   const location = useLocation();
   const { t } = useTranslation(['manager/Chat', 'common']);
@@ -89,6 +149,7 @@ export default function Chat() {
   const [showQuickReplies, setShowQuickReplies] = useState(false);
   const [showMessageSearch, setShowMessageSearch] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [activeActionMenuId, setActiveActionMenuId] = useState<string | number | null>(null);
 
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
@@ -102,6 +163,13 @@ export default function Chat() {
   const isFetchingSuggestion = useRef(false);
   const [showAskBotModal, setShowAskBotModal] = useState(false);
   const [botQuestion, setBotQuestion] = useState('');
+
+  // Close message action menu on click outside
+  useEffect(() => {
+    const handleClickOutside = () => setActiveActionMenuId(null);
+    window.addEventListener('click', handleClickOutside);
+    return () => window.removeEventListener('click', handleClickOutside);
+  }, []);
   const [botContext, setBotContext] = useState('');
   const [showAIButtons, setShowAIButtons] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -686,21 +754,21 @@ export default function Chat() {
   }
 
   return (
-    <div className={`h-screen bg-gradient-to-br from-gray-50 via-white to-pink-50 flex p-0 md:p-4 messenger-${currentMessenger}`}>
+    <div className={`h-screen flex p-0 md:p-4 messenger-${currentMessenger}`}>
       <div className="rounded-none md:rounded-3xl shadow-2xl border border-gray-200/50 h-full w-full flex overflow-hidden">
         {/* Clients List */}
         <div className={`
           ${selectedClient ? 'hidden md:flex' : 'flex'}
-          flex-col w-full md:w-96 border-r border-gray-200
+          flex-col w-full md:w-64 border-r border-gray-200 bg-white
         `}>
-          <div className="p-4 border-b border-gray-100">
+          <div className="p-2 border-b border-gray-100">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xl font-bold text-gray-900 capitalize flex items-center gap-2">
-                {currentMessenger === 'instagram' && <InstagramIcon className="w-6 h-6 text-pink-600" />}
-                {currentMessenger === 'telegram' && <TelegramIcon className="w-6 h-6 text-blue-500" />}
-                {currentMessenger === 'whatsapp' && <WhatsAppIcon className="w-6 h-6 text-green-600" />}
-                {currentMessenger === 'tiktok' && <TikTokIcon className="w-6 h-6 text-black" />}
-                {currentMessenger}
+                {currentMessenger === 'instagram' && <InstagramIcon size={32} colorful={true} />}
+                {currentMessenger === 'telegram' && <TelegramIcon size={32} colorful={true} />}
+                {currentMessenger === 'whatsapp' && <WhatsAppIcon size={32} colorful={true} />}
+                {currentMessenger === 'tiktok' && <TikTokIcon size={32} colorful={true} />}
+                <span className="ml-1 uppercase">{currentMessenger}</span>
               </span>
             </div>
             <div className="relative">
@@ -718,64 +786,14 @@ export default function Chat() {
           <div className="flex-1 overflow-y-auto">
             {filteredClients.length > 0 ? (
               <div className="divide-y divide-gray-100">
-                {filteredClients.map((client) => (
-                  <button
-                    key={client.id}
+                {filteredClients.map((client, index) => (
+                  <ClientItem
+                    key={client.id || index}
+                    client={client}
+                    isSelected={selectedClient?.id === client.id}
                     onClick={() => handleSelectClient(client)}
-                    className={`
-                      w-full p-4 flex items-start gap-3 hover:bg-gray-50 transition-colors text-left
-                      ${selectedClient?.id === client.id ? 'bg-purple-50' : ''}
-                    `}
-                  >
-                    <div className="relative flex-shrink-0">
-                      {client.profile_pic && client.profile_pic.trim() !== '' ? (
-                        <img
-                          src={client.profile_pic}
-                          alt={client.display_name}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
-                          crossOrigin="anonymous"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                            if (fallback) fallback.style.display = 'flex';
-                          }}
-                        />
-                      ) : null}
-                      <div className={`w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-semibold ${client.profile_pic && client.profile_pic.trim() !== '' ? 'hidden' : ''
-                        }`}>
-                        {client.display_name.charAt(0).toUpperCase()}
-                      </div>
-                      {client.source && (
-                        <div className={`absolute -bottom-1 -right-1 size-5 rounded-full flex items-center justify-center shadow-lg z-10 border-2 border-white ${client.source.toLowerCase() === 'instagram' ? 'bg-gradient-to-tr from-purple-500 via-pink-500 to-orange-500' :
-                          client.source.toLowerCase() === 'telegram' ? 'bg-[#0088cc]' :
-                            client.source.toLowerCase() === 'whatsapp' ? 'bg-[#25D366]' :
-                              'bg-black'
-                          }`}>
-                          {client.source.toLowerCase() === 'instagram' && <InstagramIcon className="w-2.5 h-2.5 text-white" />}
-                          {client.source.toLowerCase() === 'telegram' && <TelegramIcon className="w-2.5 h-2.5 text-white" />}
-                          {client.source.toLowerCase() === 'whatsapp' && <WhatsAppIcon className="w-2.5 h-2.5 text-white" />}
-                          {client.source.toLowerCase() === 'tiktok' && <TikTokIcon className="w-2.5 h-2.5 text-white" />}
-                        </div>
-                      )}
-                      {client.unread_count && client.unread_count > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
-                          {client.unread_count > 9 ? '9+' : client.unread_count}
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium text-gray-900 truncate">{client.display_name}</span>
-                        <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
-                          {new Date(client.last_contact).toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' })}
-                        </span>
-                      </div>
-                      <span className="text-xs text-gray-500 truncate mb-1 block">{client.phone || t('chat:no_phone')}</span>
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs text-gray-500">{client.total_messages} {t('chat:messages')}</span>
-                      </div>
-                    </div>
-                  </button>
+                    t={t}
+                  />
                 ))}
               </div>
             ) : (
@@ -791,11 +809,11 @@ export default function Chat() {
 
         {/* Chat Area */}
         {selectedClient ? (
-          <div className="flex-1 flex bg-white min-w-0">
+          <div className="flex-1 flex min-w-0">
             {/* Main Chat Column */}
             <div className="flex-1 flex flex-col min-w-0">
               {/* Chat Header */}
-              <div className="p-3 md:p-4 border-b border-gray-200/50 chat-header flex-shrink-0 transition-all duration-300">
+              <div className="p-2 md:p-3 border-b border-gray-200/50 chat-header flex-shrink-0 transition-all duration-300">
                 <div className="flex items-center justify-between gap-2">
                   {/* Left: Avatar & Info */}
                   <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -960,7 +978,7 @@ export default function Chat() {
                     <div
                       key={msg.id || index}
                       ref={(el) => { messageRefs.current[index] = el; }}
-                      className={`flex items-start gap-2 relative group ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
+                      className={`flex items-start gap-4 h-auto relative group ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'flex-row-reverse' : 'flex-row'} mb-4 animate-in fade-in slide-in-from-bottom-2 duration-300`}
                     >
                       {/* Чекбокс для режима выделения */}
                       {isSelectingMessages && msg.id && (
@@ -1120,52 +1138,76 @@ export default function Chat() {
                         </div>
                       </div>
 
-                      {/* Кнопки действий при наведении (Instagram style - Triple Dot Menu) */}
+                      {/* Actions Menu (Three Dots) - Anchored inside the flex flow for maximum reliability */}
                       <div
-                        className={`absolute ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'right-full mr-4' : 'left-full ml-4'} top-1/2 -translate-y-1/2 transition-all duration-300 z-[100] group/actions`}
+                        className={`flex items-center self-center transition-all duration-300 opacity-0 group-hover:opacity-100 ${(msg.sender === 'bot' || msg.sender === 'manager')
+                          ? 'order-first mr-1 translate-x-1'
+                          : 'order-last ml-1 -translate-x-1'
+                          }`}
                       >
-                        <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center gap-2">
-                          <div className="relative group/menu">
-                            <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all text-gray-400 hover:text-gray-600">
-                              <MoreVertical className="w-4 h-4" />
-                            </button>
+                        <div className="relative">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveActionMenuId(activeActionMenuId === (msg.id || index) ? null : (msg.id || index));
+                            }}
+                            className="p-2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-full shadow-lg border border-gray-100 dark:border-gray-700 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-all scale-90 hover:scale-110 active:scale-95"
+                          >
+                            <MoreVertical className="w-4 h-4" />
+                          </button>
 
-                            {/* Dropdown Menu on Hover */}
-                            <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover/menu:flex flex-col bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 p-1.5 min-w-[140px] animate-in zoom-in-95 duration-200 overflow-hidden">
+                          {/* Pill Menu (Shown on Click) */}
+                          {activeActionMenuId === (msg.id || index) && (
+                            <div
+                              className={`absolute bottom-full mb-3 flex items-center gap-0.5 bg-white/98 dark:bg-gray-800/98 backdrop-blur-xl rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.15)] border border-gray-100 dark:border-gray-700 p-1 animate-in zoom-in-95 slide-in-from-bottom-2 duration-200 z-[120] ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'right-0' : 'left-0'
+                                }`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
                               <button
                                 onClick={() => {
                                   setReplyToMessage(msg);
-                                  toast.info('💬 Напишите комментарий (ответ)');
+                                  toast.info('💬 Напишите ответ');
+                                  setActiveActionMenuId(null);
                                 }}
-                                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors"
+                                className="p-2 hover:bg-purple-50 dark:hover:bg-purple-900/40 text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 rounded-full transition-all"
+                                title="Ответить"
                               >
                                 <Reply className="w-4 h-4" />
-                                <span>Комментировать</span>
                               </button>
 
                               <button
                                 onClick={() => {
                                   navigator.clipboard.writeText(msg.message);
                                   toast.success('📋 Текст скопирован');
+                                  setActiveActionMenuId(null);
                                 }}
-                                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors"
+                                className="p-2 hover:bg-purple-50 dark:hover:bg-purple-900/40 text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 rounded-full transition-all"
+                                title="Копировать"
                               >
                                 <Copy className="w-4 h-4" />
-                                <span>Копировать</span>
                               </button>
 
                               <button
                                 onClick={() => {
                                   setForwardMessage(msg);
                                   setShowForwardModal(true);
+                                  setActiveActionMenuId(null);
                                 }}
-                                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors"
+                                className="p-2 hover:bg-purple-50 dark:hover:bg-purple-900/40 text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 rounded-full transition-all"
+                                title="Переслать"
                               >
                                 <Forward className="w-4 h-4" />
-                                <span>Переслать</span>
+                              </button>
+
+                              <button
+                                onClick={() => setActiveActionMenuId(null)}
+                                className="p-2 hover:bg-purple-50 dark:hover:bg-purple-900/40 text-gray-500 hover:text-red-500 dark:hover:text-red-400 rounded-full transition-all"
+                                title="Нравится"
+                              >
+                                <Heart className="w-4 h-4" />
                               </button>
                             </div>
-                          </div>
+                          )}
                         </div>
                       </div>
                     </div>
