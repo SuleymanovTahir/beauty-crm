@@ -15,17 +15,17 @@ def get_all_bookings():
 
     try:
         c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
-                     name, status, created_at, revenue, master
+                     name, status, created_at, revenue, master, user_id, source
                      FROM bookings ORDER BY created_at DESC""")
     except psycopg2.OperationalError:
-        # Fallback для старой схемы без master
+        # Fallback для старой схемы без master/user_id
         try:
             c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
-                         name, status, created_at, revenue, NULL as master
+                         name, status, created_at, revenue, master, NULL as user_id, source
                          FROM bookings ORDER BY created_at DESC""")
         except:
             c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
-                         name, status, created_at, 0 as revenue, NULL as master
+                         name, status, created_at, 0 as revenue, NULL as master, NULL as user_id
                          FROM bookings ORDER BY created_at DESC""")
 
     bookings = c.fetchall()

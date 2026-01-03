@@ -10,7 +10,10 @@
     "manual": "Вручную",
     "instagram": "Instagram",
     "telegram": "Telegram",
-    "whatsapp": "WhatsApp"
+    "whatsapp": "WhatsApp",
+    "account": "ЛК",
+    "guest_link": "Ссылка",
+    "custom": "Свой источник"
   },
   "amount": "Сумма",
   "created": "Создано",

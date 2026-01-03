@@ -226,8 +226,15 @@ export default function Bookings() {
         (booking.service_name || '').toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
       const matchesMaster = masterFilter === 'all' ||
-        booking.master === masterFilter ||
-        masters.find(m => m.username === booking.master)?.full_name === masterFilter;
+        (() => {
+          const m = masters.find(m =>
+            (m.username && booking.master && m.username.toLowerCase() === booking.master.toLowerCase()) ||
+            (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase()) ||
+            (m.full_name_ru && booking.master && m.full_name_ru.toLowerCase() === booking.master.toLowerCase())
+          );
+          const name = (i18n.language.startsWith('ru') && m?.full_name_ru) ? m.full_name_ru : (m?.full_name || booking.master);
+          return name === masterFilter;
+        })();
 
       // ✅ ДОБАВЛЕНА ФИЛЬТРАЦИЯ ПО ДАТЕ
       let matchesDate = true;
@@ -442,8 +449,9 @@ export default function Bookings() {
       setBookings(bookingsData.bookings || []);
       setClients(clientsData.clients || []);
       setServices(servicesData.services || []);
-      setMasters(usersData.users?.filter((u: any) =>
-        u.role === 'employee' || u.role === 'manager' || u.role === 'admin'
+      const allUsers = Array.isArray(usersData) ? usersData : (usersData.users || []);
+      setMasters(allUsers.filter((u: any) =>
+        ['employee', 'manager', 'admin', 'director'].includes(u.role)
       ) || []);
 
       console.log('✅ [Bookings] Все данные загружены успешно!');
@@ -475,13 +483,17 @@ export default function Bookings() {
   };
 
   const handleSourceChange = async (id: number, newSource: string) => {
+    // 1. Optimistic Update
+    setBookings((prevBookings: any[]) =>
+      prevBookings.map((b: any) => b.id === id ? { ...b, source: newSource } : b)
+    );
+
     try {
       await api.updateBooking(id, { source: newSource });
-      setBookings((prevBookings: any[]) =>
-        prevBookings.map((b: any) => b.id === id ? { ...b, source: newSource } : b)
-      );
       toast.success(t('bookings:source_updated', 'Источник обновлен'));
     } catch (err) {
+      // Refresh to sync if failed
+      await loadData();
       toast.error(t('bookings:error_updating_source', 'Ошибка обновления источника'));
     }
   };
@@ -1024,48 +1036,43 @@ export default function Bookings() {
                 <tr>
                   <th
                     onClick={() => handleSort('name')}
-                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
+                    className="px-6 py-4 text-center text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
                   >
                     {t('bookings:client')} {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     onClick={() => handleSort('service_name')}
-                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
+                    className="px-6 py-4 text-center text-sm font-semibold text-gray-600 cursor-pointer select-none min-w-[200px]"
                   >
                     {t('bookings:service')} {sortField === 'service_name' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     onClick={() => handleSort('datetime')}
-                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
+                    className="px-6 py-4 text-center text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
                   >
                     {t('bookings:date')} {sortField === 'datetime' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
-                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap"
+                    className="px-6 py-4 text-center text-sm font-semibold text-gray-600 whitespace-nowrap"
                   >
                     {t('bookings:master')}
                   </th>
                   <th
                     onClick={() => handleSort('source')}
-                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
+                    className="px-6 py-4 text-center text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
                   >
                     {t('bookings:source.title', 'Соц.сеть')} {sortField === 'source' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     onClick={() => handleSort('revenue')}
-                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
+                    className="px-6 py-4 text-center text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
                   >
                     {t('bookings:amount', 'Сумма')} {sortField === 'revenue' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th
-                    onClick={() => handleSort('created_at')}
-                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
-                  >
-                    {t('bookings:created', 'Создано')} {sortField === 'created_at' && (sortDirection === 'asc' ? '↑' : '↓')}
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">{t('bookings:phone')}</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">{t('bookings:status')}</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">{t('bookings:actions')}</th>
+
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-600 whitespace-nowrap">{t('bookings:phone')}</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-600 whitespace-nowrap">{t('bookings:status')}</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-600 whitespace-nowrap">{t('bookings:actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -1083,7 +1090,7 @@ export default function Bookings() {
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       <td style={{ padding: '1rem 1.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div className="flex items-center gap-3">
                           {(() => {
                             // Find client data by client_id
                             const client = clients.find(c => c.id === booking.client_id);
@@ -1161,23 +1168,40 @@ export default function Bookings() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
                         {(() => {
-                          const service = services.find(s => s.name === booking.service_name || s.name_ru === booking.service_name);
+                          const serviceName = booking.service_name || '-';
+                          // 1. Try to find in services list (best for localization)
+                          const service = services.find(s => s.name === serviceName || s.service_key === serviceName || s.name_ru === serviceName);
                           if (service) {
-                            const langCode = i18n.language.split('-')[0];
-                            const localizedName = service[`name_${langCode}`];
-                            return localizedName || service.name;
+                            return (i18n.language.startsWith('ru') && service.name_ru) ? service.name_ru : service.name;
                           }
-                          return t(`admin/services:${booking.service_name}`, booking.service_name || '-') as string;
+                          // 2. Try i18next translation
+                          const translated = t(`admin/services:${serviceName}`, '');
+                          if (translated && translated !== serviceName) return translated;
+
+                          // 3. Fallback
+                          return serviceName;
                         })()}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{formatDateTime(booking.datetime)}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                        <div className="flex flex-col items-center">
+                          <span className="font-medium">{new Date(booking.datetime).toLocaleDateString('ru-RU')}</span>
+                          <span className="text-xs text-gray-500">{new Date(booking.datetime).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                      </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
                         {(() => {
-                          const masterInfo = masters.find(m =>
+                          const m = masters.find(m =>
                             (m.username && booking.master && m.username.toLowerCase() === booking.master.toLowerCase()) ||
-                            (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase())
+                            (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase()) ||
+                            (m.full_name_ru && booking.master && m.full_name_ru.toLowerCase() === booking.master.toLowerCase())
                           );
-                          return masterInfo?.full_name || booking.master || '-';
+                          const name = (i18n.language.startsWith('ru') && m?.full_name_ru) ? m.full_name_ru : (m?.full_name || booking.master || '-');
+                          const pos = i18n.language.startsWith('ru') && m?.position_ru ? m.position_ru : (m?.position || '');
+                          return (
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-900">{name}</span>
+                            </div>
+                          );
                         })()}
                       </td>
                       <td className="px-6 py-4">
@@ -1187,11 +1211,16 @@ export default function Bookings() {
                         />
                       </td>
                       <td className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">
-                        {booking.revenue ? `${booking.revenue} AED` : '-'}
+                        {(() => {
+                          if (booking.revenue) {
+                            return `${booking.revenue} AED`;
+                          }
+                          // Fallback to service price if revenue is 0/null
+                          const service = services.find(s => s.name === booking.service || s.name_ru === booking.service);
+                          return service?.price ? `${service.price} AED` : '-';
+                        })()}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                        {booking.created_at ? new Date(booking.created_at).toLocaleDateString(i18n.language === 'ru' ? 'ru-RU' : 'en-US') : '-'}
-                      </td>
+
                       <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{booking.phone || '-'}</td>
                       <td className="px-6 py-4">
                         <StatusSelect
@@ -1839,9 +1868,7 @@ export default function Bookings() {
                     <option value="">{t('bookings:select_master')}</option>
                     {filteredMasters.map((m: any) => {
                       const displayName = m.full_name || m.username;
-                      const position = (m.position && m.position.length < 20)
-                        ? (m.position === 'Master' ? t('bookings:master') : (m.position === 'Top Master' ? 'Топ Мастер' : m.position))
-                        : '';
+                      const position = i18n.language === 'ru' && m.position_ru ? m.position_ru : (m.position || '');
                       return (
                         <option key={m.id} value={m.full_name || m.username}>
                           {displayName} {position ? `— ${position}` : ''}

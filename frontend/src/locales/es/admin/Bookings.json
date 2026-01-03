@@ -102,7 +102,10 @@
     "manual": "A mano",
     "telegram": "Telegrama",
     "title": "Fuente",
-    "whatsapp": "WhatsApp"
+    "whatsapp": "WhatsApp",
+    "account": "LC",
+    "guest_link": "Enlace",
+    "custom": "Fuente personalizada"
   },
   "status": "Estado",
   "status_updated": "Estado actualizado",

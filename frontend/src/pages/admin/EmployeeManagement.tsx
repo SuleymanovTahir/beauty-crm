@@ -11,7 +11,9 @@ import EmployeeDetail from './EmployeeDetail';
 interface Employee {
     id: number;
     full_name: string;
+    full_name_ru?: string;
     position?: string;
+    position_ru?: string;
     photo?: string;
     gender?: string;
     is_service_provider: boolean;
@@ -66,6 +68,8 @@ export default function EmployeeManagement() {
         }
         return '/static/avatars/default_female.webp';
     };
+
+    const { i18n } = useTranslation();
 
     return (
         <div className="flex h-[calc(100vh-4rem)] bg-gray-50">
@@ -125,10 +129,10 @@ export default function EmployeeManagement() {
                                             ? 'text-blue-900'
                                             : 'text-gray-900'
                                             }`}>
-                                            {employee.full_name}
+                                            {(i18n.language === 'ru' && employee.full_name_ru) ? employee.full_name_ru : employee.full_name}
                                         </p>
                                         <p className="text-xs text-gray-500 truncate">
-                                            {employee.position || t('employee')}
+                                            {(i18n.language === 'ru' && employee.position_ru) ? employee.position_ru : (employee.position || t('employee'))}
                                         </p>
                                     </div>
                                 </Link>

@@ -102,7 +102,9 @@
     "manual": "मैन्युअल",
     "telegram": "टेलीग्राम",
     "title": "स्रोत",
-    "whatsapp": "WHATSAPP"
+    "whatsapp": "WHATSAPP",
+    "account": "एल के",
+    "guest_link": "लिंक"
   },
   "status": "स्थिति",
   "status_updated": "स्थिति अद्यतन की गई",
