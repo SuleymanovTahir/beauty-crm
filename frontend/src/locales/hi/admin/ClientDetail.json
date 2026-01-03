@@ -61,5 +61,8 @@
   "save_error": "सहेजते समय त्रुटि",
   "delete_gallery_confirm": "क्या आप वाकई इस प्रविष्टि को अपनी गैलरी से हटाना चाहते हैं?",
   "gallery_entry_deleted": "गैलरी से पोस्ट हटा दी गई",
-  "delete_error": "हटाने के दौरान त्रुटि"
+  "delete_error": "हटाने के दौरान त्रुटि",
+  "top_3_procedures": "शीर्ष 3 प्रक्रियाएँ",
+  "top_3_masters": "शीर्ष 3 मास्टर्स",
+  "visits_dynamics": "यात्राओं की गतिशीलता"
 }

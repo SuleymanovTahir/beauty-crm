@@ -283,7 +283,7 @@ export class ApiClient {
 
   async createRolePlan(roleKey: string, metricType: string, targetValue: number,
     periodType: string, visibleToRoles?: string[],
-    canEditRoles?: string[], startDate?: string, endDate?: string) {
+    canEditRoles?: string[], startDate?: string, endDate?: string, comment?: string) {
     const data: any = {
       role_key: roleKey,
       metric_type: metricType,
@@ -294,6 +294,7 @@ export class ApiClient {
     if (canEditRoles) data.can_edit_roles = canEditRoles
     if (startDate) data.start_date = startDate
     if (endDate) data.end_date = endDate
+    if (comment) data.comment = comment
 
     return this.request('/api/plans/role', {
       method: 'POST',
@@ -302,7 +303,7 @@ export class ApiClient {
   }
 
   async createIndividualPlan(userId: number, metricType: string, targetValue: number,
-    periodType: string, startDate?: string, endDate?: string) {
+    periodType: string, startDate?: string, endDate?: string, comment?: string) {
     const data: any = {
       user_id: userId,
       metric_type: metricType,
@@ -311,10 +312,28 @@ export class ApiClient {
     }
     if (startDate) data.start_date = startDate
     if (endDate) data.end_date = endDate
+    if (comment) data.comment = comment
 
     return this.request('/api/plans/individual', {
       method: 'POST',
       body: JSON.stringify(data),
+    })
+  }
+
+  async getPlanMetrics() {
+    return this.request<any>('/api/plans/metrics/all')
+  }
+
+  async createPlanMetric(data: { key: string; name: string; unit?: string; description?: string; name_ru?: string; name_en?: string }) {
+    return this.request('/api/plans/metrics', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deletePlanMetric(key: string) {
+    return this.request(`/api/plans/metrics/${key}`, {
+      method: 'DELETE',
     })
   }
 

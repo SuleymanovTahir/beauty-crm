@@ -9,10 +9,10 @@
   "files_added": "Қосылған файлдар: {{count}}",
   "files_added_few": "Бірнеше файл қосылды",
   "files_added_many": "Көптеген файлдар қосылды",
-  "files_added_one": "Файлдар біреуі қосылды",
-  "files_added_other": "Басқа файлдар қосылды",
+  "files_added_one": "Файлдардың бірі қосылды",
+  "files_added_other": "Қосымша файлдар қосылды",
   "files_cleared": "Файлдар тазартылды",
-  "image": "Сурет",
+  "image": "Кескіндеме",
   "image_not_available": "Кескін қолжетімді емес",
   "information": "Ақпарат",
   "information_updated": "Ақпарат жаңартылды",
@@ -28,5 +28,5 @@
   "select_chat": "Чатты таңдаңыз",
   "select_dialog_from_list": "Сол жақтағы тізімнен сөйлесуді таңдаңыз",
   "templates": "Үлгілер",
-  "try_again": "Қайтадан байқап көріңіз"
+  "try_again": "қайтадан байқап көріңіз"
 }

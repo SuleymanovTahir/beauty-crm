@@ -61,5 +61,8 @@
   "save_error": "Error al guardar",
   "delete_gallery_confirm": "¿Estás seguro de que quieres eliminar esta entrada de tu galería?",
   "gallery_entry_deleted": "Publicación eliminada de la galería.",
-  "delete_error": "Error durante la eliminación"
+  "delete_error": "Error durante la eliminación",
+  "top_3_procedures": "Los 3 procedimientos principales",
+  "top_3_masters": "Los 3 mejores maestros",
+  "visits_dynamics": "Dinámica de visitas"
 }

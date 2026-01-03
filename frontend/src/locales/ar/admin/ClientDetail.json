@@ -61,5 +61,8 @@
   "save_error": "حدث خطأ أثناء الحفظ",
   "delete_gallery_confirm": "هل أنت متأكد أنك تريد إزالة هذا الإدخال من معرض الصور الخاص بك؟",
   "gallery_entry_deleted": "تمت إزالة المشاركة من المعرض",
-  "delete_error": "حدث خطأ أثناء الحذف"
+  "delete_error": "حدث خطأ أثناء الحذف",
+  "top_3_procedures": "أعلى 3 إجراءات",
+  "top_3_masters": "أعلى 3 الماجستير",
+  "visits_dynamics": "ديناميات الزيارات"
 }

@@ -99,7 +99,7 @@
   "last_contact": "último contacto",
   "lead": "Dirigir",
   "loading_clients": "Cargando clientes...",
-  "ltv": "TVL",
+  "ltv": "Ingresos (LTV)",
   "messages": "Mensajes",
   "name": "Nombre",
   "name_placeholder": "Introduzca el nombre del cliente",
@@ -136,5 +136,8 @@
   "warm": "Cálido",
   "warm_client": "Cliente cálido",
   "write_message": "Escribe un mensaje",
-  "you_are_deleting_client": "Estas eliminando un cliente"
+  "you_are_deleting_client": "Estas eliminando un cliente",
+  "bookings": "Visitas totales",
+  "total_messages_desc": "Número total de mensajes de chat",
+  "total_bookings_desc": "Número total de entradas realizadas"
 }

@@ -61,5 +61,8 @@
   "save_error": "Erro ao salvar",
   "delete_gallery_confirm": "Tem certeza de que deseja remover esta entrada da sua galeria?",
   "gallery_entry_deleted": "Postagem removida da galeria",
-  "delete_error": "Erro durante a exclusão"
+  "delete_error": "Erro durante a exclusão",
+  "top_3_procedures": "3 principais procedimentos",
+  "top_3_masters": "Os 3 melhores mestres",
+  "visits_dynamics": "Dinâmica de visitas"
 }

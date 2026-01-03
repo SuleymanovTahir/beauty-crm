@@ -11,7 +11,7 @@
     "description": "Contact us, we will be happy to answer all your questions",
     "title": "Couldn't find the answer to your question?"
   },
-  "faq_title": "FAQ",
+  "faq_title": "Frequently Asked Questions",
   "question_1": "How to sign up for the procedure?",
   "question_2": "What payment methods do you accept?",
   "question_3": "Can I cancel or reschedule an appointment?",
@@ -69,5 +69,5 @@
     }
   },
   "subtitle": "Answers to popular questions about our services",
-  "title": "FAQ"
+  "title": "Frequently Asked Questions"
 }

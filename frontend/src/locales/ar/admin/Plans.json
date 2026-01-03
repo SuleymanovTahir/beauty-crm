@@ -15,11 +15,12 @@
   "metric_type": "نوع متري",
   "metrics": {
     "active_clients": "العملاء النشطين",
-    "average_check": "متوسط \u200b\u200bالفاتورة",
+    "average_check": "متوسط ​​الفاتورة",
     "bookings": "الحجز",
     "new_clients": "عملاء جدد",
     "revenue": "دخل",
-    "vip_clients": "عملاء VIP"
+    "vip_clients": "عملاء VIP",
+    "sales": "مبيعات"
   },
   "my_plans": "خططي",
   "no_plans_found": "لم يتم العثور على خطط",
@@ -28,7 +29,9 @@
     "month": "شهر",
     "quarter": "ربع",
     "week": "أسبوع",
-    "year": "سنة"
+    "year": "سنة",
+    "two_weeks": "2 أسابيع",
+    "custom": "دورتك الشهرية"
   },
   "plan_created": "تم إنشاء الخطة",
   "plan_deleted": "تم حذف الخطة.",
@@ -41,5 +44,16 @@
   "select_role": "حدد دورًا",
   "select_user": "حدد المستخدم",
   "target_value": "القيمة المستهدفة",
-  "user": "مستخدم"
+  "user": "مستخدم",
+  "comment": "تعليق",
+  "plan_name": "اسم الخطة",
+  "manage_metrics": "إدارة المقاييس",
+  "add_metric": "أضف مقياسًا",
+  "metric_name_ru": "الاسم (رو)",
+  "metric_name_en": "العنوان (بالإنكليزية)",
+  "unit": "وحدة القياس",
+  "description": "وصف",
+  "error_loading_metrics": "حدث خطأ أثناء تحميل المقاييس",
+  "start_date": "تاريخ البدء",
+  "end_date": "تاريخ الانتهاء"
 }
