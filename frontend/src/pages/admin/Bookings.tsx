@@ -7,6 +7,7 @@ import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, P
 import { toast } from 'sonner';
 import { ExportDropdown } from '../../components/shared/ExportDropdown';
 import { StatusSelect } from '../../components/shared/StatusSelect';
+import { SourceSelect } from '../../components/shared/SourceSelect';
 import { useBookingStatuses } from '../../hooks/useStatuses';
 
 import { getDynamicAvatar } from '../../utils/avatarUtils';
@@ -468,6 +469,18 @@ export default function Bookings() {
       toast.success(t('bookings:status_updated'));
     } catch (err) {
       toast.error(t('bookings:error_updating_status'));
+    }
+  };
+
+  const handleSourceChange = async (id: number, newSource: string) => {
+    try {
+      await api.updateBooking(id, { source: newSource });
+      setBookings((prevBookings: any[]) =>
+        prevBookings.map((b: any) => b.id === id ? { ...b, source: newSource } : b)
+      );
+      toast.success(t('bookings:source_updated', 'Источник обновлен'));
+    } catch (err) {
+      toast.error(t('bookings:error_updating_source', 'Ошибка обновления источника'));
     }
   };
 
@@ -1123,17 +1136,18 @@ export default function Bookings() {
                       <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{formatDateTime(booking.datetime)}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">
                         {(() => {
-                          const master = masters.find(m => m.username === booking.master || m.full_name === booking.master);
-                          return master?.full_name || booking.master || '-';
+                          const masterInfo = masters.find(m =>
+                            (m.username && booking.master && m.username.toLowerCase() === booking.master.toLowerCase()) ||
+                            (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase())
+                          );
+                          return masterInfo?.full_name || booking.master || '-';
                         })()}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                        {booking.source === 'instagram' ? '📷 Instagram' :
-                          booking.source === 'telegram' ? '✈️ Telegram' :
-                            booking.source === 'whatsapp' ? '📱 WhatsApp' :
-                              booking.source === 'account' ? '👤 ЛК' :
-                                booking.source === 'guest_link' ? '🔗 Ссылка' :
-                                  t(`source.${booking.source || 'manual'}`, booking.source || 'Manual') as string}
+                      <td className="px-6 py-4">
+                        <SourceSelect
+                          value={booking.source}
+                          onChange={(newSource) => handleSourceChange(booking.id, newSource)}
+                        />
                       </td>
                       <td className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">
                         {booking.revenue ? `${booking.revenue} AED` : '-'}
@@ -1786,11 +1800,17 @@ export default function Bookings() {
                     disabled={loadingMasters}
                   >
                     <option value="">{t('bookings:select_master')}</option>
-                    {filteredMasters.map((m: any) => (
-                      <option key={m.id} value={m.full_name || m.username}>
-                        {m.full_name || m.username} — {m.position === 'Master' ? t('bookings:master') : (m.position === 'Top Master' ? 'Топ Мастер' : m.position)}
-                      </option>
-                    ))}
+                    {filteredMasters.map((m: any) => {
+                      const displayName = m.full_name || m.username;
+                      const position = (m.position && m.position.length < 20)
+                        ? (m.position === 'Master' ? t('bookings:master') : (m.position === 'Top Master' ? 'Топ Мастер' : m.position))
+                        : '';
+                      return (
+                        <option key={m.id} value={m.full_name || m.username}>
+                          {displayName} {position ? `— ${position}` : ''}
+                        </option>
+                      );
+                    })}
                   </select>
                   {selectedService && filteredMasters.length === 0 && !loadingMasters && (
                     <div style={{

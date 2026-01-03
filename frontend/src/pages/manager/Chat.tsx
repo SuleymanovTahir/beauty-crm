@@ -1404,6 +1404,7 @@ export default function Chat() {
                               name: data.name || c.name,
                               phone: data.phone || c.phone,
                               status: data.status || c.status,
+                              source: data.source || c.source,
                               display_name: data.name || c.username || c.display_name
                             }
                             : c
@@ -1413,6 +1414,7 @@ export default function Chat() {
                           name: data.name,
                           phone: data.phone,
                           status: data.status || selectedClient.status,
+                          source: data.source || selectedClient.source,
                           display_name: data.name || selectedClient.username || selectedClient.display_name
                         });
                         toast.success(t('chat:information_updated'));
