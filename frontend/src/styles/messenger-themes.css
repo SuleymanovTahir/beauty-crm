@@ -26,7 +26,7 @@
 
 /* Instagram Theme */
 .messenger-instagram .chat-header {
-  background: var(--instagram-gradient) !important;
+  /* background: var(--instagram-gradient) !important; */
   color: white;
 }
 
@@ -159,16 +159,28 @@
   padding: 10px 16px;
   position: relative;
   font-size: 14px;
+  border-radius: 18px;
 }
 
 .message-own {
   margin-left: auto;
-  border-radius: 18px 18px 4px 18px;
+  border-radius: 18px 18px 4px 18px !important;
 }
 
 .message-other {
   margin-right: auto;
-  border-radius: 18px 18px 18px 4px;
+  border-radius: 18px 18px 18px 4px !important;
+}
+
+/* Default message colors (Instagram style) */
+.message-bubble.message-own {
+  background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 100%) !important;
+  color: white !important;
+}
+
+.message-bubble.message-other {
+  background: #efefef !important;
+  color: #000000 !important;
 }
 
 /* Анимации */
