@@ -111,6 +111,25 @@
   border-top: 1px solid #e0e0e0 !important;
 }
 
+.messenger-telegram .empty-chat-area {
+  background-color: #eff1f5 !important;
+  background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png') !important;
+  background-size: cover;
+}
+
+.messenger-telegram .empty-chat-area .bg-gradient-to-br {
+  background: #e3f2fd !important;
+}
+
+.messenger-telegram .empty-chat-area .text-pink-600 {
+  color: #0088cc !important;
+}
+
+.messenger-telegram .empty-chat-area .text-gray-700,
+.messenger-telegram .empty-chat-area .text-gray-500 {
+  color: #546e7a !important;
+}
+
 /* WhatsApp Theme */
 .messenger-whatsapp .chat-header.chat-header {
   background-color: #00a884 !important;
