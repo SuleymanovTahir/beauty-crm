@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
+import { DateFilterDropdown } from '../../components/shared/DateFilterDropdown';
 
 interface Stats {
   total_clients: number;
@@ -309,10 +310,9 @@ export default function AdminDashboard() {
             <Filter className="w-5 h-5" />
             <span className="font-medium">{t('dashboard:date_filter', 'Период:')}</span>
           </div>
-          <select
+          <DateFilterDropdown
             value={dateFilter}
-            onChange={(e) => {
-              const value = e.target.value as DateFilter;
+            onChange={(value) => {
               setDateFilter(value);
               if (value === 'custom') {
                 setShowDatePicker(true);
@@ -320,16 +320,7 @@ export default function AdminDashboard() {
                 setShowDatePicker(false);
               }
             }}
-            className="flex-1 sm:flex-initial sm:min-w-[200px] px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent bg-white text-gray-700"
-          >
-            <option value="today">{t('dashboard:filter_today', 'Сегодня')}</option>
-            <option value="yesterday">{t('dashboard:filter_yesterday', 'Вчера')}</option>
-            <option value="last7days">{t('dashboard:filter_last7days', 'Последние 7 дней')}</option>
-            <option value="last30days">{t('dashboard:filter_last30days', 'Последние 30 дней')}</option>
-            <option value="thisMonth">{t('dashboard:filter_this_month', 'Этот месяц')}</option>
-            <option value="lastMonth">{t('dashboard:filter_last_month', 'Прошлый месяц')}</option>
-            <option value="custom">{t('dashboard:filter_custom', 'Свой период')}</option>
-          </select>
+          />
         </div>
 
         {/* Custom Date Range Picker */}
