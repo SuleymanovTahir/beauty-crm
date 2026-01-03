@@ -37,7 +37,6 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
-import MessengerSidebar, { MessengerType } from '../../components/chat/MessengerSidebar';
 
 interface Client {
   id: string;
@@ -865,7 +864,7 @@ export default function Chat() {
             {/* Main Chat Column */}
             <div className="flex-1 flex flex-col min-w-0">
               {/* Chat Header */}
-              <div className="p-2 md:p-3 border-b border-gray-200/50 chat-header flex-shrink-0 transition-all duration-300">
+              <div className="p-2 md:p-3 border-b border-gray-200/50 chat-header flex-shrink-0">
                 <div className="flex items-center justify-between gap-2">
                   {/* Left: Avatar & Info */}
                   <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -995,7 +994,7 @@ export default function Chat() {
               )}
 
               {/* Messages Area */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 chat-messages-area transition-all duration-300">
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 chat-messages-area">
                 {loadingMessages ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="flex flex-col items-center gap-3">
