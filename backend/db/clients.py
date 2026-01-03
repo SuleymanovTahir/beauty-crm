@@ -96,8 +96,9 @@ def get_client_by_id(instagram_id: str):
     c.execute("""SELECT instagram_id, username, phone, name, first_contact,
                   last_contact, total_messages, labels, status, lifetime_value,
                   profile_pic, notes, is_pinned, detected_language,
-                  total_spend, total_visits, discount, card_number,
-                  gender, age, birth_date
+                  gender, card_number, discount, total_visits,
+                  total_spend, birthday, email, temperature,
+                  age, birth_date, referral_code
                   FROM clients WHERE instagram_id = %s""", (instagram_id,))
     
     client = c.fetchone()

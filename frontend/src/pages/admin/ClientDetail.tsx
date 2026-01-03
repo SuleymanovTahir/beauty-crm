@@ -62,7 +62,7 @@ interface ClientStats {
 export default function ClientDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { t } = useTranslation(['admin/ClientDetail', 'common']);
+  const { t, i18n } = useTranslation(['admin/clientdetail', 'common']);
 
   const [client, setClient] = useState<Client | null>(null);
   const [stats, setStats] = useState<ClientStats | null>(null);
@@ -173,9 +173,9 @@ export default function ClientDetail() {
 
       const res = await api.uploadClientGalleryPhoto(client.id, photoType, file);
       setGalleryFormData({ ...galleryFormData, [photoType === 'before' ? 'before_photo' : 'after_photo']: res.image_path });
-      toast.success(t('clientdetail:photo_uploaded'));
+      toast.success(t('photo_uploaded'));
     } catch (error) {
-      toast.error(t('clientdetail:upload_error'));
+      toast.error(t('upload_error'));
     } finally {
       if (photoType === 'before') setUploadingBefore(false);
       else setUploadingAfter(false);
@@ -190,22 +190,22 @@ export default function ClientDetail() {
       loadClientGallery(client.id);
       setIsGalleryModalOpen(false);
       setGalleryFormData({ before_photo: '', after_photo: '', notes: '', category: '', master_id: 0 });
-      toast.success(t('clientdetail:gallery_entry_added'));
+      toast.success(t('gallery_entry_added'));
     } catch (error) {
-      toast.error(t('clientdetail:save_error'));
+      toast.error(t('save_error'));
     } finally {
       setSaving(false);
     }
   };
 
   const handleDeleteGalleryEntry = async (entryId: number) => {
-    if (!confirm(t('clientdetail:delete_gallery_confirm'))) return;
+    if (!confirm(t('delete_gallery_confirm'))) return;
     try {
       await api.deleteClientGalleryEntry(entryId);
       setClientGallery(clientGallery.filter(e => e.id !== entryId));
-      toast.success(t('clientdetail:gallery_entry_deleted'));
+      toast.success(t('gallery_entry_deleted'));
     } catch (error) {
-      toast.error(t('clientdetail:delete_error'));
+      toast.error(t('delete_error'));
     }
   };
 
@@ -239,9 +239,9 @@ export default function ClientDetail() {
         birth_date: editForm.birth_date || undefined
       });
       setEditing(false);
-      toast.success(t('clientdetail:client_data_updated'));
+      toast.success(t('client_data_updated'));
     } catch (err) {
-      toast.error(t('clientdetail:error_saving'));
+      toast.error(t('error_saving'));
       console.error('Error:', err);
     } finally {
       setSaving(false);
@@ -253,7 +253,7 @@ export default function ClientDetail() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-gray-600">{t('clientdetail:loading')}</p>
+          <p className="mt-4 text-gray-600">{t('loading')}</p>
         </div>
       </div>
     );
@@ -265,7 +265,7 @@ export default function ClientDetail() {
         <Button onClick={() => navigate('/crm/clients')} variant="ghost">
           ← {t('common:back_to_clients')}
         </Button>
-        <p className="text-gray-600 mt-4">{t('clientdetail:not_found')}</p>
+        <p className="text-gray-600 mt-4">{t('not_found')}</p>
       </div>
     );
   }
@@ -284,7 +284,7 @@ export default function ClientDetail() {
           {client.profile_pic && client.profile_pic !== 'null' ? (
             <img
               src={client.profile_pic}
-              alt={client.name || t('clientdetail:client')}
+              alt={client.name || t('client')}
               className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
@@ -294,7 +294,7 @@ export default function ClientDetail() {
           ) : (
             <img
               src={getDynamicAvatar(client.name || client.username || 'Client', client.temperature, client.gender)}
-              alt={client.name || t('clientdetail:client')}
+              alt={client.name || t('client')}
               className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
             />
           )}
@@ -305,7 +305,7 @@ export default function ClientDetail() {
             className="fallback-avatar hidden w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
           />
           <div className="flex-1">
-            <h1 className="text-3xl text-gray-900">{client.name || t('clientdetail:client')}</h1>
+            <h1 className="text-3xl text-gray-900">{client.name || t('client')}</h1>
             {client.username && (
               <a
                 href={`https://instagram.com/${client.username}`}
@@ -328,7 +328,7 @@ export default function ClientDetail() {
             className="gap-2"
           >
             <Edit2 className="w-4 h-4" />
-            {t('clientdetail:edit')}
+            {t('edit')}
           </Button>
         )}
       </div>
@@ -337,12 +337,12 @@ export default function ClientDetail() {
         {/* Main Info */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h2 className="text-2xl text-gray-900 mb-6">{t('clientdetail:client_info')}</h2>
+            <h2 className="text-2xl text-gray-900 mb-6">{t('client_info')}</h2>
 
             {editing ? (
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:name')}</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">{t('name')}</label>
                   <Input
                     value={editForm.name}
                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
@@ -350,7 +350,7 @@ export default function ClientDetail() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:phone')}</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">{t('phone')}</label>
                   <Input
                     value={editForm.phone}
                     onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
@@ -360,22 +360,22 @@ export default function ClientDetail() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {t('clientdetail:gender')}
+                      {t('gender')}
                     </label>
                     <select
                       value={editForm.gender}
                       onChange={(e) => setEditForm({ ...editForm, gender: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md"
                     >
-                      <option value="">{t('clientdetail:select_gender')}</option>
-                      <option value="male">{t('clientdetail:male')}</option>
-                      <option value="female">{t('clientdetail:female')}</option>
+                      <option value="">{t('select_gender')}</option>
+                      <option value="male">{t('male')}</option>
+                      <option value="female">{t('female')}</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {t('clientdetail:birth_date')}
+                      {t('birth_date')}
                     </label>
                     <Input
                       type="date"
@@ -387,17 +387,17 @@ export default function ClientDetail() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:email_login')}</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">{t('email_login')}</label>
                     <Input
                       value={editForm.email}
                       onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:password')}</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">{t('password')}</label>
                     <Input
                       type="password"
-                      placeholder={t('clientdetail:leave_blank_to_keep')}
+                      placeholder={t('leave_blank_to_keep')}
                       value={editForm.password}
                       onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
                     />
@@ -406,7 +406,7 @@ export default function ClientDetail() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:special_discount')}</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">{t('special_discount')}</label>
                     <Input
                       type="number"
                       value={editForm.discount}
@@ -414,7 +414,7 @@ export default function ClientDetail() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:promo_code')}</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">{t('promo_code')}</label>
                     <Input
                       value={editForm.referral_code}
                       onChange={(e) => setEditForm({ ...editForm, referral_code: e.target.value })}
@@ -423,7 +423,7 @@ export default function ClientDetail() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:notes')}</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">{t('notes')}</label>
                   <Textarea
                     value={editForm.notes}
                     onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
@@ -438,14 +438,14 @@ export default function ClientDetail() {
                     className="bg-pink-600 hover:bg-pink-700"
                   >
                     <Save className="w-4 h-4 mr-2" />
-                    {saving ? t('clientdetail:saving') : t('clientdetail:save')}
+                    {saving ? t('saving') : t('save')}
                   </Button>
                   <Button
                     onClick={() => setEditing(false)}
                     variant="outline"
                   >
                     <X className="w-4 h-4 mr-2" />
-                    {t('clientdetail:cancel')}
+                    {t('cancel')}
                   </Button>
                 </div>
               </div>
@@ -454,7 +454,7 @@ export default function ClientDetail() {
                 <div className="flex items-start gap-4">
                   <Phone className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">{t('clientdetail:phone')}</p>
+                    <p className="text-sm text-gray-600">{t('phone')}</p>
                     <p className="text-lg text-gray-900">{formatPhone(client.phone)}</p>
                   </div>
                 </div>
@@ -462,9 +462,9 @@ export default function ClientDetail() {
                 <div className="flex items-start gap-4">
                   <Calendar className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">{t('clientdetail:first_contact')}</p>
+                    <p className="text-sm text-gray-600">{t('first_contact')}</p>
                     <p className="text-lg text-gray-900">
-                      {new Date(client.first_contact).toLocaleDateString('ru-RU')}
+                      {new Date(client.first_contact).toLocaleDateString(i18n.language)}
                     </p>
                   </div>
                 </div>
@@ -474,15 +474,15 @@ export default function ClientDetail() {
                 <div className="flex items-start gap-4">
                   <User className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">{t('clientdetail:gender_age')}</p>
+                    <p className="text-sm text-gray-600">{t('gender_age')}</p>
                     <p className="text-lg text-gray-900">
-                      {client.gender === 'male' ? t('clientdetail:male') : client.gender === 'female' ? t('clientdetail:female') : '-'}
+                      {client.gender === 'male' ? t('male') : client.gender === 'female' ? t('female') : '-'}
                       {client.birth_date && (() => {
                         const birthDate = new Date(client.birth_date);
                         const ageDiffMs = Date.now() - birthDate.getTime();
                         const ageDate = new Date(ageDiffMs);
                         const age = Math.abs(ageDate.getUTCFullYear() - 1970);
-                        return `, ${age} ${t('clientdetail:years')}`;
+                        return `, ${age} ${t('years')}`;
                       })()}
                     </p>
                   </div>
@@ -491,7 +491,7 @@ export default function ClientDetail() {
                 <div className="flex items-start gap-4">
                   <MessageSquare className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">{t('clientdetail:total_messages')}</p>
+                    <p className="text-sm text-gray-600">{t('total_messages')}</p>
                     <p className="text-lg text-gray-900">{client.total_messages}</p>
                   </div>
                 </div>
@@ -500,14 +500,14 @@ export default function ClientDetail() {
                   <div className="flex items-start gap-4">
                     <User className="w-5 h-5 text-gray-400 mt-1" />
                     <div>
-                      <p className="text-sm text-gray-600">{t('clientdetail:email_login')}</p>
+                      <p className="text-sm text-gray-600">{t('email_login')}</p>
                       <p className="text-lg text-gray-900">{client.email || '-'}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
                     <Target className="w-5 h-5 text-gray-400 mt-1" />
                     <div>
-                      <p className="text-sm text-gray-600">{t('clientdetail:promo_code')}</p>
+                      <p className="text-sm text-gray-600">{t('promo_code')}</p>
                       <p className="text-lg text-gray-900">{client.referral_code || '-'}</p>
                     </div>
                   </div>
@@ -515,7 +515,7 @@ export default function ClientDetail() {
 
                 {client.notes && (
                   <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">{t('clientdetail:notes')}</p>
+                    <p className="text-sm text-gray-600">{t('notes')}</p>
                     <p className="text-gray-900 mt-1">{client.notes}</p>
                   </div>
                 )}
@@ -527,11 +527,11 @@ export default function ClientDetail() {
         {/* Stats Card */}
         <div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h3 className="text-lg text-gray-900 mb-6">{t('clientdetail:statistics')}</h3>
+            <h3 className="text-lg text-gray-900 mb-6">{t('statistics')}</h3>
 
             <div className="space-y-6">
               <div>
-                <p className="text-sm text-gray-600 mb-1">{t('clientdetail:status')}</p>
+                <p className="text-sm text-gray-600 mb-1">{t('status')}</p>
                 <Badge className="bg-blue-100 text-blue-800 capitalize">
                   {client.status}
                 </Badge>
@@ -539,13 +539,13 @@ export default function ClientDetail() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">{t('clientdetail:lifetime_value')}</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('lifetime_value')}</p>
                   <p className="text-2xl text-green-600 font-bold">
                     {client.total_spend || client.lifetime_value || 0} AED
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">{t('clientdetail:total_visits')}</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('total_visits')}</p>
                   <p className="text-2xl text-blue-600 font-bold">
                     {client.total_visits || 0}
                   </p>
@@ -554,13 +554,13 @@ export default function ClientDetail() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">{t('clientdetail:discount')}</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('discount')}</p>
                   <p className="text-lg text-gray-900 font-medium">
                     {client.discount ? `${String(client.discount).replace('%', '')}%` : '-'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">{t('clientdetail:card_number')}</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('card_number')}</p>
                   <p className="text-lg text-gray-900 font-medium">
                     {client.card_number || '-'}
                   </p>
@@ -568,16 +568,16 @@ export default function ClientDetail() {
               </div>
 
               <div>
-                <p className="text-sm text-gray-600 mb-1">{t('clientdetail:last_contact')}</p>
+                <p className="text-sm text-gray-600 mb-1">{t('last_contact')}</p>
                 <p className="text-gray-900">
-                  {client.last_contact ? new Date(client.last_contact).toLocaleDateString('ru-RU') : '-'}
+                  {client.last_contact ? new Date(client.last_contact).toLocaleDateString(i18n.language) : '-'}
                 </p>
               </div>
 
               {/* Top 3 Procedures */}
               {stats?.top_procedures && stats.top_procedures.length > 0 ? (
                 <div>
-                  <p className="text-sm text-gray-600 mb-2">Топ-3 процедуры</p>
+                  <p className="text-sm text-gray-600 mb-2">{t('top_3_procedures', 'Top-3 procedures')}</p>
                   <div className="space-y-2">
                     {stats.top_procedures.map((proc, idx) => (
                       <div key={idx} className="flex justify-between text-sm">
@@ -592,7 +592,7 @@ export default function ClientDetail() {
               {/* Top 3 Masters */}
               {stats?.top_masters && stats.top_masters.length > 0 ? (
                 <div>
-                  <p className="text-sm text-gray-600 mb-2">Топ-3 мастера</p>
+                  <p className="text-sm text-gray-600 mb-2">{t('top_3_masters', 'Top-3 masters')}</p>
                   <div className="space-y-2">
                     {stats.top_masters.map((master, idx) => (
                       <div key={idx} className="flex justify-between text-sm">
@@ -607,7 +607,7 @@ export default function ClientDetail() {
               {/* Visits Chart */}
               {stats?.visits_chart && stats.visits_chart.length > 0 ? (
                 <div className="h-40 mt-4">
-                  <p className="text-sm text-gray-600 mb-2">Динамика посещений</p>
+                  <p className="text-sm text-gray-600 mb-2">{t('visits_dynamics', 'Visit dynamics')}</p>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={stats.visits_chart}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -621,7 +621,7 @@ export default function ClientDetail() {
               ) : (
                 <div className="h-40 mt-4 flex items-center justify-center bg-gray-50 rounded-lg border border-dashed border-gray-200">
                   <p className="text-xs text-gray-400 text-center px-4">
-                    {t('clientdetail:no_visit_history', 'Нет истории посещений для графика')}
+                    {t('no_visit_history', 'Нет истории посещений для графика')}
                   </p>
                 </div>
               )}
@@ -672,7 +672,7 @@ export default function ClientDetail() {
       <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
         <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-2">
           <Clock className="w-6 h-6 text-pink-600" />
-          {t('clientdetail:booking_history')}
+          {t('booking_history')}
         </h2>
 
         {bookings.length > 0 ? (
@@ -681,16 +681,16 @@ export default function ClientDetail() {
               <thead>
                 <tr className="bg-gray-50">
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('clientdetail:service')}
+                    {t('service')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('clientdetail:date_time')}
+                    {t('date_time')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('clientdetail:status')}
+                    {t('status')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('clientdetail:revenue')}
+                    {t('revenue')}
                   </th>
                 </tr>
               </thead>
@@ -701,7 +701,7 @@ export default function ClientDetail() {
                       {booking.service}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {new Date(booking.datetime).toLocaleString('ru-RU', {
+                      {new Date(booking.datetime).toLocaleString(i18n.language, {
                         day: '2-digit',
                         month: '2-digit',
                         year: 'numeric',
@@ -729,13 +729,13 @@ export default function ClientDetail() {
             </table>
           </div>
         ) : (
-          <p className="text-gray-500 text-center py-8">{t('clientdetail:no_bookings')}</p>
+          <p className="text-gray-500 text-center py-8">{t('no_bookings')}</p>
         )}
       </div>
 
       {/* Chat History */}
       <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <h2 className="text-2xl text-gray-900 mb-6">{t('clientdetail:chat_history')}</h2>
+        <h2 className="text-2xl text-gray-900 mb-6">{t('chat_history')}</h2>
 
         {messages.length > 0 ? (
           <div className="space-y-4">
@@ -752,14 +752,14 @@ export default function ClientDetail() {
                 >
                   <p className="text-sm">{msg.message}</p>
                   <p className="text-xs text-gray-600 mt-1">
-                    {new Date(msg.timestamp).toLocaleTimeString('ru-RU')}
+                    {new Date(msg.timestamp).toLocaleTimeString(i18n.language)}
                   </p>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 text-center py-8">{t('clientdetail:no_messages')}</p>
+          <p className="text-gray-500 text-center py-8">{t('no_messages')}</p>
         )}
       </div>
       {/* Client Gallery */}
@@ -767,10 +767,10 @@ export default function ClientDetail() {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl text-gray-900 flex items-center gap-2">
             <Calendar className="w-6 h-6 text-pink-600" />
-            {t('clientdetail:client_gallery')}
+            {t('client_gallery')}
           </h2>
           <Button onClick={() => setIsGalleryModalOpen(true)} className="bg-pink-600 hover:bg-pink-700">
-            <Plus className="w-4 h-4 mr-2" /> {t('clientdetail:add_work')}
+            <Plus className="w-4 h-4 mr-2" /> {t('add_work')}
           </Button>
         </div>
 
@@ -790,13 +790,13 @@ export default function ClientDetail() {
                   <div className="relative">
                     <img src={entry.before_photo} alt="Before" className="w-full h-full object-cover" />
                     <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded">
-                      {t('clientdetail:before')}
+                      {t('before')}
                     </div>
                   </div>
                   <div className="relative">
                     <img src={entry.after_photo} alt="After" className="w-full h-full object-cover" />
                     <div className="absolute top-2 left-2 bg-pink-600 text-white text-[10px] px-1.5 py-0.5 rounded">
-                      {t('clientdetail:after')}
+                      {t('after')}
                     </div>
                   </div>
                 </div>
@@ -804,15 +804,15 @@ export default function ClientDetail() {
                   <p className="text-xs text-gray-400 mb-1">
                     {new Date(entry.created_at).toLocaleDateString()}
                   </p>
-                  <p className="text-sm font-medium mb-1">{entry.category || t('clientdetail:procedure')}</p>
-                  <p className="text-xs text-gray-600 italic line-clamp-2">{entry.notes || t('clientdetail:no_notes')}</p>
+                  <p className="text-sm font-medium mb-1">{entry.category || t('procedure')}</p>
+                  <p className="text-xs text-gray-600 italic line-clamp-2">{entry.notes || t('no_notes')}</p>
                 </div>
               </div>
             ))}
           </div>
         ) : (
           <div className="text-center py-12 border-2 border-dashed border-gray-100 rounded-xl">
-            <p className="text-gray-500">{t('clientdetail:no_gallery_entries')}</p>
+            <p className="text-gray-500">{t('no_gallery_entries')}</p>
           </div>
         )}
       </div>
@@ -821,11 +821,11 @@ export default function ClientDetail() {
       <Dialog open={isGalleryModalOpen} onOpenChange={setIsGalleryModalOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{t('clientdetail:add_to_gallery')}</DialogTitle>
+            <DialogTitle>{t('add_to_gallery')}</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-6 py-4">
             <div className="space-y-4">
-              <Label>{t('clientdetail:photo_before')}</Label>
+              <Label>{t('photo_before')}</Label>
               <div className="aspect-square border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center relative overflow-hidden bg-gray-50">
                 {galleryFormData.before_photo ? (
                   <img src={galleryFormData.before_photo} className="w-full h-full object-cover" />
@@ -846,7 +846,7 @@ export default function ClientDetail() {
               </div>
             </div>
             <div className="space-y-4">
-              <Label>{t('clientdetail:photo_after')}</Label>
+              <Label>{t('photo_after')}</Label>
               <div className="aspect-square border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center relative overflow-hidden bg-gray-50">
                 {galleryFormData.after_photo ? (
                   <img src={galleryFormData.after_photo} className="w-full h-full object-cover" />
@@ -868,19 +868,19 @@ export default function ClientDetail() {
             </div>
             <div className="col-span-2 space-y-4">
               <div>
-                <Label>{t('clientdetail:notes_description')}</Label>
+                <Label>{t('notes_description')}</Label>
                 <Input
                   value={galleryFormData.notes}
                   onChange={e => setGalleryFormData({ ...galleryFormData, notes: e.target.value })}
-                  placeholder={t('clientdetail:notes_placeholder')}
+                  placeholder={t('notes_placeholder')}
                 />
               </div>
               <div>
-                <Label>{t('clientdetail:category')}</Label>
+                <Label>{t('category')}</Label>
                 <Input
                   value={galleryFormData.category}
                   onChange={e => setGalleryFormData({ ...galleryFormData, category: e.target.value })}
-                  placeholder={t('clientdetail:category_placeholder')}
+                  placeholder={t('category_placeholder')}
                 />
               </div>
             </div>
@@ -894,7 +894,7 @@ export default function ClientDetail() {
               disabled={saving || uploadingBefore || uploadingAfter || !galleryFormData.before_photo || !galleryFormData.after_photo}
               className="bg-pink-600"
             >
-              {saving ? t('common:saving') : t('clientdetail:add_to_gallery')}
+              {saving ? t('common:saving') : t('add_to_gallery')}
             </Button>
           </DialogFooter>
         </DialogContent>
