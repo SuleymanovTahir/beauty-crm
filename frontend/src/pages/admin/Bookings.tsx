@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send, Trash2 } from 'lucide-react';
+import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send, Trash2, Clock, CheckCircle2, CalendarDays, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
 import { ExportDropdown } from '../../components/shared/ExportDropdown';
 import { StatusSelect } from '../../components/shared/StatusSelect';
@@ -702,22 +702,74 @@ export default function Bookings() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('bookings:pending')}</p>
-          <h3 className="text-3xl text-gray-900">{stats.pending}</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-xs md:text-sm text-gray-600 mb-2">{t('bookings:pending')}</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{stats.pending}</h3>
+              <p className="text-xs text-gray-500">
+                {period === 'all' ? t('common:all_time') :
+                  period === 'today' ? t('common:for_today') :
+                    period === 'custom' ? `${dateFrom} - ${dateTo}` :
+                      t('common:for_period', { days: period })}
+              </p>
+            </div>
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-yellow-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <Clock className="w-6 h-6 md:w-7 md:h-7 text-yellow-600" />
+            </div>
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('bookings:completed')}</p>
-          <h3 className="text-3xl text-gray-900">{stats.completed}</h3>
+        <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-xs md:text-sm text-gray-600 mb-2">{t('bookings:completed')}</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{stats.completed}</h3>
+              <p className="text-xs text-gray-500">
+                {period === 'all' ? t('common:all_time') :
+                  period === 'today' ? t('common:for_today') :
+                    period === 'custom' ? `${dateFrom} - ${dateTo}` :
+                      t('common:for_period', { days: period })}
+              </p>
+            </div>
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-green-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <CheckCircle2 className="w-6 h-6 md:w-7 md:h-7 text-green-600" />
+            </div>
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('bookings:total')}</p>
-          <h3 className="text-3xl text-gray-900">{stats.total}</h3>
+        <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-xs md:text-sm text-gray-600 mb-2">{t('bookings:total')}</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{stats.total}</h3>
+              <p className="text-xs text-gray-500">
+                {period === 'all' ? t('common:all_time') :
+                  period === 'today' ? t('common:for_today') :
+                    period === 'custom' ? `${dateFrom} - ${dateTo}` :
+                      t('common:for_period', { days: period })}
+              </p>
+            </div>
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <CalendarDays className="w-6 h-6 md:w-7 md:h-7 text-blue-600" />
+            </div>
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('bookings:revenue')}</p>
-          <h3 className="text-3xl text-gray-900">{stats.revenue} {t('bookings:currency')}</h3>
+        <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-xs md:text-sm text-gray-600 mb-2">{t('bookings:revenue')}</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{stats.revenue} {t('bookings:currency')}</h3>
+              <p className="text-xs text-gray-500">
+                {period === 'all' ? t('common:all_time') :
+                  period === 'today' ? t('common:for_today') :
+                    period === 'custom' ? `${dateFrom} - ${dateTo}` :
+                      t('common:for_period', { days: period })}
+              </p>
+            </div>
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-emerald-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <DollarSign className="w-6 h-6 md:w-7 md:h-7 text-emerald-600" />
+            </div>
+          </div>
         </div>
       </div>
 

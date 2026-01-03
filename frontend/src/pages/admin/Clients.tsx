@@ -16,7 +16,10 @@ import {
   AlertCircle,
   Trash2,
   Pin,
-  Upload
+  Upload,
+  Crown,
+  UserPlus,
+  UserCheck
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -596,46 +599,74 @@ export default function Clients() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-        <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('clients:total_clients')}</p>
-          <h3 className="text-3xl text-gray-900">{stats.total}</h3>
-          <p style={{ color: '#9ca3af', fontSize: '0.75rem', marginTop: '0.25rem' }}>
-            {period === 'all' ? t('common:all_time') :
-              period === 'today' ? t('common:for_today') :
-                period === 'custom' ? `${dateFrom} - ${dateTo}` :
-                  t('common:for_period', { days: period })}
-          </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6 mb-6 md:mb-8">
+        <div className="bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('clients:total_clients')}</p>
+              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.total}</h3>
+              <p className="text-[10px] md:text-xs text-gray-500">
+                {period === 'all' ? t('common:all_time') :
+                  period === 'today' ? t('common:for_today') :
+                    period === 'custom' ? `${dateFrom} - ${dateTo}` :
+                      t('common:for_period', { days: period })}
+              </p>
+            </div>
+            <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <Users className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-blue-600" />
+            </div>
+          </div>
         </div>
-        <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('clients:vip_clients')}</p>
-          <h3 className="text-3xl text-purple-600">{stats.vip}</h3>
-          <p style={{ color: '#9ca3af', fontSize: '0.75rem', marginTop: '0.25rem' }}>
-            {period === 'all' ? t('common:all_time') :
-              period === 'today' ? t('common:for_today') :
-                period === 'custom' ? `${dateFrom} - ${dateTo}` :
-                  t('common:for_period', { days: period })}
-          </p>
+        <div className="bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('clients:vip_clients')}</p>
+              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.vip}</h3>
+              <p className="text-[10px] md:text-xs text-gray-500">
+                {period === 'all' ? t('common:all_time') :
+                  period === 'today' ? t('common:for_today') :
+                    period === 'custom' ? `${dateFrom} - ${dateTo}` :
+                      t('common:for_period', { days: period })}
+              </p>
+            </div>
+            <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-yellow-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <Crown className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-yellow-600" />
+            </div>
+          </div>
         </div>
-        <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('clients:new_clients')}</p>
-          <h3 className="text-3xl text-green-600">{stats.new}</h3>
-          <p style={{ color: '#9ca3af', fontSize: '0.75rem', marginTop: '0.25rem' }}>
-            {period === 'all' ? t('common:all_time') :
-              period === 'today' ? t('common:for_today') :
-                period === 'custom' ? `${dateFrom} - ${dateTo}` :
-                  t('common:for_period', { days: period })}
-          </p>
+        <div className="bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('clients:new_clients')}</p>
+              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.new}</h3>
+              <p className="text-[10px] md:text-xs text-gray-500">
+                {period === 'all' ? t('common:all_time') :
+                  period === 'today' ? t('common:for_today') :
+                    period === 'custom' ? `${dateFrom} - ${dateTo}` :
+                      t('common:for_period', { days: period })}
+              </p>
+            </div>
+            <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-green-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <UserPlus className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-green-600" />
+            </div>
+          </div>
         </div>
-        <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('clients:active_clients')}</p>
-          <h3 className="text-3xl text-blue-600">{stats.active}</h3>
-          <p style={{ color: '#9ca3af', fontSize: '0.75rem', marginTop: '0.25rem' }}>
-            {period === 'all' ? t('common:all_time') :
-              period === 'today' ? t('common:for_today') :
-                period === 'custom' ? `${dateFrom} - ${dateTo}` :
-                  t('common:for_period', { days: period })}
-          </p>
+        <div className="bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('clients:active_clients')}</p>
+              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.active}</h3>
+              <p className="text-[10px] md:text-xs text-gray-500">
+                {period === 'all' ? t('common:all_time') :
+                  period === 'today' ? t('common:for_today') :
+                    period === 'custom' ? `${dateFrom} - ${dateTo}` :
+                      t('common:for_period', { days: period })}
+              </p>
+            </div>
+            <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-purple-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <UserCheck className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-purple-600" />
+            </div>
+          </div>
         </div>
       </div>
 
