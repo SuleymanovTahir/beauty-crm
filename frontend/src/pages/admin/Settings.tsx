@@ -43,6 +43,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { languages } from '../../i18n';
+import { InstagramIcon, WhatsAppIcon, TelegramIcon, TikTokIcon } from '../../components/icons/SocialIcons';
 import './Settings.css';
 
 export default function AdminSettings() {

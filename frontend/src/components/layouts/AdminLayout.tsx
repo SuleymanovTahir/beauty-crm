@@ -181,10 +181,10 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   }, [permissions, unreadCount, t]);
 
   const chatSubmenuItems = enabledMessengers.map(messenger => ({
-    icon: messenger.type === 'instagram' ? (props: any) => <InstagramIcon {...props} colorful={false} /> :
-      messenger.type === 'telegram' ? (props: any) => <TelegramIcon {...props} colorful={false} /> :
-        messenger.type === 'whatsapp' ? (props: any) => <WhatsAppIcon {...props} colorful={false} /> :
-          messenger.type === 'tiktok' ? (props: any) => <TikTokIcon {...props} colorful={false} /> : MessageSquare,
+    icon: messenger.type === 'instagram' ? (props: any) => <InstagramIcon {...props} colorful={true} /> :
+      messenger.type === 'telegram' ? (props: any) => <TelegramIcon {...props} colorful={true} /> :
+        messenger.type === 'whatsapp' ? (props: any) => <WhatsAppIcon {...props} colorful={true} /> :
+          messenger.type === 'tiktok' ? (props: any) => <TikTokIcon {...props} colorful={true} /> : MessageSquare,
     label: messenger.name,
     type: messenger.type,
     path: `/crm/chat?messenger=${messenger.type}`,
@@ -350,9 +350,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
                                   className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all duration-200 ${isActive ? 'bg-purple-50 text-purple-600 font-medium' : 'hover:bg-gray-50 text-gray-700'
                                     }`}
                                 >
-                                  <div className={`w-6 h-6 rounded-md bg-gradient-to-r ${subItem.color} flex items-center justify-center flex-shrink-0`}>
-                                    <subItem.icon size={14} className="text-white" />
-                                  </div>
+                                  <subItem.icon size={20} />
                                   <span>{subItem.label}</span>
                                 </button>
                               </li>
