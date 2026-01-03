@@ -90,7 +90,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
               {t('info_panel_title', 'Информация') || 'Информация'}
             </h3>
             <span className="text-[9px] font-bold text-blue-100 uppercase tracking-widest mt-0.5">
-              💎 V2 COMPACT
+              💎 V3 ULTRA COMPACT
             </span>
           </div>
         </div>
@@ -142,8 +142,8 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
         <div className="bg-white rounded-xl border border-gray-100 p-2.5 shadow-sm hover:border-blue-200 transition-all group">
           <div className={`${isEditing ? 'space-y-2' : 'flex items-center justify-between'}`}>
             <div className="flex items-center gap-2">
-              <User className="w-3.5 h-3.5 text-blue-500" />
-              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+              <User className="w-4 h-4 text-blue-500" />
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                 {t('client_name', 'Имя') || 'Имя'}
               </span>
             </div>
@@ -153,10 +153,10 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
                 value={editedName}
                 onChange={(e) => setEditedName(e.target.value)}
                 placeholder={t('client_name_placeholder', 'Имя клиента') || 'Имя клиента'}
-                className="h-8 text-sm border-gray-100 focus:border-blue-500 rounded-lg bg-gray-50/50"
+                className="h-9 text-base border-gray-100 focus:border-blue-500 rounded-lg bg-gray-50/50"
               />
             ) : (
-              <p className="text-gray-900 font-bold text-sm">
+              <p className="text-gray-900 font-bold text-base">
                 {client.name || <span className="text-gray-300 italic font-normal">{t('not_specified', 'Не указано') || 'Не указано'}</span>}
               </p>
             )}
@@ -167,8 +167,8 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
         <div className="bg-white rounded-xl border border-gray-100 p-2.5 shadow-sm hover:border-green-200 transition-all group">
           <div className={`${isEditing ? 'space-y-2' : 'flex items-center justify-between'}`}>
             <div className="flex items-center gap-2">
-              <Phone className="w-3.5 h-3.5 text-green-500" />
-              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+              <Phone className="w-4 h-4 text-green-500" />
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                 {t('phone', 'Телефон') || 'Телефон'}
               </span>
             </div>
@@ -178,10 +178,10 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
                 value={editedPhone}
                 onChange={(e) => setEditedPhone(e.target.value)}
                 placeholder={t('phone_placeholder', 'Телефон') || 'Телефон'}
-                className="h-8 text-sm border-gray-100 focus:border-green-500 rounded-lg bg-gray-50/50"
+                className="h-9 text-base border-gray-100 focus:border-green-500 rounded-lg bg-gray-50/50"
               />
             ) : (
-              <p className="text-gray-900 font-bold text-sm font-mono leading-none">
+              <p className="text-gray-900 font-bold text-base font-mono leading-none">
                 {client.phone || <span className="text-gray-300 italic font-normal">{t('not_specified_phone', 'Не указано') || 'Не указано'}</span>}
               </p>
             )}
@@ -192,8 +192,8 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
         <div className="bg-white rounded-xl border border-gray-100 p-2.5 shadow-sm hover:border-purple-200 transition-all group">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Check className="w-3.5 h-3.5 text-purple-500" />
-              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+              <Check className="w-4 h-4 text-purple-500" />
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                 {t('status', 'Статус') || 'Статус'}
               </span>
             </div>
@@ -222,40 +222,41 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             </div>
           </div>
         </div>
-        {/* Source and Bot Mode Section */}
-        <div className="bg-white rounded-xl border border-gray-100 p-2.5 shadow-sm space-y-3">
+        {/* Source and Bot Mode Section - Ultra Compact */}
+        <div className="bg-white rounded-xl border border-gray-100 p-2 shadow-sm space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+              <Send className="w-4 h-4 text-blue-400" />
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                 {t('source_title', 'Источник') || 'Источник'}
               </span>
             </div>
-            <div className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+            <div className="text-[10px] font-bold text-blue-600 bg-blue-50/50 px-2 py-0.5 rounded-lg border border-blue-100">
               {client.source === 'instagram' ? '📷 Instagram' :
                 client.source === 'telegram' ? '✈️ Telegram' :
                   client.source === 'whatsapp' ? '📱 WhatsApp' :
-                    client.source === 'account' ? '👤 Личный кабинет' :
-                      client.source === 'guest_link' ? '🔗 Гостевая ссылка' :
+                    client.source === 'account' ? '👤 ЛК' :
+                      client.source === 'guest_link' ? '🔗 Ссылка' :
                         t(`source.${client.source || 'manual'}`, client.source || 'Вручную') || (client.source || 'Вручную')}
             </div>
           </div>
-          <div className="pt-2 border-t border-gray-50">
+          <div className="pt-1.5 border-t border-gray-50">
             <BotModeSelector
               currentMode={botMode}
               onChange={handleBotModeChange}
             />
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+        <div className="flex items-center gap-1.5 mt-1 overflow-x-auto pb-1 no-scrollbar">
           {/* Instagram Link */}
           {client.username && (
             <a href={`https://instagram.com/${client.username}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 p-2 rounded-xl bg-pink-50 border border-pink-100 hover:bg-pink-100 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-pink-50 border border-pink-100 hover:bg-pink-100 transition-colors shrink-0"
             >
-              <Instagram className="w-4 h-4 text-pink-600" />
-              <span className="text-[11px] font-bold text-pink-600 truncate">Instagram</span>
+              <Instagram className="w-6 h-6 text-pink-600" />
+              <span className="text-sm font-bold text-pink-600">Inst</span>
             </a>
           )}
 
@@ -264,10 +265,10 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             <a href={`https://t.me/${client.telegram_id.replace('@', '')}`}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2 p-2 rounded-xl bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors shrink-0"
             >
-              <Send className="w-4 h-4 text-blue-600" />
-              <span className="text-[11px] font-bold text-blue-600 truncate">Telegram</span>
+              <Send className="w-6 h-6 text-blue-600" />
+              <span className="text-sm font-bold text-blue-600">TG</span>
             </a>
           )}
 
@@ -276,10 +277,10 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             <a href={`https://wa.me/${client.phone.replace(/[^0-9]/g, '')}`}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2 p-2 rounded-xl bg-green-50 border border-green-100 hover:bg-green-100 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-green-50 border border-green-100 hover:bg-green-100 transition-colors shrink-0"
             >
-              <MessageCircle className="w-4 h-4 text-green-600" />
-              <span className="text-[11px] font-bold text-green-600 truncate">WhatsApp</span>
+              <MessageCircle className="w-6 h-6 text-green-600" />
+              <span className="text-sm font-bold text-green-600">WA</span>
             </a>
           )}
         </div>
