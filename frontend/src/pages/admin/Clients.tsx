@@ -33,6 +33,7 @@ import { usePeriodFilter } from '../../hooks/usePeriodFilter';
 import { StatusSelect } from '../../components/shared/StatusSelect';
 import { TemperatureSelect } from '../../components/shared/TemperatureSelect';
 import { TemperatureFilter } from '../../components/shared/TemperatureFilter';
+import { PeriodFilterSelect } from '../../components/shared/PeriodFilterSelect';
 import { useClientStatuses } from '../../hooks/useStatuses';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { Pagination } from '../../components/shared/Pagination';
@@ -677,32 +678,10 @@ export default function Clients() {
               />
 
               {/* Period Filter */}
-              <select
+              <PeriodFilterSelect
                 value={period}
-                onChange={(e) => setPeriod(e.target.value)}
-                style={{
-                  padding: '0.5rem 2.5rem 0.5rem 0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.875rem',
-                  minWidth: '140px',
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%236b7280' d='M4 6l4 4 4-4z'/%3E%3C/svg%3E")`,
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'right 0.75rem center',
-                  backgroundSize: '16px 16px',
-                  appearance: 'none',
-                  WebkitAppearance: 'none',
-                  MozAppearance: 'none'
-                }}
-              >
-                <option value="all">{t('common:all_periods')}</option>
-                <option value="today">{t('common:today')}</option>
-                <option value="7">{t('common:last_7_days')}</option>
-                <option value="14">{t('common:last_14_days')}</option>
-                <option value="30">{t('common:last_month')}</option>
-                <option value="90">{t('common:last_3_months')}</option>
-                <option value="custom">{t('common:custom_period')}</option>
-              </select>
+                onChange={setPeriod}
+              />
 
               {/* Custom Date Inputs */}
               {period === 'custom' && (
