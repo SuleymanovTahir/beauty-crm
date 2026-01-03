@@ -99,7 +99,7 @@ def get_client_by_id(instagram_id: str):
                   gender, card_number, discount, total_visits,
                   total_spend, birthday, email, temperature,
                   age, birth_date, referral_code
-                  FROM clients WHERE instagram_id = %s""", (instagram_id,))
+                  FROM clients WHERE instagram_id = %s OR username = %s""", (instagram_id, instagram_id))
     
     client = c.fetchone()
     conn.close()
