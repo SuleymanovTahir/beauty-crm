@@ -184,9 +184,13 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     history = get_chat_history(decoded_client_id, limit=50)
     bookings = [b for b in get_all_bookings() if b[1] == decoded_client_id]
     
-    # Calculate stats
+    # Calculate stats directly from fetched bookings for accuracy
     from collections import Counter
     from datetime import datetime
+    
+    # b[8] is revenue, len(bookings) is total visits
+    calculated_total_spend = sum(float(b[8] or 0) for b in bookings)
+    calculated_total_visits = len(bookings)
     
     booking_services = [b[2] for b in bookings if b[2]]
     booking_masters = [b[9] for b in bookings if len(b) > 9 and b[9]]
@@ -197,54 +201,52 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     
     top_procedures = []
     for name, count in Counter(booking_services).most_common(3):
+        # Look up translated name in services
         c.execute("SELECT name_ru FROM services WHERE name = %s OR name_ru = %s LIMIT 1", (name, name))
         row = c.fetchone()
         top_procedures.append({"name": row[0] if row and row[0] else name, "count": count})
         
     top_masters = []
     for name, count in Counter(booking_masters).most_common(3):
-        c.execute("SELECT full_name_ru FROM users WHERE full_name = %s OR full_name_ru = %s LIMIT 1", (name, name))
+        # Look up translated name in users
+        c.execute("SELECT full_name_ru FROM users WHERE full_name = %s OR full_name_ru = %s OR username = %s LIMIT 1", (name, name, name))
         row = c.fetchone()
         top_masters.append({"name": row[0] if row and row[0] else name, "count": count})
-        
-    conn.close()
     
-    # Calculate visits by month for the diagram
+    # visits by month logic...
     visits_by_month = {}
     for b in bookings:
         try:
-            # b[3] is datetime string, e.g. "2026-11-06 19:30" or ISO format
-            date_str = b[3]
-            if 'T' in date_str:
-                dt = datetime.fromisoformat(date_str)
-            else:
-                dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M")
-            
-            month_key = dt.strftime("%Y-%m")
-            visits_by_month[month_key] = visits_by_month.get(month_key, 0) + 1
+            # datetime is b[3]
+            dt = datetime.fromisoformat(b[3])
+            month = dt.strftime("%Y-%m")
+            visits_by_month[month] = visits_by_month.get(month, 0) + 1
         except:
             continue
             
-    visits_chart = [{"date": k, "count": v} for k, v in sorted(visits_by_month.items())]
+    visits_chart = [{"date": m, "count": c} for m, c in sorted(visits_by_month.items())]
     
+    conn.close()
+
     return {
-        "client": {
+        "success": True,
+        "data": {
             "id": client[0],
+            "instagram_id": client[0],
             "username": client[1],
             "phone": client[2],
             "name": client[3],
             "first_contact": client[4],
             "last_contact": client[5],
             "total_messages": client[6],
-            "status": client[8] if len(client) > 8 else "new",
-            "lifetime_value": client[9] if len(client) > 9 else 0,
+            "status": client[8],
+            "lifetime_value": calculated_total_spend,
             "profile_pic": client[10] if len(client) > 10 else None,
             "notes": client[11] if len(client) > 11 else "",
-            # Correct indices based on get_client_by_id query
-            "total_spend": client[18] if len(client) > 18 else 0,
-            "total_visits": client[17] if len(client) > 17 else len(bookings),
+            "total_spend": calculated_total_spend,
+            "total_visits": calculated_total_visits,
             "discount": client[16] if len(client) > 16 else 0,
-            "card_number": client[15] if len(client) > 15 else "",
+            "card_number": client[17] if len(client) > 17 else "",
             "temperature": client[21] if len(client) > 21 else "cold",
             "gender": client[14] if len(client) > 14 else None,
             "age": client[22] if len(client) > 22 else None,
@@ -257,26 +259,25 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
             "top_masters": top_masters,
             "visits_chart": visits_chart
         },
-        "chat_history": [
-            {
-                "message": msg[0],
-                "sender": msg[1],
-                "timestamp": msg[2],
-                "type": msg[3] if len(msg) > 3 else "text"
-            }
-            for msg in history
-        ],
         "bookings": [
             {
                 "id": b[0],
-                "service": b[2],
                 "datetime": b[3],
-                "phone": b[4],
+                "service": b[2],
+                "master": b[9],
                 "status": b[6],
-                "revenue": b[8] if len(b) > 8 else 0,
-                "master": b[9] if len(b) > 9 else None
+                "revenue": b[8]
             }
             for b in bookings
+        ],
+        "history": [
+            {
+                "id": m[0],
+                "message": m[3],
+                "timestamp": m[4],
+                "sender": m[2]
+            }
+            for m in history
         ]
     }
 

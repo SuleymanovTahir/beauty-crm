@@ -827,7 +827,7 @@ export default function Clients() {
                   <tr
                     key={client.id}
                     className={`hover:bg-gray-50 transition-colors cursor-pointer ${selectedClients.has(client.id) ? 'bg-pink-50' : ''}`}
-                    onClick={() => navigate(`/crm/clients/${encodeURIComponent(client.id)}`)}
+                    onClick={() => navigate(`/crm/clients/${encodeURIComponent(client.username || client.instagram_id)}`)}
                   >
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       <Checkbox
@@ -901,9 +901,9 @@ export default function Clients() {
                     <td className="px-6 py-4 text-sm text-gray-900">{client.total_bookings || 0}</td>
 
                     <td className="px-6 py-4 text-sm text-green-600 font-medium">
-                      {client.lifetime_value || 0} AED
+                      {(client.total_spend || client.lifetime_value || 0).toLocaleString(i18n.language)} AED
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       <TemperatureSelect
                         value={client.temperature || 'cold'}
                         onChange={(value) => handleTemperatureChange(client.id, value)}
@@ -912,7 +912,7 @@ export default function Clients() {
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {new Date(client.last_contact).toLocaleDateString(i18n.language)}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       <StatusSelect
                         value={client.status}
                         onChange={async (newStatus) => {
@@ -927,6 +927,8 @@ export default function Clients() {
                           }
                         }}
                         options={statusConfig}
+                        allowAdd={false}
+                        variant="table"
                       />
                     </td>
                     <td className="px-6 py-4 text-right">

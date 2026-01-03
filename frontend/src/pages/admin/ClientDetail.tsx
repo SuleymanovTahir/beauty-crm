@@ -604,58 +604,54 @@ export default function ClientDetail() {
                 </div>
               ) : null}
 
-              {/* Visits Chart */}
+              {/* Visits Chart - Professional Bar Chart */}
               {stats?.visits_chart && stats.visits_chart.length > 0 ? (
-                <div className="h-64 mt-8 pb-4">
-                  <p className="text-sm font-semibold text-gray-700 mb-6 flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-pink-500" />
+                <div className="h-64 mt-8 bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                  <p className="text-sm font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-pink-500" />
                     {t('visits_dynamics', 'Visit dynamics')}
                   </p>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={stats.visits_chart} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <ResponsiveContainer width="100%" height="200">
+                    <BarChart data={stats.visits_chart} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
                       <defs>
-                        <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#ec4899" stopOpacity={0.2} />
-                          <stop offset="95%" stopColor="#ec4899" stopOpacity={0} />
+                        <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#ec4899" stopOpacity={1} />
+                          <stop offset="100%" stopColor="#f472b6" stopOpacity={0.8} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
                       <XAxis
                         dataKey="date"
-                        tick={{ fontSize: 11, fill: '#9ca3af' }}
+                        tick={{ fontSize: 11, fill: '#6b7280', fontWeight: 500 }}
                         axisLine={false}
                         tickLine={false}
                         dy={10}
                       />
                       <YAxis
-                        tick={{ fontSize: 11, fill: '#9ca3af' }}
+                        tick={{ fontSize: 11, fill: '#6b7280' }}
                         axisLine={false}
                         tickLine={false}
                         allowDecimals={false}
                       />
                       <Tooltip
+                        cursor={{ fill: 'transparent' }}
                         contentStyle={{
                           backgroundColor: '#fff',
-                          border: 'none',
+                          border: '1px solid #f3f4f6',
                           borderRadius: '12px',
                           boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
                           fontSize: '13px',
                           padding: '12px'
                         }}
-                        itemStyle={{ color: '#ec4899', fontWeight: 'bold' }}
-                        cursor={{ stroke: '#ec4899', strokeWidth: 2, strokeDasharray: '5 5' }}
                       />
-                      <Area
-                        type="monotone"
+                      <Bar
                         dataKey="count"
-                        stroke="#ec4899"
-                        strokeWidth={3}
-                        fillOpacity={1}
-                        fill="url(#colorVisits)"
-                        dot={{ r: 4, fill: '#ec4899', strokeWidth: 2, stroke: '#fff' }}
-                        activeDot={{ r: 6, fill: '#ec4899', strokeWidth: 2, stroke: '#fff' }}
+                        fill="url(#barGradient)"
+                        radius={[6, 6, 0, 0]}
+                        barSize={40}
+                        animationDuration={1500}
                       />
-                    </AreaChart>
+                    </BarChart>
                   </ResponsiveContainer>
                 </div>
               ) : (
