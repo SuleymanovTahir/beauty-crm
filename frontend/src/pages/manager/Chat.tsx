@@ -1140,7 +1140,7 @@ export default function Chat() {
 
                       {/* Actions Menu (Three Dots) - Anchored inside the flex flow for maximum reliability */}
                       <div
-                        className={`flex items-center self-center transition-all duration-300 opacity-0 group-hover:opacity-100 ${(msg.sender === 'bot' || msg.sender === 'manager')
+                        className={`flex items-center self-center transition-all duration-300 opacity-0 group-hover:opacity-100 z-50 ${(msg.sender === 'bot' || msg.sender === 'manager')
                           ? 'order-first mr-1 translate-x-1'
                           : 'order-last ml-1 -translate-x-1'
                           }`}
