@@ -90,25 +90,5 @@
         }
       }
     }
-  ],
-  "services": [
-    {
-      "id": 66,
-      "fields": {
-        "name_ru": {
-          "ru": "Спа-педикюр",
-          "key": "services.66.name_ru.973df8ef",
-          "en": "Spa pedicure",
-          "ar": "سبا باديكير",
-          "es": "Pedicure spa",
-          "de": "Spa-Pediküre",
-          "fr": "Spa pédicure",
-          "hi": "स्पा पेडीक्योर",
-          "kk": "СПА педикюрі",
-          "pt": "Spa-pedicura",
-          "detected_language": "bg"
-        }
-      }
-    }
   ]
 }

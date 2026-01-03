@@ -102,7 +102,10 @@
     "manual": "Қолмен",
     "telegram": "Telegram",
     "title": "Дереккөз",
-    "whatsapp": "whatsapp"
+    "whatsapp": "whatsapp",
+    "account": "Жарайды",
+    "guest_link": "Сілтеме",
+    "custom": "Сіздің көзіңіз"
   },
   "status": "Күй",
   "status_updated": "Күй жаңартылды",

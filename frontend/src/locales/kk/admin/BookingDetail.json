@@ -21,5 +21,9 @@
   "status_updated": "Күй жаңартылды",
   "update": "Жаңарту",
   "update_status": "Күйді жаңарту",
-  "write_to_client": "Клиентке жазыңыз"
+  "write_to_client": "Клиентке жазыңыз",
+  "visits": "сапарлар",
+  "total_spent": "Жалпы жұмсалған",
+  "internal_notes": "Ескертпелер",
+  "no_notes": "Бұл жазба үшін ескертпелер жоқ."
 }

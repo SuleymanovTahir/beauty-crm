@@ -1,6 +1,6 @@
 // /frontend/src/components/chat/TemplatesPanel.tsx
 import { useState, useEffect } from 'react';
-import { FileText, X, Search, Clock, Plus, Trash2, Edit2, Save, Loader } from 'lucide-react';
+import { FileText, X, Search, Clock, Plus, Trash2, Edit2, Save, Loader, ArrowLeft } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
@@ -135,13 +135,19 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
 
   return (
     <div className="bg-gradient-to-br from-purple-50 via-white to-pink-50 rounded-2xl border-2 border-purple-300 shadow-xl overflow-hidden animate-in slide-in-from-top duration-300">
-      {/* Header */}
       <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onClose}
+            className="h-9 w-9 hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors text-black"
+            title="Назад"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center" title="Шаблоны ответов">
             <FileText className="w-5 h-5 text-black" />
           </div>
-          <h3 className="font-bold text-black text-lg">{t('templates_panel_title')}</h3>
+          <h3 className="font-bold text-black text-lg">Шаблоны</h3>
         </div>
         <button
           onClick={onClose}
@@ -157,10 +163,10 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
             type="text"
-            placeholder={t('search_templates')}
+            placeholder={t('search_templates') || 'Поиск шаблонов...'}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border-2 border-purple-200 focus:border-purple-400 rounded-xl bg-white"
+            className="pl-10 border-2 border-purple-200 focus:border-purple-400 rounded-xl bg-white text-gray-900 placeholder:text-gray-400 font-medium"
           />
         </div>
       </div>
@@ -181,7 +187,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                   className="w-full p-4 mb-3 rounded-xl border-2 border-dashed border-purple-300 hover:border-purple-500 hover:bg-purple-50 transition-all flex items-center justify-center gap-2 text-purple-700 font-semibold"
                 >
                   <Plus className="w-5 h-5" />
-                  {t('create_template')}
+                  {t('create_template') || 'Создать шаблон'}
                 </button>
               )}
 
@@ -189,23 +195,23 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
               {isCreating && (
                 <div className="mb-3 p-4 bg-white rounded-xl border-2 border-purple-300">
                   <Input
-                    placeholder={t('template_name')}
+                    placeholder={t('template_name') || 'Название шаблона'}
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
-                    className="mb-2"
+                    className="mb-2 text-gray-900 border-purple-200 placeholder:text-gray-500"
                   />
                   <Textarea
                     placeholder={t('template_text')}
                     value={newContent}
                     onChange={(e) => setNewContent(e.target.value)}
-                    className="mb-2"
+                    className="mb-2 text-gray-900 border-purple-200 placeholder:text-gray-500"
                     rows={3}
                   />
                   <Input
-                    placeholder={t('category')}
+                    placeholder={t('category') || 'Категория'}
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value)}
-                    className="mb-3"
+                    className="mb-3 text-gray-900 border-purple-200 placeholder:text-gray-500"
                   />
                   <div className="flex gap-2">
                     <Button onClick={handleCreate} size="sm" className="flex-1">
@@ -237,13 +243,13 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                         <Input
                           id={`title-${template.id}`}
                           defaultValue={template.title}
-                          className="mb-2"
+                          className="mb-2 text-gray-900 border-purple-200 placeholder:text-gray-500"
                         />
                         <Textarea
                           id={`content-${template.id}`}
                           defaultValue={template.content}
                           rows={3}
-                          className="mb-2"
+                          className="mb-2 text-gray-900 border-purple-200 placeholder:text-gray-500"
                         />
                         <div className="flex gap-2">
                           <Button

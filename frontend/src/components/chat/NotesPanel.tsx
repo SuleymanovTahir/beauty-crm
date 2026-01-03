@@ -1,6 +1,6 @@
 // /frontend/src/components/chat/NotesPanel.tsx
 import { useState, useEffect } from 'react';
-import { StickyNote, X, Plus, Trash2, Loader, Edit2, Save } from 'lucide-react';
+import { StickyNote, X, Plus, Trash2, Loader, Edit2, Save, ArrowLeft } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { toast } from 'sonner';
@@ -106,11 +106,18 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
     <div className="bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 rounded-2xl border-2 border-yellow-300 shadow-xl overflow-hidden animate-in slide-in-from-top duration-300 max-h-[500px] flex flex-col">
       {/* Header */}
       <div className="bg-gradient-to-r from-yellow-500 to-amber-600 p-4 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onClose}
+            className="h-9 w-9 hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors text-black"
+            title="Назад"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center" title="Заметки по клиенту">
             <StickyNote className="w-5 h-5 text-black" />
           </div>
-          <h3 className="font-bold text-black text-lg">{t('notes_panel_title')} ({notes.length})</h3>
+          <h3 className="font-bold text-black text-lg">Заметки ({notes.length})</h3>
         </div>
         <button
           onClick={onClose}
@@ -133,21 +140,21 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
               <Textarea
                 value={newNoteText}
                 onChange={(e) => setNewNoteText(e.target.value)}
-                placeholder={t('new_note_placeholder')}
-                className="min-h-[80px] border-0 resize-none focus-visible:ring-0 bg-transparent mb-2"
-                rows={3}
+                placeholder={t('new_note_placeholder') || 'Введите заметку...'}
+                className="min-h-[100px] border-2 border-purple-100 focus:border-purple-300 rounded-xl bg-purple-50/30 mb-3 text-gray-900 placeholder:text-gray-500 font-medium p-3"
+                rows={4}
                 disabled={isSaving}
               />
               <Button
                 onClick={handleAddNote}
                 disabled={isSaving || !newNoteText.trim()}
-                className="w-full bg-gradient-to-r from-yellow-600 to-orange-500 hover:from-yellow-700 hover:to-orange-600 text-white rounded-xl"
+                className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl shadow-md font-bold"
                 size="sm"
               >
                 {isSaving ? (
                   <><Loader className="w-4 h-4 mr-2 animate-spin" />{t('saving')}</>
                 ) : (
-                  <><Plus className="w-4 h-4 mr-2" />{t('add_note')}</>
+                  <><Plus className="w-4 h-4 mr-2" />{t('add_note') || 'Добавить заметку'}</>
                 )}
               </Button>
             </div>
@@ -162,7 +169,7 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
                       <Textarea
                         value={editingText}
                         onChange={(e) => setEditingText(e.target.value)}
-                        className="min-h-[80px] border-2 border-yellow-300 rounded-xl mb-2"
+                        className="min-h-[80px] border-2 border-yellow-300 rounded-xl mb-2 text-gray-900"
                         rows={3}
                       />
                       <div className="flex gap-2">

@@ -85,24 +85,5 @@
         }
       }
     }
-  ],
-  "services": [
-    {
-      "id": 66,
-      "fields": {
-        "name_ru": {
-          "ru": "Спа-педикюр",
-          "key": "services.66.name_ru.973df8ef",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    }
   ]
 }

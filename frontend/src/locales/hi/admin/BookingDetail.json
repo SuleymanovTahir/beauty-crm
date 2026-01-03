@@ -21,5 +21,9 @@
   "status_updated": "स्थिति अद्यतन की गई",
   "update": "अद्यतन",
   "update_status": "अद्यतन स्थिति",
-  "write_to_client": "ग्राहक को लिखें"
+  "write_to_client": "ग्राहक को लिखें",
+  "visits": "दौरा",
+  "total_spent": "कुल व्यय",
+  "internal_notes": "टिप्पणियाँ",
+  "no_notes": "इस प्रविष्टि के लिए कोई नोट नहीं हैं."
 }
