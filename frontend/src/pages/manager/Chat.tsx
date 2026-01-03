@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import '../../styles/messenger-themes.css';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import {
   MessageCircle,
