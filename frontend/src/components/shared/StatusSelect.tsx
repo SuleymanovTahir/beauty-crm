@@ -26,7 +26,9 @@ interface StatusSelectProps {
 export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, showAllOption }: StatusSelectProps) {
   const { t } = useTranslation(['components', 'common', 'clients', 'admin/Clients']);
 
-  const currentStatus = options[value] || { label: value, color: 'gray' };
+  const currentStatus = value === 'all'
+    ? { label: t('all_statuses'), color: 'gray' }
+    : (options[value] || { label: value, color: 'gray' });
 
   // Helper to get color classes because the backend might return simplified color names
   const getColorClasses = (color: string) => {
