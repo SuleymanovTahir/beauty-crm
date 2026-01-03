@@ -179,7 +179,8 @@ export default function Bookings() {
     time: '',
     revenue: 0,
     master: '',
-    status: 'confirmed' // Default status
+    status: 'confirmed', // Default status
+    source: 'manual'
   });
 
   // Export states
@@ -221,7 +222,9 @@ export default function Bookings() {
         (booking.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (booking.service_name || '').toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
-      const matchesMaster = masterFilter === 'all' || booking.master === masterFilter;
+      const matchesMaster = masterFilter === 'all' ||
+        booking.master === masterFilter ||
+        masters.find(m => m.username === booking.master)?.full_name === masterFilter;
 
       // ✅ ДОБАВЛЕНА ФИЛЬТРАЦИЯ ПО ДАТЕ
       let matchesDate = true;
@@ -486,6 +489,7 @@ export default function Bookings() {
         time: addForm.time,
         revenue: addForm.revenue || selectedService.price,
         master: addForm.master,
+        source: addForm.source,
       };
 
       if (editingBooking) {
@@ -545,7 +549,8 @@ export default function Bookings() {
       time: time,
       revenue: booking.revenue || 0,
       master: booking.master || '',
-      status: booking.status || 'confirmed'
+      status: booking.status || 'confirmed',
+      source: booking.source || 'manual'
     });
 
     // Открываем диалог
@@ -557,7 +562,7 @@ export default function Bookings() {
     setServiceSearch('');
     setSelectedClient(null);
     setSelectedService(null);
-    setAddForm({ phone: '', date: '', time: '', revenue: 0, master: '', status: 'confirmed' });
+    setAddForm({ phone: '', date: '', time: '', revenue: 0, master: '', status: 'confirmed', source: 'manual' });
     setEditingBooking(null);
   };
 
@@ -1117,13 +1122,18 @@ export default function Bookings() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{formatDateTime(booking.datetime)}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">
-                        {booking.master || '-'}
+                        {(() => {
+                          const master = masters.find(m => m.username === booking.master || m.full_name === booking.master);
+                          return master?.full_name || booking.master || '-';
+                        })()}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                         {booking.source === 'instagram' ? '📷 Instagram' :
                           booking.source === 'telegram' ? '✈️ Telegram' :
                             booking.source === 'whatsapp' ? '📱 WhatsApp' :
-                              t(`source.${booking.source || 'manual'}`, booking.source || 'Manual') as string}
+                              booking.source === 'account' ? '👤 ЛК' :
+                                booking.source === 'guest_link' ? '🔗 Ссылка' :
+                                  t(`source.${booking.source || 'manual'}`, booking.source || 'Manual') as string}
                       </td>
                       <td className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">
                         {booking.revenue ? `${booking.revenue} AED` : '-'}
@@ -1777,8 +1787,8 @@ export default function Bookings() {
                   >
                     <option value="">{t('bookings:select_master')}</option>
                     {filteredMasters.map((m: any) => (
-                      <option key={m.id} value={m.full_name}>
-                        {m.full_name} - {m.position === 'Master' ? t('bookings:master') : (m.position === 'Top Master' ? 'Топ Мастер' : m.position)}
+                      <option key={m.id} value={m.full_name || m.username}>
+                        {m.full_name || m.username} — {m.position === 'Master' ? t('bookings:master') : (m.position === 'Top Master' ? 'Топ Мастер' : m.position)}
                       </option>
                     ))}
                   </select>
@@ -1828,6 +1838,30 @@ export default function Bookings() {
                       fontSize: '0.875rem', boxSizing: 'border-box'
                     }}
                   />
+                </div>
+
+                {/* Source */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                    {t('bookings:source.title', 'Источник')}
+                  </label>
+                  <select
+                    value={addForm.source}
+                    onChange={(e) => setAddForm({ ...addForm, source: e.target.value })}
+                    style={{
+                      width: '100%', padding: '0.75rem',
+                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                      fontSize: '0.875rem', boxSizing: 'border-box',
+                      backgroundColor: 'white'
+                    }}
+                  >
+                    <option value="manual">{t('bookings:source.manual', 'Вручную (CRM)')}</option>
+                    <option value="account">{t('bookings:source.account', 'Личный кабинет')}</option>
+                    <option value="guest_link">{t('bookings:source.guest_link', 'Гостевая ссылка')}</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="telegram">Telegram</option>
+                    <option value="whatsapp">WhatsApp</option>
+                  </select>
                 </div>
               </div>
 

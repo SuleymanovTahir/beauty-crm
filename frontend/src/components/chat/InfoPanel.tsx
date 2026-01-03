@@ -1,6 +1,6 @@
 // /frontend/src/components/chat/InfoPanel.tsx
 import { useState } from 'react';
-import { User, Phone, Instagram, Check, X, Loader, Edit2, Save } from 'lucide-react';
+import { User, Phone, Instagram, Check, X, Loader, Edit2, Save, Send, MessageCircle } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { StatusSelect } from '../shared/StatusSelect';
@@ -18,6 +18,8 @@ interface Client {
   display_name: string;
   profile_pic?: string;
   status: string;
+  source?: string;
+  telegram_id?: string;
 }
 
 interface InfoPanelProps {
@@ -216,6 +218,21 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             onChange={handleBotModeChange}
           />
         </div>
+
+        {/* Source Field */}
+        <div className="py-4 border-b border-gray-200">
+          <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2 text-xs uppercase tracking-wider">
+            {t('source_title', 'Источник')}
+          </label>
+          <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
+            {client.source === 'instagram' ? '📷 Instagram' :
+              client.source === 'telegram' ? '✈️ Telegram' :
+                client.source === 'whatsapp' ? '📱 WhatsApp' :
+                  client.source === 'account' ? '👤 Личный кабинет' :
+                    client.source === 'guest_link' ? '🔗 Гостевая ссылка' :
+                      t(`source.${client.source || 'manual'}`, client.source || 'Вручную')}
+          </div>
+        </div>
         {/* Instagram Field */}
         {client.username && (
           <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border-2 border-pink-200 p-4">
@@ -236,6 +253,46 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
                 <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
                 <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
               </svg>
+            </a>
+          </div>
+        )}
+
+        {/* Telegram Field */}
+        {client.telegram_id && (
+          <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border-2 border-blue-200 p-4 mt-4">
+            <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center">
+                <Send className="w-4 h-4 text-white" />
+              </div>
+              Telegram
+            </label>
+
+            <a href={`https://t.me/${client.telegram_id.replace('@', '')}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 text-blue-600 font-medium hover:underline"
+            >
+              @{client.telegram_id.replace('@', '')}
+            </a>
+          </div>
+        )}
+
+        {/* WhatsApp Field */}
+        {client.phone && (
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-2 border-green-200 p-4 mt-4">
+            <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                <MessageCircle className="w-4 h-4 text-white" />
+              </div>
+              WhatsApp
+            </label>
+
+            <a href={`https://wa.me/${client.phone.replace(/[^0-9]/g, '')}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 text-green-600 font-medium hover:underline"
+            >
+              {client.phone}
             </a>
           </div>
         )}
