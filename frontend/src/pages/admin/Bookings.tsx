@@ -939,45 +939,80 @@ export default function Bookings() {
                 {/* Period Filter */}
                 <div className="flex flex-col gap-1.5">
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Период</span>
-                  <div className="relative">
-                    <select
-                      value={period}
-                      onChange={(e) => setPeriod(e.target.value)}
-                      className="w-full h-[42px] px-4 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500/10 transition-all bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%239ca3af%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:14px_14px] bg-[right_0.75rem_center] bg-no-repeat pr-10 shadow-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      <option value="all">За все время</option>
-                      <option value="today">{t('common:today')}</option>
-                      <option value="7">{t('common:last_7_days')}</option>
-                      <option value="14">{t('common:last_14_days')}</option>
-                      <option value="30">{t('common:last_month')}</option>
-                      <option value="90">{t('common:last_3_months')}</option>
-                      <option value="custom">{t('common:custom_period')}</option>
-                    </select>
-                  </div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="h-[42px] justify-between border-gray-200 rounded-xl font-bold text-gray-700 bg-white hover:bg-gray-50 transition-all">
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          <CalendarDays className="w-4 h-4 text-pink-500 shrink-0" />
+                          <span className="truncate">
+                            {period === 'all' ? t('common:all_time') :
+                              period === 'today' ? t('common:today') :
+                                period === '7' ? t('common:last_7_days') :
+                                  period === '14' ? t('common:last_14_days') :
+                                    period === '30' ? t('common:last_month') :
+                                      period === '90' ? t('common:last_3_months', 'За 3 месяца') :
+                                        period === 'custom' ? (dateFrom && dateTo ? `${dateFrom} - ${dateTo}` : 'Свой период') :
+                                          `За ${period} дней`}
+                          </span>
+                        </div>
+                        <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-72 p-3 rounded-2xl shadow-xl border-gray-100" align="start">
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-1 gap-1.5">
+                          {[
+                            { id: 'all', label: 'За все время' },
+                            { id: 'today', label: t('common:today') },
+                            { id: '7', label: t('common:last_7_days') },
+                            { id: '14', label: t('common:last_14_days') },
+                            { id: '30', label: t('common:last_month') },
+                            { id: '90', label: t('common:last_3_months', 'За 3 месяца') }
+                          ].map(opt => (
+                            <button
+                              key={opt.id}
+                              onClick={() => setPeriod(opt.id)}
+                              className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-bold transition-all ${period === opt.id ? 'bg-pink-500 text-white' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                            >
+                              <span>{opt.label}</span>
+                              {period === opt.id && <CalendarDays className="w-3.5 h-3.5" />}
+                            </button>
+                          ))}
+                        </div>
+
+                        <div className="border-t border-gray-100 pt-3">
+                          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Свой период</p>
+                          <div className="grid grid-cols-1 gap-2">
+                            <input
+                              type="date"
+                              value={dateFrom}
+                              onChange={e => {
+                                setDateFrom(e.target.value);
+                                setPeriod('custom');
+                              }}
+                              className="w-full h-9 px-3 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
+                            />
+                            <input
+                              type="date"
+                              value={dateTo}
+                              onChange={e => {
+                                setDateTo(e.target.value);
+                                setPeriod('custom');
+                              }}
+                              className="w-full h-9 px-3 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
             </div>
           )}
         </div>
 
-        {/* Custom Date Range - Only shows if 'custom' is selected */}
-        {period === 'custom' && (
-          <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="w-1/2 sm:w-40 px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all"
-            />
-            <span className="text-gray-400 font-medium">→</span>
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="w-1/2 sm:w-40 px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all"
-            />
-          </div>
-        )}
+
       </div>
 
       {/* Table */}
