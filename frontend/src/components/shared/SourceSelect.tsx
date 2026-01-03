@@ -67,62 +67,64 @@ export function SourceSelect({ value, onChange }: SourceSelectProps) {
         <div className="relative" ref={dropdownRef}>
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 w-fit ${getSourceColor(value)}`}
+                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all ring-1 ring-gray-200 hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 w-fit ${getSourceColor(value)}`}
             >
                 <div className="shrink-0">{currentSource.icon}</div>
                 <span className="truncate">{currentSource.label}</span>
                 <ChevronDown className={`w-3.5 h-3.5 shrink-0 opacity-50 ${isOpen ? 'rotate-180' : ''}`} />
             </div>
 
-            {isOpen && (
-                <div className="absolute top-full left-0 mt-1 min-w-[140px] w-auto bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100 overflow-hidden">
-                    <div className="max-h-60 overflow-y-auto">
-                        {sources.map((s) => (
-                            <div
-                                key={s.id}
-                                onClick={() => handleSelect(s.id)}
-                                className={`flex items-center justify-between px-3 py-2 hover:bg-blue-50 cursor-pointer transition-colors ${value === s.id ? 'bg-blue-50/50' : ''}`}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <div className="w-5 h-5 flex items-center justify-center rounded-md bg-gray-50">{s.icon}</div>
-                                    <span className="text-xs font-semibold text-gray-700">{s.label}</span>
+            {
+                isOpen && (
+                    <div className="absolute top-full left-0 mt-1 min-w-[140px] w-auto bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100 overflow-hidden">
+                        <div className="max-h-60 overflow-y-auto">
+                            {sources.map((s) => (
+                                <div
+                                    key={s.id}
+                                    onClick={() => handleSelect(s.id)}
+                                    className={`flex items-center justify-between px-3 py-2 hover:bg-blue-50 cursor-pointer transition-colors ${value === s.id ? 'bg-blue-50/50' : ''}`}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-5 h-5 flex items-center justify-center rounded-md bg-gray-50">{s.icon}</div>
+                                        <span className="text-xs font-semibold text-gray-700">{s.label}</span>
+                                    </div>
+                                    {value === s.id && <Check className="w-3 h-3 text-blue-500" />}
                                 </div>
-                                {value === s.id && <Check className="w-3 h-3 text-blue-500" />}
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
 
-                    <div className="border-t border-gray-100 mt-1 pt-1 mx-2 mb-1">
-                        {isAdding ? (
-                            <div className="flex items-center gap-1">
-                                <input
-                                    autoFocus
-                                    type="text"
-                                    value={customValue}
-                                    onChange={(e) => setCustomValue(e.target.value)}
-                                    onKeyDown={(e) => e.key === 'Enter' && handleAddCustom()}
-                                    placeholder="Свой вариант..."
-                                    className="flex-1 text-[10px] px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                />
-                                <button
-                                    onClick={handleAddCustom}
-                                    className="p-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                        <div className="border-t border-gray-100 mt-1 pt-1 mx-2 mb-1">
+                            {isAdding ? (
+                                <div className="flex items-center gap-1">
+                                    <input
+                                        autoFocus
+                                        type="text"
+                                        value={customValue}
+                                        onChange={(e) => setCustomValue(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleAddCustom()}
+                                        placeholder="Свой вариант..."
+                                        className="flex-1 text-[10px] px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                    />
+                                    <button
+                                        onClick={handleAddCustom}
+                                        className="p-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                                    >
+                                        <Plus className="w-3 h-3" />
+                                    </button>
+                                </div>
+                            ) : (
+                                <div
+                                    onClick={() => setIsAdding(true)}
+                                    className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-50 cursor-pointer rounded-lg text-blue-600 transition-colors"
                                 >
                                     <Plus className="w-3 h-3" />
-                                </button>
-                            </div>
-                        ) : (
-                            <div
-                                onClick={() => setIsAdding(true)}
-                                className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-50 cursor-pointer rounded-lg text-blue-600 transition-colors"
-                            >
-                                <Plus className="w-3 h-3" />
-                                <span className="text-[10px] font-bold uppercase tracking-wider">{t('admin/bookings:source.custom', 'Свой источник')}</span>
-                            </div>
-                        )}
+                                    <span className="text-[10px] font-bold uppercase tracking-wider">{t('admin/bookings:source.custom', 'Свой источник')}</span>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 }

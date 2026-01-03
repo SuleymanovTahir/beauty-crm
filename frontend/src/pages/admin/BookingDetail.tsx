@@ -60,7 +60,7 @@ export default function BookingDetail() {
   const [masters, setMasters] = useState<User[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
-  const { t, i18n } = useTranslation(['admin/bookingdetail', 'common', 'bookings']);
+  const { t, i18n } = useTranslation(['admin/bookingdetail', 'common', 'bookings', 'admin/services']);
   const [updating, setUpdating] = useState(false);
   const [newStatus, setNewStatus] = useState('');
   const [chartPeriod, setChartPeriod] = useState('30');
@@ -307,7 +307,15 @@ export default function BookingDetail() {
                     {(() => {
                       const serviceName = booking.service || '-';
                       const s = services.find(serv => serv.name === serviceName || serv.service_key === serviceName || serv.name_ru === serviceName);
-                      return (i18n.language.startsWith('ru') && s?.name_ru) ? s.name_ru : serviceName;
+                      if (i18n.language.startsWith('ru') && s?.name_ru) {
+                        return s.name_ru;
+                      }
+
+                      // Fallback to i18next
+                      const translated = t(`admin/services:${serviceName}`, '');
+                      if (translated && translated !== serviceName) return translated;
+
+                      return serviceName;
                     })()}
                   </p>
                 </div>
