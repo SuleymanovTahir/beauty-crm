@@ -122,11 +122,16 @@ export function Masters() {
               >
                 <CardHeader className="p-0">
                   <div className="aspect-square relative">
-                    <img
-                      src={master.avatar}
-                      alt={master.name}
-                      className="w-full h-full object-cover"
-                    />
+                    <Avatar className="w-full h-full rounded-none">
+                      <AvatarImage
+                        src={master.photo}
+                        alt={master.name}
+                        className="object-cover"
+                      />
+                      <AvatarFallback className="bg-purple-100 text-purple-600 font-bold text-4xl rounded-none">
+                        {master.name?.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
                     <Button
                       size="icon"
                       variant="secondary"
@@ -149,19 +154,21 @@ export function Masters() {
                   </div>
 
                   <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg">
                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold">{master.rating}</span>
+                      <span className="text-sm font-bold text-yellow-700">{master.rating || '5.0'}</span>
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      {master.reviews_count} {t('masters.reviews', 'отзывов')}
-                    </div>
+                    {master.reviews_count > 0 && (
+                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                        ({master.reviews_count} {t('masters.reviews', 'отзывов')})
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex gap-2">
                     <Button
                       className="flex-1"
-                      onClick={() => navigate('/new-booking', { state: { masterId: master.id } })}
+                      onClick={() => navigate('/new-booking', { state: { prefillMaster: master.id } })}
                     >
                       <Calendar className="w-4 h-4 mr-2" />
                       {t('masters.book', 'Записаться')}

@@ -189,6 +189,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
         // Handle prefill from location state (for reschedule/edit)
         const state = location.state as any;
+        console.log('[UserBookingWizard] Location state:', state);
         if (state?.editBookingId || state?.prefillMaster || state?.prefillService) {
           const newState: Partial<BookingState> = {};
 
@@ -202,7 +203,9 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
           // Prefill master/professional
           if (state.prefillMaster) {
-            const master = masters.find((m: any) => m.id === state.prefillMaster);
+            console.log('[UserBookingWizard] Searching for master with ID:', state.prefillMaster);
+            const master = employeesData.find((m: any) => m.id === state.prefillMaster);
+            console.log('[UserBookingWizard] Found master:', master);
             if (master) {
               newState.professional = master;
               newState.professionalSelected = true;
@@ -230,9 +233,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             // If both service and master are prefilled, skip to datetime
             if (newState.services?.length && newState.professional) {
               setStep('datetime');
-            } else {
+            } else if (newState.services?.length) {
+              // Only services prefilled, go to services step
               setStep('services');
             }
+            // If only master is prefilled, stay on menu - don't change step
           }
         }
 
@@ -247,6 +252,36 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
     initCorrect();
   }, []);
+
+  // Handle location state changes (for prefilling master/service)
+  useEffect(() => {
+    if (loading || initialMasters.length === 0) return;
+
+    const state = location.state as any;
+    console.log('[UserBookingWizard] Location state changed:', state);
+
+    if (state?.prefillMaster) {
+      const prefillMasterId = state.prefillMaster;
+      const currentMasterId = bookingState.professional?.id;
+
+      // Only update if master is different or not set
+      if (currentMasterId !== prefillMasterId) {
+        console.log('[UserBookingWizard] Attempting to prefill master:', prefillMasterId);
+        const master = initialMasters.find((m: any) => m.id === prefillMasterId);
+        console.log('[UserBookingWizard] Found master from initialMasters:', master);
+
+        if (master) {
+          setBookingState(prev => ({
+            ...prev,
+            professional: master,
+            professionalSelected: true
+          }));
+
+          // Don't change step - let user stay on menu to see the full flow
+        }
+      }
+    }
+  }, [location.state, initialMasters, loading]);
 
   useEffect(() => {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
@@ -458,15 +493,15 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               </div>
             )}
 
-            <div className="flex gap-2">
+            <div className="flex items-center gap-3">
               {/* Edit booking button - opens reschedule dialog */}
               {step !== 'menu' && bookingState.services.length > 0 && (
                 <Button
                   variant="outline"
                   onClick={() => setShowRescheduleDialog(true)}
-                  className="h-11 px-4 rounded-xl border border-slate-200 font-bold text-[10px] gap-1.5 hover:bg-slate-50 transition-all shadow-sm whitespace-nowrap"
+                  className="h-10 px-4 rounded-lg border border-slate-200 font-medium text-sm gap-2 hover:bg-slate-50 transition-all"
                 >
-                  <Edit className="w-3.5 h-3.5 text-blue-600" />
+                  <Edit className="w-4 h-4 text-blue-600" />
                   <span>{t('booking:change_booking', 'Изменить запись')}</span>
                 </Button>
               )}
@@ -482,7 +517,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     setStep('confirm');
                   }
                 }}
-                className="flex-1 h-11 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 font-black uppercase tracking-widest text-[9px] text-white shadow-lg shadow-purple-100 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="h-10 px-6 rounded-lg bg-purple-600 hover:bg-purple-700 font-semibold text-sm text-white shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-purple-600"
                 disabled={
                   (step === 'services' && bookingState.services.length === 0) ||
                   (step === 'professional' && !bookingState.professionalSelected) ||
