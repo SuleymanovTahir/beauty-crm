@@ -1368,7 +1368,7 @@ export default function Chat() {
           </div>
         )
         }
-      </div >
+      </div>
 
       {/* Модальное окно "Спросить AI" */}
       {
@@ -1574,6 +1574,6 @@ export default function Chat() {
           </div>
         )
       }
-    </div >
-  );
+    </div>
+);
 }
