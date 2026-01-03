@@ -689,10 +689,10 @@ export default function Clients() {
           </div>
 
           {/* Row 2: Control Bar */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setShowCreateDialog(true)}
-              className="flex-1 min-w-[100px] h-[42px] px-3 bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md shadow-gray-200"
+              className="flex-[2] min-w-[100px] h-[42px] px-3 bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md shadow-gray-200"
             >
               <Plus className="w-4 h-4" />
               <span>Добавить</span>
@@ -703,14 +703,14 @@ export default function Clients() {
                 setShowFilters(!showFilters);
                 if (!showFilters) setShowActions(false);
               }}
-              className={`h-[42px] px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all border shadow-sm shrink-0 ${showFilters
+              className={`flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showFilters
                 ? 'bg-pink-50 border-pink-200 text-pink-600'
                 : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
                 }`}
             >
-              <Users className={`w-4 h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
-              <span>Фильтры</span>
-              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
+              <Users className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
+              <span className="truncate">Фильтры</span>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
             </button>
 
             <button
@@ -718,20 +718,20 @@ export default function Clients() {
                 setShowActions(!showActions);
                 if (!showActions) setShowFilters(false);
               }}
-              className={`h-[42px] px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all border shadow-sm shrink-0 ${showActions
+              className={`flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showActions
                 ? 'bg-blue-50 border-blue-200 text-blue-600'
                 : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
                 }`}
             >
-              <Upload className={`w-4 h-4 ${showActions ? 'text-blue-500' : 'text-gray-400'}`} />
-              <span>Инструменты</span>
-              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showActions ? 'rotate-180' : ''}`} />
+              <Upload className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showActions ? 'text-blue-500' : 'text-gray-400'}`} />
+              <span className="truncate">Опции</span>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showActions ? 'rotate-180' : ''}`} />
             </button>
 
             <button
               onClick={handleRefresh}
               disabled={loading}
-              className="h-[42px] px-3 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm shrink-0"
+              className="w-[42px] h-[42px] bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm shrink-0"
               title="Обновить"
             >
               <RefreshCw className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
@@ -745,17 +745,19 @@ export default function Clients() {
                 <button
                   onClick={() => setShowImportDialog(true)}
                   disabled={importing}
-                  className="h-[42px] bg-white text-gray-700 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
+                  className="h-[42px] w-full bg-white text-gray-700 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
                 >
                   <Upload className="w-4 h-4 text-gray-400" />
                   <span>Импорт</span>
                 </button>
 
-                <ExportDropdown
-                  onExport={handleExport}
-                  loading={exporting}
-                  disabled={exporting}
-                />
+                <div className="w-full">
+                  <ExportDropdown
+                    onExport={handleExport}
+                    loading={exporting}
+                    disabled={exporting}
+                  />
+                </div>
               </div>
             </div>
           )}
