@@ -44,7 +44,7 @@ export function DropdownButton({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const baseStyles = 'relative inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all';
+  const baseStyles = 'relative inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all text-sm';
   const variantStyles = {
     default: 'bg-pink-600 text-white hover:bg-pink-700',
     outline: 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50',
