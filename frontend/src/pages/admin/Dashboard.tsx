@@ -507,51 +507,46 @@ export default function AdminDashboard() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setBookingStatusFilter('all')}
-                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
-                  bookingStatusFilter === 'all'
+                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${bookingStatusFilter === 'all'
                     ? 'bg-pink-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 {t('dashboard:filter_all', 'Все')}
               </button>
               <button
                 onClick={() => setBookingStatusFilter('pending')}
-                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
-                  bookingStatusFilter === 'pending'
+                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${bookingStatusFilter === 'pending'
                     ? 'bg-yellow-600 text-white'
                     : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
-                }`}
+                  }`}
               >
                 {t('dashboard:status_pending')}
               </button>
               <button
                 onClick={() => setBookingStatusFilter('confirmed')}
-                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
-                  bookingStatusFilter === 'confirmed'
+                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${bookingStatusFilter === 'confirmed'
                     ? 'bg-green-600 text-white'
                     : 'bg-green-100 text-green-800 hover:bg-green-200'
-                }`}
+                  }`}
               >
                 {t('dashboard:status_confirmed')}
               </button>
               <button
                 onClick={() => setBookingStatusFilter('completed')}
-                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
-                  bookingStatusFilter === 'completed'
+                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${bookingStatusFilter === 'completed'
                     ? 'bg-blue-600 text-white'
                     : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
-                }`}
+                  }`}
               >
                 {t('dashboard:status_completed')}
               </button>
               <button
                 onClick={() => setBookingStatusFilter('cancelled')}
-                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
-                  bookingStatusFilter === 'cancelled'
+                className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${bookingStatusFilter === 'cancelled'
                     ? 'bg-red-600 text-white'
                     : 'bg-red-100 text-red-800 hover:bg-red-200'
-                }`}
+                  }`}
               >
                 {t('dashboard:status_cancelled')}
               </button>

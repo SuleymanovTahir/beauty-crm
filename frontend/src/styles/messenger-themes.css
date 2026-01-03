@@ -26,118 +26,119 @@
 
 /* Instagram Theme */
 .messenger-instagram .chat-header {
-  background: var(--instagram-gradient);
+  background: var(--instagram-gradient) !important;
   color: white;
 }
 
 .messenger-instagram .chat-messages-area {
-  background: #ffffff;
+  background: #ffffff !important;
 }
 
 .messenger-instagram .message-own {
-  background: var(--instagram-message-own);
+  background: var(--instagram-message-own) !important;
   color: white;
   box-shadow: 0 4px 15px rgba(225, 48, 108, 0.2);
 }
 
 .messenger-instagram .message-other {
-  background: #efefef;
+  background: #efefef !important;
   color: #000000;
 }
 
 .messenger-instagram .chat-input-area {
-  background: #ffffff;
+  background: #ffffff !important;
   border-top: 1px solid #dbdbdb;
 }
 
 /* Telegram Theme */
 .messenger-telegram .chat-header {
-  background: #ffffff;
+  background: #ffffff !important;
   border-bottom: 1px solid #e0e0e0;
   color: #000000;
 }
 
 .messenger-telegram .chat-messages-area {
-  background: #e7eef3;
-  background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+  background: #eff1f5 !important;
+  background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png') !important;
+  background-size: cover;
 }
 
 .messenger-telegram .message-own {
-  background: #0088cc;
+  background: #0088cc !important;
   color: white;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   border-radius: 12px 12px 2px 12px;
 }
 
 .messenger-telegram .message-other {
-  background: #ffffff;
+  background: #ffffff !important;
   color: #000000;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   border-radius: 12px 12px 12px 2px;
 }
 
 .messenger-telegram .chat-input-area {
-  background: #ffffff;
+  background: #ffffff !important;
   border-top: 1px solid #e0e0e0;
 }
 
 /* WhatsApp Theme */
 .messenger-whatsapp .chat-header {
-  background: #f0f2f5;
+  background: #f0f2f5 !important;
   border-bottom: 1px solid #d1d7db;
   color: #000000;
 }
 
 .messenger-whatsapp .chat-messages-area {
-  background: #e5ddd5;
-  background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+  background: #e5ddd5 !important;
+  background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png") !important;
   background-blend-mode: overlay;
   background-opacity: 0.1;
 }
 
 .messenger-whatsapp .message-own {
-  background: #DCF8C6;
+  background: #DCF8C6 !important;
   color: #000000;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   border-radius: 8px 0px 8px 8px;
 }
 
 .messenger-whatsapp .message-other {
-  background: #ffffff;
+  background: #ffffff !important;
   color: #000000;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   border-radius: 0px 8px 8px 8px;
 }
 
 .messenger-whatsapp .chat-input-area {
-  background: #f0f2f5;
+  background: #f0f2f5 !important;
 }
 
 /* TikTok Theme */
 .messenger-tiktok .chat-header {
-  background: #000000;
+  background: #000000 !important;
   border-bottom: 1px solid #2a2a2a;
   color: white;
 }
 
 .messenger-tiktok .chat-messages-area {
-  background: #000000;
+  background: #000000 !important;
 }
 
 .messenger-tiktok .message-own {
-  background: linear-gradient(135deg, #fe2c55 0%, #25f4ee 100%);
+  background: linear-gradient(135deg, #fe2c55 0%, #25f4ee 100%) !important;
   color: white;
   box-shadow: 0 0 15px rgba(254, 44, 85, 0.3);
 }
 
 .messenger-tiktok .message-other {
-  background: #1a1a1a;
+  background: #1a1a1a !important;
   color: white;
   border: 1px solid #2a2a2a;
 }
 
 .messenger-tiktok .chat-input-area {
-  background: #000000;
+  background: #000000 !important;
   border-top: 1px solid #2a2a2a;
 }
 

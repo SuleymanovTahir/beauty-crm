@@ -64,12 +64,12 @@ interface Message {
   type?: string;
 }
 
-const ClientItem = React.memo(({ client, isSelected, onClick, t }: { client: Client, isSelected: boolean, onClick: () => void, t: any }) => (
+const ClientItem = React.memo(({ client, isSelected, onClick, t, selectionBg }: { client: Client, isSelected: boolean, onClick: () => void, t: any, selectionBg?: string }) => (
   <button
     onClick={onClick}
     className={`
       w-full p-3 flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left
-      ${isSelected ? 'bg-purple-100/50 dark:bg-purple-900/10' : ''}
+      ${isSelected ? (selectionBg || 'bg-purple-100/50') : ''}
     `}
   >
     <div className="relative flex-shrink-0">
@@ -102,7 +102,7 @@ const ClientItem = React.memo(({ client, isSelected, onClick, t }: { client: Cli
           {client.source.toLowerCase() === 'tiktok' && <TikTokIcon size={14} colorful={true} />}
         </div>
       )}
-      {client.unread_count && client.unread_count > 0 && (
+      {(client.unread_count || 0) > 0 && (
         <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
           {client.unread_count > 9 ? '9+' : client.unread_count}
         </div>
@@ -128,6 +128,55 @@ export default function Chat() {
   const { t } = useTranslation(['manager/Chat', 'common']);
   const { user: currentUser } = useAuth();
   const userPermissions = usePermissions(currentUser?.role || 'employee');
+
+  // Messenger-specific color themes
+  const messengerStyles: Record<string, {
+    aiButton: string;
+    sendButton: string;
+    avatarGradient: string;
+    selectionBg: string;
+    botSuggestionBg: string;
+    botSuggestionText: string;
+    botSuggestionBorder: string;
+  }> = {
+    instagram: {
+      aiButton: 'bg-[#A855F7] hover:bg-[#9333EA]',
+      sendButton: 'bg-gradient-to-r from-purple-500 to-pink-500',
+      avatarGradient: 'bg-gradient-to-br from-purple-500 to-pink-500',
+      selectionBg: 'bg-purple-100/50 dark:bg-purple-900/10',
+      botSuggestionBg: 'bg-purple-50',
+      botSuggestionText: 'text-purple-700',
+      botSuggestionBorder: 'border-purple-100'
+    },
+    telegram: {
+      aiButton: 'bg-[#0088cc] hover:bg-[#0077b3]',
+      sendButton: 'bg-[#0088cc]',
+      avatarGradient: 'bg-[#0088cc]',
+      selectionBg: 'bg-blue-100/50 dark:bg-blue-900/10',
+      botSuggestionBg: 'bg-blue-50',
+      botSuggestionText: 'text-blue-700',
+      botSuggestionBorder: 'border-blue-100'
+    },
+    whatsapp: {
+      aiButton: 'bg-[#25D366] hover:bg-[#20bd5a]',
+      sendButton: 'bg-[#25D366]',
+      avatarGradient: 'bg-[#25D366]',
+      selectionBg: 'bg-green-100/50 dark:bg-green-900/10',
+      botSuggestionBg: 'bg-green-50',
+      botSuggestionText: 'text-green-700',
+      botSuggestionBorder: 'border-green-100'
+    },
+    tiktok: {
+      aiButton: 'bg-[#fe2c55] hover:bg-[#e61e4d]',
+      sendButton: 'bg-gradient-to-r from-[#fe2c55] to-[#25f4ee]',
+      avatarGradient: 'bg-gradient-to-br from-[#fe2c55] to-[#25f4ee]',
+      selectionBg: 'bg-gray-100/50 dark:bg-gray-800/10',
+      botSuggestionBg: 'bg-gray-50',
+      botSuggestionText: 'text-gray-700',
+      botSuggestionBorder: 'border-gray-100'
+    }
+  };
+
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -182,7 +231,10 @@ export default function Chat() {
   const [isSelectingMessages, setIsSelectingMessages] = useState(false);
   const [selectedMessageIds, setSelectedMessageIds] = useState<Set<string | number>>(new Set());
   const [isAskingBot, setIsAskingBot] = useState(false);
-  const [currentMessenger, setCurrentMessenger] = useState<string>('instagram');
+  const [currentMessenger, setCurrentMessenger] = useState<string>(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    return searchParams.get('messenger') || 'instagram';
+  });
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -190,9 +242,9 @@ export default function Chat() {
     const messengerFromUrl = searchParams.get('messenger') || 'instagram';
 
     const oldMessenger = currentMessenger;
-    setCurrentMessenger(messengerFromUrl);
-
-    if (oldMessenger !== messengerFromUrl) {
+    // Only update if it actually changed to avoid loop
+    if (messengerFromUrl !== currentMessenger) {
+      setCurrentMessenger(messengerFromUrl);
       setSelectedClient(null);
       setMessages([]);
     }
@@ -204,10 +256,10 @@ export default function Chat() {
 
   useEffect(() => {
     loadClients();
-    // Сбрасываем текущий диалог при смене мессенджера
-    setSelectedClient(null);
-    setMessages([]);
+    // Do NOT clear selectedClient/messages here blindly, as it might flash content.
+    // The previous useEffect handles the clearing on change.
   }, [currentMessenger]);
+
 
   useEffect(() => {
     if (clients.length > 0) {
@@ -793,6 +845,7 @@ export default function Chat() {
                     isSelected={selectedClient?.id === client.id}
                     onClick={() => handleSelectClient(client)}
                     t={t}
+                    selectionBg={messengerStyles[currentMessenger]?.selectionBg || messengerStyles.instagram.selectionBg}
                   />
                 ))}
               </div>
@@ -819,7 +872,7 @@ export default function Chat() {
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <button
                       onClick={handleBackToList}
-                      className={`md:hidden p-2 -ml-2 rounded-full transition-colors ${(currentMessenger === 'whatsapp' || currentMessenger === 'tiktok') ? 'hover:bg-white/10 text-white' : 'hover:bg-black/5 text-gray-700'
+                      className={`md:hidden p-2 -ml-2 rounded-full transition-colors ${(currentMessenger === 'instagram' || currentMessenger === 'tiktok') ? 'hover:bg-white/10 text-white' : 'hover:bg-black/5 text-gray-700'
                         }`}
                     >
                       <ArrowLeft className="w-5 h-5" />
@@ -833,15 +886,15 @@ export default function Chat() {
                           crossOrigin="anonymous"
                         />
                       ) : (
-                        <div className="size-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+                        <div className={`size-10 rounded-full flex items-center justify-center text-white font-bold text-sm ${messengerStyles[currentMessenger]?.avatarGradient || messengerStyles.instagram.avatarGradient}`}>
                           {selectedClient.display_name.charAt(0).toUpperCase()}
                         </div>
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className={`font-bold truncate text-sm leading-tight ${(currentMessenger === 'whatsapp' || currentMessenger === 'tiktok') ? 'text-white' : 'text-gray-900'
+                      <p className={`font-bold truncate text-sm leading-tight ${(currentMessenger === 'instagram' || currentMessenger === 'tiktok') ? 'text-white' : 'text-gray-900'
                         }`}>{selectedClient.display_name}</p>
-                      <p className={`text-[11px] truncate mt-0.5 ${(currentMessenger === 'whatsapp' || currentMessenger === 'tiktok') ? 'text-white/70' : 'text-gray-500'
+                      <p className={`text-[11px] truncate mt-0.5 ${(currentMessenger === 'instagram' || currentMessenger === 'tiktok') ? 'text-white/70' : 'text-gray-500'
                         }`}>
                         {selectedClient.username ? `@${selectedClient.username}` : 'Online'}
                       </p>
@@ -852,35 +905,15 @@ export default function Chat() {
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     <button
                       onClick={() => setShowAIButtons(!showAIButtons)}
-                      className="h-8 px-4 bg-[#A855F7] text-white rounded-full flex items-center gap-1.5 hover:bg-[#9333EA] transition-all active:scale-95 shadow-sm"
+                      className={`h-8 px-4 text-white rounded-full flex items-center gap-1.5 transition-all active:scale-95 shadow-sm ${messengerStyles[currentMessenger]?.aiButton || messengerStyles.instagram.aiButton}`}
                     >
                       <Sparkles className="w-3.5 h-3.5" />
                       <span className="text-[11px] font-bold tracking-wider">AI</span>
                     </button>
 
-                    {/* 
-                    <button
-                      onClick={() => handleProhibitedAction('звонить')}
-                      className={`p-2 rounded-full transition-colors ${(currentMessenger === 'whatsapp' || currentMessenger === 'tiktok') ? 'text-white/70 hover:bg-white/10' : 'text-gray-500 hover:bg-black/5'
-                        }`}
-                      title="Аудиозвонок"
-                    >
-                      <Phone className="w-5 h-5" />
-                    </button>
-
-                    <button
-                      onClick={() => handleProhibitedAction('совершать видеозвонки')}
-                      className={`p-2 rounded-full transition-colors ${(currentMessenger === 'whatsapp' || currentMessenger === 'tiktok') ? 'text-white/70 hover:bg-white/10' : 'text-gray-500 hover:bg-black/5'
-                        }`}
-                      title="Видеозвонок"
-                    >
-                      <Video className="w-5 h-5" />
-                    </button>
-                    */}
-
                     <button
                       onClick={() => setShowMobileMenu(!showMobileMenu)}
-                      className={`p-2 rounded-full transition-colors ${(currentMessenger === 'whatsapp' || currentMessenger === 'tiktok') ? 'text-white/70 hover:bg-white/10' : 'text-gray-500 hover:bg-black/5'
+                      className={`p-2 rounded-full transition-colors ${(currentMessenger === 'instagram' || currentMessenger === 'tiktok') ? 'text-white/70 hover:bg-white/10' : 'text-gray-500 hover:bg-black/5'
                         }`}
                     >
                       <MoreVertical className="w-5 h-5" />
@@ -1430,6 +1463,14 @@ export default function Chat() {
 
                   {/* Send or Voice Button */}
                   <div className="flex items-center">
+                    <button
+                      onClick={handleSendMessage}
+                      disabled={!message.trim()}
+                      className={`p-3 text-white rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg active:scale-95 flex items-center justify-center ${!message.trim() ? 'opacity-50 cursor-not-allowed' : ''} ${messengerStyles[currentMessenger]?.sendButton || messengerStyles.instagram.sendButton}`}
+                    >
+                      <Send className="w-5 h-5" />
+                    </button>
+                    {/* Voice message temporarily disabled
                     {message.trim() ? (
                       <button
                         onClick={handleSendMessage}
@@ -1438,7 +1479,6 @@ export default function Chat() {
                         <Send className="w-5 h-5" />
                       </button>
                     ) : (
-                      /* Voice message temporarily disabled */
                       <button
                         onClick={() => handleProhibitedAction('отправлять голосовые сообщения')}
                         className="p-3 text-gray-500 hover:bg-white hover:text-purple-600 rounded-full transition-all duration-300"
@@ -1448,7 +1488,8 @@ export default function Chat() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                         </svg>
                       </button>
-                    )}
+                    )} 
+                    */}
                   </div>
                 </div>
 
