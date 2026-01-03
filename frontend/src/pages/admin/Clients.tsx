@@ -109,6 +109,7 @@ export default function Clients() {
   // СОСТОЯНИЯ ДЛЯ ДИАЛОГОВ
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [showActions, setShowActions] = useState(false);
   const [createForm, setCreateForm] = useState({
     name: '',
     phone: '',
@@ -687,41 +688,81 @@ export default function Clients() {
             />
           </div>
 
-          {/* Row 2: Primary Actions & Toggle */}
-          <div className="flex items-center gap-2">
+          {/* Row 2: Control Bar */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
             <button
               onClick={() => setShowCreateDialog(true)}
-              className="flex-1 h-[42px] bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-2 transition-all shadow-md shadow-gray-200"
+              className="flex-1 min-w-[100px] h-[42px] px-3 bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md shadow-gray-200"
             >
               <Plus className="w-4 h-4" />
               <span>Добавить</span>
             </button>
 
             <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`h-[42px] px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all border shadow-sm ${showFilters
+              onClick={() => {
+                setShowFilters(!showFilters);
+                if (!showFilters) setShowActions(false);
+              }}
+              className={`h-[42px] px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all border shadow-sm shrink-0 ${showFilters
                 ? 'bg-pink-50 border-pink-200 text-pink-600'
                 : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
                 }`}
             >
               <Users className={`w-4 h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
-              <span className="hidden sm:inline">Фильтры</span>
+              <span>Фильтры</span>
               <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
+            </button>
+
+            <button
+              onClick={() => {
+                setShowActions(!showActions);
+                if (!showActions) setShowFilters(false);
+              }}
+              className={`h-[42px] px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all border shadow-sm shrink-0 ${showActions
+                ? 'bg-blue-50 border-blue-200 text-blue-600'
+                : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                }`}
+            >
+              <Upload className={`w-4 h-4 ${showActions ? 'text-blue-500' : 'text-gray-400'}`} />
+              <span>Инструменты</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showActions ? 'rotate-180' : ''}`} />
             </button>
 
             <button
               onClick={handleRefresh}
               disabled={loading}
-              className="h-[42px] px-3 sm:px-4 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm"
+              className="h-[42px] px-3 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm shrink-0"
               title="Обновить"
             >
               <RefreshCw className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
             </button>
           </div>
 
-          {/* Expandable Section: Filters & Secondary Actions */}
+          {/* Expandable Section: Actions (Import/Export) */}
+          {showActions && (
+            <div className="pt-4 border-t border-gray-50 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setShowImportDialog(true)}
+                  disabled={importing}
+                  className="h-[42px] bg-white text-gray-700 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
+                >
+                  <Upload className="w-4 h-4 text-gray-400" />
+                  <span>Импорт</span>
+                </button>
+
+                <ExportDropdown
+                  onExport={handleExport}
+                  loading={exporting}
+                  disabled={exporting}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Expandable Section: ONLY Filters */}
           {showFilters && (
-            <div className="pt-4 border-t border-gray-50 flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="pt-4 border-t border-gray-50 animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="flex flex-col gap-1.5">
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Статус</span>
@@ -748,26 +789,6 @@ export default function Clients() {
                   <PeriodFilterSelect
                     value={period}
                     onChange={setPeriod}
-                  />
-                </div>
-              </div>
-
-              {/* Secondary Actions Row */}
-              <div className="flex items-center gap-3 pt-2">
-                <button
-                  onClick={() => setShowImportDialog(true)}
-                  disabled={importing}
-                  className="flex-1 h-[42px] bg-white text-gray-700 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
-                >
-                  <Upload className="w-4 h-4 text-gray-400" />
-                  <span>Импорт</span>
-                </button>
-
-                <div className="flex-1">
-                  <ExportDropdown
-                    onExport={handleExport}
-                    loading={exporting}
-                    disabled={exporting}
                   />
                 </div>
               </div>
