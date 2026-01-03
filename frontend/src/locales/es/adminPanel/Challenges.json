@@ -55,9 +55,9 @@
     "failed_create": "No se pudo crear el desafío",
     "failed_delete": "No se pudo eliminar el desafío",
     "failed_load": "No se pudieron cargar los desafíos",
-    "progress_checked_one": "",
     "progress_checked_few": "",
     "progress_checked_many": "",
+    "progress_checked_one": "",
     "progress_checked_other": ""
   },
   "types": {
