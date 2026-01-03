@@ -64,13 +64,13 @@ export function TemperatureFilter({ value, onChange }: TemperatureFilterProps) {
         <div className="relative" ref={dropdownRef}>
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-between gap-2 cursor-pointer py-2 px-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors min-w-[140px]"
+                className="flex items-center justify-between gap-2 cursor-pointer py-2.5 px-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-all w-full shadow-sm"
             >
-                <div className="flex items-center gap-2">
-                    {currentConfig.icon}
-                    <span className="text-sm font-medium text-gray-700">{currentConfig.label}</span>
+                <div className="flex items-center gap-2 overflow-hidden">
+                    <div className="shrink-0">{currentConfig.icon}</div>
+                    <span className="text-sm font-semibold text-gray-700 truncate">{currentConfig.label}</span>
                 </div>
-                <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </div>
 
             {isOpen && (

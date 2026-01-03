@@ -51,16 +51,16 @@ export function PeriodFilterSelect({ value, onChange }: PeriodFilterSelectProps)
     const periods = ['all', 'today', '7', '14', '30', '90'];
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative w-full" ref={dropdownRef}>
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-between gap-2 cursor-pointer py-2 px-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors min-w-[160px]"
+                className="flex items-center justify-between gap-2 cursor-pointer py-2.5 px-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-all w-full shadow-sm"
             >
-                <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-gray-500" />
-                    <span className="text-sm font-medium text-gray-700">{getPeriodLabel(value)}</span>
+                <div className="flex items-center gap-2 overflow-hidden">
+                    <Calendar className="w-4 h-4 text-gray-500 shrink-0" />
+                    <span className="text-sm font-semibold text-gray-700 truncate">{getPeriodLabel(value)}</span>
                 </div>
-                <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </div>
 
             {isOpen && (
@@ -69,9 +69,8 @@ export function PeriodFilterSelect({ value, onChange }: PeriodFilterSelectProps)
                         <div
                             key={period}
                             onClick={() => handleSelect(period)}
-                            className={`flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm ${
-                                value === period ? 'bg-pink-50 text-pink-600 font-medium' : 'text-gray-900'
-                            }`}
+                            className={`flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm ${value === period ? 'bg-pink-50 text-pink-600 font-medium' : 'text-gray-900'
+                                }`}
                         >
                             <span>{getPeriodLabel(period)}</span>
                         </div>
