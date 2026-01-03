@@ -135,5 +135,12 @@
   "Массаж": "Massage",
   "Окрашивание": "Coloring",
   "Педикюр": "Pedicure",
-  "Стрижка": "Haircut"
+  "Педикюр": "Pedicure",
+  "Стрижка": "Haircut",
+  "Ламинирование ресниц": "Eyelash lamination",
+  "Наращивание ресниц": "Eyelash extension",
+  "Снятие ресниц": "Eyelash removal",
+  "Коррекция бровей": "Eyebrow shaping",
+  "Окрашивание бровей": "Eyebrow tinting",
+  "Долговременная укладка бровей": "Long-term eyebrow styling"
 }

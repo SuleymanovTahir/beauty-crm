@@ -27,5 +27,9 @@
   "update": "Update",
   "update_status": "Status update",
   "write_to_client": "Write to the client",
-  "status_updated": "Status updated"
+  "status_updated": "Status updated",
+  "visits": "visits",
+  "total_spent": "Total spent",
+  "internal_notes": "Internal Notes",
+  "no_notes": "No notes for this booking."
 }
