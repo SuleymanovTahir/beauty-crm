@@ -34,6 +34,7 @@
     "cmdk": "*",
     "country-flag-icons": "^1.6.4",
     "embla-carousel-react": "*",
+    "emoji-picker-react": "^4.16.1",
     "i18next": "*",
     "i18next-browser-languagedetector": "*",
     "input-otp": "*",
