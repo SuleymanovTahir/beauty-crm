@@ -13,12 +13,14 @@ interface Employee {
     id: number;
     username: string;
     full_name: string;
+    full_name_ru?: string;
     email: string;
     phone?: string;
     phone_number?: string;
     birth_date?: string;
     birthday?: string;
     position?: string;
+    position_ru?: string;
     instagram_link?: string;
     whatsapp?: string;
     telegram?: string;
@@ -41,6 +43,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
     const [form, setForm] = useState({
         username: '',
         full_name: '',
+        full_name_ru: '',
         email: '',
         phone_number: '',
         birth_date: '',
@@ -48,6 +51,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
         whatsapp: '',
         telegram: '',
         position: '',
+        position_ru: '',
         years_of_experience: '',
         specialization: '',
         about_me: '',
@@ -60,6 +64,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
         setForm({
             username: employee.username || '',
             full_name: employee.full_name || '',
+            full_name_ru: employee.full_name_ru || '',
             email: employee.email || '',
             phone_number: employee.phone_number || employee.phone || '',
             birth_date: employee.birth_date || employee.birthday || '',
@@ -67,6 +72,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
             whatsapp: employee.whatsapp || '',
             telegram: employee.telegram || '',
             position: employee.position || '',
+            position_ru: employee.position_ru || '',
             years_of_experience: String(employee.years_of_experience || ''),
             specialization: employee.specialization || '',
             about_me: employee.about_me || '',
@@ -150,6 +156,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
             const updateData: any = {
                 username: form.username,
                 full_name: form.full_name,
+                full_name_ru: form.full_name_ru,
                 email: form.email,
                 phone_number: form.phone_number,
                 birth_date: form.birth_date,
@@ -157,6 +164,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                 whatsapp: form.whatsapp,
                 telegram: form.telegram,
                 position: form.position,
+                position_ru: form.position_ru,
                 years_of_experience: form.years_of_experience,
                 specialization: form.specialization,
                 about_me: form.about_me,
@@ -238,7 +246,10 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                     {/* Profile Info */}
                     <div className="flex-1 text-center md:text-left">
                         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                            {employee.full_name || employee.username}
+                            {(() => {
+                                const { i18n } = useTranslation();
+                                return (i18n.language === 'ru' && employee.full_name_ru) ? employee.full_name_ru : (employee.full_name || employee.username);
+                            })()}
                         </h2>
                         <p className="text-gray-600 mb-4">@{employee.username}</p>
                         {employee.email && (
@@ -289,6 +300,22 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 onChange={(e) => setForm({ ...form, full_name: e.target.value })}
                                 className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                                 placeholder="John Doe"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <Label htmlFor="full_name_ru" className="text-sm font-medium text-gray-700 mb-2">
+                            {t('full_name', 'Full Name')} (RU)
+                        </Label>
+                        <div className="relative">
+                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <Input
+                                id="full_name_ru"
+                                value={form.full_name_ru}
+                                onChange={(e) => setForm({ ...form, full_name_ru: e.target.value })}
+                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                placeholder="Иван Иванов"
                             />
                         </div>
                     </div>
@@ -479,6 +506,22 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 onChange={(e) => setForm({ ...form, position: e.target.value })}
                                 className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                                 placeholder="Hairstylist"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <Label htmlFor="position_ru" className="text-sm font-medium text-gray-700 mb-2">
+                            {t('position', 'Position')} (RU)
+                        </Label>
+                        <div className="relative">
+                            <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <Input
+                                id="position_ru"
+                                value={form.position_ru}
+                                onChange={(e) => setForm({ ...form, position_ru: e.target.value })}
+                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                placeholder="Стилист"
                             />
                         </div>
                     </div>

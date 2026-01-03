@@ -103,7 +103,7 @@ async def get_user_by_id(
 
         c.execute("""
             SELECT
-                id, username, full_name, email, role, position, 
+                id, username, full_name, full_name_ru, email, role, position, 
                 phone, bio, photo, is_active, is_service_provider,
                 position_ru, position_ar, created_at,
                 years_of_experience, specialization, telegram_username,
@@ -122,22 +122,23 @@ async def get_user_by_id(
             "id": row[0],
             "username": row[1],
             "full_name": row[2],
-            "email": row[3],
-            "role": row[4],
-            "position": row[5],
-            "phone": row[6],
-            "bio": row[7],
-            "photo": row[8],
-            "is_active": bool(row[9]),
-            "is_service_provider": bool(row[10]),
-            "position_ru": row[11],
-            "position_ar": row[12],
-            "created_at": row[13],
-            "years_of_experience": row[14],
-            "specialization": row[15],
-            "telegram": row[16], # Frontend expects telegram or messenger
-            "base_salary": row[17],
-            "commission_rate": row[18]
+            "full_name_ru": row[3],
+            "email": row[4],
+            "role": row[5],
+            "position": row[6],
+            "phone": row[7],
+            "bio": row[8],
+            "photo": row[9],
+            "is_active": bool(row[10]),
+            "is_service_provider": bool(row[11]),
+            "position_ru": row[12],
+            "position_ar": row[13],
+            "created_at": row[14],
+            "years_of_experience": row[15],
+            "specialization": row[16],
+            "telegram": row[17],
+            "base_salary": row[18],
+            "commission_rate": row[19]
         }
 
         return user_data
@@ -160,7 +161,7 @@ async def get_users(current_user: dict = Depends(get_current_user)):
         # Query users directly (employees table is consolidated)
         c.execute("""
             SELECT
-                u.id, u.username, u.full_name, u.email, u.role,
+                u.id, u.username, u.full_name, u.full_name_ru, u.email, u.role,
                 u.position, u.created_at, u.is_active,
                 u.employee_id,
                 u.position_ru,
@@ -182,16 +183,17 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 "id": row[0],
                 "username": row[1],
                 "full_name": row[2],
-                "email": row[3],
-                "role": row[4],
-                "position": position_display,
+                "full_name_ru": row[3],
+                "email": row[4],
+                "role": row[5],
+                "position": row[6],
                 "position_id": None, # Legacy field
-                "employee_id": row[8],
-                "created_at": row[6],
-                "is_active": row[7],
-                "position_ru": row[9],
-                "position_ar": row[10],
-                "photo": row[11]
+                "employee_id": row[9],
+                "created_at": row[7],
+                "is_active": row[8],
+                "position_ru": row[10],
+                "position_ar": row[11],
+                "photo": row[12]
             }
 
             users.append(user_data)

@@ -1,5 +1,48 @@
 # CHANGELOG - Память проекта Beauty CRM
 
+## 2026-01-03: Исправление Локализации Сотрудников и Привязки Мастеров
+
+### ПРОБЛЕМА
+1. **Broken Master Lookup**: В календаре записей (`Bookings.tsx`) при фильтрации по мастеру или отображении имени происходила путаница: "Tahir" отображался как "Director" или другой мастер. Причина: некорректная привязка `user_id` (который в записях часто был client_id) к ID мастера.
+2. **Missing Localized Names**: Имена сотрудников (`full_name_ru`) не отображались на русском языке, даже если они были в БД. API возвращало только базовое имя.
+3. **Mismatched Translations**:
+    - Категория "Nails" переводилась как "Гвозди" (вместо "Маникюр").
+    - Должность "Мастер ногтевого сервиса/Массажи" содержала странную приписку "Массажи".
+4. **Lack of Editing**: В админке нельзя было отредактировать локализованные имена и должности сотрудников.
+
+### РЕШЕНИЕ
+1. **Master Mapping System**:
+    - Полностью переписана логика `matchesMaster` в `Bookings.tsx`. Теперь сопоставление идет по `username`, `full_name` и `full_name_ru`, что исключило конфликты с ID.
+    - В API `get_all_bookings` добавлена передача `user_id` (если он есть) как дополнительный, но не единственный фактор сопоставления.
+2. **Employee Localization**:
+    - В API `/api/users` добавлены поля `full_name_ru` и `position_ru`.
+    - Во всех ключевых компонентах (`Bookings`, `BookingDetail`, `EmployeeManagement`) внедрена поддержка `i18n.language.startsWith('ru')` для выбора RU полей.
+    - Реализована многоуровневая система fallback: `name_ru` -> `i18next` -> `raw_name`.
+3. **Database Data Audit**:
+    - Проведен ручной аудит таблицы `users`: исправлены имена (Tursunai, Tahir, Lyazzat, Mestan) и должности (Jennifer).
+    - Исправлены переводы в `services.json` (Гвозди -> Маникюр).
+4. **Admin UI Updates**:
+    - В `EmployeeInformation.tsx` добавлены поля ввода для "ФИО (RU)" и "Должность (RU)".
+    - Sidebar в управлении сотрудниками теперь корректно отображает локализованные данные.
+
+### ВАЖНО ПОМНИТЬ
+- **Master Identification**: В таблице `bookings` поле `master` является текстовым (SSOT для имени на момент записи). При сопоставлении с объектом `users` всегда проверять все варианты имен (RU/EN/Username).
+- **Service Translation**: Для услуг приоритет всегда у `name_ru` из БД, так как это позволяет админу менять название без изменения кода. `i18next` - только как запасной вариант.
+- **Language Detection**: Использовать `.startsWith('ru')`, так как браузер может вернуть `ru-RU`, `ru-AM` и т.д.
+
+### ФАЙЛЫ
+**ИЗМЕНЕНЫ:**
+- `backend/api/users.py` (Exposing RU fields)
+- `backend/api/bookings.py` (Exposing user_id for matching)
+- `frontend/src/pages/admin/Bookings.tsx` (Complete master lookup refactor)
+- `frontend/src/pages/admin/BookingDetail.tsx` (Localization integration)
+- `frontend/src/pages/admin/EmployeeManagement.tsx` (Sidebar localization)
+- `frontend/src/pages/admin/EmployeeDetail.tsx` (Sidebar localization)
+- `frontend/src/components/admin/EmployeeInformation.tsx` (RU fields editing)
+- `frontend/src/locales/ru/admin/services.json` (Translations fix)
+- `CHANGELOG.txt`
+
+
 ## 2026-01-03: Улучшение Системы Планирования и Метрик
 
 ### ПРОБЛЕМА

@@ -35,7 +35,10 @@
     "manual": "Manually",
     "telegram": "Telegram",
     "title": "Source",
-    "whatsapp": "whatsapp"
+    "whatsapp": "WhatsApp",
+    "account": "Account",
+    "guest_link": "Guest Link",
+    "custom": "Custom source"
   },
   "status": "Status",
   "status_updated": "Status updated",
