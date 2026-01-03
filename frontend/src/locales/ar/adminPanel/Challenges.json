@@ -55,12 +55,12 @@
     "failed_create": "فشل إنشاء التحدي",
     "failed_delete": "فشل حذف التحدي",
     "failed_load": "فشل تحميل التحديات",
-    "progress_checked_zero": "",
-    "progress_checked_one": "",
-    "progress_checked_two": "",
     "progress_checked_few": "",
     "progress_checked_many": "",
-    "progress_checked_other": ""
+    "progress_checked_one": "",
+    "progress_checked_other": "",
+    "progress_checked_two": "",
+    "progress_checked_zero": ""
   },
   "types": {
     "referrals": "الإحالات",
