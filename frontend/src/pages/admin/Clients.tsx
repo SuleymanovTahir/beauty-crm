@@ -670,90 +670,79 @@ export default function Clients() {
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6 font-sans">
-        <div className="flex flex-col gap-4">
-          {/* Search Row */}
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-gray-400" />
+      {/* Filters & Actions */}
+      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 backdrop-blur-xl bg-white/80">
+        <div className="flex flex-col gap-4 sm:gap-6">
+          {/* Row 1: Search */}
+          <div className="relative group">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-pink-500 transition-colors" />
             <input
               type="text"
               placeholder={t('clients:search_placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all placeholder:text-gray-400"
             />
           </div>
 
-          {/* Filters and Actions Row */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            {/* Filters Group */}
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-              <StatusSelect
-                value={statusFilter}
-                onChange={setStatusFilter}
-                options={statusConfig}
-                allowAdd={false}
-                showAllOption={true}
-                variant="filter"
-              />
+          {/* Row 2: Filters Grid */}
+          <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+            <StatusSelect
+              value={statusFilter}
+              onChange={setStatusFilter}
+              options={statusConfig}
+              allowAdd={false}
+              showAllOption={true}
+              variant="filter"
+            />
 
-              <TemperatureFilter
-                value={temperatureFilter}
-                onChange={setTemperatureFilter}
-              />
+            <TemperatureFilter
+              value={temperatureFilter}
+              onChange={setTemperatureFilter}
+            />
 
-              <PeriodFilterSelect
-                value={period}
-                onChange={setPeriod}
-              />
+            <PeriodFilterSelect
+              value={period}
+              onChange={setPeriod}
+            />
+          </div>
 
-              {period === 'custom' && (
-                <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
-                  <input
-                    type="date"
-                    value={dateFrom}
-                    onChange={(e) => setDateFrom(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none"
-                  />
-                  <span className="text-gray-500">-</span>
-                  <input
-                    type="date"
-                    value={dateTo}
-                    onChange={(e) => setDateTo(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none"
-                  />
-                </div>
-              )}
-            </div>
+          {/* Row 3: Actions Group */}
+          <div className="flex flex-col gap-4 pt-2 border-t border-gray-50">
+            {period === 'custom' && (
+              <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-2 duration-300">
+                <input
+                  type="date"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                  className="w-1/2 px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all"
+                />
+                <span className="text-gray-400 font-medium">→</span>
+                <input
+                  type="date"
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                  className="w-1/2 px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all"
+                />
+              </div>
+            )}
 
-            {/* Actions Group */}
-            <div className="flex flex-wrap items-center gap-2">
-              {selectedClients.size > 0 && (
-                <button
-                  onClick={handleBulkDelete}
-                  disabled={loading}
-                  className="px-4 py-2 bg-white text-red-600 border border-red-600 rounded-lg text-sm font-medium hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap transition-all shadow-sm"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  {t('clients:delete_selected')} ({selectedClients.size})
-                </button>
-              )}
-
+            <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-3">
               <button
                 onClick={() => setShowCreateDialog(true)}
-                className="px-4 py-2 bg-pink-600 text-white rounded-lg text-sm font-medium hover:bg-pink-700 flex items-center gap-2 whitespace-nowrap transition-all shadow-sm active:scale-95"
+                className="px-4 sm:px-6 py-2.5 bg-[#1e293b] text-white rounded-xl text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-2 transition-all shadow-md shadow-gray-200"
               >
                 <Plus className="w-4 h-4" />
-                {t('clients:add_client')}
+                <span>Добавить</span>
               </button>
 
               <button
                 onClick={() => setShowImportDialog(true)}
                 disabled={importing}
-                className="px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap transition-all shadow-sm"
+                className="px-4 sm:px-5 py-2.5 bg-white text-gray-700 border border-gray-200 rounded-xl text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
               >
-                <Upload className="w-4 h-4" />
-                {importing ? t('clients:importing') : t('clients:import')}
+                <Upload className="w-4 h-4 text-gray-400" />
+                <span>Импорт</span>
               </button>
 
               <ExportDropdown
@@ -762,6 +751,17 @@ export default function Clients() {
                 disabled={exporting}
               />
             </div>
+
+            {selectedClients.size > 0 && (
+              <button
+                onClick={handleBulkDelete}
+                disabled={loading}
+                className="w-full px-5 py-2.5 bg-red-50 text-red-600 border border-red-100 rounded-xl text-sm font-bold hover:bg-red-100 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all"
+              >
+                <Trash2 className="w-4 h-4" />
+                {t('clients:delete_selected')} ({selectedClients.size})
+              </button>
+            )}
           </div>
         </div>
       </div>
