@@ -52,21 +52,23 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
     c = conn.cursor()
 
     if messenger_type == 'instagram':
-        # Для Instagram показываем ВСЕХ клиентов, но сортируем по наличию сообщений
+        # Для Instagram показываем только клиентов с сообщениями в chat_history или messenger_messages
         c.execute("""
             SELECT DISTINCT
                 c.instagram_id, c.username, c.phone, c.name, c.first_contact,
                 c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
-                c.profile_pic, c.notes, c.is_pinned, c.gender,
-                CASE WHEN EXISTS (
-                    SELECT 1 FROM chat_history ch WHERE ch.instagram_id = c.instagram_id
-                ) THEN 1 ELSE 0 END as has_messages,
+                c.profile_pic, c.notes, c.is_pinned, c.gender, 1 as has_messages,
                 c.created_at,
                 COALESCE((SELECT SUM(revenue) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed'), 0) as total_spend,
                 COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed'), 0) as total_bookings,
                 c.temperature
             FROM clients c
-            ORDER BY c.is_pinned DESC, has_messages DESC, c.last_contact DESC
+            WHERE EXISTS (
+                SELECT 1 FROM chat_history ch WHERE ch.instagram_id = c.instagram_id
+            ) OR EXISTS (
+                SELECT 1 FROM messenger_messages mm WHERE mm.client_id = c.instagram_id AND mm.messenger_type = 'instagram'
+            )
+            ORDER BY c.is_pinned DESC, c.last_contact DESC
         """)
     else:
         # Для других мессенджеров показываем только тех, у кого есть сообщения
