@@ -38,10 +38,11 @@ async def get_client_loyalty_api(
         if not loyalty:
             return JSONResponse({"error": "Failed to get loyalty data"}, status_code=500)
 
+        config = loyalty_service.get_loyalty_config()
         return {
             "success": True,
             "client_id": client_id,
-            "loyalty": loyalty
+            "loyalty": {**loyalty, "config": config}
         }
 
     except Exception as e:

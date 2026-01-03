@@ -284,8 +284,10 @@
   "loyalty": {
     "add_to_wallet": "Zur Brieftasche hinzufügen",
     "analytics_title": "Spesenanalyse",
+    "available_points": "Доступно баллов",
     "average_check": "Durchschnittlicher Scheck",
     "card_holder": "Karteninhaber",
+    "cashback_description": "от стоимости каждой услуги возвращается баллами",
     "client_id": "Kunden-ID",
     "code_copied": "Aktionscode kopiert",
     "code_copied_instagram": "Aktionscode kopiert! In Instagram Stories einfügen",
@@ -306,6 +308,8 @@
     "points_for_friend": "Punkte für einen Freund",
     "points_for_you": "Punkte für Sie",
     "points_to_go": "{{count}} Punkte",
+    "points_total": "всего накоплено",
+    "points_value": "1 балл = 1 {{currency}} скидки",
     "qr_how_to_use": "Wie verwende ich den QR-Code?",
     "qr_saved": "QR-Code gespeichert",
     "qr_step1": "Zeigen Sie dem Administrator beim Besuch den QR-Code vor",
@@ -340,6 +344,7 @@
     "wallet_coming_soon": "Die Funktion „Zur Apple Wallet hinzufügen“ folgt in Kürze",
     "wallet_soon": "Die Funktion „Zur Brieftasche hinzufügen“ ist in Kürze verfügbar",
     "year_distribution": "Verteilung für das Jahr",
+    "your_cashback": "Ваш Кэшбэк",
     "your_discount": "Ihr Rabatt beträgt",
     "your_level": "Dein Niveau",
     "your_promo": "Ihr Promo-Code"
