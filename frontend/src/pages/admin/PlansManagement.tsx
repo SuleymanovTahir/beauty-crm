@@ -329,7 +329,7 @@ export default function PlansManagement() {
                     {isAdmin && (
                         <>
                             <Button variant="outline" onClick={() => setIsMetricsModalOpen(true)}>
-                                <PlusCircle className="w-4 h-4 mr-2" />
+                                <Pencil className="w-4 h-4 mr-2" />
                                 {t('manage_metrics')}
                             </Button>
                             <Button onClick={() => setIsCreateModalOpen(true)} className="bg-pink-600 hover:bg-pink-700">
