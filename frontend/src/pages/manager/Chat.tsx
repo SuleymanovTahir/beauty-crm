@@ -62,7 +62,7 @@ interface Message {
   type?: string;
 }
 
-const ClientItem = React.memo(({ client, isSelected, onClick, t, selectionBg }: { client: Client, isSelected: boolean, onClick: () => void, t: any, selectionBg?: string }) => (
+const ClientItem = React.memo(({ client, isSelected, onClick, t, selectionBg, avatarGradient }: { client: Client, isSelected: boolean, onClick: () => void, t: any, selectionBg?: string, avatarGradient?: string }) => (
   <button
     onClick={onClick}
     className={`
@@ -84,7 +84,7 @@ const ClientItem = React.memo(({ client, isSelected, onClick, t, selectionBg }: 
           }}
         />
       ) : null}
-      <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-semibold ${client.profile_pic && client.profile_pic.trim() !== '' ? 'hidden' : ''
+      <div className={`w-10 h-10 rounded-full ${avatarGradient || 'bg-gradient-to-br from-purple-500 to-pink-500'} flex items-center justify-center text-white text-xs font-semibold ${client.profile_pic && client.profile_pic.trim() !== '' ? 'hidden' : ''
         }`}>
         {client.display_name.charAt(0).toUpperCase()}
       </div>
@@ -874,6 +874,7 @@ export default function Chat() {
                     onClick={() => handleSelectClient(client)}
                     t={t}
                     selectionBg={messengerStyles[currentMessenger]?.selectionBg || messengerStyles.instagram.selectionBg}
+                    avatarGradient={messengerStyles[currentMessenger]?.avatarGradient || messengerStyles.instagram.avatarGradient}
                   />
                 ))}
               </div>
@@ -1797,7 +1798,7 @@ export default function Chat() {
                             crossOrigin="anonymous"
                           />
                         ) : (
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-sm">
+                          <div className={`w-10 h-10 rounded-full ${messengerStyles[currentMessenger]?.avatarGradient || 'bg-gradient-to-br from-purple-500 to-pink-500'} flex items-center justify-center text-white font-semibold text-sm`}>
                             {client.display_name.charAt(0).toUpperCase()}
                           </div>
                         )}
