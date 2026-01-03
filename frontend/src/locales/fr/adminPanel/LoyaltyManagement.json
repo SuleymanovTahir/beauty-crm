@@ -1,27 +1,27 @@
 {
   "adjust_points": "",
   "buttons": {
-    "add_rule": "Добавить правило",
+    "add_rule": "Ajouter une règle",
     "adjust_points": "",
     "cancel": "",
-    "save": "Сохранить",
+    "save": "Sauvegarder",
     "save_changes": ""
   },
   "categories": {
-    "category": "Категория",
-    "category_placeholder": "Напр. Ногти",
-    "description": "Настройте множители баллов для категорий услуг",
-    "multiplier": "Множитель",
-    "title": "Множители категорий"
+    "category": "Catégorie",
+    "category_placeholder": "Par exemple. Clous",
+    "description": "Configurer des multiplicateurs de points pour les catégories de services",
+    "multiplier": "Facteur",
+    "title": "Multiplicateurs de catégorie"
   },
   "config": {
-    "cashback_hint": "Пример: 10% кэшбэк (10 баллов за 100 потраченных)",
-    "cashback_rate": "Кэшбэк (%)",
-    "description": "Управление глобальными настройками лояльности",
-    "expiration_days": "Срок действия баллов (дней)",
-    "expiration_hint": "Начисленные баллы сгорят через указанное количество дней.",
-    "points_per_unit": "баллов за 1 ед. валюты",
-    "title": "Настройки"
+    "cashback_hint": "Exemple : 10 % de cashback (10 points pour 100 dépensés)",
+    "cashback_rate": "Remise en argent (%)",
+    "description": "Gestion des paramètres de fidélité globaux",
+    "expiration_days": "Durée de validité des points (jours)",
+    "expiration_hint": "Les points accumulés expireront après le nombre de jours spécifié.",
+    "points_per_unit": "points pour 1 unité. devises",
+    "title": "Paramètres"
   },
   "confirm_delete_rule": "",
   "dialogs": {
@@ -43,8 +43,8 @@
       "title": ""
     },
     "rule": {
-      "description": "Установите множитель баллов для категории услуг",
-      "title": "Редактировать правило категории"
+      "description": "Définir le multiplicateur de points pour la catégorie de service",
+      "title": "Modifier la règle de catégorie"
     }
   },
   "stats": {
