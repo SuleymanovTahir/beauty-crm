@@ -32,6 +32,7 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
+import MessengerSidebar, { MessengerType } from '../../components/chat/MessengerSidebar';
 
 interface Client {
   id: string;
@@ -634,25 +635,27 @@ export default function Chat() {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-50 via-white to-pink-50 flex p-0 md:p-4">
+    <div className={`h-screen bg-gradient-to-br from-gray-50 via-white to-pink-50 flex p-0 md:p-4 messenger-${currentMessenger}`}>
       <div className="bg-white rounded-none md:rounded-3xl shadow-2xl border border-gray-200/50 h-full w-full flex overflow-hidden">
         {/* Clients List */}
         <div className={`
           ${selectedClient ? 'hidden md:flex' : 'flex'}
           flex-col w-full md:w-96 border-r border-gray-200
         `}>
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-gray-100">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-semibold text-gray-900">{t('chat:chats')} ({clients.length})</span>
+              <span className="text-xl font-bold text-gray-900 capitalize">
+                {currentMessenger} ({clients.length})
+              </span>
             </div>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder={t('chat:search')}
+                placeholder="Поиск"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                className="w-full pl-11 pr-4 py-2.5 bg-[#F1F5F9] border-none rounded-xl text-sm focus:ring-2 focus:ring-purple-500 transition-all"
               />
             </div>
           </div>
@@ -725,131 +728,112 @@ export default function Chat() {
             {/* Main Chat Column */}
             <div className="flex-1 flex flex-col min-w-0">
               {/* Chat Header */}
-              <div className="p-3 md:p-4 border-b border-gray-200/50 bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-50 flex-shrink-0">
+              <div className="p-3 md:p-4 border-b border-gray-200/50 chat-header flex-shrink-0 transition-colors duration-300">
                 <div className="flex items-center justify-between gap-2">
-                  <button
-                    onClick={handleBackToList}
-                    className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/50 transition-colors flex-shrink-0"
-                  >
-                    <ArrowLeft className="w-5 h-5 text-gray-700" />
-                  </button>
-
-                  {botMode === 'assistant' && isLoadingSuggestion && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-100 rounded-full">
-                      <Loader className="w-3 h-3 text-purple-600 animate-spin" />
-                      <span className="text-xs font-medium text-purple-700">Бот думает...</span>
+                  {/* Left: Avatar & Info */}
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <button
+                      onClick={handleBackToList}
+                      className="md:hidden p-2 -ml-2 hover:bg-black/5 rounded-full transition-colors"
+                    >
+                      <ArrowLeft className="w-5 h-5 text-gray-700" />
+                    </button>
+                    <div className="relative">
+                      {selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? (
+                        <img
+                          src={selectedClient.profile_pic}
+                          alt=""
+                          className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
+                          crossOrigin="anonymous"
+                        />
+                      ) : (
+                        <div className="size-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+                          {selectedClient.display_name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
                     </div>
-                  )}
-
-                  {botMode === 'assistant' && botSuggestion && !isLoadingSuggestion && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-100 rounded-full">
-                      <Sparkles className="w-3 h-3 text-purple-600" />
-                      <span className="text-xs font-medium text-purple-700">Предложение бота</span>
-                    </div>
-                  )}
-
-                  {botMode === 'autopilot' && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 rounded-full">
-                      <span className="inline-flex items-center justify-center w-3 h-3 rounded-full bg-green-400">
-                        <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 8 8">
-                          <circle cx="4" cy="4" r="4" />
-                        </svg>
-                      </span>
-                      <span className="text-xs font-medium text-green-700">Автопилот</span>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    {selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? (
-                      <img
-                        src={selectedClient.profile_pic}
-                        alt={`${selectedClient.display_name} profile picture`}
-                        className="w-10 h-10 rounded-xl object-cover border-2 border-white shadow-lg flex-shrink-0"
-                        crossOrigin="anonymous"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                          if (fallback) fallback.style.display = 'flex';
-                        }}
-                      />
-                    ) : null}
-                    <div className={`w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg flex-shrink-0 ${selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? 'hidden' : ''
-                      }`}>
-                      {selectedClient.display_name.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-bold text-gray-900 truncate text-sm">{selectedClient.display_name}</p>
-                      <p className="text-xs text-gray-600 truncate">
-                        {selectedClient.username && `@${selectedClient.username}`}
+                    <div className="min-w-0">
+                      <p className="font-bold text-gray-900 truncate text-sm leading-tight">{selectedClient.display_name}</p>
+                      <p className="text-[11px] text-gray-500 truncate mt-0.5">
+                        {selectedClient.username ? `@${selectedClient.username}` : 'Online'}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setShowMessageSearch(!showMessageSearch)}
-                      className={`h-9 w-9 p-0 rounded-xl border-2 ${showMessageSearch ? 'bg-yellow-100 border-yellow-400 text-yellow-700' : 'hover:bg-white'
-                        }`}
+                  {/* Right: Actions */}
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    <button
+                      onClick={() => setShowAIButtons(!showAIButtons)}
+                      className="h-8 px-4 bg-[#A855F7] text-white rounded-full flex items-center gap-1.5 hover:bg-[#9333EA] transition-all active:scale-95 shadow-sm"
                     >
-                      <Search className="w-4 h-4" />
-                    </Button>
-                    <div className="relative">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setShowMobileMenu(!showMobileMenu)}
-                        className="h-9 w-9 p-0 rounded-xl border-2 hover:bg-white"
-                      >
-                        <MoreVertical className="w-4 h-4" />
-                      </Button>
-                      {showMobileMenu && (
-                        <>
-                          <div className="fixed inset-0 z-40"
-                            onClick={() => setShowMobileMenu(false)}
-                          />
-                          <div className="absolute right-0 top-11 w-52 bg-white rounded-2xl shadow-2xl border border-gray-200 py-2 z-50">
-                            <button
-                              onClick={() => {
-                                setShowClientInfo(!showClientInfo);
-                                setShowTemplates(false);
-                                setShowNotes(false);
-                                setShowMobileMenu(false);
-                              }}
-                              className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
-                            >
-                              <Info className="w-4 h-4 text-blue-600" />
-                              <span className="font-medium">{t('chat:information')}</span>
-                            </button>
-                            <button
-                              onClick={() => {
-                                setShowTemplates(!showTemplates);
-                                setShowClientInfo(false);
-                                setShowNotes(false);
-                                setShowMobileMenu(false);
-                              }}
-                              className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
-                            >
-                              <FileText className="w-4 h-4 text-purple-600" />
-                              <span className="font-medium">{t('chat:templates')}</span>
-                            </button>
-                            <button
-                              onClick={() => {
-                                setShowNotes(!showNotes);
-                                setShowClientInfo(false);
-                                setShowTemplates(false);
-                                setShowMobileMenu(false);
-                              }}
-                              className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
-                            >
-                              <StickyNote className="w-4 h-4 text-yellow-600" />
-                              <span className="font-medium">{t('chat:notes')}</span>
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </div>
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span className="text-[11px] font-bold tracking-wider">AI</span>
+                    </button>
+
+                    <button className="p-2 text-gray-500 hover:bg-black/5 rounded-full transition-colors">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                    </button>
+
+                    <button className="p-2 text-gray-500 hover:bg-black/5 rounded-full transition-colors">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                    </button>
+
+                    <button
+                      onClick={() => setShowMobileMenu(!showMobileMenu)}
+                      className="p-2 text-gray-500 hover:bg-black/5 rounded-full transition-colors"
+                    >
+                      <MoreVertical className="w-5 h-5" />
+                    </button>
+
+                    {showMobileMenu && (
+                      <>
+                        <div className="fixed inset-0 z-40"
+                          onClick={() => setShowMobileMenu(false)}
+                        />
+                        <div className="absolute right-0 top-11 w-52 bg-white rounded-2xl shadow-2xl border border-gray-200 py-2 z-50">
+                          <button
+                            onClick={() => {
+                              setShowClientInfo(!showClientInfo);
+                              setShowTemplates(false);
+                              setShowNotes(false);
+                              setShowMobileMenu(false);
+                            }}
+                            className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
+                          >
+                            <Info className="w-4 h-4 text-blue-600" />
+                            <span className="font-medium">{t('chat:information')}</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setShowTemplates(!showTemplates);
+                              setShowClientInfo(false);
+                              setShowNotes(false);
+                              setShowMobileMenu(false);
+                            }}
+                            className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
+                          >
+                            <FileText className="w-4 h-4 text-purple-600" />
+                            <span className="font-medium">{t('chat:templates')}</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setShowNotes(!showNotes);
+                              setShowClientInfo(false);
+                              setShowTemplates(false);
+                              setShowMobileMenu(false);
+                            }}
+                            className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
+                          >
+                            <StickyNote className="w-4 h-4 text-yellow-600" />
+                            <span className="font-medium">{t('chat:notes')}</span>
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -882,7 +866,7 @@ export default function Chat() {
               )}
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-white to-gray-50/30">
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 chat-messages-area transition-colors duration-300">
                 {loadingMessages ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="flex flex-col items-center gap-3">
@@ -926,10 +910,10 @@ export default function Chat() {
 
                       <div className="relative group">
                         <div
-                          className={`rounded-2xl shadow-md overflow-hidden max-w-xs sm:max-w-sm md:max-w-md ${msg.id && selectedMessageIds.has(msg.id) ? 'ring-2 ring-blue-500' : ''
+                          className={`message-bubble ${msg.id && selectedMessageIds.has(msg.id) ? 'ring-2 ring-blue-500' : ''
                             } ${(msg.sender === 'bot' || msg.sender === 'manager')
-                              ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
-                              : 'bg-white text-gray-900 border-2 border-gray-200'
+                              ? 'message-own'
+                              : 'message-other'
                             }`}
                         >
                           {/* Reply Preview */}
@@ -1036,81 +1020,84 @@ export default function Chat() {
                               </div>
                             </div>
                           ) : (
-                            <div className="px-4 py-3">
+                            <div className="px-4 py-2">
                               {msg.message.includes('↩️ Ответ на:') ? (
-                                <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
+                                <p className="text-sm whitespace-pre-wrap break-words leading-relaxed text-inherit">
                                   {msg.message.split('\n\n')[1] || msg.message}
                                 </p>
                               ) : (
-                                <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{msg.message}</p>
+                                <p className="text-sm whitespace-pre-wrap break-words leading-relaxed text-inherit">{msg.message}</p>
                               )}
-                              <p className={`text-xs mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'}`}>
-                                {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
-                              </p>
                             </div>
                           )}
                         </div>
-
-                        {/* Кнопки действий при наведении */}
-                        <div
-                          className={`absolute ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'right-full mr-2' : 'left-full ml-2'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex flex-col gap-1 bg-white/95 backdrop-blur-sm rounded-full shadow-2xl border border-gray-200 p-1`}
-                        >
-                          {/* Ответить - только на сообщения клиента */}
-                          {msg.sender === 'client' && (
-                            <button
-                              onClick={() => {
-                                setReplyToMessage(msg);
-                                toast.info('💬 Ответ на сообщение');
-                              }}
-                              className="w-9 h-9 hover:bg-blue-50 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                              title="Ответить"
-                            >
-                              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                              </svg>
-                            </button>
-                          )}
-
-
-                          {/* Переслать */}
-                          <button
-                            onClick={() => {
-                              setForwardMessage(msg);
-                              setShowForwardModal(true);
-                            }}
-                            className="w-9 h-9 hover:bg-purple-50 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                            title="Переслать"
-                          >
-                            <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                          </button>
-
-                          {/* Копировать */}
-                          <button
-                            onClick={() => {
-                              navigator.clipboard.writeText(msg.message);
-                              toast.success('📋 Скопировано!');
-                            }}
-                            className="w-9 h-9 hover:bg-gray-50 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                            title="Копировать"
-                          >
-                            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                          </button>
-                          <button
-                            className="w-9 h-9 hover:bg-gray-50 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                            title="Еще"
-                          >
-                            <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                            </svg>
-                          </button>
+                        {/* Time below bubble */}
+                        <div className={`mt-1 flex ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'justify-end' : 'justify-start'}`}>
+                          <p className="text-[10px] text-gray-400 font-medium px-2">
+                            {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
                         </div>
+                      </div>
+
+                      {/* Кнопки действий при наведении */}
+                      <div
+                        className={`absolute ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'right-full mr-2' : 'left-full ml-2'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex flex-col gap-1 bg-white/95 backdrop-blur-sm rounded-full shadow-2xl border border-gray-200 p-1`}
+                      >
+                        {/* Ответить - только на сообщения клиента */}
+                        {msg.sender === 'client' && (
+                          <button
+                            onClick={() => {
+                              setReplyToMessage(msg);
+                              toast.info('💬 Ответ на сообщение');
+                            }}
+                            className="w-10 h-10 hover:bg-white rounded-xl flex items-center justify-center transition-all hover:scale-110 shadow-sm border border-gray-100"
+                            title="Ответить"
+                          >
+                            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                            </svg>
+                          </button>
+                        )}
+
+
+                        {/* Переслать */}
+                        <button
+                          onClick={() => {
+                            setForwardMessage(msg);
+                            setShowForwardModal(true);
+                          }}
+                          className="w-10 h-10 hover:bg-white rounded-xl flex items-center justify-center transition-all hover:scale-110 shadow-sm border border-gray-100"
+                          title="Переслать"
+                        >
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                          </svg>
+                        </button>
+
+                        {/* Копировать */}
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(msg.message);
+                            toast.success('📋 Скопировано!');
+                          }}
+                          className="w-9 h-9 hover:bg-gray-50 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                          title="Копировать"
+                        >
+                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </button>
+                        <button
+                          className="w-9 h-9 hover:bg-gray-50 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                          title="Еще"
+                        >
+                          <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   ))
@@ -1191,106 +1178,39 @@ export default function Chat() {
                 </div>
               )}
 
-              {/* AI Buttons Section */}
-              {selectedClient && (
-                <div className="px-3 py-2 bg-white border-t border-gray-200">
-                  {!isSelectingMessages ? (
-                    <div className="space-y-2">
-                      {/* Кнопка-триггер */}
+              {/* AI Suggestion Bar (only shown when expanded) */}
+              {showAIButtons && selectedClient && (
+                <div className="px-4 py-3 bg-white/80 backdrop-blur-md border-t border-purple-100 animate-in slide-in-from-bottom duration-300">
+                  <div className="flex gap-2">
+                    {botMode === 'assistant' && (
                       <button
-                        onClick={() => setShowAIButtons(!showAIButtons)}
-                        className="w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium text-sm hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2"
+                        onClick={() => fetchBotSuggestion(selectedClient.id)}
+                        disabled={isLoadingSuggestion}
+                        className="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold text-xs hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-md"
                       >
-                        <Sparkles className="w-4 h-4" />
-                        <span>🤖 AI-помощник</span>
-                        {showAIButtons ? <span>▼</span> : <span>▶</span>}
+                        {isLoadingSuggestion ? <Loader className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                        <span>АВТОПОДСКАЗКА</span>
                       </button>
-
-                      {/* Свернутый блок */}
-                      {showAIButtons && (
-                        <div className="flex gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                          {botMode === 'assistant' && (
-                            <button
-                              onClick={() => fetchBotSuggestion(selectedClient.id)}
-                              disabled={isLoadingSuggestion}
-                              className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium text-sm hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              {isLoadingSuggestion ? (
-                                <>
-                                  <Loader className="w-4 h-4 animate-spin" />
-                                  <span>Бот думает...</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Sparkles className="w-4 h-4" />
-                                  <span>✨ Автоподсказка</span>
-                                </>
-                              )}
-                            </button>
-                          )}
-
-                          <button
-                            onClick={() => {
-                              setIsSelectingMessages(true);
-                              setSelectedMessageIds(new Set());
-                            }}
-                            className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium text-sm hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2"
-                          >
-                            <MessageCircle className="w-4 h-4" />
-                            <span>🤖 Выбрать и спросить AI</span>
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between p-2 bg-blue-50 rounded-lg">
-                        <span className="text-sm font-medium text-blue-900">
-                          📋 Выбрано: {selectedMessageIds.size} сообщений
-                        </span>
-                        <button
-                          onClick={() => {
-                            setIsSelectingMessages(false);
-                            setSelectedMessageIds(new Set());
-                          }}
-                          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                        >
-                          ✕ Отмена
-                        </button>
-                      </div>
-
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            if (selectedMessageIds.size === 0) {
-                              toast.error('❌ Выберите хотя бы одно сообщение');
-                              return;
-                            }
-                            handleAskBotWithSelectedMessages();
-                          }}
-                          disabled={selectedMessageIds.size === 0 || isAskingBot}
-                          className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-medium text-sm hover:from-green-600 hover:to-emerald-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {isAskingBot ? (
-                            <>
-                              <Loader className="w-4 h-4 animate-spin" />
-                              <span>Думаю...</span>
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="w-4 h-4" />
-                              <span>✨ Получить совет ({selectedMessageIds.size})</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                    )}
+                    <button
+                      onClick={() => setIsSelectingMessages(true)}
+                      className="flex-1 px-4 py-2.5 bg-gray-900 text-white rounded-xl font-bold text-xs hover:bg-black transition-all flex items-center justify-center gap-2 shadow-md"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>СПРОСИТЬ AI</span>
+                    </button>
+                    <button
+                      onClick={() => setShowAIButtons(false)}
+                      className="p-2.5 text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               )}
 
               {/* Chat Input */}
-              <div className="p-3 border-t border-gray-200 bg-white flex-shrink-0">
+              <div className="p-3 chat-input-area flex-shrink-0">
                 {/* Reply Preview */}
                 {replyToMessage && (
                   <div className="mb-2 max-w-md">
@@ -1318,78 +1238,68 @@ export default function Chat() {
                   </div>
                 )}
 
-                <div className="flex items-end gap-2">
-                  <div className="flex-1">
-                    <div className="relative">
-                      <Textarea
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        placeholder={replyToMessage ? 'Напишите ответ...' : t('chat:message')}
-                        className="resize-none border-2 border-gray-200 rounded-xl text-sm"
-                        rows={2}
-                        disabled={isUploadingFile}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            if (canSend && !isUploadingFile) {
-                              handleSendMessage();
-                            }
-                          }
-                        }}
-                      />
+                <div className="flex items-center gap-3">
+                  <button onClick={() => fileInputRef.current?.click()} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                  <button onClick={() => fileInputRef.current?.click()} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
+                    <Paperclip className="w-6 h-6" />
+                  </button>
 
-                      {botSuggestion && (
-                        <button
-                          onClick={() => {
-                            setBotSuggestion(null);
-                            setMessage('');
-                            toast.info('Предложение бота сброшено');
-                          }}
-                          className="absolute top-2 right-2 text-xs text-purple-600 hover:text-purple-700 font-medium bg-white px-2 py-1 rounded shadow-sm"
-                        >
-                          ✕ Сбросить
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-2">
+                  <div className="flex-1 relative">
                     <input
-                      type="file"
-                      ref={fileInputRef}
-                      className="hidden"
-                      accept="image/*,video/*,audio/*"
-                      multiple
-                      onChange={handleFileSelect}
+                      type="text"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Сообщение..."
+                      className="w-full h-11 pl-4 pr-10 bg-[#F1F5F9] border-none rounded-full text-sm focus:ring-2 focus:ring-purple-500 transition-all"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSendMessage();
+                        }
+                      }}
                     />
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={isUploadingFile}
-                      className="h-10 w-10 p-0 rounded-xl"
-                    >
-                      <Paperclip className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      onClick={handleSendMessage}
-                      className="bg-gradient-to-r from-pink-500 to-purple-600 h-10 w-10 p-0 rounded-xl"
-                      disabled={!canSend || isUploadingFile}
-                    >
-                      {isUploadingFile ? (
-                        <Loader className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Send className="w-4 h-4" />
-                      )}
-                    </Button>
+                    <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
                   </div>
+
+                  <button
+                    onClick={handleSendMessage}
+                    className="p-3 bg-purple-50 hover:bg-purple-100 text-purple-600 rounded-full transition-colors"
+                  >
+                    {message.trim() ? (
+                      <Send className="w-5 h-5" />
+                    ) : (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                      </svg>
+                    )}
+                  </button>
                 </div>
+
+                {botSuggestion && (
+                  <button
+                    onClick={() => {
+                      setBotSuggestion(null);
+                      setMessage('');
+                      toast.info('Предложение бота сброшено');
+                    }}
+                    className="absolute top-2 right-2 text-xs text-purple-600 hover:text-purple-700 font-medium bg-white px-2 py-1 rounded shadow-sm"
+                  >
+                    ✕ Сбросить
+                  </button>
+                )}
               </div>
             </div>
 
             {/* Right Sidebar for Panels */}
             {(showClientInfo || showTemplates || showNotes) && (
-              <div className="w-full md:w-96 border-l border-gray-200 overflow-y-auto flex-shrink-0">
+              <div className="w-full md:w-96 border-l border-gray-200 overflow-y-auto flex-shrink-0 bg-white">
                 {showClientInfo && selectedClient && (
                   <div className="p-4">
                     <InfoPanel
@@ -1456,208 +1366,214 @@ export default function Chat() {
               <p className="text-sm text-gray-500 mt-1">{t('chat:select_dialog_from_list')}</p>
             </div>
           </div>
-        )}
-      </div>
+        )
+        }
+      </div >
+
       {/* Модальное окно "Спросить AI" */}
-      {showAskBotModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
-            {/* Header */}
-            <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                  <MessageCircle className="w-5 h-5 text-blue-600" />
-                  🤖 Спросить AI-консультанта
-                </h3>
+      {
+        showAskBotModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+              {/* Header */}
+              <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <MessageCircle className="w-5 h-5 text-blue-600" />
+                    🤖 Спросить AI-консультанта
+                  </h3>
+                  <button
+                    onClick={() => {
+                      setShowAskBotModal(false);
+                      setBotQuestion('');
+                      setBotContext('');
+                    }}
+                    className="w-8 h-8 rounded-lg hover:bg-white/50 flex items-center justify-center transition-colors"
+                  >
+                    <X className="w-5 h-5 text-gray-500" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Body */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {/* Вопрос */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    ❓ Ваш вопрос <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    value={botQuestion}
+                    onChange={(e) => setBotQuestion(e.target.value)}
+                    placeholder="Например: Клиент говорит что дорого, как ответить?"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
+                    rows={3}
+                    autoFocus
+                  />
+                </div>
+
+                {/* Контекст (опционально) */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    📝 Дополнительный контекст (опционально)
+                  </label>
+                  <textarea
+                    value={botContext}
+                    onChange={(e) => setBotContext(e.target.value)}
+                    placeholder="Например: Клиент уже был у нас, но недоволен результатом"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
+                    rows={2}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    💡 Последние 5 сообщений будут добавлены автоматически
+                  </p>
+                </div>
+
+                {/* Подсказки */}
+                <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
+                  <p className="text-xs font-semibold text-blue-900 mb-2">💡 Примеры вопросов:</p>
+                  <ul className="text-xs text-blue-700 space-y-1">
+                    <li>• Клиент жалуется на цену, что ответить?</li>
+                    <li>• Как убедить записаться прямо сейчас?</li>
+                    <li>• Клиент молчит час после моего ответа, что делать?</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="p-4 border-t border-gray-200 bg-gray-50 flex gap-3">
                 <button
                   onClick={() => {
                     setShowAskBotModal(false);
                     setBotQuestion('');
                     setBotContext('');
                   }}
-                  className="w-8 h-8 rounded-lg hover:bg-white/50 flex items-center justify-center transition-colors"
+                  className="flex-1 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-medium text-sm hover:bg-gray-50 transition-colors"
                 >
-                  <X className="w-5 h-5 text-gray-500" />
+                  Отмена
                 </button>
-              </div>
-            </div>
-
-            {/* Body */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {/* Вопрос */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  ❓ Ваш вопрос <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  value={botQuestion}
-                  onChange={(e) => setBotQuestion(e.target.value)}
-                  placeholder="Например: Клиент говорит что дорого, как ответить?"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
-                  rows={3}
-                  autoFocus
-                />
-              </div>
-
-              {/* Контекст (опционально) */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  📝 Дополнительный контекст (опционально)
-                </label>
-                <textarea
-                  value={botContext}
-                  onChange={(e) => setBotContext(e.target.value)}
-                  placeholder="Например: Клиент уже был у нас, но недоволен результатом"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
-                  rows={2}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  💡 Последние 5 сообщений будут добавлены автоматически
-                </p>
-              </div>
-
-              {/* Подсказки */}
-              <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
-                <p className="text-xs font-semibold text-blue-900 mb-2">💡 Примеры вопросов:</p>
-                <ul className="text-xs text-blue-700 space-y-1">
-                  <li>• Клиент жалуется на цену, что ответить?</li>
-                  <li>• Как убедить записаться прямо сейчас?</li>
-                  <li>• Клиент молчит час после моего ответа, что делать?</li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="p-4 border-t border-gray-200 bg-gray-50 flex gap-3">
-              <button
-                onClick={() => {
-                  setShowAskBotModal(false);
-                  setBotQuestion('');
-                  setBotContext('');
-                }}
-                className="flex-1 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-medium text-sm hover:bg-gray-50 transition-colors"
-              >
-                Отмена
-              </button>
-              <button
-                onClick={handleAskBot}
-                disabled={isAskingBot || !botQuestion.trim()}
-                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium text-sm hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isAskingBot ? (
-                  <>
-                    <Loader className="w-4 h-4 animate-spin" />
-                    <span>Думаю...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4" />
-                    <span>Получить совет</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Модальное окно "Переслать" */}
-      {showForwardModal && forwardMessage && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden flex flex-col">
-            {/* Header */}
-            <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-gray-900">Переслать</h3>
                 <button
-                  onClick={() => {
-                    setShowForwardModal(false);
-                    setForwardMessage(null);
-                    setForwardSearchTerm('');
-                  }}
-                  className="w-8 h-8 rounded-lg hover:bg-white/50 flex items-center justify-center transition-colors"
+                  onClick={handleAskBot}
+                  disabled={isAskingBot || !botQuestion.trim()}
+                  className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium text-sm hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <X className="w-5 h-5 text-gray-500" />
+                  {isAskingBot ? (
+                    <>
+                      <Loader className="w-4 h-4 animate-spin" />
+                      <span>Думаю...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4" />
+                      <span>Получить совет</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
+          </div>
+        )
+      }
 
-            {/* Search */}
-            <div className="p-4 border-b border-gray-200">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Поиск..."
-                  value={forwardSearchTerm}
-                  onChange={(e) => setForwardSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  autoFocus
-                />
+      {/* Модальное окно "Переслать" */}
+      {
+        showForwardModal && forwardMessage && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden flex flex-col">
+              {/* Header */}
+              <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-gray-900">Переслать</h3>
+                  <button
+                    onClick={() => {
+                      setShowForwardModal(false);
+                      setForwardMessage(null);
+                      setForwardSearchTerm('');
+                    }}
+                    className="w-8 h-8 rounded-lg hover:bg-white/50 flex items-center justify-center transition-colors"
+                  >
+                    <X className="w-5 h-5 text-gray-500" />
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {/* Clients List */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="p-2">
-                <p className="text-xs font-semibold text-gray-500 uppercase px-3 mb-2">Рекомендуемые</p>
-                {clients
-                  .filter(c =>
-                    c.id !== selectedClient?.id &&
-                    (c.display_name.toLowerCase().includes(forwardSearchTerm.toLowerCase()) ||
-                      (c.username || '').toLowerCase().includes(forwardSearchTerm.toLowerCase()))
-                  )
-                  .slice(0, 10)
-                  .map(client => (
-                    <button
-                      key={client.id}
-                      onClick={async () => {
-                        try {
-                          await api.sendMessage(client.id, `📤 Переслано:\n\n${forwardMessage.message}`);
-                          toast.success(`✅ Отправлено ${client.display_name}`);
-                          setShowForwardModal(false);
-                          setForwardMessage(null);
-                          setForwardSearchTerm('');
-                        } catch (err) {
-                          toast.error('❌ Ошибка пересылки');
-                        }
-                      }}
-                      className="w-full p-3 flex items-center gap-3 hover:bg-gray-50 rounded-xl transition-colors"
-                    >
-                      {client.profile_pic && client.profile_pic.trim() !== '' ? (
-                        <img
-                          src={client.profile_pic}
-                          alt={client.display_name}
-                          className="w-10 h-10 rounded-full object-cover"
-                          crossOrigin="anonymous"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-sm">
-                          {client.display_name.charAt(0).toUpperCase()}
+              {/* Search */}
+              <div className="p-4 border-b border-gray-200">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Поиск..."
+                    value={forwardSearchTerm}
+                    onChange={(e) => setForwardSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    autoFocus
+                  />
+                </div>
+              </div>
+
+              {/* Clients List */}
+              <div className="flex-1 overflow-y-auto">
+                <div className="p-2">
+                  <p className="text-xs font-semibold text-gray-500 uppercase px-3 mb-2">Рекомендуемые</p>
+                  {clients
+                    .filter(c =>
+                      c.id !== selectedClient?.id &&
+                      (c.display_name.toLowerCase().includes(forwardSearchTerm.toLowerCase()) ||
+                        (c.username || '').toLowerCase().includes(forwardSearchTerm.toLowerCase()))
+                    )
+                    .slice(0, 10)
+                    .map(client => (
+                      <button
+                        key={client.id}
+                        onClick={async () => {
+                          try {
+                            await api.sendMessage(client.id, `📤 Переслано:\n\n${forwardMessage.message}`);
+                            toast.success(`✅ Отправлено ${client.display_name}`);
+                            setShowForwardModal(false);
+                            setForwardMessage(null);
+                            setForwardSearchTerm('');
+                          } catch (err) {
+                            toast.error('❌ Ошибка пересылки');
+                          }
+                        }}
+                        className="w-full p-3 flex items-center gap-3 hover:bg-gray-50 rounded-xl transition-colors"
+                      >
+                        {client.profile_pic && client.profile_pic.trim() !== '' ? (
+                          <img
+                            src={client.profile_pic}
+                            alt={client.display_name}
+                            className="w-10 h-10 rounded-full object-cover"
+                            crossOrigin="anonymous"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-sm">
+                            {client.display_name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div className="flex-1 text-left">
+                          <p className="font-medium text-gray-900 text-sm">{client.display_name}</p>
+                          <p className="text-xs text-gray-500">@{client.username}</p>
                         </div>
-                      )}
-                      <div className="flex-1 text-left">
-                        <p className="font-medium text-gray-900 text-sm">{client.display_name}</p>
-                        <p className="text-xs text-gray-500">@{client.username}</p>
-                      </div>
-                      <div className="w-6 h-6 rounded-full border-2 border-gray-300"></div>
-                    </button>
-                  ))}
+                        <div className="w-6 h-6 rounded-full border-2 border-gray-300"></div>
+                      </button>
+                    ))}
+                </div>
               </div>
-            </div>
 
-            {/* Footer */}
-            <div className="p-4 border-t border-gray-200 bg-gray-50">
-              <button
-                disabled
-                className="w-full px-4 py-2.5 bg-gray-300 text-gray-500 rounded-xl font-medium text-sm cursor-not-allowed"
-              >
-                Отправить
-              </button>
+              {/* Footer */}
+              <div className="p-4 border-t border-gray-200 bg-gray-50">
+                <button
+                  disabled
+                  className="w-full px-4 py-2.5 bg-gray-300 text-gray-500 rounded-xl font-medium text-sm cursor-not-allowed"
+                >
+                  Отправить
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
-
 }
