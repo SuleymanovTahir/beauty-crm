@@ -155,9 +155,15 @@ export default function AdminDashboard() {
       setError(null);
 
       const dateRange = getDateRange();
+
+      // Map dateFilter to comparison_period for backend
+      let comparisonPeriod = dateFilter;
+      if (dateFilter === 'last7days') comparisonPeriod = '7days';
+      if (dateFilter === 'last30days') comparisonPeriod = '30days';
+      if (dateFilter === 'thisMonth' || dateFilter === 'lastMonth') comparisonPeriod = 'month';
+
       const params = new URLSearchParams({
-        start_date: dateRange.start,
-        end_date: dateRange.end
+        comparison_period: comparisonPeriod
       });
 
       // Load real data with date filtering
@@ -298,86 +304,32 @@ export default function AdminDashboard() {
 
       {/* Date Filter Section */}
       <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-        <div className="flex flex-col md:flex-row md:items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <div className="flex items-center gap-2 text-gray-700">
             <Filter className="w-5 h-5" />
             <span className="font-medium">{t('dashboard:date_filter', 'Период:')}</span>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setDateFilter('today')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                dateFilter === 'today'
-                  ? 'bg-pink-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {t('dashboard:filter_today', 'Сегодня')}
-            </button>
-            <button
-              onClick={() => setDateFilter('yesterday')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                dateFilter === 'yesterday'
-                  ? 'bg-pink-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {t('dashboard:filter_yesterday', 'Вчера')}
-            </button>
-            <button
-              onClick={() => setDateFilter('last7days')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                dateFilter === 'last7days'
-                  ? 'bg-pink-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {t('dashboard:filter_last7days', 'Последние 7 дней')}
-            </button>
-            <button
-              onClick={() => setDateFilter('last30days')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                dateFilter === 'last30days'
-                  ? 'bg-pink-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {t('dashboard:filter_last30days', 'Последние 30 дней')}
-            </button>
-            <button
-              onClick={() => setDateFilter('thisMonth')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                dateFilter === 'thisMonth'
-                  ? 'bg-pink-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {t('dashboard:filter_this_month', 'Этот месяц')}
-            </button>
-            <button
-              onClick={() => setDateFilter('lastMonth')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                dateFilter === 'lastMonth'
-                  ? 'bg-pink-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {t('dashboard:filter_last_month', 'Прошлый месяц')}
-            </button>
-            <button
-              onClick={() => {
-                setShowDatePicker(!showDatePicker);
-                if (!showDatePicker) setDateFilter('custom');
-              }}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                dateFilter === 'custom'
-                  ? 'bg-pink-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {t('dashboard:filter_custom', 'Свой период')}
-            </button>
-          </div>
+          <select
+            value={dateFilter}
+            onChange={(e) => {
+              const value = e.target.value as DateFilter;
+              setDateFilter(value);
+              if (value === 'custom') {
+                setShowDatePicker(true);
+              } else {
+                setShowDatePicker(false);
+              }
+            }}
+            className="flex-1 sm:flex-initial sm:min-w-[200px] px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent bg-white text-gray-700"
+          >
+            <option value="today">{t('dashboard:filter_today', 'Сегодня')}</option>
+            <option value="yesterday">{t('dashboard:filter_yesterday', 'Вчера')}</option>
+            <option value="last7days">{t('dashboard:filter_last7days', 'Последние 7 дней')}</option>
+            <option value="last30days">{t('dashboard:filter_last30days', 'Последние 30 дней')}</option>
+            <option value="thisMonth">{t('dashboard:filter_this_month', 'Этот месяц')}</option>
+            <option value="lastMonth">{t('dashboard:filter_last_month', 'Прошлый месяц')}</option>
+            <option value="custom">{t('dashboard:filter_custom', 'Свой период')}</option>
+          </select>
         </div>
 
         {/* Custom Date Range Picker */}
@@ -981,45 +933,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm mb-1">{t('dashboard:total_clients')}</p>
-              <p className="text-2xl md:text-3xl text-gray-900 font-bold">{stats.total_clients}</p>
-              <p className="text-xs text-green-600 mt-1">+{stats.new_clients} {t('dashboard:new_clients')}</p>
-            </div>
-            <Users className="w-8 h-8 text-blue-600" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm mb-1">{t('dashboard:total_bookings')}</p>
-              <p className="text-2xl md:text-3xl text-gray-900 font-bold">{stats.total_bookings}</p>
-              <p className="text-xs text-green-600 mt-1">{stats.completed_bookings} {t('dashboard:completed_bookings')}</p>
-            </div>
-            <CheckCircle className="w-8 h-8 text-green-600" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm mb-1">{t('dashboard:total_messages')}</p>
-              <p className="text-2xl md:text-3xl text-gray-900 font-bold">
-                {(stats.total_client_messages || 0) + (stats.total_bot_messages || 0)}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {t('dashboard:client_messages')} {stats.total_client_messages || 0} | {t('dashboard:bot_messages')} {stats.total_bot_messages || 0}
-              </p>
-            </div>
-            <TrendingUp className="w-8 h-8 text-purple-600" />
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
