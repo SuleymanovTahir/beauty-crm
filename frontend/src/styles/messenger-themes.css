@@ -58,13 +58,13 @@
 
 .messenger-instagram .message-own {
   background: var(--instagram-message-own) !important;
-  color: white;
+  color: white !important;
   box-shadow: 0 4px 15px rgba(225, 48, 108, 0.2);
 }
 
 .messenger-instagram .message-other {
   background: #efefef !important;
-  color: #000000;
+  color: #000000 !important;
 }
 
 .messenger-instagram .chat-input-area.chat-input-area {
@@ -93,14 +93,14 @@
 
 .messenger-telegram .message-own {
   background: #0088cc !important;
-  color: white;
+  color: white !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   border-radius: 12px 12px 2px 12px;
 }
 
 .messenger-telegram .message-other {
   background: #ffffff !important;
-  color: #000000;
+  color: #000000 !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   border-radius: 12px 12px 12px 2px;
 }
@@ -164,14 +164,14 @@
 
 .messenger-whatsapp .message-own {
   background: #DCF8C6 !important;
-  color: #000000;
+  color: #000000 !important;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   border-radius: 8px 0px 8px 8px;
 }
 
 .messenger-whatsapp .message-other {
   background: #ffffff !important;
-  color: #000000;
+  color: #000000 !important;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   border-radius: 0px 8px 8px 8px;
 }
@@ -219,13 +219,13 @@
 
 .messenger-tiktok .message-own {
   background: linear-gradient(135deg, #fe2c55 0%, #25f4ee 100%) !important;
-  color: white;
+  color: white !important;
   box-shadow: 0 0 15px rgba(254, 44, 85, 0.3);
 }
 
 .messenger-tiktok .message-other {
   background: #1a1a1a !important;
-  color: white;
+  color: white !important;
   border: 1px solid #2a2a2a;
 }
 
@@ -284,16 +284,7 @@
   border-radius: 18px 18px 18px 4px !important;
 }
 
-/* Default message colors (Instagram style) */
-.message-bubble.message-own {
-  background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 100%) !important;
-  color: white !important;
-}
-
-.message-bubble.message-other {
-  background: #efefef !important;
-  color: #000000 !important;
-}
+/* Default message colors removed - using messenger-specific styles only */
 
 /* Анимации */
 @keyframes messageSlideIn {
