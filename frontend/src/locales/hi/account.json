@@ -284,8 +284,10 @@
   "loyalty": {
     "add_to_wallet": "वॉलेट में जोड़ें",
     "analytics_title": "व्यय विश्लेषण",
+    "available_points": "Доступно баллов",
     "average_check": "औसत जांच",
     "card_holder": "कार्ड स्वामी",
+    "cashback_description": "от стоимости каждой услуги возвращается баллами",
     "client_id": "ग्राहक आईडी",
     "code_copied": "प्रोमो कोड कॉपी किया गया",
     "code_copied_instagram": "प्रोमो कोड कॉपी किया गया! इंस्टाग्राम स्टोरीज़ में पेस्ट करें",
@@ -306,6 +308,8 @@
     "points_for_friend": "एक दोस्त के लिए अंक",
     "points_for_you": "आपके लिए अंक",
     "points_to_go": "{{गिनती}} अंक",
+    "points_total": "всего накоплено",
+    "points_value": "1 балл = 1 {{currency}} скидки",
     "qr_how_to_use": "QR कोड का उपयोग कैसे करें?",
     "qr_saved": "QR कोड सहेजा गया",
     "qr_step1": "विजिट करते समय एडमिनिस्ट्रेटर को क्यूआर कोड दिखाएं",
@@ -340,6 +344,7 @@
     "wallet_coming_soon": "Apple वॉलेट में जोड़ें सुविधा जल्द ही आ रही है",
     "wallet_soon": "वॉलेट में जोड़ें सुविधा जल्द ही आ रही है",
     "year_distribution": "वर्ष के लिए वितरण",
+    "your_cashback": "Ваш Кэшбэк",
     "your_discount": "आपकी छूट होगी",
     "your_level": "आपका स्तर",
     "your_promo": "आपका प्रोमो कोड"

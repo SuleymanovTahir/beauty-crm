@@ -17,7 +17,7 @@
   "month_jun": "juin",
   "month_mar": "Mar",
   "month_may": "Peut",
-  "next_tier_benefit": "Lorsque vous atteignez le niveau {{tier}}, votre remise sera de {{discount}} %",
+  "next_tier_benefit": "Lorsque vous atteignez le niveau {{tier}}, votre remise sera de {{discount}}\u00a0%",
   "points": "points",
   "points_needed": "{{points}} points",
   "points_to_friend": "points pour un ami",
