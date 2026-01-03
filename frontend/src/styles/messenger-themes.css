@@ -25,13 +25,35 @@
 }
 
 /* Instagram Theme */
-.messenger-instagram .chat-header {
-  /* background: var(--instagram-gradient) !important; */
-  color: white;
+.messenger-instagram .chat-header.chat-header {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #000000 !important;
+  border-bottom: 1px solid #e5e7eb !important;
 }
 
-.messenger-instagram .chat-messages-area {
-  background: #ffffff !important;
+.messenger-instagram .chat-header * {
+  color: #000000 !important;
+}
+
+.messenger-instagram .chat-header button[class*="bg-[#A855F7]"] {
+  background: linear-gradient(135deg, rgb(147, 51, 234), rgb(236, 72, 153)) !important;
+  background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+.messenger-instagram .chat-header button[class*="bg-[#A855F7]"] * {
+  color: #ffffff !important;
+}
+
+.messenger-instagram .chat-header button[class*="bg-[#A855F7]"]:hover {
+  background: linear-gradient(135deg, rgb(147, 51, 234), rgb(219, 39, 119)) !important;
+  background-color: transparent !important;
+}
+
+.messenger-instagram .chat-messages-area.chat-messages-area {
+  background-color: #ffffff !important;
+  background-image: none !important;
 }
 
 .messenger-instagram .message-own {
@@ -45,20 +67,26 @@
   color: #000000;
 }
 
-.messenger-instagram .chat-input-area {
-  background: #ffffff !important;
-  border-top: 1px solid #dbdbdb;
+.messenger-instagram .chat-input-area.chat-input-area {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  border-top: 1px solid #dbdbdb !important;
 }
 
 /* Telegram Theme */
-.messenger-telegram .chat-header {
-  background: #ffffff !important;
-  border-bottom: 1px solid #e0e0e0;
-  color: #000000;
+.messenger-telegram .chat-header.chat-header {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  color: #000000 !important;
 }
 
-.messenger-telegram .chat-messages-area {
-  background: #eff1f5 !important;
+.messenger-telegram .chat-header * {
+  color: #000000 !important;
+}
+
+.messenger-telegram .chat-messages-area.chat-messages-area {
+  background-color: #eff1f5 !important;
   background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png') !important;
   background-size: cover;
 }
@@ -77,20 +105,26 @@
   border-radius: 12px 12px 12px 2px;
 }
 
-.messenger-telegram .chat-input-area {
-  background: #ffffff !important;
-  border-top: 1px solid #e0e0e0;
+.messenger-telegram .chat-input-area.chat-input-area {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  border-top: 1px solid #e0e0e0 !important;
 }
 
 /* WhatsApp Theme */
-.messenger-whatsapp .chat-header {
-  background: #f0f2f5 !important;
-  border-bottom: 1px solid #d1d7db;
-  color: #000000;
+.messenger-whatsapp .chat-header.chat-header {
+  background-color: #f0f2f5 !important;
+  background-image: none !important;
+  border-bottom: 1px solid #d1d7db !important;
+  color: #000000 !important;
 }
 
-.messenger-whatsapp .chat-messages-area {
-  background: #e5ddd5 !important;
+.messenger-whatsapp .chat-header * {
+  color: #000000 !important;
+}
+
+.messenger-whatsapp .chat-messages-area.chat-messages-area {
+  background-color: #e5ddd5 !important;
   background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png") !important;
   background-blend-mode: overlay;
   background-opacity: 0.1;
@@ -110,19 +144,26 @@
   border-radius: 0px 8px 8px 8px;
 }
 
-.messenger-whatsapp .chat-input-area {
-  background: #f0f2f5 !important;
+.messenger-whatsapp .chat-input-area.chat-input-area {
+  background-color: #f0f2f5 !important;
+  background-image: none !important;
 }
 
 /* TikTok Theme */
-.messenger-tiktok .chat-header {
-  background: #000000 !important;
-  border-bottom: 1px solid #2a2a2a;
-  color: white;
+.messenger-tiktok .chat-header.chat-header {
+  background-color: #000000 !important;
+  background-image: none !important;
+  border-bottom: 1px solid #2a2a2a !important;
+  color: white !important;
 }
 
-.messenger-tiktok .chat-messages-area {
-  background: #000000 !important;
+.messenger-tiktok .chat-header * {
+  color: white !important;
+}
+
+.messenger-tiktok .chat-messages-area.chat-messages-area {
+  background-color: #000000 !important;
+  background-image: none !important;
 }
 
 .messenger-tiktok .message-own {
@@ -137,9 +178,10 @@
   border: 1px solid #2a2a2a;
 }
 
-.messenger-tiktok .chat-input-area {
-  background: #000000 !important;
-  border-top: 1px solid #2a2a2a;
+.messenger-tiktok .chat-input-area.chat-input-area {
+  background-color: #000000 !important;
+  background-image: none !important;
+  border-top: 1px solid #2a2a2a !important;
 }
 
 /* Применяем темную тему только к определенным элементам чата, чтобы не ломать боковые панели */
