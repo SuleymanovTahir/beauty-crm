@@ -136,5 +136,8 @@
   "warm": "دافيء",
   "warm_client": "عميل دافئ",
   "write_message": "اكتب رسالة",
-  "you_are_deleting_client": "أنت تقوم بحذف عميل"
+  "you_are_deleting_client": "أنت تقوم بحذف عميل",
+  "bookings": "إجمالي الزيارات",
+  "total_messages_desc": "إجمالي عدد رسائل الدردشة",
+  "total_bookings_desc": "إجمالي عدد الإدخالات التي تم إجراؤها"
 }

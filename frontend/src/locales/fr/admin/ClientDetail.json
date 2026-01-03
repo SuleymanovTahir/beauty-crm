@@ -61,5 +61,8 @@
   "save_error": "Erreur lors de l'enregistrement",
   "delete_gallery_confirm": "Êtes-vous sûr de vouloir supprimer cette entrée de votre galerie ?",
   "gallery_entry_deleted": "Article supprimé de la galerie",
-  "delete_error": "Erreur lors de la suppression"
+  "delete_error": "Erreur lors de la suppression",
+  "top_3_procedures": "Les 3 principales procédures",
+  "top_3_masters": "Les 3 meilleurs maîtres",
+  "visits_dynamics": "Dynamique des visites"
 }

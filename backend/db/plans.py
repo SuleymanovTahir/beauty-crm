@@ -139,6 +139,7 @@ def get_plan_for_user(user_id: int, metric_type: str, period_type: str = None) -
 def set_role_plan(role_key: str, metric_type: str, target_value: float, 
                      period_type: str, start_date: str, end_date: str,
                      name: str = None,
+                     comment: str = None,
                      visible_to_roles: List[str] = None,
                      can_edit_roles: List[str] = None,
                      created_by: int = None) -> Optional[int]:
@@ -172,11 +173,11 @@ def set_role_plan(role_key: str, metric_type: str, target_value: float,
                 start_date, end_date, created_by,
                 role_key, is_position_plan,
                 visible_to_positions, can_edit_positions,
-                name, role, price
+                name, role, price, comment
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, %s, %s, %s, %s, 0)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, %s, %s, %s, %s, 0, %s)
         """, (metric_type, target_value, period_type, start_date, end_date, 
-              created_by, role_key, visible_json, can_edit_json, name, role_key))
+              created_by, role_key, visible_json, can_edit_json, name, role_key, comment))
         
         plan_id = c.lastrowid
         conn.commit()
@@ -191,6 +192,7 @@ def set_role_plan(role_key: str, metric_type: str, target_value: float,
 def set_individual_plan(user_id: int, metric_type: str, target_value: float,
                        period_type: str, start_date: str, end_date: str,
                        name: str = None,
+                       comment: str = None,
                        created_by: int = None) -> Optional[int]:
     """Create individual plan override for specific user"""
     try:
@@ -217,11 +219,11 @@ def set_individual_plan(user_id: int, metric_type: str, target_value: float,
             INSERT INTO plans (
                 metric_type, target_value, period_type, 
                 start_date, end_date, created_by,
-                user_id, is_individual_plan, name, role, price
+                user_id, is_individual_plan, name, role, price, comment
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, %s, 'individual', 0)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, %s, 'individual', 0, %s)
         """, (metric_type, target_value, period_type, start_date, end_date, 
-              created_by, user_id, name))
+              created_by, user_id, name, comment))
         
         plan_id = c.lastrowid
         conn.commit()
@@ -254,7 +256,7 @@ def get_visible_plans(user_id: int) -> List[Dict[str, Any]]:
             SELECT id, metric_type, target_value, period_type, 
                    start_date, end_date, created_by, created_at,
                    role_key, user_id, visible_to_positions, can_edit_positions,
-                   is_position_plan, is_individual_plan
+                   is_position_plan, is_individual_plan, comment
             FROM plans
             WHERE is_active = TRUE
               AND start_date <= %s
@@ -291,7 +293,8 @@ def get_visible_plans(user_id: int) -> List[Dict[str, Any]]:
                     "visible_to_positions": visible_to,
                     "can_edit_positions": json.loads(row[11]) if row[11] else [],
                     "is_position_plan": bool(row[12]),
-                    "is_individual_plan": bool(row[13])
+                    "is_individual_plan": bool(row[13]),
+                    "comment": row[14]
                 })
         
         return visible_plans
@@ -363,7 +366,7 @@ def get_plans_by_role(role_key: str, active_only: bool = True) -> List[Dict[str,
             SELECT id, metric_type, target_value, period_type, 
                    start_date, end_date, created_by, created_at,
                    role_key, user_id, visible_to_positions, can_edit_positions,
-                   is_position_plan, is_individual_plan
+                   is_position_plan, is_individual_plan, comment
             FROM plans
             WHERE role_key = %s
         """
@@ -393,7 +396,8 @@ def get_plans_by_role(role_key: str, active_only: bool = True) -> List[Dict[str,
                 "visible_to_positions": json.loads(row[10]) if row[10] else [],
                 "can_edit_positions": json.loads(row[11]) if row[11] else [],
                 "is_position_plan": bool(row[12]),
-                "is_individual_plan": bool(row[13])
+                "is_individual_plan": bool(row[13]),
+                "comment": row[14]
             })
         
         return plans
@@ -583,4 +587,84 @@ def delete_plan(plan_id: int) -> bool:
         
     except Exception as e:
         log_error(f"Error deleting plan: {e}", "plans")
+        return False
+
+# Plan Metrics management
+def get_all_plan_metrics(active_only: bool = True) -> List[Dict[str, Any]]:
+    """Get all plan metrics"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        query = "SELECT id, key, name, name_ru, name_en, unit, description FROM plan_metrics"
+        if active_only:
+            query += " WHERE is_active = TRUE"
+        
+        c.execute(query)
+        rows = c.fetchall()
+        
+        metrics = []
+        for row in rows:
+            metrics.append({
+                "id": row[0],
+                "key": row[1],
+                "name": row[2],
+                "name_ru": row[3],
+                "name_en": row[4],
+                "unit": row[5],
+                "description": row[6]
+            })
+        
+        conn.close()
+        return metrics
+    except Exception as e:
+        log_error(f"Error getting plan metrics: {e}", "plans")
+        return []
+
+def create_plan_metric(key: str, name: str, unit: str = None, description: str = None, name_ru: str = None, name_en: str = None) -> Optional[int]:
+    """Create or update a plan metric"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Use provided name for all fields if localized ones aren't provided
+        n_ru = name_ru or name
+        n_en = name_en or name
+
+        c.execute("""
+            INSERT INTO plan_metrics (key, name, name_ru, name_en, unit, description)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            ON CONFLICT (key) DO UPDATE SET
+                name = EXCLUDED.name,
+                name_ru = EXCLUDED.name_ru,
+                name_en = EXCLUDED.name_en,
+                unit = EXCLUDED.unit,
+                description = EXCLUDED.description,
+                is_active = TRUE
+        """, (key, name, n_ru, n_en, unit, description))
+        
+        c.execute("SELECT id FROM plan_metrics WHERE key = %s", (key,))
+        row = c.fetchone()
+        metric_id = row[0] if row else None
+        
+        conn.commit()
+        conn.close()
+        return metric_id
+    except Exception as e:
+        log_error(f"Error creating/updating plan metric: {e}", "plans")
+        return None
+
+def delete_plan_metric(key: str) -> bool:
+    """Soft delete plan metric"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        c.execute("UPDATE plan_metrics SET is_active = FALSE WHERE key = %s", (key,))
+        
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        log_error(f"Error deleting plan metric: {e}", "plans")
         return False

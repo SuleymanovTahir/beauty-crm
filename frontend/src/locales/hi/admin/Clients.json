@@ -136,5 +136,8 @@
   "warm": "गरम",
   "warm_client": "गर्म ग्राहक",
   "write_message": "एक सन्देश लिखिए",
-  "you_are_deleting_client": "आप एक ग्राहक को हटा रहे हैं"
+  "you_are_deleting_client": "आप एक ग्राहक को हटा रहे हैं",
+  "bookings": "कुल विज़िट",
+  "total_messages_desc": "चैट संदेशों की कुल संख्या",
+  "total_bookings_desc": "की गई प्रविष्टियों की कुल संख्या"
 }

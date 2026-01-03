@@ -19,7 +19,8 @@
     "bookings": "बुकिंग",
     "new_clients": "नए ग्राहक",
     "revenue": "आय",
-    "vip_clients": "वीआईपी ग्राहक"
+    "vip_clients": "वीआईपी ग्राहक",
+    "sales": "बिक्री"
   },
   "my_plans": "मेरी योजना",
   "no_plans_found": "कोई योजना नहीं मिली",
@@ -28,7 +29,9 @@
     "month": "महीना",
     "quarter": "तिमाही",
     "week": "सप्ताह",
-    "year": "वर्ष"
+    "year": "वर्ष",
+    "two_weeks": "2 सप्ताह",
+    "custom": "आपकी अवधि"
   },
   "plan_created": "योजना बनाई गई",
   "plan_deleted": "योजना हटा दी गई है.",
@@ -41,5 +44,16 @@
   "select_role": "एक भूमिका चुनें",
   "select_user": "उपयोगकर्ता का चयन करें",
   "target_value": "लक्ष्य मान",
-  "user": "उपयोगकर्ता"
+  "user": "उपयोगकर्ता",
+  "comment": "टिप्पणी",
+  "plan_name": "योजना का नाम",
+  "manage_metrics": "मेट्रिक्स प्रबंधन",
+  "add_metric": "एक मीट्रिक जोड़ें",
+  "metric_name_ru": "नाम (आरयू)",
+  "metric_name_en": "शीर्षक (EN)",
+  "unit": "माप की इकाई",
+  "description": "विवरण",
+  "error_loading_metrics": "मेट्रिक्स लोड करने में त्रुटि",
+  "start_date": "आरंभ करने की तिथि",
+  "end_date": "अंतिम तिथि"
 }

@@ -12,7 +12,7 @@
   "channel_push": "Notifications poussées",
   "channel_push_desc": "Recevez des notifications dans l'application",
   "channel_sms": "SMS",
-  "channel_sms_desc": "Recevoir des notifications par SMS",
+  "channel_sms_desc": "Recevoir des SMS",
   "confirm_password": "Confirmez votre mot de passe",
   "current_password": "Mot de passe actuel",
   "danger_zone": "Zone dangereuse",

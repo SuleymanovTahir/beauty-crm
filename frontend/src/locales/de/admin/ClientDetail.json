@@ -61,5 +61,8 @@
   "save_error": "Fehler beim Speichern",
   "delete_gallery_confirm": "Möchten Sie diesen Eintrag wirklich aus Ihrer Galerie entfernen?",
   "gallery_entry_deleted": "Beitrag aus der Galerie entfernt",
-  "delete_error": "Fehler beim Löschen"
+  "delete_error": "Fehler beim Löschen",
+  "top_3_procedures": "Top 3 Verfahren",
+  "top_3_masters": "Top 3 Meister",
+  "visits_dynamics": "Dynamik der Besuche"
 }

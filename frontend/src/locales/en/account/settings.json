@@ -12,7 +12,7 @@
   "channel_push": "Push notifications",
   "channel_push_desc": "Receive in-app notifications",
   "channel_sms": "SMS",
-  "channel_sms_desc": "Receive SMS notifications",
+  "channel_sms_desc": "Receive SMS messages",
   "confirm_password": "Confirm your password",
   "current_password": "Current Password",
   "danger_zone": "Danger zone",
