@@ -1,8 +1,8 @@
 {
   "items": [
     {
-      "title": "Красота и элегантность",
-      "subtitle": "Профессиональные косметические услуги.",
+      "title": "Beauty and elegance",
+      "subtitle": "Professional cosmetic services.",
       "image_url": "/static/uploads/faces/banner2.webp",
       "link_url": "/services",
       "bg_pos_desktop_x": 50,
@@ -13,9 +13,9 @@
       "is_flipped_vertical": false
     },
     {
-      "title": "Скидки до 50%",
-      "subtitle": "На все услуги салона",
-      "image_url": "/static/uploads/faces/Мароканская баня.webp",
+      "title": "Discounts up to 50%",
+      "subtitle": "For all salon services",
+      "image_url": "/static/uploads/faces/Moroccan bath.webp",
       "link_url": "/services",
       "bg_pos_desktop_x": 50,
       "bg_pos_desktop_y": 50,
