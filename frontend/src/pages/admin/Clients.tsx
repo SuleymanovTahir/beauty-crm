@@ -66,7 +66,7 @@ export default function Clients() {
   const [clients, setClients] = useState<Client[]>([]);
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const { t } = useTranslation(['admin/Clients', 'common']);
+  const { t, i18n } = useTranslation(['admin/Clients', 'common']);
   const [statusFilter, setStatusFilter] = useState(() => {
     return localStorage.getItem('clients_status_filter') || 'all';
   });
@@ -770,9 +770,9 @@ export default function Clients() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-visible" style={{ minHeight: '400px', paddingBottom: '100px' }}>
         {filteredClients.length > 0 ? (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto pb-20">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
@@ -794,8 +794,12 @@ export default function Clients() {
                   >
                     {t('clients:contacts')} {sortField === 'phone' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:messages')}</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:bookings')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600" title={t('clients:total_messages_desc', 'Total messages exchanged')}>
+                    {t('clients:messages', 'Messages')}
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600" title={t('clients:total_bookings_desc', 'Total number of bookings')}>
+                    {t('clients:bookings', 'Bookings')}
+                  </th>
                   <th
                     className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('lifetime_value')}
@@ -897,7 +901,7 @@ export default function Clients() {
                     <td className="px-6 py-4 text-sm text-gray-900">{client.total_bookings || 0}</td>
 
                     <td className="px-6 py-4 text-sm text-green-600 font-medium">
-                      {client.lifetime_value} AED
+                      {client.lifetime_value || 0} AED
                     </td>
                     <td className="px-6 py-4">
                       <TemperatureSelect
@@ -906,7 +910,7 @@ export default function Clients() {
                       />
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {new Date(client.last_contact).toLocaleDateString("ru-RU")}
+                      {new Date(client.last_contact).toLocaleDateString(i18n.language)}
                     </td>
                     <td className="px-6 py-4">
                       <StatusSelect

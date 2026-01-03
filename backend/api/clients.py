@@ -62,7 +62,9 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
                     SELECT 1 FROM chat_history ch WHERE ch.instagram_id = c.instagram_id
                 ) THEN 1 ELSE 0 END as has_messages,
                 c.created_at,
-                COALESCE((SELECT SUM(revenue) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_spend
+                COALESCE((SELECT SUM(revenue) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_spend,
+                COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_bookings,
+                c.temperature
             FROM clients c
             ORDER BY c.is_pinned DESC, has_messages DESC, c.last_contact DESC
         """)
@@ -74,7 +76,9 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
                 c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
                 c.profile_pic, c.notes, c.is_pinned, c.gender, 1 as has_messages,
                 c.created_at,
-                COALESCE((SELECT SUM(revenue) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_spend
+                COALESCE((SELECT SUM(revenue) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_spend,
+                COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_bookings,
+                c.temperature
             FROM clients c
             JOIN messenger_messages mm ON c.instagram_id = mm.client_id
             WHERE mm.messenger_type = %s
@@ -130,13 +134,15 @@ async def list_clients(
                 "last_contact": c[5],
                 "total_messages": c[6],
                 "status": c[8] if len(c) > 8 else "new",
-                "lifetime_value": c[9] if len(c) > 9 else 0,
+                "lifetime_value": c[16] if len(c) > 16 else (c[9] if len(c) > 9 else 0),
                 "profile_pic": c[10] if len(c) > 10 else None,
                 "notes": c[11] if len(c) > 11 else "",
                 "is_pinned": c[12] if len(c) > 12 else 0,
                 "gender": c[13] if len(c) > 13 else "female",
                 "created_at": c[15] if len(c) > 15 else None,
-                "total_spend": c[16] if len(c) > 16 else 0,
+                "total_spend": c[16] if len(c) > 16 else (c[9] if len(c) > 9 else 0),
+                "total_bookings": c[17] if len(c) > 17 else 0,
+                "temperature": c[18] if len(c) > 18 else "cold",
                 "messenger": messenger
             }
             for c in clients
@@ -185,8 +191,23 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     booking_services = [b[2] for b in bookings if b[2]]
     booking_masters = [b[9] for b in bookings if len(b) > 9 and b[9]]
     
-    top_procedures = [{"name": name, "count": count} for name, count in Counter(booking_services).most_common(3)]
-    top_masters = [{"name": name, "count": count} for name, count in Counter(booking_masters).most_common(3)]
+    # Connect to DB to get translations
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    top_procedures = []
+    for name, count in Counter(booking_services).most_common(3):
+        c.execute("SELECT name_ru FROM services WHERE name = %s OR name_ru = %s LIMIT 1", (name, name))
+        row = c.fetchone()
+        top_procedures.append({"name": row[0] if row and row[0] else name, "count": count})
+        
+    top_masters = []
+    for name, count in Counter(booking_masters).most_common(3):
+        c.execute("SELECT full_name_ru FROM users WHERE full_name = %s OR full_name_ru = %s LIMIT 1", (name, name))
+        row = c.fetchone()
+        top_masters.append({"name": row[0] if row and row[0] else name, "count": count})
+        
+    conn.close()
     
     # Calculate visits by month for the diagram
     visits_by_month = {}
