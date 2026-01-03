@@ -1871,7 +1871,7 @@ export default function Bookings() {
                       const position = i18n.language === 'ru' && m.position_ru ? m.position_ru : (m.position || '');
                       return (
                         <option key={m.id} value={m.full_name || m.username}>
-                          {displayName} {position ? `— ${position}` : ''}
+                          {displayName}
                         </option>
                       );
                     })}
