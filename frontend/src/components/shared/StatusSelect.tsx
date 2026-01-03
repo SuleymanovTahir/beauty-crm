@@ -102,7 +102,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
           <ChevronDown className={`w-3.5 h-3.5 shrink-0 ${value === 'all' ? 'text-blue-100' : 'opacity-50'}`} />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-48 z-[100]">
+      <DropdownMenuContent align="start" className="min-w-[140px] w-auto z-[100]">
         {showAllOption && (
           <DropdownMenuItem onClick={() => onChange('all')}>
             {t('all_statuses', 'Все') || 'Все'}

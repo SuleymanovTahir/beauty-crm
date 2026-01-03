@@ -31,14 +31,25 @@ interface Booking {
   status: string;
   created_at: string;
   revenue: number;
-  master?: string; // Added master field
+  master?: string;
+  user_id?: number | string;
 }
 
 interface User {
+  id: number;
   username: string;
   full_name?: string;
+  full_name_ru?: string;
   role: string;
   position?: string;
+  position_ru?: string;
+}
+
+interface Service {
+  id: number;
+  name: string;
+  name_ru?: string;
+  service_key: string;
 }
 
 export default function BookingDetail() {
@@ -47,6 +58,7 @@ export default function BookingDetail() {
   const [booking, setBooking] = useState<Booking | null>(null);
   const [allBookings, setAllBookings] = useState<Booking[]>([]);
   const [masters, setMasters] = useState<User[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const { t, i18n } = useTranslation(['admin/bookingdetail', 'common', 'bookings']);
   const [updating, setUpdating] = useState(false);
@@ -62,15 +74,19 @@ export default function BookingDetail() {
   const loadBooking = async () => {
     try {
       setLoading(true);
-      // Загружаем букинги и пользователей
-      const [bookingsResponse, usersResponse] = await Promise.all([
+      // Загружаем букинги, пользователей и услуги
+      const [bookingsResponse, usersResponse, servicesResponse] = await Promise.all([
         apiClient.getBookings(),
-        apiClient.getUsers()
+        apiClient.getUsers(),
+        apiClient.getServices()
       ]);
 
       const found = bookingsResponse.bookings.find((b: Booking) => b.id === parseInt(id!));
       setAllBookings(bookingsResponse.bookings || []);
-      setMasters(usersResponse.users || []);
+      const usersData = Array.isArray(usersResponse) ? usersResponse : (usersResponse.users || []);
+      setMasters(usersData);
+      const servicesData = Array.isArray(servicesResponse) ? servicesResponse : (servicesResponse.services || []);
+      setServices(servicesData);
 
       if (found) {
         setBooking(found);
@@ -90,11 +106,12 @@ export default function BookingDetail() {
   const masterInfo = booking?.master
     ? masters.find(m =>
       (m.username && booking.master && m.username.toLowerCase() === booking.master.toLowerCase()) ||
-      (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase())
+      (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase()) ||
+      (m.full_name_ru && booking.master && m.full_name_ru.toLowerCase() === booking.master.toLowerCase())
     )
     : null;
 
-  const masterName = masterInfo?.full_name || booking?.master || t('common:not_specified');
+  const masterName = (i18n.language.startsWith('ru') && masterInfo?.full_name_ru) ? masterInfo.full_name_ru : (masterInfo?.full_name || booking?.master || t('common:not_specified'));
 
   const getChartData = (type: 'service' | 'master') => {
     if (!booking || !allBookings.length) return [];
@@ -136,7 +153,8 @@ export default function BookingDetail() {
         const targetMasterInfo = masterInfo;
 
         return bMaster === targetMaster ||
-          (bMasterInfo && targetMasterInfo && bMasterInfo.username === targetMasterInfo.username);
+          (bMasterInfo && targetMasterInfo && bMasterInfo.username === targetMasterInfo.username) ||
+          (bMasterInfo && targetMasterInfo && bMasterInfo.full_name_ru === targetMasterInfo.full_name_ru && bMasterInfo.full_name_ru);
       }
     });
 
@@ -285,7 +303,13 @@ export default function BookingDetail() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">{t('service')}</p>
-                  <p className="text-lg text-gray-900 font-medium">{booking.service}</p>
+                  <p className="text-lg text-gray-900 font-medium">
+                    {(() => {
+                      const serviceName = booking.service || '-';
+                      const s = services.find(serv => serv.name === serviceName || serv.service_key === serviceName || serv.name_ru === serviceName);
+                      return (i18n.language.startsWith('ru') && s?.name_ru) ? s.name_ru : serviceName;
+                    })()}
+                  </p>
                 </div>
               </div>
 
@@ -343,9 +367,12 @@ export default function BookingDetail() {
                 <div>
                   <p className="text-sm text-gray-600">{t('bookings:master', 'Мастер')}</p>
                   <p className="text-lg text-gray-900 font-bold">{masterName}</p>
-                  {masterInfo?.position && (
-                    <p className="text-sm text-indigo-600 font-medium">{masterInfo.position}</p>
-                  )}
+                  {(() => {
+                    const pos = i18n.language.startsWith('ru') && masterInfo?.position_ru ? masterInfo.position_ru : (masterInfo?.position || '');
+                    return pos ? (
+                      <p className="text-sm text-indigo-600 font-medium">{pos}</p>
+                    ) : null;
+                  })()}
                 </div>
               </div>
             </div>

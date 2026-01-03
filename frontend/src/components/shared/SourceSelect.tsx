@@ -9,7 +9,7 @@ interface SourceSelectProps {
 }
 
 export function SourceSelect({ value, onChange }: SourceSelectProps) {
-    const { t } = useTranslation(['common', 'components']);
+    const { t } = useTranslation(['admin/bookings', 'common', 'components']);
     const [isOpen, setIsOpen] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
     const [customValue, setCustomValue] = useState('');
@@ -27,15 +27,15 @@ export function SourceSelect({ value, onChange }: SourceSelectProps) {
     }, []);
 
     const sources = [
-        { id: 'manual', label: t('source.manual', 'Вручную'), icon: <User className="w-3.5 h-3.5" /> },
-        { id: 'instagram', label: 'Instagram', icon: <Instagram className="w-3.5 h-3.5 text-pink-500" /> },
-        { id: 'telegram', label: 'Telegram', icon: <Send className="w-3.5 h-3.5 text-blue-500" /> },
-        { id: 'whatsapp', label: 'WhatsApp', icon: <MessageCircle className="w-3.5 h-3.5 text-green-500" /> },
-        { id: 'account', label: 'ЛК', icon: <User className="w-3.5 h-3.5 text-indigo-500" /> },
-        { id: 'guest_link', label: 'Ссылка', icon: <Link className="w-3.5 h-3.5 text-gray-500" /> },
+        { id: 'manual', label: t('admin/bookings:source.manual', 'Вручную'), icon: <User className="w-3.5 h-3.5" /> },
+        { id: 'instagram', label: t('admin/bookings:source.instagram', 'Instagram'), icon: <Instagram className="w-3.5 h-3.5 text-pink-500" /> },
+        { id: 'telegram', label: t('admin/bookings:source.telegram', 'Telegram'), icon: <Send className="w-3.5 h-3.5 text-blue-500" /> },
+        { id: 'whatsapp', label: t('admin/bookings:source.whatsapp', 'WhatsApp'), icon: <MessageCircle className="w-3.5 h-3.5 text-green-500" /> },
+        { id: 'account', label: t('admin/bookings:source.account', 'ЛК'), icon: <User className="w-3.5 h-3.5 text-indigo-500" /> },
+        { id: 'guest_link', label: t('admin/bookings:source.guest_link', 'Ссылка'), icon: <Link className="w-3.5 h-3.5 text-gray-500" /> },
     ];
 
-    const currentSource = sources.find(s => s.id === value) || { id: value, label: value || t('source.manual', 'Вручную'), icon: <Send className="w-3.5 h-3.5 text-gray-400" /> };
+    const currentSource = sources.find(s => s.id === value) || { id: value, label: value || t('admin/bookings:source.manual', 'Вручную'), icon: <Send className="w-3.5 h-3.5 text-gray-400" /> };
 
     const handleSelect = (id: string) => {
         onChange(id);
@@ -51,21 +51,31 @@ export function SourceSelect({ value, onChange }: SourceSelectProps) {
         }
     };
 
+    const getSourceColor = (sourceId: string) => {
+        const colors: Record<string, string> = {
+            manual: 'bg-gray-100 text-gray-800 hover:bg-gray-200',
+            instagram: 'bg-pink-100 text-pink-800 hover:bg-pink-200',
+            telegram: 'bg-blue-100 text-blue-800 hover:bg-blue-200',
+            whatsapp: 'bg-green-100 text-green-800 hover:bg-green-200',
+            account: 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200',
+            guest_link: 'bg-purple-100 text-purple-800 hover:bg-purple-200',
+        };
+        return colors[sourceId] || 'bg-gray-100 text-gray-800 hover:bg-gray-200';
+    };
+
     return (
         <div className="relative" ref={dropdownRef}>
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-between gap-1.5 cursor-pointer px-2 py-1 rounded-lg border border-gray-100 bg-white hover:border-blue-200 transition-all min-w-[100px] shadow-sm group"
+                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 w-fit ${getSourceColor(value)}`}
             >
-                <div className="flex items-center gap-1.5 overflow-hidden">
-                    <div className="shrink-0">{currentSource.icon}</div>
-                    <span className="text-[11px] font-bold text-gray-700 truncate">{currentSource.label}</span>
-                </div>
-                <ChevronDown className={`w-3 h-3 text-gray-300 group-hover:text-blue-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                <div className="shrink-0">{currentSource.icon}</div>
+                <span className="truncate">{currentSource.label}</span>
+                <ChevronDown className={`w-3.5 h-3.5 shrink-0 opacity-50 ${isOpen ? 'rotate-180' : ''}`} />
             </div>
 
             {isOpen && (
-                <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100 overflow-hidden">
+                <div className="absolute top-full left-0 mt-1 min-w-[140px] w-auto bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100 overflow-hidden">
                     <div className="max-h-60 overflow-y-auto">
                         {sources.map((s) => (
                             <div
@@ -107,7 +117,7 @@ export function SourceSelect({ value, onChange }: SourceSelectProps) {
                                 className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-50 cursor-pointer rounded-lg text-blue-600 transition-colors"
                             >
                                 <Plus className="w-3 h-3" />
-                                <span className="text-[10px] font-bold uppercase tracking-wider">Свой источник</span>
+                                <span className="text-[10px] font-bold uppercase tracking-wider">{t('admin/bookings:source.custom', 'Свой источник')}</span>
                             </div>
                         )}
                     </div>

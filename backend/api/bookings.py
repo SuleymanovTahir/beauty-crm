@@ -180,6 +180,7 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
             "created_at": b[7] if len(b) > 7 else None,
             "revenue": b[8] if len(b) > 8 else 0,
             "master": b[9] if len(b) > 9 else None,
+            "user_id": b[10] if len(b) > 10 else None,
             "messengers": messengers
         })
 
@@ -230,7 +231,9 @@ async def get_booking_detail(
         "name": booking[5],
         "status": booking[6],
         "created_at": booking[7],
-        "revenue": booking[8] if len(booking) > 8 else 0
+        "revenue": booking[8] if len(booking) > 8 else 0,
+        "master": booking[9] if len(booking) > 9 else None,
+        "user_id": booking[10] if len(booking) > 10 else None
     }
 
 from fastapi import BackgroundTasks
@@ -330,11 +333,12 @@ async def create_booking_api(
         name = data.get('name')
         master = data.get('master', '')
         revenue = data.get('revenue', 0)
+        source = data.get('source', 'manual')
         user_id = user["id"]
 
         # Synchronous DB Save (Required for ID)
         get_or_create_client(instagram_id, username=name, phone=phone)
-        save_booking(instagram_id, service, datetime_str, phone, name, master=master, user_id=user_id, revenue=revenue)
+        save_booking(instagram_id, service, datetime_str, phone, name, master=master, user_id=user_id, revenue=revenue, source=source)
 
         # ✅ SYNC: Update phone and name in both tables if they are new or different
         if phone or name:
@@ -910,7 +914,7 @@ async def update_booking_api(
         conn = get_db_connection()
         c = conn.cursor()
 
-        c.execute("SELECT instagram_id, service_name, datetime, master, name, phone FROM bookings WHERE id = %s",
+        c.execute("SELECT instagram_id, service_name, datetime, master, name, phone, revenue, source FROM bookings WHERE id = %s",
                   (booking_id,))
         old_booking = c.fetchone()
 
@@ -918,7 +922,7 @@ async def update_booking_api(
             conn.close()
             return JSONResponse({"error": "Booking not found"}, status_code=404)
 
-        current_instagram_id, old_service, old_datetime, old_master, old_name, old_phone = old_booking
+        current_instagram_id, old_service, old_datetime, old_master, old_name, old_phone, old_revenue, old_source = old_booking
 
         # Обновляем запись
         new_service = data.get('service', old_service)
@@ -926,7 +930,8 @@ async def update_booking_api(
         new_master = data.get('master', old_master)
         new_name = data.get('name', old_name)
         new_phone = data.get('phone', old_phone)
-        new_revenue = data.get('revenue', 0)
+        new_revenue = data.get('revenue', old_revenue)
+        new_source = data.get('source', old_source)
 
         # Sync client info if phone/name changed
         if new_phone != old_phone or new_name != old_name:
@@ -935,9 +940,9 @@ async def update_booking_api(
 
         c.execute("""
             UPDATE bookings
-            SET service_name = %s, datetime = %s, master = %s, name = %s, phone = %s, revenue = %s
+            SET service_name = %s, datetime = %s, master = %s, name = %s, phone = %s, revenue = %s, source = %s
             WHERE id = %s
-        """, (new_service, new_datetime, new_master, new_name, new_phone, new_revenue, booking_id))
+        """, (new_service, new_datetime, new_master, new_name, new_phone, new_revenue, new_source, booking_id))
 
         conn.commit()
         conn.close()

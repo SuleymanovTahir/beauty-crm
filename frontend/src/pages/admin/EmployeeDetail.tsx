@@ -22,9 +22,11 @@ interface Employee {
     id: number;
     username: string;
     full_name: string;
+    full_name_ru?: string;
     email: string;
     role: string;
     position?: string;
+    position_ru?: string;
     phone?: string;
     bio?: string;
     photo?: string;
@@ -189,8 +191,12 @@ export default function EmployeeDetail() {
                                 className="w-10 h-10 rounded-full bg-gray-100 object-cover"
                             />
                             <div className="flex-1 text-left">
-                                <p className="text-sm font-medium text-gray-900">{emp.full_name}</p>
-                                <p className="text-xs text-gray-500 uppercase">{emp.position || emp.role}</p>
+                                <p className="text-sm font-medium text-gray-900">
+                                    {(i18n.language === 'ru' && emp.full_name_ru) ? emp.full_name_ru : emp.full_name}
+                                </p>
+                                <p className="text-xs text-gray-500 uppercase">
+                                    {(i18n.language === 'ru' && emp.position_ru) ? emp.position_ru : (emp.position || emp.role)}
+                                </p>
                             </div>
                         </button>
                     ))}

@@ -92,9 +92,6 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             <h3 className="font-bold text-white text-base tracking-tight leading-none">
               {t('info_panel_title', 'Информация') || 'Информация'}
             </h3>
-            <span className="text-[9px] font-bold text-blue-100 uppercase tracking-widest mt-0.5">
-              💎 V3.1 POLISHED
-            </span>
           </div>
         </div>
         <button
