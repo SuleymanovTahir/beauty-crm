@@ -19,12 +19,24 @@ def get_stats(comparison_period: str = "7days"):
     c = conn.cursor()
     
     # Определяем период сравнения
-    if comparison_period == "7days":
+    if comparison_period == "today":
+        days = 1
+        context = "за сегодня"
+    elif comparison_period == "yesterday":
+        days = 1
+        context = "за вчера"
+    elif comparison_period == "7days":
         days = 7
         context = "за последние 7 дней"
-    elif comparison_period == "30days" or comparison_period == "month":
+    elif comparison_period == "30days":
         days = 30
-        context = "за последний месяц"
+        context = "за последние 30 дней"
+    elif comparison_period == "month" or comparison_period == "thisMonth":
+        days = 30
+        context = "за этот месяц"
+    elif comparison_period == "lastMonth":
+        days = 30
+        context = "за прошлый месяц"
     elif comparison_period == "week":
         days = 7
         context = "за неделю"
@@ -49,7 +61,7 @@ def get_stats(comparison_period: str = "7days"):
     c.execute("SELECT COUNT(*) FROM bookings WHERE status='completed'")
     completed_bookings = c.fetchone()[0]
     
-    c.execute("SELECT COUNT(*) FROM bookings WHERE status='pending' OR status='confirmed'")
+    c.execute("SELECT COUNT(*) FROM bookings WHERE status='pending'")
     pending_bookings = c.fetchone()[0]
     
     c.execute("SELECT COUNT(*) FROM chat_history WHERE sender='client'")
@@ -162,20 +174,29 @@ def get_stats(comparison_period: str = "7days"):
     prev_completed = c.fetchone()[0]
     
     c.execute("""
-        SELECT COUNT(*) FROM bookings 
-        WHERE (status='pending' OR status='confirmed') 
+        SELECT COUNT(*) FROM bookings
+        WHERE status='pending'
         AND created_at >= %s AND created_at < %s
     """, (previous_period_start, previous_period_end))
     prev_pending = c.fetchone()[0]
     
     try:
         c.execute("""
-            SELECT SUM(revenue) FROM bookings 
+            SELECT SUM(revenue) FROM bookings
             WHERE status='completed' AND created_at >= %s AND created_at < %s
         """, (previous_period_start, previous_period_end))
         prev_revenue = c.fetchone()[0] or 0
+
+        # Average booking value for previous period
+        c.execute("""
+            SELECT COALESCE(AVG(revenue), 0)
+            FROM bookings
+            WHERE status='completed' AND created_at >= %s AND created_at < %s AND revenue > 0
+        """, (previous_period_start, previous_period_end))
+        prev_avg_booking_value = c.fetchone()[0]
     except psycopg2.OperationalError:
         prev_revenue = 0
+        prev_avg_booking_value = 0
     
     # === ТЕКУЩИЙ ПЕРИОД (новые данные) ===
     # Current new clients: unique clients who made their first booking in current period
@@ -219,19 +240,28 @@ def get_stats(comparison_period: str = "7days"):
     current_completed = c.fetchone()[0]
     
     c.execute("""
-        SELECT COUNT(*) FROM bookings 
-        WHERE (status='pending' OR status='confirmed') AND created_at >= %s
+        SELECT COUNT(*) FROM bookings
+        WHERE status='pending' AND created_at >= %s
     """, (period_start,))
     current_pending = c.fetchone()[0]
     
     try:
         c.execute("""
-            SELECT SUM(revenue) FROM bookings 
+            SELECT SUM(revenue) FROM bookings
             WHERE status='completed' AND created_at >= %s
         """, (period_start,))
         current_revenue = c.fetchone()[0] or 0
+
+        # Average booking value for current period
+        c.execute("""
+            SELECT COALESCE(AVG(revenue), 0)
+            FROM bookings
+            WHERE status='completed' AND created_at >= %s AND revenue > 0
+        """, (period_start,))
+        avg_booking_value = c.fetchone()[0]
     except psycopg2.OperationalError:
         current_revenue = 0
+        avg_booking_value = 0
     
     conn.close()
     
@@ -261,6 +291,7 @@ def get_stats(comparison_period: str = "7days"):
     completed_growth, completed_trend = calculate_growth(current_completed, prev_completed)
     pending_growth, pending_trend = calculate_growth(current_pending, prev_pending)
     revenue_growth, revenue_trend = calculate_growth(current_revenue, prev_revenue)
+    avg_booking_growth, avg_booking_trend = calculate_growth(avg_booking_value, prev_avg_booking_value)
     
     conversion_rate = (completed_bookings / total_clients * 100) if total_clients > 0 else 0
     
@@ -274,6 +305,7 @@ def get_stats(comparison_period: str = "7days"):
         "total_client_messages": total_client_messages,
         "total_bot_messages": total_bot_messages,
         "total_revenue": round(total_revenue, 2),
+        "avg_booking_value": round(avg_booking_value, 2),
         "new_clients": new_clients,
         "leads": leads,
         "customers": customers,
@@ -328,6 +360,12 @@ def get_stats(comparison_period: str = "7days"):
                 "previous": round(prev_revenue, 2),
                 "percentage": revenue_growth,
                 "trend": revenue_trend
+            },
+            "avg_booking_value": {
+                "current": round(avg_booking_value, 2),
+                "previous": round(prev_avg_booking_value, 2),
+                "percentage": avg_booking_growth,
+                "trend": avg_booking_trend
             }
         },
         "comparison_context": context
