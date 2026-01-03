@@ -85,7 +85,10 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
   };
 
   const buttonClasses = variant === 'filter'
-    ? 'inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-all bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+    ? `inline-flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold cursor-pointer transition-all border shadow-sm ${value === 'all'
+      ? 'bg-blue-500 border-blue-600 text-white hover:bg-blue-600 shadow-blue-100'
+      : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+    }`
     : `inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all hover:ring-2 hover:ring-offset-1 hover:ring-pink-200 w-fit ${getColorClasses(currentStatus.color)}`;
 
   return (
@@ -95,8 +98,8 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
           onClick={(e) => e.stopPropagation()}
           className={buttonClasses}
         >
-          <span className="truncate">{currentStatus.label}</span>
-          <ChevronDown className="w-3 h-3 opacity-50 shrink-0" />
+          <span className="truncate">{value === 'all' ? 'Все' : currentStatus.label}</span>
+          <ChevronDown className={`w-3.5 h-3.5 shrink-0 ${value === 'all' ? 'text-blue-100' : 'opacity-50'}`} />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-48 z-[100]">

@@ -696,17 +696,26 @@ export default function Bookings() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="p-4 sm:p-6 lg:p-10 bg-gray-50/30 min-h-screen font-sans">
+      <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 flex items-center gap-2 sm:gap-3">
-            <Calendar className="w-8 h-8 text-pink-600" />
+          <h1 className="text-3xl font-extrabold text-gray-900 mb-2 flex items-center gap-3">
+            <div className="p-2 bg-pink-50 rounded-lg">
+              <Calendar className="w-8 h-8 text-pink-600" />
+            </div>
             {t('bookings:title')}
           </h1>
-          <p className="text-gray-600 text-sm sm:base">{filteredBookings.length} {t('bookings:records_count')}</p>
+          <p className="text-gray-500 font-medium flex items-center gap-2">
+            <span className="inline-block w-2 h-2 bg-pink-400 rounded-full animate-pulse" />
+            {filteredBookings.length} {t('bookings:records_count')}
+          </p>
         </div>
-        <button onClick={handleRefresh} disabled={refreshing} className="w-full sm:w-auto px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 flex items-center justify-center gap-2 transition-colors shadow-sm">
-          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          className="w-full md:w-auto px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95"
+        >
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''} text-pink-600`} />
           {t('bookings:refresh')}
         </button>
       </div>
@@ -783,100 +792,94 @@ export default function Bookings() {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search */}
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-gray-400" />
-              <input
-                type="text"
-                placeholder={t('bookings:search')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Filters Group */}
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-              {/* Status Filter */}
-              <StatusSelect
-                value={statusFilter}
-                onChange={setStatusFilter}
-                options={statusConfig}
-                allowAdd={false}
-                showAllOption={true}
-                variant="filter"
-              />
-
-              {/* Master Filter */}
-              <select
-                value={masterFilter}
-                onChange={(e) => setMasterFilter(e.target.value)}
-                className="px-3 py-2 pr-10 border border-gray-300 rounded-lg text-sm min-w-[140px] appearance-none bg-white bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%236b7280%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:16px_16px] bg-[right_0.75rem_center] bg-no-repeat focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-              >
-                <option value="all">{t('common:all_employees')}</option>
-                {masters.map((m: any) => (
-                  <option key={m.id} value={m.full_name || m.username}>{m.full_name || m.username}</option>
-                ))}
-              </select>
-
-              {/* Period Filter */}
-              <select
-                value={period}
-                onChange={(e) => setPeriod(e.target.value)}
-                className="px-3 py-2 pr-10 border border-gray-300 rounded-lg text-sm min-w-[140px] appearance-none bg-white bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%236b7280%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:16px_16px] bg-[right_0.75rem_center] bg-no-repeat focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-              >
-                <option value="all">{t('common:all_periods')}</option>
-                <option value="today">{t('common:today')}</option>
-                <option value="7">{t('common:last_7_days')}</option>
-                <option value="14">{t('common:last_14_days')}</option>
-                <option value="30">{t('common:last_month')}</option>
-                <option value="90">{t('common:last_3_months')}</option>
-                <option value="custom">{t('common:custom_period')}</option>
-              </select>
-            </div>
+      {/* Filters & Actions */}
+      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 backdrop-blur-xl bg-white/80">
+        <div className="flex flex-col gap-4 sm:gap-6">
+          {/* Row 1: Search */}
+          <div className="relative group">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-pink-500 transition-colors" />
+            <input
+              type="text"
+              placeholder={t('bookings:search')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all placeholder:text-gray-400"
+            />
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Custom Date Inputs */}
+          {/* Row 2: Filters Grid */}
+          <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+            <StatusSelect
+              value={statusFilter}
+              onChange={setStatusFilter}
+              options={statusConfig}
+              allowAdd={false}
+              showAllOption={true}
+              variant="filter"
+            />
+
+            <select
+              value={masterFilter}
+              onChange={(e) => setMasterFilter(e.target.value)}
+              className="px-3 sm:px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500/10 transition-all bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%239ca3af%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:14px_14px] bg-[right_0.5rem_center] sm:bg-[right_0.75rem_center] bg-no-repeat pr-7 sm:pr-10 shadow-sm"
+            >
+              <option value="all">Сотрудники</option>
+              {masters.map((m: any) => (
+                <option key={m.id} value={m.full_name || m.username}>{m.full_name || m.username}</option>
+              ))}
+            </select>
+
+            <select
+              value={period}
+              onChange={(e) => setPeriod(e.target.value)}
+              className="px-3 sm:px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500/10 transition-all bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%239ca3af%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:14px_14px] bg-[right_0.5rem_center] sm:bg-[right_0.75rem_center] bg-no-repeat pr-7 sm:pr-10 shadow-sm"
+            >
+              <option value="all">Периоды</option>
+              <option value="today">{t('common:today')}</option>
+              <option value="7">{t('common:last_7_days')}</option>
+              <option value="14">{t('common:last_14_days')}</option>
+              <option value="30">{t('common:last_month')}</option>
+              <option value="90">{t('common:last_3_months')}</option>
+              <option value="custom">{t('common:custom_period')}</option>
+            </select>
+          </div>
+
+          {/* Row 3: Actions Grid or Custom Date */}
+          <div className="flex flex-col gap-4 pt-2 border-t border-gray-50">
             {period === 'custom' && (
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-2 duration-300">
                 <input
                   type="date"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm min-w-[140px] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-1/2 px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all"
                 />
-                <span className="text-gray-400">-</span>
+                <span className="text-gray-400 font-medium">→</span>
                 <input
                   type="date"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm min-w-[140px] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-1/2 px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all"
                 />
               </div>
             )}
 
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-2 ml-auto">
+            <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-3">
               <button
                 onClick={() => setShowAddDialog(true)}
-                className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 flex items-center gap-2 whitespace-nowrap transition-colors shadow-sm"
+                className="px-4 sm:px-6 py-2.5 bg-[#1e293b] text-white rounded-xl text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-2 transition-all shadow-md shadow-gray-200"
               >
                 <Plus className="w-4 h-4" />
-                {t('bookings:add')}
+                <span>Добавить</span>
               </button>
 
               <button
                 onClick={() => setShowImportDialog(true)}
                 disabled={importing}
-                className="px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap transition-colors shadow-sm"
+                className="px-4 sm:px-5 py-2.5 bg-white text-gray-700 border border-gray-200 rounded-xl text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
               >
-                <Upload className="w-4 h-4" />
-                {importing ? t('bookings:importing') : t('bookings:import')}
+                <Upload className="w-4 h-4 text-gray-400" />
+                <span>Импорт</span>
               </button>
 
               <ExportDropdown
@@ -1707,7 +1710,7 @@ export default function Bookings() {
                     <option value="">{t('bookings:select_master')}</option>
                     {filteredMasters.map((m: any) => (
                       <option key={m.id} value={m.full_name}>
-                        {m.full_name} - {m.position}
+                        {m.full_name} - {m.position === 'Master' ? t('bookings:master') : (m.position === 'Top Master' ? 'Топ Мастер' : m.position)}
                       </option>
                     ))}
                   </select>

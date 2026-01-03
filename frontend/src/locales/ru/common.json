@@ -92,10 +92,10 @@
   "nothing_found": "",
   "of": "",
   "period": {
-    "2weeks": "",
-    "3months": "",
-    "month": "",
-    "week": ""
+    "2weeks": "2 недели",
+    "3months": "3 месяца",
+    "month": "Месяц",
+    "week": "Неделя"
   },
   "privacyAgreementStart": "Нажимая кнопку, вы соглашаетесь",
   "privacyPolicy": "политика конфиденциальности",
@@ -117,14 +117,14 @@
   "searchService": "Найти услугу...",
   "search_in_messages": "",
   "server_error": "",
-  "showing_range": "",
-  "start_conversation": "",
+  "showing_range": "Отображается с {{start}} по {{end}} из {{total}}",
+  "start_conversation": "Начать беседу",
   "submitBooking": "Отправить заявку",
-  "to": "",
-  "try_again": "",
-  "type_message": "",
+  "to": "по",
+  "try_again": "Попробуйте снова",
+  "type_message": "Введите сообщение",
   "upload_file": "Загрузить файл",
   "uploading": "Загрузка...",
   "url_link": "URL",
-  "yearsExperience": ""
+  "yearsExperience": "лет опыта"
 }
