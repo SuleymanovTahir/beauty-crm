@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send, Trash2, Clock, CheckCircle2, CalendarDays, DollarSign } from 'lucide-react';
+import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send, Trash2, Clock, CheckCircle2, CalendarDays, DollarSign, ChevronDown, Users, } from 'lucide-react';
 import { toast } from 'sonner';
 import { ExportDropdown } from '../../components/shared/ExportDropdown';
 import { StatusSelect } from '../../components/shared/StatusSelect';
@@ -155,6 +155,7 @@ export default function Bookings() {
   const [masters, setMasters] = useState<any[]>([]);
 
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const [addingBooking, setAddingBooking] = useState(false);
   const [editingBooking, setEditingBooking] = useState<any>(null);
 
@@ -794,7 +795,7 @@ export default function Bookings() {
 
       {/* Filters & Actions */}
       <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 backdrop-blur-xl bg-white/80">
-        <div className="flex flex-col gap-4 sm:gap-6">
+        <div className="flex flex-col gap-4">
           {/* Row 1: Search */}
           <div className="relative group">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-pink-500 transition-colors" />
@@ -803,93 +804,135 @@ export default function Bookings() {
               placeholder={t('bookings:search')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all placeholder:text-gray-400"
+              className="w-full h-[42px] pl-10 pr-4 bg-gray-50/50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all placeholder:text-gray-400 font-bold"
             />
           </div>
 
-          {/* Row 2: Filters Grid */}
-          <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
-            <StatusSelect
-              value={statusFilter}
-              onChange={setStatusFilter}
-              options={statusConfig}
-              allowAdd={false}
-              showAllOption={true}
-              variant="filter"
-            />
-
-            <select
-              value={masterFilter}
-              onChange={(e) => setMasterFilter(e.target.value)}
-              className="px-3 sm:px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500/10 transition-all bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%239ca3af%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:14px_14px] bg-[right_0.5rem_center] sm:bg-[right_0.75rem_center] bg-no-repeat pr-7 sm:pr-10 shadow-sm"
+          {/* Row 2: Primary Actions & Toggle */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowAddDialog(true)}
+              className="flex-1 h-[42px] bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-2 transition-all shadow-md shadow-gray-200"
             >
-              <option value="all">Сотрудники</option>
-              {masters.map((m: any) => (
-                <option key={m.id} value={m.full_name || m.username}>{m.full_name || m.username}</option>
-              ))}
-            </select>
+              <Plus className="w-4 h-4" />
+              <span>Добавить</span>
+            </button>
 
-            <select
-              value={period}
-              onChange={(e) => setPeriod(e.target.value)}
-              className="px-3 sm:px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500/10 transition-all bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%239ca3af%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:14px_14px] bg-[right_0.5rem_center] sm:bg-[right_0.75rem_center] bg-no-repeat pr-7 sm:pr-10 shadow-sm"
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`h-[42px] px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all border shadow-sm ${showFilters
+                ? 'bg-pink-50 border-pink-200 text-pink-600'
+                : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                }`}
             >
-              <option value="all">Периоды</option>
-              <option value="today">{t('common:today')}</option>
-              <option value="7">{t('common:last_7_days')}</option>
-              <option value="14">{t('common:last_14_days')}</option>
-              <option value="30">{t('common:last_month')}</option>
-              <option value="90">{t('common:last_3_months')}</option>
-              <option value="custom">{t('common:custom_period')}</option>
-            </select>
+              <Users className={`w-4 h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
+              <span className="hidden sm:inline">Фильтры</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
+            </button>
+
+            <button
+              onClick={handleRefresh}
+              disabled={loading}
+              className="h-[42px] px-3 sm:px-4 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm"
+              title="Обновить"
+            >
+              <RefreshCw className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
+            </button>
           </div>
 
-          {/* Row 3: Actions Grid or Custom Date */}
-          <div className="flex flex-col gap-4 pt-2 border-t border-gray-50">
-            {period === 'custom' && (
-              <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-2 duration-300">
-                <input
-                  type="date"
-                  value={dateFrom}
-                  onChange={(e) => setDateFrom(e.target.value)}
-                  className="w-1/2 px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all"
-                />
-                <span className="text-gray-400 font-medium">→</span>
-                <input
-                  type="date"
-                  value={dateTo}
-                  onChange={(e) => setDateTo(e.target.value)}
-                  className="w-1/2 px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all"
-                />
+          {/* Expandable Section: Filters & Secondary Actions */}
+          {showFilters && (
+            <div className="pt-4 border-t border-gray-50 flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Статус</span>
+                  <StatusSelect
+                    value={statusFilter}
+                    onChange={setStatusFilter}
+                    options={statusConfig}
+                    allowAdd={false}
+                    showAllOption={true}
+                    variant="filter"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Мастер</span>
+                  <div className="relative">
+                    <select
+                      value={masterFilter}
+                      onChange={(e) => setMasterFilter(e.target.value)}
+                      className="w-full h-[42px] px-4 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500/10 transition-all bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%239ca3af%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:14px_14px] bg-[right_0.75rem_center] bg-no-repeat pr-10 shadow-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      <option value="all">Все мастера</option>
+                      {masters.map((m: any) => (
+                        <option key={m.id} value={m.full_name || m.username}>{m.full_name || m.username}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Период</span>
+                  <div className="relative">
+                    <select
+                      value={period}
+                      onChange={(e) => setPeriod(e.target.value)}
+                      className="w-full h-[42px] px-4 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500/10 transition-all bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%239ca3af%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:14px_14px] bg-[right_0.75rem_center] bg-no-repeat pr-10 shadow-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      <option value="all">За все время</option>
+                      <option value="today">{t('common:today')}</option>
+                      <option value="7">{t('common:last_7_days')}</option>
+                      <option value="14">{t('common:last_14_days')}</option>
+                      <option value="30">{t('common:last_month')}</option>
+                      <option value="90">{t('common:last_3_months')}</option>
+                      <option value="custom">{t('common:custom_period')}</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-            )}
 
-            <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-3">
-              <button
-                onClick={() => setShowAddDialog(true)}
-                className="px-4 sm:px-6 py-2.5 bg-[#1e293b] text-white rounded-xl text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-2 transition-all shadow-md shadow-gray-200"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Добавить</span>
-              </button>
+              {/* Secondary Actions Row */}
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  onClick={() => setShowImportDialog(true)}
+                  disabled={importing}
+                  className="flex-1 h-[42px] bg-white text-gray-700 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
+                >
+                  <Upload className="w-4 h-4 text-gray-400" />
+                  <span>Импорт</span>
+                </button>
 
-              <button
-                onClick={() => setShowImportDialog(true)}
-                disabled={importing}
-                className="px-4 sm:px-5 py-2.5 bg-white text-gray-700 border border-gray-200 rounded-xl text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
-              >
-                <Upload className="w-4 h-4 text-gray-400" />
-                <span>Импорт</span>
-              </button>
-
-              <ExportDropdown
-                onExport={handleExport}
-                loading={exporting}
-                disabled={exporting}
-              />
+                <div className="flex-1">
+                  <ExportDropdown
+                    onExport={handleExport}
+                    loading={exporting}
+                    disabled={exporting}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
+
+        {/* Custom Date Range - Only shows if 'custom' is selected */}
+        {period === 'custom' && (
+          <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="w-1/2 sm:w-40 px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all"
+            />
+            <span className="text-gray-400 font-medium">→</span>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="w-1/2 sm:w-40 px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all"
+            />
+          </div>
+        )}
       </div>
 
       {/* Table */}

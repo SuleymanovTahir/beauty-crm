@@ -27,7 +27,7 @@ export function PeriodFilterSelect({ value, onChange }: PeriodFilterSelectProps)
     const getPeriodLabel = (period: string) => {
         switch (period) {
             case 'all':
-                return t('all_periods', 'Все периоды');
+                return 'Период';
             case 'today':
                 return t('today', 'Сегодня');
             case '7':
@@ -54,11 +54,11 @@ export function PeriodFilterSelect({ value, onChange }: PeriodFilterSelectProps)
         <div className="relative w-full" ref={dropdownRef}>
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-between gap-2 cursor-pointer py-2.5 px-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-all w-full shadow-sm"
+                className="flex items-center justify-between gap-2 cursor-pointer h-[42px] px-2.5 sm:px-4 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-all w-full shadow-sm"
             >
                 <div className="flex items-center gap-2 overflow-hidden">
                     <Calendar className="w-4 h-4 text-gray-500 shrink-0" />
-                    <span className="text-sm font-semibold text-gray-700 truncate">{getPeriodLabel(value)}</span>
+                    <span className="text-xs sm:text-sm font-bold text-gray-700 truncate">{getPeriodLabel(value)}</span>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </div>

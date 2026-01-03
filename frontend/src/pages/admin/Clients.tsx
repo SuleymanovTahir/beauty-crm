@@ -19,7 +19,8 @@ import {
   Upload,
   Crown,
   UserPlus,
-  UserCheck
+  UserCheck,
+  ChevronDown
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -107,6 +108,7 @@ export default function Clients() {
 
   // СОСТОЯНИЯ ДЛЯ ДИАЛОГОВ
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const [createForm, setCreateForm] = useState({
     name: '',
     phone: '',
@@ -672,7 +674,7 @@ export default function Clients() {
 
       {/* Filters & Actions */}
       <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 backdrop-blur-xl bg-white/80">
-        <div className="flex flex-col gap-4 sm:gap-6">
+        <div className="flex flex-col gap-4">
           {/* Row 1: Search */}
           <div className="relative group">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-pink-500 transition-colors" />
@@ -681,88 +683,129 @@ export default function Clients() {
               placeholder={t('clients:search_placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all placeholder:text-gray-400"
+              className="w-full h-[42px] pl-10 pr-4 bg-gray-50/50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all placeholder:text-gray-400 font-bold"
             />
           </div>
 
-          {/* Row 2: Filters Grid */}
-          <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
-            <StatusSelect
-              value={statusFilter}
-              onChange={setStatusFilter}
-              options={statusConfig}
-              allowAdd={false}
-              showAllOption={true}
-              variant="filter"
-            />
+          {/* Row 2: Primary Actions & Toggle */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowCreateDialog(true)}
+              className="flex-1 h-[42px] bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-2 transition-all shadow-md shadow-gray-200"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Добавить</span>
+            </button>
 
-            <TemperatureFilter
-              value={temperatureFilter}
-              onChange={setTemperatureFilter}
-            />
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`h-[42px] px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all border shadow-sm ${showFilters
+                ? 'bg-pink-50 border-pink-200 text-pink-600'
+                : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                }`}
+            >
+              <Users className={`w-4 h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
+              <span className="hidden sm:inline">Фильтры</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
+            </button>
 
-            <PeriodFilterSelect
-              value={period}
-              onChange={setPeriod}
-            />
+            <button
+              onClick={handleRefresh}
+              disabled={loading}
+              className="h-[42px] px-3 sm:px-4 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm"
+              title="Обновить"
+            >
+              <RefreshCw className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
+            </button>
           </div>
 
-          {/* Row 3: Actions Group */}
-          <div className="flex flex-col gap-4 pt-2 border-t border-gray-50">
+          {/* Expandable Section: Filters & Secondary Actions */}
+          {showFilters && (
+            <div className="pt-4 border-t border-gray-50 flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Статус</span>
+                  <StatusSelect
+                    value={statusFilter}
+                    onChange={setStatusFilter}
+                    options={statusConfig}
+                    allowAdd={false}
+                    showAllOption={true}
+                    variant="filter"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Температура</span>
+                  <TemperatureFilter
+                    value={temperatureFilter}
+                    onChange={setTemperatureFilter}
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Период</span>
+                  <PeriodFilterSelect
+                    value={period}
+                    onChange={setPeriod}
+                  />
+                </div>
+              </div>
+
+              {/* Secondary Actions Row */}
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  onClick={() => setShowImportDialog(true)}
+                  disabled={importing}
+                  className="flex-1 h-[42px] bg-white text-gray-700 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
+                >
+                  <Upload className="w-4 h-4 text-gray-400" />
+                  <span>Импорт</span>
+                </button>
+
+                <div className="flex-1">
+                  <ExportDropdown
+                    onExport={handleExport}
+                    loading={exporting}
+                    disabled={exporting}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-4 mt-4 lg:mt-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex-1">
             {period === 'custom' && (
-              <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-2 duration-300">
+              <div className="flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
                 <input
                   type="date"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
-                  className="w-1/2 px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all"
+                  className="w-1/2 sm:w-40 px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all font-medium"
                 />
                 <span className="text-gray-400 font-medium">→</span>
                 <input
                   type="date"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
-                  className="w-1/2 px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all"
+                  className="w-1/2 sm:w-40 px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all font-medium"
                 />
               </div>
             )}
-
-            <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-3">
-              <button
-                onClick={() => setShowCreateDialog(true)}
-                className="px-4 sm:px-6 py-2.5 bg-[#1e293b] text-white rounded-xl text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-2 transition-all shadow-md shadow-gray-200"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Добавить</span>
-              </button>
-
-              <button
-                onClick={() => setShowImportDialog(true)}
-                disabled={importing}
-                className="px-4 sm:px-5 py-2.5 bg-white text-gray-700 border border-gray-200 rounded-xl text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
-              >
-                <Upload className="w-4 h-4 text-gray-400" />
-                <span>Импорт</span>
-              </button>
-
-              <ExportDropdown
-                onExport={handleExport}
-                loading={exporting}
-                disabled={exporting}
-              />
-            </div>
-
-            {selectedClients.size > 0 && (
-              <button
-                onClick={handleBulkDelete}
-                disabled={loading}
-                className="w-full px-5 py-2.5 bg-red-50 text-red-600 border border-red-100 rounded-xl text-sm font-bold hover:bg-red-100 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all"
-              >
-                <Trash2 className="w-4 h-4" />
-                {t('clients:delete_selected')} ({selectedClients.size})
-              </button>
-            )}
           </div>
+
+          {selectedClients.size > 0 && (
+            <button
+              onClick={handleBulkDelete}
+              disabled={loading}
+              className="w-full lg:w-auto px-5 py-2.5 bg-red-50 text-red-600 border border-red-100 rounded-xl text-sm font-bold hover:bg-red-100 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
+            >
+              <Trash2 className="w-4 h-4" />
+              {t('clients:delete_selected')} ({selectedClients.size})
+            </button>
+          )}
         </div>
       </div>
 
