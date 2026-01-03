@@ -246,6 +246,25 @@
   color: #aaa !important;
 }
 
+.messenger-tiktok .empty-chat-area {
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+.messenger-tiktok .empty-chat-area .bg-gradient-to-br {
+  background: #1a1a1a !important;
+}
+
+.messenger-tiktok .empty-chat-area .text-pink-600 {
+  color: #fe2c55 !important;
+}
+
+.messenger-tiktok .empty-chat-area .text-gray-700,
+.messenger-tiktok .empty-chat-area .text-gray-500,
+.messenger-tiktok .empty-chat-area p {
+  color: #ffffff !important;
+}
+
 /* Capsule message styles */
 .message-bubble {
   max-width: 80%;
