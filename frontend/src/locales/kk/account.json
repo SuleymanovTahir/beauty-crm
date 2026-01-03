@@ -284,8 +284,10 @@
   "loyalty": {
     "add_to_wallet": "Әмиянға қосу",
     "analytics_title": "Шығындарды талдау",
+    "available_points": "Доступно баллов",
     "average_check": "Орташа тексеру",
     "card_holder": "Карта иесі",
+    "cashback_description": "от стоимости каждой услуги возвращается баллами",
     "client_id": "Клиент идентификаторы",
     "code_copied": "Промокод көшірілді",
     "code_copied_instagram": "Промокод көшірілді! Instagram Stories ішіне қойыңыз",
@@ -306,6 +308,8 @@
     "points_for_friend": "дос үшін ұпай",
     "points_for_you": "сіз үшін ұпайлар",
     "points_to_go": "{{count}} ұпай",
+    "points_total": "всего накоплено",
+    "points_value": "1 балл = 1 {{currency}} скидки",
     "qr_how_to_use": "QR кодын қалай пайдалануға болады?",
     "qr_saved": "QR коды сақталды",
     "qr_step1": "Барған кезде әкімшіге QR кодын көрсетіңіз",
@@ -340,6 +344,7 @@
     "wallet_coming_soon": "Жақында Apple Wallet мүмкіндігін қосыңыз",
     "wallet_soon": "Әмиянға қосу мүмкіндігі жақында шығады",
     "year_distribution": "Жыл бойынша бөлу",
+    "your_cashback": "Ваш Кэшбэк",
     "your_discount": "сіздің жеңілдік болады",
     "your_level": "Сіздің деңгейіңіз",
     "your_promo": "Сіздің жарнамалық кодыңыз"

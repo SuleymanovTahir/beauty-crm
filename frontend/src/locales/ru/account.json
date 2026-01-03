@@ -283,8 +283,10 @@
   "loyalty": {
     "add_to_wallet": "Добавить в Wallet",
     "analytics_title": "Аналитика расходов",
+    "available_points": "Доступно баллов",
     "average_check": "Средний чек",
     "card_holder": "Владелец карты",
+    "cashback_description": "от стоимости каждой услуги возвращается баллами",
     "client_id": "ID клиента",
     "code_copied": "Промокод скопирован",
     "code_copied_instagram": "Промокод скопирован! Вставьте в Instagram Stories",
@@ -305,6 +307,8 @@
     "points_for_friend": "баллов другу",
     "points_for_you": "баллов вам",
     "points_to_go": "{{count}} баллов",
+    "points_total": "всего накоплено",
+    "points_value": "1 балл = 1 {{currency}} скидки",
     "qr_how_to_use": "Как использовать QR-код?",
     "qr_saved": "QR-код сохранен",
     "qr_step1": "Покажите QR-код администратору при посещении",
@@ -339,6 +343,7 @@
     "wallet_coming_soon": "Функция добавления в Apple Wallet скоро будет доступна",
     "wallet_soon": "Функция добавления в Wallet скоро будет доступна",
     "year_distribution": "Распределение за год",
+    "your_cashback": "Ваш Кэшбэк",
     "your_discount": "ваша скидка составит",
     "your_level": "Ваш уровень",
     "your_promo": "Ваш промокод"

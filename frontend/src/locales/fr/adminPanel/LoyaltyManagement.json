@@ -9,6 +9,7 @@
   },
   "categories": {
     "category": "Category",
+    "category_placeholder": "Напр. Ногти",
     "description": "Set custom multipliers for services",
     "multiplier": "Multiplier",
     "title": "Category Multipliers"
@@ -20,6 +21,7 @@
     "description": "Manage global loyalty settings",
     "expiration_days": "Points Validity (Days)",
     "expiration_hint": "Points earned will expire after this many days.",
+    "points_per_unit": "баллов за 1 ед. валюты",
     "title": "Configuration"
   },
   "confirm_delete_rule": "",
@@ -55,8 +57,8 @@
   "subtitle": "Gérer les niveaux de fidélité, les points et les transactions",
   "tiers": {
     "description": "Configuration des niveaux et des avantages",
-    "discount": "{{percent}} % de réduction",
-    "from_points": "À partir de {{points}} points",
+    "discount": "{{percent}}\u00a0% de réduction",
+    "from_points": "À partir de {{points}}\u00a0points",
     "starting_level": "Niveau d'entrée",
     "title": "Niveaux de fidélité"
   },

@@ -121,8 +121,43 @@ export function Loyalty() {
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <h1>{t('loyalty.title', 'Лояльность и Бонусы')}</h1>
-        <p className="text-muted-foreground">{t('loyalty.subtitle', 'Ваши привилегии и награды')}</p>
+        <h1>{t('loyalty.title', 'Лояльность и Кэшбэк')}</h1>
+        <p className="text-muted-foreground">{t('loyalty.subtitle', 'Накапливайте баллы и получайте кэшбэк с каждой услуги')}</p>
+      </div>
+
+      {/* Кэшбэк инфо */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-emerald-100">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2 text-emerald-700">
+              <TrendingUp className="w-4 h-4" />
+              {t('loyalty.your_cashback', 'Ваш Кэшбэк')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-emerald-600">
+              {(loyalty?.config?.loyalty_points_conversion_rate * 100 || 10).toFixed(0)}%
+            </div>
+            <p className="text-xs text-emerald-600/70 mt-1">
+              {t('loyalty.cashback_description', 'от стоимости каждой услуги возвращается баллами')}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2 text-blue-700">
+              <Gift className="w-4 h-4" />
+              {t('loyalty.available_points', 'Доступно баллов')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-blue-600">{loyaltyInfo.available_points || loyaltyInfo.points}</div>
+            <p className="text-xs text-blue-600/70 mt-1">
+              {t('loyalty.points_value', '1 балл = 1 {{currency}} скидки', { currency: currency })}
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Текущий статус */}
@@ -135,7 +170,7 @@ export function Loyalty() {
                 {currentTierData?.name} {t('loyalty.status', 'статус')}
               </CardTitle>
               <CardDescription className="mt-2">
-                {loyaltyInfo.points} {t('loyalty.points', 'баллов')} • {t('loyalty.discount', 'Скидка {{percent}}%', { percent: loyaltyInfo.discount })}
+                {loyaltyInfo.points} {t('loyalty.points_total', 'всего накоплено')} • {t('loyalty.discount', 'Скидка {{percent}}%', { percent: loyaltyInfo.discount })}
               </CardDescription>
             </div>
             <div className="text-right">

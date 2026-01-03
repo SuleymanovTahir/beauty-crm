@@ -345,14 +345,21 @@ export default function LoyaltyManagement() {
           <div className="flex items-end gap-4 max-w-md">
             <div className="flex-1 space-y-4">
               <div>
-                <Label>{t('config.cashback_rate', 'Кэшбэк (Баллы за 1 ед. валюты)')}</Label>
-                <p className="text-xs text-gray-500 mb-2">{t('config.cashback_hint', 'Пример: 0.1 = 10% кэшбэк (10 баллов за 100 потраченных)')}</p>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={config.loyalty_points_conversion_rate}
-                  onChange={(e) => setConfig({ ...config, loyalty_points_conversion_rate: parseFloat(e.target.value) })}
-                />
+                <Label>{t('config.cashback_rate', 'Кэшбэк (%)')}</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    step="0.1"
+                    value={config.loyalty_points_conversion_rate * 100}
+                    onChange={(e) => setConfig({ ...config, loyalty_points_conversion_rate: parseFloat(e.target.value) / 100 })}
+                    className="w-24"
+                  />
+                  <span className="text-gray-500">%</span>
+                  <span className="text-xs text-gray-400 ml-2">
+                    ({config.loyalty_points_conversion_rate} {t('config.points_per_unit', 'баллов за 1 ед. валюты')})
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">{t('config.cashback_hint', 'Пример: 10% кэшбэк (10 баллов за 100 потраченных)')}</p>
               </div>
               <div>
                 <Label>{t('config.expiration_days', 'Срок действия баллов (дней)')}</Label>
@@ -568,8 +575,8 @@ export default function LoyaltyManagement() {
       <Dialog open={showRuleDialog} onOpenChange={setShowRuleDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('dialogs.rule.title', 'Edit Category Rule')}</DialogTitle>
-            <DialogDescription>{t('dialogs.rule.description', 'Set multiplier for a service category')}</DialogDescription>
+            <DialogTitle>{t('dialogs.rule.title', 'Редактировать правило категории')}</DialogTitle>
+            <DialogDescription>{t('dialogs.rule.description', 'Установите множитель баллов для категории услуг')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -577,7 +584,7 @@ export default function LoyaltyManagement() {
               <Input
                 value={ruleForm.category}
                 onChange={(e) => setRuleForm({ ...ruleForm, category: e.target.value })}
-                placeholder="e.g. Nails"
+                placeholder={t('categories.category_placeholder', 'Напр. Ногти')}
               />
             </div>
             <div>
