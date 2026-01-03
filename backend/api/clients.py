@@ -220,15 +220,16 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
             "profile_pic": client[10] if len(client) > 10 else None,
             "notes": client[11] if len(client) > 11 else "",
             # Correct indices based on get_client_by_id query
-            "total_spend": client[16] if len(client) > 16 else 0,
-            "total_visits": client[12] if len(client) > 12 else len(bookings),
-            "discount": client[13] if len(client) > 13 else 0,
-            "card_number": client[14] if len(client) > 14 else "",
-            "temperature": client[15] if len(client) > 15 else "cold",
-            "gender": client[17] if len(client) > 17 else None,
-            "birth_date": client[18] if len(client) > 18 else None,
-            "email": client[19] if len(client) > 19 else None,
-            "referral_code": client[20] if len(client) > 20 else None
+            "total_spend": client[18] if len(client) > 18 else 0,
+            "total_visits": client[17] if len(client) > 17 else len(bookings),
+            "discount": client[16] if len(client) > 16 else 0,
+            "card_number": client[15] if len(client) > 15 else "",
+            "temperature": client[21] if len(client) > 21 else "cold",
+            "gender": client[14] if len(client) > 14 else None,
+            "age": client[22] if len(client) > 22 else None,
+            "birth_date": client[23] if len(client) > 23 else None,
+            "email": client[20] if len(client) > 20 else None,
+            "referral_code": client[24] if len(client) > 24 else None
         },
         "stats": {
             "top_procedures": top_procedures,

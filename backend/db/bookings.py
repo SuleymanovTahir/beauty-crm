@@ -154,7 +154,8 @@ def get_bookings_by_phone(phone: str):
 
 def save_booking(instagram_id: str, service: str, datetime_str: str, 
                 phone: str, name: str, special_package_id: int = None, master: str = None,
-                status: str = 'confirmed', source: str = 'manual', user_id: int = None):
+                status: str = 'confirmed', source: str = 'manual', user_id: int = None,
+                revenue: float = 0):
     """Сохранить завершённую запись"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -178,11 +179,11 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
 
     c.execute("""INSERT INTO bookings 
              (instagram_id, service_name, datetime, phone, name, status, 
-              created_at, special_package_id, master, source, user_id)
-             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+              created_at, special_package_id, master, source, user_id, revenue)
+             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
              RETURNING id""",
           (instagram_id, service, datetime_str, phone, name, status, 
-           now, special_package_id, master, source, user_id))
+           now, special_package_id, master, source, user_id, revenue))
     
     booking_id = c.fetchone()[0]  # ✅ ПОЛУЧАЕМ ID СОЗДАННОЙ ЗАПИСИ
     

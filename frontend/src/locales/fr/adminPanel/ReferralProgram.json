@@ -5,7 +5,7 @@
   },
   "current_settings": {
     "edit": "Modifier",
-    "min_purchase": "Montant minimum d'achat\u00a0: <strong>{{amount}} AED</strong>",
+    "min_purchase": "Montant minimum d'achat : <strong>{{amount}} AED</strong>",
     "referred_bonus": "L'ami invité reçoit <strong>{{points}} points</strong> lors de son inscription",
     "referrer_bonus": "Le parrain reçoit <strong>{{points}} points</strong>lorsqu'un ami effectue son premier achat",
     "title": "Configuration actuelle des bonus"
