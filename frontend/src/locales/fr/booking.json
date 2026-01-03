@@ -1,0 +1,73 @@
+{
+  "change_booking": "Изменить запись",
+  "common": {
+    "any_master": "Любой мастер",
+    "cancel": "Later",
+    "change": "Change",
+    "edit": "Edit",
+    "reschedule": "Reschedule",
+    "reset": "Reset All",
+    "save": "Verify",
+    "select": "Select"
+  },
+  "confirm": {
+    "confirm": "Confirm Appointment",
+    "date": "Date",
+    "dateTime": "Date & Time",
+    "error": "Error creating booking. Please try again.",
+    "phoneDesc": "Please provide your mobile number for appointment updates and verification.",
+    "phoneNeeded": "Stay Connected",
+    "professional": "Provider",
+    "success": "Booking confirmed!",
+    "summary": "Order Summary",
+    "time": "Time",
+    "timeout": "Request timed out. Please try again.",
+    "title": "Подтвердить",
+    "total": "Total Amount"
+  },
+  "datetime": {
+    "date": "Select Date",
+    "noSlots": "No slots available",
+    "selectDateFirst": "Select a date first",
+    "time": "Pick Time",
+    "title": "Date & Time"
+  },
+  "invalid_phone": "Please enter a valid phone number",
+  "loading": "Initializing Studio",
+  "menu": {
+    "completed": "Complete",
+    "continue": "Finalize Booking",
+    "datetime": "Date & Time",
+    "professional": "Professional",
+    "selectDateTime": "Pick time slot",
+    "selectProfessional": "Select master",
+    "selectServices": "Pick treatment",
+    "services": "Services"
+  },
+  "min": "min",
+  "newBooking": "Reservation",
+  "professional": {
+    "anyAvailable": "Flexible Match",
+    "anyDesc": "We'll match you with the best available professional",
+    "availableOn": "Available",
+    "availableToday": "Available Today",
+    "ready": "Ready",
+    "reviews": "Reviews",
+    "title": "Choose Master"
+  },
+  "salon": {
+    "address": "Studio Location",
+    "name": "Beauty HQ"
+  },
+  "services": {
+    "allCategories": "All",
+    "search": "Search services...",
+    "selected": "selected",
+    "service_one": "service",
+    "service_few": "services",
+    "service_many": "services",
+    "title": "Select Services",
+    "total": "Total"
+  },
+  "totalDuration": "Duration"
+}
