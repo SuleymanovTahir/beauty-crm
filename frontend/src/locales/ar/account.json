@@ -284,10 +284,10 @@
   "loyalty": {
     "add_to_wallet": "أضف إلى المحفظة",
     "analytics_title": "تحليلات النفقات",
-    "available_points": "Доступно баллов",
+    "available_points": "النقاط المتاحة",
     "average_check": "فحص متوسط",
     "card_holder": "صاحب البطاقة",
-    "cashback_description": "от стоимости каждой услуги возвращается баллами",
+    "cashback_description": "يتم استرداد تكلفة كل خدمة بالنقاط",
     "client_id": "معرف العميل",
     "code_copied": "تم نسخ الرمز الترويجي",
     "code_copied_instagram": "تم نسخ الرمز الترويجي! لصق في قصص Instagram",
@@ -308,8 +308,8 @@
     "points_for_friend": "نقاط لصديق",
     "points_for_you": "نقاط لك",
     "points_to_go": "{{عدد}} نقطة",
-    "points_total": "всего накоплено",
-    "points_value": "1 балл = 1 {{currency}} скидки",
+    "points_total": "مجموع المتراكمة",
+    "points_value": "1 نقطة = 1 {{currency}}_ خصم",
     "qr_how_to_use": "كيفية استخدام رمز الاستجابة السريعة؟",
     "qr_saved": "تم حفظ رمز الاستجابة السريعة",
     "qr_step1": "أظهر رمز الاستجابة السريعة للمسؤول عند الزيارة",
@@ -344,7 +344,7 @@
     "wallet_coming_soon": "إضافة إلى ميزة Apple Wallet قريبًا",
     "wallet_soon": "إضافة إلى ميزة المحفظة قريبا",
     "year_distribution": "التوزيع للسنة",
-    "your_cashback": "Ваш Кэшбэк",
+    "your_cashback": "استرداد النقود الخاص بك",
     "your_discount": "الخصم الخاص بك سيكون",
     "your_level": "مستواك",
     "your_promo": "الرمز الترويجي الخاص بك"
@@ -515,7 +515,7 @@
     "what_to_receive": "ماذا تريد أن تحصل عليه"
   },
   "stats": {
-    "avg_frequency": "متوسط \u200b\u200bالتردد",
+    "avg_frequency": "متوسط ​​التردد",
     "fav_master": "السيد المفضل",
     "fav_service": "الخدمة المفضلة",
     "title": "إحصائيات الزيارة",

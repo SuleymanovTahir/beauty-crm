@@ -9,7 +9,7 @@
   },
   "categories": {
     "category": "Category",
-    "category_placeholder": "Напр. Ногти",
+    "category_placeholder": "Por exemplo. Unhas",
     "description": "Set custom multipliers for services",
     "multiplier": "Multiplier",
     "title": "Category Multipliers"
@@ -21,7 +21,7 @@
     "description": "Manage global loyalty settings",
     "expiration_days": "Points Validity (Days)",
     "expiration_hint": "Points earned will expire after this many days.",
-    "points_per_unit": "баллов за 1 ед. валюты",
+    "points_per_unit": "pontos por 1 unidade. moedas",
     "title": "Configuration"
   },
   "confirm_delete_rule": "",
