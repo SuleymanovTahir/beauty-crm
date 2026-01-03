@@ -44,13 +44,13 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
     try {
       await api.updateClientBotMode(client.id, mode);
       setBotMode(mode);
-      toast.success(t('bot_mode_changed', {
-        mode: mode === 'manual' ? t('bot_mode_manual', { ns: 'common' }) :
-          mode === 'assistant' ? t('bot_mode_assistant', { ns: 'common' }) :
-            t('bot_mode_autopilot', { ns: 'common' })
+      toast.success(t('bot_mode_changed', 'Режим бота изменен', {
+        mode: mode === 'manual' ? t('bot_mode_manual', 'Вручную', { ns: 'common' }) :
+          mode === 'assistant' ? t('bot_mode_assistant', 'Ассистент', { ns: 'common' }) :
+            t('bot_mode_autopilot', 'Автопилот', { ns: 'common' })
       }));
     } catch (err) {
-      toast.error(t('error_changing_mode'));
+      toast.error(t('error_changing_mode', 'Ошибка изменения режима'));
     }
   };
 
@@ -78,20 +78,30 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-2xl border-2 border-blue-200 shadow-xl overflow-hidden animate-in slide-in-from-top duration-300 max-w-full flex flex-col max-h-[600px]">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
-            <User className="w-5 h-5 text-black" />
+    <div className="bg-white rounded-[2rem] border-2 border-blue-100 shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden animate-in zoom-in-95 duration-500 max-w-full flex flex-col max-h-[85vh] m-2">
+      {/* Header - Ultra Premium */}
+      <div className="bg-gradient-to-r from-[#1e40af] via-[#3b82f6] to-[#6366f1] p-6 flex items-center justify-between flex-shrink-0 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16 blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-500/20 rounded-full translate-y-12 -translate-x-12 blur-2xl"></div>
+
+        <div className="flex items-center gap-4 relative z-10">
+          <div className="w-12 h-12 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/30 shadow-inner">
+            <User className="w-6 h-6 text-white" />
           </div>
-          <h3 className="font-bold text-black text-lg">{t('info_panel_title')}</h3>
+          <div>
+            <h3 className="font-black text-white text-xl tracking-tight leading-none mb-1">
+              {t('info_panel_title', 'Информация') || 'Информация'}
+            </h3>
+            <span className="text-[10px] font-bold text-blue-100 uppercase tracking-[0.3em] bg-white/10 px-2 py-0.5 rounded-full">
+              💎 Premium V2
+            </span>
+          </div>
         </div>
         <button
           onClick={onClose}
-          className="h-9 w-9 hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors"
+          className="h-10 w-10 bg-white/10 hover:bg-white/20 rounded-2xl flex items-center justify-center transition-all duration-300 border border-white/10 relative z-10"
         >
-          <X className="w-5 h-5 text-black" />
+          <X className="w-6 h-6 text-white" />
         </button>
       </div>
 
@@ -121,77 +131,76 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             </span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-bold text-gray-900 text-base sm:text-lg truncate">{client.display_name}</p>
+            <p className="font-black text-gray-900 text-xl tracking-tight truncate">{client.display_name}</p>
             {client.username && (
-              <p className="text-sm text-gray-600">@{client.username}</p>
+              <div className="flex items-center gap-1.5">
+                <span className="w-1 h-1 rounded-full bg-green-500 animate-pulse"></span>
+                <p className="text-sm font-bold text-blue-600">@{client.username}</p>
+              </div>
             )}
           </div>
         </div>
 
         {/* Name Field */}
-        <div className="bg-white rounded-xl border-2 border-gray-200 p-4 hover:border-blue-300 transition-colors">
-          <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg flex items-center justify-center">
-              <User className="w-4 h-4 text-purple-600" />
-            </div>
-            {t('client_name')}
+        <div className="bg-white rounded-2xl border-2 border-gray-100 p-4 shadow-sm hover:border-blue-200 hover:shadow-md transition-all duration-300 group">
+          <label className="flex items-center gap-2 font-bold text-gray-400 mb-2 text-[10px] uppercase tracking-[0.2em]">
+            <User className="w-3 h-3 text-blue-500" />
+            {t('client_name', 'Имя клиента') || 'Имя клиента'}
           </label>
           {isEditing ? (
             <Input
               type="text"
               value={editedName}
               onChange={(e) => setEditedName(e.target.value)}
-              placeholder={t('client_name_placeholder')}
-              className="border-2 border-blue-300 focus:border-blue-500 rounded-xl"
+              placeholder={t('client_name_placeholder', 'Имя клиента') || 'Имя клиента'}
+              className="border-2 border-blue-100 focus:border-blue-500 rounded-xl bg-gray-50/50"
             />
           ) : (
-            <p className="text-gray-900 px-2 py-1">
-              {client.name || <span className="text-gray-400 italic">{t('not_specified')}</span>}
+            <p className="text-gray-900 font-bold text-lg px-1">
+              {client.name || <span className="text-gray-300 italic font-normal">{t('not_specified', 'Не указано') || 'Не указано'}</span>}
             </p>
           )}
         </div>
 
         {/* Phone Field */}
-        <div className="bg-white rounded-xl border-2 border-gray-200 p-4 hover:border-blue-300 transition-colors">
-          <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-100 to-emerald-100 rounded-lg flex items-center justify-center">
-              <Phone className="w-4 h-4 text-green-600" />
-            </div>
-            {t('phone')}
+        <div className="bg-white rounded-2xl border-2 border-gray-100 p-4 shadow-sm hover:border-green-200 hover:shadow-md transition-all duration-300 group">
+          <label className="flex items-center gap-2 font-bold text-gray-400 mb-2 text-[10px] uppercase tracking-[0.2em]">
+            <Phone className="w-3 h-3 text-green-500" />
+            {t('phone', 'Телефон') || 'Телефон'}
           </label>
           {isEditing ? (
             <Input
               type="text"
               value={editedPhone}
               onChange={(e) => setEditedPhone(e.target.value)}
-              placeholder={t('phone_placeholder')}
-              className="border-2 border-blue-300 focus:border-blue-500 rounded-xl"
+              placeholder={t('phone_placeholder', 'Телефон') || 'Телефон'}
+              className="border-2 border-green-100 focus:border-green-500 rounded-xl bg-gray-50/50"
             />
           ) : (
-            <p className="text-gray-900 px-2 py-1">
-              {client.phone || <span className="text-gray-400 italic">{t('not_specified_phone')}</span>}
+            <p className="text-gray-900 font-bold text-lg px-1 font-mono tracking-tight">
+              {client.phone || <span className="text-gray-300 italic font-normal">{t('not_specified_phone', 'Не указано') || 'Не указано'}</span>}
             </p>
           )}
         </div>
 
         {/* Status Field */}
-        <div className="bg-white rounded-xl border-2 border-gray-200 p-4 hover:border-blue-300 transition-colors">
-          <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center">
-              <Check className="w-4 h-4 text-purple-600" />
-            </div>
-            {t('status')}
+        <div className="bg-white rounded-2xl border-2 border-gray-100 p-4 shadow-sm hover:border-purple-200 hover:shadow-md transition-all duration-300 group">
+          <label className="flex items-center gap-2 font-bold text-gray-400 mb-2 text-[10px] uppercase tracking-[0.2em]">
+            <Check className="w-3 h-3 text-purple-500" />
+            {t('status', 'Статус') || 'Статус'}
           </label>
           {isEditing ? (
-            <StatusSelect
-              value={editedStatus}
-              onChange={setEditedStatus}
-              options={statusConfig}
-              allowAdd={true}
-              onAddStatus={handleAddStatus}
-            />
+            <div className="mt-1">
+              <StatusSelect
+                value={editedStatus}
+                onChange={setEditedStatus}
+                options={statusConfig}
+                allowAdd={true}
+                onAddStatus={handleAddStatus}
+              />
+            </div>
           ) : (
-            <div className="px-2 py-1">
+            <div className="mt-1">
               <StatusSelect
                 value={client.status}
                 onChange={async (newStatus) => {
@@ -220,17 +229,17 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
         </div>
 
         {/* Source Field */}
-        <div className="py-4 border-b border-gray-200">
-          <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2 text-xs uppercase tracking-wider">
-            {t('source_title', 'Источник')}
+        <div className="py-4 border-b border-gray-100">
+          <label className="flex items-center gap-2 font-bold text-gray-400 mb-2 text-[10px] uppercase tracking-[0.2em]">
+            {t('source_title', 'Источник') || 'Источник'}
           </label>
-          <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
+          <div className="flex items-center gap-2 text-sm font-bold text-gray-900 bg-gray-50 p-2 rounded-xl">
             {client.source === 'instagram' ? '📷 Instagram' :
               client.source === 'telegram' ? '✈️ Telegram' :
                 client.source === 'whatsapp' ? '📱 WhatsApp' :
                   client.source === 'account' ? '👤 Личный кабинет' :
                     client.source === 'guest_link' ? '🔗 Гостевая ссылка' :
-                      t(`source.${client.source || 'manual'}`, client.source || 'Вручную')}
+                      t(`source.${client.source || 'manual'}`, client.source || 'Вручную') || (client.source || 'Вручную')}
           </div>
         </div>
         {/* Instagram Field */}
@@ -299,23 +308,23 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
       </div>
 
       {/* Actions - зафиксированы внизу */}
-      <div className="p-3 sm:p-4 bg-gray-50 border-t-2 border-gray-100 flex-shrink-0">
+      <div className="p-4 bg-white/80 backdrop-blur-md border-t-2 border-gray-100 flex-shrink-0">
         {isEditing ? (
-          <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex flex-col sm:flex-row gap-3">
             <Button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-black rounded-xl shadow-lg"
+              className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-black font-bold h-12 rounded-2xl shadow-lg shadow-blue-200 transition-all duration-300 active:scale-[0.98]"
             >
               {isSaving ? (
                 <>
-                  <Loader className="w-4 h-4 mr-2 animate-spin" />
-                  {t('saving')}
+                  <Loader className="w-5 h-5 mr-2 animate-spin" />
+                  {t('saving', 'Сохранение...') || 'Сохранение...'}
                 </>
               ) : (
                 <>
-                  <Save className="w-4 h-4 mr-2" />
-                  {t('save')}
+                  <Save className="w-5 h-5 mr-2" />
+                  {t('save', 'Сохранить') || 'Сохранить'}
                 </>
               )}
             </Button>
@@ -323,19 +332,21 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
               onClick={handleCancel}
               disabled={isSaving}
               variant="outline"
-              className="sm:w-auto px-4 border-2 rounded-xl hover:bg-gray-100"
+              className="px-6 border-2 border-gray-100 rounded-2xl hover:bg-gray-50 h-12 font-bold text-gray-500 transition-all duration-300"
             >
-              <X className="w-4 h-4 sm:mr-2" />
-              <span className="sm:inline hidden">{t('cancel')}</span>
+              <X className="w-5 h-5 sm:mr-2" />
+              <span className="sm:inline hidden">{t('cancel', 'Отмена') || 'Отмена'}</span>
             </Button>
           </div>
         ) : (
           <Button
             onClick={() => setIsEditing(true)}
-            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-black rounded-xl shadow-lg"
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-black font-bold h-12 rounded-2xl shadow-lg shadow-blue-200 transition-all duration-300 flex items-center justify-center gap-2 group active:scale-[0.98]"
           >
-            <Edit2 className="w-4 h-4 mr-2" />
-            {t('edit')}
+            <div className="bg-white/20 p-1.5 rounded-lg group-hover:rotate-12 transition-transform duration-300">
+              <Edit2 className="w-4 h-4" />
+            </div>
+            {t('edit', 'Редактировать') || 'Редактировать'}
           </Button>
         )}
       </div>

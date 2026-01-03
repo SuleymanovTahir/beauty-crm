@@ -28,7 +28,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
   const { t } = useTranslation(['components', 'common', 'clients', 'admin/Clients']);
 
   const currentStatus = value === 'all'
-    ? { label: t('all_statuses'), color: 'gray' }
+    ? { label: t('all_statuses', 'Все') || 'Все', color: 'gray' }
     : (options[value] || { label: value, color: 'gray' });
 
   // Helper to get color classes because the backend might return simplified color names
@@ -98,14 +98,14 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
           onClick={(e) => e.stopPropagation()}
           className={buttonClasses}
         >
-          <span className="truncate">{value === 'all' ? 'Все' : currentStatus.label}</span>
+          <span className="truncate">{value === 'all' ? (t('all_statuses', 'Все') || 'Все') : currentStatus.label}</span>
           <ChevronDown className={`w-3.5 h-3.5 shrink-0 ${value === 'all' ? 'text-blue-100' : 'opacity-50'}`} />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-48 z-[100]">
         {showAllOption && (
           <DropdownMenuItem onClick={() => onChange('all')}>
-            {t('all_statuses')}
+            {t('all_statuses', 'Все') || 'Все'}
           </DropdownMenuItem>
         )}
 
@@ -130,7 +130,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
               className="gap-2 text-pink-600 focus:text-pink-700 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
-              {t('add_status')}
+              {t('add_status', 'Добавить статус') || 'Добавить статус'}
             </DropdownMenuItem>
           </>
         )}
