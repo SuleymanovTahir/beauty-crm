@@ -46,7 +46,7 @@ export function TemperatureFilter({ value, onChange }: TemperatureFilterProps) {
                 };
             default:
                 return {
-                    label: t('all_temperatures'),
+                    label: 'Темп.',
                     icon: null,
                     color: 'text-gray-600'
                 };
@@ -64,11 +64,11 @@ export function TemperatureFilter({ value, onChange }: TemperatureFilterProps) {
         <div className="relative" ref={dropdownRef}>
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-between gap-2 cursor-pointer py-2.5 px-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-all w-full shadow-sm"
+                className="flex items-center justify-between gap-2 cursor-pointer h-[42px] px-2.5 sm:px-4 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-all w-full shadow-sm"
             >
                 <div className="flex items-center gap-2 overflow-hidden">
                     <div className="shrink-0">{currentConfig.icon}</div>
-                    <span className="text-sm font-semibold text-gray-700 truncate">{currentConfig.label}</span>
+                    <span className="text-xs sm:text-sm font-bold text-gray-700 truncate">{currentConfig.label}</span>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </div>

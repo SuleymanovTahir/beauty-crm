@@ -56,12 +56,12 @@ export function DropdownButton({
       <button
         onClick={() => setIsOpen(!isOpen)}
         disabled={disabled || loading}
-        className={`${baseStyles} ${variantStyles[variant]} w-full justify-between sm:justify-center rounded-xl py-2.5 shadow-sm border-gray-200 ${disabled || loading ? 'opacity-50 cursor-not-allowed' : ''
+        className={`${baseStyles} ${variantStyles[variant]} w-full justify-between sm:justify-center rounded-xl h-[42px] px-3 sm:px-5 shadow-sm border-gray-200 ${disabled || loading ? 'opacity-50 cursor-not-allowed' : ''
           }`}
       >
         <div className="flex items-center gap-2 overflow-hidden">
           {icon && <span className="shrink-0">{icon}</span>}
-          <span className="font-bold truncate">{loading ? t('loading') : label}</span>
+          <span className="text-xs sm:text-sm font-bold truncate">{loading ? t('loading') : label}</span>
         </div>
         <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>

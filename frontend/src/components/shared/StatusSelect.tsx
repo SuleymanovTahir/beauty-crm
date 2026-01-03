@@ -85,7 +85,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
   };
 
   const buttonClasses = variant === 'filter'
-    ? `inline-flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold cursor-pointer transition-all border shadow-sm ${value === 'all'
+    ? `inline-flex items-center justify-between gap-2 px-2.5 sm:px-4 h-[42px] rounded-xl text-xs sm:text-sm font-bold cursor-pointer transition-all border shadow-sm ${value === 'all'
       ? 'bg-blue-500 border-blue-600 text-white hover:bg-blue-600 shadow-blue-100'
       : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
     }`
