@@ -1,10 +1,11 @@
 // /frontend/src/pages/admin/BookingDetail.tsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, Phone, User, Briefcase, Clock, Edit2 } from 'lucide-react';
+import { ArrowLeft, Calendar, Phone, User, Briefcase, Clock, Edit2, CalendarDays, ChevronDown } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
 import { toast } from 'sonner';
 import { apiClient } from '../../api/client';
 import {
@@ -355,38 +356,69 @@ export default function BookingDetail() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
               <h2 className="text-2xl text-gray-900">{t('analytics', 'Аналитика')}</h2>
               <div className="flex flex-wrap gap-2 items-center">
-                {['7', '30', '90'].map(p => (
-                  <Button
-                    key={p}
-                    variant={chartPeriod === p ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setChartPeriod(p)}
-                    className={chartPeriod === p ? 'bg-indigo-600' : ''}
-                  >
-                    {p} {t('days', 'дней')}
-                  </Button>
-                ))}
-                <div className="flex items-center gap-1 border rounded-lg px-2 py-1 bg-gray-50">
-                  <input
-                    type="date"
-                    value={chartDateFrom}
-                    onChange={e => {
-                      setChartDateFrom(e.target.value);
-                      setChartPeriod('custom');
-                    }}
-                    className="text-[10px] focus:outline-none bg-transparent"
-                  />
-                  <span className="text-gray-400">-</span>
-                  <input
-                    type="date"
-                    value={chartDateTo}
-                    onChange={e => {
-                      setChartDateTo(e.target.value);
-                      setChartPeriod('custom');
-                    }}
-                    className="text-[10px] focus:outline-none bg-transparent"
-                  />
-                </div>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="min-w-[200px] justify-between border-2 border-indigo-50 rounded-xl font-bold text-gray-700 hover:bg-indigo-50/30 transition-all">
+                      <div className="flex items-center gap-2">
+                        <CalendarDays className="w-5 h-5 text-indigo-500" />
+                        <span>
+                          {chartPeriod === '7' ? `7 ${t('days', 'дней')}` :
+                            chartPeriod === '30' ? `30 ${t('days', 'дней')}` :
+                              chartPeriod === '90' ? `90 ${t('days', 'дней')}` :
+                                chartPeriod === 'custom' ? (chartDateFrom && chartDateTo ? `${chartDateFrom} - ${chartDateTo}` : t('custom_range', 'Свой период')) :
+                                  t('period', 'Период')}
+                        </span>
+                      </div>
+                      <ChevronDown className="w-4 h-4 text-gray-400" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 p-4 rounded-2xl shadow-xl border-indigo-50" align="end">
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 gap-2">
+                        {['7', '30', '90'].map(p => (
+                          <button
+                            key={p}
+                            onClick={() => setChartPeriod(p)}
+                            className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${chartPeriod === p ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                          >
+                            <span>{p} {t('days', 'дней')}</span>
+                            {chartPeriod === p && <CalendarDays className="w-4 h-4" />}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="border-t border-gray-100 pt-4">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 px-1">{t('custom_range', 'Свой период')}</p>
+                        <div className="grid grid-cols-1 gap-3">
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-bold text-gray-500 ml-1">ОТ</label>
+                            <input
+                              type="date"
+                              value={chartDateFrom}
+                              onChange={e => {
+                                setChartDateFrom(e.target.value);
+                                setChartPeriod('custom');
+                              }}
+                              className="w-full h-10 px-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:border-indigo-200 transition-all"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-bold text-gray-500 ml-1">ДО</label>
+                            <input
+                              type="date"
+                              value={chartDateTo}
+                              onChange={e => {
+                                setChartDateTo(e.target.value);
+                                setChartPeriod('custom');
+                              }}
+                              className="w-full h-10 px-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:border-indigo-200 transition-all"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
