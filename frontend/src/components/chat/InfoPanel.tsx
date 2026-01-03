@@ -25,7 +25,7 @@ interface Client {
 interface InfoPanelProps {
   client: Client;
   onClose: () => void;
-  onUpdate: (data: { name: string; phone: string; status?: string }) => Promise<void>;
+  onUpdate: (data: { name: string; phone: string; status?: string; source?: string }) => Promise<void>;
 }
 
 export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps) {
@@ -36,6 +36,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
   const [editedPhone, setEditedPhone] = useState(client.phone || '');
   const { statuses: statusConfig, addStatus: handleAddStatus } = useClientStatuses();
   const [editedStatus, setEditedStatus] = useState(client.status || 'new');
+  const [editedSource, setEditedSource] = useState(client.source || 'manual');
   const [botMode, setBotMode] = useState<'manual' | 'assistant' | 'autopilot'>(
     (client as any).bot_mode || 'assistant'
   );
@@ -60,7 +61,8 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
       await onUpdate({
         name: editedName.trim(),
         phone: editedPhone.trim(),
-        status: editedStatus
+        status: editedStatus,
+        source: editedSource
       });
       setIsEditing(false);
     } catch (error) {
@@ -74,6 +76,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
     setEditedName(client.name || '');
     setEditedPhone(client.phone || '');
     setEditedStatus(client.status || 'new');
+    setEditedSource(client.source || 'manual');
     setIsEditing(false);
   };
 
@@ -90,7 +93,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
               {t('info_panel_title', 'Информация') || 'Информация'}
             </h3>
             <span className="text-[9px] font-bold text-blue-100 uppercase tracking-widest mt-0.5">
-              💎 V3 ULTRA COMPACT
+              💎 V3.1 POLISHED
             </span>
           </div>
         </div>
@@ -231,14 +234,29 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
                 {t('source_title', 'Источник') || 'Источник'}
               </span>
             </div>
-            <div className="text-[10px] font-bold text-blue-600 bg-blue-50/50 px-2 py-0.5 rounded-lg border border-blue-100">
-              {client.source === 'instagram' ? '📷 Instagram' :
-                client.source === 'telegram' ? '✈️ Telegram' :
-                  client.source === 'whatsapp' ? '📱 WhatsApp' :
-                    client.source === 'account' ? '👤 ЛК' :
-                      client.source === 'guest_link' ? '🔗 Ссылка' :
-                        t(`source.${client.source || 'manual'}`, client.source || 'Вручную') || (client.source || 'Вручную')}
-            </div>
+            {isEditing ? (
+              <select
+                value={editedSource}
+                onChange={(e) => setEditedSource(e.target.value)}
+                className="text-[10px] font-bold text-blue-600 bg-blue-50/50 px-2 py-0.5 rounded-lg border border-blue-200 focus:outline-none"
+              >
+                <option value="manual">{t('source.manual', 'Вручную') || 'Вручную'}</option>
+                <option value="instagram">📷 Instagram</option>
+                <option value="telegram">✈️ Telegram</option>
+                <option value="whatsapp">📱 WhatsApp</option>
+                <option value="account">👤 ЛК</option>
+                <option value="guest_link">🔗 Ссылка</option>
+              </select>
+            ) : (
+              <div className="text-[10px] font-bold text-blue-600 bg-blue-50/50 px-2 py-0.5 rounded-lg border border-blue-100">
+                {client.source === 'instagram' ? '📷 Instagram' :
+                  client.source === 'telegram' ? '✈️ Telegram' :
+                    client.source === 'whatsapp' ? '📱 WhatsApp' :
+                      client.source === 'account' ? '👤 ЛК' :
+                        client.source === 'guest_link' ? '🔗 Ссылка' :
+                          t(`source.${client.source || 'manual'}`, client.source || 'Вручную') || (client.source || 'Вручную')}
+              </div>
+            )}
           </div>
           <div className="pt-1.5 border-t border-gray-50">
             <BotModeSelector
@@ -247,7 +265,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             />
           </div>
         </div>
-        <div className="flex items-center gap-1.5 mt-1 overflow-x-auto pb-1 no-scrollbar">
+        <div className="flex items-center justify-center gap-3 mt-1 overflow-x-auto pb-1 no-scrollbar w-full">
           {/* Instagram Link */}
           {client.username && (
             <a href={`https://instagram.com/${client.username}`}
@@ -279,7 +297,9 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
               rel="noreferrer"
               className="flex items-center gap-2 px-3 py-2 rounded-xl bg-green-50 border border-green-100 hover:bg-green-100 transition-colors shrink-0"
             >
-              <MessageCircle className="w-6 h-6 text-green-600" />
+              <svg viewBox="0 0 24 24" className="w-6 h-6 fill-green-600" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.472 14.382c-.301-.15-1.767-.872-2.04-.971-.272-.099-.47-.15-.669.15-.199.3-.771.971-.945 1.171-.174.199-.348.225-.649.075-.301-.15-1.272-.469-2.421-1.493-.896-.799-1.5-1.786-1.674-2.086-.174-.3-.019-.462.13-.612.135-.135.301-.35.451-.525.151-.175.201-.3.301-.5.1-.199.05-.374-.025-.525-.075-.15-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.113 2.95.048.075 2.094 3.197 5.074 4.484.708.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.767-.721 2.016-1.417.249-.696.249-1.294.174-1.417-.075-.121-.272-.198-.57-.348h-.001zm-5.452 7.749H11.996c-1.808 0-3.585-.486-5.143-1.405l-.369-.219-3.824 1.002 1.02-3.727-.24-.382a10.999 10.999 0 01-1.688-5.833c0-6.066 4.935-11.001 11.003-11.001 2.937 0 5.698 1.144 7.776 3.223a10.923 10.923 0 013.221 7.778c0 6.067-4.935 11.003-11.003 11.003z" />
+              </svg>
               <span className="text-sm font-bold text-green-600">WA</span>
             </a>
           )}
@@ -293,7 +313,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             <Button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-black font-bold h-12 rounded-2xl shadow-lg shadow-blue-200 transition-all duration-300 active:scale-[0.98]"
+              className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold h-12 rounded-2xl shadow-lg shadow-blue-200 transition-all duration-300 active:scale-[0.98]"
             >
               {isSaving ? (
                 <>
@@ -320,9 +340,9 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
         ) : (
           <Button
             onClick={() => setIsEditing(true)}
-            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-black font-bold h-12 rounded-2xl shadow-lg shadow-blue-200 transition-all duration-300 flex items-center justify-center gap-2 group active:scale-[0.98]"
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold h-12 rounded-2xl shadow-lg shadow-blue-200 transition-all duration-300 flex items-center justify-center gap-2 group active:scale-[0.98]"
           >
-            <div className="bg-white/20 p-1.5 rounded-lg group-hover:rotate-12 transition-transform duration-300">
+            <div className="bg-white/20 p-1.5 rounded-lg group-hover:rotate-12 transition-transform duration-300 text-white">
               <Edit2 className="w-4 h-4" />
             </div>
             {t('edit', 'Редактировать') || 'Редактировать'}

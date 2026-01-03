@@ -7,6 +7,18 @@ import { useTranslation } from 'react-i18next';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { toast } from 'sonner';
 import { apiClient } from '../../api/client';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  Legend
+} from 'recharts';
 
 interface Booking {
   id: number;
@@ -18,16 +30,29 @@ interface Booking {
   status: string;
   created_at: string;
   revenue: number;
+  master?: string; // Added master field
+}
+
+interface User {
+  username: string;
+  full_name?: string;
+  role: string;
+  position?: string;
 }
 
 export default function BookingDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [booking, setBooking] = useState<Booking | null>(null);
+  const [allBookings, setAllBookings] = useState<Booking[]>([]);
+  const [masters, setMasters] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const { t, i18n } = useTranslation(['admin/bookingdetail', 'common']);
+  const { t, i18n } = useTranslation(['admin/bookingdetail', 'common', 'bookings']);
   const [updating, setUpdating] = useState(false);
   const [newStatus, setNewStatus] = useState('');
+  const [chartPeriod, setChartPeriod] = useState('30');
+  const [chartDateFrom, setChartDateFrom] = useState('');
+  const [chartDateTo, setChartDateTo] = useState('');
 
   useEffect(() => {
     loadBooking();
@@ -36,9 +61,15 @@ export default function BookingDetail() {
   const loadBooking = async () => {
     try {
       setLoading(true);
-      // Попробуем загрузить напрямую из всех букингов
-      const response = await apiClient.getBookings();
-      const found = response.bookings.find((b: Booking) => b.id === parseInt(id!));
+      // Загружаем букинги и пользователей
+      const [bookingsResponse, usersResponse] = await Promise.all([
+        apiClient.getBookings(),
+        apiClient.getUsers()
+      ]);
+
+      const found = bookingsResponse.bookings.find((b: Booking) => b.id === parseInt(id!));
+      setAllBookings(bookingsResponse.bookings || []);
+      setMasters(usersResponse.users || []);
 
       if (found) {
         setBooking(found);
@@ -53,6 +84,103 @@ export default function BookingDetail() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const masterInfo = booking?.master
+    ? masters.find(m =>
+      (m.username && booking.master && m.username.toLowerCase() === booking.master.toLowerCase()) ||
+      (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase())
+    )
+    : null;
+
+  const masterName = masterInfo?.full_name || booking?.master || t('common:not_specified');
+
+  const getChartData = (type: 'service' | 'master') => {
+    if (!booking || !allBookings.length) return [];
+
+    const now = new Date();
+    let startDate: Date;
+    let endDate: Date = now;
+
+    if (chartPeriod === 'custom') {
+      if (!chartDateFrom || !chartDateTo) return [];
+      startDate = new Date(chartDateFrom);
+      endDate = new Date(chartDateTo);
+      endDate.setHours(23, 59, 59, 999);
+    } else {
+      const periodDays = parseInt(chartPeriod);
+      startDate = new Date();
+      startDate.setDate(now.getDate() - periodDays);
+      startDate.setHours(0, 0, 0, 0);
+    }
+
+    const filtered = allBookings.filter(b => {
+      const bDate = new Date(b.datetime || b.created_at);
+      const matchesPeriod = bDate >= startDate && bDate <= endDate;
+
+      if (!matchesPeriod) return false;
+
+      if (type === 'service') {
+        const bService = (b.service || '').toLowerCase().trim();
+        const targetService = (booking.service || '').toLowerCase().trim();
+        return bService === targetService;
+      } else {
+        const bMaster = (b.master || '').toLowerCase().trim();
+        const targetMaster = (booking.master || '').toLowerCase().trim();
+        // Also check if master's full name matches
+        const bMasterInfo = masters.find(m =>
+          (m.username && bMaster && m.username.toLowerCase() === bMaster) ||
+          (m.full_name && bMaster && m.full_name.toLowerCase() === bMaster)
+        );
+        const targetMasterInfo = masterInfo;
+
+        return bMaster === targetMaster ||
+          (bMasterInfo && targetMasterInfo && bMasterInfo.username === targetMasterInfo.username);
+      }
+    });
+
+    // Group by day
+    const entries: Record<string, number> = {};
+    const daysDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
+    // Limit to reasonable amount of points
+    const maxPoints = 90;
+    const step = daysDiff > maxPoints ? Math.ceil(daysDiff / maxPoints) : 1;
+
+    for (let i = 0; i <= daysDiff; i += step) {
+      const d = new Date(startDate);
+      d.setDate(d.getDate() + i);
+      const key = d.toISOString().split('T')[0];
+      entries[key] = 0;
+    }
+
+    filtered.forEach(b => {
+      const key = new Date(b.datetime || b.created_at).toISOString().split('T')[0];
+      // If key is not exactly in our steps, find the closest one or just add it if within range
+      if (entries[key] !== undefined) {
+        entries[key]++;
+      } else {
+        // Find closest step
+        const bDate = new Date(key);
+        let closestKey = '';
+        let minDiff = Infinity;
+        Object.keys(entries).forEach(k => {
+          const diff = Math.abs(new Date(k).getTime() - bDate.getTime());
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestKey = k;
+          }
+        });
+        if (closestKey && minDiff < (step * 24 * 60 * 60 * 1000)) {
+          entries[closestKey]++;
+        }
+      }
+    });
+
+    return Object.entries(entries).map(([date, count]) => ({
+      date: date.split('-').slice(1).join('.'),
+      count
+    })).sort((a, b) => a.date.localeCompare(b.date));
   };
 
   const handleStatusUpdate = async () => {
@@ -203,6 +331,96 @@ export default function BookingDetail() {
                 <div>
                   <p className="text-sm text-gray-600">{t('created_at')}</p>
                   <p className="text-lg text-gray-900 font-medium">{formatDate(booking.created_at)}</p>
+                </div>
+              </div>
+
+              {/* Master */}
+              <div className="flex items-start gap-4 pt-4 border-t border-gray-100">
+                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <User className="w-6 h-6 text-indigo-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">{t('bookings:master', 'Мастер')}</p>
+                  <p className="text-lg text-gray-900 font-bold">{masterName}</p>
+                  {masterInfo?.position && (
+                    <p className="text-sm text-indigo-600 font-medium">{masterInfo.position}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Charts Section */}
+          <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+              <h2 className="text-2xl text-gray-900">{t('analytics', 'Аналитика')}</h2>
+              <div className="flex flex-wrap gap-2 items-center">
+                {['7', '30', '90'].map(p => (
+                  <Button
+                    key={p}
+                    variant={chartPeriod === p ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setChartPeriod(p)}
+                    className={chartPeriod === p ? 'bg-indigo-600' : ''}
+                  >
+                    {p} {t('days', 'дней')}
+                  </Button>
+                ))}
+                <div className="flex items-center gap-1 border rounded-lg px-2 py-1 bg-gray-50">
+                  <input
+                    type="date"
+                    value={chartDateFrom}
+                    onChange={e => {
+                      setChartDateFrom(e.target.value);
+                      setChartPeriod('custom');
+                    }}
+                    className="text-[10px] focus:outline-none bg-transparent"
+                  />
+                  <span className="text-gray-400">-</span>
+                  <input
+                    type="date"
+                    value={chartDateTo}
+                    onChange={e => {
+                      setChartDateTo(e.target.value);
+                      setChartPeriod('custom');
+                    }}
+                    className="text-[10px] focus:outline-none bg-transparent"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
+                  {t('service_stats', 'Популярность услуги')}: {booking.service}
+                </h3>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={getChartData('service')}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="date" fontSize={10} />
+                      <YAxis fontSize={10} />
+                      <Tooltip />
+                      <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
+                  {t('master_stats', 'Загрузка мастера')}: {masterName}
+                </h3>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={getChartData('master')}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="date" fontSize={10} />
+                      <YAxis fontSize={10} />
+                      <Tooltip />
+                      <Bar dataKey="count" fill="#ec4899" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
             </div>
