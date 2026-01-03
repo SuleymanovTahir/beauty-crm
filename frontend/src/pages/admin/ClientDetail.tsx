@@ -533,7 +533,7 @@ export default function ClientDetail() {
               <div>
                 <p className="text-sm text-gray-600 mb-1">{t('status')}</p>
                 <Badge className="bg-blue-100 text-blue-800 capitalize">
-                  {client.status}
+                  {t('common:status_' + (client.status || 'new'), { defaultValue: client.status || 'New' })}
                 </Badge>
               </div>
 
@@ -612,7 +612,7 @@ export default function ClientDetail() {
                     {t('visits_dynamics', 'Visit dynamics')}
                   </p>
                   <ResponsiveContainer width="100%" height="200">
-                    <BarChart data={stats.visits_chart} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+                    <BarChart data={stats.visits_chart} margin={{ top: 20, right: 10, left: 0, bottom: 0 }}>
                       <defs>
                         <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="0%" stopColor="#ec4899" stopOpacity={1} />

@@ -1,7 +1,7 @@
 {
-  "change_booking": "Изменить запись",
+  "change_booking": "प्रविष्टि संपादित करें",
   "common": {
-    "any_master": "Любой мастер",
+    "any_master": "कोई गुरु",
     "cancel": "Later",
     "change": "Change",
     "edit": "Edit",
@@ -22,7 +22,7 @@
     "summary": "Order Summary",
     "time": "Time",
     "timeout": "Request timed out. Please try again.",
-    "title": "Подтвердить",
+    "title": "पुष्टि करना",
     "total": "Total Amount"
   },
   "datetime": {
