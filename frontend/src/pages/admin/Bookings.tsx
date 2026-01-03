@@ -774,67 +774,35 @@ export default function Bookings() {
       </div>
 
       {/* Filters */}
-      <div style={{ backgroundColor: '#fff', padding: '1rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb', marginBottom: '1.5rem' }}>
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          {/* Search - compact width */}
-          <div style={{ position: 'relative', width: '280px' }}>
-            <Search style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', width: '18px', height: '18px', color: '#9ca3af' }} />
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6">
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Search */}
+          <div className="relative w-full sm:w-[280px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-gray-400" />
             <input
               type="text"
               placeholder={t('bookings:search')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                width: '100%', padding: '0.5rem 0.75rem 0.5rem 2.25rem',
-                border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                fontSize: '0.875rem', boxSizing: 'border-box'
-              }}
+              className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
             />
           </div>
 
           {/* Status Filter */}
-          <select
+          <StatusSelect
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            style={{
-              padding: '0.5rem 2.5rem 0.5rem 0.75rem',
-              border: '1px solid #d1d5db',
-              borderRadius: '0.5rem',
-              fontSize: '0.875rem',
-              minWidth: '140px',
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%236b7280' d='M4 6l4 4 4-4z'/%3E%3C/svg%3E")`,
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'right 0.75rem center',
-              backgroundSize: '16px 16px',
-              appearance: 'none',
-              WebkitAppearance: 'none',
-              MozAppearance: 'none'
-            }}
-          >
-            <option value="all">{t('bookings:all_statuses')}</option>
-            {Object.entries(statusConfig).map(([key, config]) => (
-              <option key={key} value={key}>{config.label}</option>
-            ))}
-          </select>
+            onChange={setStatusFilter}
+            options={statusConfig}
+            allowAdd={false}
+            showAllOption={true}
+            variant="filter"
+          />
 
           {/* Period Filter */}
           <select
             value={period}
             onChange={(e) => setPeriod(e.target.value)}
-            style={{
-              padding: '0.5rem 2.5rem 0.5rem 0.75rem',
-              border: '1px solid #d1d5db',
-              borderRadius: '0.5rem',
-              fontSize: '0.875rem',
-              minWidth: '140px',
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%236b7280' d='M4 6l4 4 4-4z'/%3E%3C/svg%3E")`,
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'right 0.75rem center',
-              backgroundSize: '16px 16px',
-              appearance: 'none',
-              WebkitAppearance: 'none',
-              MozAppearance: 'none'
-            }}
+            className="px-3 py-2 pr-10 border border-gray-300 rounded-lg text-sm min-w-[140px] appearance-none bg-white bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%236b7280%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:16px_16px] bg-[right_0.75rem_center] bg-no-repeat focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
           >
             <option value="all">{t('common:all_periods')}</option>
             <option value="today">{t('common:today')}</option>
@@ -852,55 +820,35 @@ export default function Bookings() {
                 type="date"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
-                style={{
-                  padding: '0.5rem 0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.875rem',
-                  minWidth: '140px'
-                }}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm min-w-[140px] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               />
               <input
                 type="date"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
-                style={{
-                  padding: '0.5rem 0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.875rem',
-                  minWidth: '140px'
-                }}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm min-w-[140px] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               />
             </>
           )}
 
           {/* Spacer to push buttons to the right */}
-          <div style={{ flex: 1 }} />
+          <div className="flex-1 min-w-4" />
 
           {/* Action Buttons */}
-          <button onClick={() => setShowAddDialog(true)} style={{
-            padding: '0.5rem 1rem', backgroundColor: '#000', color: '#fff',
-            border: 'none', borderRadius: '0.5rem', fontSize: '0.875rem',
-            fontWeight: '500', cursor: 'pointer', display: 'flex',
-            alignItems: 'center', gap: '0.5rem', whiteSpace: 'nowrap'
-          }}>
-            <Plus style={{ width: '16px', height: '16px' }} />
+          <button
+            onClick={() => setShowAddDialog(true)}
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 flex items-center gap-2 whitespace-nowrap transition-colors"
+          >
+            <Plus className="w-4 h-4" />
             {t('bookings:add')}
           </button>
 
           <button
             onClick={() => setShowImportDialog(true)}
             disabled={importing}
-            style={{
-              padding: '0.5rem 1rem', backgroundColor: '#fff', color: '#111',
-              border: '1px solid #d1d5db', borderRadius: '0.5rem', fontSize: '0.875rem',
-              fontWeight: '500', cursor: importing ? 'not-allowed' : 'pointer',
-              display: 'flex', alignItems: 'center', gap: '0.5rem',
-              opacity: importing ? 0.5 : 1, whiteSpace: 'nowrap'
-            }}
+            className="px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap transition-colors"
           >
-            <Upload style={{ width: '16px', height: '16px' }} />
+            <Upload className="w-4 h-4" />
             {importing ? t('bookings:importing') : t('bookings:import')}
           </button>
 
