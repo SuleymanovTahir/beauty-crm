@@ -141,9 +141,32 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
 
     # Добавляем информацию о мессенджерах для каждой записи
     bookings_with_messengers = []
+    
+    # Cache for client phones to avoid multiple DB lookups for same client
+    client_phones = {}
+
     for b in bookings:
         client_id = b[1]
         messengers = get_client_messengers_for_bookings(client_id)
+        
+        # Get phone from booking row
+        phone = b[4] if len(b) > 4 else ''
+        
+        # Fallback to clients table if phone is missing in booking
+        if not phone and client_id:
+            if client_id in client_phones:
+                phone = client_phones[client_id]
+            else:
+                conn = get_db_connection()
+                c = conn.cursor()
+                c.execute("SELECT phone FROM clients WHERE instagram_id = %s", (client_id,))
+                client_row = c.fetchone()
+                conn.close()
+                if client_row and client_row[0]:
+                    phone = client_row[0]
+                    client_phones[client_id] = phone
+                else:
+                    client_phones[client_id] = ''
 
         bookings_with_messengers.append({
             "id": b[0],
@@ -151,7 +174,7 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
             "service": b[2] if len(b) > 2 else None,
             "service_name": b[2] if len(b) > 2 else None,  # ✅ Дублируем для совместимости
             "datetime": b[3] if len(b) > 3 else None,
-            "phone": b[4] if len(b) > 4 else '',
+            "phone": phone,
             "name": b[5] if len(b) > 5 else '',
             "status": b[6] if len(b) > 6 else 'pending',
             "created_at": b[7] if len(b) > 7 else None,
@@ -306,11 +329,12 @@ async def create_booking_api(
         phone = data.get('phone', '')
         name = data.get('name')
         master = data.get('master', '')
+        revenue = data.get('revenue', 0)
         user_id = user["id"]
 
         # Synchronous DB Save (Required for ID)
-        get_or_create_client(instagram_id, username=name)
-        save_booking(instagram_id, service, datetime_str, phone, name, master=master, user_id=user_id)
+        get_or_create_client(instagram_id, username=name, phone=phone)
+        save_booking(instagram_id, service, datetime_str, phone, name, master=master, user_id=user_id, revenue=revenue)
 
         # ✅ SYNC: Update phone and name in both tables if they are new or different
         if phone or name:
@@ -886,7 +910,7 @@ async def update_booking_api(
         conn = get_db_connection()
         c = conn.cursor()
 
-        c.execute("SELECT service_name, datetime, master, name, phone FROM bookings WHERE id = %s",
+        c.execute("SELECT instagram_id, service_name, datetime, master, name, phone FROM bookings WHERE id = %s",
                   (booking_id,))
         old_booking = c.fetchone()
 
@@ -894,7 +918,7 @@ async def update_booking_api(
             conn.close()
             return JSONResponse({"error": "Booking not found"}, status_code=404)
 
-        old_service, old_datetime, old_master, old_name, old_phone = old_booking
+        current_instagram_id, old_service, old_datetime, old_master, old_name, old_phone = old_booking
 
         # Обновляем запись
         new_service = data.get('service', old_service)
@@ -902,12 +926,18 @@ async def update_booking_api(
         new_master = data.get('master', old_master)
         new_name = data.get('name', old_name)
         new_phone = data.get('phone', old_phone)
+        new_revenue = data.get('revenue', 0)
+
+        # Sync client info if phone/name changed
+        if new_phone != old_phone or new_name != old_name:
+            from db.clients import update_client_info
+            update_client_info(current_instagram_id, phone=new_phone, name=new_name)
 
         c.execute("""
             UPDATE bookings
-            SET service_name = %s, datetime = %s, master = %s, name = %s, phone = %s
+            SET service_name = %s, datetime = %s, master = %s, name = %s, phone = %s, revenue = %s
             WHERE id = %s
-        """, (new_service, new_datetime, new_master, new_name, new_phone, booking_id))
+        """, (new_service, new_datetime, new_master, new_name, new_phone, new_revenue, booking_id))
 
         conn.commit()
         conn.close()
