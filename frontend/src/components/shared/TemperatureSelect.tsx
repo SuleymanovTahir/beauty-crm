@@ -55,12 +55,10 @@ export function TemperatureSelect({ value, onChange }: TemperatureSelectProps) {
             <DropdownMenuTrigger asChild>
                 <div
                     onClick={(e) => e.stopPropagation()}
-                    className={`flex items-center justify-between gap-2 cursor-pointer py-1 px-3 rounded-full hover:bg-gray-100 transition-colors min-w-[120px] border border-gray-100 ${currentConfig.color}`}
+                    className={`flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full hover:bg-gray-100 transition-colors w-fit border border-gray-100 ${currentConfig.color}`}
                 >
-                    <div className="w-4 shrink-0 flex items-center justify-center">
-                        {currentConfig.icon}
-                    </div>
-                    <span className="text-sm font-medium whitespace-nowrap flex-1 text-center">{currentConfig.label}</span>
+                    {currentConfig.icon}
+                    <span className="text-sm font-medium whitespace-nowrap">{currentConfig.label}</span>
                     <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />
                 </div>
             </DropdownMenuTrigger>
