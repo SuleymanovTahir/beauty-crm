@@ -193,7 +193,8 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     
     # Calculate stats directly from fetched bookings for accuracy
     # Filter only completed bookings for LTV and visit count
-    completed_bookings = [b for b in bookings if b[5] == 'completed']
+    # Note: b[6] is the status field in get_all_bookings() result
+    completed_bookings = [b for b in bookings if b[6] == 'completed']
     calculated_total_spend = sum(float(b[8] or 0) for b in completed_bookings)
     calculated_total_visits = len(completed_bookings)
     

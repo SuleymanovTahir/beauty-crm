@@ -8,7 +8,7 @@
     "delete": "يمسح",
     "featured": "المفضلة",
     "toggle_featured": "تبديل المفضلة",
-    "uploaded_by": "تم الرفع بواسطة {{name}}",
+    "uploaded_by": "تم الرفع بواسطة __VAR0____",
     "views": "وجهات النظر"
   },
   "categories": {
@@ -24,11 +24,11 @@
       "confirm": "هل أنت متأكد أنك تريد حذف هذه الصورة؟"
     },
     "preview": {
-      "category": "الفئة: {{فئة}}",
-      "created_at": "{{date}}",
+      "category": "الفئة: {{category}}_",
+      "created_at": "__VAR0____",
       "title": "معاينة الصورة",
-      "uploaded_by": "تم الرفع بواسطة {{name}}",
-      "views": "{{عدد}} مشاهدة"
+      "uploaded_by": "تم الرفع بواسطة __VAR0____",
+      "views": "__VAR0____ عدد المشاهدات"
     },
     "upload": {
       "description": "إضافة صورة جديدة إلى المعرض",
@@ -76,7 +76,7 @@
     "failed_load": "فشل تحميل الصور",
     "failed_upload": "فشل تحميل الصورة",
     "featured_updated": "تم تحديث الحالة المفضلة",
-    "select_both_photos": "Please select both before and after photos",
+    "select_both_photos": "يرجى تحديد الصور قبل وبعد",
     "uploaded": "تم تحميل الصورة بنجاح"
   },
   "upload_photo": "تحميل الصورة"

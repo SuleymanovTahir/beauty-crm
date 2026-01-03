@@ -794,56 +794,56 @@ export default function Clients() {
                     />
                   </th>
                   <th
-                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('name')}
                   >
                     {t('clients:client')} {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
-                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('phone')}
                   >
                     {t('clients:contacts')} {sortField === 'phone' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
-                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     title={t('clients:total_messages_desc', 'Total messages exchanged')}
                     onClick={() => handleSort('total_messages')}
                   >
-                    {t('clients:messages', 'Messages')} {sortField === 'total_messages' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('clients:messages')} {sortField === 'total_messages' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
-                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     title={t('clients:total_bookings_desc', 'Total number of bookings')}
                     onClick={() => handleSort('total_bookings')}
                   >
-                    {t('clients:bookings', 'Bookings')} {sortField === 'total_bookings' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('clients:bookings')} {sortField === 'total_bookings' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
-                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('lifetime_value')}
                   >
                     {t('clients:ltv')} {sortField === 'lifetime_value' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
-                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('temperature')}
                   >
                     {t('clients:temperature')} {sortField === 'temperature' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
-                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('last_contact')}
                   >
                     {t('clients:last_contact')} {sortField === 'last_contact' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
-                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('status')}
                   >
                     {t('clients:status')} {sortField === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:actions')}</th>
+                  <th className="px-6 py-4 text-center text-sm text-gray-600">{t('clients:actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -859,8 +859,8 @@ export default function Clients() {
                         onCheckedChange={(checked) => handleSelectOne(client.id, checked as boolean)}
                       />
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex items-center justify-center gap-3">
                         {client.is_pinned === 1 && (
                           <Pin className="w-4 h-4 text-pink-600 fill-pink-600" />
                         )}
@@ -887,7 +887,7 @@ export default function Clients() {
 
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-center">
                       {(() => {
                         let displayPhone = "-";
                         let rawPhone = "";
@@ -921,22 +921,22 @@ export default function Clients() {
                         );
                       })()}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{client.total_messages}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{client.total_bookings || 0}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900 text-center">{client.total_messages}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900 text-center">{client.total_bookings || 0}</td>
 
-                    <td className="px-6 py-4 text-sm text-green-600 font-medium">
+                    <td className="px-6 py-4 text-sm text-green-600 font-medium text-center">
                       {(client.total_spend || client.lifetime_value || 0).toLocaleString(i18n.language)} AED
                     </td>
-                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                    <td className="px-6 py-4 text-center" onClick={(e) => e.stopPropagation()}>
                       <TemperatureSelect
                         value={client.temperature || 'cold'}
                         onChange={(value) => handleTemperatureChange(client.id, value)}
                       />
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
+                    <td className="px-6 py-4 text-sm text-gray-900 text-center">
                       {new Date(client.last_contact).toLocaleDateString(i18n.language)}
                     </td>
-                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                    <td className="px-6 py-4 text-center" onClick={(e) => e.stopPropagation()}>
                       <StatusSelect
                         value={client.status}
                         onChange={async (newStatus) => {
