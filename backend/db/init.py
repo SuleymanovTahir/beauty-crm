@@ -53,7 +53,7 @@ def init_database():
               preferred_messenger TEXT,
               language TEXT DEFAULT 'ru',
               bot_mode TEXT DEFAULT 'assistant',
-              temperature TEXT DEFAULT 'cold')''')
+              temperature TEXT DEFAULT 'warm')''')
 
     # Таблица настроек бота
     c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (

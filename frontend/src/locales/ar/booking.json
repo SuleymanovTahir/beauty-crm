@@ -1,7 +1,7 @@
 {
-  "change_booking": "Изменить запись",
+  "change_booking": "تحرير الإدخال",
   "common": {
-    "any_master": "Любой мастер",
+    "any_master": "أي سيد",
     "cancel": "Later",
     "change": "Change",
     "edit": "Edit",
@@ -22,7 +22,7 @@
     "summary": "Order Summary",
     "time": "Time",
     "timeout": "Request timed out. Please try again.",
-    "title": "Подтвердить",
+    "title": "يتأكد",
     "total": "Total Amount"
   },
   "datetime": {

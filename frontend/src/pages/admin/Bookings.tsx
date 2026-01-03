@@ -1134,22 +1134,24 @@ export default function Bookings() {
                           >
                             <MessageSquare style={{ width: '16px', height: '16px', color: '#10b981' }} />
                           </button>
-                          <button
-                            onClick={() => handleDeleteBooking(booking.id, booking.name)}
-                            style={{
-                              padding: '0.375rem 0.75rem',
-                              backgroundColor: '#fff',
-                              border: '1px solid #ef4444',
-                              borderRadius: '0.375rem',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center'
-                            }}
-                            title={t('bookings:delete')}
-                          >
-                            <Trash style={{ width: '16px', height: '16px', color: '#ef4444' }} />
-                          </button>
+                          {JSON.parse(localStorage.getItem('user') || '{}').role === 'director' && (
+                            <button
+                              onClick={() => handleDeleteBooking(booking.id, booking.name)}
+                              style={{
+                                padding: '0.375rem 0.75rem',
+                                backgroundColor: '#fff',
+                                border: '1px solid #ef4444',
+                                borderRadius: '0.375rem',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                              title={t('bookings:delete')}
+                            >
+                              <Trash2 style={{ width: '16px', height: '16px', color: '#ef4444' }} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

@@ -233,13 +233,40 @@ def update_client_info(instagram_id: str, phone: str = None, name: str = None, n
         conn.close()
         return False
 
+    # Миграция: изменить дефолтную температуру на 'warm'
+    try:
+        c.execute("ALTER TABLE clients ALTER COLUMN temperature SET DEFAULT 'warm'")
+        c.execute("UPDATE clients SET temperature = 'warm' WHERE temperature = 'cold'")
+        conn.commit()
+    except:
+        pass
+
 def update_client_status(instagram_id: str, status: str):
     """Обновить статус клиента"""
     conn = get_db_connection()
     c = conn.cursor()
     
+    # Обновляем сам статус
     c.execute("UPDATE clients SET status = %s WHERE instagram_id = %s",
               (status, instagram_id))
+    
+    # Если статус "завершен" (или похожий), завершаем последнюю активную запись
+    # Проверяем разные варианты ключей статуса
+    completed_keys = ['completed', 'status_completed', 'завершен', 'завершено']
+    if any(k in status.lower() for k in completed_keys):
+        # Ищем последнюю запись со статусом 'confirmed' или 'pending'
+        c.execute("""
+            UPDATE bookings 
+            SET status = 'completed', completed_at = %s 
+            WHERE instagram_id = %s 
+            AND status IN ('confirmed', 'pending')
+            AND id = (
+                SELECT id FROM bookings 
+                WHERE instagram_id = %s 
+                AND status IN ('confirmed', 'pending')
+                ORDER BY datetime DESC LIMIT 1
+            )
+        """, (datetime.now().isoformat(), instagram_id, instagram_id))
     
     conn.commit()
     conn.close()

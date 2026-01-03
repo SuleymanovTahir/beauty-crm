@@ -47,6 +47,8 @@ interface Client {
   first_contact: string;
   last_contact: string;
   total_messages: number;
+  total_bookings: number;
+  total_spend: number;
   status: string;
   lifetime_value: number;
   profile_pic: string | null;
@@ -175,16 +177,24 @@ export default function Clients() {
           bValue = (b.status || '').toLowerCase();
           break;
         case 'lifetime_value':
-          aValue = parseFloat(String(a.lifetime_value || 0));
-          bValue = parseFloat(String(b.lifetime_value || 0));
+          aValue = parseFloat(String(a.total_spend || a.lifetime_value || 0));
+          bValue = parseFloat(String(b.total_spend || b.lifetime_value || 0));
+          break;
+        case 'total_messages':
+          aValue = parseInt(String(a.total_messages || 0));
+          bValue = parseInt(String(b.total_messages || 0));
+          break;
+        case 'total_bookings':
+          aValue = parseInt(String(a.total_bookings || 0));
+          bValue = parseInt(String(b.total_bookings || 0));
           break;
         case 'last_contact':
           aValue = new Date(a.last_contact || 0).getTime();
           bValue = new Date(b.last_contact || 0).getTime();
           break;
-        case 'first_contact':
-          aValue = new Date(a.first_contact || 0).getTime();
-          bValue = new Date(b.first_contact || 0).getTime();
+        case 'temperature':
+          aValue = (a.temperature || '').toLowerCase();
+          bValue = (b.temperature || '').toLowerCase();
           break;
         default:
           return 0;
@@ -223,7 +233,7 @@ export default function Clients() {
 
 
   // Handle sorting
-  const handleSort = (field: 'name' | 'phone' | 'status' | 'lifetime_value' | 'last_contact' | 'first_contact') => {
+  const handleSort = (field: 'name' | 'phone' | 'status' | 'lifetime_value' | 'last_contact' | 'first_contact' | 'total_messages' | 'total_bookings' | 'temperature') => {
     if (sortField === field) {
       // Toggle direction if clicking the same field
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -367,6 +377,7 @@ export default function Clients() {
         name: createForm.name,
         phone: createForm.phone || '',
         notes: createForm.notes,
+        temperature: 'warm',
       });
 
       toast.success(t('clients:client_created'));
@@ -770,9 +781,9 @@ export default function Clients() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-visible" style={{ minHeight: '400px', paddingBottom: '100px' }}>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {filteredClients.length > 0 ? (
-          <div className="overflow-x-auto pb-20">
+          <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
@@ -794,11 +805,19 @@ export default function Clients() {
                   >
                     {t('clients:contacts')} {sortField === 'phone' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600" title={t('clients:total_messages_desc', 'Total messages exchanged')}>
-                    {t('clients:messages', 'Messages')}
+                  <th
+                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    title={t('clients:total_messages_desc', 'Total messages exchanged')}
+                    onClick={() => handleSort('total_messages')}
+                  >
+                    {t('clients:messages', 'Messages')} {sortField === 'total_messages' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600" title={t('clients:total_bookings_desc', 'Total number of bookings')}>
-                    {t('clients:bookings', 'Bookings')}
+                  <th
+                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    title={t('clients:total_bookings_desc', 'Total number of bookings')}
+                    onClick={() => handleSort('total_bookings')}
+                  >
+                    {t('clients:bookings', 'Bookings')} {sortField === 'total_bookings' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
@@ -806,7 +825,12 @@ export default function Clients() {
                   >
                     {t('clients:ltv')} {sortField === 'lifetime_value' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:temperature')}</th>
+                  <th
+                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort('temperature')}
+                  >
+                    {t('clients:temperature')} {sortField === 'temperature' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </th>
                   <th
                     className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('last_contact')}
@@ -928,19 +952,19 @@ export default function Clients() {
                         }}
                         options={statusConfig}
                         allowAdd={false}
-                        variant="table"
                       />
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Button
-                          variant="ghost"
                           size="sm"
+                          variant="ghost"
                           className="h-8 w-8 p-0"
                           onClick={(e) => {
                             e.stopPropagation();
                             navigate(`/crm/clients/${encodeURIComponent(client.id)}`);
                           }}
+                          title={t('clients:view_client_info')}
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -967,23 +991,21 @@ export default function Clients() {
                         >
                           <Pin className={`w-4 h-4 ${client.is_pinned ? 'fill-pink-600 text-pink-600' : ''}`} />
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-red-600 hover:bg-red-50 hover:text-red-700"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteClient(client.id, client.display_name);
-                          }}
-                          disabled={deletingId === client.id}
-                          title={t('clients:delete_client')}
-                        >
-                          {deletingId === client.id ? (
-                            <Loader className="w-4 h-4 animate-spin" />
-                          ) : (
+                        {JSON.parse(localStorage.getItem('user') || '{}').role === 'director' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteClient(client.id, client.display_name);
+                            }}
+                            disabled={deletingId === client.id}
+                            title={t('clients:delete_client')}
+                          >
                             <Trash2 className="w-4 h-4" />
-                          )}
-                        </Button>
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>
