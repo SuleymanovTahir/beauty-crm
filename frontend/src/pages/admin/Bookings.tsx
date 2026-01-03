@@ -156,6 +156,7 @@ export default function Bookings() {
 
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [showActions, setShowActions] = useState(false);
   const [addingBooking, setAddingBooking] = useState(false);
   const [editingBooking, setEditingBooking] = useState<any>(null);
 
@@ -808,52 +809,68 @@ export default function Bookings() {
             />
           </div>
 
-          {/* Row 2: Actions Row */}
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-            {/* Group 1: Core Actions */}
-            <div className="flex items-center gap-2 flex-grow">
-              <button
-                onClick={() => setShowAddDialog(true)}
-                className="flex-1 sm:flex-none h-[42px] px-4 sm:px-6 bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-2 transition-all shadow-md shadow-gray-200"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Добавить</span>
-              </button>
+          {/* Row 2: Control Bar */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+            <button
+              onClick={() => setShowAddDialog(true)}
+              className="flex-1 min-w-[100px] h-[42px] px-3 bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md shadow-gray-200"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Добавить</span>
+            </button>
 
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`flex-1 sm:flex-none h-[42px] px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all border shadow-sm ${showFilters
-                  ? 'bg-pink-50 border-pink-200 text-pink-600'
-                  : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
-                  }`}
-              >
-                <Users className={`w-4 h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
-                <span>Фильтры</span>
-                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
-              </button>
+            <button
+              onClick={() => {
+                setShowFilters(!showFilters);
+                if (!showFilters) setShowActions(false);
+              }}
+              className={`h-[42px] px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all border shadow-sm shrink-0 ${showFilters
+                ? 'bg-pink-50 border-pink-200 text-pink-600'
+                : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                }`}
+            >
+              <Users className={`w-4 h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
+              <span>Фильтры</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
+            </button>
 
-              <button
-                onClick={handleRefresh}
-                disabled={loading}
-                className="h-[42px] px-3 sm:px-4 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm"
-                title="Обновить"
-              >
-                <RefreshCw className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
-              </button>
-            </div>
+            <button
+              onClick={() => {
+                setShowActions(!showActions);
+                if (!showActions) setShowFilters(false);
+              }}
+              className={`h-[42px] px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all border shadow-sm shrink-0 ${showActions
+                ? 'bg-blue-50 border-blue-200 text-blue-600'
+                : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                }`}
+            >
+              <Upload className={`w-4 h-4 ${showActions ? 'text-blue-500' : 'text-gray-400'}`} />
+              <span>Инструменты</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showActions ? 'rotate-180' : ''}`} />
+            </button>
 
-            {/* Group 2: Tools (Import/Export) */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowImportDialog(true)}
-                disabled={importing}
-                className="flex-1 sm:flex-none h-[42px] px-4 bg-white text-gray-700 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
-              >
-                <Upload className="w-4 h-4 text-gray-400" />
-                <span>Импорт</span>
-              </button>
+            <button
+              onClick={handleRefresh}
+              disabled={loading}
+              className="h-[42px] px-3 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm shrink-0"
+            >
+              <RefreshCw className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
 
-              <div className="flex-1 sm:flex-none min-w-[110px]">
+          {/* Expandable Section: Actions (Import/Export) */}
+          {showActions && (
+            <div className="pt-4 border-t border-gray-50 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setShowImportDialog(true)}
+                  disabled={importing}
+                  className="h-[42px] bg-white text-gray-700 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
+                >
+                  <Upload className="w-4 h-4 text-gray-400" />
+                  <span>Импорт</span>
+                </button>
+
                 <ExportDropdown
                   onExport={handleExport}
                   loading={exporting}
@@ -861,7 +878,7 @@ export default function Bookings() {
                 />
               </div>
             </div>
-          </div>
+          )}
 
           {/* Expandable Section: ONLY Filters */}
           {showFilters && (
