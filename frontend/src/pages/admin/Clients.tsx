@@ -670,7 +670,7 @@ export default function Clients() {
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6">
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6 font-sans">
         <div className="flex flex-col gap-4">
           {/* Search Row */}
           <div className="relative w-full">
@@ -680,15 +680,14 @@ export default function Clients() {
               placeholder={t('clients:search_placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
             />
           </div>
 
           {/* Filters and Actions Row */}
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             {/* Filters Group */}
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Status Filter */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <StatusSelect
                 value={statusFilter}
                 onChange={setStatusFilter}
@@ -698,74 +697,71 @@ export default function Clients() {
                 variant="filter"
               />
 
-              {/* Temperature Filter */}
               <TemperatureFilter
                 value={temperatureFilter}
                 onChange={setTemperatureFilter}
               />
 
-              {/* Period Filter */}
               <PeriodFilterSelect
                 value={period}
                 onChange={setPeriod}
               />
 
-              {/* Custom Date Inputs */}
               {period === 'custom' && (
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
                   <input
                     type="date"
                     value={dateFrom}
                     onChange={(e) => setDateFrom(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none"
                   />
                   <span className="text-gray-500">-</span>
                   <input
                     type="date"
                     value={dateTo}
                     onChange={(e) => setDateTo(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 outline-none"
                   />
                 </div>
               )}
-          </div>
+            </div>
 
-          {/* Actions Group */}
-          <div className="flex flex-wrap items-center gap-2">
-            {selectedClients.size > 0 && (
+            {/* Actions Group */}
+            <div className="flex flex-wrap items-center gap-2">
+              {selectedClients.size > 0 && (
+                <button
+                  onClick={handleBulkDelete}
+                  disabled={loading}
+                  className="px-4 py-2 bg-white text-red-600 border border-red-600 rounded-lg text-sm font-medium hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap transition-all shadow-sm"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  {t('clients:delete_selected')} ({selectedClients.size})
+                </button>
+              )}
+
               <button
-                onClick={handleBulkDelete}
-                disabled={loading}
-                className="px-4 py-2 bg-white text-red-600 border border-red-600 rounded-lg text-sm font-medium hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap transition-colors"
+                onClick={() => setShowCreateDialog(true)}
+                className="px-4 py-2 bg-pink-600 text-white rounded-lg text-sm font-medium hover:bg-pink-700 flex items-center gap-2 whitespace-nowrap transition-all shadow-sm active:scale-95"
               >
-                <Trash2 className="w-4 h-4" />
-                {t('clients:delete_selected')} ({selectedClients.size})
+                <Plus className="w-4 h-4" />
+                {t('clients:add_client')}
               </button>
-            )}
 
-            <button
-              onClick={() => setShowCreateDialog(true)}
-              className="px-4 py-2 bg-pink-600 text-white rounded-lg text-sm font-medium hover:bg-pink-700 flex items-center gap-2 whitespace-nowrap transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              {t('clients:add_client')}
-            </button>
+              <button
+                onClick={() => setShowImportDialog(true)}
+                disabled={importing}
+                className="px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap transition-all shadow-sm"
+              >
+                <Upload className="w-4 h-4" />
+                {importing ? t('clients:importing') : t('clients:import')}
+              </button>
 
-            <button
-              onClick={() => setShowImportDialog(true)}
-              disabled={importing}
-              className="px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap transition-colors"
-            >
-              <Upload className="w-4 h-4" />
-              {importing ? t('clients:importing') : t('clients:import')}
-            </button>
-
-            <ExportDropdown
-              onExport={handleExport}
-              loading={exporting}
-              disabled={exporting}
-            />
-          </div>
+              <ExportDropdown
+                onExport={handleExport}
+                loading={exporting}
+                disabled={exporting}
+              />
+            </div>
           </div>
         </div>
       </div>
