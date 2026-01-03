@@ -14,8 +14,11 @@ import {
   Filter,
   ChevronDown,
   Instagram,
-  MessageSquare
+  MessageSquare,
+  Send,
+  Music
 } from 'lucide-react';
+import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../icons/SocialIcons';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { usePermissions } from '../../utils/permissions';
@@ -68,9 +71,13 @@ export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
   }, [permissions, t]);
 
   const chatSubmenuItems = enabledMessengers.map(messenger => ({
-    icon: messenger.type === 'instagram' ? Instagram : MessageSquare,
+    icon: messenger.type === 'instagram' ? InstagramIcon :
+      messenger.type === 'telegram' ? TelegramIcon :
+        messenger.type === 'whatsapp' ? WhatsAppIcon :
+          messenger.type === 'tiktok' ? TikTokIcon : MessageSquare,
     label: messenger.name,
-    path: messenger.type === 'instagram' ? '/manager/chat' : `/manager/chat?messenger=${messenger.type}`,
+    type: messenger.type,
+    path: `/manager/chat?messenger=${messenger.type}`,
     color: messenger.type === 'instagram' ? 'from-pink-500 to-purple-600' :
       messenger.type === 'whatsapp' ? 'from-green-500 to-green-600' :
         messenger.type === 'telegram' ? 'from-blue-500 to-blue-600' :
@@ -142,19 +149,26 @@ export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
                     {/* Submenu Items */}
                     {showChatSubmenu && (
                       <ul className="mt-1 ml-8 space-y-1">
-                        {chatSubmenuItems.map((subItem, subIndex) => (
-                          <li key={subIndex}>
-                            <button
-                              onClick={() => navigate(subItem.path)}
-                              className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all duration-200 hover:bg-gray-50 text-gray-700"
-                            >
-                              <div className={`w-6 h-6 rounded-md bg-gradient-to-r ${subItem.color} flex items-center justify-center flex-shrink-0`}>
-                                <subItem.icon size={14} className="text-white" />
-                              </div>
-                              <span>{subItem.label}</span>
-                            </button>
-                          </li>
-                        ))}
+                        {chatSubmenuItems.map((subItem, subIndex) => {
+                          const params = new URLSearchParams(location.search);
+                          const currentMessenger = params.get('messenger') || 'instagram';
+                          const isActive = location.pathname === '/manager/chat' && subItem.type === currentMessenger;
+
+                          return (
+                            <li key={subIndex}>
+                              <button
+                                onClick={() => navigate(subItem.path)}
+                                className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all duration-200 ${isActive ? 'bg-pink-50 text-pink-600 font-medium' : 'hover:bg-gray-50 text-gray-700'
+                                  }`}
+                              >
+                                <div className={`w-6 h-6 rounded-md bg-gradient-to-r ${subItem.color} flex items-center justify-center flex-shrink-0`}>
+                                  <subItem.icon size={14} className="text-white" />
+                                </div>
+                                <span>{subItem.label}</span>
+                              </button>
+                            </li>
+                          );
+                        })}
                       </ul>
                     )}
                   </div>
