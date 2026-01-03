@@ -1,11 +1,11 @@
 {
-  "create_permission": "Создание",
-  "delete_permission": "Удаление",
-  "edit_permission": "Редактирование",
-  "error_changing_permissions": "Ошибка изменения прав",
-  "error_loading_permissions": "Ошибка загрузки прав доступа",
-  "error_loading_users": "Ошибка загрузки пользователей",
-  "permission_granted": "Право предоставлено",
-  "permission_revoked": "Право отозвано",
-  "view_permission": "Просмотр"
+  "create_permission": "Creación",
+  "delete_permission": "Eliminación",
+  "edit_permission": "Edición",
+  "error_changing_permissions": "Error al cambiar permisos",
+  "error_loading_permissions": "Error al cargar permisos",
+  "error_loading_users": "Error al cargar usuarios",
+  "permission_granted": "Derecho concedido",
+  "permission_revoked": "Derecho revocado",
+  "view_permission": "Vista"
 }

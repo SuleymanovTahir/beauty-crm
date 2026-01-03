@@ -1,11 +1,11 @@
 {
-  "create_permission": "Создание",
-  "delete_permission": "Удаление",
-  "edit_permission": "Редактирование",
-  "error_changing_permissions": "Ошибка изменения прав",
-  "error_loading_permissions": "Ошибка загрузки прав доступа",
-  "error_loading_users": "Ошибка загрузки пользователей",
-  "permission_granted": "Право предоставлено",
-  "permission_revoked": "Право отозвано",
-  "view_permission": "Просмотр"
+  "create_permission": "निर्माण",
+  "delete_permission": "हटाना",
+  "edit_permission": "संपादन",
+  "error_changing_permissions": "अनुमतियाँ बदलने में त्रुटि",
+  "error_loading_permissions": "अनुमतियाँ लोड करने में त्रुटि",
+  "error_loading_users": "उपयोगकर्ताओं को लोड करने में त्रुटि",
+  "permission_granted": "अधिकार दिया गया",
+  "permission_revoked": "अधिकार निरस्त कर दिया गया",
+  "view_permission": "देखना"
 }

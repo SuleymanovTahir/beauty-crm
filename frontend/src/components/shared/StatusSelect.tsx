@@ -1,7 +1,13 @@
 // /frontend/src/components/shared/StatusSelect.tsx
-import { useState } from 'react';
-import { Plus, X } from 'lucide-react';
+import { Plus, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from "../ui/dropdown-menu";
 
 interface StatusConfig {
   label: string;
@@ -15,357 +21,112 @@ interface StatusSelectProps {
   allowAdd?: boolean;
   onAddStatus?: (key: string, label: string, color: string) => void;
   showAllOption?: boolean;
-  variant?: 'default' | 'filter' | 'table';
 }
 
-const getColorOptions = (t: any) => [
-  { name: t('components:color_green'), value: 'bg-green-100 text-green-800' },
-  { name: t('components:color_blue'), value: 'bg-blue-100 text-blue-800' },
-  { name: t('components:color_yellow'), value: 'bg-yellow-100 text-yellow-800' },
-  { name: t('components:color_orange'), value: 'bg-orange-100 text-orange-800' },
-  { name: t('components:color_red'), value: 'bg-red-100 text-red-800' },
-  { name: t('components:color_purple'), value: 'bg-purple-100 text-purple-800' },
-  { name: t('components:color_pink'), value: 'bg-pink-100 text-pink-800' },
-  { name: t('components:color_gray'), value: 'bg-gray-100 text-gray-800' },
-];
+export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, showAllOption }: StatusSelectProps) {
+  const { t } = useTranslation(['components', 'common', 'clients', 'admin/Clients']);
 
-export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, showAllOption, variant = 'default' }: StatusSelectProps) {
-  const { t } = useTranslation(['components', 'common']);
-  const COLOR_OPTIONS = getColorOptions(t);
-  const [showAddDialog, setShowAddDialog] = useState(false);
-  const [newStatusKey, setNewStatusKey] = useState('');
-  const [newStatusLabel, setNewStatusLabel] = useState('');
-  const [newStatusColor, setNewStatusColor] = useState(COLOR_OPTIONS[0].value);
-  const [isAdding, setIsAdding] = useState(false);
+  const currentStatus = options[value] || { label: value, color: 'gray' };
 
-  const handleAddStatus = () => {
-    if (onAddStatus && newStatusKey && newStatusLabel) {
-      setIsAdding(true);
-      onAddStatus(newStatusKey, newStatusLabel, newStatusColor);
-      setIsAdding(false);
-      setShowAddDialog(false);
-      setNewStatusKey('');
-      setNewStatusLabel('');
-      setNewStatusColor(COLOR_OPTIONS[0].value);
-    }
-  };
+  // Helper to get color classes because the backend might return simplified color names
+  const getColorClasses = (color: string) => {
+    if (color && color.includes('bg-')) return color; // Already has classes
 
-  // Helper to determine styles based on variant
-  const getStyles = () => {
-    if (variant === 'filter' || variant === 'table') {
-      return {
-        className: '',
-        style: {
-          padding: '0.5rem 2.5rem 0.5rem 0.75rem',
-          border: '1px solid #d1d5db',
-          borderRadius: '0.5rem',
-          fontSize: '0.875rem',
-          minWidth: variant === 'table' ? '120px' : '140px',
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%236b7280' d='M4 6l4 4 4-4z'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right 0.75rem center',
-          backgroundSize: '16px 16px',
-          appearance: 'none',
-          WebkitAppearance: 'none',
-          MozAppearance: 'none'
-        } as any
-      };
-    }
-
-    // Default 'badge' style
-    return {
-      className: `text-xs font-medium border-0 ${options[value]?.color || 'bg-gray-100 text-gray-800'}`,
-      style: {
-        minWidth: '100px',
-        paddingLeft: '0.5rem',
-        paddingRight: '2rem',
-        paddingTop: '0.25rem',
-        paddingBottom: '0.25rem',
-        borderRadius: '9999px',
-        cursor: 'pointer',
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='%23374151' d='M4 6l4 4 4-4z'/%3E%3C/svg%3E")`,
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'right 0.5rem center',
-        backgroundSize: '12px 12px',
-        appearance: 'none',
-        WebkitAppearance: 'none',
-        MozAppearance: 'none'
-      }
+    const colors: Record<string, string> = {
+      green: 'bg-green-100 text-green-800',
+      blue: 'bg-blue-100 text-blue-800',
+      yellow: 'bg-yellow-100 text-yellow-800',
+      orange: 'bg-orange-100 text-orange-800',
+      red: 'bg-red-100 text-red-800',
+      purple: 'bg-purple-100 text-purple-800',
+      pink: 'bg-pink-100 text-pink-800',
+      gray: 'bg-gray-100 text-gray-800',
     };
+    return colors[color] || colors.gray;
   };
 
-  const styles = getStyles();
+  const getCircleColor = (color: string) => {
+    if (!color) return 'bg-gray-400';
 
-  // ... (handleAddStatus function)
+    // Normalize color string
+    const lowerColor = color.toLowerCase();
+
+    // Static map for tailwind JIT to see these classes
+    const colorMap: Record<string, string> = {
+      red: 'bg-red-500',
+      green: 'bg-green-500',
+      blue: 'bg-blue-500',
+      yellow: 'bg-yellow-500',
+      purple: 'bg-purple-500',
+      pink: 'bg-pink-500',
+      orange: 'bg-orange-500',
+      gray: 'bg-gray-500',
+      indigo: 'bg-indigo-500',
+      teal: 'bg-teal-500',
+      emerald: 'bg-emerald-500',
+      cyan: 'bg-cyan-500',
+      amber: 'bg-amber-500',
+      lime: 'bg-lime-500',
+      violet: 'bg-violet-500',
+      fuchsia: 'bg-fuchsia-500',
+      rose: 'bg-rose-500',
+      sky: 'bg-sky-500'
+    };
+
+    // 1. Check for color name in map
+    for (const [name, className] of Object.entries(colorMap)) {
+      if (lowerColor.includes(name)) return className;
+    }
+
+    return 'bg-gray-400';
+  };
 
   return (
-    <>
-      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-        <select
-          value={value}
-          onChange={(e) => {
-            if (e.target.value === '__add_new__') {
-              setShowAddDialog(true);
-            } else {
-              onChange(e.target.value);
-            }
-          }}
-          className={styles.className}
-          style={styles.style}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className={`inline-flex items-center justify-between gap-2 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all hover:ring-2 hover:ring-offset-1 hover:ring-pink-200 min-w-[160px] ${getColorClasses(currentStatus.color)}`}
         >
-          {showAllOption && <option value="all">{t('all_statuses')}</option>}
+          <div className="flex items-center gap-2 overflow-hidden">
+            <span className="truncate">{currentStatus.label}</span>
+          </div>
+          <ChevronDown className="w-3 h-3 opacity-50 shrink-0" />
+        </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-48 z-[100]">
+        {showAllOption && (
+          <DropdownMenuItem onClick={() => onChange('all')}>
+            {t('all_statuses')}
+          </DropdownMenuItem>
+        )}
+
+        <div className="max-h-60 overflow-y-auto">
           {Object.entries(options).map(([key, config]) => (
-            <option key={key} value={key}>{config.label}</option>
+            <DropdownMenuItem
+              key={key}
+              onClick={() => onChange(key)}
+              className="gap-2 cursor-pointer"
+            >
+              <span className={`w-2 h-2 rounded-full ${getCircleColor(config.color)}`} />
+              {config.label}
+            </DropdownMenuItem>
           ))}
-          {allowAdd && <option value="__add_new__">+ {t('add_status')}</option>}
-        </select>
+        </div>
 
         {allowAdd && (
-          <button
-            onClick={() => setShowAddDialog(true)}
-            style={{
-              padding: '0.25rem 0.5rem',
-              backgroundColor: '#f3f4f6',
-              border: '1px solid #d1d5db',
-              borderRadius: '0.375rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.25rem',
-              fontSize: '0.75rem',
-              color: '#6b7280'
-            }}
-            title={t('add_new_status')}
-          >
-            <Plus style={{ width: '14px', height: '14px' }} />
-          </button>
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => onAddStatus?.('', '', '')}
+              className="gap-2 text-pink-600 focus:text-pink-700 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              {t('add_status')}
+            </DropdownMenuItem>
+          </>
         )}
-      </div>
-
-      {/* Add Status Dialog */}
-      {showAddDialog && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: '1rem'
-        }}>
-          <div style={{
-            backgroundColor: '#fff',
-            borderRadius: '1rem',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-            width: '100%',
-            maxWidth: '500px',
-            maxHeight: '90vh',
-            overflow: 'auto'
-          }}>
-            {/* Header */}
-            <div style={{
-              padding: '1.5rem',
-              borderBottom: '1px solid #e5e7eb',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111' }}>
-                {t('add_status')}
-              </h3>
-              <button
-                onClick={() => setShowAddDialog(false)}
-                disabled={isAdding}
-                style={{
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  cursor: isAdding ? 'not-allowed' : 'pointer',
-                  color: '#6b7280',
-                  fontSize: '1.5rem',
-                  padding: '0',
-                  width: '32px',
-                  height: '32px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <X style={{ width: '20px', height: '20px' }} />
-              </button>
-            </div>
-
-            {/* Body */}
-            <div style={{ padding: '1.5rem' }}>
-              <div style={{ marginBottom: '1.25rem' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '0.875rem',
-                  fontWeight: '600',
-                  color: '#374151',
-                  marginBottom: '0.5rem'
-                }}>
-                  {t('status_key_label')}
-                </label>
-                <input
-                  type="text"
-                  value={newStatusKey}
-                  onChange={(e) => setNewStatusKey(e.target.value)}
-                  placeholder="new_status"
-                  disabled={isAdding}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.875rem',
-                    boxSizing: 'border-box'
-                  }}
-                />
-                <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' }}>
-                  {t('status_key_hint')}
-                </p>
-              </div>
-
-              <div style={{ marginBottom: '1.25rem' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '0.875rem',
-                  fontWeight: '600',
-                  color: '#374151',
-                  marginBottom: '0.5rem'
-                }}>
-                  {t('status_name_label')}
-                </label>
-                <input
-                  type="text"
-                  value={newStatusLabel}
-                  onChange={(e) => setNewStatusLabel(e.target.value)}
-                  placeholder={t('new_status_placeholder')}
-                  disabled={isAdding}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.875rem',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '0.875rem',
-                  fontWeight: '600',
-                  color: '#374151',
-                  marginBottom: '0.75rem'
-                }}>
-                  {t('status_color_label')}
-                </label>
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
-                  gap: '0.75rem'
-                }}>
-                  {COLOR_OPTIONS.map((color) => (
-                    <button
-                      key={color.value}
-                      type="button"
-                      onClick={() => setNewStatusColor(color.value)}
-                      disabled={isAdding}
-                      style={{
-                        padding: '0.75rem',
-                        borderRadius: '0.5rem',
-                        border: newStatusColor === color.value ? '3px solid #ec4899' : '2px solid #e5e7eb',
-                        cursor: isAdding ? 'not-allowed' : 'pointer',
-                        fontSize: '0.875rem',
-                        fontWeight: '500',
-                        transition: 'all 0.2s',
-                        backgroundColor: newStatusColor === color.value ? '#fdf2f8' : '#fff'
-                      }}
-                      className={color.value}
-                    >
-                      {color.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Preview */}
-              {newStatusLabel && (
-                <div style={{
-                  marginTop: '1.5rem',
-                  padding: '1rem',
-                  backgroundColor: '#f9fafb',
-                  borderRadius: '0.5rem',
-                  border: '1px solid #e5e7eb'
-                }}>
-                  <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem', fontWeight: '600' }}>
-                    {t('preview')}:
-                  </p>
-                  <span
-                    className={newStatusColor}
-                    style={{
-                      display: 'inline-block',
-                      padding: '0.375rem 0.75rem',
-                      borderRadius: '9999px',
-                      fontSize: '0.875rem',
-                      fontWeight: '500'
-                    }}
-                  >
-                    {newStatusLabel}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Footer */}
-            <div style={{
-              padding: '1rem 1.5rem',
-              borderTop: '1px solid #e5e7eb',
-              display: 'flex',
-              gap: '0.75rem',
-              justifyContent: 'flex-end'
-            }}>
-              <button
-                onClick={() => setShowAddDialog(false)}
-                disabled={isAdding}
-                style={{
-                  padding: '0.625rem 1.25rem',
-                  backgroundColor: '#f3f4f6',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontWeight: '500',
-                  color: '#374151',
-                  cursor: isAdding ? 'not-allowed' : 'pointer',
-                  fontSize: '0.875rem'
-                }}
-              >
-                {t('common:cancel')}
-              </button>
-              <button
-                onClick={handleAddStatus}
-                disabled={isAdding || !newStatusKey.trim() || !newStatusLabel.trim()}
-                style={{
-                  padding: '0.625rem 1.5rem',
-                  backgroundColor: '#ec4899',
-                  border: 'none',
-                  borderRadius: '0.5rem',
-                  color: '#fff',
-                  fontWeight: '500',
-                  cursor: (isAdding || !newStatusKey.trim() || !newStatusLabel.trim()) ? 'not-allowed' : 'pointer',
-                  opacity: (isAdding || !newStatusKey.trim() || !newStatusLabel.trim()) ? 0.5 : 1,
-                  fontSize: '0.875rem'
-                }}
-              >
-                {isAdding ? t('adding') : t('add')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

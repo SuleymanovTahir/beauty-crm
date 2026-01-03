@@ -989,9 +989,8 @@ async def delete_booking_api(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
         
-    # RBAC: Clients cannot delete bookings (must use cancellation)
-    if user["role"] == "client":
-        return JSONResponse({"error": "Forbidden: Clients cannot delete bookings directly"}, status_code=403)
+    if user["role"] != "director":
+        return JSONResponse({"error": "Forbidden: Only Director can delete bookings"}, status_code=403)
 
     try:
         # Получаем информацию о записи для уведомления

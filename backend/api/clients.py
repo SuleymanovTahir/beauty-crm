@@ -62,8 +62,8 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
                     SELECT 1 FROM chat_history ch WHERE ch.instagram_id = c.instagram_id
                 ) THEN 1 ELSE 0 END as has_messages,
                 c.created_at,
-                COALESCE((SELECT SUM(revenue) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_spend,
-                COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_bookings,
+                COALESCE((SELECT SUM(revenue) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed'), 0) as total_spend,
+                COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed'), 0) as total_bookings,
                 c.temperature
             FROM clients c
             ORDER BY c.is_pinned DESC, has_messages DESC, c.last_contact DESC
@@ -76,8 +76,8 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
                 c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
                 c.profile_pic, c.notes, c.is_pinned, c.gender, 1 as has_messages,
                 c.created_at,
-                COALESCE((SELECT SUM(revenue) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_spend,
-                COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id), 0) as total_bookings,
+                COALESCE((SELECT SUM(revenue) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed'), 0) as total_spend,
+                COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed'), 0) as total_bookings,
                 c.temperature
             FROM clients c
             JOIN messenger_messages mm ON c.instagram_id = mm.client_id
@@ -181,16 +181,21 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     if not client:
         return JSONResponse({"error": "Client not found"}, status_code=404)
     
-    history = get_chat_history(decoded_client_id, limit=50)
-    bookings = [b for b in get_all_bookings() if b[1] == decoded_client_id]
+    # Use real instagram_id from the database for lookups, 
+    # as decoded_client_id might be a username from the URL
+    real_id = client[0]
     
-    # Calculate stats directly from fetched bookings for accuracy
+    history = get_chat_history(real_id, limit=50)
+    bookings = [b for b in get_all_bookings() if b[1] == real_id]
+    
     from collections import Counter
     from datetime import datetime
     
-    # b[8] is revenue, len(bookings) is total visits
-    calculated_total_spend = sum(float(b[8] or 0) for b in bookings)
-    calculated_total_visits = len(bookings)
+    # Calculate stats directly from fetched bookings for accuracy
+    # Filter only completed bookings for LTV and visit count
+    completed_bookings = [b for b in bookings if b[5] == 'completed']
+    calculated_total_spend = sum(float(b[8] or 0) for b in completed_bookings)
+    calculated_total_visits = len(completed_bookings)
     
     booking_services = [b[2] for b in bookings if b[2]]
     booking_masters = [b[9] for b in bookings if len(b) > 9 and b[9]]
@@ -219,18 +224,23 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
         try:
             # datetime is b[3]
             dt = datetime.fromisoformat(b[3])
-            month = dt.strftime("%Y-%m")
-            visits_by_month[month] = visits_by_month.get(month, 0) + 1
+            month_key = dt.strftime("%Y-%m")
+            visits_by_month[month_key] = visits_by_month.get(month_key, 0) + 1
         except:
             continue
             
-    visits_chart = [{"date": m, "count": c} for m, c in sorted(visits_by_month.items())]
+    # Sort by key (YYYY-MM) then format for display
+    visits_chart = []
+    for m in sorted(visits_by_month.keys()):
+        # Convert YYYY-MM to more readable format
+        display_date = datetime.strptime(m, "%Y-%m").strftime("%b %Y")
+        visits_chart.append({"date": display_date, "count": visits_by_month[m]})
     
     conn.close()
 
     return {
         "success": True,
-        "data": {
+        "client": {
             "id": client[0],
             "instagram_id": client[0],
             "username": client[1],
@@ -246,7 +256,7 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
             "total_spend": calculated_total_spend,
             "total_visits": calculated_total_visits,
             "discount": client[16] if len(client) > 16 else 0,
-            "card_number": client[17] if len(client) > 17 else "",
+            "card_number": client[15] if len(client) > 15 else "",
             "temperature": client[21] if len(client) > 21 else "cold",
             "gender": client[14] if len(client) > 14 else None,
             "age": client[22] if len(client) > 22 else None,
@@ -270,7 +280,7 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
             }
             for b in bookings
         ],
-        "history": [
+        "chat_history": [
             {
                 "id": m[0],
                 "message": m[3],
@@ -482,9 +492,9 @@ async def delete_client_api(
     print(f"🔍 DEBUG: Decoded client_id: {decoded_id!r}")
     
     user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager", "director"]:
+    if not user or user["role"] != "director":
         print(f"⛔ DEBUG: Auth failed or role mismatch for user: {user}")
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
+        return JSONResponse({"error": "Forbidden: Only Director can delete clients"}, status_code=403)
     
     try:
         print(f"🗑️ DEBUG: Calling delete_client with id: {decoded_id!r}")
