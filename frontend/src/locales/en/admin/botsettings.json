@@ -46,6 +46,7 @@
   "communication_style": "Communication style",
   "consult_with_husband": "Talk to your husband",
   "contextual_rules": "Contextual rules",
+  "days": "days",
   "default_template_hint": "If empty, text in the standard client language is used.",
   "delay_days": "Delay (days)",
   "delay_hours": "Delay (hours)",
@@ -76,6 +77,7 @@
   "main_information": "General information",
   "manager_consultation_prompt": "It is necessary to consult with the manager",
   "manager_consultation_prompt_description": "AI instructions when a manager asks for advice via the \"#help\" command",
+  "max_message_length": "📏 Max. ",
   "message_template": "Message template",
   "no_time": "There is no time",
   "not_sure_about_the_result": "Not sure about the outcome",
@@ -87,6 +89,7 @@
   "premium_price_explanation": "Explain the premium price",
   "price_response_template": "Price response model",
   "real_dialogues_for_training": "Real dialogues for learning",
+  "recommended_length": "200-400 characters are recommended. ",
   "response_style": "",
   "retention_hint": "If the client has not come to the salon for X days.",
   "retention_placeholder": "Hello! ",
@@ -98,6 +101,7 @@
   "separate_with_pipe": "| ",
   "settings_saved_and_bot_reloaded": "The settings will be saved and the bot will reload",
   "social_proof": "Social proof",
+  "strict_limit_warning": "⚠️ The bot STRICTLY enforces this limit!",
   "style_adaptive": "Average",
   "style_adaptive_desc": "The golden mean",
   "style_concise": "Briefly",
@@ -127,9 +131,5 @@
   "voice_message_response": "Answer a voice message",
   "what_not_to_do": "what NOT to do",
   "working_with_objections": "Dealing with objections",
-  "working_with_prices": "Work with prices",
-  "days": "days",
-  "max_message_length": "📏 Max. ",
-  "recommended_length": "200-400 characters are recommended. ",
-  "strict_limit_warning": "⚠️ The bot STRICTLY enforces this limit!"
+  "working_with_prices": "Work with prices"
 }

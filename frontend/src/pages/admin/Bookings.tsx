@@ -136,7 +136,7 @@ export default function Bookings() {
   const { statuses: statusConfig } = useBookingStatuses();
   const [bookings, setBookings] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
-  const { t } = useTranslation(['admin/bookings', 'admin/services', 'common']);
+  const { t, i18n } = useTranslation(['admin/bookings', 'admin/services', 'common']);
   const [services, setServices] = useState<any[]>([]);
   const [filteredBookings, setFilteredBookings] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -1048,20 +1048,28 @@ export default function Bookings() {
                         </div>
                       </td>
                       <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>
-                        {t(`admin/services:${booking.service_name}`, booking.service_name || '-')}
+                        {(() => {
+                          const service = services.find(s => s.name === booking.service_name || s.name_ru === booking.service_name);
+                          if (service) {
+                            const langCode = i18n.language.split('-')[0];
+                            const localizedName = service[`name_${langCode}`];
+                            return localizedName || service.name;
+                          }
+                          return t(`admin/services:${booking.service_name}`, booking.service_name || '-') as string;
+                        })()}
                       </td>
                       <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>{formatDateTime(booking.datetime)}</td>
                       <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>
                         {booking.source === 'instagram' ? '📷 Instagram' :
                           booking.source === 'telegram' ? '✈️ Telegram' :
                             booking.source === 'whatsapp' ? '📱 WhatsApp' :
-                              t(`bookings:source.${booking.source || 'manual'}`, booking.source || 'Manual')}
+                              t(`source.${booking.source || 'manual'}`, booking.source || 'Manual') as string}
                       </td>
                       <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111', fontWeight: '600' }}>
                         {booking.revenue ? `${booking.revenue} AED` : '-'}
                       </td>
                       <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>
-                        {booking.created_at ? new Date(booking.created_at).toLocaleDateString('ru-RU') : '-'}
+                        {booking.created_at ? new Date(booking.created_at).toLocaleDateString(i18n.language === 'ru' ? 'ru-RU' : 'en-US') : '-'}
                       </td>
                       <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>{booking.phone || '-'}</td>
                       <td style={{ padding: '1rem 1.5rem' }}>

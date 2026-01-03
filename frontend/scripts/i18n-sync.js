@@ -209,17 +209,19 @@ async function syncTranslations() {
                 const refValue = getValueByKey(refContent, key);
                 const langValue = getValueByKey(langContent, key);
 
-                if (langValue === undefined) {
-                    // Ключ отсутствует - переводим!
-                    log(`   🌍 Перевод: "${refValue}" → ${lang}`, 'dim');
-                    const translated = await translateText(refValue, lang);
-                    setValueByKey(langContent, key, translated);
-                    fileChanges++;
-                    totalAdded++;
-                    totalTranslated++;
+                if (langValue === undefined || langValue === "") {
+                    if (refValue && refValue.trim() !== "") {
+                        // Ключ отсутствует или пуст - переводим!
+                        log(`   🌍 Перевод: "${refValue}" → ${lang}`, 'dim');
+                        const translated = await translateText(refValue, lang);
+                        setValueByKey(langContent, key, translated);
+                        fileChanges++;
+                        totalAdded++;
+                        totalTranslated++;
 
-                    // Небольшая задержка чтобы не забанили
-                    await delay(100);
+                        // Небольшая задержка чтобы не забанили
+                        await delay(100);
+                    }
                 }
             }
 

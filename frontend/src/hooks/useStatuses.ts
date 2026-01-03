@@ -9,7 +9,7 @@ interface StatusConfig {
 }
 
 export function useClientStatuses() {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
 
   const DEFAULT_CLIENT_STATUSES: Record<string, StatusConfig> = {
     new: { label: t('status_new'), color: 'blue' },
@@ -24,7 +24,7 @@ export function useClientStatuses() {
 
   useEffect(() => {
     loadStatuses();
-  }, []);
+  }, [i18n.language]);
 
   const loadStatuses = async () => {
     try {
@@ -109,7 +109,7 @@ export function useClientStatuses() {
 }
 
 export function useBookingStatuses() {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
 
   const DEFAULT_BOOKING_STATUSES: Record<string, StatusConfig> = {
     pending: { label: t('status_pending'), color: 'yellow' },
@@ -124,7 +124,7 @@ export function useBookingStatuses() {
 
   useEffect(() => {
     loadStatuses();
-  }, []);
+  }, [i18n.language]);
 
   const loadStatuses = async () => {
     try {
