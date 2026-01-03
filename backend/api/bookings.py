@@ -199,8 +199,16 @@ async def get_booking_detail(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    bookings = get_all_bookings()
-    booking = next((b for b in bookings if b[0] == booking_id), None)
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT id, instagram_id, service_name, datetime, phone,
+               name, status, created_at, revenue, master, user_id, notes
+        FROM bookings
+        WHERE id = %s
+    """, (booking_id,))
+    booking = c.fetchone()
+    conn.close()
     
     if not booking:
         return JSONResponse({"error": "Booking not found"}, status_code=404)
@@ -231,9 +239,10 @@ async def get_booking_detail(
         "name": booking[5],
         "status": booking[6],
         "created_at": booking[7],
-        "revenue": booking[8] if len(booking) > 8 else 0,
-        "master": booking[9] if len(booking) > 9 else None,
-        "user_id": booking[10] if len(booking) > 10 else None
+        "revenue": booking[8] if booking[8] is not None else 0,
+        "master": booking[9],
+        "user_id": booking[10],
+        "notes": booking[11]
     }
 
 from fastapi import BackgroundTasks
@@ -612,6 +621,34 @@ async def update_booking_status_api(
                 log_error(f"Error earning loyalty points: {e}", "api")
 
         return {"success": True, "message": "Booking status updated"}
+    
+    return JSONResponse({"error": "Update failed"}, status_code=400)
+
+    return JSONResponse({"error": "Update failed"}, status_code=400)
+
+@router.put("/bookings/{booking_id}")
+async def update_booking_api(
+    booking_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить детали записи"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    # Only admin/manager can edit details for now
+    if user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+        
+    data = await request.json()
+    from db.bookings import update_booking_details
+    
+    success = update_booking_details(booking_id, data)
+    
+    if success:
+        log_activity(user["id"], "update_booking_details", "booking", str(booking_id), f"Updated details: {data.keys()}")
+        return {"success": True, "message": "Booking updated"}
     
     return JSONResponse({"error": "Update failed"}, status_code=400)
 

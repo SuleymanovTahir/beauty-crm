@@ -21,5 +21,9 @@
   "update": "Обновлять",
   "update_status": "Обновление статуса",
   "write_to_client": "Напишите клиенту",
-  "status_updated": "Статус обновлен"
+  "status_updated": "Статус обновлен",
+  "visits": "посещений",
+  "total_spent": "Всего потрачено",
+  "internal_notes": "Заметки",
+  "no_notes": "Нет заметок для этой записи."
 }

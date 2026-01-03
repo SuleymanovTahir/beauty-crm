@@ -723,3 +723,53 @@ def find_active_booking(instagram_id: str) -> Optional[Dict]:
             "phone": row[4]
         }
     return None
+
+def update_booking_details(booking_id: int, data: Dict) -> bool:
+    """Обновить детали записи (дата, время, услуга, мастер, стоимость, заметки)"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    fields = []
+    params = []
+    
+    if 'date' in data and 'time' in data:
+        datetime_str = f"{data['date']} {data['time']}"
+        # Convert to ISO format if needed
+        if ' ' in datetime_str and 'T' not in datetime_str:
+            datetime_str = datetime_str.replace(' ', 'T')
+        fields.append("datetime = %s")
+        params.append(datetime_str)
+    
+    if 'service' in data:
+        fields.append("service_name = %s")
+        params.append(data['service'])
+        
+    if 'master' in data:
+        fields.append("master = %s")
+        params.append(data['master'])
+        
+    if 'revenue' in data:
+        fields.append("revenue = %s")
+        params.append(data['revenue'])
+        
+    if 'notes' in data:
+        fields.append("notes = %s")
+        params.append(data['notes'])
+
+    if not fields:
+        conn.close()
+        return False
+        
+    query = f"UPDATE bookings SET {', '.join(fields)} WHERE id = %s"
+    params.append(booking_id)
+    
+    try:
+        c.execute(query, tuple(params))
+        conn.commit()
+        success = c.rowcount > 0
+        conn.close()
+        return success
+    except Exception as e:
+        print(f"❌ Ошибка обновления деталей записи: {e}")
+        conn.close()
+        return False

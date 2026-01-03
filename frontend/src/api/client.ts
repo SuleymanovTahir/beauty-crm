@@ -106,6 +106,12 @@ export const apiClient = {
       body: { status },
     }),
 
+  updateBookingDetails: (id: number, data: any) =>
+    apiCall(`/api/bookings/${id}`, {
+      method: 'PUT',
+      body: data,
+    }),
+
   // ===== CHAT =====
   getChatMessages: (clientId: string, limit: number = 50, messenger: string = 'instagram') =>
     apiCall(`/api/chat/messages?client_id=${clientId}&limit=${limit}&messenger=${messenger}`),
