@@ -316,27 +316,40 @@ export default function BookingDetail() {
           <ArrowLeft className="w-6 h-6" />
         </button>
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-3xl text-gray-900 mb-1">{t('booking_number')} {booking.id}</h1>
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="text-3xl text-gray-900">{t('booking_number')} {booking.id}</h1>
             {!isEditing ? (
-              <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)}>
+              <Button
+                onClick={() => setIsEditing(true)}
+                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-2 rounded-lg"
+              >
                 <Pencil className="w-4 h-4 mr-2" />
-                {t('common:edit', 'Изменить')}
+                {t('common:edit')}
               </Button>
             ) : (
-              <div className="flex bg-white rounded-lg shadow-sm border border-gray-100 p-1">
-                <Button size="sm" variant="ghost" onClick={() => setIsEditing(false)} className="text-gray-500">
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setIsEditing(false)}
+                  className="text-gray-600 border-gray-300 hover:bg-gray-50"
+                >
                   <X className="w-4 h-4 mr-2" />
-                  {t('common:cancel', 'Отмена')}
+                  {t('common:cancel')}
                 </Button>
-                <Button size="sm" onClick={handleSaveDetails} disabled={updating} className="bg-pink-600 text-white hover:bg-pink-700">
+                <Button
+                  size="sm"
+                  onClick={handleSaveDetails}
+                  disabled={updating}
+                  className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-md hover:shadow-lg transition-all"
+                >
                   <Save className="w-4 h-4 mr-2" />
-                  {t('common:save', 'Сохранить')}
+                  {t('common:save')}
                 </Button>
               </div>
             )}
           </div>
-          <p className="text-gray-600">{t('detailed_info')}</p>
+          <p className="text-gray-600 mt-2">{t('detailed_info')}</p>
         </div>
       </div>
 
@@ -357,9 +370,9 @@ export default function BookingDetail() {
                   <p className="text-lg text-gray-900 font-medium">{booking.name}</p>
                   <button
                     onClick={() => navigate(`/crm/clients/${booking.client_id}`)}
-                    className="text-sm text-pink-600 hover:underline mt-1"
+                    className="text-sm text-pink-600 hover:underline mt-1 font-mono"
                   >
-                    {t('client_profile')}
+                    @{booking.client_id}
                   </button>
                 </div>
               </div>
@@ -411,351 +424,351 @@ export default function BookingDetail() {
                       </SelectContent>
                     </Select>
                   ) : (
-                  ): (
-                      <p 
-                      className = "text-lg text-gray-900 font-medium cursor-pointer hover:text-purple-600 transition-colors"
-                      onClick = { () => navigate('/crm/bookings') } 
-                      title = { t('common:view_bookings', 'Посмотреть записи')}
+
+                    <p
+                      className="text-lg text-gray-900 font-medium cursor-pointer hover:text-purple-600 transition-colors"
+                      onClick={() => navigate('/crm/bookings')}
+                      title={t('common:view_bookings', 'Посмотреть записи')}
                     >
-                  {(() => {
-                    const serviceName = (booking.service || '').trim();
-                    const s = services.find(serv => serv.name === serviceName || serv.service_key === serviceName || serv.name_ru === serviceName);
-                    if (i18n.language.startsWith('ru') && s?.name_ru) {
-                      return s.name_ru;
-                    }
+                      {(() => {
+                        const serviceName = (booking.service || '').trim();
+                        const s = services.find(serv => serv.name === serviceName || serv.service_key === serviceName || serv.name_ru === serviceName);
+                        if (i18n.language.startsWith('ru') && s?.name_ru) {
+                          return s.name_ru;
+                        }
 
-                    // Try translating with explicit namespace alias 'services'
-                    let translated = t(`services:${serviceName}`, { defaultValue: '' });
-                    if (!translated) {
-                      translated = t(`admin/services:${serviceName}`, { defaultValue: '' });
-                    }
+                        // Try translating with explicit namespace alias 'services'
+                        let translated = t(`services:${serviceName}`, { defaultValue: '' });
+                        if (!translated) {
+                          translated = t(`admin/services:${serviceName}`, { defaultValue: '' });
+                        }
 
-                    if (translated) return translated;
+                        if (translated) return translated;
 
-                    return serviceName;
-                  })()}
-                </p>
+                        return serviceName;
+                      })()}
+                    </p>
                   )}
-                  )}
-              </div>
-            </div>
 
-            {/* Date & Time */}
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Calendar className="w-6 h-6 text-blue-600" />
-              </div>
-              {isEditing ? (
-                <div className="flex gap-2">
-                  <Input
-                    type="date"
-                    value={editForm.date}
-                    onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
-                  />
-                  <Input
-                    type="time"
-                    value={editForm.time}
-                    onChange={(e) => setEditForm({ ...editForm, time: e.target.value })}
-                  />
                 </div>
-              ) : (
-                <div>
-                  <p className="text-sm text-gray-600">{t('date_time')}</p>
-                  <p
-                    className="text-lg text-gray-900 font-medium cursor-pointer hover:text-blue-600 transition-colors"
-                    onClick={() => navigate('/crm/calendar')}
-                    title={t('common:view_calendar', 'Перейти в календарь')}
-                  >
-                    {formatDate(booking.datetime)}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Phone */}
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Phone className="w-6 h-6 text-green-600" />
               </div>
-              <div>
-                <p className="text-sm text-gray-600">{t('phone')}</p>
-                <p className="text-lg text-gray-900 font-medium">{booking.phone}</p>
-              </div>
-            </div>
 
-            {/* Revenue */}
-            {booking.revenue > 0 && (
+              {/* Date & Time */}
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Briefcase className="w-6 h-6 text-yellow-600" />
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Calendar className="w-6 h-6 text-blue-600" />
+                </div>
+                {isEditing ? (
+                  <div className="flex gap-2">
+                    <Input
+                      type="date"
+                      value={editForm.date}
+                      onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
+                    />
+                    <Input
+                      type="time"
+                      value={editForm.time}
+                      onChange={(e) => setEditForm({ ...editForm, time: e.target.value })}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-sm text-gray-600">{t('date_time')}</p>
+                    <p
+                      className="text-lg text-gray-900 font-medium cursor-pointer hover:text-blue-600 transition-colors"
+                      onClick={() => navigate('/crm/calendar')}
+                      title={t('common:view_calendar', 'Перейти в календарь')}
+                    >
+                      {formatDate(booking.datetime)}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Phone */}
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Phone className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">{t('revenue')}</p>
-                  {isEditing ? (
-                    <Input
-                      type="number"
-                      value={editForm.revenue}
-                      onChange={(e) => setEditForm({ ...editForm, revenue: parseFloat(e.target.value) })}
-                    />
-                  ) : (
-                    <p className="text-lg text-gray-900 font-medium">{booking.revenue} {t('currency')}</p>
-                  )}
+                  <p className="text-sm text-gray-600">{t('phone')}</p>
+                  <p className="text-lg text-gray-900 font-medium">{booking.phone}</p>
                 </div>
               </div>
-            )}
 
-            {/* Created At */}
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Clock className="w-6 h-6 text-gray-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">{t('created_at')}</p>
-                <p className="text-lg text-gray-900 font-medium">{formatDate(booking.created_at)}</p>
-              </div>
-            </div>
-
-            {/* Master */}
-            <div className="flex items-start gap-4 pt-4 border-t border-gray-100">
-              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <User className="w-6 h-6 text-indigo-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">{t('bookings:master', 'Мастер')}</p>
-                {isEditing ? (
-                  <Select
-                    value={editForm.master}
-                    onValueChange={(val) => setEditForm({ ...editForm, master: val })}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t('bookings:select_master')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {masters.map(m => (
-                        <SelectItem key={m.id} value={m.full_name || m.username}>
-                          {m.full_name || m.username}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <p
-                    className="text-lg text-gray-900 font-bold cursor-pointer hover:text-indigo-600 transition-colors"
-                    onClick={() => navigate('/crm/staff')}
-                    title={t('common:view_staff', 'Перейти к сотрудникам')}
-                  >
-                    {masterName}
-                  </p>
-                )}
-                {(() => {
-                  const pos = i18n.language.startsWith('ru') && masterInfo?.position_ru ? masterInfo.position_ru : (masterInfo?.position || '');
-                  return pos ? (
-                    <p className="text-sm text-indigo-600 font-medium">{pos}</p>
-                  ) : null;
-                })()}
-              </div>
-            </div>
-
-            {/* Internal Notes (New) */}
-            <div className="pt-6 border-t border-gray-100">
-              <h3 className="text-sm font-medium text-gray-900 mb-2">{t('internal_notes', 'Заметки')}</h3>
-
-              {isEditing ? (
-                <Textarea
-                  value={editForm.notes || ''}
-                  onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-                  placeholder={t('internal_notes_placeholder', 'Введите заметки здесь...')}
-                  className="min-h-[100px]"
-                />
-              ) : (
-                <div className={`${booking.notes ? 'bg-yellow-50 border-yellow-100 text-gray-800' : 'bg-gray-50 border-gray-100 text-gray-500'} border rounded-lg p-4`}>
-                  <p className="text-sm whitespace-pre-wrap">
-                    {booking.notes || t('no_notes', 'Нет заметок для этой записи.')}
-                  </p>
+              {/* Revenue */}
+              {booking.revenue > 0 && (
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Briefcase className="w-6 h-6 text-yellow-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">{t('revenue')}</p>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        value={editForm.revenue}
+                        onChange={(e) => setEditForm({ ...editForm, revenue: parseFloat(e.target.value) })}
+                      />
+                    ) : (
+                      <p className="text-lg text-gray-900 font-medium">{booking.revenue} {t('currency')}</p>
+                    )}
+                  </div>
                 </div>
               )}
+
+              {/* Created At */}
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-6 h-6 text-gray-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">{t('created_at')}</p>
+                  <p className="text-lg text-gray-900 font-medium">{formatDate(booking.created_at)}</p>
+                </div>
+              </div>
+
+              {/* Master */}
+              <div className="flex items-start gap-4 pt-4 border-t border-gray-100">
+                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <User className="w-6 h-6 text-indigo-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">{t('bookings:master', 'Мастер')}</p>
+                  {isEditing ? (
+                    <Select
+                      value={editForm.master}
+                      onValueChange={(val) => setEditForm({ ...editForm, master: val })}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder={t('bookings:select_master')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {masters.map(m => (
+                          <SelectItem key={m.id} value={m.full_name || m.username}>
+                            {m.full_name || m.username}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <p
+                      className="text-lg text-gray-900 font-bold cursor-pointer hover:text-indigo-600 transition-colors"
+                      onClick={() => navigate('/crm/staff')}
+                      title={t('common:view_staff', 'Перейти к сотрудникам')}
+                    >
+                      {masterName}
+                    </p>
+                  )}
+                  {(() => {
+                    const pos = i18n.language.startsWith('ru') && masterInfo?.position_ru ? masterInfo.position_ru : (masterInfo?.position || '');
+                    return pos ? (
+                      <p className="text-sm text-indigo-600 font-medium">{pos}</p>
+                    ) : null;
+                  })()}
+                </div>
+              </div>
+
+              {/* Internal Notes (New) */}
+              <div className="pt-6 border-t border-gray-100">
+                <h3 className="text-sm font-medium text-gray-900 mb-2">{t('internal_notes', 'Заметки')}</h3>
+
+                {isEditing ? (
+                  <Textarea
+                    value={editForm.notes || ''}
+                    onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                    placeholder={t('internal_notes_placeholder', 'Введите заметки здесь...')}
+                    className="min-h-[100px]"
+                  />
+                ) : (
+                  <div className={`${booking.notes ? 'bg-yellow-50 border-yellow-100 text-gray-800' : 'bg-gray-50 border-gray-100 text-gray-500'} border rounded-lg p-4`}>
+                    <p className="text-sm whitespace-pre-wrap">
+                      {booking.notes || t('no_notes', 'Нет заметок для этой записи.')}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Charts Section */}
-        <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
-            <h2 className="text-2xl text-gray-900">{t('analytics', 'Аналитика')}</h2>
-            <div className="flex flex-wrap gap-2 items-center">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="min-w-[200px] justify-between border-2 border-indigo-50 rounded-xl font-bold text-gray-700 hover:bg-indigo-50/30 transition-all">
-                    <div className="flex items-center gap-2">
-                      <CalendarDays className="w-5 h-5 text-indigo-500" />
-                      <span>
-                        {chartPeriod === '7' ? `7 ${t('days', 'дней')}` :
-                          chartPeriod === '30' ? `30 ${t('days', 'дней')}` :
-                            chartPeriod === '90' ? `90 ${t('days', 'дней')}` :
-                              chartPeriod === 'custom' ? (chartDateFrom && chartDateTo ? `${chartDateFrom} - ${chartDateTo}` : t('custom_range', 'Свой период')) :
-                                t('period', 'Период')}
-                      </span>
-                    </div>
-                    <ChevronDown className="w-4 h-4 text-gray-400" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80 p-4 rounded-2xl shadow-xl border-indigo-50" align="end">
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 gap-2">
-                      {['7', '30', '90'].map(p => (
-                        <button
-                          key={p}
-                          onClick={() => setChartPeriod(p)}
-                          className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${chartPeriod === p ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
-                        >
-                          <span>{p} {t('days', 'дней')}</span>
-                          {chartPeriod === p && <CalendarDays className="w-4 h-4" />}
-                        </button>
-                      ))}
-                    </div>
+          {/* Charts Section */}
+          <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+              <h2 className="text-2xl text-gray-900">{t('analytics', 'Аналитика')}</h2>
+              <div className="flex flex-wrap gap-2 items-center">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="min-w-[200px] justify-between border-2 border-indigo-50 rounded-xl font-bold text-gray-700 hover:bg-indigo-50/30 transition-all">
+                      <div className="flex items-center gap-2">
+                        <CalendarDays className="w-5 h-5 text-indigo-500" />
+                        <span>
+                          {chartPeriod === '7' ? `7 ${t('days', 'дней')}` :
+                            chartPeriod === '30' ? `30 ${t('days', 'дней')}` :
+                              chartPeriod === '90' ? `90 ${t('days', 'дней')}` :
+                                chartPeriod === 'custom' ? (chartDateFrom && chartDateTo ? `${chartDateFrom} - ${chartDateTo}` : t('custom_range', 'Свой период')) :
+                                  t('period', 'Период')}
+                        </span>
+                      </div>
+                      <ChevronDown className="w-4 h-4 text-gray-400" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 p-4 rounded-2xl shadow-xl border-indigo-50" align="end">
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 gap-2">
+                        {['7', '30', '90'].map(p => (
+                          <button
+                            key={p}
+                            onClick={() => setChartPeriod(p)}
+                            className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${chartPeriod === p ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                          >
+                            <span>{p} {t('days', 'дней')}</span>
+                            {chartPeriod === p && <CalendarDays className="w-4 h-4" />}
+                          </button>
+                        ))}
+                      </div>
 
-                    <div className="border-t border-gray-100 pt-4">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 px-1">{t('custom_range', 'Свой период')}</p>
-                      <div className="grid grid-cols-1 gap-3">
-                        <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-gray-500 ml-1">ОТ</label>
-                          <input
-                            type="date"
-                            value={chartDateFrom}
-                            onChange={e => {
-                              setChartDateFrom(e.target.value);
-                              setChartPeriod('custom');
-                            }}
-                            className="w-full h-10 px-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:border-indigo-200 transition-all"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-gray-500 ml-1">ДО</label>
-                          <input
-                            type="date"
-                            value={chartDateTo}
-                            onChange={e => {
-                              setChartDateTo(e.target.value);
-                              setChartPeriod('custom');
-                            }}
-                            className="w-full h-10 px-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:border-indigo-200 transition-all"
-                          />
+                      <div className="border-t border-gray-100 pt-4">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 px-1">{t('custom_range', 'Свой период')}</p>
+                        <div className="grid grid-cols-1 gap-3">
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-bold text-gray-500 ml-1">ОТ</label>
+                            <input
+                              type="date"
+                              value={chartDateFrom}
+                              onChange={e => {
+                                setChartDateFrom(e.target.value);
+                                setChartPeriod('custom');
+                              }}
+                              className="w-full h-10 px-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:border-indigo-200 transition-all"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-bold text-gray-500 ml-1">ДО</label>
+                            <input
+                              type="date"
+                              value={chartDateTo}
+                              onChange={e => {
+                                setChartDateTo(e.target.value);
+                                setChartPeriod('custom');
+                              }}
+                              className="w-full h-10 px-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:border-indigo-200 transition-all"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
-                {t('service_stats', 'Популярность услуги')}: {booking.service}
-              </h3>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={getChartData('service')}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="date" fontSize={10} />
-                    <YAxis fontSize={10} />
-                    <Tooltip />
-                    <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
-            <div>
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
-                {t('master_stats', 'Загрузка мастера')}: {masterName}
-              </h3>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={getChartData('master')}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="date" fontSize={10} />
-                    <YAxis fontSize={10} />
-                    <Tooltip />
-                    <Bar dataKey="count" fill="#ec4899" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
+                  {t('service_stats', 'Популярность услуги')}: {booking.service}
+                </h3>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={getChartData('service')}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="date" fontSize={10} />
+                      <YAxis fontSize={10} />
+                      <Tooltip />
+                      <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
+                  {t('master_stats', 'Загрузка мастера')}: {masterName}
+                </h3>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={getChartData('master')}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="date" fontSize={10} />
+                      <YAxis fontSize={10} />
+                      <Tooltip />
+                      <Bar dataKey="count" fill="#ec4899" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Status Card */}
-      <div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <h3 className="text-lg text-gray-900 mb-4 flex items-center gap-2">
-            <Edit2 className="w-5 h-5" />
-            {t('status')}
-          </h3>
+        {/* Status Card */}
+        <div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <h3 className="text-lg text-gray-900 mb-4 flex items-center gap-2">
+              <Edit2 className="w-5 h-5" />
+              {t('status')}
+            </h3>
 
-          <div className="space-y-4">
-            <Select value={newStatus} onValueChange={setNewStatus}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="new">{t('status_new')}</SelectItem>
-                <SelectItem value="confirmed">{t('status_confirmed')}</SelectItem>
-                <SelectItem value="completed">{t('status_completed')}</SelectItem>
-                <SelectItem value="cancelled">{t('status_cancelled')}</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="space-y-4">
+              <Select value={newStatus} onValueChange={setNewStatus}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="new">{t('status_new')}</SelectItem>
+                  <SelectItem value="confirmed">{t('status_confirmed')}</SelectItem>
+                  <SelectItem value="completed">{t('status_completed')}</SelectItem>
+                  <SelectItem value="cancelled">{t('status_cancelled')}</SelectItem>
+                </SelectContent>
+              </Select>
 
-            <Button
-              onClick={handleStatusUpdate}
-              disabled={updating || newStatus === booking.status}
-              className="w-full bg-gradient-to-r from-pink-500 to-purple-600"
-            >
-              {updating ? t('update') : t('update_status')}
-            </Button>
+              <Button
+                onClick={handleStatusUpdate}
+                disabled={updating || newStatus === booking.status}
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-600"
+              >
+                {updating ? t('update') : t('update_status')}
+              </Button>
 
-            {/* Current Status Badge */}
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600 mb-2">{t('current_status')}</p>
-              <div className="flex items-center gap-2">
-                <div
-                  className={`w-3 h-3 rounded-full ${booking.status === 'completed'
-                    ? 'bg-green-500'
-                    : booking.status === 'cancelled'
-                      ? 'bg-red-500'
+              {/* Current Status Badge */}
+              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                <p className="text-xs text-gray-600 mb-2">{t('current_status')}</p>
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`w-3 h-3 rounded-full ${booking.status === 'completed'
+                      ? 'bg-green-500'
+                      : booking.status === 'cancelled'
+                        ? 'bg-red-500'
+                        : booking.status === 'confirmed'
+                          ? 'bg-blue-500'
+                          : 'bg-yellow-500'
+                      }`}
+                  ></div>
+                  <span className="text-sm text-gray-900 font-medium capitalize">
+                    {booking.status === 'new'
+                      ? t('status_new')
                       : booking.status === 'confirmed'
-                        ? 'bg-blue-500'
-                        : 'bg-yellow-500'
-                    }`}
-                ></div>
-                <span className="text-sm text-gray-900 font-medium capitalize">
-                  {booking.status === 'new'
-                    ? t('status_new')
-                    : booking.status === 'confirmed'
-                      ? t('status_confirmed')
-                      : booking.status === 'completed'
-                        ? t('status_completed')
-                        : t('status_cancelled')}
-                </span>
+                        ? t('status_confirmed')
+                        : booking.status === 'completed'
+                          ? t('status_completed')
+                          : t('status_cancelled')}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Actions */}
-        <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <h3 className="text-lg text-gray-900 mb-4">{t('actions')}</h3>
-          <Button
-            onClick={() => navigate(`/crm/chat?client_id=${booking.client_id}`)}
-            variant="outline"
-            className="w-full"
-          >
-            {t('write_to_client')}
-          </Button>
+          {/* Actions */}
+          <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <h3 className="text-lg text-gray-900 mb-4">{t('actions')}</h3>
+            <Button
+              onClick={() => navigate(`/crm/chat?client_id=${booking.client_id}`)}
+              variant="outline"
+              className="w-full"
+            >
+              {t('write_to_client')}
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
     </div >
   );
 }

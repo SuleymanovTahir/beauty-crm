@@ -1867,7 +1867,7 @@ export default function Bookings() {
                   >
                     <option value="">{t('bookings:select_master')}</option>
                     {filteredMasters.map((m: any) => {
-                      const displayName = m.full_name || m.username;
+                      const displayName = (i18n.language === 'ru' && m.full_name_ru) ? m.full_name_ru : (m.full_name || m.username);
                       const position = i18n.language === 'ru' && m.position_ru ? m.position_ru : (m.position || '');
                       return (
                         <option key={m.id} value={m.full_name || m.username}>
