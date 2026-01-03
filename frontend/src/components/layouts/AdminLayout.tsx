@@ -181,10 +181,10 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   }, [permissions, unreadCount, t]);
 
   const chatSubmenuItems = enabledMessengers.map(messenger => ({
-    icon: messenger.type === 'instagram' ? InstagramIcon :
-      messenger.type === 'telegram' ? TelegramIcon :
-        messenger.type === 'whatsapp' ? WhatsAppIcon :
-          messenger.type === 'tiktok' ? TikTokIcon : MessageSquare,
+    icon: messenger.type === 'instagram' ? (props: any) => <InstagramIcon {...props} colorful={false} /> :
+      messenger.type === 'telegram' ? (props: any) => <TelegramIcon {...props} colorful={false} /> :
+        messenger.type === 'whatsapp' ? (props: any) => <WhatsAppIcon {...props} colorful={false} /> :
+          messenger.type === 'tiktok' ? (props: any) => <TikTokIcon {...props} colorful={false} /> : MessageSquare,
     label: messenger.name,
     type: messenger.type,
     path: `/crm/chat?messenger=${messenger.type}`,

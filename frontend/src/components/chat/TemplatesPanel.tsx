@@ -139,21 +139,21 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
         <div className="flex items-center gap-3">
           <button
             onClick={onClose}
-            className="h-9 w-9 hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors text-black"
+            className="h-9 w-9 hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors text-white"
             title="Назад"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center" title="Шаблоны ответов">
-            <FileText className="w-5 h-5 text-black" />
+            <FileText className="w-5 h-5 text-white" />
           </div>
-          <h3 className="font-bold text-black text-lg">Шаблоны</h3>
+          <h3 className="font-bold text-white text-lg">Шаблоны</h3>
         </div>
         <button
           onClick={onClose}
           className="h-9 w-9 hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors"
         >
-          <X className="w-5 h-5 text-black" />
+          <X className="w-5 h-5 text-white" />
         </button>
       </div>
 

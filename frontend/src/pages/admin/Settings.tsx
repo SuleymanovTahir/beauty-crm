@@ -1243,7 +1243,7 @@ export default function AdminSettings() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="instagram" className="flex items-center gap-2">
-                        <Instagram className="w-3.5 h-3.5 settings-text-pink" />
+                        <InstagramIcon className="w-4 h-4" colorful={true} />
                         Instagram
                       </Label>
                       <Input
@@ -1256,7 +1256,7 @@ export default function AdminSettings() {
 
                     <div className="space-y-2">
                       <Label htmlFor="whatsapp" className="flex items-center gap-2">
-                        <MessageCircle className="w-3.5 h-3.5 text-green-600" />
+                        <WhatsAppIcon className="w-4 h-4" colorful={true} />
                         WhatsApp
                       </Label>
                       <Input
@@ -1269,7 +1269,7 @@ export default function AdminSettings() {
 
                     <div className="space-y-2">
                       <Label htmlFor="telegram" className="flex items-center gap-2">
-                        <Smartphone className="w-3.5 h-3.5 text-blue-500" />
+                        <TelegramIcon className="w-3.5 h-3.5" colorful={true} />
                         Telegram
                       </Label>
                       <Input
@@ -2444,13 +2444,13 @@ export default function AdminSettings() {
                           )}
 
                           {broadcastPreview.by_channel.instagram > 0 && (
-                          <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
-                            <div className="flex items-center gap-2">
-                              <Camera className="w-4 h-4 text-purple-600" />
-                              <span className="text-sm text-gray-700">{t('settings:channel_instagram')}</span>
+                            <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+                              <div className="flex items-center gap-2">
+                                <Camera className="w-4 h-4 text-purple-600" />
+                                <span className="text-sm text-gray-700">{t('settings:channel_instagram')}</span>
+                              </div>
+                              <span className="font-bold text-purple-600">{broadcastPreview.by_channel.instagram}</span>
                             </div>
-                            <span className="font-bold text-purple-600">{broadcastPreview.by_channel.instagram}</span>
-                          </div>
                           )}
                         </div>
 
@@ -2570,15 +2570,17 @@ export default function AdminSettings() {
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className={`w - 12 h - 12 rounded - lg flex items - center justify - center ${messenger.messenger_type === 'instagram' ? 'bg-gradient-to-r from-pink-500 to-purple-600' :
-                          messenger.messenger_type === 'whatsapp' ? 'bg-green-500' :
-                            messenger.messenger_type === 'telegram' ? 'bg-blue-500' :
-                              'bg-black'
-                          } `}>
+                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 group/icon-card ${messenger.is_enabled ? 'bg-white' : 'bg-gray-100'}`}>
                           {messenger.messenger_type === 'instagram' ? (
-                            <Instagram className="w-6 h-6 text-white" />
+                            <InstagramIcon className="w-9 h-9" colorful={true} />
+                          ) : messenger.messenger_type === 'whatsapp' ? (
+                            <WhatsAppIcon className="w-9 h-9" colorful={true} />
+                          ) : messenger.messenger_type === 'telegram' ? (
+                            <TelegramIcon className="w-9 h-9" colorful={true} />
+                          ) : messenger.messenger_type === 'tiktok' ? (
+                            <TikTokIcon className="w-9 h-9" colorful={true} />
                           ) : (
-                            <MessageCircle className="w-6 h-6 text-white" />
+                            <MessageCircle className="w-9 h-9 text-purple-600" />
                           )}
                         </div>
                         <div>

@@ -71,10 +71,10 @@ export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
   }, [permissions, t]);
 
   const chatSubmenuItems = enabledMessengers.map(messenger => ({
-    icon: messenger.type === 'instagram' ? InstagramIcon :
-      messenger.type === 'telegram' ? TelegramIcon :
-        messenger.type === 'whatsapp' ? WhatsAppIcon :
-          messenger.type === 'tiktok' ? TikTokIcon : MessageSquare,
+    icon: messenger.type === 'instagram' ? (props: any) => <InstagramIcon {...props} colorful={true} /> :
+      messenger.type === 'telegram' ? (props: any) => <TelegramIcon {...props} colorful={true} /> :
+        messenger.type === 'whatsapp' ? (props: any) => <WhatsAppIcon {...props} colorful={true} /> :
+          messenger.type === 'tiktok' ? (props: any) => <TikTokIcon {...props} colorful={true} /> : MessageSquare,
     label: messenger.name,
     type: messenger.type,
     path: `/manager/chat?messenger=${messenger.type}`,
