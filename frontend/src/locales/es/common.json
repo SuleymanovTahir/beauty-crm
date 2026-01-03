@@ -23,6 +23,7 @@
   "confirm_logout": "¿Está seguro de que desea cerrar sesión?",
   "create": "Create",
   "custom_period": "tu periodo",
+  "edit": "Editar",
   "error_adding_status": "",
   "error_deleting_status": "",
   "error_loading": "",
@@ -91,6 +92,7 @@
   "save": "Ahorrar",
   "save_error": "",
   "save_settings": "",
+  "saved": "Guardado",
   "saving": "Ahorro...",
   "searchCountry": "Buscar un país...",
   "searchService": "Encuentra un servicio...",
@@ -125,6 +127,9 @@
   "upload_file": "Upload File",
   "uploading": "Cargando...",
   "url_link": "URL",
+  "view_bookings": "Ver reservas",
+  "view_calendar": "Ir al calendario",
+  "view_staff": "ir al personal",
   "yearsExperience": "años de experiencia",
   "yesterday": "Ayer"
 }

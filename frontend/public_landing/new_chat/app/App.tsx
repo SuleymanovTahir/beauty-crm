@@ -32,20 +32,26 @@ export default function App() {
   const [selectedMessenger, setSelectedMessenger] = useState<MessengerType>('instagram');
   const [selectedChatId, setSelectedChatId] = useState<string | null>('1');
   const [showInfoPanel, setShowInfoPanel] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Наш менеджер скоро ответит вам! 💜',
-      time: '18:38',
-      isOwn: true,
-    },
-    {
-      id: '2',
-      text: 'Наш менеджер скоро ответит вам! 💜',
-      time: '21:37',
-      isOwn: true,
-    },
-  ]);
+  const [messengerMessages, setMessengerMessages] = useState<Record<MessengerType, Message[]>>({
+    instagram: [
+      { id: 'i1', text: 'Привет! Какая цена на маникюр?', time: '10:00', isOwn: false },
+      { id: 'i2', text: 'Здравствуйте! Маникюр с покрытием от 2000р ✨', time: '10:05', isOwn: true },
+    ],
+    telegram: [
+      { id: 't1', text: 'Запишите меня на завтра на 15:00', time: '11:20', isOwn: false },
+      { id: 't2', text: 'Проверяю свободные окошки... Да, есть место! Ждем вас 🌸', time: '11:25', isOwn: true },
+    ],
+    whatsapp: [
+      { id: 'w1', text: 'Добрый день! Хочу уточнить адрес салона', time: '09:15', isOwn: false },
+      { id: 'w2', text: 'Добрый день! Мы находимся на ул. Примерная, 15 📍', time: '09:20', isOwn: true },
+    ],
+    tiktok: [
+      { id: 'tk1', text: 'Классное видео! Сколько стоит такая укладка?', time: '14:40', isOwn: false },
+      { id: 'tk2', text: 'Спасибо! Такая укладка стоит 3500р 💜', time: '14:45', isOwn: true },
+    ]
+  });
+
+  const messages = messengerMessages[selectedMessenger] || [];
 
   const [chats] = useState<Chat[]>([
     {
@@ -53,8 +59,8 @@ export default function App() {
       name: 'Tahir',
       username: '@Tahir',
       avatar: '',
-      lastMessage: '11 сообщений',
-      time: '02 янв.',
+      lastMessage: 'Записаться на завтра',
+      time: '12:00',
       unread: 0,
       phone: '+77056054308',
     },
@@ -69,7 +75,10 @@ export default function App() {
       time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
       isOwn: true,
     };
-    setMessages([...messages, newMessage]);
+    setMessengerMessages({
+      ...messengerMessages,
+      [selectedMessenger]: [...(messengerMessages[selectedMessenger] || []), newMessage]
+    });
   };
 
   const handleReply = (messageId: string) => {
@@ -89,19 +98,18 @@ export default function App() {
   };
 
   const handleLike = (messageId: string) => {
-    setMessages(messages.map(m => 
+    setMessages(messages.map(m =>
       m.id === messageId ? { ...m, liked: !m.liked } : m
     ));
   };
 
   return (
-    <div className={`h-screen flex ${
-      selectedMessenger === 'tiktok' ? 'bg-black' :
+    <div className={`h-screen flex ${selectedMessenger === 'tiktok' ? 'bg-black' :
       selectedMessenger === 'whatsapp' ? 'bg-[#f0f2f5]' :
-      'bg-gray-50'
-    }`}>
+        'bg-gray-50'
+      }`}>
       <Toaster />
-      
+
       {/* Messenger Sidebar */}
       <MessengerSidebar
         selectedMessenger={selectedMessenger}
@@ -130,12 +138,11 @@ export default function App() {
           />
 
           {/* Messages */}
-          <div className={`flex-1 overflow-y-auto p-4 ${
-            selectedMessenger === 'telegram' ? 'bg-[#e7eef3]' :
+          <div className={`flex-1 overflow-y-auto p-4 ${selectedMessenger === 'telegram' ? 'bg-[#e7eef3]' :
             selectedMessenger === 'whatsapp' ? 'bg-[#e5ddd5]' :
-            selectedMessenger === 'tiktok' ? 'bg-black' :
-            'bg-white'
-          }`}>
+              selectedMessenger === 'tiktok' ? 'bg-black' :
+                'bg-white'
+            }`}>
             <div className="max-w-4xl mx-auto space-y-1">
               {messages.map((message) => (
                 <MessageBubble
@@ -152,7 +159,7 @@ export default function App() {
           </div>
 
           {/* Input */}
-          <ChatInput 
+          <ChatInput
             onSendMessage={handleSendMessage}
             messengerType={selectedMessenger}
           />

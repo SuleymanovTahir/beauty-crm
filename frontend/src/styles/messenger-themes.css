@@ -141,25 +141,21 @@
   border-top: 1px solid #2a2a2a;
 }
 
-.messenger-tiktok .chat-input-area textarea {
-  background: #1a1a1a !important;
-  color: white !important;
-  border-color: #333 !important;
-}
-
-.messenger-tiktok .text-gray-900 {
+/* Применяем темную тему только к определенным элементам чата, чтобы не ломать боковые панели */
+.messenger-tiktok .chat-messages-area .text-gray-900,
+.messenger-tiktok .chat-messages-area .text-gray-700 {
   color: white !important;
 }
 
-.messenger-tiktok .text-gray-600,
-.messenger-tiktok .text-gray-500 {
+.messenger-tiktok .chat-messages-area .text-gray-600,
+.messenger-tiktok .chat-messages-area .text-gray-500 {
   color: #aaa !important;
 }
 
-/* Общие стили сообщений */
+/* Capsule message styles */
 .message-bubble {
-  max-width: 75%;
-  padding: 8px 12px;
+  max-width: 80%;
+  padding: 10px 16px;
   position: relative;
   font-size: 14px;
 }

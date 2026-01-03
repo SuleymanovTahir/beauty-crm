@@ -102,7 +102,10 @@
     "manual": "Manuellement",
     "telegram": "Télégramme",
     "title": "Source",
-    "whatsapp": "WhatsApp"
+    "whatsapp": "WhatsApp",
+    "account": "D'ACCORD",
+    "guest_link": "Lien",
+    "custom": "Votre source"
   },
   "status": "Statut",
   "status_updated": "Statut mis à jour",

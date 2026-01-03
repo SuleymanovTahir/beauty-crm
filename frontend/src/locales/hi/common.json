@@ -23,6 +23,7 @@
   "confirm_logout": "क्या आप लॉग आउट करना चाहते हैं?",
   "create": "Create",
   "custom_period": "आपकी अवधि",
+  "edit": "संपादन करना",
   "error_adding_status": "",
   "error_deleting_status": "",
   "error_loading": "",
@@ -91,6 +92,7 @@
   "save": "बचाना",
   "save_error": "",
   "save_settings": "",
+  "saved": "सहेजा गया",
   "saving": "सहेजा जा रहा है...",
   "searchCountry": "कोई देश खोजें...",
   "searchService": "एक सेवा खोजें...",
@@ -125,6 +127,9 @@
   "upload_file": "Upload File",
   "uploading": "लोड हो रहा है...",
   "url_link": "यूआरएल",
+  "view_bookings": "बुकिंग देखें",
+  "view_calendar": "कैलेंडर पर जाएँ",
+  "view_staff": "स्टाफ के पास जाओ",
   "yearsExperience": "वर्षों का अनुभव",
   "yesterday": "कल"
 }

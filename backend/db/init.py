@@ -796,6 +796,26 @@ def init_database():
         FOREIGN KEY (booking_id) REFERENCES bookings(id)
     )''')
 
+    # Таблица шаблонов сообщений
+    c.execute('''CREATE TABLE IF NOT EXISTS message_templates
+                 (id SERIAL PRIMARY KEY,
+                  name TEXT NOT NULL,
+                  content TEXT NOT NULL,
+                  category TEXT DEFAULT 'general',
+                  user_id INTEGER,
+                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  FOREIGN KEY (user_id) REFERENCES users(id))''')
+
+    # Таблица заметок клиентов
+    c.execute('''CREATE TABLE IF NOT EXISTS client_notes
+                 (id SERIAL PRIMARY KEY,
+                  client_id TEXT NOT NULL,
+                  note_text TEXT NOT NULL,
+                  created_by INTEGER,
+                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  FOREIGN KEY (client_id) REFERENCES clients(instagram_id) ON DELETE CASCADE,
+                  FOREIGN KEY (created_by) REFERENCES users(id))''')
+
     # Таблица специальных пакетов
     c.execute('''CREATE TABLE IF NOT EXISTS special_packages
                  (id SERIAL PRIMARY KEY,
