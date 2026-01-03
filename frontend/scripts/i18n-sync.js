@@ -177,7 +177,16 @@ async function syncTranslations() {
         for (const lang of LANGUAGES) {
             if (lang === REFERENCE_LANG) continue;
 
-            const filePath = path.join(LOCALES_DIR, lang, file);
+            const langDir = path.join(LOCALES_DIR, lang);
+            if (!fs.existsSync(langDir)) {
+                fs.mkdirSync(langDir, { recursive: true });
+            }
+
+            // Находим файл без учета регистра
+            const existingFiles = fs.readdirSync(path.dirname(path.join(langDir, file))).filter(f => f.toLowerCase() === path.basename(file).toLowerCase());
+            const fileName = existingFiles.length > 0 ? existingFiles[0] : path.basename(file).toLowerCase();
+            const filePath = path.join(path.dirname(path.join(langDir, file)), fileName);
+
             let langContent = {};
             let isNewFile = false;
 
@@ -189,13 +198,8 @@ async function syncTranslations() {
                     continue;
                 }
             } else {
-                // Создаем директорию если нет
-                const dirPath = path.dirname(filePath);
-                if (!fs.existsSync(dirPath)) {
-                    fs.mkdirSync(dirPath, { recursive: true });
-                }
                 isNewFile = true;
-                log(`📄 Создан новый файл: ${lang}/${file}`, 'green');
+                log(`📄 Создан новый файл: ${lang}/${fileName}`, 'green');
             }
 
             let fileChanges = 0;
