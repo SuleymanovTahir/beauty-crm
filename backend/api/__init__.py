@@ -16,11 +16,15 @@ from .uploads import router as uploads_router
 from .employees import router as employees_router
 from api.diagnostics import router as diagnostics_router
 from .client_auth import router as client_auth_router
+from .templates import router as templates_router
+from .notes import router as notes_router
 
 # Главный роутер API
 router = APIRouter(tags=["API"])
 
 # Подключаем все роутеры
+router.include_router(notes_router)
+router.include_router(templates_router)
 router.include_router(clients_router)
 router.include_router(bookings_router)
 router.include_router(services_router)

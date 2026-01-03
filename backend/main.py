@@ -128,7 +128,6 @@ app.mount("/static", CacheControlStaticFiles(directory=str(BASE_DIR / "static"))
 # API роутеры (все через /api)
 app.include_router(api_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
-app.include_router(templates_router, prefix="/api")
 app.include_router(statuses_router, prefix="/api")
 app.include_router(upload_router, prefix="/api")
 app.include_router(reminders_router, prefix="/api")
@@ -158,9 +157,6 @@ app.include_router(public_admin_router, prefix="/api")  # Public Content Admin A
 app.include_router(payroll_router, prefix="/api")  # Payroll API
 app.include_router(feedback_router, prefix="/api")  # Feedback API
 app.include_router(newsletter_router, prefix="/api")  # Newsletter API
-# Публичные роутеры (БЕЗ авторизации через /public)
-app.include_router(notes_router, prefix="/api")
-
 # Модуль публичных страниц (опциональный)
 from modules import is_module_enabled
 if is_module_enabled('public'):

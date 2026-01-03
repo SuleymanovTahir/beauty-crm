@@ -27,5 +27,9 @@
   "status_updated": "تم تحديث الحالة",
   "update": "تحديث",
   "update_status": "تحديث الحالة",
-  "write_to_client": "اكتب للعميل"
+  "write_to_client": "اكتب للعميل",
+  "visits": "الزيارات",
+  "total_spent": "إجمالي ما تم إنفاقه",
+  "internal_notes": "ملحوظات",
+  "no_notes": "لا توجد ملاحظات لهذا الإدخال."
 }

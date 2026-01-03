@@ -18,6 +18,12 @@ import {
   Image as ImageIcon,
   Video,
   Shield,
+  Phone,
+  Instagram,
+  Music,
+  Reply,
+  Forward,
+  Copy,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Textarea } from '../../components/ui/textarea';
@@ -89,6 +95,7 @@ export default function Chat() {
   const [isUploadingFile, setIsUploadingFile] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -98,6 +105,14 @@ export default function Chat() {
   const [botQuestion, setBotQuestion] = useState('');
   const [botContext, setBotContext] = useState('');
   const [showAIButtons, setShowAIButtons] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
+
+  const commonEmojis = [
+    '😊', '😂', '🥺', '😍', '✨', '❤️', '�', '�👍', '🙌', '�',
+    '✅', '⭐', '💯', '🚀', '👋', '🎁', '💰', '📅', '⏰', '�',
+    '💅', '�', '�‍♀️', '�‍♀️', '🌸', '�'
+  ];
   const [isSelectingMessages, setIsSelectingMessages] = useState(false);
   const [selectedMessageIds, setSelectedMessageIds] = useState<Set<string | number>>(new Set());
   const [isAskingBot, setIsAskingBot] = useState(false);
@@ -108,7 +123,13 @@ export default function Chat() {
     const clientIdFromUrl = searchParams.get('client_id');
     const messengerFromUrl = searchParams.get('messenger') || 'instagram';
 
+    const oldMessenger = currentMessenger;
     setCurrentMessenger(messengerFromUrl);
+
+    if (oldMessenger !== messengerFromUrl) {
+      setSelectedClient(null);
+      setMessages([]);
+    }
 
     if (clientIdFromUrl) {
       localStorage.setItem('selectedClientId', clientIdFromUrl);
@@ -117,6 +138,9 @@ export default function Chat() {
 
   useEffect(() => {
     loadClients();
+    // Сбрасываем текущий диалог при смене мессенджера
+    setSelectedClient(null);
+    setMessages([]);
   }, [currentMessenger]);
 
   useEffect(() => {
@@ -133,6 +157,20 @@ export default function Chat() {
       }
     }
   }, [clients]);
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
+        setShowEmojiPicker(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleEmojiClick = (emoji: string) => {
+    setMessage(prev => prev + emoji);
+    setShowEmojiPicker(false);
+  };
 
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
 
@@ -562,12 +600,29 @@ export default function Chat() {
     }
   };
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files);
+      setAttachedFiles([...attachedFiles, ...files]);
+      toast.success(t('chat:images_added', { count: files.length }));
+    }
+  };
+
+  const handleProhibitedAction = (action: string) => {
+    toast.error(`Системой ${currentMessenger} пока запрещено ${action}`);
+  };
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Временно отключено по просьбе пользователя
+    handleProhibitedAction('прикреплять файлы');
+    /* 
+    Не удалять - логика прикрепления файлов
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
       setAttachedFiles([...attachedFiles, ...files]);
       toast.success(t('chat:files_added', { count: files.length }));
     }
+    */
   };
 
   const handleRemoveFile = (index: number) => {
@@ -575,10 +630,12 @@ export default function Chat() {
     toast.info(t('chat:file_removed'));
   };
 
-  const filteredClients = clients.filter(client =>
-    (client.display_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (client.phone || '').includes(searchTerm)
-  );
+  const filteredClients = clients.filter(client => {
+    const matchesSearch = (client.display_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (client.phone || '').includes(searchTerm);
+    const matchesMessenger = client.source ? client.source === currentMessenger : true; // Fallback to all if source is missing
+    return matchesSearch && matchesMessenger;
+  });
 
   const canSend = message.trim().length > 0 || attachedFiles.length > 0;
 
@@ -644,7 +701,11 @@ export default function Chat() {
         `}>
           <div className="p-4 border-b border-gray-100">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-xl font-bold text-gray-900 capitalize">
+              <span className="text-xl font-bold text-gray-900 capitalize flex items-center gap-2">
+                {currentMessenger === 'instagram' && <Instagram className="w-6 h-6 text-pink-600" />}
+                {currentMessenger === 'telegram' && <Send className="w-6 h-6 text-blue-500" />}
+                {currentMessenger === 'whatsapp' && <MessageCircle className="w-6 h-6 text-green-500" />}
+                {currentMessenger === 'tiktok' && <Music className="w-6 h-6 text-black" />}
                 {currentMessenger} ({clients.length})
               </span>
             </div>
@@ -690,6 +751,18 @@ export default function Chat() {
                         }`}>
                         {client.display_name.charAt(0).toUpperCase()}
                       </div>
+                      {client.source && (
+                        <div className={`absolute -bottom-1 -right-1 size-5 rounded-full flex items-center justify-center shadow-lg z-10 border-2 border-white ${client.source === 'instagram' ? 'bg-gradient-to-tr from-purple-500 via-pink-500 to-orange-500' :
+                          client.source === 'telegram' ? 'bg-[#0088cc]' :
+                            client.source === 'whatsapp' ? 'bg-[#25D366]' :
+                              'bg-black'
+                          }`}>
+                          {client.source === 'instagram' && <Instagram className="w-2.5 h-2.5 text-white" />}
+                          {client.source === 'telegram' && <Send className="w-2.5 h-2.5 text-white" />}
+                          {client.source === 'whatsapp' && <MessageCircle className="w-2.5 h-2.5 text-white" />}
+                          {client.source === 'tiktok' && <Music className="w-2.5 h-2.5 text-white" />}
+                        </div>
+                      )}
                       {client.unread_count && client.unread_count > 0 && (
                         <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
                           {client.unread_count > 9 ? '9+' : client.unread_count}
@@ -728,15 +801,19 @@ export default function Chat() {
             {/* Main Chat Column */}
             <div className="flex-1 flex flex-col min-w-0">
               {/* Chat Header */}
-              <div className="p-3 md:p-4 border-b border-gray-200/50 chat-header flex-shrink-0 transition-colors duration-300">
+              <div className={`p-3 md:p-4 border-b border-gray-200/50 chat-header flex-shrink-0 transition-all duration-300 ${currentMessenger === 'whatsapp' ? 'bg-[#075e54] text-white border-b-0' :
+                currentMessenger === 'tiktok' ? 'bg-black text-white border-b-gray-800' :
+                  'bg-white text-gray-900'
+                }`}>
                 <div className="flex items-center justify-between gap-2">
                   {/* Left: Avatar & Info */}
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <button
                       onClick={handleBackToList}
-                      className="md:hidden p-2 -ml-2 hover:bg-black/5 rounded-full transition-colors"
+                      className={`md:hidden p-2 -ml-2 rounded-full transition-colors ${(currentMessenger === 'whatsapp' || currentMessenger === 'tiktok') ? 'hover:bg-white/10 text-white' : 'hover:bg-black/5 text-gray-700'
+                        }`}
                     >
-                      <ArrowLeft className="w-5 h-5 text-gray-700" />
+                      <ArrowLeft className="w-5 h-5" />
                     </button>
                     <div className="relative">
                       {selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? (
@@ -753,8 +830,10 @@ export default function Chat() {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-bold text-gray-900 truncate text-sm leading-tight">{selectedClient.display_name}</p>
-                      <p className="text-[11px] text-gray-500 truncate mt-0.5">
+                      <p className={`font-bold truncate text-sm leading-tight ${(currentMessenger === 'whatsapp' || currentMessenger === 'tiktok') ? 'text-white' : 'text-gray-900'
+                        }`}>{selectedClient.display_name}</p>
+                      <p className={`text-[11px] truncate mt-0.5 ${(currentMessenger === 'whatsapp' || currentMessenger === 'tiktok') ? 'text-white/70' : 'text-gray-500'
+                        }`}>
                         {selectedClient.username ? `@${selectedClient.username}` : 'Online'}
                       </p>
                     </div>
@@ -770,21 +849,28 @@ export default function Chat() {
                       <span className="text-[11px] font-bold tracking-wider">AI</span>
                     </button>
 
-                    <button className="p-2 text-gray-500 hover:bg-black/5 rounded-full transition-colors">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                      </svg>
+                    <button
+                      onClick={() => handleProhibitedAction('звонить')}
+                      className={`p-2 rounded-full transition-colors ${(currentMessenger === 'whatsapp' || currentMessenger === 'tiktok') ? 'text-white/70 hover:bg-white/10' : 'text-gray-500 hover:bg-black/5'
+                        }`}
+                      title="Аудиозвонок"
+                    >
+                      <Phone className="w-5 h-5" />
                     </button>
 
-                    <button className="p-2 text-gray-500 hover:bg-black/5 rounded-full transition-colors">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
+                    <button
+                      onClick={() => handleProhibitedAction('совершать видеозвонки')}
+                      className={`p-2 rounded-full transition-colors ${(currentMessenger === 'whatsapp' || currentMessenger === 'tiktok') ? 'text-white/70 hover:bg-white/10' : 'text-gray-500 hover:bg-black/5'
+                        }`}
+                      title="Видеозвонок"
+                    >
+                      <Video className="w-5 h-5" />
                     </button>
 
                     <button
                       onClick={() => setShowMobileMenu(!showMobileMenu)}
-                      className="p-2 text-gray-500 hover:bg-black/5 rounded-full transition-colors"
+                      className={`p-2 rounded-full transition-colors ${(currentMessenger === 'whatsapp' || currentMessenger === 'tiktok') ? 'text-white/70 hover:bg-white/10' : 'text-gray-500 hover:bg-black/5'
+                        }`}
                     >
                       <MoreVertical className="w-5 h-5" />
                     </button>
@@ -794,7 +880,7 @@ export default function Chat() {
                         <div className="fixed inset-0 z-40"
                           onClick={() => setShowMobileMenu(false)}
                         />
-                        <div className="absolute right-0 top-11 w-52 bg-white rounded-2xl shadow-2xl border border-gray-200 py-2 z-50">
+                        <div className="absolute right-0 top-11 w-52 bg-white rounded-2xl shadow-2xl border border-gray-200 py-2 z-50 text-gray-900">
                           <button
                             onClick={() => {
                               setShowClientInfo(!showClientInfo);
@@ -802,7 +888,7 @@ export default function Chat() {
                               setShowNotes(false);
                               setShowMobileMenu(false);
                             }}
-                            className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
+                            className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm text-gray-900"
                           >
                             <Info className="w-4 h-4 text-blue-600" />
                             <span className="font-medium">{t('chat:information')}</span>
@@ -814,7 +900,7 @@ export default function Chat() {
                               setShowNotes(false);
                               setShowMobileMenu(false);
                             }}
-                            className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
+                            className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm text-gray-900"
                           >
                             <FileText className="w-4 h-4 text-purple-600" />
                             <span className="font-medium">{t('chat:templates')}</span>
@@ -826,7 +912,7 @@ export default function Chat() {
                               setShowTemplates(false);
                               setShowMobileMenu(false);
                             }}
-                            className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
+                            className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm text-gray-900"
                           >
                             <StickyNote className="w-4 h-4 text-yellow-600" />
                             <span className="font-medium">{t('chat:notes')}</span>
@@ -865,8 +951,12 @@ export default function Chat() {
                 </div>
               )}
 
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 chat-messages-area transition-colors duration-300">
+              {/* Messages Area */}
+              <div className={`flex-1 overflow-y-auto p-4 space-y-3 chat-messages-area transition-colors duration-300 ${currentMessenger === 'telegram' ? 'bg-[#e7eef3]' :
+                currentMessenger === 'whatsapp' ? 'bg-[#e5ddd5]' :
+                  currentMessenger === 'tiktok' ? 'bg-black' :
+                    'bg-gray-50'
+                }`}>
                 {loadingMessages ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="flex flex-col items-center gap-3">
@@ -879,9 +969,9 @@ export default function Chat() {
                 ) : messages.length > 0 ? (
                   messages.map((msg, index) => (
                     <div
-                      key={msg.id}
+                      key={msg.id || index}
                       ref={(el) => { messageRefs.current[index] = el; }}
-                      className={`flex items-start gap-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
+                      className={`flex items-start gap-2 relative group ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
                     >
                       {/* Чекбокс для режима выделения */}
                       {isSelectingMessages && msg.id && (
@@ -1044,7 +1134,7 @@ export default function Chat() {
 
                       {/* Кнопки действий при наведении */}
                       <div
-                        className={`absolute ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'right-full mr-2' : 'left-full ml-2'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex flex-col gap-1 bg-white/95 backdrop-blur-sm rounded-full shadow-2xl border border-gray-200 p-1`}
+                        className={`absolute ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'right-full mr-4' : 'left-full ml-4'} top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-1.5 bg-white backdrop-blur-md rounded-2xl shadow-xl border border-gray-100 p-1.5 z-[100] animate-in zoom-in-95 duration-200`}
                       >
                         {/* Ответить - только на сообщения клиента */}
                         {msg.sender === 'client' && (
@@ -1053,15 +1143,12 @@ export default function Chat() {
                               setReplyToMessage(msg);
                               toast.info('💬 Ответ на сообщение');
                             }}
-                            className="w-10 h-10 hover:bg-white rounded-xl flex items-center justify-center transition-all hover:scale-110 shadow-sm border border-gray-100"
+                            className="w-10 h-10 hover:bg-purple-50 rounded-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-sm border border-gray-50 group/btn"
                             title="Ответить"
                           >
-                            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                            </svg>
+                            <Reply className="w-4 h-4 text-gray-500 group-hover/btn:text-purple-600 transition-colors" />
                           </button>
                         )}
-
 
                         {/* Переслать */}
                         <button
@@ -1069,34 +1156,22 @@ export default function Chat() {
                             setForwardMessage(msg);
                             setShowForwardModal(true);
                           }}
-                          className="w-10 h-10 hover:bg-white rounded-xl flex items-center justify-center transition-all hover:scale-110 shadow-sm border border-gray-100"
+                          className="w-10 h-10 hover:bg-purple-50 rounded-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-sm border border-gray-50 group/btn"
                           title="Переслать"
                         >
-                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                          </svg>
+                          <Forward className="w-4 h-4 text-gray-400 group-hover/btn:text-purple-600 transition-colors" />
                         </button>
 
                         {/* Копировать */}
                         <button
                           onClick={() => {
                             navigator.clipboard.writeText(msg.message);
-                            toast.success('📋 Скопировано!');
+                            toast.success('📋 Текст скопирован');
                           }}
-                          className="w-9 h-9 hover:bg-gray-50 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                          className="w-10 h-10 hover:bg-purple-50 rounded-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-sm border border-gray-50 group/btn"
                           title="Копировать"
                         >
-                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                        </button>
-                        <button
-                          className="w-9 h-9 hover:bg-gray-50 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                          title="Еще"
-                        >
-                          <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                          </svg>
+                          <Copy className="w-4 h-4 text-gray-400 group-hover/btn:text-purple-600 transition-colors" />
                         </button>
                       </div>
                     </div>
@@ -1209,99 +1284,169 @@ export default function Chat() {
                 </div>
               )}
 
-              {/* Chat Input */}
-              <div className="p-3 chat-input-area flex-shrink-0">
+              {/* Chat Input Capsule */}
+              <div className="p-4 md:p-6 chat-input-area flex-shrink-0">
                 {/* Reply Preview */}
                 {replyToMessage && (
-                  <div className="mb-2 max-w-md">
-                    <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-2 flex items-start gap-2 shadow-sm">
+                  <div className="mb-3 max-w-xl mx-auto">
+                    <div className="bg-white/80 backdrop-blur border-l-4 border-purple-500 rounded-2xl p-3 flex items-start gap-3 shadow-lg animate-in slide-in-from-bottom-2">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <svg className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="flex items-center gap-2 mb-1">
+                          <svg className="w-4 h-4 text-purple-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                           </svg>
-                          <span className="text-xs font-bold text-blue-900">
+                          <span className="text-xs font-bold text-gray-700">
                             Ответ на {replyToMessage.sender === 'client' ? selectedClient?.display_name : 'ваше сообщение'}
                           </span>
                         </div>
-                        <p className="text-xs text-blue-700 truncate">
-                          {replyToMessage.message.substring(0, 60)}{replyToMessage.message.length > 60 ? '...' : ''}
+                        <p className="text-xs text-gray-500 truncate italic">
+                          "{replyToMessage.message.substring(0, 100)}{replyToMessage.message.length > 100 ? '...' : ''}"
                         </p>
                       </div>
                       <button
                         onClick={() => setReplyToMessage(null)}
-                        className="flex-shrink-0 w-5 h-5 rounded-full hover:bg-blue-100 flex items-center justify-center transition-colors"
+                        className="flex-shrink-0 w-6 h-6 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors"
                       >
-                        <X className="w-3.5 h-3.5 text-blue-600" />
+                        <X className="w-4 h-4 text-gray-400" />
                       </button>
                     </div>
                   </div>
                 )}
 
-                <div className="flex items-center gap-3">
-                  <button onClick={() => fileInputRef.current?.click()} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
+                <div className="max-w-5xl mx-auto flex items-center gap-3 bg-[#F1F5F9] p-1.5 rounded-[28px] shadow-inner relative group/input">
+                  {/* Image Attachment (Allowed) */}
+                  <button
+                    onClick={() => imageInputRef.current?.click()}
+                    className="p-3 text-gray-500 hover:bg-white hover:text-purple-600 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-md"
+                    title="Прикрепить изображение"
+                  >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </button>
-                  <button onClick={() => fileInputRef.current?.click()} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
+
+                  <input
+                    type="file"
+                    ref={imageInputRef}
+                    onChange={handleImageSelect}
+                    className="hidden"
+                    multiple
+                    accept="image/*"
+                  />
+
+                  {/* File Attachment */}
+                  <button
+                    onClick={() => handleProhibitedAction('прикреплять файлы')}
+                    className="p-3 text-gray-500 hover:bg-white hover:text-purple-600 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-md"
+                    title="Прикрепить файл"
+                  >
                     <Paperclip className="w-6 h-6" />
                   </button>
 
-                  <div className="flex-1 relative">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileSelect}
+                    className="hidden"
+                    multiple
+                  />
+
+                  <div className="flex-1 relative flex items-center">
                     <input
                       type="text"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder="Сообщение..."
-                      className="w-full h-11 pl-4 pr-10 bg-[#F1F5F9] border-none rounded-full text-sm focus:ring-2 focus:ring-purple-500 transition-all"
+                      className="w-full bg-transparent border-none py-3 px-2 text-sm text-gray-900 placeholder:text-gray-400 focus:ring-0"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           handleSendMessage();
                         }
                       }}
                     />
-                    <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </button>
+
+                    {/* Emoji Button */}
+                    <div className="relative" ref={emojiPickerRef}>
+                      <button
+                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                        className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        <span className="text-xl grayscale group-hover/input:grayscale-0 transition-all">😊</span>
+                      </button>
+
+                      {showEmojiPicker && (
+                        <div className="absolute bottom-full right-0 mb-4 p-4 bg-white/95 backdrop-blur-2xl rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-white/20 w-[300px] z-50 animate-in fade-in zoom-in-95 slide-in-from-bottom-6 duration-300">
+                          <div className="flex items-center justify-between mb-3 px-1">
+                            <span className="text-[13px] font-bold text-gray-400 uppercase tracking-wider">Часто используемые</span>
+                          </div>
+                          <div className="grid grid-cols-6 gap-2.5">
+                            {commonEmojis.map(emoji => (
+                              <button
+                                key={emoji}
+                                onClick={() => handleEmojiClick(emoji)}
+                                className="w-10 h-10 flex items-center justify-center text-3xl hover:bg-gray-100/80 active:scale-75 rounded-[12px] transition-all duration-200 ease-out hover:shadow-sm"
+                              >
+                                {emoji}
+                              </button>
+                            ))}
+                          </div>
+                          <div className="mt-4 flex justify-center">
+                            <div className="w-14 h-1.5 bg-gray-200/50 rounded-full" />
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  <button
-                    onClick={handleSendMessage}
-                    className="p-3 bg-purple-50 hover:bg-purple-100 text-purple-600 rounded-full transition-colors"
-                  >
+                  {/* Send or Voice Button */}
+                  <div className="flex items-center">
                     {message.trim() ? (
-                      <Send className="w-5 h-5" />
+                      <button
+                        onClick={handleSendMessage}
+                        className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg active:scale-95 flex items-center justify-center"
+                      >
+                        <Send className="w-5 h-5" />
+                      </button>
                     ) : (
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                      </svg>
+                      /* Voice message temporarily disabled */
+                      <button
+                        onClick={() => handleProhibitedAction('отправлять голосовые сообщения')}
+                        className="p-3 text-gray-500 hover:bg-white hover:text-purple-600 rounded-full transition-all duration-300"
+                        title="Голосовое сообщение"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                        </svg>
+                      </button>
                     )}
-                  </button>
+                  </div>
                 </div>
 
                 {botSuggestion && (
-                  <button
-                    onClick={() => {
-                      setBotSuggestion(null);
-                      setMessage('');
-                      toast.info('Предложение бота сброшено');
-                    }}
-                    className="absolute top-2 right-2 text-xs text-purple-600 hover:text-purple-700 font-medium bg-white px-2 py-1 rounded shadow-sm"
-                  >
-                    ✕ Сбросить
-                  </button>
+                  <div className="max-w-5xl mx-auto mt-4 relative animate-in slide-in-from-top-4">
+                    <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4 pr-12 shadow-sm">
+                      <p className="text-sm text-purple-900 font-medium">✨ Совет от бота:</p>
+                      <p className="text-sm text-purple-700 mt-1">{botSuggestion}</p>
+                      <button
+                        onClick={() => {
+                          setBotSuggestion(null);
+                          setMessage('');
+                        }}
+                        className="absolute top-4 right-4 text-purple-400 hover:text-purple-600 transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
 
             {/* Right Sidebar for Panels */}
-            {(showClientInfo || showTemplates || showNotes) && (
-              <div className="w-full md:w-96 border-l border-gray-200 overflow-y-auto flex-shrink-0 bg-white">
-                {showClientInfo && selectedClient && (
-                  <div className="p-4">
+            {selectedClient && (showClientInfo || showTemplates || showNotes) && (
+              <div className="w-full md:w-96 border-l border-gray-200 overflow-y-auto flex-shrink-0 bg-white text-gray-900 shadow-xl z-20">
+                {showClientInfo && (
+                  <div className="p-4 text-gray-900">
                     <InfoPanel
                       client={selectedClient}
                       onClose={() => setShowClientInfo(false)}
@@ -1574,6 +1719,6 @@ export default function Chat() {
           </div>
         )
       }
-    </div>
-);
+    </div >
+  );
 }

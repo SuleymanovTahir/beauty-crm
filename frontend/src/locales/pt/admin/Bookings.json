@@ -102,7 +102,10 @@
     "manual": "Manualmente",
     "telegram": "Telegrama",
     "title": "Fonte",
-    "whatsapp": "whatsapp"
+    "whatsapp": "whatsapp",
+    "account": "OK",
+    "guest_link": "Link",
+    "custom": "Sua fonte"
   },
   "status": "Status",
   "status_updated": "Status atualizado",

@@ -21,5 +21,9 @@
   "status_updated": "Estado actualizado",
   "update": "Actualizar",
   "update_status": "Estado de actualización",
-  "write_to_client": "Escribir al cliente"
+  "write_to_client": "Escribir al cliente",
+  "visits": "visitas",
+  "total_spent": "Total gastado",
+  "internal_notes": "Notas",
+  "no_notes": "No hay notas para esta entrada."
 }
