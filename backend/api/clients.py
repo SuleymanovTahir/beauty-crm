@@ -263,7 +263,9 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
             "age": client[22] if len(client) > 22 else None,
             "birth_date": client[23] if len(client) > 23 else None,
             "email": client[20] if len(client) > 20 else None,
-            "referral_code": client[24] if len(client) > 24 else None
+            "referral_code": client[24] if len(client) > 24 else None,
+            "source": client[25] if len(client) > 25 else "manual",
+            "telegram_id": client[26] if len(client) > 26 else None
         },
         "stats": {
             "top_procedures": top_procedures,
