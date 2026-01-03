@@ -75,25 +75,37 @@ const namespaces = [
 // Используем import.meta as any для обхода ошибки типов с Vite
 const localeFiles = (import.meta as any).glob('./locales/**/*.json', { eager: true });
 
+// Create a case-insensitive map of available locale files
+const lowercaseLocaleFiles: Record<string, string> = {};
+Object.keys(localeFiles).forEach(key => {
+  lowercaseLocaleFiles[key.toLowerCase()] = key;
+});
+
 const resources: Record<string, any> = {};
 
 for (const lang of languages) {
   resources[lang] = {};
   for (const ns of namespaces) {
-    let key = `./locales/${lang}/${ns}.json`;
+    const standardKey = `./locales/${lang}/${ns}.json`;
+    let key = standardKey;
 
     // Support for separate public_landing folder
     if (ns.startsWith('public_landing/')) {
       const cleanNs = ns.replace('public_landing/', '');
-      // Check if file exists in the separate folder: locales/public_landing/en/common.json
       const altKey = `./locales/public_landing/${lang}/${cleanNs}.json`;
-      if (localeFiles[altKey]) {
-        key = altKey;
+      if (lowercaseLocaleFiles[altKey.toLowerCase()]) {
+        key = lowercaseLocaleFiles[altKey.toLowerCase()];
+      }
+    } else {
+      // Use the case-insensitive map to find the actual key
+      if (lowercaseLocaleFiles[standardKey.toLowerCase()]) {
+        key = lowercaseLocaleFiles[standardKey.toLowerCase()];
       }
     }
 
-    if (localeFiles[key]) {
-      resources[lang][ns] = (localeFiles[key] as any).default || localeFiles[key];
+    if (localeFiles[key] && key !== standardKey || localeFiles[standardKey]) {
+      const actualKey = localeFiles[key] ? key : standardKey;
+      resources[lang][ns] = (localeFiles[actualKey] as any).default || localeFiles[actualKey];
     } else {
       resources[lang][ns] = {};
     }
