@@ -21,9 +21,10 @@ interface StatusSelectProps {
   allowAdd?: boolean;
   onAddStatus?: (key: string, label: string, color: string) => void;
   showAllOption?: boolean;
+  variant?: 'default' | 'filter';
 }
 
-export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, showAllOption }: StatusSelectProps) {
+export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, showAllOption, variant = 'default' }: StatusSelectProps) {
   const { t } = useTranslation(['components', 'common', 'clients', 'admin/Clients']);
 
   const currentStatus = value === 'all'
@@ -83,12 +84,16 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
     return 'bg-gray-400';
   };
 
+  const buttonClasses = variant === 'filter'
+    ? 'inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-all bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+    : `inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all hover:ring-2 hover:ring-offset-1 hover:ring-pink-200 w-fit ${getColorClasses(currentStatus.color)}`;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div
           onClick={(e) => e.stopPropagation()}
-          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all hover:ring-2 hover:ring-offset-1 hover:ring-pink-200 w-fit ${getColorClasses(currentStatus.color)}`}
+          className={buttonClasses}
         >
           <span className="truncate">{currentStatus.label}</span>
           <ChevronDown className="w-3 h-3 opacity-50 shrink-0" />

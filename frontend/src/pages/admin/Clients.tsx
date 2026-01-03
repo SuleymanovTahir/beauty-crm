@@ -670,28 +670,24 @@ export default function Clients() {
         </div>
       </div>
 
-      <div style={{ backgroundColor: '#fff', padding: '1rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb', marginBottom: '1.5rem' }}>
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6">
         <div className="flex flex-col gap-4">
-          {/* Row 1: Search */}
-          <div style={{ position: 'relative', width: '100%', maxWidth: '400px' }}>
-            <Search style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', width: '18px', height: '18px', color: '#9ca3af' }} />
+          {/* Search Row */}
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-gray-400" />
             <input
               type="text"
               placeholder={t('clients:search_placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                width: '100%', padding: '0.5rem 0.75rem 0.5rem 2.25rem',
-                border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                fontSize: '0.875rem', boxSizing: 'border-box'
-              }}
+              className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
             />
           </div>
 
-          {/* Row 2: Filters and Actions */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 w-full">
+          {/* Filters and Actions Row */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
             {/* Filters Group */}
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3">
               {/* Status Filter */}
               <StatusSelect
                 value={statusFilter}
@@ -732,61 +728,44 @@ export default function Clients() {
                   />
                 </div>
               )}
-            </div>
+          </div>
 
-            {/* Actions Group */}
-            <div className="flex items-center gap-2">
-              {selectedClients.size > 0 && (
-                <button
-                  onClick={handleBulkDelete}
-                  disabled={loading}
-                  style={{
-                    padding: '0.5rem 1rem', backgroundColor: '#fff', color: '#dc2626',
-                    border: '1px solid #dc2626', borderRadius: '0.5rem', fontSize: '0.875rem',
-                    fontWeight: '500', cursor: loading ? 'not-allowed' : 'pointer',
-                    display: 'flex', alignItems: 'center', gap: '0.5rem',
-                    opacity: loading ? 0.5 : 1, whiteSpace: 'nowrap'
-                  }}
-                >
-                  <Trash2 style={{ width: '16px', height: '16px' }} />
-                  {t('clients:delete_selected')} ({selectedClients.size})
-                </button>
-              )}
-
+          {/* Actions Group */}
+          <div className="flex flex-wrap items-center gap-2">
+            {selectedClients.size > 0 && (
               <button
-                onClick={() => setShowCreateDialog(true)}
-                style={{
-                  padding: '0.5rem 1rem', backgroundColor: '#ec4899', color: '#fff',
-                  border: 'none', borderRadius: '0.5rem', fontSize: '0.875rem',
-                  fontWeight: '500', cursor: 'pointer', display: 'flex',
-                  alignItems: 'center', gap: '0.5rem', whiteSpace: 'nowrap'
-                }}
+                onClick={handleBulkDelete}
+                disabled={loading}
+                className="px-4 py-2 bg-white text-red-600 border border-red-600 rounded-lg text-sm font-medium hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap transition-colors"
               >
-                <Plus style={{ width: '16px', height: '16px' }} />
-                {t('clients:add_client')}
+                <Trash2 className="w-4 h-4" />
+                {t('clients:delete_selected')} ({selectedClients.size})
               </button>
+            )}
 
-              <button
-                onClick={() => setShowImportDialog(true)}
-                disabled={importing}
-                style={{
-                  padding: '0.5rem 1rem', backgroundColor: '#fff', color: '#111',
-                  border: '1px solid #d1d5db', borderRadius: '0.5rem', fontSize: '0.875rem',
-                  fontWeight: '500', cursor: importing ? 'not-allowed' : 'pointer',
-                  display: 'flex', alignItems: 'center', gap: '0.5rem',
-                  opacity: importing ? 0.5 : 1, whiteSpace: 'nowrap'
-                }}
-              >
-                <Upload style={{ width: '16px', height: '16px' }} />
-                {importing ? t('clients:importing') : t('clients:import')}
-              </button>
+            <button
+              onClick={() => setShowCreateDialog(true)}
+              className="px-4 py-2 bg-pink-600 text-white rounded-lg text-sm font-medium hover:bg-pink-700 flex items-center gap-2 whitespace-nowrap transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              {t('clients:add_client')}
+            </button>
 
-              <ExportDropdown
-                onExport={handleExport}
-                loading={exporting}
-                disabled={exporting}
-              />
-            </div>
+            <button
+              onClick={() => setShowImportDialog(true)}
+              disabled={importing}
+              className="px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap transition-colors"
+            >
+              <Upload className="w-4 h-4" />
+              {importing ? t('clients:importing') : t('clients:import')}
+            </button>
+
+            <ExportDropdown
+              onExport={handleExport}
+              loading={exporting}
+              disabled={exporting}
+            />
+          </div>
           </div>
         </div>
       </div>
