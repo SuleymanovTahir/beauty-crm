@@ -1,7 +1,7 @@
 // /frontend/src/pages/admin/ClientDetail.tsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Phone, Calendar, MessageSquare, Edit2, Save, X, Clock, Instagram, User, Upload, Plus, Trash2, Target, Loader } from 'lucide-react';
+import { ArrowLeft, Phone, Calendar, MessageSquare, Edit2, Save, X, Clock, Instagram, User, Upload, Plus, Trash2, Target, Loader, TrendingUp } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -12,7 +12,7 @@ import { Label } from '../../components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { api } from '../../services/api';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart, Area } from 'recharts';
 
 interface Client {
   id: string;
@@ -606,16 +606,56 @@ export default function ClientDetail() {
 
               {/* Visits Chart */}
               {stats?.visits_chart && stats.visits_chart.length > 0 ? (
-                <div className="h-40 mt-4">
-                  <p className="text-sm text-gray-600 mb-2">{t('visits_dynamics', 'Visit dynamics')}</p>
+                <div className="h-64 mt-8 pb-4">
+                  <p className="text-sm font-semibold text-gray-700 mb-6 flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-pink-500" />
+                    {t('visits_dynamics', 'Visit dynamics')}
+                  </p>
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={stats.visits_chart}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                      <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-                      <YAxis hide />
-                      <Tooltip />
-                      <Bar dataKey="count" fill="#ec4899" radius={[4, 4, 0, 0]} />
-                    </BarChart>
+                    <AreaChart data={stats.visits_chart} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#ec4899" stopOpacity={0.2} />
+                          <stop offset="95%" stopColor="#ec4899" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                      <XAxis
+                        dataKey="date"
+                        tick={{ fontSize: 11, fill: '#9ca3af' }}
+                        axisLine={false}
+                        tickLine={false}
+                        dy={10}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 11, fill: '#9ca3af' }}
+                        axisLine={false}
+                        tickLine={false}
+                        allowDecimals={false}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#fff',
+                          border: 'none',
+                          borderRadius: '12px',
+                          boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                          fontSize: '13px',
+                          padding: '12px'
+                        }}
+                        itemStyle={{ color: '#ec4899', fontWeight: 'bold' }}
+                        cursor={{ stroke: '#ec4899', strokeWidth: 2, strokeDasharray: '5 5' }}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="count"
+                        stroke="#ec4899"
+                        strokeWidth={3}
+                        fillOpacity={1}
+                        fill="url(#colorVisits)"
+                        dot={{ r: 4, fill: '#ec4899', strokeWidth: 2, stroke: '#fff' }}
+                        activeDot={{ r: 6, fill: '#ec4899', strokeWidth: 2, stroke: '#fff' }}
+                      />
+                    </AreaChart>
                   </ResponsiveContainer>
                 </div>
               ) : (
