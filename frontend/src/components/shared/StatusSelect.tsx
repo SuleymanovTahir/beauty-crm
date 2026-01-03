@@ -86,11 +86,9 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
       <DropdownMenuTrigger asChild>
         <div
           onClick={(e) => e.stopPropagation()}
-          className={`inline-flex items-center justify-between gap-2 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all hover:ring-2 hover:ring-offset-1 hover:ring-pink-200 min-w-[160px] ${getColorClasses(currentStatus.color)}`}
+          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all hover:ring-2 hover:ring-offset-1 hover:ring-pink-200 w-fit ${getColorClasses(currentStatus.color)}`}
         >
-          <div className="flex items-center gap-2 overflow-hidden">
-            <span className="truncate">{currentStatus.label}</span>
-          </div>
+          <span className="truncate">{currentStatus.label}</span>
           <ChevronDown className="w-3 h-3 opacity-50 shrink-0" />
         </div>
       </DropdownMenuTrigger>
