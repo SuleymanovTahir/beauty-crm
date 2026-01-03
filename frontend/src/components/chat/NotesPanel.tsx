@@ -117,7 +117,7 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
           <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center" title="Заметки по клиенту">
             <StickyNote className="w-5 h-5 text-white" />
           </div>
-          <h3 className="font-bold text-white text-lg">Заметки ({notes.length})</h3>
+          <h3 className="font-bold text-white text-lg">{t('notes')} ({notes.length})</h3>
         </div>
         <button
           onClick={onClose}
