@@ -45,6 +45,8 @@ interface Client {
   profile_pic?: string;
   unread_count?: number;
   notes?: string;
+  source?: string;
+  telegram_id?: string;
 }
 
 interface Message {
