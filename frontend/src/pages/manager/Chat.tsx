@@ -1607,7 +1607,7 @@ export default function Chat() {
             )}
           </div>
         ) : (
-          <div className="flex-1 hidden md:flex items-center justify-center bg-gradient-to-br from-gray-50 to-pink-50">
+          <div className="flex-1 hidden md:flex items-center justify-center bg-gradient-to-br from-gray-50 to-pink-50 empty-chat-area">
             <div className="text-center">
               <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl">
                 <MessageCircle className="w-12 h-12 text-pink-600" />

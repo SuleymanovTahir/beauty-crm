@@ -113,14 +113,27 @@
 
 /* WhatsApp Theme */
 .messenger-whatsapp .chat-header.chat-header {
-  background-color: #f0f2f5 !important;
+  background-color: #00a884 !important;
   background-image: none !important;
-  border-bottom: 1px solid #d1d7db !important;
-  color: #000000 !important;
+  border-bottom: none !important;
+  color: #ffffff !important;
 }
 
 .messenger-whatsapp .chat-header * {
-  color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.messenger-whatsapp .chat-header button[class*="bg-[#25D366]"] {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+.messenger-whatsapp .chat-header button[class*="bg-[#25D366]"] * {
+  color: #ffffff !important;
+}
+
+.messenger-whatsapp .chat-header button[class*="bg-[#25D366]"]:hover {
+  background-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 .messenger-whatsapp .chat-messages-area.chat-messages-area {
@@ -147,6 +160,25 @@
 .messenger-whatsapp .chat-input-area.chat-input-area {
   background-color: #f0f2f5 !important;
   background-image: none !important;
+}
+
+.messenger-whatsapp .empty-chat-area {
+  background-color: #e5ddd5 !important;
+  background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png") !important;
+  background-blend-mode: overlay;
+}
+
+.messenger-whatsapp .empty-chat-area .bg-gradient-to-br {
+  background: #d9fdd3 !important;
+}
+
+.messenger-whatsapp .empty-chat-area .text-pink-600 {
+  color: #00a884 !important;
+}
+
+.messenger-whatsapp .empty-chat-area .text-gray-700,
+.messenger-whatsapp .empty-chat-area .text-gray-500 {
+  color: #667781 !important;
 }
 
 /* TikTok Theme */
