@@ -136,6 +136,12 @@ export default function Chat() {
     botSuggestionBg: string;
     botSuggestionText: string;
     botSuggestionBorder: string;
+    headerBg: string;
+    headerText: string;
+    headerBorder: string;
+    messagesAreaBg: string;
+    inputAreaBg: string;
+    inputAreaBorder: string;
   }> = {
     instagram: {
       aiButton: 'bg-[#A855F7] hover:bg-[#9333EA]',
@@ -144,7 +150,13 @@ export default function Chat() {
       selectionBg: 'bg-purple-100/50 dark:bg-purple-900/10',
       botSuggestionBg: 'bg-purple-50',
       botSuggestionText: 'text-purple-700',
-      botSuggestionBorder: 'border-purple-100'
+      botSuggestionBorder: 'border-purple-100',
+      headerBg: 'bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500',
+      headerText: 'text-white',
+      headerBorder: 'border-purple-400',
+      messagesAreaBg: 'bg-white',
+      inputAreaBg: 'bg-white',
+      inputAreaBorder: 'border-gray-200'
     },
     telegram: {
       aiButton: 'bg-[#0088cc] hover:bg-[#0077b3]',
@@ -153,7 +165,13 @@ export default function Chat() {
       selectionBg: 'bg-blue-100/50 dark:bg-blue-900/10',
       botSuggestionBg: 'bg-blue-50',
       botSuggestionText: 'text-blue-700',
-      botSuggestionBorder: 'border-blue-100'
+      botSuggestionBorder: 'border-blue-100',
+      headerBg: 'bg-white',
+      headerText: 'text-gray-900',
+      headerBorder: 'border-gray-200',
+      messagesAreaBg: 'bg-[#eff1f5]',
+      inputAreaBg: 'bg-white',
+      inputAreaBorder: 'border-gray-200'
     },
     whatsapp: {
       aiButton: 'bg-[#25D366] hover:bg-[#20bd5a]',
@@ -162,7 +180,13 @@ export default function Chat() {
       selectionBg: 'bg-green-100/50 dark:bg-green-900/10',
       botSuggestionBg: 'bg-green-50',
       botSuggestionText: 'text-green-700',
-      botSuggestionBorder: 'border-green-100'
+      botSuggestionBorder: 'border-green-100',
+      headerBg: 'bg-[#f0f2f5]',
+      headerText: 'text-gray-900',
+      headerBorder: 'border-[#d1d7db]',
+      messagesAreaBg: 'bg-[#e5ddd5]',
+      inputAreaBg: 'bg-[#f0f2f5]',
+      inputAreaBorder: 'border-gray-200'
     },
     tiktok: {
       aiButton: 'bg-[#fe2c55] hover:bg-[#e61e4d]',
@@ -171,7 +195,13 @@ export default function Chat() {
       selectionBg: 'bg-gray-100/50 dark:bg-gray-800/10',
       botSuggestionBg: 'bg-gray-50',
       botSuggestionText: 'text-gray-700',
-      botSuggestionBorder: 'border-gray-100'
+      botSuggestionBorder: 'border-gray-100',
+      headerBg: 'bg-black',
+      headerText: 'text-white',
+      headerBorder: 'border-[#2a2a2a]',
+      messagesAreaBg: 'bg-black',
+      inputAreaBg: 'bg-black',
+      inputAreaBorder: 'border-[#2a2a2a]'
     }
   };
 
@@ -864,7 +894,9 @@ export default function Chat() {
             {/* Main Chat Column */}
             <div className="flex-1 flex flex-col min-w-0">
               {/* Chat Header */}
-              <div className="p-2 md:p-3 border-b border-gray-200/50 chat-header flex-shrink-0">
+              <div
+                className="p-2 md:p-3 chat-header flex-shrink-0"
+              >
                 <div className="flex items-center justify-between gap-2">
                   {/* Left: Avatar & Info */}
                   <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -994,7 +1026,9 @@ export default function Chat() {
               )}
 
               {/* Messages Area */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 chat-messages-area">
+              <div
+                className="flex-1 overflow-y-auto p-4 space-y-3 chat-messages-area"
+              >
                 {loadingMessages ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="flex flex-col items-center gap-3">
@@ -1352,7 +1386,9 @@ export default function Chat() {
               )}
 
               {/* Chat Input Capsule */}
-              <div className="p-4 md:p-6 chat-input-area flex-shrink-0">
+              <div
+                className="p-4 md:p-6 chat-input-area flex-shrink-0"
+              >
                 {/* Reply Preview */}
                 {replyToMessage && (
                   <div className="mb-3 max-w-xl mx-auto">
