@@ -144,6 +144,9 @@ export default function Bookings() {
     // Load saved filter from localStorage
     return localStorage.getItem('bookings_status_filter') || 'all';
   });
+  const [masterFilter, setMasterFilter] = useState(() => {
+    return localStorage.getItem('bookings_master_filter') || 'all';
+  });
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -216,6 +219,7 @@ export default function Bookings() {
         (booking.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (booking.service_name || '').toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
+      const matchesMaster = masterFilter === 'all' || booking.master === masterFilter;
 
       // ✅ ДОБАВЛЕНА ФИЛЬТРАЦИЯ ПО ДАТЕ
       let matchesDate = true;
@@ -230,6 +234,11 @@ export default function Bookings() {
           weekAgo.setDate(weekAgo.getDate() - 7);
           weekAgo.setHours(0, 0, 0, 0);
           matchesDate = bookingDate >= weekAgo;
+        } else if (period === '14') {
+          const twoWeeksAgo = new Date();
+          twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+          twoWeeksAgo.setHours(0, 0, 0, 0);
+          matchesDate = bookingDate >= twoWeeksAgo;
         } else if (period === '30') {
           const monthAgo = new Date();
           monthAgo.setDate(monthAgo.getDate() - 30);
@@ -251,7 +260,7 @@ export default function Bookings() {
         }
       }
 
-      return matchesSearch && matchesStatus && matchesDate;
+      return matchesSearch && matchesStatus && matchesDate && matchesMaster;
     });
 
     // Apply sorting
@@ -293,12 +302,16 @@ export default function Bookings() {
     });
 
     setFilteredBookings(sorted);
-  }, [searchTerm, statusFilter, bookings, period, dateFrom, dateTo, sortField, sortDirection]);
+  }, [searchTerm, statusFilter, bookings, period, dateFrom, dateTo, sortField, sortDirection, masterFilter]);
 
   // Save filters to localStorage when they change
   useEffect(() => {
     localStorage.setItem('bookings_status_filter', statusFilter);
   }, [statusFilter]);
+
+  useEffect(() => {
+    localStorage.setItem('bookings_master_filter', masterFilter);
+  }, [masterFilter]);
 
   useEffect(() => {
     localStorage.setItem('bookings_period_filter', period);
@@ -683,20 +696,17 @@ export default function Bookings() {
   }
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div className="p-4 sm:p-6 lg:p-8">
+      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Calendar style={{ width: '32px', height: '32px', color: '#ec4899' }} />
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 flex items-center gap-2 sm:gap-3">
+            <Calendar className="w-8 h-8 text-pink-600" />
             {t('bookings:title')}
           </h1>
-          <p style={{ color: '#666' }}>{filteredBookings.length} {t('bookings:records_count')}</p>
+          <p className="text-gray-600 text-sm sm:base">{filteredBookings.length} {t('bookings:records_count')}</p>
         </div>
-        <button onClick={handleRefresh} disabled={refreshing} style={{
-          padding: '0.5rem 1rem', backgroundColor: '#fff', border: '1px solid #ddd',
-          borderRadius: '0.5rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem'
-        }}>
-          <RefreshCw style={{ width: '16px', height: '16px', animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
+        <button onClick={handleRefresh} disabled={refreshing} className="w-full sm:w-auto px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 flex items-center justify-center gap-2 transition-colors shadow-sm">
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
           {t('bookings:refresh')}
         </button>
       </div>
@@ -775,185 +785,161 @@ export default function Bookings() {
 
       {/* Filters */}
       <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6">
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Search */}
-          <div className="relative w-full sm:w-[280px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-gray-400" />
-            <input
-              type="text"
-              placeholder={t('bookings:search')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-            />
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* Search */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-gray-400" />
+              <input
+                type="text"
+                placeholder={t('bookings:search')}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Filters Group */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              {/* Status Filter */}
+              <StatusSelect
+                value={statusFilter}
+                onChange={setStatusFilter}
+                options={statusConfig}
+                allowAdd={false}
+                showAllOption={true}
+                variant="filter"
+              />
+
+              {/* Master Filter */}
+              <select
+                value={masterFilter}
+                onChange={(e) => setMasterFilter(e.target.value)}
+                className="px-3 py-2 pr-10 border border-gray-300 rounded-lg text-sm min-w-[140px] appearance-none bg-white bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%236b7280%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:16px_16px] bg-[right_0.75rem_center] bg-no-repeat focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              >
+                <option value="all">{t('common:all_employees')}</option>
+                {masters.map((m: any) => (
+                  <option key={m.id} value={m.full_name || m.username}>{m.full_name || m.username}</option>
+                ))}
+              </select>
+
+              {/* Period Filter */}
+              <select
+                value={period}
+                onChange={(e) => setPeriod(e.target.value)}
+                className="px-3 py-2 pr-10 border border-gray-300 rounded-lg text-sm min-w-[140px] appearance-none bg-white bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%236b7280%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:16px_16px] bg-[right_0.75rem_center] bg-no-repeat focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              >
+                <option value="all">{t('common:all_periods')}</option>
+                <option value="today">{t('common:today')}</option>
+                <option value="7">{t('common:last_7_days')}</option>
+                <option value="14">{t('common:last_14_days')}</option>
+                <option value="30">{t('common:last_month')}</option>
+                <option value="90">{t('common:last_3_months')}</option>
+                <option value="custom">{t('common:custom_period')}</option>
+              </select>
+            </div>
           </div>
 
-          {/* Status Filter */}
-          <StatusSelect
-            value={statusFilter}
-            onChange={setStatusFilter}
-            options={statusConfig}
-            allowAdd={false}
-            showAllOption={true}
-            variant="filter"
-          />
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Custom Date Inputs */}
+            {period === 'custom' && (
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  type="date"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm min-w-[140px] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                />
+                <span className="text-gray-400">-</span>
+                <input
+                  type="date"
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm min-w-[140px] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                />
+              </div>
+            )}
 
-          {/* Period Filter */}
-          <select
-            value={period}
-            onChange={(e) => setPeriod(e.target.value)}
-            className="px-3 py-2 pr-10 border border-gray-300 rounded-lg text-sm min-w-[140px] appearance-none bg-white bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%236b7280%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:16px_16px] bg-[right_0.75rem_center] bg-no-repeat focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-          >
-            <option value="all">{t('common:all_periods')}</option>
-            <option value="today">{t('common:today')}</option>
-            <option value="7">{t('common:last_7_days')}</option>
-            <option value="14">{t('common:last_14_days')}</option>
-            <option value="30">{t('common:last_month')}</option>
-            <option value="90">{t('common:last_3_months')}</option>
-            <option value="custom">{t('common:custom_period')}</option>
-          </select>
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-2 ml-auto">
+              <button
+                onClick={() => setShowAddDialog(true)}
+                className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 flex items-center gap-2 whitespace-nowrap transition-colors shadow-sm"
+              >
+                <Plus className="w-4 h-4" />
+                {t('bookings:add')}
+              </button>
 
-          {/* Custom Date Inputs */}
-          {period === 'custom' && (
-            <>
-              <input
-                type="date"
-                value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm min-w-[140px] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              <button
+                onClick={() => setShowImportDialog(true)}
+                disabled={importing}
+                className="px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap transition-colors shadow-sm"
+              >
+                <Upload className="w-4 h-4" />
+                {importing ? t('bookings:importing') : t('bookings:import')}
+              </button>
+
+              <ExportDropdown
+                onExport={handleExport}
+                loading={exporting}
+                disabled={exporting}
               />
-              <input
-                type="date"
-                value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm min-w-[140px] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-              />
-            </>
-          )}
-
-          {/* Spacer to push buttons to the right */}
-          <div className="flex-1 min-w-4" />
-
-          {/* Action Buttons */}
-          <button
-            onClick={() => setShowAddDialog(true)}
-            className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 flex items-center gap-2 whitespace-nowrap transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            {t('bookings:add')}
-          </button>
-
-          <button
-            onClick={() => setShowImportDialog(true)}
-            disabled={importing}
-            className="px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap transition-colors"
-          >
-            <Upload className="w-4 h-4" />
-            {importing ? t('bookings:importing') : t('bookings:import')}
-          </button>
-
-          <ExportDropdown
-            onExport={handleExport}
-            loading={exporting}
-            disabled={exporting}
-          />
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Table */}
-      <div style={{ backgroundColor: '#fff', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {filteredBookings.length > 0 ? (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th
                     onClick={() => handleSort('name')}
-                    style={{
-                      padding: '1rem 1.5rem',
-                      textAlign: 'left',
-                      fontSize: '0.875rem',
-                      fontWeight: '600',
-                      color: '#6b7280',
-                      cursor: 'pointer',
-                      userSelect: 'none'
-                    }}
+                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
                   >
                     {t('bookings:client')} {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     onClick={() => handleSort('service_name')}
-                    style={{
-                      padding: '1rem 1.5rem',
-                      textAlign: 'left',
-                      fontSize: '0.875rem',
-                      fontWeight: '600',
-                      color: '#6b7280',
-                      cursor: 'pointer',
-                      userSelect: 'none'
-                    }}
+                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
                   >
                     {t('bookings:service')} {sortField === 'service_name' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     onClick={() => handleSort('datetime')}
-                    style={{
-                      padding: '1rem 1.5rem',
-                      textAlign: 'left',
-                      fontSize: '0.875rem',
-                      fontWeight: '600',
-                      color: '#6b7280',
-                      cursor: 'pointer',
-                      userSelect: 'none'
-                    }}
+                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
                   >
                     {t('bookings:date')} {sortField === 'datetime' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
+                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap"
+                  >
+                    {t('bookings:master')}
+                  </th>
+                  <th
                     onClick={() => handleSort('source')}
-                    style={{
-                      padding: '1rem 1.5rem',
-                      textAlign: 'left',
-                      fontSize: '0.875rem',
-                      fontWeight: '600',
-                      color: '#6b7280',
-                      cursor: 'pointer',
-                      userSelect: 'none'
-                    }}
+                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
                   >
                     {t('bookings:source.title', 'Соц.сеть')} {sortField === 'source' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     onClick={() => handleSort('revenue')}
-                    style={{
-                      padding: '1rem 1.5rem',
-                      textAlign: 'left',
-                      fontSize: '0.875rem',
-                      fontWeight: '600',
-                      color: '#6b7280',
-                      cursor: 'pointer',
-                      userSelect: 'none'
-                    }}
+                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
                   >
                     {t('bookings:amount', 'Сумма')} {sortField === 'revenue' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     onClick={() => handleSort('created_at')}
-                    style={{
-                      padding: '1rem 1.5rem',
-                      textAlign: 'left',
-                      fontSize: '0.875rem',
-                      fontWeight: '600',
-                      color: '#6b7280',
-                      cursor: 'pointer',
-                      userSelect: 'none'
-                    }}
+                    className="px-6 py-4 text-left text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
                   >
                     {t('bookings:created', 'Создано')} {sortField === 'created_at' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:phone')}</th>
-                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:status')}</th>
-                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:actions')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">{t('bookings:phone')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">{t('bookings:status')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">{t('bookings:actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -1014,8 +1000,8 @@ export default function Bookings() {
                               </>
                             );
                           })()}
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                            <span style={{ fontSize: '0.875rem', color: '#111' }}>{booking.name || t('bookings:no_name')}</span>
+                          <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium text-gray-900">{booking.name || t('bookings:no_name')}</span>
                             {booking.messengers && booking.messengers.length > 0 && (
                               <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
                                 {booking.messengers.map((messenger: string) => (
@@ -1047,7 +1033,7 @@ export default function Bookings() {
                           </div>
                         </div>
                       </td>
-                      <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>
+                      <td className="px-6 py-4 text-sm text-gray-900">
                         {(() => {
                           const service = services.find(s => s.name === booking.service_name || s.name_ru === booking.service_name);
                           if (service) {
@@ -1058,29 +1044,32 @@ export default function Bookings() {
                           return t(`admin/services:${booking.service_name}`, booking.service_name || '-') as string;
                         })()}
                       </td>
-                      <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>{formatDateTime(booking.datetime)}</td>
-                      <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>
+                      <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{formatDateTime(booking.datetime)}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {booking.master || '-'}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                         {booking.source === 'instagram' ? '📷 Instagram' :
                           booking.source === 'telegram' ? '✈️ Telegram' :
                             booking.source === 'whatsapp' ? '📱 WhatsApp' :
                               t(`source.${booking.source || 'manual'}`, booking.source || 'Manual') as string}
                       </td>
-                      <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111', fontWeight: '600' }}>
+                      <td className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">
                         {booking.revenue ? `${booking.revenue} AED` : '-'}
                       </td>
-                      <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>
+                      <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                         {booking.created_at ? new Date(booking.created_at).toLocaleDateString(i18n.language === 'ru' ? 'ru-RU' : 'en-US') : '-'}
                       </td>
-                      <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>{booking.phone || '-'}</td>
-                      <td style={{ padding: '1rem 1.5rem' }}>
+                      <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{booking.phone || '-'}</td>
+                      <td className="px-6 py-4">
                         <StatusSelect
                           value={booking.status}
                           onChange={(newStatus) => handleStatusChange(booking.id, newStatus)}
                           options={statusConfig}
                         />
                       </td>
-                      <td style={{ padding: '1rem 1.5rem' }}>
-                        <div style={{ display: 'flex', gap: '0.75rem' }}>
+                      <td className="px-6 py-4">
+                        <div className="flex gap-2">
                           <button
                             onClick={() => navigate(`/crm/bookings/${booking.id}`)}
                             style={{
