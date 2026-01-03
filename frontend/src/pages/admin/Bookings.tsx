@@ -808,42 +808,66 @@ export default function Bookings() {
             />
           </div>
 
-          {/* Row 2: Primary Actions & Toggle */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowAddDialog(true)}
-              className="flex-1 h-[42px] bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-2 transition-all shadow-md shadow-gray-200"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Добавить</span>
-            </button>
+          {/* Row 2: Actions Row */}
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+            {/* Group 1: Core Actions */}
+            <div className="flex items-center gap-2 flex-grow">
+              <button
+                onClick={() => setShowAddDialog(true)}
+                className="flex-1 sm:flex-none h-[42px] px-4 sm:px-6 bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-2 transition-all shadow-md shadow-gray-200"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Добавить</span>
+              </button>
 
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`h-[42px] px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all border shadow-sm ${showFilters
-                ? 'bg-pink-50 border-pink-200 text-pink-600'
-                : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
-                }`}
-            >
-              <Users className={`w-4 h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
-              <span className="hidden sm:inline">Фильтры</span>
-              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
-            </button>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex-1 sm:flex-none h-[42px] px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all border shadow-sm ${showFilters
+                  ? 'bg-pink-50 border-pink-200 text-pink-600'
+                  : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                  }`}
+              >
+                <Users className={`w-4 h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
+                <span>Фильтры</span>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
+              </button>
 
-            <button
-              onClick={handleRefresh}
-              disabled={loading}
-              className="h-[42px] px-3 sm:px-4 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm"
-              title="Обновить"
-            >
-              <RefreshCw className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
-            </button>
+              <button
+                onClick={handleRefresh}
+                disabled={loading}
+                className="h-[42px] px-3 sm:px-4 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm"
+                title="Обновить"
+              >
+                <RefreshCw className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
+
+            {/* Group 2: Tools (Import/Export) */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowImportDialog(true)}
+                disabled={importing}
+                className="flex-1 sm:flex-none h-[42px] px-4 bg-white text-gray-700 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
+              >
+                <Upload className="w-4 h-4 text-gray-400" />
+                <span>Импорт</span>
+              </button>
+
+              <div className="flex-1 sm:flex-none min-w-[110px]">
+                <ExportDropdown
+                  onExport={handleExport}
+                  loading={exporting}
+                  disabled={exporting}
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Expandable Section: Filters & Secondary Actions */}
+          {/* Expandable Section: ONLY Filters */}
           {showFilters && (
-            <div className="pt-4 border-t border-gray-50 flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="pt-4 border-t border-gray-50 animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Status Filter */}
                 <div className="flex flex-col gap-1.5">
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Статус</span>
                   <StatusSelect
@@ -856,6 +880,7 @@ export default function Bookings() {
                   />
                 </div>
 
+                {/* Master Filter */}
                 <div className="flex flex-col gap-1.5">
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Мастер</span>
                   <div className="relative">
@@ -872,6 +897,7 @@ export default function Bookings() {
                   </div>
                 </div>
 
+                {/* Period Filter */}
                 <div className="flex flex-col gap-1.5">
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Период</span>
                   <div className="relative">
@@ -889,26 +915,6 @@ export default function Bookings() {
                       <option value="custom">{t('common:custom_period')}</option>
                     </select>
                   </div>
-                </div>
-              </div>
-
-              {/* Secondary Actions Row */}
-              <div className="flex items-center gap-3 pt-2">
-                <button
-                  onClick={() => setShowImportDialog(true)}
-                  disabled={importing}
-                  className="flex-1 h-[42px] bg-white text-gray-700 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
-                >
-                  <Upload className="w-4 h-4 text-gray-400" />
-                  <span>Импорт</span>
-                </button>
-
-                <div className="flex-1">
-                  <ExportDropdown
-                    onExport={handleExport}
-                    loading={exporting}
-                    disabled={exporting}
-                  />
                 </div>
               </div>
             </div>
