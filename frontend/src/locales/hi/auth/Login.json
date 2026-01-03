@@ -1,0 +1,11 @@
+{
+  "authorization_error": "Authorization failed",
+  "enter_login": "Enter username",
+  "fill_both_fields": "Please fill in both fields",
+  "login": "Login",
+  "login_error": "Login error",
+  "login_title": "Login to your account",
+  "password": "Password",
+  "username": "Username",
+  "welcome": "Welcome"
+}
