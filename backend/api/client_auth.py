@@ -940,7 +940,7 @@ async def get_fav_masters(session_token: Optional[str] = Cookie(None)):
                 u.id,
                 u.full_name,
                 u.position,
-                u.photo_url,
+                COALESCE(u.photo, u.photo_url),
                 u.specialization,
                 CASE WHEN cfm.master_id IS NOT NULL THEN true ELSE false END as is_favorite,
                 COALESCE(AVG(r.rating), 0) as rating,
@@ -950,24 +950,25 @@ async def get_fav_masters(session_token: Optional[str] = Cookie(None)):
             LEFT JOIN bookings b ON b.master_id = u.id
             LEFT JOIN ratings r ON r.booking_id = b.id
             WHERE u.is_service_provider = true AND u.is_active = true
-            GROUP BY u.id, u.full_name, u.position, u.photo_url, u.specialization, cfm.master_id
-            ORDER BY is_favorite DESC, u.full_name
+            GROUP BY u.id, u.full_name, u.position, u.photo, u.photo_url, u.specialization, cfm.master_id
+            ORDER BY u.full_name
         """, (client_id,))
 
         masters = []
         for row in c.fetchall():
-            avatar = row[3]
-            if avatar and avatar.startswith('/static'):
-                avatar = f"http://localhost:8000{avatar}"
-                
+            photo = row[3]
+            if photo and photo.startswith('/static'):
+                photo = f"http://localhost:8000{photo}"
+
             masters.append({
                 "id": row[0],
                 "name": row[1],
                 "specialty": row[2] or "Специалист",
-                "avatar": avatar or "/default-avatar.png",
+                "avatar": photo or "/default-avatar.png",
+                "photo": photo or "/default-avatar.png",  # Добавлено для совместимости
                 "specialization": row[4],
                 "is_favorite": row[5],
-                "rating": round(row[6], 1) if row[6] else 0,
+                "rating": round(row[6], 1) if row[6] else 5.0,  # Дефолт 5.0 вместо 0
                 "reviews_count": row[7] or 0
             })
 
