@@ -50,8 +50,8 @@
   "no_notes": "No description",
   "no_gallery_entries": "There are no works in the gallery yet",
   "add_to_gallery": "Add a post to the gallery",
-  "photo_before": "PREVIOUS PHOTOS",
-  "photo_after": "AFTER the photo",
+  "photo_before": "Photos BEFORE",
+  "photo_after": "Photo AFTER",
   "notes_description": "Description/Notes",
   "notes_placeholder": "Enter a description of the procedure...",
   "category_placeholder": "For example: Permanent lips...",
@@ -61,5 +61,8 @@
   "save_error": "Error while saving",
   "delete_gallery_confirm": "Are you sure you want to remove this post from the gallery?",
   "gallery_entry_deleted": "The post has been removed from the gallery",
-  "delete_error": "Error deleting"
+  "delete_error": "Error deleting",
+  "top_3_procedures": "Top 3 procedures",
+  "top_3_masters": "Top 3 masters",
+  "visits_dynamics": "Dynamics of visits"
 }

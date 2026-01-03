@@ -99,7 +99,7 @@
   "last_contact": "Dernier contact",
   "lead": "Plomb",
   "loading_clients": "Chargement des clients...",
-  "ltv": "LTV",
+  "ltv": "Revenus (LTV)",
   "messages": "Messages",
   "name": "Nom",
   "name_placeholder": "Entrez le nom du client",
@@ -136,5 +136,8 @@
   "warm": "Chaud",
   "warm_client": "Client chaleureux",
   "write_message": "Écrire un message",
-  "you_are_deleting_client": "Vous supprimez un client"
+  "you_are_deleting_client": "Vous supprimez un client",
+  "bookings": "Visites totales",
+  "total_messages_desc": "Nombre total de messages de discussion",
+  "total_bookings_desc": "Nombre total d'entrées effectuées"
 }

@@ -19,7 +19,8 @@
     "bookings": "Réservation",
     "new_clients": "Nouveaux clients",
     "revenue": "Revenu",
-    "vip_clients": "Clients VIP"
+    "vip_clients": "Clients VIP",
+    "sales": "Ventes"
   },
   "my_plans": "Mes projets",
   "no_plans_found": "Aucun plan trouvé",
@@ -28,7 +29,9 @@
     "month": "Mois",
     "quarter": "Quart",
     "week": "Semaine",
-    "year": "Année"
+    "year": "Année",
+    "two_weeks": "2 semaines",
+    "custom": "Vos règles"
   },
   "plan_created": "Plan créé",
   "plan_deleted": "Le plan a été supprimé.",
@@ -41,5 +44,16 @@
   "select_role": "Sélectionnez un rôle",
   "select_user": "Sélectionner un utilisateur",
   "target_value": "Valeur cible",
-  "user": "Utilisateur"
+  "user": "Utilisateur",
+  "comment": "Commentaire",
+  "plan_name": "Nom du forfait",
+  "manage_metrics": "Gestion des métriques",
+  "add_metric": "Ajouter une métrique",
+  "metric_name_ru": "Nom (RU)",
+  "metric_name_en": "Titre (EN)",
+  "unit": "Unité de mesure",
+  "description": "Description",
+  "error_loading_metrics": "Erreur lors du chargement des métriques",
+  "start_date": "date de début",
+  "end_date": "Date de fin"
 }

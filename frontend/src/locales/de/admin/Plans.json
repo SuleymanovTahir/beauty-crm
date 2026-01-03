@@ -19,7 +19,8 @@
     "bookings": "Buchung",
     "new_clients": "Neue Kunden",
     "revenue": "Einkommen",
-    "vip_clients": "VIP-Kunden"
+    "vip_clients": "VIP-Kunden",
+    "sales": "Verkäufe"
   },
   "my_plans": "Meine Pläne",
   "no_plans_found": "Keine Pläne gefunden",
@@ -28,7 +29,9 @@
     "month": "Monat",
     "quarter": "Quartal",
     "week": "Woche",
-    "year": "Jahr"
+    "year": "Jahr",
+    "two_weeks": "2 Wochen",
+    "custom": "Deine Periode"
   },
   "plan_created": "Plan erstellt",
   "plan_deleted": "Der Plan wurde gelöscht.",
@@ -41,5 +44,16 @@
   "select_role": "Wählen Sie eine Rolle aus",
   "select_user": "Benutzer auswählen",
   "target_value": "Zielwert",
-  "user": "Benutzer"
+  "user": "Benutzer",
+  "comment": "Kommentar",
+  "plan_name": "Planname",
+  "manage_metrics": "Metrikverwaltung",
+  "add_metric": "Fügen Sie eine Metrik hinzu",
+  "metric_name_ru": "Name (RU)",
+  "metric_name_en": "Titel (EN)",
+  "unit": "Maßeinheit",
+  "description": "Beschreibung",
+  "error_loading_metrics": "Fehler beim Laden der Messwerte",
+  "start_date": "Startdatum",
+  "end_date": "Enddatum"
 }

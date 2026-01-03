@@ -9,7 +9,8 @@ from datetime import datetime, timedelta
 from db.plans import (
     get_plan, set_plan, get_plan_progress, get_all_plans, delete_plan,
     get_plan_for_user, set_role_plan, set_individual_plan,
-    get_visible_plans, can_user_edit_plan, get_plans_by_role
+    get_visible_plans, can_user_edit_plan, get_plans_by_role,
+    get_all_plan_metrics, create_plan_metric, delete_plan_metric
 )
 from utils.utils import require_auth
 
@@ -86,22 +87,23 @@ async def create_role_plan_api(
     can_edit_roles = data.get("can_edit_roles", [])
     
     # Determine dates
-    if "start_date" in data and "end_date" in data:
+    if data.get("start_date") and data.get("end_date"):
         start_date = data["start_date"]
         end_date = data["end_date"]
     else:
         now = datetime.now()
+        start_date = now.isoformat()
         if period_type == "week":
-            start_date = now.isoformat()
             end_date = (now + timedelta(days=7)).isoformat()
+        elif period_type == "two_weeks":
+            end_date = (now + timedelta(days=14)).isoformat()
         elif period_type == "month":
-            start_date = now.isoformat()
             end_date = (now + timedelta(days=30)).isoformat()
         elif period_type == "quarter":
-            start_date = now.isoformat()
             end_date = (now + timedelta(days=90)).isoformat()
+        elif period_type == "year":
+            end_date = (now + timedelta(days=365)).isoformat()
         else:
-            start_date = now.isoformat()
             end_date = (now + timedelta(days=30)).isoformat()
     
     plan_id = set_role_plan(
@@ -112,6 +114,7 @@ async def create_role_plan_api(
         start_date=start_date,
         end_date=end_date,
         name=data.get("name"),
+        comment=data.get("comment"),
         visible_to_roles=visible_to_roles,
         can_edit_roles=can_edit_roles,
         created_by=user.get("id")
@@ -148,22 +151,23 @@ async def create_individual_plan_api(
     period_type = data.get("period_type", "month")
     
     # Determine dates
-    if "start_date" in data and "end_date" in data:
+    if data.get("start_date") and data.get("end_date"):
         start_date = data["start_date"]
         end_date = data["end_date"]
     else:
         now = datetime.now()
+        start_date = now.isoformat()
         if period_type == "week":
-            start_date = now.isoformat()
             end_date = (now + timedelta(days=7)).isoformat()
+        elif period_type == "two_weeks":
+            end_date = (now + timedelta(days=14)).isoformat()
         elif period_type == "month":
-            start_date = now.isoformat()
             end_date = (now + timedelta(days=30)).isoformat()
         elif period_type == "quarter":
-            start_date = now.isoformat()
             end_date = (now + timedelta(days=90)).isoformat()
+        elif period_type == "year":
+            end_date = (now + timedelta(days=365)).isoformat()
         else:
-            start_date = now.isoformat()
             end_date = (now + timedelta(days=30)).isoformat()
     
     plan_id = set_individual_plan(
@@ -174,6 +178,7 @@ async def create_individual_plan_api(
         start_date=start_date,
         end_date=end_date,
         name=data.get("name"),
+        comment=data.get("comment"),
         created_by=user.get("id")
     )
     
@@ -322,3 +327,46 @@ async def delete_plan_api(
             {"error": "Не удалось удалить план"},
             status_code=500
         )
+
+# Metric Types Endpoints
+@router.get("/plans/metrics/all")
+async def get_metrics_api(session_token: Optional[str] = Cookie(None)):
+    """Получить все доступные типы метрик"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    metrics = get_all_plan_metrics()
+    return {"success": True, "metrics": metrics}
+
+@router.post("/plans/metrics")
+async def create_metric_api(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Создать или обновить тип метрики"""
+    user = require_auth(session_token)
+    if not user or user.get("role") not in ["admin", "director"]:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    data = await request.json()
+    metric_id = create_plan_metric(
+        key=data.get("key"),
+        name=data.get("name"),
+        unit=data.get("unit"),
+        description=data.get("description"),
+        name_en=data.get("name_en"),
+        name_ru=data.get("name_ru")
+    )
+    
+    if metric_id:
+        return {"success": True, "metric_id": metric_id}
+    else:
+        return JSONResponse({"error": "Не удалось сохранить метрику"}, status_code=500)
+
+@router.delete("/plans/metrics/{key}")
+async def delete_metric_api(key: str, session_token: Optional[str] = Cookie(None)):
+    """Удалить тип метрики"""
+    user = require_auth(session_token)
+    if not user or user.get("role") not in ["admin", "director"]:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    success = delete_plan_metric(key)
+    return {"success": success}

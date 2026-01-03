@@ -20,7 +20,7 @@
   "motivation_beautiful": "أنت جميل!",
   "motivation_new_day": "كل يوم هو فرصة جديدة!",
   "motivation_shine": "الوقت للتألق!",
-  "next_level_message": "لا يزال هناك __VAR0____ نقطة متبقية للوصول إلى المستوى التالي.",
+  "next_level_message": "لا يزال لديك __VAR0____ للانتقال إلى المستوى التالي.",
   "no_appointments": "لا توجد إدخالات نشطة",
   "no_appointments_desc": "اختر وقتًا مناسبًا وحدد موعدًا مع أحد المتخصصين",
   "quick_actions": "إجراءات سريعة",
