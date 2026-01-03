@@ -210,48 +210,50 @@ export function Loyalty() {
           </CardTitle>
           <CardDescription>{t('loyalty.tier_explanation', 'Накапливайте баллы и получайте больше привилегий')}</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {tiers.map((tier: any) => (
-            <div
-              key={tier.name}
-              className={`p-4 rounded-lg border-2 ${tier.name === currentTierData?.name
-                ? 'bg-white border-current'
-                : 'border-gray-200'
-                }`}
-              style={tier.name === currentTierData?.name ? { borderColor: tier.color } : {}}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: tier.color }}
-                  />
-                  <div>
-                    <div className="font-semibold flex items-center gap-2">
-                      {tier.name}
-                      {tier.name === currentTierData?.name && (
-                        <Badge className="text-xs" style={{ backgroundColor: tier.color }}>
-                          {t('loyalty.current', 'Текущий')}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {tier.points === 0
-                        ? t('loyalty.starting_level', 'Начальный уровень')
-                        : `${t('loyalty.from', 'От')} ${tier.points} ${t('loyalty.points', 'баллов')}`
-                      }
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {tiers.map((tier: any) => (
+              <div
+                key={tier.name}
+                className={`p-6 rounded-xl border-2 ${tier.name === currentTierData?.name
+                  ? 'bg-white border-current'
+                  : 'bg-white border-gray-200'
+                  }`}
+                style={tier.name === currentTierData?.name ? { borderColor: tier.color } : {}}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: tier.color }}
+                    />
+                    <div>
+                      <div className="font-semibold flex items-center gap-2">
+                        {tier.name}
+                        {tier.name === currentTierData?.name && (
+                          <Badge className="text-xs" style={{ backgroundColor: tier.color }}>
+                            {t('loyalty.current', 'Current')}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {tier.points === 0
+                          ? t('loyalty.starting_level', 'booking level')
+                          : `${t('loyalty.from', 'From')} ${tier.points.toLocaleString()} ${t('loyalty.points', 'points')}`
+                        }
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <div className="font-bold text-lg" style={{ color: tier.color }}>
-                    {tier.discount}%
+                  <div className="text-right">
+                    <div className="font-bold text-4xl" style={{ color: tier.color }}>
+                      {tier.discount}%
+                    </div>
+                    <div className="text-xs text-muted-foreground">{t('loyalty.discount_short', 'discount')}</div>
                   </div>
-                  <div className="text-xs text-muted-foreground">{t('loyalty.discount_short', 'скидка')}</div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </CardContent>
       </Card>
 
