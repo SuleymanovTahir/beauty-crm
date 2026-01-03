@@ -136,7 +136,7 @@ export default function Bookings() {
   const { statuses: statusConfig } = useBookingStatuses();
   const [bookings, setBookings] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
-  const { t } = useTranslation(['admin/Bookings', 'common']);
+  const { t } = useTranslation(['admin/bookings', 'admin/services', 'common']);
   const [services, setServices] = useState<any[]>([]);
   const [filteredBookings, setFilteredBookings] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -466,7 +466,7 @@ export default function Bookings() {
         instagram_id: selectedClient.instagram_id,
         name: selectedClient.display_name,
         phone: addForm.phone || selectedClient.phone || '',
-        service: selectedService.name_ru,
+        service: selectedService.name || selectedService.name_ru, // Store base name
         date: addForm.date,
         time: addForm.time,
         revenue: addForm.revenue || selectedService.price,
@@ -921,7 +921,7 @@ export default function Bookings() {
                       userSelect: 'none'
                     }}
                   >
-                    Соц.сеть {sortField === 'source' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('bookings:source.title', 'Соц.сеть')} {sortField === 'source' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     onClick={() => handleSort('revenue')}
@@ -935,7 +935,7 @@ export default function Bookings() {
                       userSelect: 'none'
                     }}
                   >
-                    Сумма {sortField === 'revenue' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('bookings:amount', 'Сумма')} {sortField === 'revenue' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     onClick={() => handleSort('created_at')}
@@ -949,7 +949,7 @@ export default function Bookings() {
                       userSelect: 'none'
                     }}
                   >
-                    Создано {sortField === 'created_at' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('bookings:created', 'Создано')} {sortField === 'created_at' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:phone')}</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:status')}</th>
@@ -1047,13 +1047,15 @@ export default function Bookings() {
                           </div>
                         </div>
                       </td>
-                      <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>{booking.service_name || '-'}</td>
+                      <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>
+                        {t(`admin/services:${booking.service_name}`, booking.service_name || '-')}
+                      </td>
                       <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>{formatDateTime(booking.datetime)}</td>
                       <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>
                         {booking.source === 'instagram' ? '📷 Instagram' :
-                         booking.source === 'telegram' ? '✈️ Telegram' :
-                         booking.source === 'whatsapp' ? '📱 WhatsApp' :
-                         booking.source || 'Manual'}
+                          booking.source === 'telegram' ? '✈️ Telegram' :
+                            booking.source === 'whatsapp' ? '📱 WhatsApp' :
+                              t(`bookings:source.${booking.source || 'manual'}`, booking.source || 'Manual')}
                       </td>
                       <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111', fontWeight: '600' }}>
                         {booking.revenue ? `${booking.revenue} AED` : '-'}

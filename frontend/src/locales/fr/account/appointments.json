@@ -1,0 +1,21 @@
+{
+  "button_book": "",
+  "button_cancel": "",
+  "button_change": "",
+  "button_repeat": "",
+  "history_empty": "",
+  "history_empty_desc": "",
+  "no_upcoming": "",
+  "no_upcoming_desc": "",
+  "recurring_desc": "",
+  "recurring_title": "",
+  "status_cancelled": "",
+  "status_completed": "",
+  "status_upcoming": "",
+  "subtitle": "",
+  "tab_history": "",
+  "tab_recurring": "",
+  "tab_upcoming": "",
+  "title": "",
+  "unknown_master": ""
+}

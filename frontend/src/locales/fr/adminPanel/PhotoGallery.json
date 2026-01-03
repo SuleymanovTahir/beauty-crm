@@ -21,10 +21,10 @@
   },
   "dialogs": {
     "delete": {
-      "confirm": "Êtes-vous sûr de vouloir supprimer cette photo ?"
+      "confirm": "Êtes-vous sûr de vouloir supprimer cette photo\u00a0?"
     },
     "preview": {
-      "category": "Catégorie : {{catégorie}}",
+      "category": "Catégorie\u00a0: {{catégorie}}",
       "created_at": "{{date}}",
       "title": "Aperçu des photos",
       "uploaded_by": "Téléchargé par {{name}}",
