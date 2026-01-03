@@ -1,6 +1,6 @@
-// /frontend/src/pages/manager/Chat.tsx
-// frontend/src/pages/manager/Chat.tsx
 import React, { useState, useRef, useEffect } from 'react';
+import '../../styles/messenger-themes.css';
+import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import {
   MessageCircle,
   Search,
@@ -19,12 +19,11 @@ import {
   Video,
   Shield,
   Phone,
-  Instagram,
-  Music,
   Reply,
   Forward,
   Copy,
 } from 'lucide-react';
+import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../../components/icons/SocialIcons';
 import { Button } from '../../components/ui/button';
 import { Textarea } from '../../components/ui/textarea';
 import TemplatesPanel from '../../components/chat/TemplatesPanel';
@@ -108,11 +107,10 @@ export default function Chat() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
 
-  const commonEmojis = [
-    '😊', '😂', '🥺', '😍', '✨', '❤️', '�', '�👍', '🙌', '�',
-    '✅', '⭐', '💯', '🚀', '👋', '🎁', '💰', '📅', '⏰', '�',
-    '💅', '�', '�‍♀️', '�‍♀️', '🌸', '�'
-  ];
+  const handleEmojiClick = (emojiData: EmojiClickData) => {
+    setMessage(prev => prev + emojiData.emoji);
+  };
+
   const [isSelectingMessages, setIsSelectingMessages] = useState(false);
   const [selectedMessageIds, setSelectedMessageIds] = useState<Set<string | number>>(new Set());
   const [isAskingBot, setIsAskingBot] = useState(false);
@@ -167,10 +165,6 @@ export default function Chat() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleEmojiClick = (emoji: string) => {
-    setMessage(prev => prev + emoji);
-    setShowEmojiPicker(false);
-  };
 
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
 
@@ -693,7 +687,7 @@ export default function Chat() {
 
   return (
     <div className={`h-screen bg-gradient-to-br from-gray-50 via-white to-pink-50 flex p-0 md:p-4 messenger-${currentMessenger}`}>
-      <div className="bg-white rounded-none md:rounded-3xl shadow-2xl border border-gray-200/50 h-full w-full flex overflow-hidden">
+      <div className="rounded-none md:rounded-3xl shadow-2xl border border-gray-200/50 h-full w-full flex overflow-hidden">
         {/* Clients List */}
         <div className={`
           ${selectedClient ? 'hidden md:flex' : 'flex'}
@@ -702,11 +696,11 @@ export default function Chat() {
           <div className="p-4 border-b border-gray-100">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xl font-bold text-gray-900 capitalize flex items-center gap-2">
-                {currentMessenger === 'instagram' && <Instagram className="w-6 h-6 text-pink-600" />}
-                {currentMessenger === 'telegram' && <Send className="w-6 h-6 text-blue-500" />}
-                {currentMessenger === 'whatsapp' && <MessageCircle className="w-6 h-6 text-green-500" />}
-                {currentMessenger === 'tiktok' && <Music className="w-6 h-6 text-black" />}
-                {currentMessenger} ({clients.length})
+                {currentMessenger === 'instagram' && <InstagramIcon className="w-6 h-6 text-pink-600" />}
+                {currentMessenger === 'telegram' && <TelegramIcon className="w-6 h-6 text-blue-500" />}
+                {currentMessenger === 'whatsapp' && <WhatsAppIcon className="w-6 h-6 text-green-600" />}
+                {currentMessenger === 'tiktok' && <TikTokIcon className="w-6 h-6 text-black" />}
+                {currentMessenger}
               </span>
             </div>
             <div className="relative">
@@ -752,15 +746,15 @@ export default function Chat() {
                         {client.display_name.charAt(0).toUpperCase()}
                       </div>
                       {client.source && (
-                        <div className={`absolute -bottom-1 -right-1 size-5 rounded-full flex items-center justify-center shadow-lg z-10 border-2 border-white ${client.source === 'instagram' ? 'bg-gradient-to-tr from-purple-500 via-pink-500 to-orange-500' :
-                          client.source === 'telegram' ? 'bg-[#0088cc]' :
-                            client.source === 'whatsapp' ? 'bg-[#25D366]' :
+                        <div className={`absolute -bottom-1 -right-1 size-5 rounded-full flex items-center justify-center shadow-lg z-10 border-2 border-white ${client.source.toLowerCase() === 'instagram' ? 'bg-gradient-to-tr from-purple-500 via-pink-500 to-orange-500' :
+                          client.source.toLowerCase() === 'telegram' ? 'bg-[#0088cc]' :
+                            client.source.toLowerCase() === 'whatsapp' ? 'bg-[#25D366]' :
                               'bg-black'
                           }`}>
-                          {client.source === 'instagram' && <Instagram className="w-2.5 h-2.5 text-white" />}
-                          {client.source === 'telegram' && <Send className="w-2.5 h-2.5 text-white" />}
-                          {client.source === 'whatsapp' && <MessageCircle className="w-2.5 h-2.5 text-white" />}
-                          {client.source === 'tiktok' && <Music className="w-2.5 h-2.5 text-white" />}
+                          {client.source.toLowerCase() === 'instagram' && <InstagramIcon className="w-2.5 h-2.5 text-white" />}
+                          {client.source.toLowerCase() === 'telegram' && <TelegramIcon className="w-2.5 h-2.5 text-white" />}
+                          {client.source.toLowerCase() === 'whatsapp' && <WhatsAppIcon className="w-2.5 h-2.5 text-white" />}
+                          {client.source.toLowerCase() === 'tiktok' && <TikTokIcon className="w-2.5 h-2.5 text-white" />}
                         </div>
                       )}
                       {client.unread_count && client.unread_count > 0 && (
@@ -801,10 +795,7 @@ export default function Chat() {
             {/* Main Chat Column */}
             <div className="flex-1 flex flex-col min-w-0">
               {/* Chat Header */}
-              <div className={`p-3 md:p-4 border-b border-gray-200/50 chat-header flex-shrink-0 transition-all duration-300 ${currentMessenger === 'whatsapp' ? 'bg-[#075e54] text-white border-b-0' :
-                currentMessenger === 'tiktok' ? 'bg-black text-white border-b-gray-800' :
-                  'bg-white text-gray-900'
-                }`}>
+              <div className="p-3 md:p-4 border-b border-gray-200/50 chat-header flex-shrink-0 transition-all duration-300">
                 <div className="flex items-center justify-between gap-2">
                   {/* Left: Avatar & Info */}
                   <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -849,6 +840,7 @@ export default function Chat() {
                       <span className="text-[11px] font-bold tracking-wider">AI</span>
                     </button>
 
+                    {/* 
                     <button
                       onClick={() => handleProhibitedAction('звонить')}
                       className={`p-2 rounded-full transition-colors ${(currentMessenger === 'whatsapp' || currentMessenger === 'tiktok') ? 'text-white/70 hover:bg-white/10' : 'text-gray-500 hover:bg-black/5'
@@ -866,6 +858,7 @@ export default function Chat() {
                     >
                       <Video className="w-5 h-5" />
                     </button>
+                    */}
 
                     <button
                       onClick={() => setShowMobileMenu(!showMobileMenu)}
@@ -952,11 +945,7 @@ export default function Chat() {
               )}
 
               {/* Messages Area */}
-              <div className={`flex-1 overflow-y-auto p-4 space-y-3 chat-messages-area transition-colors duration-300 ${currentMessenger === 'telegram' ? 'bg-[#e7eef3]' :
-                currentMessenger === 'whatsapp' ? 'bg-[#e5ddd5]' :
-                  currentMessenger === 'tiktok' ? 'bg-black' :
-                    'bg-gray-50'
-                }`}>
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 chat-messages-area transition-all duration-300">
                 {loadingMessages ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="flex flex-col items-center gap-3">
@@ -1008,16 +997,16 @@ export default function Chat() {
                         >
                           {/* Reply Preview */}
                           {msg.message.includes('↩️ Ответ на:') && (
-                            <div className={`border-l-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'border-pink-200/50 bg-pink-400/10' : 'border-blue-400/50 bg-blue-500/10'} px-2.5 py-1.5 mb-2`}>
+                            <div className="border-l-2 border-current/20 bg-current/5 px-2.5 py-1.5 mb-2">
                               <div className="flex items-center gap-1.5 mb-0.5">
-                                <svg className={`w-3 h-3 flex-shrink-0 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-200' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-3 h-3 flex-shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                                 </svg>
-                                <p className={`text-xs font-bold ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-blue-900'}`}>
-                                  Вы ответили {selectedClient?.display_name}
+                                <p className="text-xs font-bold opacity-90">
+                                  Ответ для {selectedClient?.display_name}
                                 </p>
                               </div>
-                              <p className={`text-xs ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100/90' : 'text-blue-800'} line-clamp-2`}>
+                              <p className="text-xs opacity-80 line-clamp-2">
                                 {msg.message.split('\n\n')[0].replace('↩️ Ответ на: "', '').replace('"', '')}
                               </p>
                             </div>
@@ -1094,13 +1083,12 @@ export default function Chat() {
                               <a href={msg.message}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`flex items-center gap-2 hover:underline ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-blue-600'
-                                  }`}
+                                className="flex items-center gap-2 hover:underline text-inherit"
                               >
                                 <FileText className="w-5 h-5" />
                                 <span className="text-sm font-medium">Открыть файл</span>
                               </a>
-                              <div className={`mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
+                              <div className="mt-2 opacity-70">
                                 <p className="text-xs">
                                   {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
                                     hour: '2-digit',
@@ -1132,47 +1120,53 @@ export default function Chat() {
                         </div>
                       </div>
 
-                      {/* Кнопки действий при наведении */}
+                      {/* Кнопки действий при наведении (Instagram style - Triple Dot Menu) */}
                       <div
-                        className={`absolute ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'right-full mr-4' : 'left-full ml-4'} top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-1.5 bg-white backdrop-blur-md rounded-2xl shadow-xl border border-gray-100 p-1.5 z-[100] animate-in zoom-in-95 duration-200`}
+                        className={`absolute ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'right-full mr-4' : 'left-full ml-4'} top-1/2 -translate-y-1/2 transition-all duration-300 z-[100] group/actions`}
                       >
-                        {/* Ответить - только на сообщения клиента */}
-                        {msg.sender === 'client' && (
-                          <button
-                            onClick={() => {
-                              setReplyToMessage(msg);
-                              toast.info('💬 Ответ на сообщение');
-                            }}
-                            className="w-10 h-10 hover:bg-purple-50 rounded-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-sm border border-gray-50 group/btn"
-                            title="Ответить"
-                          >
-                            <Reply className="w-4 h-4 text-gray-500 group-hover/btn:text-purple-600 transition-colors" />
-                          </button>
-                        )}
+                        <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center gap-2">
+                          <div className="relative group/menu">
+                            <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all text-gray-400 hover:text-gray-600">
+                              <MoreVertical className="w-4 h-4" />
+                            </button>
 
-                        {/* Переслать */}
-                        <button
-                          onClick={() => {
-                            setForwardMessage(msg);
-                            setShowForwardModal(true);
-                          }}
-                          className="w-10 h-10 hover:bg-purple-50 rounded-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-sm border border-gray-50 group/btn"
-                          title="Переслать"
-                        >
-                          <Forward className="w-4 h-4 text-gray-400 group-hover/btn:text-purple-600 transition-colors" />
-                        </button>
+                            {/* Dropdown Menu on Hover */}
+                            <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover/menu:flex flex-col bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 p-1.5 min-w-[140px] animate-in zoom-in-95 duration-200 overflow-hidden">
+                              <button
+                                onClick={() => {
+                                  setReplyToMessage(msg);
+                                  toast.info('💬 Напишите комментарий (ответ)');
+                                }}
+                                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors"
+                              >
+                                <Reply className="w-4 h-4" />
+                                <span>Комментировать</span>
+                              </button>
 
-                        {/* Копировать */}
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(msg.message);
-                            toast.success('📋 Текст скопирован');
-                          }}
-                          className="w-10 h-10 hover:bg-purple-50 rounded-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-sm border border-gray-50 group/btn"
-                          title="Копировать"
-                        >
-                          <Copy className="w-4 h-4 text-gray-400 group-hover/btn:text-purple-600 transition-colors" />
-                        </button>
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(msg.message);
+                                  toast.success('📋 Текст скопирован');
+                                }}
+                                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors"
+                              >
+                                <Copy className="w-4 h-4" />
+                                <span>Копировать</span>
+                              </button>
+
+                              <button
+                                onClick={() => {
+                                  setForwardMessage(msg);
+                                  setShowForwardModal(true);
+                                }}
+                                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors"
+                              >
+                                <Forward className="w-4 h-4" />
+                                <span>Переслать</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))
@@ -1335,6 +1329,7 @@ export default function Chat() {
                   />
 
                   {/* File Attachment */}
+                  {/* 
                   <button
                     onClick={() => handleProhibitedAction('прикреплять файлы')}
                     className="p-3 text-gray-500 hover:bg-white hover:text-purple-600 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-md"
@@ -1342,6 +1337,7 @@ export default function Chat() {
                   >
                     <Paperclip className="w-6 h-6" />
                   </button>
+                  */}
 
                   <input
                     type="file"
@@ -1375,24 +1371,16 @@ export default function Chat() {
                       </button>
 
                       {showEmojiPicker && (
-                        <div className="absolute bottom-full right-0 mb-4 p-4 bg-white/95 backdrop-blur-2xl rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-white/20 w-[300px] z-50 animate-in fade-in zoom-in-95 slide-in-from-bottom-6 duration-300">
-                          <div className="flex items-center justify-between mb-3 px-1">
-                            <span className="text-[13px] font-bold text-gray-400 uppercase tracking-wider">Часто используемые</span>
-                          </div>
-                          <div className="grid grid-cols-6 gap-2.5">
-                            {commonEmojis.map(emoji => (
-                              <button
-                                key={emoji}
-                                onClick={() => handleEmojiClick(emoji)}
-                                className="w-10 h-10 flex items-center justify-center text-3xl hover:bg-gray-100/80 active:scale-75 rounded-[12px] transition-all duration-200 ease-out hover:shadow-sm"
-                              >
-                                {emoji}
-                              </button>
-                            ))}
-                          </div>
-                          <div className="mt-4 flex justify-center">
-                            <div className="w-14 h-1.5 bg-gray-200/50 rounded-full" />
-                          </div>
+                        <div ref={emojiPickerRef} className="absolute bottom-full right-0 mb-4 z-50">
+                          <EmojiPicker
+                            onEmojiClick={handleEmojiClick}
+                            width={350}
+                            height={400}
+                            previewConfig={{ showPreview: false }}
+                            searchDisabled={false}
+                            skinTonesDisabled={false}
+                            lazyLoadEmojis={true}
+                          />
                         </div>
                       )}
                     </div>
