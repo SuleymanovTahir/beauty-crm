@@ -187,24 +187,30 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           }
         }).catch(err => console.error("Background availability fetch failed", err));
 
-        // Handle prefill from location state (for reschedule/edit)
+        // Handle prefill from location state OR query params
         const state = location.state as any;
-        console.log('[UserBookingWizard] Location state:', state);
-        if (state?.editBookingId || state?.prefillMaster || state?.prefillService) {
+        const queryPrefillMaster = searchParams.get('masterId');
+        const queryPrefillDate = searchParams.get('date');
+        const queryPrefillTime = searchParams.get('time');
+        const queryPrefillService = searchParams.get('serviceId');
+
+        if (state?.editBookingId || state?.prefillMaster || state?.prefillService || queryPrefillMaster || queryPrefillDate || queryPrefillTime || queryPrefillService) {
           const newState: Partial<BookingState> = {};
 
           // Prefill service
-          if (state.prefillService) {
-            const service = servicesData.find((s: any) => s.id === state.prefillService);
+          const serviceId = state?.prefillService || (queryPrefillService ? parseInt(queryPrefillService) : null);
+          if (serviceId) {
+            const service = servicesData.find((s: any) => s.id === serviceId);
             if (service) {
               newState.services = [service];
             }
           }
 
           // Prefill master/professional
-          if (state.prefillMaster) {
-            console.log('[UserBookingWizard] Searching for master with ID:', state.prefillMaster);
-            const master = employeesData.find((m: any) => m.id === state.prefillMaster);
+          const masterId = state?.prefillMaster || (queryPrefillMaster ? parseInt(queryPrefillMaster) : null);
+          if (masterId) {
+            console.log('[UserBookingWizard] Searching for master with ID:', masterId);
+            const master = employeesData.find((m: any) => m.id === masterId);
             console.log('[UserBookingWizard] Found master:', master);
             if (master) {
               newState.professional = master;
@@ -213,16 +219,18 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           }
 
           // Prefill date and time
-          if (state.prefillDate) {
+          const dateParam = state?.prefillDate || queryPrefillDate;
+          if (dateParam) {
             try {
-              newState.date = new Date(state.prefillDate);
+              newState.date = new Date(dateParam);
             } catch (e) {
               console.error('[UserBookingWizard] Failed to parse prefillDate:', e);
             }
           }
 
-          if (state.prefillTime) {
-            newState.time = state.prefillTime;
+          const timeParam = state?.prefillTime || queryPrefillTime;
+          if (timeParam) {
+            newState.time = timeParam;
           }
 
           // Update booking state with prefilled data
@@ -236,8 +244,10 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             } else if (newState.services?.length) {
               // Only services prefilled, go to services step
               setStep('services');
+            } else if (newState.professional && newState.date && newState.time) {
+              // If master, date and time prefilled - go to services to select what to book
+              setStep('services');
             }
-            // If only master is prefilled, stay on menu - don't change step
           }
         }
 
