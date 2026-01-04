@@ -264,117 +264,96 @@ export function ProfessionalStep({
     return (
         <div className="space-y-6">
             {/* Header */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl shadow-lg p-6"
-            >
-                <h2 className="text-2xl font-black text-gray-900 leading-none uppercase tracking-tighter">{t('professional.title', 'Choose Master')}</h2>
-            </motion.div>
+            <h2 className="text-2xl font-bold">{t('professional.title', 'Choose Master')}</h2>
 
             {/* Any Professional Option */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
+            <div
+                className={`bg-white rounded-xl border p-5 transition-colors cursor-pointer ${isAnyProfessional
+                    ? 'border-gray-900 border-2 shadow-sm'
+                    : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                onClick={() => onProfessionalChange(null)}
             >
-                <Card
-                    className={`cursor-pointer transition-all duration-300 rounded-2xl ${isAnyProfessional
-                        ? 'border-purple-500 border-2 shadow-lg bg-purple-50/50'
-                        : 'border hover:border-purple-200 hover:shadow-md'
-                        }`}
-                    onClick={() => onProfessionalChange(null)}
-                >
-                    <CardContent className="p-6">
-                        <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-3xl shadow-lg">
-                                ✨
-                            </div>
-                            <div className="flex-1">
-                                <h3 className="text-lg font-bold text-gray-900 leading-none mb-2">
-                                    {t('professional.anyAvailable', 'Flexible Match')}
-                                </h3>
-                                <p className="text-sm font-medium text-gray-500">
-                                    {t('professional.anyDesc', 'We\'ll match you with the best available professional')}
-                                </p>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </motion.div>
+                <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-2xl">✨</span>
+                    </div>
+                    <div className="flex-1">
+                        <h3 className="font-semibold mb-1">
+                            {t('professional.anyAvailable', 'Flexible Match')}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                            {t('professional.anyDesc', 'We\'ll match you with the best available professional')}
+                        </p>
+                    </div>
+                </div>
+            </div>
 
             {/* Professionals List */}
             <div className="grid md:grid-cols-2 gap-4 pb-10">
                 {filteredProfessionals.map((professional, index) => {
                     const isSelected = selectedProfessionalId === professional.id;
                     return (
-                        <motion.div
+                        <div
                             key={professional.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: (index + 1) * 0.1 }}
+                            className={`bg-white rounded-xl border-2 p-5 transition-all cursor-pointer ${isSelected
+                                ? 'border-gray-900 shadow-sm'
+                                : 'border-gray-200 hover:border-gray-300'
+                                }`}
+                            onClick={() => onProfessionalChange(professional)}
                         >
-                            <Card
-                                className={`cursor-pointer transition-all duration-300 rounded-2xl ${isSelected
-                                    ? 'border-purple-500 border-2 shadow-lg bg-purple-50/50'
-                                    : 'border hover:border-purple-200 hover:shadow-md'
-                                    }`}
-                                onClick={() => onProfessionalChange(professional)}
-                            >
-                                <CardContent className="p-6">
-                                    <div className="flex items-start gap-4">
-                                        <Avatar className="w-16 h-16 rounded-2xl">
-                                            <AvatarImage src={professional.photo} alt={professional.full_name} className="object-cover" />
-                                            <AvatarFallback className="bg-purple-100 text-purple-600 font-bold text-xl">
-                                                {professional.full_name?.charAt(0)}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1">
-                                            <h3 className="text-lg font-bold text-gray-900 leading-none mb-1">{professional.full_name}</h3>
-                                            <p className="text-sm font-semibold text-purple-500 uppercase tracking-wider mb-3 leading-none italic">{professional.position}</p>
-
-                                            <div className="flex items-center gap-4 mb-3">
-                                                <div className="flex items-center gap-1.5 bg-yellow-50 px-2 py-1 rounded-lg">
-                                                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                                                    <span className="text-sm font-bold text-yellow-700">{professional.rating || '5.0'}</span>
-                                                </div>
-                                                {professional.reviews > 0 && (
-                                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">({professional.reviews} {t('professional.reviews', 'Reviews')})</span>
-                                                )}
-                                            </div>
-
-                                            <div className="flex flex-col gap-1.5 mt-2">
-                                                <div className="flex items-center gap-2 text-green-600 bg-green-50 w-fit px-3 py-1 rounded-full border border-green-100/50">
-                                                    <Clock className="w-3.5 h-3.5" />
-                                                    <span className="text-[10px] font-black uppercase tracking-widest leading-none">
-                                                        {salonSettings?.timezone
-                                                            ? t('professional.ready', 'Ready')
-                                                            : nextSlots[professional.id]
-                                                                ? t('professional.availableToday', 'Available Today')
-                                                                : nextAvailableDate[professional.id]
-                                                                    ? `${t('professional.availableOn', 'Available')} ${nextAvailableDate[professional.id]}`
-                                                                    : t('professional.ready', 'Ready')
-                                                        }
-                                                    </span>
-                                                </div>
-                                                {!salonSettings?.timezone && nextSlots[professional.id] && (
-                                                    <div className="flex flex-wrap gap-1.5 mt-1">
-                                                        {nextSlots[professional.id].split(', ').map((time: string, idx: number) => (
-                                                            <span
-                                                                key={idx}
-                                                                className="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold tracking-wide hover:bg-slate-100 transition-colors"
-                                                            >
-                                                                {time}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
+                            {/* Master Info */}
+                            <div className="flex items-start gap-3 mb-4">
+                                <Avatar className="w-16 h-16 rounded-full flex-shrink-0">
+                                    <AvatarImage src={professional.photo} alt={professional.full_name} className="object-cover" />
+                                    <AvatarFallback className="bg-gray-100 text-gray-600 font-bold text-xl">
+                                        {professional.full_name?.charAt(0)}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="font-semibold mb-0.5">{professional.full_name}</h3>
+                                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{professional.position}</p>
+                                    <div className="flex items-center gap-1">
+                                        <Star className="text-amber-400 fill-amber-400" size={14} />
+                                        <span className="text-sm font-medium">{professional.rating || '5.0'}</span>
                                     </div>
-                                </CardContent>
-                            </Card>
-                        </motion.div>
+                                </div>
+                            </div>
+
+                            {/* Availability */}
+                            {nextSlots[professional.id] ? (
+                                <>
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <Clock className="text-green-600" size={14} />
+                                        <span className="text-xs text-green-600 font-medium uppercase tracking-wide">
+                                            {t('professional.availableToday', 'Available Today')}
+                                        </span>
+                                    </div>
+
+                                    {/* Time Slots */}
+                                    <div className="grid grid-cols-4 gap-2">
+                                        {nextSlots[professional.id].split(', ').map((time: string, idx: number) => (
+                                            <div
+                                                key={idx}
+                                                className="py-1.5 rounded-lg text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200 text-center"
+                                            >
+                                                {time}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="flex items-center gap-2 py-3">
+                                    <Clock className="text-gray-400" size={14} />
+                                    <span className="text-xs text-gray-400 font-medium uppercase tracking-wide">
+                                        {nextAvailableDate[professional.id]
+                                            ? `${t('professional.availableOn', 'Available')} ${nextAvailableDate[professional.id]}`
+                                            : t('professional.notAvailableToday', 'Not Available Today')
+                                        }
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                     );
                 })}
             </div>

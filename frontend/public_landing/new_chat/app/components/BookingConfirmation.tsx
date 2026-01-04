@@ -2,11 +2,13 @@ import { ArrowLeft, X, Globe, Calendar, Clock, Phone, CheckCircle } from 'lucide
 
 interface BookingConfirmationProps {
   service: any;
+  master: any;
+  time: string | null;
   onBack: () => void;
   onConfirm: () => void;
 }
 
-export function BookingConfirmation({ service, onBack, onConfirm }: BookingConfirmationProps) {
+export function BookingConfirmation({ service, master, time, onBack, onConfirm }: BookingConfirmationProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -42,7 +44,7 @@ export function BookingConfirmation({ service, onBack, onConfirm }: BookingConfi
             {/* Master */}
             <div>
               <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Master</p>
-              <p className="font-semibold">Amandurdyyeva Mestan</p>
+              <p className="font-semibold">{master.name}</p>
             </div>
 
             {/* Date & Time */}
@@ -68,7 +70,7 @@ export function BookingConfirmation({ service, onBack, onConfirm }: BookingConfi
                     <Clock size={16} className="text-gray-500" />
                     <span className="text-xs text-gray-500 uppercase tracking-wide">Time</span>
                   </div>
-                  <p className="font-semibold">12:00</p>
+                  <p className="font-semibold">{time}</p>
                 </div>
               </div>
             </div>

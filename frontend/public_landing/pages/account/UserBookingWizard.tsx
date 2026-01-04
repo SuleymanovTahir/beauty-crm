@@ -365,17 +365,14 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             </h1>
           </div>
 
-          <div className="flex items-center gap-2 bg-slate-100/50 p-1 rounded-2xl border border-slate-200/60 shadow-sm transition-all hover:bg-slate-100/80">
+          <div className="flex items-center gap-3">
             <PublicLanguageSwitcher />
-            <div className="w-[1px] h-4 bg-slate-200/80 mx-1" />
-            <Button
-              variant="outline"
-              size="sm"
+            <button
               onClick={handleClose}
-              className="text-[10px] font-black uppercase tracking-widest border-red-100 text-red-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all rounded-xl h-8 px-3 gap-2"
+              className="p-2 hover:bg-gray-100 rounded-lg text-gray-400"
             >
-              <X className="w-4 h-4" />
-            </Button>
+              <X size={20} />
+            </button>
           </div>
         </div>
       </div>

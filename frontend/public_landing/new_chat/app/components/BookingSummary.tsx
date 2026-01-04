@@ -2,11 +2,13 @@ import { ArrowLeft, X, Globe, Scissors, User, Calendar, ChevronRight, Edit2 } fr
 
 interface BookingSummaryProps {
   service: any;
+  master: any;
+  time: string | null;
   onNext: () => void;
   onBack: () => void;
 }
 
-export function BookingSummary({ service, onNext, onBack }: BookingSummaryProps) {
+export function BookingSummary({ service, master, time, onNext, onBack }: BookingSummaryProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -85,7 +87,7 @@ export function BookingSummary({ service, onNext, onBack }: BookingSummaryProps)
               </div>
             </div>
             <h3 className="font-semibold text-sm mb-1">Professional</h3>
-            <p className="text-xs text-gray-600 mb-3">Amandurdyyeva Mestan</p>
+            <p className="text-xs text-gray-600 mb-3">{master.name}</p>
             <div className="flex items-center justify-between">
               <span className="inline-block bg-green-100 text-green-700 text-xs px-2 py-1 rounded">Complete</span>
               <ChevronRight size={16} className="text-gray-400" />
