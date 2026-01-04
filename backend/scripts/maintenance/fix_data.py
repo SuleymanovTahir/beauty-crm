@@ -250,6 +250,24 @@ def run_all_fixes():
         shutil.copy2(cred_path, root_cred_path)
         print(f"✅ Credentials file created at: {root_cred_path}")
 
+        # 8. Set default schedule for all service providers (10:30 - 21:00)
+        print("🔍 Setting default schedules (10:30-21:00) for all masters...")
+        c.execute("SELECT id, full_name FROM users WHERE is_service_provider = TRUE")
+        all_masters = c.fetchall()
+        
+        for master_id, master_name in all_masters:
+            # For each day of the week (0-6)
+            for day in range(7):
+                c.execute("""
+                    INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
+                    VALUES (%s, %s, %s, %s, TRUE)
+                    ON CONFLICT (user_id, day_of_week) DO UPDATE 
+                    SET start_time = EXCLUDED.start_time, 
+                        end_time = EXCLUDED.end_time, 
+                        is_active = TRUE
+                """, (master_id, day, "10:30", "21:00"))
+        print(f"✅ Set default schedule for {len(all_masters)} masters.")
+
         conn.commit()
         print("✅ Data fixes completed successfully!")
         
