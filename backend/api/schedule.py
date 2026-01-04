@@ -159,6 +159,21 @@ async def delete_time_off_by_id(id: int):
     finally:
         conn.close()
 
+@router.put("/schedule/time-off/{id}")
+async def update_time_off(id: int, data: TimeOffCreate):
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        cursor.execute("""
+            UPDATE user_time_off 
+            SET start_date = %s, end_date = %s, reason = %s 
+            WHERE id = %s
+        """, (data.start_datetime, data.end_datetime, data.reason, id))
+        conn.commit()
+        return {"status": "success"}
+    finally:
+        conn.close()
+
 # --- Existing Endpoints (Master Name based) ---
 
 @router.post("/schedule/{master_name}/working-hours")

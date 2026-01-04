@@ -13,7 +13,7 @@
   "friday": "Пятница",
   "from": "С",
   "full_access_director": "Полный доступ (Директор)",
-  "granted_revoked": "Добавлено/Отозвано",
+  "granted_revoked": "Добавлено или Отозвано",
   "hierarchy_level": "Уровень в иерархии",
   "individual_permissions": "Индивидуальные права",
   "individual_permissions_description": "Права, назначенные пользователю лично, помимо его основной роли.",
