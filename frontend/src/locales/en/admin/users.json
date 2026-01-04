@@ -112,7 +112,7 @@
   "error_username_too_short": "Username too short",
   "estimated_salary": "Estimated Salary",
   "events_to_notify": "Events to notify about",
-  "file_too_large": "File too large (max. 5MB)",
+  "file_too_large": "The file is too large (maximum 5MB)",
   "fill_required_fields": "Please fill required fields",
   "filter_all_time": "All time",
   "filter_last30days": "Last 30 days",
@@ -291,5 +291,7 @@
   "view_details": "View details",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience"
+  "years_of_experience": "Years of Experience",
+  "edit_time_off": "Edit holiday",
+  "time_off_updated": "Holiday period updated"
 }

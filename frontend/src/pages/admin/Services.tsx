@@ -16,22 +16,10 @@ import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 
-// Карта единиц времени для всех поддерживаемых языков
-// Синхронизировано с public/locales/ и backend
-const DURATION_FORMATS: Record<string, { hour: string; minute: string }> = {
-  ru: { hour: 'ч', minute: 'мин' },
-  en: { hour: 'h', minute: 'min' },
-  ar: { hour: 'س', minute: 'د' },
-  de: { hour: 'Std', minute: 'Min' },
-  es: { hour: 'h', minute: 'min' },
-  fr: { hour: 'h', minute: 'min' },
-  hi: { hour: 'घंटा', minute: 'मिनट' },
-  kk: { hour: 'сағ', minute: 'мин' },
-  pt: { hour: 'h', minute: 'min' },
-};
+// DURATION_FORMATS removed in favor of dynamic translation in component
 
 // Utility function to format duration from minutes (universal for all languages)
-const formatDuration = (minutes: string | number | undefined, lang: string = 'ru'): string => {
+const formatDuration = (minutes: string | number | undefined, t: any): string => {
   if (!minutes) return '';
 
   const totalMinutes = typeof minutes === 'string' ? parseInt(minutes, 10) : minutes;
@@ -40,17 +28,15 @@ const formatDuration = (minutes: string | number | undefined, lang: string = 'ru
   const hours = Math.floor(totalMinutes / 60);
   const mins = totalMinutes % 60;
 
-  // Получаем формат для языка, fallback на русский если язык не найден
-  // Поддерживает базовые коды языков (ru, en) без локали (ru-RU, en-US)
-  const baseLang = lang.split('-')[0];
-  const fmt = DURATION_FORMATS[baseLang] || DURATION_FORMATS.ru;
+  const hourUnit = (t('unit_hour', { defaultValue: 'h' }) || 'h')[0].toLowerCase();
+  const minUnit = (t('unit_minute', { defaultValue: 'm' }) || 'm')[0].toLowerCase();
 
   if (hours > 0 && mins > 0) {
-    return `${hours}${fmt.hour} ${mins}${fmt.minute}`;
+    return `${hours}${hourUnit} ${mins}${minUnit}`;
   } else if (hours > 0) {
-    return `${hours}${fmt.hour}`;
+    return `${hours}${hourUnit}`;
   } else {
-    return `${mins}${fmt.minute}`;
+    return `${mins}${minUnit}`;
   }
 };
 
@@ -147,7 +133,7 @@ export default function Services() {
 
   // Services state
   const [services, setServices] = useState<Service[]>([]);
-  const { t, i18n } = useTranslation(['admin/Services', 'common']);
+  const { t, i18n } = useTranslation(['admin/Services', 'common', 'admin/users']);
   const [filteredServices, setFilteredServices] = useState<Service[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -809,7 +795,7 @@ export default function Services() {
                           {service.duration && service.duration !== 'null' ? (
                             <Badge className="bg-blue-100 text-blue-800 flex items-center gap-1 w-fit">
                               <Clock className="w-3 h-3" />
-                              {formatDuration(service.duration, i18n.language.split('-')[0])}
+                              {formatDuration(service.duration, t)}
                             </Badge>
                           ) : (
                             <span className="text-xs text-gray-400">—</span>

@@ -46,13 +46,13 @@
   "date": "Date",
   "day_off": "Day Off",
   "days": {
-    "FRI": "TP",
+    "FRI": "Vendredi",
     "MON": "Lun",
-    "SAT": "SB",
+    "SAT": "Samedi",
     "SUN": "Soleil",
     "THU": "Jeu",
     "TUE": "Vermont",
-    "WED": "RS"
+    "WED": "Mercredi"
   },
   "days_on_off": "(days on/off)",
   "duration": "Durée",
@@ -291,5 +291,7 @@
   "view_details": "View details",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience"
+  "years_of_experience": "Years of Experience",
+  "edit_time_off": "Modifier les jours fériés",
+  "time_off_updated": "Période de vacances mise à jour"
 }

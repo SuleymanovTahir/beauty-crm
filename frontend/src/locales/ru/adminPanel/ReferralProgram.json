@@ -40,13 +40,13 @@
     },
     "description": "Отслеживание статуса рефералов и распределения баллов",
     "filters": {
-      "all_statuses": "All Statuses"
+      "all_statuses": "Все статусы"
     },
     "search_placeholder": "Поиск рефералов...",
     "sort": {
-      "date": "Sort by Date",
-      "points": "Sort by Points",
-      "status": "Sort by Status"
+      "date": "По дате",
+      "points": "По баллам",
+      "status": "По статусу"
     },
     "statuses": {
       "cancelled": "Отменено",
