@@ -269,7 +269,7 @@ export function ProfessionalStep({
             {/* Any Professional Option */}
             <div
                 className={`bg-white rounded-xl border p-5 transition-colors cursor-pointer ${isAnyProfessional
-                    ? 'border-gray-900 border-2 shadow-sm'
+                    ? 'border-purple-500 border-2 shadow-sm bg-purple-50/50'
                     : 'border-gray-200 hover:border-gray-300'
                     }`}
                 onClick={() => onProfessionalChange(null)}
@@ -296,17 +296,17 @@ export function ProfessionalStep({
                     return (
                         <div
                             key={professional.id}
-                            className={`bg-white rounded-xl border-2 p-5 transition-all cursor-pointer ${isSelected
-                                ? 'border-gray-900 shadow-sm'
-                                : 'border-gray-200 hover:border-gray-300'
+                            className={`bg-white rounded-2xl border-2 p-6 transition-all cursor-pointer ${isSelected
+                                ? 'border-purple-500 shadow-lg bg-gradient-to-br from-purple-50 to-pink-50'
+                                : 'border-purple-200 hover:border-purple-300 hover:shadow-md'
                                 }`}
                             onClick={() => onProfessionalChange(professional)}
                         >
                             {/* Master Info */}
                             <div className="flex items-start gap-3 mb-4">
-                                <Avatar className="w-16 h-16 rounded-full flex-shrink-0">
+                                <Avatar className="w-16 h-16 rounded-2xl flex-shrink-0">
                                     <AvatarImage src={professional.photo} alt={professional.full_name} className="object-cover" />
-                                    <AvatarFallback className="bg-gray-100 text-gray-600 font-bold text-xl">
+                                    <AvatarFallback className="bg-purple-100 text-purple-600 font-bold text-xl">
                                         {professional.full_name?.charAt(0)}
                                     </AvatarFallback>
                                 </Avatar>
