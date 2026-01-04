@@ -342,36 +342,34 @@ class MasterScheduleService:
             day_of_week = dt.weekday()
 
             c.execute("""
-                SELECT start_time, end_time
+                SELECT start_time, end_time, is_active
                 FROM user_schedule
-                WHERE user_id = %s AND day_of_week = %s AND is_active = TRUE
+                WHERE user_id = %s AND day_of_week = %s
             """, (user_id, day_of_week))
 
-            schedule = c.fetchone()
+            schedule_row = c.fetchone()
             
-            # ✅ DYNAMIC SCHEDULE LOGIC
-            # If no schedule found in DB, use salon defaults from settings
-            if not schedule:
+            if not schedule_row:
+                # No specific schedule for this day -> Use salon defaults
                 from db.settings import get_salon_settings
                 settings = get_salon_settings()
                 
-                # Try to get specific weekday/weekend hours first, then fall back to generic
-                # TODO: Implement weekend specific check if needed
-                hours_str = settings.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)  # ✅ Используем константу
+                # Check if it's weekend (Sat=5, Sun=6)
+                if day_of_week >= 5:
+                    hours_str = settings.get('hours_weekends', DEFAULT_HOURS_WEEKENDS)
+                else:
+                    hours_str = settings.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)
                 
-                # Parse "10:30 - 21:30"
                 try:
                     parts = hours_str.split('-')
                     start_time_str = parts[0].strip()
                     end_time_str = parts[1].strip()
                 except:
-                    # Fallback if parsing fails (should rarely happen with defaults)
                     start_time_str = DEFAULT_HOURS_START
                     end_time_str = DEFAULT_HOURS_END
             else:
-                start_time_str, end_time_str = schedule
-                # Если время не установлено (выходной), слотов нет
-                if not start_time_str or not end_time_str:
+                start_time_str, end_time_str, is_active = schedule_row
+                if not is_active or not start_time_str or not end_time_str:
                     return []
 
             # ✅ Parse hours and minutes for optimization logic (handle HH:MM and HH:MM:SS)
@@ -693,17 +691,17 @@ class MasterScheduleService:
             # 3. BULK FETCH: Расписания (Schedules)
             # Fetch schedules for all relevant masters
             c.execute(f"""
-                SELECT user_id, day_of_week, start_time, end_time
+                SELECT user_id, day_of_week, start_time, end_time, is_active
                 FROM user_schedule
-                WHERE user_id = ANY(%s) AND is_active = TRUE
+                WHERE user_id = ANY(%s)
             """, (master_ids,))
             
-            schedules_map = {} # {user_id: {day_of_week: (start, end)}}
+            schedules_map = {} # {user_id: {day_of_week: (start, end, is_active)}}
             for row in c.fetchall():
-                uid, dow, start, end = row
+                uid, dow, start, end, active = row
                 if uid not in schedules_map:
                     schedules_map[uid] = {}
-                schedules_map[uid][dow] = (start, end)
+                schedules_map[uid][dow] = (start, end, active)
                 
             # Fallback to default schedule if missing? 
             # Current logic in `get_available_slots` falls back to settings. We should replicate that or fetch settings once.
@@ -723,7 +721,9 @@ class MasterScheduleService:
                 uid, start, end = row
                 if uid not in time_offs_map:
                     time_offs_map[uid] = []
-                time_offs_map[uid].append((str(start), str(end)))
+                start_str = str(start).replace('T', ' ')
+                end_str = str(end).replace('T', ' ')
+                time_offs_map[uid].append((start_str, end_str))
 
             # 5. BULK FETCH: Бронирования (Bookings)
             c.execute(f"""
@@ -741,12 +741,13 @@ class MasterScheduleService:
                 
                 # Parse datetime
                 if isinstance(dt_val, str):
-                    dt_str = dt_val
+                    dt_str = dt_val.replace('T', ' ')
                 else:
                     dt_str = dt_val.strftime("%Y-%m-%d %H:%M:%S")
                 
-                date_part = dt_str.split(' ')[0]
-                time_part = dt_str.split(' ')[1][:5] # HH:MM
+                parts = dt_str.split(' ')
+                date_part = parts[0]
+                time_part = parts[1][:5] if len(parts) > 1 else "00:00"
                 
                 if m_key not in bookings_map:
                     bookings_map[m_key] = {}
@@ -773,33 +774,24 @@ class MasterScheduleService:
                     m_name = master["name"]
                     
                     # A. Check Schedule
-                    user_schedule = schedules_map.get(uid, {})
                     if day_of_week in user_schedule:
-                        start_time, end_time = user_schedule[day_of_week]
-                    else:
-                        # Fallback to settings defaults if not in DB
-                        # Replicating logic from get_available_slots roughly
-                        # For speed, assume default if not explicitly set? 
-                        # Actually logic says "If no schedule found in DB... use defaults". 
-                        # But `get_working_hours` returns empty active days. 
-                        # Let's assume if not in `user_schedule` table, use Default from settings
-                        # WARNING: master_schedule.py line 352 logic says "if not schedule" (meaning fetchone is None).
-                        # So if user has NO rows in user_schedule, use defaults. 
-                        # If user has some rows but not for this day? Usually means day off.
-                        # Detailed check:
-                        if not user_schedule: 
-                            # No schedule records at all for this user -> Use Defaults
-                            hours_str = settings.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)
-                            try:
-                                parts = hours_str.split('-')
-                                start_time = parts[0].strip()
-                                end_time = parts[1].strip()
-                            except:
-                                start_time = DEFAULT_HOURS_START
-                                end_time = DEFAULT_HOURS_END
-                        else:
-                            # User has schedule, but not for this day -> Day Off
+                        start_time, end_time, is_active = user_schedule[day_of_week]
+                        if not is_active:
                             continue
+                    else:
+                        # Day missing in user schedule -> Use salon defaults
+                        if day_of_week >= 5: # Sat, Sun
+                            hours_str = settings.get('hours_weekends', DEFAULT_HOURS_WEEKENDS)
+                        else:
+                            hours_str = settings.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)
+                            
+                        try:
+                            parts = hours_str.split('-')
+                            start_time = parts[0].strip()
+                            end_time = parts[1].strip()
+                        except:
+                            start_time = DEFAULT_HOURS_START
+                            end_time = DEFAULT_HOURS_END
 
                     if not start_time or not end_time:
                         continue
@@ -852,9 +844,12 @@ class MasterScheduleService:
                     work_end_dt = datetime.combine(date_obj, dt_time(e_h, e_m))
                     
                     # Same day advance buffer
-                    min_booking_time = datetime.now()
+                    now_with_tz = get_current_time()
+                    # Make it naive for comparison if date_obj/current_dt is naive
+                    min_booking_time = now_with_tz.replace(tzinfo=None)
+                    
                     if date_obj == today:
-                         min_booking_time += timedelta(hours=2)
+                         min_booking_time += timedelta(minutes=30)
 
                     has_slot = False
                     while current_dt + timedelta(minutes=duration_minutes) <= work_end_dt:

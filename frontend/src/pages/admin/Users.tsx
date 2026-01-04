@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { PositionSelector } from '../../components/PositionSelector';
@@ -58,13 +58,19 @@ export default function Users() {
     employee: 'bg-gray-100 text-gray-800',
   };
 
+  const [searchParams, setSearchParams] = useSearchParams();
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dateFilter, setDateFilter] = useState<DateFilter>('last30days');
-  const [activeTab, setActiveTab] = useState<UserTab>('clients');
+  const [activeTab, setActiveTab] = useState<UserTab>((searchParams.get('tab') as UserTab) || 'employees');
+
+  const handleTabChange = (tab: UserTab) => {
+    setActiveTab(tab);
+    setSearchParams({ tab });
+  };
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
@@ -261,22 +267,22 @@ export default function Users() {
 
   const stats = activeTab === 'employees'
     ? {
-        total: users.length,
-        active: users.filter((u: any) => u.is_active).length,
-        serviceProviders: users.filter((u: any) => u.is_service_provider).length,
-      }
+      total: users.length,
+      active: users.filter((u: any) => u.is_active).length,
+      serviceProviders: users.filter((u: any) => u.is_service_provider).length,
+    }
     : {
-        total: users.length,
-        // New clients: created within the selected period
-        new: users.filter(u => {
-          if (!u.created_at) return false;
-          const createdDate = new Date(u.created_at);
-          const periodStart = new Date(dateRange.start);
-          return createdDate >= periodStart;
-        }).length,
-        active: users.filter(u => u.status === 'active' || u.status === 'lead').length,
-        totalSpend: users.reduce((sum, u) => sum + (u.total_spend || 0), 0),
-      };
+      total: users.length,
+      // New clients: created within the selected period
+      new: users.filter(u => {
+        if (!u.created_at) return false;
+        const createdDate = new Date(u.created_at);
+        const periodStart = new Date(dateRange.start);
+        return createdDate >= periodStart;
+      }).length,
+      active: users.filter(u => u.status === 'active' || u.status === 'lead').length,
+      totalSpend: users.reduce((sum, u) => sum + (u.total_spend || 0), 0),
+    };
 
   if (loading) {
     return (
@@ -322,33 +328,31 @@ export default function Users() {
       <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
         <div className="flex gap-2">
           <button
-            onClick={() => setActiveTab('clients')}
-            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-              activeTab === 'clients'
+            onClick={() => handleTabChange('employees')}
+            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'employees'
                 ? 'bg-pink-600 text-white shadow-sm'
                 : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <UsersIcon className="w-4 h-4" />
-              <span>{t('tab_clients', 'Клиенты')}</span>
-              {activeTab === 'clients' && (
-                <Badge className="bg-white/20 text-white border-0">{users.length}</Badge>
-              )}
-            </div>
-          </button>
-          <button
-            onClick={() => setActiveTab('employees')}
-            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-              activeTab === 'employees'
-                ? 'bg-pink-600 text-white shadow-sm'
-                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-            }`}
+              }`}
           >
             <div className="flex items-center justify-center gap-2">
               <Shield className="w-4 h-4" />
               <span>{t('tab_employees', 'Сотрудники')}</span>
               {activeTab === 'employees' && (
+                <Badge className="bg-white/20 text-white border-0">{users.length}</Badge>
+              )}
+            </div>
+          </button>
+          <button
+            onClick={() => handleTabChange('clients')}
+            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'clients'
+                ? 'bg-pink-600 text-white shadow-sm'
+                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+              }`}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <UsersIcon className="w-4 h-4" />
+              <span>{t('tab_clients', 'Клиенты')}</span>
+              {activeTab === 'clients' && (
                 <Badge className="bg-white/20 text-white border-0">{users.length}</Badge>
               )}
             </div>
@@ -359,54 +363,30 @@ export default function Users() {
       {/* Date Filter Section - только для клиентов */}
       {activeTab === 'clients' && (
         <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-        <div className="flex flex-col md:flex-row md:items-center gap-3">
-          <div className="flex items-center gap-2 text-gray-700">
-            <Filter className="w-5 h-5" />
-            <span className="font-medium">{t('period_filter', 'Период для новых клиентов:')}</span>
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
+            <div className="flex items-center gap-2 text-gray-700">
+              <Filter className="w-5 h-5 text-gray-400" />
+              <span className="font-medium text-sm">{t('period_filter', 'Период для новых клиентов:')}</span>
+            </div>
+            <div className="w-full md:w-64">
+              <select
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value as DateFilter)}
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all outline-none appearance-none cursor-pointer"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 12px center',
+                  backgroundSize: '16px'
+                }}
+              >
+                <option value="last7days">{t('filter_last7days', 'Последние 7 дней')}</option>
+                <option value="last30days">{t('filter_last30days', 'Последние 30 дней')}</option>
+                <option value="last90days">{t('filter_last90days', 'Последние 90 дней')}</option>
+                <option value="allTime">{t('filter_all_time', 'Все время')}</option>
+              </select>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setDateFilter('last7days')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                dateFilter === 'last7days'
-                  ? 'bg-pink-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {t('filter_last7days', 'Последние 7 дней')}
-            </button>
-            <button
-              onClick={() => setDateFilter('last30days')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                dateFilter === 'last30days'
-                  ? 'bg-pink-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {t('filter_last30days', 'Последние 30 дней')}
-            </button>
-            <button
-              onClick={() => setDateFilter('last90days')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                dateFilter === 'last90days'
-                  ? 'bg-pink-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {t('filter_last90days', 'Последние 90 дней')}
-            </button>
-            <button
-              onClick={() => setDateFilter('allTime')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                dateFilter === 'allTime'
-                  ? 'bg-pink-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {t('filter_all_time', 'Все время')}
-            </button>
-          </div>
-        </div>
         </div>
       )}
 
@@ -544,9 +524,9 @@ export default function Users() {
                         <td className="px-6 py-4">
                           <Badge className={
                             user.status === 'new' ? 'bg-green-100 text-green-800' :
-                            user.status === 'active' ? 'bg-blue-100 text-blue-800' :
-                            user.status === 'lead' ? 'bg-purple-100 text-purple-800' :
-                            'bg-gray-100 text-gray-800'
+                              user.status === 'active' ? 'bg-blue-100 text-blue-800' :
+                                user.status === 'lead' ? 'bg-purple-100 text-purple-800' :
+                                  'bg-gray-100 text-gray-800'
                           }>
                             {user.status || t('status_new', 'new')}
                           </Badge>
@@ -563,23 +543,67 @@ export default function Users() {
                       {activeTab === 'employees' ? (
                         <div className="flex items-center gap-2">
                           {permissions.canEditUsers && (
+                            <>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => navigate(`/crm/users/${(user as any).id}`)}
+                                className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                title={t('action_edit_title', 'Edit profile')}
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                  setSelectedUser(user);
+                                  setShowScheduleDialog(true);
+                                }}
+                                className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                title={t('action_manage_schedule_title', 'Manage schedule')}
+                              >
+                                <Calendar className="w-4 h-4" />
+                              </Button>
+
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                  setSelectedUser(user);
+                                  setShowPermissionsDialog(true);
+                                }}
+                                className="h-8 w-8 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                                title={t('action_manage_permissions_title', 'Manage permissions')}
+                              >
+                                <Key className="w-4 h-4" />
+                              </Button>
+
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                  setSelectedUser(user);
+                                  setShowRoleDialog(true);
+                                }}
+                                className="h-8 w-8 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                                title={t('action_change_role_title', 'Change role')}
+                              >
+                                <Shield className="w-4 h-4" />
+                              </Button>
+                            </>
+                          )}
+
+                          {permissions.canDeleteUsers && (
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => {
-                                setSelectedUser(user);
-                                setEditForm({
-                                  username: (user as any).username || '',
-                                  full_name: (user as any).full_name || '',
-                                  email: user.email || '',
-                                  position: (user as any).position || ''
-                                });
-                                setShowEditDialog(true);
-                              }}
-                              className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                              title={t('edit', 'Edit')}
+                              onClick={() => handleDeleteUser((user as any).id)}
+                              className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                              title={t('action_delete_title', 'Delete user')}
                             >
-                              <Edit className="w-4 h-4" />
+                              <Trash2 className="w-4 h-4" />
                             </Button>
                           )}
                         </div>
@@ -589,9 +613,9 @@ export default function Users() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => navigate(`/admin/chat/${user.instagram_id}`)}
+                              onClick={() => navigate(`/crm/clients/${user.instagram_id}`)}
                               className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                              title={t('open_chat', 'Open chat')}
+                              title={t('view_details', 'View details')}
                             >
                               <Edit className="w-4 h-4" />
                             </Button>
@@ -615,31 +639,32 @@ export default function Users() {
       {/* Диалог смены роли */}
       {
         showRoleDialog && selectedUser && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl max-w-md w-full shadow-2xl custom-dialog-scroll flex flex-col">
-              <div className="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+              <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white flex-shrink-0">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">
-                    {t('role_dialog_title')}: {selectedUser.full_name}
+                  <h3 className="text-xl font-bold text-gray-900 leading-tight">
+                    {t('action_change_role_title')}: {selectedUser.full_name}
                   </h3>
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-sm text-gray-500 mt-1">
                     {t('role_dialog_current')}: {roleConfig[selectedUser.role]?.label || selectedUser.role}
                   </p>
                 </div>
                 <Button
-                  variant="outline"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => {
                     setShowRoleDialog(false);
                     setSelectedUser(null);
                   }}
-                  className="ml-4"
+                  className="rounded-full hover:bg-gray-100"
                   disabled={savingRole}
                 >
-                  {t('role_dialog_close')}
+                  <X className="w-5 h-5 text-gray-400" />
                 </Button>
               </div>
 
-              <div className="p-4 overflow-y-auto flex-1">
+              <div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
                 {loadingRoles ? (
                   <div className="flex justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
