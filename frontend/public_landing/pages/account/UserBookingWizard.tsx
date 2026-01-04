@@ -347,9 +347,9 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   );
 
   return (
-    <div className="wizard-scrollable min-h-screen bg-gray-50">
+    <div className="wizard-scrollable min-h-screen bg-gray-50 selection:bg-purple-100 selection:text-purple-600">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="bg-white/80 backdrop-blur-sm border-b shadow-sm sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button
@@ -461,56 +461,72 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         >
           <div className="max-w-4xl mx-auto">
             {/* Single row with info and buttons */}
-            {bookingState.services.length > 0 && (
-              <div className="flex items-center justify-between gap-4">
-                {/* Left: Service info */}
-                <div className="flex flex-col min-w-0 flex-1">
-                  <p className="text-sm font-black text-gray-900 uppercase tracking-tighter truncate">
-                    {bookingState.services.length === 1
-                      ? getLocalizedName(bookingState.services[0], i18n.language)
-                      : `${bookingState.services.length} ${getPluralForm(bookingState.services.length, t('services.service_one', 'service'), t('services.service_few', 'services'), t('services.service_many', 'services'))} ${t('services.selected', 'selected').toLowerCase()}`
-                    }
-                  </p>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                    {bookingState.professional && <span>{bookingState.professional.full_name} • </span>}
-                    {totalDuration} {t('min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}
-                  </p>
-                </div>
-
-                {/* Right: Buttons */}
-                <div className="flex items-center gap-3 flex-shrink-0">
-                  {/* Edit booking button */}
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowRescheduleDialog(true)}
-                    className="h-10 px-4 rounded-lg border border-slate-200 font-medium text-sm hover:bg-slate-50 transition-all whitespace-nowrap"
-                  >
-                    {t('booking:change_booking', 'Изменить запись')}
-                  </Button>
-
-                  {/* Primary "Next" action button */}
-                  <Button
-                    onClick={() => {
-                      if (step === 'services' && bookingState.services.length > 0) {
-                        setStep('professional');
-                      } else if (step === 'professional' && bookingState.professionalSelected) {
-                        setStep('datetime');
-                      } else if (step === 'datetime' && bookingState.date && bookingState.time) {
-                        setStep('confirm');
+            <div className="flex items-center justify-between gap-4">
+              {/* Left: Service info */}
+              <div className="flex flex-col min-w-0 flex-1">
+                {bookingState.services.length > 0 ? (
+                  <>
+                    <p className="text-sm font-black text-gray-900 uppercase tracking-tighter truncate">
+                      {bookingState.services.length === 1
+                        ? getLocalizedName(bookingState.services[0], i18n.language)
+                        : `${bookingState.services.length} ${getPluralForm(bookingState.services.length, t('services.service_one', 'service'), t('services.service_few', 'services'), t('services.service_many', 'services'))} ${t('services.selected', 'selected').toLowerCase()}`
                       }
-                    }}
-                    className="h-10 px-6 rounded-lg bg-gray-900 hover:bg-gray-800 font-medium text-sm text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                    disabled={
-                      (step === 'services' && bookingState.services.length === 0) ||
-                      (step === 'professional' && !bookingState.professionalSelected) ||
-                      (step === 'datetime' && (!bookingState.date || !bookingState.time))
-                    }
-                  >
-                    {step === 'datetime' ? t('confirm.title', 'Подтвердить') : t('common:next', 'Далее')}
-                  </Button>
-                </div>
+                    </p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                      {bookingState.professional && <span>{bookingState.professional.full_name} • </span>}
+                      {totalDuration} {t('min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-sm font-medium text-gray-500">
+                    {t('booking:select_to_continue', 'Выберите услугу или мастера для продолжения')}
+                  </p>
+                )}
               </div>
-            )}
+
+              {/* Right: Action Buttons */}
+              <div className="flex items-center gap-3 flex-shrink-0">
+                {/* Services button - show if services not selected AND not on services step */}
+                {bookingState.services.length === 0 && step !== 'services' && (
+                  <Button
+                    onClick={() => setStep('services')}
+                    className="h-10 px-4 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-medium text-sm text-white transition-all whitespace-nowrap"
+                  >
+                    {t('booking:continue_services', 'Продолжить с выбора услуг')}
+                  </Button>
+                )}
+
+                {/* Professional button - show if professional not selected AND not on professional step */}
+                {!bookingState.professionalSelected && step !== 'professional' && (
+                  <Button
+                    onClick={() => setStep('professional')}
+                    className="h-10 px-4 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-medium text-sm text-white transition-all whitespace-nowrap"
+                  >
+                    {t('booking:continue_professional', 'Продолжить с выбора мастера')}
+                  </Button>
+                )}
+
+                {/* DateTime button - show if date/time not selected AND not on datetime step */}
+                {(!bookingState.date || !bookingState.time) && step !== 'datetime' && (
+                  <Button
+                    onClick={() => setStep('datetime')}
+                    className="h-10 px-4 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-medium text-sm text-white transition-all whitespace-nowrap"
+                  >
+                    {t('booking:continue_datetime', 'Продолжить с выбора даты и времени')}
+                  </Button>
+                )}
+
+                {/* Confirm button - show if everything is selected */}
+                {bookingState.services.length > 0 && bookingState.professionalSelected && bookingState.date && bookingState.time && (
+                  <Button
+                    onClick={() => setStep('confirm')}
+                    className="h-10 px-6 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-medium text-sm text-white transition-all whitespace-nowrap"
+                  >
+                    {t('confirm.title', 'Подтвердить')}
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
         </motion.div>
       )}
