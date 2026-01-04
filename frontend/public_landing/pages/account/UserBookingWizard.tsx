@@ -462,19 +462,31 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           <div className="max-w-4xl mx-auto">
             {/* Single row with info and buttons */}
             <div className="flex items-center justify-between gap-4">
-              {/* Left: Service info */}
+              {/* Left: Booking info */}
               <div className="flex flex-col min-w-0 flex-1">
-                {bookingState.services.length > 0 ? (
+                {(bookingState.services.length > 0 || bookingState.professionalSelected || bookingState.date || bookingState.time) ? (
                   <>
                     <p className="text-sm font-black text-gray-900 uppercase tracking-tighter truncate">
-                      {bookingState.services.length === 1
-                        ? getLocalizedName(bookingState.services[0], i18n.language)
-                        : `${bookingState.services.length} ${getPluralForm(bookingState.services.length, t('services.service_one', 'service'), t('services.service_few', 'services'), t('services.service_many', 'services'))} ${t('services.selected', 'selected').toLowerCase()}`
-                      }
+                      {bookingState.services.length > 0 ? (
+                        bookingState.services.length === 1
+                          ? getLocalizedName(bookingState.services[0], i18n.language)
+                          : `${bookingState.services.length} ${getPluralForm(bookingState.services.length, t('services.service_one', 'service'), t('services.service_few', 'services'), t('services.service_many', 'services'))} ${t('services.selected', 'selected').toLowerCase()}`
+                      ) : bookingState.professionalSelected ? (
+                        bookingState.professional?.full_name || t('professional.anyAvailable', 'Flexible Match')
+                      ) : (
+                        t('booking:booking_info', 'Информация о записи')
+                      )}
                     </p>
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                       {bookingState.professional && <span>{bookingState.professional.full_name} • </span>}
-                      {totalDuration} {t('min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}
+                      {bookingState.services.length > 0 && <span>{totalDuration} {t('min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}</span>}
+                      {(bookingState.date || bookingState.time) && (
+                        <>
+                          {bookingState.services.length > 0 && ' • '}
+                          {bookingState.date && format(bookingState.date, 'dd MMM')}
+                          {bookingState.time && ` ${bookingState.time}`}
+                        </>
+                      )}
                     </p>
                   </>
                 ) : (

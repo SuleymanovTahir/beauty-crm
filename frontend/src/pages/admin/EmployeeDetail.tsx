@@ -41,7 +41,7 @@ interface Employee {
 export default function EmployeeDetail() {
     const { id, tab } = useParams<{ id: string; tab: string }>();
     const navigate = useNavigate();
-    const { t } = useTranslation(['admin/users', 'common']);
+    const { t, i18n } = useTranslation(['admin/users', 'common']);
 
     const activeTab = tab || 'information';
 
@@ -223,13 +223,13 @@ export default function EmployeeDetail() {
                             <TabsList className="justify-start border-b-0 rounded-none h-auto p-0 bg-transparent">
                                 <TabsTrigger
                                     value="information"
-                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent px-4 py-2 text-sm"
+                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
                                 >
                                     {t('tab_information', 'Information')}
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="services"
-                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent px-4 py-2 text-sm"
+                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
                                 >
                                     {t('tab_services', 'Services')}
                                     {servicesCount > 0 && (
@@ -240,26 +240,26 @@ export default function EmployeeDetail() {
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="online_booking"
-                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent px-4 py-2 text-sm"
+                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
                                 >
                                     {t('tab_online_booking', 'Online booking')}
                                 </TabsTrigger>
 
                                 <TabsTrigger
                                     value="settings"
-                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent px-4 py-2 text-sm"
+                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
                                 >
                                     {t('tab_settings', 'Settings')}
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="schedule"
-                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent px-4 py-2 text-sm"
+                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
                                 >
                                     {t('tab_schedule', 'Schedule')}
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="payroll"
-                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent px-4 py-2 text-sm"
+                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent data-[state=active]:text-gray-900 px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
                                 >
                                     {t('tab_payroll', 'Payroll')}
                                 </TabsTrigger>
