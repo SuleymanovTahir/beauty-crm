@@ -140,7 +140,7 @@ export function ServicesStep({ selectedServices, onServicesChange, salonSettings
             </motion.div>
 
             {/* Services List */}
-            <div className="grid md:grid-cols-2 gap-4 pb-32">
+            <div className="grid md:grid-cols-2 gap-3 pb-32">
                 <AnimatePresence>
                     {filteredServices.map((service, index) => {
                         const isSelected = selectedServices.some((s) => s.id === service.id);
@@ -153,38 +153,32 @@ export function ServicesStep({ selectedServices, onServicesChange, salonSettings
                                 transition={{ delay: index * 0.05 }}
                             >
                                 <Card
-                                    className={`cursor-pointer transition-all duration-300 rounded-2xl ${isSelected
-                                        ? 'border-purple-500 border-2 shadow-lg bg-purple-50/50'
-                                        : 'border hover:border-purple-200 hover:shadow-md'
+                                    className={`cursor-pointer transition-all duration-300 rounded-lg ${isSelected
+                                        ? 'border-purple-500 border-2 shadow-sm bg-purple-50/50'
+                                        : 'border-2 border-gray-200 hover:border-gray-300'
                                         }`}
                                     onClick={() => toggleService(service)}
                                 >
-                                    <CardContent className="p-6">
-                                        <div className="flex items-start justify-between mb-3">
+                                    <CardContent className="p-4">
+                                        <div className="flex items-start justify-between mb-2">
                                             <div className="flex-1">
-                                                <h3 className="font-bold text-lg text-gray-900 mb-1">
+                                                <h3 className="font-semibold text-sm text-gray-900 mb-1">
                                                     {getLocalizedName(service, i18n.language)}
                                                 </h3>
                                                 {service.description && (
-                                                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{service.description}</p>
+                                                    <p className="text-xs text-gray-500 mb-3 line-clamp-2">{service.description}</p>
                                                 )}
-                                                <div className="flex items-center gap-4 text-sm font-medium text-gray-500">
+                                                <div className="flex items-center gap-3 text-xs text-gray-500">
                                                     {service.duration && (
-                                                        <div className="flex items-center gap-1">
-                                                            <Clock className="w-4 h-4" />
-                                                            <span>{service.duration} {t('min', 'min')}</span>
-                                                        </div>
+                                                        <span>{service.duration} {t('min', 'min')}</span>
                                                     )}
-                                                    <div className="flex items-center gap-1 text-purple-600">
-                                                        <Banknote className="w-4 h-4" />
-                                                        <span>{service.price} {salonSettings?.currency || 'AED'}</span>
-                                                    </div>
+                                                    <span className="text-sm font-bold text-gray-900">{service.price} {salonSettings?.currency || 'AED'}</span>
                                                 </div>
                                             </div>
                                             <Checkbox
                                                 checked={isSelected}
                                                 onCheckedChange={() => toggleService(service)}
-                                                className="w-6 h-6 rounded-lg data-[state=checked]:bg-purple-600"
+                                                className="w-5 h-5 rounded-full data-[state=checked]:bg-purple-600 flex-shrink-0 ml-2"
                                             />
                                         </div>
                                     </CardContent>

@@ -460,14 +460,15 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         <motion.div
           initial={{ y: 100 }}
           animate={{ y: 0 }}
-          className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-100 p-4 z-[55] shadow-[0_-20px_40px_rgba(0,0,0,0.1)] pt-6 pb-safe"
+          className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-100 p-4 z-[55] shadow-[0_-20px_40px_rgba(0,0,0,0.1)] pb-safe"
         >
-          <div className="max-w-4xl mx-auto space-y-4">
-            {/* Selection Mini-Summary */}
+          <div className="max-w-4xl mx-auto">
+            {/* Single row with info and buttons */}
             {bookingState.services.length > 0 && (
-              <div className="flex items-center justify-between px-2">
-                <div className="flex flex-col">
-                  <p className="text-sm font-black text-gray-900 uppercase tracking-tighter">
+              <div className="flex items-center justify-between gap-4">
+                {/* Left: Service info */}
+                <div className="flex flex-col min-w-0 flex-1">
+                  <p className="text-sm font-black text-gray-900 uppercase tracking-tighter truncate">
                     {bookingState.services.length === 1
                       ? getLocalizedName(bookingState.services[0], i18n.language)
                       : `${bookingState.services.length} ${getPluralForm(bookingState.services.length, t('services.service_one', 'service'), t('services.service_few', 'services'), t('services.service_many', 'services'))} ${t('services.selected', 'selected').toLowerCase()}`
@@ -478,55 +479,41 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     {totalDuration} {t('min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}
                   </p>
                 </div>
-                <div className="flex -space-x-2">
-                  {bookingState.services.slice(0, 3).map((s, i) => (
-                    <div key={s.id} className="w-6 h-6 rounded-full bg-purple-500 border-2 border-white flex items-center justify-center text-[8px] text-white font-black" style={{ zIndex: 10 - i }}>
-                      {getLocalizedName(s, i18n.language)[0]}
-                    </div>
-                  ))}
-                  {bookingState.services.length > 3 && (
-                    <div className="w-6 h-6 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[8px] text-slate-400 font-bold z-0">
-                      +{bookingState.services.length - 3}
-                    </div>
-                  )}
+
+                {/* Right: Buttons */}
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  {/* Edit booking button */}
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowRescheduleDialog(true)}
+                    className="h-10 px-4 rounded-lg border border-slate-200 font-medium text-sm hover:bg-slate-50 transition-all whitespace-nowrap"
+                  >
+                    {t('booking:change_booking', 'Изменить запись')}
+                  </Button>
+
+                  {/* Primary "Next" action button */}
+                  <Button
+                    onClick={() => {
+                      if (step === 'services' && bookingState.services.length > 0) {
+                        setStep('professional');
+                      } else if (step === 'professional' && bookingState.professionalSelected) {
+                        setStep('datetime');
+                      } else if (step === 'datetime' && bookingState.date && bookingState.time) {
+                        setStep('confirm');
+                      }
+                    }}
+                    className="h-10 px-6 rounded-lg bg-gray-900 hover:bg-gray-800 font-medium text-sm text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                    disabled={
+                      (step === 'services' && bookingState.services.length === 0) ||
+                      (step === 'professional' && !bookingState.professionalSelected) ||
+                      (step === 'datetime' && (!bookingState.date || !bookingState.time))
+                    }
+                  >
+                    {step === 'datetime' ? t('confirm.title', 'Подтвердить') : t('common:next', 'Далее')}
+                  </Button>
                 </div>
               </div>
             )}
-
-            <div className="flex items-center gap-3">
-              {/* Edit booking button - opens reschedule dialog */}
-              {step !== 'menu' && bookingState.services.length > 0 && (
-                <Button
-                  variant="outline"
-                  onClick={() => setShowRescheduleDialog(true)}
-                  className="h-10 px-4 rounded-lg border border-slate-200 font-medium text-sm gap-2 hover:bg-slate-50 transition-all"
-                >
-                  <Edit className="w-4 h-4 text-blue-600" />
-                  <span>{t('booking:change_booking', 'Изменить запись')}</span>
-                </Button>
-              )}
-
-              {/* Primary "Next" action button */}
-              <Button
-                onClick={() => {
-                  if (step === 'services' && bookingState.services.length > 0) {
-                    setStep('professional');
-                  } else if (step === 'professional' && bookingState.professionalSelected) {
-                    setStep('datetime');
-                  } else if (step === 'datetime' && bookingState.date && bookingState.time) {
-                    setStep('confirm');
-                  }
-                }}
-                className="h-10 px-6 rounded-lg bg-purple-600 hover:bg-purple-700 font-semibold text-sm text-white shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-purple-600"
-                disabled={
-                  (step === 'services' && bookingState.services.length === 0) ||
-                  (step === 'professional' && !bookingState.professionalSelected) ||
-                  (step === 'datetime' && (!bookingState.date || !bookingState.time))
-                }
-              >
-                {step === 'datetime' ? t('confirm.title', 'Подтвердить') : t('common:next', 'Далее')}
-              </Button>
-            </div>
           </div>
         </motion.div>
       )}
