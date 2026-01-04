@@ -1,14 +1,14 @@
 {
   "currency": "AED",
-  "haircutsStyling": "Haircuts & Styling",
-  "manicurePedicure": "Manicure & Pedicure",
+  "haircutsStyling": "حلاقة الشعر والتصميم",
+  "manicurePedicure": "مانيكير وباديكير",
   "master": "يتقن",
   "mastersDescription": "إن الفنيين المحترفين لدينا الذين يتمتعون بسنوات عديدة من الخبرة على استعداد لتزويدك بأعلى جودة من الخدمات.",
   "minutes": "دقيقة",
   "ourMasters": "أسيادنا",
   "portfolioTitle": "مَلَفّ",
-  "service1Desc": "Professional nail care services.",
-  "service2Desc": "Expert hair styling and treatments.",
-  "service3Desc": "Professional makeup and brow styling.",
-  "service3Title": "Makeup & Brows"
+  "service1Desc": "خدمات العناية بالأظافر الاحترافية.",
+  "service2Desc": "خبراء تصفيف الشعر والعلاجات.",
+  "service3Desc": "مكياج احترافي وتصفيف الحواجب.",
+  "service3Title": "مكياج وحواجب"
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Copy, Trash2, Plus, X, Calendar as CalendarIcon } from 'lucide-react';
+import { Copy, Trash2, Plus, X, Calendar as CalendarIcon, Edit } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
@@ -62,6 +62,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
     // Time-off dialog state
     const [showTimeOffDialog, setShowTimeOffDialog] = useState(false);
     const [timeOffForm, setTimeOffForm] = useState({
+        id: null as number | null,
         start_date: '',
         end_date: '',
         type: 'vacation',
@@ -77,9 +78,18 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         const loadDefaultHours = async () => {
             try {
                 const hours = await api.get('/api/salon-settings/working-hours');
-                setDefaultHours({
-                    start: hours.weekdays.start,
-                    end: hours.weekdays.end
+                const start = hours.weekdays.start;
+                const end = hours.weekdays.end;
+                setDefaultHours({ start, end });
+
+                // Set autofill defaults from salon hours
+                const [startH, startM] = (start || '10:00').split(':');
+                const [endH, endM] = (end || '20:00').split(':');
+                setAutofillHours({
+                    start: startH.padStart(2, '0'),
+                    startMin: startM.padStart(2, '0'),
+                    end: endH.padStart(2, '0'),
+                    endMin: endM.padStart(2, '0')
                 });
             } catch (error) {
                 console.error('Error loading default hours:', error);
@@ -157,22 +167,45 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         }
 
         try {
-            await api.post(`/api/schedule/user/${employeeId}/time-off`, {
-                start_datetime: timeOffForm.start_date,
-                end_datetime: timeOffForm.end_date,
-                type: timeOffForm.type,
-                reason: timeOffForm.reason
-            });
+            if (timeOffForm.id) {
+                // Update
+                await api.put(`/api/schedule/time-off/${timeOffForm.id}`, {
+                    start_datetime: timeOffForm.start_date,
+                    end_datetime: timeOffForm.end_date,
+                    type: timeOffForm.type,
+                    reason: timeOffForm.reason
+                });
+                toast.success(t('time_off_updated', 'Time-off updated successfully'));
+            } else {
+                // Create
+                await api.post(`/api/schedule/user/${employeeId}/time-off`, {
+                    start_datetime: timeOffForm.start_date,
+                    end_datetime: timeOffForm.end_date,
+                    type: timeOffForm.type,
+                    reason: timeOffForm.reason
+                });
+                toast.success(t('time_off_added', 'Time-off added successfully'));
+            }
 
-            toast.success(t('time_off_added', 'Time-off added successfully'));
             setShowTimeOffDialog(false);
-            setTimeOffForm({ start_date: '', end_date: '', type: 'vacation', reason: '' });
+            setTimeOffForm({ id: null, start_date: '', end_date: '', type: 'vacation', reason: '' });
             loadScheduleData();
 
         } catch (error) {
-            console.error('Error adding time-off:', error);
-            toast.error(t('error_adding_time_off'));
+            console.error('Error saving time-off:', error);
+            toast.error(t('error_saving_settings', 'Error saving settings'));
         }
+    };
+
+    const handleEditTimeOff = (timeOff: TimeOff) => {
+        setTimeOffForm({
+            id: timeOff.id,
+            start_date: timeOff.start_datetime ? timeOff.start_datetime.split('T')[0] : '',
+            end_date: timeOff.end_datetime ? timeOff.end_datetime.split('T')[0] : '',
+            type: timeOff.type || 'vacation',
+            reason: timeOff.reason || ''
+        });
+        setShowTimeOffDialog(true);
     };
 
     const handleDeleteTimeOff = async (id: number) => {
@@ -365,7 +398,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                     ))}
                                 </SelectContent>
                             </Select>
-                            <span>{t('unit_hour', 'h')}</span>
+                            <span>{(t('unit_hour', 'hour') || 'h')[0].toLowerCase()}</span>
                             <Select value={autofillHours.endMin} onValueChange={(v) => setAutofillHours({ ...autofillHours, endMin: v })}>
                                 <SelectTrigger className="w-20">
                                     <SelectValue />
@@ -375,7 +408,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                     <SelectItem value="30">30</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <span>{t('unit_minute', 'm')}</span>
+                            <span>{(t('unit_minute', 'minute') || 'm')[0].toLowerCase()}</span>
                         </div>
                     </div>
 
@@ -599,13 +632,22 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                         {timeOff.type} {timeOff.reason && `- ${timeOff.reason}`}
                                     </div>
                                 </div>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleDeleteTimeOff(timeOff.id)}
-                                >
-                                    <Trash2 className="w-4 h-4 text-red-500" />
-                                </Button>
+                                <div className="flex items-center gap-1">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleEditTimeOff(timeOff)}
+                                    >
+                                        <Edit className="w-4 h-4 text-yellow-600" />
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleDeleteTimeOff(timeOff.id)}
+                                    >
+                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                    </Button>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -619,8 +661,11 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg p-6 w-full max-w-md">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-semibold">{t('add_time_off', 'Add Time-off')}</h3>
-                            <Button variant="ghost" size="sm" onClick={() => setShowTimeOffDialog(false)}>
+                            <h3 className="font-semibold">{timeOffForm.id ? t('edit_time_off', 'Edit Time-off') : t('add_time_off', 'Add Time-off')}</h3>
+                            <Button variant="ghost" size="sm" onClick={() => {
+                                setShowTimeOffDialog(false);
+                                setTimeOffForm({ id: null, start_date: '', end_date: '', type: 'vacation', reason: '' });
+                            }}>
                                 <X className="w-4 h-4" />
                             </Button>
                         </div>
@@ -673,9 +718,12 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
 
                         <div className="flex gap-2 mt-6">
                             <Button onClick={handleAddTimeOff} className="flex-1">
-                                {t('add', 'Add')}
+                                {timeOffForm.id ? t('edit_save', 'Save') : t('add', 'Add')}
                             </Button>
-                            <Button variant="outline" onClick={() => setShowTimeOffDialog(false)} className="flex-1">
+                            <Button variant="outline" onClick={() => {
+                                setShowTimeOffDialog(false);
+                                setTimeOffForm({ id: null, start_date: '', end_date: '', type: 'vacation', reason: '' });
+                            }} className="flex-1">
                                 {t('cancel', 'Cancel')}
                             </Button>
                         </div>

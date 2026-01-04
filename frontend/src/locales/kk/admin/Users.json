@@ -46,13 +46,13 @@
   "date": "Date",
   "day_off": "Day Off",
   "days": {
-    "FRI": "PT",
+    "FRI": "жұма",
     "MON": "дүйсенбі",
-    "SAT": "SB",
+    "SAT": "сенбі",
     "SUN": "жексенбі",
     "THU": "бейсенбі",
     "TUE": "сейсенбі",
-    "WED": "SR"
+    "WED": "сәрсенбі"
   },
   "days_on_off": "(days on/off)",
   "duration": "Ұзақтығы",
@@ -112,7 +112,7 @@
   "error_username_too_short": "Username too short",
   "estimated_salary": "Estimated Salary",
   "events_to_notify": "Events to notify about",
-  "file_too_large": "Файл тым үлкен (макс. 5 МБ)",
+  "file_too_large": "Файл тым үлкен (ең көбі 5 МБ)",
   "fill_required_fields": "Please fill required fields",
   "filter_all_time": "Барлық уақытта",
   "filter_last30days": "Соңғы 30 күн",
@@ -132,10 +132,10 @@
   "last_name_placeholder": "Example: Smith",
   "leave_empty_if_no_change": "Leave empty if you don't want to change",
   "loading": "Пайдаланушылар жүктелуде...",
-  "max_size": "Макс. 5 МБ",
+  "max_size": "Максималды өлшемі 5 МБ",
   "middle_name": "Middle name",
   "middle_name_placeholder": "Example: Michael",
-  "min": "Мин",
+  "min": "Минут",
   "new_booking": "New Booking",
   "new_password": "New Password",
   "no_email_set": "No email address set",
@@ -176,7 +176,7 @@
   "photo_updated": "Photo updated",
   "position": "Position",
   "position_label": "Қызмет атауы",
-  "prof_price": "Бағасы проф",
+  "prof_price": "Кәсіби баға",
   "professional_information": "Professional Information",
   "profile_updated": "Profile updated",
   "provides": "қамтамасыз етеді",
@@ -291,5 +291,7 @@
   "view_details": "View details",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience"
+  "years_of_experience": "Years of Experience",
+  "edit_time_off": "Мерекені өңдеу",
+  "time_off_updated": "Демалыс уақыты жаңартылды"
 }

@@ -46,13 +46,13 @@
   "date": "Date",
   "day_off": "Day Off",
   "days": {
-    "FRI": "PT",
+    "FRI": "Sexta-feira",
     "MON": "seg",
-    "SAT": "SB",
+    "SAT": "Sábado",
     "SUN": "Sol",
     "THU": "qui",
-    "TUE": "TV",
-    "WED": "RS"
+    "TUE": "Terça-feira",
+    "WED": "Quarta-feira"
   },
   "days_on_off": "(days on/off)",
   "duration": "Duração",
@@ -112,7 +112,7 @@
   "error_username_too_short": "Username too short",
   "estimated_salary": "Estimated Salary",
   "events_to_notify": "Events to notify about",
-  "file_too_large": "Arquivo muito grande (máx. 5 MB)",
+  "file_too_large": "O arquivo é muito grande (máximo 5 MB)",
   "fill_required_fields": "Please fill required fields",
   "filter_all_time": "O tempo todo",
   "filter_last30days": "Últimos 30 dias",
@@ -132,7 +132,7 @@
   "last_name_placeholder": "Example: Smith",
   "leave_empty_if_no_change": "Leave empty if you don't want to change",
   "loading": "Carregando usuários...",
-  "max_size": "Máx. 5MB",
+  "max_size": "Tamanho máximo 5MB",
   "middle_name": "Middle name",
   "middle_name_placeholder": "Example: Michael",
   "min": "Mínimo",
@@ -291,5 +291,7 @@
   "view_details": "View details",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience"
+  "years_of_experience": "Years of Experience",
+  "edit_time_off": "Editar feriado",
+  "time_off_updated": "Período de férias atualizado"
 }

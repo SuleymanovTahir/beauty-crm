@@ -489,7 +489,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     </p>
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                       {bookingState.professional && <span>{bookingState.professional.full_name} • </span>}
-                      {bookingState.services.length > 0 && <span>{totalDuration} {t('min', 'min')} • {totalPrice} {salonSettings?.currency || 'AED'}</span>}
+                      {bookingState.services.length > 0 && <span>{totalDuration} {(t('min') || 'm')[0].toLowerCase()} • {totalPrice} {salonSettings?.currency || 'AED'}</span>}
                       {(bookingState.date || bookingState.time) && (
                         <>
                           {bookingState.services.length > 0 && ' • '}
