@@ -14,33 +14,33 @@
   "accept": "يقبل",
   "account": "مجلس الوزراء",
   "address": "عنوان",
+  "allergies": "ردود الفعل التحسسية",
   "allRightsReserved": "جميع الحقوق محفوظة.",
   "allServices": "جميع الخدمات",
-  "allergies": "ردود الفعل التحسسية",
   "book": "اشتراك",
-  "bookNow": "اشتراك",
   "booking": "الحجز",
   "bookingTag": "",
+  "bookNow": "اشتراك",
   "callUs": "يتصل",
   "cancellation": "الإلغاء من قبل العميل",
   "cookieConsentText": "نحن نستخدم ملفات تعريف الارتباط لتحسين تجربة موقع الويب الخاص بك. من خلال الاستمرار في استخدام الموقع، فإنك توافق على لدينا",
   "currency": "AED",
   "dataDeletion": {
-    "contact": "Contact Us",
-    "description": "If you want to delete your data from our system, please follow these steps:",
+    "contact": "اتصل بنا",
+    "description": "إذا كنت تريد حذف بياناتك من نظامنا، يرجى اتباع الخطوات التالية:",
     "step1": {
-      "text": " Send an email to our support team with the subject \"Data Deletion Request\".",
-      "title": "Send a request"
+      "text": "أرسل بريدًا إلكترونيًا إلى فريق الدعم لدينا بعنوان \"طلب حذف البيانات\".",
+      "title": "أرسل طلبا"
     },
     "step2": {
-      "text": " Our team will verify your identity to ensure the security of your data.",
-      "title": "Verification"
+      "text": "سيقوم فريقنا بالتحقق من هويتك لضمان أمان بياناتك.",
+      "title": "تَحَقّق"
     },
     "step3": {
-      "text": " Once verified, we will permanently delete your account and all associated data within 30 days.",
-      "title": "Deletion"
+      "text": "بمجرد التحقق، سنقوم بحذف حسابك وجميع البيانات المرتبطة به نهائيًا خلال 30 يومًا.",
+      "title": "الحذف"
     },
-    "title": "Instruction for Data Deletion"
+    "title": "تعليمات لحذف البيانات"
   },
   "days": "أيام",
   "decline": "يرفض",
@@ -121,7 +121,7 @@
   "privacySection6Text": "لديك الحقوق التالية فيما يتعلق ببياناتك الشخصية:",
   "privacySection6Title": "حقوقك",
   "privacySection7Text": "يستخدم موقعنا ملفات تعريف الارتباط لتحسين تجربتك. يمكنك إدارة إعدادات ملفات تعريف الارتباط الخاصة بك من خلال متصفحك.",
-  "privacySection7Title": "Cookies",
+  "privacySection7Title": "ملفات تعريف الارتباط",
   "privacySection8Text": "قد نقوم بتحديث سياسة الخصوصية هذه من وقت لآخر. سيتم نشر النسخة المحدثة على هذه الصفحة مع تاريخ آخر تحديث لها.",
   "privacySection8Title": "تغييرات السياسة",
   "privacyTitle": "سياسة الخصوصية",

@@ -40,13 +40,13 @@
     },
     "description": "تتبع حالة الإحالات وتوزيع النقاط",
     "filters": {
-      "all_statuses": "All Statuses"
+      "all_statuses": "جميع الحالات"
     },
     "search_placeholder": "البحث عن الإحالات...",
     "sort": {
-      "date": "Sort by Date",
-      "points": "Sort by Points",
-      "status": "Sort by Status"
+      "date": "الترتيب حسب التاريخ",
+      "points": "الترتيب حسب النقاط",
+      "status": "فرز حسب الحالة"
     },
     "statuses": {
       "cancelled": "تم الإلغاء",

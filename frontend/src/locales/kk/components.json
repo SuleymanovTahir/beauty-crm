@@ -55,6 +55,10 @@
   "save": "Сақтау",
   "saving": "Сақталуда...",
   "search_templates": "Үлгілерді іздеу...",
+  "source": {
+    "manual": "Қолмен"
+  },
+  "source_title": "Дереккөз",
   "status": "Күй",
   "status_color_label": "Күй түсі",
   "status_key_hint": "Кілт жүйеде қолданылады (мысалы: жаңа, күтуде)",

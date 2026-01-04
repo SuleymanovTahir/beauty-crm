@@ -68,7 +68,7 @@
         "title_placeholder": "عنوان الإخطار",
         "type": "يكتب",
         "types": {
-          "email": "Email",
+          "email": "بريد إلكتروني",
           "push": "دفع الإخطار",
           "sms": "SMS"
         }
@@ -80,8 +80,8 @@
     "description": "جميع الإخطارات المرسلة والمقررة",
     "filters": {
       "all": "الجميع",
-      "email": "Email",
-      "push": "Push",
+      "email": "بريد إلكتروني",
+      "push": "يدفع",
       "sms": "SMS"
     },
     "scheduled": "المخطط لها",
@@ -123,8 +123,8 @@
     "template_saved": "تم حفظ القالب بنجاح"
   },
   "types": {
-    "email": "Email",
-    "push": "Push",
+    "email": "بريد إلكتروني",
+    "push": "يدفع",
     "sms": "SMS"
   }
 }

@@ -36,12 +36,12 @@ interface EmployeeScheduleProps {
     employee: any;
 }
 
-const DAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 // 8:00 to 22:00 with 30min steps
 const TIME_SLOTS = Array.from({ length: 29 }, (_, i) => 8 + i * 0.5);
+const DAY_KEYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
 export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps) {
-    const { t } = useTranslation(['admin/users', 'common']);
+    const { t, i18n } = useTranslation(['admin/users', 'common']);
     const navigate = useNavigate();
 
     // ✅ ДОБАВИТЬ: Состояние для дефолтных часов салона
@@ -341,7 +341,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                     ))}
                                 </SelectContent>
                             </Select>
-                            <span>h</span>
+                            <span>{(t('unit_hour', 'hour') || 'h')[0].toLowerCase()}</span>
                             <Select value={autofillHours.startMin} onValueChange={(v) => setAutofillHours({ ...autofillHours, startMin: v })}>
                                 <SelectTrigger className="w-20">
                                     <SelectValue />
@@ -351,7 +351,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                     <SelectItem value="30">30</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <span>m</span>
+                            <span>{(t('unit_minute', 'minute') || 'm')[0].toLowerCase()}</span>
                             <span className="mx-2">—</span>
                             <Select value={autofillHours.end} onValueChange={(v) => setAutofillHours({ ...autofillHours, end: v })}>
                                 <SelectTrigger className="w-20">
@@ -365,7 +365,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                     ))}
                                 </SelectContent>
                             </Select>
-                            <span>h</span>
+                            <span>{t('unit_hour', 'h')}</span>
                             <Select value={autofillHours.endMin} onValueChange={(v) => setAutofillHours({ ...autofillHours, endMin: v })}>
                                 <SelectTrigger className="w-20">
                                     <SelectValue />
@@ -375,7 +375,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                     <SelectItem value="30">30</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <span>m</span>
+                            <span>{t('unit_minute', 'm')}</span>
                         </div>
                     </div>
 
@@ -420,11 +420,15 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                         <thead>
                             <tr>
                                 <th className="border p-2 text-xs font-medium text-gray-500"></th>
-                                {DAYS.map(day => (
-                                    <th key={day} className="border p-2 text-xs font-medium text-gray-700">
-                                        {day}
-                                    </th>
-                                ))}
+                                {DAY_KEYS.map(dayKey => {
+                                    const translatedDay = t(`days.${dayKey}`, dayKey);
+                                    const shortDay = i18n.language === 'ar' ? translatedDay : translatedDay.substring(0, 2).toUpperCase();
+                                    return (
+                                        <th key={dayKey} className="border p-2 text-xs font-medium text-gray-700">
+                                            {shortDay}
+                                        </th>
+                                    );
+                                })}
                             </tr>
                         </thead>
                         <tbody>
@@ -436,7 +440,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                         <td className="border p-2 text-[10px] text-gray-500 text-center font-mono">
                                             {`${h.toString().padStart(2, '0')}:${m}`}
                                         </td>
-                                        {DAYS.map((_, dayIndex) => {
+                                        {DAY_KEYS.map((_, dayIndex) => {
                                             const isBooked = isSlotBooked(dayIndex, hour);
                                             const isAvailable = isSlotAvailable(dayIndex, hour);
 

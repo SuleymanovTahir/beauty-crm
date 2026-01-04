@@ -64,6 +64,23 @@ def is_bad_translation(value: str, target_lang: str) -> bool:
         # Has multiple consecutive uppercase letters, likely untranslated
         return True
     
+    # NEW: Check for English residue in non-Latin locales (Arabic, Hindi, etc.)
+    if target_lang in ['ar', 'hi']:
+        # Exclude common technical terms and currencies
+        EXCLUSIONS = {'AED', 'USD', 'EUR', 'SMS', 'API', 'VIP', 'SPA', 'ID', 'URL', 'CSV', 'PDF', 'min', 'h', 'm'}
+        if value.strip().upper() in EXCLUSIONS or value.strip().lower() in EXCLUSIONS:
+            return False
+            
+        # If it's purely Latin (English) but should be Arabic/Hindi, it's bad
+        has_latin = bool(re.search(r'[a-zA-Z]', value))
+        if has_latin:
+            if target_lang == 'ar':
+                has_arabic = bool(re.search(r'[\u0600-\u06FF]', value))
+                if not has_arabic: return True # Pure Latin in Arabic
+            elif target_lang == 'hi':
+                has_hindi = bool(re.search(r'[\u0900-\u097F]', value))
+                if not has_hindi: return True # Pure Latin in Hindi
+    
     return False
 
 def fix_dict_recursive(source_dict: dict, target_dict: dict, source_lang: str, target_lang: str, translator: Translator, path: str = "") -> int:

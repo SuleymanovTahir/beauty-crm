@@ -1,4 +1,5 @@
 {
+  "booking_info": "Informations d'enregistrement",
   "change_booking": "Modifier l'entrée",
   "common": {
     "any_master": "N'importe quel maître",
@@ -25,6 +26,9 @@
     "title": "Confirmer",
     "total": "Total Amount"
   },
+  "continue_datetime": "Continuer avec la sélection de la date et de l'heure",
+  "continue_professional": "Continuer avec la sélection de l'assistant",
+  "continue_services": "Continuer avec la sélection de services",
   "datetime": {
     "date": "Select Date",
     "noSlots": "No slots available",
@@ -51,6 +55,7 @@
     "anyDesc": "We'll match you with the best available professional",
     "availableOn": "Available",
     "availableToday": "Available Today",
+    "notAvailableToday": "Not Available Today",
     "ready": "Ready",
     "reviews": "Reviews",
     "title": "Choose Master"
@@ -59,6 +64,7 @@
     "address": "Studio Location",
     "name": "QG Beauté"
   },
+  "select_to_continue": "Sélectionnez un service ou un technicien pour continuer",
   "services": {
     "allCategories": "All",
     "search": "Search services...",

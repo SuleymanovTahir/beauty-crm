@@ -1,4 +1,5 @@
 {
+  "booking_info": "Informationen aufzeichnen",
   "change_booking": "Eintrag bearbeiten",
   "common": {
     "any_master": "Jeder Meister",
@@ -25,6 +26,9 @@
     "title": "Bestätigen",
     "total": "Total Amount"
   },
+  "continue_datetime": "Fahren Sie mit der Auswahl von Datum und Uhrzeit fort",
+  "continue_professional": "Fahren Sie mit der Auswahl des Assistenten fort",
+  "continue_services": "Fahren Sie mit der Auswahl der Dienstleistungen fort",
   "datetime": {
     "date": "Select Date",
     "noSlots": "No slots available",
@@ -51,6 +55,7 @@
     "anyDesc": "We'll match you with the best available professional",
     "availableOn": "Available",
     "availableToday": "Available Today",
+    "notAvailableToday": "Not Available Today",
     "ready": "Ready",
     "reviews": "Reviews",
     "title": "Choose Master"
@@ -59,6 +64,7 @@
     "address": "Studio Location",
     "name": "Beauty-Hauptquartier"
   },
+  "select_to_continue": "Wählen Sie einen Service oder Techniker aus, um fortzufahren",
   "services": {
     "allCategories": "All",
     "search": "Search services...",

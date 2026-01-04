@@ -1333,30 +1333,18 @@ Google Maps: {self.salon.get('google_maps', '')}
                 found_any = True
                 date_display = suggestions['primary_date']
                 
-                # ✅ ВАЛИДАЦИЯ: Проверяем, что слоты - это строки времени
-                valid_slots = []
-                for slot in suggestions['primary_slots'][:12]:
-                    if isinstance(slot, str) and ':' in slot:
-                        try:
-                            # Проверяем формат времени
-                            hour, minute = map(int, slot.split(':'))
-                            if 0 <= hour < 24 and 0 <= minute < 60:
-                                valid_slots.append(slot)
-                            else:
-                                logger.warning(f"⚠️ Invalid time slot format: {slot}")
-                        except ValueError:
-                            logger.warning(f"⚠️ Invalid time slot format: {slot}")
-                    else:
-                        logger.warning(f"⚠️ Invalid slot type: {type(slot)}, value: {slot}")
-                
-                if valid_slots:
-                    slots_str = ", ".join(valid_slots)
-                    avail_text += f"   ✅ {date_display}: {slots_str}\n"
-                else:
-                    logger.warning(f"⚠️ No valid slots found for {full_name} on {date_display}")
-                    avail_text += f"   ❌ На {date_display} мест нет.\n"
+                # ... (rest of slots logic)
+                slots_str = ", ".join(suggestions['primary_slots'][:12])
+                avail_text += f"   ✅ {date_display}: {slots_str}\n"
             else:
-                avail_text += f"   ❌ На {suggestions['primary_date']} мест нет.\n"
+                status = suggestions.get('status', 'full')
+                date_display = suggestions['primary_date']
+                if status == 'vacation':
+                    avail_text += f"   🌴 {date_display}: Мастер в отпуске/выходной.\n"
+                elif status == 'inactive':
+                    avail_text += f"   ❌ {date_display}: Мастер временно не принимает.\n"
+                else:
+                    avail_text += f"   ❌ {date_display}: На этот день мест нет.\n"
                 
             # Show alternatives if primary is full or explicitly requested
             if suggestions.get('alternatives'):

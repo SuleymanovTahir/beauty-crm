@@ -55,6 +55,10 @@
   "save": "Save",
   "saving": "Saving...",
   "search_templates": "Search for templates...",
+  "source": {
+    "manual": "Manually"
+  },
+  "source_title": "Source",
   "status": "Status",
   "status_color_label": "Status color",
   "status_key_hint": "The key is used in the system (for example: new, pending)",

@@ -68,7 +68,7 @@
         "title_placeholder": "अधिसूचना शीर्षक",
         "type": "प्रकार",
         "types": {
-          "email": "Email",
+          "email": "ईमेल",
           "push": "सर्वर पुश नोटीफिकेशन",
           "sms": "SMS"
         }
@@ -80,8 +80,8 @@
     "description": "सभी भेजी गई और शेड्यूल की गई सूचनाएं",
     "filters": {
       "all": "सभी",
-      "email": "Email",
-      "push": "Push",
+      "email": "ईमेल",
+      "push": "धकेलना",
       "sms": "SMS"
     },
     "scheduled": "की योजना बनाई",
@@ -123,8 +123,8 @@
     "template_saved": "टेम्प्लेट सफलतापूर्वक सहेजा गया"
   },
   "types": {
-    "email": "Email",
-    "push": "Push",
+    "email": "ईमेल",
+    "push": "धकेलना",
     "sms": "SMS"
   }
 }

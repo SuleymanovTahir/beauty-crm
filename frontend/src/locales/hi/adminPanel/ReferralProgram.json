@@ -40,13 +40,13 @@
     },
     "description": "रेफरल की स्थिति और अंकों के वितरण पर नज़र रखना",
     "filters": {
-      "all_statuses": "All Statuses"
+      "all_statuses": "सभी क़ानून"
     },
     "search_placeholder": "रेफरल खोजें...",
     "sort": {
-      "date": "Sort by Date",
-      "points": "Sort by Points",
-      "status": "Sort by Status"
+      "date": "दिनांक के अनुसार क्रमबद्ध करें",
+      "points": "अंकों के आधार पर क्रमबद्ध करें",
+      "status": "स्थिति के अनुसार क्रमबद्ध करें"
     },
     "statuses": {
       "cancelled": "रद्द कर दिया गया",

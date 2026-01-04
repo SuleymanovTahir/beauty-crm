@@ -55,9 +55,9 @@
     "failed_create": "Échec de la création du défi",
     "failed_delete": "Échec de la suppression du défi",
     "failed_load": "Échec du chargement des défis",
+    "progress_checked_one": "",
     "progress_checked_few": "",
     "progress_checked_many": "",
-    "progress_checked_one": "",
     "progress_checked_other": ""
   },
   "types": {

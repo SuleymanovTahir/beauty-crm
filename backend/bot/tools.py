@@ -40,9 +40,9 @@ def get_available_time_slots(
                         duration_minutes = parsed_minutes
                         print(f"📏 Parsed duration for '{service_name}': {duration_minutes} minutes (from '{dur_str}')")
         
-        # ✅ Если длительность не определена, используем дефолт 60 минут
+        # ✅ Если длительность не определена, используем дефолт 30 минут (согласно новым требованиям)
         if duration_minutes is None:
-            duration_minutes = 60
+            duration_minutes = 30
             print(f"📏 Using default duration: {duration_minutes} minutes")
 
         # 2. Получаем мастеров
@@ -210,8 +210,8 @@ def check_time_slot_available(
     
     # Если мастер не указан, проверяем есть ли ХОТЯ БЫ ОДИН свободный мастер
     if not master_name:
-        # Получаем доступность всех мастеров
-        availability = schedule_service.get_all_masters_availability(date)
+        # Получаем доступность всех мастеров - ВСЕГДА проверяем с гранулярностью 30 мин
+        availability = schedule_service.get_all_masters_availability(date, duration_minutes=30)
         print(f"   📊 All masters availability for {date}: {len(availability)} masters checked")
         
         # ✅ ДОПОЛНИТЕЛЬНОЕ ЛОГИРОВАНИЕ
@@ -363,13 +363,35 @@ def check_time_slot_available(
             "alternatives": []
         }
     else:
-        # Слот занят - ищем альтернативы
+        # Слот занят - ищем причину (отпуск, выходной, обед)
         print(f"   ❌ Slot blocked for {master_name}")
+        
+        # Check specifically for vacation
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute("SELECT id FROM users WHERE full_name = %s", (master_name,))
+            m_row = c.fetchone()
+            if m_row:
+                m_id = m_row[0]
+                day_start = f"{date} 00:00:00"
+                day_end = f"{date} 23:59:59"
+                c.execute("SELECT reason FROM user_time_off WHERE user_id = %s AND (start_date <= %s AND end_date >= %s)", (m_id, day_start, day_end))
+                time_off = c.fetchone()
+                if time_off:
+                    reason = f"Мастер {master_name} в отпуске или выходной ({time_off[0] or 'по личным причинам'})"
+                else:
+                    reason = f"Время {time} у мастера {master_name} уже занято или это его выходной"
+            else:
+                reason = f"Мастер {master_name} не найден"
+        finally:
+            conn.close()
+
         alternatives = get_available_time_slots(date, master_name=master_name)
         
         return {
             "available": False,
-            "reason": f"Время {time} занято или мастер не работает",
+            "reason": reason,
             "alternatives": alternatives[:3]  # Первые 3 альтернативы
         }
 

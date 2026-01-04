@@ -46,6 +46,7 @@
   "note_cannot_be_empty": "Заметка не может быть пустой",
   "note_deleted": "Заметка удалена",
   "note_updated": "Заметка обновлена",
+  "notes": "Заметки",
   "notes_panel_title": "Заметки",
   "notes_visible_info": "Заметки видны только сотрудникам",
   "phone": "Телефон",
@@ -54,6 +55,10 @@
   "save": "Сохранить",
   "saving": "Сохранение...",
   "search_templates": "Поиск шаблонов...",
+  "source": {
+    "manual": "Вручную"
+  },
+  "source_title": "Источник",
   "status": "Статус",
   "status_color_label": "Цвет статуса",
   "status_key_hint": "Ключ используется в системе (например: new, pending)",
@@ -65,7 +70,6 @@
   "template_text": "Текст шаблона",
   "template_updated": "Шаблон обновлен",
   "templates": "Шаблоны",
-  "notes": "Заметки",
   "templates_not_found": "Шаблоны не найдены",
   "templates_panel_title": "Шаблоны сообщений",
   "try_another_search": "Попробуйте изменить запрос",
