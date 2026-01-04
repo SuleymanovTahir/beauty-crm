@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Star, TrendingUp, Gift, Copy, Loader2 } from 'lucide-react';
-import { Button } from './ui/button';
 import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../../../src/api/client';
 import { toast } from 'sonner';
@@ -35,7 +34,7 @@ export function Loyalty() {
         <Loader2 className="w-8 h-8 animate-spin text-pink-500" />
       </div>
     );
-  };
+  }
 
   const { loyalty } = loyaltyData || {};
   const levels = loyalty?.all_tiers || [
@@ -106,6 +105,117 @@ export function Loyalty() {
 
   return (
     <div className="max-w-4xl pb-8">
+{/* Loyalty and Cashback */}
+      <div className="mb-6">
+        <h2 className="font-semibold mb-4">{t('loyalty.loyalty_cashback', 'Loyalty and Cashback')}</h2>
+        <p className="text-sm text-gray-600 mb-4">{t('loyalty.subtitle', 'Collect points and get cashback from each service')}</p>
+
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp className="text-green-600" size={20} />
+              <span className="text-sm font-medium">{t('loyalty.your_cashback', 'Your Cashback')}</span>
+            </div>
+            <div className="text-3xl font-bold mb-1">{(loyalty?.config?.loyalty_points_conversion_rate * 100 || 10).toFixed(0)}%</div>
+            <div className="text-xs text-gray-500">{t('loyalty.cashback_description', 'The cost of each service is refunded in points')}</div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Gift className="text-blue-600" size={20} />
+              <span className="text-sm font-medium">{t('loyalty.available_points', 'Points available')}</span>
+            </div>
+            <div className="text-3xl font-bold mb-1">{loyaltyInfo.available_points || loyaltyInfo.points}</div>
+            <div className="text-xs text-gray-500">{t('loyalty.points_value', '1 point = 1 {{currency}} discount', { currency: currency })}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Status Card */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Star className="text-amber-500 fill-amber-500" size={20} />
+            <span className="font-semibold">{currentLevel.name} {t('loyalty.status', 'status')}</span>
+          </div>
+          <div className="text-right">
+            <div className="text-3xl font-bold">{loyaltyInfo.points}</div>
+            <div className="text-xs text-gray-500">{t('loyalty.points', 'points')}</div>
+          </div>
+        </div>
+
+        <div className="text-sm text-gray-600 mb-4">
+          {loyaltyInfo.points} {t('loyalty.points_total', 'total accumulated')} • {t('loyalty.discount', 'Discount {{percent}}%', { percent: loyaltyInfo.discount })}
+        </div>
+
+        {nextLevel && (
+          <div className="bg-gray-50 rounded-lg p-4">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-gray-700">{t('loyalty.to_next_level', 'To')} {nextLevel.name} {t('loyalty.level', 'level')}</span>
+              <span className="font-semibold">{nextLevel.points} {t('loyalty.points', 'points')}</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+              <div
+                className="bg-gradient-to-r from-gray-400 to-gray-500 h-2 rounded-full"
+                style={{
+                  width: `${Math.min(((loyaltyInfo.points - currentLevel.points) / (nextLevel.points - currentLevel.points)) * 100, 100)}%`
+                }}
+              ></div>
+            </div>
+            <div className="text-xs text-gray-500">
+              {t('loyalty.next_discount', 'Upon reaching')} {nextLevel.name} {t('loyalty.level', 'level')} {t('loyalty.your_discount', 'your discount will be')} {nextLevel.discount}%
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Level System */}
+      <div className="mb-4">
+        <div className="flex items-center gap-2 mb-2">
+          <TrendingUp className="text-blue-600" size={20} />
+          <h2 className="font-semibold">{t('loyalty.tier_system', 'Level system')}</h2>
+        </div>
+        <p className="text-sm text-gray-600 mb-6">{t('loyalty.tier_explanation', 'Collect points and get more privileges')}</p>
+      </div>
+
+      {/* Levels Grid */}
+      <div className="grid grid-cols-2 gap-4">
+        {levels.map((level: any) => {
+          const isCurrent = level.name === currentLevel.name;
+
+          return (
+            <div
+              key={level.name}
+              className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-sm transition-shadow"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: level.color }}
+                  />
+                  <span className="font-semibold">{level.name}</span>
+                  {isCurrent && (
+                    <span className="bg-gray-900 text-white text-xs px-2 py-0.5 rounded">
+                      {t('loyalty.current', 'Current')}
+                    </span>
+                  )}
+                </div>
+                {level.discount > 0 && (
+                  <div className="text-right">
+                    <div className="text-xl font-bold">
+                      {level.discount}%
+                    </div>
+                    <div className="text-xs text-gray-500">{t('loyalty.discount_short', 'discount')}</div>
+                  </div>
+                )}
+              </div>
+              <div className="text-xs text-gray-500">{level.requirement}</div>
+            </div>
+          );
+        })}
+      </div>
+
       {/* Stats Row */}
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-white rounded-xl border border-gray-200 p-5">
@@ -120,6 +230,8 @@ export function Loyalty() {
 
       {/* Referral Program */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+
+        
         <div className="flex items-center gap-3 mb-2">
           <Gift className="text-purple-600" size={20} />
           <h2 className="font-semibold">{t('loyalty.referral_program', 'Referral program')}</h2>
@@ -193,116 +305,7 @@ export function Loyalty() {
         </div>
       </div>
 
-      {/* Loyalty and Cashback */}
-      <div className="mb-6">
-        <h2 className="font-semibold mb-4">{t('loyalty.loyalty_cashback', 'Loyalty and Cashback')}</h2>
-        <p className="text-sm text-gray-600 mb-4">{t('loyalty.subtitle', 'Collect points and get cashback from each service')}</p>
-
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <TrendingUp className="text-green-600" size={20} />
-              <span className="text-sm font-medium">{t('loyalty.your_cashback', 'Your Cashback')}</span>
-            </div>
-            <div className="text-3xl font-bold mb-1">{(loyalty?.config?.loyalty_points_conversion_rate * 100 || 10).toFixed(0)}%</div>
-            <div className="text-xs text-gray-500">{t('loyalty.cashback_description', 'The cost of each service is refunded in points')}</div>
-          </div>
-
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <Gift className="text-blue-600" size={20} />
-              <span className="text-sm font-medium">{t('loyalty.available_points', 'Points available')}</span>
-            </div>
-            <div className="text-3xl font-bold mb-1">{loyaltyInfo.available_points || loyaltyInfo.points}</div>
-            <div className="text-xs text-gray-500">{t('loyalty.points_value', '1 point = 1 {{currency}} discount', { currency: currency })}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Status Card */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Star className="text-amber-500 fill-amber-500" size={20} />
-            <span className="font-semibold">{currentLevel.name} {t('loyalty.status', 'status')}</span>
-          </div>
-          <div className="text-right">
-            <div className="text-3xl font-bold">{loyaltyInfo.points}</div>
-            <div className="text-xs text-gray-500">{t('loyalty.points', 'points')}</div>
-          </div>
-        </div>
-
-        <div className="text-sm text-gray-600 mb-4">
-          {loyaltyInfo.points} {t('loyalty.points_total', 'total accumulated')} • {t('loyalty.discount', 'Discount {{percent}}%', { percent: loyaltyInfo.discount })}
-        </div>
-
-        {nextLevel && (
-          <div className="bg-gray-50 rounded-lg p-4">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-700">{t('loyalty.to_next_level', 'To')} {nextLevel.name} {t('loyalty.level', 'level')}</span>
-              <span className="font-semibold">{nextLevel.points - loyaltyInfo.points} {t('loyalty.points', 'points')}</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-              <div
-                className="bg-gradient-to-r from-gray-400 to-gray-500 h-2 rounded-full"
-                style={{
-                  width: `${Math.min(((loyaltyInfo.points - currentLevel.points) / (nextLevel.points - currentLevel.points)) * 100, 100)}%`
-                }}
-              ></div>
-            </div>
-            <div className="text-xs text-gray-500">
-              {t('loyalty.next_discount', 'Upon reaching')} {nextLevel.name} {t('loyalty.level', 'level')} {t('loyalty.your_discount', 'your discount will be')} {nextLevel.discount}%
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Level System */}
-      <div className="mb-4">
-        <div className="flex items-center gap-2 mb-2">
-          <TrendingUp className="text-blue-600" size={20} />
-          <h2 className="font-semibold">{t('loyalty.tier_system', 'Level system')}</h2>
-        </div>
-        <p className="text-sm text-gray-600 mb-6">{t('loyalty.tier_explanation', 'Collect points and get more privileges')}</p>
-      </div>
-
-      {/* Levels Grid */}
-      <div className="grid grid-cols-2 gap-4">
-        {levels.map((level: any) => {
-          const isCurrent = level.name === currentLevel.name;
-
-          return (
-            <div
-              key={level.name}
-              className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-sm transition-shadow"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: level.color }}
-                  />
-                  <span className="font-semibold">{level.name}</span>
-                  {isCurrent && (
-                    <span className="bg-gray-900 text-white text-xs px-2 py-0.5 rounded">
-                      {t('loyalty.current', 'Current')}
-                    </span>
-                  )}
-                </div>
-                {level.discount > 0 && (
-                  <div className="text-right">
-                    <div className="text-xl font-bold">
-                      {level.discount}%
-                    </div>
-                    <div className="text-xs text-gray-500">{t('loyalty.discount_short', 'discount')}</div>
-                  </div>
-                )}
-              </div>
-              <div className="text-xs text-gray-500">{level.requirement}</div>
-            </div>
-          );
-        })}
-      </div>
+      
     </div>
   );
 }
