@@ -121,10 +121,10 @@ export function Appointments() {
     const timeString = dateTime.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
 
     return (
-      <Card key={appointment.id}>
-        <CardContent className="p-6">
-          <div className="flex items-start gap-4">
-            <Avatar className="w-16 h-16">
+      <Card key={appointment.id} className="border-gray-200">
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            <Avatar className="w-12 h-12">
               <AvatarImage src={appointment.master_photo} alt={appointment.master_name} />
               <AvatarFallback>{appointment.master_name?.[0]}</AvatarFallback>
             </Avatar>
@@ -198,7 +198,7 @@ export function Appointments() {
   };
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="max-w-3xl space-y-6 pb-8">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">{t('appointments.title', 'Мои записи')}</h1>
