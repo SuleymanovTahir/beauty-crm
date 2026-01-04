@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { Home, Calendar, Image as ImageIcon, Award, Users, User, Bell, Globe, Gift, TrendingUp, Star, Copy, Trophy, X, Clock } from 'lucide-react';
 import { ServiceSelection } from './components/ServiceSelection';
+import { MasterSelection } from './components/MasterSelection';
 import { BookingSummary } from './components/BookingSummary';
 import { BookingConfirmation } from './components/BookingConfirmation';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('loyalty');
-  const [bookingStep, setBookingStep] = useState<'service' | 'summary' | 'confirmation' | null>(null);
+  const [bookingStep, setBookingStep] = useState<'service' | 'master' | 'summary' | 'confirmation' | null>(null);
   const [selectedService, setSelectedService] = useState<any>(null);
+  const [selectedMaster, setSelectedMaster] = useState<any>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
   
   const menuItems = [
     { id: 'home', label: 'Home', icon: Home },
@@ -379,23 +382,39 @@ export default function App() {
         <ServiceSelection
           onNext={(service) => {
             setSelectedService(service);
-            setBookingStep('summary');
+            setBookingStep('master');
           }}
           onBack={() => setBookingStep(null)}
         />
       )}
       
-      {bookingStep === 'summary' && selectedService && (
-        <BookingSummary
+      {bookingStep === 'master' && selectedService && (
+        <MasterSelection
           service={selectedService}
-          onNext={() => setBookingStep('confirmation')}
+          onNext={(master, time) => {
+            setSelectedMaster(master);
+            setSelectedTime(time);
+            setBookingStep('summary');
+          }}
           onBack={() => setBookingStep('service')}
         />
       )}
       
-      {bookingStep === 'confirmation' && selectedService && (
+      {bookingStep === 'summary' && selectedService && selectedMaster && (
+        <BookingSummary
+          service={selectedService}
+          master={selectedMaster}
+          time={selectedTime}
+          onNext={() => setBookingStep('confirmation')}
+          onBack={() => setBookingStep('master')}
+        />
+      )}
+      
+      {bookingStep === 'confirmation' && selectedService && selectedMaster && (
         <BookingConfirmation
           service={selectedService}
+          master={selectedMaster}
+          time={selectedTime}
           onBack={() => setBookingStep('summary')}
           onConfirm={() => {
             alert('Booking confirmed!');
