@@ -347,9 +347,9 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   );
 
   return (
-    <div className="wizard-scrollable min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 selection:bg-purple-100 selection:text-purple-600">
+    <div className="wizard-scrollable min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b shadow-sm sticky top-0 z-50">
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button
