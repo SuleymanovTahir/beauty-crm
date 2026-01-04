@@ -719,6 +719,18 @@ def init_database():
         UNIQUE(user_id, day_of_week)
     )''')
     
+    # Таблица индивидуальных прав пользователей
+    c.execute('''CREATE TABLE IF NOT EXISTS user_permissions
+                 (id SERIAL PRIMARY KEY,
+                  user_id INTEGER NOT NULL,
+                  permission_key TEXT NOT NULL,
+                  granted BOOLEAN DEFAULT TRUE,
+                  granted_by INTEGER,
+                  granted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  FOREIGN KEY (user_id) REFERENCES users(id),
+                  FOREIGN KEY (granted_by) REFERENCES users(id),
+                  UNIQUE(user_id, permission_key))''')
+
     # Таблица выходных дней сотрудников
     c.execute('''CREATE TABLE IF NOT EXISTS user_time_off (
         id SERIAL PRIMARY KEY,
