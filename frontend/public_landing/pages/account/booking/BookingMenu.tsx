@@ -55,6 +55,7 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
             isComplete: isServicesComplete,
             step: 'services',
             gradient: 'from-purple-500 to-pink-500',
+            useGrayIcon: true,
         },
         {
             id: 'professional',
@@ -66,6 +67,7 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
             isComplete: isProfessionalComplete,
             step: 'professional',
             gradient: 'from-pink-500 to-rose-500',
+            useGrayIcon: false,
         },
         {
             id: 'datetime',
@@ -75,6 +77,7 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
             isComplete: isDateTimeComplete,
             step: 'datetime',
             gradient: 'from-rose-500 to-orange-500',
+            useGrayIcon: false,
         },
     ];
 
@@ -84,16 +87,16 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl shadow-lg p-6"
+                className="bg-white rounded-xl border border-gray-200 p-4"
             >
-                <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                        <Scissors className="w-8 h-8 text-white" />
+                <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center">
+                        <Scissors className="w-5 h-5 text-white" />
                     </div>
                     <div className="flex-1">
-                        <h2 className="text-2xl font-bold text-gray-900">{salonSettings?.name || t('salon.name', 'Beauty HQ')}</h2>
-                        <p className="text-gray-600 flex items-center gap-2 mt-2">
-                            <MapPin className="w-4 h-4" />
+                        <h2 className="text-sm font-bold text-gray-900">{salonSettings?.name || t('salon.name', 'Beauty HQ')}</h2>
+                        <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                            <MapPin className="w-3 h-3" />
                             {salonSettings?.address || t('salon.address', 'Studio Location')}
                         </p>
                     </div>
@@ -101,7 +104,7 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
                         variant="outline"
                         size="sm"
                         onClick={onReset}
-                        className="text-[10px] font-black uppercase tracking-widest border-red-100 text-red-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all rounded-xl"
+                        className="text-xs font-medium uppercase tracking-wide text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-all rounded-lg"
                     >
                         {t('common.reset', 'Reset All')}
                     </Button>
@@ -126,8 +129,10 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
                                 <div className={`h-2 bg-gradient-to-r ${card.gradient}`} />
                                 <CardContent className="p-6">
                                     <div className="flex items-start justify-between mb-4">
-                                        <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${card.gradient} flex items-center justify-center`}>
-                                            <Icon className="w-6 h-6 text-white" />
+                                        <div className={card.useGrayIcon
+                                            ? "w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center"
+                                            : `w-12 h-12 rounded-lg bg-gradient-to-br ${card.gradient} flex items-center justify-center`}>
+                                            <Icon className={card.useGrayIcon ? "w-5 h-5 text-white" : "w-6 h-6 text-white"} />
                                         </div>
                                         {card.isComplete && (
                                             <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
