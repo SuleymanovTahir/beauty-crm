@@ -601,7 +601,7 @@ class MasterScheduleService:
         finally:
             conn.close()
 
-    def get_all_masters_availability(self, date: str, return_metadata: bool = False) -> Dict[str, List[Any]]:
+    def get_all_masters_availability(self, date: str, duration_minutes: int = 60, return_metadata: bool = False) -> Dict[str, List[Any]]:
         """Получить доступность всех мастеров на день"""
         conn = get_db_connection()
         c = conn.cursor()
@@ -624,7 +624,7 @@ class MasterScheduleService:
             # Для каждого активного мастера получаем слоты
             availability = {}
             for master_name in active_masters:
-                slots = self.get_available_slots(master_name, date, return_metadata=return_metadata)
+                slots = self.get_available_slots(master_name, date, duration_minutes=duration_minutes, return_metadata=return_metadata)
                 if slots:
                     availability[master_name] = slots
                     print(f"   📅 {master_name}: {len(slots)} slots (first: {slots[0] if slots else 'none'})")
@@ -774,8 +774,9 @@ class MasterScheduleService:
                     m_name = master["name"]
                     
                     # A. Check Schedule
-                    if day_of_week in user_schedule:
-                        start_time, end_time, is_active = user_schedule[day_of_week]
+                    master_schedule = schedules_map.get(uid, {})
+                    if day_of_week in master_schedule:
+                        start_time, end_time, is_active = master_schedule[day_of_week]
                         if not is_active:
                             continue
                     else:

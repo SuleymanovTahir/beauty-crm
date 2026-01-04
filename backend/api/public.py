@@ -275,92 +275,81 @@ async def get_available_slots(
     service_id: Optional[int] = None
 ):
     """
-    Получить доступные слоты для записи на конкретную дату
-
-    Args:
-        date: Дата в формате YYYY-MM-DD
-        employee_id: ID сотрудника (опционально)
-        service_id: ID услуги (опционально)
-
-    Returns:
-        Список доступных временных слотов
+    Получить доступные слоты для записи на конкретную дату.
+    Использует MasterScheduleService для учета расписания мастеров.
     """
-    # Генерируем слоты с 10:00 до 20:00 с интервалом 30 минут
-    slots = []
-
-    # Fetch salon settings for hours
-    try:
-        settings = get_salon_settings()
-        hours_str = settings.get('hours_weekdays', "10:30 - 21:00")
-        
-        parts = hours_str.split('-')
-        start_time_str = parts[0].strip()
-        end_time_str = parts[1].strip()
-        
-        start_h, start_m = map(int, start_time_str.split(':'))
-        end_h, end_m = map(int, end_time_str.split(':'))
-        
-        # DEBUG LOGGING FOR TIME SLOT ISSUE
-        print(f"DEBUG_SLOTS: hours_str='{hours_str}', start={start_h}:{start_m}, end={end_h}:{end_m}")
-
-    except Exception as e:
-        print(f"DEBUG_SLOTS: Error parsing hours '{hours_str}': {e}")
-        # Fallback to defaults
-        start_h, start_m = 10, 30
-        end_h, end_m = 21, 0
-
-    interval_minutes = 30
+    from services.master_schedule import MasterScheduleService
+    schedule_service = MasterScheduleService()
     
-    current_hour = start_h
-    current_minute = start_m
-
-    # Logic to filter past times if today
-    from utils.datetime_utils import get_current_time
-    current_dt = get_current_time()
-    is_today = date == current_dt.strftime('%Y-%m-%d')
-    min_booking_time_str = (current_dt + timedelta(minutes=30)).strftime('%H:%M')
-
-    while current_hour < end_h or (current_hour == end_h and current_minute < end_m):
-        time_slot = f"{current_hour:02d}:{current_minute:02d}"
-
-        # Simple check: if today and slot is in the past (with buffer), skip
-        if is_today and time_slot < min_booking_time_str:
-            # Skip this slot, mark as unavailable or just don't append?
-            # Existing code appends explicit available=False only if check_slot_availability fails.
-            # If we skip, it won't be in the list at all? 
-            # The logic below appends available=False. 
-            # Let's append it as available=False to be safe, or just skip it?
-            # If we skip, the frontend might not render it (which is what we want: "hide" it).
-            # "пусть показывает только доступное время" -> Hide it.
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        if employee_id:
+            # Получаем имя мастера
+            c.execute("SELECT full_name FROM users WHERE id = %s", (employee_id,))
+            master_row = c.fetchone()
+            if not master_row:
+                return {"date": date, "slots": []}
             
-            # Переход к следующему слоту match existing logic
-            current_minute += interval_minutes
-            if current_minute >= 60:
-                current_minute = 0
-                current_hour += 1
-            continue
-
-        # Проверяем, занят ли этот слот
-        is_available = check_slot_availability(date, time_slot, employee_id)
-
-        if is_available:
-            slots.append({
-                "time": time_slot,
-                "available": True
-            })
+            master_name = master_row[0]
+            # Получаем слоты для конкретного мастера
+            slots = schedule_service.get_available_slots(master_name, date, duration_minutes=30, return_metadata=True)
+            
+            # Преобразуем формат
+            return {
+                "date": date,
+                "slots": [{"time": s["time"], "available": True} for s in slots]
+            }
         else:
-            slots.append({
-                "time": time_slot,
-                "available": False
-            })
-
-        # Переход к следующему слоту
-        current_minute += interval_minutes
-        if current_minute >= 60:
-            current_minute = 0
-            current_hour += 1
-
-    return {"date": date, "slots": slots}
+            # Глобальный поиск: объединяем слоты всех мастеров
+            all_slots_with_status = []
+            
+            # Получаем рабочие часы салона для формирования полного списка времени
+            from db.settings import get_salon_settings
+            settings = get_salon_settings()
+            hours_str = settings.get('hours_weekdays', "10:30 - 21:00")
+            
+            try:
+                parts = hours_str.split('-')
+                start_h, start_m = map(int, parts[0].strip().split(':'))
+                end_h, end_m = map(int, parts[1].strip().split(':'))
+            except:
+                start_h, start_m = 10, 30
+                end_h, end_m = 21, 0
+                
+            # Получаем доступность всех мастеров
+            availability = schedule_service.get_all_masters_availability(date, duration_minutes=30)
+            
+            # Собираем все доступные времена в Set
+            all_available_times = set()
+            for master_slots in availability.values():
+                for slot in master_slots:
+                    # slots are strings in get_all_masters_availability if return_metadata=False
+                    all_available_times.add(slot)
+            
+            # Генерируем полный список слотов по расписанию салона
+            curr_h, curr_m = start_h, start_m
+            while curr_h < end_h or (curr_h == end_h and curr_m < end_m):
+                time_slot = f"{curr_h:02d}:{curr_m:02d}"
+                all_slots_with_status.append({
+                    "time": time_slot,
+                    "available": time_slot in all_available_times
+                })
+                
+                curr_m += 30
+                if curr_m >= 60:
+                    curr_m = 0
+                    curr_h += 1
+                    
+            return {"date": date, "slots": all_slots_with_status}
+            
+    except Exception as e:
+        from utils.logger import log_error
+        log_error(f"Error in get_available_slots: {e}", "public_api")
+        return {"date": date, "slots": [], "error": str(e)}
+    finally:
+        conn.close()
 
 def check_slot_availability(date: str, time: str, employee_id: Optional[int] = None) -> bool:
     """
@@ -431,107 +420,28 @@ def check_slot_availability(date: str, time: str, employee_id: Optional[int] = N
 async def get_batch_available_slots(date: str):
     """
     Get available slots for ALL active masters on a specific date.
-    Optimized for single-request loading.
-    
-    Returns:
-        {
-            "date": "YYYY-MM-DD",
-            "availability": {
-                master_id: ["10:00", "10:30", ...],
-                ...
-            }
-        }
+    Uses MasterScheduleService for accurate calculations.
     """
+    from services.master_schedule import MasterScheduleService
+    schedule_service = MasterScheduleService()
+    
     conn = get_db_connection()
     c = conn.cursor()
     
     try:
-        # 1. Get all active masters
-        c.execute("""
-            SELECT id, full_name FROM users 
-            WHERE is_service_provider = TRUE AND is_active = TRUE
-        """)
-        masters = c.fetchall() # [(id, name), ...]
+        # Получаем доступность всех мастеров
+        availability = schedule_service.get_all_masters_availability(date, duration_minutes=30)
         
-        # 2. Get ALL bookings for this date (for any master)
-        # We need bookings that are NOT cancelled
-        # datetime format in DB is "YYYY-MM-DD HH:MM"
-        # We'll filter by the date part string matching
+        # Получаем ID мастеров для возврата по ID
+        c.execute("SELECT id, full_name FROM users WHERE is_service_provider = TRUE")
+        masters = {row[1]: row[0] for row in c.fetchall()}
         
-        search_pattern = f"{date}%"
-        c.execute("""
-            SELECT master, datetime FROM bookings
-            WHERE datetime LIKE %s AND status NOT IN ('cancelled', 'no_show')
-        """, (search_pattern,))
-        bookings = c.fetchall() # [(master_name, "2023-10-27 10:00"), ...]
-        
-        # 3. Calculate slots in memory
         result = {}
-        
-        # Helper: Set of busy slots per master_name
-        busy_map = {} # { "Master Name": Set("10:00", "10:30") }
-        
-        for b_master, b_datetime in bookings:
-            if not b_master: continue
-            time_part = b_datetime.split(' ')[1] # Extract HH:MM
-            if b_master not in busy_map:
-                busy_map[b_master] = set()
-            busy_map[b_master].add(time_part)
-            
-        # Standard slots definition - DYNAMIC
-        from db.settings import get_salon_settings
-        try:
-            settings = get_salon_settings()
-            hours_str = settings.get('hours_weekdays', "10:30 - 21:00")
-            print(f"DEBUG: get_batch_available_slots using hours: {hours_str}") 
-            parts = hours_str.split('-')
-            start_h, start_m = map(int, parts[0].strip().split(':'))
-            end_h, end_m = map(int, parts[1].strip().split(':'))
-            print(f"DEBUG_BATCH: hours='{hours_str}', start={start_h}:{start_m}")
-        except Exception as e:
-            print(f"DEBUG_BATCH: Error: {e}")
-            start_h, start_m = 10, 30
-            end_h, end_m = 21, 0
-            
-        interval_minutes = 30
-        
-        # Logic to filter past times if today
-        from utils.datetime_utils import get_current_time
-        current_dt = get_current_time()
-        is_today = date == current_dt.strftime('%Y-%m-%d')
-        min_booking_time_str = (current_dt + timedelta(minutes=30)).strftime('%H:%M')
-        
-        # Generate standard time slots
-        standard_slots = []
-        curr_h, curr_m = start_h, start_m
-        while curr_h < end_h or (curr_h == end_h and curr_m < end_m):
-            slot_time = f"{curr_h:02d}:{curr_m:02d}"
-            
-            # Simple check: if today and slot is in the past (with buffer), skip
-            if is_today and slot_time < min_booking_time_str:
-                curr_m += interval_minutes
-                if curr_m >= 60:
-                    curr_m = 0
-                    curr_h += 1
-                continue
+        for m_name, slots in availability.items():
+            if m_name in masters:
+                m_id = masters[m_name]
+                result[m_id] = slots
                 
-            standard_slots.append(slot_time)
-            curr_m += interval_minutes
-            if curr_m >= 60:
-                curr_m = 0
-                curr_h += 1
-                
-        # 4. Build result for each master ID
-        for m_id, m_name in masters:
-            master_busy_slots = busy_map.get(m_name, set())
-            
-            available_slots = []
-            for slot in standard_slots:
-                if slot not in master_busy_slots:
-                    available_slots.append(slot)
-            
-            result[m_id] = available_slots
-            
         return {
             "date": date,
             "availability": result

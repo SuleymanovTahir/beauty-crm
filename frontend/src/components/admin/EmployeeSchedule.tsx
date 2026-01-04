@@ -1,6 +1,6 @@
-// /frontend/src/components/admin/EmployeeSchedule.tsx
 import { useState, useEffect } from 'react';
-import { Copy, Trash2, Plus, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Copy, Trash2, Plus, X, Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
@@ -37,10 +37,12 @@ interface EmployeeScheduleProps {
 }
 
 const DAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
-const HOURS = Array.from({ length: 23 }, (_, i) => i + 1); // 1 AM - 11 PM
+// 8:00 to 22:00 with 30min steps
+const TIME_SLOTS = Array.from({ length: 29 }, (_, i) => 8 + i * 0.5);
 
 export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps) {
     const { t } = useTranslation(['admin/users', 'common']);
+    const navigate = useNavigate();
 
     // ✅ ДОБАВИТЬ: Состояние для дефолтных часов салона
     const [defaultHours, setDefaultHours] = useState({ start: '10:30', end: '21:30' }); // ✅ Это fallback, будет заменено из API
@@ -100,10 +102,8 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
             setTimeOffs(timeOffData || []);
 
             // Load bookings for the selected week
-            // Note: We'll load all bookings and filter client-side since bookings use master name not ID
             const bookingsData = await api.get(`/api/bookings`);
             const allBookings = bookingsData?.bookings || [];
-            // Filter by employee's full_name (master field)
             const employeeBookings = allBookings.filter((b: Booking) => b.master === employee?.full_name);
             setBookings(employeeBookings);
 
@@ -134,8 +134,8 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
             for (let day = 5; day < 7; day++) {
                 newSchedule.push({
                     day_of_week: day,
-                    start_time: defaultHours.start,  // ✅ Исправлено
-                    end_time: defaultHours.end,      // ✅ Исправлено
+                    start_time: defaultHours.start,
+                    end_time: defaultHours.end,
                     is_working: false
                 });
             }
@@ -194,8 +194,8 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         try {
             const emptySchedule = Array.from({ length: 7 }, (_, i) => ({
                 day_of_week: i,
-                start_time: defaultHours.start,  // ✅ Исправлено
-                end_time: defaultHours.end,      // ✅ Исправлено
+                start_time: defaultHours.start,
+                end_time: defaultHours.end,
                 is_working: false
             }));
 
@@ -209,17 +209,30 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         }
     };
 
+    const handleBookSlot = (dayIndex: number, hour: number) => {
+        const today = new Date();
+        const weekStart = getWeekStart(today);
+        const slotDate = new Date(weekStart);
+        slotDate.setDate(slotDate.getDate() + dayIndex);
+
+        const h = Math.floor(hour);
+        const m = (hour % 1 === 0) ? '00' : '30';
+        const timeStr = `${h.toString().padStart(2, '0')}:${m}`;
+        const dateStr = slotDate.toISOString().split('T')[0];
+
+        // Redirect to new-booking with masterId and datetime
+        navigate(`/new-booking?booking=services&masterId=${employeeId}&date=${dateStr}&time=${timeStr}`);
+    };
+
     // Helper functions
     const getWeekStart = (date: Date) => {
         const d = new Date(date);
         const day = d.getDay();
-        const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+        const diff = d.getDate() - day + (day === 0 ? -6 : 1);
         return new Date(d.setDate(diff));
     };
 
     const isSlotBooked = (dayIndex: number, hour: number) => {
-        // For simplicity, let's assume we're always looking at the current week for bookings
-        // A more robust solution would involve a selectedDate state for the calendar view
         const today = new Date();
         const weekStart = getWeekStart(today);
         const slotDate = new Date(weekStart);
@@ -227,9 +240,13 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
 
         return bookings.some(booking => {
             const bookingDate = new Date(booking.datetime);
+            const bookingHour = bookingDate.getHours();
+            const bookingMin = bookingDate.getMinutes();
+
             return bookingDate.getDate() === slotDate.getDate() &&
                 bookingDate.getMonth() === slotDate.getMonth() &&
-                bookingDate.getHours() === hour;
+                bookingHour === Math.floor(hour) &&
+                (hour % 1 === 0 ? bookingMin < 30 : bookingMin >= 30);
         });
     };
 
@@ -237,13 +254,16 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         const daySchedule = schedule.find(s => s.day_of_week === dayIndex);
         if (!daySchedule || !daySchedule.is_working) return false;
 
-        const startHour = parseInt(daySchedule.start_time.split(':')[0]);
-        const endHour = parseInt(daySchedule.end_time.split(':')[0]);
+        const parseTimeToFloat = (timeStr: string) => {
+            const [h, m] = timeStr.split(':').map(Number);
+            return h + (m / 60);
+        };
+
+        const startHour = parseTimeToFloat(daySchedule.start_time);
+        const endHour = parseTimeToFloat(daySchedule.end_time);
 
         return hour >= startHour && hour < endHour;
     };
-
-
 
     if (loading) {
         return (
@@ -260,7 +280,6 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                 <h3 className="font-semibold mb-4">{t('schedule_autofill_template', 'Schedule autofill template')}</h3>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
-                    {/* Schedule Pattern */}
                     <div>
                         <Label>{t('schedule_pattern', 'Schedule')}</Label>
                         <div className="flex items-center gap-2 mt-2">
@@ -295,7 +314,6 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                         </div>
                     </div>
 
-                    {/* Starting Date */}
                     <div>
                         <Label>{t('starting_date', 'Starting')}</Label>
                         <Input
@@ -410,123 +428,136 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                             </tr>
                         </thead>
                         <tbody>
-                            {HOURS.map(hour => (
-                                <tr key={hour}>
-                                    <td className="border p-2 text-xs text-gray-500 text-center">
-                                        {hour} {hour < 12 ? 'AM' : 'PM'}
-                                    </td>
-                                    {DAYS.map((_, dayIndex) => {
-                                        const isBooked = isSlotBooked(dayIndex, hour);
-                                        const isAvailable = isSlotAvailable(dayIndex, hour);
+                            {TIME_SLOTS.map(hour => {
+                                const h = Math.floor(hour);
+                                const m = (hour % 1 === 0) ? '00' : '30';
+                                return (
+                                    <tr key={hour}>
+                                        <td className="border p-2 text-[10px] text-gray-500 text-center font-mono">
+                                            {`${h.toString().padStart(2, '0')}:${m}`}
+                                        </td>
+                                        {DAYS.map((_, dayIndex) => {
+                                            const isBooked = isSlotBooked(dayIndex, hour);
+                                            const isAvailable = isSlotAvailable(dayIndex, hour);
 
-                                        const handleCellClick = async () => {
-                                            // Toggle working hours for this slot
-                                            const daySchedule = schedule.find(s => s.day_of_week === dayIndex);
+                                            const handleCellClick = async () => {
+                                                const daySchedule = schedule.find(s => s.day_of_week === dayIndex);
+                                                const parseTimeToFloat = (timeStr: string) => {
+                                                    const [h_part, m_part] = timeStr.split(':').map(Number);
+                                                    return h_part + (m_part / 60);
+                                                };
+                                                const startHour = daySchedule ? parseTimeToFloat(daySchedule.start_time) : 0;
+                                                const endHour = daySchedule ? parseTimeToFloat(daySchedule.end_time) : 0;
 
-                                            if (!daySchedule || !daySchedule.is_working) {
-                                                // Day is not working, make it working with this hour
-                                                const newSchedule = [...schedule];
-                                                const existingIndex = newSchedule.findIndex(s => s.day_of_week === dayIndex);
-
-                                                if (existingIndex >= 0) {
-                                                    newSchedule[existingIndex] = {
-                                                        day_of_week: dayIndex,
-                                                        start_time: `${hour.toString().padStart(2, '0')}:00`,
-                                                        end_time: `${(hour + 1).toString().padStart(2, '0')}:00`,
-                                                        is_working: true
-                                                    };
+                                                if (isBooked) {
+                                                    // Handle booked slot action if needed
                                                 } else {
-                                                    newSchedule.push({
-                                                        day_of_week: dayIndex,
-                                                        start_time: `${hour.toString().padStart(2, '0')}:00`,
-                                                        end_time: `${(hour + 1).toString().padStart(2, '0')}:00`,
-                                                        is_working: true
-                                                    });
-                                                }
-
-                                                await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
-                                                setSchedule(newSchedule);
-                                                toast.success(t('schedule_updated', 'Schedule updated'));
-                                            } else {
-                                                // Day is working
-                                                const startHour = parseInt(daySchedule.start_time.split(':')[0]);
-                                                const endHour = parseInt(daySchedule.end_time.split(':')[0]);
-
-                                                if (hour < startHour) {
-                                                    // Extend start time backwards
-                                                    const newSchedule = schedule.map(s =>
-                                                        s.day_of_week === dayIndex
-                                                            ? { ...s, start_time: `${hour.toString().padStart(2, '0')}:00` }
-                                                            : s
-                                                    );
-                                                    await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
-                                                    setSchedule(newSchedule);
-                                                    toast.success(t('schedule_updated', 'Schedule updated'));
-                                                } else if (hour >= endHour) {
-                                                    // Extend end time forward
-                                                    const newSchedule = schedule.map(s =>
-                                                        s.day_of_week === dayIndex
-                                                            ? { ...s, end_time: `${(hour + 1).toString().padStart(2, '0')}:00` }
-                                                            : s
-                                                    );
-                                                    await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
-                                                    setSchedule(newSchedule);
-                                                    toast.success(t('schedule_updated', 'Schedule updated'));
-                                                } else {
-                                                    // Hour is within range - remove it by shrinking the range
-                                                    if (hour === startHour && hour + 1 === endHour) {
-                                                        // Only one hour - remove the day entirely
+                                                    if (!daySchedule || !daySchedule.is_working) {
+                                                        const newSchedule = [...schedule];
+                                                        const existingIndex = newSchedule.findIndex(s => s.day_of_week === dayIndex);
+                                                        if (existingIndex >= 0) {
+                                                            newSchedule[existingIndex] = {
+                                                                day_of_week: dayIndex,
+                                                                start_time: `${h.toString().padStart(2, '0')}:${m}`,
+                                                                end_time: `${(hour % 1 === 0 ? h : h + 1).toString().padStart(2, '0')}:${hour % 1 === 0 ? '30' : '00'}`,
+                                                                is_working: true
+                                                            };
+                                                        } else {
+                                                            newSchedule.push({
+                                                                day_of_week: dayIndex,
+                                                                start_time: `${h.toString().padStart(2, '0')}:${m}`,
+                                                                end_time: `${(hour % 1 === 0 ? h : h + 1).toString().padStart(2, '0')}:${hour % 1 === 0 ? '30' : '00'}`,
+                                                                is_working: true
+                                                            });
+                                                        }
+                                                        await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
+                                                        setSchedule(newSchedule);
+                                                        toast.success(t('schedule_updated', 'Schedule updated'));
+                                                    } else if (hour < startHour) {
                                                         const newSchedule = schedule.map(s =>
                                                             s.day_of_week === dayIndex
-                                                                ? { ...s, is_working: false }
+                                                                ? { ...s, start_time: `${h.toString().padStart(2, '0')}:${m}` }
                                                                 : s
                                                         );
                                                         await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
                                                         setSchedule(newSchedule);
                                                         toast.success(t('schedule_updated', 'Schedule updated'));
-                                                    } else if (hour === startHour) {
-                                                        // Remove from start
+                                                    } else if (hour >= endHour) {
+                                                        const nextH = hour % 1 === 0 ? h : h + 1;
+                                                        const nextM = hour % 1 === 0 ? '30' : '00';
                                                         const newSchedule = schedule.map(s =>
                                                             s.day_of_week === dayIndex
-                                                                ? { ...s, start_time: `${(hour + 1).toString().padStart(2, '0')}:00` }
-                                                                : s
-                                                        );
-                                                        await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
-                                                        setSchedule(newSchedule);
-                                                        toast.success(t('schedule_updated', 'Schedule updated'));
-                                                    } else if (hour + 1 === endHour) {
-                                                        // Remove from end
-                                                        const newSchedule = schedule.map(s =>
-                                                            s.day_of_week === dayIndex
-                                                                ? { ...s, end_time: `${hour.toString().padStart(2, '0')}:00` }
+                                                                ? { ...s, end_time: `${nextH.toString().padStart(2, '0')}:${nextM}` }
                                                                 : s
                                                         );
                                                         await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
                                                         setSchedule(newSchedule);
                                                         toast.success(t('schedule_updated', 'Schedule updated'));
                                                     } else {
-                                                        // Hour is in the middle - can't remove without splitting
-                                                        toast.info(t('cannot_remove_middle_hour', 'Cannot remove hour from middle of shift. Remove from start or end first.'));
+                                                        if (hour === startHour && hour + 0.5 === endHour) {
+                                                            const newSchedule = schedule.map(s =>
+                                                                s.day_of_week === dayIndex
+                                                                    ? { ...s, is_working: false }
+                                                                    : s
+                                                            );
+                                                            await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
+                                                            setSchedule(newSchedule);
+                                                            toast.success(t('schedule_updated', 'Schedule updated'));
+                                                        } else if (hour === startHour) {
+                                                            const nextH = hour % 1 === 0 ? h : h + 1;
+                                                            const nextM = hour % 1 === 0 ? '30' : '00';
+                                                            const newSchedule = schedule.map(s =>
+                                                                s.day_of_week === dayIndex
+                                                                    ? { ...s, start_time: `${nextH.toString().padStart(2, '0')}:${nextM}` }
+                                                                    : s
+                                                            );
+                                                            await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
+                                                            setSchedule(newSchedule);
+                                                            toast.success(t('schedule_updated', 'Schedule updated'));
+                                                        } else if (hour + 0.5 === endHour) {
+                                                            const newSchedule = schedule.map(s =>
+                                                                s.day_of_week === dayIndex
+                                                                    ? { ...s, end_time: `${h.toString().padStart(2, '0')}:${m}` }
+                                                                    : s
+                                                            );
+                                                            await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
+                                                            setSchedule(newSchedule);
+                                                            toast.success(t('schedule_updated', 'Schedule updated'));
+                                                        } else {
+                                                            toast.info(t('cannot_remove_middle_hour', 'Cannot remove hour from middle of shift. Remove from start or end first.'));
+                                                        }
                                                     }
                                                 }
-                                            }
-                                        };
+                                            };
 
-                                        return (
-                                            <td
-                                                key={dayIndex}
-                                                className="border p-2 text-center cursor-pointer hover:bg-gray-50 transition-colors"
-                                                onClick={handleCellClick}
-                                            >
-                                                {isAvailable && (
-                                                    <div className={`w-3 h-3 rounded-full mx-auto ${isBooked ? 'bg-red-500' : 'bg-gray-400'
-                                                        }`} />
-                                                )}
-                                            </td>
-                                        );
-                                    })}
-                                </tr>
-                            ))}
+                                            return (
+                                                <td
+                                                    key={dayIndex}
+                                                    className="border p-2 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+                                                    onClick={handleCellClick}
+                                                >
+                                                    {isAvailable && (
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleBookSlot(dayIndex, hour);
+                                                            }}
+                                                            className="group relative flex flex-col items-center justify-center w-full h-full"
+                                                            title={isBooked ? t('view_booking', 'View Booking') : t('new_booking', 'New Booking')}
+                                                        >
+                                                            <div className={`w-3 h-3 rounded-full transition-all group-hover:scale-150 ${isBooked ? 'bg-red-500 shadow-sm shadow-red-200' : 'bg-green-400 hover:bg-green-500 shadow-sm shadow-green-100'
+                                                                }`} />
+                                                            <span className="absolute -top-1 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                <Plus className="w-2 h-2 text-blue-600" />
+                                                            </span>
+                                                        </button>
+                                                    )}
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>
