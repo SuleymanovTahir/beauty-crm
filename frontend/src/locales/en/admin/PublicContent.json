@@ -125,6 +125,7 @@
   "reviews_title": "Customer Reviews",
   "service": "Service",
   "stars": "stars",
+  "subtitle": "Reviews, banners, FAQ and gallery",
   "tabs": {
     "banners": "Banners",
     "faq": "FAQ",
@@ -132,6 +133,5 @@
     "reviews": "Reviews"
   },
   "title": "Public Content",
-  "translations": "Translations",
-  "subtitle": "Reviews, banners, FAQ and gallery"
+  "translations": "Translations"
 }

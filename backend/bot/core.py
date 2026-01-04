@@ -712,6 +712,23 @@ class SalonBot:
                         for slot in available_slots[:10]  # Показываем больше слотов
                     ])
 
+                    # ✅ ДИНАМИЧЕСКИЙ СПИСОК МАСТЕРОВ ДЛЯ AI
+                    masters_mapping = []
+                    try:
+                        conn = get_db_connection()
+                        c = conn.cursor()
+                        c.execute("SELECT full_name, full_name_ru FROM users WHERE is_active=TRUE AND is_service_provider=TRUE")
+                        masters_rows = c.fetchall()
+                        for m_row in masters_rows:
+                            orig_name = m_row[0]
+                            ru_name = m_row[1] or m_row[0]
+                            masters_mapping.append(f"- {orig_name} → {ru_name}")
+                        conn.close()
+                    except Exception as e:
+                        print(f"⚠️ Error building masters mapping: {e}")
+                    
+                    masters_mapping_text = "\n    ".join(masters_mapping) if masters_mapping else "Нет данных о мастерах"
+
                     additional_context += f"""
 
     🔴 РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ НА {date_label_upper} (из БД):
@@ -723,13 +740,8 @@ class SalonBot:
     - Время выше РЕАЛЬНО СВОБОДНО - проверено в базе данных!
     - ВСЕГДА говори "{target_date_label or 'этот день'}" вместо полной даты!
     
-    📝 РУССКИЕ ИМЕНА МАСТЕРОВ (ВСЕГДА используй эти имена):
-    - GULYA / Gulya → Гуля
-    - JENNIFER / Jennifer → Дженнифер  
-    - LYAZZAT / Lyazzat → Ляззат
-    - MESTAN / Mestan → Местан
-    - SIMO / Simo → Симо
-    - TURSUNAY / Tursunay → Турсунай
+    📝 ИМЕНА МАСТЕРОВ (используй эти имена):
+    {masters_mapping_text}
     
     ✅ ЕСЛИ КЛИЕНТ ПРОСИТ КОНКРЕТНОЕ ВРЕМЯ:
     1. Проверь ВСЕХ мастеров на это время в списке выше
@@ -738,63 +750,31 @@ class SalonBot:
     3. Если время занято у одного, но свободно у другого - ПРЕДЛОЖИ АЛЬТЕРНАТИВУ!
        Пример: "У Дженнифер в 19:00 занято, но могу предложить к Местану в 19:00. Подходит?"
     4. НЕ ГОВОРИ "нет свободных слотов" если есть другие мастера на это время!
-    5. ВСЕГДА используй имена мастеров на языке на котором написал клиент из списка выше!"""
+    5. ВСЕГДА используй имена мастеров из списка выше!"""
                 else:
                     print(f"❌ No available slots found for {target_date}")
-
-                    # ✅ Проверяем ПОЧЕМУ нет слотов на сегодня
-                    reason_text = ""
-                    if target_date_label == "сегодня":
-                        # Получаем часы работы салона
-                        salon_hours = self.salon.get('hours', f'Daily {DEFAULT_HOURS_WEEKDAYS}')  # ✅ Используем константу
-                        
-                        # Парсим время закрытия
-                        if '-' in salon_hours:
-                            try:
-                                end_time_str = salon_hours.split('-')[1].strip()  # "21:30"  // ✅ Исправлено в комментарии
-                                from datetime import datetime
-                                salon_close = datetime.strptime(end_time_str, '%H:%M').time()
-                                
-                                # Получаем длительность услуги
-                                service_duration_mins = 60  # default
-                                if service_name:
-                                    from bot.tools import get_available_time_slots
-                                    from utils.duration_utils import parse_duration_to_minutes
-                                    
-                                    conn = get_db_connection()
-                                    c = conn.cursor()
-                                    c.execute("SELECT duration FROM services WHERE name_ru LIKE %s OR name LIKE %s", 
-                                             (f"%{service_name}%", f"%{service_name}%"))
-                                    dur_row = c.fetchone()
-                                    if dur_row and dur_row[0]:
-                                        parsed = parse_duration_to_minutes(dur_row[0])
-                                        if parsed:
-                                            service_duration_mins = parsed
-                                    conn.close()
-                                
-                                # Проверяем достаточно ли времени
-                                current_hour = current_time.hour
-                                current_minute = current_time.minute
-                                close_hour = salon_close.hour
-                                close_minute = salon_close.minute
-                                
-                                remaining_minutes = (close_hour * 60 + close_minute) - (current_hour * 60 + current_minute)
-                                
-                                if remaining_minutes < service_duration_mins:
-                                    reason_text = f"\n💡 Сейчас {current_time.strftime('%H:%M')}, салон работает до {end_time_str}.\n"
-                                    reason_text += f"Для этой услуги нужно {service_duration_mins} минут, а осталось только {remaining_minutes} минут.\n"
-                                    reason_text += "Поэтому на сегодня уже поздно. Предложи завтра!\n"
-                            except Exception as e:
-                                print(f"⚠️ Error parsing salon hours: {e}")
+                    
+                    # ✅ Проверяем ПОЧЕМУ нет слотов
+                    reason_text = "Все мастера заняты или у них выходной."
+                    
+                    # Try to get specific reason from scheduler/tools
+                    try:
+                        from bot.tools import check_time_slot_available
+                        # Check some middle-of-the-day slot to see if it gives a reason (vacation etc)
+                        check_res = check_time_slot_available(target_date, "14:00")
+                        if not check_res['available'] and check_res.get('reason'):
+                            reason_text = check_res['reason']
+                    except Exception as e:
+                        print(f"⚠️ Error getting reason: {e}")
 
                     additional_context += f"""
-
-    🔴 НА {date_label_upper} ВСЕ СЛОТЫ ЗАНЯТЫ (проверено в БД)!
-    {reason_text}
+    🔴 НА {date_label_upper} НЕТ СВОБОДНЫХ ОКОШЕК (проверено в БД)!
+    💡 Причина: {reason_text}
+    
     ⚠️ СТРОГИЙ ЗАПРЕТ:
     - НЕ ПРЕДЛАГАЙ НИКАКОЕ ВРЕМЯ НА {target_date_label or 'этот день'}!
-    - НЕ ГОВОРИ "ЕСТЬ ОКОШКО", ЕСЛИ ЕГО НЕТ!
-    - Скажи: "На {target_date_label or 'этот день'} уже полная запись. Предложить ближайшее свободное время на следующие дни?"
+    - Вежливо объясни причину: {reason_text}
+    - Предложи ближайшее свободное время на следующие дни.
     """
 
             # ========================================

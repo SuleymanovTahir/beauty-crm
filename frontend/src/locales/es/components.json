@@ -55,6 +55,10 @@
   "save": "Ahorrar",
   "saving": "Ahorro...",
   "search_templates": "Buscar plantillas...",
+  "source": {
+    "manual": "A mano"
+  },
+  "source_title": "Fuente",
   "status": "Estado",
   "status_color_label": "Color de estado",
   "status_key_hint": "La clave se utiliza en el sistema (por ejemplo: nueva, pendiente)",

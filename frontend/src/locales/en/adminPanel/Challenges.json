@@ -55,9 +55,9 @@
     "failed_create": "Failed to create challenge",
     "failed_delete": "Failed to delete challenge",
     "failed_load": "Failed to load challenges",
+    "progress_checked_one": "",
     "progress_checked_few": "",
     "progress_checked_many": "",
-    "progress_checked_one": "",
     "progress_checked_other": ""
   },
   "types": {

@@ -1,4 +1,5 @@
 {
+  "booking_info": "Gravando informações",
   "change_booking": "Editar entrada",
   "common": {
     "any_master": "Qualquer mestre",
@@ -25,6 +26,9 @@
     "title": "Confirmar",
     "total": "Total Amount"
   },
+  "continue_datetime": "Continuar com a seleção de data e hora",
+  "continue_professional": "Continue com a seleção do assistente",
+  "continue_services": "Continuar com a seleção de serviços",
   "datetime": {
     "date": "Select Date",
     "noSlots": "No slots available",
@@ -51,6 +55,7 @@
     "anyDesc": "We'll match you with the best available professional",
     "availableOn": "Available",
     "availableToday": "Available Today",
+    "notAvailableToday": "Not Available Today",
     "ready": "Ready",
     "reviews": "Reviews",
     "title": "Choose Master"
@@ -59,6 +64,7 @@
     "address": "Studio Location",
     "name": "Sede de beleza"
   },
+  "select_to_continue": "Selecione um serviço ou técnico para continuar",
   "services": {
     "allCategories": "All",
     "search": "Search services...",

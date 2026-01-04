@@ -55,6 +55,10 @@
   "save": "Salvar",
   "saving": "Salvando...",
   "search_templates": "Pesquisar modelos...",
+  "source": {
+    "manual": "Manualmente"
+  },
+  "source_title": "Fonte",
   "status": "Status",
   "status_color_label": "Cor do status",
   "status_key_hint": "A chave é utilizada no sistema (por exemplo: nova, pendente)",

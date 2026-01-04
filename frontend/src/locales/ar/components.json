@@ -55,6 +55,10 @@
   "save": "يحفظ",
   "saving": "توفير...",
   "search_templates": "البحث عن القوالب...",
+  "source": {
+    "manual": "يدويا"
+  },
+  "source_title": "مصدر",
   "status": "حالة",
   "status_color_label": "لون الحالة",
   "status_key_hint": "المفتاح يستخدم في النظام (مثال: جديد، معلق)",

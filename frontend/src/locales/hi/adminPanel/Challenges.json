@@ -5,7 +5,7 @@
     "update_challenge": "अद्यतन चुनौती"
   },
   "card": {
-    "check_progress": "Check Progress",
+    "check_progress": "प्रगति की जाँच करें",
     "completed": "पुरा होना",
     "progress": "प्रगति",
     "pts": "बिंदु",
@@ -51,13 +51,13 @@
   "toasts": {
     "created": "चुनौती सफलतापूर्वक बनाई गई",
     "deleted": "चुनौती सफलतापूर्वक हटा दी गई",
-    "failed_check_progress": "Failed to check progress",
+    "failed_check_progress": "प्रगति की जाँच करने में विफल",
     "failed_create": "चुनौती पैदा करने में विफल",
     "failed_delete": "चुनौती हटाने में विफल",
     "failed_load": "चुनौतियाँ लोड करने में विफल",
+    "progress_checked_one": "",
     "progress_checked_few": "",
     "progress_checked_many": "",
-    "progress_checked_one": "",
     "progress_checked_other": ""
   },
   "types": {
