@@ -1,11 +1,11 @@
 {
-  "authorization_error": "Authorization failed",
-  "enter_login": "Enter username",
-  "fill_both_fields": "Please fill in both fields",
-  "login": "Login",
-  "login_error": "Login error",
-  "login_title": "Login to your account",
-  "password": "Password",
-  "username": "Username",
-  "welcome": "Welcome"
+  "authorization_error": "प्रमाणीकरण विफल",
+  "enter_login": "उपयोक्तानाम दर्ज करें",
+  "fill_both_fields": "कृपया दोनों फील्ड में भरें",
+  "login": "लॉग इन करें",
+  "login_error": "लॉगिन त्रुटि",
+  "login_title": "अपने अकाउंट में लॉग इन करें",
+  "password": "पासवर्ड",
+  "username": "उपयोगकर्ता नाम",
+  "welcome": "स्वागत"
 }

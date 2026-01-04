@@ -1,30 +1,30 @@
 {
   "buttons": {
-    "save": "Save Changes"
+    "save": "परिवर्तनों को सुरक्षित करें"
   },
   "scheduling": {
-    "end_date": "End Date",
-    "hint": "Leave empty for indefinite availability.",
-    "label": "Scheduling (Optional)",
-    "start_date": "Start Date"
+    "end_date": "अंतिम तिथि",
+    "hint": "अनिश्चितकालीन उपलब्धता के लिए खाली छोड़ दें।",
+    "label": "शेड्यूलिंग (वैकल्पिक)",
+    "start_date": "आरंभ करने की तिथि"
   },
   "status": {
-    "active": "Active",
-    "disabled": "Disabled",
-    "disabled_switch": "Disabled",
-    "enabled": "Enabled",
-    "globally_disabled": "Feature is currently disabled globally."
+    "active": "सक्रिय",
+    "disabled": "अक्षम",
+    "disabled_switch": "अक्षम",
+    "enabled": "सक्रिय",
+    "globally_disabled": "सुविधा वर्तमान में विश्व स्तर पर अक्षम है."
   },
-  "subtitle": "Manage availability of key platform features",
-  "title": "Feature Management",
+  "subtitle": "प्रमुख प्लेटफ़ॉर्म सुविधाओं की उपलब्धता प्रबंधित करें",
+  "title": "फ़ीचर प्रबंधन",
   "toasts": {
-    "failed_load": "Failed to load feature configuration",
-    "failed_save": "Failed to save configuration",
-    "saved": "Configuration saved successfully"
+    "failed_load": "सुविधा कॉन्फ़िगरेशन लोड करने में विफल",
+    "failed_save": "कॉन्फ़िगरेशन सहेजने में विफल",
+    "saved": "कॉन्फ़िगरेशन सफलतापूर्वक सहेजा गया"
   },
   "whitelist": {
     "hint": "अल्पविराम से अलग की गई उपयोगकर्ता आईडी. यदि सेट किया गया है, तो केवल ये उपयोगकर्ता ही इस सुविधा तक पहुंच सकते हैं। सभी पात्र उपयोगकर्ताओं को अनुमति देने के लिए खाली छोड़ें।",
-    "label": "Whitelist (Optional)",
-    "placeholder": "e.g. 1, 5, 12"
+    "label": "श्वेतसूची (वैकल्पिक)",
+    "placeholder": "जैसे 1, 5, 12"
   }
 }

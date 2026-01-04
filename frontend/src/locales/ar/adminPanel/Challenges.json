@@ -5,7 +5,7 @@
     "update_challenge": "تحديث التحدي"
   },
   "card": {
-    "check_progress": "Check Progress",
+    "check_progress": "تحقق من التقدم",
     "completed": "مكتمل",
     "progress": "تقدم",
     "pts": "نقطة",
@@ -51,16 +51,16 @@
   "toasts": {
     "created": "تم إنشاء التحدي بنجاح",
     "deleted": "تم حذف التحدي بنجاح",
-    "failed_check_progress": "Failed to check progress",
+    "failed_check_progress": "فشل في التحقق من التقدم",
     "failed_create": "فشل إنشاء التحدي",
     "failed_delete": "فشل حذف التحدي",
     "failed_load": "فشل تحميل التحديات",
+    "progress_checked_zero": "",
+    "progress_checked_one": "",
+    "progress_checked_two": "",
     "progress_checked_few": "",
     "progress_checked_many": "",
-    "progress_checked_one": "",
-    "progress_checked_other": "",
-    "progress_checked_two": "",
-    "progress_checked_zero": ""
+    "progress_checked_other": ""
   },
   "types": {
     "referrals": "الإحالات",

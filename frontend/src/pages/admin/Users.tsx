@@ -330,8 +330,8 @@ export default function Users() {
           <button
             onClick={() => handleTabChange('employees')}
             className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'employees'
-                ? 'bg-pink-600 text-white shadow-sm'
-                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+              ? 'bg-pink-600 text-white shadow-sm'
+              : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               }`}
           >
             <div className="flex items-center justify-center gap-2">
@@ -345,8 +345,8 @@ export default function Users() {
           <button
             onClick={() => handleTabChange('clients')}
             className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'clients'
-                ? 'bg-pink-600 text-white shadow-sm'
-                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+              ? 'bg-pink-600 text-white shadow-sm'
+              : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               }`}
           >
             <div className="flex items-center justify-center gap-2">
@@ -493,7 +493,7 @@ export default function Users() {
                         />
                         <div>
                           <p className="text-sm text-gray-900 font-medium">
-                            {activeTab === 'employees' ? ((user as any).full_name || 'Без имени') : (user.name || user.username || 'Без имени')}
+                            {activeTab === 'employees' ? ((user as any).full_name || t('no_name', 'Без имени')) : (user.name || user.username || t('no_name', 'Без имени'))}
                           </p>
                           <p className="text-xs text-gray-400">
                             {activeTab === 'employees' ? ((user as any).username || '-') : `@${user.username || 'user'}`}

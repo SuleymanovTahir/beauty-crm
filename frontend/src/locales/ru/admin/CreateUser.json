@@ -1,6 +1,7 @@
 {
   "back_to_users": "Вернуться к пользователям",
   "create_and_assign_services": "Create User & Assign Services",
+  "create_user": "Создать пользователя",
   "creating": "Изготовление...",
   "email_hint": "Кроме того. Чтобы сбросить пароль",
   "email_label": "Адрес электронной почты",
@@ -18,6 +19,7 @@
   "password_required": "Требуется пароль",
   "position_hint": "Select one or more positions",
   "position_label": "Должность",
+  "position_none": "Не указан",
   "position_placeholder": "Выберите позицию",
   "role_admin": "Администратор",
   "role_admin_desc": "Управление пользователями и настройками",
@@ -37,7 +39,5 @@
   "username_label": "Авторизоваться *",
   "username_min_length": "Логин должен быть длиной не менее 3 символов",
   "username_placeholder": "иван_иванов",
-  "username_required": "Требуется вход",
-  "create_user": "Создать пользователя",
-  "position_none": "Не указан"
+  "username_required": "Требуется вход"
 }

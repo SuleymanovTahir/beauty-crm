@@ -55,6 +55,10 @@
   "save": "Sauvegarder",
   "saving": "Économie...",
   "search_templates": "Rechercher des modèles...",
+  "source": {
+    "manual": "Manuellement"
+  },
+  "source_title": "Source",
   "status": "Statut",
   "status_color_label": "Couleur d'état",
   "status_key_hint": "La clé est utilisée dans le système (par exemple : nouvelle, en attente)",

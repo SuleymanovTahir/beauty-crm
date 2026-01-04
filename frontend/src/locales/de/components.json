@@ -55,6 +55,10 @@
   "save": "Speichern",
   "saving": "Sparen...",
   "search_templates": "Nach Vorlagen suchen...",
+  "source": {
+    "manual": "Manuell"
+  },
+  "source_title": "Quelle",
   "status": "Status",
   "status_color_label": "Statusfarbe",
   "status_key_hint": "Der Schlüssel wird im System verwendet (zum Beispiel: neu, ausstehend)",

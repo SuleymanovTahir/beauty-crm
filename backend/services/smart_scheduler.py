@@ -56,13 +56,13 @@ class SmartScheduler:
                 target_date = now.date()
         
         # 2. Check Primary Date Availability
-        primary_slots = self._get_filtered_slots(master_name, target_date, duration_minutes)
+        primary_slots, status = self._get_filtered_slots(master_name, target_date, duration_minutes)
         
         result = {
             "primary_date": target_date.strftime("%Y-%m-%d"),
             "primary_slots": primary_slots,
             "alternatives": [],
-            "status": "available" if primary_slots else "full"
+            "status": status
         }
 
         # 3. If full or few slots, check adjacent days
@@ -79,7 +79,7 @@ class SmartScheduler:
             # Check Previous Day (if not in past)
             prev_day = target_date - timedelta(days=1)
             if prev_day >= now.date() and prev_day != target_date:
-                prev_slots = self._get_filtered_slots(master_name, prev_day, duration_minutes)
+                prev_slots, _ = self._get_filtered_slots(master_name, prev_day, duration_minutes)
                 if prev_slots:
                     result["alternatives"].append({
                         "date": prev_day.strftime("%Y-%m-%d"),
@@ -88,8 +88,8 @@ class SmartScheduler:
 
         return result
 
-    def _get_filtered_slots(self, master_name: str, date_obj, duration_minutes: int) -> List[str]:
-        """Fetch slots and apply Smart Constraints (Travel Buffer)"""
+    def _get_filtered_slots(self, master_name: str, date_obj, duration_minutes: int) -> Tuple[List[str], str]:
+        """Fetch slots and apply Smart Constraints (Travel Buffer). Returns (slots, status)"""
         date_str = date_obj.strftime("%Y-%m-%d")
         
         # ✅ ВАЛИДАЦИЯ: Проверяем, что мастер существует в БД
@@ -103,18 +103,33 @@ class SmartScheduler:
             
             if not master_info:
                 logger.error(f"❌ ERROR: Master '{master_name}' NOT FOUND in users table!")
-                print(f"❌ ERROR: Master '{master_name}' NOT FOUND in users table!")
-                return []
+                return [], "not_found"
             
             if not master_info[2]:  # is_active
                 logger.warning(f"⚠️ WARNING: Master '{master_name}' (id={master_info[0]}) is NOT ACTIVE!")
-                print(f"⚠️ WARNING: Master '{master_name}' (id={master_info[0]}) is NOT ACTIVE!")
-                return []
+                return [], "inactive"
             
             if not master_info[3]:  # is_service_provider
                 logger.warning(f"⚠️ WARNING: Master '{master_name}' (id={master_info[0]}) is NOT a service provider!")
-                print(f"⚠️ WARNING: Master '{master_name}' (id={master_info[0]}) is NOT a service provider!")
-                return []
+                return [], "not_provider"
+            # Check specifically for Time Off (Vacation)
+            day_str = date_obj.strftime("%Y-%m-%d")
+            day_start = f"{day_str} 00:00:00"
+            day_end = f"{day_str} 23:59:59"
+            
+            cursor.execute("""
+                SELECT reason FROM user_time_off 
+                WHERE user_id = %s 
+                AND (
+                    (start_date <= %s AND end_date >= %s)
+                )
+            """, (master_info[0], day_start, day_end))
+            
+            time_off = cursor.fetchone()
+            if time_off:
+                logger.info(f"🌴 Master '{master_name}' on time off: {time_off[0]}")
+                return [], "vacation"
+
         finally:
             conn.close()
         
@@ -128,14 +143,12 @@ class SmartScheduler:
             )
         except Exception as e:
             logger.error(f"❌ ERROR in get_available_slots for {master_name}: {e}", exc_info=True)
-            print(f"❌ ERROR in get_available_slots for {master_name}: {e}")
-            return []
+            return [], "error"
         
         # ✅ ВАЛИДАЦИЯ: Проверяем тип и формат слотов
         if not isinstance(raw_slots, list):
             logger.error(f"❌ ERROR: get_available_slots returned invalid type: {type(raw_slots)}")
-            print(f"❌ ERROR: get_available_slots returned invalid type: {type(raw_slots)}")
-            return []
+            return [], "error"
         
         if not raw_slots:
             logger.debug(f"⚠️ No raw slots found for master='{master_name}', date={date_str}, duration={duration_minutes}min")
@@ -184,4 +197,5 @@ class SmartScheduler:
             final_slots.append(slot)
         
         logger.debug(f"✅ Filtered to {len(final_slots)} slots for {master_name} on {date_str}")
-        return final_slots
+        status = "available" if final_slots else "full"
+        return final_slots, status

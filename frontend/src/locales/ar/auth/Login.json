@@ -1,11 +1,11 @@
 {
-  "authorization_error": "Authorization failed",
-  "enter_login": "Enter username",
-  "fill_both_fields": "Please fill in both fields",
-  "login": "Login",
-  "login_error": "Login error",
-  "login_title": "Login to your account",
-  "password": "Password",
-  "username": "Username",
-  "welcome": "Welcome"
+  "authorization_error": "فشل التفويض",
+  "enter_login": "أدخل اسم المستخدم",
+  "fill_both_fields": "يرجى ملء كلا الحقلين",
+  "login": "تسجيل الدخول",
+  "login_error": "خطأ في تسجيل الدخول",
+  "login_title": "تسجيل الدخول إلى حسابك",
+  "password": "كلمة المرور",
+  "username": "اسم المستخدم",
+  "welcome": "مرحباً"
 }
