@@ -44,7 +44,7 @@
   "example": "Beispiel",
   "excel": "Excel",
   "excel_template": "Excel-Vorlage",
-  "export_date_from": "MIR",
+  "export_date_from": "Von",
   "export_date_to": "Von",
   "export_failed": "Exportfehler",
   "export_file_format": "Dateiformat",
@@ -98,7 +98,7 @@
   "skipped_bookings_many": "Viele Buchungen verpasst",
   "skipped_bookings_other": "Verpasste Buchungen und andere",
   "source": {
-    "account": "OK",
+    "account": "Konto",
     "custom": "Ihre Quelle",
     "guest_link": "Link",
     "instagram": "Instagram",
