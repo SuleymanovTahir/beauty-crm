@@ -46,13 +46,14 @@ export function ConfirmStep({
             if (user && !profileLoaded) {
                 try {
                     // Загрузить актуальный профиль пользователя
-                    const profile = await api.getClientProfile();
+                    const response = await api.getClientProfile();
+                    const profileData = response.profile;
 
                     // Если есть номер в профиле и его нет в bookingState
-                    if (profile.phone && !bookingState.phone) {
-                        setPhone(profile.phone);
-                        onPhoneChange(profile.phone); // Обновить в bookingState
-                    } else if (!profile.phone && !bookingState.phone) {
+                    if (profileData?.phone && !bookingState.phone) {
+                        setPhone(profileData.phone);
+                        onPhoneChange(profileData.phone); // Обновить в bookingState
+                    } else if (!profileData?.phone && !bookingState.phone) {
                         // Нет номера ни в профиле, ни в bookingState - показать модалку
                         setShowPhoneModal(true);
                     }
