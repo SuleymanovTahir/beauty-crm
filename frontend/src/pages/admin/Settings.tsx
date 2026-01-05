@@ -148,6 +148,9 @@ export default function AdminSettings() {
     username: string;
     full_name: string;
     role: string;
+    email: string | null;
+    telegram_id: string | null;
+    instagram_username: string | null;
     is_subscribed: boolean;
     channels: {
       email: boolean;
