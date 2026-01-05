@@ -38,11 +38,11 @@ export function RescheduleDialog({ isOpen, onClose, appointment, onChangeStep }:
 
             if (option === 'datetime') {
                 state.prefillDate = appointment.date;
-                navigate('/new-booking?booking=datetime', { state });
+                navigate(`/new-booking?booking=datetime&id=${appointment.id}`, { state });
             } else if (option === 'master') {
-                navigate('/new-booking?booking=professional', { state: { ...state, prefillDate: null } });
+                navigate(`/new-booking?booking=professional&id=${appointment.id}`, { state: { ...state, prefillDate: null } });
             } else if (option === 'service') {
-                navigate('/new-booking?booking=services', { state: { ...state, prefillMaster: null, prefillDate: null } });
+                navigate(`/new-booking?booking=services&id=${appointment.id}`, { state: { ...state, prefillMaster: null, prefillDate: null } });
             }
         }
 

@@ -1,4 +1,5 @@
 import { ArrowLeft, X, Globe, Calendar, Clock, Phone, CheckCircle } from 'lucide-react';
+import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 
 interface BookingConfirmationProps {
   service: any;
@@ -9,6 +10,7 @@ interface BookingConfirmationProps {
 }
 
 export function BookingConfirmation({ service, master, time, onBack, onConfirm }: BookingConfirmationProps) {
+  const { currency } = useCurrency();
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -39,7 +41,7 @@ export function BookingConfirmation({ service, master, time, onBack, onConfirm }
         {/* Service Info */}
         <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
           <h2 className="font-bold text-lg mb-4">{service.name}</h2>
-          
+
           <div className="space-y-4">
             {/* Master */}
             <div>
@@ -55,7 +57,7 @@ export function BookingConfirmation({ service, master, time, onBack, onConfirm }
                   Reschedule
                 </button>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-gray-50 rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-2">
@@ -64,7 +66,7 @@ export function BookingConfirmation({ service, master, time, onBack, onConfirm }
                   </div>
                   <p className="font-semibold">Wednesday, Feb 4</p>
                 </div>
-                
+
                 <div className="bg-gray-50 rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-2">
                     <Clock size={16} className="text-gray-500" />
@@ -81,7 +83,7 @@ export function BookingConfirmation({ service, master, time, onBack, onConfirm }
                 <span className="text-xs text-gray-500 uppercase tracking-wide">Total Amount</span>
                 <div className="text-right">
                   <span className="text-3xl font-bold">{service.price}</span>
-                  <span className="text-lg text-gray-500 ml-1">AED</span>
+                  <span className="text-lg text-gray-500 ml-1">{currency}</span>
                 </div>
               </div>
             </div>

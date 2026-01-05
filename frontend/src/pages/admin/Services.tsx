@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
+import { useCurrency } from '../../hooks/useSalonSettings';
 
 // DURATION_FORMATS removed in favor of dynamic translation in component
 
@@ -99,21 +100,6 @@ const categories = [
   'Waxing'
 ];
 
-// Форматирование цены
-const formatPrice = (service: Service) => {
-  const minPrice = typeof service.min_price === 'number' ? service.min_price : null;
-  const maxPrice = typeof service.max_price === 'number' ? service.max_price : null;
-
-  if (
-    minPrice !== null &&
-    maxPrice !== null &&
-    minPrice !== maxPrice
-  ) {
-    return `${minPrice} — ${maxPrice} ${service.currency}`;
-  }
-  return `${service.price} ${service.currency}`;
-};
-
 export default function Services() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabType>(() => {
@@ -139,6 +125,22 @@ export default function Services() {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const { currency, formatCurrency } = useCurrency();
+
+  // Форматирование цены
+  const formatPrice = (service: Service) => {
+    const minPrice = typeof service.min_price === 'number' ? service.min_price : null;
+    const maxPrice = typeof service.max_price === 'number' ? service.max_price : null;
+
+    if (
+      minPrice !== null &&
+      maxPrice !== null &&
+      minPrice !== maxPrice
+    ) {
+      return `${formatCurrency(minPrice)} — ${formatCurrency(maxPrice)}`;
+    }
+    return formatCurrency(service.price);
+  };
 
   // Packages state
   const [packages, setPackages] = useState<SpecialPackage[]>([]);
@@ -210,7 +212,7 @@ export default function Services() {
     min_price: '',
     max_price: '',
     duration: '',
-    currency: 'AED',
+    currency: currency,
     category: '',
     description: '',
     description_ru: '',
@@ -226,7 +228,7 @@ export default function Services() {
     description_ru: '',
     original_price: 0,
     special_price: 0,
-    currency: 'AED',
+    currency: currency,
     services_included: '',
     promo_code: '',
     keywords: '',
@@ -315,7 +317,7 @@ export default function Services() {
       min_price: '',
       max_price: '',
       duration: '',
-      currency: 'AED',
+      currency: currency,
       category: '',
       description: '',
       description_ru: '',
@@ -468,7 +470,7 @@ export default function Services() {
       description_ru: '',
       original_price: 0,
       special_price: 0,
-      currency: 'AED',
+      currency: currency,
       services_included: '',
       promo_code: '',
       keywords: '',

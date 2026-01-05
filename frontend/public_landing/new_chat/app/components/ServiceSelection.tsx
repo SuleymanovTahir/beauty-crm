@@ -1,5 +1,5 @@
-import { Search, ArrowLeft, X, Globe, Check } from 'lucide-react';
 import { useState } from 'react';
+import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 
 interface ServiceSelectionProps {
   onNext: (service: any) => void;
@@ -9,6 +9,7 @@ interface ServiceSelectionProps {
 export function ServiceSelection({ onNext, onBack }: ServiceSelectionProps) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedService, setSelectedService] = useState<any>(null);
+  const { formatCurrency } = useCurrency();
 
   const categories = ['All', 'Brows', 'Facial', 'Hair', 'Lashes', 'Massage', 'Nails', 'Permanent Makeup', 'Promo', 'Waxing'];
 
@@ -93,11 +94,10 @@ export function ServiceSelection({ onNext, onBack }: ServiceSelectionProps) {
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-colors ${
-                  selectedCategory === category
-                    ? 'bg-gray-900 text-white'
-                    : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
-                }`}
+                className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-colors ${selectedCategory === category
+                  ? 'bg-gray-900 text-white'
+                  : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                  }`}
               >
                 {category}
               </button>
@@ -113,22 +113,20 @@ export function ServiceSelection({ onNext, onBack }: ServiceSelectionProps) {
             <div
               key={service.id}
               onClick={() => handleServiceSelect(service)}
-              className={`bg-white rounded-lg border-2 p-4 cursor-pointer transition-all ${
-                selectedService?.id === service.id
-                  ? 'border-gray-900 shadow-sm'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
+              className={`bg-white rounded-lg border-2 p-4 cursor-pointer transition-all ${selectedService?.id === service.id
+                ? 'border-gray-900 shadow-sm'
+                : 'border-gray-200 hover:border-gray-300'
+                }`}
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex-1">
                   <h3 className="font-semibold text-sm mb-1">{service.name}</h3>
                   <p className="text-xs text-gray-500">{service.description}</p>
                 </div>
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ml-2 ${
-                  selectedService?.id === service.id
-                    ? 'border-gray-900 bg-gray-900'
-                    : 'border-gray-300'
-                }`}>
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ml-2 ${selectedService?.id === service.id
+                  ? 'border-gray-900 bg-gray-900'
+                  : 'border-gray-300'
+                  }`}>
                   {selectedService?.id === service.id && (
                     <Check size={12} className="text-white" />
                   )}
@@ -138,7 +136,7 @@ export function ServiceSelection({ onNext, onBack }: ServiceSelectionProps) {
                 {service.duration && (
                   <span className="text-xs text-gray-500">{service.duration} min</span>
                 )}
-                <span className="text-sm font-bold">{service.price} AED</span>
+                <span className="text-sm font-bold">{formatCurrency(service.price)}</span>
               </div>
             </div>
           ))}
@@ -160,7 +158,7 @@ export function ServiceSelection({ onNext, onBack }: ServiceSelectionProps) {
                     <span className="text-xs text-gray-300">•</span>
                   </>
                 )}
-                <span className="text-xs text-gray-500">{selectedService.price} AED</span>
+                <span className="text-xs text-gray-500">{formatCurrency(selectedService.price)}</span>
               </div>
             </div>
             <div className="flex gap-2">

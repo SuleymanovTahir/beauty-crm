@@ -11,6 +11,7 @@ import { SourceSelect } from '../../components/shared/SourceSelect';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
 import { Button } from '../../components/ui/button';
 import { useBookingStatuses } from '../../hooks/useStatuses';
+import { useCurrency } from '../../hooks/useSalonSettings';
 
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { Pagination } from '../../components/shared/Pagination';
@@ -137,6 +138,7 @@ const api = {
 export default function Bookings() {
   const navigate = useNavigate();
   const { statuses: statusConfig } = useBookingStatuses();
+  const { currency } = useCurrency();
   const [bookings, setBookings] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
   const { t, i18n } = useTranslation(['admin/bookings', 'admin/services', 'common']);
@@ -1213,11 +1215,11 @@ export default function Bookings() {
                       <td className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">
                         {(() => {
                           if (booking.revenue) {
-                            return `${booking.revenue} AED`;
+                            return `${booking.revenue} ${currency}`;
                           }
                           // Fallback to service price if revenue is 0/null
                           const service = services.find(s => s.name === booking.service || s.name_ru === booking.service);
-                          return service?.price ? `${service.price} AED` : '-';
+                          return service?.price ? `${service.price} ${currency}` : '-';
                         })()}
                       </td>
 

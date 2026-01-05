@@ -1,4 +1,5 @@
 import { ArrowLeft, X, Globe, Star, Clock, Sparkles } from 'lucide-react';
+import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 import { useState } from 'react';
 
 interface MasterSelectionProps {
@@ -8,6 +9,7 @@ interface MasterSelectionProps {
 }
 
 export function MasterSelection({ service, onNext, onBack }: MasterSelectionProps) {
+  const { formatCurrency } = useCurrency();
   const [selectedMaster, setSelectedMaster] = useState<any>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
@@ -111,11 +113,10 @@ export function MasterSelection({ service, onNext, onBack }: MasterSelectionProp
           {masters.map((master) => (
             <div
               key={master.id}
-              className={`bg-white rounded-xl border-2 p-5 transition-all ${
-                selectedMaster?.id === master.id
+              className={`bg-white rounded-xl border-2 p-5 transition-all ${selectedMaster?.id === master.id
                   ? 'border-gray-900 shadow-sm'
                   : 'border-gray-200 hover:border-gray-300'
-              }`}
+                }`}
             >
               {/* Master Info */}
               <div className="flex items-start gap-3 mb-4">
@@ -148,11 +149,10 @@ export function MasterSelection({ service, onNext, onBack }: MasterSelectionProp
                       <button
                         key={time}
                         onClick={() => handleMasterSelect(master, time)}
-                        className={`py-2 rounded-lg text-sm font-medium transition-colors ${
-                          selectedMaster?.id === master.id && selectedTime === time
+                        className={`py-2 rounded-lg text-sm font-medium transition-colors ${selectedMaster?.id === master.id && selectedTime === time
                             ? 'bg-gray-900 text-white'
                             : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'
-                        }`}
+                          }`}
                       >
                         {time}
                       </button>
@@ -187,7 +187,7 @@ export function MasterSelection({ service, onNext, onBack }: MasterSelectionProp
                     <span className="text-xs text-gray-300">•</span>
                   </>
                 )}
-                <span className="text-xs text-gray-500">{service.price} AED</span>
+                <span className="text-xs text-gray-500">{formatCurrency(service.price)}</span>
               </div>
             </div>
             <div className="flex gap-2">

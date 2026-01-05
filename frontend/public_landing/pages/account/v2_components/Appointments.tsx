@@ -10,13 +10,15 @@ import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../../../src/api/client';
 import { toast } from 'sonner';
 import { RescheduleDialog } from './RescheduleDialog';
+import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 
 export function Appointments() {
   const { t } = useTranslation(['account', 'common']);
   const navigate = useNavigate();
+  const { formatCurrency, currency: globalCurrency } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [bookings, setBookings] = useState<any[]>([]);
-  const [currency, setCurrency] = useState('AED');
+  const [currency, setCurrency] = useState(globalCurrency || 'AED');
   const [filter, setFilter] = useState<'upcoming' | 'history' | 'recurring'>('upcoming');
 
   // Add to Google Calendar function
@@ -156,7 +158,7 @@ export function Appointments() {
               </div>
 
               <div className="flex items-center justify-between pt-2">
-                <div className="font-bold">{appointment.price} {currency}</div>
+                <div className="font-bold">{formatCurrency(appointment.price, currency)}</div>
 
                 {appointment.status === 'completed' && (
                   <Button

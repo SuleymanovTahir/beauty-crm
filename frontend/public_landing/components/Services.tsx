@@ -3,6 +3,7 @@ import { Search, Clock, ChevronDown, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
+import { useCurrency } from "../../src/hooks/useSalonSettings";
 
 interface Service {
   id: number;
@@ -16,6 +17,7 @@ interface Service {
 
 export function Services() {
   const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const { formatCurrency } = useCurrency();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [displayCount, setDisplayCount] = useState(12);
@@ -183,7 +185,7 @@ export function Services() {
                     {service[`name_${i18n.language}` as keyof Service] || service.name_ru || service.name}
                   </h3>
                   <div className="service-badge">
-                    {service.price} {t('currency', { defaultValue: 'AED' })}
+                    {formatCurrency(service.price)}
                   </div>
                 </div>
                 <div className="service-footer">

@@ -5,6 +5,7 @@ import { Switch } from '../ui/switch';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useCurrency } from '../../hooks/useSalonSettings';
 import {
     Accordion,
     AccordionContent,
@@ -60,6 +61,7 @@ interface EmployeeServicesProps {
 
 export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServicesProps) {
     const { t } = useTranslation(['admin/users', 'common']);
+    const { currency } = useCurrency();
 
     const [allServices, setAllServices] = useState<Service[]>([]);
     const [assignedServices, setAssignedServices] = useState<AssignedService[]>([]);
@@ -209,7 +211,7 @@ export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServi
                                                                 className="h-8 w-full pr-8"
                                                                 placeholder={service.default_price?.toString() || "0"}
                                                             />
-                                                            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">{t('currency', 'AED')}</span>
+                                                            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">{currency}</span>
                                                         </div>
                                                     </TableCell>
 

@@ -3,10 +3,12 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useCurrency } from "../../src/hooks/useSalonSettings";
 import '../styles/css/index.css';
 
 export function TermsOfUse() {
     const { t, i18n } = useTranslation(['public_landing', 'common']);
+    const { currency } = useCurrency();
     const [services, setServices] = useState<any[]>([]);
 
     useEffect(() => {
@@ -86,7 +88,7 @@ export function TermsOfUse() {
                                     <strong className="text-foreground">3.3 {t('payment', { defaultValue: 'Оплата' })}:</strong> {t('termsSection3Text3', { defaultValue: 'Оплата производится после оказания услуг. Мы принимаем наличные и кредитные карты.' })}
                                 </p>
                                 <p>
-                                    <strong className="text-foreground">3.4 {t('prices', { defaultValue: 'Цены' })}:</strong> {t('termsSection3Text4', { defaultValue: 'Все цены указаны в дирхамах ОАЭ (AED). Мы оставляем за собой право изменять цены без предварительного уведомления.' })}
+                                    <strong className="text-foreground">3.4 {t('prices', { defaultValue: 'Цены' })}:</strong> {t('termsSection3Text4', { defaultValue: 'Все цены указаны в валюте {{currency}}. Мы оставляем за собой право изменять цены без предварительного уведомления.', currency: currency })}
                                 </p>
                             </div>
                         </section>

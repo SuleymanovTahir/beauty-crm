@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import i18n from '../../i18n';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
+import { useCurrency } from '../../hooks/useSalonSettings';
 
 interface AnalyticsData {
   bookings_by_day: [string, number][];
@@ -48,6 +49,7 @@ export default function Analytics() {
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const { t } = useTranslation(['admin/Analytics', 'common']);
+  const { currency, formatCurrency } = useCurrency();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -272,7 +274,7 @@ export default function Analytics() {
 
           <div className="analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
             <h3 className="text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
-              {isMobile ? `${(stats.total_revenue / 1000).toFixed(1)}k` : stats.total_revenue.toLocaleString()} AED
+              {isMobile ? `${(stats.total_revenue / 1000).toFixed(1)}k ${currency}` : formatCurrency(stats.total_revenue)}
             </h3>
             <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:revenue')}</p>
             <div className="text-xs md:text-sm text-green-600">
@@ -282,7 +284,7 @@ export default function Analytics() {
 
           <div className="analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
             <h3 className="text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
-              {stats.total_revenue > 0 ? (stats.total_revenue / stats.total_bookings).toFixed(0) : 0} AED
+              {stats.total_revenue > 0 ? formatCurrency(stats.total_revenue / stats.total_bookings) : formatCurrency(0)}
             </h3>
             <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:avg_check')}</p>
             <div className="text-xs md:text-sm text-green-600">
@@ -365,7 +367,7 @@ export default function Analytics() {
                         {entry.name}
                       </div>
                       <div className="text-gray-600">
-                        {entry.value} • {entry.revenue} AED
+                        {entry.value} • {formatCurrency(entry.revenue)}
                       </div>
                     </div>
                   </div>
@@ -441,9 +443,7 @@ export default function Analytics() {
                       {service.count}
                     </td>
                     <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-green-600 font-medium">
-                      {typeof service.revenue === 'number'
-                        ? service.revenue.toLocaleString()
-                        : 0} AED
+                      {formatCurrency(service.revenue || 0)}
                     </td>
                   </tr>
                 ))}

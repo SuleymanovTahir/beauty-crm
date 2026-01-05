@@ -5,12 +5,14 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "../components/ui/button";
+import { useCurrency } from '../../src/hooks/useSalonSettings';
 
 export function ServiceDetail() {
     const { t, i18n } = useTranslation(['public_landing/services', 'public_landing', 'common']);
     const language = i18n.language;
     const { category } = useParams();
     const navigate = useNavigate();
+    const { formatCurrency } = useCurrency();
     const [masters, setMasters] = useState<any[]>([]);
 
     const [services, setServices] = useState<any[]>([]);
@@ -146,7 +148,7 @@ export function ServiceDetail() {
                                         </div>
                                         <div className="flex items-center gap-4">
                                             <span className="text-xl font-semibold text-primary">
-                                                {service.price} {t('currency', { defaultValue: 'AED' })}
+                                                {formatCurrency(service.price)}
                                             </span>
                                             {/* <span className="text-sm text-muted-foreground line-through">
                                                 AED {service.price * 2}

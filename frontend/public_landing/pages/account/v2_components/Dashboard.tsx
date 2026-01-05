@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 import { Calendar, Clock, Star, TrendingUp, Repeat, Users, MessageCircle, Sparkles, Loader2, X, Edit } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -13,6 +14,7 @@ import { toast } from 'sonner';
 export function Dashboard() {
   const { t } = useTranslation(['account', 'common']);
   const navigate = useNavigate();
+  const { currency: globalCurrency, formatCurrency } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [showRepeatModal, setShowRepeatModal] = useState(false);
@@ -140,7 +142,7 @@ export function Dashboard() {
 
   const { client, loyalty, next_booking, last_visit, achievements_summary, visit_stats } = dashboardData || {};
   const userName = client?.name || localStorage.getItem('user_name') || 'Гость';
-  const currency = loyalty?.currency || "AED";
+  const currency = loyalty?.currency || globalCurrency || "AED";
 
   return (
     <div className="space-y-6 pb-8">
@@ -186,7 +188,7 @@ export function Dashboard() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loyalty?.total_spent || 0} {currency}</div>
+            <div className="text-2xl font-bold">{formatCurrency(loyalty?.total_spent || 0, currency)}</div>
             <p className="text-xs text-muted-foreground">{t('dashboard.investment_in_beauty', 'Инвестиции в красоту')}</p>
           </CardContent>
         </Card>
@@ -197,7 +199,7 @@ export function Dashboard() {
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loyalty?.total_saved || 0} {currency}</div>
+            <div className="text-2xl font-bold">{formatCurrency(loyalty?.total_saved || 0, currency)}</div>
             <p className="text-xs text-muted-foreground">{t('dashboard.with_discounts', 'С программой лояльности')}</p>
           </CardContent>
         </Card>
@@ -298,7 +300,7 @@ export function Dashboard() {
               variant="outline"
               onClick={() => {
                 const googleReviewUrl = import.meta.env.VITE_GOOGLE_REVIEWS_URL ||
-                                       'https://www.google.com/search?q=' + encodeURIComponent((localStorage.getItem('salon_name') || 'Beauty Salon') + ' reviews');
+                  'https://www.google.com/search?q=' + encodeURIComponent((localStorage.getItem('salon_name') || 'Beauty Salon') + ' reviews');
                 window.open(googleReviewUrl, '_blank');
               }}
             >

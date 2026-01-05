@@ -196,7 +196,7 @@ export default function AdminSettings() {
   });
 
   // Holidays state
-  const [holidays, setHolidays] = useState<Array<{ id: number; date: string; name: string; is_closed: boolean; created_at: string }>>([]);
+  const [holidays, setHolidays] = useState<Array<{ id: number; date: string; name: string; is_closed: boolean; master_exceptions?: number[]; created_at: string }>>([]);
   const [loadingHolidays, setLoadingHolidays] = useState(false);
   const [showCreateHolidayDialog, setShowCreateHolidayDialog] = useState(false);
   const [holidayForm, setHolidayForm] = useState({
@@ -1551,7 +1551,7 @@ export default function AdminSettings() {
                         placeholder="15%"
                       />
                       <p className="text-xs text-gray-500 mt-1">
-                        {t('settings:birthday_discount_hint', 'Например: 15%, 20%, 500 AED')}
+                        {t('settings:birthday_discount_hint', 'Например: 15%, 20%, 500 {{currency}}', { currency: generalSettings.currency })}
                       </p>
                     </div>
                   </div>
@@ -2721,13 +2721,40 @@ export default function AdminSettings() {
                 {holidays.map((holiday) => (
                   <div
                     key={holiday.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="flex items-start justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                   >
-                    <div className="flex items-center gap-4">
-                      <Calendar className="w-5 h-5 settings-text-pink" />
-                      <div>
-                        <p className="font-medium text-gray-900">{holiday.name}</p>
+                    <div className="flex items-start gap-4 flex-1">
+                      <Calendar className="w-5 h-5 settings-text-pink flex-shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="font-medium text-gray-900">{holiday.name}</p>
+                          {holiday.is_closed && (
+                            <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full">
+                              {t('settings:closed', 'Closed')}
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-gray-600">{holiday.date}</p>
+                        {holiday.is_closed && holiday.master_exceptions && holiday.master_exceptions.length > 0 && (
+                          <div className="mt-2">
+                            <p className="text-xs text-gray-500 mb-1">
+                              {t('settings:working_masters', 'Working masters')}:
+                            </p>
+                            <div className="flex flex-wrap gap-1">
+                              {holiday.master_exceptions.map((masterId: number) => {
+                                const master = users.find(u => u.id === masterId);
+                                return master ? (
+                                  <span
+                                    key={masterId}
+                                    className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full"
+                                  >
+                                    {master.full_name}
+                                  </span>
+                                ) : null;
+                              })}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <Button
@@ -2748,7 +2775,7 @@ export default function AdminSettings() {
           {/* Create Holiday Dialog */}
           {showCreateHolidayDialog && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+              <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
                 <h3 className="text-xl font-bold mb-4">{t('settings:add_holiday', 'Add Holiday')}</h3>
                 <div className="space-y-4">
                   <div>
@@ -2779,6 +2806,56 @@ export default function AdminSettings() {
                       onCheckedChange={(checked) => setHolidayForm({ ...holidayForm, is_closed: checked })}
                     />
                   </div>
+
+                  {/* Master Exceptions Selector */}
+                  {holidayForm.is_closed && (
+                    <div className="border-t pt-4">
+                      <Label className="mb-2 block">
+                        {t('settings:master_exceptions', 'Masters who will work')}
+                      </Label>
+                      <p className="text-xs text-gray-500 mb-3">
+                        {t('settings:master_exceptions_hint', 'Select masters who will be available despite the salon being closed')}
+                      </p>
+                      <div className="max-h-48 overflow-y-auto border rounded-lg p-2 space-y-2">
+                        {users
+                          .filter(u => u.is_service_provider || u.role === 'employee')
+                          .map((user) => (
+                            <label
+                              key={user.id}
+                              className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer transition-colors"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={holidayForm.master_exceptions.includes(user.id)}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setHolidayForm({
+                                      ...holidayForm,
+                                      master_exceptions: [...holidayForm.master_exceptions, user.id]
+                                    });
+                                  } else {
+                                    setHolidayForm({
+                                      ...holidayForm,
+                                      master_exceptions: holidayForm.master_exceptions.filter(id => id !== user.id)
+                                    });
+                                  }
+                                }}
+                                className="w-4 h-4 settings-accent-pink rounded"
+                              />
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
+                                <p className="text-xs text-gray-500">@{user.username}</p>
+                              </div>
+                            </label>
+                          ))}
+                      </div>
+                      {holidayForm.master_exceptions.length > 0 && (
+                        <p className="text-xs text-green-600 mt-2">
+                          ✓ {holidayForm.master_exceptions.length} {t('settings:masters_selected', 'master(s) selected')}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div className="flex gap-2 mt-6">
                   <Button
