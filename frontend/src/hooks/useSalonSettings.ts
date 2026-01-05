@@ -44,14 +44,14 @@ export async function getSalonSettings(): Promise<SalonSettings> {
  */
 export async function getCurrency(): Promise<string> {
     const settings = await getSalonSettings();
-    return settings.currency || 'AED';
+    return settings.currency;
 }
 
 /**
  * React hook to use salon settings
  */
 export function useSalonSettings() {
-    const [settings, setSettings] = useState<SalonSettings>({ currency: 'AED' });
+    const [settings, setSettings] = useState<SalonSettings>({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -60,7 +60,7 @@ export function useSalonSettings() {
             .finally(() => setLoading(false));
     }, []);
 
-    const currency = settings.currency || 'AED';
+    const currency = settings.currency;
 
     const formatCurrency = useCallback((amount: number | string) => {
         return formatCurrencyUtil(amount, currency);

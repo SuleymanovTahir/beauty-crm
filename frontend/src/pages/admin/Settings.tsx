@@ -233,7 +233,7 @@ export default function AdminSettings() {
         instagram: data.instagram || '',
         language: data.language || 'ru',
         telegram_manager_chat_id: data.telegram_manager_chat_id || '',
-        currency: data.currency || 'AED',
+        currency: data.currency,
         timezone_offset: data.timezone_offset || 'UTC+4',
         birthday_discount: data.birthday_discount || '15%',
         working_hours: {

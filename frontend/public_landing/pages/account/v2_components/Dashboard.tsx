@@ -142,7 +142,7 @@ export function Dashboard() {
 
   const { client, loyalty, next_booking, last_visit, achievements_summary, visit_stats } = dashboardData || {};
   const userName = client?.name || localStorage.getItem('user_name') || 'Гость';
-  const currency = loyalty?.currency || globalCurrency || "AED";
+  const currency = loyalty?.currency || globalCurrency;
 
   return (
     <div className="space-y-6 pb-8">
