@@ -208,7 +208,7 @@ export function Services({ initialServices }: ServicesProps) {
                   </div>
                   <Button
                     size="sm"
-                    className="rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground h-7 text-xs px-4 transition-all duration-300"
+                    className="rounded-full bg-transparent border border-primary/30 text-primary group-hover:bg-primary group-hover:text-primary-foreground h-7 text-xs px-4 transition-all duration-300"
                     onClick={() => {
                       window.location.hash = `booking?service=${service.id}`;
                       document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
@@ -216,6 +216,7 @@ export function Services({ initialServices }: ServicesProps) {
                   >
                     {t('book', { defaultValue: 'Записаться' })}
                   </Button>
+
                 </div>
               </motion.div>
             ))}

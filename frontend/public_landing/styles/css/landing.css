@@ -198,11 +198,15 @@
 }
 
 .service-card h3 {
-  @apply text-[var(--heading)] transition-colors duration-300;
+  @apply text-[var(--heading)] font-semibold transition-colors duration-300;
 }
 
 .service-badge {
-  @apply flex items-center text-primary bg-primary/10 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors duration-300;
+  @apply flex items-center text-foreground/80 bg-muted/50 border border-border/50 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-300;
+}
+
+.service-card:hover .service-badge {
+  @apply bg-background border-primary/20 text-primary;
 }
 
 .service-meta {
