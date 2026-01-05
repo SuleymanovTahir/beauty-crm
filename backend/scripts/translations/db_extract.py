@@ -176,18 +176,9 @@ def extract_translatable_content():
                     
                     # NEW: Check if source language itself needs translation (correction)
                     # This happens if we detected that source text is NOT in source language (e.g. EN text in RU field)
-                    # We can't easily detect here without instantiating Translator, which might be slow for all records
-                    # But we can check if we have a "detected_language" stored%s No, we don't store it in DB yet.
-                    # So we rely on db_translate.py to do the actual detection and correction.
-                    # BUT db_translate.py only runs on items in this list.
-                    # So we MUST include items here if they look suspicious%s
-                    
-                    # Actually, let's instantiate Translator here. It uses cache so it should be fast for repeated runs.
-                    # We'll do it only if we haven't already flagged this field as missing
-                    # DISABLED for users table to prevent hanging on API calls
-                    # ALSO skip fields in SKIP_TRANSLATION_FIELDS
+                    # We only do this if the field hasn't already been marked as missing
                     skip_fields = SKIP_TRANSLATION_FIELDS.get(table_name, [])
-                    if not field_has_missing and table_name != 'users' and field not in skip_fields:
+                    if not field_has_missing and field not in skip_fields:
                         # Lazy instantiation
                         if 'translator' not in locals():
                             from translator import Translator
@@ -195,14 +186,11 @@ def extract_translatable_content():
                         
                         try:
                             detected = translator.detect_language(source_value)
-                            # Only flag if detected is 'en' (reliable) and source is 'ru'
+                            # Only flag if detected language differs from SOURCE_LANGUAGE (specifically English in RU field)
                             if detected == 'en' and SOURCE_LANGUAGE == 'ru':
                                  print(f"    ⚠️  Language mismatch for {key}: detected '{detected}', expected '{SOURCE_LANGUAGE}'")
                                  field_has_missing = True
-                                 # We don't increment total_missing here to avoid double counting if we re-run
-                                 # But effectively this forces it into the output list
                         except Exception as e:
-                            # Skip detection errors silently
                             pass
                     
                     # Only include field if it has missing translations

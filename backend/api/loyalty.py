@@ -39,10 +39,32 @@ async def get_client_loyalty_api(
             return JSONResponse({"error": "Failed to get loyalty data"}, status_code=500)
 
         config = loyalty_service.get_loyalty_config()
+        all_levels = loyalty_service.get_all_levels()
+        discount_info = loyalty_service.calculate_discount(client_id, 100) # Get discount for level
+
+        # Prepare frontend-compatible data
+        enriched_loyalty = {
+            **loyalty,
+            "points": loyalty["total_points"],
+            "tier": loyalty["loyalty_level"].capitalize(),
+            "discount": discount_info["discount_percent"],
+            "config": config,
+            "all_tiers": [
+                {
+                    "name": level["level_name"].capitalize(),
+                    "points": level["min_points"],
+                    "discount": level["discount_percent"],
+                    "color": level.get("color", "#CD7F32"),
+                    "requirement": f"From {level['min_points']} points"
+                }
+                for level in all_levels
+            ]
+        }
+
         return {
             "success": True,
             "client_id": client_id,
-            "loyalty": {**loyalty, "config": config}
+            "loyalty": enriched_loyalty
         }
 
     except Exception as e:
