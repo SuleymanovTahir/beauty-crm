@@ -188,7 +188,7 @@ export function Dashboard() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(loyalty?.total_spent || 0, currency)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(loyalty?.total_spent || 0)}</div>
             <p className="text-xs text-muted-foreground">{t('dashboard.investment_in_beauty', 'Инвестиции в красоту')}</p>
           </CardContent>
         </Card>
@@ -199,7 +199,7 @@ export function Dashboard() {
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(loyalty?.total_saved || 0, currency)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(loyalty?.total_saved || 0)}</div>
             <p className="text-xs text-muted-foreground">{t('dashboard.with_discounts', 'С программой лояльности')}</p>
           </CardContent>
         </Card>

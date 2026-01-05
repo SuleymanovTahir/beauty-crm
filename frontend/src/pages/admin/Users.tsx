@@ -1,6 +1,6 @@
 // /frontend/src/pages/admin/Users.tsx
 import { useState, useEffect } from 'react';
-import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle, Shield, Key, ArrowLeft, Filter, X, Check } from 'lucide-react';
+import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle, Shield, Key, Filter, X, Calendar } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -10,10 +10,9 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { PositionSelector } from '../../components/PositionSelector';
 import { useAuth } from '../../contexts/AuthContext';
-import { usePermissions, RoleHierarchy } from '../../utils/permissions';
+import { usePermissions } from '../../utils/permissions';
 import { PermissionsTab } from '../../components/admin/PermissionsTab';
 import { ScheduleDialog } from '../../components/admin/ScheduleDialog';
-import { Calendar } from 'lucide-react';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { useCurrency } from '../../hooks/useSalonSettings';
 
@@ -43,7 +42,7 @@ interface User {
 
 export default function Users() {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation(['admin/users', 'common']);
+  const { t } = useTranslation(['admin/users', 'common']);
   const { formatCurrency } = useCurrency();
   const { user: currentUser } = useAuth();
 
