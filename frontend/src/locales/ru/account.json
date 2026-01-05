@@ -237,6 +237,14 @@
     "year_distribution": "Распределение за год",
     "your_cashback": "Ваш Кэшбэк",
     "your_discount": "ваша скидка составит",
+    "tiers": {
+      "bronze": "Бронзовый",
+      "silver": "Серебряный",
+      "gold": "Золотой",
+      "platinum": "Платиновый",
+      "bronze_req": "Базовый уровень",
+      "points_req": "От {{points}} баллов"
+    },
     "your_promo": "Ваш промокод"
   },
   "masters": {
