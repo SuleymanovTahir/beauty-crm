@@ -396,7 +396,7 @@ export default function AdminDashboard() {
             <div className="flex-1">
               <p className="text-xs md:text-sm opacity-90 mb-2">{t('dashboard:total_revenue', 'Общий доход')}</p>
               <h3 className="text-2xl md:text-3xl font-bold mb-1">
-                {stats.total_revenue?.toLocaleString() || 0} {salonSettings?.currency || 'AED'}
+                {stats.total_revenue?.toLocaleString() || 0} {salonSettings?.currency}
               </h3>
               {stats.growth?.revenue && (
                 <div className="flex items-center gap-1 text-xs opacity-90">
@@ -420,7 +420,7 @@ export default function AdminDashboard() {
             <div className="flex-1">
               <p className="text-xs md:text-sm text-gray-600 mb-2">{t('dashboard:avg_booking_value', 'Средний чек')}</p>
               <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
-                {stats.avg_booking_value?.toLocaleString() || 0} {salonSettings?.currency || 'AED'}
+                {stats.avg_booking_value?.toLocaleString() || 0} {salonSettings?.currency}
               </h3>
               <p className="text-xs text-gray-500">{t('dashboard:per_booking', 'за запись')}</p>
             </div>
@@ -483,7 +483,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-gray-900">{service.revenue?.toLocaleString() || 0} {salonSettings?.currency || 'AED'}</p>
+                  <p className="text-sm font-bold text-gray-900">{service.revenue?.toLocaleString() || 0} {salonSettings?.currency}</p>
                 </div>
               </div>
             ))}
@@ -508,8 +508,8 @@ export default function AdminDashboard() {
               <button
                 onClick={() => setBookingStatusFilter('all')}
                 className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${bookingStatusFilter === 'all'
-                    ? 'bg-pink-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
               >
                 {t('dashboard:filter_all', 'Все')}
@@ -517,8 +517,8 @@ export default function AdminDashboard() {
               <button
                 onClick={() => setBookingStatusFilter('pending')}
                 className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${bookingStatusFilter === 'pending'
-                    ? 'bg-yellow-600 text-white'
-                    : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                  ? 'bg-yellow-600 text-white'
+                  : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
                   }`}
               >
                 {t('dashboard:status_pending')}
@@ -526,8 +526,8 @@ export default function AdminDashboard() {
               <button
                 onClick={() => setBookingStatusFilter('confirmed')}
                 className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${bookingStatusFilter === 'confirmed'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-green-100 text-green-800 hover:bg-green-200'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-green-100 text-green-800 hover:bg-green-200'
                   }`}
               >
                 {t('dashboard:status_confirmed')}
@@ -535,8 +535,8 @@ export default function AdminDashboard() {
               <button
                 onClick={() => setBookingStatusFilter('completed')}
                 className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${bookingStatusFilter === 'completed'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
                   }`}
               >
                 {t('dashboard:status_completed')}
@@ -544,8 +544,8 @@ export default function AdminDashboard() {
               <button
                 onClick={() => setBookingStatusFilter('cancelled')}
                 className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${bookingStatusFilter === 'cancelled'
-                    ? 'bg-red-600 text-white'
-                    : 'bg-red-100 text-red-800 hover:bg-red-200'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-red-100 text-red-800 hover:bg-red-200'
                   }`}
               >
                 {t('dashboard:status_cancelled')}
@@ -833,7 +833,7 @@ export default function AdminDashboard() {
                     <div className="absolute inset-0 bg-gradient-to-t from-pink-600 to-pink-400 rounded-t-lg"></div>
                     {/* Tooltip */}
                     <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                      {bar.amount.toLocaleString()} {salonSettings?.currency || 'AED'}
+                      {bar.amount.toLocaleString()} {salonSettings?.currency}
                     </div>
                   </div>
                   <span className="text-xs text-gray-600 font-medium">{bar.label}</span>
@@ -853,7 +853,7 @@ export default function AdminDashboard() {
               <span className="text-xs text-gray-600">{t('dashboard:revenue', 'Доход')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-gray-900">{stats.total_revenue?.toLocaleString() || 0} {salonSettings?.currency || 'AED'}</span>
+              <span className="text-sm font-bold text-gray-900">{stats.total_revenue?.toLocaleString() || 0} {salonSettings?.currency}</span>
               <span className="text-xs text-gray-500">{t('dashboard:total', 'всего')}</span>
             </div>
           </div>
