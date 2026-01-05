@@ -41,6 +41,7 @@ import { PeriodFilterSelect } from '../../components/shared/PeriodFilterSelect';
 import { useClientStatuses } from '../../hooks/useStatuses';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { Pagination } from '../../components/shared/Pagination';
+import { useCurrency } from '../../hooks/useSalonSettings';
 
 interface Client {
   id: string;
@@ -74,6 +75,7 @@ export default function Clients() {
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { t, i18n } = useTranslation(['admin/Clients', 'common']);
+  const { formatCurrency } = useCurrency();
   const [statusFilter, setStatusFilter] = useState(() => {
     return localStorage.getItem('clients_status_filter') || 'all';
   });
@@ -976,7 +978,7 @@ export default function Clients() {
                     <td className="px-6 py-4 text-sm text-gray-900 text-center">{client.total_bookings || 0}</td>
 
                     <td className="px-6 py-4 text-sm text-green-600 font-medium text-center">
-                      {(client.total_spend || client.lifetime_value || 0).toLocaleString(i18n.language)} AED
+                      {formatCurrency(client.total_spend || client.lifetime_value || 0)}
                     </td>
                     <td className="px-6 py-4 text-center" onClick={(e) => e.stopPropagation()}>
                       <TemperatureSelect
