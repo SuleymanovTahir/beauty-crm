@@ -75,5 +75,26 @@
     "title": "اختر الخدمات",
     "total": "المجموع"
   },
-  "totalDuration": "مدة"
+  "totalDuration": "مدة",
+  "auth": {
+    "welcome": "مرحباً",
+    "subtitle": "قم بتسجيل الدخول لحفظ سجل النشر الخاص بك والحصول على المكافآت",
+    "continue_google": "المتابعة عبر جوجل",
+    "continue_email": "تسجيل الدخول عبر البريد الإلكتروني",
+    "or": "أو",
+    "email_placeholder": "أدخل بريدك الإلكتروني",
+    "guest_continue": "استمر كضيف",
+    "complete_profile": "أكمل ملفك الشخصي",
+    "full_name": "اسمك",
+    "name_placeholder": "أدخل الاسم",
+    "gender": "أرضية",
+    "birthday": "تاريخ الميلاد",
+    "select": "يختار",
+    "female": "أنثى",
+    "male": "ذكر",
+    "other": "آخر",
+    "info_note": "نحن نستخدم هذه البيانات للعروض الشخصية وهدايا أعياد الميلاد.",
+    "create_account": "إنشاء حساب",
+    "success_mock": "تم استلام الملف الشخصي بنجاح!"
+  }
 }

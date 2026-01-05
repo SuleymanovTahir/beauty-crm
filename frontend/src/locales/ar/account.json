@@ -237,7 +237,15 @@
     "year_distribution": "التوزيع للسنة",
     "your_cashback": "استرداد النقود الخاص بك",
     "your_discount": "الخصم الخاص بك سيكون",
-    "your_promo": "الرمز الترويجي الخاص بك"
+    "your_promo": "الرمز الترويجي الخاص بك",
+    "tiers": {
+      "bronze": "برونزية",
+      "silver": "فضي",
+      "gold": "ذهب",
+      "platinum": "البلاتين",
+      "bronze_req": "المستوى الأساسي",
+      "points_req": "من __VAR0____ نقطة"
+    }
   },
   "masters": {
     "add_favorites_hint": "أضف الفنانين إلى مفضلتك من خلال النقر على أيقونة القلب",

@@ -237,7 +237,15 @@
     "year_distribution": "Verteilung für das Jahr",
     "your_cashback": "Ihr Cashback",
     "your_discount": "Ihr Rabatt beträgt",
-    "your_promo": "Ihr Promo-Code"
+    "your_promo": "Ihr Promo-Code",
+    "tiers": {
+      "bronze": "Bronze",
+      "silver": "Silber",
+      "gold": "Gold",
+      "platinum": "Platin",
+      "bronze_req": "Grundniveau",
+      "points_req": "Ab {{points}} Punkten"
+    }
   },
   "masters": {
     "add_favorites_hint": "Fügen Sie Künstler zu Ihren Favoriten hinzu, indem Sie auf das Herzsymbol klicken",

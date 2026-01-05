@@ -75,5 +75,26 @@
     "title": "Select Services",
     "total": "Total"
   },
-  "totalDuration": "Duration"
+  "totalDuration": "Duration",
+  "auth": {
+    "welcome": "Bem-vindo",
+    "subtitle": "Faça login para salvar seu histórico de postagens e receber bônus",
+    "continue_google": "Continuar pelo Google",
+    "continue_email": "Login por e-mail",
+    "or": "OU",
+    "email_placeholder": "Digite seu e-mail",
+    "guest_continue": "Continuar como convidado",
+    "complete_profile": "Complete seu perfil",
+    "full_name": "seu nome",
+    "name_placeholder": "Digite o nome",
+    "gender": "Chão",
+    "birthday": "Data de nascimento",
+    "select": "Escolher",
+    "female": "Fêmea",
+    "male": "Macho",
+    "other": "Outro",
+    "info_note": "Utilizamos esses dados para ofertas personalizadas e presentes de aniversário.",
+    "create_account": "Crie uma conta",
+    "success_mock": "Perfil recebido com sucesso!"
+  }
 }

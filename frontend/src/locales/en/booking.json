@@ -75,5 +75,26 @@
     "title": "Select Services",
     "total": "Total"
   },
-  "totalDuration": "Duration"
+  "totalDuration": "Duration",
+  "auth": {
+    "welcome": "Welcome",
+    "subtitle": "Login to save your booking history and receive bonuses",
+    "continue_google": "Continue via Google",
+    "continue_email": "Login via Email",
+    "or": "OR",
+    "email_placeholder": "Enter your email",
+    "guest_continue": "Continue as a guest",
+    "complete_profile": "Complete your profile",
+    "full_name": "your name",
+    "name_placeholder": "Enter name",
+    "gender": "Floor",
+    "birthday": "Date of birth",
+    "select": "Choose",
+    "female": "Female",
+    "male": "Male",
+    "other": "Another",
+    "info_note": "We use this data for personalized offers and birthday gifts.",
+    "create_account": "Create an account",
+    "success_mock": "Profile successfully received!"
+  }
 }
