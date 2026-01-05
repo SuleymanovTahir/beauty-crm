@@ -290,8 +290,9 @@ async def api_register(
 
         # Если пользователь подписался на рассылку, создаем подписки
         if newsletter_subscribed:
-            from core.subscriptions import CLIENT_SUBSCRIPTION_TYPES
-            for sub_type in CLIENT_SUBSCRIPTION_TYPES.keys():
+            from core.subscriptions import get_subscription_types_for_role
+            subscription_types = get_subscription_types_for_role(role)
+            for sub_type in subscription_types.keys():
                 c.execute("""INSERT INTO user_subscriptions
                              (user_id, subscription_type, is_subscribed, created_at, updated_at)
                              VALUES (%s, %s, TRUE, %s, %s)""",
