@@ -627,6 +627,82 @@ async def get_public_faq(language: str = "ru"):
         if 'conn' in locals():
             conn.close()
 
+@router.get("/initial-load")
+async def get_initial_load_data(language: str = "ru"):
+    """
+    Unified endpoint for initial page load to reduce round-trips.
+    Combines salon info, banners, seo-metadata and services.
+    """
+    from db.settings import get_salon_settings
+    from api.seo_metadata import get_seo_metadata
+    from db.services import get_all_services
+    from utils.utils import sanitize_url
+    
+    # 1. Get Salon Settings
+    settings = get_salon_settings()
+    
+    # 2. Get Banners
+    conn = get_db_connection()
+    c = conn.cursor()
+    banners = []
+    try:
+        c.execute("SELECT * FROM public_banners WHERE is_active = TRUE ORDER BY display_order ASC")
+        columns = [desc[0] for desc in c.description]
+        for row in c.fetchall():
+            banner = dict(zip(columns, row))
+            banner['image_url'] = sanitize_url(banner.get('image_url'))
+            banners.append(banner)
+    except Exception:
+        pass
+    finally:
+        conn.close()
+        
+    # 3. Get SEO Metadata
+    try:
+        seo = await get_seo_metadata()
+    except Exception:
+        seo = {}
+
+    # 4. Get Services (Active only)
+    try:
+        raw_services = get_all_services(active_only=True)
+        services = []
+        for s in raw_services:
+            # Map index-based result from get_all_services to dict
+            service_dict = {
+                "id": s[0],
+                "name": s[2],
+                "name_ru": s[3] if len(s) > 3 else None,
+                "name_en": s[20] if len(s) > 20 else None,
+                "price": s[5],
+                "currency": s[8],
+                "category": s[9],
+                "duration": s[15],
+            }
+            # Add other language names if they exist and are not too many
+            # Focusing on RU and EN for initial load
+            services.append(service_dict)
+    except Exception:
+        services = []
+        
+    return {
+        "salon": {
+            "name": settings.get("name"),
+            "phone": settings.get("phone"),
+            "email": settings.get("email"),
+            "address": settings.get("address"),
+            "instagram": settings.get("instagram"),
+            "whatsapp": settings.get("whatsapp"),
+            "logo_url": settings.get("logo_url"),
+            "currency": settings.get("currency", "AED"),
+        },
+        "banners": banners,
+        "seo": seo,
+        "services": services,
+        "language": language
+    }
+
+
 # ============================================================================
 # BOOKING HOLD
 # ============================================================================
@@ -655,6 +731,7 @@ async def create_booking_hold(data: BookingHoldRequest):
         client_id=data.client_id
     )
     
+    from fastapi.responses import JSONResponse
     if success:
         return {"success": True}
     else:

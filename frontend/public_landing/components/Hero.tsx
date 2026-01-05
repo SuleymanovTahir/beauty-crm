@@ -4,12 +4,20 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PromoTimer } from "./PromoTimer";
 
-export function Hero() {
+interface HeroProps {
+  initialBanner?: any;
+}
+
+export function Hero({ initialBanner }: HeroProps) {
   const { t, i18n } = useTranslation(['public_landing', 'common']);
   const language = i18n.language;
-  const [heroBanner, setHeroBanner] = useState<any>(null);
+  const [heroBanner, setHeroBanner] = useState<any>(initialBanner || null);
 
   useEffect(() => {
+    if (initialBanner) {
+      setHeroBanner(initialBanner);
+      return;
+    }
     const api_url = import.meta.env.VITE_API_URL || window.location.origin;
     fetch(`${api_url}/api/public/banners`)
       .then(res => res.json())
@@ -19,7 +27,8 @@ export function Hero() {
         }
       })
       .catch(err => console.error('Error loading hero banner:', err));
-  }, []);
+  }, [initialBanner]);
+
 
   const getTranslatedText = (banner: any, field: 'title' | 'subtitle') => {
     if (!banner) return '';
@@ -63,6 +72,7 @@ export function Hero() {
             alt="Elegant Beauty"
             className="hero-banner-img w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out"
             loading="eager"
+            fetchPriority="high"
             style={{
               transform: [
                 (heroBanner?.is_flipped_horizontal === 1 || heroBanner?.is_flipped_horizontal === true) ? 'scaleX(-1)' : '',
@@ -70,6 +80,7 @@ export function Hero() {
               ].filter(Boolean).join(' ')
             }}
           />
+
         )}
         {/* Overlay - pure white to match production */}
         <div className="hero-overlay" />

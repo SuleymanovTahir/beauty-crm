@@ -1,5 +1,4 @@
-//new/pages/LandingPage.tsx
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { Header } from '../components/Header';
 import { Hero } from '../components/Hero';
 import { CookieConsent } from '../components/CookieConsent';
@@ -24,11 +23,41 @@ const LoadingSpinner = () => (
 );
 
 export function LandingPage() {
+  const [initialData, setInitialData] = useState<any>(null);
+
+  useEffect(() => {
+    // 1. Check if we have cached data to show immediately
+    const cached = localStorage.getItem('landing_initial_data');
+    if (cached) {
+      try {
+        setInitialData(JSON.parse(cached));
+      } catch (e) { }
+    }
+
+    // 2. Fetch fresh data from unified endpoint
+    const fetchInitialData = async () => {
+      try {
+        const start = performance.now();
+        const response = await fetch('/api/public/initial-load');
+        const data = await response.json();
+        const end = performance.now();
+        console.log(`🚀 Initial data loaded in ${(end - start).toFixed(2)}ms`);
+
+        setInitialData(data);
+        localStorage.setItem('landing_initial_data', JSON.stringify(data));
+      } catch (error) {
+        console.error('Error loading initial data:', error);
+      }
+    };
+
+    fetchInitialData();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header salonInfo={initialData?.salon} />
       <main>
-        <Hero />
+        <Hero initialBanner={initialData?.banners?.[0]} />
 
         <Suspense fallback={<LoadingSpinner />}>
           <About />
@@ -83,8 +112,9 @@ export function LandingPage() {
         </div>
       </main>
 
-      <Footer />
+      <Footer salonInfo={initialData?.salon} />
       <CookieConsent />
     </div>
   );
 }
+
