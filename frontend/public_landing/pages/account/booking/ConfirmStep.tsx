@@ -33,7 +33,7 @@ export function ConfirmStep({
     onOpenRescheduleDialog
 }: ConfirmStepProps) {
     const { t, i18n } = useTranslation(['booking', 'common']);
-    const { formatCurrency, currency } = useCurrency();
+    const { formatCurrency } = useCurrency();
     const { user } = useAuth();
     const [phone, setPhone] = useState(bookingState.phone || user?.phone || '');
     const [showPhoneModal, setShowPhoneModal] = useState(false);
@@ -105,7 +105,7 @@ export function ConfirmStep({
 
             try {
                 if (bookingState.id) {
-                    await api.put(`/api/bookings/${bookingState.id}`, {
+                    await api.put(`/ api / bookings / ${bookingState.id} `, {
                         service: serviceNames,
                         master: bookingState.professional?.username || 'any',
                         date: dateStr,
@@ -115,7 +115,7 @@ export function ConfirmStep({
                     });
                 } else {
                     await api.createBooking({
-                        instagram_id: user?.username || `web_${user?.id || 'guest'}`,
+                        instagram_id: user?.username || `web_${user?.id || 'guest'} `,
                         service: serviceNames,
                         master: bookingState.professional?.username || 'any',
                         date: dateStr,
