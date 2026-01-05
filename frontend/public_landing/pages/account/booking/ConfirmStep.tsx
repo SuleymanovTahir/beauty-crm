@@ -12,11 +12,13 @@ import { api } from '../../../../src/services/api';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import { getLocalizedName, getDateLocale as getDateLocaleCentral } from '../../../../src/utils/i18nUtils';
 import { useCurrency } from '../../../../src/hooks/useSalonSettings';
+import { AuthPrompt } from './AuthPrompt';
 
 interface ConfirmStepProps {
     bookingState: any;
     totalPrice: number;
     onPhoneChange: (phone: string) => void;
+    onGuestInfoChange: (info: any) => void;
     onSuccess: () => void;
     salonSettings: any;
     setStep?: (step: string) => void;
@@ -27,6 +29,7 @@ export function ConfirmStep({
     bookingState,
     totalPrice,
     onPhoneChange,
+    onGuestInfoChange,
     onSuccess,
     salonSettings,
     setStep,
@@ -39,6 +42,7 @@ export function ConfirmStep({
     const [showPhoneModal, setShowPhoneModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [profileLoaded, setProfileLoaded] = useState(false);
+    const [isGuestContinuing, setIsGuestContinuing] = useState(false);
 
     // Автоматическая загрузка номера телефона из профиля
     useEffect(() => {
@@ -67,8 +71,8 @@ export function ConfirmStep({
                     }
                     setProfileLoaded(true);
                 }
-            } else if (!user && !bookingState.phone) {
-                // Неавторизованный пользователь без номера
+            } else if (!user && !bookingState.phone && isGuestContinuing) {
+                // Неавторизованный пользователь без номера, решивший продолжить как гость
                 setShowPhoneModal(true);
                 setProfileLoaded(true);
             } else {
@@ -112,17 +116,17 @@ export function ConfirmStep({
                         date: dateStr,
                         time: bookingState.time || '',
                         phone,
-                        name: user?.full_name || user?.username || 'Guest'
+                        name: user?.full_name || user?.username || bookingState.name || 'Guest'
                     });
                 } else {
                     await api.createBooking({
-                        instagram_id: user?.username || `web_${user?.id || 'guest'} `,
+                        instagram_id: user?.username || `web_${user?.id || 'guest'}_${Date.now()}`,
                         service: serviceNames,
                         master: bookingState.professional?.username || 'any',
                         date: dateStr,
                         time: bookingState.time || '',
                         phone,
-                        name: user?.full_name || user?.username || 'Guest'
+                        name: user?.full_name || user?.username || bookingState.name || 'Guest'
                     });
                 }
 
@@ -138,11 +142,17 @@ export function ConfirmStep({
                     }
                 }
 
-                // Redirect to appointments page after success
+                // Redirect to appointments page after success (if user logged in)
                 setTimeout(() => {
                     onSuccess();
-                    window.location.href = '/account/appointments';
-                }, 500);
+                    if (user) {
+                        window.location.href = '/account/appointments';
+                    } else {
+                        // For guests, we don't go to /account since it's restricted
+                        // They've seen the success toast, and the modal will close via onClose in onSuccess wrapper
+                        toast.info(t('auth.login_to_see_more', 'Login to manage your bookings'));
+                    }
+                }, 1000);
             } catch (fetchError: any) {
                 clearTimeout(timeoutId);
 
@@ -161,189 +171,208 @@ export function ConfirmStep({
 
     const dateLocale = getDateLocaleCentral(i18n.language);
 
+    if (!user && !isGuestContinuing) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                <AuthPrompt
+                    onGuestContinue={() => setIsGuestContinuing(true)}
+                    onAuthSuccess={(info) => {
+                        onGuestInfoChange(info);
+                        setIsGuestContinuing(true);
+                        toast.success(t('auth.success_mock', 'Profile data received!'));
+                    }}
+                />
+            </div>
+        );
+    }
+
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl shadow-lg p-6"
-            >
-                <h2 className="text-2xl font-bold text-gray-900">{t('confirm.title', 'Confirm Booking')}</h2>
-            </motion.div>
-
-            {/* Summary */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-            >
-                <Card className="border-none shadow-xl rounded-2xl overflow-hidden">
-                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-5">
-                        <h3 className="text-white font-black uppercase tracking-widest text-sm flex items-center gap-2">
-                            <CheckCircle2 className="w-5 h-5" />
-                            {t('confirm.summary', 'Order Summary')}
-                        </h3>
-                    </div>
-                    <CardContent className="p-8 space-y-8 bg-white">
-                        {/* Services */}
-                        <div>
-                            <div className="flex items-center justify-between mb-4">
-                                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('menu.services', 'Services')}</h4>
-                                {onOpenRescheduleDialog && (
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={onOpenRescheduleDialog}
-                                        className="h-7 px-3 text-[9px] font-bold uppercase tracking-wider text-purple-600 hover:bg-purple-50 rounded-lg"
-                                    >
-                                        {t('common.edit', 'Edit')}
-                                    </Button>
-                                )}
-                            </div>
-                            <div className="space-y-4">
-                                {bookingState.services.map((service: any) => (
-                                    <div key={service.id} className="flex justify-between items-center group">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-purple-500" />
-                                            <span className="text-gray-900 font-bold">{getLocalizedName(service, i18n.language)}</span>
-                                        </div>
-                                        <div className="flex items-center gap-4 text-sm">
-                                            <span className="text-gray-400 font-bold uppercase tracking-tighter">
-                                                {service.duration} {t('min', 'min')}
-                                            </span>
-                                            <span className="font-black text-gray-900">{formatCurrency(service.price)}</span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Professional */}
-                        <div className="border-t border-gray-50 pt-8">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center gap-2">
-                                    <User className="w-4 h-4 text-purple-600" />
-                                    <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('confirm.professional', 'Provider')}</h4>
-                                </div>
-                                {setStep && (
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => setStep('professional')}
-                                        className="h-7 px-3 text-[9px] font-bold uppercase tracking-wider text-purple-600 hover:bg-purple-50 rounded-lg"
-                                    >
-                                        {t('common.change', 'Change')}
-                                    </Button>
-                                )}
-                            </div>
-                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                <p className="text-gray-900 font-black">
-                                    {bookingState.professional ? getLocalizedName(bookingState.professional, i18n.language) : t('professional.anyAvailable', 'Flexible Match')}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Date & Time */}
-                        <div className="border-t border-gray-50 pt-8">
-                            <div className="flex items-center justify-between mb-4">
-                                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('confirm.dateTime', 'Date & Time')}</h4>
-                                {setStep && (
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => setStep('datetime')}
-                                        className="h-7 px-3 text-[9px] font-bold uppercase tracking-wider text-purple-600 hover:bg-purple-50 rounded-lg"
-                                    >
-                                        {t('common.reschedule', 'Reschedule')}
-                                    </Button>
-                                )}
-                            </div>
-                            <div className="grid grid-cols-2 gap-6">
-                                <div>
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <Calendar className="w-4 h-4 text-purple-600" />
-                                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('confirm.date', 'Date')}</h4>
-                                    </div>
-                                    <p className="text-gray-900 font-black bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                        {bookingState.date && format(bookingState.date, 'EEEE, MMM d', { locale: dateLocale })}
-                                    </p>
-                                </div>
-                                <div>
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <Clock className="w-4 h-4 text-purple-600" />
-                                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('confirm.time', 'Time')}</h4>
-                                    </div>
-                                    <p className="text-gray-900 font-black bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                        {bookingState.time}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Total */}
-                        <div className="border-t border-gray-50 pt-8">
-                            <div className="flex justify-between items-center bg-purple-50 p-6 rounded-2xl border border-purple-100">
-                                <span className="text-xs font-black text-purple-600 uppercase tracking-[0.2em]">{t('confirm.total', 'Total Amount')}</span>
-                                <span className="text-3xl font-black text-gray-900">
-                                    {formatCurrency(totalPrice)}
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* Phone */}
-                        {phone && (
-                            <div className="border-t border-gray-50 pt-8">
-                                <div className="flex items-center gap-3 text-gray-500 bg-slate-50 p-4 rounded-xl border border-dashed border-gray-200">
-                                    <Phone className="w-4 h-4" />
-                                    <span className="font-black tracking-widest">{phone}</span>
-                                </div>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-            </motion.div>
-
-            {/* Confirm Button */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="pb-20"
-            >
-                <Button
-                    onClick={handleConfirm}
-                    disabled={loading}
-                    className="w-full h-16 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-2xl text-xl font-black rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98]"
-                    size="lg"
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+            <div className="max-w-2xl mx-auto px-4 py-8 pb-32 w-full space-y-6">
+                {/* Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-2"
                 >
-                    {loading ? (
-                        <div className="flex items-center gap-3">
-                            <Loader2 className="w-6 h-6 animate-spin" />
-                            <span>{t('loading', 'Processing...')}</span>
+                    <h2 className="text-2xl font-bold text-gray-900">{t('confirm.title', 'Confirm Booking')}</h2>
+                </motion.div>
+
+                {/* Summary Card */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                >
+                    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                        <div className="p-6 space-y-6">
+                            {/* Services */}
+                            <div>
+                                <div className="flex items-center justify-between mb-4">
+                                    <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
+                                        {t('menu.services', 'Services')}
+                                    </p>
+                                    {onOpenRescheduleDialog && (
+                                        <button
+                                            onClick={onOpenRescheduleDialog}
+                                            className="text-xs text-gray-900 hover:text-gray-600 font-bold uppercase tracking-wide"
+                                        >
+                                            {t('common.edit', 'Edit')}
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="space-y-3">
+                                    {bookingState.services.map((service: any) => (
+                                        <div key={service.id} className="flex justify-between items-center group">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-gray-900" />
+                                                <span className="text-gray-900 font-semibold">{getLocalizedName(service, i18n.language)}</span>
+                                            </div>
+                                            <div className="flex items-center gap-4 text-sm">
+                                                <span className="text-gray-400 font-medium whitespace-nowrap">
+                                                    {service.duration} {t('min', 'min')}
+                                                </span>
+                                                <span className="font-bold text-gray-900">{formatCurrency(service.price)}</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Master */}
+                            <div className="pt-6 border-t border-gray-50">
+                                <div className="flex items-center justify-between mb-3">
+                                    <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
+                                        {t('confirm.professional', 'Provider')}
+                                    </p>
+                                    {setStep && (
+                                        <button
+                                            onClick={() => setStep('professional')}
+                                            className="text-xs text-gray-900 hover:text-gray-600 font-bold uppercase tracking-wide"
+                                        >
+                                            {t('common.change', 'Change')}
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="bg-gray-50 rounded-lg p-3">
+                                    <p className="text-gray-900 font-semibold">
+                                        {bookingState.professional ? getLocalizedName(bookingState.professional, i18n.language) : t('professional.anyAvailable', 'Flexible Match')}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Date & Time */}
+                            <div className="pt-6 border-t border-gray-50">
+                                <div className="flex items-center justify-between mb-3">
+                                    <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
+                                        {t('confirm.dateTime', 'Date & Time')}
+                                    </p>
+                                    {setStep && (
+                                        <button
+                                            onClick={() => setStep('datetime')}
+                                            className="text-xs text-gray-900 hover:text-gray-600 font-bold uppercase tracking-wide"
+                                        >
+                                            {t('common.reschedule', 'Reschedule')}
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="bg-gray-50 rounded-lg p-3">
+                                        <div className="flex items-center gap-2 mb-1.5">
+                                            <Calendar size={14} className="text-gray-400" />
+                                            <span className="text-[10px] text-gray-400 uppercase tracking-widest font-medium">
+                                                {t('confirm.date', 'Date')}
+                                            </span>
+                                        </div>
+                                        <p className="text-gray-900 font-semibold text-sm">
+                                            {bookingState.date && format(bookingState.date, 'EEEE, MMM d', { locale: dateLocale })}
+                                        </p>
+                                    </div>
+                                    <div className="bg-gray-50 rounded-lg p-3">
+                                        <div className="flex items-center gap-2 mb-1.5">
+                                            <Clock size={14} className="text-gray-400" />
+                                            <span className="text-[10px] text-gray-400 uppercase tracking-widest font-medium">
+                                                {t('confirm.time', 'Time')}
+                                            </span>
+                                        </div>
+                                        <p className="text-gray-900 font-semibold text-sm">
+                                            {bookingState.time}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Contact Number */}
+                            {phone && (
+                                <div className="pt-6 border-t border-gray-50">
+                                    <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3">
+                                        {t('confirm.contactNumber', 'Contact Number')}
+                                    </p>
+                                    <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
+                                        <Phone size={16} className="text-gray-400" />
+                                        <span className="text-gray-900 font-semibold">{phone}</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Total Amount */}
+                            <div className="pt-6 border-t border-gray-50">
+                                <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('confirm.total', 'Total Amount')}</span>
+                                    <div className="text-right">
+                                        <span className="text-2xl font-bold text-gray-900">
+                                            {formatCurrency(totalPrice)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    ) : (
-                        <>
-                            <CheckCircle2 className="w-6 h-6 mr-3" />
-                            {t('confirm.confirm', 'Confirm Appointment')}
-                        </>
-                    )}
-                </Button>
-            </motion.div>
+                    </div>
+                </motion.div>
+
+                {/* Confirm Button */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 lg:static lg:p-0 lg:bg-transparent lg:border-none"
+                >
+                    <div className="max-w-2xl mx-auto">
+                        <Button
+                            onClick={handleConfirm}
+                            disabled={loading}
+                            className="w-full h-14 bg-gray-900 text-white hover:bg-gray-800 shadow-lg text-lg font-bold rounded-xl transition-all active:scale-[0.98]"
+                            size="lg"
+                        >
+                            {loading ? (
+                                <div className="flex items-center gap-3">
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    <span>{t('loading', 'Processing...')}</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle2 className="w-5 h-5" />
+                                    <span>{t('confirm.confirm', 'Confirm Appointment')}</span>
+                                </div>
+                            )}
+                        </Button>
+                    </div>
+                </motion.div>
+            </div>
 
             {/* Phone Modal */}
             <Dialog open={showPhoneModal} onOpenChange={setShowPhoneModal}>
-                <DialogContent className="max-w-md p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl">
-                    <div className="p-10 space-y-10 bg-white">
-                        <div className="text-center space-y-4">
-                            <div className="w-20 h-20 bg-purple-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                                <Phone className="w-10 h-10 text-purple-600" />
+                <DialogContent className="max-w-md p-0 overflow-hidden rounded-2xl border-none shadow-2xl">
+                    <div className="p-8 space-y-8 bg-white text-center">
+                        <div className="space-y-4">
+                            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
+                                <Phone className="w-8 h-8 text-gray-900" />
                             </div>
-                            <h2 className="text-3xl font-black text-slate-900 tracking-tight uppercase">
-                                {t('confirm.phoneNeeded', 'Stay Connected')}
+                            <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
+                                {t('confirm.phoneNeeded', 'Contact Information')}
                             </h2>
-                            <p className="text-slate-400 font-medium leading-relaxed">
-                                {t('confirm.phoneDesc', 'Please provide your mobile number for appointment updates and verification.')}
+                            <p className="text-gray-500 font-medium text-sm">
+                                {t('confirm.phoneDesc', 'Please provide your mobile number for appointment updates.')}
                             </p>
                         </div>
 
@@ -352,17 +381,24 @@ export function ConfirmStep({
                                 type="tel"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
-                                placeholder="+971"
-                                className="h-20 text-3xl font-black text-center bg-slate-50 border-none focus-visible:ring-8 focus-visible:ring-purple-50 rounded-[1.5rem] shadow-inner tracking-widest placeholder:text-slate-200"
+                                placeholder="+7"
+                                className="h-14 text-2xl font-bold text-center bg-gray-50 border-gray-100 focus-visible:ring-gray-200 rounded-xl"
                             />
                         </div>
 
-                        <div className="flex gap-6 w-full">
-                            <Button variant="ghost" onClick={() => setShowPhoneModal(false)} className="flex-1 h-16 rounded-2xl font-black text-slate-400 hover:bg-slate-50 transition-all uppercase tracking-widest text-xs">
-                                {t('common.cancel', 'Later')}
+                        <div className="flex gap-3 w-full">
+                            <Button
+                                variant="ghost"
+                                onClick={() => setShowPhoneModal(false)}
+                                className="flex-1 h-12 rounded-lg font-bold text-gray-400 hover:bg-gray-50 uppercase tracking-widest text-xs"
+                            >
+                                {t('common.cancel', 'Cancel')}
                             </Button>
-                            <Button onClick={handlePhoneSubmit} className="flex-1 h-16 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 shadow-2xl text-white font-black uppercase tracking-widest text-xs">
-                                {t('common.save', 'Verify')}
+                            <Button
+                                onClick={handlePhoneSubmit}
+                                className="flex-1 h-12 rounded-lg bg-gray-900 text-white font-bold uppercase tracking-widest text-xs hover:bg-gray-800"
+                            >
+                                {t('common.save', 'Save')}
                             </Button>
                         </div>
                     </div>

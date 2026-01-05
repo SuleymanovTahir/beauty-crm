@@ -28,7 +28,7 @@ export function ProfessionalStep({
     selectedServices = [],
     selectedDate = null
 }: ProfessionalStepProps) {
-    const { t } = useTranslation(['booking', 'common']);
+    const { t, i18n } = useTranslation(['booking', 'common']);
     const [professionals, setProfessionals] = useState<any[]>(preloadedProfessionals || []);
     // No loading spinner if data is preloaded
     const [loading, setLoading] = useState(false);
@@ -77,7 +77,7 @@ export function ProfessionalStep({
         const fetchProfessionals = async () => {
             setLoading(true);
             try {
-                const res = await api.getPublicEmployees();
+                const res = await api.getPublicEmployees(i18n.language);
                 // API возвращает массив напрямую
                 const data = Array.isArray(res) ? res : [];
                 setProfessionals(data);
@@ -88,7 +88,7 @@ export function ProfessionalStep({
             }
         };
         fetchProfessionals();
-    }, [preloadedProfessionals]);
+    }, [preloadedProfessionals, i18n.language]);
 
     useEffect(() => {
         if (professionals.length === 0) return;
@@ -229,11 +229,9 @@ export function ProfessionalStep({
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-64">
-                <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                    <p className="text-gray-600 font-medium tracking-tight">{t('loading', 'Syncing masters...')}</p>
-                </div>
+            <div className="flex flex-col items-center justify-center h-64 gap-4">
+                <div className="w-12 h-12 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
+                <p className="text-gray-400 text-sm font-medium uppercase tracking-widest">{t('loading', 'Loading professionals...')}</p>
             </div>
         );
     }
@@ -268,21 +266,21 @@ export function ProfessionalStep({
 
             {/* Any Professional Option */}
             <div
-                className={`bg-white rounded-xl border p-5 transition-colors cursor-pointer ${isAnyProfessional
-                    ? 'border-purple-500 border-2 shadow-sm bg-purple-50/50'
-                    : 'border-gray-200 hover:border-gray-300'
+                className={`bg-white rounded-xl border-2 p-5 transition-all cursor-pointer shadow-sm ${isAnyProfessional
+                    ? 'border-gray-900'
+                    : 'border-transparent hover:border-gray-200'
                     }`}
                 onClick={() => onProfessionalChange(null)}
             >
                 <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <span className="text-white text-2xl">✨</span>
+                    <div className="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center flex-shrink-0 text-white shadow-sm">
+                        <span className="text-2xl">✨</span>
                     </div>
                     <div className="flex-1">
-                        <h3 className="font-semibold mb-1">
+                        <h3 className="font-bold text-gray-900 text-sm mb-0.5">
                             {t('professional.anyAvailable', 'Flexible Match')}
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-xs text-gray-500 line-clamp-2">
                             {t('professional.anyDesc', 'We\'ll match you with the best available professional')}
                         </p>
                     </div>
@@ -291,61 +289,61 @@ export function ProfessionalStep({
 
             {/* Professionals List */}
             <div className="grid md:grid-cols-2 gap-4 pb-10">
-                {filteredProfessionals.map((professional, index) => {
+                {filteredProfessionals.map((professional) => {
                     const isSelected = selectedProfessionalId === professional.id;
                     return (
                         <div
                             key={professional.id}
-                            className={`bg-white rounded-2xl border-2 p-6 transition-all cursor-pointer ${isSelected
-                                ? 'border-purple-500 shadow-lg bg-gradient-to-br from-purple-50 to-pink-50'
-                                : 'border-purple-200 hover:border-purple-300 hover:shadow-md'
+                            className={`bg-white rounded-xl border-2 p-5 transition-all cursor-pointer shadow-sm ${isSelected
+                                ? 'border-gray-900'
+                                : 'border-transparent hover:border-gray-200'
                                 }`}
                             onClick={() => onProfessionalChange(professional)}
                         >
                             {/* Master Info */}
                             <div className="flex items-start gap-3 mb-4">
-                                <Avatar className="w-16 h-16 rounded-2xl flex-shrink-0">
+                                <Avatar className="w-14 h-14 rounded-xl flex-shrink-0 shadow-sm border border-gray-100">
                                     <AvatarImage src={professional.photo} alt={professional.full_name} className="object-cover" />
-                                    <AvatarFallback className="bg-purple-100 text-purple-600 font-bold text-xl">
+                                    <AvatarFallback className="bg-gray-100 text-gray-500 font-bold">
                                         {professional.full_name?.charAt(0)}
                                     </AvatarFallback>
                                 </Avatar>
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="font-semibold mb-0.5">{professional.full_name}</h3>
-                                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{professional.position}</p>
-                                    <div className="flex items-center gap-1">
-                                        <Star className="text-amber-400 fill-amber-400" size={14} />
-                                        <span className="text-sm font-medium">{professional.rating || '5.0'}</span>
+                                    <h3 className="font-bold text-gray-900 text-sm truncate">{professional.full_name}</h3>
+                                    <p className="text-[10px] text-gray-500 uppercase tracking-widest font-medium mt-0.5 truncate">{professional.position}</p>
+                                    <div className="flex items-center gap-1 mt-1">
+                                        <Star className="text-amber-400 fill-amber-400" size={12} />
+                                        <span className="text-xs font-bold text-gray-700">{professional.rating || '5.0'}</span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Availability */}
                             {nextSlots[professional.id] ? (
-                                <>
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <Clock className="text-green-600" size={14} />
-                                        <span className="text-xs text-green-600 font-medium uppercase tracking-wide">
-                                            {t('professional.availableToday', 'Available Today')}
+                                <div className="pt-4 border-t border-gray-50">
+                                    <div className="flex items-center gap-1.5 mb-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                                        <span className="text-[10px] text-green-600 font-bold uppercase tracking-widest">
+                                            {t('professional.availableToday', 'Today')}
                                         </span>
                                     </div>
 
                                     {/* Time Slots */}
-                                    <div className="grid grid-cols-4 gap-2">
+                                    <div className="grid grid-cols-4 gap-1.5">
                                         {nextSlots[professional.id].split(', ').map((time: string, idx: number) => (
                                             <div
                                                 key={idx}
-                                                className="py-1.5 rounded-lg text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200 text-center"
+                                                className="py-1 rounded-md text-[10px] font-bold bg-gray-50 text-gray-700 text-center border border-gray-100"
                                             >
                                                 {time}
                                             </div>
                                         ))}
                                     </div>
-                                </>
+                                </div>
                             ) : (
-                                <div className="flex items-center gap-2 py-3">
-                                    <Clock className="text-gray-400" size={14} />
-                                    <span className="text-xs text-gray-400 font-medium uppercase tracking-wide">
+                                <div className="pt-4 border-t border-gray-50 flex items-center gap-1.5">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
+                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                                         {nextAvailableDate[professional.id]
                                             ? `${t('professional.availableOn', 'Available')} ${nextAvailableDate[professional.id]}`
                                             : t('professional.notAvailableToday', 'Not Available Today')

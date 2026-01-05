@@ -42,11 +42,8 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  /* Specific colors from the original design that components might use */
-  --purple-600: #9333ea;
-  --purple-500: #a855f7;
-  --purple-50: #faf5ff;
-  --gradient-primary: linear-gradient(90deg, #9333ea 0%, #db2777 100%);
+  /* Removed legacy purple variables */
+  --radius: 0.625rem;
 }
 
 /* @theme removed to prevent global pollution */

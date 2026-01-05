@@ -52,12 +52,10 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
         {
             id: 'services',
             icon: Scissors,
-            title: t('menu.services', 'Select Services'),
+            title: t('menu.services', 'Services'),
             description: getServicesDescription(),
             isComplete: isServicesComplete,
             step: 'services',
-            gradient: 'from-purple-500 to-pink-500',
-            useGrayIcon: true,
         },
         {
             id: 'professional',
@@ -68,8 +66,6 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
                 : t('menu.selectProfessional', 'Select master'),
             isComplete: isProfessionalComplete,
             step: 'professional',
-            gradient: 'from-pink-500 to-rose-500',
-            useGrayIcon: false,
         },
         {
             id: 'datetime',
@@ -78,8 +74,6 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
             description: getDateTimeDescription(),
             isComplete: isDateTimeComplete,
             step: 'datetime',
-            gradient: 'from-rose-500 to-orange-500',
-            useGrayIcon: false,
         },
     ];
 
@@ -87,30 +81,27 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
         <div className="space-y-6">
             {/* Salon Info */}
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-xl border border-gray-200 p-4"
+                className="bg-white rounded-xl border border-gray-200 p-5 flex items-center justify-between shadow-sm"
             >
-                <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center">
-                        <Scissors className="w-5 h-5 text-white" />
+                <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center text-white">
+                        <Scissors size={24} />
                     </div>
-                    <div className="flex-1">
-                        <h2 className="text-sm font-bold text-gray-900">{salonSettings?.name || t('salon.name', 'Beauty HQ')}</h2>
-                        <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
-                            <MapPin className="w-3 h-3" />
-                            {salonSettings?.address || t('salon.address', 'Studio Location')}
-                        </p>
+                    <div>
+                        <h2 className="font-bold text-sm text-gray-900">{salonSettings?.name || 'Beauty Lounge'}</h2>
+                        <p className="text-xs text-gray-500 mt-0.5">{salonSettings?.address || 'Shop 13, Amwaj 3 Plaza Level, JBR, Dubai'}</p>
                     </div>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={onReset}
-                        className="text-xs font-medium uppercase tracking-wide text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-all rounded-lg"
-                    >
-                        {t('common.reset', 'Reset All')}
-                    </Button>
                 </div>
+                {(isServicesComplete || isProfessionalComplete || isDateTimeComplete) && (
+                    <button
+                        onClick={onReset}
+                        className="text-xs text-gray-400 hover:text-gray-600 uppercase tracking-wide font-medium"
+                    >
+                        {t('common.resetAll', 'Reset all')}
+                    </button>
+                )}
             </motion.div>
 
             {/* Booking Steps */}
@@ -123,37 +114,32 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
+                            onClick={() => onNavigate(card.step)}
+                            className="bg-white rounded-xl border border-gray-200 p-5 transition-all hover:border-gray-900 hover:shadow-md cursor-pointer group flex flex-col h-full shadow-sm"
                         >
-                            <Card
-                                className="cursor-pointer hover:shadow-xl transition-all duration-300 border-2 hover:border-purple-200 overflow-hidden group"
-                                onClick={() => onNavigate(card.step)}
-                            >
-                                <div className={`h-2 bg-gradient-to-r ${card.gradient}`} />
-                                <CardContent className="p-6">
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div className={card.useGrayIcon
-                                            ? "w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center"
-                                            : `w-12 h-12 rounded-lg bg-gradient-to-br ${card.gradient} flex items-center justify-center`}>
-                                            <Icon className={card.useGrayIcon ? "w-5 h-5 text-white" : "w-6 h-6 text-white"} />
-                                        </div>
-                                        {card.isComplete && (
-                                            <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-                                                <Check className="w-4 h-4 text-white" />
-                                            </div>
-                                        )}
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center text-white">
+                                    <Icon size={20} />
+                                </div>
+                                {card.isComplete ? (
+                                    <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center shadow-sm">
+                                        <Check className="w-4 h-4 text-white" />
                                     </div>
+                                ) : (
+                                    <div className="w-6 h-6 rounded-full border-2 border-gray-100" />
+                                )}
+                            </div>
 
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{card.title}</h3>
-                                    <p className="text-sm text-gray-600 mb-4">{card.description}</p>
+                            <h3 className="text-sm font-bold text-gray-900 mb-1">{card.title}</h3>
+                            <p className="text-xs text-gray-500 line-clamp-2 flex-grow">{card.description}</p>
 
-                                    <div className="flex items-center justify-between">
-                                        <Badge variant={card.isComplete ? 'default' : 'outline'} className={card.isComplete ? 'bg-green-500' : ''}>
-                                            {card.isComplete ? t('menu.completed', 'Complete') : t('common.select', 'Select')}
-                                        </Badge>
-                                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 transition-colors" />
-                                    </div>
-                                </CardContent>
-                            </Card>
+                            <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-50">
+                                <span className={`text-[10px] font-bold uppercase tracking-widest ${card.isComplete ? 'text-green-600' : 'text-gray-400'
+                                    }`}>
+                                    {card.isComplete ? t('menu.completed', 'Complete') : t('common.select', 'Select')}
+                                </span>
+                                <ChevronRight size={16} className="text-gray-300 group-hover:text-gray-900 transition-colors" />
+                            </div>
                         </motion.div>
                     );
                 })}

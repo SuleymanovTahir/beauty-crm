@@ -155,30 +155,37 @@ export function DateTimeStep({
         <div className="space-y-6">
             {/* Header */}
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl shadow-lg p-6"
+                className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm"
             >
-                <h2 className="text-2xl font-black text-gray-900 mb-2 uppercase tracking-tighter">{t('datetime.title', 'Date & Time')}</h2>
-                <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">
-                    {t('totalDuration', 'Duration')}: <span className="text-purple-600 italic">{totalDuration} {t('min', 'min')}</span>
-                </p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h2 className="text-xl font-bold text-gray-900 mb-1">{t('datetime.title', 'Date & Time')}</h2>
+                        <div className="flex items-center gap-2">
+                            <Clock size={12} className="text-gray-400" />
+                            <p className="text-xs text-gray-500 font-medium tracking-wide">
+                                {t('totalDuration', 'Total duration')}: <span className="text-gray-900 font-bold">{totalDuration} {t('min', 'min')}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </motion.div>
 
-            <div className="grid lg:grid-cols-2 gap-6 pb-20">
+            <div className="grid lg:grid-cols-2 gap-6">
                 {/* Calendar */}
                 <motion.div
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
                 >
-                    <Card className="overflow-hidden border-none shadow-xl rounded-2xl">
-                        <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-5">
-                            <h3 className="text-white font-black uppercase tracking-widest text-sm">
-                                {t('datetime.date', 'Select Date')}
+                    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm h-full">
+                        <div className="p-4 border-b border-gray-50 bg-gray-50/50">
+                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                                {t('datetime.date', '1. Select Date')}
                             </h3>
                         </div>
-                        <CardContent className="p-4 bg-white">
+                        <div className="p-4">
                             <Calendar
                                 mode="single"
                                 selected={selectedDate || undefined}
@@ -196,64 +203,65 @@ export function DateTimeStep({
                                 }}
                                 className="rounded-xl border-none w-full"
                             />
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </motion.div>
 
                 {/* Time Slots */}
                 <motion.div
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2 }}
                 >
-                    <Card className="overflow-hidden border-none shadow-xl rounded-2xl h-full">
-                        <div className="bg-gradient-to-r from-pink-500 to-rose-500 p-5">
-                            <h3 className="text-white font-black uppercase tracking-widest text-sm">{t('datetime.time', 'Pick Time')}</h3>
+                    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm h-full flex flex-col">
+                        <div className="p-4 border-b border-gray-50 bg-gray-50/50">
+                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{t('datetime.time', '2. Pick Time')}</h3>
                         </div>
-                        <CardContent className="p-6 bg-white">
+                        <div className="p-6 flex-1">
                             {!selectedDate ? (
-                                <div className="text-center py-24 text-gray-400">
-                                    <Clock className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                                    <p className="font-bold uppercase tracking-widest text-xs">
+                                <div className="text-center py-12 text-gray-400">
+                                    <Clock className="w-10 h-10 mx-auto mb-3 opacity-20" />
+                                    <p className="font-bold uppercase tracking-widest text-[10px]">
                                         {t('datetime.selectDateFirst', 'Select a date first')}
                                     </p>
                                 </div>
                             ) : loading ? (
-                                <div className="text-center py-24">
-                                    <div className="w-12 h-12 border-8 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                                    <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">{t('loading', 'Syncing slots...')}</p>
+                                <div className="text-center py-12">
+                                    <div className="w-10 h-10 border-4 border-gray-100 border-t-gray-900 rounded-full animate-spin mx-auto mb-3" />
+                                    <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">{t('loading', 'Syncing slots...')}</p>
                                 </div>
                             ) : timeSlots.length === 0 ? (
-                                <div className="text-center py-24 text-gray-400">
-                                    <p className="font-bold uppercase tracking-widest text-xs">{t('datetime.noSlots', 'No slots available')}</p>
+                                <div className="text-center py-12 text-gray-400">
+                                    <p className="font-bold uppercase tracking-widest text-[10px]">{t('datetime.noSlots', 'No slots available')}</p>
                                 </div>
                             ) : (
-                                <div className="space-y-8 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                                <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                                     {(['morning', 'afternoon', 'evening'] as const).map((period) => {
                                         const periodSlots = groupedSlots[period];
                                         if (periodSlots.length === 0) return null;
 
                                         return (
                                             <div key={period}>
-                                                <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em] mb-3">
                                                     {t(`datetime.${period}`, period.charAt(0).toUpperCase() + period.slice(1))}
                                                 </h4>
                                                 <div className="grid grid-cols-3 gap-2">
                                                     {periodSlots.map((slot) => (
-                                                        <Button
+                                                        <button
                                                             key={slot.time}
-                                                            variant={selectedTime === slot.time ? 'default' : 'outline'}
-                                                            className={`relative ${selectedTime === slot.time
-                                                                ? 'bg-gradient-to-r from-purple-600 to-pink-600'
-                                                                : ''
-                                                                }`}
                                                             onClick={() => handleTimeSelect(slot.time)}
+                                                            className={`relative h-11 rounded-lg text-sm font-bold transition-all border ${selectedTime === slot.time
+                                                                    ? 'bg-gray-900 text-white border-gray-900 shadow-md'
+                                                                    : 'bg-white text-gray-900 border-gray-100 hover:border-gray-300'
+                                                                }`}
                                                         >
                                                             {slot.isOptimal && (
-                                                                <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-400 fill-yellow-400" />
+                                                                <div className="absolute -top-1 -right-1">
+                                                                    <Sparkles className="w-3 h-3 text-amber-400 fill-amber-400" />
+                                                                </div>
                                                             )}
                                                             {slot.time}
-                                                        </Button>
+                                                        </button>
                                                     ))}
                                                 </div>
                                             </div>
@@ -261,8 +269,8 @@ export function DateTimeStep({
                                     })}
                                 </div>
                             )}
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </motion.div>
             </div>
         </div>
