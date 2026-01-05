@@ -1,12 +1,20 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-export function Footer() {
+interface FooterProps {
+  salonInfo?: any;
+}
+
+export function Footer({ salonInfo }: FooterProps) {
   const { t, i18n } = useTranslation(['public_landing', 'common']);
-  const [salonName, setSalonName] = useState("M Le Diamant");
+  const [salonName, setSalonName] = useState(salonInfo?.name || "M Le Diamant");
   const currentYear = new Date().getFullYear();
 
   useEffect(() => {
+    if (salonInfo?.name) {
+      setSalonName(salonInfo.name);
+      return;
+    }
     const fetchSalonInfo = async () => {
       try {
         const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
@@ -20,7 +28,8 @@ export function Footer() {
       }
     };
     fetchSalonInfo();
-  }, [i18n.language]);
+  }, [salonInfo, i18n.language]);
+
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();

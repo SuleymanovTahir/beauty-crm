@@ -61,16 +61,18 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
 
   useEffect(() => {
     // Fetch salon info if not provided
-    if (!propSalonInfo || Object.keys(propSalonInfo).length === 0) {
-      const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-      fetch(`${API_URL}/api/public/salon-info?language=${language}`)
-        .then(res => res.json())
-        .then(setSalonInfo)
-        .catch(err => console.error('Error loading salon info:', err));
-    } else {
+    if (propSalonInfo && Object.keys(propSalonInfo).length > 0) {
       setSalonInfo(propSalonInfo);
+      return;
     }
+
+    const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+    fetch(`${API_URL}/api/public/salon-info?language=${language}`)
+      .then(res => res.json())
+      .then(setSalonInfo)
+      .catch(err => console.error('Error loading salon info:', err));
   }, [propSalonInfo, language]);
+
 
   useEffect(() => {
     const handleScroll = () => {

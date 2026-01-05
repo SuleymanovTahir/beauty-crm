@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
 
   <!-- SEO Meta Tags -->
@@ -96,137 +97,109 @@
   }
   </script>
 
-  <!-- Dynamic SEO Metadata Loader -->
+  <!-- Local SEO Metadata Cache Loader (Instant UI update) -->
+  <script>
+    (function () {
+      const cached = localStorage.getItem('seo_metadata');
+      if (cached) {
+        try {
+          const seo = JSON.parse(cached);
+          document.title = seo.seo_title || document.title;
+          const desc = document.querySelector('meta[name="description"]');
+          if (desc) desc.setAttribute('content', seo.seo_description);
+          // Only apply from cache if it's less than 1 hour old
+          if (Date.now() - (seo._timestamp || 0) > 3600000) localStorage.removeItem('seo_metadata');
+        } catch (e) { }
+      }
+    })();
+  </script>
+
+  <!-- Dynamic SEO Metadata Refresher -->
   <script>
     // Load SEO metadata from database and update meta tags
     (async function () {
       try {
         const response = await fetch('/api/public/seo-metadata');
         const seo = await response.json();
+        seo._timestamp = Date.now();
+        localStorage.setItem('seo_metadata', JSON.stringify(seo));
 
-        // Update title
+        // Update title and meta
         document.title = seo.seo_title;
-
-        // Update meta description
         document.querySelector('meta[name="description"]').setAttribute('content', seo.seo_description);
 
-        // Update Open Graph tags (use dynamic logo and base URL)
-        document.querySelector('meta[property="og:title"]').setAttribute('content', seo.salon_name + ' - Premium Beauty Salon');
-        document.querySelector('meta[property="og:description"]').setAttribute('content', seo.seo_description);
-        document.querySelector('meta[property="og:image"]').setAttribute('content', seo.logo_url);
-        document.querySelector('meta[property="og:url"]').setAttribute('content', seo.base_url);
+        // Update Open Graph and Twitter
+        const updateMeta = (selector, attr, value) => {
+          const el = document.querySelector(selector);
+          if (el) el.setAttribute(attr, value);
+        };
 
-        // Update Twitter Cards (use dynamic logo)
-        document.querySelector('meta[name="twitter:title"]').setAttribute('content', seo.salon_name);
-        document.querySelector('meta[name="twitter:description"]').setAttribute('content', `Premium beauty salon with expert services in ${seo.city}`);
-        document.querySelector('meta[name="twitter:image"]').setAttribute('content', seo.logo_url);
+        updateMeta('meta[property="og:title"]', 'content', seo.salon_name + ' - Premium Beauty Salon');
+        updateMeta('meta[property="og:description"]', 'content', seo.seo_description);
+        updateMeta('meta[property="og:image"]', 'content', seo.logo_url);
+        updateMeta('meta[property="og:url"]', 'content', seo.base_url);
 
-        // Update Schema.org BeautySalon (use dynamic values)
-        const beautySalonSchema = {
-          "@context": "https://schema.org",
-          "@type": "BeautySalon",
-          "name": seo.schema.name,
-          "image": seo.logo_url,
-          "url": seo.base_url,
-          "telephone": seo.schema.telephone,
-          "priceRange": "$$",
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": seo.schema.address.streetAddress,
-            "addressLocality": seo.schema.address.addressLocality,
-            "addressRegion": seo.schema.address.addressRegion,
-            "addressCountry": seo.schema.address.addressCountry
-          },
-          "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": seo.schema.geo.latitude,
-            "longitude": seo.schema.geo.longitude
-          },
-          "openingHoursSpecification": [
-            {
+        updateMeta('meta[name="twitter:title"]', 'content', seo.salon_name);
+        updateMeta('meta[name="twitter:description"]', 'content', `Premium beauty salon with expert services in ${seo.city}`);
+        updateMeta('meta[name="twitter:image"]', 'content', seo.logo_url);
+
+        // Update Schema.org
+        const schemaScripts = document.querySelectorAll('script[type="application/ld+json"]');
+        if (schemaScripts.length >= 2 && seo.schema) {
+          const beautySalonSchema = {
+            "@context": "https://schema.org",
+            "@type": "BeautySalon",
+            "name": seo.schema.name,
+            "image": seo.logo_url,
+            "url": seo.base_url,
+            "telephone": seo.schema.telephone,
+            "priceRange": "$$",
+            "address": seo.schema.address,
+            "geo": seo.schema.geo,
+            "openingHoursSpecification": [{
               "@type": "OpeningHoursSpecification",
               "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
               "opens": seo.schema.openingHours.opens,
               "closes": seo.schema.openingHours.closes
-            }
-          ],
-          "sameAs": seo.schema.sameAs
-        };
-
-        // Update Schema.org Organization (use dynamic values)
-        const organizationSchema = {
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          "name": seo.schema.name,
-          "url": seo.base_url,
-          "logo": seo.logo_url,
-          "contactPoint": {
-            "@type": "ContactPoint",
-            "telephone": seo.schema.telephone,
-            "contactType": "customer service",
-            "availableLanguage": ["English", "Russian", "Arabic"]
-          },
-          "sameAs": seo.schema.sameAs
-        };
-
-        // Replace existing schema scripts
-        const schemaScripts = document.querySelectorAll('script[type="application/ld+json"]');
-        if (schemaScripts.length >= 2) {
-          schemaScripts[0].textContent = JSON.stringify(beautySalonSchema, null, 2);
-          schemaScripts[1].textContent = JSON.stringify(organizationSchema, null, 2);
+            }],
+            "sameAs": seo.schema.sameAs
+          };
+          schemaScripts[0].textContent = JSON.stringify(beautySalonSchema);
         }
 
-        // ✅ Conditionally load Google Analytics if ID is set
+        // ✅ Conditionally load External Scripts
         if (seo.google_analytics_id) {
-          const gaScript = document.createElement('script');
-          gaScript.async = true;
-          gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${seo.google_analytics_id}`;
-          document.head.appendChild(gaScript);
-
-          const gaConfig = document.createElement('script');
-          gaConfig.textContent = `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${seo.google_analytics_id}');
-          `;
-          document.head.appendChild(gaConfig);
-          console.log('✅ Google Analytics loaded:', seo.google_analytics_id);
-        } else {
-          console.log('ℹ️ Google Analytics ID not set in database');
+          const ga = document.createElement('script');
+          ga.async = true;
+          ga.src = `https://www.googletagmanager.com/gtag/js?id=${seo.google_analytics_id}`;
+          document.head.appendChild(ga);
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', seo.google_analytics_id);
         }
 
-        // ✅ Conditionally load Facebook Pixel if ID is set
         if (seo.facebook_pixel_id) {
-          const fbPixel = document.createElement('script');
-          fbPixel.textContent = `
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
+          !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+              n.callMethod ?
+              n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+          }(window, document, 'script',
             'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '${seo.facebook_pixel_id}');
-            fbq('track', 'PageView');
-          `;
-          document.head.appendChild(fbPixel);
-
-          const fbNoscript = document.createElement('noscript');
-          fbNoscript.innerHTML = `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${seo.facebook_pixel_id}&ev=PageView&noscript=1" alt="Facebook Pixel" />`;
-          document.body.appendChild(fbNoscript);
-          console.log('✅ Facebook Pixel loaded:', seo.facebook_pixel_id);
-        } else {
-          console.log('ℹ️ Facebook Pixel ID not set in database');
+          fbq('init', seo.facebook_pixel_id);
+          fbq('track', 'PageView');
         }
-
-        console.log('✅ SEO metadata loaded from database');
       } catch (error) {
-        console.warn('⚠️ Failed to load dynamic SEO metadata, using defaults:', error);
+        console.warn('⚠️ SEO metadata Refresh failed:', error);
       }
     })();
   </script>
+
 
   <!-- Google Analytics 4 -->
 
