@@ -237,7 +237,15 @@
     "year_distribution": "वर्ष के लिए वितरण",
     "your_cashback": "आपका कैशबैक",
     "your_discount": "आपकी छूट होगी",
-    "your_promo": "आपका प्रोमो कोड"
+    "your_promo": "आपका प्रोमो कोड",
+    "tiers": {
+      "bronze": "पीतल",
+      "silver": "चाँदी",
+      "gold": "सोना",
+      "platinum": "प्लैटिनम",
+      "bronze_req": "बुनियादी स्तर",
+      "points_req": "{{points}} अंक से"
+    }
   },
   "masters": {
     "add_favorites_hint": "हृदय आइकन पर क्लिक करके कलाकारों को अपने पसंदीदा में जोड़ें",

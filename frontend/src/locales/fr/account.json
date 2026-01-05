@@ -237,7 +237,15 @@
     "year_distribution": "Répartition pour l'année",
     "your_cashback": "Votre remise en argent",
     "your_discount": "votre réduction sera",
-    "your_promo": "Votre code promo"
+    "your_promo": "Votre code promo",
+    "tiers": {
+      "bronze": "Bronze",
+      "silver": "Argent",
+      "gold": "Or",
+      "platinum": "Platine",
+      "bronze_req": "Niveau de base",
+      "points_req": "À partir de {{points}} points"
+    }
   },
   "masters": {
     "add_favorites_hint": "Ajoutez des artistes à vos favoris en cliquant sur l'icône en forme de cœur",

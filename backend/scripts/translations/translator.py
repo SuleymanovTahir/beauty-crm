@@ -288,7 +288,9 @@ class Translator:
         cache_key_suffix = "|ctx" if use_context else ""
         cached = self._get_cached_translation(text + cache_key_suffix, source, target)
         if cached:
-            return cached
+            # Still apply terminology corrections to cached results, 
+            # as terminology may have been updated
+            return self._apply_terminology_corrections(cached, target)
         
         # Determine which translator to use based on text length
         text_length = len(text.strip())

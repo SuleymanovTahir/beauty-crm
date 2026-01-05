@@ -75,5 +75,26 @@
     "title": "Select Services",
     "total": "Total"
   },
-  "totalDuration": "Duration"
+  "totalDuration": "Duration",
+  "auth": {
+    "welcome": "Willkommen",
+    "subtitle": "Melden Sie sich an, um Ihren Beitragsverlauf zu speichern und Boni zu erhalten",
+    "continue_google": "Weiter über Google",
+    "continue_email": "Melden Sie sich per E-Mail an",
+    "or": "ODER",
+    "email_placeholder": "Geben Sie Ihre E-Mail-Adresse ein",
+    "guest_continue": "Weiter als Gast",
+    "complete_profile": "Vervollständigen Sie Ihr Profil",
+    "full_name": "Ihr Name",
+    "name_placeholder": "Namen eingeben",
+    "gender": "Boden",
+    "birthday": "Geburtsdatum",
+    "select": "Wählen",
+    "female": "Weiblich",
+    "male": "Männlich",
+    "other": "Ein anderer",
+    "info_note": "Wir nutzen diese Daten für personalisierte Angebote und Geburtstagsgeschenke.",
+    "create_account": "Ein Konto erstellen",
+    "success_mock": "Profil erfolgreich erhalten!"
+  }
 }

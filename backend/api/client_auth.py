@@ -73,8 +73,14 @@ def _get_client_id(user: dict, cursor) -> str:
         row = cursor.fetchone()
         if row: return row[0]
         
-    # 4. Крайний случай - возвращаем user_id как строку
-    return str(user.get("id", ""))
+    # 4. Проверяем, есть ли запись в client_loyalty_points по user_id
+    user_id = str(user.get("id", ""))
+    if user_id:
+        cursor.execute("SELECT client_id FROM client_loyalty_points WHERE client_id = %s", (user_id,))
+        if cursor.fetchone(): return user_id
+        
+    # 5. Крайний случай - возвращаем user_id как строку
+    return user_id
 
 # ============================================================================
 # ENDPOINTS
@@ -107,11 +113,32 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         
         client_row = c.fetchone()
 
-        points = client_row[0] if client_row else 0
+        # Get loyalty points and info correctly
+        from services.loyalty import LoyaltyService
+        loyalty_service = LoyaltyService()
+        loyalty_data = loyalty_service.get_client_loyalty(client_id)
+        
+        points = loyalty_data.get("available_points", 0) if loyalty_data else 0
+        total_spent = 0
+        total_saved = 0
+        
+        # Get actual totals if possible
+        try:
+            c.execute("SELECT total_spend, total_saved FROM clients WHERE instagram_id = %s", (client_id,))
+            spent_row = c.fetchone()
+            if spent_row:
+                total_spent = spent_row[0] or 0
+                total_saved = spent_row[1] or 0
+        except: pass
+
         loyalty = {
             "points": points,
-            "referral_code": client_row[1] if client_row else "",
-            "total_saved": client_row[2] if client_row else 0
+            "available_points": points,
+            "total_points": loyalty_data.get("total_points", 0) if loyalty_data else points,
+            "tier": (loyalty_data.get("loyalty_level", "bronze") if loyalty_data else "bronze").capitalize(),
+            "referral_code": client_row[1] if client_row else f"REF{client_id[:6].upper()}",
+            "total_saved": total_saved,
+            "total_spent": total_spent
         }
 
         client_info = {
@@ -712,17 +739,20 @@ async def get_loyalty(session_token: Optional[str] = Cookie(None)):
 
         if not loyalty_data:
             return {"success": False, "error": "Failed to get loyalty data"}
-
+        
+        # Enrich with configuration and tiers
+        all_levels = loyalty_service.get_all_levels()
+        
         # Get referral code from clients table
         c.execute("SELECT referral_code FROM clients WHERE instagram_id = %s", (client_id,))
         referral_row = c.fetchone()
-        referral_code = referral_row[0] if referral_row else f"REF{str(user.get('id', ''))[:6].upper()}"
+        referral_code = referral_row[0] if referral_row else f"REF{client_id[:6].upper()}"
 
         # Calculate actual totals
         user_phone = user.get("phone")
         user_id = user.get("id")
         
-        # 1. Total spent (sum of revenue from completed bookings)
+        # 1. Total spent
         c.execute("""
             SELECT SUM(revenue) FROM bookings 
             WHERE (instagram_id = %s OR phone = %s OR user_id = %s)
@@ -730,28 +760,22 @@ async def get_loyalty(session_token: Optional[str] = Cookie(None)):
         """, (client_id, user_phone, user_id))
         total_spent = c.fetchone()[0] or 0
         
-        # 2. Total saved (sum of spent loyalty points as currency)
+        # 2. Total saved
         c.execute("""
             SELECT SUM(points) FROM loyalty_transactions 
             WHERE client_id = %s AND transaction_type = 'spent'
         """, (client_id,))
         total_saved_points = abs(c.fetchone()[0] or 0)
 
-        # 3. Fetch all tiers
-        c.execute("""
-            SELECT level_name, min_points, discount_percent, color, benefits 
-            FROM loyalty_levels 
-            ORDER BY min_points ASC
-        """)
-        tiers_rows = c.fetchall()
+        # 3. Format tiers for frontend
         all_tiers = []
-        for t_row in tiers_rows:
+        for level in all_levels:
             all_tiers.append({
-                "name": t_row[0].capitalize(),
-                "points": t_row[1],
-                "discount": t_row[2],
-                "color": t_row[3],
-                "benefits": t_row[4]
+                "name": level["level_name"].capitalize(),
+                "points": level["min_points"],
+                "discount": level["discount_percent"],
+                "color": level.get("color", "#CD7F32"),
+                "benefits": level.get("benefits", "")
             })
 
         # 4. Fetch currency
@@ -764,7 +788,7 @@ async def get_loyalty(session_token: Optional[str] = Cookie(None)):
             "loyalty": {
                 "points": loyalty_data.get("available_points", 0),
                 "total_points": loyalty_data.get("total_points", 0),
-                "tier": loyalty_data.get("loyalty_level", "bronze"),
+                "tier": loyalty_data.get("loyalty_level", "bronze").capitalize(),
                 "discount": get_discount_for_tier(loyalty_data.get("loyalty_level", "bronze")),
                 "referral_code": referral_code,
                 "total_spent": total_spent,

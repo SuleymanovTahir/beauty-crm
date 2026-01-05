@@ -1,4 +1,96 @@
 {
+  "users": [
+    {
+      "id": 5,
+      "fields": {
+        "position": {
+          "ru": "Ногти/Вощение",
+          "key": "users.5.position.0e33fa6b",
+          "en": "Nail/Waxing",
+          "ar": "الأظافر/الصبح",
+          "es": "Uñas/Cera",
+          "de": "Nägel/Wachsen",
+          "fr": "Ongle/Épilation",
+          "hi": "नाखून/वैक्सिंग",
+          "kk": "Тырнақтар/балауыз",
+          "pt": "Prego/Depilação",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "position": {
+          "ru": "Стилист-парикмахер",
+          "key": "users.2.position.18612649",
+          "en": "Hair Stylist",
+          "ar": "مصفف الشعر",
+          "es": "estilista",
+          "de": "Friseur",
+          "fr": "Coiffeur",
+          "hi": "बालों की स्टाइल बनाने वाला",
+          "kk": "Шаш стилисті",
+          "pt": "Cabeleireiro",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "position": {
+          "ru": "Мастер ногтевого сервиса/Массажи",
+          "key": "users.6.position.d68a2270",
+          "en": "Nail Master/Massages",
+          "ar": "ماجستير الأظافر/التدليك",
+          "es": "Maestro de uñas/Masajes",
+          "de": "Nagelmeister/Massagen",
+          "fr": "Maître des Ongles/Massages",
+          "hi": "नेल मास्टर/मालिश",
+          "kk": "Тырнақ техникі/массаж",
+          "pt": "Mestre de unhas/massagens",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "fields": {
+        "position": {
+          "ru": "Мастер ногтевого сервиса",
+          "key": "users.4.position.1c34eb1b",
+          "en": "Nail Master",
+          "ar": "سيد الأظافر",
+          "es": "Maestro de uñas",
+          "de": "Nagelmeister",
+          "fr": "Maître des Ongles",
+          "hi": "नेल मास्टर",
+          "kk": "Тырнақ күтімінің шебері",
+          "pt": "Mestre de unhas",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "position": {
+          "ru": "Стилист-парикмахер",
+          "key": "users.3.position.18612649",
+          "en": "Hair Stylist",
+          "ar": "مصفف الشعر",
+          "es": "estilista",
+          "de": "Friseur",
+          "fr": "Coiffeur",
+          "hi": "बालों की स्टाइल बनाने वाला",
+          "kk": "Шаш стилисті",
+          "pt": "Cabeleireiro",
+          "detected_language": "en"
+        }
+      }
+    }
+  ],
   "public_reviews": [
     {
       "id": 1,
