@@ -43,6 +43,9 @@ SALON_TERMINOLOGY = {
         'ноготь': 'nail',
         'ногтя': 'nail',
         'ногтей': 'nails',
+        'вощение': 'ваксинг',
+        'массажи': 'массаж',
+        'бровист': 'мастер по бровям',
     },
     # English terms that need specific translations
     'en': {

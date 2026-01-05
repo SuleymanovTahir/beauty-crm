@@ -39,12 +39,18 @@ export function Loyalty() {
   }
 
   const { loyalty } = loyaltyData || {};
-  const levels = loyalty?.all_tiers || [
-    { name: 'Bronze', points: 0, discount: 0, color: '#CD7F32', requirement: 'booking level' },
-    { name: 'Silver', points: 1000, discount: 5, color: '#C0C0C0', requirement: 'From 1000 points' },
-    { name: 'Gold', points: 5000, discount: 10, color: '#FFD700', requirement: 'From 5000 points' },
-    { name: 'Platinum', points: 10000, discount: 15, color: '#E5E4E2', requirement: 'From 10000 points' },
-  ];
+  const levels = loyalty?.all_tiers?.map((tier: any) => ({
+    ...tier,
+    name: t(`loyalty.tiers.${tier.name.toLowerCase()}`, tier.name),
+    requirement: tier.points === 0
+      ? t('loyalty.tiers.bronze_req', 'Базовый уровень')
+      : t('loyalty.tiers.points_req', 'От {{points}} баллов', { points: tier.points })
+  })) || [
+      { name: t('loyalty.tiers.bronze', 'Bronze'), points: 0, discount: 0, color: '#CD7F32', requirement: t('loyalty.tiers.bronze_req', 'Базовый уровень') },
+      { name: t('loyalty.tiers.silver', 'Silver'), points: 1000, discount: 5, color: '#C0C0C0', requirement: t('loyalty.tiers.points_req', 'От 1000 баллов', { points: 1000 }) },
+      { name: t('loyalty.tiers.gold', 'Gold'), points: 5000, discount: 10, color: '#FFD700', requirement: t('loyalty.tiers.points_req', 'От 5000 баллов', { points: 5000 }) },
+      { name: t('loyalty.tiers.platinum', 'Platinum'), points: 10000, discount: 15, color: '#E5E4E2', requirement: t('loyalty.tiers.points_req', 'От 10000 баллов', { points: 10000 }) },
+    ];
   const currency = loyalty?.currency || globalCurrency || "AED";
 
   const defaultLoyalty = {
@@ -138,7 +144,7 @@ export function Loyalty() {
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-2">
             <Star className="text-amber-500 fill-amber-500" size={20} />
-            <span className="font-semibold">{currentLevel.name} {t('loyalty.status', 'status')}</span>
+            <span className="font-semibold">{currentLevel.name}</span>
           </div>
           <div className="text-right">
             <div className="text-3xl font-bold">{loyaltyInfo.points}</div>
