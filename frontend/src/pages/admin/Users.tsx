@@ -15,6 +15,7 @@ import { PermissionsTab } from '../../components/admin/PermissionsTab';
 import { ScheduleDialog } from '../../components/admin/ScheduleDialog';
 import { Calendar } from 'lucide-react';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
+import { useCurrency } from '../../hooks/useSalonSettings';
 
 import { getPhotoUrl } from '../../utils/photoUtils';
 
@@ -42,7 +43,8 @@ interface User {
 
 export default function Users() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['admin/users', 'common']);
+  const { t, i18n } = useTranslation(['admin/users', 'common']);
+  const { formatCurrency } = useCurrency();
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав
@@ -417,7 +419,7 @@ export default function Users() {
             </div>
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
               <p className="text-gray-600 text-sm mb-2">{t('stats_total_spend', 'Total Spend')}</p>
-              <h3 className="text-3xl text-pink-600">{(stats as any).totalSpend.toFixed(0)} AED</h3>
+              <h3 className="text-3xl text-pink-600">{formatCurrency((stats as any).totalSpend)}</h3>
             </div>
           </>
         )}
@@ -532,7 +534,7 @@ export default function Users() {
                           </Badge>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
-                          {(user.total_spend || 0).toFixed(0)} AED
+                          {formatCurrency(user.total_spend || 0)}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
                           {user.created_at ? new Date(user.created_at).toLocaleDateString('ru-RU') : '-'}

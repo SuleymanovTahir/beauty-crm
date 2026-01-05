@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { api } from '../../services/api';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart, Area } from 'recharts';
+import { useCurrency } from '../../hooks/useSalonSettings';
 
 interface Client {
   id: string;
@@ -63,6 +64,7 @@ export default function ClientDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation(['admin/clientdetail', 'common']);
+  const { formatCurrency } = useCurrency();
 
   const [client, setClient] = useState<Client | null>(null);
   const [stats, setStats] = useState<ClientStats | null>(null);
@@ -541,7 +543,7 @@ export default function ClientDetail() {
                 <div>
                   <p className="text-sm text-gray-600 mb-1">{t('lifetime_value')}</p>
                   <p className="text-2xl text-green-600 font-bold">
-                    {client.total_spend || client.lifetime_value || 0} AED
+                    {formatCurrency(client.total_spend || client.lifetime_value || 0)}
                   </p>
                 </div>
                 <div>
@@ -757,7 +759,7 @@ export default function ClientDetail() {
                       </Badge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                      {booking.revenue ? `${booking.revenue} AED` : '-'}
+                      {booking.revenue ? formatCurrency(booking.revenue) : '-'}
                     </td>
                   </tr>
                 ))}

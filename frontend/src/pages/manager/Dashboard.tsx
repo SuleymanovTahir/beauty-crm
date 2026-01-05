@@ -7,6 +7,7 @@ import { Badge } from '../../components/ui/badge';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../../hooks/useSalonSettings';
 
 interface Stats {
   total_clients: number;
@@ -39,6 +40,7 @@ interface FunnelData {
 export default function ManagerDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const { t } = useTranslation(['dashboard', 'common']);
+  const { formatCurrency } = useCurrency();
   const [funnel, setFunnel] = useState<FunnelData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -245,7 +247,7 @@ export default function ManagerDashboard() {
             <div className="flex items-center justify-between p-4 bg-pink-50 rounded-lg">
               <div>
                 <p className="text-sm text-gray-600">{t('dashboard:total_revenue')}</p>
-                <p className="text-2xl text-gray-900 font-medium">{(stats?.total_revenue || 0).toFixed(0)} AED</p>
+                <p className="text-2xl text-gray-900 font-medium">{formatCurrency(stats?.total_revenue || 0)}</p>
               </div>
               <TrendingUp className="w-6 h-6 text-pink-600" />
             </div>

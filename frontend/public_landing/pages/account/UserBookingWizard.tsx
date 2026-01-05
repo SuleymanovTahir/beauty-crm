@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedName } from '../../../src/utils/i18nUtils';
 
 // New Synced Components
+import { useCurrency } from '../../../src/hooks/useSalonSettings';
 import { BookingMenu } from './booking/BookingMenu';
 import { ServicesStep } from './booking/ServicesStep';
 import { ProfessionalStep } from './booking/ProfessionalStep';
@@ -53,6 +54,7 @@ export interface BookingState {
   date: Date | null;
   time: string | null;
   phone: string;
+  id?: number | null;
 }
 
 interface Props {
@@ -69,6 +71,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
   const step = searchParams.get('booking') || 'menu';
   const { t, i18n } = useTranslation(['booking', 'common']);
+  const { formatCurrency, currency } = useCurrency();
 
   // Helper for Russian pluralization
   const getPluralForm = (count: number, one: string, few: string, many: string) => {
@@ -98,6 +101,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
       date: null,
       time: null,
       phone: '',
+      id: null,
     };
   });
 
@@ -125,6 +129,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
       date: null,
       time: null,
       phone: '',
+      id: null,
     };
     setBookingState(initialState);
     sessionStorage.removeItem(STORAGE_KEY);
@@ -193,9 +198,14 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         const queryPrefillDate = searchParams.get('date');
         const queryPrefillTime = searchParams.get('time');
         const queryPrefillService = searchParams.get('serviceId');
+        const queryBookingId = searchParams.get('id');
 
-        if (state?.editBookingId || state?.prefillMaster || state?.prefillService || queryPrefillMaster || queryPrefillDate || queryPrefillTime || queryPrefillService) {
+        if (state?.editBookingId || queryBookingId || state?.prefillMaster || state?.prefillService || queryPrefillMaster || queryPrefillDate || queryPrefillTime || queryPrefillService) {
           const newState: Partial<BookingState> = {};
+
+          if (state?.editBookingId || queryBookingId) {
+            newState.id = state?.editBookingId || (queryBookingId ? parseInt(queryBookingId as string) : null);
+          }
 
           // Prefill service
           const serviceId = state?.prefillService || (queryPrefillService ? parseInt(queryPrefillService) : null);
@@ -489,7 +499,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     </p>
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                       {bookingState.professional && <span>{bookingState.professional.full_name} • </span>}
-                      {bookingState.services.length > 0 && <span>{totalDuration} {(t('min') || 'm')[0].toLowerCase()} • {totalPrice} {salonSettings?.currency || 'AED'}</span>}
+                      {bookingState.services.length > 0 && <span>{totalDuration} {(t('min') || 'm')[0].toLowerCase()} • {formatCurrency(totalPrice)}</span>}
                       {(bookingState.date || bookingState.time) && (
                         <>
                           {bookingState.services.length > 0 && ' • '}
@@ -559,7 +569,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           isOpen={showRescheduleDialog}
           onClose={() => setShowRescheduleDialog(false)}
           appointment={{
-            id: null, // Новая запись, не редактирование существующей
+            id: bookingState.id,
             service_name: bookingState.services.map((s: Service) => getLocalizedName(s, i18n.language)).join(', '),
             service_id: bookingState.services[0]?.id,
             master_name: bookingState.professional?.full_name || t('common.any_master', 'Любой мастер'),

@@ -263,6 +263,25 @@ class MasterScheduleService:
             dt = datetime.strptime(date, '%Y-%m-%d')
             day_of_week = dt.weekday()
 
+            # 1. Проверка праздников салона
+            c.execute("""
+                SELECT is_closed, master_exceptions 
+                FROM salon_holidays 
+                WHERE date = %s
+            """, (date,))
+            holiday = c.fetchone()
+            if holiday:
+                is_closed, master_exceptions_json = holiday
+                if is_closed:
+                    import json
+                    try:
+                        exceptions = json.loads(master_exceptions_json) if master_exceptions_json else []
+                    except:
+                        exceptions = []
+                    
+                    if user_id not in exceptions:
+                        return False # Салон закрыт и мастер не в исключениях
+
             # Проверяем рабочие часы
             c.execute("""
                 SELECT start_time, end_time
@@ -337,10 +356,31 @@ class MasterScheduleService:
         c = conn.cursor()
 
         try:
-            # Получаем рабочие часы на этот день
+            # Парсим дату
             dt = datetime.strptime(date, '%Y-%m-%d')
             day_of_week = dt.weekday()
 
+            # 1. Проверка праздников салона
+            c.execute("""
+                SELECT is_closed, master_exceptions 
+                FROM salon_holidays 
+                WHERE date = %s
+            """, (date,))
+            holiday = c.fetchone()
+            if holiday:
+                is_closed, master_exceptions_json = holiday
+                if is_closed:
+                    import json
+                    try:
+                        exceptions = json.loads(master_exceptions_json) if master_exceptions_json else []
+                    except:
+                        exceptions = []
+                    
+                    if user_id not in exceptions:
+                        log_info(f"Salon is closed on {date} (Holiday). {master_name} is not an exception.", "schedule")
+                        return []
+
+            # Получаем рабочие часы на этот день
             c.execute("""
                 SELECT start_time, end_time, is_active
                 FROM user_schedule

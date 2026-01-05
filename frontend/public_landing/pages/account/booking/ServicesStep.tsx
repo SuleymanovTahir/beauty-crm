@@ -8,6 +8,7 @@ import { Search, Clock, Banknote } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { api } from '../../../../src/services/api';
 import { getLocalizedName } from '../../../../src/utils/i18nUtils';
+import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 
 interface ServicesStepProps {
     selectedServices: any[];
@@ -19,6 +20,7 @@ interface ServicesStepProps {
 
 export function ServicesStep({ selectedServices, onServicesChange, salonSettings, preloadedServices, selectedProfessional = null }: ServicesStepProps) {
     const { t, i18n } = useTranslation(['booking', 'common']);
+    const { formatCurrency } = useCurrency();
     // Use preloaded services if available, otherwise empty (or start fetch)
     const [services, setServices] = useState<any[]>(preloadedServices || []);
     // Only show loading if we DON'T have preloaded services AND we are fetching (fallback)
@@ -172,7 +174,7 @@ export function ServicesStep({ selectedServices, onServicesChange, salonSettings
                                                     {service.duration && (
                                                         <span>{service.duration} {t('min', 'min')}</span>
                                                     )}
-                                                    <span className="text-sm font-bold text-gray-900">{service.price} {salonSettings?.currency || 'AED'}</span>
+                                                    <span className="text-sm font-bold text-gray-900">{formatCurrency(service.price)}</span>
                                                 </div>
                                             </div>
                                             <Checkbox

@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../components/ui/select';
+import { useCurrency } from '../../hooks/useSalonSettings';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -107,6 +108,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const [viewMode, setViewMode] = useState<'day' | 'week'>('week');
   const [bookings, setBookings] = useState<Booking[]>([]);
   const { t } = useTranslation(['admin/Calendar', 'common']);
+  const { currency, formatCurrency } = useCurrency();
 
   const statusLabels: Record<string, string> = {
     pending: t('calendar:pending'),
@@ -907,7 +909,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                                 </div>
                               </div>
                               <div className="text-sm font-semibold text-purple-600">
-                                {service.price} {service.currency}
+                                {formatCurrency(service.price)}
                               </div>
                             </div>
                           </button>
@@ -989,7 +991,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
               {/* Revenue */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  {t('calendar:revenue')} (AED)
+                  {t('calendar:revenue')} ({currency})
                 </label>
                 <input
                   type="number"

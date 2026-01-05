@@ -14,6 +14,7 @@ import { Textarea } from '../../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useCurrency } from '../../hooks/useSalonSettings';
 
 interface SpecialPackage {
   id: number;
@@ -57,6 +58,7 @@ interface ReferralCampaign {
 export default function SpecialPackages() {
   const [packages, setPackages] = useState<SpecialPackage[]>([]);
   const { t } = useTranslation(['admin/SpecialPackages', 'common']);
+  const { currency, formatCurrency } = useCurrency();
   const [filteredPackages, setFilteredPackages] = useState<SpecialPackage[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
@@ -90,7 +92,7 @@ export default function SpecialPackages() {
     description_ru: '',
     original_price: 0,
     special_price: 0,
-    currency: 'AED',
+    currency: currency,
     services_included: '',
     promo_code: '',
     keywords: '',
@@ -149,7 +151,7 @@ export default function SpecialPackages() {
       description_ru: '',
       original_price: 0,
       special_price: 0,
-      currency: 'AED',
+      currency: currency,
       services_included: '',
       promo_code: '',
       keywords: '',
@@ -406,10 +408,10 @@ export default function SpecialPackages() {
                 <div className="mb-4">
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold text-pink-600">
-                      {pkg.special_price} {pkg.currency}
+                      {formatCurrency(pkg.special_price)}
                     </span>
                     <span className="text-lg text-gray-400 line-through">
-                      {pkg.original_price} {pkg.currency}
+                      {formatCurrency(pkg.original_price)}
                     </span>
                   </div>
                   <div className="text-sm text-green-600 font-medium">

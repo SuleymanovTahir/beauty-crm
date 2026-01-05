@@ -1,4 +1,5 @@
 import { ArrowLeft, X, Globe, Scissors, User, Calendar, ChevronRight, Edit2 } from 'lucide-react';
+import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 
 interface BookingSummaryProps {
   service: any;
@@ -9,6 +10,7 @@ interface BookingSummaryProps {
 }
 
 export function BookingSummary({ service, master, time, onNext, onBack }: BookingSummaryProps) {
+  const { formatCurrency } = useCurrency();
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -62,7 +64,7 @@ export function BookingSummary({ service, master, time, onNext, onBack }: Bookin
               </div>
               <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M10 3L4.5 8.5L2 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M10 3L4.5 8.5L2 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
             </div>
@@ -82,7 +84,7 @@ export function BookingSummary({ service, master, time, onNext, onBack }: Bookin
               </div>
               <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M10 3L4.5 8.5L2 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M10 3L4.5 8.5L2 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
             </div>
@@ -134,7 +136,7 @@ export function BookingSummary({ service, master, time, onNext, onBack }: Bookin
                 {service.duration && (
                   <p className="text-xs text-gray-500 mb-1">min</p>
                 )}
-                <p className="text-sm font-bold">{service.price} AED</p>
+                <p className="text-sm font-bold">{formatCurrency(service.price)}</p>
               </div>
             </div>
           </div>
@@ -146,7 +148,7 @@ export function BookingSummary({ service, master, time, onNext, onBack }: Bookin
                 <p className="text-xs text-gray-500">{service.duration} min</p>
               )}
             </div>
-            <p className="text-2xl font-bold">{service.price} AED</p>
+            <p className="text-2xl font-bold">{formatCurrency(service.price)}</p>
           </div>
         </div>
       </div>

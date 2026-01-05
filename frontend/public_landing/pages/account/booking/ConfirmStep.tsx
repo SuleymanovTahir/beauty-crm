@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import { api } from '../../../../src/services/api';
 import { useAuth } from '../../../../src/contexts/AuthContext';
 import { getLocalizedName, getDateLocale as getDateLocaleCentral } from '../../../../src/utils/i18nUtils';
+import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 
 interface ConfirmStepProps {
     bookingState: any;
@@ -32,6 +33,7 @@ export function ConfirmStep({
     onOpenRescheduleDialog
 }: ConfirmStepProps) {
     const { t, i18n } = useTranslation(['booking', 'common']);
+    const { formatCurrency, currency } = useCurrency();
     const { user } = useAuth();
     const [phone, setPhone] = useState(bookingState.phone || user?.phone || '');
     const [showPhoneModal, setShowPhoneModal] = useState(false);
@@ -102,15 +104,26 @@ export function ConfirmStep({
             const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
 
             try {
-                await api.createBooking({
-                    instagram_id: user?.username || `web_${user?.id || 'guest'}`,
-                    service: serviceNames,
-                    master: bookingState.professional?.username || 'any',
-                    date: dateStr,
-                    time: bookingState.time || '',
-                    phone,
-                    name: user?.full_name || user?.username || 'Guest'
-                });
+                if (bookingState.id) {
+                    await api.put(`/api/bookings/${bookingState.id}`, {
+                        service: serviceNames,
+                        master: bookingState.professional?.username || 'any',
+                        date: dateStr,
+                        time: bookingState.time || '',
+                        phone,
+                        name: user?.full_name || user?.username || 'Guest'
+                    });
+                } else {
+                    await api.createBooking({
+                        instagram_id: user?.username || `web_${user?.id || 'guest'}`,
+                        service: serviceNames,
+                        master: bookingState.professional?.username || 'any',
+                        date: dateStr,
+                        time: bookingState.time || '',
+                        phone,
+                        name: user?.full_name || user?.username || 'Guest'
+                    });
+                }
 
                 clearTimeout(timeoutId);
                 toast.success(t('confirm.success', 'Booking confirmed!'));
@@ -198,7 +211,7 @@ export function ConfirmStep({
                                             <span className="text-gray-400 font-bold uppercase tracking-tighter">
                                                 {service.duration} {t('min', 'min')}
                                             </span>
-                                            <span className="font-black text-gray-900">{service.price} {salonSettings?.currency || 'AED'}</span>
+                                            <span className="font-black text-gray-900">{formatCurrency(service.price)}</span>
                                         </div>
                                     </div>
                                 ))}
@@ -272,8 +285,7 @@ export function ConfirmStep({
                             <div className="flex justify-between items-center bg-purple-50 p-6 rounded-2xl border border-purple-100">
                                 <span className="text-xs font-black text-purple-600 uppercase tracking-[0.2em]">{t('confirm.total', 'Total Amount')}</span>
                                 <span className="text-3xl font-black text-gray-900">
-                                    {totalPrice}
-                                    <span className="text-sm font-bold text-gray-400 ml-2 uppercase">{salonSettings?.currency || 'AED'}</span>
+                                    {formatCurrency(totalPrice)}
                                 </span>
                             </div>
                         </div>

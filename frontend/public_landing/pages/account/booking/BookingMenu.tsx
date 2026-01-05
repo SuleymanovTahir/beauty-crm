@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -17,6 +18,7 @@ interface BookingMenuProps {
 
 export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, totalPrice, salonSettings }: BookingMenuProps) {
     const { t, i18n } = useTranslation(['booking', 'common']);
+    const { formatCurrency } = useCurrency();
 
     const isServicesComplete = bookingState.services.length > 0;
     const isProfessionalComplete = bookingState.professional !== null || bookingState.professionalSelected;
@@ -194,7 +196,7 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
                                 <span className="text-gray-700">{getLocalizedName(service, i18n.language)}</span>
                                 <div className="flex items-center gap-3">
                                     <span className="text-sm text-gray-500">{service.duration} {t('min', 'min')}</span>
-                                    <span className="font-medium">{service.price} {salonSettings?.currency || 'AED'}</span>
+                                    <span className="font-medium">{formatCurrency(service.price)}</span>
                                 </div>
                             </div>
                         ))}
@@ -205,7 +207,7 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
                             <p className="text-gray-600">{t('services.total', 'Total')}</p>
                             <p className="text-sm text-gray-500">{totalDuration} {t('min', 'min')}</p>
                         </div>
-                        <p className="text-2xl font-bold text-purple-600">{totalPrice} {salonSettings?.currency || 'AED'}</p>
+                        <p className="text-2xl font-bold text-purple-600">{formatCurrency(totalPrice)}</p>
                     </div>
 
                     {isAllComplete && (
