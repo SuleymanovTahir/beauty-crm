@@ -62,8 +62,8 @@ export function useSalonSettings() {
 
     const currency = settings.currency;
 
-    const formatCurrency = useCallback((amount: number | string) => {
-        return formatCurrencyUtil(amount, currency);
+    const formatCurrency = useCallback((amount: number | string, overrideCurrency?: string) => {
+        return formatCurrencyUtil(amount, overrideCurrency || currency);
     }, [currency]);
 
     return { settings, loading, currency, formatCurrency };
