@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from '../../src/contexts/AuthContext';
+import { supportedLanguages } from "../../src/utils/i18nUtils";
 import logo from "../styles/img/logo.png";
 
 const navigation = [
@@ -16,17 +17,11 @@ const navigation = [
   { name: "Контакты", href: "#map-section", key: "contactsTag", defaultText: "Контакты" },
 ];
 
-const languages = [
-  { code: 'ru', name: 'Русский', flag: '🇷🇺', short: 'RU' },
-  { code: 'en', name: 'English', flag: '🇬🇧', short: 'EN' },
-  { code: 'ar', name: 'العربية', flag: '🇦🇪', short: 'AR' },
-  { code: 'es', name: 'Español', flag: '🇪🇸', short: 'ES' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪', short: 'DE' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷', short: 'FR' },
-  { code: 'hi', name: 'हिन्दी', flag: '🇮🇳', short: 'HI' },
-  { code: 'kk', name: 'Қазақша', flag: '🇰🇿', short: 'KZ' },
-  { code: 'pt', name: 'Português', flag: '🇵🇹', short: 'PT' }
-];
+// Derive languages from utils
+const languages = supportedLanguages.map(lang => ({
+  ...lang,
+  short: lang.code === 'kk' ? 'KZ' : lang.code.toUpperCase()
+}));
 
 interface HeaderProps {
   salonInfo?: any;
@@ -42,6 +37,8 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isMobileUserMenuOpen, setIsMobileUserMenuOpen] = useState(false);
+  const [isMobileLangMenuOpen, setIsMobileLangMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const langMenuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -391,24 +388,51 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-border/10">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">
-                    Язык / Language
-                  </p>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {languages.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => changeLanguage(lang.code)}
-                        className={`px-2 py-1.5 rounded-lg text-xs flex flex-col items-center justify-center gap-0.5 transition-all ${language === lang.code
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-secondary hover:bg-secondary/80 text-primary'
-                          }`}
+                  <button
+                    onClick={() => setIsMobileLangMenuOpen(!isMobileLangMenuOpen)}
+                    className="w-full flex items-center justify-between mb-2 group"
+                  >
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
+                      {t('common:language', 'Язык / Language')}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-primary uppercase">
+                        {languages.find(l => l.code === language)?.short || language}
+                      </span>
+                      <ChevronDown className={`w-3 h-3 text-muted-foreground transition-transform duration-300 ${isMobileLangMenuOpen ? 'rotate-180' : ''}`} />
+                    </div>
+                  </button>
+
+                  <AnimatePresence>
+                    {isMobileLangMenuOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
                       >
-                        <span className="text-base">{lang.flag}</span>
-                        <span className="text-[9px]">{lang.short}</span>
-                      </button>
-                    ))}
-                  </div>
+                        <div className="grid grid-cols-3 gap-1.5 pt-1">
+                          {languages.map((lang) => (
+                            <button
+                              key={lang.code}
+                              onClick={() => {
+                                changeLanguage(lang.code);
+                                // Optional: close menu after selection
+                                // setIsMobileLangMenuOpen(false);
+                              }}
+                              className={`px-2 py-2.5 rounded-xl text-xs flex flex-col items-center justify-center gap-1 transition-all active:scale-95 ${language === lang.code
+                                ? 'bg-primary text-primary-foreground shadow-md'
+                                : 'bg-gray-50 hover:bg-gray-100 text-gray-600'
+                                }`}
+                            >
+                              <span className="text-lg leading-none">{lang.flag}</span>
+                              <span className="text-[10px] font-bold uppercase tracking-tight">{lang.short}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </nav>
 
@@ -446,39 +470,68 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
 
                   {user ? (
                     <div className="space-y-2">
-                      <Button
-                        onClick={() => window.location.href = '/account/dashboard'}
-                        variant="outline"
-                        className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-9 text-sm justify-start"
+                      {/* Premium User Card Trigger */}
+                      <button
+                        onClick={() => setIsMobileUserMenuOpen(!isMobileUserMenuOpen)}
+                        className="w-full bg-primary/5 rounded-2xl p-4 flex items-center justify-between transition-all active:bg-primary/10"
                       >
-                        <LayoutDashboard className="w-4 h-4 mr-2" />
-                        {t('account:tabs.dashboard', 'Личный кабинет')}
-                      </Button>
-                      <Button
-                        onClick={() => window.location.href = '/account/appointments'}
-                        variant="outline"
-                        className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-9 text-sm justify-start"
-                      >
-                        <Calendar className="w-4 h-4 mr-2" />
-                        {t('account:tabs.appointments', 'Мои записи')}
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          logout();
-                          window.location.href = '/';
-                        }}
-                        variant="ghost"
-                        className="w-full text-red-500 hover:bg-red-50 h-9 text-sm justify-start"
-                      >
-                        <LogOut className="w-4 h-4 mr-2" />
-                        {t('common:logout', 'Выйти')}
-                      </Button>
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shadow-inner">
+                            <User className="w-5 h-5 text-primary" />
+                          </div>
+                          <div className="text-left min-w-0">
+                            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">{t('account:user_role', 'Клиент')}</p>
+                            <p className="text-sm font-bold text-gray-900 truncate">{user.full_name || user.username}</p>
+                          </div>
+                        </div>
+                        <ChevronDown className={`w-4 h-4 text-primary/50 transition-transform duration-300 ${isMobileUserMenuOpen ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      {/* Collapsible Actions */}
+                      <AnimatePresence>
+                        {isMobileUserMenuOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden space-y-1 pt-1"
+                          >
+                            <Button
+                              onClick={() => window.location.href = '/account/dashboard'}
+                              variant="ghost"
+                              className="w-full h-11 text-xs justify-start hover:bg-primary/5 rounded-xl px-4 transition-all"
+                            >
+                              <LayoutDashboard className="w-4 h-4 mr-3 text-primary/70" />
+                              <span className="font-medium text-gray-600">{t('account:tabs.dashboard', 'Личный кабинет')}</span>
+                            </Button>
+                            <Button
+                              onClick={() => window.location.href = '/account/appointments'}
+                              variant="ghost"
+                              className="w-full h-11 text-xs justify-start hover:bg-primary/5 rounded-xl px-4 transition-all"
+                            >
+                              <Calendar className="w-4 h-4 mr-3 text-primary/70" />
+                              <span className="font-medium text-gray-600">{t('account:tabs.appointments', 'Мои записи')}</span>
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                logout();
+                                window.location.href = '/';
+                              }}
+                              variant="ghost"
+                              className="w-full h-11 text-xs justify-start text-red-500 hover:bg-red-50 rounded-xl px-4 transition-all"
+                            >
+                              <LogOut className="w-4 h-4 mr-3" />
+                              <span className="font-medium">{t('common:logout', 'Выйти')}</span>
+                            </Button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   ) : (
                     <Button
                       onClick={() => window.location.href = '/login'}
                       variant="outline"
-                      className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-9 text-sm"
+                      className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-11 text-sm font-bold rounded-xl transition-all active:scale-[0.98]"
                     >
                       <User className="w-4 h-4 mr-2" />
                       {t('login', { defaultValue: 'Войти' })}
