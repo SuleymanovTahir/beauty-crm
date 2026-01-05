@@ -18,7 +18,7 @@ export function Appointments() {
   const { formatCurrency, currency: globalCurrency } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [bookings, setBookings] = useState<any[]>([]);
-  const [currency, setCurrency] = useState(globalCurrency || 'AED');
+  const [currency, setCurrency] = useState(globalCurrency);
   const [filter, setFilter] = useState<'upcoming' | 'history' | 'recurring'>('upcoming');
 
   // Add to Google Calendar function
