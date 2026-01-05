@@ -1414,6 +1414,8 @@ export class ApiClient {
     subject: string;
     message: string;
     target_role?: string;
+    user_ids?: number[];
+    force_send?: boolean;
   }) {
     return this.request<{
       total_users: number;
@@ -1438,6 +1440,8 @@ export class ApiClient {
     subject: string;
     message: string;
     target_role?: string;
+    user_ids?: number[];
+    force_send?: boolean;
   }) {
     return this.request<{
       success: boolean;
@@ -1461,6 +1465,30 @@ export class ApiClient {
         results: string;
       }>;
     }>('/api/broadcasts/history')
+  }
+
+  async getBroadcastUsers(subscriptionType: string, targetRole?: string) {
+    let url = `/api/broadcasts/users?subscription_type=${subscriptionType}`
+    if (targetRole && targetRole !== 'all') {
+      url += `&target_role=${targetRole}`
+    }
+    return this.request<{
+      users: Array<{
+        id: number;
+        username: string;
+        full_name: string;
+        role: string;
+        email: string | null;
+        telegram_id: string | null;
+        instagram_username: string | null;
+        is_subscribed: boolean;
+        channels: {
+          email: boolean;
+          telegram: boolean;
+          instagram: boolean;
+        };
+      }>;
+    }>(url)
   }
 
   async getSalonWorkingHours() {

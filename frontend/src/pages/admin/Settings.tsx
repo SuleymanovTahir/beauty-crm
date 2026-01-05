@@ -27,6 +27,8 @@ import {
   Bot,
   BookOpen,
   Shield,
+  ShieldAlert,
+  X,
   User,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
@@ -134,13 +136,25 @@ export default function AdminSettings() {
     message: '',
     target_role: '',
     user_ids: [] as number[],
+    force_send: false,
   });
   const [broadcastPreview, setBroadcastPreview] = useState<any>(null);
   const [loadingBroadcastPreview, setLoadingBroadcastPreview] = useState(false);
   const [sendingBroadcast, setSendingBroadcast] = useState(false);
   const [broadcastHistory, setBroadcastHistory] = useState<any[]>([]);
   const [loadingBroadcastHistory, setLoadingBroadcastHistory] = useState(false);
-  const [broadcastUsers, setBroadcastUsers] = useState<Array<{ id: number; username: string; full_name: string; role: string }>>([]);
+  const [broadcastUsers, setBroadcastUsers] = useState<Array<{
+    id: number;
+    username: string;
+    full_name: string;
+    role: string;
+    is_subscribed: boolean;
+    channels: {
+      email: boolean;
+      telegram: boolean;
+      instagram: boolean;
+    };
+  }>>([]);
   const [loadingBroadcastUsers, setLoadingBroadcastUsers] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
@@ -215,11 +229,16 @@ export default function AdminSettings() {
     loadBroadcastHistory();
     loadBookingReminderSettings();
     loadMessengerSettings();
-    loadBroadcastUsers();
     loadHolidays();
   }, []);
 
-  // ДОБАВИТЬ эту функцию:
+  useEffect(() => {
+    if (broadcastForm.subscription_type) {
+      loadBroadcastUsers(broadcastForm.subscription_type, broadcastForm.target_role);
+    }
+  }, [broadcastForm.subscription_type, broadcastForm.target_role]);
+
+
   const loadSalonSettings = async () => {
     try {
       setLoading(true);
@@ -697,15 +716,13 @@ export default function AdminSettings() {
     }
   };
 
-  const loadBroadcastUsers = async () => {
+  const loadBroadcastUsers = async (type?: string, role?: string) => {
+    if (!type) return;
     try {
       setLoadingBroadcastUsers(true);
-      console.log('🔍 Loading users for broadcast selection...');
-      const response = await api.getUsers();
-      console.log('✅ Users response:', response);
-      const usersArray = Array.isArray(response) ? response : (response?.users || []);
-      console.log('✅ Users array:', usersArray);
-      setBroadcastUsers(usersArray);
+      console.log('🔍 Loading eligible users for broadcast...', type, role);
+      const response = await api.getBroadcastUsers(type, role);
+      setBroadcastUsers(response.users);
     } catch (err) {
       console.error('❌ Error loading broadcast users:', err);
     } finally {
@@ -888,11 +905,12 @@ export default function AdminSettings() {
       // Reset form
       setBroadcastForm({
         subscription_type: '',
-        channels: [],
+        channels: [] as string[],
         subject: '',
         message: '',
         target_role: '',
-        user_ids: [],
+        user_ids: [] as number[],
+        force_send: false,
       });
       setBroadcastPreview(null);
 
@@ -2228,6 +2246,21 @@ export default function AdminSettings() {
                         </Select>
                       </div>
 
+                      {/* Force Send Toggle */}
+                      <div className="flex items-center justify-between p-4 bg-amber-50 rounded-lg border border-amber-200">
+                        <div className="flex items-center gap-3">
+                          <ShieldAlert className="w-5 h-5 text-amber-600" />
+                          <div>
+                            <p className="text-sm font-medium text-amber-900">{t('settings:important_message')}</p>
+                            <p className="text-xs text-amber-700">{t('settings:force_send_description')}</p>
+                          </div>
+                        </div>
+                        <Switch
+                          checked={broadcastForm.force_send}
+                          onCheckedChange={(checked) => setBroadcastForm({ ...broadcastForm, force_send: checked })}
+                        />
+                      </div>
+
                       {/* User Selection */}
                       <div>
                         <Label className="text-sm font-medium text-gray-700 mb-2 block">
@@ -2264,12 +2297,12 @@ export default function AdminSettings() {
                                   <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                       type="checkbox"
-                                      checked={(broadcastForm.user_ids || []).length === filteredUsers.length && filteredUsers.length > 0}
+                                      checked={(broadcastForm.user_ids || []).length === filteredUsers.filter(u => u.is_subscribed || broadcastForm.force_send).length && filteredUsers.length > 0}
                                       onChange={() => {
-                                        if ((broadcastForm.user_ids || []).length === filteredUsers.length) {
+                                        if ((broadcastForm.user_ids || []).length === filteredUsers.filter(u => u.is_subscribed || broadcastForm.force_send).length) {
                                           setBroadcastForm({ ...broadcastForm, user_ids: [] });
                                         } else {
-                                          setBroadcastForm({ ...broadcastForm, user_ids: filteredUsers.map(u => u.id) });
+                                          setBroadcastForm({ ...broadcastForm, user_ids: filteredUsers.filter(u => u.is_subscribed || broadcastForm.force_send).map(u => u.id) });
                                         }
                                       }}
                                       className="w-4 h-4 settings-accent-pink rounded"
@@ -2284,29 +2317,57 @@ export default function AdminSettings() {
                                     <div className="flex justify-center py-8">
                                       <Loader className="w-5 h-5 animate-spin settings-loader" />
                                     </div>
+                                  ) : !broadcastForm.subscription_type ? (
+                                    <div className="flex justify-center py-8 text-gray-500 text-sm">
+                                      {t('settings:select_type_first')}
+                                    </div>
                                   ) : filteredUsers.length === 0 ? (
                                     <div className="flex justify-center py-8 text-gray-500 text-sm">
-                                      {t('settings:no_users_for_role')}
+                                      {t('settings:no_users_found')}
                                     </div>
                                   ) : (
                                     <div className="p-2">
-                                      {filteredUsers.map((user) => (
-                                        <label
-                                          key={user.id}
-                                          className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition-colors"
-                                        >
-                                          <input
-                                            type="checkbox"
-                                            checked={(broadcastForm.user_ids || []).includes(user.id)}
-                                            onChange={() => handleBroadcastUserToggle(user.id)}
-                                            className="w-4 h-4 settings-accent-pink rounded"
-                                          />
-                                          <div className="flex-1">
-                                            <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
-                                            <p className="text-xs text-gray-500">@{user.username} · {user.role}</p>
-                                          </div>
-                                        </label>
-                                      ))}
+                                      {filteredUsers.map((user) => {
+                                        const isUnsubscribed = !user.is_subscribed && !broadcastForm.force_send;
+                                        return (
+                                          <label
+                                            key={user.id}
+                                            className={`flex items-start gap-3 p-2 rounded cursor-pointer transition-colors ${isUnsubscribed ? 'opacity-50 grayscale' : 'hover:bg-gray-50'}`}
+                                          >
+                                            <input
+                                              type="checkbox"
+                                              disabled={isUnsubscribed}
+                                              checked={(broadcastForm.user_ids || []).includes(user.id)}
+                                              onChange={() => handleBroadcastUserToggle(user.id)}
+                                              className="w-4 h-4 mt-1 settings-accent-pink rounded"
+                                            />
+                                            <div className="flex-1">
+                                              <div className="flex items-center justify-between">
+                                                <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
+                                                {!user.is_subscribed && (
+                                                  <span className="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-600 rounded-full flex items-center gap-1">
+                                                    <X className="w-2.5 h-2.5" />
+                                                    {t('settings:unsubscribed')}
+                                                  </span>
+                                                )}
+                                              </div>
+                                              <p className="text-xs text-gray-500">@{user.username} · {user.role}</p>
+                                              <div className="flex gap-2 mt-1">
+                                                {broadcastForm.channels.includes('email') && (
+                                                  <span className={`text-[10px] ${user.email ? 'text-blue-600' : 'text-gray-400'}`}>
+                                                    {user.email ? '✓ Email' : '✗ Email'}
+                                                  </span>
+                                                )}
+                                                {broadcastForm.channels.includes('telegram') && (
+                                                  <span className={`text-[10px] ${user.telegram_id ? 'text-green-600' : 'text-gray-400'}`}>
+                                                    {user.telegram_id ? '✓ TG' : '✗ TG'}
+                                                  </span>
+                                                )}
+                                              </div>
+                                            </div>
+                                          </label>
+                                        );
+                                      })}
                                     </div>
                                   )}
                                 </div>
