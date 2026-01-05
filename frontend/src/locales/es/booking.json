@@ -75,5 +75,26 @@
     "title": "Select Services",
     "total": "Total"
   },
-  "totalDuration": "Duration"
+  "totalDuration": "Duration",
+  "auth": {
+    "welcome": "Bienvenido",
+    "subtitle": "Inicie sesión para guardar su historial de publicaciones y recibir bonificaciones",
+    "continue_google": "Continuar a través de Google",
+    "continue_email": "Iniciar sesión por correo electrónico",
+    "or": "O",
+    "email_placeholder": "Introduce tu correo electrónico",
+    "guest_continue": "Continuar como invitado",
+    "complete_profile": "Completa tu perfil",
+    "full_name": "Su nombre",
+    "name_placeholder": "Introduce el nombre",
+    "gender": "Piso",
+    "birthday": "Fecha de nacimiento",
+    "select": "Elegir",
+    "female": "Femenino",
+    "male": "Masculino",
+    "other": "Otro",
+    "info_note": "Utilizamos estos datos para ofertas personalizadas y regalos de cumpleaños.",
+    "create_account": "Crea una cuenta",
+    "success_mock": "¡Perfil recibido exitosamente!"
+  }
 }

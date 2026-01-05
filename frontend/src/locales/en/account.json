@@ -237,7 +237,15 @@
     "year_distribution": "Distribution for the year",
     "your_cashback": "Your Cashback",
     "your_discount": "your discount will be",
-    "your_promo": "Your promo code"
+    "your_promo": "Your promo code",
+    "tiers": {
+      "bronze": "Bronze",
+      "silver": "Silver",
+      "gold": "Gold",
+      "platinum": "Platinum",
+      "bronze_req": "Basic level",
+      "points_req": "From {{points}} points"
+    }
   },
   "masters": {
     "add_favorites_hint": "Add artists to your favorites by clicking on the heart icon",

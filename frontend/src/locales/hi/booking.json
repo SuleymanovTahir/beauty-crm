@@ -75,5 +75,26 @@
     "title": "सेवाएँ चुनें",
     "total": "कुल"
   },
-  "totalDuration": "अवधि"
+  "totalDuration": "अवधि",
+  "auth": {
+    "welcome": "स्वागत",
+    "subtitle": "अपना पोस्ट इतिहास सहेजने और बोनस प्राप्त करने के लिए लॉगिन करें",
+    "continue_google": "Google के माध्यम से जारी रखें",
+    "continue_email": "ईमेल के माध्यम से लॉगिन करें",
+    "or": "या",
+    "email_placeholder": "अपना ईमेल दर्ज करें",
+    "guest_continue": "अतिथि के रूप में जारी रखें",
+    "complete_profile": "अपनी प्रोफ़ाइल पूरी करें",
+    "full_name": "आपका नाम",
+    "name_placeholder": "नाम दर्ज करें",
+    "gender": "ज़मीन",
+    "birthday": "जन्मतिथि",
+    "select": "चुनना",
+    "female": "महिला",
+    "male": "पुरुष",
+    "other": "एक और",
+    "info_note": "हम इस डेटा का उपयोग वैयक्तिकृत ऑफ़र और जन्मदिन उपहारों के लिए करते हैं।",
+    "create_account": "खाता बनाएं",
+    "success_mock": "प्रोफ़ाइल सफलतापूर्वक प्राप्त हुई!"
+  }
 }

@@ -1,4 +1,91 @@
 {
+  "users": [
+    {
+      "id": 5,
+      "fields": {
+        "position": {
+          "ru": "Nail/Waxing",
+          "key": "users.5.position.0e33fa6b",
+          "en": "Nail/Waxing",
+          "ar": "الأظافر/الصبح",
+          "es": "Uñas/Cera",
+          "de": "Nägel/Wachsen",
+          "fr": "Ongle/Épilation",
+          "hi": "नाखून/वैक्सिंग",
+          "kk": "Тырнақтар/балауыз",
+          "pt": "Prego/Depilação"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "position": {
+          "ru": "Hair Stylist",
+          "key": "users.2.position.18612649",
+          "en": "Hair Stylist",
+          "ar": "مصفف الشعر",
+          "es": "estilista",
+          "de": "Friseur",
+          "fr": "Coiffeur",
+          "hi": "बालों की स्टाइल बनाने वाला",
+          "kk": "Шаш стилисті",
+          "pt": "Cabeleireiro"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "position": {
+          "ru": "Nail Master/Massages",
+          "key": "users.6.position.d68a2270",
+          "en": "Nail Master/Massages",
+          "ar": "ماجستير الأظافر/التدليك",
+          "es": "Maestro de uñas/Masajes",
+          "de": "Nagelmeister/Massagen",
+          "fr": "Maître des Ongles/Massages",
+          "hi": "नेल मास्टर/मालिश",
+          "kk": "Тырнақ техникі/массаж",
+          "pt": "Mestre de unhas/massagens"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "fields": {
+        "position": {
+          "ru": "Nail Master",
+          "key": "users.4.position.1c34eb1b",
+          "en": "Nail Master",
+          "ar": "سيد الأظافر",
+          "es": "Maestro de uñas",
+          "de": "Nagelmeister",
+          "fr": "Maître des Ongles",
+          "hi": "नेल मास्टर",
+          "kk": "Тырнақ күтімінің шебері",
+          "pt": "Mestre de unhas"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "position": {
+          "ru": "Hair Stylist",
+          "key": "users.3.position.18612649",
+          "en": "Hair Stylist",
+          "ar": "مصفف الشعر",
+          "es": "estilista",
+          "de": "Friseur",
+          "fr": "Coiffeur",
+          "hi": "बालों की स्टाइल बनाने वाला",
+          "kk": "Шаш стилисті",
+          "pt": "Cabeleireiro"
+        }
+      }
+    }
+  ],
   "public_reviews": [
     {
       "id": 1,
