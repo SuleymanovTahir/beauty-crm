@@ -15,16 +15,55 @@ interface Service {
   category: string;
 }
 
-export function Services() {
+interface ServicesProps {
+  initialServices?: Service[];
+}
+
+export function Services({ initialServices }: ServicesProps) {
   const { t, i18n } = useTranslation(['public_landing', 'common']);
   const { formatCurrency } = useCurrency();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [displayCount, setDisplayCount] = useState(12);
-  const [services, setServices] = useState<Service[]>([]);
+  const [services, setServices] = useState<Service[]>(initialServices || []);
   const [categories, setCategories] = useState<{ id: string, label: string }[]>([]);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const processServicesData = (data: any) => {
+    if (Array.isArray(data)) {
+      setServices(data);
+
+      const uniqueCategories = new Set(data.map((item: any) => item.category));
+      const cats = [{ id: "all", label: t('allServices', { defaultValue: 'Все услуги' }) }];
+
+      uniqueCategories.forEach(cat => {
+        if (cat) {
+          const catId = String(cat).toLowerCase();
+          let label = t(catId, { defaultValue: catId.charAt(0).toUpperCase() + catId.slice(1) });
+          if (!cats.find(c => c.id === cat)) {
+            cats.push({ id: cat, label: label });
+          }
+        }
+      });
+      setCategories(cats);
+    } else if (data.categories) {
+      const flatServices: Service[] = [];
+      const cats = [{ id: "all", label: t('allServices', { defaultValue: 'Все услуги' }) }];
+
+      data.categories.forEach((cat: any) => {
+        cats.push({ id: cat.id, label: cat.title });
+        if (cat.items) {
+          flatServices.push(...cat.items.map((item: any) => ({
+            ...item,
+            category: cat.id
+          })));
+        }
+      });
+      setServices(flatServices);
+      setCategories(cats);
+    }
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -38,49 +77,23 @@ export function Services() {
   }, []);
 
   useEffect(() => {
+    if (initialServices && initialServices.length > 0) {
+      processServicesData(initialServices);
+      return;
+    }
+
     const fetchServices = async () => {
       try {
         const res = await fetch(`/api/public/services?language=${i18n.language}`);
         const data = await res.json();
-
-        if (Array.isArray(data)) {
-          setServices(data);
-
-          const uniqueCategories = new Set(data.map((item: any) => item.category));
-          const cats = [{ id: "all", label: t('allServices', { defaultValue: 'Все услуги' }) }];
-
-          uniqueCategories.forEach(cat => {
-            if (cat) {
-              const catId = String(cat).toLowerCase();
-              let label = t(catId, { defaultValue: catId.charAt(0).toUpperCase() + catId.slice(1) });
-              if (!cats.find(c => c.id === cat)) {
-                cats.push({ id: cat, label: label });
-              }
-            }
-          });
-          setCategories(cats);
-        } else if (data.categories) {
-          const flatServices: Service[] = [];
-          const cats = [{ id: "all", label: t('allServices', { defaultValue: 'Все услуги' }) }];
-
-          data.categories.forEach((cat: any) => {
-            cats.push({ id: cat.id, label: cat.title });
-            if (cat.items) {
-              flatServices.push(...cat.items.map((item: any) => ({
-                ...item,
-                category: cat.id
-              })));
-            }
-          });
-          setServices(flatServices);
-          setCategories(cats);
-        }
+        processServicesData(data);
       } catch (error) {
         console.error("Error loading services:", error);
       }
     };
     fetchServices();
-  }, [i18n.language]);
+  }, [initialServices, i18n.language]);
+
 
   const filteredServices = services.filter((service) => {
     const matchesCategory = activeCategory === "all" || service.category === activeCategory;

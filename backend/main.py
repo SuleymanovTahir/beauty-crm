@@ -512,8 +512,13 @@ async def startup_event():
     # ================================
     # ПОЛУЧЕНИЕ НАСТРОЕК САЛОНА
     # ================================
+    # Инициализация пула соединений
+    from db.connection import init_connection_pool
+    init_connection_pool()
+    
     # Получаем настройки ПОСЛЕ миграций
     global salon
+
     salon = get_salon_settings()
     log_info(f"✅ Настройки загружены: {salon['name']}", "startup")
  

@@ -24,8 +24,10 @@ class CacheControlMiddleware(BaseHTTPMiddleware):
             "/api/public/salon-info",
             "/api/public/seo-metadata",
             "/api/public/reviews",
-            "/api/public/gallery"
+            "/api/public/gallery",
+            "/api/public/initial-load"
         ]
+
         
         if any(request.url.path.startswith(path) for path in cacheable_paths):
             # Кэшируем на 10 минут

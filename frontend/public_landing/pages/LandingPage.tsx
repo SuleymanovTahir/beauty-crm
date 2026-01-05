@@ -65,9 +65,10 @@ export function LandingPage() {
 
         <div id="services">
           <Suspense fallback={<LoadingSpinner />}>
-            <Services />
+            <Services initialServices={initialData?.services} />
           </Suspense>
         </div>
+
 
         <div id="portfolio">
           <Suspense fallback={<LoadingSpinner />}>
