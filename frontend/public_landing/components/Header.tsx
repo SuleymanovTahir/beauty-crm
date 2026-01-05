@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Globe, Instagram, User } from "lucide-react";
+import { Menu, X, Globe, Instagram, User, ChevronDown, LogOut, Calendar, LayoutDashboard } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
@@ -33,21 +33,26 @@ interface HeaderProps {
 }
 
 export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
-  const { user } = useAuth();
+  const { t, i18n } = useTranslation(['public_landing', 'common', 'account']);
+  const { user, logout } = useAuth();
   const language = i18n.language;
   const changeLanguage = (lang: string) => i18n.changeLanguage(lang);
   const [salonInfo, setSalonInfo] = useState(propSalonInfo || {});
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const langMenuRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
         setIsLangMenuOpen(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
       }
     };
 
@@ -237,21 +242,73 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
 
               {/* User Account */}
               {user ? (
-                <Button
-                  onClick={() => window.location.href = '/account'}
-                  variant="outline"
-                  size="sm"
-                  className="border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-8 text-xs"
-                >
-                  <User className="w-3.5 h-3.5 mr-1.5" />
-                  {user.full_name || t('account', { defaultValue: 'Кабинет' })}
-                </Button>
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    onMouseEnter={() => setIsUserMenuOpen(true)}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/10 hover:border-primary/30 hover:bg-black/5 transition-all group"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
+                      <User className="w-3.5 h-3.5 text-primary" />
+                    </div>
+                    <span className="text-xs font-medium text-primary max-w-[100px] truncate">
+                      {user.full_name || user.username}
+                    </span>
+                    <ChevronDown className={`w-3.5 h-3.5 text-primary/50 transition-transform duration-300 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  <AnimatePresence>
+                    {isUserMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        onMouseLeave={() => setIsUserMenuOpen(false)}
+                        className="absolute right-0 top-full mt-2 w-48 bg-white/95 backdrop-blur-md border border-gray-100 rounded-2xl shadow-2xl overflow-hidden z-50 py-1.5"
+                      >
+                        <div className="px-4 py-2 border-b border-gray-50 mb-1">
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('account:user_role', 'Клиент')}</p>
+                          <p className="text-xs font-bold text-gray-900 truncate">{user.full_name || user.username}</p>
+                        </div>
+
+                        <button
+                          onClick={() => window.location.href = '/account/dashboard'}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-gray-600 hover:text-primary hover:bg-primary/5 transition-all"
+                        >
+                          <LayoutDashboard className="w-4 h-4" />
+                          <span>{t('account:tabs.dashboard', 'Личный кабинет')}</span>
+                        </button>
+
+                        <button
+                          onClick={() => window.location.href = '/account/appointments'}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-gray-600 hover:text-primary hover:bg-primary/5 transition-all"
+                        >
+                          <Calendar className="w-4 h-4" />
+                          <span>{t('account:tabs.appointments', 'Мои записи')}</span>
+                        </button>
+
+                        <div className="h-px bg-gray-50 my-1" />
+
+                        <button
+                          onClick={() => {
+                            logout();
+                            window.location.href = '/';
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-red-500 hover:bg-red-50 transition-all font-medium"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>{t('common:logout', 'Выйти')}</span>
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               ) : (
                 <Button
                   onClick={() => window.location.href = '/login'}
                   variant="outline"
                   size="sm"
-                  className="border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-8 text-xs"
+                  className="border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-8 text-xs rounded-full px-4"
                 >
                   <User className="w-3.5 h-3.5 mr-1.5" />
                   {t('login', { defaultValue: 'Войти' })}
@@ -388,14 +445,35 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   </div>
 
                   {user ? (
-                    <Button
-                      onClick={() => window.location.href = '/account'}
-                      variant="outline"
-                      className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-9 text-sm"
-                    >
-                      <User className="w-4 h-4 mr-2" />
-                      {user.full_name || t('account', { defaultValue: 'Кабинет' })}
-                    </Button>
+                    <div className="space-y-2">
+                      <Button
+                        onClick={() => window.location.href = '/account/dashboard'}
+                        variant="outline"
+                        className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-9 text-sm justify-start"
+                      >
+                        <LayoutDashboard className="w-4 h-4 mr-2" />
+                        {t('account:tabs.dashboard', 'Личный кабинет')}
+                      </Button>
+                      <Button
+                        onClick={() => window.location.href = '/account/appointments'}
+                        variant="outline"
+                        className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-9 text-sm justify-start"
+                      >
+                        <Calendar className="w-4 h-4 mr-2" />
+                        {t('account:tabs.appointments', 'Мои записи')}
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          logout();
+                          window.location.href = '/';
+                        }}
+                        variant="ghost"
+                        className="w-full text-red-500 hover:bg-red-50 h-9 text-sm justify-start"
+                      >
+                        <LogOut className="w-4 h-4 mr-2" />
+                        {t('common:logout', 'Выйти')}
+                      </Button>
+                    </div>
                   ) : (
                     <Button
                       onClick={() => window.location.href = '/login'}

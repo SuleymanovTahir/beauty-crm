@@ -75,5 +75,26 @@
     "title": "Выберите услуги",
     "total": "Итого"
   },
-  "totalDuration": "Длительность"
+  "totalDuration": "Длительность",
+  "auth": {
+    "welcome": "Добро пожаловать",
+    "subtitle": "Войдите, чтобы сохранять историю записей и получать бонусы",
+    "continue_google": "Продолжить через Google",
+    "continue_email": "Войти через Email",
+    "or": "ИЛИ",
+    "email_placeholder": "Введите ваш email",
+    "guest_continue": "Продолжить как гость",
+    "complete_profile": "Завершите профиль",
+    "full_name": "Ваше имя",
+    "name_placeholder": "Введите имя",
+    "gender": "Пол",
+    "birthday": "Дата рождения",
+    "select": "Выбрать",
+    "female": "Женский",
+    "male": "Мужской",
+    "other": "Другой",
+    "info_note": "Мы используем эти данные для персональных предложений и подарков на день рождения.",
+    "create_account": "Создать аккаунт",
+    "success_mock": "Профиль успешно получен!"
+  }
 }

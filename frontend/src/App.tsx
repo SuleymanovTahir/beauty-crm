@@ -416,8 +416,10 @@ export default function App() {
                 <Route path="/terms" element={<TermsOfUseNew />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
                 <Route path="/data-deletion" element={<DataDeletionNew />} />
-                <Route path="/account" element={<AccountPage />} />
-                <Route path="/account/*" element={<AccountPage />} />
+                <Route
+                  path="/account/*"
+                  element={currentUser ? <AccountPage /> : <Navigate to="/login" replace />}
+                />
                 <Route path="/new-booking" element={<UserBookingWizard />} />
               </Route>
 

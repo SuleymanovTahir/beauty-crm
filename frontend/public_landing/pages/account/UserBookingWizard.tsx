@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../../src/contexts/AuthContext';
 import { format, parseISO } from 'date-fns';
 import { AnimatePresence, motion } from 'motion/react';
 import { X, Scissors, User, Edit } from 'lucide-react';
@@ -72,6 +73,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const step = searchParams.get('booking') || 'menu';
   const { t, i18n } = useTranslation(['booking', 'common']);
   const { formatCurrency, currency } = useCurrency();
+  const { user } = useAuth();
 
   // Helper for Russian pluralization
   const getPluralForm = (count: number, one: string, few: string, many: string) => {
@@ -129,6 +131,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
       date: null,
       time: null,
       phone: '',
+      name: '',
+      email: '',
       id: null,
     };
     setBookingState(initialState);
@@ -153,10 +157,10 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
       onClose();
       return;
     }
-    if (window.history.length > 2) {
+    if (window.history.length > 2 && user) {
       navigate('/account');
     } else {
-      window.location.href = 'http://localhost:5173';
+      window.location.href = window.location.origin;
     }
   };
 
@@ -271,7 +275,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     }
 
     initCorrect();
-  }, []);
+  }, [i18n.language]);
 
   // Handle location state changes (for prefilling master/service)
   useEffect(() => {
@@ -367,37 +371,39 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   );
 
   return (
-    <div className="wizard-scrollable min-h-screen bg-gray-50 selection:bg-purple-100 selection:text-purple-600">
+    <div className="wizard-scrollable min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b shadow-sm sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleGlobalBack}
-              className="w-10 h-10 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 text-slate-700 hover:text-purple-600 transition-all"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <h1 className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              {t('newBooking', 'Reservation')}
-            </h1>
-          </div>
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-3xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {(user || step !== 'menu') && (
+                <button onClick={handleGlobalBack} className="p-2 hover:bg-gray-100 rounded-lg text-gray-900 transition-colors">
+                  <ArrowLeft size={20} />
+                </button>
+              )}
+              <h1 className="text-xl font-bold text-gray-900">
+                {t('newBooking', 'Reservation')}
+              </h1>
+            </div>
 
-          <div className="flex items-center gap-3">
-            <PublicLanguageSwitcher />
-            <button
-              onClick={handleClose}
-              className="p-2 hover:bg-gray-100 rounded-lg text-gray-400"
-            >
-              <X size={20} />
-            </button>
+            <div className="flex items-center gap-3">
+              <PublicLanguageSwitcher />
+              {user && (
+                <button
+                  onClick={handleClose}
+                  className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 transition-colors"
+                  title={t('common:close', 'Close')}
+                >
+                  <X size={20} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-3xl mx-auto px-4 py-8 w-full">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
@@ -458,6 +464,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 bookingState={bookingState}
                 totalPrice={totalPrice}
                 onPhoneChange={(phone: any) => updateState({ phone })}
+                onGuestInfoChange={(info: any) => updateState(info)}
                 onSuccess={() => {
                   sessionStorage.removeItem(STORAGE_KEY);
                   if (onSuccess) onSuccess();
@@ -477,41 +484,50 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         <motion.div
           initial={{ y: 100 }}
           animate={{ y: 0 }}
-          className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-100 p-4 z-[55] shadow-[0_-20px_40px_rgba(0,0,0,0.1)] pb-safe"
+          className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-[55] shadow-lg pb-safe"
         >
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-3xl mx-auto">
             {/* Single row with info and buttons */}
             <div className="flex items-center justify-between gap-4">
               {/* Left: Booking info */}
               <div className="flex flex-col min-w-0 flex-1">
                 {(bookingState.services.length > 0 || bookingState.professionalSelected || bookingState.date || bookingState.time) ? (
                   <>
-                    <p className="text-sm font-black text-gray-900 uppercase tracking-tighter truncate">
+                    <p className="text-sm font-bold text-gray-900 truncate">
                       {bookingState.services.length > 0 ? (
                         bookingState.services.length === 1
                           ? getLocalizedName(bookingState.services[0], i18n.language)
-                          : `${bookingState.services.length} ${getPluralForm(bookingState.services.length, t('services.service_one', 'service'), t('services.service_few', 'services'), t('services.service_many', 'services'))} ${t('services.selected', 'selected').toLowerCase()}`
+                          : `${bookingState.services.length} ${getPluralForm(bookingState.services.length, t('services.service_one', 'service'), t('services.service_few', 'services'), t('services.service_many', 'services'))}`
                       ) : bookingState.professionalSelected ? (
                         bookingState.professional?.full_name || t('professional.anyAvailable', 'Flexible Match')
                       ) : (
-                        t('booking:booking_info', 'Информация о записи')
+                        t('booking:booking_info', 'Booking info')
                       )}
                     </p>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                      {bookingState.professional && <span>{bookingState.professional.full_name} • </span>}
-                      {bookingState.services.length > 0 && <span>{totalDuration} {(t('min') || 'm')[0].toLowerCase()} • {formatCurrency(totalPrice)}</span>}
-                      {(bookingState.date || bookingState.time) && (
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
+                      {bookingState.professional && <span>{bookingState.professional.full_name}</span>}
+                      {bookingState.services.length > 0 && (
                         <>
-                          {bookingState.services.length > 0 && ' • '}
-                          {bookingState.date && format(bookingState.date, 'dd MMM')}
-                          {bookingState.time && ` ${bookingState.time}`}
+                          {bookingState.professional && <span>•</span>}
+                          <span>{totalDuration} {t('min', 'min')}</span>
+                          <span>•</span>
+                          <span className="font-bold text-gray-900">{formatCurrency(totalPrice)}</span>
                         </>
                       )}
-                    </p>
+                      {(bookingState.date || bookingState.time) && (
+                        <>
+                          <span>•</span>
+                          <span className="text-gray-900 font-semibold">
+                            {bookingState.date && format(bookingState.date, 'dd MMM')}
+                            {bookingState.time && ` ${bookingState.time}`}
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </>
                 ) : (
-                  <p className="text-sm font-medium text-gray-500">
-                    {t('booking:select_to_continue', 'Выберите услугу или мастера для продолжения')}
+                  <p className="text-sm font-medium text-gray-400">
+                    {t('booking:select_to_continue', 'Select service or master to continue')}
                   </p>
                 )}
               </div>
@@ -520,42 +536,42 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               <div className="flex items-center gap-3 flex-shrink-0">
                 {/* Services button - show if services not selected AND not on services step */}
                 {bookingState.services.length === 0 && step !== 'services' && (
-                  <Button
+                  <button
                     onClick={() => setStep('services')}
-                    className="h-10 px-4 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-medium text-sm text-white transition-all whitespace-nowrap"
+                    className="h-11 px-5 rounded-lg bg-gray-900 text-white font-bold text-sm hover:bg-gray-800 transition-colors whitespace-nowrap"
                   >
-                    {t('booking:continue_services', 'Продолжить с выбора услуг')}
-                  </Button>
+                    {t('booking:continue_services', 'Continue with Services')}
+                  </button>
                 )}
 
                 {/* Professional button - show if professional not selected AND not on professional step */}
                 {!bookingState.professionalSelected && step !== 'professional' && (
-                  <Button
+                  <button
                     onClick={() => setStep('professional')}
-                    className="h-10 px-4 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-medium text-sm text-white transition-all whitespace-nowrap"
+                    className="h-11 px-5 rounded-lg bg-gray-900 text-white font-bold text-sm hover:bg-gray-800 transition-colors whitespace-nowrap"
                   >
-                    {t('booking:continue_professional', 'Продолжить с выбора мастера')}
-                  </Button>
+                    {t('booking:continue_professional', 'Select Professional')}
+                  </button>
                 )}
 
                 {/* DateTime button - show if date/time not selected AND not on datetime step */}
                 {(!bookingState.date || !bookingState.time) && step !== 'datetime' && (
-                  <Button
+                  <button
                     onClick={() => setStep('datetime')}
-                    className="h-10 px-4 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-medium text-sm text-white transition-all whitespace-nowrap"
+                    className="h-11 px-5 rounded-lg bg-gray-900 text-white font-bold text-sm hover:bg-gray-800 transition-colors whitespace-nowrap"
                   >
-                    {t('booking:continue_datetime', 'Продолжить с выбора даты и времени')}
-                  </Button>
+                    {t('booking:continue_datetime', 'Choose Date & Time')}
+                  </button>
                 )}
 
                 {/* Confirm button - show if everything is selected */}
                 {bookingState.services.length > 0 && bookingState.professionalSelected && bookingState.date && bookingState.time && (
-                  <Button
+                  <button
                     onClick={() => setStep('confirm')}
-                    className="h-10 px-6 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-medium text-sm text-white transition-all whitespace-nowrap"
+                    className="h-11 px-6 rounded-lg bg-gray-900 text-white font-bold text-sm hover:bg-gray-800 transition-colors whitespace-nowrap"
                   >
-                    {t('confirm.title', 'Подтвердить')}
-                  </Button>
+                    {t('confirm.title', 'Confirm')}
+                  </button>
                 )}
               </div>
             </div>
@@ -572,7 +588,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             id: bookingState.id,
             service_name: bookingState.services.map((s: Service) => getLocalizedName(s, i18n.language)).join(', '),
             service_id: bookingState.services[0]?.id,
-            master_name: bookingState.professional?.full_name || t('common.any_master', 'Любой мастер'),
+            master_name: bookingState.professional ? getLocalizedName(bookingState.professional, i18n.language) : t('common.any_master', 'Любой мастер'),
             master_id: bookingState.professional?.id,
             date: bookingState.date ? format(bookingState.date, 'yyyy-MM-dd') : '',
             time: bookingState.time || ''
