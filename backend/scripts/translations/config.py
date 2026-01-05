@@ -51,7 +51,6 @@ TRANSLATE_OUTPUT = "scripts/translations/translations_completed.json"
 # Fields that should NEVER be translated (technical fields, proper nouns, etc.)
 SKIP_TRANSLATION_FIELDS = {
     "salon_settings": ["city", "country"],  # Proper nouns should not be translated
-    "public_reviews": ["author_name"],  # Names are proper nouns
     "services": ["duration"]  # Duration format like "1h", "30min" should not be translated
 }
 

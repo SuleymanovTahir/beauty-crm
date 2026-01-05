@@ -20,7 +20,7 @@
   "security_tip2": "No utilices la misma contraseña para diferentes servicios",
   "security_tip3": "Cambie su contraseña periódicamente (cada 3 meses)",
   "security_tips": "Recomendaciones de seguridad",
-  "sms_notifications": "Notificaciones por SMS",
+  "sms_notifications": "Notificaciones hasta SMS",
   "subtitle": "Gestionar notificaciones y seguridad.",
   "title": "Ajustes"
 }

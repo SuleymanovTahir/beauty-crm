@@ -122,18 +122,14 @@ def translate_content():
                         use_context = False
                         
                         # Special handling for names (transliteration)
-                        if table_name == 'users' and field_name == 'full_name':
+                        is_name_field = field_name in ['full_name', 'author_name', 'employee_name', 'client_name'] or field_name.endswith('_name')
+                        
+                        if is_name_field:
                             # Ensure source is title cased first
-                            source_clean = source_text.title()
+                            source_clean = source_text.strip().title()
                             
-                            # For Latin languages, use transliteration
-                            if lang in ['en', 'de', 'es', 'fr', 'pt']:
-                                translated = translator.transliterate_ru_to_latin(source_clean)
-                                print(f"      → {lang}: '{translated}' (transliterated)")
-                            else:
-                                # For non-Latin (ar, hi, kk), use translation (phonetic)
-                                translated = translator.translate(source_clean, detected_lang, lang, use_context=False)
-                                print(f"      → {lang}: '{translated}'")
+                            translated = translator.transliterate(source_clean, detected_lang, lang)
+                            print(f"      → {lang}: '{translated}' (transliterated)")
                             
                             # Ensure result is title cased
                             if translated:

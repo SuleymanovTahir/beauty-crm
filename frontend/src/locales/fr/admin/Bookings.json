@@ -44,7 +44,7 @@
   "example": "Exemple",
   "excel": "Exceller",
   "excel_template": "Modèle Excel",
-  "export_date_from": "POUR MOI",
+  "export_date_from": "De",
   "export_date_to": "Par",
   "export_failed": "Erreur d'exportation",
   "export_file_format": "Format de fichier",
@@ -98,7 +98,7 @@
   "skipped_bookings_many": "Beaucoup de réservations manquées",
   "skipped_bookings_other": "Réservations manquées autres",
   "source": {
-    "account": "D'ACCORD",
+    "account": "Compte",
     "custom": "Votre source",
     "guest_link": "Lien",
     "instagram": "Instagram",

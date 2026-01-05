@@ -12,25 +12,8 @@
           "de": "Nägel/Wachsen",
           "fr": "Ongle/Épilation",
           "hi": "नाखून/वैक्सिंग",
-          "kk": "Тырнақтар/балауыз",
+          "kk": "Тырнақ/балауыз",
           "pt": "Prego/Depilação"
-        }
-      }
-    },
-    {
-      "id": 2,
-      "fields": {
-        "position": {
-          "ru": "Hair Stylist",
-          "key": "users.2.position.18612649",
-          "en": "Hair Stylist",
-          "ar": "مصفف الشعر",
-          "es": "estilista",
-          "de": "Friseur",
-          "fr": "Coiffeur",
-          "hi": "बालों की स्टाइल बनाने वाला",
-          "kk": "Шаш стилисті",
-          "pt": "Cabeleireiro"
         }
       }
     },
@@ -84,9 +67,43 @@
           "pt": "Cabeleireiro"
         }
       }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "position": {
+          "ru": "Hair Stylist",
+          "key": "users.2.position.18612649",
+          "en": "Hair Stylist",
+          "ar": "مصفف الشعر",
+          "es": "estilista",
+          "de": "Friseur",
+          "fr": "Coiffeur",
+          "hi": "बालों की स्टाइल बनाने वाला",
+          "kk": "Шаш стилисті",
+          "pt": "Cabeleireiro"
+        }
+      }
     }
   ],
   "public_reviews": [
+    {
+      "id": 3,
+      "fields": {
+        "employee_position": {
+          "ru": "Manicure & Pedicure",
+          "key": "public_reviews.3.employee_position.8e5cfdfa",
+          "en": "Manicure & Pedicure",
+          "ar": "مانيكير وباديكير",
+          "es": "Manicura y Pedicura",
+          "de": "Maniküre und Pediküre",
+          "fr": "Manucure et Pédicure",
+          "hi": "मैनीक्योर और पेडीक्योर",
+          "kk": "Маникюр және педикюр",
+          "pt": "Manicura e Pedicura"
+        }
+      }
+    },
     {
       "id": 1,
       "fields": {
@@ -107,6 +124,18 @@
     {
       "id": 2,
       "fields": {
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.2.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sarah Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Sarah Jenkins",
+          "pt": "Sarah Jenkins"
+        },
         "employee_position": {
           "ru": "Eyelashes",
           "key": "public_reviews.2.employee_position.5b1b1d5e",
@@ -124,6 +153,18 @@
     {
       "id": 5,
       "fields": {
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.5.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fatima Al-Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Fatima Al-Sayed",
+          "pt": "Fatima Al-Sayed"
+        },
         "employee_position": {
           "ru": "Microblading",
           "key": "public_reviews.5.employee_position.65d6c03d",
@@ -139,25 +180,20 @@
       }
     },
     {
-      "id": 3,
-      "fields": {
-        "employee_position": {
-          "ru": "Manicure & Pedicure",
-          "key": "public_reviews.3.employee_position.8e5cfdfa",
-          "en": "Manicure & Pedicure",
-          "ar": "مانيكير وباديكير",
-          "es": "Manicura y Pedicura",
-          "de": "Maniküre und Pediküre",
-          "fr": "Manucure et Pédicure",
-          "hi": "मैनीक्योर और पेडीक्योर",
-          "kk": "Маникюр және педикюр",
-          "pt": "Manicura e Pedicura"
-        }
-      }
-    },
-    {
       "id": 4,
       "fields": {
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.4.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "Maria Gonzalez",
+          "de": "Maria Gonzalez",
+          "fr": "Maria Gonzalez",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Maria Gonzalez",
+          "pt": "Maria Gonzalez"
+        },
         "employee_position": {
           "ru": "Facial Treatment",
           "key": "public_reviews.4.employee_position.9a3a91ca",

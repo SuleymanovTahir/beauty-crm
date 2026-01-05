@@ -30,28 +30,107 @@ except ImportError:
 # Salon-specific terminology dictionary for better context
 # This helps correct common mistranslations
 SALON_TERMINOLOGY = {
-    # Russian terms that are often mistranslated
+    # Corrections for Russian (when RU is the target language)
     'ru': {
-        'запись': 'booking',  # Not 'post' or 'entry' or 'record'
-        'записи': 'bookings',
-        'записей': 'bookings',
-        'напоминание': 'reminder',
-        'напоминания': 'reminders',
-        'напоминаний': 'reminders',
-        'починка': 'repair',  # Not 'fix' in context of nails
-        'ремонт': 'repair',
-        'ноготь': 'nail',
-        'ногтя': 'nail',
-        'ногтей': 'nails',
-        'вощение': 'ваксинг',
-        'массажи': 'массаж',
+        # Mistranslations from English
+        'пост': 'запись',        # 'post' -> 'запись' (booking)
+        'записи': 'записи',      # Plural consistency
+        'вход': 'запись',        # 'entry' -> 'запись'
+        'рекорд': 'запись',      # 'record' -> 'запись'
+        'вощение': 'ваксинг',    # 'waxing' -> 'ваксинг'
+        'массажи': 'массаж',     # 'massages' -> 'массаж'
         'бровист': 'мастер по бровям',
+        'ноготь': 'ногти',       # 'nail' -> 'ногти'
+        'ногтя': 'ногтей',
+        'починка': 'ремонт',     # 'fix' -> 'ремонт'
+        'услуга': 'услуга',
     },
-    # English terms that need specific translations
+    # Corrections for English (when EN is the target language)
     'en': {
-        'post': 'booking',  # Correct mistranslation
-        'record': 'booking',  # Correct mistranslation
-        'entry': 'booking',  # Correct mistranslation
+        'post': 'booking',
+        'posts': 'bookings',
+        'record': 'booking',
+        'records': 'bookings',
+        'recording': 'booking',
+        'entry': 'booking',
+        'entries': 'bookings',
+        'vaksing': 'waxing',
+        'voring': 'waxing',
+        'voxing': 'waxing',
+        'master of eyebrows': 'brow master',
+        'repair of nails': 'nail repair',
+        'nail fixing': 'nail repair',
+        'vaxing': 'waxing',
+        'fix': 'repair',
+    },
+    # Corrections for Spanish
+    'es': {
+        'publicaciones': 'reservas',
+        'publicación': 'reserva',
+        'entrada': 'reserva',
+        'entradas': 'reservas',
+        'registro': 'reserva',
+        'registros': 'reservas',
+        'asistentes': 'especialistas',
+        'asistente': 'especialista',
+        'cerca': 'cerrar',
+        'sobresalir': 'Excel',
+        'a mí': 'desde',
+        'por': 'hasta',
+        'charlar': 'chat',
+        'comportamiento': 'acciones',
+        'de acuerdo': 'cuenta',
+    },
+    # Corrections for Portuguese
+    'pt': {
+        'postagens': 'reservas',
+        'postagem': 'reserva',
+        'entrada': 'reserva',
+        'entradas': 'reservas',
+        'registro': 'reserva',
+        'registros': 'reservas',
+        'assistentes': 'especialistas',
+        'assistente': 'especialista',
+        'para mim': 'de',
+        'por': 'até',
+        'bater papo': 'chat',
+        'renda': 'receita',
+        'ok': 'conta',
+    },
+    # Corrections for French
+    'fr': {
+        'publications': 'réservations',
+        'enregistrement': 'réservation',
+        'entrée': 'réservation',
+        'entrées': 'réservations',
+        'enregistrements': 'réservations',
+        'assistants': 'spécialistes',
+        'assistant': 'spécialiste',
+        'pour moi': 'de',
+        'par': 'à',
+        'exceller': 'Excel',
+        'd\'accord': 'compte',
+    },
+    # Corrections for German
+    'de': {
+        'beiträge': 'buchungen',
+        'beitrag': 'buchung',
+        'eintrag': 'buchung',
+        'einträge': 'buchungen',
+        'datensätze': 'buchungen',
+        'datensatz': 'buchung',
+        'assistenten': 'spezialisten',
+        'assistent': 'spezialist',
+        'mir': 'von',
+        'von': 'bis',
+        'chatten': 'chat',
+        'einkommen': 'umsatz',
+        'ok': 'konto',
+    },
+    # Corrections for Arabic
+    'ar': {
+        'منشورات': 'حجوزات',     # 'posts' -> 'bookings'
+        'سجل': 'حجز',            # 'record' -> 'booking'
     }
 }
 
@@ -407,32 +486,61 @@ class Translator:
             for key, value in data.items()
         }
 
-    def transliterate_ru_to_latin(self, text: str) -> str:
+    def transliterate(self, text: str, source: str, target: str) -> str:
         """
-        Transliterate Russian text to Latin (English style)
-        Useful for names
+        Transliterate text between languages (useful for names)
         """
         if not text:
             return text
             
-        mapping = {
-            'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
-            'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
-            'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
-            'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch',
-            'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
-            'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'Yo',
-            'Ж': 'Zh', 'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M',
-            'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U',
-            'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts', 'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Shch',
-            'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu', 'Я': 'Ya'
-        }
-        
-        result = []
-        for char in text:
-            result.append(mapping.get(char, char))
+        # 1. RU -> Latin (en, es, fr, etc)
+        if source == 'ru' and target in ['en', 'es', 'fr', 'pt', 'de']:
+            mapping = {
+                'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
+                'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+                'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+                'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch',
+                'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+                'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'Yo',
+                'Ж': 'Zh', 'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M',
+                'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U',
+                'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts', 'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Shch',
+                'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu', 'Я': 'Ya'
+            }
+            result = "".join(mapping.get(c, c) for c in text)
+            return result
             
-        return "".join(result)
+        # 2. Latin -> RU
+        if source in ['en', 'es', 'fr', 'pt', 'de'] and target == 'ru':
+            # Improved mapping for names
+            mapping = {
+                'a': 'а', 'b': 'б', 'v': 'в', 'g': 'г', 'd': 'д', 'e': 'е', 'z': 'з', 
+                'i': 'и', 'k': 'к', 'l': 'л', 'm': 'м', 'n': 'н', 'o': 'о', 'p': 'п', 
+                'r': 'р', 's': 'с', 't': 'т', 'u': 'у', 'f': 'ф', 'h': 'х', 'y': 'ы',
+                'x': 'кс', 'w': 'в', 'j': 'дж', 'q': 'к', 'c': 'к',
+                'A': 'А', 'B': 'Б', 'V': 'В', 'G': 'Г', 'D': 'Д', 'E': 'Е', 'Z': 'З', 
+                'I': 'И', 'K': 'К', 'L': 'Л', 'M': 'М', 'N': 'Н', 'O': 'О', 'P': 'П', 
+                'R': 'Р', 'S': 'С', 'T': 'Т', 'U': 'У', 'F': 'Ф', 'H': 'Х', 'Y': 'Ы',
+                'X': 'Кс', 'W': 'В', 'J': 'Дж', 'Q': 'К', 'C': 'К'
+            }
+            # Multi-char replacements (descending length)
+            text = text.replace('shch', 'щ').replace('Shch', 'Щ')
+            text = text.replace('sh', 'ш').replace('Sh', 'Ш')
+            text = text.replace('ch', 'ч').replace('Ch', 'Ч')
+            text = text.replace('zh', 'ж').replace('Zh', 'Ж')
+            text = text.replace('kh', 'х').replace('Kh', 'Х')
+            text = text.replace('ts', 'ц').replace('Ts', 'Ц')
+            text = text.replace('yu', 'ю').replace('Yu', 'Ю')
+            text = text.replace('ya', 'я').replace('Ya', 'Я')
+            text = text.replace('yo', 'ё').replace('Yo', 'Ё')
+            text = text.replace('ph', 'ф').replace('Ph', 'Ф')
+            
+            result = "".join(mapping.get(c, c) for c in text)
+            return result
+
+        # 3. Fallback to Google Translate (phonetic mode is implicit for names)
+        # We use a special hint to the translator if possible
+        return self.translate(text, source, target, use_context=False)
 
 if __name__ == "__main__":
     # Test translation
