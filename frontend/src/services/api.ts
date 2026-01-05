@@ -1467,11 +1467,7 @@ export class ApiClient {
     }>('/api/broadcasts/history')
   }
 
-  async getBroadcastUsers(subscriptionType: string, targetRole?: string) {
-    let url = `/api/broadcasts/users?subscription_type=${subscriptionType}`
-    if (targetRole && targetRole !== 'all') {
-      url += `&target_role=${targetRole}`
-    }
+  async getBroadcastUsers(type: string, role?: string) {
     return this.request<{
       users: Array<{
         id: number;
@@ -1488,7 +1484,7 @@ export class ApiClient {
           instagram: boolean;
         };
       }>;
-    }>(url)
+    }>(`/api/broadcasts/users?type=${type}${role ? `&role=${role}` : ''}`)
   }
 
   async getSalonWorkingHours() {
