@@ -1000,47 +1000,46 @@ export default function AdminSettings() {
       )}
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-        <TabsList className="flex flex-nowrap overflow-x-auto w-full lg:w-full gap-1 pb-2 mb-2 hide-scrollbar border-b border-gray-100 bg-transparent h-auto">
-
-          <TabsTrigger key="profile" value="profile" className="flex items-center gap-2 whitespace-nowrap settings-tab-trigger-active">
+        <TabsList className="flex flex-nowrap overflow-x-auto w-full gap-1 pb-2 mb-2 hide-scrollbar border-b border-gray-100 bg-transparent h-auto justify-start items-center">
+          <TabsTrigger key="profile" value="profile" className="flex items-center gap-2 whitespace-nowrap settings-tab-trigger-active shrink-0">
             <User className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:profile', 'Profile')}</span>
           </TabsTrigger>
 
-          <TabsTrigger key="general" value="general" className="flex items-center gap-2 settings-tab-trigger-active">
+          <TabsTrigger key="general" value="general" className="flex items-center gap-2 settings-tab-trigger-active shrink-0">
             <Globe className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:general')}</span>
           </TabsTrigger>
 
-          <TabsTrigger key="notifications" value="notifications" className="flex items-center gap-2 settings-tab-trigger-active">
+          <TabsTrigger key="notifications" value="notifications" className="flex items-center gap-2 settings-tab-trigger-active shrink-0">
             <Bell className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:notifications')}</span>
           </TabsTrigger>
-          <TabsTrigger key="security" value="security" className="flex items-center gap-2 settings-tab-trigger-active">
+          <TabsTrigger key="security" value="security" className="flex items-center gap-2 settings-tab-trigger-active shrink-0">
             <Shield className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:security')}</span>
           </TabsTrigger>
-          <TabsTrigger key="diagnostics" value="diagnostics" className="flex items-center gap-2 settings-tab-trigger-active">
+          <TabsTrigger key="diagnostics" value="diagnostics" className="flex items-center gap-2 settings-tab-trigger-active shrink-0">
             <AlertCircle className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:diagnostics')}</span>
           </TabsTrigger>
-          <TabsTrigger key="subscriptions" value="subscriptions" className="flex items-center gap-2 settings-tab-trigger-active">
+          <TabsTrigger key="subscriptions" value="subscriptions" className="flex items-center gap-2 settings-tab-trigger-active shrink-0">
             <Mail className="w-4 h-4" />
             <span className="hidden sm:inline">{t('subscriptions')}</span>
           </TabsTrigger>
-          <TabsTrigger key="broadcasts" value="broadcasts" className="flex items-center gap-2 settings-tab-trigger-active">
+          <TabsTrigger key="broadcasts" value="broadcasts" className="flex items-center gap-2 settings-tab-trigger-active shrink-0">
             <Send className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:broadcasts')}</span>
           </TabsTrigger>
-          <TabsTrigger key="messengers" value="messengers" className="flex items-center gap-2 settings-tab-trigger-active">
+          <TabsTrigger key="messengers" value="messengers" className="flex items-center gap-2 settings-tab-trigger-active shrink-0">
             <MessageCircle className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:messengers')}</span>
           </TabsTrigger>
-          <TabsTrigger key="holidays" value="holidays" className="flex items-center gap-2 settings-tab-trigger-active">
+          <TabsTrigger key="holidays" value="holidays" className="flex items-center gap-2 settings-tab-trigger-active shrink-0">
             <Calendar className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:holidays', 'Holidays')}</span>
           </TabsTrigger>
-          <TabsTrigger key="danger" value="danger" className="flex items-center gap-2 settings-tab-trigger-active">
+          <TabsTrigger key="danger" value="danger" className="flex items-center gap-2 settings-tab-trigger-active shrink-0">
             <Trash2 className="w-4 h-4" />
             <span className="hidden sm:inline">{t('danger_zone')}</span>
           </TabsTrigger>
