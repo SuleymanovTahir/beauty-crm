@@ -183,7 +183,7 @@ export class ApiClient {
     })
   }
 
-  async askBotAdvice(question: string, context?: string) {
+  async askBotAdvice(question: string, context?: string): Promise<any> {
     return this.request('/api/chat/ask-bot', {
       method: 'POST',
       body: JSON.stringify({
@@ -193,7 +193,7 @@ export class ApiClient {
     })
   }
 
-  async getBotSuggestion(clientId: string) {
+  async getBotSuggestion(clientId: string): Promise<any> {
     return this.request('/api/chat/bot-suggest', {
       method: 'POST',
       body: JSON.stringify({ client_id: clientId }),
@@ -561,6 +561,10 @@ export class ApiClient {
     return this.request<any>('/api/client/loyalty')
   }
 
+  async getClientProfile() {
+    return this.request<any>('/api/client/profile')
+  }
+
   async updateClientProfile(data: any) {
     return this.request('/api/client/profile', {
       method: 'PUT',
@@ -614,7 +618,7 @@ export class ApiClient {
   }
 
 
-  async getChatMessages(clientId: string, limit: number = 50, messenger: string = 'instagram') {
+  async getChatMessages(clientId: string, limit: number = 50, messenger: string = 'instagram'): Promise<any> {
     return this.request(`/api/chat/messages?client_id=${clientId}&limit=${limit}&messenger=${messenger}`)
   }
 

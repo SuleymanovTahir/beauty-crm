@@ -1000,7 +1000,7 @@ export default function AdminSettings() {
       )}
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-        <TabsList className="flex flex-nowrap overflow-x-auto w-full lg:w-auto gap-1 pb-1 hide-scrollbar">
+        <TabsList className="flex flex-nowrap overflow-x-auto w-full lg:w-full gap-1 pb-2 mb-2 hide-scrollbar border-b border-gray-100 bg-transparent h-auto">
 
           <TabsTrigger key="profile" value="profile" className="flex items-center gap-2 whitespace-nowrap settings-tab-trigger-active">
             <User className="w-4 h-4" />

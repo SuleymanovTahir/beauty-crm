@@ -137,7 +137,7 @@ export default function Clients() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Sorting states
-  const [sortField, setSortField] = useState<'name' | 'phone' | 'status' | 'lifetime_value' | 'last_contact' | 'first_contact'>('last_contact');
+  const [sortField, setSortField] = useState<'name' | 'phone' | 'status' | 'lifetime_value' | 'last_contact' | 'first_contact' | 'total_messages' | 'total_bookings' | 'temperature'>('last_contact');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {

@@ -158,7 +158,7 @@ export default function AdminDashboard() {
       const dateRange = getDateRange();
 
       // Map dateFilter to comparison_period for backend
-      let comparisonPeriod = dateFilter;
+      let comparisonPeriod: string = dateFilter;
       if (dateFilter === 'last7days') comparisonPeriod = '7days';
       if (dateFilter === 'last30days') comparisonPeriod = '30days';
       if (dateFilter === 'thisMonth' || dateFilter === 'lastMonth') comparisonPeriod = 'month';

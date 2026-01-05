@@ -2,7 +2,7 @@
 // frontend/src/pages/admin/Services.tsx - С ВКЛАДКАМИ ДЛЯ СПЕЦПАКЕТОВ И НОВЫМИ ПОЛЯМИ
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Scissors, Search, Plus, Edit, Trash2, Loader, AlertCircle, Gift, Tag, Calendar, Clock, Users, Target } from 'lucide-react';
+import { Scissors, Search, Plus, Edit, Trash2, Loader, AlertCircle, Gift, Tag, Calendar, Clock } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -87,7 +87,7 @@ interface SpecialPackage {
   auto_deactivate?: boolean;
 }
 
-type TabType = 'services' | 'packages';
+type TabType = 'services' | 'packages' | 'referrals' | 'challenges';
 
 const categories = [
   'Permanent Makeup',
