@@ -4,9 +4,8 @@ import { Card, CardContent } from './ui/card';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { Checkbox } from './ui/checkbox';
-import { Search, Clock, Banknote } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { api } from '../../../../src/services/api';
 import { getLocalizedName } from '../../../../src/utils/i18nUtils';
 import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 
