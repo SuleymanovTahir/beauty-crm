@@ -404,6 +404,82 @@ async def get_salon_working_hours():
 
         return get_default_working_hours_response()  # ✅ Используем функцию
 
+# ===== CURRENCY MANAGEMENT =====
+
+@router.get("/settings/currencies")
+async def get_currencies():
+    """Получить список всех доступных валют"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("SELECT code, name, symbol, is_active FROM currencies ORDER BY code")
+        currencies = []
+        for row in c.fetchall():
+            currencies.append({
+                "code": row[0],
+                "name": row[1],
+                "symbol": row[2],
+                "is_active": row[3]
+            })
+        conn.close()
+        return {"currencies": currencies}
+    except Exception as e:
+        log_error(f"Error loading currencies: {e}", "settings")
+        # Return default if table doesn't exist yet (though migration should have run)
+        return {"currencies": [
+            {"code": "AED", "name": "UAE Dirham", "symbol": "AED", "is_active": True},
+            {"code": "USD", "name": "US Dollar", "symbol": "$", "is_active": True}
+        ]}
+
+@router.post("/settings/currencies")
+async def add_currency(request: Request):
+    """Добавить новую валюту"""
+    try:
+        data = await request.json()
+        code = data.get('code', '').upper()
+        name = data.get('name', '')
+        symbol = data.get('symbol', '')
+
+        if not code or not name or not symbol:
+            raise HTTPException(status_code=400, detail="Missing required fields")
+
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Check if exists
+        c.execute("SELECT code FROM currencies WHERE code = %s", (code,))
+        if c.fetchone():
+             c.execute("""
+                UPDATE currencies SET name=%s, symbol=%s, is_active=TRUE 
+                WHERE code=%s
+             """, (name, symbol, code))
+        else:
+            c.execute("""
+                INSERT INTO currencies (code, name, symbol, is_active)
+                VALUES (%s, %s, %s, TRUE)
+            """, (code, name, symbol))
+        
+        conn.commit()
+        conn.close()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error adding currency: {e}", "settings")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/settings/currencies/{code}")
+async def delete_currency(code: str):
+    """Удалить валюту"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("DELETE FROM currencies WHERE code = %s", (code.upper(),))
+        conn.commit()
+        conn.close()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error deleting currency: {e}", "settings")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===== FEATURE MANAGEMENT =====
 
 @router.get("/features")

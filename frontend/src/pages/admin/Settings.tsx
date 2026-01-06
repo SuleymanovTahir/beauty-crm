@@ -46,6 +46,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { languages } from '../../i18n';
 import { InstagramIcon, WhatsAppIcon, TelegramIcon, TikTokIcon } from '../../components/icons/SocialIcons';
+import { ManageCurrenciesDialog } from '../../components/admin/ManageCurrenciesDialog';
 import './Settings.css';
 
 export default function AdminSettings() {
@@ -80,6 +81,10 @@ export default function AdminSettings() {
 
   // ✅ ДОБАВЬ СОСТОЯНИЕ:
   const [botGloballyEnabled, setBotGloballyEnabled] = useState(false);
+
+  // Currencies state
+  const [currencies, setCurrencies] = useState<Array<{ code: string, name: string, symbol: string }>>([]);
+  const [showCurrencyDialog, setShowCurrencyDialog] = useState(false);
 
   const [notificationSettings, setNotificationSettings] = useState({
     emailNotifications: true,
@@ -233,6 +238,7 @@ export default function AdminSettings() {
     loadBookingReminderSettings();
     loadMessengerSettings();
     loadHolidays();
+    loadCurrencies();
   }, []);
 
   useEffect(() => {
@@ -469,6 +475,15 @@ export default function AdminSettings() {
       setLoadingRoles(false);
     }
   }
+
+  const loadCurrencies = async () => {
+    try {
+      const response = await api.get('/api/settings/currencies');
+      setCurrencies(response.currencies || []);
+    } catch (err) {
+      console.error('Error loading currencies:', err);
+    }
+  };
 
   const handleSaveGeneral = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -1521,21 +1536,32 @@ export default function AdminSettings() {
 
                     <div>
                       <Label htmlFor="currency">{t('settings:currency', 'Валюта')}</Label>
-                      <Select
-                        value={generalSettings.currency}
-                        onValueChange={(value) => setGeneralSettings({ ...generalSettings, currency: value })}
-                      >
-                        <SelectTrigger id="currency">
-                          <SelectValue placeholder={t('settings:select_currency', 'Выберите валюту')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="AED">AED (Dirham)</SelectItem>
-                          <SelectItem value="USD">USD (Dollar)</SelectItem>
-                          <SelectItem value="EUR">EUR (Euro)</SelectItem>
-                          <SelectItem value="RUB">RUB (Ruble)</SelectItem>
-                          <SelectItem value="KZT">KZT (Tenge)</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="flex gap-2">
+                        <Select
+                          value={generalSettings.currency}
+                          onValueChange={(value) => setGeneralSettings({ ...generalSettings, currency: value })}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder={t('settings:select_currency')} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {currencies.map((curr) => (
+                              <SelectItem key={curr.code} value={curr.code}>
+                                {curr.code} - {curr.name} ({curr.symbol})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setShowCurrencyDialog(true)}
+                          title={t('settings:manage_currencies')}
+                        >
+                          <SettingsIcon className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
 
                     <div>
@@ -3137,6 +3163,14 @@ export default function AdminSettings() {
           </div>
         )
       }
-    </div >
+      <ManageCurrenciesDialog
+        open={showCurrencyDialog}
+        onOpenChange={setShowCurrencyDialog}
+        onSuccess={() => {
+          loadCurrencies();
+          loadSalonSettings();
+        }}
+      />
+    </div>
   );
 }

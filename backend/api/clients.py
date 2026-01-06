@@ -354,7 +354,8 @@ async def update_client_api(
         email=data.get('email'),
         referral_code=data.get('referral_code'),
         discount=data.get('discount'),
-        password_hash=password_hash
+        password_hash=password_hash,
+        reminder_date=data.get('reminder_date')
     )
     
     if success:
