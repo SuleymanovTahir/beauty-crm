@@ -9,7 +9,7 @@ import { Textarea } from '../ui/textarea';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
 import { ScrollArea } from '../ui/scroll-area';
-import { CalendarDays, Clock, Phone, Trash2, Edit2, Plus, Save, User as UserIcon } from 'lucide-react';
+import { CalendarDays, Clock, Phone, Trash2, Edit2, Plus, Save, User as UserIcon, Bell } from 'lucide-react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import {
@@ -32,6 +32,7 @@ interface Client {
     temperature: 'cold' | 'warm' | 'hot';
     pipeline_stage_id: number;
     profile_pic?: string;
+    reminder_date?: string;
 }
 
 interface Booking {
@@ -47,6 +48,7 @@ interface Stage {
     id: number;
     name: string;
     color: string;
+    key?: string;
 }
 
 interface ClientDetailsDialogProps {
@@ -67,6 +69,7 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [notes, setNotes] = useState('');
+    const [reminderDate, setReminderDate] = useState('');
     const [temperature, setTemperature] = useState<'cold' | 'warm' | 'hot'>('cold');
     const [stageId, setStageId] = useState<string>(''); // form value
 
@@ -80,6 +83,7 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
             setName(client.name || '');
             setPhone(client.phone || '');
             setNotes(client.notes || '');
+            setReminderDate(client.reminder_date || '');
             setTemperature(client.temperature || 'cold');
             setStageId(client.pipeline_stage_id?.toString() || '');
             fetchClientDetails(client.id);
@@ -104,8 +108,16 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
     const handleSave = async () => {
         if (!client) return;
         try {
+            // Auto-move to "Remind Later" stage if reminder date is set and stage not manually changed to something else particular
+            // But here we respect stageId which might have been changed by handleReminderDateChange
+
             // Update info
-            await api.post(`/api/clients/${client.id}/update`, { name, phone, notes });
+            await api.post(`/api/clients/${client.id}/update`, {
+                name,
+                phone,
+                notes,
+                reminder_date: reminderDate || null
+            });
 
             // Update temperature
             if (temperature !== client.temperature) {
@@ -257,6 +269,32 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
                                     <div className="flex items-center gap-2 text-gray-700">
                                         <Phone className="w-4 h-4 text-gray-400" />
                                         {phone || t('no_phone', 'Нет телефона')}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-400 uppercase">{t('reminder', 'Напоминание')}</Label>
+                                {isEditing ? (
+                                    <Input
+                                        type="datetime-local"
+                                        value={reminderDate}
+                                        onChange={(e) => {
+                                            const newDate = e.target.value;
+                                            setReminderDate(newDate);
+                                            if (newDate) {
+                                                const remindStage = stages.find(s => s.key === 'remind_later' || s.name?.toLowerCase().includes('напомнить') || s.name?.toLowerCase().includes('remind'));
+                                                if (remindStage) {
+                                                    setStageId(remindStage.id.toString());
+                                                }
+                                            }
+                                        }}
+                                        className="bg-white h-8"
+                                    />
+                                ) : (
+                                    <div className="flex items-center gap-2 text-gray-700">
+                                        <Bell className="w-4 h-4 text-gray-400" />
+                                        {reminderDate ? format(new Date(reminderDate), 'dd MMM yyyy HH:mm', { locale: ru }) : <span className="text-gray-400 italic">{t('no_reminder', 'Не установлено')}</span>}
                                     </div>
                                 )}
                             </div>

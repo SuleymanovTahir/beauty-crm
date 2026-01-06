@@ -145,6 +145,10 @@ def run_all_tests():
     results.append(("test_employee_management.py", run_suite("test_employee_management.py", subprocess_path="test_employee_management.py")))
     results.append(("test_bot_analytics.py", run_suite("test_bot_analytics.py", subprocess_path="test_bot_analytics.py")))
     results.append(("test_conversation_context.py", run_suite("test_conversation_context.py", subprocess_path="test_conversation_context.py")))
+    
+    # 2.1 Тесты миграций и новых функций
+    from db.migrations.run_all_migrations import run_all_migrations
+    results.append(("Миграции БД", run_suite("run_all_migrations.py", func=run_all_migrations, description="Проверка всех миграций")))
 
     # 3. Дополнительные проверки
     results.append(("Проверка услуг без мастеров", run_suite("Услуги без мастеров", func=check_services_without_masters)))
