@@ -1,0 +1,30 @@
+{
+  "title": "Сату шұңқыры",
+  "subtitle": "Кезеңді және түрлендіруді басқару",
+  "funnel": "Шұңқыр",
+  "search_clients": "Клиенттер ізделуде...",
+  "quick_add": "Жылдам қосу",
+  "no_clients": "Клиенттер жоқ",
+  "moved_successfully": "Клиент сәтті жылжытылды",
+  "move_failed": "Жылжыту қатесі",
+  "conversion": {
+    "visitor_to_engaged": "Келуші -> Қатысқан",
+    "engaged_to_booking": "Engaged -> Жазуды бастады",
+    "booking_to_booked": "Жазуды бастады -> Тіркелді",
+    "booked_to_completed": "Тіркелді -> Аяқталды"
+  },
+  "funnel_chart": "Шұңқыр диаграммасы",
+  "key_metrics": "Негізгі көрсеткіштер",
+  "total_conversion": "Жалпы конверсия",
+  "total_losses": "Жалпы шығындар",
+  "successful_visits": "Сәтті сапарлар",
+  "recommendations_title": "Ұсыныстар",
+  "all_good": "Бәрі жақсы! Шұңқырыңыз жақсы нәтиже көрсетуде.",
+  "stage_details": "Детальдау кезеңдері",
+  "table": {
+    "stage": "Сахна",
+    "count": "Саны",
+    "percentage": "Пайыз",
+    "losses": "Шығындар"
+  }
+}

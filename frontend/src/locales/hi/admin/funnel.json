@@ -1,0 +1,30 @@
+{
+  "title": "बिक्री फ़नल",
+  "subtitle": "स्टेज और रूपांतरण प्रबंधन",
+  "funnel": "फ़नल",
+  "search_clients": "ग्राहकों की तलाश की जा रही है...",
+  "quick_add": "शीघ्र जोड़ें",
+  "no_clients": "कोई ग्राहक नहीं",
+  "moved_successfully": "ग्राहक सफलतापूर्वक स्थानांतरित हो गया",
+  "move_failed": "त्रुटि ले जाएँ",
+  "conversion": {
+    "visitor_to_engaged": "आगंतुक -> व्यस्त",
+    "engaged_to_booking": "व्यस्त -> रिकॉर्डिंग प्रारंभ की गई",
+    "booking_to_booked": "रिकॉर्डिंग प्रारंभ की गई -> साइन अप किया गया",
+    "booked_to_completed": "साइन अप -> पूर्ण"
+  },
+  "funnel_chart": "फ़नल चार्ट",
+  "key_metrics": "प्रमुख मेट्रिक्स",
+  "total_conversion": "कुल रूपांतरण",
+  "total_losses": "कुल घाटा",
+  "successful_visits": "सफल दौरे",
+  "recommendations_title": "सिफारिशों",
+  "all_good": "और सब ठीक है न! आपका फ़नल अच्छे परिणाम दिखा रहा है.",
+  "stage_details": "विवरण चरण",
+  "table": {
+    "stage": "अवस्था",
+    "count": "मात्रा",
+    "percentage": "प्रतिशत",
+    "losses": "हानि"
+  }
+}
