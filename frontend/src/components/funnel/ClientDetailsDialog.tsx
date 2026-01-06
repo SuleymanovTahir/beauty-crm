@@ -55,9 +55,10 @@ interface ClientDetailsDialogProps {
     client: Client | null;
     onSuccess: () => void;
     stages?: Stage[];
+    onAddBooking?: (client: Client) => void;
 }
 
-export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, stages = [] }: ClientDetailsDialogProps) {
+export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, stages = [], onAddBooking }: ClientDetailsDialogProps) {
     const { t } = useTranslation(['admin/funnel', 'common']);
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState<'info' | 'bookings'>('info');
@@ -319,7 +320,7 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
                                 </div>
                             )}
 
-                            <Button className="w-full mt-4" variant="outline">
+                            <Button className="w-full mt-4" variant="outline" onClick={() => client && onAddBooking?.(client)}>
                                 <Plus className="w-4 h-4 mr-2" />
                                 {t('add_booking', 'Добавить запись')}
                             </Button>

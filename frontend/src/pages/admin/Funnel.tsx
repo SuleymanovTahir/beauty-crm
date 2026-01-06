@@ -298,6 +298,10 @@ export default function Funnel() {
                     client={selectedClient}
                     onSuccess={loadData}
                     stages={stages}
+                    onAddBooking={(client) => {
+                        setBookingClient(client);
+                        setCreateBookingOpen(true);
+                    }}
                 />
 
 
@@ -492,9 +496,114 @@ export default function Funnel() {
                         </div>
                     </div>
                 ) : (
-                    <div className="p-8 h-full overflow-y-auto">
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center text-gray-500">
-                            List view coming soon...
+                    <div className="p-6 h-full overflow-hidden flex flex-col">
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex-1 overflow-hidden flex flex-col">
+                            <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0">
+                                <h3 className="font-semibold text-gray-900">{t('client_list')}</h3>
+                                <div className="text-sm text-gray-500">
+                                    {Object.values(clients).flat().length} {t('clients')}
+                                </div>
+                            </div>
+                            <ScrollArea className="flex-1">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="text-xs text-gray-500 uppercase bg-gray-50 sticky top-0 z-10 shadow-sm">
+                                        <tr>
+                                            <th className="px-6 py-3 font-medium">{t('client')}</th>
+                                            <th className="px-6 py-3 font-medium">{t('stage')}</th>
+                                            <th className="px-6 py-3 font-medium">{t('temperature')}</th>
+                                            <th className="px-6 py-3 font-medium">{t('last_contact')}</th>
+                                            <th className="px-6 py-3 font-medium text-right">{t('total_spend')}</th>
+                                            <th className="px-6 py-3 font-medium text-right">{t('actions')}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {Object.values(clients).flat().length > 0 ? (
+                                            Object.values(clients).flat()
+                                                .filter(c =>
+                                                    c.name?.toLowerCase().includes(search.toLowerCase()) ||
+                                                    c.username?.toLowerCase().includes(search.toLowerCase())
+                                                )
+                                                .map((client) => (
+                                                    <tr
+                                                        key={client.id}
+                                                        className="hover:bg-gray-50/80 group cursor-pointer transition-colors"
+                                                        onClick={() => handleClientClick(client)}
+                                                    >
+                                                        <td className="px-6 py-4">
+                                                            <div className="flex items-center gap-3">
+                                                                <Avatar className="w-9 h-9 border border-gray-100">
+                                                                    <AvatarImage src={client.profile_pic} />
+                                                                    <AvatarFallback className="bg-purple-50 text-purple-600 font-medium text-xs">
+                                                                        {client.username?.[0]?.toUpperCase()}
+                                                                    </AvatarFallback>
+                                                                </Avatar>
+                                                                <div>
+                                                                    <div className="font-medium text-gray-900">{client.name || client.username}</div>
+                                                                    <div className="text-xs text-gray-500">@{client.username}</div>
+                                                                    {client.phone && (
+                                                                        <div className="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+                                                                            <Phone className="w-3 h-3" />
+                                                                            {client.phone}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <Badge variant="secondary" className="bg-gray-100 font-normal">
+                                                                {stages.find(s => s.id === client.pipeline_stage_id)?.name}
+                                                            </Badge>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className={`w-2 h-2 rounded-full ${getTemperatureColor(client.temperature)}`} />
+                                                                <span className="capitalize text-gray-600">{client.temperature}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-gray-500">
+                                                            {format(new Date(client.last_contact), 'dd MMM HH:mm', { locale: ru })}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-right font-medium text-gray-900">
+                                                            {client.total_spend > 0 ? `${client.total_spend} ₸` : '-'}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-right">
+                                                            <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="h-8 w-8 text-gray-400 hover:text-blue-600"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleClientClick(client);
+                                                                    }}
+                                                                >
+                                                                    <Eye className="w-4 h-4" />
+                                                                </Button>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="h-8 w-8 text-gray-400 hover:text-red-600"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleDeleteClient(client);
+                                                                    }}
+                                                                >
+                                                                    <Trash2 className="w-4 h-4" />
+                                                                </Button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={6} className="text-center py-12 text-gray-400 text-sm">
+                                                    {t('no_clients_found', 'Клиенты не найдены')}
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </ScrollArea>
                         </div>
                     </div>
                 )}
