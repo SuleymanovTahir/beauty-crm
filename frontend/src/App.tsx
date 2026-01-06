@@ -27,6 +27,8 @@ const PublicContent = React.lazy(() => import('./pages/admin/PublicContent'));
 const EmployeeDetail = React.lazy(() => import('./pages/admin/EmployeeDetail'));
 const EmployeeManagement = React.lazy(() => import('./pages/admin/EmployeeManagement'));
 const VisitorAnalytics = React.lazy(() => import('./pages/admin/VisitorAnalytics'));
+const AdminFunnel = React.lazy(() => import('./pages/admin/Funnel'));
+const AdminTasks = React.lazy(() => import('./pages/admin/Tasks'));
 
 // Admin Panel pages
 const AdminPanelLayout = React.lazy(() => import('./components/layouts/AdminPanelLayout'));
@@ -306,6 +308,8 @@ export default function App() {
                 <Route path="bot-settings/:tab?" element={<BotSettings />} />
                 <Route path="public-content/:tab?" element={<PublicContent />} />
                 <Route path="visitor-analytics" element={<VisitorAnalytics />} />
+                <Route path="funnel" element={<AdminFunnel />} />
+                <Route path="tasks" element={<AdminTasks />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 

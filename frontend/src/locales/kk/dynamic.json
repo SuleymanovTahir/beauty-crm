@@ -11,7 +11,7 @@
   "users.4.full_name.7e09288f": "Қожабай Ләзат",
   "users.4.position.1c34eb1b": "Тырнақ күтімінің шебері",
   "users.4.bio.8aed439c": "Шашыңызды түрлендіру шебері. Қожабай Ләзат сіздің даралығыңызды көрсететін жеке бояу мен күтім әдістерін пайдаланады.",
-  "users.7.full_name.ab8bc7dd": "Сенімді Болыңыз",
+  "users.7.full_name.ab8bc7dd": "Тұрсынай",
   "users.7.position.7c5ba892": "Директор",
   "users.7.bio.d09b5cdd": "Шашыңызды түрлендіру шебері. Тұрсынай сіздің даралығыңызды көрсететін жеке бояу мен күтім әдістерін пайдаланады.",
   "users.3.full_name.fffd05a4": "Амандұрдыева Местан",
@@ -338,5 +338,18 @@
   "public_banners.2.subtitle_ru.8f973b34": "Кәсіби косметикалық қызметтер.",
   "public_banners.3.title_ru.816f4b30": "50% дейін жеңілдіктер",
   "public_banners.3.subtitle_ru.f9d0958e": "Барлық салон қызметтері үшін",
-  "services.66.name_ru.973df8ef": "СПА педикюрі"
+  "services.66.name_ru.973df8ef": "СПА педикюрі",
+  "public_reviews.6.text_ru.6f00ad70": "Дубайдағы ең жақсы сұлулық салоны!",
+  "public_reviews.6.author_name.ff715865": "Сара Дженкинс",
+  "public_reviews.6.employee_position.5b1b1d5e": "Кірпіктер",
+  "public_reviews.7.text_ru.f38138da": "Керемет қызмет. Мен бет күтімін жасадым, терім жылтырап жатыр. Мен міндетті түрде қайтамын!",
+  "public_reviews.7.author_name.653816a6": "Мария Гонсалес",
+  "public_reviews.7.employee_position.9a3a91ca": "Бет күтімі",
+  "public_reviews.8.text_ru.ae85e84b": "Тамаша қызмет көрсету және кәсіби персонал.",
+  "public_reviews.8.author_name.f26d4aa2": "Фатима әл-Сайед",
+  "public_reviews.8.employee_position.65d6c03d": "Микроблейдинг",
+  "services.110.duration.072b030b": "60",
+  "public_reviews.6.text_ru.d04583b6": "Дубайдағы ең жақсы сұлулық салоны!",
+  "public_reviews.7.text_ru.784d2781": "Керемет қызмет. Мен бет күтімін жасадым, терім жылтырап жатыр. Мен міндетті түрде қайтамын!",
+  "public_reviews.8.text_ru.33473c5f": "Тамаша қызмет көрсету және кәсіби персонал."
 }

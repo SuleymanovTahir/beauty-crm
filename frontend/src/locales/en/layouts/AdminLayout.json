@@ -18,6 +18,8 @@
     "services": "Services",
     "settings": "Settings",
     "users": "Users",
-    "visitors": "Visitors"
+    "visitors": "Visitors",
+    "funnel": "Funnel",
+    "tasks": "Tasks"
   }
 }
