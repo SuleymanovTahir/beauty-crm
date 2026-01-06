@@ -231,6 +231,12 @@ def run_all_migrations():
         "Расширение ЛК (рефералки, галерея, достижения, избранные мастера)"
     )
 
+    from db.migrations.consolidated.schema_telephony import run_migration as migrate_telephony
+    results["consolidated/telephony"] = run_migration_function(
+        migrate_telephony,
+        "Таблица call_logs (Телефония)"
+    )
+
 
     results["consolidated/holidays"] = run_migration_function(
         migrate_holidays_schema,

@@ -378,6 +378,20 @@ export function CreateBookingDialog({
                             </div>
                         )}
                     </div>
+                    {/* Status Selection */}
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">{t('bookings:status', 'Статус')}</label>
+                        <select
+                            value={addForm.status}
+                            onChange={(e) => setAddForm({ ...addForm, status: e.target.value })}
+                            className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all bg-white"
+                        >
+                            <option value="confirmed">{t('bookings:confirmed', 'Подтверждено')}</option>
+                            <option value="pending">{t('bookings:pending', 'Ожидает')}</option>
+                            <option value="cancelled">{t('bookings:cancelled', 'Отменено')}</option>
+                            <option value="completed">{t('bookings:completed', 'Завершено')}</option>
+                        </select>
+                    </div>
                 </div>
 
                 {/* Footer */}

@@ -25,7 +25,8 @@ import {
   Bell,
   Sparkles,
   Filter,
-  CheckSquare
+  CheckSquare,
+  Phone
 } from 'lucide-react';
 import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../icons/SocialIcons';
 import { toast } from 'sonner';
@@ -177,6 +178,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       { icon: MapPinned, label: t('menu.visitors'), path: '/crm/visitor-analytics', requirePermission: () => permissions.canViewAnalytics },
       { icon: Settings, label: t('menu.settings'), path: '/crm/settings', requirePermission: () => permissions.canViewSettings },
       { icon: Bot, label: t('menu.bot_settings'), path: '/crm/bot-settings', requirePermission: () => permissions.canViewBotSettings },
+      { icon: Phone, label: t('menu.telephony', 'Телефония'), path: '/crm/telephony', requirePermission: () => true },
     ];
 
     // Фильтруем только те пункты, к которым есть доступ
