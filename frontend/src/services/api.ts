@@ -639,10 +639,32 @@ export class ApiClient {
   }
 
   // ===== ТЕЛЕФОНИЯ =====
-  async getCalls(search?: string, limit: number = 50, offset: number = 0) {
+  async getCalls(search?: string, limit: number = 50, offset: number = 0, dateFrom?: string, dateTo?: string) {
     let url = `/api/telephony/calls?limit=${limit}&offset=${offset}`
     if (search) url += `&search=${search}`
+    if (dateFrom) url += `&start_date=${dateFrom}`
+    if (dateTo) url += `&end_date=${dateTo}`
     return this.request<any>(url)
+  }
+
+  async createCall(data: any) {
+    return this.request('/api/telephony/calls', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    })
+  }
+
+  async updateCall(id: number, data: any) {
+    return this.request(`/api/telephony/calls/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    })
+  }
+
+  async deleteCall(id: number) {
+    return this.request(`/api/telephony/calls/${id}`, {
+      method: 'DELETE'
+    })
   }
 
   async getTelephonyStats() {
