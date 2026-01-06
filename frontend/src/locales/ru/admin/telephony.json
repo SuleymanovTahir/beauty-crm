@@ -1,0 +1,18 @@
+{
+    "telephony": "Телефония",
+    "subtitle": "История звонков и записи разговоров",
+    "total_calls": "Всего звонков",
+    "inbound": "Входящие",
+    "outbound": "Исходящие",
+    "missed": "Пропущенные",
+    "type": "Тип",
+    "client": "Клиент",
+    "employee": "Сотрудник",
+    "duration": "Длительность",
+    "date": "Дата",
+    "recording": "Запись",
+    "search_placeholder": "Поиск по номеру или имени...",
+    "connect_telephony": "Подключите IP-телефонию",
+    "integration_description": "Интегрируйте CRM с Binotel, OnlinePBX или Twilio, чтобы автоматически сохранять историю звонков.",
+    "setup_integration": "Настроить интеграцию"
+}

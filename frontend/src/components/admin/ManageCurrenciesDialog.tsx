@@ -119,8 +119,8 @@ export function ManageCurrenciesDialog({ open, onOpenChange, onSuccess }: Manage
                 <div className="space-y-6">
                     {/* Add New Currency Form */}
                     <form onSubmit={handleAdd} className="bg-gray-50 p-4 rounded-lg space-y-4 border border-gray-100">
-                        <div className="grid grid-cols-3 gap-3">
-                            <div className="space-y-2">
+                        <div className="grid grid-cols-4 gap-3">
+                            <div className="space-y-2 col-span-1">
                                 <Label className="text-xs">{t('currency_code')}</Label>
                                 <Input
                                     value={newCurrency.code}
@@ -129,6 +129,15 @@ export function ManageCurrenciesDialog({ open, onOpenChange, onSuccess }: Manage
                                     required
                                     maxLength={3}
                                     disabled={!!editingCurrencyCode}
+                                />
+                            </div>
+                            <div className="space-y-2 col-span-1">
+                                <Label className="text-xs">{t('currency_symbol')}</Label>
+                                <Input
+                                    value={newCurrency.symbol}
+                                    onChange={(e) => setNewCurrency({ ...newCurrency, symbol: e.target.value })}
+                                    placeholder={t('currency_symbol_placeholder')}
+                                    required
                                 />
                             </div>
                             <div className="space-y-2 col-span-2">
@@ -141,29 +150,17 @@ export function ManageCurrenciesDialog({ open, onOpenChange, onSuccess }: Manage
                                 />
                             </div>
                         </div>
-                        <div className="grid grid-cols-3 gap-3 items-end">
-                            <div className="space-y-2">
-                                <Label className="text-xs">{t('currency_symbol')}</Label>
-                                <Input
-                                    value={newCurrency.symbol}
-                                    onChange={(e) => setNewCurrency({ ...newCurrency, symbol: e.target.value })}
-                                    placeholder={t('currency_symbol_placeholder')}
-                                    required
-                                />
-                            </div>
-                            <div className="col-span-2">
-                                <div className="flex gap-2">
-                                    {editingCurrencyCode && (
-                                        <Button type="button" variant="outline" onClick={cancelEdit} className="w-10 px-0">
-                                            <X className="w-4 h-4" />
-                                        </Button>
-                                    )}
-                                    <Button type="submit" className="w-full bg-pink-600 hover:bg-pink-700" disabled={adding}>
-                                        {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : (editingCurrencyCode ? <Edit className="w-4 h-4 mr-2" /> : <Plus className="w-4 h-4 mr-2" />)}
-                                        {editingCurrencyCode ? t('save_changes') : t('add_currency')}
-                                    </Button>
-                                </div>
-                            </div>
+
+                        <div className="flex gap-2 pt-2">
+                            {editingCurrencyCode && (
+                                <Button type="button" variant="outline" onClick={cancelEdit} className="w-10 px-0 shrink-0">
+                                    <X className="w-4 h-4" />
+                                </Button>
+                            )}
+                            <Button type="submit" className="flex-1 bg-pink-600 hover:bg-pink-700" disabled={adding}>
+                                {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : (editingCurrencyCode ? <Edit className="w-4 h-4 mr-2" /> : <Plus className="w-4 h-4 mr-2" />)}
+                                {editingCurrencyCode ? t('save_changes') : t('add_currency')}
+                            </Button>
                         </div>
                     </form>
 
