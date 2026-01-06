@@ -17,13 +17,14 @@ import {
     Pencil,
     Trash2,
     Layout,
-    LayoutDashboard
+    LayoutDashboard,
+    Settings
 } from 'lucide-react';
 import { format, isToday, isPast } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { CreateTaskDialog } from '../../components/tasks/CreateTaskDialog';
-import { AddStageDialog } from '../../components/tasks/AddStageDialog';
+import { ManageTaskStagesDialog } from '../../components/tasks/ManageTaskStagesDialog';
 import { TasksDashboard } from '../../components/tasks/TasksDashboard';
 import {
     DropdownMenu,
@@ -68,7 +69,7 @@ export default function Tasks() {
 
     // Dialog states
     const [createDialogOpen, setCreateDialogOpen] = useState(false);
-    const [addStageDialogOpen, setAddStageDialogOpen] = useState(false);
+    const [manageStagesOpen, setManageStagesOpen] = useState(false);
     const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
 
     useEffect(() => {
@@ -161,8 +162,6 @@ export default function Tasks() {
     // View state
     const [viewMode, setViewMode] = useState<'board' | 'dashboard'>('board');
 
-    // ... (rest of useEffects and handlers)
-
     return (
         <div className="h-full flex flex-col bg-gray-50/50">
             {/* Header & Analytics */}
@@ -198,10 +197,11 @@ export default function Tasks() {
 
                         <Button
                             variant="outline"
-                            onClick={() => setAddStageDialogOpen(true)}
+                            className="bg-white"
+                            onClick={() => setManageStagesOpen(true)}
                         >
-                            <Plus className="w-4 h-4 mr-2" />
-                            {t('add_stage', 'Добавить стадию')}
+                            <Settings className="w-4 h-4 mr-2" />
+                            {t('manage_stages', 'Управление стадиями')}
                         </Button>
                         <Button
                             className="bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-purple-500/20"
@@ -221,9 +221,9 @@ export default function Tasks() {
                     taskToEdit={taskToEdit}
                 />
 
-                <AddStageDialog
-                    open={addStageDialogOpen}
-                    onOpenChange={setAddStageDialogOpen}
+                <ManageTaskStagesDialog
+                    open={manageStagesOpen}
+                    onOpenChange={setManageStagesOpen}
                     onSuccess={loadData}
                 />
 
@@ -289,7 +289,10 @@ export default function Tasks() {
                                 <div className="p-4 border-b border-gray-200/60 bg-white/50 rounded-t-xl sticky top-0 backdrop-blur-sm z-10">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
-                                            <div className={`w-2 h-2 rounded-full ${stage.color || 'bg-gray-500'}`} />
+                                            <div
+                                                className="w-2 h-2 rounded-full"
+                                                style={{ backgroundColor: stage.color?.replace('bg-', '').replace('-500', '') || '#9ca3af' }}
+                                            />
                                             <span className="font-semibold text-gray-700">{stage.name}</span>
                                         </div>
                                         <Badge variant="secondary" className="bg-white text-gray-500 shadow-sm border">
@@ -390,4 +393,3 @@ export default function Tasks() {
         </div>
     );
 }
-

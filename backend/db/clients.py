@@ -138,13 +138,19 @@ def get_or_create_client(instagram_id: str, username: str = None, phone: str = N
         # 3. Если клиента всё еще нет - создаем нового
         if not client:
             now = datetime.now().isoformat()
+            
+            # Fetch default pipeline stage (usually 'new' or first order)
+            c.execute("SELECT id FROM pipeline_stages WHERE key = 'new' OR order_index = 0 ORDER BY order_index ASC LIMIT 1")
+            stage_row = c.fetchone()
+            default_stage_id = stage_row[0] if stage_row else None
+            
             c.execute("""INSERT INTO clients 
                          (instagram_id, username, phone, email, first_contact, last_contact, 
-                          total_messages, labels, status, detected_language)
-                         VALUES (%s, %s, %s, %s, %s, %s, 0, %s, %s, %s)""",
-                      (instagram_id, username, phone, email, now, now, "Новый клиент", "new", "ru"))
+                          total_messages, labels, status, detected_language, pipeline_stage_id)
+                         VALUES (%s, %s, %s, %s, %s, %s, 0, %s, %s, %s, %s)""",
+                      (instagram_id, username, phone, email, now, now, "Новый клиент", "new", "ru", default_stage_id))
             conn.commit()
-            print(f"✨ Создан новый клиент: {instagram_id} ({username or ''})")
+            print(f"✨ Создан новый клиент: {instagram_id} ({username or ''}) в стадии {default_stage_id}")
         else:
             # Обновляем время контакта
             now = datetime.now().isoformat()

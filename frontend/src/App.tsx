@@ -289,7 +289,6 @@ export default function App() {
                 <Route path="bookings" element={<Bookings />} />
                 <Route path="bookings/:id" element={<BookingDetail />} />
                 <Route path="analytics" element={<Analytics />} />
-                <Route path="funnel" element={<Funnel />} />
                 <Route path="services" element={<Services />} />
                 <Route path="clients" element={<Clients />} />
                 <Route path="clients/:id" element={<ClientDetail />} />

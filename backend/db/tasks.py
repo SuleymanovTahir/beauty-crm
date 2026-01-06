@@ -63,17 +63,51 @@ def create_task_stage(name: str, color: str = 'bg-gray-500') -> Optional[int]:
     finally:
         conn.close()
 
-def update_task_stage_order(orders: List[Dict[str, int]]) -> bool:
-    """Update order of stages. orders = [{'id': 1, 'order_index': 0}, ...]"""
+
+def update_task_stage_order(orders: List[int]) -> bool:
+    """Update order of stages. orders = [id1, id2, ...]"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        for item in orders:
-            c.execute("UPDATE task_stages SET order_index = %s WHERE id = %s", (item['order_index'], item['id']))
+        for idx, stage_id in enumerate(orders):
+            c.execute("UPDATE task_stages SET order_index = %s WHERE id = %s", (idx, stage_id))
         conn.commit()
         return True
     except Exception as e:
         log_error(f"Error updating stage order: {e}", "db.tasks")
+        conn.rollback()
+        return False
+    finally:
+        conn.close()
+
+def update_stage_details(stage_id: int, name: str, color: str) -> bool:
+    """Update stage name and color"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("UPDATE task_stages SET name = %s, color = %s WHERE id = %s", (name, color, stage_id))
+        conn.commit()
+        return True
+    except Exception as e:
+        log_error(f"Error updating stage details: {e}", "db.tasks")
+        conn.rollback()
+        return False
+    finally:
+        conn.close()
+
+def delete_task_stage(stage_id: int, fallback_stage_id: Optional[int] = None) -> bool:
+    """Delete task stage and reassign tasks"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        if fallback_stage_id:
+            c.execute("UPDATE tasks SET stage_id = %s WHERE stage_id = %s", (fallback_stage_id, stage_id))
+        
+        c.execute("DELETE FROM task_stages WHERE id = %s", (stage_id,))
+        conn.commit()
+        return True
+    except Exception as e:
+        log_error(f"Error deleting task stage: {e}", "db.tasks")
         conn.rollback()
         return False
     finally:

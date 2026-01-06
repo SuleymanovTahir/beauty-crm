@@ -363,6 +363,22 @@ async def create_booking_api(
             if user_updates and user_id:
                 db_update_user(user_id, user_updates)
 
+        # ✅ SYNC: Move client to 'Booked' stage in Funnel
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            # Find stage with 'book' or 'запис' in name
+            c.execute("SELECT id FROM pipeline_stages WHERE LOWER(name) LIKE '%book%' OR LOWER(name) LIKE '%запис%' LIMIT 1")
+            stage_row = c.fetchone()
+            if stage_row:
+                booked_stage_id = stage_row[0]
+                c.execute("UPDATE clients SET pipeline_stage_id = %s WHERE instagram_id = %s", (booked_stage_id, instagram_id))
+                conn.commit()
+        except Exception as e:
+            log_error(f"Error syncing client stage: {e}", "api")
+        finally:
+            conn.close()
+
         # Get ID
         conn = get_db_connection()
         c = conn.cursor()

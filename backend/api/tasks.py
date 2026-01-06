@@ -4,8 +4,10 @@ from typing import List, Optional
 from pydantic import BaseModel
 from datetime import datetime
 from db.tasks import (
+
     create_task, get_tasks, update_task_stage, get_task_analytics, 
-    get_task_stages, create_task_stage, update_task, delete_task
+    get_task_stages, create_task_stage, update_task, delete_task,
+    update_task_stage_order, update_stage_details, delete_task_stage
 )
 from utils.utils import get_current_user
 
@@ -14,6 +16,13 @@ router = APIRouter()
 class TaskStageCreate(BaseModel):
     name: str
     color: Optional[str] = 'bg-gray-500'
+
+class StageUpdateRequest(BaseModel):
+    name: str
+    color: str
+
+class ReorderStagesRequest(BaseModel):
+    ordered_ids: List[int]
 
 class TaskCreate(BaseModel):
     title: str
@@ -48,7 +57,40 @@ async def new_stage(
         raise HTTPException(status_code=400, detail="Failed to create stage")
     return {"id": stage_id, **stage.dict()}
 
+
+    return {"id": stage_id, **stage.dict()}
+
+@router.put("/tasks/stages/{stage_id}")
+async def update_stage(
+    stage_id: int,
+    request: StageUpdateRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    if update_stage_details(stage_id, request.name, request.color):
+        return {"success": True}
+    raise HTTPException(status_code=500, detail="Failed to update stage")
+
+@router.delete("/tasks/stages/{stage_id}")
+async def delete_stage(
+    stage_id: int,
+    fallback_stage_id: Optional[int] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    if delete_task_stage(stage_id, fallback_stage_id):
+        return {"success": True}
+    raise HTTPException(status_code=500, detail="Failed to delete stage")
+
+@router.post("/tasks/stages/reorder")
+async def reorder_stages(
+    request: ReorderStagesRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    if update_task_stage_order(request.ordered_ids):
+        return {"success": True}
+    raise HTTPException(status_code=500, detail="Failed to reorder stages")
+
 @router.get("/tasks")
+
 async def list_tasks(
     stage_id: int = None, 
     assignee_id: int = None,
