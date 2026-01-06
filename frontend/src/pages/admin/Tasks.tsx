@@ -12,13 +12,12 @@ import {
     CheckCircle2,
     AlertCircle,
     CalendarDays,
-    MoreVertical,
     User,
-    Pencil,
     Trash2,
     Layout,
     LayoutDashboard,
-    Settings
+    Settings,
+    Eye
 } from 'lucide-react';
 import { format, isToday, isPast } from 'date-fns';
 import { ru } from 'date-fns/locale';
@@ -26,12 +25,6 @@ import { toast } from 'sonner';
 import { CreateTaskDialog } from '../../components/tasks/CreateTaskDialog';
 import { ManageTaskStagesDialog } from '../../components/tasks/ManageTaskStagesDialog';
 import { TasksDashboard } from '../../components/tasks/TasksDashboard';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
 
 interface Task {
     id: number;
@@ -308,31 +301,41 @@ export default function Tasks() {
                                                 key={task.id}
                                                 draggable
                                                 onDragStart={(e) => handleDragStart(e, task)}
-                                                className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-grab active:cursor-grabbing group"
+                                                className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-grab active:cursor-grabbing group relative"
                                             >
+                                                {/* Actions Overlay */}
+                                                <div className="absolute top-2 right-2 flex gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 rounded-lg p-0.5 backdrop-blur-sm">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-7 w-7 text-gray-400 hover:text-blue-600 hover:bg-blue-50"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleEditTask(task);
+                                                        }}
+                                                        title={t('edit', 'Edit')}
+                                                    >
+                                                        <Eye className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-7 w-7 text-gray-400 hover:text-red-600 hover:bg-red-50"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDeleteTask(task.id);
+                                                        }}
+                                                        title={t('delete', 'Delete')}
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+
                                                 {/* Task Card Content */}
                                                 <div className="flex justify-between items-start mb-2">
                                                     <Badge className={`px-2 py-0.5 text-[10px] bg-transparent border ${getPriorityColor(task.priority)} shadow-none hover:bg-transparent`}>
                                                         {t(`priority.${task.priority}`, task.priority)}
                                                     </Badge>
-
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button variant="ghost" size="icon" className="h-6 w-6 -mr-2 text-gray-300 group-hover:text-gray-500">
-                                                                <MoreVertical className="w-4 h-4" />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end">
-                                                            <DropdownMenuItem onClick={() => handleEditTask(task)}>
-                                                                <Pencil className="w-4 h-4 mr-2" />
-                                                                {t('edit')}
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteTask(task.id)}>
-                                                                <Trash2 className="w-4 h-4 mr-2" />
-                                                                {t('delete')}
-                                                            </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
                                                 </div>
 
                                                 <h4 className="text-sm font-semibold text-gray-900 mb-1 leading-snug">{task.title}</h4>
