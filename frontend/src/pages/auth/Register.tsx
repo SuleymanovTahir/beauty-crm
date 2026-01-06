@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { api } from "../../services/api";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
+import GoogleLoginButton from "../../components/GoogleLoginButton";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -337,6 +338,21 @@ export default function Register() {
               <p className="text-red-800 text-sm">{error}</p>
             </div>
           )}
+
+          <div className="mb-6 space-y-6">
+            <GoogleLoginButton text="signup_with" />
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 text-gray-500">
+                  {t('or_register_with_email', 'Или регистрация через email')}
+                </span>
+              </div>
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

@@ -15,6 +15,9 @@ from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error, log_warning
 from utils.utils import require_auth
+import httpx
+import secrets
+from db.users import verify_user, create_session, delete_session
 
 router = APIRouter(tags=["Auth"])
 
@@ -137,6 +140,152 @@ async def logout_api(session_token: Optional[str] = Cookie(None)):
         return response
     except Exception as e:
         log_error(f"Error in logout: {e}", "auth")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.post("/google-login")
+async def google_login(data: dict):
+    """API: Вход/Регистрация через Google"""
+    token = data.get("token")
+    if not token:
+        return JSONResponse({"error": "Token is required"}, status_code=400)
+
+    try:
+        # 1. Проверяем токен через Google API
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={token}")
+            if resp.status_code != 200:
+                log_warning(f"Invalid Google token: {resp.text}", "auth")
+                return JSONResponse({"error": "Invalid Google token"}, status_code=400)
+            google_data = resp.json()
+
+        email = google_data.get("email")
+        if not email:
+             return JSONResponse({"error": "Email not found in Google token"}, status_code=400)
+        
+        email_verified_google = google_data.get("email_verified")
+        if not email_verified_google: # Google emails are usually verified, but good to check
+             return JSONResponse({"error": "Google email not verified"}, status_code=400)
+
+        # 2. Ищем пользователя в БД
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        c.execute("SELECT id, username, full_name, email, role, is_active, phone FROM users WHERE email = %s", (email,))
+        user = c.fetchone()
+        
+        user_id = None
+        username = None
+        full_name = None
+        role = None
+        phone = None
+        
+        if user:
+            # Пользователь существует - логиним
+            user_id, username, full_name, db_email, role, is_active, phone = user
+            
+            # Проверяем is_active
+            if not is_active:
+                conn.close()
+                return JSONResponse(
+                    {
+                        "error": "Ваш аккаунт еще не активирован администратором",
+                        "error_type": "not_approved",
+                        "message": "Ваша регистрация ожидает одобрения администратора"
+                    }, 
+                    status_code=403
+                )
+                
+            # Если email не был подтвержден в нашей системе, подтверждаем т.к. Google доверенный
+            c.execute("UPDATE users SET email_verified = TRUE WHERE id = %s AND email_verified = FALSE", (user_id,))
+            conn.commit()
+            
+        else:
+            # Пользователь не существует - регистрируем
+            username = email.split('@')[0]
+            # Уникальность username
+            c.execute("SELECT id FROM users WHERE username = %s", (username,))
+            if c.fetchone():
+                import random
+                username = f"{username}{random.randint(100, 999)}"
+            
+            full_name = google_data.get("name") or username
+            password_hash = "google_auth_no_password" # Невозможно войти по паролю
+            role = "employee" # Дефолтная роль
+            
+            # Создаем пользователя (требует одобрения админа!)
+            from datetime import datetime
+            now = datetime.now().isoformat()
+            
+            c.execute("""INSERT INTO users 
+                         (username, password_hash, full_name, email, role, created_at, 
+                          is_active, email_verified, privacy_accepted, privacy_accepted_at)
+                         VALUES (%s, %s, %s, %s, %s, %s, FALSE, TRUE, 1, %s) RETURNING id""",
+                      (username, password_hash, full_name, email, role, now, now))
+            
+            user_id = c.fetchone()[0]
+            conn.commit()
+            
+            # Уведомляем админов
+            # (Код уведомления можно вынести в функцию, но пока оставим как есть или упростим)
+            try:
+                c.execute("SELECT email FROM users WHERE role = 'director' AND is_active = TRUE AND email IS NOT NULL")
+                admin_emails = [row[0] for row in c.fetchall()]
+                from utils.email_service import send_admin_notification_email
+                
+                user_data = {
+                    'username': username,
+                    'email': email,
+                    'full_name': full_name,
+                    'role': role,
+                    'position': 'Google Auth'
+                }
+                for admin_email in admin_emails:
+                    send_admin_notification_email(admin_email, user_data)
+            except Exception as e:
+                log_error(f"Failed to notify admins about Google reg: {e}", "auth")
+
+            conn.close()
+            
+            return JSONResponse(
+                {
+                    "error": "Регистрация успешна! Ожидайте одобрения администратора.",
+                    "error_type": "not_approved",
+                    "message": "Ваш аккаунт создан и ожидает активации."
+                },
+                status_code=403
+            )
+
+        conn.close()
+
+        # Создаем сессию
+        session_token = create_session(user_id)
+        log_info(f"Google Login successful for {username}", "auth")
+
+        response_data = {
+            "success": True,
+            "token": session_token,
+            "user": {
+                "id": user_id,
+                "username": username,
+                "full_name": full_name,
+                "email": email,
+                "role": role,
+                "phone": phone
+            }
+        }
+        
+        response = JSONResponse(response_data)
+        response.set_cookie(
+            key="session_token",
+            value=session_token,
+            httponly=True,
+            max_age=7*24*60*60,
+            samesite="lax"
+        )
+        return response
+
+    except Exception as e:
+        log_error(f"Error in google_login: {e}", "auth")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 # ===== РЕГИСТРАЦИЯ =====

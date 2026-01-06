@@ -31,6 +31,10 @@
 
   /* Radius */
   --radius-lg: 0.625rem;
+
+  /* WhatsApp Official Color */
+  --color-whatsapp: #25d366;
+  --color-whatsapp-hover: #128c7e;
 }
 
 @custom-variant dark (&:is(.dark *));
