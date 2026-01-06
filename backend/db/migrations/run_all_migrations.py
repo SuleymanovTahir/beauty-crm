@@ -4,6 +4,7 @@ Simplified Migration Runner - Uses Consolidated Migrations Only
 """
 import sys
 import os
+import subprocess
 from datetime import datetime
 
 # Add backend to path
@@ -239,7 +240,7 @@ def run_all_migrations():
         pass
 
     # Better: Use subprocess to run it to avoid module-level execution weirdness during import if cached
-    import subprocess
+
     print_header("МИГРАЦИЯ: ПРЕДПОЧТЕНИЯ И КОНТЕКСТ")
     try:
         # Use sys.executable to ensure we use the same python interpreter

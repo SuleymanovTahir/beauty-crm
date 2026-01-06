@@ -65,18 +65,18 @@ def test_database():
     print_section("ТЕСТ 1: Проверка базы данных")
 
     try:
-        from core.config import DATABASE_NAME
+        from core.config import DATABASE_NAME, DATABASE_TYPE
         from db.connection import get_db_connection
 
         # Проверка существования БД
         # Проверка существования БД
-        if os.getenv('DATABASE_TYPE') == 'postgresql':
+        if DATABASE_TYPE == 'postgresql':
             print("   ℹ️  PostgreSQL database (skipping file check)")
         elif not os.path.exists(DATABASE_NAME):
             print(f"   ❌ ОШИБКА: Файл БД не найден: {DATABASE_NAME}")
             return False
         
-        if os.getenv('DATABASE_TYPE') != 'postgresql':
+        if DATABASE_TYPE != 'postgresql':
             print(f"   ✅ База данных найдена: {DATABASE_NAME}")
 
         # Подключение к БД
@@ -97,10 +97,10 @@ def test_database():
             'client_loyalty_points'
         ]
 
-        if os.getenv('DATABASE_TYPE') == 'postgresql':
+        if DATABASE_TYPE == 'postgresql':
             c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
         else:
-            c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public'")
+            c.execute("SELECT name FROM sqlite_master WHERE type='table'")
         
         existing_tables = [row[0] for row in c.fetchall()]
 

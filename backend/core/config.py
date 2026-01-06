@@ -121,7 +121,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # ===== DATABASE CONFIGURATION (PostgreSQL Only) =====
 # Принудительно используем PostgreSQL
 DATABASE_TYPE = "postgresql"
-
+DATABASE_NAME = os.getenv('POSTGRES_DB', 'beauty_crm')
 
 POSTGRES_CONFIG = {
     'host': os.getenv('POSTGRES_HOST', 'localhost'),
@@ -184,7 +184,7 @@ if HAS_DOTENV and not is_running_migrations:
         # Не бросаем исключение для миграций
 
 print("✅ Config загружен успешно!")
-print(f"   Database: {DATABASE_NAME}")
+print(f"   Database: {os.getenv('POSTGRES_DB', 'beauty_crm')} ({DATABASE_TYPE})")
 print(f"   ℹ️  Для настроек салона используйте: from database import get_salon_settings")
 # Перед строкой if __name__ == "__main__":
 
