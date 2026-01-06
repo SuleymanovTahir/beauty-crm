@@ -110,6 +110,7 @@ from api.admin_features import router as admin_features_router
 from api.users import router as users_router
 from api.funnel import router as funnel_router
 from api.tasks import router as tasks_router
+from api.telephony import router as telephony_router
 
 # Создаём директории для загрузок
 ensure_upload_directories()
@@ -187,6 +188,7 @@ app.include_router(admin_features_router, prefix="/api")  # Admin Features API (
 app.include_router(users_router, prefix="/api")  # Users API
 app.include_router(funnel_router, prefix="/api") # Funnel API
 app.include_router(tasks_router, prefix="/api") # Tasks API
+app.include_router(telephony_router, prefix="/api") # Telephony API
 
 
 # ===== MIDDLEWARE =====

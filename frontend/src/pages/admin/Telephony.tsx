@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -14,10 +14,12 @@ import {
     PhoneOutgoing,
     PhoneMissed,
     Calendar,
-    Filter
+    Filter,
+    Loader2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { api } from '../../services/api';
 
 interface CallLog {
     id: number;
@@ -31,45 +33,56 @@ interface CallLog {
     manager_name?: string;
 }
 
-// Mock data
-const MOCK_CALLS: CallLog[] = [
-    {
-        id: 1,
-        client_name: 'Алина Ким',
-        phone: '+7 777 123 4567',
-        type: 'inbound',
-        status: 'completed',
-        duration: 245,
-        recording_url: 'https://example.com/audio.mp3',
-        created_at: new Date().toISOString(),
-        manager_name: 'Администратор'
-    },
-    {
-        id: 2,
-        client_name: 'Неизвестный',
-        phone: '+7 701 987 6543',
-        type: 'missed',
-        status: 'missed',
-        duration: 0,
-        created_at: new Date(Date.now() - 3600000).toISOString(),
-    },
-    {
-        id: 3,
-        client_name: 'Жанна',
-        phone: '+7 705 555 1212',
-        type: 'outbound',
-        status: 'completed',
-        duration: 120,
-        recording_url: 'https://example.com/audio2.mp3',
-        created_at: new Date(Date.now() - 7200000).toISOString(),
-        manager_name: 'Мастер Динара'
-    }
-];
-
 export default function Telephony() {
     const { t } = useTranslation(['admin/telephony', 'common']);
     const [search, setSearch] = useState('');
     const [playingId, setPlayingId] = useState<number | null>(null);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    const [calls, setCalls] = useState<CallLog[]>([]);
+    const [stats, setStats] = useState({
+        total_calls: 0,
+        inbound: 0,
+        outbound: 0,
+        missed: 0
+    });
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadData();
+    }, [search]);
+
+    const loadData = async () => {
+        setLoading(true);
+        try {
+            const [callsData, statsData] = await Promise.all([
+                api.getCalls(search),
+                api.getTelephonyStats()
+            ]);
+            setCalls(callsData);
+            setStats(statsData);
+        } catch (error) {
+            console.error('Failed to load telephony data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handlePlay = (id: number, url: string) => {
+        if (playingId === id) {
+            audioRef.current?.pause();
+            setPlayingId(null);
+        } else {
+            if (audioRef.current) {
+                audioRef.current.pause();
+            }
+            const audio = new Audio(url);
+            audio.onended = () => setPlayingId(null);
+            audio.play();
+            audioRef.current = audio;
+            setPlayingId(id);
+        }
+    };
 
     const formatDuration = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
@@ -101,7 +114,7 @@ export default function Telephony() {
                             <Phone className="w-6 h-6" />
                         </div>
                         <div>
-                            <div className="text-2xl font-bold text-blue-900">124</div>
+                            <div className="text-2xl font-bold text-blue-900">{stats.total_calls}</div>
                             <div className="text-xs text-blue-600 font-medium">Всего звонков</div>
                         </div>
                     </div>
@@ -110,7 +123,7 @@ export default function Telephony() {
                             <PhoneIncoming className="w-6 h-6" />
                         </div>
                         <div>
-                            <div className="text-2xl font-bold text-green-900">85</div>
+                            <div className="text-2xl font-bold text-green-900">{stats.inbound}</div>
                             <div className="text-xs text-green-600 font-medium">Входящие</div>
                         </div>
                     </div>
@@ -119,7 +132,7 @@ export default function Telephony() {
                             <PhoneOutgoing className="w-6 h-6" />
                         </div>
                         <div>
-                            <div className="text-2xl font-bold text-purple-900">32</div>
+                            <div className="text-2xl font-bold text-purple-900">{stats.outbound}</div>
                             <div className="text-xs text-purple-600 font-medium">Исходящие</div>
                         </div>
                     </div>
@@ -128,7 +141,7 @@ export default function Telephony() {
                             <PhoneMissed className="w-6 h-6" />
                         </div>
                         <div>
-                            <div className="text-2xl font-bold text-red-900">7</div>
+                            <div className="text-2xl font-bold text-red-900">{stats.missed}</div>
                             <div className="text-xs text-red-600 font-medium">Пропущенные</div>
                         </div>
                     </div>
@@ -171,49 +184,68 @@ export default function Telephony() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {MOCK_CALLS.map((call) => (
-                                <tr key={call.id} className="hover:bg-gray-50 transition-colors group">
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2">
-                                            <div className={`p-2 rounded-full bg-gray-50 ${call.status === 'missed' ? 'bg-red-50' :
-                                                    call.type === 'inbound' ? 'bg-green-50' : 'bg-blue-50'
-                                                }`}>
-                                                {getIcon(call.type, call.status)}
-                                            </div>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                                        <div className="flex justify-center mb-2">
+                                            <Loader2 className="animate-spin w-8 h-8 text-pink-500" />
                                         </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="font-medium text-gray-900">{call.client_name}</div>
-                                        <div className="text-xs text-gray-500">{call.phone}</div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {call.manager_name || <span className="text-gray-400">-</span>}
-                                    </td>
-                                    <td className="px-6 py-4 font-mono text-gray-600">
-                                        {call.status === 'missed' ? '-' : formatDuration(call.duration)}
-                                    </td>
-                                    <td className="px-6 py-4 text-gray-500">
-                                        {format(new Date(call.created_at), 'dd MMM HH:mm', { locale: ru })}
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        {call.recording_url && (
-                                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-8 w-8 rounded-full hover:bg-pink-50 hover:text-pink-600"
-                                                    onClick={() => setPlayingId(playingId === call.id ? null : call.id)}
-                                                >
-                                                    {playingId === call.id ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                                                </Button>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-gray-100">
-                                                    <Download className="w-4 h-4 text-gray-400" />
-                                                </Button>
-                                            </div>
-                                        )}
+                                        Загрузка звонков...
                                     </td>
                                 </tr>
-                            ))}
+                            ) : calls.length === 0 ? (
+                                <tr>
+                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                                        Звонков не найдено
+                                    </td>
+                                </tr>
+                            ) : (
+                                calls.map((call) => (
+                                    <tr key={call.id} className="hover:bg-gray-50 transition-colors group">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-2">
+                                                <div className={`p-2 rounded-full bg-gray-50 ${call.status === 'missed' ? 'bg-red-50' :
+                                                    call.type === 'inbound' ? 'bg-green-50' : 'bg-blue-50'
+                                                    }`}>
+                                                    {getIcon(call.type, call.status)}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="font-medium text-gray-900">{call.client_name || 'Неизвестный'}</div>
+                                            <div className="text-xs text-gray-500">{call.phone}</div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {call.manager_name || <span className="text-gray-400">-</span>}
+                                        </td>
+                                        <td className="px-6 py-4 font-mono text-gray-600">
+                                            {call.status === 'missed' ? '-' : formatDuration(call.duration)}
+                                        </td>
+                                        <td className="px-6 py-4 text-gray-500">
+                                            {call.created_at ? format(new Date(call.created_at), 'dd MMM HH:mm', { locale: ru }) : '-'}
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            {call.recording_url && (
+                                                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 rounded-full hover:bg-pink-50 hover:text-pink-600"
+                                                        onClick={() => call.recording_url && handlePlay(call.id, call.recording_url)}
+                                                    >
+                                                        {playingId === call.id ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                                                    </Button>
+                                                    <a href={call.recording_url} download target="_blank" rel="noreferrer">
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-gray-100">
+                                                            <Download className="w-4 h-4 text-gray-400" />
+                                                        </Button>
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>

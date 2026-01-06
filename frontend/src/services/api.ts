@@ -638,6 +638,17 @@ export class ApiClient {
     return this.request(`/api/chat/messages?client_id=${clientId}&limit=${limit}&messenger=${messenger}`)
   }
 
+  // ===== ТЕЛЕФОНИЯ =====
+  async getCalls(search?: string, limit: number = 50, offset: number = 0) {
+    let url = `/api/telephony/calls?limit=${limit}&offset=${offset}`
+    if (search) url += `&search=${search}`
+    return this.request<any>(url)
+  }
+
+  async getTelephonyStats() {
+    return this.request<any>('/api/telephony/stats')
+  }
+
   // ===== УСЛУГИ =====
   async getServices(activeOnly: boolean = true) {
     return this.request<any>(`/api/services?active_only=${activeOnly}`)
