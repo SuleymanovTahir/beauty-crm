@@ -74,7 +74,7 @@ export default function Clients() {
   const [clients, setClients] = useState<Client[]>([]);
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const { t, i18n } = useTranslation(['admin/Clients', 'common']);
+  const { t, i18n } = useTranslation(['admin/clients', 'common']);
   const { formatCurrency } = useCurrency();
   const [statusFilter, setStatusFilter] = useState(() => {
     return localStorage.getItem('clients_status_filter') || 'all';
@@ -282,7 +282,7 @@ export default function Clients() {
   const handleBulkDelete = async () => {
     if (selectedClients.size === 0) return;
 
-    if (!window.confirm(t('clients:confirm_bulk_delete', { count: selectedClients.size, defaultValue: `Delete ${selectedClients.size} clients?` }))) {
+    if (!window.confirm(t('confirm_bulk_delete', { count: selectedClients.size, defaultValue: `Delete ${selectedClients.size} clients?` }))) {
       return;
     }
 
@@ -290,12 +290,12 @@ export default function Clients() {
       setLoading(true);
       await api.bulkAction('delete', Array.from(selectedClients));
 
-      toast.success(t('clients:bulk_delete_success', { defaultValue: 'Selected clients deleted' }));
+      toast.success(t('bulk_delete_success', { defaultValue: 'Selected clients deleted' }));
       setSelectedClients(new Set());
       await loadClients();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error deleting clients';
-      toast.error(`${t('clients:error')}: ${message}`);
+      toast.error(`${t('error')}: ${message}`);
     } finally {
       setLoading(false);
     }
@@ -313,12 +313,12 @@ export default function Clients() {
       setClients(clientsArray);
 
       if (clientsArray.length === 0) {
-        toast.info(t('clients:no_clients_found'));
+        toast.info(t('no_clients_found'));
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : t('clients:error_loading_clients');
+      const message = err instanceof Error ? err.message : t('error_loading_clients');
       setError(message);
-      toast.error(`${t('clients:error')}: ${message}`);
+      toast.error(`${t('error')}: ${message}`);
       console.error("Error loading clients:", err);
     } finally {
       setLoading(false);
@@ -329,7 +329,7 @@ export default function Clients() {
     setRefreshing(true);
     await loadClients();
     setRefreshing(false);
-    toast.success(t('clients:data_updated'));
+    toast.success(t('data_updated'));
   };
 
   // ✅ НОВОЕ: Сохранение редактирования
@@ -358,11 +358,11 @@ export default function Clients() {
           : c
       ));
 
-      toast.success(t('clients:client_updated'));
+      toast.success(t('client_updated'));
       setShowEditDialog(false);
       setEditingClient(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : t('clients:error_updating_client');
+      const message = err instanceof Error ? err.message : t('error_updating_client');
       toast.error(`❌ Ошибка: ${message}`);
       console.error("Error:", err);
     } finally {
@@ -372,7 +372,7 @@ export default function Clients() {
 
   const handleCreateClient = async () => {
     if (!createForm.name.trim()) {
-      toast.error(t('clients:fill_client_name'));
+      toast.error(t('fill_client_name'));
       return;
     }
 
@@ -389,13 +389,13 @@ export default function Clients() {
         temperature: 'warm',
       });
 
-      toast.success(t('clients:client_created'));
+      toast.success(t('client_created'));
       setShowCreateDialog(false);
       setCreateForm({ name: "", phone: "", instagram_id: "", notes: "" });
       await loadClients();
     } catch (err) {
-      const message = err instanceof Error ? err.message : t('clients:error_creating_client');
-      toast.error(`${t('clients:error')}: ${message}`);
+      const message = err instanceof Error ? err.message : t('error_creating_client');
+      toast.error(`${t('error')}: ${message}`);
       console.error("Error:", err);
     } finally {
       setCreatingClient(false);
@@ -412,7 +412,7 @@ export default function Clients() {
           : client
       ));
 
-      toast.success(t('clients:temperature_updated'));
+      toast.success(t('temperature_updated'));
     } catch (error) {
       console.error('Error updating temperature:', error);
       toast.error(t('common:error_updating_status'));
@@ -431,12 +431,12 @@ export default function Clients() {
       setDeletingId(clientToDelete.id);
       await api.deleteClient(clientToDelete.id);
       setClients(clients.filter(c => c.id !== clientToDelete.id));
-      toast.success(t('clients:client_deleted'));
+      toast.success(t('client_deleted'));
       setShowDeleteDialog(false);
       setClientToDelete(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : t('clients:error_deleting_client');
-      toast.error(`${t('clients:error')}: ${message}`);
+      const message = err instanceof Error ? err.message : t('error_deleting_client');
+      toast.error(`${t('error')}: ${message}`);
       console.error("Error:", err);
     } finally {
       setDeletingId(null);
@@ -447,9 +447,9 @@ export default function Clients() {
     try {
       await api.pinClient(clientId);
       await loadClients();
-      toast.success(t('clients:changed'));
+      toast.success(t('changed'));
     } catch (err) {
-      toast.error(t('clients:error'));
+      toast.error(t('error'));
     }
   };
 
@@ -470,9 +470,9 @@ export default function Clients() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      toast.success(`${t('clients:file_downloaded')} ${format.toUpperCase()}`);
+      toast.success(`${t('file_downloaded')} ${format.toUpperCase()}`);
     } catch (err) {
-      toast.error(t('clients:error_exporting'));
+      toast.error(t('error_exporting'));
     } finally {
       setExporting(false);
     }
@@ -499,10 +499,10 @@ export default function Clients() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      toast.success(`${t('clients:full_export')} ${format.toUpperCase()}`);
+      toast.success(`${t('full_export')} ${format.toUpperCase()}`);
       setShowExportDialog(false);
     } catch (err) {
-      toast.error(t('clients:error_exporting'));
+      toast.error(t('error_exporting'));
     } finally {
       setExporting(false);
     }
@@ -563,7 +563,7 @@ export default function Clients() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">{t('clients:loading_clients')}</p>
+          <p className="text-gray-600">{t('loading_clients')}</p>
         </div>
       </div>
     );
@@ -576,10 +576,10 @@ export default function Clients() {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-red-800 font-medium">{t('clients:error_loading_clients')}</p>
+              <p className="text-red-800 font-medium">{t('error_loading_clients')}</p>
               <p className="text-red-700 text-sm mt-1">{error}</p>
               <Button onClick={loadClients} className="mt-4 bg-red-600 hover:bg-red-700">
-                {t('clients:try_again')}
+                {t('try_again')}
               </Button>
             </div>
           </div>
@@ -594,13 +594,13 @@ export default function Clients() {
         <div>
           <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
             <Users className="w-8 h-8 text-pink-600" />
-            {t('clients:title')}
+            {t('title')}
           </h1>
-          <p className="text-gray-600">{filteredClients.length} {t('clients:total_clients')}</p>
+          <p className="text-gray-600">{filteredClients.length} {t('total_clients')}</p>
         </div>
         <Button onClick={handleRefresh} disabled={refreshing} variant="outline">
           <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
-          {t('clients:refresh')}
+          {t('refresh')}
         </Button>
       </div>
 
@@ -608,7 +608,7 @@ export default function Clients() {
         <div className="bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('clients:total_clients')}</p>
+              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('total_clients')}</p>
               <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.total}</h3>
               <p className="text-[10px] md:text-xs text-gray-500">
                 {period === 'all' ? t('common:all_time') :
@@ -625,7 +625,7 @@ export default function Clients() {
         <div className="bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('clients:vip_clients')}</p>
+              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('vip_clients')}</p>
               <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.vip}</h3>
               <p className="text-[10px] md:text-xs text-gray-500">
                 {period === 'all' ? t('common:all_time') :
@@ -642,7 +642,7 @@ export default function Clients() {
         <div className="bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('clients:new_clients')}</p>
+              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('new_clients')}</p>
               <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.new}</h3>
               <p className="text-[10px] md:text-xs text-gray-500">
                 {period === 'all' ? t('common:all_time') :
@@ -659,7 +659,7 @@ export default function Clients() {
         <div className="bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('clients:active_clients')}</p>
+              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('active_clients')}</p>
               <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.active}</h3>
               <p className="text-[10px] md:text-xs text-gray-500">
                 {period === 'all' ? t('common:all_time') :
@@ -683,7 +683,7 @@ export default function Clients() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-pink-500 transition-colors" />
             <input
               type="text"
-              placeholder={t('clients:search_placeholder')}
+              placeholder={t('search_placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full h-[42px] pl-10 pr-4 bg-gray-50/50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all placeholder:text-gray-400 font-bold"
@@ -828,7 +828,7 @@ export default function Clients() {
               className="w-full lg:w-auto px-5 py-2.5 bg-red-50 text-red-600 border border-red-100 rounded-xl text-sm font-bold hover:bg-red-100 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
             >
               <Trash2 className="w-4 h-4" />
-              {t('clients:delete_selected')} ({selectedClients.size})
+              {t('delete_selected')} ({selectedClients.size})
             </button>
           )}
         </div>
@@ -850,53 +850,53 @@ export default function Clients() {
                     className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('name')}
                   >
-                    {t('clients:client')} {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('client')} {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('phone')}
                   >
-                    {t('clients:contacts')} {sortField === 'phone' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('contacts')} {sortField === 'phone' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
-                    title={t('clients:total_messages_desc', 'Total messages exchanged')}
+                    title={t('total_messages_desc', 'Total messages exchanged')}
                     onClick={() => handleSort('total_messages')}
                   >
-                    {t('clients:messages')} {sortField === 'total_messages' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('messages')} {sortField === 'total_messages' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
-                    title={t('clients:total_bookings_desc', 'Total number of bookings')}
+                    title={t('total_bookings_desc', 'Total number of bookings')}
                     onClick={() => handleSort('total_bookings')}
                   >
-                    {t('clients:bookings')} {sortField === 'total_bookings' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('bookings')} {sortField === 'total_bookings' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('lifetime_value')}
                   >
-                    {t('clients:ltv')} {sortField === 'lifetime_value' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('ltv')} {sortField === 'lifetime_value' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('temperature')}
                   >
-                    {t('clients:temperature')} {sortField === 'temperature' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('temperature')} {sortField === 'temperature' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('last_contact')}
                   >
-                    {t('clients:last_contact')} {sortField === 'last_contact' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('last_contact')} {sortField === 'last_contact' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('status')}
                   >
-                    {t('clients:status')} {sortField === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('status')} {sortField === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-4 text-center text-sm text-gray-600">{t('clients:actions')}</th>
+                  <th className="px-6 py-4 text-center text-sm text-gray-600">{t('actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -998,9 +998,9 @@ export default function Clients() {
                             setClients(clients.map(c =>
                               c.id === client.id ? { ...c, status: newStatus } : c
                             ));
-                            toast.success(t('clients:status_updated'));
+                            toast.success(t('status_updated'));
                           } catch (err) {
-                            toast.error(t('clients:error_updating_status'));
+                            toast.error(t('error_updating_status'));
                           }
                         }}
                         options={statusConfig}
@@ -1017,7 +1017,7 @@ export default function Clients() {
                             e.stopPropagation();
                             navigate(`/crm/clients/${encodeURIComponent(client.id)}`);
                           }}
-                          title={t('clients:view_client_info')}
+                          title={t('view_client_info')}
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -1029,7 +1029,7 @@ export default function Clients() {
                             e.stopPropagation();
                             navigate(`/crm/chat?client_id=${client.id}`);
                           }}
-                          title={t('clients:write_message')}
+                          title={t('write_message')}
                         >
                           <MessageSquare className="w-4 h-4" />
                         </Button>
@@ -1040,7 +1040,7 @@ export default function Clients() {
                             e.stopPropagation();
                             handlePinClient(client.id);
                           }}
-                          title={t('clients:pin_client')}
+                          title={t('pin_client')}
                         >
                           <Pin className={`w-4 h-4 ${client.is_pinned ? 'fill-pink-600 text-pink-600' : ''}`} />
                         </Button>
@@ -1054,7 +1054,7 @@ export default function Clients() {
                               handleDeleteClient(client.id, client.display_name);
                             }}
                             disabled={deletingId === client.id}
-                            title={t('clients:delete_client')}
+                            title={t('delete_client')}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -1069,7 +1069,7 @@ export default function Clients() {
         ) : (
           <div className="py-20 text-center text-gray-500">
             <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p>{t('clients:no_clients_found')}</p>
+            <p>{t('no_clients_found')}</p>
           </div>
         )}
       </div>
@@ -1096,37 +1096,37 @@ export default function Clients() {
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{t('clients:edit_client')}</DialogTitle>
+            <DialogTitle>{t('edit_client')}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="edit_name">{t('clients:name')}</Label>
+              <Label htmlFor="edit_name">{t('name')}</Label>
               <Input
                 id="edit_name"
                 value={editForm.name}
                 onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                placeholder={t('clients:name_placeholder')}
+                placeholder={t('name_placeholder')}
               />
             </div>
 
             <div>
-              <Label htmlFor="edit_phone">{t('clients:phone')}</Label>
+              <Label htmlFor="edit_phone">{t('phone')}</Label>
               <Input
                 id="edit_phone"
                 value={editForm.phone}
                 onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                placeholder={t('clients:phone_placeholder')}
+                placeholder={t('phone_placeholder')}
               />
             </div>
 
             <div>
-              <Label htmlFor="edit_notes">{t('clients:notes')}</Label>
+              <Label htmlFor="edit_notes">{t('notes')}</Label>
               <Textarea
                 id="edit_notes"
                 value={editForm.notes}
                 onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-                placeholder={t('clients:notes_placeholder')}
+                placeholder={t('notes_placeholder')}
                 className="min-h-[80px]"
               />
             </div>
@@ -1141,7 +1141,7 @@ export default function Clients() {
               }}
               disabled={savingEdit}
             >
-              {t('clients:cancel')}
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleSaveEdit}
@@ -1151,10 +1151,10 @@ export default function Clients() {
               {savingEdit ? (
                 <>
                   <Loader className="w-4 h-4 mr-2 animate-spin" />
-                  {t('clients:saving')}
+                  {t('saving')}
                 </>
               ) : (
-                t('clients:save')
+                t('save')
               )}
             </Button>
           </DialogFooter>
@@ -1165,49 +1165,49 @@ export default function Clients() {
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{t('clients:add_client')}</DialogTitle>
+            <DialogTitle>{t('add_client')}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">{t('clients:name')} *</Label>
+              <Label htmlFor="name">{t('name')} *</Label>
               <Input
                 id="name"
                 value={createForm.name}
                 onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
-                placeholder={t('clients:name_placeholder')}
+                placeholder={t('name_placeholder')}
               />
             </div>
 
             <div>
-              <Label htmlFor="phone">{t('clients:phone')}</Label>
+              <Label htmlFor="phone">{t('phone')}</Label>
               <Input
                 id="phone"
                 value={createForm.phone}
                 onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
-                placeholder={t('clients:phone_placeholder')}
+                placeholder={t('phone_placeholder')}
               />
-              <p className="text-xs text-gray-500 mt-1">{t('clients:optional')}</p>
+              <p className="text-xs text-gray-500 mt-1">{t('optional')}</p>
             </div>
 
             <div>
-              <Label htmlFor="instagram">{t('clients:instagram_id')}</Label>
+              <Label htmlFor="instagram">{t('instagram_id')}</Label>
               <Input
                 id="instagram"
                 value={createForm.instagram_id}
                 onChange={(e) => setCreateForm({ ...createForm, instagram_id: e.target.value })}
-                placeholder={t('clients:instagram_id_placeholder')}
+                placeholder={t('instagram_id_placeholder')}
               />
-              <p className="text-xs text-gray-500 mt-1">{t('clients:optional')}</p>
+              <p className="text-xs text-gray-500 mt-1">{t('optional')}</p>
             </div>
 
             <div>
-              <Label htmlFor="notes">{t('clients:notes')}</Label>
+              <Label htmlFor="notes">{t('notes')}</Label>
               <Textarea
                 id="notes"
                 value={createForm.notes}
                 onChange={(e) => setCreateForm({ ...createForm, notes: e.target.value })}
-                placeholder={t('clients:notes_placeholder')}
+                placeholder={t('notes_placeholder')}
                 className="min-h-[80px]"
               />
             </div>
@@ -1215,10 +1215,10 @@ export default function Clients() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCreateDialog(false)} disabled={creatingClient}>
-              {t('clients:cancel')}
+              {t('cancel')}
             </Button>
             <Button onClick={handleCreateClient} className="bg-pink-600 hover:bg-pink-700" disabled={creatingClient}>
-              {creatingClient ? t('clients:creating') : t('clients:create')}
+              {creatingClient ? t('creating') : t('create')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1250,14 +1250,14 @@ export default function Clients() {
                     <AlertCircle style={{ width: '24px', height: '24px', color: '#dc2626' }} />
                   </div>
                   <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#7f1d1d' }}>
-                    {t('clients:delete_client')}
+                    {t('delete_client')}
                   </h3>
                 </div>
               </div>
 
               <div style={{ backgroundColor: '#fff', padding: '1.5rem' }}>
                 <p style={{ color: '#1f2937', marginBottom: '1rem', fontSize: '0.95rem' }}>
-                  {t('clients:you_are_deleting_client')} <strong>"{clientToDelete.name}"</strong>
+                  {t('you_are_deleting_client')} <strong>"{clientToDelete.name}"</strong>
                 </p>
 
                 <div style={{
@@ -1268,12 +1268,12 @@ export default function Clients() {
                     <AlertCircle style={{ width: '20px', height: '20px', color: '#b45309', flexShrink: 0, marginTop: '2px' }} />
                     <div>
                       <p style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#92400e', marginBottom: '0.5rem' }}>
-                        ⚠️ {t('clients:this_action_is_irreversible')}!
+                        ⚠️ {t('this_action_is_irreversible')}!
                       </p>
                       <ul style={{ fontSize: '0.875rem', color: '#92400e', marginLeft: '1rem' }}>
-                        <li>✗ {t('clients:all_messages_will_be_deleted')}</li>
-                        <li>✗ {t('clients:all_records_will_be_deleted')}</li>
-                        <li>✗ {t('clients:history_will_not_be_restored')}</li>
+                        <li>✗ {t('all_messages_will_be_deleted')}</li>
+                        <li>✗ {t('all_records_will_be_deleted')}</li>
+                        <li>✗ {t('history_will_not_be_restored')}</li>
                       </ul>
                     </div>
                   </div>
@@ -1299,7 +1299,7 @@ export default function Clients() {
                     opacity: deletingId !== null ? 0.5 : 1
                   }}
                 >
-                  {t('clients:cancel')}
+                  {t('cancel')}
                 </button>
                 <button
                   onClick={handleConfirmDelete}
@@ -1316,10 +1316,10 @@ export default function Clients() {
                   {deletingId ? (
                     <>
                       <Loader style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
-                      {t('clients:deleting')}...
+                      {t('deleting')}...
                     </>
                   ) : (
-                    t('clients:delete')
+                    t('delete')
                   )}
                 </button>
               </div>
@@ -1337,7 +1337,7 @@ export default function Clients() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                   <Download className="w-5 h-5 text-green-600" />
-                  {t('clients:full_export_data')}
+                  {t('full_export_data')}
                 </h3>
                 <button
                   onClick={() => setShowExportDialog(false)}
@@ -1349,17 +1349,17 @@ export default function Clients() {
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                 <p className="text-sm text-blue-900">
-                  <strong>{t('clients:export_includes')}:</strong>
+                  <strong>{t('export_includes')}:</strong>
                 </p>
                 <ul className="text-sm text-blue-800 mt-2 space-y-1">
-                  <li>✓ {t('clients:all_client_data')}</li>
-                  <li>✓ {t('clients:all_messages_with_client_links')}</li>
-                  <li>✓ {t('clients:all_records_with_client_links')}</li>
+                  <li>✓ {t('all_client_data')}</li>
+                  <li>✓ {t('all_messages_with_client_links')}</li>
+                  <li>✓ {t('all_records_with_client_links')}</li>
                 </ul>
               </div>
 
               <p className="text-sm text-gray-600 mb-4">
-                {t('clients:select_export_format')}:
+                {t('select_export_format')}:
               </p>
 
               <div className="space-y-3">
@@ -1369,7 +1369,7 @@ export default function Clients() {
                   className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <FileText className="w-5 h-5" />
-                  CSV ({t('clients:universal_format')})
+                  CSV ({t('universal_format')})
                 </button>
 
                 <button
@@ -1378,14 +1378,14 @@ export default function Clients() {
                   className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <FileSpreadsheet className="w-5 h-5" />
-                  Excel ({t('clients:separate_sheets')})
+                  Excel ({t('separate_sheets')})
                 </button>
               </div>
 
               {exporting && (
                 <div className="mt-4 flex items-center justify-center gap-2 text-gray-600">
                   <Loader className="w-4 h-4 animate-spin" />
-                  <span className="text-sm">{t('clients:preparing_file')}</span>
+                  <span className="text-sm">{t('preparing_file')}</span>
                 </div>
               )}
             </div>
@@ -1399,7 +1399,7 @@ export default function Clients() {
           <DialogHeader className="sticky top-0 bg-white z-10 px-6 pt-6 pb-4 border-b">
             <DialogTitle className="flex items-center gap-2">
               <Upload className="w-5 h-5 text-blue-600" />
-              {t('clients:import_clients')}
+              {t('import_clients')}
             </DialogTitle>
           </DialogHeader>
 
@@ -1409,45 +1409,45 @@ export default function Clients() {
                 {/* Поддерживаемые форматы */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <p className="text-sm text-blue-900 font-medium mb-2">
-                    📋 {t('clients:import_supported_formats')}:
+                    📋 {t('import_supported_formats')}:
                   </p>
                   <p className="text-sm text-blue-800">
-                    • {t('clients:import_csv')}
+                    • {t('import_csv')}
                   </p>
                 </div>
 
                 {/* Названия колонок */}
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <p className="text-sm text-green-900 font-medium mb-2">
-                    📊 {t('clients:import_column_names')}:
+                    📊 {t('import_column_names')}:
                   </p>
                   <div className="grid grid-cols-2 gap-2 text-sm text-green-800">
-                    <div>• <strong>{t('clients:import_column_name')}</strong></div>
-                    <div>• {t('clients:import_column_phone')}</div>
-                    <div>• {t('clients:import_column_email')}</div>
-                    <div>• {t('clients:import_column_category')}</div>
-                    <div>• {t('clients:import_column_instagram')}</div>
-                    <div>• {t('clients:import_column_notes')}</div>
+                    <div>• <strong>{t('import_column_name')}</strong></div>
+                    <div>• {t('import_column_phone')}</div>
+                    <div>• {t('import_column_email')}</div>
+                    <div>• {t('import_column_category')}</div>
+                    <div>• {t('import_column_instagram')}</div>
+                    <div>• {t('import_column_notes')}</div>
                   </div>
                 </div>
 
                 {/* Важная информация */}
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                   <p className="text-sm text-amber-900 font-medium mb-2">
-                    ⚡ {t('clients:import_important_info')}:
+                    ⚡ {t('import_important_info')}:
                   </p>
                   <ul className="text-sm text-amber-800 space-y-1">
-                    <li>✓ {t('clients:import_column_order')}</li>
-                    <li>✓ {t('clients:import_not_all_columns')}</li>
-                    <li>✓ {t('clients:import_empty_fields')}</li>
-                    <li>✓ {t('clients:import_duplicates')}</li>
+                    <li>✓ {t('import_column_order')}</li>
+                    <li>✓ {t('import_not_all_columns')}</li>
+                    <li>✓ {t('import_empty_fields')}</li>
+                    <li>✓ {t('import_duplicates')}</li>
                   </ul>
                 </div>
 
                 {/* Пример структуры */}
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                   <p className="text-sm text-gray-900 font-medium mb-2">
-                    💡 {t('clients:import_example_structure')}:
+                    💡 {t('import_example_structure')}:
                   </p>
                   <div className="bg-white p-2 rounded border border-gray-300 font-mono text-xs">
                     <div className="text-gray-600">Имя, Телефон, Email</div>
@@ -1476,7 +1476,7 @@ export default function Clients() {
                     <div className="text-center">
                       <FileSpreadsheet className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                       <p className="text-sm text-gray-600 mb-4">
-                        {t('clients:import_select_file')}
+                        {t('import_select_file')}
                       </p>
                       <Button
                         onClick={() => fileInputRef.current?.click()}
@@ -1484,7 +1484,7 @@ export default function Clients() {
                         className="bg-white"
                       >
                         <Upload className="w-4 h-4 mr-2" />
-                        {t('clients:choose_file')}
+                        {t('choose_file')}
                       </Button>
                     </div>
                   ) : (
@@ -1514,7 +1514,7 @@ export default function Clients() {
                     onClick={handleCloseImportDialog}
                     variant="outline"
                   >
-                    {t('clients:cancel')}
+                    {t('cancel')}
                   </Button>
                   <Button
                     onClick={handleImport}
@@ -1525,7 +1525,7 @@ export default function Clients() {
                     {importing ? (
                       <>
                         <Loader className="w-4 h-4 mr-2 animate-spin" />
-                        {t('clients:import_importing')}
+                        {t('import_importing')}
                       </>
                     ) : (
                       <>
@@ -1542,26 +1542,26 @@ export default function Clients() {
               <div className="space-y-4">
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <p className="text-lg font-bold text-green-900 mb-2">
-                    ✅ {t('clients:import_completed')}
+                    ✅ {t('import_completed')}
                   </p>
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
                       <p className="text-2xl font-bold text-green-600">
                         {importResults.created || 0}
                       </p>
-                      <p className="text-sm text-gray-600">{t('clients:import_created')}</p>
+                      <p className="text-sm text-gray-600">{t('import_created')}</p>
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-blue-600">
                         {importResults.updated || 0}
                       </p>
-                      <p className="text-sm text-gray-600">{t('clients:import_updated')}</p>
+                      <p className="text-sm text-gray-600">{t('import_updated')}</p>
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-gray-600">
                         {importResults.unchanged || 0}
                       </p>
-                      <p className="text-sm text-gray-600">{t('clients:import_unchanged')}</p>
+                      <p className="text-sm text-gray-600">{t('import_unchanged')}</p>
                     </div>
                   </div>
                 </div>
@@ -1569,12 +1569,12 @@ export default function Clients() {
                 {importResults.errors.length > 0 && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-h-60 overflow-y-auto">
                     <p className="text-sm font-medium text-red-900 mb-2">
-                      ⚠️ {t('clients:import_error_list')}:
+                      ⚠️ {t('import_error_list')}:
                     </p>
                     <ul className="text-sm text-red-800 space-y-1">
                       {importResults.errors.map((err: any, idx: number) => (
                         <li key={idx}>
-                          <span className="font-medium">{t('clients:import_row')} {err.row}:</span>{' '}
+                          <span className="font-medium">{t('import_row')} {err.row}:</span>{' '}
                           {err.reason || err.error}
                           {err.name && <span className="text-gray-600"> ({err.name})</span>}
                         </li>
@@ -1589,7 +1589,7 @@ export default function Clients() {
                     onClick={handleCloseImportDialog}
                     className="bg-blue-600 hover:bg-blue-700"
                   >
-                    {t('clients:import_close')}
+                    {t('import_close')}
                   </Button>
                 </div>
               </div>

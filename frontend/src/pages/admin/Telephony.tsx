@@ -3,85 +3,209 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import {
     Phone,
     Search,
     Play,
     Pause,
     Download,
-    MoreHorizontal,
     PhoneIncoming,
     PhoneOutgoing,
     PhoneMissed,
     Calendar,
     Filter,
-    Loader2
+    Loader2,
+    Plus,
+    Trash2,
+    Edit2,
+    MoreVertical
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { api } from '../../services/api';
+import { toast } from 'sonner';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
 
 interface CallLog {
     id: number;
     client_name: string;
+    client_id: string;
     phone: string;
-    type: 'inbound' | 'outbound' | 'missed';
+    type: 'inbound' | 'outbound' | 'missed' | 'rejected' | 'ongoing';
     status: 'completed' | 'missed' | 'rejected' | 'ongoing';
     duration: number; // seconds
     recording_url?: string;
     created_at: string;
     manager_name?: string;
+    notes?: string;
 }
+
+// Imports from other components at the top
+import { PeriodFilterSelect } from '../../components/shared/PeriodFilterSelect';
+import { usePeriodFilter } from '../../hooks/usePeriodFilter';
+
+// ... (other imports)
 
 export default function Telephony() {
     const { t } = useTranslation(['admin/telephony', 'common']);
     const [search, setSearch] = useState('');
-    const [playingId, setPlayingId] = useState<number | null>(null);
-    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const [period, setPeriod] = useState('all');
+    const [dateFrom, setDateFrom] = useState('');
+    const [dateTo, setDateTo] = useState('');
 
-    const [calls, setCalls] = useState<CallLog[]>([]);
-    const [stats, setStats] = useState({
-        total_calls: 0,
-        inbound: 0,
-        outbound: 0,
-        missed: 0
-    });
-    const [loading, setLoading] = useState(true);
+    // ... (other state)
 
     useEffect(() => {
         loadData();
-    }, [search]);
+    }, [search, period, dateFrom, dateTo]);
 
     const loadData = async () => {
         setLoading(true);
         try {
+            // Calculate timestamps based on period if not custom
+            let start = dateFrom;
+            let end = dateTo;
+
+            if (period !== 'custom' && period !== 'all') {
+                const now = new Date();
+                const startDate = new Date();
+                if (period === 'today') {
+                    start = new Date(now.setHours(0, 0, 0, 0)).toISOString();
+                    end = new Date(now.setHours(23, 59, 59, 999)).toISOString();
+                } else if (period === 'week') {
+                    startDate.setDate(now.getDate() - 7);
+                    start = startDate.toISOString();
+                    end = now.toISOString();
+                } else if (period === 'month') {
+                    startDate.setMonth(now.getMonth() - 1);
+                    start = startDate.toISOString();
+                    end = now.toISOString();
+                }
+            }
+
+            if (period === 'all') {
+                start = '';
+                end = '';
+            }
+
             const [callsData, statsData] = await Promise.all([
-                api.getCalls(search),
+                api.getCalls(search, 50, 0, start, end),
                 api.getTelephonyStats()
             ]);
             setCalls(callsData);
             setStats(statsData);
         } catch (error) {
             console.error('Failed to load telephony data:', error);
+            toast.error('Ошибка загрузки данных');
         } finally {
             setLoading(false);
         }
     };
 
-    const handlePlay = (id: number, url: string) => {
-        if (playingId === id) {
-            audioRef.current?.pause();
-            setPlayingId(null);
-        } else {
-            if (audioRef.current) {
-                audioRef.current.pause();
-            }
-            const audio = new Audio(url);
-            audio.onended = () => setPlayingId(null);
-            audio.play();
-            audioRef.current = audio;
-            setPlayingId(id);
+    // ... (rest of the component)
+
+    // Update the Filter section in JSX to:
+    /*
+                <div className="flex gap-2">
+                    <div className="relative flex-1 max-w-sm">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Input
+                            placeholder="Поиск по номеру или имени..."
+                            className="pl-9 bg-gray-50 border-gray-200"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </div>
+                
+                    <PeriodFilterSelect 
+                        value={period}
+                        onChange={setPeriod}
+                    />
+
+                    {period === 'custom' && (
+                       <div className="flex gap-2">
+                          <Input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-32" />
+                          <Input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-32" />
+                       </div>
+                    )}
+                </div>
+    */
+
+    const handleCreateCall = async () => {
+        if (!formData.phone) {
+            toast.error('Введите номер телефона');
+            return;
         }
+        try {
+            setProcessing(true);
+            await api.createCall(formData);
+            toast.success('Звонок добавлен');
+            setShowAddDialog(false);
+            setFormData({
+                phone: '',
+                direction: 'outbound',
+                status: 'completed',
+                duration: 0,
+                notes: '',
+                recording_url: ''
+            });
+            loadData();
+        } catch (error) {
+            toast.error('Ошибка создания звонка');
+        } finally {
+            setProcessing(false);
+        }
+    };
+
+    const handleUpdateCall = async () => {
+        if (!editingCall) return;
+        try {
+            setProcessing(true);
+            await api.updateCall(editingCall.id, {
+                notes: formData.notes,
+                status: formData.status
+            });
+            toast.success('Звонок обновлен');
+            setShowEditDialog(false);
+            setEditingCall(null);
+            loadData();
+        } catch (error) {
+            toast.error('Ошибка обновления');
+        } finally {
+            setProcessing(false);
+        }
+    };
+
+    const handleDeleteCall = async (id: number) => {
+        if (!confirm('Вы уверены, что хотите удалить эту запись?')) return;
+        try {
+            await api.deleteCall(id);
+            toast.success('Звонок удален');
+            setCalls(calls.filter(c => c.id !== id));
+        } catch (error) {
+            toast.error('Ошибка удаления');
+        }
+    };
+
+    const openEditDialog = (call: CallLog) => {
+        setEditingCall(call);
+        setFormData({
+            phone: call.phone,
+            direction: call.type as string,
+            status: call.status as string,
+            duration: call.duration,
+            notes: call.notes || '',
+            recording_url: call.recording_url || ''
+        });
+        setShowEditDialog(true);
     };
 
     const formatDuration = (seconds: number) => {
@@ -103,8 +227,11 @@ export default function Telephony() {
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">{t('telephony', 'Телефония')}</h1>
-                        <p className="text-sm text-gray-500 mt-1">{t('subtitle', 'История звонков и записи разговоров')}</p>
+                        <p className="text-sm text-gray-500 mt-1">{t('subtitle', 'История звонков и интеграции')}</p>
                     </div>
+                    <Button onClick={() => setShowAddDialog(true)} className="bg-pink-600 hover:bg-pink-700">
+                        <Plus className="w-4 h-4 mr-2" /> Добавить звонок
+                    </Button>
                 </div>
 
                 {/* Stats Cards */}
@@ -178,15 +305,17 @@ export default function Telephony() {
                                 <th className="px-6 py-3 font-medium">Тип</th>
                                 <th className="px-6 py-3 font-medium">Клиент</th>
                                 <th className="px-6 py-3 font-medium">Сотрудник</th>
+                                <th className="px-6 py-3 font-medium">Заметки</th>
                                 <th className="px-6 py-3 font-medium">Длительность</th>
                                 <th className="px-6 py-3 font-medium">Дата</th>
                                 <th className="px-6 py-3 font-medium text-right">Запись</th>
+                                <th className="px-6 py-3 font-medium text-right"></th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                                    <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                                         <div className="flex justify-center mb-2">
                                             <Loader2 className="animate-spin w-8 h-8 text-pink-500" />
                                         </div>
@@ -195,7 +324,7 @@ export default function Telephony() {
                                 </tr>
                             ) : calls.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                                    <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                                         Звонков не найдено
                                     </td>
                                 </tr>
@@ -217,6 +346,9 @@ export default function Telephony() {
                                         </td>
                                         <td className="px-6 py-4">
                                             {call.manager_name || <span className="text-gray-400">-</span>}
+                                        </td>
+                                        <td className="px-6 py-4 max-w-xs truncate text-gray-500">
+                                            {call.notes}
                                         </td>
                                         <td className="px-6 py-4 font-mono text-gray-600">
                                             {call.status === 'missed' ? '-' : formatDuration(call.duration)}
@@ -243,6 +375,23 @@ export default function Telephony() {
                                                 </div>
                                             )}
                                         </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                        <MoreVertical className="w-4 h-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuItem onClick={() => openEditDialog(call)}>
+                                                        <Edit2 className="w-4 h-4 mr-2" /> Редактировать
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleDeleteCall(call.id)} className="text-red-600">
+                                                        <Trash2 className="w-4 h-4 mr-2" /> Удалить
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </td>
                                     </tr>
                                 ))
                             )}
@@ -250,21 +399,136 @@ export default function Telephony() {
                     </table>
                 </div>
 
-                {/* Integration Banner */}
-                <div className="mt-8 bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-8 text-white relative overflow-hidden">
-                    <div className="relative z-10 max-w-2xl">
-                        <h3 className="text-2xl font-bold mb-2">Подключите IP-телефонию</h3>
-                        <p className="text-gray-300 mb-6">
-                            Интегрируйте CRM с Binotel, OnlinePBX или Twilio, чтобы автоматически сохранять историю звонков,
-                            слушать записи разговоров и видеть карточку клиента при входящем звонке.
-                        </p>
-                        <Button className="bg-white text-gray-900 hover:bg-gray-100">
-                            Настроить интеграцию
-                        </Button>
-                    </div>
-                    <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-pink-500/20 to-transparent pointer-events-none" />
+                {/* Integration Info */}
+                <div className="mt-8 bg-gray-900 rounded-xl p-6 text-gray-400 text-sm">
+                    <p className="font-mono mb-2 text-white">Webhook URL для интеграции:</p>
+                    <code className="bg-gray-800 px-3 py-1 rounded select-all block mb-4">
+                        {window.location.origin}/api/telephony/webhook/generic
+                    </code>
+                    <p>
+                        Поддерживаемые провайдеры:
+                        <span className="text-white mx-1">binotel</span>,
+                        <span className="text-white mx-1">onlinepbx</span>,
+                        <span className="text-white mx-1">generic</span>.
+                        Просто замените последнее слово в URL.
+                    </p>
                 </div>
             </div>
+
+            {/* Add Call Dialog */}
+            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Добавить звонок</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div>
+                            <Label>Телефон</Label>
+                            <Input
+                                value={formData.phone}
+                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                placeholder="+7..."
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <Label>Тип</Label>
+                                <Select
+                                    value={formData.direction}
+                                    onValueChange={v => setFormData({ ...formData, direction: v })}
+                                >
+                                    <SelectTrigger><SelectValue /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="outbound">Исходящий</SelectItem>
+                                        <SelectItem value="inbound">Входящий</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
+                                <Label>Статус</Label>
+                                <Select
+                                    value={formData.status}
+                                    onValueChange={v => setFormData({ ...formData, status: v })}
+                                >
+                                    <SelectTrigger><SelectValue /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="completed">Завершен</SelectItem>
+                                        <SelectItem value="missed">Пропущен</SelectItem>
+                                        <SelectItem value="rejected">Отклонен</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                        <div>
+                            <Label>Длительность (сек)</Label>
+                            <Input
+                                type="number"
+                                value={formData.duration}
+                                onChange={e => setFormData({ ...formData, duration: parseInt(e.target.value) })}
+                            />
+                        </div>
+                        <div>
+                            <Label>Ссылка на запись (URL)</Label>
+                            <Input
+                                value={formData.recording_url}
+                                onChange={e => setFormData({ ...formData, recording_url: e.target.value })}
+                                placeholder="https://..."
+                            />
+                        </div>
+                        <div>
+                            <Label>Заметки</Label>
+                            <Input
+                                value={formData.notes}
+                                onChange={e => setFormData({ ...formData, notes: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowAddDialog(false)}>Отмена</Button>
+                        <Button onClick={handleCreateCall} disabled={processing}>
+                            {processing ? <Loader2 className="animate-spin" /> : 'Создать'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Edit Call Dialog */}
+            <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Редактировать звонок</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div>
+                            <Label>Статус</Label>
+                            <Select
+                                value={formData.status}
+                                onValueChange={v => setFormData({ ...formData, status: v })}
+                            >
+                                <SelectTrigger><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="completed">Завершен</SelectItem>
+                                    <SelectItem value="missed">Пропущен</SelectItem>
+                                    <SelectItem value="rejected">Отклонен</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div>
+                            <Label>Заметки</Label>
+                            <Input
+                                value={formData.notes}
+                                onChange={e => setFormData({ ...formData, notes: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowEditDialog(false)}>Отмена</Button>
+                        <Button onClick={handleUpdateCall} disabled={processing}>
+                            {processing ? <Loader2 className="animate-spin" /> : 'Сохранить'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
