@@ -23,7 +23,9 @@ import {
   Globe,
   MapPinned,
   Bell,
-  Sparkles
+  Sparkles,
+  Filter,
+  CheckSquare
 } from 'lucide-react';
 import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../icons/SocialIcons';
 import { toast } from 'sonner';
@@ -166,7 +168,8 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       { icon: Users, label: t('menu.clients'), path: '/crm/clients', requirePermission: () => permissions.canViewAllClients },
       { icon: MessageSquare, label: t('menu.chat'), path: '/crm/chat', badge: unreadCount, hasSubmenu: true, requirePermission: () => true },
       { icon: BarChart3, label: t('menu.analytics'), path: '/crm/analytics', requirePermission: () => permissions.canViewAnalytics },
-      { icon: Target, label: t('menu.plans'), path: '/crm/plans', requirePermission: () => permissions.canViewAnalytics },
+      { icon: Filter, label: t('menu.funnel'), path: '/crm/funnel', requirePermission: () => permissions.canViewAnalytics },
+      { icon: CheckSquare, label: t('menu.tasks'), path: '/crm/tasks', requirePermission: () => true },
       { icon: Scissors, label: t('menu.services'), path: '/crm/services', requirePermission: () => permissions.canViewServices },
       { icon: Calendar, label: t('menu.calendar'), path: '/crm/calendar', requirePermission: () => permissions.canViewAllCalendars },
       { icon: UserCog, label: t('menu.users'), path: '/crm/users', requirePermission: () => permissions.canViewAllUsers },

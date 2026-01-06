@@ -18,6 +18,8 @@
     "services": "Services",
     "settings": "Paramètres",
     "users": "Utilisateurs",
-    "visitors": "Visiteurs"
+    "visitors": "Visiteurs",
+    "funnel": "Entonnoir",
+    "tasks": "Tâches"
   }
 }

@@ -1,0 +1,30 @@
+{
+  "title": "Sales funnel",
+  "subtitle": "Stage and conversion management",
+  "funnel": "Funnel",
+  "search_clients": "Searching for clients...",
+  "quick_add": "Quick Add",
+  "no_clients": "No clients",
+  "moved_successfully": "Client successfully moved",
+  "move_failed": "Move Error",
+  "conversion": {
+    "visitor_to_engaged": "Visitor -> Engaged",
+    "engaged_to_booking": "Engaged -> Started booking",
+    "booking_to_booked": "Started booking -> Signed up",
+    "booked_to_completed": "Signed up -> Completed"
+  },
+  "funnel_chart": "Funnel chart",
+  "key_metrics": "Key metrics",
+  "total_conversion": "Total Conversion",
+  "total_losses": "Total losses",
+  "successful_visits": "Successful visits",
+  "recommendations_title": "Recommendations",
+  "all_good": "Everything is fine! ",
+  "stage_details": "Detailing stages",
+  "table": {
+    "stage": "Stage",
+    "count": "Quantity",
+    "percentage": "Percent",
+    "losses": "Losses"
+  }
+}

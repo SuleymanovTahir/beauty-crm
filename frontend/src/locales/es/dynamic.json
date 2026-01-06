@@ -284,7 +284,7 @@
   "services.28.name_ru.1b90012d": "Saliendo del negro",
   "services.28.description_ru.32fb73b4": "Corrección de color desde la oscuridad.",
   "services.30.name_ru.ab1edd95": "Extensiones de cabello por cápsula",
-  "services.30.description_ru.7295515b": "Extensión por cápsula",
+  "services.30.description_ru.7295515b": "Extensión hasta cápsula",
   "services.31.name_ru.d85c8406": "Volumen de pestañas clásico",
   "services.31.description_ru.1cb01f28": "Extensiones de pestañas naturales",
   "services.32.name_ru.6dc0aef0": "Volumen de pestañas 2D",
@@ -338,5 +338,18 @@
   "public_banners.2.subtitle_ru.8f973b34": "Servicios de cosmética profesional.",
   "public_banners.3.title_ru.816f4b30": "Descuentos hasta el 50%",
   "public_banners.3.subtitle_ru.f9d0958e": "Para todos los servicios de salón",
-  "services.66.name_ru.973df8ef": "Pedicure spa"
+  "services.66.name_ru.973df8ef": "Pedicure spa",
+  "public_reviews.6.text_ru.6f00ad70": "¡El mejor salón de belleza en Dubai! ",
+  "public_reviews.6.author_name.ff715865": "Sara Jenkins",
+  "public_reviews.6.employee_position.5b1b1d5e": "Pestañas",
+  "public_reviews.7.text_ru.f38138da": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
+  "public_reviews.7.author_name.653816a6": "María González",
+  "public_reviews.7.employee_position.9a3a91ca": "Tratamiento Facial",
+  "public_reviews.8.text_ru.ae85e84b": "Excelente servicio y personal profesional. ",
+  "public_reviews.8.author_name.f26d4aa2": "Fátima Al Sayed",
+  "public_reviews.8.employee_position.65d6c03d": "microblading",
+  "services.110.duration.072b030b": "60",
+  "public_reviews.6.text_ru.d04583b6": "¡El mejor salón de belleza de Dubai!",
+  "public_reviews.7.text_ru.784d2781": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!",
+  "public_reviews.8.text_ru.33473c5f": "Excelente servicio y personal profesional."
 }

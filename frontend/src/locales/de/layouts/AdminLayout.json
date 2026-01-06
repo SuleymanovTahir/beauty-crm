@@ -18,6 +18,8 @@
     "services": "Dienstleistungen",
     "settings": "Einstellungen",
     "users": "Benutzer",
-    "visitors": "Besucher"
+    "visitors": "Besucher",
+    "funnel": "Trichter",
+    "tasks": "Aufgaben"
   }
 }

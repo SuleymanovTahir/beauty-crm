@@ -18,6 +18,8 @@
     "services": "Servicios",
     "settings": "Ajustes",
     "users": "Usuarios",
-    "visitors": "Visitantes"
+    "visitors": "Visitantes",
+    "funnel": "Embudo",
+    "tasks": "Tareas"
   }
 }

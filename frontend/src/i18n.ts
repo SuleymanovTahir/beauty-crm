@@ -29,6 +29,8 @@ const namespaces = [
   'admin/specialpackages',
   'admin/users',
   'admin/VisitorAnalytics',
+  'admin/funnel',
+  'admin/tasks',
   'manager/chat',
   'manager/dashboard',
   'manager/funnel',
@@ -128,6 +130,8 @@ for (const lang of languages) {
   resources[lang]['settings'] = resources[lang]['admin/settings'];
   resources[lang]['specialPackages'] = resources[lang]['admin/specialpackages'];
   resources[lang]['users'] = resources[lang]['admin/users'];
+  resources[lang]['funnel'] = resources[lang]['admin/funnel'];
+  resources[lang]['tasks'] = resources[lang]['admin/tasks'];
 
   // Manager pages
   resources[lang]['chat'] = resources[lang]['manager/chat'];
