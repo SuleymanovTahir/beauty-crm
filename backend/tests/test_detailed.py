@@ -7,7 +7,7 @@
 """
 import sys
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 import traceback
 import json
 
@@ -56,7 +56,11 @@ def print_data(label, data):
     """Вывод данных"""
     print(f"   📊 {label}:")
     if isinstance(data, (dict, list)):
-        print(f"      {json.dumps(data, indent=6, ensure_ascii=False)}")
+        def default_serializer(obj):
+            if isinstance(obj, (datetime, date)):
+                return obj.isoformat()
+            return str(obj)
+        print(f"      {json.dumps(data, indent=6, ensure_ascii=False, default=default_serializer)}")
     else:
         print(f"      {data}")
 

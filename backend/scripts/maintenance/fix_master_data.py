@@ -50,16 +50,18 @@ def parse_duration(duration_str):
         
     return 60
 
-def fix_master_data():
+def fix_master_data(csv_file_path=None):
     conn = get_db_connection()
     c = conn.cursor()
 
     print("🔧 Starting FULL master data sync (Services + Assignments)...")
 
-    # CSV Data from User
     # CSV Data Path
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    csv_path = os.path.join(base_dir, 'data', 'services_master_matrix.csv')
+    if csv_file_path:
+        csv_path = csv_file_path
+    else:
+        csv_path = os.path.join(base_dir, 'data', 'services_master_matrix.csv')
     
     if not os.path.exists(csv_path):
         print(f"❌ CSV file not found at: {csv_path}")

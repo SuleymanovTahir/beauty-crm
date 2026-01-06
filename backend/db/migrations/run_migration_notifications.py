@@ -2,15 +2,16 @@
 """
 Миграция: Таблица уведомлений для клиентов
 """
-from db.connection import get_db_connection
 import os
 import sys
-from datetime import datetime
 
-# Получаем DATABASE_NAME из конфига
+# Add backend to path BEFORE imports
 backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 if backend_dir not in sys.path:
     sys.path.insert(0, backend_dir)
+
+from db.connection import get_db_connection
+from datetime import datetime
 from core.config import DATABASE_NAME
 
 conn = get_db_connection()
