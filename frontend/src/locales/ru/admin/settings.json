@@ -340,5 +340,5 @@
   "fill_currency_fields": "Заполните все поля валюты",
   "delete_currency_confirm": "Вы уверены, что хотите удалить эту валюту?",
   "no_currencies_found": "Валюты не найдены",
-  "currency_updated": "Валюта обновлена",
+  "currency_updated": "Валюта обновлена"
 }
