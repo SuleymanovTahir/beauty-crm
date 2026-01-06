@@ -112,7 +112,6 @@ def run_all_migrations():
     from db.migrations.consolidated.schema_service_assignments import run_migration as migrate_service_assignments
     from db.migrations.consolidated.schema_universal_constants import run_migration as migrate_universal_constants
     from db.migrations.consolidated.schema_challenges import migrate_challenges_schema
-    from db.migrations.consolidated.schema_006_currencies import apply_currencies_schema
 
     results["consolidated/newsletter"] = run_migration_function(
         create_newsletter_table,
@@ -235,12 +234,6 @@ def run_all_migrations():
     results["consolidated/telephony"] = run_migration_function(
         migrate_telephony,
         "Таблица call_logs (Телефония)"
-    )
-
-
-    results["consolidated/holidays"] = run_migration_function(
-        migrate_holidays_schema,
-        "Таблица salon_holidays (праздничные дни)"
     )
 
     # ========================================================================
