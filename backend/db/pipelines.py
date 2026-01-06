@@ -60,7 +60,7 @@ def get_clients_by_stage(stage_id: int, limit: int = 50, offset: int = 0, search
                 "phone": row[3],
                 "total_spend": row[4],
                 "last_contact": row[5],
-                "temperature": row[6],
+                "temperature": row[6] or 'cold',
                 "profile_pic": row[7]
             }
             for row in rows

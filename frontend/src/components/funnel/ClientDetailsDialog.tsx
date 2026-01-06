@@ -261,6 +261,18 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
                                 </div>
                             )}
 
+                            {!isEditing && (
+                                <div className="space-y-2">
+                                    <Label className="text-xs text-gray-400 uppercase">{t('temperature', 'Температура')}</Label>
+                                    <div className="flex items-center gap-2">
+                                        <div className={`w-3 h-3 rounded-full ${temperature === 'hot' ? 'bg-red-500' : temperature === 'warm' ? 'bg-orange-500' : 'bg-blue-300'}`} />
+                                        <span className="capitalize text-gray-700 font-medium">
+                                            {temperature === 'hot' ? 'Hot' : temperature === 'warm' ? 'Warm' : 'Cold'}
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="space-y-2">
                                 <Label className="text-xs text-gray-400 uppercase">{t('phone', 'Телефон')}</Label>
                                 {isEditing ? (
