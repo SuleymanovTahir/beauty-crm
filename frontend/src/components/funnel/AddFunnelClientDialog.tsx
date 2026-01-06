@@ -111,7 +111,7 @@ export function AddFunnelClientDialog({ open, onOpenChange, onSuccess, stages }:
                             id="username"
                             value={formData.username}
                             onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                            placeholder="instagram_username"
+                            placeholder={t('username_placeholder')}
                         />
                     </div>
 

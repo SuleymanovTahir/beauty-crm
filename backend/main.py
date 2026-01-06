@@ -77,7 +77,7 @@ from api.positions import router as positions_router
 from api.messengers import router as messengers_router
 from api.client_import import router as client_import_router
 from api.booking_import import router as booking_import_router
-from scheduler import start_birthday_checker, start_client_birthday_checker, start_booking_reminder_checker
+from scheduler import start_birthday_checker, start_client_birthday_checker, start_booking_reminder_checker, start_task_checker
 from api.internal_chat import router as internal_chat_router
 from api.dashboard import router as dashboard_router
 from api.schedule import router as schedule_router
@@ -569,6 +569,7 @@ async def startup_event():
         start_birthday_checker()
         start_client_birthday_checker()
         start_booking_reminder_checker()
+        start_task_checker()
         
         # ✅ Запуск планировщика напоминаний (Instagram)
         from services.reminder_service import check_and_send_reminders

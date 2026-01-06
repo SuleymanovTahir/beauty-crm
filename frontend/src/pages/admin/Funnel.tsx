@@ -17,7 +17,8 @@ import {
     TrendingUp,
     Settings,
     Eye,
-    Trash2
+    Trash2,
+    Bell
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
@@ -29,10 +30,12 @@ import { CreateBookingDialog } from "../../components/bookings/CreateBookingDial
 import { ManageFunnelStagesDialog } from '../../components/funnel/ManageFunnelStagesDialog';
 import { ClientDetailsDialog } from '../../components/funnel/ClientDetailsDialog';
 import { ScrollArea } from '../../components/ui/scroll-area';
+import { useCurrency } from '../../hooks/useSalonSettings';
 
 interface Stage {
     id: number;
     name: string;
+    key?: string;
     color: string;
     count?: number;
     total_value?: number;
@@ -49,10 +52,12 @@ interface Client {
     temperature: 'cold' | 'warm' | 'hot';
     pipeline_stage_id: number;
     profile_pic?: string;
+    reminder_date?: string;
 }
 
 export default function Funnel() {
     const { t } = useTranslation(['admin/funnel', 'common']);
+    const { currency } = useCurrency();
     const [stages, setStages] = useState<Stage[]>([]);
     const [clients, setClients] = useState<Record<number, Client[]>>({});
     const [search, setSearch] = useState('');
@@ -88,6 +93,16 @@ export default function Funnel() {
             const clientsMap: Record<number, Client[]> = {};
             await Promise.all(stagesData.map(async (stage: Stage) => {
                 const clientsData = await api.get(`/api/funnel/clients?stage_id=${stage.id}&limit=20`);
+
+                // Sort by reminder_date if stage is Reminder
+                if (stage.key === 'remind_later' || stage.name.toLowerCase().includes('напомнить') || stage.name.toLowerCase().includes('remind')) {
+                    clientsData.sort((a: Client, b: Client) => {
+                        if (!a.reminder_date) return 1;
+                        if (!b.reminder_date) return -1;
+                        return new Date(a.reminder_date).getTime() - new Date(b.reminder_date).getTime();
+                    });
+                }
+
                 clientsMap[stage.id] = clientsData;
             }));
             setClients(clientsMap);
@@ -301,6 +316,7 @@ export default function Funnel() {
                     onAddBooking={(client) => {
                         setBookingClient(client);
                         setCreateBookingOpen(true);
+                        setClientDetailsOpen(false);
                     }}
                 />
 
@@ -387,7 +403,7 @@ export default function Funnel() {
                                         <div className="mt-2 text-xs text-gray-400 font-medium flex justify-between">
                                             <span>{t('total')}:</span>
                                             <span>
-                                                {clients[stage.id]?.reduce((sum, c) => sum + c.total_spend, 0) || 0} ₸
+                                                {clients[stage.id]?.reduce((sum, c) => sum + c.total_spend, 0) || 0} {currency}
                                             </span>
                                         </div>
                                     </div>
@@ -450,6 +466,13 @@ export default function Funnel() {
                                                         <div className="text-xs text-gray-600 flex items-center gap-1.5 mb-3 bg-gray-50 p-2 rounded-md border border-gray-100">
                                                             <Phone className="w-3 h-3 text-gray-400" />
                                                             {client.phone}
+                                                        </div>
+                                                    )}
+
+                                                    {client.reminder_date && (
+                                                        <div className="flex items-center gap-1 mt-1.5 text-xs text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full w-fit">
+                                                            <Bell className="w-3 h-3" />
+                                                            {format(new Date(client.reminder_date), 'dd MMM HH:mm', { locale: ru })}
                                                         </div>
                                                     )}
 
@@ -564,7 +587,7 @@ export default function Funnel() {
                                                             {format(new Date(client.last_contact), 'dd MMM HH:mm', { locale: ru })}
                                                         </td>
                                                         <td className="px-6 py-4 text-right font-medium text-gray-900">
-                                                            {client.total_spend > 0 ? `${client.total_spend} ₸` : '-'}
+                                                            {client.total_spend > 0 ? `${client.total_spend} ${currency}` : '-'}
                                                         </td>
                                                         <td className="px-6 py-4 text-right">
                                                             <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

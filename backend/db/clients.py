@@ -98,7 +98,7 @@ def get_client_by_id(instagram_id: str):
                   profile_pic, notes, is_pinned, detected_language,
                   gender, card_number, discount, total_visits,
                   total_spend, birthday, email, temperature,
-                  age, birth_date, referral_code, source, telegram_id
+                  age, birth_date, referral_code, source, telegram_id, reminder_date
                   FROM clients WHERE instagram_id = %s OR username = %s""", (instagram_id, instagram_id))
     
     client = c.fetchone()
@@ -170,7 +170,7 @@ def update_client_info(instagram_id: str, phone: str = None, name: str = None, n
                        gender: str = None, age: int = None, birth_date: str = None,
                        profile_pic: str = None, email: str = None,
                        referral_code: str = None, password_hash: str = None,
-                       telegram_id: str = None):
+                       telegram_id: str = None, reminder_date: str = None):
     """Обновить информацию о клиенте"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -223,6 +223,9 @@ def update_client_info(instagram_id: str, phone: str = None, name: str = None, n
     if telegram_id is not None:
         updates.append("telegram_id = %s")
         params.append(telegram_id)
+    if reminder_date is not None:
+        updates.append("reminder_date = %s")
+        params.append(reminder_date)
         
     try:
         if updates:

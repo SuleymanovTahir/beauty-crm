@@ -108,6 +108,11 @@ def run_all_migrations():
     from db.migrations.consolidated.schema_holidays import migrate_holidays_schema
     from db.migrations.consolidated.schema_004_tasks_and_pipelines import migration_004_tasks_and_pipelines
     from db.migrations.consolidated.schema_005_task_stages import migration_005_task_stages
+    from db.migrations.consolidated.schema_006_currencies import apply_currencies_schema
+    from db.migrations.consolidated.schema_service_assignments import run_migration as migrate_service_assignments
+    from db.migrations.consolidated.schema_universal_constants import run_migration as migrate_universal_constants
+    from db.migrations.consolidated.schema_challenges import migrate_challenges_schema
+    from db.migrations.consolidated.schema_006_currencies import apply_currencies_schema
 
     results["consolidated/newsletter"] = run_migration_function(
         create_newsletter_table,
@@ -155,10 +160,20 @@ def run_all_migrations():
         migration_005_task_stages,
         "Таблицы стадий задач (005)"
     )
+
+    results["consolidated/currencies"] = run_migration_function(
+        apply_currencies_schema,
+        "Таблица currencies (006)"
+    )
     
     results["consolidated/services"] = run_migration_function(
         migrate_services_schema,
         "Все изменения таблицы services"
+    )
+
+    results["consolidated/service_assignments"] = run_migration_function(
+        migrate_service_assignments,
+        "Автоматическое назначение услуг мастерам (по Position)"
     )
     
     results["consolidated/clients"] = run_migration_function(
@@ -176,6 +191,11 @@ def run_all_migrations():
         "Все изменения таблицы bot_analytics"
     )
     
+    results["consolidated/universal_constants"] = run_migration_function(
+        migrate_universal_constants,
+        "Добавление констант бота (synonyms, keywords) в bot_settings"
+    )
+    
     results["consolidated/salon"] = run_migration_function(
         migrate_salon_schema,
         "Все изменения таблицы salon_settings"
@@ -189,6 +209,11 @@ def run_all_migrations():
     results["consolidated/gallery"] = run_migration_function(
         migrate_gallery_schema,
         "Все изменения таблицы gallery_images"
+    )
+
+    results["consolidated/challenges"] = run_migration_function(
+        migrate_challenges_schema,
+        "Таблица active_challenges (Геймификация)"
     )
     
     results["consolidated/public"] = run_migration_function(
