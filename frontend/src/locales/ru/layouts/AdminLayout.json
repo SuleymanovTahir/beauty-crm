@@ -18,6 +18,8 @@
     "services": "Услуги",
     "settings": "Настройки",
     "users": "Пользователи",
-    "visitors": "Посетители"
+    "visitors": "Посетители",
+    "funnel": "Воронка (Funnel)",
+    "tasks": "Задачи (Tasks)"
   }
 }

@@ -1,0 +1,393 @@
+
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { api } from '../../services/api';
+import { Button } from '../../components/ui/button';
+import { Badge } from '../../components/ui/badge';
+import { ScrollArea } from '../../components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import {
+    Plus,
+    Clock,
+    CheckCircle2,
+    AlertCircle,
+    CalendarDays,
+    MoreVertical,
+    User,
+    Pencil,
+    Trash2,
+    Layout,
+    LayoutDashboard
+} from 'lucide-react';
+import { format, isToday, isPast } from 'date-fns';
+import { ru } from 'date-fns/locale';
+import { toast } from 'sonner';
+import { CreateTaskDialog } from '../../components/tasks/CreateTaskDialog';
+import { AddStageDialog } from '../../components/tasks/AddStageDialog';
+import { TasksDashboard } from '../../components/tasks/TasksDashboard';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
+
+interface Task {
+    id: number;
+    title: string;
+    description?: string;
+    stage_id: number;
+    status: string; // legacy or convenience
+    priority: 'low' | 'medium' | 'high';
+    due_date?: string;
+    assignee_id?: number;
+    assignee_name?: string;
+    created_at: string;
+}
+
+interface Stage {
+    id: number;
+    name: string;
+    key?: string;
+    color: string;
+}
+
+interface TaskAnalytics {
+    total_active: number;
+    completed: number;
+    overdue: number;
+    today: number;
+}
+
+export default function Tasks() {
+    const { t } = useTranslation(['admin/tasks', 'common']);
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [stages, setStages] = useState<Stage[]>([]);
+    const [analytics, setAnalytics] = useState<TaskAnalytics>({ total_active: 0, completed: 0, overdue: 0, today: 0 });
+    const [draggedTask, setDraggedTask] = useState<Task | null>(null);
+
+    // Dialog states
+    const [createDialogOpen, setCreateDialogOpen] = useState(false);
+    const [addStageDialogOpen, setAddStageDialogOpen] = useState(false);
+    const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
+
+    useEffect(() => {
+        loadData();
+    }, []);
+
+    const loadData = async () => {
+        try {
+            const [tasksData, analyticsData, stagesData] = await Promise.all([
+                api.get('/api/tasks'),
+                api.get('/api/tasks/analytics'),
+                api.get('/api/tasks/stages')
+            ]);
+            setTasks(tasksData);
+            setAnalytics(analyticsData);
+            setStages(stagesData);
+        } catch (error) {
+            console.error('Error loading tasks:', error);
+            toast.error('Failed to load tasks');
+        }
+    };
+
+    const handleDragStart = (e: React.DragEvent, task: Task) => {
+        setDraggedTask(task);
+        e.dataTransfer.effectAllowed = "move";
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+    };
+
+    const handleDrop = async (e: React.DragEvent, stageId: number) => {
+        e.preventDefault();
+        if (!draggedTask || draggedTask.stage_id === stageId) return;
+
+        // Optimistic update
+        setTasks(prev => prev.map(t => t.id === draggedTask.id ? { ...t, stage_id: stageId } : t));
+
+        try {
+            await api.put(`/api/tasks/${draggedTask.id}/move`, { stage_id: stageId });
+            toast.success(t('status_updated'));
+            // Refresh analytics
+            const updatedAnalytics = await api.get('/api/tasks/analytics');
+            setAnalytics(updatedAnalytics);
+        } catch (error) {
+            console.error("Update failed", error);
+            toast.error(t('update_failed'));
+            loadData();
+        } finally {
+            setDraggedTask(null);
+        }
+    };
+
+    const handleEditTask = (task: Task) => {
+        setTaskToEdit(task);
+        setCreateDialogOpen(true);
+    };
+
+    const handleDeleteTask = async (taskId: number) => {
+        if (!confirm(t('confirm_delete', 'Вы уверены, что хотите удалить эту задачу?'))) return;
+
+        try {
+            await api.delete(`/api/tasks/${taskId}`);
+            toast.success(t('task_deleted'));
+
+            setTasks(prev => prev.filter(t => t.id !== taskId));
+            const updatedAnalytics = await api.get('/api/tasks/analytics');
+            setAnalytics(updatedAnalytics);
+        } catch (error) {
+            console.error("Delete failed", error);
+            toast.error(t('delete_failed'));
+        }
+    };
+
+    const handleCreateTaskClose = (open: boolean) => {
+        setCreateDialogOpen(open);
+        if (!open) setTaskToEdit(null);
+    };
+
+    const getPriorityColor = (priority: string) => {
+        switch (priority) {
+            case 'high': return 'bg-red-100 text-red-700 border-red-200';
+            case 'medium': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+            case 'low': return 'bg-blue-100 text-blue-700 border-blue-200';
+            default: return 'bg-gray-100 text-gray-700 border-gray-200';
+        }
+    };
+
+    // View state
+    const [viewMode, setViewMode] = useState<'board' | 'dashboard'>('board');
+
+    // ... (rest of useEffects and handlers)
+
+    return (
+        <div className="h-full flex flex-col bg-gray-50/50">
+            {/* Header & Analytics */}
+            <div className="px-8 py-6 bg-white border-b">
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('tasks', 'Задачи')}</h1>
+                        <p className="text-sm text-gray-500 mt-1">{t('task_management_subtitle', 'Управление задачами команды')}</p>
+                    </div>
+                    <div className="flex gap-2">
+                        <div className="bg-gray-100 p-1 rounded-lg flex items-center mr-2 border border-gray-200">
+                            <button
+                                onClick={() => setViewMode('board')}
+                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === 'board'
+                                    ? 'bg-white text-gray-900 shadow-sm'
+                                    : 'text-gray-500 hover:text-gray-900'
+                                    }`}
+                            >
+                                <Layout className="w-4 h-4 mr-2 inline-block" />
+                                {t('board', 'Доска')}
+                            </button>
+                            <button
+                                onClick={() => setViewMode('dashboard')}
+                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === 'dashboard'
+                                    ? 'bg-white text-gray-900 shadow-sm'
+                                    : 'text-gray-500 hover:text-gray-900'
+                                    }`}
+                            >
+                                <LayoutDashboard className="w-4 h-4 mr-2 inline-block" />
+                                {t('dashboard', 'Дашборд')}
+                            </button>
+                        </div>
+
+                        <Button
+                            variant="outline"
+                            onClick={() => setAddStageDialogOpen(true)}
+                        >
+                            <Plus className="w-4 h-4 mr-2" />
+                            {t('add_stage', 'Добавить стадию')}
+                        </Button>
+                        <Button
+                            className="bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-purple-500/20"
+                            onClick={() => setCreateDialogOpen(true)}
+                        >
+                            <Plus className="w-4 h-4 mr-2" />
+                            {t('create_task', 'Новая задача')}
+                        </Button>
+                    </div>
+                </div>
+
+                <CreateTaskDialog
+                    open={createDialogOpen}
+                    onOpenChange={handleCreateTaskClose}
+                    onSuccess={loadData}
+                    stages={stages}
+                    taskToEdit={taskToEdit}
+                />
+
+                <AddStageDialog
+                    open={addStageDialogOpen}
+                    onOpenChange={setAddStageDialogOpen}
+                    onSuccess={loadData}
+                />
+
+                {/* Only show analytics summary in Board view */}
+                {viewMode === 'board' && (
+                    <div className="grid grid-cols-4 gap-4">
+                        <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
+                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                                <Clock className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <div className="text-2xl font-bold text-blue-900">{analytics.today}</div>
+                                <div className="text-xs text-blue-600 font-medium">{t('analytics.today', 'На сегодня')}</div>
+                            </div>
+                        </div>
+                        <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center gap-4">
+                            <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center text-red-600">
+                                <AlertCircle className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <div className="text-2xl font-bold text-red-900">{analytics.overdue}</div>
+                                <div className="text-xs text-red-600 font-medium">{t('analytics.overdue', 'Просрочено')}</div>
+                            </div>
+                        </div>
+                        <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl flex items-center gap-4">
+                            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
+                                <CheckCircle2 className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <div className="text-2xl font-bold text-purple-900">{analytics.completed}</div>
+                                <div className="text-xs text-purple-600 font-medium">{t('analytics.completed', 'Выполнено')}</div>
+                            </div>
+                        </div>
+                        <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl flex items-center gap-4">
+                            <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center text-gray-600">
+                                <CalendarDays className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <div className="text-2xl font-bold text-gray-900">{analytics.total_active}</div>
+                                <div className="text-xs text-gray-600 font-medium">{t('analytics.active', 'В работе')}</div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Content Area */}
+            {viewMode === 'dashboard' ? (
+                <div className="flex-1 overflow-hidden">
+                    <TasksDashboard tasks={tasks} stages={stages} />
+                </div>
+            ) : (
+                /* Kanban Board */
+                <div className="flex-1 overflow-x-auto p-6">
+                    <div className="flex gap-6 h-full min-w-max">
+                        {stages.map(stage => (
+                            <div
+                                key={stage.id}
+                                className="w-96 flex flex-col bg-gray-100/50 rounded-xl border border-gray-200/60"
+                                onDragOver={handleDragOver}
+                                onDrop={(e) => handleDrop(e, stage.id)}
+                            >
+                                <div className="p-4 border-b border-gray-200/60 bg-white/50 rounded-t-xl sticky top-0 backdrop-blur-sm z-10">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className={`w-2 h-2 rounded-full ${stage.color || 'bg-gray-500'}`} />
+                                            <span className="font-semibold text-gray-700">{stage.name}</span>
+                                        </div>
+                                        <Badge variant="secondary" className="bg-white text-gray-500 shadow-sm border">
+                                            {tasks.filter(t => t.stage_id === stage.id).length}
+                                        </Badge>
+                                    </div>
+                                </div>
+
+                                <ScrollArea className="flex-1 p-3">
+                                    <div className="space-y-3 pb-2">
+                                        {tasks.filter(t => t.stage_id === stage.id).map(task => (
+                                            <div
+                                                key={task.id}
+                                                draggable
+                                                onDragStart={(e) => handleDragStart(e, task)}
+                                                className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-grab active:cursor-grabbing group"
+                                            >
+                                                {/* Task Card Content */}
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <Badge className={`px-2 py-0.5 text-[10px] bg-transparent border ${getPriorityColor(task.priority)} shadow-none hover:bg-transparent`}>
+                                                        {t(`priority.${task.priority}`, task.priority)}
+                                                    </Badge>
+
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" size="icon" className="h-6 w-6 -mr-2 text-gray-300 group-hover:text-gray-500">
+                                                                <MoreVertical className="w-4 h-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            <DropdownMenuItem onClick={() => handleEditTask(task)}>
+                                                                <Pencil className="w-4 h-4 mr-2" />
+                                                                {t('edit')}
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteTask(task.id)}>
+                                                                <Trash2 className="w-4 h-4 mr-2" />
+                                                                {t('delete')}
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </div>
+
+                                                <h4 className="text-sm font-semibold text-gray-900 mb-1 leading-snug">{task.title}</h4>
+                                                {task.description && <p className="text-xs text-gray-500 line-clamp-2 mb-3">{task.description}</p>}
+
+                                                <div className="flex items-center justify-between pt-3 border-t border-gray-50 mt-3">
+                                                    <div className="flex items-center gap-2" title={task.assignee_name}>
+                                                        {task.assignee_name ? (
+                                                            <Avatar className="w-5 h-5">
+                                                                <AvatarFallback className="text-[9px] bg-pink-50 text-pink-600">
+                                                                    {task.assignee_name[0]}
+                                                                </AvatarFallback>
+                                                            </Avatar>
+                                                        ) : (
+                                                            <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center border border-dashed border-gray-300 text-gray-400">
+                                                                <User className="w-3 h-3" />
+                                                            </div>
+                                                        )}
+                                                        <span className="text-xs text-gray-400">{task.assignee_name || t('unassigned')}</span>
+                                                    </div>
+
+                                                    {task.due_date && (
+                                                        <div className={`text-xs flex items-center gap-1 ${isPast(new Date(task.due_date)) && !isToday(new Date(task.due_date)) ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+                                                            <CalendarDays className="w-3 h-3" />
+                                                            {format(new Date(task.due_date), 'd MMM', { locale: ru })}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {tasks.filter(t => t.stage_id === stage.id).length === 0 && (
+                                            <div className="text-center py-10 text-gray-400 text-xs italic border-2 border-dashed border-gray-100 rounded-lg">
+                                                {t('no_tasks')}
+                                            </div>
+                                        )}
+                                    </div>
+                                </ScrollArea>
+
+                                <div className="p-2 pt-0 sticky bottom-0 bg-transparent">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="w-full text-gray-400 hover:text-gray-600 text-xs border border-dashed border-gray-300 hover:bg-white bg-transparent"
+                                        onClick={() => {
+                                            setTaskToEdit(null); // Ensure creation mode
+                                            setCreateDialogOpen(true);
+                                        }}
+                                    >
+                                        <Plus className="w-3 h-3 mr-1.5" />
+                                        {t('quick_add')}
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+

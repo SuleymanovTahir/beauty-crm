@@ -104,7 +104,10 @@ def run_all_migrations():
     from db.migrations.consolidated.schema_cookies import create_cookie_consents_table
     from db.migrations.consolidated.schema_loyalty import migrate_loyalty_schema
     from db.migrations.consolidated.schema_preferences import migrate_preferences
+    from db.migrations.consolidated.schema_preferences import migrate_preferences
     from db.migrations.consolidated.schema_holidays import migrate_holidays_schema
+    from db.migrations.consolidated.schema_004_tasks_and_pipelines import migration_004_tasks_and_pipelines
+    from db.migrations.consolidated.schema_005_task_stages import migration_005_task_stages
 
     results["consolidated/newsletter"] = run_migration_function(
         create_newsletter_table,
@@ -141,6 +144,16 @@ def run_all_migrations():
     results["consolidated/bookings"] = run_migration_function(
         migrate_bookings_schema,
         "Все изменения таблицы bookings"
+    )
+
+    results["consolidated/tasks_pipelines"] = run_migration_function(
+        migration_004_tasks_and_pipelines,
+        "Таблицы задач и воронок (004)"
+    )
+
+    results["consolidated/task_stages"] = run_migration_function(
+        migration_005_task_stages,
+        "Таблицы стадий задач (005)"
     )
     
     results["consolidated/services"] = run_migration_function(
