@@ -102,7 +102,7 @@ export function LandingPage() {
 
         <div id="map-section">
           <Suspense fallback={<LoadingSpinner />}>
-            <MapSection />
+            <MapSection salonInfo={initialData?.salon} />
           </Suspense>
         </div>
 

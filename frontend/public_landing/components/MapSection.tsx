@@ -3,11 +3,21 @@ import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-export function MapSection() {
+interface MapSectionProps {
+  salonInfo?: any;
+}
+
+export function MapSection({ salonInfo: initialSalonInfo }: MapSectionProps) {
   const { t, i18n } = useTranslation(['public_landing', 'common']);
-  const [salonInfo, setSalonInfo] = useState<any>(null);
+  const [salonInfo, setSalonInfo] = useState<any>(initialSalonInfo || null);
 
   useEffect(() => {
+    // Only fetch if we don't have initial data
+    if (initialSalonInfo) {
+      setSalonInfo(initialSalonInfo);
+      return;
+    }
+
     const fetchSalonInfo = async () => {
       try {
         const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
@@ -19,7 +29,7 @@ export function MapSection() {
       }
     };
     fetchSalonInfo();
-  }, [i18n.language]);
+  }, [i18n.language, initialSalonInfo]);
 
   const phone = salonInfo?.phone || "";
   const email = salonInfo?.email || "";

@@ -164,7 +164,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   left: 0;
                   width: 0;
                   height: 2px;
-                  background-color: var(--primary);
+                  background-color: #db2777;
                   transition: width 0.3s ease-in-out;
                 }
                 .nav-item:hover::after,

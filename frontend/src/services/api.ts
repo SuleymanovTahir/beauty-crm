@@ -102,6 +102,22 @@ export class ApiClient {
     return response
   }
 
+  async googleLogin(token: string) {
+    const response = await this.request<any>('/api/google-login', {
+      method: 'POST',
+      body: JSON.stringify({ token }),
+    })
+
+    if (response.user) {
+      localStorage.setItem('user', JSON.stringify(response.user))
+    }
+    if (response.token) {
+      localStorage.setItem('session_token', response.token)
+    }
+
+    return response
+  }
+
   async register(username: string, password: string, full_name: string, email: string, phone: string, role: string = 'employee', position: string = '', privacy_accepted: boolean = false, newsletter_subscribed: boolean = true) {
     const formData = new URLSearchParams()
     formData.append('username', username)

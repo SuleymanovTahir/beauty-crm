@@ -1,5 +1,5 @@
 """
-Database модуль - функции для работы с SQLite
+Database модуль - функции для работы с PostgreSQL
 """
 # Инициализация
 from .init import init_database

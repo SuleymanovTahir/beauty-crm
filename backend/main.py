@@ -396,7 +396,7 @@ async def get_diagnostics():
         
         # Собираем данные
         diagnostics = {
-            "database": DATABASE_NAME,
+            "database": os.getenv('POSTGRES_DB', 'beauty_crm'),
             "tables": {},
             "bot_settings": {},
             "employees": []
