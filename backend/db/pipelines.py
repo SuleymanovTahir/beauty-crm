@@ -71,6 +71,7 @@ def get_clients_by_stage(stage_id: int, limit: int = 50, offset: int = 0, search
     finally:
         conn.close()
 
+
 def update_client_stage(client_id: str, stage_id: int) -> bool:
     """Move client to a new stage"""
     conn = get_db_connection()
@@ -86,6 +87,25 @@ def update_client_stage(client_id: str, stage_id: int) -> bool:
         return True
     except Exception as e:
         log_error(f"Error updating client stage: {e}", "db.pipelines")
+        conn.rollback()
+        return False
+    finally:
+        conn.close()
+
+def remove_client_from_funnel(client_id: str) -> bool:
+    """Remove client from funnel (set stage to NULL)"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("""
+            UPDATE clients 
+            SET pipeline_stage_id = NULL
+            WHERE instagram_id = %s
+        """, (client_id,))
+        conn.commit()
+        return True
+    except Exception as e:
+        log_error(f"Error removing client from funnel: {e}", "db.pipelines")
         conn.rollback()
         return False
     finally:
@@ -118,6 +138,88 @@ def get_funnel_stats(start_date: str = None, end_date: str = None) -> Dict:
         ]
     except Exception as e:
         log_error(f"Error getting funnel stats: {e}", "db.pipelines")
-        return []
+
+def create_pipeline_stage(name: str, color: str, order_index: int) -> Optional[int]:
+    """Create a new pipeline stage"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        # Generate a key from name (simple slug)
+        key = name.lower().replace(" ", "_")[:50]
+        
+        c.execute("""
+            INSERT INTO pipeline_stages (name, key, color, order_index)
+            VALUES (%s, %s, %s, %s)
+            RETURNING id
+        """, (name, key, color, order_index))
+        stage_id = c.fetchone()[0]
+        conn.commit()
+        return stage_id
+    except Exception as e:
+        log_error(f"Error creating pipeline stage: {e}", "db.pipelines")
+        conn.rollback()
+        return None
+    finally:
+        conn.close()
+
+def update_pipeline_stage(stage_id: int, name: str, color: str) -> bool:
+    """Update a pipeline stage"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("""
+            UPDATE pipeline_stages 
+            SET name = %s, color = %s
+            WHERE id = %s
+        """, (name, color, stage_id))
+        conn.commit()
+        return True
+    except Exception as e:
+        log_error(f"Error updating pipeline stage: {e}", "db.pipelines")
+        conn.rollback()
+        return False
+    finally:
+        conn.close()
+
+def delete_pipeline_stage(stage_id: int, fallback_stage_id: int = None) -> bool:
+    """Delete a pipeline stage and move clients to fallback if provided"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        # If fallback provided, move clients first
+        if fallback_stage_id:
+            c.execute("""
+                UPDATE clients 
+                SET pipeline_stage_id = %s 
+                WHERE pipeline_stage_id = %s
+            """, (fallback_stage_id, stage_id))
+            
+        c.execute("DELETE FROM pipeline_stages WHERE id = %s", (stage_id,))
+        conn.commit()
+        return True
+    except Exception as e:
+        log_error(f"Error deleting pipeline stage: {e}", "db.pipelines")
+        conn.rollback()
+        return False
+    finally:
+        conn.close()
+
+def reorder_pipeline_stages(ordered_ids: List[int]) -> bool:
+    """Update order_index for a list of stage IDs"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        for idx, stage_id in enumerate(ordered_ids):
+            c.execute("""
+                UPDATE pipeline_stages 
+                SET order_index = %s 
+                WHERE id = %s
+            """, (idx, stage_id))
+        conn.commit()
+        return True
+    except Exception as e:
+        log_error(f"Error reordering pipeline stages: {e}", "db.pipelines")
+        conn.rollback()
+        return False
     finally:
         conn.close()

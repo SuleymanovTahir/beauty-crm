@@ -1,5 +1,33 @@
 {
   "Your funnel shows good results": {
     " Keep it up!": "استمر!"
+  },
+  "title": "قمع المبيعات",
+  "subtitle": "إدارة المرحلة والتحويل",
+  "funnel": "قمع",
+  "search_clients": "البحث عن العملاء...",
+  "quick_add": "إضافة سريعة",
+  "no_clients": "لا يوجد عملاء",
+  "moved_successfully": "تم نقل العميل بنجاح",
+  "move_failed": "خطأ في النقل",
+  "conversion": {
+    "visitor_to_engaged": "زائر -> مشارك",
+    "engaged_to_booking": "مشغول -> بدأ التسجيل",
+    "booking_to_booked": "بدأ التسجيل -> تم التسجيل",
+    "booked_to_completed": "تم التسجيل -> مكتمل"
+  },
+  "funnel_chart": "مخطط قمع",
+  "key_metrics": "المقاييس الرئيسية",
+  "total_conversion": "إجمالي التحويل",
+  "total_losses": "إجمالي الخسائر",
+  "successful_visits": "الزيارات الناجحة",
+  "recommendations_title": "التوصيات",
+  "all_good": "كل شيء على ما يرام! يُظهر مسار التحويل الخاص بك نتائج جيدة.",
+  "stage_details": "مراحل التفصيل",
+  "table": {
+    "stage": "منصة",
+    "count": "كمية",
+    "percentage": "نسبة مئوية",
+    "losses": "خسائر"
   }
 }

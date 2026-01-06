@@ -1,5 +1,33 @@
 {
   "Your funnel shows good results": {
     " Keep it up!": "Continuez comme ça!"
+  },
+  "title": "Entonnoir de vente",
+  "subtitle": "Gestion des étapes et des conversions",
+  "funnel": "Entonnoir",
+  "search_clients": "Recherche de clients...",
+  "quick_add": "Ajout rapide",
+  "no_clients": "Aucun client",
+  "moved_successfully": "Le client a été déplacé avec succès",
+  "move_failed": "Erreur de déplacement",
+  "conversion": {
+    "visitor_to_engaged": "Visiteur -> Engagé",
+    "engaged_to_booking": "Engagé -> réservation démarré",
+    "booking_to_booked": "réservation commencé -> Inscrit",
+    "booked_to_completed": "Inscrit -> Terminé"
+  },
+  "funnel_chart": "Graphique en entonnoir",
+  "key_metrics": "Indicateurs clés",
+  "total_conversion": "Conversion totale",
+  "total_losses": "Pertes totales",
+  "successful_visits": "Des visites réussies",
+  "recommendations_title": "Recommandations",
+  "all_good": "Tout va bien ! Votre entonnoir montre de bons résultats.",
+  "stage_details": "Étapes de détail",
+  "table": {
+    "stage": "Scène",
+    "count": "Quantité",
+    "percentage": "Pour cent",
+    "losses": "Pertes"
   }
 }

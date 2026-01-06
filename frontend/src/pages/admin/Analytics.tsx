@@ -1,7 +1,6 @@
 // /frontend/src/pages/admin/Analytics.tsx
-//src/pages/admin/Analytics.tsx
 import { useState, useEffect } from 'react';
-import { BarChart3, Download, RefreshCw, AlertCircle, Loader } from 'lucide-react';
+import { BarChart3, Download, RefreshCw, AlertCircle, Loader, Filter, ArrowRight, TrendingUp, TrendingDown } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -46,9 +45,10 @@ export default function Analytics() {
   const [exporting, setExporting] = useState(false);
   const [stats, setStats] = useState<Stats | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [funnel, setFunnel] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const { t } = useTranslation(['admin/Analytics', 'common']);
+  const { t } = useTranslation(['analytics', 'common']);
   const { currency, formatCurrency } = useCurrency();
 
   useEffect(() => {
@@ -70,6 +70,9 @@ export default function Analytics() {
 
       const statsData = await api.getStats();
       setStats(statsData);
+
+      const funnelData = await api.get('/api/analytics/funnel');
+      setFunnel(funnelData);
 
       let analyticsData;
       if (dateFrom && dateTo) {
@@ -452,6 +455,102 @@ export default function Analytics() {
           </div>
         </div>
       )}
+      {/* Funnel Overview */}
+      {funnel && (
+        <>
+          {/* Conversion Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <p className="text-gray-600 text-sm mb-2">{t('analytics:funnel.conversion.visitor_to_engaged', 'Visitor -> Engaged')}</p>
+              <div className="flex items-center justify-between">
+                <h3 className="text-3xl text-gray-900">{funnel.conversion_rates.visitor_to_engaged}%</h3>
+                {funnel.conversion_rates.visitor_to_engaged >= 60 ? <TrendingUp className="w-6 h-6 text-green-600" /> : <TrendingDown className="w-6 h-6 text-yellow-600" />}
+              </div>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <p className="text-gray-600 text-sm mb-2">{t('analytics:funnel.conversion.engaged_to_booking', 'Engaged -> Started Booking')}</p>
+              <div className="flex items-center justify-between">
+                <h3 className="text-3xl text-gray-900">{funnel.conversion_rates.engaged_to_booking}%</h3>
+                {funnel.conversion_rates.engaged_to_booking >= 50 ? <TrendingUp className="w-6 h-6 text-green-600" /> : <TrendingDown className="w-6 h-6 text-yellow-600" />}
+              </div>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <p className="text-gray-600 text-sm mb-2">{t('analytics:funnel.conversion.booking_to_booked', 'Started -> Booked')}</p>
+              <div className="flex items-center justify-between">
+                <h3 className="text-3xl text-gray-900">{funnel.conversion_rates.booking_to_booked}%</h3>
+                {funnel.conversion_rates.booking_to_booked >= 50 ? <TrendingUp className="w-6 h-6 text-green-600" /> : <TrendingDown className="w-6 h-6 text-yellow-600" />}
+              </div>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <p className="text-gray-600 text-sm mb-2">{t('analytics:funnel.conversion.booked_to_completed', 'Booked -> Completed')}</p>
+              <div className="flex items-center justify-between">
+                <h3 className="text-3xl text-gray-900">{funnel.conversion_rates.booked_to_completed}%</h3>
+                {funnel.conversion_rates.booked_to_completed >= 90 ? <TrendingUp className="w-6 h-6 text-green-600" /> : <TrendingDown className="w-6 h-6 text-yellow-600" />}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
+            <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-2">
+              <Filter className="w-6 h-6 text-pink-600" />
+              {t('analytics:funnel_chart', 'Funnel Visualization')}
+            </h2>
+
+            <div className="space-y-4">
+              {[
+                { name: t('analytics:funnel.stages.visitors', 'Visitors'), value: funnel.visitors, color: 'bg-blue-500', desc: t('analytics:funnel.desc.visitors', 'Site/Social Visitors') },
+                { name: t('analytics:funnel.stages.engaged', 'Engaged'), value: funnel.engaged, color: 'bg-cyan-500', desc: t('analytics:funnel.desc.engaged', 'Showed Interest') },
+                { name: t('analytics:funnel.stages.started_booking', 'Started Booking'), value: funnel.started_booking, color: 'bg-green-500', desc: t('analytics:funnel.desc.started_booking', 'Opened Booking Form') },
+                { name: t('analytics:funnel.stages.booked', 'Booked'), value: funnel.booked, color: 'bg-amber-500', desc: t('analytics:funnel.desc.booked', 'Completed Booking') },
+                { name: t('analytics:funnel.stages.completed', 'Completed'), value: funnel.completed, color: 'bg-pink-500', desc: t('analytics:funnel.desc.completed', 'Service Completed') }
+              ].map((stage, index, arr) => {
+                const maxValue = Math.max(...arr.map(s => s.value));
+                const percentage = (stage.value / (maxValue || 1)) * 100;
+                const conversionPercent = (stage.value / (funnel.visitors || 1)) * 100;
+                const prevValue = index > 0 ? arr[index - 1].value : 0;
+                const loss = index > 0 ? prevValue - stage.value : 0;
+
+                return (
+                  <div key={index} className="relative">
+                    <div className="flex items-center gap-4">
+                      {/* Funnel Bar */}
+                      <div className="flex-1">
+                        <div
+                          className={`${stage.color} text-white p-6 rounded-lg transition-all hover:shadow-lg cursor-pointer`}
+                          style={{
+                            width: `${Math.max(percentage, 5)}%`,
+                            minWidth: '200px'
+                          }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h3 className="text-lg mb-1">{stage.name}</h3>
+                              <p className="text-sm opacity-90">{stage.desc}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-2xl">{stage.value}</p>
+                              <p className="text-sm opacity-90">{conversionPercent.toFixed(1)}%</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Losses */}
+                    {loss > 0 && (
+                      <div className="mt-2 ml-4 flex items-center gap-2 text-red-600 text-sm">
+                        <TrendingDown className="w-4 h-4" />
+                        <span>{t('analytics:funnel.losses', { count: loss })}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Drop-off Analysis */}
       {analytics?.drop_off_points && analytics.drop_off_points.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-6">
