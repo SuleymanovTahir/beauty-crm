@@ -121,7 +121,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # ===== DATABASE CONFIGURATION (PostgreSQL Only) =====
 # Принудительно используем PostgreSQL
 DATABASE_TYPE = "postgresql"
-DATABASE_NAME = None  # SQLite больше не используется
+
 
 POSTGRES_CONFIG = {
     'host': os.getenv('POSTGRES_HOST', 'localhost'),

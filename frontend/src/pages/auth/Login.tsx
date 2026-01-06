@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { api } from "../../services/api";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
 import { useAuth } from "../../contexts/AuthContext";
+import GoogleLoginButton from "../../components/GoogleLoginButton";
 
 export default function Login() {
   const { login } = useAuth();
@@ -157,6 +158,21 @@ export default function Login() {
               <p className="text-red-800 text-sm">{error}</p>
             </div>
           )}
+
+          <div className="space-y-4">
+            <GoogleLoginButton text="signin_with" />
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 text-gray-500">
+                  {t('login:or_email', 'Или через email')}
+                </span>
+              </div>
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
