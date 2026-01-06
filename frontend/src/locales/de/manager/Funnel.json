@@ -1,5 +1,33 @@
 {
   "Your funnel shows good results": {
     " Keep it up!": "Weiter so!"
+  },
+  "title": "Verkaufstrichter",
+  "subtitle": "Bühnen- und Konvertierungsmanagement",
+  "funnel": "Trichter",
+  "search_clients": "Auf der Suche nach Kunden...",
+  "quick_add": "Schnell hinzufügen",
+  "no_clients": "Keine Kunden",
+  "moved_successfully": "Der Client wurde erfolgreich verschoben",
+  "move_failed": "Fehler beim Verschieben",
+  "conversion": {
+    "visitor_to_engaged": "Besucher -> Verlobt",
+    "engaged_to_booking": "Verlobt -> Aufnahme gestartet",
+    "booking_to_booked": "Aufnahme gestartet -> Angemeldet",
+    "booked_to_completed": "Angemeldet -> Abgeschlossen"
+  },
+  "funnel_chart": "Trichterdiagramm",
+  "key_metrics": "Schlüsselkennzahlen",
+  "total_conversion": "Gesamtumwandlung",
+  "total_losses": "Totalverluste",
+  "successful_visits": "Erfolgreiche Besuche",
+  "recommendations_title": "Empfehlungen",
+  "all_good": "Alles ist in Ordnung! Ihr Funnel zeigt gute Ergebnisse.",
+  "stage_details": "Detaillierungsschritte",
+  "table": {
+    "stage": "Bühne",
+    "count": "Menge",
+    "percentage": "Prozent",
+    "losses": "Verluste"
   }
 }

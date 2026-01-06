@@ -52,7 +52,7 @@ async def get_analytics_api(
     else:
         return get_analytics_data(days=period)
 
-@router.get("/funnel")
+@router.get("/analytics/funnel")
 async def get_funnel_api(session_token: Optional[str] = Cookie(None)):
     """Получить данные воронки продаж"""
     user = require_auth(session_token)

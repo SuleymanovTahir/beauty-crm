@@ -1,5 +1,33 @@
 {
   "Your funnel shows good results": {
     " Keep it up!": "¡Avanza!"
+  },
+  "title": "embudo de ventas",
+  "subtitle": "Gestión de etapas y conversión.",
+  "funnel": "Embudo",
+  "search_clients": "Buscando clientes...",
+  "quick_add": "Agregar rápido",
+  "no_clients": "Sin clientes",
+  "moved_successfully": "Cliente movido exitosamente",
+  "move_failed": "Error de movimiento",
+  "conversion": {
+    "visitor_to_engaged": "Visitante -> Comprometido",
+    "engaged_to_booking": "Comprometido -> Comenzó a grabar",
+    "booking_to_booked": "Comenzó a grabar -> Registrado",
+    "booked_to_completed": "Registrado -> Completado"
+  },
+  "funnel_chart": "gráfico de embudo",
+  "key_metrics": "Métricas clave",
+  "total_conversion": "Conversión total",
+  "total_losses": "Pérdidas totales",
+  "successful_visits": "Visitas exitosas",
+  "recommendations_title": "Recomendaciones",
+  "all_good": "¡Todo está bien! Tu embudo está mostrando buenos resultados.",
+  "stage_details": "Detallando etapas",
+  "table": {
+    "stage": "Escenario",
+    "count": "Cantidad",
+    "percentage": "hasta ciento",
+    "losses": "Pérdidas"
   }
 }

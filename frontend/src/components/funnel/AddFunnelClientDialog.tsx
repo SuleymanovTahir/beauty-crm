@@ -6,6 +6,7 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
+    DialogDescription,
     DialogFooter,
 } from "../../components/ui/dialog";
 import { Button } from "../../components/ui/button";
@@ -35,7 +36,7 @@ interface AddFunnelClientDialogProps {
 }
 
 export function AddFunnelClientDialog({ open, onOpenChange, onSuccess, stages }: AddFunnelClientDialogProps) {
-    const { t } = useTranslation(['pages/funnel', 'common']);
+    const { t } = useTranslation(['admin/funnel', 'common']);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -77,6 +78,9 @@ export function AddFunnelClientDialog({ open, onOpenChange, onSuccess, stages }:
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>{t('add_client_to_funnel')}</DialogTitle>
+                    <DialogDescription className="sr-only">
+                        {t('add_client_to_funnel_description', 'Fill in the details to add a new client to the funnel')}
+                    </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">

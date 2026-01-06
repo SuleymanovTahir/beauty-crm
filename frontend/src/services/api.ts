@@ -265,7 +265,7 @@ export class ApiClient {
   }
 
   async getFunnel() {
-    return this.request<any>('/api/funnel')
+    return this.request<any>('/api/analytics/funnel')
   }
 
   // ===== FEEDBACK =====
