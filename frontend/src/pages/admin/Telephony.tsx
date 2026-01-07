@@ -19,7 +19,6 @@ import {
     Upload,
     ArrowUp,
     ArrowDown,
-    Filter,
     RefreshCw,
     ChevronDown,
     Users
@@ -465,10 +464,34 @@ export default function Telephony() {
                                                 <SelectItem value="today">Сегодня</SelectItem>
                                                 <SelectItem value="week">Неделя</SelectItem>
                                                 <SelectItem value="month">Месяц</SelectItem>
+                                                <SelectItem value="custom">Период</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
                                 </div>
+
+                                {period === 'custom' && (
+                                    <div className="grid grid-cols-2 gap-3 pt-3 mt-2 border-t border-gray-50">
+                                        <div className="flex flex-col gap-1.5">
+                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">От</span>
+                                            <input
+                                                type="date"
+                                                value={dateFrom}
+                                                onChange={e => setDateFrom(e.target.value)}
+                                                className="w-full h-[42px] px-3 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all shadow-sm"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-1.5">
+                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">До</span>
+                                            <input
+                                                type="date"
+                                                value={dateTo}
+                                                onChange={e => setDateTo(e.target.value)}
+                                                className="w-full h-[42px] px-3 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all shadow-sm"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
