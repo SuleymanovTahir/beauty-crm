@@ -51,5 +51,20 @@
   "create_failed": "Erreur lors de la création de la tâche",
   "update_failed": "Erreur de mise à jour de la tâche",
   "edit_task": "Modifier la tâche",
-  "create_new_task": "Nouvelle tâche"
+  "create_new_task": "Nouvelle tâche",
+  "status_updated": "Statut mis à jour",
+  "confirm_delete": "Êtes-vous sûr de vouloir supprimer cette tâche ?",
+  "task_deleted": "Tâche supprimée",
+  "delete_failed": "Erreur lors de la suppression de la tâche",
+  "manage_stages": "Gestion de scène",
+  "failed_to_load_stages": "Échec du chargement des étapes",
+  "stage_created": "Étape créée",
+  "stage_deleted": "Étape supprimée",
+  "order_saved": "Commande préservée",
+  "order_save_failed": "Erreur lors de l'réservation de la commande",
+  "add_new_stage": "Ajouter une nouvelle étape",
+  "stage_name": "Nom de scène",
+  "add": "Ajouter",
+  "are_you_sure": "Es-tu sûr?",
+  "confirm_delete_stage": "Êtes-vous sûr de vouloir supprimer cette étape ? Les tâches qu'il contient resteront sans étape (ou seront déplacées)."
 }

@@ -51,5 +51,20 @@
   "create_failed": "Error creating task",
   "update_failed": "Task update error",
   "edit_task": "Edit task",
-  "create_new_task": "New task"
+  "create_new_task": "New task",
+  "status_updated": "Status updated",
+  "confirm_delete": "Are you sure you want to delete this task?",
+  "task_deleted": "Task deleted",
+  "delete_failed": "Error deleting task",
+  "manage_stages": "Stage management",
+  "failed_to_load_stages": "Failed to load stages",
+  "stage_created": "Stage created",
+  "stage_deleted": "Stage removed",
+  "order_saved": "Order preserved",
+  "order_save_failed": "Error saving order",
+  "add_new_stage": "Add a new stage",
+  "stage_name": "Stage name",
+  "add": "Add",
+  "are_you_sure": "Are you sure?",
+  "confirm_delete_stage": "Are you sure you want to delete this stage? "
 }
