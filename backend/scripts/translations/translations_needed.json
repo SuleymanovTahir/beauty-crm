@@ -88,6 +88,129 @@
   ],
   "public_reviews": [
     {
+      "id": 9,
+      "fields": {
+        "text_ru": {
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.9.text_ru.d04583b6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.9.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.9.employee_position.5b1b1d5e",
+          "en": "Eyelashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "fields": {
+        "text_ru": {
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.10.text_ru.784d2781",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.10.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González"
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.10.employee_position.9a3a91ca",
+          "en": "Facial Treatment",
+          "ar": "علاج الوجه",
+          "es": "Tratamiento Facial",
+          "de": "Gesichtsbehandlung",
+          "fr": "Traitement du visage",
+          "hi": "चेहरे का उपचार",
+          "kk": "Бет күтімі",
+          "pt": "Tratamento facial"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "fields": {
+        "text_ru": {
+          "ru": "Отличный сервис и профессиональный персонал. ",
+          "key": "public_reviews.11.text_ru.33473c5f",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.11.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима әл-Сайед",
+          "pt": "Fátima Al-Sayed"
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.11.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading"
+        }
+      }
+    },
+    {
       "id": 6,
       "fields": {
         "author_name": {

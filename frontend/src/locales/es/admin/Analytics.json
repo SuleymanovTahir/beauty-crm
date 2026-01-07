@@ -61,5 +61,34 @@
   "top_services": "Servicios destacados",
   "try_again": "Intentar otra vez",
   "where_clients_leave": "¿A dónde van los clientes?",
-  "work_on_objections": "Lidiar con las objeciones"
+  "work_on_objections": "Lidiar con las objeciones",
+  "funnel_overview": "embudo de ventas",
+  "visitors": "Visitantes",
+  "engaged": "Involucrado",
+  "booked": "Registrado",
+  "completed": "Visitado",
+  "funnel_chart": "Visualización del embudo",
+  "funnel": {
+    "conversion": {
+      "visitor_to_engaged": "Visitante -> Comprometido",
+      "engaged_to_booking": "Comprometido -> Comenzó a grabar",
+      "booking_to_booked": "Iniciado -> Registrado",
+      "booked_to_completed": "Registrado -> Visitado"
+    },
+    "stages": {
+      "visitors": "Visitantes",
+      "engaged": "Involucrado",
+      "started_booking": "Comenzó a grabar",
+      "booked": "Registrado",
+      "completed": "Visitado"
+    },
+    "desc": {
+      "visitors": "Visitantes del sitio web/redes sociales",
+      "engaged": "Mostró interés",
+      "started_booking": "Abrió el formulario de reserva.",
+      "booked": "reserva completado",
+      "completed": "Servicio prestado"
+    },
+    "losses": "Pérdidas: {{count}}"
+  }
 }

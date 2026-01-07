@@ -61,5 +61,34 @@
   "top_services": "أعلى الخدمات",
   "try_again": "حاول ثانية",
   "where_clients_leave": "أين يذهب العملاء؟",
-  "work_on_objections": "التعامل مع الاعتراضات"
+  "work_on_objections": "التعامل مع الاعتراضات",
+  "funnel_overview": "قمع المبيعات",
+  "visitors": "الزوار",
+  "engaged": "متضمن",
+  "booked": "تم التسجيل",
+  "completed": "تمت زيارتها",
+  "funnel_chart": "تصور القمع",
+  "funnel": {
+    "conversion": {
+      "visitor_to_engaged": "زائر -> مشارك",
+      "engaged_to_booking": "مشغول -> بدأ التسجيل",
+      "booking_to_booked": "بدأت -> اشتركت",
+      "booked_to_completed": "تم التسجيل -> تمت الزيارة"
+    },
+    "stages": {
+      "visitors": "الزوار",
+      "engaged": "متضمن",
+      "started_booking": "بدأ التسجيل",
+      "booked": "تم التسجيل",
+      "completed": "تمت زيارتها"
+    },
+    "desc": {
+      "visitors": "زوار الموقع/وسائل التواصل الاجتماعي",
+      "engaged": "أظهر الاهتمام",
+      "started_booking": "فتحت استمارة التسجيل",
+      "booked": "اكتمل التسجيل",
+      "completed": "الخدمة المقدمة"
+    },
+    "losses": "الخسائر: __VAR0____"
+  }
 }

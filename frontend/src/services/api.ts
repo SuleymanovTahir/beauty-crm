@@ -692,8 +692,23 @@ export class ApiClient {
     })
   }
 
-  async getTelephonyStats() {
-    return this.request<any>('/api/telephony/stats')
+  async getTelephonyStats(startDate?: string, endDate?: string) {
+    let url = '/api/telephony/stats?'
+    if (startDate) url += `start_date=${startDate}&`
+    if (endDate) url += `end_date=${endDate}`
+    return this.request<any>(url)
+  }
+
+  async getTelephonyAnalytics(startDate?: string, endDate?: string, managerName?: string, status?: string, direction?: string, minDuration?: number, maxDuration?: number) {
+    let url = '/api/telephony/analytics?'
+    if (startDate) url += `start_date=${startDate}&`
+    if (endDate) url += `end_date=${endDate}&`
+    if (managerName) url += `manager_name=${encodeURIComponent(managerName)}&`
+    if (status && status !== 'all') url += `status=${status}&`
+    if (direction && direction !== 'all') url += `direction=${direction}&`
+    if (minDuration !== undefined) url += `min_duration=${minDuration}&`
+    if (maxDuration !== undefined) url += `max_duration=${maxDuration}`
+    return this.request<any>(url)
   }
 
   // ===== НАСТРОЙКИ МЕНЮ =====

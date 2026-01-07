@@ -61,5 +61,34 @@
   "top_services": "Best services",
   "try_again": "Try again",
   "where_clients_leave": "Where do customers go?",
-  "work_on_objections": "Deal with objections"
+  "work_on_objections": "Deal with objections",
+  "funnel_overview": "Sales funnel",
+  "visitors": "Visitors",
+  "engaged": "Involved",
+  "booked": "Signed up",
+  "completed": "Visited",
+  "funnel_chart": "Funnel visualization",
+  "funnel": {
+    "conversion": {
+      "visitor_to_engaged": "Visitor -> Engaged",
+      "engaged_to_booking": "Engaged -> Started booking",
+      "booking_to_booked": "Started -> Signed up",
+      "booked_to_completed": "Signed up -> Visited"
+    },
+    "stages": {
+      "visitors": "Visitors",
+      "engaged": "Involved",
+      "started_booking": "Started booking",
+      "booked": "Signed up",
+      "completed": "Visited"
+    },
+    "desc": {
+      "visitors": "Website/social media visitors",
+      "engaged": "Showed interest",
+      "started_booking": "Opened the registration form",
+      "booked": "Completed registration",
+      "completed": "Service provided"
+    },
+    "losses": "Losses: {{count}}"
+  }
 }
