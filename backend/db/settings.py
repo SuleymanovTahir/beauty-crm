@@ -74,7 +74,8 @@ def get_salon_settings() -> dict:
                 "base_url": row_dict.get("base_url", "https://mlediamant.com"),
                 # Feature Management
                 "points_expiration_days": row_dict.get("points_expiration_days", 365),
-                "feature_flags": row_dict.get("feature_flags", "{}")
+                "feature_flags": row_dict.get("feature_flags", "{}"),
+                "telephony_settings": row_dict.get("telephony_settings", "{}")
             }
         else:
             log_warning(
@@ -181,7 +182,8 @@ def update_salon_settings(data: dict) -> bool:
             'logo_url': 'logo_url',
             'base_url': 'base_url',
             'points_expiration_days': 'points_expiration_days',
-            'feature_flags': 'feature_flags'
+            'feature_flags': 'feature_flags',
+            'telephony_settings': 'telephony_settings'
         }
 
         # Формируем SET часть запроса только для предоставленных полей

@@ -56,5 +56,19 @@
   "service_name": "Қызмет атауы",
   "status_completed": "Аяқталды",
   "status_missed": "Өткізіп жіберді",
-  "status_ongoing": "Орындалуда"
+  "status_ongoing": "Орындалуда",
+  "integrations_tab": "Интеграциялар",
+  "add_integration": "Телефонияны қосыңыз",
+  "provider": "Провайдер",
+  "integration_status": "Webhook нұсқаулары",
+  "webhook_url_label": "Сіздің бірегей Webhook URL мекенжайы",
+  "webhook_instruction_short": "Қоңырауларды автоматты түрде қабылдау үшін телефония провайдерінің параметрлеріне келесі URL мекенжайын енгізіңіз.",
+  "webhook_security_note": "Қауіпсіздік мақсатында бұл URL мекенжайын үшінші тараптармен бөліспеңіз.",
+  "test_connection": "Қосылымды тексеріңіз",
+  "save_settings": "Параметрлерді сақтау",
+  "testing": "Емтихан...",
+  "copy": "Көшіру",
+  "copied": "Көшірілген",
+  "success": "Сәтті",
+  "error": "Қате"
 }

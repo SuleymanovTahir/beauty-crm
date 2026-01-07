@@ -56,5 +56,19 @@
   "service_name": "Service name",
   "status_completed": "Completed",
   "status_missed": "Skipped",
-  "status_ongoing": "In progress"
+  "status_ongoing": "In progress",
+  "integrations_tab": "Integrations",
+  "add_integration": "Connect telephony",
+  "provider": "Provider",
+  "integration_status": "Webhook Instructions",
+  "webhook_url_label": "Your unique Webhook URL",
+  "webhook_instruction_short": "To automatically receive calls, enter the following URL in your telephony provider's settings.",
+  "webhook_security_note": "For security reasons, do not share this URL with third parties.",
+  "test_connection": "Check connection",
+  "save_settings": "Save settings",
+  "testing": "Examination...",
+  "copy": "Copy",
+  "copied": "Copied",
+  "success": "Successfully",
+  "error": "Error"
 }

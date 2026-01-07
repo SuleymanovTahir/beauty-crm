@@ -83,6 +83,9 @@ async def get_telephony_settings(current_user: dict = Depends(get_current_user))
         if row and row[0]:
             return json.loads(row[0])
         return {}
+    except Exception as e:
+        logger.warning(f"Could not fetch telephony settings (maybe column missing?): {e}")
+        return {}
     finally:
         conn.close()
 
@@ -113,6 +116,9 @@ async def test_telephony_integration(settings: TelephonySettings, current_user: 
     elif settings.provider == 'onlinepbx':
         if not settings.api_key:
             return {"success": False, "error": "API Key обязателен для OnlinePBX"}
+    elif settings.provider == 'twilio':
+        if not settings.api_key or not settings.api_secret:
+            return {"success": False, "error": "Account SID и Auth Token обязательны для Twilio"}
     
     # In real world, we would call the provider's API here
     # Mocking a successful validation for non-empty keys
@@ -588,6 +594,19 @@ def normalize_webhook_data(provider: str, data: Dict[str, Any]) -> Optional[Dict
                  'recording_url': data.get('recording_url'),
                  'created_at': datetime.now().isoformat()
              }
+    
+    # 3. Twilio
+    elif provider == 'twilio':
+        # Twilio sends Form Data: CallSid, From, To, CallStatus, CallDuration, RecordingUrl
+        return {
+            'external_id': data.get('CallSid'),
+            'phone': data.get('From'),
+            'direction': 'inbound' if data.get('Direction', '').startswith('inbound') else 'outbound',
+            'status': 'completed' if data.get('CallStatus') == 'completed' else data.get('CallStatus'),
+            'duration': int(data.get('CallDuration', 0)),
+            'recording_url': data.get('RecordingUrl'),
+            'created_at': datetime.now().isoformat()
+        }
 
     # 3. Generic (our own format)
     elif provider == 'generic':
