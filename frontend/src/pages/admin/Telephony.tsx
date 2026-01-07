@@ -10,7 +10,6 @@ import {
     PhoneIncoming,
     PhoneOutgoing,
     PhoneMissed,
-    Calendar,
     Loader2,
     Plus,
     Trash2,
@@ -365,14 +364,13 @@ export default function Telephony() {
                 <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 backdrop-blur-xl bg-white/80">
                     <div className="flex flex-col gap-4">
                         {/* Row 1: Search */}
-                        <div className="relative group">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-pink-500 transition-colors" />
-                            <input
-                                type="text"
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <Input
                                 placeholder="Поиск по номеру или имени..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="w-full h-[42px] pl-10 pr-4 bg-gray-50/50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all placeholder:text-gray-400 font-bold"
+                                className="pl-9 h-[42px] bg-gray-50/50 border-gray-200 rounded-xl font-bold shadow-none focus-visible:ring-1 focus-visible:ring-pink-500"
                             />
                         </div>
 

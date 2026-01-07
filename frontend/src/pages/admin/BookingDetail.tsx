@@ -17,10 +17,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  Legend
+  ResponsiveContainer
 } from 'recharts';
 import { CallHistorySection } from '../../components/bookings/CallHistorySection';
 
@@ -54,6 +51,7 @@ interface Service {
   name: string;
   name_ru?: string;
   service_key: string;
+  price?: number;
 }
 
 export default function BookingDetail() {
