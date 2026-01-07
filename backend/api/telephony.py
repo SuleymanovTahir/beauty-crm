@@ -83,9 +83,11 @@ async def get_calls(
                 cl.recording_file,
                 cl.created_at,
                 cl.transcription,
-                cl.notes
+                cl.notes,
+                b.master as manager_name
             FROM call_logs cl
             LEFT JOIN clients c ON c.instagram_id = cl.client_id
+            LEFT JOIN bookings b ON b.id = cl.booking_id
             WHERE 1=1
         """
         params = []
@@ -122,7 +124,8 @@ async def get_calls(
             'duration': 'cl.duration',
             'client_name': 'client_name',
             'status': 'cl.status',
-            'type': 'cl.direction'
+            'type': 'cl.direction',
+            'manager_name': 'b.master'
         }
         sort_column = allowed_sort_fields.get(sort_by, 'cl.created_at')
         sort_direction = 'DESC' if order == 'desc' else 'ASC'
@@ -148,7 +151,7 @@ async def get_calls(
                 "created_at": row[10].isoformat() if row[10] else None,
                 "transcription": row[11],
                 "notes": row[12],
-                "manager_name": None 
+                "manager_name": row[13]
             }
             for row in rows
         ]
