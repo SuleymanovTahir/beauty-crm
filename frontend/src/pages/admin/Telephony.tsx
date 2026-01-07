@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -7,9 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import {
     Phone,
     Search,
-    Play,
-    Pause,
-    Download,
     PhoneIncoming,
     PhoneOutgoing,
     PhoneMissed,
@@ -18,7 +15,11 @@ import {
     Plus,
     Trash2,
     Edit2,
-    MoreVertical
+    MoreVertical,
+    Upload,
+    ArrowUp,
+    ArrowDown,
+    Filter
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
@@ -31,16 +32,20 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
+import { Checkbox } from '../../components/ui/checkbox';
+import { AudioPlayer } from '../../components/telephony/AudioPlayer';
 
 interface CallLog {
     id: number;
     client_name: string;
     client_id: string;
+    booking_id?: number;
     phone: string;
     type: 'inbound' | 'outbound' | 'missed' | 'rejected' | 'ongoing';
     status: 'completed' | 'missed' | 'rejected' | 'ongoing';
     duration: number;
     recording_url?: string;
+    recording_file?: string;
     created_at: string;
     manager_name?: string;
     notes?: string;
@@ -52,10 +57,17 @@ export default function Telephony() {
     const [period, setPeriod] = useState('all');
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
-    const [playingId, setPlayingId] = useState<number | null>(null);
-    const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    // Sorting state
+    const [sortBy, setSortBy] = useState<string>('created_at');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
+    // Filters state
+    const [statusFilter, setStatusFilter] = useState<string>('all');
+    const [typeFilter, setTypeFilter] = useState<string>('all');
 
     const [calls, setCalls] = useState<CallLog[]>([]);
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [stats, setStats] = useState({
         total_calls: 0,
         inbound: 0,
@@ -68,6 +80,8 @@ export default function Telephony() {
     const [showEditDialog, setShowEditDialog] = useState(false);
     const [editingCall, setEditingCall] = useState<CallLog | null>(null);
     const [processing, setProcessing] = useState(false);
+    const [uploadingFile, setUploadingFile] = useState<number | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     const [formData, setFormData] = useState({
         phone: '',
@@ -75,12 +89,22 @@ export default function Telephony() {
         status: 'completed',
         duration: 0,
         notes: '',
-        recording_url: ''
+        recording_url: '',
+        booking_id: undefined as number | undefined
     });
 
     useEffect(() => {
         loadData();
-    }, [search, period, dateFrom, dateTo]);
+    }, [search, period, dateFrom, dateTo, sortBy, sortOrder, statusFilter, typeFilter]);
+
+    const handleSort = (field: string) => {
+        if (sortBy === field) {
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortBy(field);
+            setSortOrder('desc');
+        }
+    };
 
     const loadData = async () => {
         setLoading(true);
@@ -111,7 +135,7 @@ export default function Telephony() {
             }
 
             const [callsData, statsData] = await Promise.all([
-                api.getCalls(search, 50, 0, start, end),
+                api.getCalls(search, 50, 0, start, end, undefined, sortBy, sortOrder, statusFilter, typeFilter),
                 api.getTelephonyStats()
             ]);
             setCalls(callsData);
@@ -124,19 +148,48 @@ export default function Telephony() {
         }
     };
 
-    const handlePlay = (id: number, url: string) => {
-        if (playingId === id) {
-            audioRef.current?.pause();
-            setPlayingId(null);
+    const handleSelectAll = (checked: boolean) => {
+        if (checked) {
+            setSelectedIds(calls.map(c => c.id));
         } else {
-            if (audioRef.current) {
-                audioRef.current.pause();
-            }
-            const audio = new Audio(url);
-            audio.onended = () => setPlayingId(null);
-            audio.play().catch(() => toast.error('Ошибка воспроизведения файла'));
-            audioRef.current = audio;
-            setPlayingId(id);
+            setSelectedIds([]);
+        }
+    };
+
+    const handleSelectOne = (id: number, checked: boolean) => {
+        if (checked) {
+            setSelectedIds(prev => [...prev, id]);
+        } else {
+            setSelectedIds(prev => prev.filter(i => i !== id));
+        }
+    };
+
+    const handleBulkDelete = async () => {
+        if (!confirm(`Удалить выбранные звонки (${selectedIds.length})?`)) return;
+
+        setProcessing(true);
+        try {
+            await Promise.all(selectedIds.map(id => api.deleteCall(id)));
+            toast.success(`Удалено ${selectedIds.length} звонков`);
+            setSelectedIds([]);
+            loadData();
+        } catch (e) {
+            toast.error("Ошибка при удалении");
+        } finally {
+            setProcessing(false);
+        }
+    };
+
+    const handleFileUpload = async (callId: number, file: File) => {
+        try {
+            setUploadingFile(callId);
+            await api.uploadRecording(callId, file);
+            toast.success('Запись загружена');
+            loadData();
+        } catch (error) {
+            toast.error('Ошибка загрузки файла');
+        } finally {
+            setUploadingFile(null);
         }
     };
 
@@ -147,8 +200,20 @@ export default function Telephony() {
         }
         try {
             setProcessing(true);
-            await api.createCall(formData);
-            toast.success('Звонок добавлен');
+            const response = await api.createCall(formData) as any;
+
+            if (response.success && response.id && selectedFile) {
+                try {
+                    await api.uploadRecording(response.id, selectedFile);
+                    toast.success('Звонок создан и запись загружена');
+                } catch (uploadError) {
+                    console.error('Error uploading file:', uploadError);
+                    toast.error('Звонок создан, но ошибка загрузки файла');
+                }
+            } else {
+                toast.success('Звонок добавлен');
+            }
+
             setShowAddDialog(false);
             setFormData({
                 phone: '',
@@ -156,8 +221,10 @@ export default function Telephony() {
                 status: 'completed',
                 duration: 0,
                 notes: '',
-                recording_url: ''
+                recording_url: '',
+                booking_id: undefined
             });
+            setSelectedFile(null);
             loadData();
         } catch (error) {
             toast.error('Ошибка создания звонка');
@@ -204,7 +271,8 @@ export default function Telephony() {
             status: call.status as string,
             duration: call.duration,
             notes: call.notes || '',
-            recording_url: call.recording_url || ''
+            recording_url: call.recording_url || '',
+            booking_id: call.booking_id
         });
         setShowEditDialog(true);
     };
@@ -319,17 +387,82 @@ export default function Telephony() {
                 </div>
             </div>
 
+            <div className="px-8 pb-4 bg-white border-b flex gap-4">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-[180px]">
+                        <Filter className="w-4 h-4 mr-2" />
+                        <SelectValue placeholder="Статус" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">Все статусы</SelectItem>
+                        <SelectItem value="completed">Завершенные</SelectItem>
+                        <SelectItem value="missed">Пропущенные</SelectItem>
+                        <SelectItem value="rejected">Отклоненные</SelectItem>
+                    </SelectContent>
+                </Select>
+
+                <Select value={typeFilter} onValueChange={setTypeFilter}>
+                    <SelectTrigger className="w-[180px]">
+                        <Filter className="w-4 h-4 mr-2" />
+                        <SelectValue placeholder="Тип звонка" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">Все типы</SelectItem>
+                        <SelectItem value="inbound">Входящие</SelectItem>
+                        <SelectItem value="outbound">Исходящие</SelectItem>
+                    </SelectContent>
+                </Select>
+
+                {selectedIds.length > 0 && (
+                    <Button
+                        variant="destructive"
+                        onClick={handleBulkDelete}
+                        className="ml-auto"
+                        disabled={processing}
+                    >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Удалить ({selectedIds.length})
+                    </Button>
+                )}
+            </div>
+
             <div className="flex-1 overflow-auto p-6">
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <table className="w-full text-sm text-left">
                         <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-100">
                             <tr>
-                                <th className="px-6 py-3 font-medium">Тип</th>
-                                <th className="px-6 py-3 font-medium">Клиент</th>
+                                <th className="px-6 py-3 w-10">
+                                    <Checkbox
+                                        checked={selectedIds.length === calls.length && calls.length > 0}
+                                        onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+                                    />
+                                </th>
+                                <th onClick={() => handleSort('type')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors">
+                                    <div className="flex items-center gap-1">
+                                        Тип
+                                        {sortBy === 'type' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
+                                    </div>
+                                </th>
+                                <th onClick={() => handleSort('client_name')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors">
+                                    <div className="flex items-center gap-1">
+                                        Клиент
+                                        {sortBy === 'client_name' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
+                                    </div>
+                                </th>
                                 <th className="px-6 py-3 font-medium">Сотрудник</th>
                                 <th className="px-6 py-3 font-medium">Заметки</th>
-                                <th className="px-6 py-3 font-medium">Длительность</th>
-                                <th className="px-6 py-3 font-medium">Дата</th>
+                                <th onClick={() => handleSort('duration')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors">
+                                    <div className="flex items-center gap-1">
+                                        Длительность
+                                        {sortBy === 'duration' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
+                                    </div>
+                                </th>
+                                <th onClick={() => handleSort('created_at')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors">
+                                    <div className="flex items-center gap-1">
+                                        Дата
+                                        {sortBy === 'created_at' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
+                                    </div>
+                                </th>
                                 <th className="px-6 py-3 font-medium text-right">Запись</th>
                                 <th className="px-6 py-3 font-medium text-right"></th>
                             </tr>
@@ -353,6 +486,12 @@ export default function Telephony() {
                             ) : (
                                 calls.map((call) => (
                                     <tr key={call.id} className="hover:bg-gray-50 transition-colors group">
+                                        <td className="px-6 py-4">
+                                            <Checkbox
+                                                checked={selectedIds.includes(call.id)}
+                                                onCheckedChange={(checked) => handleSelectOne(call.id, checked as boolean)}
+                                            />
+                                        </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-2">
                                                 <div className={`p-2 rounded-full bg-gray-50 ${call.status === 'missed' ? 'bg-red-50' :
@@ -378,22 +517,42 @@ export default function Telephony() {
                                         <td className="px-6 py-4 text-gray-500">
                                             {call.created_at ? format(new Date(call.created_at), 'dd MMM HH:mm', { locale: ru }) : '-'}
                                         </td>
-                                        <td className="px-6 py-4 text-right">
-                                            {call.recording_url && (
-                                                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8 rounded-full hover:bg-pink-50 hover:text-pink-600"
-                                                        onClick={() => call.recording_url && handlePlay(call.id, call.recording_url)}
-                                                    >
-                                                        {playingId === call.id ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                                                    </Button>
-                                                    <a href={call.recording_url} download target="_blank" rel="noreferrer">
-                                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-gray-100">
-                                                            <Download className="w-4 h-4 text-gray-400" />
+                                        <td className="px-6 py-4">
+                                            {(call.recording_url || call.recording_file) ? (
+                                                <AudioPlayer
+                                                    url={call.recording_file ? `/static/recordings/${call.recording_file}` : call.recording_url!}
+                                                    className="min-w-[400px]"
+                                                />
+                                            ) : (
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="file"
+                                                        accept="audio/*"
+                                                        className="hidden"
+                                                        id={`upload-${call.id}`}
+                                                        onChange={(e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (file) handleFileUpload(call.id, file);
+                                                        }}
+                                                    />
+                                                    <label htmlFor={`upload-${call.id}`}>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="cursor-pointer"
+                                                            asChild
+                                                            disabled={uploadingFile === call.id}
+                                                        >
+                                                            <span>
+                                                                {uploadingFile === call.id ? (
+                                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                                ) : (
+                                                                    <Upload className="w-4 h-4 mr-2" />
+                                                                )}
+                                                                Загрузить запись
+                                                            </span>
                                                         </Button>
-                                                    </a>
+                                                    </label>
                                                 </div>
                                             )}
                                         </td>
@@ -435,7 +594,7 @@ export default function Telephony() {
                             <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
                                 <p className="text-xs text-gray-400 mb-1">Webhook URL:</p>
                                 <code className="text-xs bg-gray-900 px-2 py-1 rounded text-green-400 select-all block break-all">
-                                    {window.location.origin}/api/telephony/webhook/[provider]
+                                    {import.meta.env.VITE_API_URL || window.location.origin}/api/telephony/webhook/[provider]
                                 </code>
                                 <p className="text-xs text-gray-500 mt-2">
                                     Замените <code className="text-pink-400">[provider]</code> на: binotel, onlinepbx или generic
@@ -506,6 +665,15 @@ export default function Telephony() {
                             />
                         </div>
                         <div>
+                            <Label>Файл записи (если нет ссылки)</Label>
+                            <Input
+                                type="file"
+                                accept="audio/*"
+                                onChange={e => setSelectedFile(e.target.files?.[0] || null)}
+                                className="cursor-pointer file:cursor-pointer"
+                            />
+                        </div>
+                        <div>
                             <Label>Заметки</Label>
                             <Input
                                 value={formData.notes}
@@ -558,6 +726,6 @@ export default function Telephony() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </div>
+        </div >
     );
 }
