@@ -11,6 +11,7 @@ def run_migration():
     try:
         logging.info("Creating call_logs table...")
         
+        c.execute("""
             CREATE TABLE IF NOT EXISTS call_logs (
                 id SERIAL PRIMARY KEY,
                 client_id VARCHAR(255) REFERENCES clients(instagram_id) ON DELETE SET NULL,
@@ -24,7 +25,10 @@ def run_migration():
                 transcription TEXT,
                 notes TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                external_id VARCHAR(255) -- id from external telephony provider
+                external_id VARCHAR(255), -- id from external telephony provider
+                manual_client_name VARCHAR(255),
+                manual_manager_name VARCHAR(255),
+                manual_service_name text
             );
         """)
         
@@ -32,6 +36,9 @@ def run_migration():
         try:
             c.execute("ALTER TABLE call_logs ADD COLUMN IF NOT EXISTS booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL;")
             c.execute("ALTER TABLE call_logs ADD COLUMN IF NOT EXISTS recording_file VARCHAR(255);")
+            c.execute("ALTER TABLE call_logs ADD COLUMN IF NOT EXISTS manual_client_name VARCHAR(255);")
+            c.execute("ALTER TABLE call_logs ADD COLUMN IF NOT EXISTS manual_manager_name VARCHAR(255);")
+            c.execute("ALTER TABLE call_logs ADD COLUMN IF NOT EXISTS manual_service_name text;")
         except Exception as e:
             logging.warning(f"Columns might already exist: {e}")
 

@@ -20,8 +20,13 @@ import {
     ArrowDown,
     RefreshCw,
     ChevronDown,
-    Users
+    Users,
+    Check,
+    ChevronsUpDown,
 } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../../components/ui/command';
+import { cn } from '../../lib/utils';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { api } from '../../services/api';
@@ -35,6 +40,22 @@ import {
 } from "../../components/ui/dropdown-menu";
 import { Checkbox } from '../../components/ui/checkbox';
 import { AudioPlayer } from '../../components/telephony/AudioPlayer';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    Legend,
+    PieChart,
+    Pie,
+    Cell,
+    LineChart,
+    Line
+} from 'recharts';
 
 interface CallLog {
     id: number;
@@ -50,6 +71,9 @@ interface CallLog {
     created_at: string;
     manager_name?: string;
     notes?: string;
+    manual_client_name?: string;
+    manual_manager_name?: string;
+    manual_service_name?: string;
 }
 
 export default function Telephony() {
@@ -58,6 +82,7 @@ export default function Telephony() {
     const [period, setPeriod] = useState('all');
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
+    const [analytics, setAnalytics] = useState<any[]>([]);
 
     // Sorting state
     const [sortBy, setSortBy] = useState<string>('created_at');
@@ -84,20 +109,38 @@ export default function Telephony() {
     const [processing, setProcessing] = useState(false);
     const [uploadingFile, setUploadingFile] = useState<number | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [managerFilter, setManagerFilter] = useState<string>('all');
+    const [managers, setManagers] = useState<string[]>([]);
+    const [minDuration, setMinDuration] = useState<string>('');
+    const [maxDuration, setMaxDuration] = useState<string>('');
+
+    // Lists for selection
+    const [allClients, setAllClients] = useState<any[]>([]);
+    const [allMasters, setAllMasters] = useState<any[]>([]);
+    const [allServices, setAllServices] = useState<any[]>([]);
+
+    // Add/Edit states
+    const [clientOpen, setClientOpen] = useState(false);
+    const [masterOpen, setMasterOpen] = useState(false);
+    const [serviceOpen, setServiceOpen] = useState(false);
 
     const [formData, setFormData] = useState({
         phone: '',
-        direction: 'outbound',
-        status: 'completed',
+        direction: 'outbound' as any,
+        status: 'completed' as any,
         duration: 0,
         notes: '',
         recording_url: '',
-        booking_id: undefined as number | undefined
+        booking_id: undefined as number | undefined,
+        manual_client_name: '',
+        manual_manager_name: '',
+        manual_service_name: '',
+        client_id: ''
     });
 
     useEffect(() => {
         loadData();
-    }, [search, period, dateFrom, dateTo, sortBy, sortOrder, statusFilter, typeFilter]);
+    }, [search, period, dateFrom, dateTo, sortBy, sortOrder, statusFilter, typeFilter, managerFilter, minDuration, maxDuration]);
 
     const handleSort = (field: string) => {
         if (sortBy === field) {
@@ -142,12 +185,36 @@ export default function Telephony() {
                 end = '';
             }
 
-            const [callsData, statsData] = await Promise.all([
+            const [callsData, statsData, analyticsData] = await Promise.all([
                 api.getCalls(search, 50, 0, start, end, undefined, sortBy, sortOrder, statusFilter, typeFilter),
-                api.getTelephonyStats()
+                api.getTelephonyStats(start, end),
+                api.getTelephonyAnalytics(
+                    start,
+                    end,
+                    managerFilter === 'all' ? undefined : managerFilter,
+                    statusFilter === 'all' ? undefined : statusFilter,
+                    typeFilter === 'all' ? undefined : typeFilter,
+                    minDuration ? parseInt(minDuration) : undefined,
+                    maxDuration ? parseInt(maxDuration) : undefined
+                )
             ]);
             setCalls(callsData);
             setStats(statsData);
+            setAnalytics(analyticsData);
+
+            // Extract unique managers for filter
+            const mgrs = Array.from(new Set(callsData.map((c: any) => c.manager_name).filter(Boolean))) as string[];
+            if (mgrs.length > 0) setManagers(mgrs);
+
+            // Fetch additional data for dialogs
+            const [clientsData, mastersData, servicesData] = await Promise.all([
+                api.getClients(),
+                api.getMasters(),
+                api.getServices()
+            ]);
+            setAllClients(clientsData.clients || []);
+            setAllMasters(mastersData.users || mastersData || []);
+            setAllServices(servicesData.services || []);
         } catch (error) {
             console.error('Failed to load telephony data:', error);
             toast.error('Ошибка загрузки данных');
@@ -225,12 +292,16 @@ export default function Telephony() {
             setShowAddDialog(false);
             setFormData({
                 phone: '',
-                direction: 'outbound',
-                status: 'completed',
+                direction: 'outbound' as any,
+                status: 'completed' as any,
                 duration: 0,
                 notes: '',
                 recording_url: '',
-                booking_id: undefined
+                booking_id: undefined,
+                manual_client_name: '',
+                manual_manager_name: '',
+                manual_service_name: '',
+                client_id: ''
             });
             setSelectedFile(null);
             loadData();
@@ -245,10 +316,7 @@ export default function Telephony() {
         if (!editingCall) return;
         try {
             setProcessing(true);
-            await api.updateCall(editingCall.id, {
-                notes: formData.notes,
-                status: formData.status
-            });
+            await api.updateCall(editingCall.id, formData);
             toast.success('Звонок обновлен');
             setShowEditDialog(false);
             setEditingCall(null);
@@ -275,12 +343,16 @@ export default function Telephony() {
         setEditingCall(call);
         setFormData({
             phone: call.phone,
-            direction: call.type as string,
-            status: call.status as string,
+            direction: call.type as any,
+            status: call.status as any,
             duration: call.duration,
             notes: call.notes || '',
             recording_url: call.recording_url || '',
-            booking_id: call.booking_id
+            booking_id: call.booking_id,
+            manual_client_name: call.manual_client_name || '',
+            manual_manager_name: call.manager_name || '',
+            manual_service_name: call.manual_service_name || '',
+            client_id: call.client_id || ''
         });
         setShowEditDialog(true);
     };
@@ -322,468 +394,1035 @@ export default function Telephony() {
                     </button>
                 </div>
 
-                <div className="grid grid-cols-4 gap-4 mb-6">
-                    <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
-                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
-                            <Phone className="w-6 h-6" />
-                        </div>
-                        <div>
-                            <div className="text-2xl font-bold text-blue-900">{stats.total_calls}</div>
-                            <div className="text-xs text-blue-600 font-medium">Всего звонков</div>
-                        </div>
-                    </div>
-                    <div className="bg-green-50 border border-green-100 p-4 rounded-xl flex items-center gap-4">
-                        <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
-                            <PhoneIncoming className="w-6 h-6" />
-                        </div>
-                        <div>
-                            <div className="text-2xl font-bold text-green-900">{stats.inbound}</div>
-                            <div className="text-xs text-green-600 font-medium">Входящие</div>
-                        </div>
-                    </div>
-                    <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl flex items-center gap-4">
-                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
-                            <PhoneOutgoing className="w-6 h-6" />
-                        </div>
-                        <div>
-                            <div className="text-2xl font-bold text-purple-900">{stats.outbound}</div>
-                            <div className="text-xs text-purple-600 font-medium">Исходящие</div>
-                        </div>
-                    </div>
-                    <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center gap-4">
-                        <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center text-red-600">
-                            <PhoneMissed className="w-6 h-6" />
-                        </div>
-                        <div>
-                            <div className="text-2xl font-bold text-red-900">{stats.missed}</div>
-                            <div className="text-xs text-red-600 font-medium">Пропущенные</div>
-                        </div>
-                    </div>
-                </div>
+                <Tabs defaultValue="list" className="w-full">
+                    <TabsList className="mb-6 bg-gray-100/50 p-1 rounded-xl w-fit">
+                        <TabsTrigger value="list" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-pink-600 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
+                            {t('telephony:call_list_tab', 'Список звонков')}
+                        </TabsTrigger>
+                        <TabsTrigger value="analytics" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-pink-600 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
+                            {t('telephony:analytics_tab', 'Аналитика')}
+                        </TabsTrigger>
+                    </TabsList>
 
-                <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 backdrop-blur-xl bg-white/80">
-                    <div className="flex flex-col gap-4">
-                        {/* Row 1: Search */}
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <Input
-                                placeholder="Поиск по номеру или имени..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                className="pl-9 h-[42px] bg-gray-50/50 border-gray-200 rounded-xl font-bold shadow-none focus-visible:ring-1 focus-visible:ring-pink-500"
-                            />
+                    <TabsContent value="list" className="space-y-6 focus-visible:outline-none">
+                        <div className="grid grid-cols-4 gap-4 mb-6">
+                            <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
+                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                                    <Phone className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <div className="text-2xl font-bold text-blue-900">{stats.total_calls}</div>
+                                    <div className="text-xs text-blue-600 font-medium">Всего звонков</div>
+                                </div>
+                            </div>
+                            <div className="bg-green-50 border border-green-100 p-4 rounded-xl flex items-center gap-4">
+                                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
+                                    <PhoneIncoming className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <div className="text-2xl font-bold text-green-900">{stats.inbound}</div>
+                                    <div className="text-xs text-green-600 font-medium">Входящие</div>
+                                </div>
+                            </div>
+                            <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl flex items-center gap-4">
+                                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
+                                    <PhoneOutgoing className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <div className="text-2xl font-bold text-purple-900">{stats.outbound}</div>
+                                    <div className="text-xs text-purple-600 font-medium">Исходящие</div>
+                                </div>
+                            </div>
+                            <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center gap-4">
+                                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center text-red-600">
+                                    <PhoneMissed className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <div className="text-2xl font-bold text-red-900">{stats.missed}</div>
+                                    <div className="text-xs text-red-600 font-medium">Пропущенные</div>
+                                </div>
+                            </div>
                         </div>
 
-                        {/* Row 2: Control Bar */}
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => setShowAddDialog(true)}
-                                className="flex-[2] min-w-[100px] h-[42px] px-3 bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md shadow-gray-200"
-                            >
-                                <Plus className="w-4 h-4" />
-                                <span>Добавить</span>
-                            </button>
-
-                            <button
-                                onClick={() => setShowFilters(!showFilters)}
-                                className={`flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showFilters
-                                    ? 'bg-pink-50 border-pink-200 text-pink-600'
-                                    : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
-                                    }`}
-                            >
-                                <Users className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
-                                <span className="truncate">Фильтры</span>
-                                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
-                            </button>
-
-                            {selectedIds.length > 0 && (
-                                <button
-                                    onClick={handleBulkDelete}
-                                    className="flex-1 h-[42px] px-2 bg-red-50 text-red-600 border border-red-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-red-100 active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-sm"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                    <span className="truncate">Удалить ({selectedIds.length})</span>
-                                </button>
-                            )}
-
-                            <button
-                                onClick={handleRefresh}
-                                disabled={loading}
-                                className="w-[42px] h-[42px] bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm shrink-0"
-                            >
-                                <RefreshCw className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
-                            </button>
-                        </div>
-
-                        {/* Expandable Filters */}
-                        {showFilters && (
-                            <div className="pt-4 border-t border-gray-50 animate-in fade-in slide-in-from-top-2 duration-300">
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                    {/* Status */}
-                                    <div className="flex flex-col gap-1.5">
-                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Статус</span>
-                                        <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                            <SelectTrigger className="w-full h-[42px] rounded-xl font-bold bg-white border-gray-200">
-                                                <SelectValue placeholder="Статус" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="all">Все статусы</SelectItem>
-                                                <SelectItem value="completed">Завершенные</SelectItem>
-                                                <SelectItem value="missed">Пропущенные</SelectItem>
-                                                <SelectItem value="rejected">Отклоненные</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-
-                                    {/* Type */}
-                                    <div className="flex flex-col gap-1.5">
-                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Тип звонка</span>
-                                        <Select value={typeFilter} onValueChange={setTypeFilter}>
-                                            <SelectTrigger className="w-full h-[42px] rounded-xl font-bold bg-white border-gray-200">
-                                                <SelectValue placeholder="Тип звонка" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="all">Все типы</SelectItem>
-                                                <SelectItem value="inbound">Входящие</SelectItem>
-                                                <SelectItem value="outbound">Исходящие</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-
-                                    {/* Period */}
-                                    <div className="flex flex-col gap-1.5">
-                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Период</span>
-                                        <Select value={period} onValueChange={setPeriod}>
-                                            <SelectTrigger className="w-full h-[42px] rounded-xl font-bold bg-white border-gray-200">
-                                                <SelectValue placeholder="Период" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="all">Все время</SelectItem>
-                                                <SelectItem value="today">Сегодня</SelectItem>
-                                                <SelectItem value="week">Неделя</SelectItem>
-                                                <SelectItem value="month">Месяц</SelectItem>
-                                                <SelectItem value="custom">Период</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
+                        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 backdrop-blur-xl bg-white/80">
+                            <div className="flex flex-col gap-4">
+                                {/* Row 1: Search */}
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                    <Input
+                                        placeholder="Поиск по номеру или имени..."
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        className="pl-9 h-[42px] bg-gray-50/50 border-gray-200 rounded-xl font-bold shadow-none focus-visible:ring-1 focus-visible:ring-pink-500"
+                                    />
                                 </div>
 
-                                {period === 'custom' && (
-                                    <div className="grid grid-cols-2 gap-3 pt-3 mt-2 border-t border-gray-50">
-                                        <div className="flex flex-col gap-1.5">
-                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">От</span>
-                                            <input
-                                                type="date"
-                                                value={dateFrom}
-                                                onChange={e => setDateFrom(e.target.value)}
-                                                className="w-full h-[42px] px-3 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all shadow-sm"
-                                            />
+                                {/* Row 2: Control Bar */}
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => setShowAddDialog(true)}
+                                        className="flex-[2] min-w-[100px] h-[42px] px-3 bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md shadow-gray-200"
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        <span>Добавить</span>
+                                    </button>
+
+                                    <button
+                                        onClick={() => setShowFilters(!showFilters)}
+                                        className={`flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showFilters
+                                            ? 'bg-pink-50 border-pink-200 text-pink-600'
+                                            : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        <Users className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
+                                        <span className="truncate">Фильтры</span>
+                                        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
+                                    </button>
+
+                                    {selectedIds.length > 0 && (
+                                        <button
+                                            onClick={handleBulkDelete}
+                                            className="flex-1 h-[42px] px-2 bg-red-50 text-red-600 border border-red-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-red-100 active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                            <span className="truncate">Удалить ({selectedIds.length})</span>
+                                        </button>
+                                    )}
+
+                                    <button
+                                        onClick={handleRefresh}
+                                        disabled={loading}
+                                        className="w-[42px] h-[42px] bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm shrink-0"
+                                    >
+                                        <RefreshCw className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
+                                    </button>
+                                </div>
+
+                                {/* Expandable Filters */}
+                                {showFilters && (
+                                    <div className="pt-4 border-t border-gray-50 animate-in fade-in slide-in-from-top-2 duration-300">
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                            {/* Status */}
+                                            <div className="flex flex-col gap-1.5">
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">{t('telephony:status', 'Статус')}</span>
+                                                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                                                    <SelectTrigger className="w-full h-[42px] rounded-xl font-bold bg-white border-gray-200">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="all">{t('common:all', 'Все')}</SelectItem>
+                                                        <SelectItem value="completed">{t('common:status_completed', 'Завершенные')}</SelectItem>
+                                                        <SelectItem value="missed">{t('telephony:missed', 'Пропущенные')}</SelectItem>
+                                                        <SelectItem value="rejected">{t('common:rejected', 'Отклоненные')}</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            {/* Type */}
+                                            <div className="flex flex-col gap-1.5">
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">{t('telephony:type', 'Тип')}</span>
+                                                <Select value={typeFilter} onValueChange={setTypeFilter}>
+                                                    <SelectTrigger className="w-full h-[42px] rounded-xl font-bold bg-white border-gray-200">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="all">{t('common:all', 'Все')}</SelectItem>
+                                                        <SelectItem value="inbound">{t('telephony:inbound', 'Входящие')}</SelectItem>
+                                                        <SelectItem value="outbound">{t('telephony:outbound', 'Исходящие')}</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            {/* Manager */}
+                                            <div className="flex flex-col gap-1.5">
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">{t('telephony:employee', 'Сотрудник')}</span>
+                                                <Select value={managerFilter} onValueChange={setManagerFilter}>
+                                                    <SelectTrigger className="w-full h-[42px] rounded-xl font-bold bg-white border-gray-200">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="all">{t('common:all', 'Все сотрудники')}</SelectItem>
+                                                        {managers.map(m => (
+                                                            <SelectItem key={m} value={m}>{m}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            {/* Period */}
+                                            <div className="flex flex-col gap-1.5">
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">{t('telephony:period', 'Период')}</span>
+                                                <Select value={period} onValueChange={setPeriod}>
+                                                    <SelectTrigger className="w-full h-[42px] rounded-xl font-bold bg-white border-gray-200">
+                                                        <SelectValue placeholder={t('telephony:period', 'Период')} />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="all">{t('telephony:all_time', 'Все время')}</SelectItem>
+                                                        <SelectItem value="today">{t('telephony:today', 'Сегодня')}</SelectItem>
+                                                        <SelectItem value="week">{t('telephony:week', 'Неделя')}</SelectItem>
+                                                        <SelectItem value="month">{t('telephony:month', 'Месяц')}</SelectItem>
+                                                        <SelectItem value="custom">{t('telephony:period', 'Период')}</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            {/* Duration Range */}
+                                            <div className="flex flex-col gap-1.5 sm:col-span-2">
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">{t('telephony:duration_range', 'Длительность (сек)')}</span>
+                                                <div className="flex items-center gap-2">
+                                                    <Input
+                                                        type="number"
+                                                        placeholder={t('telephony:from', 'От')}
+                                                        value={minDuration}
+                                                        onChange={(e) => setMinDuration(e.target.value)}
+                                                        className="h-[42px] bg-white border-gray-200 rounded-xl"
+                                                    />
+                                                    <div className="w-2 h-[1px] bg-gray-300" />
+                                                    <Input
+                                                        type="number"
+                                                        placeholder={t('telephony:to', 'До')}
+                                                        value={maxDuration}
+                                                        onChange={(e) => setMaxDuration(e.target.value)}
+                                                        className="h-[42px] bg-white border-gray-200 rounded-xl"
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="flex flex-col gap-1.5">
-                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">До</span>
-                                            <input
-                                                type="date"
-                                                value={dateTo}
-                                                onChange={e => setDateTo(e.target.value)}
-                                                className="w-full h-[42px] px-3 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all shadow-sm"
-                                            />
-                                        </div>
+
+                                        {period === 'custom' && (
+                                            <div className="grid grid-cols-2 gap-3 pt-3 mt-2 border-t border-gray-50">
+                                                <div className="flex flex-col gap-1.5">
+                                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">От</span>
+                                                    <input
+                                                        type="date"
+                                                        value={dateFrom}
+                                                        onChange={e => setDateFrom(e.target.value)}
+                                                        className="w-full h-[42px] px-3 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all shadow-sm"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col gap-1.5">
+                                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">До</span>
+                                                    <input
+                                                        type="date"
+                                                        value={dateTo}
+                                                        onChange={e => setDateTo(e.target.value)}
+                                                        className="w-full h-[42px] px-3 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all shadow-sm"
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
-                        )}
-                    </div>
-                </div>
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <table className="w-full text-sm text-left">
-                        <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-100">
-                            <tr>
-                                <th className="px-6 py-3 w-10">
-                                    <Checkbox
-                                        checked={selectedIds.length === calls.length && calls.length > 0}
-                                        onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
-                                    />
-                                </th>
-                                <th onClick={() => handleSort('type')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors">
-                                    <div className="flex items-center gap-1">
-                                        Тип
-                                        {sortBy === 'type' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
-                                    </div>
-                                </th>
-                                <th onClick={() => handleSort('client_name')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors">
-                                    <div className="flex items-center gap-1">
-                                        Клиент
-                                        {sortBy === 'client_name' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
-                                    </div>
-                                </th>
-                                <th onClick={() => handleSort('manager_name')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors">
-                                    <div className="flex items-center gap-1">
-                                        Сотрудник
-                                        {sortBy === 'manager_name' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
-                                    </div>
-                                </th>
-                                <th className="px-6 py-3 font-medium">Заметки</th>
-                                <th onClick={() => handleSort('duration')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors">
-                                    <div className="flex items-center gap-1">
-                                        Длительность
-                                        {sortBy === 'duration' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
-                                    </div>
-                                </th>
-                                <th onClick={() => handleSort('created_at')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors">
-                                    <div className="flex items-center gap-1">
-                                        Дата
-                                        {sortBy === 'created_at' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
-                                    </div>
-                                </th>
-                                <th className="px-6 py-3 font-medium text-right">Запись</th>
-                                <th className="px-6 py-3 font-medium text-right"></th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {loading ? (
-                                <tr>
-                                    <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
-                                        <div className="flex justify-center mb-2">
-                                            <Loader2 className="animate-spin w-8 h-8 text-pink-500" />
-                                        </div>
-                                        Загрузка звонков...
-                                    </td>
-                                </tr>
-                            ) : calls.length === 0 ? (
-                                <tr>
-                                    <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
-                                        Звонков не найдено
-                                    </td>
-                                </tr>
-                            ) : (
-                                calls.map((call) => (
-                                    <tr key={call.id} className="hover:bg-gray-50 transition-colors group">
-                                        <td className="px-6 py-4">
-                                            <Checkbox
-                                                checked={selectedIds.includes(call.id)}
-                                                onCheckedChange={(checked) => handleSelectOne(call.id, checked as boolean)}
-                                            />
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2">
-                                                <div className={`p-2 rounded-full bg-gray-50 ${call.status === 'missed' ? 'bg-red-50' :
-                                                    call.type === 'inbound' ? 'bg-green-50' : 'bg-blue-50'
-                                                    }`}>
-                                                    {getIcon(call.type, call.status)}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="font-medium text-gray-900">{call.client_name || 'Неизвестный'}</div>
-                                            <div className="text-xs text-gray-500">{call.phone}</div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {call.manager_name || <span className="text-gray-400">-</span>}
-                                        </td>
-                                        <td className="px-6 py-4 max-w-xs truncate text-gray-500">
-                                            {call.notes}
-                                        </td>
-                                        <td className="px-6 py-4 font-mono text-gray-600">
-                                            {call.status === 'missed' ? '-' : formatDuration(call.duration)}
-                                        </td>
-                                        <td className="px-6 py-4 text-gray-500">
-                                            {call.created_at ? format(new Date(call.created_at), 'dd MMM HH:mm', { locale: ru }) : '-'}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {(call.recording_url || call.recording_file) ? (
-                                                <AudioPlayer
-                                                    url={call.recording_file ? `/static/recordings/${call.recording_file}` : call.recording_url!}
-                                                    className="min-w-[400px]"
-                                                />
-                                            ) : (
-                                                <div className="flex items-center gap-2">
-                                                    <input
-                                                        type="file"
-                                                        accept="audio/*"
-                                                        className="hidden"
-                                                        id={`upload-${call.id}`}
-                                                        onChange={(e) => {
-                                                            const file = e.target.files?.[0];
-                                                            if (file) handleFileUpload(call.id, file);
-                                                        }}
-                                                    />
-                                                    <label htmlFor={`upload-${call.id}`}>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="cursor-pointer"
-                                                            asChild
-                                                            disabled={uploadingFile === call.id}
-                                                        >
-                                                            <span>
-                                                                {uploadingFile === call.id ? (
-                                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                                ) : (
-                                                                    <Upload className="w-4 h-4 mr-2" />
-                                                                )}
-                                                                Загрузить запись
-                                                            </span>
-                                                        </Button>
-                                                    </label>
-                                                </div>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                        <MoreVertical className="w-4 h-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem onClick={() => openEditDialog(call)}>
-                                                        <Edit2 className="w-4 h-4 mr-2" /> Редактировать
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => handleDeleteCall(call.id)} className="text-red-600">
-                                                        <Trash2 className="w-4 h-4 mr-2" /> Удалить
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div className="mt-8 bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 text-gray-300 text-sm shadow-lg">
-                    <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 bg-pink-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Phone className="w-5 h-5 text-pink-400" />
                         </div>
-                        <div className="flex-1">
-                            <p className="font-semibold mb-2 text-white">Интеграция с телефонией</p>
-                            <p className="text-xs mb-3 text-gray-400">
-                                Подключите вашу АТС для автоматической синхронизации звонков.
-                                Поддерживаются: <span className="text-pink-400">Binotel</span>, <span className="text-blue-400">OnlinePBX</span>, Twilio и другие.
-                            </p>
-                            <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-                                <p className="text-xs text-gray-400 mb-1">Webhook URL:</p>
-                                <code className="text-xs bg-gray-900 px-2 py-1 rounded text-green-400 select-all block break-all">
-                                    {import.meta.env.VITE_API_URL || window.location.origin}/api/telephony/webhook/[provider]
-                                </code>
-                                <p className="text-xs text-gray-500 mt-2">
-                                    Замените <code className="text-pink-400">[provider]</code> на: binotel, onlinepbx или generic
-                                </p>
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+                            <table className="w-full text-sm text-left">
+                                <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-100">
+                                    <tr>
+                                        <th className="px-6 py-3 w-10">
+                                            <Checkbox
+                                                checked={selectedIds.length === calls.length && calls.length > 0}
+                                                onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+                                            />
+                                        </th>
+                                        <th onClick={() => handleSort('type')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors w-[80px]">
+                                            <div className="flex items-center gap-1">
+                                                {t('telephony:type', 'Тип')}
+                                                {sortBy === 'type' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
+                                            </div>
+                                        </th>
+                                        <th onClick={() => handleSort('client_name')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors min-w-[180px]">
+                                            <div className="flex items-center gap-1">
+                                                {t('telephony:client', 'Клиент')}
+                                                {sortBy === 'client_name' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
+                                            </div>
+                                        </th>
+                                        <th onClick={() => handleSort('manager_name')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors min-w-[150px]">
+                                            <div className="flex items-center gap-1">
+                                                {t('telephony:employee', 'Сотрудник')}
+                                                {sortBy === 'manager_name' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
+                                            </div>
+                                        </th>
+                                        <th className="px-6 py-3 font-medium min-w-[150px]">{t('telephony:notes', 'Заметки')}</th>
+                                        <th onClick={() => handleSort('duration')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors min-w-[110px]">
+                                            <div className="flex items-center gap-1">
+                                                {t('telephony:duration', 'Длительность')}
+                                                {sortBy === 'duration' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
+                                            </div>
+                                        </th>
+                                        <th onClick={() => handleSort('created_at')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors min-w-[130px]">
+                                            <div className="flex items-center gap-1">
+                                                {t('telephony:date', 'Дата')}
+                                                {sortBy === 'created_at' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
+                                            </div>
+                                        </th>
+                                        <th className="px-6 py-3 font-medium text-right min-w-[80px]">{t('telephony:recording', 'Запись')}</th>
+                                        <th className="px-6 py-3 font-medium text-right w-10"></th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {loading ? (
+                                        <tr>
+                                            <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
+                                                <div className="flex justify-center mb-2">
+                                                    <Loader2 className="animate-spin w-8 h-8 text-pink-500" />
+                                                </div>
+                                                Загрузка звонков...
+                                            </td>
+                                        </tr>
+                                    ) : calls.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
+                                                Звонков не найдено
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        calls.map((call) => (
+                                            <tr key={call.id} className="hover:bg-gray-50 transition-colors group">
+                                                <td className="px-6 py-4">
+                                                    <Checkbox
+                                                        checked={selectedIds.includes(call.id)}
+                                                        onCheckedChange={(checked) => handleSelectOne(call.id, checked as boolean)}
+                                                    />
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className={`p-2 rounded-full bg-gray-50 ${call.status === 'missed' ? 'bg-red-50' :
+                                                            call.type === 'inbound' ? 'bg-green-50' : 'bg-blue-50'
+                                                            }`}>
+                                                            {getIcon(call.type, call.status)}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="font-medium text-gray-900">{call.client_name || 'Неизвестный'}</div>
+                                                    <div className="text-xs text-gray-500">{call.phone}</div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {call.manager_name || <span className="text-gray-400">-</span>}
+                                                </td>
+                                                <td className="px-6 py-4 max-w-xs truncate text-gray-500">
+                                                    {call.notes}
+                                                </td>
+                                                <td className="px-6 py-4 font-mono text-gray-600">
+                                                    {call.status === 'missed' ? '-' : formatDuration(call.duration)}
+                                                </td>
+                                                <td className="px-6 py-4 text-gray-500">
+                                                    {call.created_at ? format(new Date(call.created_at), 'dd MMM HH:mm', { locale: ru }) : '-'}
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    {(call.recording_url || call.recording_file) ? (
+                                                        <div className="flex justify-end">
+                                                            <AudioPlayer
+                                                                url={call.recording_file ? `/static/recordings/${call.recording_file}` : call.recording_url!}
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex items-center gap-2">
+                                                            <input
+                                                                type="file"
+                                                                accept="audio/*"
+                                                                className="hidden"
+                                                                id={`upload-${call.id}`}
+                                                                onChange={(e) => {
+                                                                    const file = e.target.files?.[0];
+                                                                    if (file) handleFileUpload(call.id, file);
+                                                                }}
+                                                            />
+                                                            <label htmlFor={`upload-${call.id}`}>
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className="cursor-pointer"
+                                                                    asChild
+                                                                    disabled={uploadingFile === call.id}
+                                                                >
+                                                                    <span>
+                                                                        {uploadingFile === call.id ? (
+                                                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                                        ) : (
+                                                                            <Upload className="w-4 h-4 mr-2" />
+                                                                        )}
+                                                                        Загрузить запись
+                                                                    </span>
+                                                                </Button>
+                                                            </label>
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                                <MoreVertical className="w-4 h-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            <DropdownMenuItem onClick={() => openEditDialog(call)}>
+                                                                <Edit2 className="w-4 h-4 mr-2" /> Редактировать
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleDeleteCall(call.id)} className="text-red-600">
+                                                                <Trash2 className="w-4 h-4 mr-2" /> Удалить
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div className="mt-8 bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 text-gray-300 text-sm shadow-lg">
+                            <div className="flex items-start gap-4">
+                                <div className="w-10 h-10 bg-pink-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <Phone className="w-5 h-5 text-pink-400" />
+                                </div>
+                                <div className="flex-1">
+                                    <p className="font-semibold mb-2 text-white">{t('telephony:integration_with_telephony', 'Интеграция с телефонией')}</p>
+                                    <p className="text-xs mb-3 text-gray-400">
+                                        {t('telephony:integration_note', 'Подключите вашу АТС для автоматической синхронизации звонков. Поддерживаются: Binotel, OnlinePBX, Twilio и другие.')}
+                                    </p>
+                                    <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                                        <p className="text-xs text-gray-400 mb-1">Webhook URL:</p>
+                                        <code className="text-xs bg-gray-900 px-2 py-1 rounded text-green-400 select-all block break-all">
+                                            {import.meta.env.VITE_API_URL || window.location.origin}/api/telephony/webhook/[provider]
+                                        </code>
+                                        <p className="text-xs text-gray-500 mt-2">
+                                            Замените <code className="text-pink-400">[provider]</code> на: binotel, onlinepbx или generic
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+
+                    </TabsContent>
+
+                    <TabsContent value="analytics" className="space-y-6 focus-visible:outline-none">
+                        {analytics.length > 0 ? (
+                            <div className="space-y-6">
+                                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                    <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:dynamics', 'Динамика звонков')}</h3>
+                                    <div className="h-[300px] w-full">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={analytics}>
+                                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                                <XAxis
+                                                    dataKey="date"
+                                                    tickFormatter={(value) => {
+                                                        if (!value) return '';
+                                                        try { return format(new Date(value), 'd MMM', { locale: ru }); } catch { return value; }
+                                                    }}
+                                                    fontSize={12}
+                                                />
+                                                <YAxis fontSize={12} />
+                                                <Tooltip
+                                                    labelFormatter={(value) => {
+                                                        if (!value) return '';
+                                                        try { return format(new Date(value), 'd MMMM yyyy', { locale: ru }); } catch { return value; }
+                                                    }}
+                                                />
+                                                <Legend />
+                                                <Bar dataKey="inbound" name={t('telephony:inbound', 'Входящие')} fill="#22c55e" radius={[4, 4, 0, 0]} stackId="a" />
+                                                <Bar dataKey="outbound" name={t('telephony:outbound', 'Исходящие')} fill="#3b82f6" radius={[4, 4, 0, 0]} stackId="a" />
+                                                <Bar dataKey="missed" name={t('telephony:missed', 'Пропущенные')} fill="#ef4444" radius={[4, 4, 0, 0]} stackId="a" />
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                    <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:average_duration', 'Средняя длительность (сек)')}</h3>
+                                    <div className="h-[300px] w-full">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <LineChart data={analytics}>
+                                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                                <XAxis
+                                                    dataKey="date"
+                                                    tickFormatter={(value) => {
+                                                        if (!value) return '';
+                                                        try { return format(new Date(value), 'd MMM', { locale: ru }); } catch { return value; }
+                                                    }}
+                                                    fontSize={12}
+                                                />
+                                                <YAxis fontSize={12} />
+                                                <Tooltip />
+                                                <Legend />
+                                                <Line type="monotone" dataKey="avg_duration" name={t('telephony:duration_label', 'Длительность')} stroke="#db2777" strokeWidth={3} dot={{ r: 4, fill: '#db2777' }} activeDot={{ r: 6 }} />
+                                            </LineChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                        <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:distribution', 'Распределение по типам')}</h3>
+                                        <div className="h-[300px] w-full">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <PieChart>
+                                                    <Pie
+                                                        data={[
+                                                            { name: t('telephony:inbound', 'Входящие'), value: stats.inbound, color: '#22c55e' },
+                                                            { name: t('telephony:outbound', 'Исходящие'), value: stats.outbound, color: '#3b82f6' },
+                                                            { name: t('telephony:missed', 'Пропущенные'), value: stats.missed, color: '#ef4444' }
+                                                        ].filter(item => item.value > 0)}
+                                                        innerRadius={60}
+                                                        outerRadius={80}
+                                                        paddingAngle={5}
+                                                        dataKey="value"
+                                                    >
+                                                        {[
+                                                            { name: 'Входящие', value: stats.inbound, color: '#22c55e' },
+                                                            { name: 'Исходящие', value: stats.outbound, color: '#3b82f6' },
+                                                            { name: 'Пропущенные', value: stats.missed, color: '#ef4444' }
+                                                        ].filter(item => item.value > 0).map((entry, index) => (
+                                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                                        ))}
+                                                    </Pie>
+                                                    <Tooltip />
+                                                    <Legend verticalAlign="bottom" height={36} />
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                        <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:period_stats', 'Статистика за период')}</h3>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                                                <p className="text-sm text-gray-500 mb-1">{t('telephony:total_calls', 'Всего звонков')}</p>
+                                                <p className="text-2xl font-bold text-gray-900">{stats.total_calls}</p>
+                                            </div>
+                                            <div className="p-4 bg-green-50 rounded-lg border border-green-100">
+                                                <p className="text-sm text-green-600 mb-1">{t('telephony:efficiency', 'Эффективность')}</p>
+                                                <p className="text-2xl font-bold text-green-700">
+                                                    {stats.total_calls > 0 ? Math.round(((stats.inbound + stats.outbound) / stats.total_calls) * 100) : 0}%
+                                                </p>
+                                            </div>
+                                            <div className="col-span-2 p-4 bg-blue-50 rounded-lg border border-blue-100 flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-sm text-blue-600 mb-1">{t('telephony:outbound', 'Исходящие')}</p>
+                                                    <p className="text-2xl font-bold text-blue-700">{stats.outbound}</p>
+                                                </div>
+                                                <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                                    <div className="h-6 w-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" style={{ animationDuration: '3s' }}></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="bg-white p-12 text-center rounded-xl border border-gray-200 text-gray-500">
+                                {t('telephony:no_data_analytics', 'Нет данных для аналитики за выбранный период')}
+                            </div>
+                        )}
+                    </TabsContent>
+                </Tabs >
             </div>
 
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-                <DialogContent>
+                <DialogContent className="max-w-2xl">
                     <DialogHeader>
                         <DialogTitle>Добавить звонок</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
-                        <div>
-                            <Label>Телефон</Label>
-                            <Input
-                                value={formData.phone}
-                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                placeholder="+7..."
-                            />
-                        </div>
                         <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <Label>Тип</Label>
+                            <div className="space-y-2">
+                                <Label>{t('phone')}</Label>
+                                <Input
+                                    value={formData.phone}
+                                    onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                    placeholder="+7..."
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>{t('type')}</Label>
                                 <Select
                                     value={formData.direction}
-                                    onValueChange={v => setFormData({ ...formData, direction: v })}
+                                    onValueChange={v => setFormData({ ...formData, direction: v as any })}
                                 >
-                                    <SelectTrigger><SelectValue /></SelectTrigger>
+                                    <SelectTrigger>
+                                        <SelectValue />
+                                    </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="outbound">Исходящий</SelectItem>
-                                        <SelectItem value="inbound">Входящий</SelectItem>
+                                        <SelectItem value="inbound">{t('inbound')}</SelectItem>
+                                        <SelectItem value="outbound">{t('outbound')}</SelectItem>
+                                        <SelectItem value="missed">{t('missed')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div>
-                                <Label>Статус</Label>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label>{t('status')}</Label>
                                 <Select
                                     value={formData.status}
-                                    onValueChange={v => setFormData({ ...formData, status: v })}
+                                    onValueChange={v => setFormData({ ...formData, status: v as any })}
                                 >
-                                    <SelectTrigger><SelectValue /></SelectTrigger>
+                                    <SelectTrigger>
+                                        <SelectValue />
+                                    </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="completed">Завершен</SelectItem>
-                                        <SelectItem value="missed">Пропущен</SelectItem>
-                                        <SelectItem value="rejected">Отклонен</SelectItem>
+                                        <SelectItem value="completed">{t('status_completed')}</SelectItem>
+                                        <SelectItem value="missed">{t('status_missed')}</SelectItem>
+                                        <SelectItem value="ongoing">{t('status_ongoing')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
+                            <div className="space-y-2">
+                                <Label>{t('duration')} ({t('common:seconds')})</Label>
+                                <Input
+                                    type="number"
+                                    value={formData.duration}
+                                    onChange={e => setFormData({ ...formData, duration: parseInt(e.target.value) || 0 })}
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <Label>Длительность (сек)</Label>
-                            <Input
-                                type="number"
-                                value={formData.duration}
-                                onChange={e => setFormData({ ...formData, duration: parseInt(e.target.value) || 0 })}
-                            />
+
+                        <div className="space-y-2">
+                            <Label>{t('client_name')}</Label>
+                            <div className="flex gap-2">
+                                <Popover open={clientOpen} onOpenChange={setClientOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={clientOpen}
+                                            className="w-full justify-between font-normal"
+                                        >
+                                            {formData.manual_client_name || formData.client_id || t('select_client')}
+                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-[300px] p-0">
+                                        <Command>
+                                            <CommandInput placeholder={t('search_client')} />
+                                            <CommandEmpty>{t('no_clients_found')}</CommandEmpty>
+                                            <CommandGroup className="max-h-[200px] overflow-y-auto">
+                                                {allClients.map((client) => (
+                                                    <CommandItem
+                                                        key={client.id}
+                                                        value={client.name || client.id}
+                                                        onSelect={() => {
+                                                            setFormData({
+                                                                ...formData,
+                                                                client_id: client.instagram_id || client.id,
+                                                                manual_client_name: client.name || client.display_name || client.id
+                                                            });
+                                                            setClientOpen(false);
+                                                        }}
+                                                    >
+                                                        <Check
+                                                            className={cn(
+                                                                "mr-2 h-4 w-4",
+                                                                formData.client_id === (client.instagram_id || client.id) ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                        <div>
+                                                            <div>{client.name || client.display_name || client.username || client.id}</div>
+                                                            <div className="text-xs text-gray-400">{client.phone}</div>
+                                                        </div>
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
+                                <Input
+                                    placeholder={t('manual_input')}
+                                    value={formData.manual_client_name}
+                                    onChange={e => setFormData({ ...formData, manual_client_name: e.target.value })}
+                                    className="w-1/2"
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <Label>Ссылка на запись (URL)</Label>
+
+                        <div className="space-y-2">
+                            <Label>{t('manager_name')}</Label>
+                            <div className="flex gap-2">
+                                <Popover open={masterOpen} onOpenChange={setMasterOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={masterOpen}
+                                            className="w-full justify-between font-normal"
+                                        >
+                                            {formData.manual_manager_name || t('select_manager')}
+                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-[300px] p-0">
+                                        <Command>
+                                            <CommandInput placeholder={t('search_manager')} />
+                                            <CommandEmpty>{t('no_managers_found')}</CommandEmpty>
+                                            <CommandGroup className="max-h-[200px] overflow-y-auto">
+                                                {allMasters.map((master) => (
+                                                    <CommandItem
+                                                        key={master.id}
+                                                        value={master.full_name || master.username}
+                                                        onSelect={() => {
+                                                            setFormData({
+                                                                ...formData,
+                                                                manual_manager_name: master.full_name || master.username
+                                                            });
+                                                            setMasterOpen(false);
+                                                        }}
+                                                    >
+                                                        <Check
+                                                            className={cn(
+                                                                "mr-2 h-4 w-4",
+                                                                formData.manual_manager_name === (master.full_name || master.username) ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                        {master.full_name || master.username}
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
+                                <Input
+                                    placeholder={t('manual_input')}
+                                    value={formData.manual_manager_name}
+                                    onChange={e => setFormData({ ...formData, manual_manager_name: e.target.value })}
+                                    className="w-1/2"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>{t('service_name')}</Label>
+                            <div className="flex gap-2">
+                                <Popover open={serviceOpen} onOpenChange={setServiceOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={serviceOpen}
+                                            className="w-full justify-between font-normal"
+                                        >
+                                            {formData.manual_service_name || t('select_service')}
+                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-[300px] p-0">
+                                        <Command>
+                                            <CommandInput placeholder={t('search_service')} />
+                                            <CommandEmpty>{t('no_services_found')}</CommandEmpty>
+                                            <CommandGroup className="max-h-[200px] overflow-y-auto">
+                                                {allServices.map((service) => (
+                                                    <CommandItem
+                                                        key={service.id}
+                                                        value={service.name_ru || service.name}
+                                                        onSelect={() => {
+                                                            setFormData({
+                                                                ...formData,
+                                                                manual_service_name: service.name_ru || service.name
+                                                            });
+                                                            setServiceOpen(false);
+                                                        }}
+                                                    >
+                                                        <Check
+                                                            className={cn(
+                                                                "mr-2 h-4 w-4",
+                                                                formData.manual_service_name === (service.name_ru || service.name) ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                        {service.name_ru || service.name}
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
+                                <Input
+                                    placeholder={t('manual_input')}
+                                    value={formData.manual_service_name}
+                                    onChange={e => setFormData({ ...formData, manual_service_name: e.target.value })}
+                                    className="w-1/2"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>{t('recording_url')}</Label>
                             <Input
                                 value={formData.recording_url}
                                 onChange={e => setFormData({ ...formData, recording_url: e.target.value })}
                                 placeholder="https://..."
                             />
                         </div>
-                        <div>
-                            <Label>Файл записи (если нет ссылки)</Label>
+                        <div className="space-y-2">
+                            <Label>{t('recording_file')}</Label>
                             <Input
                                 type="file"
                                 accept="audio/*"
-                                onChange={e => setSelectedFile(e.target.files?.[0] || null)}
+                                onChange={e => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        setSelectedFile(file);
+                                        const audio = new Audio(URL.createObjectURL(file));
+                                        audio.onloadedmetadata = () => {
+                                            setFormData(prev => ({ ...prev, duration: Math.floor(audio.duration) }));
+                                            URL.revokeObjectURL(audio.src);
+                                        };
+                                    } else {
+                                        setSelectedFile(null);
+                                    }
+                                }}
                                 className="cursor-pointer file:cursor-pointer"
                             />
                         </div>
-                        <div>
-                            <Label>Заметки</Label>
+                        <div className="space-y-2">
+                            <Label>{t('notes')}</Label>
                             <Input
                                 value={formData.notes}
                                 onChange={e => setFormData({ ...formData, notes: e.target.value })}
+                                placeholder={t('notes_placeholder')}
                             />
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setShowAddDialog(false)}>Отмена</Button>
+                        <Button variant="outline" onClick={() => setShowAddDialog(false)}>{t('common:cancel')}</Button>
                         <Button onClick={handleCreateCall} disabled={processing}>
-                            {processing ? <Loader2 className="animate-spin" /> : 'Создать'}
+                            {processing ? <Loader2 className="animate-spin" /> : t('common:create')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
 
             <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-                <DialogContent>
+                <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                        <DialogTitle>Редактировать звонок</DialogTitle>
+                        <DialogTitle>{t('edit_call')}</DialogTitle>
                     </DialogHeader>
+                    {/* Reusing same fields for Edit Dialog */}
                     <div className="space-y-4">
-                        <div>
-                            <Label>Статус</Label>
-                            <Select
-                                value={formData.status}
-                                onValueChange={v => setFormData({ ...formData, status: v })}
-                            >
-                                <SelectTrigger><SelectValue /></SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="completed">Завершен</SelectItem>
-                                    <SelectItem value="missed">Пропущен</SelectItem>
-                                    <SelectItem value="rejected">Отклонен</SelectItem>
-                                </SelectContent>
-                            </Select>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label>{t('phone')}</Label>
+                                <Input
+                                    value={formData.phone}
+                                    onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>{t('type')}</Label>
+                                <Select
+                                    value={formData.direction}
+                                    onValueChange={v => setFormData({ ...formData, direction: v as any })}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="inbound">{t('inbound')}</SelectItem>
+                                        <SelectItem value="outbound">{t('outbound')}</SelectItem>
+                                        <SelectItem value="missed">{t('missed')}</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
-                        <div>
-                            <Label>Заметки</Label>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label>{t('status')}</Label>
+                                <Select
+                                    value={formData.status}
+                                    onValueChange={v => setFormData({ ...formData, status: v as any })}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="completed">{t('status_completed')}</SelectItem>
+                                        <SelectItem value="missed">{t('status_missed')}</SelectItem>
+                                        <SelectItem value="ongoing">{t('status_ongoing')}</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label>{t('duration')} ({t('common:seconds')})</Label>
+                                <Input
+                                    type="number"
+                                    value={formData.duration}
+                                    onChange={e => setFormData({ ...formData, duration: parseInt(e.target.value) || 0 })}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>{t('client_name')}</Label>
+                            <div className="flex gap-2">
+                                <Popover open={clientOpen} onOpenChange={setClientOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={clientOpen}
+                                            className="w-full justify-between font-normal"
+                                        >
+                                            {formData.manual_client_name || formData.client_id || t('select_client')}
+                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-[300px] p-0">
+                                        <Command>
+                                            <CommandInput placeholder={t('search_client')} />
+                                            <CommandEmpty>{t('no_clients_found')}</CommandEmpty>
+                                            <CommandGroup className="max-h-[200px] overflow-y-auto">
+                                                {allClients.map((client) => (
+                                                    <CommandItem
+                                                        key={client.id}
+                                                        value={client.name || client.id}
+                                                        onSelect={() => {
+                                                            setFormData({
+                                                                ...formData,
+                                                                client_id: client.instagram_id || client.id,
+                                                                manual_client_name: client.name || client.display_name || client.id
+                                                            });
+                                                            setClientOpen(false);
+                                                        }}
+                                                    >
+                                                        <Check
+                                                            className={cn(
+                                                                "mr-2 h-4 w-4",
+                                                                formData.client_id === (client.instagram_id || client.id) ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                        <div>
+                                                            <div>{client.name || client.display_name || client.username || client.id}</div>
+                                                            <div className="text-xs text-gray-400">{client.phone}</div>
+                                                        </div>
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
+                                <Input
+                                    placeholder={t('manual_input')}
+                                    value={formData.manual_client_name}
+                                    onChange={e => setFormData({ ...formData, manual_client_name: e.target.value })}
+                                    className="w-1/2"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>{t('manager_name')}</Label>
+                            <div className="flex gap-2">
+                                <Popover open={masterOpen} onOpenChange={setMasterOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={masterOpen}
+                                            className="w-full justify-between font-normal"
+                                        >
+                                            {formData.manual_manager_name || t('select_manager')}
+                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-[300px] p-0">
+                                        <Command>
+                                            <CommandInput placeholder={t('search_manager')} />
+                                            <CommandEmpty>{t('no_managers_found')}</CommandEmpty>
+                                            <CommandGroup className="max-h-[200px] overflow-y-auto">
+                                                {allMasters.map((master) => (
+                                                    <CommandItem
+                                                        key={master.id}
+                                                        value={master.full_name || master.username}
+                                                        onSelect={() => {
+                                                            setFormData({
+                                                                ...formData,
+                                                                manual_manager_name: master.full_name || master.username
+                                                            });
+                                                            setMasterOpen(false);
+                                                        }}
+                                                    >
+                                                        <Check
+                                                            className={cn(
+                                                                "mr-2 h-4 w-4",
+                                                                formData.manual_manager_name === (master.full_name || master.username) ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                        {master.full_name || master.username}
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
+                                <Input
+                                    placeholder={t('manual_input')}
+                                    value={formData.manual_manager_name}
+                                    onChange={e => setFormData({ ...formData, manual_manager_name: e.target.value })}
+                                    className="w-1/2"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>{t('service_name')}</Label>
+                            <div className="flex gap-2">
+                                <Popover open={serviceOpen} onOpenChange={setServiceOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={serviceOpen}
+                                            className="w-full justify-between font-normal"
+                                        >
+                                            {formData.manual_service_name || t('select_service')}
+                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-[300px] p-0">
+                                        <Command>
+                                            <CommandInput placeholder={t('search_service')} />
+                                            <CommandEmpty>{t('no_services_found')}</CommandEmpty>
+                                            <CommandGroup className="max-h-[200px] overflow-y-auto">
+                                                {allServices.map((service) => (
+                                                    <CommandItem
+                                                        key={service.id}
+                                                        value={service.name_ru || service.name}
+                                                        onSelect={() => {
+                                                            setFormData({
+                                                                ...formData,
+                                                                manual_service_name: service.name_ru || service.name
+                                                            });
+                                                            setServiceOpen(false);
+                                                        }}
+                                                    >
+                                                        <Check
+                                                            className={cn(
+                                                                "mr-2 h-4 w-4",
+                                                                formData.manual_service_name === (service.name_ru || service.name) ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                        {service.name_ru || service.name}
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
+                                <Input
+                                    placeholder={t('manual_input')}
+                                    value={formData.manual_service_name}
+                                    onChange={e => setFormData({ ...formData, manual_service_name: e.target.value })}
+                                    className="w-1/2"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>{t('notes')}</Label>
                             <Input
                                 value={formData.notes}
                                 onChange={e => setFormData({ ...formData, notes: e.target.value })}
@@ -791,9 +1430,9 @@ export default function Telephony() {
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setShowEditDialog(false)}>Отмена</Button>
+                        <Button variant="outline" onClick={() => setShowEditDialog(false)}>{t('common:cancel')}</Button>
                         <Button onClick={handleUpdateCall} disabled={processing}>
-                            {processing ? <Loader2 className="animate-spin" /> : 'Сохранить'}
+                            {processing ? <Loader2 className="animate-spin" /> : t('common:save')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

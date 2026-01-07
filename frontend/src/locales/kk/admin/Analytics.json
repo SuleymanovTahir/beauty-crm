@@ -61,5 +61,34 @@
   "top_services": "Ең жақсы қызметтер",
   "try_again": "қайтадан байқап көріңіз",
   "where_clients_leave": "Клиенттер қайда барады?",
-  "work_on_objections": "Қарсылықтарды өңдеу"
+  "work_on_objections": "Қарсылықтарды өңдеу",
+  "funnel_overview": "Сату шұңқыры",
+  "visitors": "Келушілер",
+  "engaged": "Қатысқан",
+  "booked": "Тіркелді",
+  "completed": "Барған",
+  "funnel_chart": "Шұңқырдың визуализациясы",
+  "funnel": {
+    "conversion": {
+      "visitor_to_engaged": "Келуші -> Қатысқан",
+      "engaged_to_booking": "Engaged -> Жазуды бастады",
+      "booking_to_booked": "Басталды -> Тіркелді",
+      "booked_to_completed": "Тіркелген -> Барған"
+    },
+    "stages": {
+      "visitors": "Келушілер",
+      "engaged": "Қатысқан",
+      "started_booking": "Жазуды бастады",
+      "booked": "Тіркелді",
+      "completed": "Барған"
+    },
+    "desc": {
+      "visitors": "Веб-сайт/әлеуметтік медиа келушілері",
+      "engaged": "Қызығушылық танытты",
+      "started_booking": "Тіркеу формасын ашты",
+      "booked": "Тіркеу аяқталды",
+      "completed": "Қызмет көрсетілген"
+    },
+    "losses": "Шығындар: {{count}}"
+  }
 }

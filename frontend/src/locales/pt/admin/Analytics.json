@@ -61,5 +61,34 @@
   "top_services": "Principais serviços",
   "try_again": "Tente novamente",
   "where_clients_leave": "Para onde vão os clientes?",
-  "work_on_objections": "Lidar com objeções"
+  "work_on_objections": "Lidar com objeções",
+  "funnel_overview": "Funil de vendas",
+  "visitors": "Visitantes",
+  "engaged": "Envolvido",
+  "booked": "Inscrito",
+  "completed": "Visitado",
+  "funnel_chart": "Visualização de funil",
+  "funnel": {
+    "conversion": {
+      "visitor_to_engaged": "Visitante -> Envolvido",
+      "engaged_to_booking": "Noivo -> Gravação iniciada",
+      "booking_to_booked": "Iniciado -> Inscrito",
+      "booked_to_completed": "Inscrito -> Visitado"
+    },
+    "stages": {
+      "visitors": "Visitantes",
+      "engaged": "Envolvido",
+      "started_booking": "Começou a gravar",
+      "booked": "Inscrito",
+      "completed": "Visitado"
+    },
+    "desc": {
+      "visitors": "Visitantes do site/mídia social",
+      "engaged": "Demonstrou interesse",
+      "started_booking": "Abriu o formulário de inscrição",
+      "booked": "Cadastro concluído",
+      "completed": "Serviço prestado"
+    },
+    "losses": "Perdas: {{count}}"
+  }
 }

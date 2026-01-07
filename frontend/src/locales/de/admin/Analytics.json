@@ -61,5 +61,34 @@
   "top_services": "Top-Leistungen",
   "try_again": "Versuchen Sie es erneut",
   "where_clients_leave": "Wohin gehen Kunden?",
-  "work_on_objections": "Gehen Sie mit Einwänden um"
+  "work_on_objections": "Gehen Sie mit Einwänden um",
+  "funnel_overview": "Verkaufstrichter",
+  "visitors": "Besucher",
+  "engaged": "Beteiligt",
+  "booked": "Angemeldet",
+  "completed": "Besucht",
+  "funnel_chart": "Trichtervisualisierung",
+  "funnel": {
+    "conversion": {
+      "visitor_to_engaged": "Besucher -> Verlobt",
+      "engaged_to_booking": "Verlobt -> Aufnahme gestartet",
+      "booking_to_booked": "Gestartet -> Angemeldet",
+      "booked_to_completed": "Angemeldet -> Besichtigt"
+    },
+    "stages": {
+      "visitors": "Besucher",
+      "engaged": "Beteiligt",
+      "started_booking": "Aufnahme gestartet",
+      "booked": "Angemeldet",
+      "completed": "Besucht"
+    },
+    "desc": {
+      "visitors": "Website-/Social-Media-Besucher",
+      "engaged": "Interesse gezeigt",
+      "started_booking": "Anmeldeformular geöffnet",
+      "booked": "Registrierung abgeschlossen",
+      "completed": "Service bereitgestellt"
+    },
+    "losses": "Verluste: {{count}}"
+  }
 }
