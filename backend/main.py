@@ -502,9 +502,9 @@ async def startup_event():
     # 1. Создание БД если не существует (recreate_database)
     # 2. Инициализация базовых таблиц (init_database)
     # 3. Все консолидированные миграции
-    # from db.migrations.run_all_migrations import run_all_migrations
-    # log_info("🔧 Запуск миграций...", "startup")
-    # run_all_migrations()
+    from db.migrations.run_all_migrations import run_all_migrations
+    log_info("🔧 Запуск миграций...", "startup")
+    run_all_migrations()
     
     # ================================
     # УДАЛЕНИЕ БАЗЫ ДАННЫХ (ОПЦИОНАЛЬНО)

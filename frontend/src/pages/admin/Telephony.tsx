@@ -878,28 +878,6 @@ export default function Telephony() {
                             </table>
                         </div>
 
-                        <div className="mt-8 bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 text-gray-300 text-sm shadow-lg">
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-pink-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <Phone className="w-5 h-5 text-pink-400" />
-                                </div>
-                                <div className="flex-1">
-                                    <p className="font-semibold mb-2 text-white">{t('telephony:integration_with_telephony', 'Интеграция с телефонией')}</p>
-                                    <p className="text-xs mb-3 text-gray-400">
-                                        {t('telephony:integration_note', 'Подключите вашу АТС для автоматической синхронизации звонков. Поддерживаются: Binotel, OnlinePBX, Twilio и другие.')}
-                                    </p>
-                                    <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-                                        <p className="text-xs text-gray-400 mb-1">Webhook URL:</p>
-                                        <code className="text-xs bg-gray-900 px-2 py-1 rounded text-green-400 select-all block break-all">
-                                            {import.meta.env.VITE_API_URL || window.location.origin}/api/telephony/webhook/[provider]
-                                        </code>
-                                        <p className="text-xs text-gray-500 mt-2">
-                                            Замените <code className="text-pink-400">[provider]</code> на: binotel, onlinepbx или generic
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
                     </TabsContent>
 
@@ -1043,6 +1021,7 @@ export default function Telephony() {
                                         <SelectContent>
                                             <SelectItem value="binotel">Binotel</SelectItem>
                                             <SelectItem value="onlinepbx">OnlinePBX</SelectItem>
+                                            <SelectItem value="twilio">Twilio</SelectItem>
                                             <SelectItem value="generic">Generic (Webhook)</SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -1051,24 +1030,24 @@ export default function Telephony() {
                                 {integrationSettings.provider !== 'generic' && (
                                     <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
                                         <div className="space-y-2">
-                                            <Label className="text-gray-700 font-semibold">API Key</Label>
+                                            <Label className="text-gray-700 font-semibold">{integrationSettings.provider === 'twilio' ? 'Account SID' : 'API Key'}</Label>
                                             <Input
                                                 type="password"
                                                 value={integrationSettings.api_key}
                                                 onChange={(e) => setIntegrationSettings({ ...integrationSettings, api_key: e.target.value })}
-                                                placeholder="Введите API Key"
+                                                placeholder={integrationSettings.provider === 'twilio' ? 'Введите Account SID' : 'Введите API Key'}
                                                 className="h-[45px] rounded-xl border-gray-200"
                                             />
                                         </div>
 
-                                        {integrationSettings.provider === 'binotel' && (
+                                        {(integrationSettings.provider === 'binotel' || integrationSettings.provider === 'twilio') && (
                                             <div className="space-y-2">
-                                                <Label className="text-gray-700 font-semibold">API Secret</Label>
+                                                <Label className="text-gray-700 font-semibold">{integrationSettings.provider === 'twilio' ? 'Auth Token' : 'API Secret'}</Label>
                                                 <Input
                                                     type="password"
                                                     value={integrationSettings.api_secret}
                                                     onChange={(e) => setIntegrationSettings({ ...integrationSettings, api_secret: e.target.value })}
-                                                    placeholder="Введите API Secret"
+                                                    placeholder={integrationSettings.provider === 'twilio' ? 'Введите Auth Token' : 'Введите API Secret'}
                                                     className="h-[45px] rounded-xl border-gray-200"
                                                 />
                                             </div>
@@ -1086,10 +1065,10 @@ export default function Telephony() {
                                         {testingConnection ? (
                                             <>
                                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                Проверка...
+                                                {t('telephony:testing', 'Проверка...')}
                                             </>
                                         ) : (
-                                            'Проверить соединение'
+                                            t('telephony:test_connection', 'Проверить соединение')
                                         )}
                                     </Button>
                                     <Button
@@ -1097,7 +1076,7 @@ export default function Telephony() {
                                         disabled={processing}
                                         className="h-[45px] rounded-xl font-bold flex-1 bg-pink-600 hover:bg-pink-700 shadow-md shadow-pink-100"
                                     >
-                                        {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Сохранить настройки'}
+                                        {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : t('telephony:save_settings', 'Сохранить настройки')}
                                     </Button>
                                 </div>
 
@@ -1110,10 +1089,10 @@ export default function Telephony() {
                                         )}
                                         <div>
                                             <p className={`text-sm font-bold ${testResult.success ? 'text-green-800' : 'text-red-800'}`}>
-                                                {testResult.success ? 'Успешно' : 'Ошибка'}
+                                                {testResult.success ? t('telephony:success', 'Успешно') : t('telephony:error', 'Ошибка')}
                                             </p>
                                             <p className={`text-xs ${testResult.success ? 'text-green-600' : 'text-red-600'}`}>
-                                                {testResult.message || testResult.error}
+                                                {testResult.message}
                                             </p>
                                         </div>
                                     </div>
@@ -1129,10 +1108,10 @@ export default function Telephony() {
                                 <div className="flex-1">
                                     <p className="font-bold mb-2 text-white text-lg">{t('telephony:integration_status', 'Инструкции для Webhook')}</p>
                                     <p className="text-xs mb-4 text-gray-400 leading-relaxed">
-                                        Для автоматического получения звонков укажите следующий URL в настройках вашего провайдера телефонии.
+                                        {t('telephony:webhook_instruction_short', 'Для автоматического получения звонков укажите следующий URL в настройках вашего провайдера телефонии.')}
                                     </p>
                                     <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700 shadow-inner">
-                                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Ваш уникальный Webhook URL</p>
+                                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">{t('telephony:webhook_url_label', 'Ваш уникальный Webhook URL')}</p>
                                         <div className="flex items-center gap-3">
                                             <code className="text-xs bg-gray-900 px-3 py-2 rounded-lg text-green-400 select-all block break-all flex-1 border border-gray-700">
                                                 {import.meta.env.VITE_API_URL || window.location.origin}/api/telephony/webhook/{integrationSettings.provider === 'generic' ? 'generic' : integrationSettings.provider}
@@ -1144,15 +1123,15 @@ export default function Telephony() {
                                                 onClick={() => {
                                                     const url = `${import.meta.env.VITE_API_URL || window.location.origin}/api/telephony/webhook/${integrationSettings.provider === 'generic' ? 'generic' : integrationSettings.provider}`;
                                                     navigator.clipboard.writeText(url);
-                                                    toast.success('Скопировано');
+                                                    toast.success(t('telephony:copied', 'Скопировано'));
                                                 }}
                                             >
-                                                Копировать
+                                                {t('telephony:copy', 'Копировать')}
                                             </Button>
                                         </div>
                                         <p className="text-[10px] text-gray-500 mt-3 flex items-center gap-1.5">
                                             <AlertCircle className="w-3 h-3" />
-                                            Для безопасности не передавайте этот URL посторонним лицам.
+                                            {t('telephony:webhook_security_note', 'Для безопасности не передавайте этот URL посторонним лицам.')}
                                         </p>
                                     </div>
                                 </div>

@@ -56,5 +56,19 @@
   "service_name": "Nome do serviço",
   "status_completed": "Concluído",
   "status_missed": "Ignorado",
-  "status_ongoing": "Em andamento"
+  "status_ongoing": "Em andamento",
+  "integrations_tab": "Integrações",
+  "add_integration": "Conectar telefonia",
+  "provider": "Provedor",
+  "integration_status": "Instruções do webhook",
+  "webhook_url_label": "Seu URL de webhook exclusivo",
+  "webhook_instruction_short": "Para receber chamadas automaticamente, insira o seguinte URL nas configurações da sua operadora de telefonia.",
+  "webhook_security_note": "até motivos de segurança, não compartilhe esta URL com terceiros.",
+  "test_connection": "Verifique a conexão",
+  "save_settings": "Salvar configurações",
+  "testing": "Exame...",
+  "copy": "Cópia",
+  "copied": "Copiado",
+  "success": "Com sucesso",
+  "error": "Erro"
 }

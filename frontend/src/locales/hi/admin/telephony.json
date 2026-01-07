@@ -56,5 +56,19 @@
   "service_name": "सेवा का नाम",
   "status_completed": "पुरा होना।",
   "status_missed": "छोड़ा गया",
-  "status_ongoing": "प्रगति पर है"
+  "status_ongoing": "प्रगति पर है",
+  "integrations_tab": "एकीकरण",
+  "add_integration": "टेलीफोनी कनेक्ट करें",
+  "provider": "प्रदाता",
+  "integration_status": "वेबहुक निर्देश",
+  "webhook_url_label": "आपका अद्वितीय वेबहुक यूआरएल",
+  "webhook_instruction_short": "स्वचालित रूप से कॉल प्राप्त करने के लिए, अपने टेलीफोनी प्रदाता की सेटिंग में निम्नलिखित URL दर्ज करें।",
+  "webhook_security_note": "सुरक्षा कारणों से, इस यूआरएल को तीसरे पक्ष के साथ साझा न करें।",
+  "test_connection": "कनेक्शन की जाँच करें",
+  "save_settings": "सेटिंग्स सेव करें",
+  "testing": "परीक्षा...",
+  "copy": "प्रतिलिपि",
+  "copied": "कॉपी किया गया",
+  "success": "सफलतापूर्वक",
+  "error": "गलती"
 }

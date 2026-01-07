@@ -56,5 +56,19 @@
     "service_name": "Название услуги",
     "status_completed": "Завершен",
     "status_missed": "Пропущен",
-    "status_ongoing": "В процессе"
+    "status_ongoing": "В процессе",
+    "integrations_tab": "Интеграции",
+    "add_integration": "Подключить телефонию",
+    "provider": "Провайдер",
+    "integration_status": "Инструкции для Webhook",
+    "webhook_url_label": "Ваш уникальный Webhook URL",
+    "webhook_instruction_short": "Для автоматического получения звонков укажите следующий URL в настройках вашего провайдера телефонии.",
+    "webhook_security_note": "Для безопасности не передавайте этот URL посторонним лицам.",
+    "test_connection": "Проверить соединение",
+    "save_settings": "Сохранить настройки",
+    "testing": "Проверка...",
+    "copy": "Копировать",
+    "copied": "Скопировано",
+    "success": "Успешно",
+    "error": "Ошибка"
 }
