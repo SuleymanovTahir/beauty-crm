@@ -56,5 +56,19 @@
   "service_name": "اسم الخدمة",
   "status_completed": "مكتمل",
   "status_missed": "تم تخطيه",
-  "status_ongoing": "في تَقَدم"
+  "status_ongoing": "في تَقَدم",
+  "integrations_tab": "التكامل",
+  "add_integration": "ربط الهاتف",
+  "provider": "مزود",
+  "integration_status": "تعليمات الويب هوك",
+  "webhook_url_label": "عنوان URL الفريد الخاص بك على الويب",
+  "webhook_instruction_short": "لتلقي المكالمات تلقائيًا، أدخل عنوان URL التالي في إعدادات مزود خدمة الهاتف لديك.",
+  "webhook_security_note": "لأسباب أمنية، لا تشارك عنوان URL هذا مع أطراف ثالثة.",
+  "test_connection": "تحقق من الاتصال",
+  "save_settings": "حفظ الإعدادات",
+  "testing": "فحص...",
+  "copy": "ينسخ",
+  "copied": "منقول",
+  "success": "بنجاح",
+  "error": "خطأ"
 }

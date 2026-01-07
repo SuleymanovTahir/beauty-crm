@@ -56,5 +56,19 @@
   "service_name": "Dienstname",
   "status_completed": "Vollendet",
   "status_missed": "Übersprungen",
-  "status_ongoing": "Im Gange"
+  "status_ongoing": "Im Gange",
+  "integrations_tab": "Integrationen",
+  "add_integration": "Telefonie verbinden",
+  "provider": "Anbieter",
+  "integration_status": "Webhook-Anweisungen",
+  "webhook_url_label": "Ihre eindeutige Webhook-URL",
+  "webhook_instruction_short": "Um Anrufe automatisch zu empfangen, geben Sie in den Einstellungen Ihres Telefonanbieters die folgende URL ein.",
+  "webhook_security_note": "Geben Sie diese URL aus Sicherheitsgründen nicht an Dritte weiter.",
+  "test_connection": "Verbindung prüfen",
+  "save_settings": "Einstellungen speichern",
+  "testing": "Prüfung...",
+  "copy": "Kopie",
+  "copied": "Kopiert",
+  "success": "Erfolgreich",
+  "error": "Fehler"
 }
