@@ -51,5 +51,20 @@
   "create_failed": "Error al crear tarea",
   "update_failed": "Error de actualización de tarea",
   "edit_task": "Editar tarea",
-  "create_new_task": "Nueva tarea"
+  "create_new_task": "Nueva tarea",
+  "status_updated": "Estado actualizado",
+  "confirm_delete": "¿Estás seguro de que deseas eliminar esta tarea?",
+  "task_deleted": "Tarea eliminada",
+  "delete_failed": "Error al eliminar la tarea",
+  "manage_stages": "Dirección de escena",
+  "failed_to_load_stages": "No se pudieron cargar las etapas",
+  "stage_created": "Etapa creada",
+  "stage_deleted": "Etapa eliminada",
+  "order_saved": "Orden preservado",
+  "order_save_failed": "Error al guardar el pedido",
+  "add_new_stage": "Agregar una nueva etapa",
+  "stage_name": "Nombre artístico",
+  "add": "Agregar",
+  "are_you_sure": "¿Está seguro?",
+  "confirm_delete_stage": "¿Estás seguro de que deseas eliminar esta etapa? Las tareas que contiene permanecerán sin escenario (o serán movidas)."
 }

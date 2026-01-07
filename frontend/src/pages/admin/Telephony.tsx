@@ -23,6 +23,9 @@ import {
     Users,
     Check,
     ChevronsUpDown,
+    Play,
+    Headphones,
+    FileText,
 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../../components/ui/command';
@@ -364,9 +367,9 @@ export default function Telephony() {
     };
 
     const getIcon = (type: string, status: string) => {
-        if (status === 'missed') return <PhoneMissed className="w-4 h-4 text-red-500" />;
-        if (type === 'inbound') return <PhoneIncoming className="w-4 h-4 text-green-500" />;
-        return <PhoneOutgoing className="w-4 h-4 text-blue-500" />;
+        if (status === 'missed') return <PhoneMissed className="w-4 h-4" style={{ color: 'var(--telephony-missed)' }} />;
+        if (type === 'inbound') return <PhoneIncoming className="w-4 h-4" style={{ color: 'var(--telephony-inbound)' }} />;
+        return <PhoneOutgoing className="w-4 h-4" style={{ color: 'var(--telephony-outbound)' }} />;
     };
 
     return (
@@ -701,8 +704,27 @@ export default function Telephony() {
                                                 <td className="px-6 py-4">
                                                     {call.manager_name || <span className="text-gray-400">-</span>}
                                                 </td>
-                                                <td className="px-6 py-4 max-w-xs truncate text-gray-500">
-                                                    {call.notes}
+                                                <td className="px-6 py-4 max-w-[200px] text-gray-500">
+                                                    {call.notes && call.notes.length > 50 ? (
+                                                        <Popover>
+                                                            <PopoverTrigger asChild>
+                                                                <div className="cursor-help flex items-center gap-1 hover:text-pink-500 transition-colors">
+                                                                    <FileText className="w-4 h-4 text-gray-400 group-hover:text-pink-400" />
+                                                                    <span className="truncate">{call.notes.substring(0, 47)}...</span>
+                                                                </div>
+                                                            </PopoverTrigger>
+                                                            <PopoverContent className="w-80 p-4">
+                                                                <div className="space-y-2">
+                                                                    <h4 className="font-medium text-sm border-b pb-1">{t('telephony:notes', 'Заметки')}</h4>
+                                                                    <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
+                                                                        {call.notes}
+                                                                    </p>
+                                                                </div>
+                                                            </PopoverContent>
+                                                        </Popover>
+                                                    ) : (
+                                                        <span className="truncate overflow-hidden block">{call.notes || <span className="text-gray-400">-</span>}</span>
+                                                    )}
                                                 </td>
                                                 <td className="px-6 py-4 font-mono text-gray-600">
                                                     {call.status === 'missed' ? '-' : formatDuration(call.duration)}
@@ -713,9 +735,31 @@ export default function Telephony() {
                                                 <td className="px-6 py-4 text-right">
                                                     {(call.recording_url || call.recording_file) ? (
                                                         <div className="flex justify-end">
-                                                            <AudioPlayer
-                                                                url={call.recording_file ? `/static/recordings/${call.recording_file}` : call.recording_url!}
-                                                            />
+                                                            <Popover>
+                                                                <PopoverTrigger asChild>
+                                                                    <Button variant="ghost" size="icon" className="h-8 w-8 bg-pink-50 text-pink-600 border border-pink-100 hover:bg-pink-100 rounded-full shadow-sm">
+                                                                        <Play className="w-4 h-4 fill-current ml-0.5" />
+                                                                    </Button>
+                                                                </PopoverTrigger>
+                                                                <PopoverContent className="w-[450px] p-0 border-none shadow-2xl bg-transparent" side="left">
+                                                                    <div className="bg-white rounded-2xl shadow-2xl border p-4">
+                                                                        <div className="flex items-center gap-3 mb-3 px-1">
+                                                                            <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
+                                                                                <Headphones className="w-6 h-6 text-pink-600" />
+                                                                            </div>
+                                                                            <div>
+                                                                                <p className="text-xs font-semibold text-gray-900 leading-none mb-1">{call.client_name || call.phone}</p>
+                                                                                <p className="text-[10px] text-gray-500">{format(new Date(call.created_at), 'dd MMMM yyyy, HH:mm', { locale: ru })}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <AudioPlayer
+                                                                            url={call.recording_file ? `/static/recordings/${call.recording_file}` : call.recording_url!}
+                                                                            autoPlay={true}
+                                                                            initialExpanded={true}
+                                                                        />
+                                                                    </div>
+                                                                </PopoverContent>
+                                                            </Popover>
                                                         </div>
                                                     ) : (
                                                         <div className="flex items-center gap-2">
@@ -824,9 +868,9 @@ export default function Telephony() {
                                                     }}
                                                 />
                                                 <Legend />
-                                                <Bar dataKey="inbound" name={t('telephony:inbound', 'Входящие')} fill="#22c55e" radius={[4, 4, 0, 0]} stackId="a" />
-                                                <Bar dataKey="outbound" name={t('telephony:outbound', 'Исходящие')} fill="#3b82f6" radius={[4, 4, 0, 0]} stackId="a" />
-                                                <Bar dataKey="missed" name={t('telephony:missed', 'Пропущенные')} fill="#ef4444" radius={[4, 4, 0, 0]} stackId="a" />
+                                                <Bar dataKey="inbound" name={t('telephony:inbound', 'Входящие')} fill="var(--telephony-inbound)" radius={[4, 4, 0, 0]} stackId="a" />
+                                                <Bar dataKey="outbound" name={t('telephony:outbound', 'Исходящие')} fill="var(--telephony-outbound)" radius={[4, 4, 0, 0]} stackId="a" />
+                                                <Bar dataKey="missed" name={t('telephony:missed', 'Пропущенные')} fill="var(--telephony-missed)" radius={[4, 4, 0, 0]} stackId="a" />
                                             </BarChart>
                                         </ResponsiveContainer>
                                     </div>
@@ -849,7 +893,7 @@ export default function Telephony() {
                                                 <YAxis fontSize={12} />
                                                 <Tooltip />
                                                 <Legend />
-                                                <Line type="monotone" dataKey="avg_duration" name={t('telephony:duration_label', 'Длительность')} stroke="#db2777" strokeWidth={3} dot={{ r: 4, fill: '#db2777' }} activeDot={{ r: 6 }} />
+                                                <Line type="monotone" dataKey="avg_duration" name={t('telephony:duration_label', 'Длительность')} stroke="var(--telephony-avg-duration)" strokeWidth={3} dot={{ r: 4, fill: 'var(--telephony-avg-duration)' }} activeDot={{ r: 6 }} />
                                             </LineChart>
                                         </ResponsiveContainer>
                                     </div>
@@ -863,9 +907,9 @@ export default function Telephony() {
                                                 <PieChart>
                                                     <Pie
                                                         data={[
-                                                            { name: t('telephony:inbound', 'Входящие'), value: stats.inbound, color: '#22c55e' },
-                                                            { name: t('telephony:outbound', 'Исходящие'), value: stats.outbound, color: '#3b82f6' },
-                                                            { name: t('telephony:missed', 'Пропущенные'), value: stats.missed, color: '#ef4444' }
+                                                            { name: t('telephony:inbound', 'Входящие'), value: stats.inbound, color: 'var(--telephony-inbound)' },
+                                                            { name: t('telephony:outbound', 'Исходящие'), value: stats.outbound, color: 'var(--telephony-outbound)' },
+                                                            { name: t('telephony:missed', 'Пропущенные'), value: stats.missed, color: 'var(--telephony-missed)' }
                                                         ].filter(item => item.value > 0)}
                                                         innerRadius={60}
                                                         outerRadius={80}
@@ -873,9 +917,9 @@ export default function Telephony() {
                                                         dataKey="value"
                                                     >
                                                         {[
-                                                            { name: 'Входящие', value: stats.inbound, color: '#22c55e' },
-                                                            { name: 'Исходящие', value: stats.outbound, color: '#3b82f6' },
-                                                            { name: 'Пропущенные', value: stats.missed, color: '#ef4444' }
+                                                            { name: 'Входящие', value: stats.inbound, color: 'var(--telephony-inbound)' },
+                                                            { name: 'Исходящие', value: stats.outbound, color: 'var(--telephony-outbound)' },
+                                                            { name: 'Пропущенные', value: stats.missed, color: 'var(--telephony-missed)' }
                                                         ].filter(item => item.value > 0).map((entry, index) => (
                                                             <Cell key={`cell-${index}`} fill={entry.color} />
                                                         ))}

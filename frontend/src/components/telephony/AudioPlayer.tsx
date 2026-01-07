@@ -7,16 +7,18 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 interface AudioPlayerProps {
     url: string;
     className?: string;
+    autoPlay?: boolean;
+    initialExpanded?: boolean;
 }
 
-export function AudioPlayer({ url, className = '' }: AudioPlayerProps) {
+export function AudioPlayer({ url, className = '', autoPlay = false, initialExpanded = false }: AudioPlayerProps) {
     const audioRef = useRef<HTMLAudioElement>(null);
-    const [isPlaying, setIsPlaying] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(autoPlay);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(1);
     const [isMuted, setIsMuted] = useState(false);
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(initialExpanded || autoPlay);
 
     useEffect(() => {
         const audio = audioRef.current;
@@ -29,6 +31,10 @@ export function AudioPlayer({ url, className = '' }: AudioPlayerProps) {
         audio.addEventListener('timeupdate', updateTime);
         audio.addEventListener('loadedmetadata', updateDuration);
         audio.addEventListener('ended', handleEnded);
+
+        if (autoPlay) {
+            audio.play().catch(err => console.log('Autoplay blocked:', err));
+        }
 
         return () => {
             audio.removeEventListener('timeupdate', updateTime);
