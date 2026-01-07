@@ -192,7 +192,8 @@ def init_database():
         main_location_en TEXT,
         main_location_ar TEXT,
         points_expiration_days INTEGER DEFAULT 365,
-        feature_flags TEXT DEFAULT '{}'
+        feature_flags TEXT DEFAULT '{}',
+        telephony_settings TEXT DEFAULT '{}'
     )''')
 
     # Миграция: добавить bot_name_en и bot_name_ar если их нет
@@ -241,7 +242,8 @@ def init_database():
     # Миграция: Feature Management & Cashback
     feature_migrations = {
         'points_expiration_days': 'INTEGER DEFAULT 365',
-        'feature_flags': "TEXT DEFAULT '{}'"
+        'feature_flags': "TEXT DEFAULT '{}'",
+        'telephony_settings': "TEXT DEFAULT '{}'"
     }
     for col, col_type in feature_migrations.items():
         if col not in columns:

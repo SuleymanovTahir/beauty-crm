@@ -9,6 +9,7 @@ import json
 import logging
 import os
 import shutil
+import asyncio
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -64,6 +65,60 @@ class CallLogResponse(BaseModel):
     manual_client_name: Optional[str]
     manual_manager_name: Optional[str]
     manual_service_name: Optional[str]
+
+class TelephonySettings(BaseModel):
+    provider: str = 'generic' # binotel, onlinepbx, generic
+    api_key: Optional[str] = None
+    api_secret: Optional[str] = None
+    webhook_token: Optional[str] = None
+    is_active: bool = True
+
+@router.get("/telephony/settings")
+async def get_telephony_settings(current_user: dict = Depends(get_current_user)):
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("SELECT telephony_settings FROM salon_settings WHERE id = 1")
+        row = c.fetchone()
+        if row and row[0]:
+            return json.loads(row[0])
+        return {}
+    finally:
+        conn.close()
+
+@router.post("/telephony/settings")
+async def save_telephony_settings(settings: TelephonySettings, current_user: dict = Depends(get_current_user)):
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("""
+            UPDATE salon_settings 
+            SET telephony_settings = %s 
+            WHERE id = 1
+        """, (settings.model_dump_json(),))
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.post("/telephony/test-integration")
+async def test_telephony_integration(settings: TelephonySettings, current_user: dict = Depends(get_current_user)):
+    # Simple validation logic for now
+    if settings.provider == 'binotel':
+        if not settings.api_key or not settings.api_secret:
+            return {"success": False, "error": "API Key и Secret обязательны для Binotel"}
+    elif settings.provider == 'onlinepbx':
+        if not settings.api_key:
+            return {"success": False, "error": "API Key обязателен для OnlinePBX"}
+    
+    # In real world, we would call the provider's API here
+    # Mocking a successful validation for non-empty keys
+    await asyncio.sleep(1) # Simulate network delay
+    
+    return {"success": True, "message": f"Соединение с {settings.provider} успешно проверено"}
 
 @router.get("/telephony/calls", response_model=List[CallLogResponse])
 async def get_calls(

@@ -639,6 +639,24 @@ export class ApiClient {
   }
 
   // ===== ТЕЛЕФОНИЯ =====
+  async getTelephonySettings() {
+    return this.request<any>('/api/telephony/settings')
+  }
+
+  async saveTelephonySettings(settings: any) {
+    return this.request('/api/telephony/settings', {
+      method: 'POST',
+      body: JSON.stringify(settings)
+    })
+  }
+
+  async testTelephonyIntegration(settings: any) {
+    return this.request<any>('/api/telephony/test-integration', {
+      method: 'POST',
+      body: JSON.stringify(settings)
+    })
+  }
+
   async getCalls(search?: string, limit: number = 50, offset: number = 0, dateFrom?: string, dateTo?: string, bookingId?: number, sortBy?: string, order?: string, status?: string, direction?: string) {
     let url = `/api/telephony/calls?limit=${limit}&offset=${offset}`
     if (search) url += `&search=${search}`
