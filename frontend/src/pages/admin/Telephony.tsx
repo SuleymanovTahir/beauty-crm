@@ -19,7 +19,10 @@ import {
     Upload,
     ArrowUp,
     ArrowDown,
-    Filter
+    Filter,
+    RefreshCw,
+    ChevronDown,
+    Users
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
@@ -68,6 +71,7 @@ export default function Telephony() {
 
     const [calls, setCalls] = useState<CallLog[]>([]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [showFilters, setShowFilters] = useState(false);
     const [stats, setStats] = useState({
         total_calls: 0,
         inbound: 0,
@@ -104,6 +108,12 @@ export default function Telephony() {
             setSortBy(field);
             setSortOrder('desc');
         }
+    };
+
+    const handleRefresh = async () => {
+        setProcessing(true);
+        await loadData();
+        setProcessing(false);
     };
 
     const loadData = async () => {
@@ -291,15 +301,27 @@ export default function Telephony() {
 
     return (
         <div className="h-full flex flex-col bg-gray-50/50">
-            <div className="px-8 py-6 bg-white border-b sticky top-0 z-20">
-                <div className="flex items-center justify-between mb-6">
+            <div className="p-6">
+                <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">{t('telephony', 'Телефония')}</h1>
-                        <p className="text-sm text-gray-500 mt-1">{t('subtitle', 'История звонков и интеграции')}</p>
+                        <h1 className="text-3xl font-extrabold text-gray-900 mb-2 flex items-center gap-3">
+                            <div className="p-2 bg-pink-50 rounded-lg">
+                                <Phone className="w-8 h-8 text-pink-600" />
+                            </div>
+                            {t('telephony', 'Телефония')}
+                        </h1>
+                        <p className="text-gray-500 font-medium flex items-center gap-2">
+                            <span className="inline-block w-2 h-2 bg-pink-400 rounded-full animate-pulse" />
+                            {calls.length} записей
+                        </p>
                     </div>
-                    <Button onClick={() => setShowAddDialog(true)} className="bg-pink-600 hover:bg-pink-700">
-                        <Plus className="w-4 h-4 mr-2" /> Добавить звонок
-                    </Button>
+                    <button
+                        onClick={handleRefresh}
+                        className="w-full md:w-auto px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95"
+                    >
+                        <RefreshCw className={`w-4 h-4 ${processing ? 'animate-spin' : ''} text-pink-600`} />
+                        Обновить
+                    </button>
                 </div>
 
                 <div className="grid grid-cols-4 gap-4 mb-6">
@@ -341,92 +363,116 @@ export default function Telephony() {
                     </div>
                 </div>
 
-                <div className="flex gap-2">
-                    <div className="relative flex-1 max-w-sm">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <Input
-                            placeholder="Поиск по номеру или имени..."
-                            className="pl-9 bg-gray-50 border-gray-200"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                    </div>
-
-                    <Select value={period} onValueChange={setPeriod}>
-                        <SelectTrigger className="w-40">
-                            <Calendar className="w-4 h-4 mr-2" />
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Все время</SelectItem>
-                            <SelectItem value="today">Сегодня</SelectItem>
-                            <SelectItem value="week">Неделя</SelectItem>
-                            <SelectItem value="month">Месяц</SelectItem>
-                            <SelectItem value="custom">Период</SelectItem>
-                        </SelectContent>
-                    </Select>
-
-                    {period === 'custom' && (
-                        <div className="flex gap-2">
-                            <Input
-                                type="date"
-                                value={dateFrom}
-                                onChange={e => setDateFrom(e.target.value)}
-                                className="w-40"
-                                placeholder="От"
-                            />
-                            <Input
-                                type="date"
-                                value={dateTo}
-                                onChange={e => setDateTo(e.target.value)}
-                                className="w-40"
-                                placeholder="До"
+                <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 backdrop-blur-xl bg-white/80">
+                    <div className="flex flex-col gap-4">
+                        {/* Row 1: Search */}
+                        <div className="relative group">
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-pink-500 transition-colors" />
+                            <input
+                                type="text"
+                                placeholder="Поиск по номеру или имени..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="w-full h-[42px] pl-10 pr-4 bg-gray-50/50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all placeholder:text-gray-400 font-bold"
                             />
                         </div>
-                    )}
+
+                        {/* Row 2: Control Bar */}
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setShowAddDialog(true)}
+                                className="flex-[2] min-w-[100px] h-[42px] px-3 bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md shadow-gray-200"
+                            >
+                                <Plus className="w-4 h-4" />
+                                <span>Добавить</span>
+                            </button>
+
+                            <button
+                                onClick={() => setShowFilters(!showFilters)}
+                                className={`flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showFilters
+                                    ? 'bg-pink-50 border-pink-200 text-pink-600'
+                                    : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                                    }`}
+                            >
+                                <Users className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
+                                <span className="truncate">Фильтры</span>
+                                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            {selectedIds.length > 0 && (
+                                <button
+                                    onClick={handleBulkDelete}
+                                    className="flex-1 h-[42px] px-2 bg-red-50 text-red-600 border border-red-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-red-100 active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    <span className="truncate">Удалить ({selectedIds.length})</span>
+                                </button>
+                            )}
+
+                            <button
+                                onClick={handleRefresh}
+                                disabled={loading}
+                                className="w-[42px] h-[42px] bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm shrink-0"
+                            >
+                                <RefreshCw className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
+                            </button>
+                        </div>
+
+                        {/* Expandable Filters */}
+                        {showFilters && (
+                            <div className="pt-4 border-t border-gray-50 animate-in fade-in slide-in-from-top-2 duration-300">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    {/* Status */}
+                                    <div className="flex flex-col gap-1.5">
+                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Статус</span>
+                                        <Select value={statusFilter} onValueChange={setStatusFilter}>
+                                            <SelectTrigger className="w-full h-[42px] rounded-xl font-bold bg-white border-gray-200">
+                                                <SelectValue placeholder="Статус" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">Все статусы</SelectItem>
+                                                <SelectItem value="completed">Завершенные</SelectItem>
+                                                <SelectItem value="missed">Пропущенные</SelectItem>
+                                                <SelectItem value="rejected">Отклоненные</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {/* Type */}
+                                    <div className="flex flex-col gap-1.5">
+                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Тип звонка</span>
+                                        <Select value={typeFilter} onValueChange={setTypeFilter}>
+                                            <SelectTrigger className="w-full h-[42px] rounded-xl font-bold bg-white border-gray-200">
+                                                <SelectValue placeholder="Тип звонка" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">Все типы</SelectItem>
+                                                <SelectItem value="inbound">Входящие</SelectItem>
+                                                <SelectItem value="outbound">Исходящие</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {/* Period */}
+                                    <div className="flex flex-col gap-1.5">
+                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Период</span>
+                                        <Select value={period} onValueChange={setPeriod}>
+                                            <SelectTrigger className="w-full h-[42px] rounded-xl font-bold bg-white border-gray-200">
+                                                <SelectValue placeholder="Период" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">Все время</SelectItem>
+                                                <SelectItem value="today">Сегодня</SelectItem>
+                                                <SelectItem value="week">Неделя</SelectItem>
+                                                <SelectItem value="month">Месяц</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
-
-            <div className="px-8 pb-4 bg-white border-b flex gap-4">
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-[180px]">
-                        <Filter className="w-4 h-4 mr-2" />
-                        <SelectValue placeholder="Статус" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">Все статусы</SelectItem>
-                        <SelectItem value="completed">Завершенные</SelectItem>
-                        <SelectItem value="missed">Пропущенные</SelectItem>
-                        <SelectItem value="rejected">Отклоненные</SelectItem>
-                    </SelectContent>
-                </Select>
-
-                <Select value={typeFilter} onValueChange={setTypeFilter}>
-                    <SelectTrigger className="w-[180px]">
-                        <Filter className="w-4 h-4 mr-2" />
-                        <SelectValue placeholder="Тип звонка" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">Все типы</SelectItem>
-                        <SelectItem value="inbound">Входящие</SelectItem>
-                        <SelectItem value="outbound">Исходящие</SelectItem>
-                    </SelectContent>
-                </Select>
-
-                {selectedIds.length > 0 && (
-                    <Button
-                        variant="destructive"
-                        onClick={handleBulkDelete}
-                        className="ml-auto"
-                        disabled={processing}
-                    >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Удалить ({selectedIds.length})
-                    </Button>
-                )}
-            </div>
-
-            <div className="flex-1 overflow-auto p-6">
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <table className="w-full text-sm text-left">
                         <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-100">
@@ -449,7 +495,12 @@ export default function Telephony() {
                                         {sortBy === 'client_name' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
                                     </div>
                                 </th>
-                                <th className="px-6 py-3 font-medium">Сотрудник</th>
+                                <th onClick={() => handleSort('manager_name')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors">
+                                    <div className="flex items-center gap-1">
+                                        Сотрудник
+                                        {sortBy === 'manager_name' && (sortOrder === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
+                                    </div>
+                                </th>
                                 <th className="px-6 py-3 font-medium">Заметки</th>
                                 <th onClick={() => handleSort('duration')} className="px-6 py-3 font-medium cursor-pointer hover:bg-gray-100 transition-colors">
                                     <div className="flex items-center gap-1">
