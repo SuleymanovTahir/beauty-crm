@@ -30,6 +30,7 @@ const VisitorAnalytics = React.lazy(() => import('./pages/admin/VisitorAnalytics
 const AdminFunnel = React.lazy(() => import('./pages/admin/Funnel'));
 const AdminTasks = React.lazy(() => import('./pages/admin/Tasks'));
 const Telephony = React.lazy(() => import('./pages/admin/Telephony'));
+const MenuCustomization = React.lazy(() => import('./pages/admin/MenuCustomization'));
 
 // Admin Panel pages
 const AdminPanelLayout = React.lazy(() => import('./components/layouts/AdminPanelLayout'));
@@ -311,6 +312,7 @@ export default function App() {
                 <Route path="funnel" element={<AdminFunnel />} />
                 <Route path="tasks" element={<AdminTasks />} />
                 <Route path="telephony" element={<Telephony />} />
+                <Route path="menu-customization" element={<MenuCustomization />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 

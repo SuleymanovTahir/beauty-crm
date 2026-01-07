@@ -639,11 +639,16 @@ export class ApiClient {
   }
 
   // ===== ТЕЛЕФОНИЯ =====
-  async getCalls(search?: string, limit: number = 50, offset: number = 0, dateFrom?: string, dateTo?: string) {
+  async getCalls(search?: string, limit: number = 50, offset: number = 0, dateFrom?: string, dateTo?: string, bookingId?: number, sortBy?: string, order?: string, status?: string, direction?: string) {
     let url = `/api/telephony/calls?limit=${limit}&offset=${offset}`
     if (search) url += `&search=${search}`
     if (dateFrom) url += `&start_date=${dateFrom}`
     if (dateTo) url += `&end_date=${dateTo}`
+    if (bookingId) url += `&booking_id=${bookingId}`
+    if (sortBy) url += `&sort_by=${sortBy}`
+    if (order) url += `&order=${order}`
+    if (status) url += `&status=${status}`
+    if (direction) url += `&direction=${direction}`
     return this.request<any>(url)
   }
 
@@ -652,6 +657,26 @@ export class ApiClient {
       method: 'POST',
       body: JSON.stringify(data)
     })
+  }
+
+  async uploadRecording(callId: number, file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const token = localStorage.getItem('token')
+    const response = await fetch(`/api/telephony/upload-recording/${callId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    })
+
+    if (!response.ok) {
+      throw new Error('Upload failed')
+    }
+
+    return response.json()
   }
 
   async updateCall(id: number, data: any) {
@@ -669,6 +694,22 @@ export class ApiClient {
 
   async getTelephonyStats() {
     return this.request<any>('/api/telephony/stats')
+  }
+
+  // ===== НАСТРОЙКИ МЕНЮ =====
+  async getMenuSettings() {
+    return this.request<{ menu_order: string[] | null; hidden_items: string[] | null }>('/api/menu-settings')
+  }
+
+  async saveMenuSettings(settings: { menu_order: string[]; hidden_items: string[] }, saveForRole: boolean = false) {
+    return this.request('/api/menu-settings', {
+      method: 'POST',
+      body: JSON.stringify({ ...settings, save_for_role: saveForRole })
+    })
+  }
+
+  async resetMenuSettings() {
+    return this.request('/api/menu-settings', { method: 'DELETE' })
   }
 
   // ===== УСЛУГИ =====

@@ -19,6 +19,7 @@ import {
   Trash2,
   Edit,
   Save,
+  Menu,
   Users,
   Send,
   Eye,
@@ -228,6 +229,17 @@ export default function AdminSettings() {
     master_exceptions: [] as number[]
   });
 
+  const [users, setUsers] = useState<any[]>([]);
+
+  const loadUsers = async () => {
+    try {
+      const data = await api.getUsers();
+      setUsers(data);
+    } catch (error) {
+      console.error('Failed to load users:', error);
+    }
+  };
+
   useEffect(() => {
     loadRoles();
     loadSalonSettings();
@@ -239,6 +251,7 @@ export default function AdminSettings() {
     loadMessengerSettings();
     loadHolidays();
     loadCurrencies();
+    loadUsers();
   }, []);
 
   useEffect(() => {
@@ -1018,6 +1031,17 @@ export default function AdminSettings() {
           {t('settings:system_settings')}
         </h1>
         <p className="text-sm md:text-base text-gray-600">{t('settings:manage_crm_parameters')}</p>
+      </div>
+
+      <div className="mb-6 flex justify-end">
+        <Button
+          onClick={() => navigate('/crm/menu-customization')}
+          variant="outline"
+          className="bg-white"
+        >
+          <Menu className="w-4 h-4 mr-2" />
+          Настроить меню
+        </Button>
       </div>
 
       {/* Информация о правах доступа */}
