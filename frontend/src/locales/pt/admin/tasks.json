@@ -51,5 +51,20 @@
   "create_failed": "Erro ao criar tarefa",
   "update_failed": "Erro de atualização de tarefa",
   "edit_task": "Editar tarefa",
-  "create_new_task": "Nova tarefa"
+  "create_new_task": "Nova tarefa",
+  "status_updated": "Status atualizado",
+  "confirm_delete": "Tem certeza de que deseja excluir esta tarefa?",
+  "task_deleted": "Tarefa excluída",
+  "delete_failed": "Erro ao excluir tarefa",
+  "manage_stages": "Gerenciamento de palco",
+  "failed_to_load_stages": "Falha ao carregar estágios",
+  "stage_created": "Palco criado",
+  "stage_deleted": "Estágio removido",
+  "order_saved": "Ordem preservada",
+  "order_save_failed": "Erro ao salvar pedido",
+  "add_new_stage": "Adicionar um novo estágio",
+  "stage_name": "Nome artístico",
+  "add": "Adicionar",
+  "are_you_sure": "Tem certeza?",
+  "confirm_delete_stage": "Tem certeza de que deseja excluir esta etapa? As tarefas nele permanecerão sem palco (ou serão movidas)."
 }

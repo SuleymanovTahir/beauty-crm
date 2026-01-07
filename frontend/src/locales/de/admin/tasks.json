@@ -51,5 +51,20 @@
   "create_failed": "Fehler beim Erstellen der Aufgabe",
   "update_failed": "Fehler bei der Aufgabenaktualisierung",
   "edit_task": "Aufgabe bearbeiten",
-  "create_new_task": "Neue Aufgabe"
+  "create_new_task": "Neue Aufgabe",
+  "status_updated": "Status aktualisiert",
+  "confirm_delete": "Sind Sie sicher, dass Sie diese Aufgabe löschen möchten?",
+  "task_deleted": "Aufgabe gelöscht",
+  "delete_failed": "Fehler beim Löschen der Aufgabe",
+  "manage_stages": "Bühnenmanagement",
+  "failed_to_load_stages": "Die Stufen konnten nicht geladen werden",
+  "stage_created": "Bühne erstellt",
+  "stage_deleted": "Bühne entfernt",
+  "order_saved": "Ordnung erhalten",
+  "order_save_failed": "Fehler beim Speichern der Bestellung",
+  "add_new_stage": "Fügen Sie eine neue Stufe hinzu",
+  "stage_name": "Künstlername",
+  "add": "Hinzufügen",
+  "are_you_sure": "Bist du sicher?",
+  "confirm_delete_stage": "Sind Sie sicher, dass Sie diese Phase löschen möchten? Die darin enthaltenen Aufgaben bleiben ohne Bühne (oder werden verschoben)."
 }

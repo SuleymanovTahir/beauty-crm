@@ -51,5 +51,20 @@
   "create_failed": "حدث خطأ أثناء إنشاء المهمة",
   "update_failed": "خطأ في تحديث المهمة",
   "edit_task": "تحرير المهمة",
-  "create_new_task": "مهمة جديدة"
+  "create_new_task": "مهمة جديدة",
+  "status_updated": "تم تحديث الحالة",
+  "confirm_delete": "هل أنت متأكد أنك تريد حذف هذه المهمة؟",
+  "task_deleted": "تم حذف المهمة",
+  "delete_failed": "حدث خطأ أثناء حذف المهمة",
+  "manage_stages": "إدارة المرحلة",
+  "failed_to_load_stages": "فشل في تحميل المراحل",
+  "stage_created": "تم إنشاء المرحلة",
+  "stage_deleted": "تمت إزالة المرحلة",
+  "order_saved": "النظام محفوظ",
+  "order_save_failed": "خطأ في حفظ الطلب",
+  "add_new_stage": "أضف مرحلة جديدة",
+  "stage_name": "اسم المرحلة",
+  "add": "يضيف",
+  "are_you_sure": "هل أنت متأكد؟",
+  "confirm_delete_stage": "هل أنت متأكد أنك تريد حذف هذه المرحلة؟ ستبقى المهام الموجودة فيه بدون مرحلة (أو سيتم نقلها)."
 }

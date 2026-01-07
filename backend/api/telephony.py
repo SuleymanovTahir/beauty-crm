@@ -99,6 +99,7 @@ async def get_calls(
                 cl.notes,
                 COALESCE(cl.manual_manager_name, b.master) as manager_name,
                 cl.manual_client_name,
+                cl.manual_manager_name,
                 cl.manual_service_name
             FROM call_logs cl
             LEFT JOIN clients c ON c.instagram_id = cl.client_id
@@ -168,7 +169,8 @@ async def get_calls(
                 "notes": row[12],
                 "manager_name": row[13],
                 "manual_client_name": row[14],
-                "manual_service_name": row[15]
+                "manual_manager_name": row[15],
+                "manual_service_name": row[16]
             }
             for row in rows
         ]
