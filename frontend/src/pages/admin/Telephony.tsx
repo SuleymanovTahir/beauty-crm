@@ -26,6 +26,8 @@ import {
     Play,
     Headphones,
     FileText,
+    AlertCircle,
+    CheckCircle2,
 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../../components/ui/command';
@@ -140,6 +142,30 @@ export default function Telephony() {
         manual_service_name: '',
         client_id: ''
     });
+
+    const [integrationSettings, setIntegrationSettings] = useState({
+        provider: 'binotel',
+        api_key: '',
+        api_secret: '',
+        webhook_token: '',
+        is_active: true
+    });
+    const [testingConnection, setTestingConnection] = useState(false);
+    const [testResult, setTestResult] = useState<{ success: boolean; message: string; error?: string } | null>(null);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const settings = await api.getTelephonySettings();
+                if (settings && Object.keys(settings).length > 0) {
+                    setIntegrationSettings(settings);
+                }
+            } catch (error) {
+                console.error('Failed to load telephony settings:', error);
+            }
+        };
+        fetchSettings();
+    }, []);
 
     useEffect(() => {
         loadData();
@@ -315,6 +341,37 @@ export default function Telephony() {
         }
     };
 
+    const handleTestIntegration = async () => {
+        setTestingConnection(true);
+        setTestResult(null);
+        try {
+            const result = await api.testTelephonyIntegration(integrationSettings);
+            setTestResult(result);
+            if (result.success) {
+                toast.success(result.message || 'Соединение успешно');
+            } else {
+                toast.error(result.error || 'Ошибка соединения');
+            }
+        } catch (error: any) {
+            setTestResult({ success: false, message: error.message || 'Ошибка проверки' });
+            toast.error('Ошибка при тестировании');
+        } finally {
+            setTestingConnection(false);
+        }
+    };
+
+    const handleSaveSettings = async () => {
+        setProcessing(true);
+        try {
+            await api.saveTelephonySettings(integrationSettings);
+            toast.success('Настройки сохранены');
+        } catch (error) {
+            toast.error('Ошибка сохранения настроек');
+        } finally {
+            setProcessing(false);
+        }
+    };
+
     const handleUpdateCall = async () => {
         if (!editingCall) return;
         try {
@@ -404,6 +461,9 @@ export default function Telephony() {
                         </TabsTrigger>
                         <TabsTrigger value="analytics" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-pink-600 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
                             {t('telephony:analytics_tab', 'Аналитика')}
+                        </TabsTrigger>
+                        <TabsTrigger value="integrations" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-pink-600 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
+                            {t('telephony:integrations_tab', 'Интеграции')}
                         </TabsTrigger>
                     </TabsList>
 
@@ -962,6 +1022,142 @@ export default function Telephony() {
                                 {t('telephony:no_data_analytics', 'Нет данных для аналитики за выбранный период')}
                             </div>
                         )}
+                    </TabsContent>
+                    <TabsContent value="integrations" className="space-y-6 focus-visible:outline-none">
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                <Plus className="w-5 h-5 text-pink-600" />
+                                {t('telephony:add_integration', 'Подключить телефонию')}
+                            </h3>
+
+                            <div className="space-y-6">
+                                <div className="space-y-2">
+                                    <Label className="text-gray-700 font-semibold">{t('telephony:provider', 'Провайдер')}</Label>
+                                    <Select
+                                        value={integrationSettings.provider}
+                                        onValueChange={(val) => setIntegrationSettings({ ...integrationSettings, provider: val })}
+                                    >
+                                        <SelectTrigger className="h-[45px] rounded-xl border-gray-200">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="binotel">Binotel</SelectItem>
+                                            <SelectItem value="onlinepbx">OnlinePBX</SelectItem>
+                                            <SelectItem value="generic">Generic (Webhook)</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                {integrationSettings.provider !== 'generic' && (
+                                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                        <div className="space-y-2">
+                                            <Label className="text-gray-700 font-semibold">API Key</Label>
+                                            <Input
+                                                type="password"
+                                                value={integrationSettings.api_key}
+                                                onChange={(e) => setIntegrationSettings({ ...integrationSettings, api_key: e.target.value })}
+                                                placeholder="Введите API Key"
+                                                className="h-[45px] rounded-xl border-gray-200"
+                                            />
+                                        </div>
+
+                                        {integrationSettings.provider === 'binotel' && (
+                                            <div className="space-y-2">
+                                                <Label className="text-gray-700 font-semibold">API Secret</Label>
+                                                <Input
+                                                    type="password"
+                                                    value={integrationSettings.api_secret}
+                                                    onChange={(e) => setIntegrationSettings({ ...integrationSettings, api_secret: e.target.value })}
+                                                    placeholder="Введите API Secret"
+                                                    className="h-[45px] rounded-xl border-gray-200"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-50">
+                                    <Button
+                                        onClick={handleTestIntegration}
+                                        disabled={testingConnection}
+                                        variant="outline"
+                                        className="h-[45px] rounded-xl font-bold flex-1"
+                                    >
+                                        {testingConnection ? (
+                                            <>
+                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                Проверка...
+                                            </>
+                                        ) : (
+                                            'Проверить соединение'
+                                        )}
+                                    </Button>
+                                    <Button
+                                        onClick={handleSaveSettings}
+                                        disabled={processing}
+                                        className="h-[45px] rounded-xl font-bold flex-1 bg-pink-600 hover:bg-pink-700 shadow-md shadow-pink-100"
+                                    >
+                                        {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Сохранить настройки'}
+                                    </Button>
+                                </div>
+
+                                {testResult && (
+                                    <div className={`mt-4 p-4 rounded-xl border flex items-start gap-3 animate-in fade-in zoom-in-95 duration-300 ${testResult.success ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
+                                        {testResult.success ? (
+                                            <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
+                                        ) : (
+                                            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
+                                        )}
+                                        <div>
+                                            <p className={`text-sm font-bold ${testResult.success ? 'text-green-800' : 'text-red-800'}`}>
+                                                {testResult.success ? 'Успешно' : 'Ошибка'}
+                                            </p>
+                                            <p className={`text-xs ${testResult.success ? 'text-green-600' : 'text-red-600'}`}>
+                                                {testResult.message || testResult.error}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 text-gray-300 text-sm shadow-xl">
+                            <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 bg-pink-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <Phone className="w-6 h-6 text-pink-400" />
+                                </div>
+                                <div className="flex-1">
+                                    <p className="font-bold mb-2 text-white text-lg">{t('telephony:integration_status', 'Инструкции для Webhook')}</p>
+                                    <p className="text-xs mb-4 text-gray-400 leading-relaxed">
+                                        Для автоматического получения звонков укажите следующий URL в настройках вашего провайдера телефонии.
+                                    </p>
+                                    <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700 shadow-inner">
+                                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Ваш уникальный Webhook URL</p>
+                                        <div className="flex items-center gap-3">
+                                            <code className="text-xs bg-gray-900 px-3 py-2 rounded-lg text-green-400 select-all block break-all flex-1 border border-gray-700">
+                                                {import.meta.env.VITE_API_URL || window.location.origin}/api/telephony/webhook/{integrationSettings.provider === 'generic' ? 'generic' : integrationSettings.provider}
+                                            </code>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="text-gray-400 hover:text-white hover:bg-gray-700"
+                                                onClick={() => {
+                                                    const url = `${import.meta.env.VITE_API_URL || window.location.origin}/api/telephony/webhook/${integrationSettings.provider === 'generic' ? 'generic' : integrationSettings.provider}`;
+                                                    navigator.clipboard.writeText(url);
+                                                    toast.success('Скопировано');
+                                                }}
+                                            >
+                                                Копировать
+                                            </Button>
+                                        </div>
+                                        <p className="text-[10px] text-gray-500 mt-3 flex items-center gap-1.5">
+                                            <AlertCircle className="w-3 h-3" />
+                                            Для безопасности не передавайте этот URL посторонним лицам.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </TabsContent>
                 </Tabs >
             </div>
