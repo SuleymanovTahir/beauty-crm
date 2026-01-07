@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
 import { Button } from '../ui/button';
@@ -62,7 +62,6 @@ interface ClientDetailsDialogProps {
 
 export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, stages = [], onAddBooking }: ClientDetailsDialogProps) {
     const { t } = useTranslation(['admin/funnel', 'common']);
-    const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState<'info' | 'bookings'>('info');
 
     // Editable state
@@ -91,8 +90,6 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
     }, [client]);
 
     const fetchClientDetails = async (clientId: string) => {
-        setLoading(true);
-
         try {
             // Fetch bookings
             const bookingsData = await api.get(`/api/bookings?client_id=${clientId}`);
@@ -100,8 +97,6 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
         } catch (error) {
             console.error('Error fetching client details:', error);
             setBookings([]);
-        } finally {
-            setLoading(false);
         }
     };
 

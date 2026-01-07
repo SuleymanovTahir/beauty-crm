@@ -1,11 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { api } from '../../services/api'; // Use global api
-import { X, Search } from 'lucide-react';
-import { Button } from '../../components/ui/button'; // Assuming these exist or use standard HTML
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog'; // Use standard Radix/UI dialog if available, or custom
+import { api } from '../../services/api';
+import { X } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 
 // Interface for props
 interface CreateBookingDialogProps {
