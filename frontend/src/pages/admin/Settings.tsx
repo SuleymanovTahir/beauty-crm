@@ -1105,6 +1105,7 @@ export default function AdminSettings() {
           </TabsTrigger>
         </TabsList>
 
+
         {/* General Settings */}
         <TabsContent value="profile">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
@@ -2664,8 +2665,8 @@ export default function AdminSettings() {
               <MessageCircle className="w-6 h-6 settings-text-pink" />
               {t('settings:messengers_settings')}
             </h2>
-            <p className="text-gray-600 mb-6">
-              {t('settings:manage_messengers')}
+            <p className="text-gray-600 mb-8">
+              {t('settings:manage_messengers', 'Настройка интеграций с мессенджерами для автоматизации и уведомлений')}
             </p>
 
             {loadingMessengers ? (
@@ -2673,18 +2674,18 @@ export default function AdminSettings() {
                 <Loader className="w-8 h-8 settings-loader animate-spin" />
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {messengerSettings.map((messenger) => (
                   <div
                     key={messenger.messenger_type}
-                    className={`border-2 rounded-xl p-6 transition-all ${messenger.is_enabled
-                      ? 'settings-border-pink-light settings-bg-pink-light'
-                      : 'border-gray-200 bg-white'
+                    className={`border-2 rounded-2xl p-6 transition-all duration-300 ${messenger.is_enabled
+                      ? 'settings-border-pink-light settings-bg-pink-light/30 shadow-sm'
+                      : 'border-gray-100 bg-white hover:border-gray-200'
                       }`}
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 group/icon-card ${messenger.is_enabled ? 'bg-white' : 'bg-gray-100'}`}>
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-md transition-all duration-300 hover:scale-110 group/icon-card ${messenger.is_enabled ? 'bg-white' : 'bg-gray-100'}`}>
                           {messenger.messenger_type === 'instagram' ? (
                             <InstagramIcon className="w-9 h-9" colorful={true} />
                           ) : messenger.messenger_type === 'whatsapp' ? (
@@ -2698,12 +2699,24 @@ export default function AdminSettings() {
                           )}
                         </div>
                         <div>
-                          <h3 className="text-lg font-bold text-gray-900">
+                          <h3 className="text-xl font-bold text-gray-900">
                             {messenger.display_name}
                           </h3>
-                          <p className="text-xs text-gray-600">
-                            {messenger.has_token ? t('settings:configured') : t('settings:needs_configuration')}
-                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            {messenger.is_enabled ? (
+                              <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
+                                <span className="w-1 h-1 bg-green-500 rounded-full animate-pulse" />
+                                ACTIVE
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-bold px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full uppercase">
+                                {t('settings:disabled', 'Отключен')}
+                              </span>
+                            )}
+                            <span className="text-xs text-gray-500">
+                              {messenger.has_token ? t('settings:configured', 'Настроен') : t('settings:needs_configuration', 'Требует настройки')}
+                            </span>
+                          </div>
                         </div>
                       </div>
                       <Switch
@@ -2714,53 +2727,65 @@ export default function AdminSettings() {
                       />
                     </div>
 
+                    <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+                      {messenger.messenger_type === 'instagram' && t('settings:instagram_desc', 'Автоматические ответы в Direct и сторис, сбор лидов.')}
+                      {messenger.messenger_type === 'telegram' && t('settings:telegram_desc', 'Чат-бот для записи клиентов, уведомления менеджерам.')}
+                      {messenger.messenger_type === 'whatsapp' && t('settings:whatsapp_desc', 'Рассылки через WhatsApp Business API, напоминания о записи.')}
+                      {messenger.messenger_type === 'tiktok' && t('settings:tiktok_desc', 'Сбор заявок из TikTok Lead Gen и общение в чате.')}
+                    </p>
+
                     {messenger.is_enabled && (
-                      <div className="space-y-4 pt-4 border-t border-gray-200">
+                      <div className="space-y-4 pt-6 border-t border-gray-100">
                         {editingMessenger === messenger.messenger_type ? (
-                          <div className="space-y-3">
-                            {messenger.messenger_type !== 'instagram' && (
-                              <div>
-                                <Label htmlFor={`${messenger.messenger_type} -token`}>
-                                  API Token {messenger.messenger_type === 'telegram' ? t('settings:telegram_bot_token_hint') : ''}
-                                </Label>
-                                <Input
-                                  id={`${messenger.messenger_type} -token`}
-                                  type="password"
-                                  value={messengerForm.api_token}
-                                  onChange={(e) =>
-                                    setMessengerForm({ ...messengerForm, api_token: e.target.value })
-                                  }
-                                  placeholder={
-                                    messenger.messenger_type === 'telegram'
-                                      ? '1234567890:ABCdefGHIjklMNOpqrsTUVwxyz'
-                                      : t('settings:placeholder_enter_api_token')
-                                  }
-                                />
-                              </div>
-                            )}
-
-                            {messenger.messenger_type === 'telegram' && (
-                              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                                <p className="text-sm text-blue-800 mb-2">
-                                  <strong>{t('settings:how_to_get_telegram_token')}:</strong>
+                          <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <div className="space-y-2">
+                              <Label htmlFor={`${messenger.messenger_type}-token`} className="text-sm font-semibold">
+                                API Token
+                              </Label>
+                              <Input
+                                id={`${messenger.messenger_type}-token`}
+                                type="password"
+                                value={messengerForm.api_token}
+                                onChange={(e) =>
+                                  setMessengerForm({ ...messengerForm, api_token: e.target.value })
+                                }
+                                placeholder={
+                                  messenger.messenger_type === 'telegram'
+                                    ? '1234567890:ABCdefGHIjklMNOpqrsTUVwxyz'
+                                    : t('settings:placeholder_enter_api_token', 'Введите API токен...')
+                                }
+                                className="bg-white/50 border-gray-200 focus:border-pink-300 transition-all"
+                              />
+                              {messenger.messenger_type === 'telegram' && (
+                                <p className="text-[10px] text-gray-500 italic">
+                                  {t('settings:telegram_bot_token_hint', 'Получите его у @BotFather')}
                                 </p>
-                                <ol className="text-sm text-blue-700 space-y-1 list-decimal list-inside">
-                                  <li>{t('settings:telegram_step_1')}</li>
-                                  <li>{t('settings:telegram_step_2')}</li>
-                                  <li>{t('settings:telegram_step_3')}</li>
-                                  <li>{t('settings:telegram_step_4')}</li>
-                                </ol>
-                              </div>
-                            )}
+                              )}
+                            </div>
 
-                            <div className="flex gap-2">
+                            <div className="space-y-2">
+                              <Label htmlFor={`${messenger.messenger_type}-webhook`} className="text-sm font-semibold">
+                                Webhook URL
+                              </Label>
+                              <Input
+                                id={`${messenger.messenger_type}-webhook`}
+                                value={messengerForm.webhook_url}
+                                onChange={(e) =>
+                                  setMessengerForm({ ...messengerForm, webhook_url: e.target.value })
+                                }
+                                placeholder="https://your-domain.com/webhook"
+                                className="bg-white/50 border-gray-200 focus:border-pink-300 transition-all"
+                              />
+                            </div>
+
+                            <div className="flex gap-3 pt-2">
                               <Button
                                 type="button"
                                 onClick={() => handleSaveMessengerConfig(messenger.messenger_type)}
-                                className="settings-button-gradient"
+                                className="settings-button-gradient flex-1 shadow-md hover:shadow-lg transition-all"
                               >
                                 <Save className="w-4 h-4 mr-2" />
-                                {t('settings:save')}
+                                {t('settings:save', 'Сохранить')}
                               </Button>
                               <Button
                                 type="button"
@@ -2769,28 +2794,29 @@ export default function AdminSettings() {
                                   setEditingMessenger(null);
                                   setMessengerForm({ api_token: '', webhook_url: '' });
                                 }}
+                                className="flex-1 hover:bg-gray-50"
                               >
-                                {t('settings:cancel')}
+                                {t('settings:cancel', 'Отмена')}
                               </Button>
                             </div>
                           </div>
                         ) : (
-                          <div>
-                            {messenger.messenger_type === 'instagram' ? (
-                              <p className="text-sm text-gray-600">
-                                {t('settings:instagram_integration_note')}
-                              </p>
-                            ) : (
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleStartEditMessenger(messenger.messenger_type)}
-                              >
-                                <Edit className="w-4 h-4 mr-2" />
-                                {messenger.has_token ? t('settings:change_settings') : t('settings:configure')}
-                              </Button>
-                            )}
+                          <div className="flex items-center justify-between">
+                            <div className="flex -space-x-2">
+                              <div className="w-6 h-6 rounded-full border-2 border-white bg-pink-100" />
+                              <div className="w-6 h-6 rounded-full border-2 border-white bg-blue-100" />
+                              <div className="w-6 h-6 rounded-full border-2 border-white bg-green-100" />
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleStartEditMessenger(messenger.messenger_type)}
+                              className="text-pink-600 hover:text-pink-700 hover:bg-pink-50 font-semibold"
+                            >
+                              <Edit className="w-4 h-4 mr-2" />
+                              {messenger.has_token ? t('settings:change_settings', 'Изменить настройки') : t('settings:configure', 'Настроить')}
+                            </Button>
                           </div>
                         )}
                       </div>

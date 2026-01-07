@@ -61,5 +61,34 @@
   "top_services": "Meilleurs services",
   "try_again": "Essayer à nouveau",
   "where_clients_leave": "Où vont les clients ?",
-  "work_on_objections": "Gérer les objections"
+  "work_on_objections": "Gérer les objections",
+  "funnel_overview": "Entonnoir de vente",
+  "visitors": "Visiteurs",
+  "engaged": "Impliqué",
+  "booked": "Inscrit",
+  "completed": "Visité",
+  "funnel_chart": "Visualisation de l'entonnoir",
+  "funnel": {
+    "conversion": {
+      "visitor_to_engaged": "Visiteur -> Engagé",
+      "engaged_to_booking": "Engagé -> réservation démarré",
+      "booking_to_booked": "Commencé -> Inscrit",
+      "booked_to_completed": "Inscrit -> Visité"
+    },
+    "stages": {
+      "visitors": "Visiteurs",
+      "engaged": "Impliqué",
+      "started_booking": "L'réservation a commencé",
+      "booked": "Inscrit",
+      "completed": "Visité"
+    },
+    "desc": {
+      "visitors": "Visiteurs du site Web/des réseaux sociaux",
+      "engaged": "A manifesté de l'intérêt",
+      "started_booking": "Ouverture du formulaire d'inscription",
+      "booked": "Inscription terminée",
+      "completed": "Service fourni"
+    },
+    "losses": "Pertes : {{count}}"
+  }
 }

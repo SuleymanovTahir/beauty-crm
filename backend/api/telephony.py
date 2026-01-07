@@ -29,12 +29,22 @@ class CallLogCreate(BaseModel):
     transcription: Optional[str] = None
     notes: Optional[str] = None
     external_id: Optional[str] = None
+    manual_client_name: Optional[str] = None
+    manual_manager_name: Optional[str] = None
+    manual_service_name: Optional[str] = None
 
 class CallLogUpdate(BaseModel):
     client_id: Optional[str] = None
     booking_id: Optional[int] = None
     notes: Optional[str] = None
     status: Optional[str] = None
+    phone: Optional[str] = None
+    direction: Optional[str] = None
+    duration: Optional[int] = None
+    manual_client_name: Optional[str] = None
+    manual_manager_name: Optional[str] = None
+    manual_service_name: Optional[str] = None
+    recording_url: Optional[str] = None
 
 class CallLogResponse(BaseModel):
     id: int
@@ -51,6 +61,9 @@ class CallLogResponse(BaseModel):
     manager_name: Optional[str]
     transcription: Optional[str]
     notes: Optional[str]
+    manual_client_name: Optional[str]
+    manual_manager_name: Optional[str]
+    manual_service_name: Optional[str]
 
 @router.get("/telephony/calls", response_model=List[CallLogResponse])
 async def get_calls(
@@ -72,7 +85,7 @@ async def get_calls(
         query = """
             SELECT 
                 cl.id,
-                COALESCE(c.name, c.username, 'Неизвестный') as client_name,
+                COALESCE(cl.manual_client_name, c.name, c.username, 'Неизвестный') as client_name,
                 cl.client_id,
                 cl.booking_id,
                 cl.phone,
@@ -84,7 +97,9 @@ async def get_calls(
                 cl.created_at,
                 cl.transcription,
                 cl.notes,
-                b.master as manager_name
+                COALESCE(cl.manual_manager_name, b.master) as manager_name,
+                cl.manual_client_name,
+                cl.manual_service_name
             FROM call_logs cl
             LEFT JOIN clients c ON c.instagram_id = cl.client_id
             LEFT JOIN bookings b ON b.id = cl.booking_id
@@ -151,7 +166,9 @@ async def get_calls(
                 "created_at": row[10].isoformat() if row[10] else None,
                 "transcription": row[11],
                 "notes": row[12],
-                "manager_name": row[13]
+                "manager_name": row[13],
+                "manual_client_name": row[14],
+                "manual_service_name": row[15]
             }
             for row in rows
         ]
@@ -162,18 +179,34 @@ async def get_calls(
         conn.close()
 
 @router.get("/telephony/stats")
-async def get_telephony_stats(current_user: dict = Depends(get_current_user)):
+async def get_telephony_stats(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("""
+        query = """
             SELECT 
                 COUNT(*) as total,
                 SUM(CASE WHEN direction = 'inbound' THEN 1 ELSE 0 END) as inbound,
                 SUM(CASE WHEN direction = 'outbound' THEN 1 ELSE 0 END) as outbound,
                 SUM(CASE WHEN status = 'missed' THEN 1 ELSE 0 END) as missed
             FROM call_logs
-        """)
+            WHERE 1=1
+        """
+        params = []
+        if start_date:
+            query += " AND created_at >= %s"
+            params.append(start_date)
+        if end_date:
+            query += " AND created_at <= %s"
+            if len(end_date) == 10:
+                 end_date += " 23:59:59"
+            params.append(end_date)
+
+        c.execute(query, params)
         row = c.fetchone()
         return {
             "total_calls": row[0] or 0,
@@ -184,6 +217,82 @@ async def get_telephony_stats(current_user: dict = Depends(get_current_user)):
     except Exception as e:
         logger.error(f"Error fetching telephony stats: {e}")
         return {"total_calls": 0, "inbound": 0, "outbound": 0, "missed": 0}
+    finally:
+        conn.close()
+
+@router.get("/telephony/analytics")
+async def get_telephony_analytics(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    manager_name: Optional[str] = None,
+    status: Optional[str] = None,
+    direction: Optional[str] = None,
+    min_duration: Optional[int] = None,
+    max_duration: Optional[int] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        query = """
+            SELECT 
+                DATE(cl.created_at) as date,
+                SUM(CASE WHEN cl.direction = 'inbound' THEN 1 ELSE 0 END) as inbound,
+                SUM(CASE WHEN cl.direction = 'outbound' THEN 1 ELSE 0 END) as outbound,
+                SUM(CASE WHEN cl.status = 'missed' THEN 1 ELSE 0 END) as missed,
+                AVG(cl.duration) as avg_duration
+            FROM call_logs cl
+            LEFT JOIN bookings b ON b.id = cl.booking_id
+            WHERE 1=1
+        """
+        params = []
+        if start_date:
+            query += " AND cl.created_at >= %s"
+            params.append(start_date)
+        if end_date:
+            query += " AND cl.created_at <= %s"
+            if len(end_date) == 10:
+                end_date += " 23:59:59"
+            params.append(end_date)
+            
+        if manager_name:
+            query += " AND b.master = %s"
+            params.append(manager_name)
+
+        if status and status != 'all':
+            query += " AND cl.status = %s"
+            params.append(status)
+
+        if direction and direction != 'all':
+            query += " AND cl.direction = %s"
+            params.append(direction)
+            
+        if min_duration is not None:
+            query += " AND cl.duration >= %s"
+            params.append(min_duration)
+
+        if max_duration is not None:
+            query += " AND cl.duration <= %s"
+            params.append(max_duration)
+
+        query += " GROUP BY DATE(cl.created_at) ORDER BY date"
+        
+        c.execute(query, params)
+        rows = c.fetchall()
+        
+        return [
+            {
+                "date": row[0].isoformat() if row[0] else None,
+                "inbound": row[1],
+                "outbound": row[2],
+                "missed": row[3],
+                "avg_duration": round(row[4] or 0, 2)
+            }
+            for row in rows
+        ]
+    except Exception as e:
+        logger.error(f"Error fetching analytics: {e}")
+        return []
     finally:
         conn.close()
 
@@ -226,12 +335,14 @@ async def create_call(call: CallLogCreate, current_user: dict = Depends(get_curr
         c.execute("""
             INSERT INTO call_logs (
                 phone, client_id, booking_id, direction, status, duration, recording_url, 
-                created_at, transcription, notes, external_id
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                created_at, transcription, notes, external_id, 
+                manual_client_name, manual_manager_name, manual_service_name
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """, (
             call.phone, call.client_id, call.booking_id, call.direction, call.status, call.duration,
-            call.recording_url, created_at, call.transcription, call.notes, call.external_id
+            call.recording_url, created_at, call.transcription, call.notes, call.external_id,
+            call.manual_client_name, call.manual_manager_name, call.manual_service_name
         ))
         call_id = c.fetchone()[0]
         conn.commit()
@@ -307,6 +418,27 @@ async def update_call(call_id: int, update: CallLogUpdate, current_user: dict = 
         if update.status is not None:
              fields.append("status = %s")
              params.append(update.status)
+        if update.phone is not None:
+             fields.append("phone = %s")
+             params.append(update.phone)
+        if update.direction is not None:
+             fields.append("direction = %s")
+             params.append(update.direction)
+        if update.duration is not None:
+             fields.append("duration = %s")
+             params.append(update.duration)
+        if update.manual_client_name is not None:
+             fields.append("manual_client_name = %s")
+             params.append(update.manual_client_name)
+        if update.manual_manager_name is not None:
+             fields.append("manual_manager_name = %s")
+             params.append(update.manual_manager_name)
+        if update.manual_service_name is not None:
+             fields.append("manual_service_name = %s")
+             params.append(update.manual_service_name)
+        if update.recording_url is not None:
+             fields.append("recording_url = %s")
+             params.append(update.recording_url)
         
         if not fields:
              return {"success": True}

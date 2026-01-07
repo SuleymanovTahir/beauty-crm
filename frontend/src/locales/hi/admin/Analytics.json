@@ -61,5 +61,34 @@
   "top_services": "शीर्ष सेवाएँ",
   "try_again": "पुनः प्रयास करें",
   "where_clients_leave": "ग्राहक कहां जाएं?",
-  "work_on_objections": "आपत्तियों से निपटें"
+  "work_on_objections": "आपत्तियों से निपटें",
+  "funnel_overview": "बिक्री फ़नल",
+  "visitors": "आगंतुकों",
+  "engaged": "शामिल",
+  "booked": "साइनअप किया",
+  "completed": "दौरा किया",
+  "funnel_chart": "फ़नल विज़ुअलाइज़ेशन",
+  "funnel": {
+    "conversion": {
+      "visitor_to_engaged": "आगंतुक -> व्यस्त",
+      "engaged_to_booking": "व्यस्त -> रिकॉर्डिंग प्रारंभ की गई",
+      "booking_to_booked": "प्रारंभ -> साइन अप किया गया",
+      "booked_to_completed": "साइन अप किया गया -> दौरा किया गया"
+    },
+    "stages": {
+      "visitors": "आगंतुकों",
+      "engaged": "शामिल",
+      "started_booking": "रिकॉर्डिंग शुरू कर दी",
+      "booked": "साइनअप किया",
+      "completed": "दौरा किया"
+    },
+    "desc": {
+      "visitors": "वेबसाइट/सोशल मीडिया विज़िटर",
+      "engaged": "दिलचस्पी दिखाई",
+      "started_booking": "रजिस्ट्रेशन फॉर्म खोला",
+      "booked": "पूरा पंजीकरण",
+      "completed": "सेवा प्रदान की गई"
+    },
+    "losses": "हानियाँ: {{count}}"
+  }
 }
