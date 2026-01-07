@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -15,7 +14,6 @@ import {
     PhoneOutgoing,
     PhoneMissed,
     Calendar,
-    Filter,
     Loader2,
     Plus,
     Trash2,
@@ -41,18 +39,12 @@ interface CallLog {
     phone: string;
     type: 'inbound' | 'outbound' | 'missed' | 'rejected' | 'ongoing';
     status: 'completed' | 'missed' | 'rejected' | 'ongoing';
-    duration: number; // seconds
+    duration: number;
     recording_url?: string;
     created_at: string;
     manager_name?: string;
     notes?: string;
 }
-
-// Imports from other components at the top
-import { PeriodFilterSelect } from '../../components/shared/PeriodFilterSelect';
-import { usePeriodFilter } from '../../hooks/usePeriodFilter';
-
-// ... (other imports)
 
 export default function Telephony() {
     const { t } = useTranslation(['admin/telephony', 'common']);
@@ -60,8 +52,31 @@ export default function Telephony() {
     const [period, setPeriod] = useState('all');
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
+    const [playingId, setPlayingId] = useState<number | null>(null);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
 
-    // ... (other state)
+    const [calls, setCalls] = useState<CallLog[]>([]);
+    const [stats, setStats] = useState({
+        total_calls: 0,
+        inbound: 0,
+        outbound: 0,
+        missed: 0
+    });
+    const [loading, setLoading] = useState(true);
+
+    const [showAddDialog, setShowAddDialog] = useState(false);
+    const [showEditDialog, setShowEditDialog] = useState(false);
+    const [editingCall, setEditingCall] = useState<CallLog | null>(null);
+    const [processing, setProcessing] = useState(false);
+
+    const [formData, setFormData] = useState({
+        phone: '',
+        direction: 'outbound',
+        status: 'completed',
+        duration: 0,
+        notes: '',
+        recording_url: ''
+    });
 
     useEffect(() => {
         loadData();
@@ -70,7 +85,6 @@ export default function Telephony() {
     const loadData = async () => {
         setLoading(true);
         try {
-            // Calculate timestamps based on period if not custom
             let start = dateFrom;
             let end = dateTo;
 
@@ -110,34 +124,21 @@ export default function Telephony() {
         }
     };
 
-    // ... (rest of the component)
-
-    // Update the Filter section in JSX to:
-    /*
-                <div className="flex gap-2">
-                    <div className="relative flex-1 max-w-sm">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <Input
-                            placeholder="Поиск по номеру или имени..."
-                            className="pl-9 bg-gray-50 border-gray-200"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                    </div>
-                
-                    <PeriodFilterSelect 
-                        value={period}
-                        onChange={setPeriod}
-                    />
-
-                    {period === 'custom' && (
-                       <div className="flex gap-2">
-                          <Input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-32" />
-                          <Input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-32" />
-                       </div>
-                    )}
-                </div>
-    */
+    const handlePlay = (id: number, url: string) => {
+        if (playingId === id) {
+            audioRef.current?.pause();
+            setPlayingId(null);
+        } else {
+            if (audioRef.current) {
+                audioRef.current.pause();
+            }
+            const audio = new Audio(url);
+            audio.onended = () => setPlayingId(null);
+            audio.play().catch(() => toast.error('Ошибка воспроизведения файла'));
+            audioRef.current = audio;
+            setPlayingId(id);
+        }
+    };
 
     const handleCreateCall = async () => {
         if (!formData.phone) {
@@ -222,7 +223,6 @@ export default function Telephony() {
 
     return (
         <div className="h-full flex flex-col bg-gray-50/50">
-            {/* Header */}
             <div className="px-8 py-6 bg-white border-b sticky top-0 z-20">
                 <div className="flex items-center justify-between mb-6">
                     <div>
@@ -234,7 +234,6 @@ export default function Telephony() {
                     </Button>
                 </div>
 
-                {/* Stats Cards */}
                 <div className="grid grid-cols-4 gap-4 mb-6">
                     <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
                         <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
@@ -274,7 +273,6 @@ export default function Telephony() {
                     </div>
                 </div>
 
-                {/* Filters */}
                 <div className="flex gap-2">
                     <div className="relative flex-1 max-w-sm">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -285,18 +283,42 @@ export default function Telephony() {
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
-                    <Button variant="outline" className="gap-2">
-                        <Calendar className="w-4 h-4" />
-                        Дата
-                    </Button>
-                    <Button variant="outline" className="gap-2">
-                        <Filter className="w-4 h-4" />
-                        Фильтр
-                    </Button>
+
+                    <Select value={period} onValueChange={setPeriod}>
+                        <SelectTrigger className="w-40">
+                            <Calendar className="w-4 h-4 mr-2" />
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Все время</SelectItem>
+                            <SelectItem value="today">Сегодня</SelectItem>
+                            <SelectItem value="week">Неделя</SelectItem>
+                            <SelectItem value="month">Месяц</SelectItem>
+                            <SelectItem value="custom">Период</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    {period === 'custom' && (
+                        <div className="flex gap-2">
+                            <Input
+                                type="date"
+                                value={dateFrom}
+                                onChange={e => setDateFrom(e.target.value)}
+                                className="w-40"
+                                placeholder="От"
+                            />
+                            <Input
+                                type="date"
+                                value={dateTo}
+                                onChange={e => setDateTo(e.target.value)}
+                                className="w-40"
+                                placeholder="До"
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
 
-            {/* List */}
             <div className="flex-1 overflow-auto p-6">
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <table className="w-full text-sm text-left">
@@ -399,23 +421,31 @@ export default function Telephony() {
                     </table>
                 </div>
 
-                {/* Integration Info */}
-                <div className="mt-8 bg-gray-900 rounded-xl p-6 text-gray-400 text-sm">
-                    <p className="font-mono mb-2 text-white">Webhook URL для интеграции:</p>
-                    <code className="bg-gray-800 px-3 py-1 rounded select-all block mb-4">
-                        {window.location.origin}/api/telephony/webhook/generic
-                    </code>
-                    <p>
-                        Поддерживаемые провайдеры:
-                        <span className="text-white mx-1">binotel</span>,
-                        <span className="text-white mx-1">onlinepbx</span>,
-                        <span className="text-white mx-1">generic</span>.
-                        Просто замените последнее слово в URL.
-                    </p>
+                <div className="mt-8 bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 text-gray-300 text-sm shadow-lg">
+                    <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 bg-pink-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Phone className="w-5 h-5 text-pink-400" />
+                        </div>
+                        <div className="flex-1">
+                            <p className="font-semibold mb-2 text-white">Интеграция с телефонией</p>
+                            <p className="text-xs mb-3 text-gray-400">
+                                Подключите вашу АТС для автоматической синхронизации звонков.
+                                Поддерживаются: <span className="text-pink-400">Binotel</span>, <span className="text-blue-400">OnlinePBX</span>, Twilio и другие.
+                            </p>
+                            <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                                <p className="text-xs text-gray-400 mb-1">Webhook URL:</p>
+                                <code className="text-xs bg-gray-900 px-2 py-1 rounded text-green-400 select-all block break-all">
+                                    {window.location.origin}/api/telephony/webhook/[provider]
+                                </code>
+                                <p className="text-xs text-gray-500 mt-2">
+                                    Замените <code className="text-pink-400">[provider]</code> на: binotel, onlinepbx или generic
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* Add Call Dialog */}
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
                 <DialogContent>
                     <DialogHeader>
@@ -464,7 +494,7 @@ export default function Telephony() {
                             <Input
                                 type="number"
                                 value={formData.duration}
-                                onChange={e => setFormData({ ...formData, duration: parseInt(e.target.value) })}
+                                onChange={e => setFormData({ ...formData, duration: parseInt(e.target.value) || 0 })}
                             />
                         </div>
                         <div>
@@ -492,7 +522,6 @@ export default function Telephony() {
                 </DialogContent>
             </Dialog>
 
-            {/* Edit Call Dialog */}
             <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
                 <DialogContent>
                     <DialogHeader>
