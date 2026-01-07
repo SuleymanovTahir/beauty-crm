@@ -22,6 +22,7 @@ import {
   Line,
   Legend
 } from 'recharts';
+import { CallHistorySection } from '../../components/bookings/CallHistorySection';
 
 interface Booking {
   id: number;
@@ -590,6 +591,9 @@ export default function BookingDetail() {
               </div>
             </div>
           </div>
+
+          {/* Call History Section */}
+          <CallHistorySection bookingId={booking.id} clientId={booking.client_id} />
 
           {/* Charts Section */}
           <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">

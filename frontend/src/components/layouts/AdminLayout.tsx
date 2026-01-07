@@ -56,6 +56,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [menuSettings, setMenuSettings] = useState<{ menu_order: string[] | null; hidden_items: string[] | null } | null>(null);
 
   // Используем централизованную систему прав
   const permissions = usePermissions(user?.role || 'employee');
@@ -66,6 +67,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     loadNotifications();
     loadSalonSettings();
     loadUserProfile();
+    loadMenuSettings();
     const unreadInterval = setInterval(loadUnreadCount, 10000);
     const notifInterval = setInterval(loadNotifications, 30000);
 
@@ -122,6 +124,16 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       setUnreadCount(data.total || 0);
     } catch (error) {
       console.error('Error loading unread count:', error);
+    }
+  };
+
+  const loadMenuSettings = async () => {
+    try {
+      const settings = await api.getMenuSettings();
+      setMenuSettings(settings);
+    } catch (error) {
+      console.error('Error loading menu settings:', error);
+      setMenuSettings({ menu_order: null, hidden_items: null });
     }
   };
 
@@ -182,8 +194,35 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     ];
 
     // Фильтруем только те пункты, к которым есть доступ
-    return allItems.filter(item => item.requirePermission());
-  }, [permissions, unreadCount, t]);
+    let filteredItems = allItems.filter(item => item.requirePermission());
+
+    // Применяем настройки меню
+    if (menuSettings?.menu_order && menuSettings.menu_order.length > 0) {
+      // Сортируем по сохраненному порядку
+      const ordered = menuSettings.menu_order
+        .map(id => filteredItems.find(item => item.path.includes(id)))
+        .filter(Boolean) as typeof allItems;
+
+      // Добавляем новые пункты, которых не было в настройках
+      filteredItems.forEach(item => {
+        if (!ordered.find(o => o?.path === item.path)) {
+          ordered.push(item);
+        }
+      });
+
+      filteredItems = ordered;
+    }
+
+    // Фильтруем скрытые пункты
+    if (menuSettings?.hidden_items && menuSettings.hidden_items.length > 0) {
+      filteredItems = filteredItems.filter(item => {
+        const itemId = item.path.split('/').pop();
+        return !menuSettings.hidden_items?.includes(itemId || '');
+      });
+    }
+
+    return filteredItems;
+  }, [permissions, unreadCount, menuSettings, t]);
 
   const chatSubmenuItems = enabledMessengers.map(messenger => ({
     icon: messenger.type === 'instagram' ? (props: any) => <InstagramIcon {...props} colorful={true} /> :

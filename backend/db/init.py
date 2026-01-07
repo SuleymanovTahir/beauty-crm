@@ -1706,6 +1706,22 @@ def init_database():
     except Exception as e:
         log_warning(f"⚠️ Public content migration warning: {e}", "db")
     
+    # Run telephony schema migration
+    try:
+        from db.migrations.consolidated.schema_telephony import run_migration as migrate_telephony
+        migrate_telephony()
+        log_info("✅ Telephony tables migrated", "db")
+    except Exception as e:
+        log_warning(f"⚠️ Telephony migration warning: {e}", "db")
+
+    # Run menu settings schema migration
+    try:
+         from db.migrations.consolidated.schema_menu_settings import run_migration as migrate_menu
+         migrate_menu()
+         log_info("✅ Menu settings tables migrated", "db")
+    except Exception as e:
+        log_warning(f"⚠️ Menu settings migration warning: {e}", "db")
+
     log_info("✅ База данных инициализирована", "db")
 
 if __name__ == "__main__":
