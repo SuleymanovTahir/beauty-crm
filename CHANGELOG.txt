@@ -1,5 +1,113 @@
 # CHANGELOG - Память проекта Beauty CRM
 
+## 2026-01-07: Полная Интеграция Телефонии с CRUD и Webhook
+
+### ПРОБЛЕМА
+1. **Mock Data**: Страница телефонии (`/crm/telephony`) отображала только статичные данные без подключения к БД.
+2. **No CRUD**: Отсутствовала возможность добавлять, редактировать или удалять записи звонков вручную.
+3. **No Filters**: Не было фильтрации по датам и периодам (сегодня, неделя, месяц, произвольный период).
+4. **No Integration**: Не было возможности подключить реальные АТС (Binotel, OnlinePBX, Twilio).
+5. **Missing Translations**: Отсутствовали переводы для страницы Funnel.
+6. **Lint Warnings**: Множество неиспользуемых импортов в компонентах.
+
+### РЕШЕНИЕ
+1. **Backend API (Telephony)**:
+   - Создан полноценный CRUD API для звонков:
+     * `GET /api/telephony/calls` - получение списка с фильтрами (search, start_date, end_date)
+     * `POST /api/telephony/calls` - создание записи звонка (с авто-привязкой клиента по номеру)
+     * `PUT /api/telephony/calls/{id}` - редактирование (статус, заметки)
+     * `DELETE /api/telephony/calls/{id}` - удаление записи
+     * `GET /api/telephony/stats` - статистика (всего, входящие, исходящие, пропущенные)
+
+2. **Webhook Integration**:
+   - Реализован универсальный вебхук: `POST /api/telephony/webhook/{provider}`
+   - Поддержка провайдеров из коробки:
+     * **Binotel** - нормализация полей (requestType, generalCallID, externalNumber, duration, recording)
+     * **OnlinePBX** - обработка событий (event=call_end, uuid, duration, recording_url)
+     * **Generic** - универсальный JSON формат для любых других АТС
+   - Автоматическая привязка клиента по номеру телефона при получении webhook
+   - Асинхронная обработка через BackgroundTasks
+
+3. **Frontend (Telephony Page)**:
+   - Полное подключение к API (удалены все моковые данные)
+   - Реализован CRUD UI:
+     * Диалог "Добавить звонок" с полями (телефон, тип, статус, длительность, запись, заметки)
+     * Диалог "Редактировать звонок" (статус, заметки)
+     * Кнопка удаления с подтверждением
+   - Фильтрация по периодам:
+     * Dropdown выбора периода (Все время, Сегодня, Неделя, Месяц, Произвольный)
+     * Два date picker для выбора произвольного диапазона
+   - Улучшенный UI:
+     * Премиальный блок с инструкцией по интеграции (градиент, иконки, код webhook URL)
+     * Цветные карточки статистики (синий, зеленый, фиолетовый, красный)
+     * Иконки типов звонков (входящий, исходящий, пропущенный)
+     * Плеер для прослушивания записей (play/pause)
+
+4. **Auto-linking Logic**:
+   - При создании звонка (вручную или через webhook) система автоматически ищет клиента по номеру телефона
+   - Используется умная очистка номера (удаление пробелов, тире, плюсов) для сопоставления
+   - Если клиент найден - автоматически привязывается `client_id`
+
+5. **Translation Fixes**:
+   - Исправлена ошибка в `Clients.tsx`: namespace изменен с `admin/Clients` на `admin/clients`
+   - Удалены все префиксы `clients:` из вызовов `t()` для упрощения
+   - Переводы для Funnel уже были в наличии (`admin/funnel.json`)
+
+6. **Code Cleanup**:
+   - Удалены неиспользуемые импорты:
+     * `React` из `ClientDetailsDialog.tsx`, `CreateBookingDialog.tsx`, `Telephony.tsx`
+     * `loading` state из `ClientDetailsDialog.tsx`
+     * `Search`, `Button` из `CreateBookingDialog.tsx`
+     * `Filter` из `Telephony.tsx`
+   - Исправлены все lint warnings
+
+### ВАЖНО ПОМНИТЬ
+- **Webhook URL Format**: `{APP_URL}/api/telephony/webhook/{provider}` где provider = binotel | onlinepbx | generic
+- **Phone Matching**: Система использует частичное совпадение (LIKE) для поиска клиентов по телефону
+- **Date Filters**: Backend принимает ISO строки, frontend автоматически добавляет время (23:59:59) к end_date
+- **Auto-linking**: Клиент привязывается автоматически при создании звонка, если номер найден в БД
+
+### УНИВЕРСАЛЬНОСТЬ КОДА ✅
+**НЕТ ХАРДКОДА:**
+- ✅ Webhook URL генерируется динамически из `window.location.origin`
+- ✅ Провайдеры определяются через параметр пути, а не хардкод
+- ✅ Все тексты через систему переводов (i18next)
+- ✅ Цвета и стили через CSS классы (Tailwind)
+- ✅ Форматы дат через `date-fns` с локалью
+
+### МОЖЕТ СЛОМАТЬСЯ
+- **SMTP не настроен** → уведомления админам о новых звонках не отправятся (если добавить эту фичу)
+- **Webhook без HTTPS** → некоторые провайдеры требуют SSL для webhook
+- **Дубликаты номеров** → если несколько клиентов с похожими номерами, привяжется первый найденный
+- **Формат даты** → если провайдер отправляет нестандартный формат timestamp
+
+### TESTING
+Проверено:
+- ✅ Создание звонка вручную через UI
+- ✅ Редактирование статуса и заметок
+- ✅ Удаление записи звонка
+- ✅ Фильтрация по поиску (номер, имя клиента)
+- ✅ Фильтрация по периодам (сегодня, неделя, месяц, произвольный)
+- ✅ Автоматическая привязка клиента по номеру
+- ✅ Отображение статистики (всего, входящие, исходящие, пропущенные)
+- ✅ Воспроизведение записи звонка (play/pause)
+
+### ФАЙЛЫ
+**НОВЫЕ:**
+- `backend/api/telephony.py` - NEW (Full CRUD API + Webhooks)
+- `backend/db/migrations/consolidated/schema_telephony.py` - NEW (Таблица call_logs)
+
+**ИЗМЕНЕНЫ:**
+- `backend/main.py` - MODIFIED (Регистрация telephony_router)
+- `backend/db/migrations/run_all_migrations.py` - MODIFIED (Добавлена миграция телефонии)
+- `frontend/src/services/api.ts` - MODIFIED (Методы getCalls, createCall, updateCall, deleteCall, getTelephonyStats)
+- `frontend/src/pages/admin/Telephony.tsx` - MODIFIED (Полный рефакторинг с CRUD и фильтрами)
+- `frontend/src/pages/admin/Clients.tsx` - MODIFIED (Исправлен namespace переводов)
+- `frontend/src/components/funnel/ClientDetailsDialog.tsx` - MODIFIED (Удалены неиспользуемые импорты)
+- `frontend/src/components/bookings/CreateBookingDialog.tsx` - MODIFIED (Удалены неиспользуемые импорты)
+- `frontend/src/components/layouts/AdminLayout.tsx` - VIEWED (Пункт меню "Телефония" уже был добавлен ранее)
+- `CHANGELOG.txt` - MODIFIED
+
 ## 2026-01-03: Исправление Локализации Сотрудников и Привязки Мастеров
 
 ### ПРОБЛЕМА
