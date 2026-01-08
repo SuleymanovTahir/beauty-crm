@@ -664,35 +664,54 @@ async def pin_client_api(
 @router.post("/clients/{client_id:path}/delete")
 async def delete_client_api(
     client_id: str,
+    request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Удалить клиента"""
+    """Удалить клиента (Soft Delete)"""
     from urllib.parse import unquote
+    from utils.soft_delete import soft_delete_client
+    from utils.audit import log_audit
     
-    print(f"🔍 DEBUG: Raw client_id from URL: {client_id!r}")
     decoded_id = unquote(client_id)
-    print(f"🔍 DEBUG: Decoded client_id: {decoded_id!r}")
     
     user = require_auth(session_token)
     if not user or user["role"] != "director":
-        print(f"⛔ DEBUG: Auth failed or role mismatch for user: {user}")
         return JSONResponse({"error": "Forbidden: Only Director can delete clients"}, status_code=403)
     
     try:
-        print(f"🗑️ DEBUG: Calling delete_client with id: {decoded_id!r}")
-        success = delete_client(decoded_id)
-        print(f"🤷‍♂️ DEBUG: delete_client returned: {success}")
+        # Получаем данные клиента перед удалением для аудита
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("SELECT id, name, phone, instagram_id FROM clients WHERE id = %s", (decoded_id,))
+        client_data = c.fetchone()
+        conn.close()
+
+        if not client_data:
+             return JSONResponse({"error": "Client not found"}, status_code=404)
+
+        success = soft_delete_client(decoded_id, user)
         
         if success:
-            log_activity(user["id"], "delete_client", "client", 
-                        decoded_id, "Client deleted")
-            return {"success": True, "message": "Client deleted"}
+            # Логируем в аудит
+            log_audit(
+                user=user,
+                action='delete',
+                entity_type='client',
+                entity_id=decoded_id,
+                old_value={
+                    "name": client_data[1],
+                    "phone": client_data[2],
+                    "instagram_id": client_data[3]
+                },
+                ip_address=request.client.host
+            )
+            return {"success": True, "message": "Client moved to trash"}
         else:
-            return JSONResponse({"error": "Client not found"}, 
-                              status_code=404)
+            return JSONResponse({"error": "Client not found or already deleted"}, status_code=404)
     except Exception as e:
         log_error(f"Error deleting client: {e}", "api")
-        return JSONResponse({" error": str(e)}, status_code=400)
+        return JSONResponse({"error": str(e)}, status_code=400)
+
 
 @router.get("/search")
 async def search_clients(

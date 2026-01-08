@@ -19,25 +19,21 @@ import {
   Menu,
   Bot,
   ChevronDown,
-  Target,
   Globe,
   MapPinned,
   Bell,
-  Sparkles,
   Filter,
   CheckSquare,
-  Phone
+  Phone,
+  Trash2,
+  ShieldCheck
 } from 'lucide-react';
 import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../icons/SocialIcons';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { usePermissions } from '../../utils/permissions';
 import { getPhotoUrl } from '../../utils/photoUtils';
-import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
-
 interface AdminLayoutProps {
   user: { id: number; role: string; full_name: string } | null;
   onLogout: () => void;
@@ -191,6 +187,8 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       { icon: Settings, label: t('menu.settings'), path: '/crm/settings', requirePermission: () => permissions.canViewSettings },
       { icon: Bot, label: t('menu.bot_settings'), path: '/crm/bot-settings', requirePermission: () => permissions.canViewBotSettings },
       { icon: Phone, label: t('menu.telephony', 'Телефония'), path: '/crm/telephony', requirePermission: () => true },
+      { icon: Trash2, label: t('menu.trash', 'Корзина'), path: '/crm/trash', requirePermission: () => permissions.roleLevel >= 80 },
+      { icon: ShieldCheck, label: t('menu.audit_log', 'Логи аудита'), path: '/crm/audit-log', requirePermission: () => user?.role === 'director' },
     ];
 
     // Фильтруем только те пункты, к которым есть доступ

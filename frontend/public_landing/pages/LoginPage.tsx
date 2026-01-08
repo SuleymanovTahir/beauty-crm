@@ -106,18 +106,16 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
 
     try {
       setLoading(true);
-      // Default to 'client' role for public registration unless specified otherwise
-      const response = await api.register(
+      // Используем упрощенную регистрацию клиента
+      const response = await api.registerClient(
         formData.username,
         formData.password,
         formData.full_name,
         formData.email,
         formData.phone,
-        'client', // role
-        '', // position
-        formData.agreedToTerms,
-        true // subscribe to newsletter
+        formData.agreedToTerms
       );
+
 
       if (response.success) {
         toast.success(t('auth/register:code_sent_to_email', 'Verification code sent to email'));

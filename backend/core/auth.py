@@ -298,6 +298,67 @@ async def google_login(data: dict):
 
 # ===== РЕГИСТРАЦИЯ =====
 
+# ===== РЕГИСТРАЦИЯ (ОБЩАЯ) =====
+
+@router.post("/register/client")
+async def register_client_api(
+    username: str = Form(...),
+    password: str = Form(...),
+    full_name: str = Form(...),
+    email: str = Form(...),
+    phone: str = Form(""),
+    privacy_accepted: bool = Form(False)
+):
+    """API: Регистрация клиента (упрощенная)"""
+    return await api_register(
+        username=username,
+        password=password,
+        full_name=full_name,
+        email=email,
+        role="client",
+        position="Клиент",
+        phone=phone,
+        privacy_accepted=privacy_accepted
+    )
+
+@router.post("/register/employee")
+async def register_employee_api(
+    username: str = Form(...),
+    password: str = Form(...),
+    full_name: str = Form(...),
+    email: str = Form(...),
+    role: str = Form("employee"),
+    position: str = Form(""),
+    phone: str = Form(""),
+    privacy_accepted: bool = Form(False)
+):
+    """API: Регистрация сотрудника (с выбором должности/роли)"""
+    # Запрещаем регистрировать директора через общую форму из соображений безопасности
+    # (хотя подтверждение все равно нужно, лучше перестраховаться)
+    if role == "director" and username.lower() != "admin":
+         # Проверяем, есть ли уже директора. Если есть - запрещаем.
+         conn = get_db_connection()
+         c = conn.cursor()
+         c.execute("SELECT COUNT(*) FROM users WHERE role = 'director' AND is_active = TRUE")
+         count = c.fetchone()[0]
+         conn.close()
+         if count > 0:
+             return JSONResponse(
+                 {"error": "Регистрация роли Директор через общую форму запрещена."},
+                 status_code=403
+             )
+
+    return await api_register(
+        username=username,
+        password=password,
+        full_name=full_name,
+        email=email,
+        role=role,
+        position=position,
+        phone=phone,
+        privacy_accepted=privacy_accepted
+    )
+
 @router.post("/register")
 async def api_register(
     username: str = Form(...),
@@ -306,217 +367,131 @@ async def api_register(
     email: str = Form(...),
     role: str = Form("employee"),
     position: str = Form(""),
+    phone: str = Form(""),
     privacy_accepted: bool = Form(False),
     newsletter_subscribed: bool = Form(True)
 ):
-    """API: Регистрация нового пользователя (требуется email подтверждение + одобрение админа)"""
+    """API: Регистрация нового пользователя (базовый метод)"""
     try:
         # Валидация
         if len(username) < 3:
-            return JSONResponse(
-                {"error": "Логин должен быть минимум 3 символа"},
-                status_code=400
-            )
+            return JSONResponse({"error": "Логин должен быть минимум 3 символа"}, status_code=400)
 
         if len(password) < 6:
-            return JSONResponse(
-                {"error": "Пароль должен быть минимум 6 символов"},
-                status_code=400
-            )
+            return JSONResponse({"error": "Пароль должен быть минимум 6 символов"}, status_code=400)
 
         if not full_name or len(full_name) < 2:
-            return JSONResponse(
-                {"error": "Имя должно быть минимум 2 символа"},
-                status_code=400
-            )
+            return JSONResponse({"error": "Имя должно быть минимум 2 символа"}, status_code=400)
 
         if not email or '@' not in email:
-            return JSONResponse(
-                {"error": "Введите корректный email"},
-                status_code=400
-            )
+            return JSONResponse({"error": "Введите корректный email"}, status_code=400)
 
         # Проверяем что логин и email не заняты
         conn = get_db_connection()
         c = conn.cursor()
 
-        # Проверка уникальности username
-        c.execute("SELECT id, username FROM users WHERE LOWER(username) = LOWER(%s)", (username,))
-        existing_user = c.fetchone()
-        if existing_user:
+        c.execute("SELECT id FROM users WHERE LOWER(username) = LOWER(%s)", (username,))
+        if c.fetchone():
             conn.close()
-            log_warning(f"Registration failed: username '{username}' already exists", "auth")
-            return JSONResponse(
-                {"error": f"Пользователь с логином '{username}' уже существует"},
-                status_code=400
-            )
+            return JSONResponse({"error": f"Пользователь с логином '{username}' уже существует"}, status_code=400)
 
-        # Проверка уникальности email
-        c.execute("SELECT id, email FROM users WHERE LOWER(email) = LOWER(%s)", (email,))
-        existing_email = c.fetchone()
-        if existing_email:
+        c.execute("SELECT id FROM users WHERE LOWER(email) = LOWER(%s)", (email,))
+        if c.fetchone():
             conn.close()
-            log_warning(f"Registration failed: email '{email}' already exists", "auth")
-            return JSONResponse(
-                {"error": f"Пользователь с email '{email}' уже зарегистрирован"},
-                status_code=400
-            )
+            return JSONResponse({"error": f"Пользователь с email '{email}' уже зарегистрирован"}, status_code=400)
 
-        # Генерируем токен верификации
-        import hashlib
-        from datetime import datetime, timedelta
+        # Генерируем токены
         import secrets
-
-        # Генерируем токен (безопасная случайная строка)
         verification_token = secrets.token_urlsafe(32)
-
-        # Для обратной совместимости также генерируем код
         from utils.email import generate_verification_code, get_code_expiry
-
         verification_code = generate_verification_code()
         code_expires = get_code_expiry()
 
-        # Создаём пользователя с is_active = 0 и email_verified = 0
         from utils.utils import hash_password
         password_hash = hash_password(password)
+        from datetime import datetime
         now = datetime.now().isoformat()
 
-        # ============================================================================
-        # 🔒 EMAIL VERIFICATION REQUIRED
-        # ============================================================================
-        # Теперь ВСЕ пользователи должны подтвердить email и получить одобрение админа
-        # Исключение только для первого админа (admin/admin123)
-        # ============================================================================
-
-        # Проверяем, это первый admin?
+        # Первый админ?
         is_first_admin = False
         if username.lower() == 'admin' and role == 'director':
             c.execute("SELECT COUNT(*) FROM users WHERE LOWER(username) = 'admin' AND role = 'director'")
-            admin_count = c.fetchone()[0]
-            is_first_admin = (admin_count == 0)
+            is_first_admin = (c.fetchone()[0] == 0)
         
-        auto_verify = is_first_admin  # Только первый admin автоактивируется
-
-        # ============================================================================
-        # ВАРИАНТ 2 (ОТКЛЮЧЕН): Автоактивация только первого директора
-        # Закомментируйте строку "auto_verify = True" выше и раскомментируйте блок ниже:
-        # ============================================================================
-        """
-        # Проверяем, существуют ли уже активные и верифицированные директора
-        # Тестовые/неактивные пользователи не считаются
-        c.execute("SELECT COUNT(*) FROM users WHERE role = 'director' AND is_active = TRUE AND email_verified = TRUE")
-        active_verified_directors = c.fetchone()[0]
-        is_first_director = (active_verified_directors == 0)
-
-        # Для первого РЕАЛЬНОГО директора автоматически подтверждаем email и активируем
-        # Это решает проблему "курицы и яйца" - некому подтверждать первого директора
-        # Тестовые боты не мешают, т.к. они либо не активны, либо не верифицированы
-        auto_verify = is_first_director and role == 'director'
-        """
-
-
-        # Добавляем privacy_accepted и privacy_accepted_at
-        privacy_accepted_at = now if privacy_accepted else None
+        auto_verify = is_first_admin
 
         c.execute("""INSERT INTO users
-                     (username, password_hash, full_name, email, role, position, created_at,
+                     (username, password_hash, full_name, email, phone, role, position, created_at,
                       is_active, email_verified, verification_code, verification_code_expires,
                       email_verification_token, privacy_accepted, privacy_accepted_at)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
-                  (username, password_hash, full_name, email, role, position, now,
-                   True if auto_verify else False,  # is_active
-                   True if auto_verify else False,  # email_verified
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
+                  (username, password_hash, full_name, email, phone, role, position, now,
+                   True if auto_verify else False,
+                   True if auto_verify else False,
                    verification_code, code_expires,
                    verification_token,
-                   int(privacy_accepted), privacy_accepted_at))
+                   int(privacy_accepted), now if privacy_accepted else None))
 
         user_id = c.fetchone()[0]
 
-
-        # Создаем запись в таблице employees для сотрудников
-        if role in ['employee', 'manager', 'director', 'admin']:
+        # Если это сотрудник - создаем запись в employees
+        if role in ['employee', 'manager', 'director', 'admin', 'sales', 'marketer']:
             c.execute("""INSERT INTO employees
                          (full_name, position, email, phone, is_active, created_at, updated_at)
-                         VALUES (%s, %s, %s, '', TRUE, %s, %s) RETURNING id""",
-                      (full_name, position or role, email, now, now))
-
+                         VALUES (%s, %s, %s, %s, TRUE, %s, %s) RETURNING id""",
+                      (full_name, position or role, email, phone, now, now))
             employee_id = c.fetchone()[0]
-
-            # Связываем пользователя с записью employee
-            c.execute("UPDATE users SET assigned_employee_id = %s WHERE id = %s",
-                      (employee_id, user_id))
-
-        # Если пользователь подписался на рассылку, создаем подписки
-        if newsletter_subscribed:
-            from core.subscriptions import get_subscription_types_for_role
-            subscription_types = get_subscription_types_for_role(role)
-            for sub_type in subscription_types.keys():
-                c.execute("""INSERT INTO user_subscriptions
-                             (user_id, subscription_type, is_subscribed, created_at, updated_at)
-                             VALUES (%s, %s, TRUE, %s, %s)""",
-                          (user_id, sub_type, now, now))
+            c.execute("UPDATE users SET assigned_employee_id = %s WHERE id = %s", (employee_id, user_id))
 
         conn.commit()
         conn.close()
 
-        # Если это первый admin, он автоматически подтвержден
         if auto_verify:
-            response_data = {
-                "success": True,
-                "message": "Регистрация успешна! Вы первый администратор системы и автоматически подтверждены. Можете войти в систему.",
-                "user_id": user_id,
-                "auto_verified": True,
-                "is_first_admin": True
-            }
-            log_info(f"First admin registered and auto-verified: {username} (ID: {user_id})", "auth")
-            conn.close()
-            return response_data
+            return {"success": True, "message": "Первый администратор создан", "user_id": user_id}
 
-        # Отправляем email с КОДОМ верификации (вместо ссылки)
-        from utils.email_service import send_verification_code_email, send_admin_notification_email
-        
-        # Отправляем код пользователю
-        email_sent = send_verification_code_email(email, verification_code, full_name, 'user')
-        
-        # Уведомляем админов о новой регистрации
+        # Отправляем уведомления
         try:
-            # Получаем email всех директоров для уведомления
-            c.execute("SELECT email FROM users WHERE role = 'director' AND is_active = TRUE AND email IS NOT NULL")
-            admin_emails = [row[0] for row in c.fetchall() if row[0]]
+            from utils.email_service import send_verification_code_email, send_admin_notification_email
+            send_verification_code_email(email, verification_code, full_name, 'user')
             
-            user_data_for_admin = {
-                'username': username,
-                'email': email,
-                'full_name': full_name,
-                'role': role,
-                'position': position
-            }
-            
-            for admin_email in admin_emails:
-                send_admin_notification_email(admin_email, user_data_for_admin)
+            # Уведомляем руководство о новой регистрации
+            if not auto_verify:
+                conn = get_db_connection()
+                cur = conn.cursor()
                 
-            log_info(f"Admin notifications sent to {len(admin_emails)} directors", "auth")
+                # 📢 Кого уведомляем? 
+                # Если регистрируется Админ - уведомляем только Директора.
+                # Если кто-то другой - уведомляем и Админа, и Директора.
+                if role == 'admin':
+                    cur.execute("SELECT email FROM users WHERE role = 'director' AND is_active = TRUE AND email IS NOT NULL")
+                else:
+                    cur.execute("SELECT email FROM users WHERE role IN ('director', 'admin') AND is_active = TRUE AND email IS NOT NULL")
+                
+                approvers = [r[0] for r in cur.fetchall() if r[0]]
+                conn.close()
+                
+                user_info = {
+                    'username': username, 
+                    'email': email, 
+                    'full_name': full_name, 
+                    'role': role, 
+                    'position': position
+                }
+                
+                for a_email in approvers:
+                    send_admin_notification_email(a_email, user_info)
+                    
+                log_info(f"Notification sent to {len(approvers)} approvers for role {role}", "auth")
         except Exception as e:
-            log_error(f"Failed to send admin notifications: {e}", "auth")
+            log_error(f"Notification error: {e}", "auth")
 
-        response_data = {
+
+        return {
             "success": True,
-            "message": "Регистрация успешна! Проверьте вашу почту и перейдите по ссылке для подтверждения.",
-            "user_id": user_id,
-            "email_sent": email_sent
+            "message": "Регистрация успешна! Подтвердите email и дождитесь одобрения руководства.",
+            "user_id": user_id
         }
 
-        # В development режиме возвращаем токен в ответе если email не отправлен
-        import os
-        if not email_sent and os.getenv("ENVIRONMENT") != "production":
-            log_warning(f"SMTP not configured - showing verification link in response", "auth")
-            verification_url = f"http://localhost:5173/verify-email%stoken={verification_token}"
-            response_data["verification_url"] = verification_url
-            response_data["message"] = f"⚠️ SMTP не настроен. Ссылка для подтверждения: {verification_url}"
-
-        log_info(f"New registration: {username} (ID: {user_id}), token: {'sent to email' if email_sent else verification_token[:20]+'...'}", "auth")
-
-        return response_data
 
     except psycopg2.IntegrityError:
         log_error(f"Registration failed: username {username} already exists", "auth")
@@ -692,25 +667,36 @@ async def verify_email_token(token: str):
             # Email уже подтвержден - просто логиним пользователя
             log_info(f"Email already verified for user {username}, logging in", "auth")
         else:
-            # Подтверждаем email и активируем пользователя
+            # Подтверждаем email (активация произойдет позже при одобрении админом)
             c.execute("""
                 UPDATE users
                 SET email_verified = TRUE,
-                    is_active = TRUE,
+                    is_active = FALSE,
                     email_verification_token = NULL,
                     verification_code = NULL,
                     verification_code_expires = NULL
                 WHERE id = %s
             """, (user_id,))
 
-            conn.commit()
-            log_info(f"Email verified and user activated: {username} (ID: {user_id})", "auth")
 
+            conn.commit()
+            log_info(f"Email verified for user: {username} (ID: {user_id}). Waiting for admin approval.", "auth")
+
+        # Проверяем активность пользователя перед входом
+        c.execute("SELECT is_active FROM users WHERE id = %s", (user_id,))
+        is_active = c.fetchone()[0]
         conn.close()
 
-        # Создаем сессию для автоматического входа
+        if not is_active:
+             return {
+                "success": True,
+                "needs_approval": True,
+                "message": "Email успешно подтвержден! Теперь ваш аккаунт должен быть одобрен администратором. Вам придет уведомление на почту."
+            }
+
+        # Создаем сессию для автоматического входа (только если уже активен, например для повторных кликов)
         session_token = create_session(user_id)
-        log_info(f"Session created for {username} after email verification", "auth")
+        log_info(f"Session created for {username} after email verification (already active)", "auth")
 
         # Возвращаем данные для автоматического входа
         response_data = {
@@ -726,6 +712,7 @@ async def verify_email_token(token: str):
                 "phone": phone
             }
         }
+
 
         response = JSONResponse(response_data)
         response.set_cookie(

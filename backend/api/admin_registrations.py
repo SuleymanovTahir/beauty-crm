@@ -74,17 +74,39 @@ async def approve_user_registration(
         raise HTTPException(status_code=403, detail="Access denied. Director or Admin role required.")
     
     try:
+        # Проверяем роль пользователя, которого хотим одобрить
+        from db.connection import get_db_connection
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("SELECT role, username FROM users WHERE id = %s", (data.user_id,))
+        target_user = c.fetchone()
+        conn.close()
+
+        if not target_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        target_role, target_username = target_user
+
+        # 🔒 КРИТИЧЕСКОЕ ПРАВИЛО: Админа может одобрить ТОЛЬКО Директор
+        if target_role == 'admin' and user["role"] != 'director':
+            log_warning(f"Security: Admin {user['username']} attempted to approve another Admin {target_username}", "admin_registrations")
+            raise HTTPException(
+                status_code=403, 
+                detail="Registration of an Admin can only be approved by a Director."
+            )
+
         success = approve_registration(data.user_id, user["id"])
         
         if not success:
             raise HTTPException(status_code=404, detail="User not found or already approved")
         
-        log_info(f"Admin {user['username']} approved registration for user ID {data.user_id}", "admin_registrations")
+        log_info(f"Admin/Director {user['username']} approved registration for {target_username} ({target_role})", "admin_registrations")
         
         return {
             "success": True,
-            "message": "Registration approved successfully"
+            "message": f"Registration for {target_username} approved successfully"
         }
+
         
     except HTTPException:
         raise

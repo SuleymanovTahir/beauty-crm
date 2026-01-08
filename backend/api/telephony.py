@@ -306,9 +306,7 @@ async def get_telephony_analytics(
     # 🔒 Только director, admin, sales
     if current_user.get("role") not in ["director", "admin", "sales"]:
         raise HTTPException(status_code=403, detail="Access denied")
-    max_duration: Optional[int] = None,
-    current_user: dict = Depends(get_current_user)
-):
+
     conn = get_db_connection()
     c = conn.cursor()
     try:

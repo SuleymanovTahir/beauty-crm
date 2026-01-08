@@ -31,6 +31,8 @@ const AdminFunnel = React.lazy(() => import('./pages/admin/Funnel'));
 const AdminTasks = React.lazy(() => import('./pages/admin/Tasks'));
 const Telephony = React.lazy(() => import('./pages/admin/Telephony'));
 const MenuCustomization = React.lazy(() => import('./pages/admin/MenuCustomization'));
+const TrashBin = React.lazy(() => import('./pages/admin/TrashBin'));
+const AuditLog = React.lazy(() => import('./pages/admin/AuditLog'));
 
 // Admin Panel pages
 const AdminPanelLayout = React.lazy(() => import('./components/layouts/AdminPanelLayout'));
@@ -313,7 +315,8 @@ export default function App() {
                 <Route path="tasks" element={<AdminTasks />} />
                 <Route path="telephony" element={<Telephony />} />
                 <Route path="menu-customization" element={<MenuCustomization />} />
-                <Route path="" element={<Navigate to="dashboard" replace />} />
+                <Route path="trash" element={<TrashBin />} />
+                <Route path="audit-log" element={<ProtectedRoute element={<AuditLog />} isAuthenticated={!!currentUser} requiredRole="director" currentRole={currentUser?.role} />} />
               </Route>
 
               {/* Manager Routes - Protected */}
