@@ -32,6 +32,8 @@ const namespaces = [
   'admin/funnel',
   'admin/tasks',
   'admin/telephony',
+  'admin/trash',
+  'admin/audit-log',
   'manager/chat',
   'manager/dashboard',
   'manager/funnel',

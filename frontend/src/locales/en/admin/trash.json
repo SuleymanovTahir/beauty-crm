@@ -1,0 +1,34 @@
+{
+    "title": "Trash Bin",
+    "subtitle": "Manage deleted items and restoration",
+    "search_placeholder": "Search by ID, reason or author...",
+    "filter_all": "All",
+    "filter_booking": "Bookings",
+    "filter_client": "Clients",
+    "filter_user": "Employees",
+    "empty_title": "Trash is empty",
+    "empty_desc": "Deleted items will appear here",
+    "loading": "Loading data...",
+    "objects_count": "{{count}} objects",
+    "deleted_by": "Deleted by",
+    "deleted_at": "Deleted at",
+    "restore": "Restore",
+    "permanent_delete": "Permanent Delete",
+    "permanent_delete_confirm": "Are you sure? This action cannot be undone!",
+    "not_restorable": "Not restorable",
+    "important_info": "Important Information",
+    "info_desc": "Items in the trash are kept indefinitely, but we recommend periodic cleaning for optimal database performance. Restoring an employee also returns their status to \"Active\".",
+    "toast": {
+        "load_error": "Error loading trash bin",
+        "refreshed": "Refreshed",
+        "restore_success": "{{type}} successfully restored",
+        "restore_error": "Failed to restore object",
+        "delete_success": "Object permanently deleted",
+        "delete_error": "Error during permanent deletion"
+    },
+    "entity": {
+        "booking": "Booking",
+        "client": "Client",
+        "user": "Employee"
+    }
+}

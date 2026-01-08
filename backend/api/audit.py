@@ -69,3 +69,25 @@ async def get_audit_summary(
             "actions_breakdown": actions
         }
     }
+
+@router.delete("/admin/audit-log/clear")
+async def clear_audit_log(
+    current_user: dict = Depends(get_current_user)
+):
+    """API: Полная очистка журнала аудита (только для Директора)"""
+    if current_user["role"] != "director":
+        raise HTTPException(status_code=403, detail="Forbidden: Only Director can clear audit log")
+        
+    from db.connection import get_db_connection
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        c.execute("TRUNCATE TABLE audit_log")
+        conn.commit()
+        return {"success": True, "message": "Audit log cleared successfully"}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()

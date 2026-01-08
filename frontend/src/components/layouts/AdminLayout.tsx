@@ -33,7 +33,7 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { usePermissions } from '../../utils/permissions';
 import { getPhotoUrl } from '../../utils/photoUtils';
-import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
+
 interface AdminLayoutProps {
   user: { id: number; role: string; full_name: string } | null;
   onLogout: () => void;
@@ -172,23 +172,32 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   // Фильтруем пункты меню на основе прав пользователя
   const menuItems = useMemo(() => {
     const allItems = [
+      // ГРУППА 1: Ежедневная работа (Операции)
       { icon: LayoutDashboard, label: t('menu.dashboard'), path: '/crm/dashboard', requirePermission: () => true },
+      { icon: Calendar, label: t('menu.calendar'), path: '/crm/calendar', requirePermission: () => permissions.canViewAllCalendars },
       { icon: FileText, label: t('menu.bookings'), path: '/crm/bookings', requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings },
-      { icon: Users, label: t('menu.clients'), path: '/crm/clients', requirePermission: () => permissions.canViewAllClients },
+      { icon: CheckSquare, label: t('menu.tasks'), path: '/crm/tasks', requirePermission: () => true },
       { icon: MessageSquare, label: t('menu.chat'), path: '/crm/chat', badge: unreadCount, hasSubmenu: true, requirePermission: () => true },
+
+      // ГРУППА 2: Управление (Базы данных)
+      { icon: Users, label: t('menu.clients'), path: '/crm/clients', requirePermission: () => permissions.canViewAllClients },
+      { icon: Scissors, label: t('menu.services'), path: '/crm/services', requirePermission: () => permissions.canViewServices },
+      { icon: UserCog, label: t('menu.users'), path: '/crm/users', requirePermission: () => permissions.canViewAllUsers },
+
+      // ГРУППА 3: Маркетинг и Аналитика
       { icon: BarChart3, label: t('menu.analytics'), path: '/crm/analytics', requirePermission: () => permissions.canViewAnalytics },
       { icon: Filter, label: t('menu.funnel'), path: '/crm/funnel', requirePermission: () => permissions.canViewAnalytics },
-      { icon: CheckSquare, label: t('menu.tasks'), path: '/crm/tasks', requirePermission: () => true },
-      { icon: Scissors, label: t('menu.services'), path: '/crm/services', requirePermission: () => permissions.canViewServices },
-      { icon: Calendar, label: t('menu.calendar'), path: '/crm/calendar', requirePermission: () => permissions.canViewAllCalendars },
-      { icon: UserCog, label: t('menu.users'), path: '/crm/users', requirePermission: () => permissions.canViewAllUsers },
-      { icon: Globe, label: t('menu.public_content'), path: '/crm/public-content', requirePermission: () => permissions.canViewSettings },
       { icon: MapPinned, label: t('menu.visitors'), path: '/crm/visitor-analytics', requirePermission: () => permissions.canViewAnalytics },
+
+      // ГРУППА 4: Контент и Каналы
+      { icon: Globe, label: t('menu.public_content'), path: '/crm/public-content', requirePermission: () => permissions.canViewSettings },
+      { icon: Phone, label: t('menu.telephony', 'Телефония'), path: '/crm/telephony', requirePermission: () => true },
+
+      // ГРУППА 5: Системные настройки
       { icon: Settings, label: t('menu.settings'), path: '/crm/settings', requirePermission: () => permissions.canViewSettings },
       { icon: Bot, label: t('menu.bot_settings'), path: '/crm/bot-settings', requirePermission: () => permissions.canViewBotSettings },
-      { icon: Phone, label: t('menu.telephony', 'Телефония'), path: '/crm/telephony', requirePermission: () => true },
-      { icon: Trash2, label: t('menu.trash', 'Корзина'), path: '/crm/trash', requirePermission: () => permissions.roleLevel >= 80 },
       { icon: ShieldCheck, label: t('menu.audit_log', 'Логи аудита'), path: '/crm/audit-log', requirePermission: () => user?.role === 'director' },
+      { icon: Trash2, label: t('menu.trash', 'Корзина'), path: '/crm/trash', requirePermission: () => permissions.roleLevel >= 80 },
     ];
 
     // Фильтруем только те пункты, к которым есть доступ
