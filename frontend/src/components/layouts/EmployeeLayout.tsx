@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
-import { usePermissions } from '../../utils/permissions';
 import { getPhotoUrl } from '../../utils/photoUtils';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 
@@ -31,7 +30,6 @@ export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) 
   const [userProfile, setUserProfile] = useState<any>(null);
 
   // Используем централизованную систему прав
-  const permissions = usePermissions(user?.role || 'employee');
 
   useEffect(() => {
     loadSalonSettings();

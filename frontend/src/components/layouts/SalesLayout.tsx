@@ -32,6 +32,7 @@ export default function SalesLayout({ user, onLogout }: SalesLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showChatSubmenu, setShowChatSubmenu] = useState(false);
   const [enabledMessengers, setEnabledMessengers] = useState<Array<{ type: string; name: string }>>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
 
@@ -39,8 +40,11 @@ export default function SalesLayout({ user, onLogout }: SalesLayoutProps) {
 
   useEffect(() => {
     loadEnabledMessengers();
+    loadUnreadCount();
     loadSalonSettings();
     loadUserProfile();
+
+    const unreadInterval = setInterval(loadUnreadCount, 10000);
 
     const handleMessengersUpdate = () => {
       loadEnabledMessengers();
@@ -53,10 +57,20 @@ export default function SalesLayout({ user, onLogout }: SalesLayoutProps) {
     window.addEventListener('profile-updated', handleProfileUpdate);
 
     return () => {
+      clearInterval(unreadInterval);
       window.removeEventListener('messengers-updated', handleMessengersUpdate);
       window.removeEventListener('profile-updated', handleProfileUpdate);
     };
   }, []);
+
+  const loadUnreadCount = async () => {
+    try {
+      const data = await api.getTotalUnread();
+      setUnreadCount(data.total || 0);
+    } catch (error) {
+      console.error('Error loading unread count:', error);
+    }
+  };
 
   const loadEnabledMessengers = async () => {
     try {
@@ -107,7 +121,7 @@ export default function SalesLayout({ user, onLogout }: SalesLayoutProps) {
   const menuItems = useMemo(() => {
     const allItems = [
       { icon: Users, label: t('menu.clients', 'Клиенты'), path: '/sales/clients', requirePermission: () => true },
-      { icon: MessageSquare, label: t('menu.chat', 'Чат'), path: '/sales/chat', hasSubmenu: true, requirePermission: () => permissions.canViewInstagramChat },
+      { icon: MessageSquare, label: t('menu.chat', 'Чат'), path: '/sales/chat', badge: unreadCount, hasSubmenu: true, requirePermission: () => permissions.canViewInstagramChat },
       { icon: BarChart3, label: t('menu.analytics', 'Аналитика'), path: '/sales/analytics', requirePermission: () => permissions.canViewAnalytics },
       { icon: Send, label: t('menu.broadcasts', 'Рассылки'), path: '/sales/broadcasts', requirePermission: () => permissions.canSendBroadcasts },
       { icon: MessageCircle, label: t('menu.internal_chat', 'Внутренний чат'), path: '/sales/internal-chat', requirePermission: () => true },
@@ -203,6 +217,11 @@ export default function SalesLayout({ user, onLogout }: SalesLayoutProps) {
                           size={16}
                           className={`ml-auto transition-transform ${showChatSubmenu ? 'rotate-180' : ''}`}
                         />
+                        {item.badge != null && Number(item.badge) > 0 && (
+                          <span className="absolute right-10 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
+                            {Number(item.badge) > 99 ? '99+' : item.badge}
+                          </span>
+                        )}
                       </button>
 
                       {/* Submenu Items */}
@@ -251,6 +270,11 @@ export default function SalesLayout({ user, onLogout }: SalesLayoutProps) {
                     >
                       <item.icon size={18} />
                       <span>{item.label}</span>
+                      {item.badge != null && Number(item.badge) > 0 && (
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
+                          {Number(item.badge) > 99 ? '99+' : item.badge}
+                        </span>
+                      )}
                     </button>
                   )}
                 </li>

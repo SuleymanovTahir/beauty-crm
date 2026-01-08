@@ -12,9 +12,7 @@ import {
   ChevronDown,
   MessageSquare,
   X,
-  Menu,
-  Globe,
-  MapPinned
+  Menu
 } from 'lucide-react';
 import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../icons/SocialIcons';
 import { toast } from 'sonner';
