@@ -236,10 +236,30 @@ async def get_notification_settings():
 # ===== BOT SETTINGS =====
 
 @router.get("/bot-settings")
-async def get_bot_settings_api():
+async def get_bot_settings_api(session_token: Optional[str] = Cookie(None)):
     """
-    Получить настройки бота
+    Получить настройки бота (только director, admin, sales)
     """
+    from utils.utils import require_auth
+    from utils.logger import log_warning
+    
+    user = require_auth(session_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    # 🔒 Только director, admin, sales могут видеть настройки бота
+    ALLOWED_BOT_SETTINGS_ROLES = ["director", "admin", "sales"]
+    
+    if user["role"] not in ALLOWED_BOT_SETTINGS_ROLES:
+        log_warning(
+            f"🔒 SECURITY: {user['role']} {user['username']} attempted to view bot settings", 
+            "security"
+        )
+        raise HTTPException(
+            status_code=403,
+            detail="Only director, admin, and sales can view bot settings"
+        )
+    
     try:
         settings = get_bot_settings()
         return settings
@@ -248,16 +268,36 @@ async def get_bot_settings_api():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/settings/bot")
-async def update_bot_settings_api(request: Request):
+async def update_bot_settings_api(request: Request, session_token: Optional[str] = Cookie(None)):
     """
-    Обновить настройки бота
+    Обновить настройки бота (только director, admin, sales)
     """
+    from utils.utils import require_auth
+    from utils.logger import log_warning
+    
+    user = require_auth(session_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    # 🔒 Только director, admin, sales могут изменять настройки бота
+    ALLOWED_BOT_SETTINGS_ROLES = ["director", "admin", "sales"]
+    
+    if user["role"] not in ALLOWED_BOT_SETTINGS_ROLES:
+        log_warning(
+            f"🔒 SECURITY: {user['role']} {user['username']} attempted to update bot settings", 
+            "security"
+        )
+        raise HTTPException(
+            status_code=403,
+            detail="Only director, admin, and sales can update bot settings"
+        )
+    
     try:
         data = await request.json()
         success = update_bot_settings(data)
 
         if success:
-            log_info("Bot settings updated successfully", "settings")
+            log_info(f"Bot settings updated by {user['role']} {user['username']}", "settings")
             return {"success": True, "message": "Bot settings updated"}
         else:
             raise HTTPException(status_code=500, detail="Failed to update bot settings")

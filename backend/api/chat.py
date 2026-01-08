@@ -60,10 +60,22 @@ async def get_chat_messages(
     messenger: Optional[str] = Query('instagram'),
     session_token: Optional[str] = Cookie(None)
 ):
-    """Получить сообщения чата с фильтрацией по мессенджеру"""
+    """Получить сообщения чата с фильтрацией по мессенджеру (НЕ для employee)"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    # 🔒 Employee НЕ должен видеть переписку с клиентами
+    if user["role"] == "employee":
+        log_warning(
+            f"🔒 SECURITY: Employee {user['username']} attempted to view chat with {client_id}", 
+            "security"
+        )
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=403,
+            detail="Access denied: Employees cannot view client conversations"
+        )
 
     # Валидируем тип мессенджера
     valid_messengers = ['instagram', 'telegram', 'whatsapp', 'tiktok']
@@ -97,8 +109,8 @@ async def send_chat_message(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    # 🔒 КРИТИЧНО: Только определенные роли могут отправлять сообщения
-    ALLOWED_TO_SEND_MESSAGES = ["admin", "director", "manager", "sales"]
+    # 🔒 КРИТИЧНО: Только sales, admin, director могут отправлять сообщения
+    ALLOWED_TO_SEND_MESSAGES = ["admin", "director", "sales"]
     
     if user["role"] not in ALLOWED_TO_SEND_MESSAGES:
         log_warning(
@@ -144,8 +156,8 @@ async def send_chat_file(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    # 🔒 КРИТИЧНО: Только определенные роли могут отправлять файлы
-    ALLOWED_TO_SEND_MESSAGES = ["admin", "director", "manager", "sales"]
+    # 🔒 КРИТИЧНО: Только sales, admin, director могут отправлять файлы
+    ALLOWED_TO_SEND_MESSAGES = ["admin", "director", "sales"]
     
     if user["role"] not in ALLOWED_TO_SEND_MESSAGES:
         log_warning(
