@@ -37,5 +37,7 @@
         "broadcasts": "Рассылки",
         "internal_chat": "Внутренняя связь",
         "notifications": "Уведомления"
-    }
+    },
+    "notifications": "Уведомления",
+    "no_new_notifications": "Нет уведомлений"
 }
