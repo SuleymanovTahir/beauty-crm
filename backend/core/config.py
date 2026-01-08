@@ -231,8 +231,11 @@ ROLES = {
             'clients_view_limited',
             'analytics_view_stats_only',
             'staff_chat_own',
-            'calendar_view_all_readonly',
-            'bot_settings_view'
+            'calendar_view_all',           # Полный доступ к календарю (для просмотра и записи)
+            'bot_settings_view',
+            'bookings_create',             # Право создавать записи
+            'bookings_view',               # Право просматривать записи
+            'telephony_access'             # Доступ к телефонии для звонков
         ],
         'can_manage_roles': [],
         'hierarchy_level': 40
@@ -310,7 +313,11 @@ PERMISSION_DESCRIPTIONS = {
     # Настройки
     'settings_view': 'Просмотр настроек',
     'settings_edit': 'Изменение настроек',
+    'bot_settings_view': 'Просмотр настроек бота',
     'bot_settings_edit': 'Настройки бота',
+
+    # Телефония
+    'telephony_access': 'Доступ к телефонии для звонков клиентам',
 }
 
 def has_permission(user_role: str, permission: str) -> bool:
