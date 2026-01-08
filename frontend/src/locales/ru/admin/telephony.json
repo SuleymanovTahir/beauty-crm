@@ -70,5 +70,9 @@
     "copy": "Копировать",
     "copied": "Скопировано",
     "success": "Успешно",
-    "error": "Ошибка"
+    "error": "Ошибка",
+    "provider_binotel": "Binotel",
+    "provider_onlinepbx": "OnlinePBX",
+    "provider_twilio": "Twilio",
+    "provider_generic": "Generic (Webhook)"
 }

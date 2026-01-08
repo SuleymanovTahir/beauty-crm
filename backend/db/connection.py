@@ -13,15 +13,18 @@ def init_connection_pool():
     if _connection_pool is None:
         try:
             _connection_pool = pool.ThreadedConnectionPool(
-                minconn=5,
+                minconn=10,  # Увеличено с 5 для снижения задержек
                 maxconn=50,
                 host=os.getenv('POSTGRES_HOST', 'localhost'),
                 port=os.getenv('POSTGRES_PORT', '5432'),
                 database=os.getenv('POSTGRES_DB', 'beauty_crm'),
                 user=os.getenv('POSTGRES_USER', 'beauty_crm_user'),
-                password=os.getenv('POSTGRES_PASSWORD', '')
+                password=os.getenv('POSTGRES_PASSWORD', ''),
+                # Оптимизация производительности
+                connect_timeout=5,  # Таймаут подключения
+                options='-c statement_timeout=30000'  # 30 секунд на запрос
             )
-            log_info("✅ Database connection pool initialized (5-50 connections)", "db")
+            log_info("✅ Database connection pool initialized (10-50 connections)", "db")
         except Exception as e:
             log_error(f"❌ Failed to initialize connection pool: {e}", "db")
             raise

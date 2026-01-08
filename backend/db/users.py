@@ -42,16 +42,17 @@ def create_user(username: str, password: str, full_name: str = None,
     conn = get_db_connection()
     c = conn.cursor()
     
-    password_hash = hashlib.sha256(password.encode()).hexdigest()
+    from utils.utils import hash_password
+    password_hash = hash_password(password)
     now = datetime.now().isoformat()
     
     try:
         c.execute("""INSERT INTO users 
                      (username, password_hash, full_name, email, role, created_at, phone)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+                     VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id""",
                   (username, password_hash, full_name, email, role, now, phone))
         conn.commit()
-        user_id = c.lastrowid
+        user_id = c.fetchone()[0]
         conn.close()
         return user_id
     except psycopg2.IntegrityError:
@@ -63,26 +64,40 @@ def verify_user(username: str, password: str) -> Optional[Dict]:
     conn = get_db_connection()
     c = conn.cursor()
     
-    password_hash = hashlib.sha256(password.encode()).hexdigest()
-    
-    c.execute("""SELECT id, username, full_name, email, role, employee_id, phone
+    c.execute("""SELECT id, username, full_name, email, role, employee_id, phone, password_hash
                  FROM users 
-                 WHERE username = %s AND password_hash = %s AND is_active = TRUE""",
-              (username, password_hash))
+                 WHERE username = %s AND is_active = TRUE""",
+              (username,))
     
-    user = c.fetchone()
+    user_row = c.fetchone()
     conn.close()
     
-    if user:
-        return {
-            "id": user[0],
-            "username": user[1],
-            "full_name": user[2],
-            "email": user[3],
-            "role": user[4],
-            "employee_id": user[5],
-            "phone": user[6]
-        }
+    if user_row:
+        stored_hash = user_row[7]
+        is_valid = False
+        
+        if stored_hash.startswith("pbkdf2:"):
+            try:
+                _, algorithm, iterations_salt_hash = stored_hash.split(':')
+                iterations, salt, hash_value = iterations_salt_hash.split('$')
+                new_hash = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), int(iterations)).hex()
+                is_valid = (new_hash == hash_value)
+            except Exception:
+                is_valid = False
+        else:
+            # Legacy SHA256 support
+            is_valid = (hashlib.sha256(password.encode()).hexdigest() == stored_hash)
+            
+        if is_valid:
+            return {
+                "id": user_row[0],
+                "username": user_row[1],
+                "full_name": user_row[2],
+                "email": user_row[3],
+                "role": user_row[4],
+                "employee_id": user_row[5],
+                "phone": user_row[6]
+            }
     return None
 
 def delete_user(user_id: int) -> bool:
@@ -247,7 +262,9 @@ def reset_user_password(user_id: int, new_password: str):
     conn = get_db_connection()
     c = conn.cursor()
     
-    password_hash = hashlib.sha256(new_password.encode()).hexdigest()
+    salt = secrets.token_hex(16)
+    hash_value = hashlib.pbkdf2_hmac('sha256', new_password.encode(), salt.encode(), 100000).hex()
+    password_hash = f"pbkdf2:sha256:100000${salt}${hash_value}"
     
     c.execute("UPDATE users SET password_hash = %s WHERE id = %s",
               (password_hash, user_id))

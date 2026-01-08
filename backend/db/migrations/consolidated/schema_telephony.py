@@ -47,6 +47,7 @@ def run_migration():
         # Add index on client_id and phone for faster lookups
         c.execute("CREATE INDEX IF NOT EXISTS idx_call_logs_client ON call_logs(client_id);")
         c.execute("CREATE INDEX IF NOT EXISTS idx_call_logs_phone ON call_logs(phone);")
+        c.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_call_logs_external_id ON call_logs(external_id) WHERE external_id IS NOT NULL;")
         
         conn.commit()
         logging.info("✅ call_logs table created successfully.")
