@@ -92,10 +92,24 @@ async def send_chat_message(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Отправить сообщение клиенту"""
+    """Отправить сообщение клиенту (только admin, director, manager, sales)"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    # 🔒 КРИТИЧНО: Только определенные роли могут отправлять сообщения
+    ALLOWED_TO_SEND_MESSAGES = ["admin", "director", "manager", "sales"]
+    
+    if user["role"] not in ALLOWED_TO_SEND_MESSAGES:
+        log_warning(
+            f"🔒 SECURITY: {user['role']} {user['username']} attempted to send message", 
+            "security"
+        )
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=403,
+            detail="You don't have permission to send messages to clients"
+        )
     
     data = await request.json()
     instagram_id = data.get('instagram_id')
@@ -105,29 +119,44 @@ async def send_chat_message(
         return JSONResponse({"error": "Missing data"}, status_code=400)
     
     try:
+        log_info(f"📤 {user['role']} {user['username']} sending message to {instagram_id}", "chat")
+        
         result = await send_message(instagram_id, message)
         
         if "error" not in result:
             save_message(instagram_id, message, "bot")
             log_activity(user["id"], "send_message", "client", instagram_id, 
-                        "Message sent")
+                        f"Message sent by {user['role']}")
             return {"success": True, "message": "Message sent"}
         
         return JSONResponse({"error": "Send failed"}, status_code=500)
     except Exception as e:
         log_error(f"Error sending message: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-    
 
 @router.post("/chat/send-file")
 async def send_chat_file(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Отправить файл клиенту"""
+    """Отправить файл клиенту (только admin, director, manager, sales)"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    # 🔒 КРИТИЧНО: Только определенные роли могут отправлять файлы
+    ALLOWED_TO_SEND_MESSAGES = ["admin", "director", "manager", "sales"]
+    
+    if user["role"] not in ALLOWED_TO_SEND_MESSAGES:
+        log_warning(
+            f"🔒 SECURITY: {user['role']} {user['username']} attempted to send file", 
+            "security"
+        )
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=403,
+            detail="You don't have permission to send files to clients"
+        )
     
     try:
         data = await request.json()
