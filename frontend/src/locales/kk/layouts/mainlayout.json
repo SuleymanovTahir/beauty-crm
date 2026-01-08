@@ -30,6 +30,12 @@
     "my_bookings": "Менің тапсырыстарым",
     "profile": "Профиль",
     "broadcasts": "Ақпараттық бюллетеньдер",
-    "internal_chat": "Домофон"
+    "internal_chat": "Домофон",
+    "notifications": "Хабарландырулар"
+  },
+  "roles": {
+    "director": "Директор",
+    "sales": "Сатылымдар",
+    "marketer": "Маркетинг"
   }
 }

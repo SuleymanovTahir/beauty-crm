@@ -30,6 +30,12 @@
     "my_bookings": "Meine Buchungen",
     "profile": "Profil",
     "broadcasts": "Newsletter",
-    "internal_chat": "Gegensprechanlage"
+    "internal_chat": "Gegensprechanlage",
+    "notifications": "Benachrichtigungen"
+  },
+  "roles": {
+    "director": "Direktor",
+    "sales": "Verkäufe",
+    "marketer": "Marketing"
   }
 }

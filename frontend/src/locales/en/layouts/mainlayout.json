@@ -2,6 +2,11 @@
   "admin": "Administrator",
   "manager": "Manager",
   "employee": "Employee",
+  "roles": {
+    "director": "Director",
+    "sales": "Sales",
+    "marketer": "Marketing"
+  },
   "admin_panel": "Admin panel",
   "crm": "CRM Panel",
   "logout": "Log out",
@@ -30,6 +35,7 @@
     "my_bookings": "My bookings",
     "profile": "Profile",
     "broadcasts": "Newsletters",
-    "internal_chat": "Intercom"
+    "internal_chat": "Intercom",
+    "notifications": "Notifications"
   }
 }

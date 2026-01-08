@@ -138,6 +138,16 @@ const api = {
 export default function Bookings() {
   const navigate = useNavigate();
   const { statuses: statusConfig } = useBookingStatuses();
+  const statusConfigArray = useMemo(() =>
+    Object.entries(statusConfig).map(([value, config]) => ({
+      value,
+      label: config.label,
+      color: config.color,
+      bgColor: `bg-${config.color}-100`,
+      textColor: `text-${config.color}-700`
+    })),
+    [statusConfig]
+  );
   const { currency } = useCurrency();
   const [bookings, setBookings] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
@@ -160,6 +170,11 @@ export default function Bookings() {
   const [masters, setMasters] = useState<any[]>([]);
   const currentUser = useMemo(() => api.getCurrentUser(), []);
   const isEmployee = currentUser?.role === 'employee';
+  const isSales = currentUser?.role === 'sales';
+  const isAdmin = currentUser?.role === 'admin';
+  const isDirector = currentUser?.role === 'director';
+  const canEdit = isDirector || isAdmin || isSales; // Все кроме employee
+  const canDelete = isDirector; // Только директор
 
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -842,13 +857,15 @@ export default function Bookings() {
 
           {/* Row 2: Control Bar */}
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowAddDialog(true)}
-              className="flex-[2] min-w-[100px] h-[42px] px-3 bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md shadow-gray-200"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Добавить</span>
-            </button>
+            {!isEmployee && (
+              <button
+                onClick={() => setShowAddDialog(true)}
+                className="flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:from-pink-600 hover:to-purple-700 active:scale-95 transition-all shadow-md"
+              >
+                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span>Добавить</span>
+              </button>
+            )}
 
             <button
               onClick={() => {
@@ -865,20 +882,22 @@ export default function Bookings() {
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
             </button>
 
-            <button
-              onClick={() => {
-                setShowActions(!showActions);
-                if (!showActions) setShowFilters(false);
-              }}
-              className={`flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showActions
-                ? 'bg-blue-50 border-blue-200 text-blue-600'
-                : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
-                }`}
-            >
-              <Upload className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showActions ? 'text-blue-500' : 'text-gray-400'}`} />
-              <span className="truncate">Опции</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showActions ? 'rotate-180' : ''}`} />
-            </button>
+            {!isEmployee && (
+              <button
+                onClick={() => {
+                  setShowActions(!showActions);
+                  if (!showActions) setShowFilters(false);
+                }}
+                className={`flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showActions
+                  ? 'bg-blue-50 border-blue-200 text-blue-600'
+                  : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                  }`}
+              >
+                <Upload className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showActions ? 'text-blue-500' : 'text-gray-400'}`} />
+                <span className="truncate">Опции</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showActions ? 'rotate-180' : ''}`} />
+              </button>
+            )}
 
             <button
               onClick={handleRefresh}
@@ -1206,10 +1225,14 @@ export default function Bookings() {
                         })()}
                       </td>
                       <td className="px-6 py-4">
-                        <SourceSelect
-                          value={booking.source}
-                          onChange={(newSource) => handleSourceChange(booking.id, newSource)}
-                        />
+                        {canEdit ? (
+                          <SourceSelect
+                            value={booking.source}
+                            onChange={(newSource) => handleSourceChange(booking.id, newSource)}
+                          />
+                        ) : (
+                          <span className="text-sm text-gray-700">{booking.source || '-'}</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">
                         {(() => {
@@ -1224,11 +1247,20 @@ export default function Bookings() {
 
                       <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{booking.phone || '-'}</td>
                       <td className="px-6 py-4">
-                        <StatusSelect
-                          value={booking.status}
-                          onChange={(newStatus) => handleStatusChange(booking.id, newStatus)}
-                          options={statusConfig}
-                        />
+                        {canEdit ? (
+                          <StatusSelect
+                            value={booking.status}
+                            onChange={(newStatus) => handleStatusChange(booking.id, newStatus)}
+                            options={statusConfig}
+                          />
+                        ) : (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style={{
+                            backgroundColor: statusConfigArray.find((s: any) => s.value === booking.status)?.bgColor || '#f3f4f6',
+                            color: statusConfigArray.find((s: any) => s.value === booking.status)?.textColor || '#374151'
+                          }}>
+                            {statusConfigArray.find((s: any) => s.value === booking.status)?.label || booking.status}
+                          </span>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex gap-2">
@@ -1248,22 +1280,24 @@ export default function Bookings() {
                           >
                             <Eye style={{ width: '16px', height: '16px', color: '#6b7280' }} />
                           </button>
-                          <button
-                            onClick={() => handleEditBooking(booking)}
-                            style={{
-                              padding: '0.375rem 0.75rem',
-                              backgroundColor: '#fff',
-                              border: '1px solid #d1d5db',
-                              borderRadius: '0.375rem',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center'
-                            }}
-                            title={t('bookings:edit')}
-                          >
-                            <Edit style={{ width: '16px', height: '16px', color: '#3b82f6' }} />
-                          </button>
+                          {canEdit && (
+                            <button
+                              onClick={() => handleEditBooking(booking)}
+                              style={{
+                                padding: '0.375rem 0.75rem',
+                                backgroundColor: '#fff',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '0.375rem',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                              title={t('bookings:edit')}
+                            >
+                              <Edit style={{ width: '16px', height: '16px', color: '#3b82f6' }} />
+                            </button>
+                          )}
                           <button
                             onClick={() => {
                               const messenger = booking.messengers && booking.messengers.length > 0
@@ -1285,7 +1319,7 @@ export default function Bookings() {
                           >
                             <MessageSquare style={{ width: '16px', height: '16px', color: '#10b981' }} />
                           </button>
-                          {JSON.parse(localStorage.getItem('user') || '{}').role === 'director' && (
+                          {canDelete && (
                             <button
                               onClick={() => handleDeleteBooking(booking.id, booking.name)}
                               style={{
