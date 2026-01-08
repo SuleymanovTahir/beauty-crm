@@ -57,6 +57,7 @@ const namespaces = [
   'auth/register',
   'auth/forgotpassword',
   'layouts/AdminLayout',
+  'layouts/mainlayout',
   'layouts/AdminPanelLayout',
   'layouts/EmployeeLayout',
   'layouts/ManagerLayout',
