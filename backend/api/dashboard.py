@@ -15,18 +15,11 @@ async def get_dashboard_kpi(
     period: str = Query("month", description="Period: today, week, month, year, custom"),
     start_date: Optional[str] = Query(None, description="Start date for custom period (YYYY-MM-DD HH:MM:SS)"),
     end_date: Optional[str] = Query(None, description="End date for custom period (YYYY-MM-DD HH:MM:SS)"),
+    master: Optional[str] = Query(None, description="Filter by master name"),
     session_token: Optional[str] = Cookie(None)
 ):
     """
     Получить все KPI метрики для Dashboard
-
-    Возвращает:
-    - Выручка (общая, по дням, средний чек, прогноз)
-    - Записи (всего, завершенные, отмененные, conversion rate)
-    - Клиенты (новые, возвращающиеся, retention rate, LTV)
-    - Мастера (топ-5, загрузка)
-    - Услуги (топ-5)
-    - Тренды (сравнение с предыдущим периодом)
     """
     user = require_auth(session_token)
     if not user:
@@ -41,7 +34,8 @@ async def get_dashboard_kpi(
         kpi = analytics.get_dashboard_kpi(
             period=period,
             start_date=start_date,
-            end_date=end_date
+            end_date=end_date,
+            master_filter=master
         )
 
         log_info(f"📊 Dashboard KPI requested by {user['username']} for period: {period}", "dashboard")
