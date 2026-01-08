@@ -81,8 +81,11 @@ export const ROLES: Record<string, Role> = {
       'clients_view_limited',
       'analytics_view_stats_only',
       'staff_chat_own',
-      'calendar_view_all_readonly',
+      'calendar_view_all',           // Полный доступ к календарю (для просмотра и записи)
       'bot_settings_view',
+      'bookings_create',             // Право создавать записи
+      'bookings_view',               // Право просматривать записи
+      'telephony_access',            // Доступ к телефонии для звонков
     ],
     can_manage_roles: [],
     hierarchy_level: 40,
