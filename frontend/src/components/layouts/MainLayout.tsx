@@ -61,16 +61,24 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
 
     // Определяем префикс путей в зависимости от роли или текущего пути
     const rolePrefix = useMemo(() => {
-        if (location.pathname.startsWith('/crm')) return '/crm';
-        if (location.pathname.startsWith('/manager')) return '/manager';
-        if (location.pathname.startsWith('/sales')) return '/sales';
-        if (location.pathname.startsWith('/marketer')) return '/marketer';
-        if (location.pathname.startsWith('/employee')) return '/employee';
+        const path = location.pathname;
+        if (path.startsWith('/crm')) return '/crm';
+        if (path.startsWith('/manager')) return '/manager';
+        if (path.startsWith('/sales')) return '/sales';
+        if (path.startsWith('/marketer')) return '/marketer';
+        if (path.startsWith('/employee')) return '/employee';
 
         // Fallback на основе роли
         if (user?.role === 'admin' || user?.role === 'director') return '/crm';
-        return `/${user?.role}`;
+        if (user?.role) return `/${user.role}`;
+        return '/crm';
     }, [location.pathname, user?.role]);
+
+    const dashboardPath = useMemo(() => {
+        if (user?.role === 'sales') return `${rolePrefix}/clients`;
+        if (user?.role === 'marketer') return `${rolePrefix}/analytics`;
+        return `${rolePrefix}/dashboard`;
+    }, [user?.role, rolePrefix]);
 
     useEffect(() => {
         loadUnreadCount();
@@ -192,7 +200,14 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const menuItems = useMemo(() => {
         const allItems = [
             // ГРУППА 1: Ежедневная работа (Операции)
-            { icon: LayoutDashboard, label: user?.role === 'employee' ? t('menu.my_bookings', 'Мои записи') : t('menu.dashboard'), path: `${rolePrefix}/dashboard`, requirePermission: () => true },
+            {
+                icon: LayoutDashboard,
+                label: user?.role === 'employee' ? t('menu.my_bookings', 'Мои записи') :
+                    user?.role === 'sales' ? t('menu.clients', 'Клиенты') :
+                        user?.role === 'marketer' ? t('menu.analytics', 'Аналитика') : t('menu.dashboard'),
+                path: dashboardPath,
+                requirePermission: () => true
+            },
             { icon: Calendar, label: t('menu.calendar'), path: `${rolePrefix}/calendar`, requirePermission: () => permissions.canViewAllCalendars || user?.role === 'employee' },
             { icon: FileText, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings },
             { icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, requirePermission: () => permissions.canViewTasks || permissions.roleLevel >= 70 },
@@ -200,12 +215,12 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             { icon: User, label: t('menu.profile', 'Профиль'), path: `${rolePrefix}/profile`, requirePermission: () => user?.role === 'employee' },
 
             // ГРУППА 2: Управление (Базы данных)
-            { icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, requirePermission: () => permissions.canViewAllClients },
+            { icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, requirePermission: () => permissions.canViewAllClients && user?.role !== 'sales' },
             { icon: Scissors, label: t('menu.services'), path: `${rolePrefix}/services`, requirePermission: () => permissions.canViewServices },
             { icon: UserCog, label: t('menu.users'), path: `${rolePrefix}/users`, requirePermission: () => permissions.canViewAllUsers },
 
             // ГРУППА 3: Маркетинг и Аналитика
-            { icon: BarChart3, label: t('menu.analytics'), path: `${rolePrefix}/analytics`, requirePermission: () => permissions.canViewAnalytics },
+            { icon: BarChart3, label: t('menu.analytics'), path: `${rolePrefix}/analytics`, requirePermission: () => permissions.canViewAnalytics && user?.role !== 'marketer' },
             { icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, requirePermission: () => permissions.canViewAnalytics },
             { icon: MapPinned, label: t('menu.visitors'), path: `${rolePrefix}/visitor-analytics`, requirePermission: () => permissions.canViewAnalytics },
             { icon: Send, label: t('menu.broadcasts', 'Рассылки'), path: `${rolePrefix}/broadcasts`, requirePermission: () => permissions.canSendBroadcasts },
@@ -480,7 +495,11 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                 />
                             ) : (
                                 <img
-                                    src={getDynamicAvatar(userProfile?.full_name || user?.full_name || 'User', 'warm', 'female')}
+                                    src={getDynamicAvatar(
+                                        userProfile?.full_name || user?.full_name || 'User',
+                                        'warm',
+                                        user?.role === 'employee' || userProfile?.gender === 'female' ? 'female' : 'male'
+                                    )}
                                     alt={userProfile?.full_name}
                                     className="w-10 h-10 rounded-full object-cover border-2 border-purple-100 shadow-sm"
                                 />
