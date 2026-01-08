@@ -91,6 +91,135 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
     conn.close()
     return clients
 
+def get_clients_by_master(master_name: str):
+    """
+    Получить клиентов конкретного мастера (для employee)
+    Возвращает только тех клиентов, у которых есть записи к данному мастеру
+    БЕЗ контактных данных и финансовой аналитики
+    """
+    from utils.logger import log_info
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    c.execute("""
+        SELECT DISTINCT
+            c.instagram_id, 
+            c.username, 
+            NULL as phone,  -- ❌ Скрываем телефон
+            c.name, 
+            c.first_contact,
+            c.last_contact, 
+            c.total_messages, 
+            c.labels, 
+            c.status, 
+            0 as lifetime_value,  -- ❌ Скрываем финансы
+            c.profile_pic, 
+            c.notes, 
+            c.is_pinned, 
+            c.gender, 
+            1 as has_messages,
+            c.created_at,
+            0 as total_spend,  -- ❌ Скрываем выручку
+            COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed' AND master = %s), 0) as total_bookings,
+            c.temperature
+        FROM clients c
+        INNER JOIN bookings b ON c.instagram_id = b.instagram_id
+        WHERE b.master = %s
+        ORDER BY c.is_pinned DESC, c.last_contact DESC
+    """, (master_name, master_name))
+    
+    clients = c.fetchall()
+    conn.close()
+    
+    log_info(f"📋 Получено {len(clients)} клиентов для мастера {master_name} (без контактов)", "clients")
+    
+    return clients
+
+def get_clients_limited():
+    """
+    Получить всех клиентов БЕЗ контактных данных и финансов (для sales)
+    """
+    from utils.logger import log_info
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    c.execute("""
+        SELECT DISTINCT
+            c.instagram_id, 
+            c.username, 
+            NULL as phone,  -- ❌ Скрываем телефон
+            c.name, 
+            c.first_contact,
+            c.last_contact, 
+            c.total_messages, 
+            c.labels, 
+            c.status, 
+            0 as lifetime_value,  -- ❌ Скрываем финансы
+            c.profile_pic, 
+            c.notes, 
+            c.is_pinned, 
+            c.gender, 
+            1 as has_messages,
+            c.created_at,
+            0 as total_spend,  -- ❌ Скрываем выручку
+            COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed'), 0) as total_bookings,
+            c.temperature
+        FROM clients c
+        WHERE EXISTS (
+            SELECT 1 FROM chat_history ch WHERE ch.instagram_id = c.instagram_id
+        ) OR EXISTS (
+            SELECT 1 FROM messenger_messages mm WHERE mm.client_id = c.instagram_id
+        )
+        ORDER BY c.is_pinned DESC, c.last_contact DESC
+    """)
+    
+    clients = c.fetchall()
+    conn.close()
+    
+    log_info(f"📋 Получено {len(clients)} клиентов (ограниченный доступ для sales)", "clients")
+    
+    return clients
+
+def get_clients_stats_only():
+    """
+    Получить только статистику клиентов БЕЗ персональных данных (для marketer)
+    """
+    from utils.logger import log_info
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    c.execute("""
+        SELECT 
+            COUNT(*) as total_clients,
+            COUNT(CASE WHEN status = 'new' THEN 1 END) as new_clients,
+            COUNT(CASE WHEN status = 'active' THEN 1 END) as active_clients,
+            COUNT(CASE WHEN status = 'inactive' THEN 1 END) as inactive_clients,
+            COUNT(CASE WHEN temperature = 'hot' THEN 1 END) as hot_clients,
+            COUNT(CASE WHEN temperature = 'warm' THEN 1 END) as warm_clients,
+            COUNT(CASE WHEN temperature = 'cold' THEN 1 END) as cold_clients
+        FROM clients
+    """)
+    
+    stats = c.fetchone()
+    conn.close()
+    
+    log_info(f"📊 Получена статистика клиентов для marketer", "clients")
+    
+    return {
+        "total_clients": stats[0] if stats else 0,
+        "new_clients": stats[1] if stats else 0,
+        "active_clients": stats[2] if stats else 0,
+        "inactive_clients": stats[3] if stats else 0,
+        "hot_clients": stats[4] if stats else 0,
+        "warm_clients": stats[5] if stats else 0,
+        "cold_clients": stats[6] if stats else 0
+    }
+
+
+
 @router.get("/clients")
 async def list_clients(
     session_token: Optional[str] = Cookie(None),
@@ -122,7 +251,27 @@ async def list_clients(
     if messenger not in valid_messengers:
         messenger = 'instagram'
 
-    clients = get_clients_by_messenger(messenger)
+    # RBAC: Разные уровни доступа в зависимости от роли
+    if user["role"] == "employee":
+        # Employee видит только своих клиентов (без контактов)
+        from utils.logger import log_info
+        full_name = user.get("full_name", "")
+        log_info(f"🔒 Employee {user['username']} запрашивает своих клиентов", "clients")
+        clients = get_clients_by_master(full_name)
+    elif user["role"] == "sales":
+        # Sales видит всех клиентов БЕЗ контактов и финансов
+        from utils.logger import log_info
+        log_info(f"🔒 Sales {user['username']} запрашивает клиентов (ограниченный доступ)", "clients")
+        clients = get_clients_limited()
+    elif user["role"] == "marketer":
+        # Marketer видит только статистику
+        from utils.logger import log_info
+        log_info(f"📊 Marketer {user['username']} запрашивает статистику клиентов", "clients")
+        stats = get_clients_stats_only()
+        return {"clients_stats": stats, "access_level": "stats_only"}
+    else:
+        # Admin/Manager/Director видят всех клиентов с полными данными
+        clients = get_clients_by_messenger(messenger)
     return {
         "clients": [
             {
@@ -171,6 +320,7 @@ async def get_client_messengers_api(
 async def get_client_detail(client_id: str, session_token: Optional[str] = Cookie(None)):
     """Получить детальную информацию о клиенте"""
     from urllib.parse import unquote
+    from fastapi import HTTPException
     
     user = require_auth(session_token)
     if not user:
@@ -186,6 +336,29 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     # Use real instagram_id from the database for lookups, 
     # as decoded_client_id might be a username from the URL
     real_id = client[0]
+    
+    # RBAC: Employee может видеть только своих клиентов
+    if user["role"] == "employee":
+        from utils.logger import log_warning
+        full_name = user.get("full_name", "")
+        
+        # Проверяем, есть ли у этого клиента записи к данному мастеру
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("""
+            SELECT COUNT(*) FROM bookings 
+            WHERE instagram_id = %s AND master = %s
+        """, (real_id, full_name))
+        
+        has_access = c.fetchone()[0] > 0
+        conn.close()
+        
+        if not has_access:
+            log_warning(f"🔒 Employee {user['username']} ({full_name}) attempted to access client {real_id}", "security")
+            raise HTTPException(
+                status_code=403,
+                detail="Access denied: You can only view clients with bookings to you"
+            )
     
     history = get_chat_history(real_id, limit=50)
     bookings = [b for b in get_all_bookings() if b[1] == real_id]
@@ -241,33 +414,36 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     
     conn.close()
 
+    # Определяем, нужно ли скрывать конфиденциальные данные
+    hide_sensitive_data = user["role"] == "employee"
+    
     return {
         "success": True,
         "client": {
             "id": client[0],
             "instagram_id": client[0],
             "username": client[1],
-            "phone": client[2],
+            "phone": None if hide_sensitive_data else client[2],  # ❌ Скрываем для employee
             "name": client[3],
             "first_contact": client[4],
             "last_contact": client[5],
             "total_messages": client[6],
             "status": client[8],
-            "lifetime_value": calculated_total_spend,
+            "lifetime_value": 0 if hide_sensitive_data else calculated_total_spend,  # ❌ Скрываем для employee
             "profile_pic": client[10] if len(client) > 10 else None,
             "notes": client[11] if len(client) > 11 else "",
-            "total_spend": calculated_total_spend,
+            "total_spend": 0 if hide_sensitive_data else calculated_total_spend,  # ❌ Скрываем для employee
             "total_visits": calculated_total_visits,
-            "discount": client[16] if len(client) > 16 else 0,
-            "card_number": client[15] if len(client) > 15 else "",
+            "discount": 0 if hide_sensitive_data else (client[16] if len(client) > 16 else 0),  # ❌ Скрываем для employee
+            "card_number": "" if hide_sensitive_data else (client[15] if len(client) > 15 else ""),
             "temperature": client[21] if len(client) > 21 else "cold",
             "gender": client[14] if len(client) > 14 else None,
             "age": client[22] if len(client) > 22 else None,
             "birth_date": client[23] if len(client) > 23 else None,
-            "email": client[20] if len(client) > 20 else None,
+            "email": None if hide_sensitive_data else (client[20] if len(client) > 20 else None),  # ❌ Скрываем для employee
             "referral_code": client[24] if len(client) > 24 else None,
             "source": client[25] if len(client) > 25 else "manual",
-            "telegram_id": client[26] if len(client) > 26 else None
+            "telegram_id": None if hide_sensitive_data else (client[26] if len(client) > 26 else None)  # ❌ Скрываем для employee
         },
         "stats": {
             "top_procedures": top_procedures,
@@ -281,7 +457,7 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
                 "service": b[2],
                 "master": b[9],
                 "status": b[6],
-                "revenue": b[8]
+                "revenue": 0 if hide_sensitive_data else b[8]  # ❌ Скрываем для employee
             }
             for b in bookings
         ],

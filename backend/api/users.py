@@ -56,16 +56,17 @@ async def create_user_api(
             return JSONResponse({"error": "Пользователь с таким логином уже существует"}, status_code=400)
 
         # Создаем пользователя
-        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        from utils.utils import hash_password
+        password_hash = hash_password(password)
         from datetime import datetime
         now = datetime.now().isoformat()
 
         c.execute("""INSERT INTO users
                      (username, password_hash, full_name, email, role, position, created_at, is_active)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE)""",
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE) RETURNING id""",
                   (username, password_hash, full_name, email, role, position, now))
         conn.commit()
-        user_id = c.lastrowid
+        user_id = c.fetchone()[0]
         
         log_activity(user["id"], "create_user", "user", str(user_id), 
                     f"Created: {full_name} ({username})")

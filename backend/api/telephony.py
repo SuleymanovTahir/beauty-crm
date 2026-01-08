@@ -152,7 +152,7 @@ async def get_calls(
                 cl.phone,
                 cl.direction as type,
                 cl.status,
-                cl.duration,
+                COALESCE(cl.duration, 0) as duration,
                 cl.recording_url,
                 cl.recording_file,
                 cl.created_at,
@@ -627,11 +627,11 @@ def save_webhook_call(call_data: Dict[str, Any]):
     conn = get_db_connection()
     c = conn.cursor()
     try:
+        external_id = call_data.get('external_id')
+        
         # Check if client exists by phone
         client_id = None
         if call_data.get('phone'):
-             # Try to find client by partial match or full match
-             # Very simple cleanup: remove spaces, dashes, +, etc.
              clean_phone = ''.join(filter(str.isdigit, call_data['phone']))
              if len(clean_phone) > 6:
                  c.execute("SELECT instagram_id FROM clients WHERE phone LIKE %s LIMIT 1", (f"%{clean_phone}%",))
@@ -639,17 +639,44 @@ def save_webhook_call(call_data: Dict[str, Any]):
                  if row:
                      client_id = row[0]
 
+        # Check if call already exists by external_id
+        if external_id:
+            c.execute("SELECT id FROM call_logs WHERE external_id = %s", (external_id,))
+            id_row = c.fetchone()
+            if id_row:
+                call_id = id_row[0]
+                # Update existing call
+                fields = []
+                params = []
+                # Fields we allow to update from webhook
+                updateable = ['status', 'duration', 'recording_url', 'transcription', 'notes', 'recording_file']
+                for field in updateable:
+                    if field in call_data and call_data[field] is not None:
+                        fields.append(f"{field} = %s")
+                        params.append(call_data[field])
+                
+                if fields:
+                    params.append(call_id)
+                    query = f"UPDATE call_logs SET {', '.join(fields)} WHERE id = %s"
+                    c.execute(query, params)
+                    conn.commit()
+                    logger.info(f"Updated existing call {call_id} (external_id: {external_id})")
+                    return
+
+        # Insert new call if not found or no external_id
         c.execute("""
             INSERT INTO call_logs (
                 phone, client_id, direction, status, duration, recording_url, 
-                created_at, external_id, notes
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                created_at, external_id, notes, transcription
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             call_data.get('phone'), client_id, call_data.get('direction'), 
             call_data.get('status'), call_data.get('duration'), call_data.get('recording_url'),
-            call_data.get('created_at'), call_data.get('external_id'), call_data.get('notes')
+            call_data.get('created_at'), call_data.get('external_id'), 
+            call_data.get('notes'), call_data.get('transcription')
         ))
         conn.commit()
+        logger.info(f"Inserted new call from webhook")
     except Exception as e:
         logger.error(f"Error saving webhook call: {e}")
     finally:

@@ -513,6 +513,11 @@ def init_database():
                   created_at TEXT,
                   expires_at TEXT,
                   FOREIGN KEY (user_id) REFERENCES users(id))''')
+    
+    # Индексы для оптимизации производительности аутентификации
+    c.execute('''CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(session_token)''')
+    c.execute('''CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at)''')
+    c.execute('''CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)''')
 
     # Таблица логов активности
     c.execute('''CREATE TABLE IF NOT EXISTS activity_log

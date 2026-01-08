@@ -169,7 +169,31 @@ export default function Telephony() {
 
     useEffect(() => {
         loadData();
+
+        // Polling: refresh data every 30 seconds to see updates (duration, etc.)
+        const interval = setInterval(() => {
+            loadData();
+        }, 30000);
+
+        return () => clearInterval(interval);
     }, [search, period, dateFrom, dateTo, sortBy, sortOrder, statusFilter, typeFilter, managerFilter, minDuration, maxDuration]);
+
+    // Set default manager when opening add dialog
+    useEffect(() => {
+        if (showAddDialog && formData.manual_manager_name === '') {
+            const defaultManager = allMasters.find(m =>
+                (m.position && m.position.toLowerCase().includes('менеджер')) ||
+                (m.position_ru && m.position_ru.toLowerCase().includes('менеджер')) ||
+                (m.role && m.role.toLowerCase().includes('manager'))
+            );
+            if (defaultManager) {
+                setFormData(prev => ({
+                    ...prev,
+                    manual_manager_name: defaultManager.full_name || defaultManager.username
+                }));
+            }
+        }
+    }, [showAddDialog, allMasters]);
 
     const handleSort = (field: string) => {
         if (sortBy === field) {
@@ -242,7 +266,7 @@ export default function Telephony() {
                 api.getServices()
             ]);
             setAllClients(clientsData.clients || []);
-            setAllMasters(mastersData.users || mastersData || []);
+            setAllMasters(mastersData.employees || mastersData.users || (Array.isArray(mastersData) ? mastersData : []));
             setAllServices(servicesData.services || []);
         } catch (error) {
             console.error('Failed to load telephony data:', error);
@@ -318,6 +342,7 @@ export default function Telephony() {
                 toast.success('Звонок добавлен');
             }
 
+            await loadData();
             setShowAddDialog(false);
             setFormData({
                 phone: '',
@@ -1019,10 +1044,10 @@ export default function Telephony() {
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="binotel">Binotel</SelectItem>
-                                            <SelectItem value="onlinepbx">OnlinePBX</SelectItem>
-                                            <SelectItem value="twilio">Twilio</SelectItem>
-                                            <SelectItem value="generic">Generic (Webhook)</SelectItem>
+                                            <SelectItem value="binotel">{t('telephony:provider_binotel', 'Binotel')}</SelectItem>
+                                            <SelectItem value="onlinepbx">{t('telephony:provider_onlinepbx', 'OnlinePBX')}</SelectItem>
+                                            <SelectItem value="twilio">{t('telephony:provider_twilio', 'Twilio')}</SelectItem>
+                                            <SelectItem value="generic">{t('telephony:provider_generic', 'Generic (Webhook)')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -1210,7 +1235,7 @@ export default function Telephony() {
                                             variant="outline"
                                             role="combobox"
                                             aria-expanded={clientOpen}
-                                            className="w-full justify-between font-normal"
+                                            className="flex-1 justify-between font-normal"
                                         >
                                             {formData.manual_client_name || formData.client_id || t('select_client')}
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -1254,7 +1279,7 @@ export default function Telephony() {
                                     placeholder={t('manual_input')}
                                     value={formData.manual_client_name}
                                     onChange={e => setFormData({ ...formData, manual_client_name: e.target.value })}
-                                    className="w-1/2"
+                                    className="w-[180px] shrink-0"
                                 />
                             </div>
                         </div>
@@ -1268,7 +1293,7 @@ export default function Telephony() {
                                             variant="outline"
                                             role="combobox"
                                             aria-expanded={masterOpen}
-                                            className="w-full justify-between font-normal"
+                                            className="flex-1 justify-between font-normal"
                                         >
                                             {formData.manual_manager_name || t('select_manager')}
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -1308,7 +1333,7 @@ export default function Telephony() {
                                     placeholder={t('manual_input')}
                                     value={formData.manual_manager_name}
                                     onChange={e => setFormData({ ...formData, manual_manager_name: e.target.value })}
-                                    className="w-1/2"
+                                    className="w-[180px] shrink-0"
                                 />
                             </div>
                         </div>
@@ -1322,7 +1347,7 @@ export default function Telephony() {
                                             variant="outline"
                                             role="combobox"
                                             aria-expanded={serviceOpen}
-                                            className="w-full justify-between font-normal"
+                                            className="flex-1 justify-between font-normal"
                                         >
                                             {formData.manual_service_name || t('select_service')}
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -1362,7 +1387,7 @@ export default function Telephony() {
                                     placeholder={t('manual_input')}
                                     value={formData.manual_service_name}
                                     onChange={e => setFormData({ ...formData, manual_service_name: e.target.value })}
-                                    className="w-1/2"
+                                    className="w-[180px] shrink-0"
                                 />
                             </div>
                         </div>
@@ -1483,7 +1508,7 @@ export default function Telephony() {
                                             variant="outline"
                                             role="combobox"
                                             aria-expanded={clientOpen}
-                                            className="w-full justify-between font-normal"
+                                            className="flex-1 justify-between font-normal"
                                         >
                                             {formData.manual_client_name || formData.client_id || t('select_client')}
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -1527,7 +1552,7 @@ export default function Telephony() {
                                     placeholder={t('manual_input')}
                                     value={formData.manual_client_name}
                                     onChange={e => setFormData({ ...formData, manual_client_name: e.target.value })}
-                                    className="w-1/2"
+                                    className="w-[180px] shrink-0"
                                 />
                             </div>
                         </div>
@@ -1541,7 +1566,7 @@ export default function Telephony() {
                                             variant="outline"
                                             role="combobox"
                                             aria-expanded={masterOpen}
-                                            className="w-full justify-between font-normal"
+                                            className="flex-1 justify-between font-normal"
                                         >
                                             {formData.manual_manager_name || t('select_manager')}
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -1581,7 +1606,7 @@ export default function Telephony() {
                                     placeholder={t('manual_input')}
                                     value={formData.manual_manager_name}
                                     onChange={e => setFormData({ ...formData, manual_manager_name: e.target.value })}
-                                    className="w-1/2"
+                                    className="w-[180px] shrink-0"
                                 />
                             </div>
                         </div>
@@ -1595,7 +1620,7 @@ export default function Telephony() {
                                             variant="outline"
                                             role="combobox"
                                             aria-expanded={serviceOpen}
-                                            className="w-full justify-between font-normal"
+                                            className="flex-1 justify-between font-normal"
                                         >
                                             {formData.manual_service_name || t('select_service')}
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -1635,7 +1660,7 @@ export default function Telephony() {
                                     placeholder={t('manual_input')}
                                     value={formData.manual_service_name}
                                     onChange={e => setFormData({ ...formData, manual_service_name: e.target.value })}
-                                    className="w-1/2"
+                                    className="w-[180px] shrink-0"
                                 />
                             </div>
                         </div>

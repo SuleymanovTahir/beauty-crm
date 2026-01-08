@@ -473,9 +473,34 @@ def validate_password(password: str, min_length: int = 6) -> tuple:
     return True, None
 
 def hash_password(password: str) -> str:
-    """Хэшировать пароль (SHA256)"""
+    """Хэшировать пароль (PBKDF2 с солью)
+    Используем 50000 итераций - баланс между безопасностью и производительностью
+    (OWASP рекомендует минимум 10000 итераций)
+    """
     import hashlib
-    return hashlib.sha256(password.encode()).hexdigest()
+    import secrets
+    salt = secrets.token_hex(16)
+    iterations = 50000  # Снижено с 100000 для производительности
+    hash_value = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), iterations).hex()
+    return f"pbkdf2:sha256:{iterations}${salt}${hash_value}"
+
+def verify_password(password: str, stored_hash: str) -> bool:
+    """Проверить пароль с поддержкой legacy SHA256"""
+    import hashlib
+    if not stored_hash:
+        return False
+        
+    if stored_hash.startswith("pbkdf2:"):
+        try:
+            _, algorithm, iterations_salt_hash = stored_hash.split(':')
+            iterations, salt, hash_value = iterations_salt_hash.split('$')
+            new_hash = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), int(iterations)).hex()
+            return new_hash == hash_value
+        except Exception:
+            return False
+    else:
+        # Legacy SHA256
+        return hashlib.sha256(password.encode()).hexdigest() == stored_hash
 
 # ===== БЕЗОПАСНОСТЬ =====
 
