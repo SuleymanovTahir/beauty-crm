@@ -7,7 +7,7 @@ import { useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 
 // Lazy load pages
-const AdminLayout = React.lazy(() => import('./components/layouts/AdminLayout'));
+const MainLayout = React.lazy(() => import('./components/layouts/MainLayout'));
 const AdminDashboard = React.lazy(() => import('./pages/admin/Dashboard'));
 const Bookings = React.lazy(() => import('./pages/admin/Bookings'));
 const BookingDetail = React.lazy(() => import('./pages/admin/BookingDetail'));
@@ -45,17 +45,13 @@ const NotificationsDashboard = React.lazy(() => import('./pages/adminPanel/Notif
 const PhotoGallery = React.lazy(() => import('./pages/adminPanel/PhotoGallery'));
 const FeatureManagement = React.lazy(() => import('./pages/adminPanel/FeatureManagement'));
 
-const ManagerLayout = React.lazy(() => import('./components/layouts/ManagerLayout'));
 const ManagerDashboard = React.lazy(() => import('./pages/manager/Dashboard'));
 const Chat = React.lazy(() => import('./pages/manager/Chat'));
 const Funnel = React.lazy(() => import('./pages/manager/Funnel'));
 const ManagerSettings = React.lazy(() => import('./pages/manager/Settings'));
 
-const SalesLayout = React.lazy(() => import('./components/layouts/SalesLayout'));
-const MarketerLayout = React.lazy(() => import('./components/layouts/MarketerLayout'));
 const InternalChat = React.lazy(() => import('./components/shared/InternalChat'));
 
-const EmployeeLayout = React.lazy(() => import('./components/layouts/EmployeeLayout'));
 const EmployeeDashboard = React.lazy(() => import('./pages/employee/Dashboard'));
 const EmployeeProfile = React.lazy(() => import('./pages/employee/Profile'));
 
@@ -281,7 +277,7 @@ export default function App() {
                     currentRole={currentUser?.role}
                     currentUsername={currentUser?.username}
                     element={
-                      <AdminLayout
+                      <MainLayout
                         user={currentUser}
                         onLogout={handleLogout}
                       />
@@ -329,7 +325,7 @@ export default function App() {
                     currentRole={currentUser?.role}
                     currentUsername={currentUser?.username}
                     element={
-                      <ManagerLayout
+                      <MainLayout
                         user={currentUser}
                         onLogout={handleLogout}
                       />
@@ -357,7 +353,7 @@ export default function App() {
                     currentRole={currentUser?.role}
                     currentUsername={currentUser?.username}
                     element={
-                      <SalesLayout
+                      <MainLayout
                         user={currentUser}
                         onLogout={handleLogout}
                       />
@@ -382,7 +378,7 @@ export default function App() {
                     currentRole={currentUser?.role}
                     currentUsername={currentUser?.username}
                     element={
-                      <MarketerLayout
+                      <MainLayout
                         user={currentUser}
                         onLogout={handleLogout}
                       />
@@ -405,7 +401,7 @@ export default function App() {
                     currentRole={currentUser?.role}
                     currentUsername={currentUser?.username}
                     element={
-                      <EmployeeLayout
+                      <MainLayout
                         user={currentUser}
                         onLogout={handleLogout}
                       />
