@@ -58,5 +58,8 @@
   "verification_title": "E-Mail-Bestätigung",
   "verify_button": "Bestätigen",
   "verifying": "Prüfung...",
-  "your_code": "Ihr Code:"
+  "your_code": "Ihr Code:",
+  "register_staff_title": "Mitarbeiterregistrierung",
+  "register_staff_subtitle": "Geben Sie die Informationen ein, um auf das CRM zuzugreifen. Ihr Antrag muss vom Administrator genehmigt werden.",
+  "only_for_staff": "Bitte beachten Sie: Diese Registrierung gilt nur für Salonpersonal."
 }

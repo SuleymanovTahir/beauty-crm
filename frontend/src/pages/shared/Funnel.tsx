@@ -37,10 +37,7 @@ import { CreateBookingDialog } from "../../components/bookings/CreateBookingDial
 import { ManageFunnelStagesDialog } from '../../components/funnel/ManageFunnelStagesDialog';
 import { ClientDetailsDialog } from '../../components/funnel/ClientDetailsDialog';
 import { ScrollArea } from '../../components/ui/scroll-area';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { useCurrency } from '../../hooks/useSalonSettings';
-import { useAuth } from '../../contexts/AuthContext';
-import { usePermissions } from '../../utils/permissions';
 
 interface Stage {
     id: number;
@@ -89,8 +86,6 @@ const analyticsStageColors = [
 
 export default function UniversalFunnel() {
     const { t } = useTranslation(['pages/funnel', 'common']);
-    const { user: currentUser } = useAuth();
-    const permissions = usePermissions(currentUser?.role || 'employee');
     const { currency } = useCurrency();
 
     // View state
@@ -104,7 +99,7 @@ export default function UniversalFunnel() {
 
     // Analytics Data
     const [funnelAnalytics, setFunnelAnalytics] = useState<FunnelData | null>(null);
-    const [period, setPeriod] = useState('month');
+    const [period] = useState('month');
     const [loadingAnalytics, setLoadingAnalytics] = useState(false);
 
     const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -120,6 +115,11 @@ export default function UniversalFunnel() {
     const [pendingStageId, setPendingStageId] = useState<number | null>(null);
 
     const [loading, setLoading] = useState(true);
+    const currentUser = useMemo(() => {
+        const userStr = localStorage.getItem('user');
+        return userStr ? JSON.parse(userStr) : null;
+    }, []);
+    const isAdmin = currentUser?.role === 'admin' || currentUser?.role === 'director';
 
     useEffect(() => {
         if (viewMode === 'analytics') {
@@ -329,28 +329,32 @@ export default function UniversalFunnel() {
                                 <LayoutDashboard className="w-4 h-4 mr-2 inline-block" />
                                 {t('list_view')}
                             </button>
-                            <button
-                                onClick={() => setViewMode('analytics')}
-                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === 'analytics'
-                                    ? 'bg-white text-gray-900 shadow-sm'
-                                    : 'text-gray-500 hover:text-gray-900'
-                                    }`}
-                            >
-                                <BarChart3 className="w-4 h-4 mr-2 inline-block" />
-                                {t('funnel_chart')}
-                            </button>
+                            {isAdmin && (
+                                <button
+                                    onClick={() => setViewMode('analytics')}
+                                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === 'analytics'
+                                        ? 'bg-white text-gray-900 shadow-sm'
+                                        : 'text-gray-500 hover:text-gray-900'
+                                        }`}
+                                >
+                                    <BarChart3 className="w-4 h-4 mr-2 inline-block" />
+                                    {t('funnel_chart')}
+                                </button>
+                            )}
                         </div>
 
                         {viewMode !== 'analytics' && (
                             <>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    className="text-gray-500 hover:text-gray-900"
-                                    onClick={() => setManageStagesOpen(true)}
-                                >
-                                    <Settings className="w-4 h-4" />
-                                </Button>
+                                {isAdmin && (
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        className="text-gray-500 hover:text-gray-900"
+                                        onClick={() => setManageStagesOpen(true)}
+                                    >
+                                        <Settings className="w-4 h-4" />
+                                    </Button>
+                                )}
 
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />

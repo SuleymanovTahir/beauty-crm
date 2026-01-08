@@ -1,0 +1,34 @@
+{
+  "title": "Korb",
+  "subtitle": "Gelöschte Daten verwalten und wiederherstellen",
+  "search_placeholder": "Suche nach ID, Grund oder Autor...",
+  "filter_all": "Alle",
+  "filter_booking": "bookings",
+  "filter_client": "Kunden",
+  "filter_user": "Mitarbeiter",
+  "empty_title": "Der Warenkorb ist leer",
+  "empty_desc": "Gelöschte Objekte werden hier angezeigt",
+  "loading": "Daten werden geladen...",
+  "objects_count": "{{count}} Objekte",
+  "deleted_by": "Gelöscht",
+  "deleted_at": "Gelöscht",
+  "restore": "Wiederherstellen",
+  "permanent_delete": "Dauerhaft löschen",
+  "permanent_delete_confirm": "Bist du sicher? Diese Aktion kann nicht rückgängig gemacht werden!",
+  "not_restorable": "Nicht wiederherstellbar",
+  "important_info": "Wichtige Informationen",
+  "info_desc": "Elemente im Papierkorb werden auf unbestimmte Zeit aufbewahrt. Wir empfehlen jedoch, den Papierkorb regelmäßig zu leeren, um eine optimale Datenbankleistung aufrechtzuerhalten. Durch die Wiederherstellung eines Mitarbeiters wird dieser auch wieder in den aktiven Status zurückversetzt.",
+  "toast": {
+    "load_error": "Fehler beim Laden des Warenkorbs",
+    "refreshed": "Aktualisiert",
+    "restore_success": "{{type}} erfolgreich wiederhergestellt",
+    "restore_error": "Objekt konnte nicht wiederhergestellt werden",
+    "delete_success": "Das Objekt wird endgültig gelöscht",
+    "delete_error": "Fehler beim endgültigen Löschen"
+  },
+  "entity": {
+    "booking": "booking",
+    "client": "Kunde",
+    "user": "Mitarbeiter"
+  }
+}

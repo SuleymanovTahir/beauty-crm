@@ -202,17 +202,17 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             // ГРУППА 1: Ежедневная работа (Операции)
             {
                 icon: LayoutDashboard,
-                label: user?.role === 'employee' ? t('menu.my_bookings', 'Мои записи') :
-                    user?.role === 'sales' ? t('menu.clients', 'Клиенты') :
+                label: user?.role === 'employee' ? t('menu.calendar') :
+                    user?.role === 'sales' ? t('menu.dashboard_sales', 'Мои клиенты') :
                         user?.role === 'marketer' ? t('menu.analytics', 'Аналитика') : t('menu.dashboard'),
                 path: dashboardPath,
                 requirePermission: () => true
             },
-            { icon: Calendar, label: t('menu.calendar'), path: `${rolePrefix}/calendar`, requirePermission: () => permissions.canViewAllCalendars || user?.role === 'employee' },
-            { icon: FileText, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings },
-            { icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, requirePermission: () => permissions.canViewTasks || permissions.roleLevel >= 70 },
-            { icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: unreadCount, hasSubmenu: true, requirePermission: () => permissions.canViewInstagramChat || permissions.roleLevel >= 70 },
-            { icon: User, label: t('menu.profile', 'Профиль'), path: `${rolePrefix}/profile`, requirePermission: () => user?.role === 'employee' },
+            { icon: Calendar, label: t('menu.calendar'), path: `${rolePrefix}/calendar`, requirePermission: () => permissions.canViewAllCalendars && user?.role !== 'employee' },
+            { icon: FileText, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings || user?.role === 'employee' },
+            { icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, requirePermission: () => permissions.canViewTasks || permissions.roleLevel >= 70 || user?.role === 'sales' },
+            { icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: unreadCount, hasSubmenu: true, requirePermission: () => permissions.canViewInstagramChat || permissions.roleLevel >= 70 || user?.role === 'sales' },
+            { icon: User, label: t('menu.profile', 'Профиль'), path: `${rolePrefix}/profile`, requirePermission: () => user?.role === 'employee' || user?.role === 'sales' },
 
             // ГРУППА 2: Управление (Базы данных)
             { icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, requirePermission: () => permissions.canViewAllClients && user?.role !== 'sales' },
@@ -220,19 +220,19 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             { icon: UserCog, label: t('menu.users'), path: `${rolePrefix}/users`, requirePermission: () => permissions.canViewAllUsers },
 
             // ГРУППА 3: Маркетинг и Аналитика
-            { icon: BarChart3, label: t('menu.analytics'), path: `${rolePrefix}/analytics`, requirePermission: () => permissions.canViewAnalytics && user?.role !== 'marketer' },
-            { icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, requirePermission: () => permissions.canViewAnalytics },
+            { icon: BarChart3, label: t('menu.analytics'), path: `${rolePrefix}/analytics`, requirePermission: () => permissions.canViewAnalytics && user?.role !== 'marketer' && user?.role !== 'sales' },
+            { icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, requirePermission: () => permissions.canViewAnalytics || user?.role === 'sales' },
             { icon: MapPinned, label: t('menu.visitors'), path: `${rolePrefix}/visitor-analytics`, requirePermission: () => permissions.canViewAnalytics },
-            { icon: Send, label: t('menu.broadcasts', 'Рассылки'), path: `${rolePrefix}/broadcasts`, requirePermission: () => permissions.canSendBroadcasts },
+            { icon: Send, label: t('menu.broadcasts', 'Рассылки'), path: `${rolePrefix}/broadcasts`, requirePermission: () => permissions.canSendBroadcasts || user?.role === 'sales' },
 
             // ГРУППА 4: Контент и Каналы
             { icon: Globe, label: t('menu.public_content'), path: `${rolePrefix}/public-content`, requirePermission: () => permissions.canViewSettings && permissions.roleLevel >= 80 },
             { icon: Phone, label: t('menu.telephony', 'Телефония'), path: `${rolePrefix}/telephony`, requirePermission: () => permissions.roleLevel >= 80 },
-            { icon: MessageCircle, label: t('menu.internal_chat', 'Внутренний чат'), path: `${rolePrefix}/internal-chat`, requirePermission: () => user?.role === 'sales' || user?.role === 'marketer' },
+            { icon: MessageCircle, label: t('menu.internal_chat', 'Внутренняя связь'), path: `${rolePrefix}/internal-chat`, requirePermission: () => user?.role === 'sales' || user?.role === 'marketer' || user?.role === 'manager' },
 
             // ГРУППА 5: Системные настройки
-            { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, requirePermission: () => permissions.canViewSettings || user?.role === 'employee' || user?.role === 'manager' },
-            { icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, requirePermission: () => permissions.canViewBotSettings },
+            { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, requirePermission: () => permissions.canViewSettings || user?.role === 'employee' || user?.role === 'manager' || user?.role === 'sales' },
+            { icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, requirePermission: () => permissions.canViewBotSettings || user?.role === 'sales' },
             { icon: ShieldCheck, label: t('menu.audit_log', 'Логи аудита'), path: `${rolePrefix}/audit-log`, requirePermission: () => user?.role === 'director' },
             { icon: Trash2, label: t('menu.trash', 'Корзина'), path: `${rolePrefix}/trash`, requirePermission: () => permissions.roleLevel >= 80 },
         ];

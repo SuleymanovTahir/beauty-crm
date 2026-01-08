@@ -70,5 +70,9 @@
   "copy": "Көшіру",
   "copied": "Көшірілген",
   "success": "Сәтті",
-  "error": "Қате"
+  "error": "Қате",
+  "provider_binotel": "Бинотель",
+  "provider_onlinepbx": "OnlinePBX",
+  "provider_twilio": "Twilio",
+  "provider_generic": "Жалпы (вебхук)"
 }
