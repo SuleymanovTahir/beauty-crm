@@ -139,6 +139,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const [selectedServiceItem, setSelectedServiceItem] = useState<Service | null>(null);
   const currentUser = useMemo(() => JSON.parse(localStorage.getItem('user') || '{}'), []);
   const employeeId = useMemo(() => employeeFilter ? (currentUser.full_name || currentUser.username) : null, [employeeFilter, currentUser]);
+  const canEdit = currentUser?.role === 'director' || currentUser?.role === 'admin' || currentUser?.role === 'sales';
 
   const [addForm, setAddForm] = useState({
     phone: '',
@@ -498,13 +499,15 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 </SelectContent>
               </Select>
 
-              <Button
-                onClick={() => openCreateModal()}
-                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-xl h-9 md:h-10 px-3 md:px-4 text-sm shadow-lg hover:shadow-xl transition-all whitespace-nowrap ml-auto sm:ml-0"
-              >
-                <Plus className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">{t('calendar:add')}</span>
-              </Button>
+              {canEdit && (
+                <Button
+                  onClick={() => openCreateModal()}
+                  className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-xl h-9 md:h-10 px-3 md:px-4 text-sm shadow-lg hover:shadow-xl transition-all whitespace-nowrap ml-auto sm:ml-0"
+                >
+                  <Plus className="w-4 h-4 md:mr-2" />
+                  <span className="hidden md:inline">{t('calendar:add')}</span>
+                </Button>
+              )}
             </div>
           </div>
 
@@ -689,13 +692,15 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                         ))}
                       </div>
 
-                      {/* Add Button */}
-                      <button
-                        onClick={() => openCreateModal(day, hour)}
-                        className="absolute bottom-1 right-1 w-6 h-6 bg-purple-600 hover:bg-purple-700 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-lg"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
+                      {/* Add Button - Only for users with edit permissions */}
+                      {canEdit && (
+                        <button
+                          onClick={() => openCreateModal(day, hour)}
+                          className="absolute bottom-1 right-1 w-6 h-6 bg-purple-600 hover:bg-purple-700 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-lg"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      )}
                     </div>
                   );
                 })}
