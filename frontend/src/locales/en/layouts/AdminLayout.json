@@ -20,6 +20,9 @@
     "users": "Users",
     "visitors": "Visitors",
     "funnel": "Funnel",
-    "tasks": "Tasks"
+    "tasks": "Tasks",
+    "telephony": "Telephony",
+    "trash": "Trash",
+    "audit_log": "Audit Log"
   }
 }
