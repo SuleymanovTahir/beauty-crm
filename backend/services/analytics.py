@@ -26,18 +26,17 @@ class AnalyticsService:
         self,
         period: str = "month",
         start_date: Optional[str] = None,
-        end_date: Optional[str] = None
+        end_date: Optional[str] = None,
+        master_filter: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Получить все KPI для Dashboard
-
+        
         Args:
             period: 'today', 'week', 'month', 'year', 'custom'
             start_date: Начальная дата (для custom)
             end_date: Конечная дата (для custom)
-
-        Returns:
-            Dict с KPI метриками
+            master_filter: Фильтр по имени мастера (для личного дашборда)
         """
         # Вычисляем период
         if period == "custom" and start_date and end_date:
@@ -58,7 +57,6 @@ class AnalyticsService:
                 date_start = (now - timedelta(days=365)).strftime('%Y-%m-%d 00:00:00')
                 date_end = now.strftime('%Y-%m-%d 23:59:59')
             else:
-                # По умолчанию месяц
                 date_start = (now - timedelta(days=30)).strftime('%Y-%m-%d 00:00:00')
                 date_end = now.strftime('%Y-%m-%d 23:59:59')
 
@@ -69,120 +67,114 @@ class AnalyticsService:
                     "start": date_start,
                     "end": date_end
                 },
-                "revenue": self._get_revenue_metrics(date_start, date_end),
-                "bookings": self._get_booking_metrics(date_start, date_end),
-                "clients": self._get_client_metrics(date_start, date_end),
-                "masters": self._get_master_metrics(date_start, date_end),
-                "services": self._get_service_metrics(date_start, date_end),
-                "peak_hours": self._get_peak_hours(date_start, date_end),
-                "trends": self._get_trends(date_start, date_end)
+                "revenue": self._get_revenue_metrics(date_start, date_end, master_filter),
+                "bookings": self._get_booking_metrics(date_start, date_end, master_filter),
+                "clients": self._get_client_metrics(date_start, date_end, master_filter),
+                "masters": self._get_master_metrics(date_start, date_end, master_filter),
+                "services": self._get_service_metrics(date_start, date_end, master_filter),
+                "peak_hours": self._get_peak_hours(date_start, date_end, master_filter),
+                "trends": self._get_trends(date_start, date_end, master_filter)
             }
         except Exception as e:
             log_error(f"Error getting dashboard KPI: {e}", "analytics")
             return {}
 
-    def _get_revenue_metrics(self, start_date: str, end_date: str) -> Dict:
+    def _get_revenue_metrics(self, start_date: str, end_date: str, master: Optional[str] = None) -> Dict:
         """Метрики по выручке"""
+        params = [start_date, end_date]
+        master_clause = ""
+        if master:
+            master_clause = " AND master = %s"
+            params.append(master)
+
         # Общая выручка за период
-        self.c.execute("""
+        self.c.execute(f"""
             SELECT COALESCE(SUM(revenue), 0)
             FROM bookings
             WHERE datetime BETWEEN %s AND %s
             AND status != 'cancelled'
-        """, (start_date, end_date))
+            {master_clause}
+        """, tuple(params))
         total_revenue = self.c.fetchone()[0]
 
-        # Выручка по дням (для графика)
-        self.c.execute("""
+        # Выручка по дням
+        self.c.execute(f"""
             SELECT DATE(datetime) as date, COALESCE(SUM(revenue), 0) as daily_revenue
             FROM bookings
             WHERE datetime BETWEEN %s AND %s
             AND status != 'cancelled'
+            {master_clause}
             GROUP BY DATE(datetime)
             ORDER BY date
-        """, (start_date, end_date))
+        """, tuple(params))
         daily_revenue = [{"date": row[0], "revenue": row[1]} for row in self.c.fetchall()]
 
         # Средний чек
-        self.c.execute("""
+        self.c.execute(f"""
             SELECT COALESCE(AVG(revenue), 0)
             FROM bookings
             WHERE datetime BETWEEN %s AND %s
             AND status != 'cancelled'
             AND revenue > 0
-        """, (start_date, end_date))
-        avg_check = round(self.c.fetchone()[0], 2)
-
-        # Прогноз на следующий период (простой - на основе среднего)
-        forecast = round(total_revenue * 1.1, 2)  # +10% оптимистичный прогноз
+            {master_clause}
+        """, tuple(params))
+        avg_check = round(self.c.fetchone()[0] or 0, 2)
 
         return {
             "total": round(total_revenue, 2),
             "daily": daily_revenue,
-            "average_check": avg_check,
-            "forecast": forecast
+            "average_check": avg_check
         }
 
-    def _get_booking_metrics(self, start_date: str, end_date: str) -> Dict:
+    def _get_booking_metrics(self, start_date: str, end_date: str, master: Optional[str] = None) -> Dict:
         """Метрики по записям"""
+        params = [start_date, end_date]
+        master_clause = ""
+        if master:
+            master_clause = " AND master = %s"
+            params.append(master)
+
         # Общее количество записей
-        self.c.execute("""
-            SELECT COUNT(*)
-            FROM bookings
+        self.c.execute(f"""
+            SELECT COUNT(*) FROM bookings
             WHERE datetime BETWEEN %s AND %s
-        """, (start_date, end_date))
+            {master_clause}
+        """, tuple(params))
         total_bookings = self.c.fetchone()[0]
 
-        # Завершенные записи
-        self.c.execute("""
-            SELECT COUNT(*)
+        # Статусы
+        self.c.execute(f"""
+            SELECT status, COUNT(*) 
             FROM bookings
             WHERE datetime BETWEEN %s AND %s
-            AND status = 'completed'
-        """, (start_date, end_date))
-        completed = self.c.fetchone()[0]
-
-        # Отмененные записи
-        self.c.execute("""
-            SELECT COUNT(*)
-            FROM bookings
-            WHERE datetime BETWEEN %s AND %s
-            AND status = 'cancelled'
-        """, (start_date, end_date))
-        cancelled = self.c.fetchone()[0]
-
-        # No-show (не пришли)
-        self.c.execute("""
-            SELECT COUNT(*)
-            FROM bookings
-            WHERE datetime BETWEEN %s AND %s
-            AND status = 'no_show'
-        """, (start_date, end_date))
-        no_show = self.c.fetchone()[0]
-
-        # Процент отмен
-        cancellation_rate = round((cancelled / total_bookings * 100) if total_bookings > 0 else 0, 2)
-
-        # Процент no-show
-        no_show_rate = round((no_show / total_bookings * 100) if total_bookings > 0 else 0, 2)
-
-        # Conversion rate (завершенные / всего)
-        completion_rate = round((completed / total_bookings * 100) if total_bookings > 0 else 0, 2)
+            {master_clause}
+            GROUP BY status
+        """, tuple(params))
+        status_counts = dict(self.c.fetchall())
+        
+        completed = status_counts.get('completed', 0)
+        cancelled = status_counts.get('cancelled', 0)
+        no_show = status_counts.get('no_show', 0)
 
         return {
             "total": total_bookings,
             "completed": completed,
             "cancelled": cancelled,
             "no_show": no_show,
-            "cancellation_rate": cancellation_rate,
-            "no_show_rate": no_show_rate,
-            "completion_rate": completion_rate
+            "cancellation_rate": round((cancelled / total_bookings * 100) if total_bookings > 0 else 0, 2),
+            "completion_rate": round((completed / total_bookings * 100) if total_bookings > 0 else 0, 2)
         }
 
-    def _get_client_metrics(self, start_date: str, end_date: str) -> Dict:
+    def _get_client_metrics(self, start_date: str, end_date: str, master: Optional[str] = None) -> Dict:
         """Метрики по клиентам"""
+        params = [start_date, end_date]
+        master_clause = ""
+        if master:
+            master_clause = " AND master = %s"
+            params.append(master)
+
         # Новые клиенты за период
-        self.c.execute("""
+        self.c.execute(f"""
             SELECT COUNT(DISTINCT instagram_id)
             FROM bookings
             WHERE datetime BETWEEN %s AND %s
@@ -191,11 +183,12 @@ class AnalyticsService:
                 FROM clients
                 WHERE first_contact BETWEEN %s AND %s
             )
-        """, (start_date, end_date, start_date, end_date))
+            {master_clause}
+        """, tuple(params + [start_date, end_date]))
         new_clients = self.c.fetchone()[0]
 
-        # Возвращающиеся клиенты (2+ записей)
-        self.c.execute("""
+        # Возвращающиеся клиенты
+        self.c.execute(f"""
             SELECT COUNT(DISTINCT instagram_id)
             FROM bookings
             WHERE datetime BETWEEN %s AND %s
@@ -205,42 +198,34 @@ class AnalyticsService:
                 GROUP BY instagram_id
                 HAVING COUNT(*) >= 2
             )
-        """, (start_date, end_date))
+            {master_clause}
+        """, tuple(params))
         returning_clients = self.c.fetchone()[0]
 
-        # Всего активных клиентов за период
-        self.c.execute("""
+        # Всего активных
+        self.c.execute(f"""
             SELECT COUNT(DISTINCT instagram_id)
             FROM bookings
             WHERE datetime BETWEEN %s AND %s
-        """, (start_date, end_date))
-        total_active = self.c.fetchone()[0]
+            {master_clause}
+        """, tuple(params))
+        total_active = self.c.fetchone()[0] or 0
 
-        # Retention rate (возвращающиеся / всего)
         retention_rate = round((returning_clients / total_active * 100) if total_active > 0 else 0, 2)
-
-        # Средний LTV клиента
-        self.c.execute("""
-            SELECT COALESCE(AVG(total_revenue), 0)
-            FROM (
-                SELECT instagram_id, SUM(revenue) as total_revenue
-                FROM bookings
-                WHERE status != 'cancelled'
-                GROUP BY instagram_id
-            )
-        """)
-        avg_ltv = round(self.c.fetchone()[0], 2)
 
         return {
             "new": new_clients,
             "returning": returning_clients,
             "total_active": total_active,
-            "retention": retention_rate,
-            "ltv": avg_ltv
+            "retention": retention_rate
         }
 
-    def _get_master_metrics(self, start_date: str, end_date: str) -> Dict:
+    def _get_master_metrics(self, start_date: str, end_date: str, master: Optional[str] = None) -> Dict:
         """Метрики по мастерам"""
+        if master:
+            # Для конкретного мастера аналитика по другим мастерам не нужна
+            return {"top_masters": [], "active_masters": 1, "avg_bookings_per_master": 0}
+
         # Топ-5 мастеров по выручке
         self.c.execute("""
             SELECT master, COUNT(*) as bookings_count, COALESCE(SUM(revenue), 0) as revenue
@@ -263,7 +248,7 @@ class AnalyticsService:
             for row in self.c.fetchall()
         ]
 
-        # Средняя загрузка мастеров (записей на мастера)
+        # Средняя загрузка
         self.c.execute("""
             SELECT COUNT(DISTINCT master)
             FROM bookings
@@ -271,7 +256,7 @@ class AnalyticsService:
             AND master IS NOT NULL
             AND master != ''
         """, (start_date, end_date))
-        active_masters = self.c.fetchone()[0]
+        active_masters = self.c.fetchone()[0] or 0
 
         self.c.execute("""
             SELECT COUNT(*)
@@ -280,7 +265,7 @@ class AnalyticsService:
             AND master IS NOT NULL
             AND master != ''
         """, (start_date, end_date))
-        total_bookings = self.c.fetchone()[0]
+        total_bookings = self.c.fetchone()[0] or 0
 
         avg_bookings_per_master = round(total_bookings / active_masters if active_masters > 0 else 0, 2)
 
@@ -290,18 +275,24 @@ class AnalyticsService:
             "avg_bookings_per_master": avg_bookings_per_master
         }
 
-    def _get_service_metrics(self, start_date: str, end_date: str) -> Dict:
+    def _get_service_metrics(self, start_date: str, end_date: str, master: Optional[str] = None) -> Dict:
         """Метрики по услугам"""
-        # Топ-5 услуг по популярности
-        self.c.execute("""
+        params = [start_date, end_date]
+        master_clause = ""
+        if master:
+            master_clause = " AND master = %s"
+            params.append(master)
+
+        self.c.execute(f"""
             SELECT service_name, COUNT(*) as bookings_count, COALESCE(SUM(revenue), 0) as revenue
             FROM bookings
             WHERE datetime BETWEEN %s AND %s
             AND status != 'cancelled'
+            {master_clause}
             GROUP BY service_name
             ORDER BY bookings_count DESC
             LIMIT 5
-        """, (start_date, end_date))
+        """, tuple(params))
 
         top_services = [
             {
@@ -316,92 +307,68 @@ class AnalyticsService:
             "top_services": top_services
         }
 
-    def _get_peak_hours(self, start_date: str, end_date: str) -> List[Dict]:
+    def _get_peak_hours(self, start_date: str, end_date: str, master: Optional[str] = None) -> List[Dict]:
         """Пиковые часы посещаемости"""
-        # PostgreSQL compatible date extraction
-        self.c.execute("""
+        params = [start_date, end_date]
+        master_clause = ""
+        if master:
+            master_clause = " AND master = %s"
+            params.append(master)
+
+        self.c.execute(f"""
             SELECT EXTRACT(HOUR FROM datetime::timestamp) as hour, COUNT(*) as count 
             FROM bookings 
             WHERE datetime BETWEEN %s AND %s
             AND status != 'cancelled'
+            {master_clause}
             GROUP BY hour 
             ORDER BY count DESC 
             LIMIT 5
-        """, (start_date, end_date))
+        """, tuple(params))
         
         return [
             {"hour": f"{int(row[0])}:00", "count": row[1]} 
             for row in self.c.fetchall()
         ]
 
-    def _get_trends(self, start_date: str, end_date: str) -> Dict:
+    def _get_trends(self, start_date: str, end_date: str, master: Optional[str] = None) -> Dict:
         """Тренды и сравнение с предыдущим периодом"""
-        # Вычисляем длину периода
         start = datetime.fromisoformat(start_date.replace(' ', 'T'))
         end = datetime.fromisoformat(end_date.replace(' ', 'T'))
         period_length = (end - start).days
 
-        # Предыдущий период
         prev_end = start - timedelta(seconds=1)
         prev_start = prev_end - timedelta(days=period_length)
 
-        # Выручка текущего периода
-        self.c.execute("""
-            SELECT COALESCE(SUM(revenue), 0)
-            FROM bookings
-            WHERE datetime BETWEEN %s AND %s
-            AND status != 'cancelled'
-        """, (start_date, end_date))
-        current_revenue = self.c.fetchone()[0]
+        master_clause = " AND master = %s" if master else ""
+        
+        # Current revenue
+        params_curr = [start_date, end_date]
+        if master: params_curr.append(master)
+        self.c.execute(f"SELECT COALESCE(SUM(revenue), 0) FROM bookings WHERE datetime BETWEEN %s AND %s AND status != 'cancelled' {master_clause}", tuple(params_curr))
+        current_revenue = self.c.fetchone()[0] or 0
 
-        # Выручка предыдущего периода
-        self.c.execute("""
-            SELECT COALESCE(SUM(revenue), 0)
-            FROM bookings
-            WHERE datetime BETWEEN %s AND %s
-            AND status != 'cancelled'
-        """, (prev_start.isoformat(), prev_end.isoformat()))
-        prev_revenue = self.c.fetchone()[0]
+        # Previous revenue
+        params_prev = [prev_start.isoformat(), prev_end.isoformat()]
+        if master: params_prev.append(master)
+        self.c.execute(f"SELECT COALESCE(SUM(revenue), 0) FROM bookings WHERE datetime BETWEEN %s AND %s AND status != 'cancelled' {master_clause}", tuple(params_prev))
+        prev_revenue = self.c.fetchone()[0] or 0
 
-        # Процент изменения выручки
-        revenue_change = round(
-            ((current_revenue - prev_revenue) / prev_revenue * 100) if prev_revenue > 0 else 0,
-            2
-        )
+        # Bookings
+        self.c.execute(f"SELECT COUNT(*) FROM bookings WHERE datetime BETWEEN %s AND %s {master_clause}", tuple(params_curr))
+        current_bookings = self.c.fetchone()[0] or 0
 
-        # Записи текущего периода
-        self.c.execute("""
-            SELECT COUNT(*)
-            FROM bookings
-            WHERE datetime BETWEEN %s AND %s
-        """, (start_date, end_date))
-        current_bookings = self.c.fetchone()[0]
+        self.c.execute(f"SELECT COUNT(*) FROM bookings WHERE datetime BETWEEN %s AND %s {master_clause}", tuple(params_prev))
+        prev_bookings = self.c.fetchone()[0] or 0
 
-        # Записи предыдущего периода
-        self.c.execute("""
-            SELECT COUNT(*)
-            FROM bookings
-            WHERE datetime BETWEEN %s AND %s
-        """, (prev_start.isoformat(), prev_end.isoformat()))
-        prev_bookings = self.c.fetchone()[0]
-
-        # Процент изменения записей
-        bookings_change = round(
-            ((current_bookings - prev_bookings) / prev_bookings * 100) if prev_bookings > 0 else 0,
-            2
-        )
+        revenue_change = round(((current_revenue - prev_revenue) / prev_revenue * 100) if prev_revenue > 0 else 0, 2)
+        bookings_change = round(((current_bookings - prev_bookings) / prev_bookings * 100) if prev_bookings > 0 else 0, 2)
 
         return {
             "revenue_change_percent": revenue_change,
             "bookings_change_percent": bookings_change,
-            "current_period": {
-                "revenue": round(current_revenue, 2),
-                "bookings": current_bookings
-            },
-            "previous_period": {
-                "revenue": round(prev_revenue, 2),
-                "bookings": prev_bookings
-            }
+            "current_period": {"revenue": round(current_revenue, 2), "bookings": current_bookings},
+            "previous_period": {"revenue": round(prev_revenue, 2), "bookings": prev_bookings}
         }
 
     def get_master_schedule_stats(self, master_name: str, date: str) -> Dict:
