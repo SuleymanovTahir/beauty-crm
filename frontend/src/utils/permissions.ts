@@ -321,16 +321,26 @@ export class PermissionChecker {
 
   // === АНАЛИТИКА ===
 
+  /**
+   * Проверить доступ к аналитике (ОБНОВЛЕНО: только admin, director, manager)
+   * 
+   * ВАЖНО: Это соответствует backend/api/analytics.py ANALYTICS_ROLES
+   */
   static canViewAnalytics(role: string): boolean {
-    return (
-      RoleHierarchy.hasPermission(role, 'analytics_view') ||
-      RoleHierarchy.hasPermission(role, 'analytics_view_anonymized') ||
-      RoleHierarchy.hasPermission(role, 'analytics_view_stats_only')
-    );
+    // Только admin, director, manager имеют доступ к финансовой аналитике
+    return ['admin', 'director', 'manager'].includes(role);
   }
 
   static canViewFullAnalytics(role: string): boolean {
+    // Только director видит полную аналитику без ограничений
     return role === 'director';
+  }
+
+  /**
+   * Проверить доступ к дашборду (то же что и аналитика)
+   */
+  static canViewDashboard(role: string): boolean {
+    return this.canViewAnalytics(role);
   }
 
   static canExportData(role: string): boolean {

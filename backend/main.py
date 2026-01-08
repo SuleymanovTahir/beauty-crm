@@ -14,7 +14,7 @@ if "cgi" not in sys.modules:
 # ---------------------------------------------------
 
 import asyncio
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import Response
@@ -37,7 +37,7 @@ from db.connection import get_db_connection
 from db import init_database
 from db.settings import get_salon_settings
 from bot import get_bot
-from utils.utils import ensure_upload_directories
+from utils.utils import ensure_upload_directories, get_current_user
 from middleware import CacheControlMiddleware
 
 # Force reload check 3
@@ -113,6 +113,12 @@ from api.tasks import router as tasks_router
 from api.telephony import router as telephony_router
 from api.menu_settings import router as menu_settings_router
 
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+limiter = Limiter(key_func=get_remote_address)
+
 # Создаём директории для загрузок
 ensure_upload_directories()
 
@@ -121,6 +127,8 @@ salon = None
 
 # Инициализация FastAPI
 app = FastAPI(title="💎 Beauty CRM")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Подключение статики и шаблонов
 # Подключение статики и шаблонов
@@ -206,22 +214,26 @@ async def add_security_headers(request: Request, call_next):
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
-    """Логирование запросов"""
-    # Игнорируем статику и документацию
-    if request.url.path.startswith("/static") or request.url.path == "/docs":
+    """Логирование запросов (оптимизировано)"""
+    # Игнорируем статику, документацию и большинство API запросов
+    path = request.url.path
+    if path.startswith("/static") or path == "/docs" or path.startswith("/api/"):
         return await call_next(request)
     
     start_time = time.time()
-    log_info(f"🔥 {request.method} {request.url.path}", "middleware")
+    log_info(f"🔥 {request.method} {path}", "middleware")
     
     try:
         response = await call_next(request)
         process_time = time.time() - start_time
-        log_info(f"📤 {request.method} {request.url.path} → {response.status_code} ({process_time:.2f}s)", 
-                "middleware")
+        
+        # Логируем только медленные запросы (> 1с)
+        if process_time > 1.0:
+            log_info(f"📤 {request.method} {path} → {response.status_code} ({process_time:.2f}s)", 
+                    "middleware")
         
         # Track visitors to public pages
-        if request.url.path.startswith("/api/public") or request.url.path == "/":
+        if path.startswith("/api/public") or path == "/":
             try:
                 from db.visitor_tracking import track_visitor
                 ip = request.client.host
@@ -233,11 +245,11 @@ async def log_requests(request: Request, call_next):
                 asyncio.create_task(asyncio.to_thread(track_visitor, ip, user_agent, page_url))
             except Exception as e:
                 # Don't fail the request if tracking fails
-                log_error(f"Visitor tracking error: {e}", "middleware")
+                pass  # Убрали логирование ошибок трекинга
         
         return response
     except Exception as e:
-        log_error(f"❌ ОШИБКА: {request.method} {request.url.path}", "middleware", 
+        log_error(f"❌ ОШИБКА: {request.method} {path}", "middleware", 
                  exc_info=True)
         raise
 
@@ -286,11 +298,17 @@ async def global_exception_handler(request: Request, exc: Exception):
     import traceback
     log_error(f"📋 Traceback:\n{traceback.format_exc()}", "exception_handler")
     
+    error_msg = "Internal Server Error"
+    detail_msg = str(exc)
+    
+    if os.getenv("ENVIRONMENT") == "production":
+        detail_msg = "An unexpected error occurred. Please contact support."
+
     return JSONResponse(
         status_code=500,
         content={
-            "error": "Internal Server Error",
-            "message": str(exc),
+            "error": error_msg,
+            "message": detail_msg,
         }
     )
 
@@ -340,10 +358,13 @@ async def data_deletion():
     return RedirectResponse(url="/#/data-deletion")
 
 @app.post("/admin/run-migration/{migration_name}")
-async def run_migration(migration_name: str):
-    """Запустить конкретную миграцию (только для разработки)"""
-    if os.getenv("ENVIRONMENT") == "production":
-        return JSONResponse({"error": "Migrations disabled in production"}, status_code=403)
+async def run_migration(migration_name: str, user: dict = Depends(get_current_user)):
+    """Запустить конкретную миграцию (только для директора)"""
+    if user["role"] != 'director':
+        return JSONResponse({"error": "Forbidden: Only directors can run migrations"}, status_code=403)
+    
+    if os.getenv("ENVIRONMENT") == "production" and migration_name != "consolidated":
+        return JSONResponse({"error": "Direct migrations disabled in production. Use consolidated migration only."}, status_code=403)
     
     try:
         log_info(f"🔧 Запуск миграции: {migration_name}", "migrations")
@@ -392,10 +413,10 @@ async def run_migration(migration_name: str):
         )
 
 @app.get("/admin/diagnostics")
-async def get_diagnostics():
-    """Получить диагностику БД (только для разработки)"""
-    if os.getenv("ENVIRONMENT") == "production":
-        return JSONResponse({"error": "Diagnostics disabled in production"}, status_code=403)
+async def get_diagnostics(user: dict = Depends(get_current_user)):
+    """Получить диагностику БД (только для директора)"""
+    if user["role"] != 'director' and os.getenv("ENVIRONMENT") == "production":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     
     try:
@@ -624,6 +645,15 @@ async def startup_event():
             'interval',
             minutes=30,
             id='appointment_reminders'
+        )
+        
+        # ✅ Очистка устаревших сессий (каждые 6 часов)
+        from scripts.cleanup_sessions import cleanup_expired_sessions
+        scheduler.add_job(
+            cleanup_expired_sessions,
+            'interval',
+            hours=6,
+            id='cleanup_sessions'
         )
         
         scheduler.start()

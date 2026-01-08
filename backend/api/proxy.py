@@ -6,13 +6,35 @@ from utils.logger import log_error, log_info
 
 router = APIRouter(tags=["Proxy"])
 
+# Whitelist of allowed domains for proxy (кэшируем на уровне модуля)
+ALLOWED_DOMAINS = {
+    "cdninstagram.com",
+    "fbcdn.net",
+    "instagram.com",
+    "facebook.com"
+}
+
 @router.get("/proxy/image")
 async def proxy_image(url: str = Query(...)):
     """
     Прокси для загрузки изображений Instagram
     Обходит ограничения CORS и 403 Forbidden
     """
+    
     try:
+        from urllib.parse import urlparse
+        parsed_url = urlparse(url)
+        domain = parsed_url.netloc.lower()
+        
+        # Быстрая проверка через set и проверка поддоменов
+        is_allowed = domain in ALLOWED_DOMAINS or any(
+            domain.endswith("." + allowed) for allowed in ALLOWED_DOMAINS
+        )
+        
+        if not is_allowed:
+            log_error(f"❌ Попытка доступа к запрещенному домену через прокси: {domain}", "proxy")
+            return Response(content=b'Forbidden domain', status_code=403)
+
         log_info(f"🔄 Прокси запрос для изображения: {url[:100]}...", "proxy")
         log_info(f"🔍 Полный URL: {url}", "proxy")
         

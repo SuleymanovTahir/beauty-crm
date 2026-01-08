@@ -26,9 +26,14 @@ export class ApiClient {
       ...options,
     }
 
+    // Таймаут для предотвращения зависания (30 секунд)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000)
+    defaultOptions.signal = controller.signal
 
     try {
       const response = await fetch(url, defaultOptions)
+      clearTimeout(timeoutId)
 
       if (response.status === 401) {
         localStorage.removeItem('user')
@@ -48,11 +53,13 @@ export class ApiClient {
       }
 
       return response.json()
-    } catch (error) {
-      console.error('API Error:', error)
+    } catch (error: any) {
+      clearTimeout(timeoutId)
+      if (error.name === 'AbortError') {
+        throw new Error('Запрос превысил время ожидания. Попробуйте еще раз.')
+      }
       throw error
     }
-
   }
 
   // Generic HTTP methods
@@ -1189,7 +1196,7 @@ export class ApiClient {
 
   // ===== МАСТЕРА =====
   async getMasters() {
-    return this.request<any>('/api/masters')
+    return this.request<any>('/api/employees')
   }
 
   async addMasterTimeOff(masterId: number, data: { date_from: string; date_to: string; reason?: string }) {
