@@ -825,6 +825,12 @@ export class ApiClient {
     return this.request<{ summary: any }>('/api/admin/audit-log/summary')
   }
 
+  async clearAuditLog() {
+    return this.request<{ success: boolean; message: string }>('/api/admin/audit-log/clear', {
+      method: 'DELETE'
+    })
+  }
+
   // ===== УСЛУГИ =====
   async getServices(activeOnly: boolean = true) {
     return this.request<any>(`/api/services?active_only=${activeOnly}`)

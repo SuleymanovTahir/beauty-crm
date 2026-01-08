@@ -31,8 +31,8 @@ const AdminFunnel = React.lazy(() => import('./pages/admin/Funnel'));
 const AdminTasks = React.lazy(() => import('./pages/admin/Tasks'));
 const Telephony = React.lazy(() => import('./pages/admin/Telephony'));
 const MenuCustomization = React.lazy(() => import('./pages/admin/MenuCustomization'));
-const TrashBin = React.lazy(() => import('./pages/admin/TrashBin'));
-const AuditLog = React.lazy(() => import('./pages/admin/AuditLog'));
+const TrashBin = React.lazy(() => import('@/pages/admin/TrashBin'));
+const AuditLog = React.lazy(() => import('@/pages/admin/AuditLog'));
 
 // Admin Panel pages
 const AdminPanelLayout = React.lazy(() => import('./components/layouts/AdminPanelLayout'));
