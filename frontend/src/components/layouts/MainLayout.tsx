@@ -228,12 +228,12 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             // ГРУППА 4: Контент и Каналы
             { icon: Globe, label: t('menu.public_content'), path: `${rolePrefix}/public-content`, requirePermission: () => permissions.canViewSettings && permissions.roleLevel >= 80 },
             { icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, requirePermission: () => permissions.roleLevel >= 80 || user?.role === 'sales' },
-            { icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, requirePermission: () => user?.role === 'sales' || user?.role === 'marketer' || user?.role === 'manager' },
+            { icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, requirePermission: () => permissions.canUseStaffChat },
 
             // ГРУППА 5: Системные настройки
             { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, requirePermission: () => permissions.canViewSettings || user?.role === 'employee' || user?.role === 'manager' || user?.role === 'sales' },
             { icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, requirePermission: () => permissions.canViewBotSettings || user?.role === 'sales' },
-            { icon: ShieldCheck, label: t('menu.audit_log'), path: `${rolePrefix}/audit-log`, requirePermission: () => user?.role === 'director' },
+            { icon: ShieldCheck, label: t('menu.audit_log'), path: `${rolePrefix}/audit-log`, requirePermission: () => permissions.roleLevel >= 80 },
             { icon: Trash2, label: t('menu.trash'), path: `${rolePrefix}/trash`, requirePermission: () => permissions.roleLevel >= 80 },
         ];
 
