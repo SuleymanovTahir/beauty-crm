@@ -50,6 +50,15 @@ async def main():
         except Exception as e:
             log_error(f"❌ Ошибка в sync_master_services.py: {e}", "run_all_fixes")
 
+        # 4. Housekeeping (Periodic cleanup)
+        log_info("4️⃣  Запуск housekeeping.py...", "run_all_fixes")
+        try:
+            from scripts.maintenance.housekeeping import run_housekeeping
+            run_housekeeping()
+            log_info("✅ housekeeping.py выполнен успешно", "run_all_fixes")
+        except Exception as e:
+            log_error(f"❌ Ошибка в housekeeping.py: {e}", "run_all_fixes")
+
         log_info("🎉 Все исправления завершены!", "run_all_fixes")
 
     except Exception as e:

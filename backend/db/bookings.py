@@ -16,7 +16,9 @@ def get_all_bookings():
     try:
         c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
                      name, status, created_at, revenue, master, user_id, source
-                     FROM bookings ORDER BY created_at DESC""")
+                     FROM bookings 
+                     WHERE deleted_at IS NULL
+                     ORDER BY created_at DESC""")
     except psycopg2.OperationalError:
         # Fallback для старой схемы без master/user_id
         try:
@@ -42,7 +44,7 @@ def get_bookings_by_master(master_name: str):
             SELECT id, instagram_id, service_name, datetime, phone,
                    name, status, created_at, revenue, master
             FROM bookings
-            WHERE master = %s
+            WHERE master = %s AND deleted_at IS NULL
             ORDER BY datetime DESC
         """, (master_name,))
     except psycopg2.OperationalError:
@@ -91,9 +93,8 @@ def get_bookings_by_client(instagram_id: str = None, phone: str = None, user_id:
         
         if conditions:
             query += " AND (" + " OR ".join(conditions) + ")"
-        else:
-            query += " AND 1=0" # No criteria provided
-
+        
+        query += " AND deleted_at IS NULL"
         query += " ORDER BY datetime DESC"
 
         c.execute(query, tuple(params))
@@ -296,9 +297,11 @@ def search_bookings(query: str, limit: int = 50):
                    b.datetime, b.phone, b.status, b.created_at, b.revenue
             FROM bookings b
             LEFT JOIN clients c ON b.instagram_id = c.instagram_id
-            WHERE b.service_name LIKE %s OR b.name LIKE %s OR c.username LIKE %s 
-                  OR c.name LIKE %s OR b.phone LIKE %s
+            WHERE (b.service_name LIKE %s OR b.name LIKE %s OR c.username LIKE %s 
+                  OR c.name LIKE %s OR b.phone LIKE %s)
+                  AND b.deleted_at IS NULL
             ORDER BY b.created_at DESC
+
             LIMIT %s
         """, (query, query, query, query, query, limit))
         
@@ -649,6 +652,8 @@ def get_upcoming_bookings(hours: int = 24) -> List[Tuple]:
         JOIN clients c ON b.instagram_id = c.instagram_id
         WHERE b.status IN ('pending', 'confirmed')
         AND b.datetime BETWEEN %s AND %s
+        AND b.deleted_at IS NULL
+
     """, (start_time, end_time))
     
     results = c.fetchall()
@@ -707,7 +712,9 @@ def find_active_booking(instagram_id: str) -> Optional[Dict]:
         WHERE instagram_id = %s 
         AND status IN ('confirmed', 'pending')
         AND datetime >= %s
+        AND deleted_at IS NULL
         ORDER BY datetime ASC
+
         LIMIT 1
     """, (instagram_id, now))
     

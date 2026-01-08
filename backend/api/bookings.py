@@ -1094,25 +1094,30 @@ async def delete_booking_api(
             except Exception as e:
                 log_error(f"Error sending booking cancel notification: {e}", "api")
 
-        # ✅ Удаляем зависимые записи из таблиц с FOREIGN KEY на bookings
-        c.execute("DELETE FROM booking_reminders_sent WHERE booking_id = %s", (booking_id,))
-        c.execute("DELETE FROM loyalty_transactions WHERE booking_id = %s", (booking_id,))
-        c.execute("DELETE FROM ratings WHERE booking_id = %s", (booking_id,))
-        c.execute("DELETE FROM reminder_logs WHERE booking_id = %s", (booking_id,))
-        c.execute("DELETE FROM notification_logs WHERE booking_id = %s", (booking_id,))
+        # ✅ Используем Soft Delete вместо физического удаления
+        from utils.soft_delete import soft_delete_booking
+        from utils.audit import log_audit
+        
+        success = soft_delete_booking(booking_id, user)
+        
+        if success:
+            # Логируем в аудит
+            log_audit(
+                user=user,
+                action='delete',
+                entity_type='booking',
+                entity_id=str(booking_id),
+                old_value={
+                    "service": service,
+                    "datetime": datetime_str,
+                    "master": master,
+                    "client": name
+                }
+            )
+            return {"success": True, "message": "Booking moved to trash"}
+        else:
+            return JSONResponse({"error": "Booking not found or already deleted"}, status_code=404)
 
-        # Удаляем запись
-        c.execute("DELETE FROM bookings WHERE id = %s", (booking_id,))
-        conn.commit()
-        conn.close()
-
-        try:
-            log_activity(user["id"], "delete_booking", "booking", str(booking_id),
-                        f"Deleted booking: {service}")
-        except Exception as log_err:
-            log_error(f"Error logging activity for booking deletion: {log_err}", "api")
-
-        return {"success": True, "message": "Booking deleted"}
 
     except Exception as e:
         log_error(f"Booking deletion error: {e}", "api")

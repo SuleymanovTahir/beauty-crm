@@ -70,6 +70,72 @@ def soft_delete_booking(
         log_error(f"Error soft deleting booking: {e}", "soft_delete")
         return False
 
+def soft_delete_client(
+    client_id: str,
+    deleted_by_user: Dict[str, Any],
+    reason: Optional[str] = None
+) -> bool:
+    """Мягкое удаление клиента"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        c.execute("SELECT id FROM clients WHERE id = %s AND deleted_at IS NULL", (client_id,))
+        if not c.fetchone():
+            conn.close()
+            return False
+        
+        c.execute("UPDATE clients SET deleted_at = CURRENT_TIMESTAMP WHERE id = %s", (client_id,))
+        
+        c.execute("""
+            INSERT INTO deleted_items 
+            (entity_type, entity_id, deleted_by, deleted_by_role, reason, can_restore)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, ('client', client_id, deleted_by_user.get("id"), deleted_by_user.get("role"), 
+              reason or f"Deleted by {deleted_by_user.get('username')}", True))
+        
+        conn.commit()
+        conn.close()
+        log_info(f"🗑️ Client {client_id} soft deleted by {deleted_by_user.get('username')}", "soft_delete")
+        return True
+    except Exception as e:
+        log_error(f"Error soft deleting client: {e}", "soft_delete")
+        return False
+
+def soft_delete_user(
+    user_id: int,
+    deleted_by_user: Dict[str, Any],
+    reason: Optional[str] = None
+) -> bool:
+    """Мягкое удаление пользователя"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        c.execute("SELECT id FROM users WHERE id = %s AND deleted_at IS NULL", (user_id,))
+        if not c.fetchone():
+            conn.close()
+            return False
+        
+        # Помечаем пользователя как неактивного и удаленного
+        c.execute("UPDATE users SET deleted_at = CURRENT_TIMESTAMP, is_active = FALSE WHERE id = %s", (user_id,))
+        
+        c.execute("""
+            INSERT INTO deleted_items 
+            (entity_type, entity_id, deleted_by, deleted_by_role, reason, can_restore)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, ('user', str(user_id), deleted_by_user.get("id"), deleted_by_user.get("role"), 
+              reason or f"Deleted by {deleted_by_user.get('username')}", True))
+        
+        conn.commit()
+        conn.close()
+        log_info(f"🗑️ User {user_id} soft deleted by {deleted_by_user.get('username')}", "soft_delete")
+        return True
+    except Exception as e:
+        log_error(f"Error soft deleting user: {e}", "soft_delete")
+        return False
+
+
 def restore_booking(
     booking_id: int,
     restored_by_user: Dict[str, Any]
@@ -178,6 +244,57 @@ def get_deleted_items(
         log_error(f"Error getting deleted items: {e}", "soft_delete")
         return []
 
+def restore_client(
+    client_id: str,
+    restored_by_user: Dict[str, Any]
+) -> bool:
+    """Восстановить удаленного клиента"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        c.execute("UPDATE clients SET deleted_at = NULL WHERE id = %s", (client_id,))
+        
+        c.execute("""
+            UPDATE deleted_items
+            SET restored_at = CURRENT_TIMESTAMP, restored_by = %s
+            WHERE entity_type = 'client' AND entity_id = %s AND restored_at IS NULL
+        """, (restored_by_user.get("id"), client_id))
+        
+        conn.commit()
+        conn.close()
+        log_info(f"♻️ Client {client_id} restored by {restored_by_user.get('username')}", "soft_delete")
+        return True
+    except Exception as e:
+        log_error(f"Error restoring client: {e}", "soft_delete")
+        return False
+
+def restore_user(
+    user_id: int,
+    restored_by_user: Dict[str, Any]
+) -> bool:
+    """Восстановить удаленного пользователя"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Восстанавливаем и активируем обратно
+        c.execute("UPDATE users SET deleted_at = NULL, is_active = TRUE WHERE id = %s", (user_id,))
+        
+        c.execute("""
+            UPDATE deleted_items
+            SET restored_at = CURRENT_TIMESTAMP, restored_by = %s
+            WHERE entity_type = 'user' AND entity_id = %s AND restored_at IS NULL
+        """, (restored_by_user.get("id"), str(user_id)))
+        
+        conn.commit()
+        conn.close()
+        log_info(f"♻️ User {user_id} restored by {restored_by_user.get('username')}", "soft_delete")
+        return True
+    except Exception as e:
+        log_error(f"Error restoring user: {e}", "soft_delete")
+        return False
+
 def permanent_delete_booking(booking_id: int) -> bool:
     """
     Полное удаление записи (ОПАСНО! Нельзя восстановить)
@@ -188,6 +305,7 @@ def permanent_delete_booking(booking_id: int) -> bool:
     Returns:
         bool: Успешно ли удалено
     """
+
     try:
         conn = get_db_connection()
         c = conn.cursor()
