@@ -114,18 +114,18 @@ const AuditLog: React.FC = () => {
     });
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 p-6 lg:p-10 font-['Outfit']">
+        <div className="p-6 space-y-6">
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10"
             >
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 mb-2">
+                    <h1 className="text-3xl font-bold tracking-tight">
                         {t('title')}
                     </h1>
-                    <p className="text-gray-400 flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-[#6366f1]" />
+                    <p className="text-muted-foreground flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4" />
                         {t('subtitle')}
                     </p>
                 </div>
