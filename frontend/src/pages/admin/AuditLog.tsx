@@ -21,6 +21,8 @@ import {
 import { api } from '../../services/api';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
 
 type AuditEntry = {
     id: number;
@@ -81,17 +83,17 @@ const AuditLog: React.FC = () => {
     };
 
     const handleClearLogs = async () => {
-        if (!window.confirm(t('clear_confirm', 'Вы уверены, что хотите полностью очистить журнал аудита? Это действие необратимо.'))) return;
+        if (!window.confirm(t('clear_confirm'))) return;
 
         try {
             setIsClearing(true);
             await api.clearAuditLog();
-            toast.success(t('toast.clear_success', 'Журнал аудита успешно очищен'));
+            toast.success(t('toast.clear_success'));
             setHistory([]);
             setSummary(null);
             fetchSummary();
         } catch (error) {
-            toast.error(t('toast.clear_error', 'Ошибка при очистке журнала'));
+            toast.error(t('toast.clear_error'));
         } finally {
             setIsClearing(false);
         }
@@ -132,21 +134,22 @@ const AuditLog: React.FC = () => {
 
                 <div className="flex items-center gap-3">
                     {isDirector && (
-                        <button
+                        <Button
                             onClick={handleClearLogs}
                             disabled={isClearing || history.length === 0}
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            variant="destructive"
                         >
                             <Trash2 size={18} />
-                            <span className="hidden md:inline">{t('clear_all', 'Очистить всё')}</span>
-                        </button>
+                            <span className="hidden md:inline">{t('clear_all')}</span>
+                        </Button>
                     )}
-                    <button
+                    <Button
                         onClick={() => { fetchData(); fetchSummary(); }}
-                        className="p-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 shadow-sm transition-all text-slate-400 hover:text-[#6366f1]"
+                        variant="outline"
+                        size="icon"
                     >
                         <RefreshCcw className="w-5 h-5" />
-                    </button>
+                    </Button>
                 </div>
             </motion.div>
 
@@ -164,14 +167,14 @@ const AuditLog: React.FC = () => {
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: i * 0.1 }}
-                            className="bg-white border border-slate-200 p-4 rounded-xl flex items-center gap-4 shadow-sm"
+                            className="bg-card border p-4 rounded-xl flex items-center gap-4 shadow-sm"
                         >
-                            <div className={`w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center ${stat.color}`}>
+                            <div className={`w-10 h-10 rounded-xl bg-muted flex items-center justify-center ${stat.color}`}>
                                 <stat.icon size={20} />
                             </div>
                             <div>
-                                <p className="text-xs text-slate-500 uppercase tracking-widest">{stat.label}</p>
-                                <p className="text-xl font-bold text-slate-900">{stat.value}</p>
+                                <p className="text-xs text-muted-foreground uppercase tracking-widest">{stat.label}</p>
+                                <p className="text-xl font-bold">{stat.value}</p>
                             </div>
                         </motion.div>
                     ))}
@@ -181,18 +184,18 @@ const AuditLog: React.FC = () => {
             {/* Filters */}
             <div className="flex flex-col lg:flex-row gap-4 mb-8">
                 <div className="flex-1 relative group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+                    <Input
                         type="text"
                         placeholder={t('search_placeholder')}
-                        className="w-full bg-white border border-slate-200 rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-[#6366f1]/20 outline-none shadow-sm transition-all"
+                        className="pl-10"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
                 <div className="relative">
                     <select
-                        className="w-full lg:w-48 appearance-none bg-white border border-slate-200 rounded-lg pl-4 pr-10 py-2 text-sm outline-none focus:ring-2 focus:ring-[#6366f1]/20 cursor-pointer shadow-sm text-slate-700"
+                        className="w-full lg:w-48 appearance-none bg-card border rounded-lg pl-4 pr-10 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] cursor-pointer shadow-sm"
                         value={filterAction}
                         onChange={(e) => setFilterAction(e.target.value)}
                     >
@@ -203,56 +206,56 @@ const AuditLog: React.FC = () => {
                         <option value="restore">{t('filter_restore')}</option>
                         <option value="login">{t('filter_login')}</option>
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                 </div>
             </div>
 
             {/* Table */}
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-card border rounded-xl overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
-                            <tr className="border-b border-slate-100 bg-slate-50/50">
-                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">{t('table.action')}</th>
-                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">{t('table.user')}</th>
-                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">{t('table.entity')}</th>
-                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">{t('table.status')}</th>
-                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">{t('table.time')}</th>
-                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500"></th>
+                            <tr className="border-b bg-muted/50">
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('table.action')}</th>
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('table.user')}</th>
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('table.entity')}</th>
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('table.status')}</th>
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('table.time')}</th>
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground"></th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={6} className="py-20 text-center text-gray-500">{t('table.loading')}</td>
+                                    <td colSpan={6} className="py-20 text-center text-muted-foreground">{t('table.loading')}</td>
                                 </tr>
                             ) : filteredHistory.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="py-20 text-center text-gray-500">{t('table.empty')}</td>
+                                    <td colSpan={6} className="py-20 text-center text-muted-foreground">{t('table.empty')}</td>
                                 </tr>
                             ) : (
                                 filteredHistory.map((entry) => (
-                                    <tr key={entry.id} className="border-b border-slate-50 hover:bg-slate-50/80 transition-colors group">
+                                    <tr key={entry.id} className="border-b hover:bg-muted/30 transition-colors group">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="p-2 rounded-lg bg-slate-50 border border-slate-100">
+                                                <div className="p-2 rounded-lg bg-muted border">
                                                     {getActionIcon(entry.action)}
                                                 </div>
-                                                <span className="font-medium capitalize text-slate-700">{t(`filter_${entry.action}`)}</span>
+                                                <span className="font-medium capitalize">{t(`filter_${entry.action}`)}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
-                                                <span className="font-semibold text-slate-900">{entry.username}</span>
-                                                <span className="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">
+                                                <span className="font-semibold">{entry.username}</span>
+                                                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">
                                                     {entry.user_role}
                                                 </span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-medium text-slate-700">{entry.entity_type || '-'}</span>
-                                                <span className="text-xs text-slate-400">ID: {entry.entity_id || '-'}</span>
+                                                <span className="text-sm font-medium">{entry.entity_type || '-'}</span>
+                                                <span className="text-xs text-muted-foreground">ID: {entry.entity_id || '-'}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
@@ -266,16 +269,18 @@ const AuditLog: React.FC = () => {
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-slate-500">
+                                        <td className="px-6 py-4 text-sm text-muted-foreground">
                                             {new Date(entry.created_at).toLocaleString()}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <button
+                                            <Button
                                                 onClick={() => setSelectedEntry(entry)}
-                                                className="p-2 rounded-xl border border-slate-200 bg-white text-[#6366f1] opacity-0 group-hover:opacity-100 transition-all hover:bg-[#6366f1] hover:text-white shadow-sm"
+                                                variant="outline"
+                                                size="icon"
+                                                className="opacity-0 group-hover:opacity-100 transition-all"
                                             >
                                                 <Eye size={16} />
-                                            </button>
+                                            </Button>
                                         </td>
                                     </tr>
                                 ))
@@ -288,35 +293,37 @@ const AuditLog: React.FC = () => {
             {/* Details Modal */}
             <AnimatePresence>
                 {selectedEntry && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#050510]/80 backdrop-blur-sm">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
-                            className="bg-white border border-slate-200 w-full max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl relative"
+                            className="bg-card border w-full max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl relative"
                         >
-                            <button
+                            <Button
                                 onClick={() => setSelectedEntry(null)}
-                                className="absolute top-6 right-6 p-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-all"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute top-6 right-6"
                             >
-                                <XCircle className="w-6 h-6 text-slate-500" />
-                            </button>
+                                <XCircle className="w-6 h-6" />
+                            </Button>
 
                             <div className="p-10">
                                 <div className="flex items-center gap-4 mb-8">
-                                    <div className="p-4 rounded-2xl bg-[#6366f1]/5 text-[#6366f1]">
+                                    <div className="p-4 rounded-2xl bg-primary/5 text-primary">
                                         <Database size={32} />
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-bold text-slate-900">{t('details.title')}</h2>
-                                        <p className="text-slate-500">{t('details.op_id')}: {selectedEntry.id} • {new Date(selectedEntry.created_at).toLocaleString()}</p>
+                                        <h2 className="text-2xl font-bold">{t('details.title')}</h2>
+                                        <p className="text-muted-foreground">{t('details.op_id')}: {selectedEntry.id} • {new Date(selectedEntry.created_at).toLocaleString()}</p>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-[50vh] overflow-y-auto">
                                     <div className="space-y-4">
-                                        <h3 className="text-sm font-bold uppercase tracking-widest text-[#6366f1]">{t('details.old_data')}</h3>
-                                        <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 text-xs font-mono overflow-auto max-h-[40vh]">
+                                        <h3 className="text-sm font-bold uppercase tracking-widest text-primary">{t('details.old_data')}</h3>
+                                        <div className="p-6 rounded-2xl bg-muted border text-xs font-mono overflow-auto max-h-[40vh]">
                                             <pre className="text-pink-600/80">
                                                 {JSON.stringify(selectedEntry.old_value, null, 2) || t('details.no_data')}
                                             </pre>
@@ -324,7 +331,7 @@ const AuditLog: React.FC = () => {
                                     </div>
                                     <div className="space-y-4">
                                         <h3 className="text-sm font-bold uppercase tracking-widest text-green-600">{t('details.new_data')}</h3>
-                                        <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 text-xs font-mono overflow-auto max-h-[40vh]">
+                                        <div className="p-6 rounded-2xl bg-muted border text-xs font-mono overflow-auto max-h-[40vh]">
                                             <pre className="text-green-700/80">
                                                 {JSON.stringify(selectedEntry.new_value, null, 2) || t('details.no_data')}
                                             </pre>
@@ -332,8 +339,8 @@ const AuditLog: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="mt-8 flex items-center gap-6 text-sm text-slate-500">
-                                    <span className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
+                                <div className="mt-8 flex items-center gap-6 text-sm text-muted-foreground">
+                                    <span className="flex items-center gap-2 bg-muted px-4 py-2 rounded-full border">
                                         <Clock size={16} /> {t('details.ip')}: {selectedEntry.ip_address || 'N/A'}
                                     </span>
                                     {selectedEntry.error_message && (

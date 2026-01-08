@@ -203,8 +203,8 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             {
                 icon: LayoutDashboard,
                 label: user?.role === 'employee' ? t('menu.calendar') :
-                    user?.role === 'sales' ? t('menu.dashboard_sales', 'Мои клиенты') :
-                        user?.role === 'marketer' ? t('menu.analytics', 'Аналитика') : t('menu.dashboard'),
+                    user?.role === 'sales' ? t('menu.dashboard_sales') :
+                        user?.role === 'marketer' ? t('menu.analytics') : t('menu.dashboard'),
                 path: dashboardPath,
                 requirePermission: () => true
             },
@@ -212,7 +212,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             { icon: FileText, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings || user?.role === 'employee' },
             { icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, requirePermission: () => permissions.canViewTasks || permissions.roleLevel >= 70 || user?.role === 'sales' },
             { icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: unreadCount, hasSubmenu: true, requirePermission: () => permissions.canViewInstagramChat || permissions.roleLevel >= 70 || user?.role === 'sales' },
-            { icon: User, label: t('menu.profile', 'Профиль'), path: `${rolePrefix}/profile`, requirePermission: () => user?.role === 'employee' || user?.role === 'sales' },
+            { icon: User, label: t('menu.profile'), path: `${rolePrefix}/profile`, requirePermission: () => user?.role === 'employee' || user?.role === 'sales' },
 
             // ГРУППА 2: Управление (Базы данных)
             { icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, requirePermission: () => permissions.canViewAllClients && user?.role !== 'sales' },
@@ -223,18 +223,18 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             { icon: BarChart3, label: t('menu.analytics'), path: `${rolePrefix}/analytics`, requirePermission: () => permissions.canViewAnalytics && user?.role !== 'marketer' && user?.role !== 'sales' },
             { icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, requirePermission: () => permissions.canViewAnalytics || user?.role === 'sales' },
             { icon: MapPinned, label: t('menu.visitors'), path: `${rolePrefix}/visitor-analytics`, requirePermission: () => permissions.canViewAnalytics },
-            { icon: Send, label: t('menu.broadcasts', 'Рассылки'), path: `${rolePrefix}/broadcasts`, requirePermission: () => permissions.canSendBroadcasts || user?.role === 'sales' },
+            { icon: Send, label: t('menu.broadcasts'), path: `${rolePrefix}/broadcasts`, requirePermission: () => permissions.canSendBroadcasts || user?.role === 'sales' },
 
             // ГРУППА 4: Контент и Каналы
             { icon: Globe, label: t('menu.public_content'), path: `${rolePrefix}/public-content`, requirePermission: () => permissions.canViewSettings && permissions.roleLevel >= 80 },
-            { icon: Phone, label: t('menu.telephony', 'Телефония'), path: `${rolePrefix}/telephony`, requirePermission: () => permissions.roleLevel >= 80 },
-            { icon: MessageCircle, label: t('menu.internal_chat', 'Внутренняя связь'), path: `${rolePrefix}/internal-chat`, requirePermission: () => user?.role === 'sales' || user?.role === 'marketer' || user?.role === 'manager' },
+            { icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, requirePermission: () => permissions.roleLevel >= 80 },
+            { icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, requirePermission: () => user?.role === 'sales' || user?.role === 'marketer' || user?.role === 'manager' },
 
             // ГРУППА 5: Системные настройки
             { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, requirePermission: () => permissions.canViewSettings || user?.role === 'employee' || user?.role === 'manager' || user?.role === 'sales' },
             { icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, requirePermission: () => permissions.canViewBotSettings || user?.role === 'sales' },
-            { icon: ShieldCheck, label: t('menu.audit_log', 'Логи аудита'), path: `${rolePrefix}/audit-log`, requirePermission: () => user?.role === 'director' },
-            { icon: Trash2, label: t('menu.trash', 'Корзина'), path: `${rolePrefix}/trash`, requirePermission: () => permissions.roleLevel >= 80 },
+            { icon: ShieldCheck, label: t('menu.audit_log'), path: `${rolePrefix}/audit-log`, requirePermission: () => user?.role === 'director' },
+            { icon: Trash2, label: t('menu.trash'), path: `${rolePrefix}/trash`, requirePermission: () => permissions.roleLevel >= 80 },
         ];
 
         // Фильтруем только те пункты, к которым есть доступ
@@ -281,11 +281,11 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
 
     const getRoleLabel = () => {
         switch (user?.role) {
-            case 'director': return t('roles.director', 'Директор');
+            case 'director': return t('roles.director');
             case 'admin': return t('admin', 'Админ');
             case 'manager': return t('manager', 'Менеджер');
-            case 'sales': return t('roles.sales', 'Продажи');
-            case 'marketer': return t('roles.marketer', 'Маркетинг');
+            case 'sales': return t('roles.sales');
+            case 'marketer': return t('roles.marketer');
             case 'employee': return t('employee', 'Мастер');
             default: return user?.role;
         }
@@ -441,7 +441,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                     className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors relative"
                                 >
                                     <Bell size={18} />
-                                    <span>{t('menu.notifications', 'Уведомления')}</span>
+                                    <span>{t('menu.notifications')}</span>
                                     {notifCount > 0 && (
                                         <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                                             {notifCount}
@@ -477,7 +477,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                 ))
                                             ) : (
                                                 <div className="p-4 text-center text-xs text-gray-400">
-                                                    {t('no_new_notifications', 'Нет уведомлений')}
+                                                    {t('no_new_notifications')}
                                                 </div>
                                             )}
                                         </div>
