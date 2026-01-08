@@ -58,5 +58,8 @@
   "verification_title": "Confirmación por correo electrónico",
   "verify_button": "Confirmar",
   "verifying": "Examen...",
-  "your_code": "Tu código:"
+  "your_code": "Tu código:",
+  "register_staff_title": "reserva de empleados",
+  "register_staff_subtitle": "Complete la información para acceder al CRM. Su solicitud debe ser aprobada hasta el administrador.",
+  "only_for_staff": "Tenga en cuenta: este reserva es solo para el personal del salón."
 }

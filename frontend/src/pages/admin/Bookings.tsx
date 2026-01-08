@@ -1,6 +1,6 @@
 // /frontend/src/pages/admin/Bookings.tsx
 // frontend/src/pages/admin/Bookings.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send, Trash2, Clock, CheckCircle2, CalendarDays, DollarSign, ChevronDown, Users, } from 'lucide-react';
@@ -158,6 +158,8 @@ export default function Bookings() {
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [masters, setMasters] = useState<any[]>([]);
+  const currentUser = useMemo(() => api.getCurrentUser(), []);
+  const isEmployee = currentUser?.role === 'employee';
 
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -227,7 +229,11 @@ export default function Bookings() {
         (booking.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (booking.service_name || '').toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
-      const matchesMaster = masterFilter === 'all' ||
+
+      // Auto-filter by master for employees
+      const effectiveMasterFilter = isEmployee ? (currentUser?.full_name || currentUser?.username) : masterFilter;
+
+      const matchesMaster = effectiveMasterFilter === 'all' ||
         (() => {
           const m = masters.find(m =>
             (m.username && booking.master && m.username.toLowerCase() === booking.master.toLowerCase()) ||
@@ -235,7 +241,7 @@ export default function Bookings() {
             (m.full_name_ru && booking.master && m.full_name_ru.toLowerCase() === booking.master.toLowerCase())
           );
           const name = (i18n.language.startsWith('ru') && m?.full_name_ru) ? m.full_name_ru : (m?.full_name || booking.master);
-          return name === masterFilter;
+          return name === effectiveMasterFilter;
         })();
 
       // ✅ ДОБАВЛЕНА ФИЛЬТРАЦИЯ ПО ДАТЕ
@@ -605,15 +611,6 @@ export default function Bookings() {
     (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase())
   );
 
-  const formatDateTime = (datetime: string) => {
-    try {
-      const date = new Date(datetime);
-      return date.toLocaleDateString('ru-RU') + ' ' +
-        date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-    } catch {
-      return datetime;
-    }
-  };
 
   // ===== EXPORT HANDLERS =====
   const handleExport = async (format: 'csv' | 'pdf' | 'excel') => {
@@ -893,7 +890,8 @@ export default function Bookings() {
           </div>
 
           {/* Expandable Section: Actions (Import/Export) */}
-          {showActions && (
+          {/* Expandable Section: Actions (Import/Export) - Hidden for employees */}
+          {showActions && !isEmployee && (
             <div className="pt-4 border-t border-gray-50 animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="grid grid-cols-2 gap-3">
                 <button
@@ -933,22 +931,24 @@ export default function Bookings() {
                   />
                 </div>
 
-                {/* Master Filter */}
-                <div className="flex flex-col gap-1.5">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Мастер</span>
-                  <div className="relative">
-                    <select
-                      value={masterFilter}
-                      onChange={(e) => setMasterFilter(e.target.value)}
-                      className="w-full h-[42px] px-4 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500/10 transition-all bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%239ca3af%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:14px_14px] bg-[right_0.75rem_center] bg-no-repeat pr-10 shadow-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      <option value="all">Все мастера</option>
-                      {masters.map((m: any) => (
-                        <option key={m.id} value={m.full_name || m.username}>{m.full_name || m.username}</option>
-                      ))}
-                    </select>
+                {/* Master Filter - Hidden for employees */}
+                {!isEmployee && (
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Мастер</span>
+                    <div className="relative">
+                      <select
+                        value={masterFilter}
+                        onChange={(e) => setMasterFilter(e.target.value)}
+                        className="w-full h-[42px] px-4 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500/10 transition-all bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20fill=%27%239ca3af%27%20d=%27M4%206l4%204%204-4z%27/%3E%3C/svg%3E')] bg-[length:14px_14px] bg-[right_0.75rem_center] bg-no-repeat pr-10 shadow-sm text-gray-700 hover:bg-gray-50"
+                      >
+                        <option value="all">Все мастера</option>
+                        {masters.map((m: any) => (
+                          <option key={m.id} value={m.full_name || m.username}>{m.full_name || m.username}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Period Filter */}
                 <div className="flex flex-col gap-1.5">
@@ -1198,7 +1198,6 @@ export default function Bookings() {
                             (m.full_name_ru && booking.master && m.full_name_ru.toLowerCase() === booking.master.toLowerCase())
                           );
                           const name = (i18n.language.startsWith('ru') && m?.full_name_ru) ? m.full_name_ru : (m?.full_name || booking.master || '-');
-                          const pos = i18n.language.startsWith('ru') && m?.position_ru ? m.position_ru : (m?.position || '');
                           return (
                             <div className="flex flex-col">
                               <span className="font-medium text-gray-900">{name}</span>
@@ -1870,7 +1869,6 @@ export default function Bookings() {
                     <option value="">{t('bookings:select_master')}</option>
                     {filteredMasters.map((m: any) => {
                       const displayName = (i18n.language === 'ru' && m.full_name_ru) ? m.full_name_ru : (m.full_name || m.username);
-                      const position = i18n.language === 'ru' && m.position_ru ? m.position_ru : (m.position || '');
                       return (
                         <option key={m.id} value={m.full_name || m.username}>
                           {displayName}

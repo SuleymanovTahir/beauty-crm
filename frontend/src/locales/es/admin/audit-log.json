@@ -1,0 +1,38 @@
+{
+  "title": "Diario de auditoría",
+  "subtitle": "Historial de todas las acciones y cambios en el sistema.",
+  "search_placeholder": "Buscar hasta usuario, entidad o acción...",
+  "filter_all": "Todas las acciones",
+  "filter_create": "Creación",
+  "filter_update": "Cambiar",
+  "filter_delete": "Eliminación",
+  "filter_restore": "Recuperación",
+  "filter_login": "Iniciar sesión",
+  "stat_total": "Total (24h)",
+  "stat_errors": "Errores (24h)",
+  "stat_active_users": "Usuarios activos",
+  "stat_created": "Creado",
+  "table": {
+    "action": "Acción",
+    "user": "Usuario",
+    "entity": "Esencia",
+    "status": "Estado",
+    "time": "Tiempo",
+    "success": "ÉXITO",
+    "error": "ERROR",
+    "empty": "la historia esta vacia",
+    "loading": "Cargando..."
+  },
+  "details": {
+    "title": "Cambiar detalles",
+    "op_id": "ID de operación",
+    "old_data": "datos antiguos",
+    "new_data": "Nuevos datos",
+    "no_data": "No hay datos disponibles",
+    "ip": "IP",
+    "error_msg": "Mensaje de error"
+  },
+  "toast": {
+    "load_error": "Error al cargar el reserva de auditoría"
+  }
+}

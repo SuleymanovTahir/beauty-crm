@@ -35,7 +35,7 @@
   "register_button": "Register",
   "register_subtitle": "Create an account in the CRM system",
   "register_staff_title": "Employee Registration",
-  "register_staff_subtitle": "Fill in the details to access the CRM. Your application must be approved by an administrator.",
+  "register_staff_subtitle": "Fill in the information to access the CRM. ",
   "register_title": "Registration",
   "only_for_staff": "Note: this registration is for salon staff only",
   "registering": "Registration...",

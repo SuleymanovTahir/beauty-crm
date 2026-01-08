@@ -1,38 +1,38 @@
 {
-    "title": "Audit Log",
-    "subtitle": "History of all system actions and changes",
-    "search_placeholder": "Search by user, entity or action...",
-    "filter_all": "All actions",
-    "filter_create": "Create",
-    "filter_update": "Update",
-    "filter_delete": "Delete",
-    "filter_restore": "Restore",
-    "filter_login": "Login",
-    "stat_total": "Total (24h)",
-    "stat_errors": "Errors (24h)",
-    "stat_active_users": "Active Users",
-    "stat_created": "Created",
-    "table": {
-        "action": "Action",
-        "user": "User",
-        "entity": "Entity",
-        "status": "Status",
-        "time": "Time",
-        "success": "SUCCESS",
-        "error": "ERROR",
-        "empty": "History is empty",
-        "loading": "Loading..."
-    },
-    "details": {
-        "title": "Change Details",
-        "op_id": "Operation ID",
-        "old_data": "Old Data",
-        "new_data": "New Data",
-        "no_data": "No data",
-        "ip": "IP",
-        "error_msg": "Error Message"
-    },
-    "toast": {
-        "load_error": "Error loading audit log"
-    }
+  "title": "Audit Log",
+  "subtitle": "History of all system actions and changes",
+  "search_placeholder": "Search by user, entity or action...",
+  "filter_all": "All actions",
+  "filter_create": "Create",
+  "filter_update": "Update",
+  "filter_delete": "Delete",
+  "filter_restore": "Restore",
+  "filter_login": "Login",
+  "stat_total": "Total (24h)",
+  "stat_errors": "Errors (24h)",
+  "stat_active_users": "Active Users",
+  "stat_created": "Created",
+  "table": {
+    "action": "Action",
+    "user": "User",
+    "entity": "Entity",
+    "status": "Status",
+    "time": "Time",
+    "success": "SUCCESS",
+    "error": "ERROR",
+    "empty": "History is empty",
+    "loading": "Loading..."
+  },
+  "details": {
+    "title": "Change Details",
+    "op_id": "Operation ID",
+    "old_data": "Old Data",
+    "new_data": "New Data",
+    "no_data": "No data",
+    "ip": "IP",
+    "error_msg": "Error Message"
+  },
+  "toast": {
+    "load_error": "Error loading audit log"
+  }
 }

@@ -70,5 +70,9 @@
   "copy": "Kopie",
   "copied": "Kopiert",
   "success": "Erfolgreich",
-  "error": "Fehler"
+  "error": "Fehler",
+  "provider_binotel": "Binotel",
+  "provider_onlinepbx": "OnlinePBX",
+  "provider_twilio": "Twilio",
+  "provider_generic": "Generisch (Webhook)"
 }

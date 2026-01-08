@@ -58,5 +58,8 @@
   "verification_title": "Confirmation par e-mail",
   "verify_button": "Confirmer",
   "verifying": "Examen...",
-  "your_code": "Votre code :"
+  "your_code": "Votre code :",
+  "register_staff_title": "Inscription des employés",
+  "register_staff_subtitle": "Remplissez les informations pour accéder au CRM. Votre demande doit être approuvée à l'administrateur.",
+  "only_for_staff": "Attention : cette inscription est réservée au personnel du salon."
 }

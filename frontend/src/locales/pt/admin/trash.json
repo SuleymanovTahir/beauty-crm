@@ -1,0 +1,34 @@
+{
+  "title": "Cesta",
+  "subtitle": "Gerenciando e restaurando dados excluídos",
+  "search_placeholder": "Pesquise até ID, motivo ou autor...",
+  "filter_all": "Todos",
+  "filter_booking": "bookings",
+  "filter_client": "Clientes",
+  "filter_user": "Funcionários",
+  "empty_title": "O carrinho está vazio",
+  "empty_desc": "Os objetos excluídos serão exibidos aqui",
+  "loading": "Carregando dados...",
+  "objects_count": "{{count}} objetos",
+  "deleted_by": "Excluído",
+  "deleted_at": "Excluído",
+  "restore": "Restaurar",
+  "permanent_delete": "Excluir permanentemente",
+  "permanent_delete_confirm": "Tem certeza? Esta ação não pode ser desfeita!",
+  "not_restorable": "Não recuperável",
+  "important_info": "Informações importantes",
+  "info_desc": "Os itens na Lixeira são retidos indefinidamente, mas recomendamos esvaziar periodicamente a Lixeira para manter o desempenho ideal do banco de dados. A restauração de um funcionário também o retorna ao status Ativo.",
+  "toast": {
+    "load_error": "Erro ao carregar o carrinho",
+    "refreshed": "Atualizado",
+    "restore_success": "{{type}} restaurado com sucesso",
+    "restore_error": "Falha ao restaurar o objeto",
+    "delete_success": "O objeto foi excluído permanentemente",
+    "delete_error": "Erro durante a exclusão final"
+  },
+  "entity": {
+    "booking": "booking",
+    "client": "Cliente",
+    "user": "Funcionário"
+  }
+}

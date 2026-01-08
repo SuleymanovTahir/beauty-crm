@@ -1,0 +1,38 @@
+{
+  "title": "Diário de Auditoria",
+  "subtitle": "Histórico de todas as ações e alterações no sistema",
+  "search_placeholder": "Pesquise até usuário, entidade ou ação...",
+  "filter_all": "Todas as ações",
+  "filter_create": "Criação",
+  "filter_update": "Mudar",
+  "filter_delete": "Remoção",
+  "filter_restore": "Recuperação",
+  "filter_login": "Login",
+  "stat_total": "Total (24h)",
+  "stat_errors": "Erros (24h)",
+  "stat_active_users": "Usuários ativos",
+  "stat_created": "Criado",
+  "table": {
+    "action": "Ação",
+    "user": "Usuário",
+    "entity": "Essência",
+    "status": "Status",
+    "time": "Tempo",
+    "success": "SUCESSO",
+    "error": "ERRO",
+    "empty": "A história está vazia",
+    "loading": "Carregando..."
+  },
+  "details": {
+    "title": "Alterar detalhes",
+    "op_id": "ID da operação",
+    "old_data": "Dados antigos",
+    "new_data": "Novos dados",
+    "no_data": "Não há dados disponíveis",
+    "ip": "PI",
+    "error_msg": "Mensagem de erro"
+  },
+  "toast": {
+    "load_error": "Erro ao carregar o log de auditoria"
+  }
+}

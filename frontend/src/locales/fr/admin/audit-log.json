@@ -1,0 +1,38 @@
+{
+  "title": "Journal d'audit",
+  "subtitle": "Historique de toutes les actions et changements dans le système",
+  "search_placeholder": "Recherche à utilisateur, entité ou action...",
+  "filter_all": "Toutes les actions",
+  "filter_create": "Création",
+  "filter_update": "Changement",
+  "filter_delete": "Suppression",
+  "filter_restore": "Récupération",
+  "filter_login": "Connexion",
+  "stat_total": "Totale (24h)",
+  "stat_errors": "Erreurs (24h)",
+  "stat_active_users": "Utilisateurs actifs",
+  "stat_created": "Créé",
+  "table": {
+    "action": "Action",
+    "user": "Utilisateur",
+    "entity": "Essence",
+    "status": "Statut",
+    "time": "Temps",
+    "success": "SUCCÈS",
+    "error": "ERREUR",
+    "empty": "L'histoire est vide",
+    "loading": "Chargement..."
+  },
+  "details": {
+    "title": "Modifier les détails",
+    "op_id": "ID d'opération",
+    "old_data": "Anciennes données",
+    "new_data": "Nouvelles données",
+    "no_data": "Aucune donnée disponible",
+    "ip": "IP",
+    "error_msg": "Message d'erreur"
+  },
+  "toast": {
+    "load_error": "Erreur lors du chargement du journal d'audit"
+  }
+}
