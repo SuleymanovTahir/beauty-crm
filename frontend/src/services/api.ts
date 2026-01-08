@@ -146,6 +146,45 @@ export class ApiClient {
     })
   }
 
+  async registerClient(username: string, password: string, full_name: string, email: string, phone: string, privacy_accepted: boolean) {
+    const formData = new URLSearchParams()
+    formData.append('username', username)
+    formData.append('password', password)
+    formData.append('full_name', full_name)
+    formData.append('email', email)
+    formData.append('phone', phone)
+    formData.append('privacy_accepted', privacy_accepted.toString())
+
+    return this.request<any>('/api/register/client', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+  }
+
+  async registerEmployee(username: string, password: string, full_name: string, email: string, phone: string, role: string, position: string, privacy_accepted: boolean) {
+    const formData = new URLSearchParams()
+    formData.append('username', username)
+    formData.append('password', password)
+    formData.append('full_name', full_name)
+    formData.append('email', email)
+    formData.append('phone', phone)
+    formData.append('role', role)
+    formData.append('position', position)
+    formData.append('privacy_accepted', privacy_accepted.toString())
+
+    return this.request<any>('/api/register/employee', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+  }
+
+
   async verifyEmailToken(token: string) {
     return this.request<any>(`/api/verify-email-token?token=${token}`, {
       method: 'GET',
@@ -750,6 +789,40 @@ export class ApiClient {
 
   async resetMenuSettings() {
     return this.request('/api/menu-settings', { method: 'DELETE' })
+  }
+
+  // ===== КОРЗИНА (TRASH) =====
+  async getTrashItems(entityType?: string) {
+    const url = entityType ? `/api/admin/trash?entity_type=${entityType}` : '/api/admin/trash'
+    return this.request<{ items: any[] }>(url)
+  }
+
+  async restoreTrashItem(entityType: string, entityId: string | number) {
+    return this.request(`/api/admin/trash/restore/${entityType}/${entityId}`, {
+      method: 'POST'
+    })
+  }
+
+  async permanentDeleteTrashItem(entityType: string, entityId: string | number) {
+    return this.request(`/api/admin/trash/permanent/${entityType}/${entityId}`, {
+      method: 'DELETE'
+    })
+  }
+
+  // ===== ЖУРНАЛ АУДИТА (AUDIT LOG) =====
+  async getAuditLog(filters: { entity_type?: string; entity_id?: string; user_id?: number; action?: string; limit?: number } = {}) {
+    const params = new URLSearchParams()
+    if (filters.entity_type) params.append('entity_type', filters.entity_type)
+    if (filters.entity_id) params.append('entity_id', filters.entity_id)
+    if (filters.user_id) params.append('user_id', filters.user_id.toString())
+    if (filters.action) params.append('action', filters.action)
+    if (filters.limit) params.append('limit', filters.limit.toString())
+
+    return this.request<{ history: any[] }>(`/api/admin/audit-log?${params.toString()}`)
+  }
+
+  async getAuditSummary() {
+    return this.request<{ summary: any }>('/api/admin/audit-log/summary')
   }
 
   // ===== УСЛУГИ =====

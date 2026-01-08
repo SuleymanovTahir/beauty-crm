@@ -92,6 +92,25 @@ def approve_registration(user_id: int, approved_by: int) -> bool:
             VALUES (%s, 'approved', %s, %s)
         """, (user_id, approved_by, datetime.now().isoformat()))
         
+        # Логируем в Audit Log (для уведомлений директоров)
+        from utils.audit import log_audit
+        try:
+            # Пытаемся получить данные админа для лога
+            c.execute("SELECT id, username, role FROM users WHERE id = %s", (approved_by,))
+            admin_data = c.fetchone()
+            admin_user = {"id": admin_data[0], "username": admin_data[1], "role": admin_data[2]} if admin_data else {"id": approved_by, "role": "admin", "username": "Admin"}
+            
+            log_audit(
+                user=admin_user,
+                action='update',
+                entity_type='user',
+                entity_id=str(user_id),
+                new_value={"is_active": True, "status": "approved"},
+                success=True
+            )
+        except Exception as audit_err:
+            log_error(f"Failed to log audit for approval: {audit_err}", "audit")
+
         conn.commit()
         
         # Отправляем email уведомление
@@ -134,11 +153,30 @@ def reject_registration(user_id: int, rejected_by: int, reason: str = "") -> boo
         
         email, full_name = user_data
         
-        # Записываем в audit log ПЕРЕД удалением
+        # Записываем в audit log ПЕРЕД отменой
         c.execute("""
             INSERT INTO registration_audit (user_id, action, approved_by, reason, created_at)
             VALUES (%s, 'rejected', %s, %s, %s)
         """, (user_id, rejected_by, reason, datetime.now().isoformat()))
+        
+        # Логируем в Audit Log
+        from utils.audit import log_audit
+        try:
+            c.execute("SELECT id, username, role FROM users WHERE id = %s", (rejected_by,))
+            admin_data = c.fetchone()
+            admin_user = {"id": admin_data[0], "username": admin_data[1], "role": admin_data[2]} if admin_data else {"id": rejected_by, "role": "admin", "username": "Admin"}
+
+            log_audit(
+                user=admin_user,
+                action='update',
+                entity_type='user',
+                entity_id=str(user_id),
+                new_value={"is_active": False, "status": "rejected", "reason": reason},
+                success=True
+            )
+        except Exception as audit_err:
+            log_error(f"Failed to log audit for rejection: {audit_err}", "audit")
+
         
         # Помечаем пользователя как неактивного (не удаляем для истории)
         c.execute("""

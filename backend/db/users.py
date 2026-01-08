@@ -16,7 +16,9 @@ def get_all_users():
     
     c.execute("""SELECT id, username, password_hash, full_name, email, role, 
                  created_at, last_login, is_active, is_service_provider 
-                 FROM users ORDER BY id""")
+                 FROM users 
+                 WHERE deleted_at IS NULL
+                 ORDER BY id""")
     
     users = c.fetchall()
     conn.close()
@@ -27,14 +29,16 @@ def get_all_service_providers():
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("""SELECT id, full_name, role 
+    c.execute("""SELECT id, username, full_name, role, specialization, position 
                  FROM users 
-                 WHERE is_service_provider = TRUE AND is_active = TRUE
+                 WHERE (is_service_provider = TRUE OR role = 'employee')
+                 AND deleted_at IS NULL
                  ORDER BY full_name""")
     
     providers = c.fetchall()
     conn.close()
-    return [{"id": row[0], "full_name": row[1], "role": row[2]} for row in providers]
+    return [{"id": row[0], "full_name": row[2], "role": row[3]} for row in providers]
+
 
 def create_user(username: str, password: str, full_name: str = None,
                 email: str = None, role: str = 'employee', phone: str = None):

@@ -75,7 +75,9 @@ def get_all_clients():
                      last_contact, total_messages, labels, status, lifetime_value,
                      profile_pic, notes, is_pinned,
                      total_spend, total_visits, discount, card_number, gender
-                     FROM clients ORDER BY is_pinned DESC, last_contact DESC""")
+                      FROM clients 
+                      WHERE deleted_at IS NULL
+                      ORDER BY is_pinned DESC, last_contact DESC""")
     except psycopg2.OperationalError:
         # Fallback для старой версии БД
         c.execute("""SELECT instagram_id, username, phone, name, first_contact, 
@@ -99,7 +101,8 @@ def get_client_by_id(instagram_id: str):
                   gender, card_number, discount, total_visits,
                   total_spend, birthday, email, temperature,
                   age, birth_date, referral_code, source, telegram_id, reminder_date
-                  FROM clients WHERE instagram_id = %s OR username = %s""", (instagram_id, instagram_id))
+                  FROM clients WHERE (instagram_id = %s OR username = %s) AND deleted_at IS NULL""", (instagram_id, instagram_id))
+
     
     client = c.fetchone()
     conn.close()

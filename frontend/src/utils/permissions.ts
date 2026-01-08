@@ -446,5 +446,8 @@ export function usePermissions(role: string) {
 
     // Instagram
     canViewInstagramChat: PermissionChecker.canViewInstagramChat(role),
+
+    // Дополнительно
+    roleLevel: ROLES[role]?.hierarchy_level || 0,
   };
 }

@@ -21,9 +21,9 @@ async def create_user_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Создать нового пользователя (только для admin)"""
+    """Создать нового пользователя (для admin и director)"""
     user = require_auth(session_token)
-    if not user or user["role"] != "admin":
+    if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     data = await request.json()
@@ -35,6 +35,15 @@ async def create_user_api(
     email = data.get('email', '').strip() or None
     role = data.get('role', 'employee')
     position = data.get('position', '').strip() or None
+    phone = data.get('phone', '').strip() or ""
+
+    # 🔒 Иерархия: Админ не может создавать других админов или директоров
+    if user["role"] == "admin" and role in ["admin", "director"]:
+        return JSONResponse(
+            {"error": "Администратор не может создавать пользователей с ролью Admin или Director"}, 
+            status_code=403
+        )
+
 
     if len(username) < 3:
         return JSONResponse({"error": "Логин должен быть минимум 3 символа"}, status_code=400)
@@ -62,9 +71,10 @@ async def create_user_api(
         now = datetime.now().isoformat()
 
         c.execute("""INSERT INTO users
-                     (username, password_hash, full_name, email, role, position, created_at, is_active)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE) RETURNING id""",
-                  (username, password_hash, full_name, email, role, position, now))
+                     (username, password_hash, full_name, email, phone, role, position, created_at, is_active, email_verified)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, TRUE, TRUE) RETURNING id""",
+                  (username, password_hash, full_name, email, phone, role, position, now))
+
         conn.commit()
         user_id = c.fetchone()[0]
         
@@ -297,9 +307,13 @@ async def reject_user(
 @router.post("/users/{user_id}/delete")
 async def delete_user_api(
     user_id: int,
+    request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Удалить пользователя"""
+    """Удалить пользователя (Soft Delete)"""
+    from utils.soft_delete import soft_delete_user
+    from utils.audit import log_audit
+
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
@@ -307,47 +321,46 @@ async def delete_user_api(
     if user["id"] == user_id:
         return JSONResponse({"error": "Нельзя удалить самого себя"}, status_code=400)
 
-    # Проверяем роль удаляемого пользователя
+    # Проверяем роль и данные удаляемого пользователя
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT role FROM users WHERE id = %s", (user_id,))
-    target_user = c.fetchone()
-    if not target_user:
-        conn.close()
+    c.execute("SELECT role, username, full_name FROM users WHERE id = %s", (user_id,))
+    target_data = c.fetchone()
+    conn.close()
+
+    if not target_data:
         return JSONResponse({"error": "Пользователь не найден"}, status_code=404)
     
+    target_role, target_username, target_full_name = target_data
+    
     # Нельзя удалить admin или director, если ты не director
-    if target_user[0] in ['admin', 'director'] and user["role"] != 'director':
-        conn.close()
+    if target_role in ['admin', 'director'] and user["role"] != 'director':
         return JSONResponse({"error": "Недостаточно прав для удаления этого пользователя"}, status_code=403)
     
     try:
-        # Сначала удаляем связанные записи
-        # 1. Удаляем из activity_log
-        c.execute("DELETE FROM activity_log WHERE user_id = %s", (user_id,))
+        success = soft_delete_user(user_id, user)
         
-        # 2. Удаляем из notification_settings
-        c.execute("DELETE FROM notification_settings WHERE user_id = %s", (user_id,))
-        
-        # 3. Удаляем из user_subscriptions
-        c.execute("DELETE FROM user_subscriptions WHERE user_id = %s", (user_id,))
-        
-        # 4. Удаляем из user_services
-        c.execute("DELETE FROM user_services WHERE user_id = %s", (user_id,))
-        
-        # Теперь удаляем самого пользователя
-        c.execute("DELETE FROM users WHERE id = %s", (user_id,))
-        conn.commit()
-        
-        log_activity(user["id"], "delete_user", "user", str(user_id), f"User deleted")
-        
-        return {"success": True, "message": "Пользователь удален"}
+        if success:
+            # Логируем в аудит
+            log_audit(
+                user=user,
+                action='delete',
+                entity_type='user',
+                entity_id=str(user_id),
+                old_value={
+                    "username": target_username,
+                    "full_name": target_full_name,
+                    "role": target_role
+                },
+                ip_address=request.client.host
+            )
+            return {"success": True, "message": "Пользователь успешно удален (перемещен в корзину)"}
+        else:
+            return JSONResponse({"error": "Ошибка при удалении пользователя"}, status_code=400)
     except Exception as e:
-        conn.rollback()
         log_error(f"Error deleting user {user_id}: {e}", "api")
-        return JSONResponse({"error": "Ошибка удаления"}, status_code=400)
-    finally:
-        conn.close()
+        return JSONResponse({"error": str(e)}, status_code=400)
+
 
 # После строки 286 (после функции update_user_profile)
 

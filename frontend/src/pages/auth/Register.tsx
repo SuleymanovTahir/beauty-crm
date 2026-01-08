@@ -89,7 +89,7 @@ export default function Register() {
       setLoading(true);
       setError("");
 
-      const response = await api.register(
+      const response = await api.registerEmployee(
         formData.username,
         formData.password,
         formData.full_name,
@@ -97,9 +97,9 @@ export default function Register() {
         formData.phone,
         formData.role,
         formData.position,
-        privacyAccepted,
-        newsletterSubscribed
+        privacyAccepted
       );
+
 
       if (response.success) {
         // Если это первый директор - он автоматически подтвержден
@@ -327,9 +327,10 @@ export default function Register() {
             )}
           </div>
           <h1 className="text-4xl text-gray-900 mb-2">
-            {salonSettings?.name ? `${t('register_title')} ${salonSettings.name}` : t('register_title')}
+            {t('register_staff_title', 'Регистрация сотрудника')}
           </h1>
-          <p className="text-gray-600">{t('register_subtitle')}</p>
+          <p className="text-gray-600">{t('register_staff_subtitle', 'Пожалуйста, заполните данные для доступа к CRM системе')}</p>
+
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
