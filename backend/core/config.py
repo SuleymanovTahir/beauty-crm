@@ -200,13 +200,15 @@ ROLES = {
     'admin': {
         'name': 'Администратор',
         'permissions': [
-            'clients_view', 'clients_create', 'clients_edit',
-            'bookings_view', 'bookings_create', 'bookings_edit',
-            'services_view',
-            'users_view', 'users_create',
+            'clients_view', 'clients_create', 'clients_edit', 'clients_delete',
+            'bookings_view', 'bookings_create', 'bookings_edit', 'bookings_delete',
+            'services_view', 'services_edit',
+            'users_view', 'users_create', 'users_edit',
             'analytics_view_anonymized',
             'staff_chat_own',
-            'calendar_view_all'
+            'calendar_view_all',
+            'bot_settings_view',
+            'broadcasts_send'
         ],
         'can_manage_roles': ['manager', 'sales', 'marketer', 'employee'],
         'hierarchy_level': 80
@@ -256,7 +258,9 @@ ROLES = {
             'bookings_view_own',
             'calendar_view_own',
             'clients_view_own',
-            'staff_chat_own'
+            'staff_chat_own',
+            'tasks_view_own',       # Просмотр своих задач
+            'services_view'         # Просмотр каталога услуг (readonly)
         ],
         'can_manage_roles': [],
         'hierarchy_level': 20
@@ -318,6 +322,17 @@ PERMISSION_DESCRIPTIONS = {
 
     # Телефония
     'telephony_access': 'Доступ к телефонии для звонков клиентам',
+
+    # Задачи
+    'tasks_view': 'Просмотр всех задач',
+    'tasks_view_own': 'Просмотр только своих задач',
+    'tasks_create': 'Создание задач',
+    'tasks_edit': 'Редактирование задач',
+    'tasks_delete': 'Удаление задач',
+
+    # Рассылки
+    'broadcasts_send': 'Отправка рассылок клиентам',
+    'broadcasts_view': 'Просмотр рассылок',
 }
 
 def has_permission(user_role: str, permission: str) -> bool:
