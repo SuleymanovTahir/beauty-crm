@@ -132,38 +132,78 @@ export default function UniversalDashboard() {
       setLoading(true);
       setError(null);
 
-      if (currentUser?.role === 'employee') {
-        const response = await fetch('/api/bookings', { credentials: 'include' });
-        if (!response.ok) throw new Error('Failed to fetch bookings');
-        const data = await response.json();
-        const today = new Date().toISOString().split('T')[0];
-        setRecentBookings(data.bookings.filter((b: any) => b.datetime.startsWith(today)));
-        setLoading(false);
-        return;
-      }
-
-      const dateRange = getDateRange();
       let comparisonPeriod: string = dateFilter;
       if (dateFilter === 'last7days') comparisonPeriod = '7days';
       if (dateFilter === 'last30days') comparisonPeriod = '30days';
       if (dateFilter === 'thisMonth' || dateFilter === 'lastMonth') comparisonPeriod = 'month';
 
-      const params = new URLSearchParams({ comparison_period: comparisonPeriod });
+      const params = new URLSearchParams({
+        comparison_period: comparisonPeriod,
+        period: dateFilter === 'custom' ? 'custom' : dateFilter
+      });
 
-      const [statsData, bookingsData, clientsData, botData, settingsData] = await Promise.all([
-        api.get(`/api/stats?${params.toString()}`).catch(() => api.getStats()),
+      if (dateFilter === 'custom') {
+        params.append('start_date', customDateRange.start);
+        params.append('end_date', customDateRange.end);
+      }
+
+      // Add master filter for employees
+      if (currentUser?.role === 'employee') {
+        params.append('master', currentUser.full_name || currentUser.username);
+      }
+
+      const [kpiData, bookingsData, clientsData, botData, settingsData] = await Promise.all([
+        api.get(`/api/dashboard/kpi?${params.toString()}`).catch(() => null),
         api.getBookings(),
         api.getClients(),
         api.get('/api/bot-analytics?days=30').catch(() => null),
         api.getPublicSalonSettings().catch(() => ({ currency: 'AED' })),
       ]);
 
-      setStats(statsData);
+      // Transform kpiData to stats format for compatibility
+      if (kpiData?.success && kpiData.kpi) {
+        const k = kpiData.kpi;
+        const transformedStats: Stats = {
+          total_revenue: k.revenue.total,
+          total_bookings: k.bookings.total,
+          completed_bookings: k.bookings.completed,
+          pending_bookings: k.bookings.total - k.bookings.completed - k.bookings.cancelled,
+          cancelled_bookings: k.bookings.cancelled,
+          conversion_rate: k.bookings.completion_rate,
+          new_clients: k.clients.new,
+          leads: k.bookings.total, // fallback
+          customers: k.clients.total_active,
+          total_client_messages: 0,
+          total_bot_messages: 0,
+          vip_clients: 0,
+          active_clients: k.clients.total_active,
+          avg_booking_value: k.revenue.average_check,
+          cancellation_rate: k.bookings.cancellation_rate,
+          total_clients: k.clients.total_active, // fallback
+          growth: k.trends ? {
+            revenue: { percentage: k.trends.revenue_change_percent, trend: k.trends.revenue_change_percent >= 0 ? 'up' : 'down' },
+            total_clients: { percentage: k.trends.bookings_change_percent, trend: k.trends.bookings_change_percent >= 0 ? 'up' : 'down' },
+            new_clients: { percentage: 0, trend: 'stable' },
+            vip_clients: { percentage: 0, trend: 'stable' },
+            active_clients: { percentage: 0, trend: 'stable' },
+            pending_bookings: { percentage: 0, trend: 'stable' }
+          } : undefined
+        };
+        setStats(transformedStats);
+      }
+
       setBotAnalytics(botData);
       setSalonSettings(settingsData);
 
       if (bookingsData.bookings) {
-        const enrichedBookings = bookingsData.bookings.slice(0, 10).map((booking: any) => {
+        // Filter bookings for employee
+        let filteredBookings = bookingsData.bookings;
+        if (currentUser?.role === 'employee') {
+          const masterName = currentUser.full_name || currentUser.username;
+          filteredBookings = filteredBookings.filter((b: any) => b.master === masterName);
+        }
+
+        const enrichedBookings = filteredBookings.slice(0, 10).map((booking: any) => {
           const client = clientsData.clients?.find((c: any) =>
             c.id === booking.client_id || c.instagram_id === booking.instagram_id
           );
@@ -242,56 +282,105 @@ export default function UniversalDashboard() {
     );
   }
 
-  // Employee View
-  if (currentUser?.role === 'employee') {
-    const confirmedCount = recentBookings.filter(b => b.status === 'confirmed').length;
-    const pendingCount = recentBookings.filter(b => b.status === 'pending').length;
+  // Employee / Sales View
+  if (currentUser?.role === 'employee' || currentUser?.role === 'sales') {
+    const isSales = currentUser?.role === 'sales';
 
     return (
-      <div className="p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl text-gray-900 mb-2">{t('employee/Dashboard:my_bookings')}</h1>
-          <p className="text-gray-600">{t('employee/Dashboard:today')}, {new Date().toLocaleDateString(i18n.language === 'ru' ? 'ru-RU' : 'en-US')}</p>
+      <div className="p-4 md:p-8">
+        <div className="mb-6 md:mb-8 flex justify-between items-start">
+          <div>
+            <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 font-bold">
+              {t('common:welcome')}, {currentUser.full_name || currentUser.username}!
+            </h1>
+            <p className="text-sm md:text-base text-gray-600">
+              {isSales ? 'Ваши показатели продаж и воронки' : t('employee/Dashboard:my_bookings')}
+            </p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p className="text-gray-500 text-sm mb-2">{t('employee/Dashboard:today_bookings')}</p>
-            <h3 className="text-3xl text-gray-900 font-bold">{recentBookings.length}</h3>
+        {/* Date Filter */}
+        <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div className="flex items-center gap-2 text-gray-700">
+              <Filter className="w-5 h-5" />
+              <span className="font-medium">{t('admin/dashboard:date_filter', 'Период:')}</span>
+            </div>
+            <DateFilterDropdown
+              value={dateFilter}
+              onChange={(value) => {
+                setDateFilter(value);
+                setShowDatePicker(value === 'custom');
+              }}
+            />
+          </div>
+          {showDatePicker && (
+            <div className="mt-4 flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
+              <div className="flex-1">
+                <label className="block text-xs text-gray-600 mb-1">От:</label>
+                <input type="date" className="w-full px-3 py-2 border rounded-lg" value={customDateRange.start.split('T')[0]} onChange={(e) => setCustomDateRange({ ...customDateRange, start: new Date(e.target.value).toISOString() })} />
+              </div>
+              <div className="flex-1">
+                <label className="block text-xs text-gray-600 mb-1">До:</label>
+                <input type="date" className="w-full px-3 py-2 border rounded-lg" value={customDateRange.end.split('T')[0]} onChange={(e) => setCustomDateRange({ ...customDateRange, end: new Date(e.target.value).toISOString() })} />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+          <div className="bg-gradient-to-br from-pink-500 to-purple-600 p-6 rounded-xl shadow-lg text-white">
+            <p className="text-sm opacity-80 mb-1">{isSales ? 'Выручка сделок' : 'Ваша выручка'}</p>
+            <h3 className="text-3xl font-bold">{stats?.total_revenue?.toLocaleString()} {salonSettings?.currency}</h3>
+            {stats?.growth?.revenue && (
+              <div className="flex items-center gap-1 text-xs mt-1">
+                <TrendingUp className={`w-3 h-3 ${stats.growth.revenue.trend === 'down' ? 'rotate-180' : ''}`} />
+                <span>{stats.growth.revenue.percentage}% к прошлому периоду</span>
+              </div>
+            )}
           </div>
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p className="text-gray-500 text-sm mb-2">{t('employee/Dashboard:confirmed')}</p>
-            <h3 className="text-3xl text-green-600 font-bold">{confirmedCount}</h3>
+            <p className="text-gray-500 text-sm mb-1">{isSales ? 'Всего лидов' : t('employee/Dashboard:today_bookings')}</p>
+            <h3 className="text-3xl text-gray-900 font-bold">{stats?.total_bookings || 0}</h3>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p className="text-gray-500 text-sm mb-2">{t('employee/Dashboard:pending')}</p>
-            <h3 className="text-3xl text-yellow-600 font-bold">{pendingCount}</h3>
+            <p className="text-gray-500 text-sm mb-1">{isSales ? 'Конверсия в сделку' : 'Моя конверсия'}</p>
+            <h3 className="text-3xl text-green-600 font-bold">{stats?.conversion_rate?.toFixed(1)}%</h3>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <p className="text-gray-500 text-sm mb-1">Новых клиентов</p>
+            <h3 className="text-3xl text-blue-600 font-bold">{stats?.new_clients || 0}</h3>
           </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl text-gray-900 mb-6">{t('employee/Dashboard:schedule_for_today')}</h2>
+          <h2 className="text-xl text-gray-900 font-bold mb-6">
+            {isSales ? 'Последние лиды' : t('employee/Dashboard:schedule_for_today')}
+          </h2>
           {recentBookings.length === 0 ? (
-            <p className="text-gray-500">{t('employee/Dashboard:no_bookings_today')}</p>
+            <div className="flex flex-col items-center py-12 text-center">
+              <Calendar className="w-12 h-12 text-gray-300 mb-4" />
+              <p className="text-gray-500">{isSales ? 'У вас пока нет активных лидов' : t('employee/Dashboard:no_bookings_today')}</p>
+            </div>
           ) : (
             <div className="space-y-4">
               {recentBookings.map((booking) => (
-                <div key={booking.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate(`${rolePrefix}/bookings/${booking.id}`)}>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
-                        <Clock className="w-6 h-6 text-pink-600" />
+                <div key={booking.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer bg-gray-50" onClick={() => navigate(`${rolePrefix}/bookings/${booking.id}`)}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                        <Clock className="w-5 h-5 text-pink-600" />
                       </div>
                       <div>
-                        <p className="text-lg text-gray-900 mb-1 font-bold">
+                        <p className="font-bold text-gray-900">
                           {new Date(booking.datetime).toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' })}
                         </p>
-                        <p className="text-gray-900">{booking.name}</p>
-                        <p className="text-gray-600 text-sm">{booking.service}</p>
+                        <p className="text-gray-900 text-sm">{booking.name}</p>
+                        <p className="text-gray-500 text-xs">{booking.service}</p>
                       </div>
                     </div>
                     <Badge className={
-                      booking.status === 'confirmed'
+                      booking.status === 'confirmed' || booking.status === 'completed'
                         ? 'bg-green-100 text-green-800'
                         : booking.status === 'pending'
                           ? 'bg-yellow-100 text-yellow-800'
