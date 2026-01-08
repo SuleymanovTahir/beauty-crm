@@ -388,6 +388,12 @@ export class PermissionChecker {
   static canViewInstagramChat(role: string): boolean {
     return RoleHierarchy.hasPermission(role, 'instagram_chat_view');
   }
+
+  // === ЗАДАЧИ ===
+
+  static canViewTasks(role: string): boolean {
+    return ['director', 'admin', 'manager'].includes(role) || RoleHierarchy.hasPermission(role, 'tasks_view');
+  }
 }
 
 /**
@@ -446,6 +452,9 @@ export function usePermissions(role: string) {
 
     // Instagram
     canViewInstagramChat: PermissionChecker.canViewInstagramChat(role),
+
+    // Задачи
+    canViewTasks: PermissionChecker.canViewTasks(role),
 
     // Дополнительно
     roleLevel: ROLES[role]?.hierarchy_level || 0,
