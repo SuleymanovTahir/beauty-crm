@@ -30,6 +30,12 @@
     "my_bookings": "حجوزاتي",
     "profile": "حساب تعريفي",
     "broadcasts": "النشرات الإخبارية",
-    "internal_chat": "الاتصال الداخلي"
+    "internal_chat": "الاتصال الداخلي",
+    "notifications": "إشعارات"
+  },
+  "roles": {
+    "director": "مخرج",
+    "sales": "مبيعات",
+    "marketer": "تسويق"
   }
 }

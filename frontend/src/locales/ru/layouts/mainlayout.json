@@ -2,6 +2,11 @@
     "admin": "Администратор",
     "manager": "Менеджер",
     "employee": "Сотрудник",
+    "roles": {
+        "director": "Директор",
+        "sales": "Продажи",
+        "marketer": "Маркетинг"
+    },
     "admin_panel": "Админ панель",
     "crm": "CRM Панель",
     "logout": "Выйти",
@@ -30,6 +35,7 @@
         "my_bookings": "Мои бронирования",
         "profile": "Профиль",
         "broadcasts": "Рассылки",
-        "internal_chat": "Внутренняя связь"
+        "internal_chat": "Внутренняя связь",
+        "notifications": "Уведомления"
     }
 }

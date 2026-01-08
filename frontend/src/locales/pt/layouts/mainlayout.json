@@ -30,6 +30,12 @@
     "my_bookings": "Minhas reservas",
     "profile": "Perfil",
     "broadcasts": "Boletins informativos",
-    "internal_chat": "Interfone"
+    "internal_chat": "Interfone",
+    "notifications": "Notificações"
+  },
+  "roles": {
+    "director": "Diretor",
+    "sales": "Vendas",
+    "marketer": "Marketing"
   }
 }

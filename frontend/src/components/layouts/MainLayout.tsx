@@ -281,11 +281,11 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
 
     const getRoleLabel = () => {
         switch (user?.role) {
-            case 'director': return t('director', 'Директор');
+            case 'director': return t('roles.director', 'Директор');
             case 'admin': return t('admin', 'Админ');
             case 'manager': return t('manager', 'Менеджер');
-            case 'sales': return t('sales', 'Продажи');
-            case 'marketer': return t('marketer', 'Маркетинг');
+            case 'sales': return t('roles.sales', 'Продажи');
+            case 'marketer': return t('roles.marketer', 'Маркетинг');
             case 'employee': return t('employee', 'Мастер');
             default: return user?.role;
         }
@@ -441,7 +441,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                     className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors relative"
                                 >
                                     <Bell size={18} />
-                                    <span>{t('notifications', 'Уведомления')}</span>
+                                    <span>{t('menu.notifications', 'Уведомления')}</span>
                                     {notifCount > 0 && (
                                         <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                                             {notifCount}

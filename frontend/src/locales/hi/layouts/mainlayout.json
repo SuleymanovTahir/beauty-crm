@@ -30,6 +30,12 @@
     "my_bookings": "मेरी बुकिंग",
     "profile": "प्रोफ़ाइल",
     "broadcasts": "समाचार",
-    "internal_chat": "इण्टरकॉम"
+    "internal_chat": "इण्टरकॉम",
+    "notifications": "सूचनाएं"
+  },
+  "roles": {
+    "director": "निदेशक",
+    "sales": "बिक्री",
+    "marketer": "मार्केटिंग"
   }
 }
