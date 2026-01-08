@@ -8,7 +8,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 
 // Lazy load pages
 const MainLayout = React.lazy(() => import('./components/layouts/MainLayout'));
-const AdminDashboard = React.lazy(() => import('./pages/admin/Dashboard'));
+const Dashboard = React.lazy(() => import('./pages/shared/Dashboard'));
 const Bookings = React.lazy(() => import('./pages/admin/Bookings'));
 const BookingDetail = React.lazy(() => import('./pages/admin/BookingDetail'));
 const Analytics = React.lazy(() => import('./pages/admin/Analytics'));
@@ -18,7 +18,7 @@ const ClientDetail = React.lazy(() => import('./pages/admin/ClientDetail'));
 const CreateUser = React.lazy(() => import('./pages/admin/CreateUser'));
 const Users = React.lazy(() => import('./pages/admin/Users'));
 const Calendar = React.lazy(() => import('./pages/admin/Calendar'));
-const Settings = React.lazy(() => import('./pages/admin/Settings'));
+const Settings = React.lazy(() => import('./pages/shared/Settings'));
 const BotSettings = React.lazy(() => import('./pages/admin/BotSettings'));
 const PendingRegistrations = React.lazy(() => import('./pages/admin/PendingRegistrations'));
 const PermissionManagement = React.lazy(() => import('./pages/admin/PermissionManagement'));
@@ -27,7 +27,7 @@ const PublicContent = React.lazy(() => import('./pages/admin/PublicContent'));
 const EmployeeDetail = React.lazy(() => import('./pages/admin/EmployeeDetail'));
 const EmployeeManagement = React.lazy(() => import('./pages/admin/EmployeeManagement'));
 const VisitorAnalytics = React.lazy(() => import('./pages/admin/VisitorAnalytics'));
-const AdminFunnel = React.lazy(() => import('./pages/admin/Funnel'));
+const Funnel = React.lazy(() => import('./pages/shared/Funnel'));
 const AdminTasks = React.lazy(() => import('./pages/admin/Tasks'));
 const Telephony = React.lazy(() => import('./pages/admin/Telephony'));
 const MenuCustomization = React.lazy(() => import('./pages/admin/MenuCustomization'));
@@ -45,14 +45,10 @@ const NotificationsDashboard = React.lazy(() => import('./pages/adminPanel/Notif
 const PhotoGallery = React.lazy(() => import('./pages/adminPanel/PhotoGallery'));
 const FeatureManagement = React.lazy(() => import('./pages/adminPanel/FeatureManagement'));
 
-const ManagerDashboard = React.lazy(() => import('./pages/manager/Dashboard'));
 const Chat = React.lazy(() => import('./pages/manager/Chat'));
-const Funnel = React.lazy(() => import('./pages/manager/Funnel'));
-const ManagerSettings = React.lazy(() => import('./pages/manager/Settings'));
-
 const InternalChat = React.lazy(() => import('./components/shared/InternalChat'));
 
-const EmployeeDashboard = React.lazy(() => import('./pages/employee/Dashboard'));
+// Employee routes use shared components
 const EmployeeProfile = React.lazy(() => import('./pages/employee/Profile'));
 
 // const PublicLayout = React.lazy(() => import('./components/layouts/PublicLayout'));
@@ -285,7 +281,7 @@ export default function App() {
                   />
                 }
               >
-                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="dashboard" element={<Dashboard />} />
                 <Route path="bookings" element={<Bookings />} />
                 <Route path="bookings/:id" element={<BookingDetail />} />
                 <Route path="analytics" element={<Analytics />} />
@@ -307,7 +303,7 @@ export default function App() {
                 <Route path="bot-settings/:tab?" element={<BotSettings />} />
                 <Route path="public-content/:tab?" element={<PublicContent />} />
                 <Route path="visitor-analytics" element={<VisitorAnalytics />} />
-                <Route path="funnel" element={<AdminFunnel />} />
+                <Route path="funnel" element={<Funnel />} />
                 <Route path="tasks" element={<AdminTasks />} />
                 <Route path="telephony" element={<Telephony />} />
                 <Route path="menu-customization" element={<MenuCustomization />} />
@@ -333,12 +329,10 @@ export default function App() {
                   />
                 }
               >
-                <Route path="dashboard" element={<ManagerDashboard />} />
+                <Route path="dashboard" element={<Dashboard />} />
                 <Route path="chat" element={<Chat />} />
                 <Route path="analytics" element={<Analytics />} />
-                <Route path="funnel" element={<Funnel />} />
-                <Route path="clients" element={<Clients />} />
-                <Route path="settings" element={<ManagerSettings />} />
+                <Route path="settings/:tab?" element={<Settings />} />
                 <Route path="bot-settings" element={<BotSettings />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
@@ -409,7 +403,7 @@ export default function App() {
                   />
                 }
               >
-                <Route path="dashboard" element={<EmployeeDashboard />} />
+                <Route path="dashboard" element={<Dashboard />} />
                 <Route path="profile" element={<EmployeeProfile />} />
                 <Route path="calendar" element={<Calendar employeeFilter={true} />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
