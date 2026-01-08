@@ -237,6 +237,23 @@ def run_all_migrations():
     )
 
     # ========================================================================
+    # SECURITY ENHANCEMENTS - SOFT DELETE & AUDIT LOG
+    # ========================================================================
+    print_header("УЛУЧШЕНИЯ БЕЗОПАСНОСТИ")
+    
+    from db.migrations.add_soft_delete import run as migrate_soft_delete
+    results["security/soft_delete"] = run_migration_function(
+        migrate_soft_delete,
+        "Soft Delete (deleted_at, deleted_items)"
+    )
+    
+    from db.migrations.create_audit_log import run as migrate_audit_log
+    results["security/audit_log"] = run_migration_function(
+        migrate_audit_log,
+        "Audit Log (audit_log, critical_actions)"
+    )
+
+    # ========================================================================
     # MIGRATION: NOTIFICATIONS TABLE
     # ========================================================================
     print_header("МИГРАЦИЯ: ТАБЛИЦА УВЕДОМЛЕНИЙ")
