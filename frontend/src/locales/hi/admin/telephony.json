@@ -70,5 +70,9 @@
   "copy": "प्रतिलिपि",
   "copied": "कॉपी किया गया",
   "success": "सफलतापूर्वक",
-  "error": "गलती"
+  "error": "गलती",
+  "provider_binotel": "बिनोटेल",
+  "provider_onlinepbx": "ऑनलाइनपीबीएक्स",
+  "provider_twilio": "ट्विलियो",
+  "provider_generic": "जेनेरिक (वेबहुक)"
 }

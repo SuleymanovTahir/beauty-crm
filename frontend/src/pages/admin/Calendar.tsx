@@ -137,8 +137,8 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const [serviceSearch, setServiceSearch] = useState('');
   const [showServiceDropdown, setShowServiceDropdown] = useState(false);
   const [selectedServiceItem, setSelectedServiceItem] = useState<Service | null>(null);
-  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-  const [employeeId] = useState(employeeFilter ? currentUser.full_name : null);
+  const currentUser = useMemo(() => JSON.parse(localStorage.getItem('user') || '{}'), []);
+  const employeeId = useMemo(() => employeeFilter ? (currentUser.full_name || currentUser.username) : null, [employeeFilter, currentUser]);
 
   const [addForm, setAddForm] = useState({
     phone: '',
@@ -476,15 +476,17 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-              <Button
-                onClick={() => setShowFilters(!showFilters)}
-                variant="outline"
-                className={`rounded-xl border-2 h-9 md:h-10 px-2 md:px-3 text-sm whitespace-nowrap ${showFilters ? 'bg-purple-100 border-purple-400' : 'hover:border-purple-400'
-                  }`}
-              >
-                <Filter className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">{t('calendar:filters')}</span>
-              </Button>
+              {!employeeFilter && (
+                <Button
+                  onClick={() => setShowFilters(!showFilters)}
+                  variant="outline"
+                  className={`rounded-xl border-2 h-9 md:h-10 px-2 md:px-3 text-sm whitespace-nowrap ${showFilters ? 'bg-purple-100 border-purple-400' : 'hover:border-purple-400'
+                    }`}
+                >
+                  <Filter className="w-4 h-4 md:mr-2" />
+                  <span className="hidden md:inline">{t('calendar:filters')}</span>
+                </Button>
+              )}
 
               <Select value={viewMode} onValueChange={(v: string) => setViewMode(v as 'day' | 'week')}>
                 <SelectTrigger className="w-[100px] md:w-[130px] rounded-xl border-2 h-9 md:h-10 text-sm">

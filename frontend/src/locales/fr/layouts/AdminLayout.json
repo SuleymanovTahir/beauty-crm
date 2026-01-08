@@ -20,6 +20,9 @@
     "users": "Utilisateurs",
     "visitors": "Visiteurs",
     "funnel": "Entonnoir",
-    "tasks": "Tâches"
+    "tasks": "Tâches",
+    "telephony": "Téléphonie",
+    "trash": "Panier",
+    "audit_log": "Journaux d'audit"
   }
 }

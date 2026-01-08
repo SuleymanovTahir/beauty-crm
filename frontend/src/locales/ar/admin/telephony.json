@@ -70,5 +70,9 @@
   "copy": "ينسخ",
   "copied": "منقول",
   "success": "بنجاح",
-  "error": "خطأ"
+  "error": "خطأ",
+  "provider_binotel": "بينوتيل",
+  "provider_onlinepbx": "عبر الإنترنتPBX",
+  "provider_twilio": "تويليو",
+  "provider_generic": "عام (الخطاف الإلكتروني)"
 }

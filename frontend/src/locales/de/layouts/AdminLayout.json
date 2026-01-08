@@ -20,6 +20,9 @@
     "users": "Benutzer",
     "visitors": "Besucher",
     "funnel": "Trichter",
-    "tasks": "Aufgaben"
+    "tasks": "Aufgaben",
+    "telephony": "Telefonie",
+    "trash": "Korb",
+    "audit_log": "Audit-Protokolle"
   }
 }

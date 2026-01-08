@@ -1,6 +1,6 @@
 // /frontend/src/pages/admin/Clients.tsx
 // frontend/src/pages/admin/Clients.tsx - ИСПРАВЛЕННАЯ ВЕРСИЯ
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   Users,
   Search,
@@ -135,6 +135,11 @@ export default function Clients() {
   const [selectedClients, setSelectedClients] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const currentUser = useMemo(() => {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+  }, []);
+  const isSales = currentUser?.role === 'sales';
 
   // Sorting states
   const [sortField, setSortField] = useState<'name' | 'phone' | 'status' | 'lifetime_value' | 'last_contact' | 'first_contact' | 'total_messages' | 'total_bookings' | 'temperature'>('last_contact');
@@ -715,20 +720,22 @@ export default function Clients() {
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
             </button>
 
-            <button
-              onClick={() => {
-                setShowActions(!showActions);
-                if (!showActions) setShowFilters(false);
-              }}
-              className={`flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showActions
-                ? 'bg-blue-50 border-blue-200 text-blue-600'
-                : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
-                }`}
-            >
-              <Upload className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showActions ? 'text-blue-500' : 'text-gray-400'}`} />
-              <span className="truncate">Опции</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showActions ? 'rotate-180' : ''}`} />
-            </button>
+            {!isSales && (
+              <button
+                onClick={() => {
+                  setShowActions(!showActions);
+                  if (!showActions) setShowFilters(false);
+                }}
+                className={`flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showActions
+                  ? 'bg-blue-50 border-blue-200 text-blue-600'
+                  : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                  }`}
+              >
+                <Upload className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showActions ? 'text-blue-500' : 'text-gray-400'}`} />
+                <span className="truncate">Опции</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showActions ? 'rotate-180' : ''}`} />
+              </button>
+            )}
 
             <button
               onClick={handleRefresh}

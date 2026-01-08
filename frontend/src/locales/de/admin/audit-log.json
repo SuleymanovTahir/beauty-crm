@@ -1,0 +1,38 @@
+{
+  "title": "Audit-Journal",
+  "subtitle": "Historie aller Aktionen und Änderungen im System",
+  "search_placeholder": "Suche nach Benutzer, Entität oder Aktion ...",
+  "filter_all": "Alle Aktionen",
+  "filter_create": "Schaffung",
+  "filter_update": "Ändern",
+  "filter_delete": "Entfernung",
+  "filter_restore": "Erholung",
+  "filter_login": "Anmelden",
+  "stat_total": "Gesamt (24h)",
+  "stat_errors": "Fehler (24h)",
+  "stat_active_users": "Aktive Benutzer",
+  "stat_created": "Erstellt",
+  "table": {
+    "action": "Aktion",
+    "user": "Benutzer",
+    "entity": "Wesen",
+    "status": "Status",
+    "time": "Zeit",
+    "success": "ERFOLG",
+    "error": "FEHLER",
+    "empty": "Die Geschichte ist leer",
+    "loading": "Laden..."
+  },
+  "details": {
+    "title": "Details ändern",
+    "op_id": "Vorgangs-ID",
+    "old_data": "Alte Daten",
+    "new_data": "Neue Daten",
+    "no_data": "Keine Daten verfügbar",
+    "ip": "IP",
+    "error_msg": "Fehlermeldung"
+  },
+  "toast": {
+    "load_error": "Fehler beim Laden des Audit-Protokolls"
+  }
+}

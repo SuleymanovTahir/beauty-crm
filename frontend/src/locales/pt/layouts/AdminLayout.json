@@ -20,6 +20,9 @@
     "users": "Usuários",
     "visitors": "Visitantes",
     "funnel": "Funil",
-    "tasks": "Tarefas"
+    "tasks": "Tarefas",
+    "telephony": "Telefonia",
+    "trash": "Cesta",
+    "audit_log": "reservas de auditoria"
   }
 }

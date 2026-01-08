@@ -91,8 +91,8 @@
       "id": 12,
       "fields": {
         "text_ru": {
-          "ru": "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!",
-          "key": "public_reviews.12.text_ru.6f00ad70",
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.12.text_ru.d04583b6",
           "en": null,
           "ar": null,
           "es": null,
@@ -105,6 +105,47 @@
         "author_name": {
           "ru": "Sarah Jenkins",
           "key": "public_reviews.12.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.12.employee_position.5b1b1d5e",
+          "en": "Eyelashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "fields": {
+        "text_ru": {
+          "ru": "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!",
+          "key": "public_reviews.15.text_ru.6f00ad70",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.15.author_name.ff715865",
           "en": null,
           "ar": null,
           "es": null,
@@ -116,7 +157,89 @@
         },
         "employee_position": {
           "ru": "Eyelashes",
-          "key": "public_reviews.12.employee_position.5b1b1d5e",
+          "key": "public_reviews.15.employee_position.5b1b1d5e",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 16,
+      "fields": {
+        "text_ru": {
+          "ru": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
+          "key": "public_reviews.16.text_ru.f38138da",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.16.author_name.653816a6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.16.employee_position.9a3a91ca",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 17,
+      "fields": {
+        "text_ru": {
+          "ru": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
+          "key": "public_reviews.17.text_ru.ae85e84b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.17.author_name.f26d4aa2",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.17.employee_position.65d6c03d",
           "en": null,
           "ar": null,
           "es": null,
@@ -132,8 +255,8 @@
       "id": 13,
       "fields": {
         "text_ru": {
-          "ru": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
-          "key": "public_reviews.13.text_ru.f38138da",
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.13.text_ru.784d2781",
           "en": null,
           "ar": null,
           "es": null,
@@ -146,26 +269,26 @@
         "author_name": {
           "ru": "Maria Gonzalez",
           "key": "public_reviews.13.author_name.653816a6",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González"
         },
         "employee_position": {
           "ru": "Facial Treatment",
           "key": "public_reviews.13.employee_position.9a3a91ca",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Facial Treatment",
+          "ar": "علاج الوجه",
+          "es": "Tratamiento Facial",
+          "de": "Gesichtsbehandlung",
+          "fr": "Traitement du visage",
+          "hi": "चेहरे का उपचार",
+          "kk": "Бет күтімі",
+          "pt": "Tratamento facial"
         }
       }
     },
@@ -173,8 +296,8 @@
       "id": 14,
       "fields": {
         "text_ru": {
-          "ru": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
-          "key": "public_reviews.14.text_ru.ae85e84b",
+          "ru": "Отличный сервис и профессиональный персонал. ",
+          "key": "public_reviews.14.text_ru.33473c5f",
           "en": null,
           "ar": null,
           "es": null,
@@ -187,26 +310,26 @@
         "author_name": {
           "ru": "Fatima Al-Sayed",
           "key": "public_reviews.14.author_name.f26d4aa2",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима әл-Сайед",
+          "pt": "Fátima Al-Sayed"
         },
         "employee_position": {
           "ru": "Microblading",
           "key": "public_reviews.14.employee_position.65d6c03d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading"
         }
       }
     },
@@ -593,6 +716,23 @@
       }
     },
     {
+      "id": 23,
+      "fields": {
+        "description_ru": {
+          "ru": "Осветление корней с укладкой",
+          "key": "services.23.description_ru.785f83b1",
+          "en": "Root lightening with styling",
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
       "id": 90,
       "fields": {
         "description_ru": {
@@ -831,12 +971,12 @@
       }
     },
     {
-      "id": 67,
+      "id": 68,
       "fields": {
         "description_ru": {
-          "ru": "французский",
-          "key": "services.67.description_ru.782cfc25",
-          "en": "French",
+          "ru": "Твердый гель",
+          "key": "services.68.description_ru.14b6df39",
+          "en": "Solid gel",
           "ar": null,
           "es": null,
           "de": null,
@@ -848,12 +988,12 @@
       }
     },
     {
-      "id": 68,
+      "id": 67,
       "fields": {
         "description_ru": {
-          "ru": "Твердый гель",
-          "key": "services.68.description_ru.14b6df39",
-          "en": "Solid gel",
+          "ru": "французский",
+          "key": "services.67.description_ru.782cfc25",
+          "en": "French",
           "ar": null,
           "es": null,
           "de": null,
@@ -1738,23 +1878,6 @@
           "ru": "Профессиональная стрижка с укладкой",
           "key": "services.19.description_ru.5d2597e1",
           "en": "Professional haircut with styling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 23,
-      "fields": {
-        "description_ru": {
-          "ru": "Осветление корней с укладкой",
-          "key": "services.23.description_ru.785f83b1",
-          "en": "Root lightening with styling",
           "ar": null,
           "es": null,
           "de": null,
