@@ -75,6 +75,10 @@ class TelephonySettings(BaseModel):
 
 @router.get("/telephony/settings")
 async def get_telephony_settings(current_user: dict = Depends(get_current_user)):
+    # 🔒 Только director, admin, sales могут видеть настройки телефонии
+    if current_user.get("role") not in ["director", "admin", "sales"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
     conn = get_db_connection()
     c = conn.cursor()
     try:
@@ -140,6 +144,9 @@ async def get_calls(
     direction: Optional[str] = None,
     current_user: dict = Depends(get_current_user)
 ):
+    # 🔒 Только director, admin, sales могут видеть звонки
+    if current_user.get("role") not in ["director", "admin", "sales"]:
+        raise HTTPException(status_code=403, detail="Access denied")
     conn = get_db_connection()
     c = conn.cursor()
     try:
@@ -247,6 +254,9 @@ async def get_telephony_stats(
     end_date: Optional[str] = None,
     current_user: dict = Depends(get_current_user)
 ):
+    # 🔒 Только director, admin, sales
+    if current_user.get("role") not in ["director", "admin", "sales"]:
+        raise HTTPException(status_code=403, detail="Access denied")
     conn = get_db_connection()
     c = conn.cursor()
     try:
@@ -291,6 +301,11 @@ async def get_telephony_analytics(
     status: Optional[str] = None,
     direction: Optional[str] = None,
     min_duration: Optional[int] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    # 🔒 Только director, admin, sales
+    if current_user.get("role") not in ["director", "admin", "sales"]:
+        raise HTTPException(status_code=403, detail="Access denied")
     max_duration: Optional[int] = None,
     current_user: dict = Depends(get_current_user)
 ):
