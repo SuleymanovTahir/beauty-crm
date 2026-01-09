@@ -139,7 +139,11 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 if (user.role === 'employee') {
                     try {
                         const empProfile = await api.getMyEmployeeProfile();
-                        setUserProfile({ ...profile, photo: empProfile.photo });
+                        // Only use employee photo if it exists and is not empty
+                        const photo = empProfile?.photo && empProfile.photo.trim() !== ''
+                            ? empProfile.photo
+                            : profile.photo;
+                        setUserProfile({ ...profile, photo });
                     } catch (empErr) {
                         console.log('Employee profile not available:', empErr);
                         setUserProfile(profile);
@@ -243,7 +247,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             { icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, requirePermission: () => permissions.canUseStaffChat },
 
             // ГРУППА 5: Системные настройки
-            { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, requirePermission: () => permissions.canViewSettings || user?.role === 'employee' || user?.role === 'manager' || user?.role === 'sales' },
+            { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, requirePermission: () => (permissions.canViewSettings || user?.role === 'manager' || user?.role === 'sales') && user?.role !== 'employee' },
             { icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, requirePermission: () => permissions.canViewBotSettings || user?.role === 'sales' },
             { icon: ShieldCheck, label: t('menu.audit_log'), path: `${rolePrefix}/audit-log`, requirePermission: () => permissions.roleLevel >= 80 },
             { icon: Trash2, label: t('menu.trash'), path: `${rolePrefix}/trash`, requirePermission: () => permissions.roleLevel >= 80 },

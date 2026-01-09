@@ -8,7 +8,7 @@ import { api } from '../../services/api';
 
 interface Booking {
   id: number;
-  client_name: string;
+  name: string; // Changed from client_name to match backend
   service: string;
   datetime: string;
   status: string;
@@ -178,7 +178,7 @@ export default function EmployeeBookings() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                 <div className="flex items-center gap-2 text-gray-600">
                   <User className="w-4 h-4" />
-                  <span>{booking.client_name || t('bookings:no_name')}</span>
+                  <span>{booking.name || t('bookings:no_name')}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-600">
                   <Clock className="w-4 h-4" />

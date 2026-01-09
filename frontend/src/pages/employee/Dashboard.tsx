@@ -12,7 +12,7 @@ interface Booking {
   datetime: string;
   status: string;
   phone: string;
-  client_name?: string;
+  name?: string; // Changed from client_name to match backend
 }
 
 interface Stats {
@@ -56,7 +56,7 @@ export default function EmployeeDashboard() {
         const monthBookings = allBookings.filter((b: any) => new Date(b.datetime) >= monthAgo);
 
         // Подсчет уникальных клиентов
-        const uniqueClients = new Set(allBookings.map((b: any) => b.client_name || b.phone)).size;
+        const uniqueClients = new Set(allBookings.map((b: any) => b.name || b.phone)).size;
 
         setStats({
           today_bookings: todayBookings.length,
@@ -195,36 +195,77 @@ export default function EmployeeDashboard() {
         </button>
       </div>
 
+      {/* Today's Schedule - Timeline View */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h2 className="text-xl text-gray-900 mb-6">{t('dashboard:schedule_for_today')}</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl text-gray-900 flex items-center gap-2">
+            <Clock className="w-6 h-6 text-pink-600" />
+            {t('dashboard:schedule_for_today')}
+          </h2>
+          <span className="text-sm text-gray-500">
+            {confirmedCount} подтверждено, {pendingCount} ожидает
+          </span>
+        </div>
+
         {bookings.length === 0 ? (
-          <p className="text-gray-500">{t('dashboard:no_bookings_today')}</p>
+          <div className="text-center py-12">
+            <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500 text-lg">{t('dashboard:no_bookings_today')}</p>
+            <p className="text-gray-400 text-sm mt-2">Наслаждайтесь свободным днём!</p>
+          </div>
         ) : (
-          <div className="space-y-4">
-            {bookings.map((booking) => (
-              <div key={booking.id} className="border border-gray-200 rounded-lg p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
-                      <Clock className="w-6 h-6 text-pink-600" />
-                    </div>
-                    <div>
-                      <p className="text-lg text-gray-900 mb-1">{booking.datetime.split(' ')[1]}</p>
-                      <p className="text-gray-900">{t('dashboard:booking')} #{booking.id}</p>
-                      <p className="text-gray-600 text-sm">{booking.service}</p>
-                      <p className="text-gray-600 text-sm">{booking.phone}</p>
+          <div className="space-y-3">
+            {bookings
+              .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
+              .map((booking) => {
+                const bookingTime = new Date(booking.datetime);
+                const now = new Date();
+                const isPast = bookingTime < now;
+                const isNow = Math.abs(bookingTime.getTime() - now.getTime()) < 30 * 60 * 1000; // within 30 min
+
+                return (
+                  <div
+                    key={booking.id}
+                    className={`border-l-4 rounded-lg p-4 transition-all ${
+                      isNow ? 'border-pink-500 bg-pink-50' :
+                      isPast ? 'border-gray-300 bg-gray-50 opacity-60' :
+                      'border-purple-300 bg-white hover:bg-purple-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 flex-1">
+                        <div className="text-center min-w-[60px]">
+                          <div className={`text-2xl font-bold ${isNow ? 'text-pink-600' : 'text-gray-900'}`}>
+                            {booking.datetime.split(' ')[1].substring(0, 5)}
+                          </div>
+                          {isNow && (
+                            <span className="text-xs text-pink-600 font-semibold animate-pulse">СЕЙЧАС</span>
+                          )}
+                        </div>
+
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-semibold text-gray-900">{booking.name || 'Клиент'}</h3>
+                            <Badge className={
+                              booking.status === 'confirmed'
+                                ? 'bg-green-100 text-green-800 text-xs'
+                                : 'bg-yellow-100 text-yellow-800 text-xs'
+                            }>
+                              {booking.status === 'confirmed' ? '✓' : '⏱'}
+                            </Badge>
+                          </div>
+                          <p className="text-gray-700 text-sm mb-1">{booking.service}</p>
+                          <p className="text-gray-500 text-xs">{booking.phone}</p>
+                        </div>
+                      </div>
+
+                      {isPast && !isNow && (
+                        <CheckCircle className="w-5 h-5 text-gray-400" />
+                      )}
                     </div>
                   </div>
-                  <Badge className={
-                    booking.status === 'confirmed' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-yellow-100 text-yellow-800'
-                  }>
-                    {booking.status === 'confirmed' ? t('dashboard:confirmed') : t('dashboard:pending')}
-                  </Badge>
-                </div>
-              </div>
-            ))}
+                );
+              })}
           </div>
         )}
       </div>
