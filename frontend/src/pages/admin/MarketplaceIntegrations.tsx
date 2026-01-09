@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Store, Settings, CheckCircle, XCircle, RefreshCw, BarChart3 } from 'lucide-react';
 import { api } from '../../services/api';
+import '../../styles/crm-pages.css';
+
 import { toast } from 'sonner';
 
 interface MarketplaceProvider {
@@ -31,7 +33,7 @@ const MarketplaceIntegrations = () => {
     const loadProviders = async () => {
         try {
             setLoading(true);
-            const response = await api.get('/marketplace-providers');
+            const response = await api.get('/api/marketplace-providers');
             setProviders(response.providers || []);
         } catch (error) {
             console.error('Error loading marketplace providers:', error);
@@ -43,7 +45,7 @@ const MarketplaceIntegrations = () => {
 
     const loadStats = async () => {
         try {
-            const response = await api.get('/marketplace/stats');
+            const response = await api.get('/api/marketplace/stats');
             setStats(response);
         } catch (error) {
             console.error('Error loading stats:', error);
@@ -140,8 +142,8 @@ const MarketplaceIntegrations = () => {
     };
 
     return (
-        <div className="marketplace-integrations-page">
-            <div className="page-header">
+        <div className="crm-page">
+            <div className="crm-page-header">
                 <div>
                     <h1>{t('marketplace.title', 'Маркетплейсы')}</h1>
                     <p className="text-gray-600">{t('marketplace.subtitle', 'Интеграция с платформами бронирования')}</p>
@@ -149,37 +151,37 @@ const MarketplaceIntegrations = () => {
             </div>
 
             {stats && (
-                <div className="stats-grid">
-                    <div className="stat-card">
-                        <div className="stat-icon bg-blue-100 text-blue-600">
+                <div className="crm-stats-grid">
+                    <div className="crm-stat-card">
+                        <div className="crm-stat-icon blue">
                             <Store size={24} />
                         </div>
-                        <div className="stat-content">
-                            <div className="stat-value">
+                        <div className="crm-stat-content">
+                            <div className="crm-stat-value">
                                 {Object.values(stats.bookings_by_provider || {}).reduce((a: any, b: any) => a + b, 0)}
                             </div>
-                            <div className="stat-label">{t('marketplace.totalBookings', 'Всего записей')}</div>
+                            <div className="crm-stat-label">{t('marketplace.totalBookings', 'Всего записей')}</div>
                         </div>
                     </div>
 
-                    <div className="stat-card">
-                        <div className="stat-icon bg-yellow-100 text-yellow-600">
+                    <div className="crm-stat-card">
+                        <div className="crm-stat-icon orange">
                             <BarChart3 size={24} />
                         </div>
-                        <div className="stat-content">
-                            <div className="stat-value">
+                        <div className="crm-stat-content">
+                            <div className="crm-stat-value">
                                 {Object.keys(stats.bookings_by_provider || {}).length}
                             </div>
-                            <div className="stat-label">{t('marketplace.activeSources', 'Активных источников')}</div>
+                            <div className="crm-stat-label">{t('marketplace.activeSources', 'Активных источников')}</div>
                         </div>
                     </div>
                 </div>
             )}
 
             {loading ? (
-                <div className="loading">{t('common:loading', 'Загрузка...')}</div>
+                <div className="crm-loading">{t('common:loading', 'Загрузка...')}</div>
             ) : (
-                <div className="providers-grid">
+                <div className="crm-grid crm-grid-2">
                     {Object.entries(marketplaceInfo).map(([key, info]) => {
                         const isActive = getProviderStatus(key);
                         const providerData = getProviderData(key);
@@ -187,14 +189,14 @@ const MarketplaceIntegrations = () => {
                         const reviewData = stats?.reviews_by_provider?.[key];
 
                         return (
-                            <div key={key} className={`provider-card ${isActive ? 'active' : ''}`}>
-                                <div className={`provider-header bg-gradient-to-r ${info.color}`}>
-                                    <div className="provider-icon">{info.icon}</div>
-                                    <div className="provider-info">
-                                        <h3>{info.name}</h3>
-                                        <p>{info.description}</p>
+                            <div key={key} className={`crm-provider-card ${isActive ? 'active' : ''}`}>
+                                <div className="crm-provider-header">
+                                    <div className="crm-provider-icon">{info.icon}</div>
+                                    <div className="crm-provider-info">
+                                        <h3 className="crm-provider-name">{info.name}</h3>
+                                        <p className="crm-provider-desc">{info.description}</p>
                                     </div>
-                                    <div className="provider-status">
+                                    <div className="crm-provider-status">
                                         {isActive ? (
                                             <CheckCircle className="text-green-400" size={24} />
                                         ) : (
@@ -203,33 +205,33 @@ const MarketplaceIntegrations = () => {
                                     </div>
                                 </div>
 
-                                <div className="provider-body">
+                                <div className="crm-provider-body">
                                     {isActive && (
-                                        <div className="provider-stats">
-                                            <div className="stat">
-                                                <span className="label">{t('marketplace.bookings', 'Записей')}:</span>
-                                                <span className="value">{bookingCount}</span>
+                                        <div className="crm-provider-stats">
+                                            <div className="crm-detail-row">
+                                                <span className="crm-detail-label">{t('marketplace.bookings', 'Записей')}:</span>
+                                                <span className="crm-detail-value">{bookingCount}</span>
                                             </div>
                                             {reviewData && (
-                                                <div className="stat">
-                                                    <span className="label">{t('marketplace.reviews', 'Отзывов')}:</span>
-                                                    <span className="value">
+                                                <div className="crm-detail-row">
+                                                    <span className="crm-detail-label">{t('marketplace.reviews', 'Отзывов')}:</span>
+                                                    <span className="crm-detail-value">
                                                         {reviewData.count} (⭐ {reviewData.avg_rating?.toFixed(1)})
                                                     </span>
                                                 </div>
                                             )}
-                                            <div className="stat">
-                                                <span className="label">{t('marketplace.lastSync', 'Синхронизация')}:</span>
-                                                <span className="value text-sm">
+                                            <div className="crm-detail-row">
+                                                <span className="crm-detail-label">{t('marketplace.lastSync', 'Синхронизация')}:</span>
+                                                <span className="crm-detail-value text-sm">
                                                     {formatLastSync(providerData?.last_sync_at || null)}
                                                 </span>
                                             </div>
                                         </div>
                                     )}
 
-                                    <div className="provider-actions">
+                                    <div className="crm-provider-actions">
                                         <button
-                                            className="btn-secondary flex-1"
+                                            className="crm-btn-secondary flex-1"
                                             onClick={() => {
                                                 setSelectedProvider(key);
                                                 setShowConfigDialog(true);
@@ -241,11 +243,11 @@ const MarketplaceIntegrations = () => {
 
                                         {isActive && (
                                             <button
-                                                className="btn-primary flex-1"
+                                                className="crm-btn-primary flex-1"
                                                 onClick={() => handleSync(key)}
                                                 disabled={syncing === key}
                                             >
-                                                <RefreshCw size={16} className={syncing === key ? 'animate-spin' : ''} />
+                                                <RefreshCw size={16} className={syncing === key ? 'crm-animate-spin' : ''} />
                                                 {syncing === key ? t('marketplace.syncing', 'Синхронизация...') : t('marketplace.sync', 'Синхронизировать')}
                                             </button>
                                         )}
@@ -294,7 +296,7 @@ const ConfigDialog = ({ provider, providerInfo, onClose, onSuccess }: any) => {
         setLoading(true);
 
         try {
-            await api.post('/marketplace-providers', formData);
+            await api.post('/api/marketplace-providers', formData);
             onSuccess();
         } catch (error) {
             console.error('Error saving provider:', error);
@@ -307,43 +309,46 @@ const ConfigDialog = ({ provider, providerInfo, onClose, onSuccess }: any) => {
     const webhookUrl = `${window.location.origin}/api/marketplace/webhook/${provider}`;
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
+        <div className="crm-modal-overlay" onClick={onClose}>
+            <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
                 <h2>{t('marketplace.configureProvider', 'Настройка')} {providerInfo.name}</h2>
 
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>{t('marketplace.apiKey', 'API ключ')}</label>
+                    <div className="crm-form-group">
+                        <label className="crm-label">{t('marketplace.apiKey', 'API ключ')}</label>
                         <input
                             type="text"
+                            className="crm-input"
                             value={formData.api_key}
                             onChange={(e) => setFormData({ ...formData, api_key: e.target.value })}
                             placeholder="API Key"
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label>{t('marketplace.apiSecret', 'API Secret')}</label>
+                    <div className="crm-form-group">
+                        <label className="crm-label">{t('marketplace.apiSecret', 'API Secret')}</label>
                         <input
                             type="password"
+                            className="crm-input"
                             value={formData.api_secret}
                             onChange={(e) => setFormData({ ...formData, api_secret: e.target.value })}
                             placeholder="API Secret"
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label>{t('marketplace.webhookUrl', 'URL для вебхука')}</label>
-                        <div className="webhook-url-display">
+                    <div className="crm-form-group">
+                        <label className="crm-label">{t('marketplace.webhookUrl', 'URL для вебхука')}</label>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
                             <input
                                 type="text"
+                                className="crm-input"
                                 value={webhookUrl}
                                 readOnly
-                                className="bg-gray-50"
+                                style={{ flex: 1, backgroundColor: '#f9fafb' }}
                             />
                             <button
                                 type="button"
-                                className="btn-secondary"
+                                className="crm-btn-secondary"
                                 onClick={() => {
                                     navigator.clipboard.writeText(webhookUrl);
                                     toast.success(t('marketplace.urlCopied', 'URL скопирован'));
@@ -352,13 +357,13 @@ const ConfigDialog = ({ provider, providerInfo, onClose, onSuccess }: any) => {
                                 {t('common:copy', 'Копировать')}
                             </button>
                         </div>
-                        <small className="text-gray-500">
+                        <small className="text-gray-600 text-sm">
                             {t('marketplace.webhookHint', 'Укажите этот URL в настройках вебхуков на платформе')}
                         </small>
                     </div>
 
-                    <div className="form-group">
-                        <label className="checkbox-label">
+                    <div className="crm-form-group">
+                        <label className="crm-checkbox-label">
                             <input
                                 type="checkbox"
                                 checked={formData.is_active}
@@ -368,11 +373,11 @@ const ConfigDialog = ({ provider, providerInfo, onClose, onSuccess }: any) => {
                         </label>
                     </div>
 
-                    <div className="form-actions">
-                        <button type="button" className="btn-secondary" onClick={onClose}>
+                    <div className="crm-modal-footer">
+                        <button type="button" className="crm-btn-secondary" onClick={onClose}>
                             {t('common:cancel', 'Отмена')}
                         </button>
-                        <button type="submit" className="btn-primary" disabled={loading}>
+                        <button type="submit" className="crm-btn-primary" disabled={loading}>
                             {loading ? t('common:saving', 'Сохранение...') : t('common:save', 'Сохранить')}
                         </button>
                     </div>

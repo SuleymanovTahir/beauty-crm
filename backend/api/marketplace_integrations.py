@@ -131,6 +131,47 @@ async def create_marketplace_provider(
         log_error(f"Error configuring marketplace provider: {e}", "marketplace")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ===== СТАТИСТИКА =====
+
+@router.get("/marketplace/stats")
+async def get_marketplace_stats(current_user: dict = Depends(get_current_user)):
+    """Получить статистику по маркетплейсам"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Статистика по записям
+        cursor.execute("""
+            SELECT provider, COUNT(*) as count
+            FROM marketplace_bookings
+            GROUP BY provider
+        """)
+        bookings_by_provider = {row[0]: row[1] for row in cursor.fetchall()}
+
+        # Статистика по отзывам
+        cursor.execute("""
+            SELECT provider, COUNT(*) as count, AVG(rating) as avg_rating
+            FROM marketplace_reviews
+            GROUP BY provider
+        """)
+        reviews_by_provider = {}
+        for row in cursor.fetchall():
+            reviews_by_provider[row[0]] = {
+                "count": row[1],
+                "avg_rating": float(row[2]) if row[2] else 0
+            }
+
+        conn.close()
+
+        return {
+            "bookings_by_provider": bookings_by_provider,
+            "reviews_by_provider": reviews_by_provider
+        }
+
+    except Exception as e:
+        log_error(f"Error getting marketplace stats: {e}", "marketplace")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ===== ВЕБХУКИ ОТ МАРКЕТПЛЕЙСОВ =====
 
 @router.post("/webhook/{provider}")

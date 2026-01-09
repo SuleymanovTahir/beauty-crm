@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Edit, Trash2, Package, TrendingUp } from 'lucide-react';
 import { api } from '../../services/api';
+import '../../styles/crm-pages.css';
+
 
 
 interface Product {
@@ -70,20 +72,20 @@ const Products = () => {
     };
 
     return (
-        <div className="products-page">
-            <div className="page-header">
+        <div className="crm-page">
+            <div className="crm-page-header">
                 <h1>{t('title')}</h1>
-                <button className="btn-primary" onClick={() => setShowAddDialog(true)}>
+                <button className="crm-btn-primary" onClick={() => setShowAddDialog(true)}>
                     <Plus size={20} />
                     {t('addProduct')}
                 </button>
             </div>
 
-            <div className="filters">
+            <div className="crm-filters">
                 <select
                     value={filterCategory}
                     onChange={(e) => setFilterCategory(e.target.value)}
-                    className="filter-select"
+                    className="crm-filter-select"
                 >
                     <option value="">{t('allCategories')}</option>
                     {categories.map((cat) => (
@@ -93,39 +95,39 @@ const Products = () => {
             </div>
 
             {loading ? (
-                <div className="loading">{t('loading')}</div>
+                <div className="crm-loading">{t('loading')}</div>
             ) : (
-                <div className="products-grid">
+                <div className="crm-grid crm-grid-3">
                     {products.map((product) => (
-                        <div key={product.id} className="product-card">
-                            <div className="product-header">
-                                <div className="product-icon">
+                        <div key={product.id} className="crm-card">
+                            <div className="crm-card-header">
+                                <div className="crm-card-icon">
                                     <Package size={24} />
                                 </div>
-                                <div className="product-info">
+                                <div className="crm-card-title">
                                     <h3>{product.name_ru || product.name}</h3>
                                     {product.category && (
-                                        <span className="category-badge">{product.category}</span>
+                                        <span className="crm-badge">{product.category}</span>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="product-details">
-                                <div className="detail-row">
-                                    <span className="label">{t('form.price')}:</span>
-                                    <span className="value">{product.price} AED</span>
+                            <div className="crm-card-body">
+                                <div className="crm-detail-row">
+                                    <span className="crm-detail-label">{t('form.price')}:</span>
+                                    <span className="crm-detail-value">{product.price} AED</span>
                                 </div>
-                                <div className="detail-row">
-                                    <span className="label">{t('form.stockQuantity')}:</span>
-                                    <span className={`value stock-${getStockStatus(product)}`}>
+                                <div className="crm-detail-row">
+                                    <span className="crm-detail-label">{t('form.stockQuantity')}:</span>
+                                    <span className={`crm-detail-value crm-stock-${getStockStatus(product)}`}>
                                         {product.stock_quantity}
                                     </span>
                                 </div>
                             </div>
 
-                            <div className="product-actions">
+                            <div className="crm-card-footer">
                                 <button
-                                    className="btn-icon"
+                                    className="crm-btn-icon"
                                     onClick={() => {
                                         setSelectedProduct(product);
                                         setShowMovementDialog(true);
@@ -135,7 +137,7 @@ const Products = () => {
                                     <TrendingUp size={16} />
                                 </button>
                                 <button
-                                    className="btn-icon"
+                                    className="crm-btn-icon"
                                     onClick={() => {
                                         setSelectedProduct(product);
                                         setShowEditDialog(true);
@@ -145,7 +147,7 @@ const Products = () => {
                                     <Edit size={16} />
                                 </button>
                                 <button
-                                    className="btn-icon"
+                                    className="crm-btn-icon"
                                     onClick={() => handleDelete(product.id)}
                                     title={t('delete')}
                                 >
@@ -239,12 +241,12 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
     };
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
+        <div className="crm-modal-overlay" onClick={onClose}>
+            <div className="crm-modal modal-large" onClick={(e) => e.stopPropagation()}>
                 <h2>{product ? t('edit') : t('addProduct')}</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-grid">
-                        <div className="form-group">
+                    <div className="crm-form-grid">
+                        <div className="crm-form-group">
                             <label>{t('form.name')} *</label>
                             <input
                                 type="text"
@@ -254,7 +256,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="crm-form-group">
                             <label>{t('form.nameRu')}</label>
                             <input
                                 type="text"
@@ -263,7 +265,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="crm-form-group">
                             <label>{t('form.category')}</label>
                             <input
                                 type="text"
@@ -272,7 +274,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="crm-form-group">
                             <label>{t('form.price')} *</label>
                             <input
                                 type="number"
@@ -283,7 +285,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="crm-form-group">
                             <label>{t('form.costPrice')}</label>
                             <input
                                 type="number"
@@ -293,7 +295,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="crm-form-group">
                             <label>{t('form.stockQuantity')}</label>
                             <input
                                 type="number"
@@ -302,7 +304,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="crm-form-group">
                             <label>{t('form.minStockLevel')}</label>
                             <input
                                 type="number"
@@ -311,7 +313,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="crm-form-group">
                             <label>{t('form.sku')}</label>
                             <input
                                 type="text"
@@ -321,7 +323,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                         </div>
                     </div>
 
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('form.notes')}</label>
                         <textarea
                             value={formData.notes}
@@ -330,8 +332,8 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label className="checkbox-label">
+                    <div className="crm-form-group">
+                        <label className="crm-checkbox-label">
                             <input
                                 type="checkbox"
                                 checked={formData.is_active}
@@ -341,11 +343,11 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                         </label>
                     </div>
 
-                    <div className="form-actions">
-                        <button type="button" className="btn-secondary" onClick={onClose}>
+                    <div className="crm-modal-footer">
+                        <button type="button" className="crm-btn-secondary" onClick={onClose}>
                             {t('form.cancel')}
                         </button>
-                        <button type="submit" className="btn-primary">
+                        <button type="submit" className="crm-btn-primary">
                             {t('form.save')}
                         </button>
                     </div>
@@ -375,12 +377,12 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
     };
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="crm-modal-overlay" onClick={onClose}>
+            <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
                 <h2>{t('movement.title')}</h2>
                 <p className="product-name">{product.name}</p>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('movement.type')}</label>
                         <select
                             value={formData.movement_type}
@@ -392,7 +394,7 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
                         </select>
                     </div>
 
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('movement.quantity')}</label>
                         <input
                             type="number"
@@ -402,7 +404,7 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
                         />
                     </div>
 
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('movement.reason')}</label>
                         <textarea
                             value={formData.reason}
@@ -411,11 +413,11 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
                         />
                     </div>
 
-                    <div className="form-actions">
-                        <button type="button" className="btn-secondary" onClick={onClose}>
+                    <div className="crm-modal-footer">
+                        <button type="button" className="crm-btn-secondary" onClick={onClose}>
                             {t('form.cancel')}
                         </button>
-                        <button type="submit" className="btn-primary">
+                        <button type="submit" className="crm-btn-primary">
                             {t('form.save')}
                         </button>
                     </div>
