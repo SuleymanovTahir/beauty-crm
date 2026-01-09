@@ -43,12 +43,17 @@ export default function EmployeeDashboard() {
         const allBookings = data.bookings || [];
 
         // Фильтруем только сегодняшние записи
-        const today = new Date().toISOString().split('T')[0];
-        const todayBookings = allBookings.filter((b: any) => b.datetime.startsWith(today));
+        const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+
+        const todayBookings = allBookings.filter((b: any) => {
+          const bookingDate = new Date(b.datetime);
+          return bookingDate >= todayStart && bookingDate <= todayEnd;
+        });
         setBookings(todayBookings);
 
         // Вычисляем статистику
-        const now = new Date();
         const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
