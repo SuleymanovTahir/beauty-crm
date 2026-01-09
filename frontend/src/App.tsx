@@ -49,8 +49,12 @@ const Chat = React.lazy(() => import('./pages/manager/Chat'));
 const InternalChat = React.lazy(() => import('./components/shared/InternalChat'));
 const Broadcasts = React.lazy(() => import('./pages/admin/Broadcasts'));
 
-// Employee routes use shared components
+// Employee routes
 const EmployeeProfile = React.lazy(() => import('./pages/employee/Profile'));
+const EmployeeSettings = React.lazy(() => import('./pages/employee/Settings'));
+const EmployeeTasks = React.lazy(() => import('./pages/employee/Tasks'));
+const EmployeeBookings = React.lazy(() => import('./pages/employee/Bookings'));
+const EmployeeServices = React.lazy(() => import('./pages/employee/Services'));
 
 // const PublicLayout = React.lazy(() => import('./components/layouts/PublicLayout'));
 // const Success = React.lazy(() => import('./pages/public/Success'));
@@ -408,7 +412,12 @@ export default function App() {
               >
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="profile" element={<EmployeeProfile />} />
+                <Route path="settings" element={<EmployeeSettings />} />
                 <Route path="calendar" element={<Calendar employeeFilter={true} />} />
+                <Route path="bookings" element={<EmployeeBookings />} />
+                <Route path="tasks" element={<EmployeeTasks />} />
+                <Route path="services" element={<EmployeeServices />} />
+                <Route path="internal-chat" element={<InternalChat />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 

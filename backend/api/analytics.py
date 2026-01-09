@@ -167,14 +167,14 @@ async def get_advanced_analytics(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
-    if user["role"] not in ANALYTICS_ROLES:
+
+    if user["role"] not in ALL_ANALYTICS_ROLES:
         log_warning(f"User {user['username']} ({user['role']}) attempted to access advanced analytics", "security")
         raise HTTPException(
             status_code=403,
             detail="Only admin, director, and manager can view analytics"
         )
-    
+
     from db.analytics import get_advanced_analytics_data
     return get_advanced_analytics_data(period, date_from, date_to)
 
@@ -188,7 +188,7 @@ async def get_client_insights(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    if user["role"] not in ANALYTICS_ROLES:
+    if user["role"] not in ALL_ANALYTICS_ROLES:
         log_warning(f"User {user['username']} ({user['role']}) attempted to access client insights", "security")
         raise HTTPException(
             status_code=403,
@@ -208,7 +208,7 @@ async def get_performance_metrics(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    if user["role"] not in ANALYTICS_ROLES:
+    if user["role"] not in ALL_ANALYTICS_ROLES:
         log_warning(f"User {user['username']} ({user['role']}) attempted to access performance metrics", "security")
         raise HTTPException(
             status_code=403,
@@ -228,7 +228,7 @@ async def get_bot_analytics(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    if user["role"] not in ANALYTICS_ROLES:
+    if user["role"] not in ALL_ANALYTICS_ROLES:
         log_warning(f"User {user['username']} ({user['role']}) attempted to access bot analytics", "security")
         raise HTTPException(
             status_code=403,
