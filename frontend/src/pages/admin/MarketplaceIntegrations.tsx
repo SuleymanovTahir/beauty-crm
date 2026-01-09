@@ -94,6 +94,24 @@ const MarketplaceIntegrations = () => {
             description: 'CRM для салонов красоты',
             icon: '💼',
             color: 'from-cyan-500 to-blue-600'
+        },
+        wildberries: {
+            name: 'Wildberries',
+            description: 'Маркетплейс WB',
+            icon: '🛍️',
+            color: 'from-purple-600 to-pink-700'
+        },
+        ozon: {
+            name: 'Ozon',
+            description: 'Маркетплейс Ozon',
+            icon: '🔵',
+            color: 'from-blue-600 to-blue-800'
+        },
+        amazon: {
+            name: 'Amazon',
+            description: 'Amazon Marketplace',
+            icon: '📦',
+            color: 'from-orange-500 to-yellow-600'
         }
     };
 
