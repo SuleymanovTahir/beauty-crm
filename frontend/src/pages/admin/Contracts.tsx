@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Send, Edit, Trash2, Eye, FileText } from 'lucide-react';
-import api from '../../services/api';
+import { Plus, Send, Trash2, FileText } from 'lucide-react';
+import { api } from '../../services/api';
+
 
 interface Contract {
     id: number;

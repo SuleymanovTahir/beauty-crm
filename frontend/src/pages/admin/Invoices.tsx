@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Send, DollarSign, Edit, Trash2, FileText } from 'lucide-react';
-import api from '../../services/api';
+import { Plus, Send, DollarSign, Trash2, FileText } from 'lucide-react';
+import { api } from '../../services/api';
+
 
 interface Invoice {
     id: number;
