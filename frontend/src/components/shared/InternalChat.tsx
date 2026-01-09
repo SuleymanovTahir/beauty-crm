@@ -30,6 +30,8 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import { webrtcService, CallType } from '../../services/webrtc';
+import { getDynamicAvatar } from '../../utils/avatarUtils';
+import { getPhotoUrl } from '../../utils/photoUtils';
 
 interface Message {
   id: number;
@@ -49,6 +51,8 @@ interface User {
   full_name: string;
   role: string;
   email?: string;
+  photo?: string;
+  photo_url?: string;
 }
 
 interface VoiceRecorder {
@@ -467,6 +471,15 @@ export default function InternalChat() {
     }
   };
 
+  const getUserAvatar = (user: User) => {
+    // If user has photo, use it
+    if (user.photo) {
+      return getPhotoUrl(user.photo);
+    }
+    // Otherwise use dynamic avatar
+    return getDynamicAvatar(user.full_name || user.username, 'warm');
+  };
+
   const startCall = async (type: CallType) => {
     if (!selectedUser) return;
 
@@ -748,8 +761,12 @@ export default function InternalChat() {
                   selectedUser?.id === user.id ? 'bg-accent' : ''
                 }`}
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white text-sm font-medium shadow-lg">
-                  {user.full_name.charAt(0).toUpperCase()}
+                <div className="w-12 h-12 rounded-full overflow-hidden shadow-lg flex-shrink-0">
+                  <img
+                    src={getUserAvatar(user)}
+                    alt={user.full_name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="flex-1 text-left min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">{user.full_name}</p>
@@ -786,8 +803,12 @@ export default function InternalChat() {
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </button>
-                <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                  {selectedUser.full_name.charAt(0).toUpperCase()}
+                <div className="w-10 h-10 rounded-full overflow-hidden shadow-lg flex-shrink-0 ring-2 ring-white/30">
+                  <img
+                    src={getUserAvatar(selectedUser)}
+                    alt={selectedUser.full_name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-white truncate text-sm">
