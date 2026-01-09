@@ -1,3 +1,13 @@
+/**
+ * Internal Chat с полной поддержкой WebRTC аудио/видео звонков
+ *
+ * Используйте этот файл вместо InternalChat.tsx для включения функционала звонков
+ *
+ * Переименуйте:
+ * 1. Удалите или переименуйте старый InternalChat.tsx
+ * 2. Переименуйте этот файл в InternalChat.tsx
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Send,
@@ -11,20 +21,18 @@ import {
   PhoneOff,
   Mic,
   MicOff,
-  VideoOff,
+  VideoOff as VideoOffIcon,
   X,
   MoreVertical,
   Reply,
   Copy,
-  Forward,
   ArrowLeft,
   FileText,
   Smile,
-  Trash2,
-  Square,
+  PhoneIncoming,
+  PhoneOutgoing,
 } from 'lucide-react';
 import { Button } from '../ui/button';
-import { Input } from '../ui/input';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
@@ -69,12 +77,10 @@ export default function InternalChat() {
   const [sending, setSending] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
   const [activeActionMenuId, setActiveActionMenuId] = useState<number | null>(null);
   const [showMobileUserList, setShowMobileUserList] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   // Voice recording state
   const [voiceRecorder, setVoiceRecorder] = useState<VoiceRecorder>({
@@ -84,7 +90,7 @@ export default function InternalChat() {
     recordingTime: 0,
   });
 
-  // Video/Audio call state
+  // WebRTC call state
   const [isInCall, setIsInCall] = useState(false);
   const [callType, setCallType] = useState<CallType | null>(null);
   const [isMicMuted, setIsMicMuted] = useState(false);
@@ -100,6 +106,76 @@ export default function InternalChat() {
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentUserData = JSON.parse(localStorage.getItem('user') || '{}');
+
+  // Initialize WebRTC
+  useEffect(() => {
+    if (currentUserData?.id) {
+      // Инициализируем WebRTC
+      webrtcService.initialize(currentUserData.id).catch(err => {
+        console.error('Failed to initialize WebRTC:', err);
+        toast.error('Не удалось подключиться к серверу звонков');
+      });
+
+      // Обработка входящего звонка
+      webrtcService.onIncomingCall = (fromUserId: number, type: CallType) => {
+        const caller = users.find(u => u.id === fromUserId);
+        if (caller) {
+          setIncomingCall({ from: fromUserId, type });
+          toast.info(`📞 ${caller.full_name} звонит (${type === 'video' ? 'видео' : 'аудио'})`, {
+            duration: 30000,
+          });
+        }
+      };
+
+      // Обработка принятого звонка
+      webrtcService.onCallAccepted = () => {
+        setIsInCall(true);
+        setIncomingCall(null);
+        toast.success('✅ Звонок начат');
+      };
+
+      // Обработка отклоненного звонка
+      webrtcService.onCallRejected = () => {
+        toast.error('❌ Звонок отклонен');
+        setIsInCall(false);
+        setIncomingCall(null);
+      };
+
+      // Обработка удаленного потока
+      webrtcService.onRemoteStream = (stream: MediaStream) => {
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = stream;
+        }
+      };
+
+      // Обработка завершения звонка
+      webrtcService.onCallEnded = () => {
+        toast.info('📞 Звонок завершен');
+        setIsInCall(false);
+        setCallType(null);
+        setIncomingCall(null);
+      };
+
+      // Обработка ошибок
+      webrtcService.onError = (error: string) => {
+        toast.error(error);
+      };
+
+      return () => {
+        webrtcService.disconnect();
+      };
+    }
+  }, [currentUserData?.id, users]);
+
+  // Update local video stream
+  useEffect(() => {
+    if (isInCall && localVideoRef.current) {
+      const localStream = webrtcService.getLocalStream();
+      if (localStream) {
+        localVideoRef.current.srcObject = localStream;
+      }
+    }
+  }, [isInCall]);
 
   useEffect(() => {
     loadData();
@@ -127,59 +203,6 @@ export default function InternalChat() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Initialize WebRTC service
-  useEffect(() => {
-    if (currentUserData?.id) {
-      webrtcService.initialize(currentUserData.id).catch(err => {
-        console.error('Failed to initialize WebRTC:', err);
-        // Don't show error to user, WebRTC is optional
-      });
-
-      // Set up WebRTC callbacks
-      webrtcService.onIncomingCall = (fromUserId: number, type: CallType) => {
-        const caller = users.find(u => u.id === fromUserId);
-        if (caller) {
-          setIncomingCall({ from: fromUserId, type });
-          toast.info(`📞 Входящий ${type === 'video' ? 'видео' : 'аудио'} звонок от ${caller.full_name}`);
-        }
-      };
-
-      webrtcService.onCallAccepted = () => {
-        setIsInCall(true);
-        toast.success('✅ Звонок принят');
-      };
-
-      webrtcService.onCallRejected = () => {
-        setIsInCall(false);
-        setIncomingCall(null);
-        toast.error('❌ Звонок отклонен');
-      };
-
-      webrtcService.onRemoteStream = (stream: MediaStream) => {
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = stream;
-        }
-      };
-
-      webrtcService.onCallEnded = () => {
-        setIsInCall(false);
-        setCallType(null);
-        setIncomingCall(null);
-        setIsMicMuted(false);
-        setIsVideoOff(false);
-        toast.info('📞 Звонок завершен');
-      };
-
-      webrtcService.onError = (error: string) => {
-        toast.error(error);
-      };
-
-      return () => {
-        webrtcService.disconnect();
-      };
-    }
-  }, [currentUserData?.id, users]);
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -187,24 +210,11 @@ export default function InternalChat() {
   const loadData = async () => {
     try {
       setLoading(true);
-      setError(null);
       const response = await fetch('/api/internal-chat/users', { credentials: 'include' });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
       const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
       setUsers(data.users || []);
     } catch (err) {
       console.error('Error loading users:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
-      setError(errorMessage);
       toast.error(t('common:error_loading_data', 'Ошибка загрузки данных'));
     } finally {
       setLoading(false);
@@ -236,7 +246,6 @@ export default function InternalChat() {
 
       let finalMessage = textToSend;
 
-      // Add reply prefix if replying
       if (replyToMessage && !fileUrl) {
         const quotedText = replyToMessage.message.length > 50
           ? replyToMessage.message.substring(0, 50) + '...'
@@ -254,11 +263,8 @@ export default function InternalChat() {
         })
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
+      if (!response.ok) throw new Error('Failed to send message');
 
-      // Add message to local state immediately
       const newMsg: Message = {
         id: Date.now(),
         from_user_id: currentUserData.id,
@@ -274,7 +280,6 @@ export default function InternalChat() {
       setMessages(prev => [...prev, newMsg]);
       setNewMessage('');
       setReplyToMessage(null);
-      setAttachedFiles([]);
 
       toast.success('✅ Отправлено');
       await loadMessagesWithUser(selectedUser.id);
@@ -358,19 +363,12 @@ export default function InternalChat() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       const audioChunks: Blob[] = [];
-      let isCancelled = false; // Flag to track if recording was cancelled
 
       mediaRecorder.ondataavailable = (event) => {
         audioChunks.push(event.data);
       };
 
       mediaRecorder.onstop = async () => {
-        // If cancelled, just clean up and don't send
-        if (isCancelled) {
-          stream.getTracks().forEach(track => track.stop());
-          return;
-        }
-
         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
         const file = new File([audioBlob], `voice-${Date.now()}.webm`, { type: 'audio/webm' });
 
@@ -418,11 +416,6 @@ export default function InternalChat() {
         recordingTime: 0
       });
 
-      // Store cancel function that sets the flag
-      (mediaRecorder as any)._cancelRecording = () => {
-        isCancelled = true;
-      };
-
       toast.info('🎤 Запись началась');
     } catch (err) {
       console.error('Error starting recording:', err);
@@ -445,66 +438,32 @@ export default function InternalChat() {
     }
   };
 
-  const cancelVoiceRecording = () => {
-    if (voiceRecorder.mediaRecorder && voiceRecorder.isRecording) {
-      // Set cancel flag before stopping
-      if ((voiceRecorder.mediaRecorder as any)._cancelRecording) {
-        (voiceRecorder.mediaRecorder as any)._cancelRecording();
-      }
-
-      voiceRecorder.mediaRecorder.stop();
-      if (recordingIntervalRef.current) {
-        clearInterval(recordingIntervalRef.current);
-      }
-      // Clear audio chunks to prevent sending
-      setVoiceRecorder({
-        mediaRecorder: null,
-        audioChunks: [],
-        isRecording: false,
-        recordingTime: 0
-      });
-      toast.info('🚫 Запись отменена');
-    }
-  };
-
   const startCall = async (type: CallType) => {
     if (!selectedUser) return;
 
     try {
       setCallType(type);
       await webrtcService.startCall(selectedUser.id, type);
-
-      // Set local video stream
-      const localStream = webrtcService.getLocalStream();
-      if (localVideoRef.current && localStream) {
-        localVideoRef.current.srcObject = localStream;
-      }
-
-      toast.success(`📞 Звоним ${selectedUser.full_name}...`);
+      toast.info(`📞 Звоним ${selectedUser.full_name}...`);
     } catch (err) {
       console.error('Error starting call:', err);
-      toast.error('❌ Ошибка при начале звонка');
+      toast.error('❌ Ошибка начала звонка');
     }
   };
 
-  const acceptCall = async () => {
-    try {
+  const acceptIncomingCall = async () => {
+    if (!incomingCall) return;
+
+    const caller = users.find(u => u.id === incomingCall.from);
+    if (caller) {
+      setSelectedUser(caller);
+      setCallType(incomingCall.type);
       await webrtcService.acceptCall();
-      setCallType(incomingCall?.type || 'audio');
-      setIncomingCall(null);
-
-      // Set local video stream
-      const localStream = webrtcService.getLocalStream();
-      if (localVideoRef.current && localStream) {
-        localVideoRef.current.srcObject = localStream;
-      }
-    } catch (err) {
-      console.error('Error accepting call:', err);
-      toast.error('❌ Ошибка при приёме звонка');
+      setShowMobileUserList(false);
     }
   };
 
-  const rejectCall = () => {
+  const rejectIncomingCall = () => {
     webrtcService.rejectCall();
     setIncomingCall(null);
   };
@@ -513,8 +472,6 @@ export default function InternalChat() {
     webrtcService.endCall();
     setIsInCall(false);
     setCallType(null);
-    setIsMicMuted(false);
-    setIsVideoOff(false);
   };
 
   const toggleMic = () => {
@@ -562,30 +519,6 @@ export default function InternalChat() {
     return `${import.meta.env.VITE_API_URL}${msg.message}`;
   };
 
-  if (error) {
-    return (
-      <div className="p-8 flex items-center justify-center min-h-screen bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 bg-red-500 rounded-2xl flex items-center justify-center shadow-2xl">
-            <X className="w-8 h-8 text-white" />
-          </div>
-          <p className="text-foreground font-medium">Ошибка загрузки</p>
-          <p className="text-sm text-muted-foreground">{error}</p>
-          <button
-            onClick={() => {
-              setError(null);
-              setLoading(true);
-              loadData();
-            }}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-          >
-            Попробовать снова
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center min-h-screen bg-background">
@@ -602,36 +535,29 @@ export default function InternalChat() {
   }
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex bg-background">
+    <div className="h-[calc(100vh-4rem)] flex bg-background relative">
       {/* Incoming Call Modal */}
       {incomingCall && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-card rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-border">
-            <div className="text-center mb-8">
-              <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4 shadow-lg">
-                {users.find(u => u.id === incomingCall.from)?.full_name.charAt(0).toUpperCase()}
-              </div>
-              <h3 className="text-2xl font-bold text-foreground mb-2">
-                {users.find(u => u.id === incomingCall.from)?.full_name}
-              </h3>
-              <p className="text-muted-foreground">
-                {incomingCall.type === 'video' ? '📹 Видеозвонок' : '📞 Аудиозвонок'}
-              </p>
-            </div>
-
+        <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl p-8 max-w-md w-full text-center shadow-2xl">
+            <PhoneIncoming className="w-16 h-16 text-green-500 mx-auto mb-4 animate-bounce" />
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Входящий {incomingCall.type === 'video' ? 'видео' : 'аудио'} звонок
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              {users.find(u => u.id === incomingCall.from)?.full_name || 'Неизвестный'}
+            </p>
             <div className="flex gap-4">
               <button
-                onClick={rejectCall}
-                className="flex-1 py-4 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
+                onClick={rejectIncomingCall}
+                className="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium transition-all"
               >
-                <PhoneOff className="w-5 h-5" />
                 Отклонить
               </button>
               <button
-                onClick={acceptCall}
-                className="flex-1 py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
+                onClick={acceptIncomingCall}
+                className="flex-1 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-medium transition-all"
               >
-                <Phone className="w-5 h-5" />
                 Принять
               </button>
             </div>
@@ -647,61 +573,46 @@ export default function InternalChat() {
             <p className="text-gray-300">{callType === 'video' ? 'Видеозвонок' : 'Аудиозвонок'}</p>
           </div>
 
-          {callType === 'video' ? (
-            <div className="relative w-full max-w-4xl aspect-video bg-gray-900 rounded-lg overflow-hidden shadow-2xl">
+          {callType === 'video' && (
+            <div className="relative w-full max-w-4xl aspect-video bg-gray-900 rounded-lg overflow-hidden">
               <video
                 ref={remoteVideoRef}
                 autoPlay
                 playsInline
                 className="w-full h-full object-cover"
               />
-              <video
-                ref={localVideoRef}
-                autoPlay
-                playsInline
-                muted
-                className={`absolute bottom-4 right-4 w-48 aspect-video bg-gray-800 rounded-lg object-cover border-2 border-white shadow-lg ${
-                  isVideoOff ? 'hidden' : ''
-                }`}
-              />
-              {isVideoOff && (
-                <div className="absolute bottom-4 right-4 w-48 aspect-video bg-gray-800 rounded-lg flex items-center justify-center border-2 border-white shadow-lg">
-                  <VideoOff className="w-12 h-12 text-white" />
-                </div>
+              {!isVideoOff && (
+                <video
+                  ref={localVideoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="absolute bottom-4 right-4 w-48 aspect-video bg-gray-800 rounded-lg object-cover border-2 border-white shadow-lg"
+                />
               )}
-            </div>
-          ) : (
-            <div className="w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white text-5xl font-bold shadow-2xl">
-              {selectedUser?.full_name.charAt(0).toUpperCase()}
             </div>
           )}
 
           <div className="mt-8 flex gap-4">
-            <button
-              onClick={toggleMic}
-              className={`w-14 h-14 rounded-full flex items-center justify-center text-white transition-all shadow-lg ${
-                isMicMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
-              }`}
-              title={isMicMuted ? 'Включить микрофон' : 'Выключить микрофон'}
-            >
-              {isMicMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-            </button>
-
             {callType === 'video' && (
               <button
                 onClick={toggleVideo}
-                className={`w-14 h-14 rounded-full flex items-center justify-center text-white transition-all shadow-lg ${
-                  isVideoOff ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
-                }`}
-                title={isVideoOff ? 'Включить видео' : 'Выключить видео'}
+                className={`w-14 h-14 ${isVideoOff ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'} rounded-full flex items-center justify-center text-white transition-all shadow-lg`}
               >
-                {isVideoOff ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
+                {isVideoOff ? <VideoOffIcon className="w-6 h-6" /> : <Video className="w-6 h-6" />}
               </button>
             )}
 
             <button
+              onClick={toggleMic}
+              className={`w-14 h-14 ${isMicMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'} rounded-full flex items-center justify-center text-white transition-all shadow-lg`}
+            >
+              {isMicMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+            </button>
+
+            <button
               onClick={endCall}
-              className="w-16 h-16 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white transition-all shadow-lg scale-110"
+              className="w-16 h-16 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white transition-all shadow-lg"
             >
               <PhoneOff className="w-6 h-6" />
             </button>
@@ -821,6 +732,14 @@ export default function InternalChat() {
 
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-background">
+              {voiceRecorder.isRecording && (
+                <div className="bg-red-50 border-2 border-red-200 rounded-xl p-3 mb-3 animate-pulse">
+                  <p className="text-sm font-medium text-red-900 flex items-center gap-2">
+                    <Mic className="w-4 h-4 animate-pulse" />
+                    🎤 Идет запись... {voiceRecorder.recordingTime}с
+                  </p>
+                </div>
+              )}
 
               {messages.length === 0 ? (
                 <div className="text-center text-muted-foreground mt-20">
@@ -853,7 +772,6 @@ export default function InternalChat() {
                               : 'bg-muted text-foreground'
                           }`}
                         >
-                          {/* Reply Preview */}
                           {msg.message.includes('↩️ Ответ на:') && (
                             <div className="border-l-2 border-current/20 bg-current/5 px-2.5 py-1.5 mb-2 rounded">
                               <p className="text-xs opacity-80 line-clamp-2">
@@ -910,7 +828,6 @@ export default function InternalChat() {
                         </div>
                       </div>
 
-                      {/* Actions Menu */}
                       <div className={`flex items-center self-center opacity-0 group-hover:opacity-100 transition-opacity ${
                         isOwn ? 'order-first' : 'order-last'
                       }`}>
@@ -963,7 +880,6 @@ export default function InternalChat() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Reply Preview */}
             {replyToMessage && (
               <div className="px-4 py-2 bg-accent">
                 <div className="flex items-start gap-3 max-w-xl">
@@ -990,155 +906,107 @@ export default function InternalChat() {
 
             {/* Input Area */}
             <div className="p-4 bg-card border-t border-border">
-              {voiceRecorder.isRecording ? (
-                /* WhatsApp-style Voice Recording UI */
-                <div className="bg-background rounded-[28px] border border-border p-3">
-                  <div className="flex items-center gap-3 mb-3">
-                    {/* Recording Animation */}
-                    <div className="flex items-center gap-2 flex-1">
-                      <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                      <span className="text-sm font-medium text-foreground">
-                        {Math.floor(voiceRecorder.recordingTime / 60)}:{(voiceRecorder.recordingTime % 60).toString().padStart(2, '0')}
-                      </span>
+              <div className="flex items-center gap-2 bg-background p-2 rounded-[28px] border border-border">
+                <button
+                  onClick={() => imageInputRef.current?.click()}
+                  disabled={isUploadingFile}
+                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-full transition-all"
+                  title="Прикрепить изображение"
+                >
+                  <ImageIcon className="w-5 h-5" />
+                </button>
 
-                      {/* Animated Voice Waveform */}
-                      <div className="flex items-center gap-1 ml-2">
-                        {[...Array(20)].map((_, i) => (
-                          <div
-                            key={i}
-                            className="w-1 bg-gradient-to-t from-purple-500 to-pink-600 rounded-full transition-all"
-                            style={{
-                              height: `${Math.random() * 24 + 8}px`,
-                              animation: `pulse ${Math.random() * 0.5 + 0.5}s ease-in-out infinite`,
-                              animationDelay: `${i * 0.05}s`
-                            }}
-                          />
-                        ))}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploadingFile}
+                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-full transition-all"
+                  title="Прикрепить файл"
+                >
+                  <Paperclip className="w-5 h-5" />
+                </button>
+
+                <input
+                  type="file"
+                  ref={imageInputRef}
+                  onChange={handleImageSelect}
+                  className="hidden"
+                  multiple
+                  accept="image/*,video/*"
+                />
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  multiple
+                />
+
+                <div className="flex-1 relative flex items-center">
+                  <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder={t('common:type_message', 'Введите сообщение...')}
+                    disabled={sending || isUploadingFile}
+                    className="w-full bg-transparent border-none py-2 px-2 text-sm focus:ring-0"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
+                  />
+
+                  <div className="relative" ref={emojiPickerRef}>
+                    <button
+                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      className="p-2 text-muted-foreground hover:text-foreground"
+                    >
+                      <Smile className="w-5 h-5" />
+                    </button>
+
+                    {showEmojiPicker && (
+                      <div className="absolute bottom-full right-0 mb-2 z-50">
+                        <EmojiPicker
+                          onEmojiClick={handleEmojiClick}
+                          width={350}
+                          height={400}
+                        />
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex items-center justify-between gap-3">
-                    <button
-                      onClick={cancelVoiceRecording}
-                      className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-full transition-all"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                      <span className="text-sm font-medium">Отменить</span>
-                    </button>
-
-                    <button
-                      onClick={stopVoiceRecording}
-                      className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-full transition-all hover:scale-105 shadow-lg"
-                    >
-                      <Square className="w-5 h-5 fill-white" />
-                      <span className="text-sm font-medium">Отправить</span>
-                    </button>
+                    )}
                   </div>
                 </div>
-              ) : (
-                /* Normal Message Input */
-                <div className="flex items-center gap-2 bg-background p-2 rounded-[28px] border border-border">
-                  {/* Image Upload */}
+
+                {newMessage.trim() ? (
                   <button
-                    onClick={() => imageInputRef.current?.click()}
-                    disabled={isUploadingFile}
-                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-full transition-all"
-                    title="Прикрепить изображение"
+                    onClick={() => handleSendMessage()}
+                    disabled={sending || isUploadingFile}
+                    className="p-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-full transition-all hover:scale-110 disabled:opacity-50"
                   >
-                    <ImageIcon className="w-5 h-5" />
+                    {sending || isUploadingFile ? (
+                      <Loader className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <Send className="w-5 h-5" />
+                    )}
                   </button>
-
-                  {/* File Upload */}
+                ) : voiceRecorder.isRecording ? (
                   <button
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploadingFile}
-                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-full transition-all"
-                    title="Прикрепить файл"
+                    onClick={stopVoiceRecording}
+                    className="p-3 bg-red-500 text-white rounded-full transition-all hover:scale-110 animate-pulse"
                   >
-                    <Paperclip className="w-5 h-5" />
+                    <PhoneOff className="w-5 h-5" />
                   </button>
-
-                  <input
-                    type="file"
-                    ref={imageInputRef}
-                    onChange={handleImageSelect}
-                    className="hidden"
-                    multiple
-                    accept="image/*,video/*"
-                  />
-
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileSelect}
-                    className="hidden"
-                    multiple
-                  />
-
-                  {/* Message Input */}
-                  <div className="flex-1 relative flex items-center">
-                    <input
-                      type="text"
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder={t('common:type_message', 'Введите сообщение...')}
-                      disabled={sending || isUploadingFile}
-                      className="w-full bg-transparent border-none py-2 px-2 text-sm focus:ring-0"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          handleSendMessage();
-                        }
-                      }}
-                    />
-
-                    {/* Emoji Picker */}
-                    <div className="relative" ref={emojiPickerRef}>
-                      <button
-                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                        className="p-2 text-muted-foreground hover:text-foreground"
-                      >
-                        <Smile className="w-5 h-5" />
-                      </button>
-
-                      {showEmojiPicker && (
-                        <div className="absolute bottom-full right-0 mb-2 z-50">
-                          <EmojiPicker
-                            onEmojiClick={handleEmojiClick}
-                            width={350}
-                            height={400}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Send or Voice Button */}
-                  {newMessage.trim() ? (
-                    <button
-                      onClick={() => handleSendMessage()}
-                      disabled={sending || isUploadingFile}
-                      className="p-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-full transition-all hover:scale-110 disabled:opacity-50"
-                    >
-                      {sending || isUploadingFile ? (
-                        <Loader className="w-5 h-5 animate-spin" />
-                      ) : (
-                        <Send className="w-5 h-5" />
-                      )}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={startVoiceRecording}
-                      className="p-3 text-muted-foreground hover:text-foreground hover:bg-accent rounded-full transition-all"
-                      title="Голосовое сообщение"
-                    >
-                      <Mic className="w-5 h-5" />
-                    </button>
-                  )}
-                </div>
-              )}
+                ) : (
+                  <button
+                    onClick={startVoiceRecording}
+                    className="p-3 text-muted-foreground hover:text-foreground hover:bg-accent rounded-full transition-all"
+                    title="Голосовое сообщение"
+                  >
+                    <Mic className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
             </div>
           </>
         )}

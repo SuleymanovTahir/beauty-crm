@@ -309,6 +309,8 @@ export default function App() {
                 <Route path="menu-customization" element={<MenuCustomization />} />
                 <Route path="trash" element={<TrashBin />} />
                 <Route path="audit-log" element={<ProtectedRoute element={<AuditLog />} isAuthenticated={!!currentUser} requiredRole="director" currentRole={currentUser?.role} />} />
+                <Route path="internal-chat" element={<InternalChat />} />
+                <Route path="broadcasts" element={<div className="p-8">Broadcasts page coming soon</div>} />
               </Route>
 
               {/* Manager Routes - Protected */}
