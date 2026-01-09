@@ -1,0 +1,12 @@
+{
+  "our_services": "Наши услуги",
+  "browse_available_services": "Просмотр доступных услуг салона",
+  "no_services": "Услуги не найдены",
+  "no_services_description": "В данный момент нет доступных услуг для отображения.",
+  "service_name": "Название услуги",
+  "description": "Описание",
+  "price": "Цена",
+  "duration": "Длительность",
+  "category": "Категория",
+  "min": "мин"
+}

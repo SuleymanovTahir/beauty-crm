@@ -61,11 +61,13 @@ async def api_login(request: Request, username: str = Form(...), password: str =
         
         # Исключение для admin пользователя
         is_admin_exception = (username.lower() == 'admin')
-        
+
         if not is_admin_exception:
             conn = get_db_connection()
             c = conn.cursor()
-            c.execute("SELECT is_active, email_verified, email FROM users WHERE id = %s", (user["id"],))
+            # Для сотрудников (таблица users) проверяем только is_active
+            # Email верификация нужна только для клиентов (таблица clients)
+            c.execute("SELECT is_active FROM users WHERE id = %s", (user["id"],))
             result = c.fetchone()
             conn.close()
 
@@ -75,20 +77,7 @@ async def api_login(request: Request, username: str = Form(...), password: str =
                     status_code=404
                 )
 
-            is_active, email_verified, user_email = result
-
-            # Проверяем email верификацию
-            if not email_verified:
-                log_warning(f"User {username} email not verified yet", "auth")
-                return JSONResponse(
-                    {
-                        "error": "Email не подтвержден",
-                        "error_type": "email_not_verified",
-                        "email": user_email,
-                        "message": "Пожалуйста, проверьте вашу почту и введите код подтверждения"
-                    },
-                    status_code=403
-                )
+            is_active = result[0]
 
             # Проверяем активацию администратором
             if not is_active:

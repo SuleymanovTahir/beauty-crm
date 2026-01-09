@@ -356,14 +356,14 @@ export default function Broadcasts() {
                 <div>
                   <Label htmlFor="target_role">Целевая роль (опционально)</Label>
                   <Select
-                    value={form.target_role}
-                    onValueChange={(value) => setForm({ ...form, target_role: value })}
+                    value={form.target_role || undefined}
+                    onValueChange={(value) => setForm({ ...form, target_role: value === 'all' ? '' : value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder={t('broadcasts:placeholder_all_users', 'Все пользователи')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Все пользователи</SelectItem>
+                      <SelectItem value="all">Все пользователи</SelectItem>
                       <SelectItem value="admin">Администраторы</SelectItem>
                       <SelectItem value="manager">Менеджеры</SelectItem>
                       <SelectItem value="employee">Сотрудники</SelectItem>
