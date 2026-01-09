@@ -202,6 +202,9 @@ export class WebRTCService {
         to: this.remoteUserId
       });
 
+      // Вызываем callback
+      this.onCallAccepted?.();
+
       console.log('✅ Call accepted');
     } catch (error) {
       console.error('❌ Error accepting call:', error);
