@@ -236,6 +236,30 @@ def run_all_migrations():
         "Таблица call_logs (Телефония)"
     )
 
+    from db.migrations.consolidated.schema_contracts import migrate as migrate_contracts
+    results["consolidated/contracts"] = run_migration_function(
+        migrate_contracts,
+        "Таблица contracts (Договоры)"
+    )
+
+    from db.migrations.consolidated.schema_products import migrate as migrate_products
+    results["consolidated/products"] = run_migration_function(
+        migrate_products,
+        "Таблица products (Товары)"
+    )
+
+    from db.migrations.consolidated.schema_invoices import migrate as migrate_invoices
+    results["consolidated/invoices"] = run_migration_function(
+        migrate_invoices,
+        "Таблица invoices (Счета)"
+    )
+
+    from db.migrations.consolidated.schema_funnel_checkpoints import migrate as migrate_funnel_checkpoints
+    results["consolidated/funnel_checkpoints"] = run_migration_function(
+        migrate_funnel_checkpoints,
+        "Таблица funnel_checkpoints (Контрольные точки воронки)"
+    )
+
     # ========================================================================
     # SECURITY ENHANCEMENTS - SOFT DELETE & AUDIT LOG
     # ========================================================================
