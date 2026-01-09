@@ -239,10 +239,12 @@ async def get_chat_users(session_token: Optional[str] = Cookie(None)):
     c = conn.cursor()
 
     c.execute("""
-        SELECT id, username, full_name, role, email, photo
-        FROM users
-        WHERE id != %s AND is_active = TRUE
-        ORDER BY full_name
+        SELECT u.id, u.username, u.full_name, u.role, u.email, u.photo,
+               us.is_online, us.last_seen
+        FROM users u
+        LEFT JOIN user_status us ON u.id = us.user_id
+        WHERE u.id != %s AND u.is_active = TRUE
+        ORDER BY u.full_name
     """, (user['id'],))
 
     users = [{
@@ -251,7 +253,9 @@ async def get_chat_users(session_token: Optional[str] = Cookie(None)):
         'full_name': row[2],
         'role': row[3],
         'email': row[4],
-        'photo': row[5]
+        'photo': row[5],
+        'is_online': row[6] if row[6] is not None else False,
+        'last_seen': row[7].isoformat() if row[7] else None
     } for row in c.fetchall()]
 
     conn.close()
@@ -512,3 +516,53 @@ async def add_reaction(
     conn.close()
 
     return {"success": True, "reactions": reactions}
+
+@router.post("/status/online")
+async def set_online(session_token: Optional[str] = Cookie(None)):
+    """Установить статус онлайн"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Требуется авторизация"}, status_code=401)
+
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    from datetime import datetime
+    now = datetime.now()
+
+    c.execute("""
+        INSERT INTO user_status (user_id, is_online, last_seen, updated_at)
+        VALUES (%s, TRUE, %s, %s)
+        ON CONFLICT (user_id)
+        DO UPDATE SET is_online = TRUE, updated_at = %s
+    """, (user['id'], now, now, now))
+
+    conn.commit()
+    conn.close()
+
+    return {"success": True}
+
+@router.post("/status/offline")
+async def set_offline(session_token: Optional[str] = Cookie(None)):
+    """Установить статус оффлайн"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Требуется авторизация"}, status_code=401)
+
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    from datetime import datetime
+    now = datetime.now()
+
+    c.execute("""
+        INSERT INTO user_status (user_id, is_online, last_seen, updated_at)
+        VALUES (%s, FALSE, %s, %s)
+        ON CONFLICT (user_id)
+        DO UPDATE SET is_online = FALSE, last_seen = %s, updated_at = %s
+    """, (user['id'], now, now, now, now))
+
+    conn.commit()
+    conn.close()
+
+    return {"success": True}

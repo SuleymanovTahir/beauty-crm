@@ -56,6 +56,8 @@ interface User {
   email?: string;
   photo?: string;
   photo_url?: string;
+  is_online?: boolean;
+  last_seen?: string;
 }
 
 interface VoiceRecorder {
