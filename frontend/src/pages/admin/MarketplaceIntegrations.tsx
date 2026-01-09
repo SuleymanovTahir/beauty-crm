@@ -70,49 +70,49 @@ const MarketplaceIntegrations = () => {
         yandex_maps: {
             name: 'Яндекс.Карты',
             description: 'Записи и отзывы с Яндекс.Карт',
-            icon: <Store size={32} />,
+            icon: <Store size={20} />,
             brandClass: 'brand-yandex_maps'
         },
         '2gis': {
             name: '2ГИС',
             description: 'Онлайн-записи через 2ГИС',
-            icon: <Store size={32} />,
+            icon: <Store size={20} />,
             brandClass: 'brand-2gis'
         },
         google_business: {
             name: 'Google Business',
             description: 'Google Мой Бизнес',
-            icon: <Store size={32} />,
+            icon: <Store size={20} />,
             brandClass: 'brand-google_business'
         },
         booksy: {
             name: 'Booksy',
             description: 'Платформа онлайн-записи',
-            icon: <Store size={32} />,
+            icon: <Store size={20} />,
             brandClass: 'brand-booksy'
         },
         yclients: {
             name: 'YCLIENTS',
             description: 'CRM для салонов красоты',
-            icon: <Store size={32} />,
+            icon: <Store size={20} />,
             brandClass: 'brand-yclients'
         },
         wildberries: {
             name: 'Wildberries',
             description: 'Маркетплейс WB',
-            icon: <Store size={32} />,
+            icon: <Store size={20} />,
             brandClass: 'brand-wildberries'
         },
         ozon: {
             name: 'Ozon',
             description: 'Маркетплейс Ozon',
-            icon: <Store size={32} />,
+            icon: <Store size={20} />,
             brandClass: 'brand-ozon'
         },
         amazon: {
             name: 'Amazon',
             description: 'Amazon Marketplace',
-            icon: <Store size={32} />,
+            icon: <Store size={20} />,
             brandClass: 'brand-amazon'
         }
     };

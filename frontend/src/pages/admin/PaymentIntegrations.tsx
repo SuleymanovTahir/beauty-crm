@@ -43,73 +43,73 @@ const PaymentIntegrations = () => {
         stripe: {
             name: 'Stripe',
             description: 'Международные платежи картами',
-            icon: <CreditCard size={32} />,
+            icon: <CreditCard size={20} />,
             brandClass: 'brand-stripe'
         },
         yookassa: {
             name: 'ЮKassa',
             description: 'Российская платежная система',
-            icon: <CreditCard size={32} />,
+            icon: <CreditCard size={20} />,
             brandClass: 'brand-yookassa'
         },
         tinkoff: {
             name: 'Tinkoff',
             description: 'Российский банк',
-            icon: <CreditCard size={32} />,
+            icon: <CreditCard size={20} />,
             brandClass: 'brand-tinkoff'
         },
         sberbank: {
             name: 'Сбербанк',
             description: 'Сбербанк России',
-            icon: <CreditCard size={32} />,
+            icon: <CreditCard size={20} />,
             brandClass: 'brand-sberbank'
         },
         alfabank: {
             name: 'Альфа-Банк',
             description: 'Альфа-Банк России',
-            icon: <CreditCard size={32} />,
+            icon: <CreditCard size={20} />,
             brandClass: 'brand-alfabank'
         },
         kaspi: {
             name: 'Kaspi.kz',
             description: 'Казахстанский банк',
-            icon: <CreditCard size={32} />,
+            icon: <CreditCard size={20} />,
             brandClass: 'brand-kaspi'
         },
         halyk: {
             name: 'Halyk Bank',
             description: 'Народный банк Казахстана',
-            icon: <CreditCard size={32} />,
+            icon: <CreditCard size={20} />,
             brandClass: 'brand-halyk'
         },
         freedom: {
             name: 'Freedom Finance',
             description: 'Freedom Bank Kazakhstan',
-            icon: <CreditCard size={32} />,
+            icon: <CreditCard size={20} />,
             brandClass: 'brand-freedom'
         },
         emirates_nbd: {
             name: 'Emirates NBD',
             description: 'Банк ОАЭ',
-            icon: <CreditCard size={32} />,
+            icon: <CreditCard size={20} />,
             brandClass: 'brand-emirates_nbd'
         },
         adcb: {
             name: 'ADCB',
             description: 'Abu Dhabi Commercial Bank',
-            icon: <CreditCard size={32} />,
+            icon: <CreditCard size={20} />,
             brandClass: 'brand-adcb'
         },
         mashreq: {
             name: 'Mashreq Bank',
             description: 'Банк Машрек ОАЭ',
-            icon: <CreditCard size={32} />,
+            icon: <CreditCard size={20} />,
             brandClass: 'brand-mashreq'
         },
         paypal: {
             name: 'PayPal',
             description: 'Международные платежи',
-            icon: <CreditCard size={32} />,
+            icon: <CreditCard size={20} />,
             brandClass: 'brand-paypal'
         }
     };
