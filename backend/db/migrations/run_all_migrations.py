@@ -407,6 +407,28 @@ def run_all_migrations():
     )
 
     # ========================================================================
+    # ИНТЕГРАЦИИ: ПЛАТЕЖНЫЕ СИСТЕМЫ
+    # ========================================================================
+    print_header("МИГРАЦИЯ: ПЛАТЕЖНЫЕ СИСТЕМЫ")
+    
+    from db.migrations.consolidated.schema_payment_integrations import migrate_payment_integrations
+    results["integrations/payment_systems"] = run_migration_function(
+        migrate_payment_integrations,
+        "Интеграция с платежными системами (Stripe, Yookassa, Tinkoff)"
+    )
+
+    # ========================================================================
+    # ИНТЕГРАЦИИ: МАРКЕТПЛЕЙСЫ
+    # ========================================================================
+    print_header("МИГРАЦИЯ: МАРКЕТПЛЕЙСЫ")
+    
+    from db.migrations.consolidated.schema_marketplace_integrations import migrate_marketplace_integrations
+    results["integrations/marketplaces"] = run_migration_function(
+        migrate_marketplace_integrations,
+        "Интеграция с маркетплейсами (Yandex Maps, 2GIS, Google Business, Booksy, YCLIENTS)"
+    )
+
+    # ========================================================================
     # ИТОГИ
     # ========================================================================
     print_header("ИТОГИ МИГРАЦИЙ")

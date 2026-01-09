@@ -119,6 +119,8 @@ from api.contracts import router as contracts_router
 from api.products import router as products_router
 from api.invoices import router as invoices_router
 from api.funnel_checkpoints import router as funnel_checkpoints_router
+from api.payment_integrations import router as payment_integrations_router
+from api.marketplace_integrations import router as marketplace_integrations_router
 
 
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -214,6 +216,8 @@ app.include_router(contracts_router, prefix="/api")  # Contracts API
 app.include_router(products_router, prefix="/api")  # Products API
 app.include_router(invoices_router, prefix="/api")  # Invoices API
 app.include_router(funnel_checkpoints_router, prefix="/api")  # Funnel Checkpoints API
+app.include_router(payment_integrations_router, prefix="/api")  # Payment Integrations API
+app.include_router(marketplace_integrations_router, prefix="/api")  # Marketplace Integrations API
  # Menu Settings API
 
 

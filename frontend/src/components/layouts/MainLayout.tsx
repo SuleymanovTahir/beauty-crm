@@ -31,7 +31,9 @@ import {
     User,
     FileSignature,
     Package,
-    Receipt
+    Receipt,
+    CreditCard,
+    Store
 } from 'lucide-react';
 import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../icons/SocialIcons';
 import { toast } from 'sonner';
@@ -251,6 +253,8 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             { icon: Globe, label: t('menu.public_content'), path: `${rolePrefix}/public-content`, requirePermission: () => permissions.canViewSettings && permissions.roleLevel >= 80 },
             { icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, requirePermission: () => permissions.roleLevel >= 80 || user?.role === 'sales' },
             { icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, requirePermission: () => permissions.canUseStaffChat },
+            { icon: CreditCard, label: t('menu.payment_integrations'), path: `${rolePrefix}/payment-integrations`, requirePermission: () => permissions.roleLevel >= 80 },
+            { icon: Store, label: t('menu.marketplace_integrations'), path: `${rolePrefix}/marketplace-integrations`, requirePermission: () => permissions.roleLevel >= 80 },
 
             // ГРУППА 5: Системные настройки
             { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, requirePermission: () => (permissions.canViewSettings || user?.role === 'manager' || user?.role === 'sales') && user?.role !== 'employee' },
