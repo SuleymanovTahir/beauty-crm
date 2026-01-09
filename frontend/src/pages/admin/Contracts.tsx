@@ -1,0 +1,323 @@
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Plus, Send, Edit, Trash2, Eye, FileText } from 'lucide-react';
+import api from '../../services/api';
+
+interface Contract {
+    id: number;
+    contract_number: string;
+    client_id: string;
+    client_name: string;
+    client_phone: string;
+    booking_id?: number;
+    contract_type: string;
+    status: string;
+    created_at: string;
+    sent_at?: string;
+    signed_at?: string;
+}
+
+const Contracts = () => {
+    const { t } = useTranslation('admin/contracts');
+    const [contracts, setContracts] = useState<Contract[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [showAddDialog, setShowAddDialog] = useState(false);
+    const [showSendDialog, setShowSendDialog] = useState(false);
+    const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+    const [filterStatus, setFilterStatus] = useState<string>('');
+
+    useEffect(() => {
+        loadContracts();
+    }, [filterStatus]);
+
+    const loadContracts = async () => {
+        try {
+            setLoading(true);
+            const params: any = {};
+            if (filterStatus) params.status = filterStatus;
+
+            const response = await api.get('/contracts', { params });
+            setContracts(response.data.contracts);
+        } catch (error) {
+            console.error('Error loading contracts:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        if (!confirm(t('messages.confirmDelete'))) return;
+
+        try {
+            await api.delete(`/contracts/${id}`);
+            loadContracts();
+        } catch (error) {
+            console.error('Error deleting contract:', error);
+        }
+    };
+
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'draft': return 'status-draft';
+            case 'sent': return 'status-sent';
+            case 'signed': return 'status-signed';
+            case 'cancelled': return 'status-cancelled';
+            default: return '';
+        }
+    };
+
+    return (
+        <div className="contracts-page">
+            <div className="page-header">
+                <h1>{t('title')}</h1>
+                <button className="btn-primary" onClick={() => setShowAddDialog(true)}>
+                    <Plus size={20} />
+                    {t('addContract')}
+                </button>
+            </div>
+
+            <div className="filters">
+                <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className="filter-select"
+                >
+                    <option value="">{t('allStatuses')}</option>
+                    <option value="draft">{t('statuses.draft')}</option>
+                    <option value="sent">{t('statuses.sent')}</option>
+                    <option value="signed">{t('statuses.signed')}</option>
+                    <option value="cancelled">{t('statuses.cancelled')}</option>
+                </select>
+            </div>
+
+            {loading ? (
+                <div className="loading">{t('loading')}</div>
+            ) : (
+                <div className="contracts-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{t('contractNumber')}</th>
+                                <th>{t('client')}</th>
+                                <th>{t('status')}</th>
+                                <th>{t('createdAt')}</th>
+                                <th>{t('actions')}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {contracts.map((contract) => (
+                                <tr key={contract.id}>
+                                    <td>
+                                        <div className="contract-number">
+                                            <FileText size={16} />
+                                            {contract.contract_number}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div className="client-info">
+                                            <div className="client-name">{contract.client_name}</div>
+                                            <div className="client-phone">{contract.client_phone}</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span className={`status-badge ${getStatusColor(contract.status)}`}>
+                                            {t(`statuses.${contract.status}`)}
+                                        </span>
+                                    </td>
+                                    <td>{new Date(contract.created_at).toLocaleDateString()}</td>
+                                    <td>
+                                        <div className="actions">
+                                            <button
+                                                className="btn-icon"
+                                                onClick={() => {
+                                                    setSelectedContract(contract);
+                                                    setShowSendDialog(true);
+                                                }}
+                                                title={t('sendButton')}
+                                            >
+                                                <Send size={16} />
+                                            </button>
+                                            <button
+                                                className="btn-icon"
+                                                onClick={() => handleDelete(contract.id)}
+                                                title={t('delete')}
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {showAddDialog && (
+                <AddContractDialog
+                    onClose={() => setShowAddDialog(false)}
+                    onSuccess={() => {
+                        setShowAddDialog(false);
+                        loadContracts();
+                    }}
+                />
+            )}
+
+            {showSendDialog && selectedContract && (
+                <SendContractDialog
+                    contract={selectedContract}
+                    onClose={() => {
+                        setShowSendDialog(false);
+                        setSelectedContract(null);
+                    }}
+                    onSuccess={() => {
+                        setShowSendDialog(false);
+                        setSelectedContract(null);
+                        loadContracts();
+                    }}
+                />
+            )}
+        </div>
+    );
+};
+
+const AddContractDialog = ({ onClose, onSuccess }: any) => {
+    const { t } = useTranslation('admin/contracts');
+    const [clients, setClients] = useState<any[]>([]);
+    const [formData, setFormData] = useState({
+        client_id: '',
+        booking_id: null,
+        contract_type: 'service',
+        template_name: 'default'
+    });
+
+    useEffect(() => {
+        loadClients();
+    }, []);
+
+    const loadClients = async () => {
+        try {
+            const response = await api.get('/clients');
+            setClients(response.data.clients);
+        } catch (error) {
+            console.error('Error loading clients:', error);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await api.post('/contracts', formData);
+            onSuccess();
+        } catch (error) {
+            console.error('Error creating contract:', error);
+        }
+    };
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <h2>{t('addContract')}</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label>{t('form.selectClient')}</label>
+                        <select
+                            value={formData.client_id}
+                            onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
+                            required
+                        >
+                            <option value="">{t('form.selectClient')}</option>
+                            {clients.map((client) => (
+                                <option key={client.instagram_id} value={client.instagram_id}>
+                                    {client.name} - {client.phone}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="form-group">
+                        <label>{t('form.contractType')}</label>
+                        <select
+                            value={formData.contract_type}
+                            onChange={(e) => setFormData({ ...formData, contract_type: e.target.value })}
+                        >
+                            <option value="service">{t('types.service')}</option>
+                            <option value="product">{t('types.product')}</option>
+                            <option value="subscription">{t('types.subscription')}</option>
+                        </select>
+                    </div>
+
+                    <div className="form-actions">
+                        <button type="button" className="btn-secondary" onClick={onClose}>
+                            {t('form.cancel')}
+                        </button>
+                        <button type="submit" className="btn-primary">
+                            {t('form.save')}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+const SendContractDialog = ({ contract, onClose, onSuccess }: any) => {
+    const { t } = useTranslation('admin/contracts');
+    const [formData, setFormData] = useState({
+        delivery_method: 'email',
+        recipient: contract.client_phone || ''
+    });
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await api.post(`/contracts/${contract.id}/send`, formData);
+            onSuccess();
+        } catch (error) {
+            console.error('Error sending contract:', error);
+        }
+    };
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <h2>{t('sendDialog.title')}</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label>{t('sendDialog.method')}</label>
+                        <select
+                            value={formData.delivery_method}
+                            onChange={(e) => setFormData({ ...formData, delivery_method: e.target.value })}
+                        >
+                            <option value="email">{t('sendDialog.email')}</option>
+                            <option value="whatsapp">{t('sendDialog.whatsapp')}</option>
+                            <option value="telegram">{t('sendDialog.telegram')}</option>
+                            <option value="instagram">{t('sendDialog.instagram')}</option>
+                        </select>
+                    </div>
+
+                    <div className="form-group">
+                        <label>{t('sendDialog.recipient')}</label>
+                        <input
+                            type="text"
+                            value={formData.recipient}
+                            onChange={(e) => setFormData({ ...formData, recipient: e.target.value })}
+                            required
+                        />
+                    </div>
+
+                    <div className="form-actions">
+                        <button type="button" className="btn-secondary" onClick={onClose}>
+                            {t('form.cancel')}
+                        </button>
+                        <button type="submit" className="btn-primary">
+                            {t('sendDialog.sendButton')}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+export default Contracts;
