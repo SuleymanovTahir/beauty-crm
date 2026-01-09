@@ -1,0 +1,12 @@
+{
+  "our_services": "Our services",
+  "browse_available_services": "View available salon services",
+  "no_services": "Services not found",
+  "no_services_description": "There are no services available to display at this time.",
+  "service_name": "Service name",
+  "description": "Description",
+  "price": "Price",
+  "duration": "Duration",
+  "category": "Category",
+  "min": "min"
+}

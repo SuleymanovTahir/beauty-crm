@@ -1,4 +1,26 @@
 {
+  "auth": {
+    "birthday": "Туған жылы",
+    "complete_profile": "Профильіңізді толтырыңыз",
+    "continue_email": "Электрондық пошта арқылы кіру",
+    "continue_google": "Google арқылы жалғастырыңыз",
+    "create_account": "Аккаунты құру",
+    "email_placeholder": "Электрондық поштаңызды енгізіңіз",
+    "female": "Әйел",
+    "full_name": "сіздің атыңыз",
+    "gender": "Еден",
+    "guest_continue": "Қонақ ретінде жалғастырыңыз",
+    "info_note": "Біз бұл деректерді жеке ұсыныстар мен туған күн сыйлықтары үшін пайдаланамыз.",
+    "login_to_see_more": "Login to manage your bookings",
+    "male": "Ер",
+    "name_placeholder": "Атын енгізіңіз",
+    "or": "НЕМЕСЕ",
+    "other": "Басқа",
+    "select": "таңдаңыз",
+    "subtitle": "Жазбалар тарихын сақтау және бонустар алу үшін жүйеге кіріңіз",
+    "success_mock": "Профиль сәтті алынды!",
+    "welcome": "Қош келдіңіз"
+  },
   "booking_info": "Ақпаратты жазу",
   "change_booking": "Жазбаны өңдеу",
   "common": {
@@ -8,11 +30,13 @@
     "edit": "Edit",
     "reschedule": "Reschedule",
     "reset": "Reset All",
+    "resetAll": "Reset all",
     "save": "Verify",
     "select": "Select"
   },
   "confirm": {
     "confirm": "Confirm Appointment",
+    "contactNumber": "Contact Number",
     "date": "Date",
     "dateTime": "Date & Time",
     "error": "Error creating booking. Please try again.",
@@ -67,6 +91,7 @@
   "select_to_continue": "Жалғастыру үшін қызметті немесе техникті таңдаңыз",
   "services": {
     "allCategories": "All",
+    "notFound": "No services found",
     "search": "Search services...",
     "selected": "selected",
     "service_one": "service",
@@ -75,26 +100,5 @@
     "title": "Select Services",
     "total": "Total"
   },
-  "totalDuration": "Duration",
-  "auth": {
-    "welcome": "Қош келдіңіз",
-    "subtitle": "Жазбалар тарихын сақтау және бонустар алу үшін жүйеге кіріңіз",
-    "continue_google": "Google арқылы жалғастырыңыз",
-    "continue_email": "Электрондық пошта арқылы кіру",
-    "or": "НЕМЕСЕ",
-    "email_placeholder": "Электрондық поштаңызды енгізіңіз",
-    "guest_continue": "Қонақ ретінде жалғастырыңыз",
-    "complete_profile": "Профильіңізді толтырыңыз",
-    "full_name": "сіздің атыңыз",
-    "name_placeholder": "Атын енгізіңіз",
-    "gender": "Еден",
-    "birthday": "Туған жылы",
-    "select": "таңдаңыз",
-    "female": "Әйел",
-    "male": "Ер",
-    "other": "Басқа",
-    "info_note": "Біз бұл деректерді жеке ұсыныстар мен туған күн сыйлықтары үшін пайдаланамыз.",
-    "create_account": "Аккаунты құру",
-    "success_mock": "Профиль сәтті алынды!"
-  }
+  "totalDuration": "Duration"
 }

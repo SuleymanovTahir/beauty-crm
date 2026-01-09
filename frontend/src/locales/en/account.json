@@ -227,6 +227,14 @@
     "subtitle": "Collect points and get cashback from each service",
     "tier_explanation": "Collect points and get more privileges",
     "tier_system": "Level system",
+    "tiers": {
+      "bronze": "Bronze",
+      "bronze_req": "Basic level",
+      "gold": "Gold",
+      "platinum": "Platinum",
+      "points_req": "From {{points}} points",
+      "silver": "Silver"
+    },
     "title": "Loyalty and Cashback",
     "to_next_level": "To",
     "total_saved": "Total Saved",
@@ -237,15 +245,7 @@
     "year_distribution": "Distribution for the year",
     "your_cashback": "Your Cashback",
     "your_discount": "your discount will be",
-    "your_promo": "Your promo code",
-    "tiers": {
-      "bronze": "Bronze",
-      "silver": "Silver",
-      "gold": "Gold",
-      "platinum": "Platinum",
-      "bronze_req": "Basic level",
-      "points_req": "From {{points}} points"
-    }
+    "your_promo": "Your promo code"
   },
   "masters": {
     "add_favorites_hint": "Add artists to your favorites by clicking on the heart icon",
@@ -366,5 +366,6 @@
     "masters": "Masters",
     "notifications": "Notifications",
     "settings": "Settings"
-  }
+  },
+  "user_role": "Client"
 }

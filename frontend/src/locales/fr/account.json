@@ -227,6 +227,14 @@
     "subtitle": "Collectez des points et obtenez du cashback pour chaque service",
     "tier_explanation": "Collectez des points et obtenez plus de privilèges",
     "tier_system": "Système de niveaux",
+    "tiers": {
+      "bronze": "Bronze",
+      "bronze_req": "Niveau de base",
+      "gold": "Or",
+      "platinum": "Platine",
+      "points_req": "À partir de {{points}} points",
+      "silver": "Argent"
+    },
     "title": "Fidélité et Cashback",
     "to_next_level": "À",
     "total_saved": "Total économisé",
@@ -237,15 +245,7 @@
     "year_distribution": "Répartition pour l'année",
     "your_cashback": "Votre remise en argent",
     "your_discount": "votre réduction sera",
-    "your_promo": "Votre code promo",
-    "tiers": {
-      "bronze": "Bronze",
-      "silver": "Argent",
-      "gold": "Or",
-      "platinum": "Platine",
-      "bronze_req": "Niveau de base",
-      "points_req": "À partir de {{points}} points"
-    }
+    "your_promo": "Votre code promo"
   },
   "masters": {
     "add_favorites_hint": "Ajoutez des artistes à vos favoris en cliquant sur l'icône en forme de cœur",
@@ -366,5 +366,6 @@
     "masters": "Maîtres",
     "notifications": "Notifications",
     "settings": "Paramètres"
-  }
+  },
+  "user_role": "Client"
 }

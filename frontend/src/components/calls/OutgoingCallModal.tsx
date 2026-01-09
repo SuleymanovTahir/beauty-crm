@@ -1,5 +1,6 @@
 // Модальное окно для исходящих звонков
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Phone, PhoneOff, Video } from 'lucide-react';
 import { Button } from '../ui/button';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
@@ -20,6 +21,7 @@ export default function OutgoingCallModal({
   callType,
   onCancel
 }: OutgoingCallModalProps) {
+  const { t } = useTranslation(['common']);
   const [dots, setDots] = useState('');
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export default function OutgoingCallModal({
           <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center animate-pulse">
             {calleePhoto ? (
               <img
-                src={avatarUrl}
+                src={avatarUrl || undefined}
                 alt={calleeName}
                 className="w-24 h-24 rounded-full object-cover"
                 onError={(e) => {
@@ -65,18 +67,18 @@ export default function OutgoingCallModal({
             {callType === 'video' ? (
               <>
                 <Video className="w-5 h-5" />
-                <span>Видеозвонок</span>
+                <span>{t('calls.video_call', 'Видеозвонок')}</span>
               </>
             ) : (
               <>
                 <Phone className="w-5 h-5" />
-                <span>Аудиозвонок</span>
+                <span>{t('calls.audio_call', 'Аудиозвонок')}</span>
               </>
             )}
           </div>
 
           <p className="text-gray-500 animate-pulse">
-            Вызов{dots}
+            {t('calls.calling', 'Вызов')}{dots}
           </p>
         </div>
 
@@ -86,7 +88,7 @@ export default function OutgoingCallModal({
           className="w-full bg-red-500 hover:bg-red-600 text-white py-6 rounded-xl text-lg font-semibold shadow-lg transition-all hover:scale-105"
         >
           <PhoneOff className="w-6 h-6 mr-2" />
-          Отменить
+          {t('calls.cancel', 'Отменить')}
         </Button>
       </div>
     </div>

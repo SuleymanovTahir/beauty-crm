@@ -1,33 +1,33 @@
 {
-  "Your funnel shows good results": {
-    " Keep it up!": "Keep it up!"
-  },
-  "title": "Sales funnel",
-  "subtitle": "Stage and conversion management",
-  "funnel": "Funnel",
-  "search_clients": "Searching for clients...",
-  "quick_add": "Quick Add",
-  "no_clients": "No clients",
-  "moved_successfully": "Client successfully moved",
-  "move_failed": "Move Error",
+  "all_good": "Everything is fine! ",
   "conversion": {
-    "visitor_to_engaged": "Visitor -> Engaged",
-    "engaged_to_booking": "Engaged -> Started booking",
+    "booked_to_completed": "Signed up -> Completed",
     "booking_to_booked": "Started booking -> Signed up",
-    "booked_to_completed": "Signed up -> Completed"
+    "engaged_to_booking": "Engaged -> Started booking",
+    "visitor_to_engaged": "Visitor -> Engaged"
   },
+  "funnel": "Funnel",
   "funnel_chart": "Funnel chart",
   "key_metrics": "Key metrics",
+  "move_failed": "Move Error",
+  "moved_successfully": "Client successfully moved",
+  "no_clients": "No clients",
+  "quick_add": "Quick Add",
+  "recommendations_title": "Recommendations",
+  "search_clients": "Searching for clients...",
+  "stage_details": "Detailing stages",
+  "subtitle": "Stage and conversion management",
+  "successful_visits": "Successful visits",
+  "table": {
+    "count": "Quantity",
+    "losses": "Losses",
+    "percentage": "Percent",
+    "stage": "Stage"
+  },
+  "title": "Sales funnel",
   "total_conversion": "Total Conversion",
   "total_losses": "Total losses",
-  "successful_visits": "Successful visits",
-  "recommendations_title": "Recommendations",
-  "all_good": "Everything is fine! ",
-  "stage_details": "Detailing stages",
-  "table": {
-    "stage": "Stage",
-    "count": "Quantity",
-    "percentage": "Percent",
-    "losses": "Losses"
+  "Your funnel shows good results": {
+    " Keep it up!": ""
   }
 }

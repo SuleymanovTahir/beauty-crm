@@ -1,30 +1,33 @@
 {
-    "title": "Воронка продаж",
-    "subtitle": "Управление этапами и конверсией",
-    "funnel": "Воронка",
-    "search_clients": "Поиск клиентов...",
-    "quick_add": "Быстрое добавление",
-    "no_clients": "Нет клиентов",
-    "moved_successfully": "Клиент успешно перемещен",
-    "move_failed": "Ошибка перемещения",
-    "conversion": {
-        "visitor_to_engaged": "Посетитель -> Вовлечен",
-        "engaged_to_booking": "Вовлечен -> Начал запись",
-        "booking_to_booked": "Начал запись -> Записался",
-        "booked_to_completed": "Записался -> Завершил"
-    },
-    "funnel_chart": "График воронки",
-    "key_metrics": "Ключевые метрики",
-    "total_conversion": "Общая конверсия",
-    "total_losses": "Общие потери",
-    "successful_visits": "Успешные визиты",
-    "recommendations_title": "Рекомендации",
-    "all_good": "Все отлично! Ваша воронка показывает хорошие результаты.",
-    "stage_details": "Детализация стадий",
-    "table": {
-        "stage": "Стадия",
-        "count": "Количество",
-        "percentage": "Процент",
-        "losses": "Потери"
-    }
+  "all_good": "Все отлично! Ваша воронка показывает хорошие результаты.",
+  "conversion": {
+    "booked_to_completed": "Записался -> Завершил",
+    "booking_to_booked": "Начал запись -> Записался",
+    "engaged_to_booking": "Вовлечен -> Начал запись",
+    "visitor_to_engaged": "Посетитель -> Вовлечен"
+  },
+  "funnel": "Воронка",
+  "funnel_chart": "График воронки",
+  "key_metrics": "Ключевые метрики",
+  "move_failed": "Ошибка перемещения",
+  "moved_successfully": "Клиент успешно перемещен",
+  "no_clients": "Нет клиентов",
+  "quick_add": "Быстрое добавление",
+  "recommendations_title": "Рекомендации",
+  "search_clients": "Поиск клиентов...",
+  "stage_details": "Детализация стадий",
+  "subtitle": "Управление этапами и конверсией",
+  "successful_visits": "Успешные визиты",
+  "table": {
+    "count": "Количество",
+    "losses": "Потери",
+    "percentage": "Процент",
+    "stage": "Стадия"
+  },
+  "title": "Воронка продаж",
+  "total_conversion": "Общая конверсия",
+  "total_losses": "Общие потери",
+  "Your funnel shows good results": {
+    " Keep it up!": ""
+  }
 }

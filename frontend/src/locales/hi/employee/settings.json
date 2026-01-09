@@ -1,0 +1,23 @@
+{
+  "my_settings": "मेरी सेटिंग्स",
+  "manage_account_settings": "खाता सेटिंग प्रबंधित करें",
+  "personal_information": "व्यक्तिगत जानकारी",
+  "full_name": "पूरा नाम",
+  "full_name_placeholder": "इवान इवानोव",
+  "full_name_validation": "नाम में कम से कम 2 अक्षर होने चाहिए",
+  "username": "लॉग इन करें",
+  "email": "ईमेल",
+  "email_placeholder": "your@email.com",
+  "change_password": "पासवर्ड बदलें",
+  "current_password": "वर्तमान पासवर्ड",
+  "enter_current_password": "अपने वर्तमान पासवर्ड को दर्ज करें",
+  "new_password": "नया पासवर्ड",
+  "enter_new_password": "नया पासवर्ड दर्ज करें (न्यूनतम 6 अक्षर)",
+  "confirm_password": "अपने पासवर्ड की पुष्टि करें",
+  "confirm_new_password": "अपने नये पासवर्ड की पुष्टि करें",
+  "passwords_do_not_match": "पासवर्ड मेल नहीं खाते",
+  "password_min_length": "पासवर्ड में कम से कम 6 अक्षर होने चाहिए",
+  "fill_all_password_fields": "अपना पासवर्ड बदलने के लिए सभी फ़ील्ड भरें",
+  "update_password": "पासवर्ड अपडेट करें",
+  "security_tip": "अधिकतम खाता सुरक्षा के लिए अक्षरों, संख्याओं और विशेष वर्णों के संयोजन के साथ एक मजबूत पासवर्ड का उपयोग करें।"
+}

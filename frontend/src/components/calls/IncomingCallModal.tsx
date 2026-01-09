@@ -1,6 +1,7 @@
 // Модальное окно для входящих звонков
-import React, { useEffect, useState } from 'react';
-import { Phone, PhoneOff, Video, Mic } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Phone, PhoneOff, Video } from 'lucide-react';
 import { Button } from '../ui/button';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 
@@ -19,7 +20,8 @@ export default function IncomingCallModal({
   onAccept,
   onReject
 }: IncomingCallModalProps) {
-  const [ringing, setRinging] = useState(true);
+  const { t } = useTranslation(['common']);
+  const [ringing] = useState(true);
 
   useEffect(() => {
     // Воспроизведение звука звонка
@@ -62,12 +64,12 @@ export default function IncomingCallModal({
             {callType === 'video' ? (
               <>
                 <Video className="w-5 h-5" />
-                <span>Видеозвонок</span>
+                <span>{t('calls.video_call', 'Видеозвонок')}</span>
               </>
             ) : (
               <>
                 <Phone className="w-5 h-5" />
-                <span>Аудиозвонок</span>
+                <span>{t('calls.audio_call', 'Аудиозвонок')}</span>
               </>
             )}
           </div>
@@ -80,7 +82,7 @@ export default function IncomingCallModal({
             className="flex-1 bg-red-500 hover:bg-red-600 text-white py-6 rounded-xl text-lg font-semibold shadow-lg"
           >
             <PhoneOff className="w-6 h-6 mr-2" />
-            Отклонить
+            {t('calls.reject', 'Отклонить')}
           </Button>
 
           <Button
@@ -88,7 +90,7 @@ export default function IncomingCallModal({
             className="flex-1 bg-green-500 hover:bg-green-600 text-white py-6 rounded-xl text-lg font-semibold shadow-lg animate-pulse"
           >
             <Phone className="w-6 h-6 mr-2" />
-            Принять
+            {t('calls.accept', 'Принять')}
           </Button>
         </div>
       </div>

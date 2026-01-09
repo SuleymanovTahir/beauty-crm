@@ -39,6 +39,11 @@ export class WebRTCService {
   public onCallEnded: (() => void) | null = null;
   public onError: ((error: string) => void) | null = null;
   public onQualityChange: ((quality: 'excellent' | 'good' | 'poor' | 'disconnected', stats: any) => void) | null = null;
+  public onUserStatusChange: ((userId: number, isOnline: boolean, lastSeen?: string | null) => void) | null = null;
+
+  // Internal state
+  private iceCandidatesQueue: RTCIceCandidateInit[] = [];
+  private isRemoteDescriptionSet: boolean = false;
 
   // Media control state
   private isAudioEnabled: boolean = true;
@@ -141,6 +146,11 @@ export class WebRTCService {
       case 'error':
         console.error('❌ Server error:', data.message);
         this.onError?.(data.message);
+        break;
+
+      case 'user_status':
+        console.log(`👤 User ${data.user_id} is ${data.status}`);
+        this.onUserStatusChange?.(data.user_id, data.status === 'online', data.last_seen || data.timestamp);
         break;
     }
   }
@@ -257,6 +267,10 @@ export class WebRTCService {
    * Создать peer connection
    */
   private createPeerConnection(): void {
+    if (this.peerConnection) {
+      // If connection exists, close it first
+      this.peerConnection.close();
+    }
     this.peerConnection = new RTCPeerConnection(DEFAULT_CONFIG);
 
     // Добавляем локальный stream
@@ -295,7 +309,7 @@ export class WebRTCService {
       }
 
       if (this.peerConnection?.connectionState === 'disconnected' ||
-          this.peerConnection?.connectionState === 'failed') {
+        this.peerConnection?.connectionState === 'failed') {
         this.onCallEnded?.();
         this.cleanup();
       }
@@ -347,6 +361,9 @@ export class WebRTCService {
       });
 
       console.log('📤 Answer sent');
+
+      // Process queued ICE candidates
+      this.processIceQueue();
     } catch (error) {
       console.error('❌ Error handling offer:', error);
     }
@@ -360,7 +377,11 @@ export class WebRTCService {
 
     try {
       await this.peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
+      this.isRemoteDescriptionSet = true;
       console.log('✅ Answer applied');
+
+      // Process queued ICE candidates
+      this.processIceQueue();
     } catch (error) {
       console.error('❌ Error handling answer:', error);
     }
@@ -372,12 +393,33 @@ export class WebRTCService {
   private async handleIceCandidate(candidate: RTCIceCandidateInit): Promise<void> {
     if (!this.peerConnection) return;
 
+    // Changes: Queue candidates if remote description is not set yet
+    if (!this.peerConnection.remoteDescription && !this.isRemoteDescriptionSet) {
+      console.log('🧊 Queuing ICE candidate (remote description not set)');
+      this.iceCandidatesQueue.push(candidate);
+      return;
+    }
+
     try {
       await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
       console.log('🧊 ICE candidate added');
     } catch (error) {
       console.error('❌ Error adding ICE candidate:', error);
     }
+  }
+
+  private async processIceQueue(): Promise<void> {
+    if (!this.peerConnection || this.iceCandidatesQueue.length === 0) return;
+
+    console.log(`Processing ${this.iceCandidatesQueue.length} queued ICE candidates`);
+    for (const candidate of this.iceCandidatesQueue) {
+      try {
+        await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+      } catch (error) {
+        console.error('❌ Error processing queued ICE candidate:', error);
+      }
+    }
+    this.iceCandidatesQueue = [];
   }
 
   /**
@@ -521,6 +563,8 @@ export class WebRTCService {
     this.remoteUserId = null;
     this.isAudioEnabled = true;
     this.isVideoEnabled = true;
+    this.iceCandidatesQueue = [];
+    this.isRemoteDescriptionSet = false;
   }
 
   /**

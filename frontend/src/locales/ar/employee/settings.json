@@ -1,0 +1,23 @@
+{
+  "my_settings": "إعداداتي",
+  "manage_account_settings": "إدارة إعدادات الحساب",
+  "personal_information": "معلومات شخصية",
+  "full_name": "الاسم الكامل",
+  "full_name_placeholder": "إيفان إيفانوف",
+  "full_name_validation": "يجب أن يحتوي الاسم على حرفين على الأقل",
+  "username": "تسجيل الدخول",
+  "email": "بريد إلكتروني",
+  "email_placeholder": "your@email.com",
+  "change_password": "تغيير كلمة المرور",
+  "current_password": "كلمة المرور الحالية",
+  "enter_current_password": "أدخل كلمة المرور الحالية الخاصة بك",
+  "new_password": "كلمة المرور الجديدة",
+  "enter_new_password": "أدخل كلمة مرور جديدة (6 أحرف على الأقل)",
+  "confirm_password": "قم بتأكيد كلمة المرور الخاصة بك",
+  "confirm_new_password": "قم بتأكيد كلمة المرور الجديدة",
+  "passwords_do_not_match": "كلمات المرور غير متطابقة",
+  "password_min_length": "يجب أن تحتوي كلمة المرور على 6 أحرف على الأقل",
+  "fill_all_password_fields": "املأ جميع الحقول لتغيير كلمة المرور الخاصة بك",
+  "update_password": "تحديث كلمة المرور",
+  "security_tip": "استخدم كلمة مرور قوية مكونة من مجموعة من الأحرف والأرقام والأحرف الخاصة لتحقيق أقصى قدر من الأمان للحساب."
+}

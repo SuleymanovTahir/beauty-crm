@@ -1,0 +1,12 @@
+{
+  "my_tasks": "mis tareas",
+  "manage_your_tasks": "Gestionar tareas y asignaciones",
+  "no_tasks": "Aún no hay tareas",
+  "no_tasks_description": "No tienes tareas activas. Las nuevas tareas aparecerán aquí cuando se asignen.",
+  "task_title": "Nombre de la tarea",
+  "task_description": "Descripción",
+  "due_date": "Fecha de vencimiento",
+  "status": "Estado",
+  "priority": "Prioridad",
+  "assigned_to": "Asignado"
+}

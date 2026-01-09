@@ -1,0 +1,21 @@
+{
+  "my_bookings": "Minhas reservas",
+  "view_and_manage_bookings": "Visualize e gerencie reservas de clientes",
+  "all": "Todos",
+  "upcoming": "até vir",
+  "past": "Passado",
+  "no_bookings": "Ainda não há reservas",
+  "no_bookings_description": "Você não tem reservas. Novas reservas aparecerão aqui automaticamente.",
+  "booking": "booking",
+  "client": "Cliente",
+  "service": "Serviço",
+  "date_time": "Data e hora",
+  "phone": "Telefone",
+  "notes": "Notas",
+  "no_name": "Nome não fornecido",
+  "no_phone": "Número de telefone não especificado",
+  "status_confirmed": "Confirmado",
+  "status_pending": "Esperando",
+  "status_cancelled": "Cancelado",
+  "status_completed": "Concluído"
+}

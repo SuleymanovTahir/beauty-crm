@@ -68,6 +68,7 @@
   "edit_position_placeholder": "Wählen Sie eine Position aus dem Verzeichnis aus",
   "edit_save": "Speichern",
   "edit_saving": "Sparen...",
+  "edit_time_off": "Feiertag bearbeiten",
   "edit_username_label": "Login",
   "edit_username_placeholder": "Benutzeranmeldung",
   "email": "Email",
@@ -140,6 +141,7 @@
   "new_password": "New Password",
   "no_email_set": "No email address set",
   "no_history": "No payroll history found",
+  "no_name": "Kein Name",
   "no_permission_to_change_roles": "Sie sind nicht berechtigt, die Rollen anderer Benutzer zu ändern.",
   "no_time_off": "No time-off periods scheduled",
   "no_users_found": "Keine Benutzer gefunden",
@@ -274,6 +276,7 @@
   "time_off": "Time-off / Absences",
   "time_off_added": "Time-off added successfully",
   "time_off_deleted": "Time-off deleted",
+  "time_off_updated": "Ferienzeit aktualisiert",
   "title": "Benutzerverwaltung",
   "total_bookings": "Total Bookings",
   "total_revenue": "Total Revenue",
@@ -291,7 +294,5 @@
   "view_details": "View details",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience",
-  "edit_time_off": "Feiertag bearbeiten",
-  "time_off_updated": "Ferienzeit aktualisiert"
+  "years_of_experience": "Years of Experience"
 }

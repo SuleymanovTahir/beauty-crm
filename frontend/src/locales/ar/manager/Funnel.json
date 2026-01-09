@@ -1,33 +1,33 @@
 {
-  "Your funnel shows good results": {
-    " Keep it up!": "استمر!"
-  },
-  "title": "قمع المبيعات",
-  "subtitle": "إدارة المرحلة والتحويل",
-  "funnel": "قمع",
-  "search_clients": "البحث عن العملاء...",
-  "quick_add": "إضافة سريعة",
-  "no_clients": "لا يوجد عملاء",
-  "moved_successfully": "تم نقل العميل بنجاح",
-  "move_failed": "خطأ في النقل",
+  "all_good": "كل شيء على ما يرام! يُظهر مسار التحويل الخاص بك نتائج جيدة.",
   "conversion": {
-    "visitor_to_engaged": "زائر -> مشارك",
-    "engaged_to_booking": "مشغول -> بدأ التسجيل",
+    "booked_to_completed": "تم التسجيل -> مكتمل",
     "booking_to_booked": "بدأ التسجيل -> تم التسجيل",
-    "booked_to_completed": "تم التسجيل -> مكتمل"
+    "engaged_to_booking": "مشغول -> بدأ التسجيل",
+    "visitor_to_engaged": "زائر -> مشارك"
   },
+  "funnel": "قمع",
   "funnel_chart": "مخطط قمع",
   "key_metrics": "المقاييس الرئيسية",
+  "move_failed": "خطأ في النقل",
+  "moved_successfully": "تم نقل العميل بنجاح",
+  "no_clients": "لا يوجد عملاء",
+  "quick_add": "إضافة سريعة",
+  "recommendations_title": "التوصيات",
+  "search_clients": "البحث عن العملاء...",
+  "stage_details": "مراحل التفصيل",
+  "subtitle": "إدارة المرحلة والتحويل",
+  "successful_visits": "الزيارات الناجحة",
+  "table": {
+    "count": "كمية",
+    "losses": "خسائر",
+    "percentage": "نسبة مئوية",
+    "stage": "منصة"
+  },
+  "title": "قمع المبيعات",
   "total_conversion": "إجمالي التحويل",
   "total_losses": "إجمالي الخسائر",
-  "successful_visits": "الزيارات الناجحة",
-  "recommendations_title": "التوصيات",
-  "all_good": "كل شيء على ما يرام! يُظهر مسار التحويل الخاص بك نتائج جيدة.",
-  "stage_details": "مراحل التفصيل",
-  "table": {
-    "stage": "منصة",
-    "count": "كمية",
-    "percentage": "نسبة مئوية",
-    "losses": "خسائر"
+  "Your funnel shows good results": {
+    " Keep it up!": ""
   }
 }

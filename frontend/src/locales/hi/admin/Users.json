@@ -68,6 +68,7 @@
   "edit_position_placeholder": "निर्देशिका से एक स्थिति का चयन करें",
   "edit_save": "बचाना",
   "edit_saving": "सहेजा जा रहा है...",
+  "edit_time_off": "छुट्टियाँ संपादित करें",
   "edit_username_label": "लॉग इन करें",
   "edit_username_placeholder": "उपयोगकर्ता लॉगिन",
   "email": "ईमेल",
@@ -140,6 +141,7 @@
   "new_password": "नया पासवर्ड",
   "no_email_set": "कोई ईमेल पता सेट नहीं है",
   "no_history": "भुगतान इतिहास नहीं मिला",
+  "no_name": "कोई नाम नहीं",
   "no_permission_to_change_roles": "आपको अन्य उपयोगकर्ताओं की भूमिकाएँ बदलने की अनुमति नहीं है.",
   "no_time_off": "कोई निर्धारित छुट्टी का दिन नहीं",
   "no_users_found": "कोई उपयोगकर्ता नहीं मिला",
@@ -274,6 +276,7 @@
   "time_off": "सप्ताहांत/अनुपस्थितियाँ",
   "time_off_added": "छुट्टी का दिन सफलतापूर्वक जोड़ा गया",
   "time_off_deleted": "छुट्टी हटा दी गई",
+  "time_off_updated": "अवकाश अवधि अद्यतन की गई",
   "title": "प्रयोक्ता प्रबंधन",
   "total_bookings": "कुल रिकार्ड",
   "total_revenue": "कुल मुनाफा",
@@ -291,7 +294,5 @@
   "view_details": "विवरण देखें",
   "weeks_ahead": "सप्ताह पहले",
   "working_hours": "कार्य के घंटे",
-  "years_of_experience": "कार्य अनुभव (वर्ष)",
-  "edit_time_off": "छुट्टियाँ संपादित करें",
-  "time_off_updated": "अवकाश अवधि अद्यतन की गई"
+  "years_of_experience": "कार्य अनुभव (वर्ष)"
 }

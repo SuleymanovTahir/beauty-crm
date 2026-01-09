@@ -9,5 +9,6 @@
   "schedule_for_today": "Programme pour aujourd'hui",
   "today": "Aujourd'hui",
   "today_bookings": "Messages aujourd'hui",
-  "unknown_error": "Erreur inconnue"
+  "unknown_error": "Erreur inconnue",
+  "welcome": "Accueillir"
 }

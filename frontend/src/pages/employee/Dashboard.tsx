@@ -32,6 +32,40 @@ export default function EmployeeDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Helper functions
+  const parseDate = (dateStr: string) => {
+    if (!dateStr) return new Date(0);
+
+    const cleanStr = dateStr.trim();
+
+    // 1. Try standard Date constructor first (ISO 8601, etc.)
+    const d1 = new Date(cleanStr);
+    if (!isNaN(d1.getTime())) return d1;
+
+    // 2. Handle Russian/European format: DD.MM.YYYY [HH:mm[:ss]]
+    const match = cleanStr.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})(?:[, ]+\s*(\d{1,2})(?::(\d{1,2}))?(?::(\d{1,2}))?)?/);
+
+    if (match) {
+      const day = parseInt(match[1], 10);
+      const month = parseInt(match[2], 10) - 1;
+      const year = parseInt(match[3], 10);
+      const hour = match[4] ? parseInt(match[4], 10) : 0;
+      const minute = match[5] ? parseInt(match[5], 10) : 0;
+      const second = match[6] ? parseInt(match[6], 10) : 0;
+
+      const d2 = new Date(year, month, day, hour, minute, second);
+      if (!isNaN(d2.getTime())) return d2;
+    }
+
+    return new Date(0);
+  };
+
+  const isSameDay = (d1: Date, d2: Date) => {
+    return d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -43,13 +77,13 @@ export default function EmployeeDashboard() {
         const allBookings = data.bookings || [];
 
         // Фильтруем только сегодняшние записи
+        // Фильтруем только сегодняшние записи
+        // Safely parse date from various formats
         const now = new Date();
-        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-        const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
 
         const todayBookings = allBookings.filter((b: any) => {
-          const bookingDate = new Date(b.datetime);
-          return bookingDate >= todayStart && bookingDate <= todayEnd;
+          const bookingDate = parseDate(b.datetime);
+          return isSameDay(bookingDate, now);
         });
         setBookings(todayBookings);
 
@@ -57,8 +91,8 @@ export default function EmployeeDashboard() {
         const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-        const weekBookings = allBookings.filter((b: any) => new Date(b.datetime) >= weekAgo);
-        const monthBookings = allBookings.filter((b: any) => new Date(b.datetime) >= monthAgo);
+        const weekBookings = allBookings.filter((b: any) => parseDate(b.datetime) >= weekAgo);
+        const monthBookings = allBookings.filter((b: any) => parseDate(b.datetime) >= monthAgo);
 
         // Подсчет уникальных клиентов
         const uniqueClients = new Set(allBookings.map((b: any) => b.name || b.phone)).size;
@@ -88,7 +122,7 @@ export default function EmployeeDashboard() {
           <Skeleton className="h-6 w-48" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {[1,2,3].map(i => <Skeleton key={i} className="h-20" />)}
+          {[1, 2, 3].map(i => <Skeleton key={i} className="h-20" />)}
         </div>
       </div>
     );
@@ -221,9 +255,9 @@ export default function EmployeeDashboard() {
         ) : (
           <div className="space-y-3">
             {bookings
-              .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
+              .sort((a, b) => parseDate(a.datetime).getTime() - parseDate(b.datetime).getTime())
               .map((booking) => {
-                const bookingTime = new Date(booking.datetime);
+                const bookingTime = parseDate(booking.datetime);
                 const now = new Date();
                 const isPast = bookingTime < now;
                 const isNow = Math.abs(bookingTime.getTime() - now.getTime()) < 30 * 60 * 1000; // within 30 min
@@ -231,17 +265,16 @@ export default function EmployeeDashboard() {
                 return (
                   <div
                     key={booking.id}
-                    className={`border-l-4 rounded-lg p-4 transition-all ${
-                      isNow ? 'border-pink-500 bg-pink-50' :
+                    className={`border-l-4 rounded-lg p-4 transition-all ${isNow ? 'border-pink-500 bg-pink-50' :
                       isPast ? 'border-gray-300 bg-gray-50 opacity-60' :
-                      'border-purple-300 bg-white hover:bg-purple-50'
-                    }`}
+                        'border-purple-300 bg-white hover:bg-purple-50'
+                      }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4 flex-1">
                         <div className="text-center min-w-[60px]">
                           <div className={`text-2xl font-bold ${isNow ? 'text-pink-600' : 'text-gray-900'}`}>
-                            {booking.datetime.split(' ')[1].substring(0, 5)}
+                            {bookingTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </div>
                           {isNow && (
                             <span className="text-xs text-pink-600 font-semibold animate-pulse">СЕЙЧАС</span>

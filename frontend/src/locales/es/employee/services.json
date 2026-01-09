@@ -1,0 +1,12 @@
+{
+  "our_services": "Nuestros servicios",
+  "browse_available_services": "Ver servicios de salón disponibles",
+  "no_services": "Servicios no encontrados",
+  "no_services_description": "No hay servicios disponibles para mostrar en este momento.",
+  "service_name": "Nombre del servicio",
+  "description": "Descripción",
+  "price": "Precio",
+  "duration": "Duración",
+  "category": "Categoría",
+  "min": "mín."
+}
