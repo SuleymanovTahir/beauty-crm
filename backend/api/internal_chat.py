@@ -64,21 +64,6 @@ async def send_chat_email_notification(sender_name: str, recipient_email: str, r
             html=html_message
         )
 
-        # Обновляем статус отправки email в БД
-        conn = get_db_connection()
-        c = conn.cursor()
-        c.execute("""
-            UPDATE internal_chat
-            SET email_sent = TRUE, email_sent_at = %s
-            WHERE to_user_id = %s AND from_user_id = (
-                SELECT id FROM users WHERE full_name = %s
-            )
-            ORDER BY created_at DESC
-            LIMIT 1
-        """, (datetime.now().isoformat(), recipient_email, sender_name))
-        conn.commit()
-        conn.close()
-
         log_info(f"📧 Email уведомление отправлено: {recipient_email}", "internal_chat")
 
     except Exception as e:
@@ -102,53 +87,80 @@ async def get_internal_messages(
     if with_user_id:
         c.execute("""
             SELECT
-                ic.id, ic.from_user_id, ic.to_user_id, ic.message,
-                ic.is_read, ic.created_at, ic.email_sent,
+                ic.id, ic.sender_id, ic.receiver_id, ic.message,
+                ic.is_read, ic.timestamp, ic.type,
                 u1.full_name as sender_name,
-                u2.full_name as recipient_name
+                u2.full_name as recipient_name,
+                ic.edited, ic.edited_at, ic.deleted_for_sender, ic.deleted_for_receiver, ic.reactions
             FROM internal_chat ic
-            LEFT JOIN users u1 ON ic.from_user_id = u1.id
-            LEFT JOIN users u2 ON ic.to_user_id = u2.id
-            WHERE (ic.from_user_id = %s AND ic.to_user_id = %s)
-               OR (ic.from_user_id = %s AND ic.to_user_id = %s)
-            ORDER BY ic.created_at ASC
+            LEFT JOIN users u1 ON ic.sender_id = u1.id
+            LEFT JOIN users u2 ON ic.receiver_id = u2.id
+            WHERE (ic.sender_id = %s AND ic.receiver_id = %s)
+               OR (ic.sender_id = %s AND ic.receiver_id = %s)
+            ORDER BY ic.timestamp ASC
             LIMIT %s
         """, (user['id'], with_user_id, with_user_id, user['id'], limit))
     else:
         # Получаем все сообщения пользователя
         c.execute("""
             SELECT
-                ic.id, ic.from_user_id, ic.to_user_id, ic.message,
-                ic.is_read, ic.created_at, ic.email_sent,
+                ic.id, ic.sender_id, ic.receiver_id, ic.message,
+                ic.is_read, ic.timestamp, ic.type,
                 u1.full_name as sender_name,
-                u2.full_name as recipient_name
+                u2.full_name as recipient_name,
+                ic.edited, ic.edited_at, ic.deleted_for_sender, ic.deleted_for_receiver, ic.reactions
             FROM internal_chat ic
-            LEFT JOIN users u1 ON ic.from_user_id = u1.id
-            LEFT JOIN users u2 ON ic.to_user_id = u2.id
-            WHERE ic.from_user_id = %s OR ic.to_user_id = %s
-            ORDER BY ic.created_at DESC
+            LEFT JOIN users u1 ON ic.sender_id = u1.id
+            LEFT JOIN users u2 ON ic.receiver_id = u2.id
+            WHERE ic.sender_id = %s OR ic.receiver_id = %s
+            ORDER BY ic.timestamp DESC
             LIMIT %s
         """, (user['id'], user['id'], limit))
 
-    messages = [{
-        'id': row[0],
-        'from_user_id': row[1],
-        'to_user_id': row[2],
-        'message': row[3],
-        'is_read': bool(row[4]),
-        'created_at': row[5],
-        'email_sent': bool(row[6]),
-        'sender_name': row[7],
-        'recipient_name': row[8]
-    } for row in c.fetchall()]
+    all_messages = c.fetchall()
+
+    # Фильтруем удаленные сообщения
+    messages = []
+    for row in all_messages:
+        deleted_for_sender = row[11]
+        deleted_for_receiver = row[12]
+        sender_id = row[1]
+
+        # Пропускаем если удалено для текущего пользователя
+        if user['id'] == sender_id and deleted_for_sender:
+            continue
+        if user['id'] != sender_id and deleted_for_receiver:
+            continue
+
+        import json
+        reactions = row[13] if row[13] else []
+        if isinstance(reactions, str):
+            reactions = json.loads(reactions)
+
+        messages.append({
+            'id': row[0],
+            'from_user_id': row[1],
+            'to_user_id': row[2],
+            'message': row[3],
+            'is_read': bool(row[4]),
+            'created_at': row[5],
+            'type': row[6] or 'text',
+            'sender_name': row[7],
+            'recipient_name': row[8],
+            'edited': bool(row[9]),
+            'edited_at': row[10],
+            'deleted_for_sender': deleted_for_sender,
+            'deleted_for_receiver': deleted_for_receiver,
+            'reactions': reactions
+        })
 
     # Отмечаем сообщения как прочитанные
     if with_user_id:
         c.execute("""
             UPDATE internal_chat
-            SET is_read = TRUE, read_at = %s
-            WHERE to_user_id = %s AND from_user_id = %s AND is_read = FALSE
-        """, (datetime.now().isoformat(), user['id'], with_user_id))
+            SET is_read = TRUE
+            WHERE receiver_id = %s AND sender_id = %s AND is_read = FALSE
+        """, (user['id'], with_user_id))
         conn.commit()
 
     conn.close()
@@ -168,6 +180,7 @@ async def send_internal_message(
     data = await request.json()
     message = data.get('message')
     to_user_id = data.get('to_user_id')
+    msg_type = data.get('type', 'text')  # Default to 'text' if not specified
 
     if not message:
         return JSONResponse({"error": "Сообщение не может быть пустым"}, status_code=400)
@@ -181,11 +194,12 @@ async def send_internal_message(
     # Вставляем сообщение
     now = datetime.now().isoformat()
     c.execute("""
-        INSERT INTO internal_chat (from_user_id, to_user_id, message, created_at, updated_at)
+        INSERT INTO internal_chat (sender_id, receiver_id, message, timestamp, type)
         VALUES (%s, %s, %s, %s, %s)
-    """, (user['id'], to_user_id, message, now, now))
+        RETURNING id
+    """, (user['id'], to_user_id, message, now, msg_type))
 
-    message_id = c.lastrowid
+    message_id = c.fetchone()[0]
     conn.commit()
 
     # Получаем информацию о получателе для email уведомления
@@ -225,10 +239,11 @@ async def get_chat_users(session_token: Optional[str] = Cookie(None)):
     c = conn.cursor()
 
     c.execute("""
-        SELECT id, username, full_name, role, email
-        FROM users
-        WHERE id != %s AND is_active = TRUE
-        ORDER BY full_name
+        SELECT u.id, u.username, u.full_name, u.role, u.email, e.photo
+        FROM users u
+        LEFT JOIN employees e ON u.id = e.user_id
+        WHERE u.id != %s AND u.is_active = TRUE
+        ORDER BY u.full_name
     """, (user['id'],))
 
     users = [{
@@ -236,7 +251,8 @@ async def get_chat_users(session_token: Optional[str] = Cookie(None)):
         'username': row[1],
         'full_name': row[2],
         'role': row[3],
-        'email': row[4]
+        'email': row[4],
+        'photo': row[5]
     } for row in c.fetchall()]
 
     conn.close()
@@ -256,7 +272,7 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     c.execute("""
         SELECT COUNT(*)
         FROM internal_chat
-        WHERE to_user_id = %s AND is_read = FALSE
+        WHERE receiver_id = %s AND is_read = FALSE
     """, (user['id'],))
 
     count = c.fetchone()[0]
@@ -283,15 +299,217 @@ async def mark_messages_read(
     conn = get_db_connection()
     c = conn.cursor()
 
-    now = datetime.now().isoformat()
     c.execute("""
         UPDATE internal_chat
-        SET is_read = TRUE, read_at = %s
-        WHERE to_user_id = %s AND from_user_id = %s AND is_read = FALSE
-    """, (now, user['id'], from_user_id))
+        SET is_read = TRUE
+        WHERE receiver_id = %s AND sender_id = %s AND is_read = FALSE
+    """, (user['id'], from_user_id))
 
     conn.commit()
     affected = c.rowcount
     conn.close()
 
     return {"success": True, "marked_count": affected}
+
+@router.post("/messages/{message_id}/edit")
+async def edit_message(
+    message_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Редактировать сообщение (только в течение 10 минут)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Требуется авторизация"}, status_code=401)
+
+    data = await request.json()
+    new_message = data.get('message')
+
+    if not new_message:
+        return JSONResponse({"error": "Новое сообщение не может быть пустым"}, status_code=400)
+
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    # Проверяем, что сообщение принадлежит пользователю и не старше 10 минут
+    c.execute("""
+        SELECT sender_id, timestamp
+        FROM internal_chat
+        WHERE id = %s
+    """, (message_id,))
+
+    msg = c.fetchone()
+    if not msg:
+        conn.close()
+        return JSONResponse({"error": "Сообщение не найдено"}, status_code=404)
+
+    if msg[0] != user['id']:
+        conn.close()
+        return JSONResponse({"error": "Вы можете редактировать только свои сообщения"}, status_code=403)
+
+    # Проверяем время (10 минут = 600 секунд)
+    from datetime import datetime
+    message_time = datetime.fromisoformat(msg[1])
+    now = datetime.now()
+    elapsed = (now - message_time).total_seconds()
+
+    if elapsed > 600:
+        conn.close()
+        return JSONResponse({"error": "Сообщение можно редактировать только в течение 10 минут"}, status_code=403)
+
+    # Обновляем сообщение
+    c.execute("""
+        UPDATE internal_chat
+        SET message = %s, edited = TRUE, edited_at = %s
+        WHERE id = %s
+    """, (new_message, now.isoformat(), message_id))
+
+    conn.commit()
+    conn.close()
+
+    return {"success": True}
+
+@router.post("/messages/{message_id}/delete")
+async def delete_message(
+    message_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Удалить сообщение (у себя или у всех)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Требуется авторизация"}, status_code=401)
+
+    data = await request.json()
+    delete_for_everyone = data.get('delete_for_everyone', False)
+
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    # Проверяем, что сообщение существует и пользователь имеет право на удаление
+    c.execute("""
+        SELECT sender_id, receiver_id, timestamp
+        FROM internal_chat
+        WHERE id = %s
+    """, (message_id,))
+
+    msg = c.fetchone()
+    if not msg:
+        conn.close()
+        return JSONResponse({"error": "Сообщение не найдено"}, status_code=404)
+
+    sender_id, receiver_id, timestamp = msg
+
+    # Пользователь может удалять только свои сообщения или сообщения, отправленные ему
+    if user['id'] != sender_id and user['id'] != receiver_id:
+        conn.close()
+        return JSONResponse({"error": "Нет доступа к этому сообщению"}, status_code=403)
+
+    if delete_for_everyone:
+        # Удалить у всех могут только отправители и только в течение 10 минут
+        if user['id'] != sender_id:
+            conn.close()
+            return JSONResponse({"error": "Удалить для всех может только отправитель"}, status_code=403)
+
+        # Проверяем время (10 минут = 600 секунд)
+        from datetime import datetime
+        message_time = datetime.fromisoformat(timestamp)
+        now = datetime.now()
+        elapsed = (now - message_time).total_seconds()
+
+        if elapsed > 600:
+            conn.close()
+            return JSONResponse({"error": "Удалить для всех можно только в течение 10 минут"}, status_code=403)
+
+        # Помечаем как удаленное для обоих
+        c.execute("""
+            UPDATE internal_chat
+            SET deleted_for_sender = TRUE, deleted_for_receiver = TRUE
+            WHERE id = %s
+        """, (message_id,))
+    else:
+        # Удаляем только для себя
+        if user['id'] == sender_id:
+            c.execute("""
+                UPDATE internal_chat
+                SET deleted_for_sender = TRUE
+                WHERE id = %s
+            """, (message_id,))
+        else:
+            c.execute("""
+                UPDATE internal_chat
+                SET deleted_for_receiver = TRUE
+                WHERE id = %s
+            """, (message_id,))
+
+    conn.commit()
+    conn.close()
+
+    return {"success": True, "deleted_for_everyone": delete_for_everyone}
+
+@router.post("/messages/{message_id}/react")
+async def add_reaction(
+    message_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Добавить реакцию на сообщение"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Требуется авторизация"}, status_code=401)
+
+    data = await request.json()
+    emoji = data.get('emoji')
+
+    if not emoji:
+        return JSONResponse({"error": "Не указана реакция"}, status_code=400)
+
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    # Получаем текущие реакции
+    c.execute("""
+        SELECT reactions
+        FROM internal_chat
+        WHERE id = %s
+    """, (message_id,))
+
+    result = c.fetchone()
+    if not result:
+        conn.close()
+        return JSONResponse({"error": "Сообщение не найдено"}, status_code=404)
+
+    import json
+    reactions = result[0] if result[0] else []
+    if isinstance(reactions, str):
+        reactions = json.loads(reactions)
+
+    # Проверяем, есть ли уже реакция от этого пользователя
+    user_reaction = next((r for r in reactions if r.get('user_id') == user['id']), None)
+
+    if user_reaction:
+        # Если пользователь ставит ту же реакцию - убираем её
+        if user_reaction.get('emoji') == emoji:
+            reactions = [r for r in reactions if r.get('user_id') != user['id']]
+        else:
+            # Меняем реакцию
+            user_reaction['emoji'] = emoji
+    else:
+        # Добавляем новую реакцию
+        reactions.append({
+            'user_id': user['id'],
+            'user_name': user.get('full_name', user['username']),
+            'emoji': emoji
+        })
+
+    # Обновляем реакции
+    c.execute("""
+        UPDATE internal_chat
+        SET reactions = %s::jsonb
+        WHERE id = %s
+    """, (json.dumps(reactions), message_id))
+
+    conn.commit()
+    conn.close()
+
+    return {"success": True, "reactions": reactions}
