@@ -1975,6 +1975,55 @@ export class ApiClient {
       body: JSON.stringify(data),
     })
   }
+
+  // ===== ПЛАТЕЖНЫЕ ИНТЕГРАЦИИ =====
+  async getPaymentProviders() {
+    return this.request<any>('/api/payment-providers')
+  }
+
+  async createPaymentProvider(data: any) {
+    return this.request('/api/payment-providers', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async createPayment(data: any) {
+    return this.request('/api/create-payment', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getPaymentTransactions(invoiceId?: number, status?: string, provider?: string) {
+    let url = '/api/transactions?'
+    if (invoiceId) url += `invoice_id=${invoiceId}&`
+    if (status) url += `status=${status}&`
+    if (provider) url += `provider=${provider}`
+    return this.request<any>(url)
+  }
+
+  // ===== МАРКЕТПЛЕЙС ИНТЕГРАЦИИ =====
+  async getMarketplaceProviders() {
+    return this.request<any>('/api/marketplace-providers')
+  }
+
+  async createMarketplaceProvider(data: any) {
+    return this.request('/api/marketplace-providers', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async syncMarketplace(provider: string) {
+    return this.request(`/api/marketplace/sync/${provider}`, {
+      method: 'POST',
+    })
+  }
+
+  async getMarketplaceStats() {
+    return this.request<any>('/api/marketplace/stats')
+  }
 }
 
 export const api = new ApiClient()

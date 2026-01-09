@@ -1,14 +1,15 @@
 """
 API для управления контрольными точками воронки
 """
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from typing import Optional, List
+from datetime import datetime
 import json
 
-from core.auth import get_current_user
 from db.connection import get_db_connection
-from utils.logger import log_info, log_warning
+from utils.logger import log_info, log_error
+from utils.utils import get_current_user
 
 router = APIRouter()
 
