@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 import json
+import os
 
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
@@ -281,6 +282,90 @@ async def send_invoice(
     c = conn.cursor()
     
     try:
+        # Получение счета
+        c.execute("""
+            SELECT invoice_number, pdf_path, client_id, items, total_amount, currency
+            FROM invoices
+            WHERE id = %s
+        """, (invoice_id,))
+        
+        invoice = c.fetchone()
+        if not invoice:
+            raise HTTPException(status_code=404, detail="Счет не найден")
+        
+        invoice_number, pdf_path, client_id, items_json, total_amount, currency = invoice
+        items = json.loads(items_json) if items_json else []
+        
+        # Получаем данные клиента
+        c.execute("""
+            SELECT name, phone, email
+            FROM clients
+            WHERE instagram_id = %s
+        """, (client_id,))
+        client = c.fetchone()
+        
+        if not client:
+            raise HTTPException(status_code=404, detail="Клиент не найден")
+        
+        client_name, client_phone, client_email = client
+        
+        # Получаем данные салона
+        c.execute("""
+            SELECT name, address, phone, email, inn
+            FROM salon_settings
+            WHERE id = 1
+        """)
+        salon = c.fetchone()
+        
+        # Генерируем PDF если его еще нет
+        if not pdf_path or not os.path.exists(pdf_path):
+            from services.pdf_generator import generate_invoice_pdf
+            
+            # Подготавливаем данные для PDF
+            pdf_data = {
+                "id": invoice_id,
+                "invoice_number": invoice_number,
+                "issue_date": datetime.now().strftime('%d.%m.%Y'),
+                "client_name": client_name,
+                "client_phone": client_phone,
+                "client_email": client_email,
+                "company_name": salon[0] if salon else "",
+                "company_address": salon[1] if salon else "",
+                "company_phone": salon[2] if salon else "",
+                "company_email": salon[3] if salon else "",
+                "company_inn": salon[4] if salon else "",
+                "items": items,
+                "total_amount": total_amount,
+                "currency": currency
+            }
+            
+            # Генерируем PDF
+            pdf_path = generate_invoice_pdf(pdf_data, "/tmp")
+            
+            # Сохраняем путь к PDF
+            c.execute("""
+                UPDATE invoices
+                SET pdf_path = %s, updated_at = NOW()
+                WHERE id = %s
+            """, (pdf_path, invoice_id))
+            conn.commit()
+        
+        # Отправляем в фоне
+        from services.document_sender import send_document
+        
+        subject = f"Счет на оплату {invoice_number}"
+        message = f"Здравствуйте, {client_name}!\n\nНаправляем вам счет {invoice_number} на сумму {total_amount} {currency}."
+        
+        background_tasks.add_task(
+            send_document,
+            delivery_method,
+            recipient,
+            subject,
+            message,
+            pdf_path,
+            f"{invoice_number}.pdf"
+        )
+        
         # Логирование отправки
         c.execute("""
             INSERT INTO invoice_delivery_log
@@ -297,13 +382,13 @@ async def send_invoice(
         
         conn.commit()
         
-        log_info(f"✅ Счет {invoice_id} отправлен через {delivery_method}", "api")
+        log_info(f"✅ Счет {invoice_number} отправлен через {delivery_method}", "api")
         
-        return {"message": "Счет отправлен"}
+        return {"message": "Счет отправлен", "pdf_path": pdf_path}
         
     except Exception as e:
         conn.rollback()
-        log_warning(f"❌ Ошибка отправки счета: {e}", "api")
+        log_error(f"❌ Ошибка отправки счета: {e}", "api")
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()

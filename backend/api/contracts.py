@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 import json
+import os
 
 from db.connection import get_db_connection
 from utils.logger import log_info, log_warning, log_error
@@ -273,8 +274,62 @@ async def send_contract(
         if not contract:
             raise HTTPException(status_code=404, detail="Договор не найден")
         
-        # TODO: Реализовать отправку через соответствующий канал
-        # background_tasks.add_task(send_contract_via_channel, ...)
+        contract_number, pdf_path, client_id, data_json = contract
+        contract_data = json.loads(data_json) if data_json else {}
+        
+        # Получаем данные клиента
+        c.execute("""
+            SELECT name, phone, email
+            FROM clients
+            WHERE instagram_id = %s
+        """, (client_id,))
+        client = c.fetchone()
+        
+        if not client:
+            raise HTTPException(status_code=404, detail="Клиент не найден")
+        
+        client_name, client_phone, client_email = client
+        
+        # Генерируем PDF если его еще нет
+        if not pdf_path or not os.path.exists(pdf_path):
+            from services.pdf_generator import generate_contract_pdf
+            
+            # Подготавливаем данные для PDF
+            pdf_data = {
+                "id": contract_id,
+                "contract_number": contract_number,
+                "client_name": client_name,
+                "client_phone": client_phone,
+                "client_email": client_email,
+                **contract_data
+            }
+            
+            # Генерируем PDF
+            pdf_path = generate_contract_pdf(pdf_data, "/tmp")
+            
+            # Сохраняем путь к PDF
+            c.execute("""
+                UPDATE contracts
+                SET pdf_path = %s, updated_at = NOW()
+                WHERE id = %s
+            """, (pdf_path, contract_id))
+            conn.commit()
+        
+        # Отправляем в фоне
+        from services.document_sender import send_document
+        
+        subject = f"Договор {contract_number}"
+        message = f"Здравствуйте, {client_name}!\n\nНаправляем вам договор {contract_number} на подпись."
+        
+        background_tasks.add_task(
+            send_document,
+            send_data.delivery_method,
+            send_data.recipient,
+            subject,
+            message,
+            pdf_path,
+            f"{contract_number}.pdf"
+        )
         
         # Логирование отправки
         c.execute("""
@@ -292,9 +347,9 @@ async def send_contract(
         
         conn.commit()
         
-        log_info(f"✅ Договор {contract[0]} отправлен через {send_data.delivery_method}", "api")
+        log_info(f"✅ Договор {contract_number} отправлен через {send_data.delivery_method}", "api")
         
-        return {"message": "Договор отправлен"}
+        return {"message": "Договор отправлен", "pdf_path": pdf_path}
         
     except Exception as e:
         conn.rollback()
