@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Edit, Trash2, Package, TrendingUp, TrendingDown } from 'lucide-react';
-import api from '../../services/api';
+import { Plus, Edit, Trash2, Package, TrendingUp } from 'lucide-react';
+import { api } from '../../services/api';
+
 
 interface Product {
     id: number;

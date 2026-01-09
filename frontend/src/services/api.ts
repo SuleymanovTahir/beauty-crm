@@ -1812,6 +1812,169 @@ export class ApiClient {
       method: 'DELETE',
     })
   }
+
+  // ===== ДОГОВОРЫ (CONTRACTS) =====
+  async getContracts(clientId?: string, status?: string) {
+    let url = '/api/contracts?'
+    if (clientId) url += `client_id=${clientId}&`
+    if (status) url += `status=${status}`
+    return this.request<any>(url)
+  }
+
+  async createContract(data: any) {
+    return this.request('/api/contracts', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateContract(id: number, data: any) {
+    return this.request(`/api/contracts/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteContract(id: number) {
+    return this.request(`/api/contracts/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async sendContract(id: number, data: { delivery_method: string; recipient: string }) {
+    return this.request(`/api/contracts/${id}/send`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  // ===== ТОВАРЫ (PRODUCTS) =====
+  async getProducts(category?: string, isActive?: boolean, search?: string) {
+    let url = '/api/products?'
+    if (category) url += `category=${category}&`
+    if (isActive !== undefined) url += `is_active=${isActive}&`
+    if (search) url += `search=${search}`
+    return this.request<any>(url)
+  }
+
+  async getProduct(id: number) {
+    return this.request<any>(`/api/products/${id}`)
+  }
+
+  async createProduct(data: any) {
+    return this.request('/api/products', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateProduct(id: number, data: any) {
+    return this.request(`/api/products/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteProduct(id: number) {
+    return this.request(`/api/products/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async createProductMovement(data: any) {
+    return this.request('/api/products/movements', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getProductMovements(productId: number) {
+    return this.request<any>(`/api/products/${productId}/movements`)
+  }
+
+  async getProductCategories() {
+    return this.request<any>('/api/products/categories')
+  }
+
+  // ===== СЧЕТА (INVOICES) =====
+  async getInvoices(clientId?: string, status?: string) {
+    let url = '/api/invoices?'
+    if (clientId) url += `client_id=${clientId}&`
+    if (status) url += `status=${status}`
+    return this.request<any>(url)
+  }
+
+  async createInvoice(data: any) {
+    return this.request('/api/invoices', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateInvoice(id: number, data: any) {
+    return this.request(`/api/invoices/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteInvoice(id: number) {
+    return this.request(`/api/invoices/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async addInvoicePayment(id: number, data: any) {
+    return this.request(`/api/invoices/${id}/payments`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async sendInvoice(id: number, deliveryMethod: string, recipient: string) {
+    return this.request(`/api/invoices/${id}/send?delivery_method=${deliveryMethod}&recipient=${recipient}`, {
+      method: 'POST',
+    })
+  }
+
+  // ===== КОНТРОЛЬНЫЕ ТОЧКИ ВОРОНКИ =====
+  async getFunnelCheckpoints(stageId?: number, isActive?: boolean) {
+    let url = '/api/funnel/checkpoints?'
+    if (stageId) url += `stage_id=${stageId}&`
+    if (isActive !== undefined) url += `is_active=${isActive}`
+    return this.request<any>(url)
+  }
+
+  async createFunnelCheckpoint(data: any) {
+    return this.request('/api/funnel/checkpoints', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateFunnelCheckpoint(id: number, data: any) {
+    return this.request(`/api/funnel/checkpoints/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteFunnelCheckpoint(id: number) {
+    return this.request(`/api/funnel/checkpoints/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async getClientCheckpointProgress(clientId: string) {
+    return this.request<any>(`/api/funnel/clients/${clientId}/progress`)
+  }
+
+  async updateClientCheckpoint(clientId: string, checkpointId: number, data: any) {
+    return this.request(`/api/funnel/clients/${clientId}/checkpoints/${checkpointId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
 }
 
 export const api = new ApiClient()
