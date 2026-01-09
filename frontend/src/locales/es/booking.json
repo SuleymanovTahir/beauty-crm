@@ -1,4 +1,26 @@
 {
+  "auth": {
+    "birthday": "Fecha de nacimiento",
+    "complete_profile": "Completa tu perfil",
+    "continue_email": "Iniciar sesión por correo electrónico",
+    "continue_google": "Continuar a través de Google",
+    "create_account": "Crea una cuenta",
+    "email_placeholder": "Introduce tu correo electrónico",
+    "female": "Femenino",
+    "full_name": "Su nombre",
+    "gender": "Piso",
+    "guest_continue": "Continuar como invitado",
+    "info_note": "Utilizamos estos datos para ofertas personalizadas y regalos de cumpleaños.",
+    "login_to_see_more": "Login to manage your bookings",
+    "male": "Masculino",
+    "name_placeholder": "Introduce el nombre",
+    "or": "O",
+    "other": "Otro",
+    "select": "Elegir",
+    "subtitle": "Inicie sesión para guardar su historial de publicaciones y recibir bonificaciones",
+    "success_mock": "¡Perfil recibido exitosamente!",
+    "welcome": "Bienvenido"
+  },
   "booking_info": "Información de grabación",
   "change_booking": "Editar entrada",
   "common": {
@@ -8,11 +30,13 @@
     "edit": "Edit",
     "reschedule": "Reschedule",
     "reset": "Reset All",
+    "resetAll": "Reset all",
     "save": "Verify",
     "select": "Select"
   },
   "confirm": {
     "confirm": "Confirm Appointment",
+    "contactNumber": "Contact Number",
     "date": "Date",
     "dateTime": "Date & Time",
     "error": "Error creating booking. Please try again.",
@@ -67,6 +91,7 @@
   "select_to_continue": "Seleccione un servicio o técnico para continuar",
   "services": {
     "allCategories": "All",
+    "notFound": "No services found",
     "search": "Search services...",
     "selected": "selected",
     "service_one": "service",
@@ -75,26 +100,5 @@
     "title": "Select Services",
     "total": "Total"
   },
-  "totalDuration": "Duration",
-  "auth": {
-    "welcome": "Bienvenido",
-    "subtitle": "Inicie sesión para guardar su historial de publicaciones y recibir bonificaciones",
-    "continue_google": "Continuar a través de Google",
-    "continue_email": "Iniciar sesión por correo electrónico",
-    "or": "O",
-    "email_placeholder": "Introduce tu correo electrónico",
-    "guest_continue": "Continuar como invitado",
-    "complete_profile": "Completa tu perfil",
-    "full_name": "Su nombre",
-    "name_placeholder": "Introduce el nombre",
-    "gender": "Piso",
-    "birthday": "Fecha de nacimiento",
-    "select": "Elegir",
-    "female": "Femenino",
-    "male": "Masculino",
-    "other": "Otro",
-    "info_note": "Utilizamos estos datos para ofertas personalizadas y regalos de cumpleaños.",
-    "create_account": "Crea una cuenta",
-    "success_mock": "¡Perfil recibido exitosamente!"
-  }
+  "totalDuration": "Duration"
 }

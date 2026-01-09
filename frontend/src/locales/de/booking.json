@@ -1,4 +1,26 @@
 {
+  "auth": {
+    "birthday": "Geburtsdatum",
+    "complete_profile": "Vervollständigen Sie Ihr Profil",
+    "continue_email": "Melden Sie sich per E-Mail an",
+    "continue_google": "Weiter über Google",
+    "create_account": "Ein Konto erstellen",
+    "email_placeholder": "Geben Sie Ihre E-Mail-Adresse ein",
+    "female": "Weiblich",
+    "full_name": "Ihr Name",
+    "gender": "Boden",
+    "guest_continue": "Weiter als Gast",
+    "info_note": "Wir nutzen diese Daten für personalisierte Angebote und Geburtstagsgeschenke.",
+    "login_to_see_more": "Login to manage your bookings",
+    "male": "Männlich",
+    "name_placeholder": "Namen eingeben",
+    "or": "ODER",
+    "other": "Ein anderer",
+    "select": "Wählen",
+    "subtitle": "Melden Sie sich an, um Ihren Beitragsverlauf zu speichern und Boni zu erhalten",
+    "success_mock": "Profil erfolgreich erhalten!",
+    "welcome": "Willkommen"
+  },
   "booking_info": "Informationen aufzeichnen",
   "change_booking": "Eintrag bearbeiten",
   "common": {
@@ -8,11 +30,13 @@
     "edit": "Edit",
     "reschedule": "Reschedule",
     "reset": "Reset All",
+    "resetAll": "Reset all",
     "save": "Verify",
     "select": "Select"
   },
   "confirm": {
     "confirm": "Confirm Appointment",
+    "contactNumber": "Contact Number",
     "date": "Date",
     "dateTime": "Date & Time",
     "error": "Error creating booking. Please try again.",
@@ -67,6 +91,7 @@
   "select_to_continue": "Wählen Sie einen Service oder Techniker aus, um fortzufahren",
   "services": {
     "allCategories": "All",
+    "notFound": "No services found",
     "search": "Search services...",
     "selected": "selected",
     "service_one": "service",
@@ -75,26 +100,5 @@
     "title": "Select Services",
     "total": "Total"
   },
-  "totalDuration": "Duration",
-  "auth": {
-    "welcome": "Willkommen",
-    "subtitle": "Melden Sie sich an, um Ihren Beitragsverlauf zu speichern und Boni zu erhalten",
-    "continue_google": "Weiter über Google",
-    "continue_email": "Melden Sie sich per E-Mail an",
-    "or": "ODER",
-    "email_placeholder": "Geben Sie Ihre E-Mail-Adresse ein",
-    "guest_continue": "Weiter als Gast",
-    "complete_profile": "Vervollständigen Sie Ihr Profil",
-    "full_name": "Ihr Name",
-    "name_placeholder": "Namen eingeben",
-    "gender": "Boden",
-    "birthday": "Geburtsdatum",
-    "select": "Wählen",
-    "female": "Weiblich",
-    "male": "Männlich",
-    "other": "Ein anderer",
-    "info_note": "Wir nutzen diese Daten für personalisierte Angebote und Geburtstagsgeschenke.",
-    "create_account": "Ein Konto erstellen",
-    "success_mock": "Profil erfolgreich erhalten!"
-  }
+  "totalDuration": "Duration"
 }

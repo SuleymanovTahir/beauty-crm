@@ -68,6 +68,7 @@
   "edit_position_placeholder": "Selecione uma posição no diretório",
   "edit_save": "Salvar",
   "edit_saving": "Salvando...",
+  "edit_time_off": "Editar feriado",
   "edit_username_label": "Conecte-se",
   "edit_username_placeholder": "Login do usuário",
   "email": "Email",
@@ -140,6 +141,7 @@
   "new_password": "New Password",
   "no_email_set": "No email address set",
   "no_history": "No payroll history found",
+  "no_name": "Sem nome",
   "no_permission_to_change_roles": "Você não tem permissão para alterar as funções de outros usuários.",
   "no_time_off": "No time-off periods scheduled",
   "no_users_found": "Nenhum usuário encontrado",
@@ -274,6 +276,7 @@
   "time_off": "Time-off / Absences",
   "time_off_added": "Time-off added successfully",
   "time_off_deleted": "Time-off deleted",
+  "time_off_updated": "Período de férias atualizado",
   "title": "Gerenciamento de usuários",
   "total_bookings": "Total Bookings",
   "total_revenue": "Total Revenue",
@@ -291,7 +294,5 @@
   "view_details": "View details",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience",
-  "edit_time_off": "Editar feriado",
-  "time_off_updated": "Período de férias atualizado"
+  "years_of_experience": "Years of Experience"
 }

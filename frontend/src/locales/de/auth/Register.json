@@ -25,6 +25,8 @@
   "full_name_placeholder": "Geben Sie Ihren Namen ein",
   "i_accept": "Ich akzeptiere",
   "new_code_sent": "Ein neuer Code wurde an Ihre E-Mail-Adresse gesendet!",
+  "only_for_staff": "Bitte beachten Sie: Diese Registrierung gilt nur für Salonpersonal.",
+  "or_register_with_email": "Oder melden Sie sich per E-Mail an",
   "password": "Passwort",
   "password_placeholder": "Mindestens 6 Zeichen",
   "phone": "Phone Number",
@@ -33,6 +35,8 @@
   "position_placeholder": "Wählen Sie eine Position aus",
   "privacy_policy": "Datenschutzrichtlinie",
   "register_button": "Registrieren",
+  "register_staff_subtitle": "Geben Sie die Informationen ein, um auf das CRM zuzugreifen. Ihr Antrag muss vom Administrator genehmigt werden.",
+  "register_staff_title": "Mitarbeiterregistrierung",
   "register_subtitle": "Erstellen Sie ein Konto im CRM-System",
   "register_title": "Anmeldung",
   "registering": "Anmeldung...",
@@ -58,8 +62,5 @@
   "verification_title": "E-Mail-Bestätigung",
   "verify_button": "Bestätigen",
   "verifying": "Prüfung...",
-  "your_code": "Ihr Code:",
-  "register_staff_title": "Mitarbeiterregistrierung",
-  "register_staff_subtitle": "Geben Sie die Informationen ein, um auf das CRM zuzugreifen. Ihr Antrag muss vom Administrator genehmigt werden.",
-  "only_for_staff": "Bitte beachten Sie: Diese Registrierung gilt nur für Salonpersonal."
+  "your_code": "Ihr Code:"
 }

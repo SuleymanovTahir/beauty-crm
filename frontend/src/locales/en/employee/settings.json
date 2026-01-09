@@ -1,0 +1,23 @@
+{
+  "my_settings": "My settings",
+  "manage_account_settings": "Manage account settings",
+  "personal_information": "Personal information",
+  "full_name": "Full name",
+  "full_name_placeholder": "Ivan Ivanov",
+  "full_name_validation": "The name must contain at least 2 characters",
+  "username": "Login",
+  "email": "Email",
+  "email_placeholder": "your@email.com",
+  "change_password": "Change password",
+  "current_password": "Current Password",
+  "enter_current_password": "Enter your current password",
+  "new_password": "New Password",
+  "enter_new_password": "Enter a new password (minimum 6 characters)",
+  "confirm_password": "Confirm your password",
+  "confirm_new_password": "Confirm your new password",
+  "passwords_do_not_match": "Passwords don't match",
+  "password_min_length": "Password must contain at least 6 characters",
+  "fill_all_password_fields": "Fill in all fields to change your password",
+  "update_password": "Update password",
+  "security_tip": "Use a strong password with a combination of letters, numbers and special characters for maximum account security."
+}

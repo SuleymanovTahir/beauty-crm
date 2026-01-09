@@ -1,0 +1,23 @@
+{
+  "my_settings": "Mi configuración",
+  "manage_account_settings": "Administrar la configuración de la cuenta",
+  "personal_information": "Información personal",
+  "full_name": "nombre completo",
+  "full_name_placeholder": "Iván Ivanov",
+  "full_name_validation": "El nombre debe contener al menos 2 caracteres.",
+  "username": "Acceso",
+  "email": "Correo electrónico",
+  "email_placeholder": "tu@correo electrónico.com",
+  "change_password": "Cambiar la contraseña",
+  "current_password": "Contraseña actual",
+  "enter_current_password": "Ingrese su contraseña actual",
+  "new_password": "Nueva contraseña",
+  "enter_new_password": "Ingrese una nueva contraseña (mínimo 6 caracteres)",
+  "confirm_password": "Confirma tu contraseña",
+  "confirm_new_password": "Confirma tu nueva contraseña",
+  "passwords_do_not_match": "Las contraseñas no coinciden",
+  "password_min_length": "La contraseña debe contener al menos 6 caracteres",
+  "fill_all_password_fields": "Complete todos los campos para cambiar su contraseña",
+  "update_password": "Actualizar contraseña",
+  "security_tip": "Utilice una contraseña segura con una combinación de letras, números y caracteres especiales para máxima seguridad de la cuenta."
+}

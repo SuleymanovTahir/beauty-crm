@@ -1,4 +1,26 @@
 {
+  "auth": {
+    "birthday": "Date of birth",
+    "complete_profile": "Complete your profile",
+    "continue_email": "Login via Email",
+    "continue_google": "Continue via Google",
+    "create_account": "Create an account",
+    "email_placeholder": "Enter your email",
+    "female": "Female",
+    "full_name": "your name",
+    "gender": "Floor",
+    "guest_continue": "Continue as a guest",
+    "info_note": "We use this data for personalized offers and birthday gifts.",
+    "login_to_see_more": "Login to manage your bookings",
+    "male": "Male",
+    "name_placeholder": "Enter name",
+    "or": "OR",
+    "other": "Another",
+    "select": "Choose",
+    "subtitle": "Login to save your booking history and receive bonuses",
+    "success_mock": "Profile successfully received!",
+    "welcome": "Welcome"
+  },
   "booking_info": "Recording information",
   "change_booking": "Edit booking",
   "common": {
@@ -8,11 +30,13 @@
     "edit": "Edit",
     "reschedule": "Reschedule",
     "reset": "Reset All",
+    "resetAll": "Reset all",
     "save": "Verify",
     "select": "Select"
   },
   "confirm": {
     "confirm": "Confirm Appointment",
+    "contactNumber": "Contact Number",
     "date": "Date",
     "dateTime": "Date & Time",
     "error": "Error creating booking. Please try again.",
@@ -67,6 +91,7 @@
   "select_to_continue": "Select a service or technician to continue",
   "services": {
     "allCategories": "All",
+    "notFound": "No services found",
     "search": "Search services...",
     "selected": "selected",
     "service_one": "service",
@@ -75,26 +100,5 @@
     "title": "Select Services",
     "total": "Total"
   },
-  "totalDuration": "Duration",
-  "auth": {
-    "welcome": "Welcome",
-    "subtitle": "Login to save your booking history and receive bonuses",
-    "continue_google": "Continue via Google",
-    "continue_email": "Login via Email",
-    "or": "OR",
-    "email_placeholder": "Enter your email",
-    "guest_continue": "Continue as a guest",
-    "complete_profile": "Complete your profile",
-    "full_name": "your name",
-    "name_placeholder": "Enter name",
-    "gender": "Floor",
-    "birthday": "Date of birth",
-    "select": "Choose",
-    "female": "Female",
-    "male": "Male",
-    "other": "Another",
-    "info_note": "We use this data for personalized offers and birthday gifts.",
-    "create_account": "Create an account",
-    "success_mock": "Profile successfully received!"
-  }
+  "totalDuration": "Duration"
 }

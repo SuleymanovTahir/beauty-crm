@@ -68,6 +68,7 @@
   "edit_position_placeholder": "Seleccione una posición del directorio",
   "edit_save": "Ahorrar",
   "edit_saving": "Ahorro...",
+  "edit_time_off": "Editar vacaciones",
   "edit_username_label": "Acceso",
   "edit_username_placeholder": "Inicio de sesión de usuario",
   "email": "Email",
@@ -140,6 +141,7 @@
   "new_password": "New Password",
   "no_email_set": "No email address set",
   "no_history": "No payroll history found",
+  "no_name": "Sin nombre",
   "no_permission_to_change_roles": "No tienes permiso para cambiar los roles de otros usuarios.",
   "no_time_off": "No time-off periods scheduled",
   "no_users_found": "No se encontraron usuarios",
@@ -274,6 +276,7 @@
   "time_off": "Time-off / Absences",
   "time_off_added": "Time-off added successfully",
   "time_off_deleted": "Time-off deleted",
+  "time_off_updated": "Período de vacaciones actualizado",
   "title": "Gestión de usuarios",
   "total_bookings": "Total Bookings",
   "total_revenue": "Total Revenue",
@@ -291,7 +294,5 @@
   "view_details": "View details",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience",
-  "edit_time_off": "Editar vacaciones",
-  "time_off_updated": "Período de vacaciones actualizado"
+  "years_of_experience": "Years of Experience"
 }

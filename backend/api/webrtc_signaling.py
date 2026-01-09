@@ -5,13 +5,14 @@ WebRTC Signaling Server для видео/аудио звонков
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from typing import Dict, Set
 import json
+from datetime import datetime
 from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["WebRTC"], prefix="/api/webrtc")
 
 # Хранилище активных WebSocket соединений
-# Структура: {user_id: WebSocket}
-active_connections: Dict[int, WebSocket] = {}
+# Структура: {user_id: Set[WebSocket]}
+active_connections: Dict[int, Set[WebSocket]] = {}
 
 # Хранилище активных звонков
 # Структура: {call_id: {caller_id, callee_id, type}}
@@ -22,34 +23,67 @@ class ConnectionManager:
     """Управление WebSocket соединениями для WebRTC"""
 
     def __init__(self):
-        self.active_connections: Dict[int, WebSocket] = {}
+        self.active_connections: Dict[int, Set[WebSocket]] = {}
 
     async def connect(self, user_id: int, websocket: WebSocket):
         """Добавить новое соединение"""
         await websocket.accept()
-        self.active_connections[user_id] = websocket
-        log_info(f"WebRTC: User {user_id} connected. Active: {len(self.active_connections)}", "webrtc")
+        if user_id not in self.active_connections:
+            self.active_connections[user_id] = set()
+        self.active_connections[user_id].add(websocket)
+        log_info(f"WebRTC: User {user_id} connected. Total sessions: {len(self.active_connections.get(user_id, []))}", "webrtc")
 
-    def disconnect(self, user_id: int):
+    def disconnect(self, user_id: int, websocket: WebSocket):
         """Удалить соединение"""
         if user_id in self.active_connections:
-            del self.active_connections[user_id]
-            log_info(f"WebRTC: User {user_id} disconnected. Active: {len(self.active_connections)}", "webrtc")
+            if websocket in self.active_connections[user_id]:
+                self.active_connections[user_id].remove(websocket)
+            
+            if not self.active_connections[user_id]:
+                del self.active_connections[user_id]
+                log_info(f"WebRTC: User {user_id} fully disconnected (no active sessions).", "webrtc")
+                return True # Indicates user is now completely offline
+            else:
+                log_info(f"WebRTC: User {user_id} disconnected one session. Remaining: {len(self.active_connections[user_id])}", "webrtc")
+                return False # User still has other active connections
+        return False
 
     async def send_to_user(self, user_id: int, message: dict):
-        """Отправить сообщение конкретному пользователю"""
+        """Отправить сообщение конкретному пользователю (на все его устройства)"""
         if user_id in self.active_connections:
-            try:
-                await self.active_connections[user_id].send_json(message)
-                return True
-            except Exception as e:
-                log_error(f"Error sending to user {user_id}: {e}", "webrtc")
-                return False
+            # Отправляем на все активные соединения пользователя
+            dead_sockets = []
+            for connection in self.active_connections[user_id]:
+                try:
+                    await connection.send_json(message)
+                except Exception as e:
+                    log_error(f"Error sending to user {user_id}: {e}", "webrtc")
+                    dead_sockets.append(connection)
+            
+            # Cleanup dead sockets
+            for ds in dead_sockets:
+                if ds in self.active_connections.get(user_id, set()):
+                    self.active_connections[user_id].remove(ds)
+            
+            if not self.active_connections.get(user_id):
+                if user_id in self.active_connections:
+                    del self.active_connections[user_id]
+            
+            return True
         return False
+
+    async def broadcast(self, message: dict):
+        """Broadcast message to all connected users"""
+        for user_id, connections in self.active_connections.items():
+            for connection in connections:
+                try:
+                    await connection.send_json(message)
+                except Exception as e:
+                    log_error(f"Error broadcasting to user {user_id}: {e}", "webrtc")
 
     def is_user_online(self, user_id: int) -> bool:
         """Проверить, онлайн ли пользователь"""
-        return user_id in self.active_connections
+        return user_id in self.active_connections and len(self.active_connections[user_id]) > 0
 
 
 manager = ConnectionManager()
@@ -58,20 +92,18 @@ manager = ConnectionManager()
 @router.websocket("/signal")
 async def websocket_endpoint(websocket: WebSocket):
     """
-    WebSocket endpoint для WebRTC сигнализации
-
-    Сообщения:
-    - register: {type: "register", user_id: int}
-    - call: {type: "call", from: int, to: int, call_type: "audio"|"video"}
-    - offer: {type: "offer", from: int, to: int, sdp: string}
-    - answer: {type: "answer", from: int, to: int, sdp: string}
-    - ice-candidate: {type: "ice-candidate", from: int, to: int, candidate: object}
-    - hangup: {type: "hangup", from: int, to: int}
+    WebSocket endpoint для WebRTC сигнализации и статусов
     """
     user_id = None
 
     try:
-        await websocket.accept()
+        # Note: We don't accept here immediately, let connect() handle acceptance logic or pre-acceptance if needed
+        # But for compatibility with existing flow where we wait for register message:
+        await websocket.accept() # Accept first to receive register message
+        
+        # NOTE: Standard flow usually authenticates/registers immediately via query params or headers, 
+        # but here we rely on "register" message.
+        # So we keep connection open but not managed until "register"
 
         while True:
             # Получаем сообщение от клиента
@@ -82,12 +114,25 @@ async def websocket_endpoint(websocket: WebSocket):
             if message_type == "register":
                 user_id = data.get("user_id")
                 if user_id:
-                    manager.active_connections[user_id] = websocket
+                    # Manually add to manager (since we already accepted)
+                    if user_id not in manager.active_connections:
+                        manager.active_connections[user_id] = set()
+                        # Notify others only if this is the FIRST connection
+                        await manager.broadcast({
+                            "type": "user_status",
+                            "user_id": user_id,
+                            "status": "online",
+                            "timestamp": datetime.now().isoformat()
+                        })
+                    
+                    manager.active_connections[user_id].add(websocket)
+                    
                     await websocket.send_json({
                         "type": "registered",
                         "user_id": user_id,
                         "success": True
                     })
+                    
                     log_info(f"User {user_id} registered for WebRTC", "webrtc")
 
             # Инициация звонка
@@ -185,12 +230,20 @@ async def websocket_endpoint(websocket: WebSocket):
 
     except WebSocketDisconnect:
         if user_id:
-            manager.disconnect(user_id)
+            is_offline = manager.disconnect(user_id, websocket)
+            if is_offline:
+                # Broadcast offline status only if no connections left
+                await manager.broadcast({
+                    "type": "user_status",
+                    "user_id": user_id,
+                    "status": "offline",
+                    "last_seen": datetime.now().isoformat()
+                })
             log_info(f"WebSocket disconnected: user {user_id}", "webrtc")
     except Exception as e:
         log_error(f"WebSocket error: {e}", "webrtc")
         if user_id:
-            manager.disconnect(user_id)
+            manager.disconnect(user_id, websocket)
 
 
 @router.get("/online-users")

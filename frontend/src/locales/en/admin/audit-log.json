@@ -1,42 +1,42 @@
 {
-  "title": "Audit Log",
-  "subtitle": "History of all system actions and changes",
-  "search_placeholder": "Search by user, entity or action...",
-  "filter_all": "All actions",
-  "filter_create": "Create",
-  "filter_update": "Update",
-  "filter_delete": "Delete",
-  "filter_restore": "Restore",
-  "filter_login": "Login",
   "clear_all": "Clear All",
   "clear_confirm": "Are you sure you want to completely clear the audit log? This action is irreversible.",
-  "stat_total": "Total (24h)",
-  "stat_errors": "Errors (24h)",
-  "stat_active_users": "Active Users",
-  "stat_created": "Created",
-  "table": {
-    "action": "Action",
-    "user": "User",
-    "entity": "Entity",
-    "status": "Status",
-    "time": "Time",
-    "success": "SUCCESS",
-    "error": "ERROR",
-    "empty": "History is empty",
-    "loading": "Loading..."
-  },
   "details": {
-    "title": "Change Details",
-    "op_id": "Operation ID",
-    "old_data": "Old Data",
+    "error_msg": "Error Message",
+    "ip": "IP",
     "new_data": "New Data",
     "no_data": "No data",
-    "ip": "IP",
-    "error_msg": "Error Message"
+    "old_data": "Old Data",
+    "op_id": "Operation ID",
+    "title": "Change Details"
   },
+  "filter_all": "All actions",
+  "filter_create": "Create",
+  "filter_delete": "Delete",
+  "filter_login": "Login",
+  "filter_restore": "Restore",
+  "filter_update": "Update",
+  "search_placeholder": "Search by user, entity or action...",
+  "stat_active_users": "Active Users",
+  "stat_created": "Created",
+  "stat_errors": "Errors (24h)",
+  "stat_total": "Total (24h)",
+  "subtitle": "History of all system actions and changes",
+  "table": {
+    "action": "Action",
+    "empty": "History is empty",
+    "entity": "Entity",
+    "error": "ERROR",
+    "loading": "Loading...",
+    "status": "Status",
+    "success": "SUCCESS",
+    "time": "Time",
+    "user": "User"
+  },
+  "title": "Audit Log",
   "toast": {
-    "load_error": "Error loading audit log",
+    "clear_error": "Error clearing audit log",
     "clear_success": "Audit log successfully cleared",
-    "clear_error": "Error clearing audit log"
+    "load_error": "Error loading audit log"
   }
 }

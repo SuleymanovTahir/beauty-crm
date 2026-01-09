@@ -227,6 +227,14 @@
     "subtitle": "अंक एकत्रित करें और प्रत्येक सेवा से कैशबैक प्राप्त करें",
     "tier_explanation": "अंक एकत्रित करें और अधिक विशेषाधिकार प्राप्त करें",
     "tier_system": "स्तर प्रणाली",
+    "tiers": {
+      "bronze": "पीतल",
+      "bronze_req": "बुनियादी स्तर",
+      "gold": "सोना",
+      "platinum": "प्लैटिनम",
+      "points_req": "{{points}} अंक से",
+      "silver": "चाँदी"
+    },
     "title": "वफादारी और कैशबैक",
     "to_next_level": "को",
     "total_saved": "कुल सहेजा गया",
@@ -237,15 +245,7 @@
     "year_distribution": "वर्ष के लिए वितरण",
     "your_cashback": "आपका कैशबैक",
     "your_discount": "आपकी छूट होगी",
-    "your_promo": "आपका प्रोमो कोड",
-    "tiers": {
-      "bronze": "पीतल",
-      "silver": "चाँदी",
-      "gold": "सोना",
-      "platinum": "प्लैटिनम",
-      "bronze_req": "बुनियादी स्तर",
-      "points_req": "{{points}} अंक से"
-    }
+    "your_promo": "आपका प्रोमो कोड"
   },
   "masters": {
     "add_favorites_hint": "हृदय आइकन पर क्लिक करके कलाकारों को अपने पसंदीदा में जोड़ें",
@@ -366,5 +366,6 @@
     "masters": "मास्टर्स",
     "notifications": "सूचनाएं",
     "settings": "सेटिंग्स"
-  }
+  },
+  "user_role": "ग्राहक"
 }

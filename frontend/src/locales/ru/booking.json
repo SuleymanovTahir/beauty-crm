@@ -1,4 +1,26 @@
 {
+  "auth": {
+    "birthday": "Дата рождения",
+    "complete_profile": "Завершите профиль",
+    "continue_email": "Войти через Email",
+    "continue_google": "Продолжить через Google",
+    "create_account": "Создать аккаунт",
+    "email_placeholder": "Введите ваш email",
+    "female": "Женский",
+    "full_name": "Ваше имя",
+    "gender": "Пол",
+    "guest_continue": "Продолжить как гость",
+    "info_note": "Мы используем эти данные для персональных предложений и подарков на день рождения.",
+    "login_to_see_more": "Login to manage your bookings",
+    "male": "Мужской",
+    "name_placeholder": "Введите имя",
+    "or": "ИЛИ",
+    "other": "Другой",
+    "select": "Выбрать",
+    "subtitle": "Войдите, чтобы сохранять историю записей и получать бонусы",
+    "success_mock": "Профиль успешно получен!",
+    "welcome": "Добро пожаловать"
+  },
   "booking_info": "Информация о записи",
   "change_booking": "Изменить запись",
   "common": {
@@ -8,11 +30,13 @@
     "edit": "Редактировать",
     "reschedule": "Перенести",
     "reset": "Сбросить все",
+    "resetAll": "Reset all",
     "save": "Проверить",
     "select": "Выбрать"
   },
   "confirm": {
     "confirm": "Подтвердить запись",
+    "contactNumber": "Contact Number",
     "date": "Дата",
     "dateTime": "Дата и время",
     "error": "Ошибка при создании записи. Пожалуйста, попробуйте еще раз.",
@@ -67,6 +91,7 @@
   "select_to_continue": "Выберите услугу или мастера для продолжения",
   "services": {
     "allCategories": "Все категории",
+    "notFound": "No services found",
     "search": "Поиск услуг...",
     "selected": "выбрано",
     "service_one": "услуга",
@@ -75,26 +100,5 @@
     "title": "Выберите услуги",
     "total": "Итого"
   },
-  "totalDuration": "Длительность",
-  "auth": {
-    "welcome": "Добро пожаловать",
-    "subtitle": "Войдите, чтобы сохранять историю записей и получать бонусы",
-    "continue_google": "Продолжить через Google",
-    "continue_email": "Войти через Email",
-    "or": "ИЛИ",
-    "email_placeholder": "Введите ваш email",
-    "guest_continue": "Продолжить как гость",
-    "complete_profile": "Завершите профиль",
-    "full_name": "Ваше имя",
-    "name_placeholder": "Введите имя",
-    "gender": "Пол",
-    "birthday": "Дата рождения",
-    "select": "Выбрать",
-    "female": "Женский",
-    "male": "Мужской",
-    "other": "Другой",
-    "info_note": "Мы используем эти данные для персональных предложений и подарков на день рождения.",
-    "create_account": "Создать аккаунт",
-    "success_mock": "Профиль успешно получен!"
-  }
+  "totalDuration": "Длительность"
 }

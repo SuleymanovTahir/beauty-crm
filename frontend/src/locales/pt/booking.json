@@ -1,4 +1,26 @@
 {
+  "auth": {
+    "birthday": "Data de nascimento",
+    "complete_profile": "Complete seu perfil",
+    "continue_email": "Login por e-mail",
+    "continue_google": "Continuar pelo Google",
+    "create_account": "Crie uma conta",
+    "email_placeholder": "Digite seu e-mail",
+    "female": "Fêmea",
+    "full_name": "seu nome",
+    "gender": "Chão",
+    "guest_continue": "Continuar como convidado",
+    "info_note": "Utilizamos esses dados para ofertas personalizadas e presentes de aniversário.",
+    "login_to_see_more": "Login to manage your bookings",
+    "male": "Macho",
+    "name_placeholder": "Digite o nome",
+    "or": "OU",
+    "other": "Outro",
+    "select": "Escolher",
+    "subtitle": "Faça login para salvar seu histórico de postagens e receber bônus",
+    "success_mock": "Perfil recebido com sucesso!",
+    "welcome": "Bem-vindo"
+  },
   "booking_info": "Gravando informações",
   "change_booking": "Editar entrada",
   "common": {
@@ -8,11 +30,13 @@
     "edit": "Edit",
     "reschedule": "Reschedule",
     "reset": "Reset All",
+    "resetAll": "Reset all",
     "save": "Verify",
     "select": "Select"
   },
   "confirm": {
     "confirm": "Confirm Appointment",
+    "contactNumber": "Contact Number",
     "date": "Date",
     "dateTime": "Date & Time",
     "error": "Error creating booking. Please try again.",
@@ -67,6 +91,7 @@
   "select_to_continue": "Selecione um serviço ou técnico para continuar",
   "services": {
     "allCategories": "All",
+    "notFound": "No services found",
     "search": "Search services...",
     "selected": "selected",
     "service_one": "service",
@@ -75,26 +100,5 @@
     "title": "Select Services",
     "total": "Total"
   },
-  "totalDuration": "Duration",
-  "auth": {
-    "welcome": "Bem-vindo",
-    "subtitle": "Faça login para salvar seu histórico de postagens e receber bônus",
-    "continue_google": "Continuar pelo Google",
-    "continue_email": "Login por e-mail",
-    "or": "OU",
-    "email_placeholder": "Digite seu e-mail",
-    "guest_continue": "Continuar como convidado",
-    "complete_profile": "Complete seu perfil",
-    "full_name": "seu nome",
-    "name_placeholder": "Digite o nome",
-    "gender": "Chão",
-    "birthday": "Data de nascimento",
-    "select": "Escolher",
-    "female": "Fêmea",
-    "male": "Macho",
-    "other": "Outro",
-    "info_note": "Utilizamos esses dados para ofertas personalizadas e presentes de aniversário.",
-    "create_account": "Crie uma conta",
-    "success_mock": "Perfil recebido com sucesso!"
-  }
+  "totalDuration": "Duration"
 }

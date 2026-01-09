@@ -46,13 +46,13 @@
   "date": "Date",
   "day_off": "Day Off",
   "days": {
-    "MON": "Mon",
-    "TUE": "Tue",
-    "WED": "Wed",
-    "THU": "Thu",
     "FRI": "Fri",
+    "MON": "Mon",
     "SAT": "Sat",
-    "SUN": "Sun"
+    "SUN": "Sun",
+    "THU": "Thu",
+    "TUE": "Tue",
+    "WED": "Wed"
   },
   "days_on_off": "(days on/off)",
   "duration": "Duration",
@@ -68,6 +68,7 @@
   "edit_position_placeholder": "Select a position from the directory",
   "edit_save": "Save",
   "edit_saving": "Saving...",
+  "edit_time_off": "Edit holiday",
   "edit_username_label": "Login",
   "edit_username_placeholder": "User login",
   "email": "Email",
@@ -140,6 +141,7 @@
   "new_password": "New Password",
   "no_email_set": "No email address set",
   "no_history": "No payroll history found",
+  "no_name": "No name",
   "no_permission_to_change_roles": "You do not have permission to change the roles of other users.",
   "no_time_off": "No time-off periods scheduled",
   "no_users_found": "No users found",
@@ -274,6 +276,7 @@
   "time_off": "Time-off / Absences",
   "time_off_added": "Time-off added successfully",
   "time_off_deleted": "Time-off deleted",
+  "time_off_updated": "Holiday period updated",
   "title": "User management",
   "total_bookings": "Total Bookings",
   "total_revenue": "Total Revenue",
@@ -291,7 +294,5 @@
   "view_details": "View details",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience",
-  "edit_time_off": "Edit holiday",
-  "time_off_updated": "Holiday period updated"
+  "years_of_experience": "Years of Experience"
 }

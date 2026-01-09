@@ -25,6 +25,8 @@
   "full_name_placeholder": "أدخل اسمك",
   "i_accept": "أنا أقبل",
   "new_code_sent": "تم إرسال رمز جديد إلى بريدك الإلكتروني!",
+  "only_for_staff": "ملحوظة: هذا التسجيل مخصص لموظفي الصالون فقط.",
+  "or_register_with_email": "أو التسجيل عبر البريد الإلكتروني",
   "password": "كلمة المرور",
   "password_placeholder": "الحد الأدنى 6 أحرف",
   "phone": "رقم التليفون",
@@ -33,6 +35,8 @@
   "position_placeholder": "حدد موقفا",
   "privacy_policy": "سياسة الخصوصية",
   "register_button": "يسجل",
+  "register_staff_subtitle": "قم بملء المعلومات للوصول إلى إدارة علاقات العملاء (CRM). يجب أن تتم الموافقة على طلبك من قبل المسؤول.",
+  "register_staff_title": "تسجيل الموظف",
   "register_subtitle": "إنشاء حساب في نظام CRM",
   "register_title": "تسجيل",
   "registering": "تسجيل...",
@@ -58,8 +62,5 @@
   "verification_title": "تأكيد البريد الإلكتروني",
   "verify_button": "يتأكد",
   "verifying": "فحص...",
-  "your_code": "الرمز الخاص بك:",
-  "register_staff_title": "تسجيل الموظف",
-  "register_staff_subtitle": "قم بملء المعلومات للوصول إلى إدارة علاقات العملاء (CRM). يجب أن تتم الموافقة على طلبك من قبل المسؤول.",
-  "only_for_staff": "ملحوظة: هذا التسجيل مخصص لموظفي الصالون فقط."
+  "your_code": "الرمز الخاص بك:"
 }

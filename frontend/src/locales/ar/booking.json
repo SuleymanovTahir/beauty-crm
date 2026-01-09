@@ -1,4 +1,26 @@
 {
+  "auth": {
+    "birthday": "تاريخ الميلاد",
+    "complete_profile": "أكمل ملفك الشخصي",
+    "continue_email": "تسجيل الدخول عبر البريد الإلكتروني",
+    "continue_google": "المتابعة عبر جوجل",
+    "create_account": "إنشاء حساب",
+    "email_placeholder": "أدخل بريدك الإلكتروني",
+    "female": "أنثى",
+    "full_name": "اسمك",
+    "gender": "أرضية",
+    "guest_continue": "استمر كضيف",
+    "info_note": "نحن نستخدم هذه البيانات للعروض الشخصية وهدايا أعياد الميلاد.",
+    "login_to_see_more": "تسجيل الدخول لإدارة الحجوزات الخاصة بك",
+    "male": "ذكر",
+    "name_placeholder": "أدخل الاسم",
+    "or": "أو",
+    "other": "آخر",
+    "select": "يختار",
+    "subtitle": "قم بتسجيل الدخول لحفظ سجل النشر الخاص بك والحصول على المكافآت",
+    "success_mock": "تم استلام الملف الشخصي بنجاح!",
+    "welcome": "مرحباً"
+  },
   "booking_info": "تسجيل المعلومات",
   "change_booking": "تحرير الإدخال",
   "common": {
@@ -8,11 +30,13 @@
     "edit": "يحرر",
     "reschedule": "يؤجل",
     "reset": "إعادة ضبط كل شيء",
+    "resetAll": "إعادة ضبط الكل",
     "save": "يفحص",
     "select": "يختار"
   },
   "confirm": {
     "confirm": "تأكيد الدخول",
+    "contactNumber": "رقم الاتصال",
     "date": "تاريخ",
     "dateTime": "التاريخ والوقت",
     "error": "حدث خطأ أثناء إنشاء السجل. يرجى المحاولة مرة أخرى.",
@@ -67,6 +91,7 @@
   "select_to_continue": "حدد خدمة أو فنيًا للمتابعة",
   "services": {
     "allCategories": "جميع الفئات",
+    "notFound": "لم يتم العثور على الخدمات",
     "search": "البحث عن الخدمات...",
     "selected": "مختارة",
     "service_one": "خدمة",
@@ -75,26 +100,5 @@
     "title": "اختر الخدمات",
     "total": "المجموع"
   },
-  "totalDuration": "مدة",
-  "auth": {
-    "welcome": "مرحباً",
-    "subtitle": "قم بتسجيل الدخول لحفظ سجل النشر الخاص بك والحصول على المكافآت",
-    "continue_google": "المتابعة عبر جوجل",
-    "continue_email": "تسجيل الدخول عبر البريد الإلكتروني",
-    "or": "أو",
-    "email_placeholder": "أدخل بريدك الإلكتروني",
-    "guest_continue": "استمر كضيف",
-    "complete_profile": "أكمل ملفك الشخصي",
-    "full_name": "اسمك",
-    "name_placeholder": "أدخل الاسم",
-    "gender": "أرضية",
-    "birthday": "تاريخ الميلاد",
-    "select": "يختار",
-    "female": "أنثى",
-    "male": "ذكر",
-    "other": "آخر",
-    "info_note": "نحن نستخدم هذه البيانات للعروض الشخصية وهدايا أعياد الميلاد.",
-    "create_account": "إنشاء حساب",
-    "success_mock": "تم استلام الملف الشخصي بنجاح!"
-  }
+  "totalDuration": "مدة"
 }

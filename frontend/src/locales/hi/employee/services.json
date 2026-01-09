@@ -1,0 +1,12 @@
+{
+  "our_services": "हमारी सेवाएँ",
+  "browse_available_services": "उपलब्ध सैलून सेवाएँ देखें",
+  "no_services": "सेवाएँ नहीं मिलीं",
+  "no_services_description": "इस समय प्रदर्शित करने के लिए कोई सेवाएँ उपलब्ध नहीं हैं।",
+  "service_name": "सेवा का नाम",
+  "description": "विवरण",
+  "price": "कीमत",
+  "duration": "अवधि",
+  "category": "वर्ग",
+  "min": "मिन"
+}

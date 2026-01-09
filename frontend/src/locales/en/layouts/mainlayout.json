@@ -1,43 +1,43 @@
 {
   "admin": "Administrator",
-  "manager": "Manager",
-  "employee": "Employee",
-  "roles": {
-    "director": "Director",
-    "sales": "Sales",
-    "marketer": "Marketing"
-  },
   "admin_panel": "Admin panel",
   "crm": "CRM Panel",
+  "employee": "Employee",
   "logout": "Log out",
   "logout_success": "You have successfully logged out",
+  "manager": "Manager",
   "menu": {
     "analytics": "Analytics",
+    "audit_log": "Audit logs",
     "bookings": "bookings",
     "bot_settings": "Bot settings",
+    "broadcasts": "Newsletters",
     "calendar": "Calendar",
     "chat": "Chat",
     "clients": "Clients",
     "dashboard": "Dashboard",
     "dashboard_sales": "My clients",
     "feedback": "Feedback",
+    "funnel": "Funnel",
+    "internal_chat": "Intercom",
+    "my_bookings": "My bookings",
+    "notifications": "Notifications",
     "plans": "Plans",
+    "profile": "Profile",
     "public_content": "Public Content",
     "services": "Services",
     "settings": "Settings",
-    "users": "Users",
-    "visitors": "Visitors",
-    "funnel": "Funnel",
     "tasks": "Tasks",
     "telephony": "Telephony",
     "trash": "Basket",
-    "audit_log": "Audit logs",
-    "my_bookings": "My bookings",
-    "profile": "Profile",
-    "broadcasts": "Newsletters",
-    "internal_chat": "Intercom",
-    "notifications": "Notifications"
+    "users": "Users",
+    "visitors": "Visitors"
   },
+  "no_new_notifications": "No new notifications",
   "notifications": "Notifications",
-  "no_new_notifications": "No new notifications"
+  "roles": {
+    "director": "Director",
+    "marketer": "Marketing",
+    "sales": "Sales"
+  }
 }

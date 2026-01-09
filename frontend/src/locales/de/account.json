@@ -227,6 +227,14 @@
     "subtitle": "Sammeln Sie Punkte und erhalten Sie Cashback für jeden Service",
     "tier_explanation": "Sammeln Sie Punkte und erhalten Sie mehr Privilegien",
     "tier_system": "Levelsystem",
+    "tiers": {
+      "bronze": "Bronze",
+      "bronze_req": "Grundniveau",
+      "gold": "Gold",
+      "platinum": "Platin",
+      "points_req": "Ab {{points}} Punkten",
+      "silver": "Silber"
+    },
     "title": "Treue und Cashback",
     "to_next_level": "Zu",
     "total_saved": "Insgesamt gespart",
@@ -237,15 +245,7 @@
     "year_distribution": "Verteilung für das Jahr",
     "your_cashback": "Ihr Cashback",
     "your_discount": "Ihr Rabatt beträgt",
-    "your_promo": "Ihr Promo-Code",
-    "tiers": {
-      "bronze": "Bronze",
-      "silver": "Silber",
-      "gold": "Gold",
-      "platinum": "Platin",
-      "bronze_req": "Grundniveau",
-      "points_req": "Ab {{points}} Punkten"
-    }
+    "your_promo": "Ihr Promo-Code"
   },
   "masters": {
     "add_favorites_hint": "Fügen Sie Künstler zu Ihren Favoriten hinzu, indem Sie auf das Herzsymbol klicken",
@@ -366,5 +366,6 @@
     "masters": "Meister",
     "notifications": "Benachrichtigungen",
     "settings": "Einstellungen"
-  }
+  },
+  "user_role": "Kunde"
 }
