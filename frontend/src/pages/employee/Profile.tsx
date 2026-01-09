@@ -97,6 +97,11 @@ export default function EmployeeProfile() {
         phone: ''
       });
 
+      // Set photo from userData first
+      if (userData.photo) {
+        setPhotoPreview(userData.photo);
+      }
+
       // ✅ Load employee profile data if user has employee_id
       if (userData.employee_id || currentUser.role === 'employee') {
         try {
@@ -106,12 +111,13 @@ export default function EmployeeProfile() {
             full_name: empData.full_name || '',
             position: empData.position || '',
             experience: empData.experience || '',
-            photo: empData.photo || '',
+            photo: empData.photo || userData.photo || '',
             bio: empData.bio || '',
             phone: empData.phone || '',
             email: empData.email || '',
             instagram: empData.instagram || ''
           });
+          // Override with empData.photo if available
           if (empData.photo) {
             setPhotoPreview(empData.photo);
           }
