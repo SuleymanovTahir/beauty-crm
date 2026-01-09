@@ -52,9 +52,57 @@ const PaymentIntegrations = () => {
         },
         tinkoff: {
             name: 'Tinkoff',
-            description: 'Банковские платежи',
+            description: 'Российский банк',
             icon: '🏦',
             color: 'from-yellow-500 to-orange-600'
+        },
+        sberbank: {
+            name: 'Сбербанк',
+            description: 'Сбербанк России',
+            icon: '🟢',
+            color: 'from-green-600 to-green-800'
+        },
+        alfabank: {
+            name: 'Альфа-Банк',
+            description: 'Альфа-Банк России',
+            icon: '🔴',
+            color: 'from-red-500 to-red-700'
+        },
+        kaspi: {
+            name: 'Kaspi.kz',
+            description: 'Казахстанский банк',
+            icon: '🇰🇿',
+            color: 'from-red-600 to-pink-600'
+        },
+        halyk: {
+            name: 'Halyk Bank',
+            description: 'Народный банк Казахстана',
+            icon: '🏛️',
+            color: 'from-blue-600 to-indigo-700'
+        },
+        freedom: {
+            name: 'Freedom Finance',
+            description: 'Freedom Bank Kazakhstan',
+            icon: '💎',
+            color: 'from-purple-600 to-blue-600'
+        },
+        emirates_nbd: {
+            name: 'Emirates NBD',
+            description: 'Банк ОАЭ',
+            icon: '🇦🇪',
+            color: 'from-green-500 to-teal-600'
+        },
+        adcb: {
+            name: 'ADCB',
+            description: 'Abu Dhabi Commercial Bank',
+            icon: '🏝️',
+            color: 'from-blue-500 to-blue-700'
+        },
+        mashreq: {
+            name: 'Mashreq Bank',
+            description: 'Банк Машрек ОАЭ',
+            icon: '🌟',
+            color: 'from-orange-500 to-red-600'
         },
         paypal: {
             name: 'PayPal',

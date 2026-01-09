@@ -172,6 +172,12 @@ async def process_marketplace_webhook(provider: str, data: dict):
             await handle_booksy_webhook(data, cursor, conn)
         elif provider == "yclients":
             await handle_yclients_webhook(data, cursor, conn)
+        elif provider == "wildberries":
+            await handle_wildberries_webhook(data, cursor, conn)
+        elif provider == "ozon":
+            await handle_ozon_webhook(data, cursor, conn)
+        elif provider == "amazon":
+            await handle_amazon_webhook(data, cursor, conn)
         
         conn.close()
         
@@ -282,6 +288,139 @@ async def handle_yclients_webhook(data: dict, cursor, conn):
             
     except Exception as e:
         log_error(f"Error handling YCLIENTS webhook: {e}", "marketplace")
+
+async def handle_wildberries_webhook(data: dict, cursor, conn):
+    """Обработать webhook от Wildberries"""
+    try:
+        event_type = data.get("type")
+        
+        if event_type == "order.created":
+            order_data = data.get("order", {})
+            # WB - это маркетплейс товаров, создаем заказ
+            await create_order_from_marketplace(
+                "wildberries",
+                order_data,
+                cursor,
+                conn
+            )
+            
+    except Exception as e:
+        log_error(f"Error handling Wildberries webhook: {e}", "marketplace")
+
+async def handle_ozon_webhook(data: dict, cursor, conn):
+    """Обработать webhook от Ozon"""
+    try:
+        event_type = data.get("message_type")
+        
+        if event_type == "TYPE_NEW_POSTING":
+            posting_data = data.get("posting", {})
+            await create_order_from_marketplace(
+                "ozon",
+                posting_data,
+                cursor,
+                conn
+            )
+            
+    except Exception as e:
+        log_error(f"Error handling Ozon webhook: {e}", "marketplace")
+
+async def handle_amazon_webhook(data: dict, cursor, conn):
+    """Обработать webhook от Amazon"""
+    try:
+        notification_type = data.get("NotificationType")
+        
+        if notification_type == "AnyOfferChanged":
+            # Amazon MWS/SP-API формат
+            payload = data.get("Payload", {})
+            await create_order_from_marketplace(
+                "amazon",
+                payload,
+                cursor,
+                conn
+            )
+            
+    except Exception as e:
+        log_error(f"Error handling Amazon webhook: {e}", "marketplace")
+
+async def create_order_from_marketplace(provider: str, order_data: dict, cursor, conn):
+    """Создать заказ из маркетплейса товаров (WB, Ozon, Amazon)"""
+    try:
+        # Нормализуем данные заказа
+        normalized = normalize_order_data(provider, order_data)
+        
+        # Создаем клиента если нужно
+        cursor.execute("""
+            SELECT instagram_id FROM clients WHERE phone = %s
+        """, (normalized.get("client_phone", "unknown"),))
+        
+        client = cursor.fetchone()
+        
+        if not client:
+            now = datetime.now().isoformat()
+            cursor.execute("""
+                INSERT INTO clients
+                (instagram_id, name, phone, email, source, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                RETURNING instagram_id
+            """, (
+                f"marketplace_{provider}_{normalized.get('order_id')}",
+                normalized.get("client_name", "Клиент из маркетплейса"),
+                normalized.get("client_phone", ""),
+                normalized.get("client_email"),
+                provider,
+                now
+            ))
+            client_id = cursor.fetchone()[0]
+        else:
+            client_id = client[0]
+        
+        # Сохраняем информацию о заказе в notes клиента
+        now = datetime.now().isoformat()
+        order_note = f"Заказ #{normalized.get('order_id')} из {provider}: {normalized.get('items_summary', 'товары')}, сумма: {normalized.get('total_amount', 0)}"
+        
+        cursor.execute("""
+            UPDATE clients
+            SET notes = COALESCE(notes, '') || %s
+            WHERE instagram_id = %s
+        """, (f"\n{order_note}", client_id))
+        
+        conn.commit()
+        log_info(f"Created order from {provider}: {normalized.get('order_id')}", "marketplace")
+        
+    except Exception as e:
+        conn.rollback()
+        log_error(f"Error creating order from marketplace: {e}", "marketplace")
+
+def normalize_order_data(provider: str, data: dict) -> dict:
+    """Нормализовать данные заказа из маркетплейса"""
+    normalized = {}
+    
+    if provider == "wildberries":
+        normalized = {
+            "order_id": data.get("id"),
+            "client_name": data.get("user", {}).get("name"),
+            "client_phone": data.get("user", {}).get("phone"),
+            "total_amount": data.get("total_price"),
+            "items_summary": ", ".join([item.get("name", "") for item in data.get("items", [])])
+        }
+    elif provider == "ozon":
+        normalized = {
+            "order_id": data.get("posting_number"),
+            "client_name": data.get("customer", {}).get("name"),
+            "client_phone": data.get("customer", {}).get("phone"),
+            "total_amount": sum([p.get("price", 0) for p in data.get("products", [])]),
+            "items_summary": ", ".join([p.get("name", "") for p in data.get("products", [])])
+        }
+    elif provider == "amazon":
+        normalized = {
+            "order_id": data.get("AmazonOrderId"),
+            "client_name": data.get("BuyerName"),
+            "client_email": data.get("BuyerEmail"),
+            "total_amount": data.get("OrderTotal", {}).get("Amount", 0),
+            "items_summary": "Amazon order items"
+        }
+    
+    return normalized
 
 # ===== СОЗДАНИЕ ЗАПИСИ ИЗ МАРКЕТПЛЕЙСА =====
 
