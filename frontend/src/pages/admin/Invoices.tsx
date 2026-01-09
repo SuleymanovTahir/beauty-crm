@@ -35,11 +35,8 @@ const Invoices = () => {
     const loadInvoices = async () => {
         try {
             setLoading(true);
-            const params: any = {};
-            if (filterStatus) params.status = filterStatus;
-
-            const response = await api.get('/invoices', { params });
-            setInvoices(response.data.invoices);
+            const response = await api.getInvoices(undefined, filterStatus);
+            setInvoices(response.invoices);
         } catch (error) {
             console.error('Error loading invoices:', error);
         } finally {
