@@ -36,6 +36,8 @@ const AuditLog = React.lazy(() => import('@/pages/admin/AuditLog'));
 const Contracts = React.lazy(() => import('./pages/admin/Contracts'));
 const Products = React.lazy(() => import('./pages/admin/Products'));
 const Invoices = React.lazy(() => import('./pages/admin/Invoices'));
+const PaymentIntegrations = React.lazy(() => import('./pages/admin/PaymentIntegrations'));
+const MarketplaceIntegrations = React.lazy(() => import('./pages/admin/MarketplaceIntegrations'));
 
 
 // Admin Panel pages
@@ -323,6 +325,8 @@ export default function App() {
                 <Route path="contracts" element={<Contracts />} />
                 <Route path="products" element={<Products />} />
                 <Route path="invoices" element={<Invoices />} />
+                <Route path="payment-integrations" element={<PaymentIntegrations />} />
+                <Route path="marketplace-integrations" element={<MarketplaceIntegrations />} />
               </Route>
 
               {/* Manager Routes - Protected */}
