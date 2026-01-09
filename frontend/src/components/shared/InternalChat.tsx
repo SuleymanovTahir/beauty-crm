@@ -243,6 +243,54 @@ export default function InternalChat() {
     loadData();
   }, []);
 
+  // Set user online status
+  useEffect(() => {
+    const setOnlineStatus = async () => {
+      try {
+        await fetch('/api/internal-chat/status/online', {
+          method: 'POST',
+          credentials: 'include'
+        });
+      } catch (err) {
+        console.error('Error setting online status:', err);
+      }
+    };
+
+    // Set online immediately when component mounts
+    setOnlineStatus();
+
+    // Set online every 30 seconds (heartbeat)
+    const heartbeatInterval = setInterval(() => {
+      setOnlineStatus();
+    }, 30000);
+
+    // Set offline when component unmounts or page is about to unload
+    const setOfflineStatus = async () => {
+      try {
+        await fetch('/api/internal-chat/status/offline', {
+          method: 'POST',
+          credentials: 'include'
+        });
+      } catch (err) {
+        console.error('Error setting offline status:', err);
+      }
+    };
+
+    // Handle page unload/refresh
+    const handleBeforeUnload = () => {
+      // Use sendBeacon for reliability during page unload
+      navigator.sendBeacon('/api/internal-chat/status/offline');
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      clearInterval(heartbeatInterval);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      setOfflineStatus();
+    };
+  }, []);
+
   // ... (existing useEffects)
 
   // Initialize WebRTC service
