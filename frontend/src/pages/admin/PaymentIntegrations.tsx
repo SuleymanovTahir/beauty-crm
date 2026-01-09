@@ -43,74 +43,74 @@ const PaymentIntegrations = () => {
         stripe: {
             name: 'Stripe',
             description: 'Международные платежи картами',
-            icon: '💳',
-            color: 'from-purple-500 to-indigo-600'
+            icon: <CreditCard size={32} />,
+            brandClass: 'brand-stripe'
         },
         yookassa: {
             name: 'ЮKassa',
             description: 'Российская платежная система',
-            icon: '🇷🇺',
-            color: 'from-blue-500 to-cyan-600'
+            icon: <CreditCard size={32} />,
+            brandClass: 'brand-yookassa'
         },
         tinkoff: {
             name: 'Tinkoff',
             description: 'Российский банк',
-            icon: '🏦',
-            color: 'from-yellow-500 to-orange-600'
+            icon: <CreditCard size={32} />,
+            brandClass: 'brand-tinkoff'
         },
         sberbank: {
             name: 'Сбербанк',
             description: 'Сбербанк России',
-            icon: '🟢',
-            color: 'from-green-600 to-green-800'
+            icon: <CreditCard size={32} />,
+            brandClass: 'brand-sberbank'
         },
         alfabank: {
             name: 'Альфа-Банк',
             description: 'Альфа-Банк России',
-            icon: '🔴',
-            color: 'from-red-500 to-red-700'
+            icon: <CreditCard size={32} />,
+            brandClass: 'brand-alfabank'
         },
         kaspi: {
             name: 'Kaspi.kz',
             description: 'Казахстанский банк',
-            icon: '🇰🇿',
-            color: 'from-red-600 to-pink-600'
+            icon: <CreditCard size={32} />,
+            brandClass: 'brand-kaspi'
         },
         halyk: {
             name: 'Halyk Bank',
             description: 'Народный банк Казахстана',
-            icon: '🏛️',
-            color: 'from-blue-600 to-indigo-700'
+            icon: <CreditCard size={32} />,
+            brandClass: 'brand-halyk'
         },
         freedom: {
             name: 'Freedom Finance',
             description: 'Freedom Bank Kazakhstan',
-            icon: '💎',
-            color: 'from-purple-600 to-blue-600'
+            icon: <CreditCard size={32} />,
+            brandClass: 'brand-freedom'
         },
         emirates_nbd: {
             name: 'Emirates NBD',
             description: 'Банк ОАЭ',
-            icon: '🇦🇪',
-            color: 'from-green-500 to-teal-600'
+            icon: <CreditCard size={32} />,
+            brandClass: 'brand-emirates_nbd'
         },
         adcb: {
             name: 'ADCB',
             description: 'Abu Dhabi Commercial Bank',
-            icon: '🏝️',
-            color: 'from-blue-500 to-blue-700'
+            icon: <CreditCard size={32} />,
+            brandClass: 'brand-adcb'
         },
         mashreq: {
             name: 'Mashreq Bank',
             description: 'Банк Машрек ОАЭ',
-            icon: '🌟',
-            color: 'from-orange-500 to-red-600'
+            icon: <CreditCard size={32} />,
+            brandClass: 'brand-mashreq'
         },
         paypal: {
             name: 'PayPal',
             description: 'Международные платежи',
-            icon: '💰',
-            color: 'from-blue-600 to-blue-800'
+            icon: <CreditCard size={32} />,
+            brandClass: 'brand-paypal'
         }
     };
 
@@ -137,7 +137,7 @@ const PaymentIntegrations = () => {
 
                         return (
                             <div key={key} className={`crm-provider-card ${isActive ? 'active' : ''}`}>
-                                <div className="crm-provider-header">
+                                <div className={`crm-provider-header ${info.brandClass}`}>
                                     <div className="crm-provider-icon">{info.icon}</div>
                                     <div className="crm-provider-info">
                                         <h3 className="crm-provider-name">{info.name}</h3>
