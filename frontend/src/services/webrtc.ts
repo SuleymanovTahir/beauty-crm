@@ -1,0 +1,417 @@
+/**
+ * WebRTC Service для видео/аудио звонков
+ * Управляет peer connections и сигнализацией через WebSocket
+ */
+
+export interface CallUser {
+  id: number;
+  full_name: string;
+}
+
+export type CallType = 'audio' | 'video';
+
+interface WebRTCConfig {
+  iceServers: RTCIceServer[];
+}
+
+const DEFAULT_CONFIG: WebRTCConfig = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+  ]
+};
+
+export class WebRTCService {
+  private ws: WebSocket | null = null;
+  private peerConnection: RTCPeerConnection | null = null;
+  private localStream: MediaStream | null = null;
+  private remoteStream: MediaStream | null = null;
+  private currentUserId: number | null = null;
+  private remoteUserId: number | null = null;
+  private callType: CallType = 'audio';
+
+  // Callbacks
+  public onIncomingCall: ((from: number, callType: CallType) => void) | null = null;
+  public onCallAccepted: (() => void) | null = null;
+  public onCallRejected: (() => void) | null = null;
+  public onRemoteStream: ((stream: MediaStream) => void) | null = null;
+  public onCallEnded: (() => void) | null = null;
+  public onError: ((error: string) => void) | null = null;
+
+  /**
+   * Инициализация WebRTC сервиса
+   */
+  async initialize(userId: number): Promise<void> {
+    this.currentUserId = userId;
+    await this.connectWebSocket();
+  }
+
+  /**
+   * Подключение к WebSocket серверу для сигнализации
+   */
+  private async connectWebSocket(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const wsUrl = `ws://${window.location.hostname}:8000/api/webrtc/signal`;
+      this.ws = new WebSocket(wsUrl);
+
+      this.ws.onopen = () => {
+        console.log('✅ WebRTC WebSocket connected');
+        // Регистрируем пользователя
+        this.sendSignal({
+          type: 'register',
+          user_id: this.currentUserId
+        });
+        resolve();
+      };
+
+      this.ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        this.handleSignal(data);
+      };
+
+      this.ws.onerror = (error) => {
+        console.error('❌ WebSocket error:', error);
+        this.onError?.('Ошибка подключения к серверу звонков');
+        reject(error);
+      };
+
+      this.ws.onclose = () => {
+        console.log('🔌 WebSocket disconnected');
+        this.cleanup();
+      };
+    });
+  }
+
+  /**
+   * Обработка сигналов от сервера
+   */
+  private async handleSignal(data: any): Promise<void> {
+    switch (data.type) {
+      case 'registered':
+        console.log('✅ Registered for WebRTC:', data.user_id);
+        break;
+
+      case 'incoming-call':
+        console.log('📞 Incoming call from:', data.from);
+        this.remoteUserId = data.from;
+        this.callType = data.call_type;
+        this.onIncomingCall?.(data.from, data.call_type);
+        break;
+
+      case 'call-accepted':
+        console.log('✅ Call accepted by:', data.from);
+        this.onCallAccepted?.();
+        await this.createOffer();
+        break;
+
+      case 'call-rejected':
+        console.log('❌ Call rejected by:', data.from);
+        this.onCallRejected?.();
+        this.cleanup();
+        break;
+
+      case 'offer':
+        console.log('📩 Received offer from:', data.from);
+        await this.handleOffer(data.sdp);
+        break;
+
+      case 'answer':
+        console.log('📩 Received answer from:', data.from);
+        await this.handleAnswer(data.sdp);
+        break;
+
+      case 'ice-candidate':
+        console.log('🧊 Received ICE candidate');
+        await this.handleIceCandidate(data.candidate);
+        break;
+
+      case 'hangup':
+        console.log('📴 Call ended by remote user');
+        this.onCallEnded?.();
+        this.cleanup();
+        break;
+
+      case 'error':
+        console.error('❌ Server error:', data.message);
+        this.onError?.(data.message);
+        break;
+    }
+  }
+
+  /**
+   * Отправка сигнала на сервер
+   */
+  private sendSignal(data: any): void {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(data));
+    }
+  }
+
+  /**
+   * Начать звонок
+   */
+  async startCall(toUserId: number, callType: CallType = 'audio'): Promise<void> {
+    try {
+      this.remoteUserId = toUserId;
+      this.callType = callType;
+
+      // Получаем доступ к камере/микрофону
+      await this.getMediaDevices(callType);
+
+      // Создаем peer connection
+      this.createPeerConnection();
+
+      // Отправляем сигнал о звонке
+      this.sendSignal({
+        type: 'call',
+        from: this.currentUserId,
+        to: toUserId,
+        call_type: callType
+      });
+
+      console.log(`📞 Calling user ${toUserId} (${callType})`);
+    } catch (error) {
+      console.error('❌ Error starting call:', error);
+      this.onError?.('Не удалось получить доступ к камере/микрофону');
+      this.cleanup();
+    }
+  }
+
+  /**
+   * Принять входящий звонок
+   */
+  async acceptCall(): Promise<void> {
+    try {
+      // Получаем доступ к камере/микрофону
+      await this.getMediaDevices(this.callType);
+
+      // Создаем peer connection
+      this.createPeerConnection();
+
+      // Отправляем подтверждение
+      this.sendSignal({
+        type: 'accept-call',
+        from: this.currentUserId,
+        to: this.remoteUserId
+      });
+
+      console.log('✅ Call accepted');
+    } catch (error) {
+      console.error('❌ Error accepting call:', error);
+      this.onError?.('Не удалось получить доступ к камере/микрофону');
+      this.cleanup();
+    }
+  }
+
+  /**
+   * Отклонить входящий звонок
+   */
+  rejectCall(): void {
+    this.sendSignal({
+      type: 'reject-call',
+      from: this.currentUserId,
+      to: this.remoteUserId
+    });
+    this.cleanup();
+  }
+
+  /**
+   * Завершить звонок
+   */
+  endCall(): void {
+    this.sendSignal({
+      type: 'hangup',
+      from: this.currentUserId,
+      to: this.remoteUserId
+    });
+    this.cleanup();
+  }
+
+  /**
+   * Получить доступ к медиа-устройствам
+   */
+  private async getMediaDevices(callType: CallType): Promise<void> {
+    const constraints = {
+      audio: true,
+      video: callType === 'video' ? {
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      } : false
+    };
+
+    this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+    console.log('🎥 Local stream obtained');
+  }
+
+  /**
+   * Создать peer connection
+   */
+  private createPeerConnection(): void {
+    this.peerConnection = new RTCPeerConnection(DEFAULT_CONFIG);
+
+    // Добавляем локальный stream
+    if (this.localStream) {
+      this.localStream.getTracks().forEach(track => {
+        this.peerConnection!.addTrack(track, this.localStream!);
+      });
+    }
+
+    // Обработка удаленного stream
+    this.peerConnection.ontrack = (event) => {
+      console.log('📺 Remote track received');
+      this.remoteStream = event.streams[0];
+      this.onRemoteStream?.(this.remoteStream);
+    };
+
+    // Обработка ICE candidates
+    this.peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        this.sendSignal({
+          type: 'ice-candidate',
+          from: this.currentUserId,
+          to: this.remoteUserId,
+          candidate: event.candidate
+        });
+      }
+    };
+
+    // Обработка изменения состояния соединения
+    this.peerConnection.onconnectionstatechange = () => {
+      console.log('Connection state:', this.peerConnection?.connectionState);
+      if (this.peerConnection?.connectionState === 'disconnected' ||
+          this.peerConnection?.connectionState === 'failed') {
+        this.onCallEnded?.();
+        this.cleanup();
+      }
+    };
+
+    console.log('🔗 Peer connection created');
+  }
+
+  /**
+   * Создать и отправить offer
+   */
+  private async createOffer(): Promise<void> {
+    if (!this.peerConnection) return;
+
+    try {
+      const offer = await this.peerConnection.createOffer();
+      await this.peerConnection.setLocalDescription(offer);
+
+      this.sendSignal({
+        type: 'offer',
+        from: this.currentUserId,
+        to: this.remoteUserId,
+        sdp: offer
+      });
+
+      console.log('📤 Offer sent');
+    } catch (error) {
+      console.error('❌ Error creating offer:', error);
+    }
+  }
+
+  /**
+   * Обработать полученный offer
+   */
+  private async handleOffer(sdp: RTCSessionDescriptionInit): Promise<void> {
+    if (!this.peerConnection) return;
+
+    try {
+      await this.peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
+
+      const answer = await this.peerConnection.createAnswer();
+      await this.peerConnection.setLocalDescription(answer);
+
+      this.sendSignal({
+        type: 'answer',
+        from: this.currentUserId,
+        to: this.remoteUserId,
+        sdp: answer
+      });
+
+      console.log('📤 Answer sent');
+    } catch (error) {
+      console.error('❌ Error handling offer:', error);
+    }
+  }
+
+  /**
+   * Обработать полученный answer
+   */
+  private async handleAnswer(sdp: RTCSessionDescriptionInit): Promise<void> {
+    if (!this.peerConnection) return;
+
+    try {
+      await this.peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
+      console.log('✅ Answer applied');
+    } catch (error) {
+      console.error('❌ Error handling answer:', error);
+    }
+  }
+
+  /**
+   * Обработать ICE candidate
+   */
+  private async handleIceCandidate(candidate: RTCIceCandidateInit): Promise<void> {
+    if (!this.peerConnection) return;
+
+    try {
+      await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+      console.log('🧊 ICE candidate added');
+    } catch (error) {
+      console.error('❌ Error adding ICE candidate:', error);
+    }
+  }
+
+  /**
+   * Получить локальный stream
+   */
+  getLocalStream(): MediaStream | null {
+    return this.localStream;
+  }
+
+  /**
+   * Получить удаленный stream
+   */
+  getRemoteStream(): MediaStream | null {
+    return this.remoteStream;
+  }
+
+  /**
+   * Очистка ресурсов
+   */
+  private cleanup(): void {
+    console.log('🧹 Cleaning up WebRTC resources');
+
+    // Останавливаем треки
+    if (this.localStream) {
+      this.localStream.getTracks().forEach(track => track.stop());
+      this.localStream = null;
+    }
+
+    // Закрываем peer connection
+    if (this.peerConnection) {
+      this.peerConnection.close();
+      this.peerConnection = null;
+    }
+
+    this.remoteStream = null;
+    this.remoteUserId = null;
+  }
+
+  /**
+   * Отключение от WebSocket
+   */
+  disconnect(): void {
+    this.cleanup();
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+    }
+  }
+}
+
+// Singleton instance
+export const webrtcService = new WebRTCService();

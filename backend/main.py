@@ -114,6 +114,7 @@ from api.telephony import router as telephony_router
 from api.menu_settings import router as menu_settings_router
 from api.trash import router as trash_router
 from api.audit import router as audit_router
+from api.webrtc_signaling import router as webrtc_router
 
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -203,6 +204,7 @@ app.include_router(telephony_router, prefix="/api") # Telephony API
 app.include_router(menu_settings_router, prefix="/api")
 app.include_router(trash_router, prefix="/api")
 app.include_router(audit_router, prefix="/api")
+app.include_router(webrtc_router)  # WebRTC signaling for video/audio calls
  # Menu Settings API
 
 
