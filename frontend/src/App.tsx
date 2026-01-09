@@ -33,6 +33,10 @@ const Telephony = React.lazy(() => import('./pages/admin/Telephony'));
 const MenuCustomization = React.lazy(() => import('./pages/admin/MenuCustomization'));
 const TrashBin = React.lazy(() => import('@/pages/admin/TrashBin'));
 const AuditLog = React.lazy(() => import('@/pages/admin/AuditLog'));
+const Contracts = React.lazy(() => import('./pages/admin/Contracts'));
+const Products = React.lazy(() => import('./pages/admin/Products'));
+const Invoices = React.lazy(() => import('./pages/admin/Invoices'));
+
 
 // Admin Panel pages
 const AdminPanelLayout = React.lazy(() => import('./components/layouts/AdminPanelLayout'));
@@ -316,6 +320,9 @@ export default function App() {
                 <Route path="audit-log" element={<ProtectedRoute element={<AuditLog />} isAuthenticated={!!currentUser} requiredRole="director" currentRole={currentUser?.role} />} />
                 <Route path="internal-chat" element={<InternalChat />} />
                 <Route path="broadcasts" element={<Broadcasts />} />
+                <Route path="contracts" element={<Contracts />} />
+                <Route path="products" element={<Products />} />
+                <Route path="invoices" element={<Invoices />} />
               </Route>
 
               {/* Manager Routes - Protected */}
