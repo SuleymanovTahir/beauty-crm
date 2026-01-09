@@ -239,11 +239,10 @@ async def get_chat_users(session_token: Optional[str] = Cookie(None)):
     c = conn.cursor()
 
     c.execute("""
-        SELECT u.id, u.username, u.full_name, u.role, u.email, e.photo
-        FROM users u
-        LEFT JOIN employees e ON u.id = e.user_id
-        WHERE u.id != %s AND u.is_active = TRUE
-        ORDER BY u.full_name
+        SELECT id, username, full_name, role, email, photo
+        FROM users
+        WHERE id != %s AND is_active = TRUE
+        ORDER BY full_name
     """, (user['id'],))
 
     users = [{
