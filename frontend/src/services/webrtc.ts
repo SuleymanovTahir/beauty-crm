@@ -38,6 +38,12 @@ export class WebRTCService {
   public onRemoteStream: ((stream: MediaStream) => void) | null = null;
   public onCallEnded: (() => void) | null = null;
   public onError: ((error: string) => void) | null = null;
+  public onQualityChange: ((quality: 'excellent' | 'good' | 'poor' | 'disconnected', stats: any) => void) | null = null;
+
+  // Media control state
+  private isAudioEnabled: boolean = true;
+  private isVideoEnabled: boolean = true;
+  private qualityCheckInterval: any = null;
 
   /**
    * Инициализация WebRTC сервиса
@@ -279,6 +285,12 @@ export class WebRTCService {
     // Обработка изменения состояния соединения
     this.peerConnection.onconnectionstatechange = () => {
       console.log('Connection state:', this.peerConnection?.connectionState);
+
+      if (this.peerConnection?.connectionState === 'connected') {
+        // Соединение установлено - начинаем мониторинг качества
+        this.startQualityMonitoring();
+      }
+
       if (this.peerConnection?.connectionState === 'disconnected' ||
           this.peerConnection?.connectionState === 'failed') {
         this.onCallEnded?.();
@@ -380,10 +392,115 @@ export class WebRTCService {
   }
 
   /**
+   * Переключить микрофон (вкл/выкл)
+   */
+  toggleAudio(): boolean {
+    if (this.localStream) {
+      const audioTrack = this.localStream.getAudioTracks()[0];
+      if (audioTrack) {
+        this.isAudioEnabled = !this.isAudioEnabled;
+        audioTrack.enabled = this.isAudioEnabled;
+        console.log(`🎤 Audio ${this.isAudioEnabled ? 'enabled' : 'disabled'}`);
+        return this.isAudioEnabled;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Переключить камеру (вкл/выкл)
+   */
+  toggleVideo(): boolean {
+    if (this.localStream) {
+      const videoTrack = this.localStream.getVideoTracks()[0];
+      if (videoTrack) {
+        this.isVideoEnabled = !this.isVideoEnabled;
+        videoTrack.enabled = this.isVideoEnabled;
+        console.log(`📹 Video ${this.isVideoEnabled ? 'enabled' : 'disabled'}`);
+        return this.isVideoEnabled;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Получить статус микрофона
+   */
+  isAudioActive(): boolean {
+    return this.isAudioEnabled;
+  }
+
+  /**
+   * Получить статус камеры
+   */
+  isVideoActive(): boolean {
+    return this.isVideoEnabled;
+  }
+
+  /**
+   * Начать мониторинг качества соединения
+   */
+  private startQualityMonitoring(): void {
+    if (!this.peerConnection) return;
+
+    this.qualityCheckInterval = setInterval(async () => {
+      if (!this.peerConnection) {
+        this.stopQualityMonitoring();
+        return;
+      }
+
+      try {
+        const stats = await this.peerConnection.getStats();
+        let packetLoss = 0;
+        let latency = 0;
+        let quality: 'excellent' | 'good' | 'poor' | 'disconnected' = 'good';
+
+        stats.forEach((report) => {
+          if (report.type === 'inbound-rtp' && report.kind === 'video') {
+            packetLoss = report.packetsLost / (report.packetsReceived + report.packetsLost) * 100 || 0;
+          }
+          if (report.type === 'candidate-pair' && report.state === 'succeeded') {
+            latency = report.currentRoundTripTime ? report.currentRoundTripTime * 1000 : 0;
+          }
+        });
+
+        // Определяем качество
+        if (latency < 100 && packetLoss < 2) {
+          quality = 'excellent';
+        } else if (latency < 200 && packetLoss < 5) {
+          quality = 'good';
+        } else if (latency < 500 && packetLoss < 10) {
+          quality = 'poor';
+        } else {
+          quality = 'poor';
+        }
+
+        // Уведомляем о изменении качества
+        this.onQualityChange?.(quality, { latency, packetLoss });
+      } catch (error) {
+        console.error('Error getting stats:', error);
+      }
+    }, 2000); // Проверка каждые 2 секунды
+  }
+
+  /**
+   * Остановить мониторинг качества
+   */
+  private stopQualityMonitoring(): void {
+    if (this.qualityCheckInterval) {
+      clearInterval(this.qualityCheckInterval);
+      this.qualityCheckInterval = null;
+    }
+  }
+
+  /**
    * Очистка ресурсов
    */
   private cleanup(): void {
     console.log('🧹 Cleaning up WebRTC resources');
+
+    // Останавливаем мониторинг качества
+    this.stopQualityMonitoring();
 
     // Останавливаем треки
     if (this.localStream) {
@@ -399,6 +516,8 @@ export class WebRTCService {
 
     this.remoteStream = null;
     this.remoteUserId = null;
+    this.isAudioEnabled = true;
+    this.isVideoEnabled = true;
   }
 
   /**

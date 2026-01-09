@@ -134,7 +134,19 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
         if (user?.id) {
             try {
                 const profile = await api.getUserProfile(user.id);
-                setUserProfile(profile);
+
+                // Для сотрудников загружаем также employee profile для фото
+                if (user.role === 'employee') {
+                    try {
+                        const empProfile = await api.getMyEmployeeProfile();
+                        setUserProfile({ ...profile, photo: empProfile.photo });
+                    } catch (empErr) {
+                        console.log('Employee profile not available:', empErr);
+                        setUserProfile(profile);
+                    }
+                } else {
+                    setUserProfile(profile);
+                }
             } catch (err) {
                 console.error('Failed to load user profile:', err);
             }
@@ -202,7 +214,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             // ГРУППА 1: Ежедневная работа (Операции)
             {
                 icon: LayoutDashboard,
-                label: user?.role === 'employee' ? t('menu.calendar') :
+                label: user?.role === 'employee' ? t('menu.my_bookings') :
                     user?.role === 'sales' ? t('menu.dashboard_sales') :
                         user?.role === 'marketer' ? t('menu.analytics') : t('menu.dashboard'),
                 path: dashboardPath,
