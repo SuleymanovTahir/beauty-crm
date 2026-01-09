@@ -47,6 +47,7 @@ const FeatureManagement = React.lazy(() => import('./pages/adminPanel/FeatureMan
 
 const Chat = React.lazy(() => import('./pages/manager/Chat'));
 const InternalChat = React.lazy(() => import('./components/shared/InternalChat'));
+const Broadcasts = React.lazy(() => import('./pages/admin/Broadcasts'));
 
 // Employee routes use shared components
 const EmployeeProfile = React.lazy(() => import('./pages/employee/Profile'));
@@ -310,7 +311,7 @@ export default function App() {
                 <Route path="trash" element={<TrashBin />} />
                 <Route path="audit-log" element={<ProtectedRoute element={<AuditLog />} isAuthenticated={!!currentUser} requiredRole="director" currentRole={currentUser?.role} />} />
                 <Route path="internal-chat" element={<InternalChat />} />
-                <Route path="broadcasts" element={<div className="p-8">Broadcasts page coming soon</div>} />
+                <Route path="broadcasts" element={<Broadcasts />} />
               </Route>
 
               {/* Manager Routes - Protected */}
