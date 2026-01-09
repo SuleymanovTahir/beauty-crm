@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/ta
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useTranslation } from 'react-i18next';
+import { getPhotoUrl } from '../../utils/photoUtils';
 
 interface UserProfile {
   id: number;
@@ -367,8 +368,14 @@ export default function EmployeeProfile() {
         </div>
 
         {/* ✅ НОВОЕ: Вкладки для разделения функционала */}
-        <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs defaultValue={employeeProfile ? "employee" : "profile"} className="space-y-6">
+          <TabsList className={`grid w-full ${employeeProfile ? 'grid-cols-3' : 'grid-cols-2'}`}>
+            {employeeProfile && (
+              <TabsTrigger value="employee">
+                <Briefcase className="w-4 h-4 mr-2" />
+                Профиль сотрудника
+              </TabsTrigger>
+            )}
             <TabsTrigger value="profile">
               <UserIcon className="w-4 h-4 mr-2" />
               {t('profile:edit_profile')}
@@ -377,19 +384,19 @@ export default function EmployeeProfile() {
               <Key className="w-4 h-4 mr-2" />
               {t('profile:change_password')}
             </TabsTrigger>
-            {employeeProfile && (
-              <TabsTrigger value="employee">
-                <Briefcase className="w-4 h-4 mr-2" />
-                Профиль сотрудника
-              </TabsTrigger>
-            )}
           </TabsList>
 
-          {/* ✅ Вкладка: Редактирование профиля */}
+          {/* ✅ Вкладка: Редактирование профиля (учетная запись) */}
           <TabsContent value="profile">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('profile:personal_information')}</h2>
-              
+              <h2 className="text-xl text-gray-900 mb-6 font-semibold">Учетная запись</h2>
+
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  <strong>ℹ️ Информация:</strong> Здесь вы можете изменить данные для входа в систему. Для изменения публичной информации используйте вкладку "Профиль сотрудника".
+                </p>
+              </div>
+
               <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div>
                   <Label htmlFor="username">{t('profile:username')} *</Label>
@@ -405,19 +412,6 @@ export default function EmployeeProfile() {
                   <p className="text-sm text-gray-500 mt-1">
                     {t('profile:username_must_be_at_least_3_characters')}
                   </p>
-                </div>
-
-                <div>
-                  <Label htmlFor="full_name">{t('profile:full_name')} *</Label>
-                  <Input
-                    id="full_name"
-                    required
-                    disabled={saving}
-                    value={profileData.full_name}
-                    onChange={(e) => setProfileData({ ...profileData, full_name: e.target.value })}
-                    placeholder={t('profile:full_name_placeholder')}
-                    minLength={2}
-                  />
                 </div>
 
                 <div>
@@ -439,8 +433,8 @@ export default function EmployeeProfile() {
                   </p>
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={saving}
                   className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
                 >
@@ -553,9 +547,13 @@ export default function EmployeeProfile() {
                     <div className="relative">
                       {photoPreview ? (
                         <img
-                          src={photoPreview}
+                          src={getPhotoUrl(photoPreview) || photoPreview}
                           alt="Profile"
                           className="w-32 h-32 rounded-full object-cover border-4 border-pink-200"
+                          onError={(e) => {
+                            const img = e.target as HTMLImageElement;
+                            img.style.display = 'none';
+                          }}
                         />
                       ) : (
                         <div className="w-32 h-32 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">

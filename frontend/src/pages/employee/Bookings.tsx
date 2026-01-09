@@ -30,18 +30,38 @@ export default function EmployeeBookings() {
   const loadBookings = async () => {
     try {
       setLoading(true);
-      const response = await api.getBookings();
-      const allBookings = response.bookings || [];
+      const response = await fetch('/api/bookings', {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        throw new Error(t('common:error_loading'));
+      }
+      const data = await response.json();
+      const allBookings = data.bookings || [];
 
       // Filter bookings based on selected filter
       const now = new Date();
+      now.setHours(0, 0, 0, 0); // Start of today
       let filtered = allBookings;
 
       if (filter === 'upcoming') {
-        filtered = allBookings.filter((b: Booking) => new Date(b.datetime) >= now);
+        filtered = allBookings.filter((b: Booking) => {
+          const bookingDate = new Date(b.datetime);
+          return bookingDate >= now;
+        });
       } else if (filter === 'past') {
-        filtered = allBookings.filter((b: Booking) => new Date(b.datetime) < now);
+        filtered = allBookings.filter((b: Booking) => {
+          const bookingDate = new Date(b.datetime);
+          return bookingDate < now;
+        });
       }
+
+      // Sort by datetime (newest first for past, earliest first for upcoming)
+      filtered.sort((a: Booking, b: Booking) => {
+        const dateA = new Date(a.datetime).getTime();
+        const dateB = new Date(b.datetime).getTime();
+        return filter === 'past' ? dateB - dateA : dateA - dateB;
+      });
 
       setBookings(filtered);
     } catch (err: any) {
