@@ -11,7 +11,50 @@ export default function AudioPlayer({ src, className = '' }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [waveformData, setWaveformData] = useState<number[]>([]);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+
+  // Extract waveform data from audio
+  useEffect(() => {
+    const extractWaveform = async () => {
+      try {
+        const response = await fetch(src);
+        const arrayBuffer = await response.arrayBuffer();
+
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+        const rawData = audioBuffer.getChannelData(0);
+        const samples = 30; // Number of bars in waveform
+        const blockSize = Math.floor(rawData.length / samples);
+        const filteredData: number[] = [];
+
+        for (let i = 0; i < samples; i++) {
+          const blockStart = blockSize * i;
+          let sum = 0;
+          for (let j = 0; j < blockSize; j++) {
+            sum += Math.abs(rawData[blockStart + j]);
+          }
+          filteredData.push(sum / blockSize);
+        }
+
+        // Normalize to 0-100 range
+        const multiplier = Math.max(...filteredData);
+        const normalized = filteredData.map(n => (n / multiplier) * 100);
+        setWaveformData(normalized);
+
+        audioContext.close();
+      } catch (error) {
+        console.error('Error extracting waveform:', error);
+        // Fallback to random data if extraction fails
+        setWaveformData(Array.from({ length: 30 }, () => Math.random() * 100));
+      }
+    };
+
+    extractWaveform();
+  }, [src]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -95,23 +138,35 @@ export default function AudioPlayer({ src, className = '' }: AudioPlayerProps) {
             style={{ width: `${progress}%` }}
           />
 
-          {/* Fake waveform bars */}
+          {/* Real waveform bars */}
           <div className="absolute inset-0 flex items-center justify-around px-2">
-            {[...Array(30)].map((_, i) => {
-              const height = Math.random() * 60 + 20;
-              const isPast = (i / 30) * 100 < progress;
-              return (
+            {waveformData.length > 0 ? (
+              waveformData.map((height, i) => {
+                const isPast = (i / waveformData.length) * 100 < progress;
+                // Map height from 0-100 to 20-80 for visual consistency
+                const visualHeight = 20 + (height * 0.6);
+                return (
+                  <div
+                    key={i}
+                    className={`w-0.5 rounded-full transition-all ${
+                      isPast
+                        ? 'bg-white'
+                        : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
+                    style={{ height: `${visualHeight}%` }}
+                  />
+                );
+              })
+            ) : (
+              // Loading skeleton
+              [...Array(30)].map((_, i) => (
                 <div
                   key={i}
-                  className={`w-0.5 rounded-full transition-all ${
-                    isPast
-                      ? 'bg-white'
-                      : 'bg-gray-300 dark:bg-gray-600'
-                  }`}
-                  style={{ height: `${height}%` }}
+                  className="w-0.5 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"
+                  style={{ height: '40%' }}
                 />
-              );
-            })}
+              ))
+            )}
           </div>
         </div>
 
