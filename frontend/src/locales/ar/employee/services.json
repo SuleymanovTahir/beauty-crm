@@ -1,0 +1,12 @@
+{
+  "our_services": "خدماتنا",
+  "browse_available_services": "عرض خدمات الصالون المتوفرة",
+  "no_services": "لم يتم العثور على الخدمات",
+  "no_services_description": "لا توجد خدمات متاحة للعرض في هذا الوقت.",
+  "service_name": "اسم الخدمة",
+  "description": "وصف",
+  "price": "سعر",
+  "duration": "مدة",
+  "category": "فئة",
+  "min": "دقيقة"
+}

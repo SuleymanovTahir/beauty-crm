@@ -68,6 +68,7 @@
   "edit_position_placeholder": "Каталогтан орынды таңдаңыз",
   "edit_save": "Сақтау",
   "edit_saving": "Сақталуда...",
+  "edit_time_off": "Мерекені өңдеу",
   "edit_username_label": "Жүйеге кіру",
   "edit_username_placeholder": "Пайдаланушыға кіру",
   "email": "Email",
@@ -140,6 +141,7 @@
   "new_password": "New Password",
   "no_email_set": "No email address set",
   "no_history": "No payroll history found",
+  "no_name": "Аты жоқ",
   "no_permission_to_change_roles": "Басқа пайдаланушылардың рөлдерін өзгертуге рұқсатыңыз жоқ.",
   "no_time_off": "No time-off periods scheduled",
   "no_users_found": "Ешбір пайдаланушы табылмады",
@@ -274,6 +276,7 @@
   "time_off": "Time-off / Absences",
   "time_off_added": "Time-off added successfully",
   "time_off_deleted": "Time-off deleted",
+  "time_off_updated": "Демалыс уақыты жаңартылды",
   "title": "Пайдаланушыны басқару",
   "total_bookings": "Total Bookings",
   "total_revenue": "Total Revenue",
@@ -291,7 +294,5 @@
   "view_details": "View details",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience",
-  "edit_time_off": "Мерекені өңдеу",
-  "time_off_updated": "Демалыс уақыты жаңартылды"
+  "years_of_experience": "Years of Experience"
 }

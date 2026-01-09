@@ -35,5 +35,7 @@
   "try_reloading_page": "Try reloading the page",
   "use_complex_password_at_least_6_characters": "Use a complex password (minimum 6 characters).",
   "username": "Login",
-  "username_must_be_at_least_3_characters": "Login must contain at least 3 characters"
+  "username_must_be_at_least_3_characters": "Login must contain at least 3 characters",
+  "employee_profile": "Employee profile",
+  "account": "Account"
 }

@@ -1,0 +1,12 @@
+{
+  "our_services": "Біздің қызметтеріміз",
+  "browse_available_services": "Қол жетімді салон қызметтерін қараңыз",
+  "no_services": "Қызметтер табылмады",
+  "no_services_description": "Қазіргі уақытта көрсетілетін қызметтер жоқ.",
+  "service_name": "Қызмет атауы",
+  "description": "Сипаттама",
+  "price": "Бағасы",
+  "duration": "Ұзақтығы",
+  "category": "Санат",
+  "min": "мин"
+}

@@ -9,5 +9,6 @@
   "schedule_for_today": "Agenda para hoy",
   "today": "Hoy",
   "today_bookings": "Publicaciones de hoy",
-  "unknown_error": "Error desconocido"
+  "unknown_error": "Error desconocido",
+  "welcome": "Bienvenido"
 }

@@ -25,6 +25,8 @@
   "full_name_placeholder": "अपना नाम दर्ज करें",
   "i_accept": "मुझे स्वीकार है",
   "new_code_sent": "आपके ईमेल पर एक नया कोड भेज दिया गया है!",
+  "only_for_staff": "कृपया ध्यान दें: यह पंजीकरण केवल सैलून स्टाफ के लिए है।",
+  "or_register_with_email": "या ईमेल के माध्यम से रजिस्टर करें",
   "password": "पासवर्ड",
   "password_placeholder": "न्यूनतम 6 अक्षर",
   "phone": "फ़ोन नंबर",
@@ -33,6 +35,8 @@
   "position_placeholder": "एक पद चुनें",
   "privacy_policy": "गोपनीयता नीति",
   "register_button": "पंजीकरण करवाना",
+  "register_staff_subtitle": "सीआरएम तक पहुंचने के लिए जानकारी भरें। आपका आवेदन व्यवस्थापक द्वारा अनुमोदित होना चाहिए.",
+  "register_staff_title": "कर्मचारी पंजीकरण",
   "register_subtitle": "CRM सिस्टम में एक खाता बनाएँ",
   "register_title": "पंजीकरण",
   "registering": "पंजीकरण...",
@@ -58,8 +62,5 @@
   "verification_title": "ईमेल पुष्टिकरण",
   "verify_button": "पुष्टि करना",
   "verifying": "परीक्षा...",
-  "your_code": "आपका कोड:",
-  "register_staff_title": "कर्मचारी पंजीकरण",
-  "register_staff_subtitle": "सीआरएम तक पहुंचने के लिए जानकारी भरें। आपका आवेदन व्यवस्थापक द्वारा अनुमोदित होना चाहिए.",
-  "only_for_staff": "कृपया ध्यान दें: यह पंजीकरण केवल सैलून स्टाफ के लिए है।"
+  "your_code": "आपका कोड:"
 }

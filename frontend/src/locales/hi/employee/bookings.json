@@ -1,0 +1,21 @@
+{
+  "my_bookings": "मेरी प्रविष्टियाँ",
+  "view_and_manage_bookings": "ग्राहक रिकॉर्ड देखें और प्रबंधित करें",
+  "all": "सभी",
+  "upcoming": "आगामी",
+  "past": "अतीत",
+  "no_bookings": "अभी तक कोई पोस्ट नहीं है",
+  "no_bookings_description": "आपके पास कोई प्रविष्टियाँ नहीं हैं. नई प्रविष्टियाँ स्वचालित रूप से यहाँ दिखाई देंगी।",
+  "booking": "booking",
+  "client": "ग्राहक",
+  "service": "ब्यूटी सैलून सेवा सेवा",
+  "date_time": "तिथि और समय",
+  "phone": "टेलीफ़ोन",
+  "notes": "टिप्पणियाँ",
+  "no_name": "नाम निर्दिष्ट नहीं है",
+  "no_phone": "फ़ोन नंबर निर्दिष्ट नहीं है",
+  "status_confirmed": "की पुष्टि",
+  "status_pending": "इंतज़ार में",
+  "status_cancelled": "रद्द कर दिया गया",
+  "status_completed": "पुरा होना।"
+}

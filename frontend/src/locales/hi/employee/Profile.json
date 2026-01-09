@@ -35,5 +35,7 @@
   "try_reloading_page": "पृष्ठ को पुनः लोड करने का प्रयास करें",
   "use_complex_password_at_least_6_characters": "एक जटिल पासवर्ड (न्यूनतम 6 अक्षर) का उपयोग करें।",
   "username": "लॉग इन करें",
-  "username_must_be_at_least_3_characters": "लॉगिन में कम से कम 3 अक्षर होने चाहिए"
+  "username_must_be_at_least_3_characters": "लॉगिन में कम से कम 3 अक्षर होने चाहिए",
+  "employee_profile": "कर्मचारी प्रोफ़ाइल",
+  "account": "खाता"
 }

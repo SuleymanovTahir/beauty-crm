@@ -25,6 +25,8 @@
   "full_name_placeholder": "Entrez votre nom",
   "i_accept": "J'accepte",
   "new_code_sent": "Un nouveau code a été envoyé à votre email !",
+  "only_for_staff": "Attention : cette inscription est réservée au personnel du salon.",
+  "or_register_with_email": "Ou inscrivez-vous à email",
   "password": "Mot de passe",
   "password_placeholder": "Minimum 6 caractères",
   "phone": "Phone Number",
@@ -33,6 +35,8 @@
   "position_placeholder": "Sélectionnez un poste",
   "privacy_policy": "politique de confidentialité",
   "register_button": "Registre",
+  "register_staff_subtitle": "Remplissez les informations pour accéder au CRM. Votre demande doit être approuvée à l'administrateur.",
+  "register_staff_title": "Inscription des employés",
   "register_subtitle": "Créer un compte dans le système CRM",
   "register_title": "Inscription",
   "registering": "Inscription...",
@@ -58,8 +62,5 @@
   "verification_title": "Confirmation par e-mail",
   "verify_button": "Confirmer",
   "verifying": "Examen...",
-  "your_code": "Votre code :",
-  "register_staff_title": "Inscription des employés",
-  "register_staff_subtitle": "Remplissez les informations pour accéder au CRM. Votre demande doit être approuvée à l'administrateur.",
-  "only_for_staff": "Attention : cette inscription est réservée au personnel du salon."
+  "your_code": "Votre code :"
 }

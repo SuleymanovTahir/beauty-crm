@@ -1,0 +1,21 @@
+{
+  "my_bookings": "مداخلاتي",
+  "view_and_manage_bookings": "عرض وإدارة سجلات العملاء",
+  "all": "الجميع",
+  "upcoming": "القادمة",
+  "past": "ماضي",
+  "no_bookings": "لا توجد مشاركات حتى الآن",
+  "no_bookings_description": "ليس لديك أي إدخالات. ستظهر الإدخالات الجديدة هنا تلقائيًا.",
+  "booking": "booking",
+  "client": "عميل",
+  "service": "الخدمة",
+  "date_time": "التاريخ والوقت",
+  "phone": "هاتف",
+  "notes": "ملحوظات",
+  "no_name": "الاسم غير محدد",
+  "no_phone": "رقم الهاتف غير محدد",
+  "status_confirmed": "مؤكد",
+  "status_pending": "منتظر",
+  "status_cancelled": "تم الإلغاء",
+  "status_completed": "مكتمل"
+}

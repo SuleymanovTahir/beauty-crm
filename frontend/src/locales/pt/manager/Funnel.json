@@ -1,33 +1,33 @@
 {
-  "Your funnel shows good results": {
-    " Keep it up!": "Mantem!"
-  },
-  "title": "Funil de vendas",
-  "subtitle": "Gerenciamento de estágio e conversão",
-  "funnel": "Funil",
-  "search_clients": "Procurando clientes...",
-  "quick_add": "Adição rápida",
-  "no_clients": "Nenhum cliente",
-  "moved_successfully": "Cliente movido com sucesso",
-  "move_failed": "Erro ao mover",
+  "all_good": "Está tudo bem! Seu funil está apresentando bons resultados.",
   "conversion": {
-    "visitor_to_engaged": "Visitante -> Envolvido",
-    "engaged_to_booking": "Noivo -> Gravação iniciada",
+    "booked_to_completed": "Inscrito -> Concluído",
     "booking_to_booked": "Gravação iniciada -> Inscrito",
-    "booked_to_completed": "Inscrito -> Concluído"
+    "engaged_to_booking": "Noivo -> Gravação iniciada",
+    "visitor_to_engaged": "Visitante -> Envolvido"
   },
+  "funnel": "Funil",
   "funnel_chart": "Gráfico de funil",
   "key_metrics": "Métricas principais",
+  "move_failed": "Erro ao mover",
+  "moved_successfully": "Cliente movido com sucesso",
+  "no_clients": "Nenhum cliente",
+  "quick_add": "Adição rápida",
+  "recommendations_title": "Recomendações",
+  "search_clients": "Procurando clientes...",
+  "stage_details": "Etapas de detalhamento",
+  "subtitle": "Gerenciamento de estágio e conversão",
+  "successful_visits": "Visitas bem-sucedidas",
+  "table": {
+    "count": "Quantidade",
+    "losses": "Perdas",
+    "percentage": "até cento",
+    "stage": "Estágio"
+  },
+  "title": "Funil de vendas",
   "total_conversion": "Conversão total",
   "total_losses": "Perdas totais",
-  "successful_visits": "Visitas bem-sucedidas",
-  "recommendations_title": "Recomendações",
-  "all_good": "Está tudo bem! Seu funil está apresentando bons resultados.",
-  "stage_details": "Etapas de detalhamento",
-  "table": {
-    "stage": "Estágio",
-    "count": "Quantidade",
-    "percentage": "até cento",
-    "losses": "Perdas"
+  "Your funnel shows good results": {
+    " Keep it up!": ""
   }
 }

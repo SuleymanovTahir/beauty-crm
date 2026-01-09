@@ -25,6 +25,8 @@
   "full_name_placeholder": "Атыңызды енгізіңіз",
   "i_accept": "қабылдаймын",
   "new_code_sent": "Электрондық поштаңызға жаңа код жіберілді!",
+  "only_for_staff": "Назар аударыңыз: бұл тіркеу тек салон қызметкерлеріне арналған.",
+  "or_register_with_email": "Немесе электрондық пошта арқылы тіркеліңіз",
   "password": "Құпия сөз",
   "password_placeholder": "Кемінде 6 таңба",
   "phone": "Phone Number",
@@ -33,6 +35,8 @@
   "position_placeholder": "Позицияны таңдаңыз",
   "privacy_policy": "құпиялылық саясаты",
   "register_button": "Тіркелу",
+  "register_staff_subtitle": "CRM жүйесіне қол жеткізу үшін ақпаратты толтырыңыз. Сіздің өтінішіңізді әкімші бекітуі керек.",
+  "register_staff_title": "Қызметкерлерді тіркеу",
   "register_subtitle": "CRM жүйесінде тіркелгі жасаңыз",
   "register_title": "Тіркеу",
   "registering": "Тіркелу...",
@@ -58,8 +62,5 @@
   "verification_title": "Электрондық поштаны растау",
   "verify_button": "Растау",
   "verifying": "Емтихан...",
-  "your_code": "Сіздің кодыңыз:",
-  "register_staff_title": "Қызметкерлерді тіркеу",
-  "register_staff_subtitle": "CRM жүйесіне қол жеткізу үшін ақпаратты толтырыңыз. Сіздің өтінішіңізді әкімші бекітуі керек.",
-  "only_for_staff": "Назар аударыңыз: бұл тіркеу тек салон қызметкерлеріне арналған."
+  "your_code": "Сіздің кодыңыз:"
 }
