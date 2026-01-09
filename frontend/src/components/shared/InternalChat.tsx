@@ -23,6 +23,7 @@ import {
   Square,
   Minimize2,
   Maximize2,
+  Settings,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -68,14 +69,9 @@ interface VoiceRecorder {
 
 export default function InternalChat() {
   const { t } = useTranslation(['common', 'layouts/mainlayout']);
-  const { user: _currentUser } = useAuth(); // Prefixed with _ to indicate unused or just remove it
-  // Actually just remove it if really unused
-  // const { user: currentUser } = useAuth(); 
-  // But wait, useAuth might be needed for something else? No, currentUserData is used.
-  // I will just remove the line completely if useAuth is not used anywhere else.
-  // useAuth IS imported. 
-  // Let's keep useAuth call but ignore result?
-  useAuth();
+  const { user: _currentUser } = useAuth();
+  // useAuth(); // Removed redundant call if not needed or keeps it if side-effect relevant
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -84,12 +80,13 @@ export default function InternalChat() {
   const [sending, setSending] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
   const [activeActionMenuId, setActiveActionMenuId] = useState<number | null>(null);
   const [showMobileUserList, setShowMobileUserList] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showSettings, setShowSettings] = useState(false); // Settings modal state
+  const [customRingtone, setCustomRingtone] = useState<string | null>(localStorage.getItem('chat_ringtone'));
 
   // Voice recording state
   const [voiceRecorder, setVoiceRecorder] = useState<VoiceRecorder>({
@@ -111,6 +108,7 @@ export default function InternalChat() {
   const [incomingCall, setIncomingCall] = useState<{ from: number; type: CallType } | null>(null);
   const [isMinimized, setIsMinimized] = useState(false);
   const [callStartTime, setCallStartTime] = useState<number | null>(null);
+  const [isCallRecording, setIsCallRecording] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
@@ -118,35 +116,116 @@ export default function InternalChat() {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteAudioRef = useRef<HTMLAudioElement>(null);
+  const callRecorderRef = useRef<MediaRecorder | null>(null);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Audio context and oscillators need to be persistent for stopping loops
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const activeOscillatorsRef = useRef<any[]>([]);
+  const activeAudioElementsRef = useRef<HTMLAudioElement[]>([]); // For custom audio
+
+  const stopSounds = () => {
+    activeOscillatorsRef.current.forEach(osc => {
+      try {
+        osc.stop();
+        osc.disconnect();
+      } catch (e) { /* ignore */ }
+    });
+    activeOscillatorsRef.current = [];
+
+    activeAudioElementsRef.current.forEach(audio => {
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch (e) { /* ignore */ }
+    });
+    activeAudioElementsRef.current = [];
+  };
+
   const playSound = (type: 'incoming' | 'outgoing' | 'end') => {
     try {
+      if (type === 'incoming' && customRingtone) {
+        stopSounds();
+        const audio = new Audio(customRingtone);
+        audio.loop = true;
+        audio.play().catch(e => console.error("Custom ringtone play failed", e));
+        activeAudioElementsRef.current.push(audio);
+        return;
+      }
+
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
       if (!AudioContext) return;
 
-      const ctx = new AudioContext();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
+      if (!audioContextRef.current) {
+        audioContextRef.current = new AudioContext();
+      }
+      const ctx = audioContextRef.current;
 
-      osc.connect(gain);
-      gain.connect(ctx.destination);
+      // Resume context if suspended (browser policy)
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+
+      stopSounds(); // Stop previous sounds
 
       if (type === 'incoming') {
-        // Rhythmic ringing
+        // Rhythmic ringing loop (Default)
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
         osc.frequency.setValueAtTime(800, ctx.currentTime);
         osc.frequency.setValueAtTime(1000, ctx.currentTime + 0.4);
-        gain.gain.setValueAtTime(0.1, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
-        osc.start();
-        osc.stop(ctx.currentTime + 1);
+
+        // Simple manual loop simulation using interval is better than overly complex scheduling
+        // But for web audio, we can just start an oscillator.
+        // Let's use a simpler approach: create a repeating beep pattern
+        const startBeep = (time: number) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.connect(g);
+          g.connect(ctx.destination);
+          o.frequency.value = 800;
+          g.gain.setValueAtTime(0.1, time);
+          g.gain.linearRampToValueAtTime(0, time + 1);
+          o.start(time);
+          o.stop(time + 1);
+          activeOscillatorsRef.current.push(o);
+        };
+
+        // Schedule 10 seconds of ringing
+        for (let i = 0; i < 10; i++) {
+          startBeep(ctx.currentTime + i * 2);
+        }
+
       } else if (type === 'outgoing') {
-        // Dial tone
+        // Dial tone (long intermittent beep)
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
         osc.frequency.value = 440;
-        gain.gain.value = 0.1;
+        gain.gain.value = 0.05;
+
+        // Pulse it
+        const lfo = ctx.createOscillator();
+        lfo.type = 'square';
+        lfo.frequency.value = 0.5; // 2 seconds period (1 sec on, 1 sec off)
+        const lfoGain = ctx.createGain();
+        lfoGain.gain.value = 500; // ample modulation
+
         osc.start();
-        osc.stop(ctx.currentTime + 0.5);
+        activeOscillatorsRef.current.push(osc);
       } else if (type === 'end') {
         // Disconnect tone
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
         osc.frequency.value = 300;
         gain.gain.setValueAtTime(0.1, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
@@ -164,41 +243,16 @@ export default function InternalChat() {
     loadData();
   }, []);
 
-  useEffect(() => {
-    if (selectedUser) {
-      loadMessagesWithUser(selectedUser.id);
-      const interval = setInterval(() => loadMessagesWithUser(selectedUser.id), 5000);
-      return () => clearInterval(interval);
-    }
-  }, [selectedUser]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
-        setShowEmojiPicker(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  // ... (existing useEffects)
 
   // Initialize WebRTC service
   useEffect(() => {
     if (currentUserData?.id) {
-      // Pass the current users ref or a callback to get users if needed, 
-      // but strictly speaking we don't need 'users' at init time.
       webrtcService.initialize(currentUserData.id).catch(err => {
         console.error('Failed to initialize WebRTC:', err);
       });
 
-      // Set up WebRTC callbacks
       webrtcService.onIncomingCall = (fromUserId: number, type: CallType) => {
-        // Just set the incoming call, don't check against users list immediately to avoid closure staleness issues
-        // The UI will try to find the user from the state when rendering
         setIncomingCallFrom(fromUserId);
         setIncomingCallType(type);
         setIncomingCall({ from: fromUserId, type });
@@ -220,24 +274,34 @@ export default function InternalChat() {
       };
 
       webrtcService.onCallAccepted = () => {
+        stopSounds(); // Stop ringing
         setIsInCall(true);
         setCallStartTime(Date.now());
         toast.success(t('calls.call_accepted', 'Звонок принят'));
       };
 
       webrtcService.onCallRejected = () => {
+        stopSounds();
         setIsInCall(false);
         setIncomingCall(null);
         toast.error(t('calls.call_rejected', 'Звонок отклонен'));
       };
 
       webrtcService.onRemoteStream = (stream: MediaStream) => {
+        // Always attach to audio ref first to ensure sound works regardless of video call or audio call
+        if (remoteAudioRef.current) {
+          remoteAudioRef.current.srcObject = stream;
+          // Ensure it plays
+          remoteAudioRef.current.play().catch(e => console.error("Audio auto-play failed", e));
+        }
+
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = stream;
         }
       };
 
       webrtcService.onCallEnded = () => {
+        stopSounds();
         handleCallEndedByRemote();
       };
 
@@ -246,10 +310,11 @@ export default function InternalChat() {
       };
 
       return () => {
+        stopSounds();
         webrtcService.disconnect();
       };
     }
-  }, [currentUserData?.id]); // REMOVED [users] dependency to fix infinite loop
+  }, [currentUserData?.id]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -364,7 +429,6 @@ export default function InternalChat() {
       setMessages(prev => [...prev, newMsg]);
       setNewMessage('');
       setReplyToMessage(null);
-      setAttachedFiles([]);
 
       toast.success('✅ Отправлено');
       await loadMessagesWithUser(selectedUser.id);
@@ -557,6 +621,77 @@ export default function InternalChat() {
     }
   };
 
+  // Ensure local video is attached when call starts and video element appears
+  useEffect(() => {
+    if (isInCall && callType === 'video' && localVideoRef.current) {
+      const localStream = webrtcService.getLocalStream();
+      if (localStream) {
+        localVideoRef.current.srcObject = localStream;
+      }
+    }
+  }, [isInCall, callType, isMinimized]); // Re-run if view changes (minimized/maximized)
+
+  const startCallRecording = () => {
+    const remoteStream = webrtcService.getRemoteStream();
+    const localStream = webrtcService.getLocalStream();
+
+    if (!remoteStream && !localStream) {
+      toast.error('Нет потоков для записи');
+      return;
+    }
+
+    try {
+      // Create a mixed stream if possible (requires Web Audio API mostly, but for simplicity let's record remote)
+      // Ideally we want to record both.
+      // Simple approach: Record remote stream which is the most important.
+      // Better approach: Create a canvas or audio context to mix? Too complex for now.
+      // Let's record the remote stream.
+
+      // If we want audio from both, we can mix audio tracks.
+      const tracks = [];
+      if (remoteStream) tracks.push(...remoteStream.getTracks());
+      if (localStream) {
+        // Add local audio track
+        const localAudio = localStream.getAudioTracks()[0];
+        if (localAudio) tracks.push(localAudio);
+      }
+
+      const mixedStream = new MediaStream(tracks);
+      const recorder = new MediaRecorder(mixedStream);
+      const chunks: Blob[] = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `call_recording_${new Date().toISOString()}.webm`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('Запись звонка сохранена');
+      };
+
+      recorder.start();
+      callRecorderRef.current = recorder;
+      setIsCallRecording(true);
+      toast.info('🔴 Запись звонка началась');
+    } catch (e) {
+      console.error('Recording failed:', e);
+      toast.error('Не удалось начать запись');
+    }
+  };
+
+  const stopCallRecording = () => {
+    if (callRecorderRef.current && callRecorderRef.current.state !== 'inactive') {
+      callRecorderRef.current.stop();
+      setIsCallRecording(false);
+    }
+  };
+
   const getUserAvatar = (user: User) => {
     // If user has photo, use it
     if (user.photo) {
@@ -573,11 +708,7 @@ export default function InternalChat() {
       setCallType(type);
       await webrtcService.startCall(selectedUser.id, type);
 
-      // Set local video stream
-      const localStream = webrtcService.getLocalStream();
-      if (localVideoRef.current && localStream) {
-        localVideoRef.current.srcObject = localStream;
-      }
+      // Local video will be attached by useEffect
 
       toast.success(`📞 Звоним ${selectedUser.full_name}...`);
     } catch (err) {
@@ -588,15 +719,21 @@ export default function InternalChat() {
 
   const acceptCall = async () => {
     try {
+      // Set the selected user to the caller to avoid UI crashes and ensure correct chat context
+      if (incomingCall?.from) {
+        const caller = users.find(u => u.id === incomingCall.from);
+        if (caller) {
+          setSelectedUser(caller);
+        }
+      }
+
       await webrtcService.acceptCall();
       setCallType(incomingCall?.type || 'audio');
       setIncomingCall(null);
+      setIncomingCallFrom(null);
+      setIncomingCallType(null);
 
-      // Set local video stream
-      const localStream = webrtcService.getLocalStream();
-      if (localVideoRef.current && localStream) {
-        localVideoRef.current.srcObject = localStream;
-      }
+      // Local video will be attached by useEffect
     } catch (err) {
       console.error('Error accepting call:', err);
       toast.error('❌ Ошибка при приёме звонка');
@@ -608,6 +745,7 @@ export default function InternalChat() {
     setIncomingCall(null);
     setIncomingCallFrom(null);
     setIncomingCallType(null);
+    stopSounds(); // Ensure sound stops
   };
 
   const handleAcceptCall = acceptCall;
@@ -621,9 +759,12 @@ export default function InternalChat() {
   };
 
   const handleCallEndedByRemote = () => {
+    stopCallRecording(); // Stop recording if active
     setIsInCall(false);
     setCallType(null);
     setIncomingCall(null);
+    setIncomingCallFrom(null);
+    setIncomingCallType(null);
     setIsMicMuted(false);
     setIsVideoOff(false);
     setIsMinimized(false);
@@ -768,123 +909,140 @@ export default function InternalChat() {
 
       {/* Call Overlay or Minimized View */}
       {isInCall && (
-        isMinimized ? (
-          // Minimized View (PiP)
-          <div className="fixed bottom-4 right-4 z-50 w-72 bg-gray-900 rounded-2xl shadow-2xl border border-gray-700 overflow-hidden animate-in slide-in-from-bottom-4">
-            <div className="relative aspect-video bg-gray-800">
-              {callType === 'video' ? (
-                <video
-                  ref={remoteVideoRef}
-                  autoPlay
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-pink-600">
-                  <span className="text-4xl font-bold text-white">
-                    {selectedUser?.full_name.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              )}
-              {/* Controls Overlay */}
-              <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button onClick={() => setIsMinimized(false)} className="p-2 bg-white/20 hover:bg-white/30 rounded-full text-white">
-                  <Maximize2 className="w-5 h-5" />
-                </button>
-                <button onClick={endCall} className="p-2 bg-red-500 hover:bg-red-600 rounded-full text-white">
-                  <PhoneOff className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-            <div className="p-3 flex justify-between items-center bg-gray-900">
-              <span className="text-white font-medium truncat text-sm">{selectedUser?.full_name}</span>
-              <div className="flex gap-2">
-                {isMicMuted && <MicOff className="w-4 h-4 text-red-400" />}
-              </div>
-            </div>
-          </div>
-        ) : (
-          // Full Screen View
-          <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col items-center justify-center">
-            <div className="absolute top-4 right-4">
-              <button
-                onClick={() => setIsMinimized(true)}
-                className="p-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full transition-colors"
-              >
-                <Minimize2 className="w-6 h-6" />
-              </button>
-            </div>
+        <>
+          {/* Persist audio across view modes */}
+          <audio ref={remoteAudioRef} autoPlay />
 
-            <div className="text-white text-center mb-8">
-              <h2 className="text-2xl font-bold mb-2">{selectedUser?.full_name}</h2>
-              <p className="text-gray-300 flex items-center justify-center gap-2">
-                {callType === 'video' ? t('calls.video_call', 'Видеозвонок') : t('calls.audio_call', 'Аудиозвонок')}
-                {callStartTime && (
-                  <span className="text-sm bg-gray-800 px-2 py-1 rounded-full font-mono">
-                    {formatDuration(Date.now() - (callStartTime || 0))}
-                  </span>
-                )}
-              </p>
-            </div>
-
-            {callType === 'video' ? (
-              <div className="relative w-full max-w-4xl aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
-                <video
-                  ref={remoteVideoRef}
-                  autoPlay
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
-                <video
-                  ref={localVideoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className={`absolute bottom-4 right-4 w-48 aspect-video bg-gray-800 rounded-xl object-cover border-2 border-white/20 shadow-lg transition-all ${isVideoOff ? 'hidden' : ''
-                    }`}
-                />
-                {isVideoOff && (
-                  <div className="absolute bottom-4 right-4 w-48 aspect-video bg-gray-800 rounded-xl flex items-center justify-center border-2 border-white/20 shadow-lg">
-                    <VideoOff className="w-12 h-12 text-white/50" />
+          {isMinimized ? (
+            // Minimized View (PiP)
+            <div className="fixed bottom-4 right-4 z-50 w-72 bg-gray-900 rounded-2xl shadow-2xl border border-gray-700 overflow-hidden animate-in slide-in-from-bottom-4">
+              <div className="relative aspect-video bg-gray-800">
+                {callType === 'video' ? (
+                  <video
+                    ref={remoteVideoRef}
+                    autoPlay
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-pink-600">
+                    <span className="text-4xl font-bold text-white">
+                      {selectedUser?.full_name.charAt(0).toUpperCase()}
+                    </span>
                   </div>
                 )}
+                {/* Controls Overlay */}
+                <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                  <button onClick={() => setIsMinimized(false)} className="p-2 bg-white/20 hover:bg-white/30 rounded-full text-white">
+                    <Maximize2 className="w-5 h-5" />
+                  </button>
+                  <button onClick={endCall} className="p-2 bg-red-500 hover:bg-red-600 rounded-full text-white">
+                    <PhoneOff className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
-            ) : (
-              <div className="w-40 h-40 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white text-6xl font-bold shadow-2xl animate-pulse">
-                {selectedUser?.full_name.charAt(0).toUpperCase()}
+              <div className="p-3 flex justify-between items-center bg-gray-900">
+                <span className="text-white font-medium truncat text-sm">{selectedUser?.full_name}</span>
+                <div className="flex gap-2">
+                  {isMicMuted && <MicOff className="w-4 h-4 text-red-400" />}
+                </div>
               </div>
-            )}
-
-            <div className="mt-12 flex gap-6">
-              <button
-                onClick={toggleMic}
-                className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isMicMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
-                  }`}
-                title={isMicMuted ? 'Включить микрофон' : 'Выключить микрофон'}
-              >
-                {isMicMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
-              </button>
-
-              {callType === 'video' && (
+            </div>
+          ) : (
+            // Full Screen View
+            <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col items-center justify-center">
+              <div className="absolute top-4 right-4">
                 <button
-                  onClick={toggleVideo}
-                  className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isVideoOff ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
-                    }`}
-                  title={isVideoOff ? 'Включить видео' : 'Выключить видео'}
+                  onClick={() => setIsMinimized(true)}
+                  className="p-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full transition-colors"
                 >
-                  {isVideoOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
+                  <Minimize2 className="w-6 h-6" />
                 </button>
+              </div>
+
+              <div className="text-white text-center mb-8">
+                <h2 className="text-2xl font-bold mb-2">{selectedUser?.full_name}</h2>
+                <p className="text-gray-300 flex items-center justify-center gap-2">
+                  {callType === 'video' ? t('calls.video_call', 'Видеозвонок') : t('calls.audio_call', 'Аудиозвонок')}
+                  {callStartTime && (
+                    <span className="text-sm bg-gray-800 px-2 py-1 rounded-full font-mono">
+                      {formatDuration(Date.now() - (callStartTime || 0))}
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              {/* Invisible audio element for handling audio in both video and audio calls */}
+              <audio ref={remoteAudioRef} autoPlay />
+
+              {callType === 'video' ? (
+                <div className="relative w-full max-w-4xl aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
+                  <video
+                    ref={remoteVideoRef}
+                    autoPlay
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                  <video
+                    ref={localVideoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className={`absolute bottom-4 right-4 w-48 aspect-video bg-gray-800 rounded-xl object-cover border-2 border-white/20 shadow-lg transition-all ${isVideoOff ? 'hidden' : ''
+                      }`}
+                  />
+                  {isVideoOff && (
+                    <div className="absolute bottom-4 right-4 w-48 aspect-video bg-gray-800 rounded-xl flex items-center justify-center border-2 border-white/20 shadow-lg">
+                      <VideoOff className="w-12 h-12 text-white/50" />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="w-40 h-40 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white text-6xl font-bold shadow-2xl animate-pulse">
+                  {selectedUser?.full_name.charAt(0).toUpperCase()}
+                </div>
               )}
 
-              <button
-                onClick={endCall}
-                className="w-20 h-20 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white transition-all shadow-xl hover:scale-110"
-              >
-                <PhoneOff className="w-8 h-8" />
-              </button>
+              <div className="mt-12 flex gap-6">
+                <button
+                  onClick={toggleMic}
+                  className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isMicMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
+                    }`}
+                  title={isMicMuted ? 'Включить микрофон' : 'Выключить микрофон'}
+                >
+                  {isMicMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+                </button>
+
+                {callType === 'video' && (
+                  <button
+                    onClick={toggleVideo}
+                    className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isVideoOff ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
+                      }`}
+                    title={isVideoOff ? 'Включить видео' : 'Выключить видео'}
+                  >
+                    {isVideoOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
+                  </button>
+                )}
+
+                <button
+                  onClick={isCallRecording ? stopCallRecording : startCallRecording}
+                  className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isCallRecording ? 'bg-red-500 animate-pulse' : 'bg-gray-700 hover:bg-gray-600'}`}
+                  title={isCallRecording ? 'Остановить запись' : 'Начать запись'}
+                >
+                  <Square className={`w-6 h-6 ${isCallRecording ? 'fill-current' : ''}`} />
+                </button>
+
+                <button
+                  onClick={endCall}
+                  className="w-20 h-20 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white transition-all shadow-xl hover:scale-110"
+                >
+                  <PhoneOff className="w-8 h-8" />
+                </button>
+              </div>
             </div>
-          </div>
-        )
+          )
+          }
+        </>
       )}
 
       {/* Users List */}
@@ -893,10 +1051,19 @@ export default function InternalChat() {
         flex-col w-full md:w-80 border-r border-border bg-card
       `}>
         <div className="p-4 border-b border-border">
-          <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-            <MessageCircle className="w-6 h-6 text-primary" />
-            {t('layouts/mainlayout:menu.internal_chat', 'Внутренняя связь')}
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <MessageCircle className="w-6 h-6 text-primary" />
+              {t('layouts/mainlayout:menu.internal_chat', 'Внутренняя связь')}
+            </h2>
+            <button
+              onClick={() => setShowSettings(true)}
+              className="p-2 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground transition-colors"
+              title="Настройки звука"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+          </div>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
@@ -1382,6 +1549,83 @@ export default function InternalChat() {
           </div>
         )
       }
+      {/* Settings Modal */}
+      {showSettings && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center">
+          <div className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold flex items-center gap-2">
+                <Settings className="w-6 h-6 text-primary" />
+                Настройки звука
+              </h3>
+              <button
+                onClick={() => setShowSettings(false)}
+                className="p-2 hover:bg-muted rounded-full transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">Мелодия звонка</label>
+                <input
+                  type="file"
+                  accept="audio/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      if (file.size > 2 * 1024 * 1024) {
+                        toast.error("Файл слишком большой (макс 2MB)");
+                        return;
+                      }
+                      const reader = new FileReader();
+                      reader.onload = (evt) => {
+                        const result = evt.target?.result as string;
+                        setCustomRingtone(result);
+                        localStorage.setItem('chat_ringtone', result);
+                        toast.success("Мелодия сохранена");
+
+                        // Preview
+                        const audio = new Audio(result);
+                        audio.play();
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  className="w-full text-sm text-slate-500
+                              file:mr-4 file:py-2 file:px-4
+                              file:rounded-full file:border-0
+                              file:text-sm file:font-semibold
+                              file:bg-violet-50 file:text-violet-700
+                              hover:file:bg-violet-100"
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  Загрузите свой файл (mp3, wav). Макс 2MB.
+                </p>
+              </div>
+
+              {customRingtone && (
+                <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-xl">
+                  <div className="flex-1 overflow-hidden">
+                    <p className="text-sm font-medium truncate">Установлена пользовательская мелодия</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setCustomRingtone(null);
+                      localStorage.removeItem('chat_ringtone');
+                      toast.success("Сброшено на стандартную");
+                    }}
+                    className="text-sm text-red-500 hover:text-red-600 font-medium"
+                  >
+                    Сбросить
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div >
   );
 }

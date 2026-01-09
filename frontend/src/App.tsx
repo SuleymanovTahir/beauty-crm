@@ -51,10 +51,10 @@ const Broadcasts = React.lazy(() => import('./pages/admin/Broadcasts'));
 
 // Employee routes
 const EmployeeProfile = React.lazy(() => import('./pages/employee/Profile'));
-const EmployeeSettings = React.lazy(() => import('./pages/employee/Settings'));
 const EmployeeTasks = React.lazy(() => import('./pages/employee/Tasks'));
 const EmployeeBookings = React.lazy(() => import('./pages/employee/Bookings'));
 const EmployeeServices = React.lazy(() => import('./pages/employee/Services'));
+const EmployeeDashboard = React.lazy(() => import('./pages/employee/Dashboard'));
 
 // const PublicLayout = React.lazy(() => import('./components/layouts/PublicLayout'));
 // const Success = React.lazy(() => import('./pages/public/Success'));
@@ -410,7 +410,7 @@ export default function App() {
                   />
                 }
               >
-                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="dashboard" element={<EmployeeDashboard />} />
                 <Route path="profile" element={<EmployeeProfile />} />
                 <Route path="settings" element={<Navigate to="/employee/profile" replace />} />
                 <Route path="calendar" element={<Calendar employeeFilter={true} />} />
