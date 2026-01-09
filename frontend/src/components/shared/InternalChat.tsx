@@ -32,6 +32,9 @@ import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import { webrtcService, CallType } from '../../services/webrtc';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { getPhotoUrl } from '../../utils/photoUtils';
+import AudioPlayer from './AudioPlayer';
+import IncomingCallModal from '../calls/IncomingCallModal';
+import CallQualityIndicator, { ConnectionQuality } from '../calls/CallQualityIndicator';
 
 interface Message {
   id: number;
@@ -91,6 +94,10 @@ export default function InternalChat() {
   // Video/Audio call state
   const [isInCall, setIsInCall] = useState(false);
   const [callType, setCallType] = useState<CallType | null>(null);
+  const [incomingCallFrom, setIncomingCallFrom] = useState<number | null>(null);
+  const [incomingCallType, setIncomingCallType] = useState<CallType | null>(null);
+  const [connectionQuality, setConnectionQuality] = useState<ConnectionQuality>('good');
+  const [qualityStats, setQualityStats] = useState({ latency: 0, packetLoss: 0 });
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [incomingCall, setIncomingCall] = useState<{ from: number; type: CallType } | null>(null);
@@ -143,9 +150,15 @@ export default function InternalChat() {
       webrtcService.onIncomingCall = (fromUserId: number, type: CallType) => {
         const caller = users.find(u => u.id === fromUserId);
         if (caller) {
+          setIncomingCallFrom(fromUserId);
+          setIncomingCallType(type);
           setIncomingCall({ from: fromUserId, type });
-          toast.info(`📞 Входящий ${type === 'video' ? 'видео' : 'аудио'} звонок от ${caller.full_name}`);
         }
+      };
+
+      webrtcService.onQualityChange = (quality, stats) => {
+        setConnectionQuality(quality);
+        setQualityStats(stats);
       };
 
       webrtcService.onCallAccepted = () => {
@@ -254,7 +267,8 @@ export default function InternalChat() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: fileUrl || finalMessage,
-          to_user_id: selectedUser.id
+          to_user_id: selectedUser.id,
+          type: messageType // Добавляем тип сообщения
         })
       });
 
@@ -520,7 +534,12 @@ export default function InternalChat() {
   const rejectCall = () => {
     webrtcService.rejectCall();
     setIncomingCall(null);
+    setIncomingCallFrom(null);
+    setIncomingCallType(null);
   };
+
+  const handleAcceptCall = acceptCall;
+  const handleRejectCall = rejectCall;
 
   const endCall = () => {
     webrtcService.endCall();
@@ -897,12 +916,8 @@ export default function InternalChat() {
                               className="max-w-full rounded-lg"
                             />
                           ) : msg.type === 'voice' || msg.type === 'audio' ? (
-                            <div className="min-w-[240px]">
-                              <audio
-                                src={getImageUrl(msg)}
-                                controls
-                                className="w-full"
-                              />
+                            <div className="min-w-[280px]">
+                              <AudioPlayer src={getImageUrl(msg)} />
                             </div>
                           ) : msg.type === 'file' ? (
                             <a
@@ -1164,6 +1179,28 @@ export default function InternalChat() {
           </>
         )}
       </div>
+
+      {/* Incoming Call Modal */}
+      {incomingCallFrom && incomingCallType && (
+        <IncomingCallModal
+          callerName={users.find(u => u.id === incomingCallFrom)?.full_name || 'Unknown'}
+          callerId={incomingCallFrom}
+          callType={incomingCallType}
+          onAccept={handleAcceptCall}
+          onReject={handleRejectCall}
+        />
+      )}
+
+      {/* Call Quality Indicator - shown during active call */}
+      {isInCall && (
+        <div className="fixed top-4 right-4 z-50">
+          <CallQualityIndicator
+            quality={connectionQuality}
+            latency={Math.round(qualityStats.latency)}
+            packetLoss={Math.round(qualityStats.packetLoss * 10) / 10}
+          />
+        </div>
+      )}
     </div>
   );
 }

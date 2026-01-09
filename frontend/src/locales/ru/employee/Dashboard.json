@@ -9,5 +9,6 @@
   "schedule_for_today": "Расписание на сегодня",
   "today": "Сегодня",
   "today_bookings": "Записей сегодня",
-  "unknown_error": "Неизвестная ошибка"
+  "unknown_error": "Неизвестная ошибка",
+  "welcome": "Добро пожаловать"
 }
