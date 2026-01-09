@@ -379,12 +379,12 @@ export default function EmployeeProfile() {
             {employeeProfile && (
               <TabsTrigger value="employee">
                 <Briefcase className="w-4 h-4 mr-2" />
-                Профиль сотрудника
+                {t('profile:employee_profile')}
               </TabsTrigger>
             )}
             <TabsTrigger value="profile">
               <UserIcon className="w-4 h-4 mr-2" />
-              {t('profile:edit_profile')}
+              {t('profile:account')}
             </TabsTrigger>
             <TabsTrigger value="password">
               <Key className="w-4 h-4 mr-2" />
@@ -395,7 +395,7 @@ export default function EmployeeProfile() {
           {/* ✅ Вкладка: Редактирование профиля (учетная запись) */}
           <TabsContent value="profile">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              <h2 className="text-xl text-gray-900 mb-6 font-semibold">Учетная запись</h2>
+              <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('profile:account')}</h2>
 
               <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
