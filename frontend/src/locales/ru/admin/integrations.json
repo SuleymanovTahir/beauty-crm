@@ -1,56 +1,24 @@
 {
-    "payment": {
-        "title": "Платежные системы",
-        "subtitle": "Настройка интеграций с платежными системами",
-        "status": "Статус",
-        "active": "Активен",
-        "inactive": "Не настроен",
-        "configure": "Настроить",
-        "setup": "Подключить",
-        "configSuccess": "Настройки сохранены",
-        "configureProvider": "Настройка",
-        "apiKey": "API ключ",
-        "secretKey": "Секретный ключ",
-        "webhookSecret": "Webhook Secret",
-        "webhookUrl": "URL для вебхука",
-        "enableProvider": "Включить провайдера"
-    },
-    "marketplace": {
-        "title": "Маркетплейсы",
-        "subtitle": "Интеграция с платформами бронирования",
-        "totalBookings": "Всего записей",
-        "activeSources": "Активных источников",
-        "bookings": "Записей",
-        "reviews": "Отзывов",
-        "lastSync": "Синхронизация",
-        "neverSynced": "Никогда",
-        "justNow": "Только что",
-        "minutesAgo": "{{count}} мин назад",
-        "hoursAgo": "{{count}} ч назад",
-        "daysAgo": "{{count}} дн назад",
-        "configure": "Настроить",
-        "sync": "Синхронизировать",
-        "syncing": "Синхронизация...",
-        "syncStarted": "Синхронизация запущена",
-        "configSuccess": "Настройки сохранены",
-        "configureProvider": "Настройка",
-        "apiKey": "API ключ",
-        "apiSecret": "API Secret",
-        "webhookUrl": "URL для вебхука",
-        "webhookHint": "Укажите этот URL в настройках вебхуков на платформе",
-        "enableProvider": "Включить интеграцию",
-        "urlCopied": "URL скопирован"
-    },
-    "errors": {
-        "loadFailed": "Ошибка загрузки данных",
-        "saveFailed": "Ошибка сохранения",
-        "syncFailed": "Ошибка синхронизации"
-    },
-    "common": {
-        "loading": "Загрузка...",
-        "save": "Сохранить",
-        "saving": "Сохранение...",
-        "cancel": "Отмена",
-        "copy": "Копировать"
-    }
+  "marketplace": {
+    "title": "Интеграции с маркетплейсами",
+    "subtitle": "Подключение платформ бронирования и маркетплейсов",
+    "totalBookings": "Всего записей",
+    "activeSources": "Активных источников",
+    "bookings": "Записей",
+    "reviews": "Отзывов",
+    "lastSync": "Последняя синхронизация",
+    "neverSynced": "Никогда",
+    "justNow": "Только что",
+    "minutesAgo": "{{count}} мин назад",
+    "hoursAgo": "{{count}} ч назад",
+    "daysAgo": "{{count}} дн назад",
+    "configure": "Настроить",
+    "sync": "Синхронизировать",
+    "syncing": "Синхронизация...",
+    "syncStarted": "Синхронизация запущена"
+  },
+  "errors": {
+    "loadFailed": "Ошибка загрузки данных",
+    "syncFailed": "Ошибка синхронизации"
+  }
 }
