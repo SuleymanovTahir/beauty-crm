@@ -247,8 +247,8 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                 <form onSubmit={handleSubmit}>
                     <div className="crm-form-grid">
                         <div className="crm-form-group">
-                            <label>{t('form.name')} *</label>
-                            <input
+                            <label className="crm-label">{t('form.name')} *</label>
+                            <input className="crm-input"
                                 type="text"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -257,8 +257,8 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                         </div>
 
                         <div className="crm-form-group">
-                            <label>{t('form.nameRu')}</label>
-                            <input
+                            <label className="crm-label">{t('form.nameRu')}</label>
+                            <input className="crm-input"
                                 type="text"
                                 value={formData.name_ru}
                                 onChange={(e) => setFormData({ ...formData, name_ru: e.target.value })}
@@ -266,8 +266,8 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                         </div>
 
                         <div className="crm-form-group">
-                            <label>{t('form.category')}</label>
-                            <input
+                            <label className="crm-label">{t('form.category')}</label>
+                            <input className="crm-input"
                                 type="text"
                                 value={formData.category}
                                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
@@ -275,8 +275,8 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                         </div>
 
                         <div className="crm-form-group">
-                            <label>{t('form.price')} *</label>
-                            <input
+                            <label className="crm-label">{t('form.price')} *</label>
+                            <input className="crm-input"
                                 type="number"
                                 step="0.01"
                                 value={formData.price}
@@ -286,8 +286,8 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                         </div>
 
                         <div className="crm-form-group">
-                            <label>{t('form.costPrice')}</label>
-                            <input
+                            <label className="crm-label">{t('form.costPrice')}</label>
+                            <input className="crm-input"
                                 type="number"
                                 step="0.01"
                                 value={formData.cost_price}
@@ -296,8 +296,8 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                         </div>
 
                         <div className="crm-form-group">
-                            <label>{t('form.stockQuantity')}</label>
-                            <input
+                            <label className="crm-label">{t('form.stockQuantity')}</label>
+                            <input className="crm-input"
                                 type="number"
                                 value={formData.stock_quantity}
                                 onChange={(e) => setFormData({ ...formData, stock_quantity: parseInt(e.target.value) })}
@@ -305,8 +305,8 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                         </div>
 
                         <div className="crm-form-group">
-                            <label>{t('form.minStockLevel')}</label>
-                            <input
+                            <label className="crm-label">{t('form.minStockLevel')}</label>
+                            <input className="crm-input"
                                 type="number"
                                 value={formData.min_stock_level}
                                 onChange={(e) => setFormData({ ...formData, min_stock_level: parseInt(e.target.value) })}
@@ -314,8 +314,8 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                         </div>
 
                         <div className="crm-form-group">
-                            <label>{t('form.sku')}</label>
-                            <input
+                            <label className="crm-label">{t('form.sku')}</label>
+                            <input className="crm-input"
                                 type="text"
                                 value={formData.sku}
                                 onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
@@ -324,8 +324,8 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                     </div>
 
                     <div className="crm-form-group">
-                        <label>{t('form.notes')}</label>
-                        <textarea
+                        <label className="crm-label">{t('form.notes')}</label>
+                        <textarea className="crm-textarea"
                             value={formData.notes}
                             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                             rows={3}
@@ -383,8 +383,9 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
                 <p className="product-name">{product.name}</p>
                 <form onSubmit={handleSubmit}>
                     <div className="crm-form-group">
-                        <label>{t('movement.type')}</label>
-                        <select
+                        <label className="crm-label">{t('movement.type')}</label>
+                        <select className="crm-select"
+                            className="crm-select"
                             value={formData.movement_type}
                             onChange={(e) => setFormData({ ...formData, movement_type: e.target.value })}
                         >
@@ -395,9 +396,10 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
                     </div>
 
                     <div className="crm-form-group">
-                        <label>{t('movement.quantity')}</label>
-                        <input
+                        <label className="crm-label">{t('movement.quantity')}</label>
+                        <input className="crm-input"
                             type="number"
+                            className="crm-input"
                             value={formData.quantity}
                             onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
                             required
@@ -405,8 +407,9 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
                     </div>
 
                     <div className="crm-form-group">
-                        <label>{t('movement.reason')}</label>
-                        <textarea
+                        <label className="crm-label">{t('movement.reason')}</label>
+                        <textarea className="crm-textarea"
+                            className="crm-textarea"
                             value={formData.reason}
                             onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                             rows={3}
