@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Send, Trash2, FileText } from 'lucide-react';
 import { api } from '../../services/api';
+import '../../styles/crm-pages.css';
+
 
 
 interface Contract {
@@ -56,29 +58,29 @@ const Contracts = () => {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'draft': return 'status-draft';
-            case 'sent': return 'status-sent';
-            case 'signed': return 'status-signed';
-            case 'cancelled': return 'status-cancelled';
+            case 'draft': return 'draft';
+            case 'sent': return 'sent';
+            case 'signed': return 'signed';
+            case 'cancelled': return 'cancelled';
             default: return '';
         }
     };
 
     return (
-        <div className="contracts-page">
-            <div className="page-header">
+        <div className="crm-page">
+            <div className="crm-page-header">
                 <h1>{t('title')}</h1>
-                <button className="btn-primary" onClick={() => setShowAddDialog(true)}>
+                <button className="crm-btn-primary" onClick={() => setShowAddDialog(true)}>
                     <Plus size={20} />
                     {t('addContract')}
                 </button>
             </div>
 
-            <div className="filters">
+            <div className="crm-filters">
                 <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="filter-select"
+                    className="crm-filter-select"
                 >
                     <option value="">{t('allStatuses')}</option>
                     <option value="draft">{t('statuses.draft')}</option>
@@ -89,10 +91,10 @@ const Contracts = () => {
             </div>
 
             {loading ? (
-                <div className="loading">{t('loading')}</div>
+                <div className="crm-loading">{t('loading')}</div>
             ) : (
-                <div className="contracts-table">
-                    <table>
+                <div className="crm-table-container">
+                    <table className="crm-table">
                         <thead>
                             <tr>
                                 <th>{t('contractNumber')}</th>
@@ -118,7 +120,7 @@ const Contracts = () => {
                                         </div>
                                     </td>
                                     <td>
-                                        <span className={`status-badge ${getStatusColor(contract.status)}`}>
+                                        <span className={`crm-badge ${getStatusColor(contract.status)}`}>
                                             {t(`statuses.${contract.status}`)}
                                         </span>
                                     </td>
@@ -126,7 +128,7 @@ const Contracts = () => {
                                     <td>
                                         <div className="actions">
                                             <button
-                                                className="btn-icon"
+                                                className="crm-btn-icon"
                                                 onClick={() => {
                                                     setSelectedContract(contract);
                                                     setShowSendDialog(true);
@@ -136,7 +138,7 @@ const Contracts = () => {
                                                 <Send size={16} />
                                             </button>
                                             <button
-                                                className="btn-icon"
+                                                className="crm-btn-icon"
                                                 onClick={() => handleDelete(contract.id)}
                                                 title={t('delete')}
                                             >
@@ -213,11 +215,11 @@ const AddContractDialog = ({ onClose, onSuccess }: any) => {
     };
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="crm-modal-overlay" onClick={onClose}>
+            <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
                 <h2>{t('addContract')}</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('form.selectClient')}</label>
                         <select
                             value={formData.client_id}
@@ -233,7 +235,7 @@ const AddContractDialog = ({ onClose, onSuccess }: any) => {
                         </select>
                     </div>
 
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('form.contractType')}</label>
                         <select
                             value={formData.contract_type}
@@ -245,11 +247,11 @@ const AddContractDialog = ({ onClose, onSuccess }: any) => {
                         </select>
                     </div>
 
-                    <div className="form-actions">
-                        <button type="button" className="btn-secondary" onClick={onClose}>
+                    <div className="crm-modal-footer">
+                        <button type="button" className="crm-btn-secondary" onClick={onClose}>
                             {t('form.cancel')}
                         </button>
-                        <button type="submit" className="btn-primary">
+                        <button type="submit" className="crm-btn-primary">
                             {t('form.save')}
                         </button>
                     </div>
@@ -277,11 +279,11 @@ const SendContractDialog = ({ contract, onClose, onSuccess }: any) => {
     };
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="crm-modal-overlay" onClick={onClose}>
+            <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
                 <h2>{t('sendDialog.title')}</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('sendDialog.method')}</label>
                         <select
                             value={formData.delivery_method}
@@ -294,7 +296,7 @@ const SendContractDialog = ({ contract, onClose, onSuccess }: any) => {
                         </select>
                     </div>
 
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('sendDialog.recipient')}</label>
                         <input
                             type="text"
@@ -304,11 +306,11 @@ const SendContractDialog = ({ contract, onClose, onSuccess }: any) => {
                         />
                     </div>
 
-                    <div className="form-actions">
-                        <button type="button" className="btn-secondary" onClick={onClose}>
+                    <div className="crm-modal-footer">
+                        <button type="button" className="crm-btn-secondary" onClick={onClose}>
                             {t('form.cancel')}
                         </button>
-                        <button type="submit" className="btn-primary">
+                        <button type="submit" className="crm-btn-primary">
                             {t('sendDialog.sendButton')}
                         </button>
                     </div>

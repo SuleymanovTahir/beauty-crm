@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Send, DollarSign, Trash2, FileText } from 'lucide-react';
 import { api } from '../../services/api';
+import '../../styles/crm-pages.css';
+
 
 
 interface Invoice {
@@ -57,12 +59,12 @@ const Invoices = () => {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'draft': return 'status-draft';
-            case 'sent': return 'status-sent';
-            case 'partial': return 'status-partial';
-            case 'paid': return 'status-paid';
-            case 'overdue': return 'status-overdue';
-            case 'cancelled': return 'status-cancelled';
+            case 'draft': return 'draft';
+            case 'sent': return 'sent';
+            case 'partial': return 'partial';
+            case 'paid': return 'paid';
+            case 'overdue': return 'overdue';
+            case 'cancelled': return 'cancelled';
             default: return '';
         }
     };
@@ -73,20 +75,20 @@ const Invoices = () => {
     };
 
     return (
-        <div className="invoices-page">
-            <div className="page-header">
+        <div className="crm-page">
+            <div className="crm-page-header">
                 <h1>{t('title')}</h1>
-                <button className="btn-primary" onClick={() => setShowAddDialog(true)}>
+                <button className="crm-btn-primary" onClick={() => setShowAddDialog(true)}>
                     <Plus size={20} />
                     {t('addInvoice')}
                 </button>
             </div>
 
-            <div className="filters">
+            <div className="crm-filters">
                 <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="filter-select"
+                    className="crm-filter-select"
                 >
                     <option value="">{t('allStatuses')}</option>
                     <option value="draft">{t('statuses.draft')}</option>
@@ -98,10 +100,10 @@ const Invoices = () => {
             </div>
 
             {loading ? (
-                <div className="loading">{t('loading')}</div>
+                <div className="crm-loading">{t('loading')}</div>
             ) : (
-                <div className="invoices-table">
-                    <table>
+                <div className="crm-table-container">
+                    <table className="crm-table">
                         <thead>
                             <tr>
                                 <th>{t('invoiceNumber')}</th>
@@ -143,7 +145,7 @@ const Invoices = () => {
                                         </div>
                                     </td>
                                     <td>
-                                        <span className={`status-badge ${getStatusColor(invoice.status)}`}>
+                                        <span className={`crm-badge ${getStatusColor(invoice.status)}`}>
                                             {t(`statuses.${invoice.status}`)}
                                         </span>
                                     </td>
@@ -153,7 +155,7 @@ const Invoices = () => {
                                     <td>
                                         <div className="actions">
                                             <button
-                                                className="btn-icon"
+                                                className="crm-btn-icon"
                                                 onClick={() => {
                                                     setSelectedInvoice(invoice);
                                                     setShowPaymentDialog(true);
@@ -163,7 +165,7 @@ const Invoices = () => {
                                                 <DollarSign size={16} />
                                             </button>
                                             <button
-                                                className="btn-icon"
+                                                className="crm-btn-icon"
                                                 onClick={() => {
                                                     setSelectedInvoice(invoice);
                                                     setShowSendDialog(true);
@@ -173,7 +175,7 @@ const Invoices = () => {
                                                 <Send size={16} />
                                             </button>
                                             <button
-                                                className="btn-icon"
+                                                className="crm-btn-icon"
                                                 onClick={() => handleDelete(invoice.id)}
                                                 title={t('delete')}
                                             >
@@ -294,11 +296,11 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
     };
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
+        <div className="crm-modal-overlay" onClick={onClose}>
+            <div className="crm-modal modal-large" onClick={(e) => e.stopPropagation()}>
                 <h2>{t('addInvoice')}</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('form.selectClient')}</label>
                         <select
                             value={formData.client_id}
@@ -347,7 +349,7 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                                 {items.length > 1 && (
                                     <button
                                         type="button"
-                                        className="btn-icon"
+                                        className="crm-btn-icon"
                                         onClick={() => removeItem(index)}
                                     >
                                         <Trash2 size={16} />
@@ -355,7 +357,7 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                                 )}
                             </div>
                         ))}
-                        <button type="button" className="btn-secondary" onClick={addItem}>
+                        <button type="button" className="crm-btn-secondary" onClick={addItem}>
                             {t('form.addItem')}
                         </button>
                     </div>
@@ -364,7 +366,7 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                         <strong>{t('totalAmount')}: {calculateTotal().toFixed(2)} AED</strong>
                     </div>
 
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('form.dueDate')}</label>
                         <input
                             type="date"
@@ -373,7 +375,7 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                         />
                     </div>
 
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('form.notes')}</label>
                         <textarea
                             value={formData.notes}
@@ -382,11 +384,11 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                         />
                     </div>
 
-                    <div className="form-actions">
-                        <button type="button" className="btn-secondary" onClick={onClose}>
+                    <div className="crm-modal-footer">
+                        <button type="button" className="crm-btn-secondary" onClick={onClose}>
                             {t('form.cancel')}
                         </button>
-                        <button type="submit" className="btn-primary">
+                        <button type="submit" className="crm-btn-primary">
                             {t('form.save')}
                         </button>
                     </div>
@@ -415,14 +417,14 @@ const PaymentDialog = ({ invoice, onClose, onSuccess }: any) => {
     };
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="crm-modal-overlay" onClick={onClose}>
+            <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
                 <h2>{t('payment.title')}</h2>
                 <p className="invoice-info">
                     {invoice.invoice_number} - {invoice.client_name}
                 </p>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('payment.amount')}</label>
                         <input
                             type="number"
@@ -434,7 +436,7 @@ const PaymentDialog = ({ invoice, onClose, onSuccess }: any) => {
                         />
                     </div>
 
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('payment.method')}</label>
                         <select
                             value={formData.payment_method}
@@ -447,7 +449,7 @@ const PaymentDialog = ({ invoice, onClose, onSuccess }: any) => {
                         </select>
                     </div>
 
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('payment.notes')}</label>
                         <textarea
                             value={formData.notes}
@@ -456,11 +458,11 @@ const PaymentDialog = ({ invoice, onClose, onSuccess }: any) => {
                         />
                     </div>
 
-                    <div className="form-actions">
-                        <button type="button" className="btn-secondary" onClick={onClose}>
+                    <div className="crm-modal-footer">
+                        <button type="button" className="crm-btn-secondary" onClick={onClose}>
                             {t('form.cancel')}
                         </button>
-                        <button type="submit" className="btn-primary">
+                        <button type="submit" className="crm-btn-primary">
                             {t('payment.add')}
                         </button>
                     </div>
@@ -488,11 +490,11 @@ const SendInvoiceDialog = ({ invoice, onClose, onSuccess }: any) => {
     };
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="crm-modal-overlay" onClick={onClose}>
+            <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
                 <h2>{t('sendDialog.title')}</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('sendDialog.method')}</label>
                         <select
                             value={formData.delivery_method}
@@ -504,7 +506,7 @@ const SendInvoiceDialog = ({ invoice, onClose, onSuccess }: any) => {
                         </select>
                     </div>
 
-                    <div className="form-group">
+                    <div className="crm-form-group">
                         <label>{t('sendDialog.recipient')}</label>
                         <input
                             type="text"
@@ -514,11 +516,11 @@ const SendInvoiceDialog = ({ invoice, onClose, onSuccess }: any) => {
                         />
                     </div>
 
-                    <div className="form-actions">
-                        <button type="button" className="btn-secondary" onClick={onClose}>
+                    <div className="crm-modal-footer">
+                        <button type="button" className="crm-btn-secondary" onClick={onClose}>
                             {t('form.cancel')}
                         </button>
-                        <button type="submit" className="btn-primary">
+                        <button type="submit" className="crm-btn-primary">
                             {t('sendDialog.sendButton')}
                         </button>
                     </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import LanguageSwitcher from '../LanguageSwitcher';
@@ -60,6 +60,8 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
     const [userProfile, setUserProfile] = useState<any>(null);
     const [menuSettings, setMenuSettings] = useState<{ menu_order: string[] | null; hidden_items: string[] | null } | null>(null);
+    const activeMenuItemRef = useRef<HTMLButtonElement>(null);
+    const navContainerRef = useRef<HTMLDivElement>(null);
 
     // Используем централизованную систему прав
     const permissions = usePermissions(user?.role || 'employee');
@@ -116,6 +118,25 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             window.removeEventListener('profile-updated', handleProfileUpdate);
         };
     }, [user?.role]);
+
+    // Auto-scroll to active menu item
+    useEffect(() => {
+        if (activeMenuItemRef.current && navContainerRef.current) {
+            const menuItem = activeMenuItemRef.current;
+            const container = navContainerRef.current;
+
+            // Calculate scroll position to center the active item
+            const itemTop = menuItem.offsetTop;
+            const itemHeight = menuItem.offsetHeight;
+            const containerHeight = container.clientHeight;
+            const scrollPosition = itemTop - (containerHeight / 2) + (itemHeight / 2);
+
+            container.scrollTo({
+                top: scrollPosition,
+                behavior: 'smooth'
+            });
+        }
+    }, [location.pathname]);
 
     const loadEnabledMessengers = async () => {
         try {
@@ -371,13 +392,16 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                     </div>
 
                     {/* Menu Items */}
-                    <nav className="flex-1 overflow-y-auto p-3">
+                    <nav ref={navContainerRef} className="flex-1 overflow-y-auto p-3">
                         <ul className="space-y-1">
-                            {menuItems.map((item, index) => (
+                            {menuItems.map((item, index) => {
+                                const isActive = location.pathname.startsWith(item.path);
+                                return (
                                 <li key={index}>
                                     {item.hasSubmenu ? (
                                         <div>
                                             <button
+                                                ref={isActive ? activeMenuItemRef : null}
                                                 onClick={() => setShowChatSubmenu(!showChatSubmenu)}
                                                 className={`
                           w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm
@@ -430,6 +454,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                         </div>
                                     ) : (
                                         <button
+                                            ref={isActive ? activeMenuItemRef : null}
                                             onClick={() => {
                                                 navigate(item.path);
                                                 setIsMobileMenuOpen(false);
@@ -453,7 +478,8 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                         </button>
                                     )}
                                 </li>
-                            ))}
+                                );
+                            })}
                         </ul>
                     </nav>
 
