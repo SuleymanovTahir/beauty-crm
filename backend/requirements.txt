@@ -24,3 +24,5 @@ charset-normalizer
 certifi
 urllib3
 psycopg2-binary
+python-docx
+aiosmtplib
