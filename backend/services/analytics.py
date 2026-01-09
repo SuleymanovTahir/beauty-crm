@@ -401,3 +401,80 @@ class AnalyticsService:
             "bookings_count": bookings_count,
             "revenue": round(daily_revenue, 2)
         }
+
+    def get_employee_dashboard_stats(self, user_id: int) -> Dict[str, Any]:
+        """
+        Получить статистику для дашборда сотрудника:
+        - Рейтинг
+        - Расчетный доход за текущий месяц (оклад + %)
+        """
+        try:
+            # 1. Рейтинг из public_reviews
+            # Check if table exists first? Assuming schema is migrated.
+            # Use avg(rating)
+            try:
+                self.c.execute("""
+                    SELECT COALESCE(AVG(rating), 0)
+                    FROM public_reviews
+                    WHERE employee_id = %s
+                """, (user_id,))
+                row = self.c.fetchone()
+                rating = round(row[0] or 0, 1) if row else 0
+            except:
+                # Fallback if table doesn't exist or error
+                rating = 0
+
+            # Если рейтинга нет (0), вернем 5.0 как дефолт для новичков
+            if rating == 0:
+                rating = 5.0
+
+            # 2. Настройки зарплаты (оклад, процент)
+            self.c.execute("""
+                SELECT base_salary, commission_rate, full_name
+                FROM users 
+                WHERE id = %s
+            """, (user_id,))
+            user_row = self.c.fetchone()
+            
+            if not user_row:
+                return {}
+
+            base_salary = float(user_row[0]) if user_row[0] else 0.0
+            commission_rate = float(user_row[1]) if user_row[1] else 0.0
+            full_name = user_row[2]
+
+            # 3. Выручка за текущий месяц (completed bookings)
+            now = datetime.now()
+            start_month = now.strftime('%Y-%m-01 00:00:00')
+            
+            self.c.execute("""
+                SELECT COALESCE(SUM(revenue), 0)
+                FROM bookings
+                WHERE master = %s
+                AND status = 'completed'
+                AND datetime >= %s
+            """, (full_name, start_month))
+            
+            month_revenue = float(self.c.fetchone()[0] or 0.0)
+            
+            # 4. Расчет дохода
+            commission_income = (month_revenue * commission_rate) / 100
+            total_income = base_salary + commission_income
+            
+            return {
+                "rating": rating,
+                "income_month": round(total_income, 2),
+                "month_revenue": round(month_revenue, 2),
+                "base_salary": base_salary,
+                "commission_rate": commission_rate
+            }
+            
+        except Exception as e:
+            log_error(f"Error calculating employee stats: {e}", "analytics")
+            return {
+                "rating": 5.0,
+                "income_month": 0.0,
+                "month_revenue": 0.0,
+                "base_salary": 0.0,
+                "commission_rate": 0.0
+            }

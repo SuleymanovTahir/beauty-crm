@@ -70,13 +70,21 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
 
     const [salarySettings, setSalarySettings] = useState({
         base_salary: employee?.base_salary || 0,
-        commission_rate: employee?.commission_rate || 0
+        commission_rate: employee?.commission_rate || 0,
+        hourly_rate: (employee as any)?.hourly_rate || 0,
+        daily_rate: (employee as any)?.daily_rate || 0,
+        per_booking_rate: (employee as any)?.per_booking_rate || 0,
+        salary_type: 'commission' // fixed, commission, hourly, daily, per_booking
     });
 
     useEffect(() => {
         setSalarySettings({
             base_salary: employee?.base_salary || 0,
-            commission_rate: employee?.commission_rate || 0
+            commission_rate: employee?.commission_rate || 0,
+            hourly_rate: (employee as any)?.hourly_rate || 0,
+            daily_rate: (employee as any)?.daily_rate || 0,
+            per_booking_rate: (employee as any)?.per_booking_rate || 0,
+            salary_type: 'commission'
         });
     }, [employee]);
 
@@ -139,7 +147,10 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
             setSavingSettings(true);
             await api.post(`/api/users/${employeeId}/update-profile`, {
                 base_salary: salarySettings.base_salary,
-                commission_rate: salarySettings.commission_rate
+                commission_rate: salarySettings.commission_rate,
+                hourly_rate: salarySettings.hourly_rate,
+                daily_rate: salarySettings.daily_rate,
+                per_booking_rate: salarySettings.per_booking_rate
             });
             toast.success(t('settings_saved', 'Settings saved'));
             onUpdate();
@@ -176,37 +187,108 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">{t('salary_type', 'Тип расчета зарплаты')}</label>
+                        <select
+                            value={salarySettings.salary_type}
+                            onChange={(e) => setSalarySettings(prev => ({ ...prev, salary_type: e.target.value }))}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        >
+                            <option value="fixed">{t('salary_type_fixed', 'Фиксированный оклад')}</option>
+                            <option value="commission">{t('salary_type_commission', 'Оклад + % от выручки')}</option>
+                            <option value="hourly">{t('salary_type_hourly', 'Почасовая оплата')}</option>
+                            <option value="daily">{t('salary_type_daily', 'Оплата за день')}</option>
+                            <option value="per_booking">{t('salary_type_per_booking', 'Оплата за запись')}</option>
+                        </select>
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">{t('base_salary', 'Base Salary')}</label>
-                            <div className="relative">
-                                <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                                <Input
-                                    type="number"
-                                    value={salarySettings.base_salary}
-                                    onChange={(e) => setSalarySettings(prev => ({ ...prev, base_salary: parseFloat(e.target.value) || 0 }))}
-                                    className="pl-8"
-                                    placeholder="0"
-                                />
+                        {(salarySettings.salary_type === 'fixed' || salarySettings.salary_type === 'commission') && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">{t('base_salary', 'Base Salary')}</label>
+                                <div className="relative">
+                                    <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                    <Input
+                                        type="number"
+                                        value={salarySettings.base_salary}
+                                        onChange={(e) => setSalarySettings(prev => ({ ...prev, base_salary: parseFloat(e.target.value) || 0 }))}
+                                        className="pl-8"
+                                        placeholder="0"
+                                    />
+                                </div>
+                                <p className="text-xs text-gray-500">{t('base_salary_hint', 'Fixed monthly salary')}</p>
                             </div>
-                            <p className="text-xs text-gray-500">{t('base_salary_hint', 'Fixed monthly salary')}</p>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">{t('commission_rate', 'Commission Rate (%)')}</label>
-                            <div className="relative">
-                                <Percent className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                                <Input
-                                    type="number"
-                                    value={salarySettings.commission_rate}
-                                    onChange={(e) => setSalarySettings(prev => ({ ...prev, commission_rate: parseFloat(e.target.value) || 0 }))}
-                                    className="pl-8"
-                                    placeholder="0"
-                                    min="0"
-                                    max="100"
-                                />
+                        )}
+
+                        {salarySettings.salary_type === 'commission' && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">{t('commission_rate', 'Commission Rate (%)')}</label>
+                                <div className="relative">
+                                    <Percent className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                    <Input
+                                        type="number"
+                                        value={salarySettings.commission_rate}
+                                        onChange={(e) => setSalarySettings(prev => ({ ...prev, commission_rate: parseFloat(e.target.value) || 0 }))}
+                                        className="pl-8"
+                                        placeholder="0"
+                                        min="0"
+                                        max="100"
+                                    />
+                                </div>
+                                <p className="text-xs text-gray-500">{t('commission_rate_hint', 'Percentage of revenue')}</p>
                             </div>
-                            <p className="text-xs text-gray-500">{t('commission_rate_hint', 'Percentage of revenue')}</p>
-                        </div>
+                        )}
+
+                        {salarySettings.salary_type === 'hourly' && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">{t('hourly_rate', 'Ставка за час')}</label>
+                                <div className="relative">
+                                    <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                    <Input
+                                        type="number"
+                                        value={salarySettings.hourly_rate}
+                                        onChange={(e) => setSalarySettings(prev => ({ ...prev, hourly_rate: parseFloat(e.target.value) || 0 }))}
+                                        className="pl-8"
+                                        placeholder="0"
+                                    />
+                                </div>
+                                <p className="text-xs text-gray-500">{t('hourly_rate_hint', 'Оплата за каждый отработанный час')}</p>
+                            </div>
+                        )}
+
+                        {salarySettings.salary_type === 'daily' && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">{t('daily_rate', 'Ставка за день')}</label>
+                                <div className="relative">
+                                    <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                    <Input
+                                        type="number"
+                                        value={salarySettings.daily_rate}
+                                        onChange={(e) => setSalarySettings(prev => ({ ...prev, daily_rate: parseFloat(e.target.value) || 0 }))}
+                                        className="pl-8"
+                                        placeholder="0"
+                                    />
+                                </div>
+                                <p className="text-xs text-gray-500">{t('daily_rate_hint', 'Оплата за каждый отработанный день')}</p>
+                            </div>
+                        )}
+
+                        {salarySettings.salary_type === 'per_booking' && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">{t('per_booking_rate', 'Оплата за запись')}</label>
+                                <div className="relative">
+                                    <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                    <Input
+                                        type="number"
+                                        value={salarySettings.per_booking_rate}
+                                        onChange={(e) => setSalarySettings(prev => ({ ...prev, per_booking_rate: parseFloat(e.target.value) || 0 }))}
+                                        className="pl-8"
+                                        placeholder="0"
+                                    />
+                                </div>
+                                <p className="text-xs text-gray-500">{t('per_booking_rate_hint', 'Оплата за каждую завершенную запись')}</p>
+                            </div>
+                        )}
                     </div>
                     <Button onClick={handleSaveSettings} disabled={savingSettings}>
                         {savingSettings ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
