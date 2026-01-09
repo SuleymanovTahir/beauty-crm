@@ -34,11 +34,8 @@ const Contracts = () => {
     const loadContracts = async () => {
         try {
             setLoading(true);
-            const params: any = {};
-            if (filterStatus) params.status = filterStatus;
-
-            const response = await api.get('/contracts', { params });
-            setContracts(response.data.contracts);
+            const response = await api.getContracts(undefined, filterStatus);
+            setContracts(response.contracts);
         } catch (error) {
             console.error('Error loading contracts:', error);
         } finally {

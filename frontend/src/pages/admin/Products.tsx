@@ -34,11 +34,8 @@ const Products = () => {
     const loadProducts = async () => {
         try {
             setLoading(true);
-            const params: any = {};
-            if (filterCategory) params.category = filterCategory;
-
-            const response = await api.get('/products', { params });
-            setProducts(response.data.products);
+            const response = await api.getProducts(filterCategory);
+            setProducts(response.products);
         } catch (error) {
             console.error('Error loading products:', error);
         } finally {
@@ -48,8 +45,8 @@ const Products = () => {
 
     const loadCategories = async () => {
         try {
-            const response = await api.get('/products/categories');
-            setCategories(response.data.categories);
+            const response = await api.getProductCategories();
+            setCategories(response.categories);
         } catch (error) {
             console.error('Error loading categories:', error);
         }
