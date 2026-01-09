@@ -133,9 +133,36 @@ async def get_products(
             })
         
         return {"products": products}
-        
+
     except Exception as e:
         log_warning(f"❌ Ошибка получения товаров: {e}", "api")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+@router.get("/products/categories")
+async def get_product_categories(
+    current_user: dict = Depends(get_current_user)
+):
+    """Получить список категорий товаров"""
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            SELECT DISTINCT category
+            FROM products
+            WHERE category IS NOT NULL
+            ORDER BY category
+        """)
+
+        categories = [row[0] for row in c.fetchall()]
+
+        return {"categories": categories}
+
+    except Exception as e:
+        log_warning(f"❌ Ошибка получения категорий: {e}", "api")
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
@@ -417,33 +444,6 @@ async def get_product_movements(
         
     except Exception as e:
         log_warning(f"❌ Ошибка получения движений товара: {e}", "api")
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        conn.close()
-
-
-@router.get("/products/categories")
-async def get_product_categories(
-    current_user: dict = Depends(get_current_user)
-):
-    """Получить список категорий товаров"""
-    conn = get_db_connection()
-    c = conn.cursor()
-    
-    try:
-        c.execute("""
-            SELECT DISTINCT category
-            FROM products
-            WHERE category IS NOT NULL
-            ORDER BY category
-        """)
-        
-        categories = [row[0] for row in c.fetchall()]
-        
-        return {"categories": categories}
-        
-    except Exception as e:
-        log_warning(f"❌ Ошибка получения категорий: {e}", "api")
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
