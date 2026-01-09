@@ -115,6 +115,11 @@ from api.menu_settings import router as menu_settings_router
 from api.trash import router as trash_router
 from api.audit import router as audit_router
 from api.webrtc_signaling import router as webrtc_router
+from api.contracts import router as contracts_router
+from api.products import router as products_router
+from api.invoices import router as invoices_router
+from api.funnel_checkpoints import router as funnel_checkpoints_router
+
 
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -205,7 +210,12 @@ app.include_router(menu_settings_router, prefix="/api")
 app.include_router(trash_router, prefix="/api")
 app.include_router(audit_router, prefix="/api")
 app.include_router(webrtc_router)  # WebRTC signaling for video/audio calls
+app.include_router(contracts_router, prefix="/api")  # Contracts API
+app.include_router(products_router, prefix="/api")  # Products API
+app.include_router(invoices_router, prefix="/api")  # Invoices API
+app.include_router(funnel_checkpoints_router, prefix="/api")  # Funnel Checkpoints API
  # Menu Settings API
+
 
 
 # ===== MIDDLEWARE =====

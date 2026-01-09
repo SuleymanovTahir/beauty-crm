@@ -1,0 +1,50 @@
+{
+    "title": "Договоры",
+    "addContract": "Добавить договор",
+    "contractNumber": "Номер договора",
+    "client": "Клиент",
+    "status": "Статус",
+    "createdAt": "Создан",
+    "actions": "Действия",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "sendButton": "Отправить",
+    "view": "Просмотр",
+    "statuses": {
+        "draft": "Черновик",
+        "sent": "Отправлен",
+        "signed": "Подписан",
+        "cancelled": "Отменен"
+    },
+    "types": {
+        "service": "Услуга",
+        "product": "Товар",
+        "subscription": "Подписка"
+    },
+    "form": {
+        "selectClient": "Выберите клиента",
+        "selectBooking": "Выберите запись",
+        "contractType": "Тип договора",
+        "template": "Шаблон",
+        "data": "Данные",
+        "save": "Сохранить",
+        "cancel": "Отмена"
+    },
+    "sendDialog": {
+        "title": "Отправить договор",
+        "method": "Способ отправки",
+        "recipient": "Получатель",
+        "email": "Email",
+        "whatsapp": "WhatsApp",
+        "telegram": "Telegram",
+        "instagram": "Instagram",
+        "sendButton": "Отправить"
+    },
+    "messages": {
+        "created": "Договор создан",
+        "updated": "Договор обновлен",
+        "deleted": "Договор удален",
+        "sent": "Договор отправлен",
+        "error": "Ошибка при работе с договором"
+    }
+}
