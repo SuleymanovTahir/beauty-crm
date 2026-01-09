@@ -412,7 +412,7 @@ export default function App() {
               >
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="profile" element={<EmployeeProfile />} />
-                <Route path="settings" element={<EmployeeSettings />} />
+                <Route path="settings" element={<Navigate to="/employee/profile" replace />} />
                 <Route path="calendar" element={<Calendar employeeFilter={true} />} />
                 <Route path="bookings" element={<EmployeeBookings />} />
                 <Route path="tasks" element={<EmployeeTasks />} />
