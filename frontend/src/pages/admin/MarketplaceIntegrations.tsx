@@ -55,7 +55,7 @@ const MarketplaceIntegrations = () => {
     const handleSync = async (providerName: string) => {
         try {
             setSyncing(providerName);
-            await api.post(`/marketplace/sync/${providerName}`);
+            await api.post(`/api/marketplace/sync/${providerName}`);
             toast.success(t('marketplace.syncStarted', 'Синхронизация запущена'));
             setTimeout(loadProviders, 2000);
         } catch (error) {
@@ -70,50 +70,50 @@ const MarketplaceIntegrations = () => {
         yandex_maps: {
             name: 'Яндекс.Карты',
             description: 'Записи и отзывы с Яндекс.Карт',
-            icon: '🗺️',
-            color: 'from-red-500 to-yellow-500'
+            icon: <Store size={32} />,
+            brandClass: 'brand-yandex_maps'
         },
         '2gis': {
             name: '2ГИС',
             description: 'Онлайн-записи через 2ГИС',
-            icon: '🏢',
-            color: 'from-green-500 to-emerald-600'
+            icon: <Store size={32} />,
+            brandClass: 'brand-2gis'
         },
         google_business: {
             name: 'Google Business',
             description: 'Google Мой Бизнес',
-            icon: '🔍',
-            color: 'from-blue-500 to-indigo-600'
+            icon: <Store size={32} />,
+            brandClass: 'brand-google_business'
         },
         booksy: {
             name: 'Booksy',
             description: 'Платформа онлайн-записи',
-            icon: '📅',
-            color: 'from-purple-500 to-pink-600'
+            icon: <Store size={32} />,
+            brandClass: 'brand-booksy'
         },
         yclients: {
             name: 'YCLIENTS',
             description: 'CRM для салонов красоты',
-            icon: '💼',
-            color: 'from-cyan-500 to-blue-600'
+            icon: <Store size={32} />,
+            brandClass: 'brand-yclients'
         },
         wildberries: {
             name: 'Wildberries',
             description: 'Маркетплейс WB',
-            icon: '🛍️',
-            color: 'from-purple-600 to-pink-700'
+            icon: <Store size={32} />,
+            brandClass: 'brand-wildberries'
         },
         ozon: {
             name: 'Ozon',
             description: 'Маркетплейс Ozon',
-            icon: '🔵',
-            color: 'from-blue-600 to-blue-800'
+            icon: <Store size={32} />,
+            brandClass: 'brand-ozon'
         },
         amazon: {
             name: 'Amazon',
             description: 'Amazon Marketplace',
-            icon: '📦',
-            color: 'from-orange-500 to-yellow-600'
+            icon: <Store size={32} />,
+            brandClass: 'brand-amazon'
         }
     };
 
@@ -190,7 +190,7 @@ const MarketplaceIntegrations = () => {
 
                         return (
                             <div key={key} className={`crm-provider-card ${isActive ? 'active' : ''}`}>
-                                <div className="crm-provider-header">
+                                <div className={`crm-provider-header ${info.brandClass}`}>
                                     <div className="crm-provider-icon">{info.icon}</div>
                                     <div className="crm-provider-info">
                                         <h3 className="crm-provider-name">{info.name}</h3>
