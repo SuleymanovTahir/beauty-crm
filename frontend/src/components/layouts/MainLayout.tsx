@@ -28,7 +28,10 @@ import {
     ShieldCheck,
     Send,
     MessageCircle,
-    User
+    User,
+    FileSignature,
+    Package,
+    Receipt
 } from 'lucide-react';
 import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../icons/SocialIcons';
 import { toast } from 'sonner';
@@ -233,6 +236,9 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             // ГРУППА 2: Управление (Базы данных)
             { icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, requirePermission: () => permissions.canViewAllClients && user?.role !== 'sales' },
             { icon: Scissors, label: t('menu.services'), path: `${rolePrefix}/services`, requirePermission: () => permissions.canViewServices },
+            { icon: FileSignature, label: t('menu.contracts'), path: `${rolePrefix}/contracts`, requirePermission: () => permissions.canViewAllClients },
+            { icon: Package, label: t('menu.products'), path: `${rolePrefix}/products`, requirePermission: () => permissions.canViewServices },
+            { icon: Receipt, label: t('menu.invoices'), path: `${rolePrefix}/invoices`, requirePermission: () => permissions.canViewAllClients },
             { icon: UserCog, label: t('menu.users'), path: `${rolePrefix}/users`, requirePermission: () => permissions.canViewAllUsers },
 
             // ГРУППА 3: Маркетинг и Аналитика
