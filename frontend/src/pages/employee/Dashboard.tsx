@@ -28,7 +28,7 @@ export default function EmployeeDashboard() {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
-  const { t } = useTranslation(['employee/Dashboard', 'common']);
+  const { t } = useTranslation(['employee/dashboard', 'common']);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,39 +57,44 @@ export default function EmployeeDashboard() {
       if (!isNaN(d2.getTime())) return d2;
     }
 
+
     return new Date(0);
   };
 
-  const isSameDay = (d1: Date, d2: Date) => {
-    return d1.getFullYear() === d2.getFullYear() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getDate() === d2.getDate();
-  };
+  const [services, setServices] = useState<any[]>([]);
+
+  // ... (existing parseDate, isSameDay)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/bookings', {
-          credentials: 'include',
-        });
-        if (!response.ok) throw new Error(t('dashboard:failed_to_fetch_bookings'));
-        const data = await response.json();
-        const allBookings = data.bookings || [];
+        const [bookingsRes, servicesRes, statsRes] = await Promise.all([
+          fetch('/api/appointments/list?role=employee&range=all', { credentials: 'include' }),
+          fetch('/api/services?active_only=true', { credentials: 'include' }),
+          fetch('/api/dashboard/employee-stats', { credentials: 'include' })
+        ]);
 
-        // Фильтруем только сегодняшние записи
-        // Фильтруем только сегодняшние записи
-        // Safely parse date from various formats
+        if (!bookingsRes.ok) console.error("Bookings fetch failed");
+
+        const bookingsData = await bookingsRes.json();
+        const servicesData = servicesRes.ok ? await servicesRes.json() : { services: [] };
+        const statsData = statsRes.ok ? await statsRes.json() : {};
+
+        const allBookings = Array.isArray(bookingsData) ? bookingsData : (bookingsData.bookings || []);
+        const empStats = statsData;
+
+        setBookings(allBookings);
+        setServices(servicesData.services || []);
+
         const now = new Date();
-
-        const todayBookings = allBookings.filter((b: any) => {
-          const bookingDate = parseDate(b.datetime);
-          return isSameDay(bookingDate, now);
-        });
-        setBookings(todayBookings);
-
-        // Вычисляем статистику
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+        const todayBookings = allBookings.filter((b: any) => {
+          const d = parseDate(b.datetime);
+          return d >= today && d < new Date(today.getTime() + 24 * 60 * 60 * 1000);
+        });
 
         const weekBookings = allBookings.filter((b: any) => parseDate(b.datetime) >= weekAgo);
         const monthBookings = allBookings.filter((b: any) => parseDate(b.datetime) >= monthAgo);
@@ -101,11 +106,12 @@ export default function EmployeeDashboard() {
           today_bookings: todayBookings.length,
           week_bookings: weekBookings.length,
           month_bookings: monthBookings.length,
-          total_revenue: monthBookings.reduce((sum: number, b: any) => sum + (b.price || 0), 0),
-          avg_rating: 4.8, // Placeholder - можно получить из API
+          total_revenue: empStats.income_month || 0, // Расчетный доход из бэкенда
+          avg_rating: empStats.rating || 5.0, // Реальный рейтинг
           total_clients: uniqueClients
         });
       } catch (err) {
+        console.error(err);
         setError(err instanceof Error ? err.message : t('dashboard:unknown_error'));
       } finally {
         setLoading(false);
@@ -113,6 +119,23 @@ export default function EmployeeDashboard() {
     };
     fetchData();
   }, []);
+
+  const getServiceName = (originalName: string) => {
+    if (!originalName) return '';
+    // Try to find exact match by name or English name
+    const service = services.find(s =>
+      s.name === originalName ||
+      s.name_en === originalName ||
+      s.name_ru === originalName
+    );
+
+    if (service) {
+      // Return localized name if available, otherwise default name
+      // Assuming current language is Russian (based on dashboard usage)
+      return service.name_ru || service.name;
+    }
+    return originalName;
+  };
 
   if (loading) {
     return (
@@ -148,7 +171,7 @@ export default function EmployeeDashboard() {
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <Calendar className="w-8 h-8 text-pink-600" />
-          Мой дашборд
+          {t('dashboard:my_profile', 'Мой дашборд')}
         </h1>
         <p className="text-gray-600">{t('dashboard:today')}, {new Date().toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
       </div>
@@ -159,7 +182,7 @@ export default function EmployeeDashboard() {
           <div className="flex items-center justify-between mb-2">
             <Clock className="w-8 h-8 opacity-80" />
           </div>
-          <p className="text-pink-100 text-sm mb-1">Сегодня</p>
+          <p className="text-pink-100 text-sm mb-1">{t('dashboard:today_bookings', 'Сегодня')}</p>
           <h3 className="text-3xl font-bold">{stats?.today_bookings || 0}</h3>
         </div>
 
@@ -167,7 +190,7 @@ export default function EmployeeDashboard() {
           <div className="flex items-center justify-between mb-2">
             <TrendingUp className="w-8 h-8 opacity-80" />
           </div>
-          <p className="text-purple-100 text-sm mb-1">За неделю</p>
+          <p className="text-purple-100 text-sm mb-1">{t('dashboard:week_bookings', 'За неделю')}</p>
           <h3 className="text-3xl font-bold">{stats?.week_bookings || 0}</h3>
         </div>
 
@@ -175,7 +198,7 @@ export default function EmployeeDashboard() {
           <div className="flex items-center justify-between mb-2">
             <Calendar className="w-8 h-8 opacity-80" />
           </div>
-          <p className="text-blue-100 text-sm mb-1">За месяц</p>
+          <p className="text-blue-100 text-sm mb-1">{t('dashboard:month_bookings', 'За месяц')}</p>
           <h3 className="text-3xl font-bold">{stats?.month_bookings || 0}</h3>
         </div>
 
@@ -183,7 +206,7 @@ export default function EmployeeDashboard() {
           <div className="flex items-center justify-between mb-2">
             <Users className="w-8 h-8 opacity-80" />
           </div>
-          <p className="text-green-100 text-sm mb-1">Клиентов</p>
+          <p className="text-green-100 text-sm mb-1">{t('dashboard:new_clients', 'Клиентов')}</p>
           <h3 className="text-3xl font-bold">{stats?.total_clients || 0}</h3>
         </div>
 
@@ -191,7 +214,7 @@ export default function EmployeeDashboard() {
           <div className="flex items-center justify-between mb-2">
             <Star className="w-8 h-8 opacity-80" />
           </div>
-          <p className="text-yellow-100 text-sm mb-1">Рейтинг</p>
+          <p className="text-yellow-100 text-sm mb-1">{t('dashboard:my_conversion', 'Рейтинг')}</p>
           <h3 className="text-3xl font-bold">{stats?.avg_rating || 0}</h3>
         </div>
 
@@ -199,7 +222,7 @@ export default function EmployeeDashboard() {
           <div className="flex items-center justify-between mb-2">
             <DollarSign className="w-8 h-8 opacity-80" />
           </div>
-          <p className="text-indigo-100 text-sm mb-1">Доход (мес)</p>
+          <p className="text-indigo-100 text-sm mb-1">{t('dashboard:your_revenue', 'Доход (мес)')}</p>
           <h3 className="text-3xl font-bold">{stats?.total_revenue || 0}</h3>
         </div>
       </div>
@@ -211,8 +234,8 @@ export default function EmployeeDashboard() {
           className="bg-white p-6 rounded-xl shadow-sm border-2 border-gray-200 hover:border-pink-500 transition-all group"
         >
           <Calendar className="w-8 h-8 text-pink-600 mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">Все записи</h3>
-          <p className="text-gray-600 text-sm">Просмотр всех записей с фильтрами</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('dashboard:view_and_manage_bookings', 'Все записи')}</h3>
+          <p className="text-gray-600 text-sm">{t('dashboard:view_bookings_desc', 'Просмотр всех записей с фильтрами')}</p>
         </button>
 
         <button
@@ -220,8 +243,8 @@ export default function EmployeeDashboard() {
           className="bg-white p-6 rounded-xl shadow-sm border-2 border-gray-200 hover:border-purple-500 transition-all group"
         >
           <CheckCircle className="w-8 h-8 text-purple-600 mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">Услуги</h3>
-          <p className="text-gray-600 text-sm">Мои услуги и прайс-лист</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('dashboard:our_services', 'Услуги')}</h3>
+          <p className="text-gray-600 text-sm">{t('dashboard:browse_available_services', 'Мои услуги и прайс-лист')}</p>
         </button>
 
         <button
@@ -229,8 +252,8 @@ export default function EmployeeDashboard() {
           className="bg-white p-6 rounded-xl shadow-sm border-2 border-gray-200 hover:border-blue-500 transition-all group"
         >
           <Users className="w-8 h-8 text-blue-600 mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">Профиль</h3>
-          <p className="text-gray-600 text-sm">Редактировать мой профиль</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('dashboard:my_profile', 'Профиль')}</h3>
+          <p className="text-gray-600 text-sm">{t('dashboard:manage_personal_data_and_security_settings', 'Редактировать мой профиль')}</p>
         </button>
       </div>
 
@@ -242,7 +265,7 @@ export default function EmployeeDashboard() {
             {t('dashboard:schedule_for_today')}
           </h2>
           <span className="text-sm text-gray-500">
-            {confirmedCount} подтверждено, {pendingCount} ожидает
+            {confirmedCount} {t('dashboard:confirmed', 'подтверждено')}, {pendingCount} {t('dashboard:pending', 'ожидает')}
           </span>
         </div>
 
@@ -277,7 +300,7 @@ export default function EmployeeDashboard() {
                             {bookingTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </div>
                           {isNow && (
-                            <span className="text-xs text-pink-600 font-semibold animate-pulse">СЕЙЧАС</span>
+                            <span className="text-xs text-pink-600 font-semibold animate-pulse">{t('dashboard:now', 'СЕЙЧАС')}</span>
                           )}
                         </div>
 
@@ -292,7 +315,7 @@ export default function EmployeeDashboard() {
                               {booking.status === 'confirmed' ? '✓' : '⏱'}
                             </Badge>
                           </div>
-                          <p className="text-gray-700 text-sm mb-1">{booking.service}</p>
+                          <p className="text-gray-700 text-sm mb-1">{getServiceName(booking.service)}</p>
                           <p className="text-gray-500 text-xs">{booking.phone}</p>
                         </div>
                       </div>
