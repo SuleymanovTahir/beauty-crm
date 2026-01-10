@@ -13,6 +13,7 @@ import { Input } from '../../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
@@ -1194,8 +1195,12 @@ export default function Services() {
 
       {/* Service Modal */}
       <Dialog open={isServiceModalOpen} onOpenChange={setIsServiceModalOpen}>
-        <DialogContent className="max-w-4xl p-0 flex flex-col max-h-[95vh] overflow-hidden border-none shadow-2xl rounded-2xl">
-          <DialogHeader className="bg-gradient-to-r from-pink-600 to-purple-700 p-8 rounded-t-2xl">
+        <DialogContent className="w-[95vw] sm:w-[90vw] md:max-w-4xl p-0 flex flex-col h-[90vh] overflow-hidden border-none shadow-2xl rounded-2xl">
+          <DialogHeader className="bg-gradient-to-r from-pink-600 to-purple-700 p-8 rounded-t-2xl relative">
+            <DialogPrimitive.Close className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors outline-none focus:ring-2 focus:ring-white/30 z-50">
+              <X className="w-5 h-5" />
+              <span className="sr-only">Close</span>
+            </DialogPrimitive.Close>
             <div className="flex items-center gap-3 text-left">
               <div className="p-3 bg-white/20 rounded-xl backdrop-blur-md">
                 <Scissors className="w-6 h-6 text-white" />
@@ -1211,8 +1216,8 @@ export default function Services() {
             </div>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto crm-scrollbar">
-            <div className="p-8 space-y-8">
+          <div tabIndex={0} className="flex-1 overflow-y-auto crm-scrollbar outline-none focus:bg-gray-50/5 transition-colors" style={{ pointerEvents: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <div className="p-4 sm:p-8 space-y-8">
               {/* Section 1: Basic Information */}
               <div className="section-container">
                 <div className="flex items-center gap-2 mb-4">
@@ -1423,10 +1428,10 @@ export default function Services() {
                     </div>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-4 max-w-full">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div className="space-y-1">
-                        <Label className="text-[11px] font-black uppercase tracking-widest text-gray-600">
+                        <Label className="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-[11px] font-black uppercase tracking-widest text-gray-600">
                           {t('services:employees_providing_service')}
                         </Label>
                         <p className="text-[10px] text-gray-400 font-medium">
@@ -1435,13 +1440,13 @@ export default function Services() {
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-4">
-                      <div className="flex flex-wrap items-center gap-3">
-                        <Popover>
+                    <div className="flex flex-col gap-4 w-full">
+                      <div className="flex flex-wrap items-center gap-3 w-full">
+                        <Popover modal={false}>
                           <PopoverTrigger asChild>
                             <Button
                               variant="outline"
-                              className="h-12 px-5 bg-white border-gray-100 rounded-xl shadow-sm hover:border-pink-200 flex items-center gap-3 min-w-[280px] justify-between group transition-all"
+                              className="h-12 px-5 bg-white border-gray-100 rounded-xl shadow-sm hover:border-pink-200 flex items-center gap-3 w-full sm:w-auto sm:min-w-[280px] justify-between group transition-all"
                             >
                               <div className="flex items-center gap-2 overflow-hidden">
                                 <Users className="w-4 h-4 text-pink-500" />
@@ -1454,7 +1459,12 @@ export default function Services() {
                               <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-pink-500 transition-colors" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[320px] p-0 rounded-2xl shadow-xl border-gray-100" align="start">
+                          <PopoverContent
+                            className="w-[320px] p-0 rounded-2xl shadow-xl border-gray-100"
+                            align="start"
+                            side="bottom"
+                            sideOffset={8}
+                          >
                             <Command className="rounded-2xl h-auto ![&_[data-slot=command-input-wrapper]]:h-12 ![&_[data-slot=command-input-wrapper]]:border-b ![&_[data-slot=command-input-wrapper]_svg]:text-pink-500 ![&_[data-slot=command-input-wrapper]_svg]:opacity-100 ![&_[data-slot=command-input-wrapper]_svg]:size-4">
                               <div className="flex flex-col border-b">
                                 <CommandInput
