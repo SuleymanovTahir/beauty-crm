@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Label } from '../ui/label';
 import { ScrollArea } from '../ui/scroll-area';
 import { api } from '../../services/api';
 import { toast } from 'sonner';

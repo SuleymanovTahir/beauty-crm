@@ -8,6 +8,7 @@ import {
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useCurrency } from '../../hooks/useSalonSettings';
+import { ManageStagesDialog } from '../../components/shared/ManageStagesDialog';
 import '../../styles/crm-pages.css';
 
 interface Invoice {
@@ -33,6 +34,8 @@ const Invoices = () => {
     const [showSendDialog, setShowSendDialog] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
     const [filterStatus, setFilterStatus] = useState<string>('');
+    const [invoiceStages, setInvoiceStages] = useState<any[]>([]);
+    const [showStagesDialog, setShowStagesDialog] = useState(false);
     const [viewMode, setViewMode] = useState<'board' | 'list'>(() => {
         return localStorage.getItem('invoices_view_mode') as 'board' | 'list' || 'board';
     });
@@ -50,8 +53,12 @@ const Invoices = () => {
     const loadInvoices = async () => {
         try {
             setLoading(true);
-            const response = await api.getInvoices(undefined, filterStatus);
-            setInvoices(response.invoices);
+            const [invoicesRes, stagesRes] = await Promise.all([
+                api.getInvoices(undefined, filterStatus),
+                api.get('/api/invoices/stages')
+            ]);
+            setInvoices(invoicesRes.invoices);
+            setInvoiceStages(stagesRes || []);
         } catch (error) {
             console.error('Error loading invoices:', error);
         } finally {
@@ -98,9 +105,9 @@ const Invoices = () => {
         });
     }, [invoices, filterStatus, searchQuery, sortConfig]);
 
-    const handleStatusMove = async (invoiceId: number, newStatus: string) => {
+    const handleStatusMove = async (invoiceId: number, newStageId: number) => {
         try {
-            await api.put(`/api/invoices/${invoiceId}`, { status: newStatus });
+            await api.put(`/api/invoices/${invoiceId}`, { stage_id: newStageId });
             toast.success(t('messages.invoiceUpdated'));
             loadInvoices();
         } catch (error) {
@@ -116,12 +123,11 @@ const Invoices = () => {
         e.preventDefault();
     };
 
-    const handleDrop = (e: React.DragEvent, newStatus: string) => {
+    const handleDrop = (e: React.DragEvent, newStageId: number) => {
         e.preventDefault();
-        const invoiceId = parseInt(e.dataTransfer.getData('invoiceId'));
-        const invoice = invoices.find(i => i.id === invoiceId);
-        if (invoice && invoice.status !== newStatus) {
-            handleStatusMove(invoiceId, newStatus);
+        const invoiceIdStr = e.dataTransfer.getData('invoiceId');
+        if (invoiceIdStr) {
+            handleStatusMove(parseInt(invoiceIdStr), newStageId);
         }
     };
 
@@ -155,7 +161,6 @@ const Invoices = () => {
         return (invoice.paid_amount / invoice.total_amount) * 100;
     };
 
-    const statuses = ['draft', 'sent', 'partial', 'paid', 'overdue'];
 
     return (
         <div className="crm-page p-0 bg-gray-50/50 flex flex-col h-full overflow-hidden">
@@ -189,6 +194,14 @@ const Invoices = () => {
                             </button>
                         </div>
 
+                        <button
+                            onClick={() => setShowStagesDialog(true)}
+                            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+                            title={t('manage_stages', 'Управление стадиями')}
+                        >
+                            <LayoutDashboard size={16} />
+                            <span className="hidden sm:inline">{t('manage_stages', 'Колонки')}</span>
+                        </button>
                         <button className="crm-btn-primary h-10" onClick={() => setShowAddDialog(true)}>
                             <Plus size={18} />
                             {t('addInvoice')}
@@ -204,8 +217,8 @@ const Invoices = () => {
                             className="crm-select text-sm h-9 min-w-[150px]"
                         >
                             <option value="">{t('allStatuses')}</option>
-                            {statuses.map(s => (
-                                <option key={s} value={s}>{t(`statuses.${s}`)}</option>
+                            {invoiceStages.map(s => (
+                                <option key={s.key} value={s.key}>{s.name}</option>
                             ))}
                         </select>
                     </div>
@@ -230,20 +243,20 @@ const Invoices = () => {
                     </div>
                 ) : viewMode === 'board' ? (
                     <div className="h-full overflow-x-auto flex gap-6 pb-4">
-                        {statuses.map(status => (
+                        {invoiceStages.map(stage => (
                             <div
-                                key={status}
+                                key={stage.id}
                                 className="w-80 flex flex-col h-full bg-gray-100/50 rounded-xl border border-gray-200/60"
                                 onDragOver={handleDragOver}
-                                onDrop={(e) => handleDrop(e, status)}
+                                onDrop={(e) => handleDrop(e, stage.id)}
                             >
                                 <div className="p-4 border-b border-gray-200/60 bg-white/50 backdrop-blur-sm rounded-t-xl">
                                     <div className="flex items-center justify-between">
                                         <h3 className="font-semibold text-sm text-gray-700 uppercase tracking-tight">
-                                            {t(`statuses.${status}`)}
+                                            {stage.name}
                                         </h3>
                                         <span className="px-2 py-0.5 rounded-full bg-white border text-xs font-mono text-gray-500 shadow-sm">
-                                            {filteredAndSortedInvoices.filter(i => i.status === status).length}
+                                            {filteredAndSortedInvoices.filter(i => i.status === stage.key).length}
                                         </span>
                                     </div>
                                     <div className={`h-1 w-full rounded-full mt-3 bg-gray-200 overflow-hidden`}>
@@ -251,17 +264,14 @@ const Invoices = () => {
                                             className={`h-full transition-all duration-500`}
                                             style={{
                                                 width: '100%',
-                                                backgroundColor: status === 'paid' ? '#10b981' :
-                                                    status === 'sent' ? '#3b82f6' :
-                                                        status === 'partial' ? '#f59e0b' :
-                                                            status === 'overdue' ? '#ef4444' : '#64748b'
+                                                backgroundColor: stage.color
                                             }}
                                         />
                                     </div>
                                 </div>
 
                                 <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-3 no-scrollbar">
-                                    {filteredAndSortedInvoices.filter(i => i.status === status).map(invoice => (
+                                    {filteredAndSortedInvoices.filter(i => i.status === stage.key).map(invoice => (
                                         <div
                                             key={invoice.id}
                                             draggable
@@ -483,6 +493,16 @@ const Invoices = () => {
                         setSelectedInvoice(null);
                         loadInvoices();
                     }}
+                />
+            )}
+
+            {showStagesDialog && (
+                <ManageStagesDialog
+                    open={showStagesDialog}
+                    onOpenChange={setShowStagesDialog}
+                    onSuccess={loadInvoices}
+                    apiUrl="/api/invoices/stages"
+                    title={t('manage_stages')}
                 />
             )}
         </div>

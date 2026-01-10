@@ -184,7 +184,6 @@ const Contracts = () => {
     }
 
     const canManageTypes = ['admin', 'director'].includes(userRole);
-    const statuses = contractStages.map(s => s.key);
 
     return (
         <div className="crm-page p-0 bg-gray-50/50 flex flex-col h-full overflow-hidden">
@@ -280,8 +279,8 @@ const Contracts = () => {
                             className="crm-select text-sm h-9 min-w-[150px]"
                         >
                             <option value="">{t('allStatuses')}</option>
-                            {statuses.map(s => (
-                                <option key={s} value={s}>{t(`statuses.${s}`)}</option>
+                            {contractStages.map(s => (
+                                <option key={s.key} value={s.key}>{s.name}</option>
                             ))}
                         </select>
                     </div>
