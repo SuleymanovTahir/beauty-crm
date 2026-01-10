@@ -294,5 +294,17 @@
   "view_details": "View details",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience"
+  "years_of_experience": "Years of Experience",
+  "salary_type": "tipo de nómina",
+  "salary_type_fixed": "Salario fijo",
+  "salary_type_commission": "Salario + % de ingresos",
+  "salary_type_hourly": "Tarifa hasta hora",
+  "salary_type_daily": "pago hasta dia",
+  "salary_type_per_booking": "Pago hasta grabación",
+  "hourly_rate": "Tarifa hasta hora",
+  "hourly_rate_hint": "Pago hasta cada hora trabajada.",
+  "daily_rate": "Tarifa hasta día",
+  "daily_rate_hint": "Pago hasta cada día trabajado.",
+  "per_booking_rate": "Pago hasta grabación",
+  "per_booking_rate_hint": "Pago hasta cada reserva completada"
 }

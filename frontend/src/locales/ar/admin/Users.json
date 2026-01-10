@@ -294,5 +294,17 @@
   "view_details": "عرض التفاصيل",
   "weeks_ahead": "أسابيع مقدما",
   "working_hours": "ساعات العمل",
-  "years_of_experience": "الخبرة العملية (سنوات)"
+  "years_of_experience": "الخبرة العملية (سنوات)",
+  "salary_type": "نوع الرواتب",
+  "salary_type_fixed": "راتب ثابت",
+  "salary_type_commission": "الراتب +٪ من الإيرادات",
+  "salary_type_hourly": "سعر الساعة",
+  "salary_type_daily": "الدفع يوميا",
+  "salary_type_per_booking": "الدفع لكل تسجيل",
+  "hourly_rate": "معدل في الساعة",
+  "hourly_rate_hint": "الدفع عن كل ساعة عمل",
+  "daily_rate": "معدل في اليوم الواحد",
+  "daily_rate_hint": "الدفع عن كل يوم عمل",
+  "per_booking_rate": "الدفع لكل تسجيل",
+  "per_booking_rate_hint": "الدفع لكل إدخال مكتمل"
 }
