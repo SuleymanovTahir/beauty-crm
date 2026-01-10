@@ -15,13 +15,36 @@ from utils.utils import get_current_user
 class StageCreate(BaseModel):
     name: str
     color: str
-    order_index: int
+    order_index: int = 0
 
 class StageUpdate(BaseModel):
     name: Optional[str] = None
     color: Optional[str] = None
     order_index: Optional[int] = None
     is_active: Optional[bool] = None
+
+class ReorderStagesRequest(BaseModel):
+    ordered_ids: List[int]
+
+class InvoiceCreate(BaseModel):
+    client_id: str
+    booking_id: Optional[int] = None
+    items: List[dict]
+    notes: Optional[str] = None
+    due_date: Optional[str] = None
+
+
+class InvoiceUpdate(BaseModel):
+    status: Optional[str] = None
+    stage_id: Optional[int] = None
+    items: Optional[List[dict]] = None
+    notes: Optional[str] = None
+    due_date: Optional[str] = None
+
+class InvoicePayment(BaseModel):
+    amount: float
+    payment_method: str
+    notes: Optional[str] = None
 
 router = APIRouter()
 
@@ -128,41 +151,6 @@ async def reorder_invoice_stages(
         conn.close()
 
 
-class InvoiceCreate(BaseModel):
-    client_id: str
-    booking_id: Optional[int] = None
-    items: List[dict]
-    notes: Optional[str] = None
-    due_date: Optional[str] = None
-
-
-class InvoiceUpdate(BaseModel):
-    status: Optional[str] = None
-    stage_id: Optional[int] = None
-    items: Optional[List[dict]] = None
-    notes: Optional[str] = None
-    due_date: Optional[str] = None
-
-
-class StageCreate(BaseModel):
-    name: str
-    color: str
-    order_index: int = 0
-
-
-class StageUpdate(BaseModel):
-    name: str
-    color: str
-
-
-class ReorderStagesRequest(BaseModel):
-    ordered_ids: List[int]
-
-
-class InvoicePayment(BaseModel):
-    amount: float
-    payment_method: str
-    notes: Optional[str] = None
 
 
 @router.get("/invoices")
