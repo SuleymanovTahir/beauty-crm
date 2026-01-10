@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Edit, Trash2, Package, TrendingUp, X, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, Package, TrendingUp, X, Image as ImageIcon, Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
 import { useCurrency } from '../../hooks/useSalonSettings';
@@ -32,6 +32,8 @@ const Products = () => {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [filterCategory, setFilterCategory] = useState<string>('');
     const [categories, setCategories] = useState<string[]>([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
 
     useEffect(() => {
         loadProducts();
@@ -78,6 +80,37 @@ const Products = () => {
         }
     };
 
+    const handleSort = (key: string) => {
+        let direction: 'asc' | 'desc' = 'asc';
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const getSortIcon = (key: string) => {
+        if (!sortConfig || sortConfig.key !== key) return <ArrowUpDown size={14} className="ml-1 opacity-30" />;
+        return sortConfig.direction === 'asc' ? <ArrowUp size={14} className="ml-1" /> : <ArrowDown size={14} className="ml-1" />;
+    };
+
+    const filteredAndSortedProducts = useMemo(() => {
+        return products.filter(p => {
+            const name = (p.name_ru || p.name || '').toLowerCase();
+            const category = (p.category || '').toLowerCase();
+            const search = searchQuery.toLowerCase();
+            return name.includes(search) || category.includes(search);
+        }).sort((a, b) => {
+            if (!sortConfig) return 0;
+            const { key, direction } = sortConfig;
+            let aVal: any = a[key as keyof Product];
+            let bVal: any = b[key as keyof Product];
+
+            if (aVal! < bVal!) return direction === 'asc' ? -1 : 1;
+            if (aVal! > bVal!) return direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }, [products, searchQuery, sortConfig]);
+
     const getStockStatus = (product: Product) => {
         if (product.stock_quantity === 0) return 'out-of-stock';
         if (product.stock_quantity <= product.min_stock_level) return 'low-stock';
@@ -85,105 +118,176 @@ const Products = () => {
     };
 
     return (
-        <div className="crm-page">
-            <div className="crm-page-header">
-                <div>
-                    <h1>{t('title')}</h1>
-                    <p className="text-gray-600">{t('subtitle')}</p>
+        <div className="crm-page p-0 bg-gray-50/50 flex flex-col h-full overflow-hidden">
+            <div className="px-8 py-6 bg-white border-b sticky top-0 z-20 shadow-sm">
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+                        <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
+                    </div>
+                    <button className="crm-btn-primary h-10" onClick={() => setShowAddDialog(true)}>
+                        <Plus size={18} />
+                        {t('addProduct')}
+                    </button>
                 </div>
-                <button className="crm-btn-primary" onClick={() => setShowAddDialog(true)}>
-                    <Plus size={20} />
-                    {t('addProduct')}
-                </button>
-            </div>
 
-            <div className="crm-filters">
-                <select
-                    value={filterCategory}
-                    onChange={(e) => setFilterCategory(e.target.value)}
-                    className="crm-filter-select"
-                >
-                    <option value="">{t('allCategories')}</option>
-                    {categories.map((cat) => (
-                        <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                </select>
-            </div>
+                <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <select
+                            value={filterCategory}
+                            onChange={(e) => setFilterCategory(e.target.value)}
+                            className="crm-select text-sm h-10 min-w-[180px]"
+                        >
+                            <option value="">{t('allCategories')}</option>
+                            {categories.map((cat) => (
+                                <option key={cat} value={cat}>{cat}</option>
+                            ))}
+                        </select>
 
-            {loading ? (
-                <div className="crm-loading">{t('loading')}</div>
-            ) : (
-                <div className="crm-grid crm-grid-3">
-                    {products.map((product) => (
-                        <div key={product.id} className="crm-card">
-                            <div className="crm-card-header">
-                                <div className="crm-card-icon overflow-hidden bg-gray-50 flex items-center justify-center">
-                                    {product.photos && product.photos.length > 0 ? (
-                                        <img src={product.photos[0]} alt="" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <Package size={24} className="text-gray-400" />
-                                    )}
-                                </div>
-                                <div className="crm-card-title">
-                                    <h3>{product.name_ru || product.name}</h3>
-                                    {product.category && (
-                                        <span className="crm-badge">{product.category}</span>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div
-                                className="crm-card-body cursor-pointer hover:bg-gray-50/50 transition-colors"
-                                onClick={() => {
-                                    setSelectedProduct(product);
-                                    setShowDetailDialog(true);
-                                }}
+                        <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg border border-gray-200">
+                            <button
+                                onClick={() => handleSort('price')}
+                                className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center transition-all ${sortConfig?.key === 'price' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                             >
-                                <div className="crm-detail-row">
-                                    <span className="crm-detail-label">{t('form.price')}:</span>
-                                    <span className="crm-detail-value font-bold text-pink-600">{product.price} {currency}</span>
-                                </div>
-                                <div className="crm-detail-row text-xs mt-1">
-                                    <span className="crm-detail-label">{t('form.stockQuantity')}:</span>
-                                    <span className={`crm-detail-value font-medium crm-stock-${getStockStatus(product)}`}>
-                                        {product.stock_quantity}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="crm-card-footer">
-                                <button
-                                    className="crm-btn-icon"
-                                    onClick={() => {
-                                        setSelectedProduct(product);
-                                        setShowMovementDialog(true);
-                                    }}
-                                    title={t('movement.title')}
-                                >
-                                    <TrendingUp size={16} />
-                                </button>
-                                <button
-                                    className="crm-btn-icon"
-                                    onClick={() => {
-                                        setSelectedProduct(product);
-                                        setShowEditDialog(true);
-                                    }}
-                                    title={t('edit')}
-                                >
-                                    <Edit size={16} />
-                                </button>
-                                <button
-                                    className="crm-btn-icon"
-                                    onClick={() => handleDelete(product.id)}
-                                    title={t('delete')}
-                                >
-                                    <Trash2 size={16} />
-                                </button>
-                            </div>
+                                {t('form.price')} {getSortIcon('price')}
+                            </button>
+                            <button
+                                onClick={() => handleSort('stock_quantity')}
+                                className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center transition-all ${sortConfig?.key === 'stock_quantity' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                            >
+                                {t('form.stockQuantity')} {getSortIcon('stock_quantity')}
+                            </button>
                         </div>
-                    ))}
+                    </div>
+
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder={t('search_placeholder', 'Поиск по названию или категории...')}
+                            className="pl-9 pr-4 h-10 w-72 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
                 </div>
-            )}
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6">
+                {loading ? (
+                    <div className="flex items-center justify-center h-64">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {filteredAndSortedProducts.map((product) => (
+                            <div key={product.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group overflow-hidden flex flex-col">
+                                <div
+                                    className="aspect-square bg-gray-50 relative cursor-pointer overflow-hidden"
+                                    onClick={() => {
+                                        setSelectedProduct(product);
+                                        setShowDetailDialog(true);
+                                    }}
+                                >
+                                    {product.photos && product.photos.length > 0 ? (
+                                        <img src={Array.isArray(product.photos) ? product.photos[0] : (product.photos as string)} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-200">
+                                            <Package size={48} strokeWidth={1} />
+                                        </div>
+                                    )}
+                                    <div className="absolute top-3 left-3">
+                                        <span className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${getStockStatus(product) === 'out-of-stock' ? 'bg-red-500 text-white' : getStockStatus(product) === 'low-stock' ? 'bg-orange-500 text-white' : 'bg-green-500 text-white'}`}>
+                                            {getStockStatus(product) === 'out-of-stock' ? t('movement.types.out') : getStockStatus(product) === 'low-stock' ? 'Low' : 'In Stock'}
+                                        </span>
+                                    </div>
+                                    {product.category && (
+                                        <div className="absolute bottom-3 left-3">
+                                            <span className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-[10px] font-bold text-gray-600 shadow-sm border border-gray-100">
+                                                {product.category}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="p-4 flex-1 flex flex-col">
+                                    <h3
+                                        className="font-bold text-gray-900 mb-2 line-clamp-2 cursor-pointer hover:text-pink-600 transition-colors"
+                                        onClick={() => {
+                                            setSelectedProduct(product);
+                                            setShowDetailDialog(true);
+                                        }}
+                                    >
+                                        {product.name_ru || product.name}
+                                    </h3>
+
+                                    <div className="mt-auto flex items-end justify-between">
+                                        <div>
+                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{t('form.price')}</p>
+                                            <p className="text-xl font-black text-pink-600 leading-tight">
+                                                {product.price} <span className="text-xs font-bold">{currency}</span>
+                                            </p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{t('form.stockQuantity')}</p>
+                                            <p className="text-sm font-bold text-gray-900">{product.stock_quantity} шт.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="h-1 w-full bg-gray-100 rounded-full mt-3 overflow-hidden">
+                                        <div
+                                            className={`h-full transition-all ${getStockStatus(product) === 'in-stock' ? 'bg-green-500' : 'bg-orange-500'}`}
+                                            style={{ width: `${Math.min(100, (product.stock_quantity / (product.min_stock_level || 1)) * 50)}%` }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="px-4 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all">
+                                    <button
+                                        className="p-2 hover:bg-white text-gray-400 hover:text-pink-600 rounded-xl transition-all shadow-sm hover:shadow border border-transparent hover:border-pink-100"
+                                        onClick={() => {
+                                            setSelectedProduct(product);
+                                            setShowMovementDialog(true);
+                                        }}
+                                        title={t('movement.title')}
+                                    >
+                                        <TrendingUp size={16} />
+                                    </button>
+                                    <div className="flex gap-1">
+                                        <button
+                                            className="p-2 hover:bg-white text-gray-400 hover:text-blue-600 rounded-xl transition-all shadow-sm hover:shadow border border-transparent hover:border-blue-100"
+                                            onClick={() => {
+                                                setSelectedProduct(product);
+                                                setShowEditDialog(true);
+                                            }}
+                                            title={t('edit')}
+                                        >
+                                            <Edit size={16} />
+                                        </button>
+                                        <button
+                                            className="p-2 hover:bg-white text-gray-400 hover:text-red-600 rounded-xl transition-all shadow-sm hover:shadow border border-transparent hover:border-red-100"
+                                            onClick={() => handleDelete(product.id)}
+                                            title={t('delete')}
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {!loading && filteredAndSortedProducts.length === 0 && (
+                    <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+                        <div className="bg-gray-50 p-4 rounded-full mb-4">
+                            <Package size={48} className="text-gray-300" />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-900">{t('noProducts')}</h3>
+                        <p className="text-gray-500">{searchQuery ? 'Ничего не найдено по вашему запросу' : t('createFirst')}</p>
+                    </div>
+                )}
+            </div>
 
             {showAddDialog && (
                 <ProductDialog
