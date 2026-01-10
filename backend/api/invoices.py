@@ -12,6 +12,17 @@ from db.connection import get_db_connection
 from utils.logger import log_info, log_error, log_warning
 from utils.utils import get_current_user
 
+class StageCreate(BaseModel):
+    name: str
+    color: str
+    order_index: int
+
+class StageUpdate(BaseModel):
+    name: Optional[str] = None
+    color: Optional[str] = None
+    order_index: Optional[int] = None
+    is_active: Optional[bool] = None
+
 router = APIRouter()
 
 
