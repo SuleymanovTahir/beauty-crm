@@ -1010,6 +1010,12 @@ export class ApiClient {
     })
   }
 
+  async clearAllNotifications() {
+    return this.request('/api/notifications/clear-all', {
+      method: 'DELETE',
+    })
+  }
+
   // ===== UNREAD COUNT =====
   async getUnreadCount() {
     return this.request<any>('/api/notifications/unread-count')

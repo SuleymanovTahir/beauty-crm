@@ -152,26 +152,60 @@ async def get_unread_count(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
 
-    
+
+
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        
+
         c.execute("""
-            SELECT COUNT(*) 
-            FROM notifications 
+            SELECT COUNT(*)
+            FROM notifications
             WHERE user_id =%s AND is_read = FALSE
         """, (user["id"],))
-        
+
         count = c.fetchone()[0]
         conn.close()
-        
+
         return {"unread_count": count}
-        
+
     except Exception as e:
         log_error(f"Error getting unread count: {e}", "notifications")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.delete("/notifications/clear-all")
+async def clear_all_notifications(
+    session_token: Optional[str] = Cookie(None)
+):
+    """Удалить все уведомления текущего пользователя"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        c.execute("""
+            DELETE FROM notifications
+            WHERE user_id = %s
+        """, (user["id"],))
+
+        deleted_count = c.rowcount
+        conn.commit()
+        conn.close()
+
+        log_info(f"Deleted {deleted_count} notifications for user {user['id']}", "notifications")
+
+        return {
+            "success": True,
+            "message": f"Deleted {deleted_count} notifications",
+            "count": deleted_count
+        }
+
+    except Exception as e:
+        log_error(f"Error clearing all notifications: {e}", "notifications")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 def create_notification(user_id: str, title: str, message: str, 

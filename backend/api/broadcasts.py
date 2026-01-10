@@ -86,13 +86,13 @@ async def preview_broadcast(
                 WHERE user_id = %s AND subscription_type = %s
             """, (user_id, broadcast.subscription_type))
 
-            channels_data = c.fetchone() if not broadcast.force_send else (True, True, True)
-            
-            if not channels_data:
-                # Если не форсируем и нет данных о подписке - пропускаем
-                continue
+            channels_data = c.fetchone()
 
-            email_enabled, telegram_enabled, instagram_enabled = channels_data
+            # Если нет записи о подписке - используем все каналы по умолчанию
+            if not channels_data:
+                email_enabled, telegram_enabled, instagram_enabled = True, True, True
+            else:
+                email_enabled, telegram_enabled, instagram_enabled = channels_data
 
             user_info = {
                 "id": user_id,
@@ -202,12 +202,17 @@ async def send_broadcast(
                 WHERE user_id = %s AND subscription_type = %s
             """, (user_id, broadcast.subscription_type))
 
-            channels_data = c.fetchone() if not broadcast.force_send else (True, True, True)
-            
-            if not channels_data and not broadcast.force_send:
-                continue
+            channels_data = c.fetchone()
 
-            email_enabled, telegram_enabled, instagram_enabled = channels_data if channels_data else (True, True, True)
+            # Если нет записи о подписке или force_send - включаем все каналы по умолчанию
+            if not channels_data:
+                if broadcast.force_send:
+                    email_enabled, telegram_enabled, instagram_enabled = True, True, True
+                else:
+                    # По умолчанию все каналы включены если нет явной записи
+                    email_enabled, telegram_enabled, instagram_enabled = True, True, True
+            else:
+                email_enabled, telegram_enabled, instagram_enabled = channels_data
 
             # In-app notification (personal account)
             if "notification" in broadcast.channels:
