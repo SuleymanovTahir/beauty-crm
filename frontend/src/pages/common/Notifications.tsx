@@ -10,6 +10,7 @@ export default function NotificationsPage() {
     const [loading, setLoading] = useState(true);
     const [selectedNotification, setSelectedNotification] = useState<any>(null);
     const [showModal, setShowModal] = useState(false);
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
     useEffect(() => {
         loadNotifications();
@@ -56,6 +57,7 @@ export default function NotificationsPage() {
         try {
             await api.deleteNotification(id);
             setNotifications(notifications.filter(n => n.id !== id));
+            setSelectedIds(selectedIds.filter(sid => sid !== id));
             toast.success('Уведомление удалено');
         } catch (error) {
             console.error('Error deleting notification:', error);
@@ -70,10 +72,49 @@ export default function NotificationsPage() {
         try {
             await api.clearAllNotifications();
             setNotifications([]);
+            setSelectedIds([]);
             toast.success('Все уведомления удалены');
         } catch (error) {
             console.error('Error clearing notifications:', error);
             toast.error('Ошибка при удалении уведомлений');
+        }
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedIds.length === notifications.length) {
+            setSelectedIds([]);
+        } else {
+            setSelectedIds(notifications.map(n => n.id));
+        }
+    };
+
+    const toggleSelect = (id: number) => {
+        if (selectedIds.includes(id)) {
+            setSelectedIds(selectedIds.filter(sid => sid !== id));
+        } else {
+            setSelectedIds([...selectedIds, id]);
+        }
+    };
+
+    const handleDeleteSelected = async () => {
+        if (selectedIds.length === 0) return;
+        if (!window.confirm(`Вы уверены что хотите удалить ${selectedIds.length} уведомлений?`)) return;
+
+        try {
+            // Delete one by one as API doesn't seem to have bulk delete by IDs
+            // Or use clearAll if all are selected
+            if (selectedIds.length === notifications.length) {
+                await api.clearAllNotifications();
+                setNotifications([]);
+            } else {
+                await Promise.all(selectedIds.map(id => api.deleteNotification(id)));
+                setNotifications(notifications.filter(n => !selectedIds.includes(n.id)));
+            }
+            setSelectedIds([]);
+            toast.success('Выбранные уведомления удалены');
+        } catch (error) {
+            console.error('Error deleting selected:', error);
+            toast.error('Ошибка при удалении выбранных уведомлений');
         }
     };
 
@@ -95,10 +136,19 @@ export default function NotificationsPage() {
                         </p>
                     </div>
                     <div className="flex gap-2">
+                        {selectedIds.length > 0 && (
+                            <button
+                                onClick={handleDeleteSelected}
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm"
+                            >
+                                <Trash2 size={16} />
+                                Удалить ({selectedIds.length})
+                            </button>
+                        )}
                         {unreadCount > 0 && (
                             <button
                                 onClick={handleMarkAllRead}
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-100"
                             >
                                 <CheckCheck size={16} />
                                 Отметить все прочитанными
@@ -107,14 +157,26 @@ export default function NotificationsPage() {
                         {notifications.length > 0 && (
                             <button
                                 onClick={handleClearAll}
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
                             >
                                 <Trash2 size={16} />
-                                Очистить все
+                                Очистить список
                             </button>
                         )}
                     </div>
                 </div>
+
+                {notifications.length > 0 && (
+                    <div className="flex items-center gap-3 mb-4 p-2">
+                        <input
+                            type="checkbox"
+                            checked={notifications.length > 0 && selectedIds.length === notifications.length}
+                            onChange={toggleSelectAll}
+                            className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300"
+                        />
+                        <span className="text-sm text-gray-600 font-medium">Выбрать все</span>
+                    </div>
+                )}
             </div>
 
             {loading ? (
@@ -136,56 +198,65 @@ export default function NotificationsPage() {
                     {notifications.map((notif) => (
                         <div
                             key={notif.id}
-                            className={`bg-white rounded-xl shadow-sm border border-gray-200 p-6 transition-all hover:shadow-md hover:border-blue-300 group ${!notif.is_read ? 'bg-gradient-to-r from-blue-50/50 to-blue-50/50 border-l-4 border-l-blue-500' : ''
+                            className={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 transition-all hover:shadow-md hover:border-blue-300 group flex items-start gap-4 ${!notif.is_read ? 'bg-gradient-to-r from-blue-50/50 to-blue-50/50 border-l-4 border-l-blue-500' : ''
                                 }`}
                         >
-                            <div className="flex items-start gap-4">
+                            <div className="pt-1.5 flex flex-col items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    checked={selectedIds.includes(notif.id)}
+                                    onChange={(e) => { e.stopPropagation(); toggleSelect(notif.id); }}
+                                    className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300 cursor-pointer"
+                                />
                                 {!notif.is_read && (
-                                    <div className="w-3 h-3 bg-blue-500 rounded-full mt-1.5 flex-shrink-0 animate-pulse"></div>
+                                    <div className="w-3 h-3 bg-blue-500 rounded-full flex-shrink-0 animate-pulse" title="Не прочитано"></div>
                                 )}
-                                <div
-                                    className="flex-1 min-w-0 cursor-pointer"
-                                    onClick={() => handleNotificationClick(notif)}
-                                >
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                            </div>
+
+                            <div
+                                className="flex-1 min-w-0 cursor-pointer"
+                                onClick={() => handleNotificationClick(notif)}
+                            >
+                                <div className="flex justify-between items-start">
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
                                         {notif.title}
                                     </h3>
-                                    <p className="text-gray-700 line-clamp-2 mb-3">
-                                        {notif.message}
-                                    </p>
-                                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                                        <span>
-                                            {new Date(notif.created_at).toLocaleString('ru-RU', {
-                                                day: '2-digit',
-                                                month: 'long',
-                                                year: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            })}
-                                        </span>
-                                        {notif.type && (
-                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${notif.type === 'info' ? 'bg-blue-100 text-blue-700' :
-                                                notif.type === 'success' ? 'bg-green-100 text-green-700' :
-                                                    notif.type === 'warning' ? 'bg-yellow-100 text-yellow-700' :
-                                                        'bg-red-100 text-red-700'
-                                                }`}>
-                                                {notif.type}
-                                            </span>
-                                        )}
-                                    </div>
+                                    <span className="text-xs text-gray-400 whitespace-nowrap ml-2">
+                                        {new Date(notif.created_at).toLocaleString('ru-RU', {
+                                            day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+                                        })}
+                                    </span>
                                 </div>
-                                <button
-                                    onClick={() => handleDeleteNotification(notif.id)}
-                                    className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-all"
-                                    title="Удалить уведомление"
-                                >
-                                    <Trash2 size={18} />
-                                </button>
+
+                                <p className="text-gray-700 line-clamp-2 mb-2 text-sm">
+                                    {notif.message}
+                                </p>
+
+                                <div className="flex items-center gap-2">
+                                    {notif.type && (
+                                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${notif.type === 'info' ? 'bg-blue-100 text-blue-700' :
+                                            notif.type === 'success' ? 'bg-green-100 text-green-700' :
+                                                notif.type === 'warning' ? 'bg-yellow-100 text-yellow-700' :
+                                                    'bg-red-100 text-red-700'
+                                            }`}>
+                                            {notif.type}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
+
+                            <button
+                                onClick={(e) => { e.stopPropagation(); handleDeleteNotification(notif.id); }}
+                                className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-all self-center"
+                                title="Удалить"
+                            >
+                                <Trash2 size={18} />
+                            </button>
                         </div>
                     ))}
                 </div>
             )}
+            {/* Modal code remains same in next chunk... but since replacing whole component body... */}
 
             {/* Notification Detail Modal */}
             {showModal && selectedNotification && (

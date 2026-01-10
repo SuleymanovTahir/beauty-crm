@@ -575,7 +575,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💎 {t('premium_price_explanation')}
+                {t('premium_price_explanation')}
               </label>
               <textarea
                 value={settings.price_explanation}

@@ -51,14 +51,14 @@ def send_verification_email(to_email: str, code: str, full_name: str) -> bool:
         html = f"""
         <html>
           <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
-              <h1 style="color: white; margin: 0;">💎 Beauty CRM</h1>
+            <div style="background: #000; padding: 20px; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 24px;">Beauty CRM</h1>
             </div>
             <div style="padding: 30px; background-color: #f7f7f7;">
               <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
               <p style="color: #666; font-size: 16px;">Ваш код подтверждения для регистрации:</p>
               <div style="background-color: white; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
-                <h1 style="color: #667eea; font-size: 48px; margin: 0; letter-spacing: 8px;">{code}</h1>
+                <h1 style="color: #000; font-size: 48px; margin: 0; letter-spacing: 8px;">{code}</h1>
               </div>
               <p style="color: #666; font-size: 14px;">Код действителен в течение 5 минут.</p>
               <p style="color: #999; font-size: 12px; margin-top: 30px;">
@@ -135,15 +135,15 @@ def send_verification_link_email(to_email: str, verification_token: str, full_na
         html = f"""
         <html>
           <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
-              <h1 style="color: white; margin: 0;">💎 Beauty CRM</h1>
+            <div style="background: #000; padding: 20px; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 24px;">Beauty CRM</h1>
             </div>
             <div style="padding: 30px; background-color: #f7f7f7;">
               <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
               <p style="color: #666; font-size: 16px;">Добро пожаловать в Beauty CRM!</p>
               <p style="color: #666; font-size: 16px;">Нажмите на кнопку ниже, чтобы подтвердить ваш email и активировать аккаунт:</p>
               <div style="text-align: center; margin: 30px 0;">
-                <a href="{verification_url}" style="background-color: #667eea; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 16px;">
+                <a href="{verification_url}" style="background-color: #000; color: white; padding: 15px 40px; text-decoration: none; border-radius: 4px; display: inline-block; font-size: 16px;">
                   Подтвердить Email
                 </a>
               </div>
@@ -153,7 +153,7 @@ def send_verification_link_email(to_email: str, verification_token: str, full_na
               </p>
               <p style="color: #999; font-size: 11px; margin-top: 20px;">
                 Если кнопка не работает, скопируйте эту ссылку в браузер:<br>
-                <a href="{verification_url}" style="color: #667eea; word-break: break-all;">{verification_url}</a>
+                <a href="{verification_url}" style="color: #000; word-break: break-all;">{verification_url}</a>
               </p>
             </div>
           </body>
@@ -224,15 +224,15 @@ def send_approval_notification(to_email: str, full_name: str, approved: bool) ->
             html = f"""
             <html>
               <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
-                  <h1 style="color: white; margin: 0;">💎 Beauty CRM</h1>
+                <div style="background: #000; padding: 20px; text-align: center;">
+                  <h1 style="color: white; margin: 0; font-size: 24px;">Beauty CRM</h1>
                 </div>
                 <div style="padding: 30px; background-color: #f7f7f7;">
                   <h2 style="color: #333;">Поздравляем, {full_name}!</h2>
                   <p style="color: #666; font-size: 16px;">Ваша регистрация была одобрена администратором.</p>
                   <p style="color: #666; font-size: 16px;">Теперь вы можете войти в систему используя свои учетные данные.</p>
                   <div style="text-align: center; margin: 30px 0;">
-                    <a href="#" style="background-color: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                    <a href="#" style="background-color: #000; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block;">
                       Войти в систему
                     </a>
                   </div>
@@ -246,8 +246,8 @@ def send_approval_notification(to_email: str, full_name: str, approved: bool) ->
             html = f"""
             <html>
               <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
-                  <h1 style="color: white; margin: 0;">💎 Beauty CRM</h1>
+                <div style="background: #000; padding: 20px; text-align: center;">
+                  <h1 style="color: white; margin: 0; font-size: 24px;">Beauty CRM</h1>
                 </div>
                 <div style="padding: 30px; background-color: #f7f7f7;">
                   <h2 style="color: #333;">{full_name},</h2>
@@ -314,15 +314,15 @@ def send_password_reset_email(to_email: str, reset_token: str, full_name: str) -
         html = f"""
         <html>
           <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
-              <h1 style="color: white; margin: 0;">💎 Beauty CRM</h1>
+            <div style="background: #000; padding: 20px; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 24px;">Beauty CRM</h1>
             </div>
             <div style="padding: 30px; background-color: #f7f7f7;">
               <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
               <p style="color: #666; font-size: 16px;">Вы запросили сброс пароля для вашего аккаунта.</p>
               <p style="color: #666; font-size: 16px;">Нажмите на кнопку ниже, чтобы создать новый пароль:</p>
               <div style="text-align: center; margin: 30px 0;">
-                <a href="{reset_url}" style="background-color: #667eea; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 16px;">
+                <a href="{reset_url}" style="background-color: #000; color: white; padding: 15px 40px; text-decoration: none; border-radius: 4px; display: inline-block; font-size: 16px;">
                   Сбросить пароль
                 </a>
               </div>
@@ -332,7 +332,7 @@ def send_password_reset_email(to_email: str, reset_token: str, full_name: str) -
               </p>
               <p style="color: #999; font-size: 11px; margin-top: 20px;">
                 Если кнопка не работает, скопируйте эту ссылку в браузер:<br>
-                <a href="{reset_url}" style="color: #667eea; word-break: break-all;">{reset_url}</a>
+                <a href="{reset_url}" style="color: #000; word-break: break-all;">{reset_url}</a>
               </p>
             </div>
           </body>
@@ -444,7 +444,7 @@ async def send_email_async(recipients: list, subject: str, message: str, html: s
 
 def send_broadcast_email(to_email: str, subject: str, message: str, full_name: str, unsubscribe_link: str) -> bool:
     """
-    Отправить broadcast email с возможностью отписки
+    Отправить broadcast email с новым дизайном (v2)
 
     Args:
         to_email: Email получателя
@@ -465,10 +465,11 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
         smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
 
         # Получаем название салона и URL из .env
-        salon_name = os.getenv('SALON_BOT_NAME', 'M.Le Diamant Bot').replace(' Bot', '')
+        salon_name = os.getenv('SALON_BOT_NAME', 'M.Le Diamant').replace(' Bot', '')
         base_url = os.getenv('BASE_URL', 'https://mlediamant.com')
+        clean_base_url = base_url.replace('https://', '').replace('http://', '')
 
-        # Определяем URL для отписки (localhost для разработки, base_url для продакшена)
+        # Определяем URL для отписки
         if 'localhost' in base_url or '127.0.0.1' in base_url:
             unsubscribe_url = f"http://localhost:5173{unsubscribe_link}"
         else:
@@ -484,102 +485,82 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
         msg['From'] = f"{salon_name} <{smtp_from}>"
         msg['To'] = to_email
 
-        # HTML версия письма - современный дизайн
+        # HTML версия письма - Minimalism Design
         html = f"""
         <!DOCTYPE html>
         <html>
           <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+              body {{
+                margin: 0;
+                padding: 0;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                background-color: #f5f5f5;
+                color: #000000;
+              }}
+              a {{ color: inherit; text-decoration: none; }}
+            </style>
           </head>
-          <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+          <body>
             <table role="presentation" style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td align="center" style="padding: 40px 20px;">
                   <!-- Main Container -->
-                  <table role="presentation" style="max-width: 600px; width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-
-                    <!-- Header with Gradient -->
+                  <table role="presentation" style="max-width: 600px; width: 100%; border-collapse: collapse; background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    
+                    <!-- Header -->
                     <tr>
-                      <td style="background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%); padding: 40px 30px; text-align: center;">
-                        <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
-                          💎 {salon_name}
+                      <td style="padding: 40px 40px 20px 40px; text-align: left;">
+                        <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #000000; letter-spacing: -0.5px;">
+                          {salon_name}
                         </h1>
                       </td>
                     </tr>
 
-                    <!-- Content -->
+                    <!-- Divider -->
                     <tr>
-                      <td style="padding: 40px 30px;">
-                        <p style="margin: 0 0 24px 0; color: #1f2937; font-size: 18px; font-weight: 600;">
-                          Здравствуйте, {full_name}!
-                        </p>
-
-                        <div style="background-color: #f9fafb; border-left: 4px solid #3b82f6; padding: 20px; border-radius: 8px; margin: 24px 0;">
-                          <p style="margin: 0; color: #374151; font-size: 16px; line-height: 1.6; white-space: pre-wrap;">{message}</p>
-                        </div>
+                      <td style="padding: 0 40px;">
+                        <div style="height: 1px; background-color: #eaeaea; width: 100%;"></div>
                       </td>
                     </tr>
 
-                    <!-- Unsubscribe Button -->
+                    <!-- Body Content -->
                     <tr>
-                      <td style="padding: 0 30px 30px 30px; text-align: center;">
-                        <a href="{unsubscribe_url}" style="display: inline-block; background-color: #ef4444; color: #ffffff; text-decoration: none; padding: 12px 32px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: background-color 0.2s;">
-                          Отписаться от рассылки
-                        </a>
+                      <td style="padding: 40px;">
+                        <p style="margin: 0 0 20px 0; font-size: 16px; font-weight: 600; color: #000000;">
+                          Здравствуйте, {full_name}!
+                        </p>
+                        <div style="font-size: 15px; line-height: 1.6; color: #333333; white-space: pre-wrap;">
+                          {message}
+                        </div>
                       </td>
                     </tr>
 
                     <!-- Footer -->
                     <tr>
-                      <td style="background-color: #f9fafb; padding: 30px; border-top: 1px solid #e5e7eb;">
+                      <td style="background-color: #f9f9f9; padding: 40px; border-top: 1px solid #eaeaea; font-size: 13px; color: #666666; line-height: 1.8;">
                         <table role="presentation" style="width: 100%; border-collapse: collapse;">
                           <tr>
-                            <td style="text-align: center; padding-bottom: 16px;">
-                              <p style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600;">
-                                {salon_name}
-                              </p>
+                            <td style="padding-bottom: 24px;">
+                              <div style="font-weight: 700; color: #000000; font-size: 14px; margin-bottom: 8px;">{salon_name}</div>
+                              <div>📍 Грузия, Батуми</div>
+                              <div>📞 <a href="tel:+995123456789" style="text-decoration: none; color: #666666;">+995 123 456 789</a></div>
+                              <div>✉️ <a href="mailto:ii3391609@gmail.com" style="text-decoration: none; color: #666666;">ii3391609@gmail.com</a></div>
+                              <div>🌐 <a href="{base_url}" style="text-decoration: none; color: #666666;">mlediamant.com</a></div>
                             </td>
                           </tr>
                           <tr>
-                            <td style="text-align: center; padding-bottom: 8px;">
-                              <p style="margin: 0; color: #6b7280; font-size: 14px;">
-                                📍 Грузия, Батуми
-                              </p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="text-align: center; padding-bottom: 8px;">
-                              <p style="margin: 0; color: #6b7280; font-size: 14px;">
-                                📞 <a href="tel:+995123456789" style="color: #3b82f6; text-decoration: none;">+995 123 456 789</a>
-                              </p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="text-align: center; padding-bottom: 8px;">
-                              <p style="margin: 0; color: #6b7280; font-size: 14px;">
-                                ✉️ <a href="mailto:{smtp_from}" style="color: #3b82f6; text-decoration: none;">{smtp_from}</a>
-                              </p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="text-align: center; padding-bottom: 16px;">
-                              <p style="margin: 0; color: #6b7280; font-size: 14px;">
-                                🌐 <a href="{base_url}" style="color: #3b82f6; text-decoration: none;">{base_url.replace('https://', '').replace('http://', '')}</a>
-                              </p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="text-align: center; padding-top: 16px; border-top: 1px solid #e5e7eb;">
-                              <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                                © 2026 {salon_name}. Все права защищены.
-                              </p>
+                            <td style="padding-top: 24px; border-top: 1px solid #eaeaea; text-align: center;">
+                                <a href="{unsubscribe_url}" style="color: #999999; text-decoration: underline; font-size: 12px;">
+                                  Отписаться от рассылки
+                                </a>
                             </td>
                           </tr>
                         </table>
                       </td>
                     </tr>
-
                   </table>
                 </td>
               </tr>
@@ -590,27 +571,20 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
 
         # Текстовая версия письма
         text = f"""
-{salon_name}
+        {salon_name}
 
-Здравствуйте, {full_name}!
+        Здравствуйте, {full_name}!
 
-{message}
+        {message}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        ---
+        {salon_name}
+        📍 Грузия, Батуми
+        📞 +995 123 456 789
+        ✉️ ii3391609@gmail.com
+        🌐 mlediamant.com
 
-КОНТАКТНАЯ ИНФОРМАЦИЯ
-
-{salon_name}
-📍 Грузия, Батуми
-📞 +995 123 456 789
-✉️ {smtp_from}
-🌐 {base_url.replace('https://', '').replace('http://', '')}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Отписаться от рассылки: {unsubscribe_url}
-
-© 2026 {salon_name}. Все права защищены.
+        Отписаться: {unsubscribe_url}
         """
 
         part1 = MIMEText(text, 'plain', 'utf-8')
