@@ -24,6 +24,7 @@ const Products = () => {
     const [showAddDialog, setShowAddDialog] = useState(false);
     const [showEditDialog, setShowEditDialog] = useState(false);
     const [showMovementDialog, setShowMovementDialog] = useState(false);
+    const [showDetailDialog, setShowDetailDialog] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [filterCategory, setFilterCategory] = useState<string>('');
     const [categories, setCategories] = useState<string[]>([]);
@@ -115,14 +116,20 @@ const Products = () => {
                                 </div>
                             </div>
 
-                            <div className="crm-card-body">
+                            <div
+                                className="crm-card-body cursor-pointer hover:bg-gray-50/50 transition-colors"
+                                onClick={() => {
+                                    setSelectedProduct(product);
+                                    setShowDetailDialog(true);
+                                }}
+                            >
                                 <div className="crm-detail-row">
                                     <span className="crm-detail-label">{t('form.price')}:</span>
-                                    <span className="crm-detail-value">{product.price} AED</span>
+                                    <span className="crm-detail-value font-bold text-pink-600">{product.price} AED</span>
                                 </div>
-                                <div className="crm-detail-row">
+                                <div className="crm-detail-row text-xs mt-1">
                                     <span className="crm-detail-label">{t('form.stockQuantity')}:</span>
-                                    <span className={`crm-detail-value crm-stock-${getStockStatus(product)}`}>
+                                    <span className={`crm-detail-value font-medium crm-stock-${getStockStatus(product)}`}>
                                         {product.stock_quantity}
                                     </span>
                                 </div>
@@ -198,6 +205,16 @@ const Products = () => {
                         setShowMovementDialog(false);
                         setSelectedProduct(null);
                         loadProducts();
+                    }}
+                />
+            )}
+
+            {showDetailDialog && selectedProduct && (
+                <ProductDetailDialog
+                    product={selectedProduct}
+                    onClose={() => {
+                        setShowDetailDialog(false);
+                        setSelectedProduct(null);
                     }}
                 />
             )}
@@ -468,6 +485,131 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    );
+};
+
+const ProductDetailDialog = ({ product, onClose }: any) => {
+    const { t } = useTranslation('admin/products');
+    const [movements, setMovements] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [activePhoto, setActivePhoto] = useState(product.photos?.[0] || null);
+
+    useEffect(() => {
+        loadMovements();
+    }, [product.id]);
+
+    const loadMovements = async () => {
+        try {
+            setLoading(true);
+            const response = await api.getProductMovements(product.id);
+            setMovements(response.movements || []);
+        } catch (error) {
+            console.error('Error loading movements:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="crm-modal-overlay" onClick={onClose}>
+            <div className="crm-modal modal-large" onClick={(e) => e.stopPropagation()}>
+                <button className="crm-modal-close" onClick={onClose}>
+                    <X size={20} />
+                </button>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Left: Photos */}
+                    <div className="space-y-4">
+                        <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100 border relative group">
+                            {activePhoto ? (
+                                <img src={activePhoto} alt={product.name} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                    <ImageIcon size={64} />
+                                </div>
+                            )}
+                        </div>
+
+                        {product.photos && product.photos.length > 0 && (
+                            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                                {product.photos.map((photo: string, idx: number) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => setActivePhoto(photo)}
+                                        className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${activePhoto === photo ? 'border-pink-500 scale-95' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                                    >
+                                        <img src={photo} alt="" className="w-full h-full object-cover" />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="bg-pink-50 rounded-2xl p-6 border border-pink-100">
+                            <h3 className="font-bold text-pink-900 mb-2">{t('form.price')}</h3>
+                            <p className="text-3xl font-black text-pink-600">{product.price} AED</p>
+                            {product.cost_price > 0 && (
+                                <p className="text-sm text-pink-400 mt-1">Себестоимость: {product.cost_price} AED</p>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Right: Info & Analytics */}
+                    <div className="space-y-6">
+                        <div>
+                            <span className="text-xs font-bold text-pink-500 uppercase tracking-wider">{product.category || 'Без категории'}</span>
+                            <h2 className="text-3xl font-black text-gray-900 leading-tight">{product.name_ru || product.name}</h2>
+                            {product.sku && <p className="text-sm text-gray-500 mt-1 font-mono">SKU: {product.sku}</p>}
+                        </div>
+
+                        {product.notes && (
+                            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                <p className="text-sm text-gray-600 italic">"{product.notes}"</p>
+                            </div>
+                        )}
+
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                                    <TrendingUp className="w-5 h-5 text-pink-500" />
+                                    История движений
+                                </h3>
+                                <div className={`px-3 py-1 rounded-full text-xs font-bold ${product.stock_quantity > product.min_stock_level ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                    В наличии: {product.stock_quantity}
+                                </div>
+                            </div>
+
+                            <div className="max-h-[300px] overflow-y-auto pr-2 space-y-2">
+                                {loading ? (
+                                    <div className="py-8 text-center text-gray-400">Загрузка данных...</div>
+                                ) : movements.length === 0 ? (
+                                    <div className="py-8 text-center text-gray-400">Нет данных о движениях</div>
+                                ) : (
+                                    movements.map((m: any, idx: number) => (
+                                        <div key={idx} className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-all">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${m.movement_type === 'in' ? 'bg-green-50 text-green-600' : m.movement_type === 'out' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}>
+                                                    {m.movement_type === 'in' ? '+' : m.movement_type === 'out' ? '-' : '~'}
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-bold text-gray-800">
+                                                        {m.movement_type === 'in' ? 'Поступление' : m.movement_type === 'out' ? 'Списание' : 'Корректировка'}
+                                                    </p>
+                                                    <p className="text-[10px] text-gray-400">{new Date(m.created_at).toLocaleString()}</p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="font-bold text-gray-900">{m.quantity} шт.</p>
+                                                {m.reason && <p className="text-[10px] text-gray-400 max-w-[120px] truncate" title={m.reason}>{m.reason}</p>}
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
