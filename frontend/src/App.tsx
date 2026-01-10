@@ -327,6 +327,8 @@ export default function App() {
                 <Route path="invoices" element={<Invoices />} />
                 <Route path="payment-integrations" element={<PaymentIntegrations />} />
                 <Route path="marketplace-integrations" element={<MarketplaceIntegrations />} />
+                <Route path="referrals" element={<ReferralProgram />} />
+                <Route path="challenges" element={<Challenges />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
