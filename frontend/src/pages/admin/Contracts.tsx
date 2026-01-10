@@ -302,9 +302,9 @@ const ContractDialog = ({ contract, contractTypes, onClose, onSuccess }: Contrac
         }
     };
 
-    // Filter types logic
+    // Filter types logic: restricted roles can't see office types (employment/rental)
     const displayedTypes = isRestricted
-        ? contractTypes.filter(type => type.code === 'service')
+        ? contractTypes.filter(type => !['employment', 'rental'].includes(type.code))
         : contractTypes;
 
     return (
@@ -459,10 +459,10 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
         try {
             if (editingType) {
                 await api.updateContractType(editingType.id, formData);
-                toast.success('Тип обновлен');
+                toast.success(t('typeManagement.messages.updated'));
             } else {
                 await api.createContractType(formData);
-                toast.success('Тип создан');
+                toast.success(t('typeManagement.messages.created'));
             }
             // Reset and reload
             setEditingType(null);
@@ -479,7 +479,7 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
         if (!typeToDelete) return;
         try {
             await api.deleteContractType(typeToDelete.id, deleteWithDocs);
-            toast.success('Тип удален');
+            toast.success(t('typeManagement.messages.deleted'));
             setMode('list');
             setTypeToDelete(null);
             loadTypes();
@@ -496,25 +496,25 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
                     <button className="crm-modal-close" onClick={() => setMode('list')}>
                         <X size={20} />
                     </button>
-                    <h2>{editingType ? 'Редактировать тип' : 'Создать тип'}</h2>
+                    <h2>{editingType ? t('typeManagement.editType') : t('typeManagement.createType')}</h2>
                     <form onSubmit={handleSave}>
                         <div className="crm-form-content">
                             <div className="crm-form-group">
-                                <label className="crm-label">Название</label>
+                                <label className="crm-label">{t('typeManagement.name')}</label>
                                 <input className="crm-input" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
                             </div>
                             <div className="crm-form-group">
-                                <label className="crm-label">Код (с-лат, уникальный)</label>
+                                <label className="crm-label">{t('typeManagement.code')}</label>
                                 <input className="crm-input" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} required disabled={!!editingType} />
                             </div>
                             <div className="crm-form-group">
-                                <label className="crm-label">Описание</label>
+                                <label className="crm-label">{t('typeManagement.description')}</label>
                                 <textarea className="crm-input" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
                             </div>
                         </div>
                         <div className="crm-modal-footer">
-                            <button type="button" className="crm-btn-secondary" onClick={() => setMode('list')}>Отмена</button>
-                            <button type="submit" className="crm-btn-primary">Сохранить</button>
+                            <button type="button" className="crm-btn-secondary" onClick={() => setMode('list')}>{t('form.cancel')}</button>
+                            <button type="submit" className="crm-btn-primary">{t('form.save')}</button>
                         </div>
                     </form>
                 </div>
@@ -529,9 +529,9 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
                     <button className="crm-modal-close" onClick={() => setMode('list')}>
                         <X size={20} />
                     </button>
-                    <h2>Удаление типа "{typeToDelete.name}"</h2>
+                    <h2>{t('typeManagement.deleteTitle', { name: typeToDelete.name })}</h2>
                     <div className="crm-form-content">
-                        <p className="mb-4">Вы хотите удалить этот тип договора. Как поступить с существующими договорами этого типа?</p>
+                        <p className="mb-4">{t('typeManagement.deletePrompt')}</p>
 
                         <div className="flex flex-col gap-2">
                             <label className="flex items-center gap-2 cursor-pointer p-2 border rounded hover:bg-gray-50">
@@ -542,8 +542,8 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
                                     onChange={() => setDeleteWithDocs(true)}
                                 />
                                 <div>
-                                    <span className="font-medium">Удалить все договоры</span>
-                                    <p className="text-sm text-gray-500">Все документы этого типа будут удалены безвозвратно.</p>
+                                    <span className="font-medium">{t('typeManagement.deleteWithDocs')}</span>
+                                    <p className="text-sm text-gray-500">{t('typeManagement.deleteWithDocsSub')}</p>
                                 </div>
                             </label>
 
@@ -555,15 +555,15 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
                                     onChange={() => setDeleteWithDocs(false)}
                                 />
                                 <div>
-                                    <span className="font-medium">Оставить договоры без типа</span>
-                                    <p className="text-sm text-gray-500">Договоры останутся, но поле "Тип" будет очищено.</p>
+                                    <span className="font-medium">{t('typeManagement.keepDocs')}</span>
+                                    <p className="text-sm text-gray-500">{t('typeManagement.keepDocsSub')}</p>
                                 </div>
                             </label>
                         </div>
                     </div>
                     <div className="crm-modal-footer">
-                        <button type="button" className="crm-btn-secondary" onClick={() => setMode('list')}>Отмена</button>
-                        <button type="button" className="crm-btn-danger" onClick={confirmDelete}>Подтвердить удаление</button>
+                        <button type="button" className="crm-btn-secondary" onClick={() => setMode('list')}>{t('form.cancel')}</button>
+                        <button type="button" className="crm-btn-danger" onClick={confirmDelete}>{t('typeManagement.confirmDelete')}</button>
                     </div>
                 </div>
             </div>
@@ -577,13 +577,13 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
                     <X size={20} />
                 </button>
                 <div className="flex justify-between items-center mb-4">
-                    <h2>Типы договоров</h2>
+                    <h2>{t('typeManagement.title')}</h2>
                     <button className="crm-btn-primary" onClick={() => {
                         setEditingType(null);
                         setFormData({ name: '', code: '', description: '' });
                         setMode('edit');
                     }}>
-                        <Plus size={16} /> Добавить
+                        <Plus size={16} /> {t('typeManagement.add')}
                     </button>
                 </div>
 
@@ -591,9 +591,9 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
                     <table className="crm-table">
                         <thead>
                             <tr>
-                                <th>Название</th>
-                                <th>Код</th>
-                                <th style={{ width: '100px' }}>Действия</th>
+                                <th>{t('typeManagement.name')}</th>
+                                <th>{t('typeManagement.code')}</th>
+                                <th style={{ width: '100px' }}>{t('actions')}</th>
                             </tr>
                         </thead>
                         <tbody>
