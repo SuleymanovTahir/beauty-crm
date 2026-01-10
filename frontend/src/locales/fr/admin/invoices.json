@@ -1,0 +1,67 @@
+{
+  "title": "Comptes",
+  "subtitle": "Gestion des comptes et des paiements",
+  "addInvoice": "Créer un compte",
+  "addPayment": "Ajouter un paiement",
+  "loading": "Chargement...",
+  "allStatuses": "Tous les statuts",
+  "invoiceNumber": "Numéro de compte",
+  "client": "Client",
+  "totalAmount": "Somme",
+  "paidAmount": "Payé",
+  "status": "Statut",
+  "dueDate": "Date d'échéance",
+  "actions": "Actes",
+  "sendButton": "Envoyer",
+  "delete": "Supprimer",
+  "noInvoices": "Aucun compte pour l'instant",
+  "createFirst": "Créez votre première facture pour un client",
+  "statuses": {
+    "draft": "Brouillon",
+    "sent": "Envoyé",
+    "partial": "Partiellement payé",
+    "paid": "Payé",
+    "overdue": "Expiré"
+  },
+  "form": {
+    "selectClient": "Sélectionner un client",
+    "items": "Positions de compte",
+    "itemName": "Nom",
+    "itemQuantity": "Quantité",
+    "itemPrice": "Prix",
+    "addItem": "Ajouter un poste",
+    "dueDate": "Date d'échéance",
+    "notes": "Remarques",
+    "save": "Sauvegarder",
+    "cancel": "Annuler"
+  },
+  "payment": {
+    "title": "Ajouter un paiement",
+    "amount": "Somme",
+    "method": "Mode de paiement",
+    "notes": "Remarques",
+    "add": "Ajouter",
+    "methods": {
+      "cash": "Espèces",
+      "card": "Carte",
+      "transfer": "Traduction",
+      "online": "En ligne"
+    }
+  },
+  "sendDialog": {
+    "title": "Envoyer la facture",
+    "method": "Méthode d'expédition",
+    "recipient": "Destinataire",
+    "email": "E-mail",
+    "whatsapp": "WhatsApp",
+    "telegram": "Télégramme",
+    "sendButton": "Envoyer"
+  },
+  "messages": {
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce compte ?",
+    "invoiceCreated": "Compte créé",
+    "invoiceSent": "Facture envoyée",
+    "paymentAdded": "Paiement ajouté",
+    "invoiceDeleted": "Compte supprimé"
+  }
+}

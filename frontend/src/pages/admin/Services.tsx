@@ -1500,14 +1500,14 @@ export default function Services() {
         <DialogContent className="max-w-2xl p-0 flex flex-col max-h-[90vh]">
           <DialogHeader className="px-6 pt-6 pb-4 border-b">
             <DialogTitle>
-              {editingCampaign ? 'Редактировать кампанию' : 'Создать реферальную кампанию'}
+              {editingCampaign ? t('services:edit_campaign', 'Редактировать кампанию') : t('services:create_referral_campaign', 'Создать реферальную кампанию')}
             </DialogTitle>
           </DialogHeader>
 
           <div className="crm-form-content px-6 py-4">
             <div className="space-y-4">
               <div>
-                <Label htmlFor="campaignName">Название кампании *</Label>
+                <Label htmlFor="campaignName">{t('services:campaign_name', 'Название кампании')} *</Label>
                 <Input
                   id="campaignName"
                   value={referralFormData.name}
@@ -1527,7 +1527,7 @@ export default function Services() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="referrerBonus">Бонус приглашающему</Label>
+                  <Label htmlFor="referrerBonus">{t('services:bonus_for_referrer', 'Бонус приглашающему')}</Label>
                   <Input
                     id="referrerBonus"
                     type="number"
@@ -1538,7 +1538,7 @@ export default function Services() {
               </div>
 
               <div>
-                <Label htmlFor="targetType">Целевая аудитория</Label>
+                <Label htmlFor="targetType">{t('services:target_audience', 'Целевая аудитория')}</Label>
                 <Select
                   value={referralFormData.target_type}
                   onValueChange={(value: any) => setReferralFormData({ ...referralFormData, target_type: value })}
@@ -1900,7 +1900,7 @@ export default function Services() {
                   className="w-4 h-4 text-purple-600 rounded"
                 />
                 <Label htmlFor="campaignActive" className="cursor-pointer">
-                  Активна (клиенты могут использовать)
+                  {t('services:active_label', 'Активна (клиенты могут использовать)')}
                 </Label>
               </div>
             </div>
@@ -1908,7 +1908,7 @@ export default function Services() {
 
           <div className="crm-modal-footer px-6 py-4 border-t">
             <Button variant="outline" onClick={() => setIsReferralModalOpen(false)}>
-              Отмена
+              {t('common:cancel', 'Отмена')}
             </Button>
             <Button
               onClick={async () => {
@@ -1953,7 +1953,7 @@ export default function Services() {
               }}
               className="bg-purple-600 hover:bg-purple-700"
             >
-              {editingCampaign ? 'Сохранить' : 'Создать'}
+              {editingCampaign ? t('common:save', 'Сохранить') : t('common:create', 'Создать')}
             </Button>
           </div>
         </DialogContent>
@@ -2000,7 +2000,7 @@ export default function Services() {
 
               {/* Target Audience Selection for Challenges */}
               <div>
-                <Label>Целевая аудитория</Label>
+                <Label>{t('services:target_audience', 'Целевая аудитория')}</Label>
                 <Select value={challengeFormData.target_type} onValueChange={(value: any) => setChallengeFormData({ ...challengeFormData, target_type: value })}>
                   <SelectTrigger><SelectValue placeholder={t('services:select_audience', 'Выберите аудиторию')} /></SelectTrigger>
                   <SelectContent>
@@ -2015,11 +2015,11 @@ export default function Services() {
               {challengeFormData.target_type === 'by_master' && (
                 <div className="space-y-4">
                   <div>
-                    <Label>Выберите мастера</Label>
+                    <Label>{t('services:select_master', 'Выберите мастера')}</Label>
                     {mastersLoading ? (
-                      <div className="flex items-center gap-2 p-2 text-gray-500"><Loader className="w-4 h-4 animate-spin" /> Загрузка...</div>
+                      <div className="flex items-center gap-2 p-2 text-gray-500"><Loader className="w-4 h-4 animate-spin" /> {t('common:loading')}</div>
                     ) : mastersList.length === 0 ? (
-                      <p className="text-sm text-gray-500 p-2">Мастера не найдены</p>
+                      <p className="text-sm text-gray-500 p-2">{t('services:no_masters_found', 'Мастера не найдены')}</p>
                     ) : (
                       <Select value={challengeFormData.master_id?.toString() || ''} onValueChange={async (value) => {
                         const masterId = Number(value);
@@ -2042,9 +2042,9 @@ export default function Services() {
                   </div>
                   {challengeFormData.master_id && (
                     <div>
-                      <Label>Клиенты мастера</Label>
-                      {clientsLoading ? (<div className="flex items-center gap-2 p-2 text-gray-500"><Loader className="w-4 h-4 animate-spin" /> Загрузка...</div>
-                      ) : clientsOfMaster.length === 0 ? (<p className="text-sm text-gray-500 p-2">У этого мастера нет клиентов</p>
+                      <Label>{t('services:master_clients', 'Клиенты мастера')}</Label>
+                      {clientsLoading ? (<div className="flex items-center gap-2 p-2 text-gray-500"><Loader className="w-4 h-4 animate-spin" /> {t('common:loading')}</div>
+                      ) : clientsOfMaster.length === 0 ? (<p className="text-sm text-gray-500 p-2">{t('services:no_clients_found', 'Клиенты не найдены')}</p>
                       ) : (
                         <div className="space-y-2">
                           <div className="flex gap-2 mb-2">
@@ -2074,7 +2074,7 @@ export default function Services() {
               {challengeFormData.target_type === 'by_service' && (
                 <div className="space-y-4">
                   <div>
-                    <Label>Выберите услугу</Label>
+                    <Label>{t('services:select_service', 'Выберите услугу')}</Label>
                     <Select value={challengeFormData.service_id?.toString() || ''} onValueChange={async (value) => {
                       const serviceId = Number(value);
                       setChallengeFormData({ ...challengeFormData, service_id: serviceId, client_ids: [] });
@@ -2095,9 +2095,9 @@ export default function Services() {
                   </div>
                   {challengeFormData.service_id && (
                     <div>
-                      <Label>Клиенты, использовавшие услугу</Label>
-                      {clientsLoading ? (<div className="flex items-center gap-2 p-2 text-gray-500"><Loader className="w-4 h-4 animate-spin" /> Загрузка...</div>
-                      ) : clientsOfMaster.length === 0 ? (<p className="text-sm text-gray-500 p-2">Клиенты не найдены</p>
+                      <Label>{t('services:service_clients', 'Клиенты, использовавшие услугу')}</Label>
+                      {clientsLoading ? (<div className="flex items-center gap-2 p-2 text-gray-500"><Loader className="w-4 h-4 animate-spin" /> {t('common:loading')}</div>
+                      ) : clientsOfMaster.length === 0 ? (<p className="text-sm text-gray-500 p-2">{t('services:no_clients_found', 'Клиенты не найдены')}</p>
                       ) : (
                         <div className="space-y-2">
                           <div className="flex gap-2 mb-2">
@@ -2127,7 +2127,7 @@ export default function Services() {
               {challengeFormData.target_type === 'by_inactivity' && (
                 <div className="space-y-4">
                   <div>
-                    <Label>Дней без посещения</Label>
+                    <Label>{t('services:days_inactive', 'Дней без посещения')}</Label>
                     <Input type="number" value={challengeFormData.days_inactive} onChange={(e) => setChallengeFormData({ ...challengeFormData, days_inactive: Number(e.target.value) })} placeholder="30" />
                   </div>
                   <Button type="button" variant="outline" onClick={async () => {
@@ -2141,10 +2141,10 @@ export default function Services() {
                     } finally {
                       setClientsLoading(false);
                     }
-                  }}>Загрузить неактивных клиентов</Button>
+                  }}>{t('services:load_inactive_clients', 'Загрузить неактивных клиентов')}</Button>
                   {clientsOfMaster.length > 0 && (
                     <div>
-                      <Label>Неактивные клиенты</Label>
+                      <Label>{t('services:inactive_clients', 'Неактивные клиенты')}</Label>
                       <div className="space-y-2">
                         <div className="flex gap-2 mb-2">
                           <Input placeholder={t('services:search_clients', 'Поиск клиентов...')} value={challengeFormData.clientSearch || ''} onChange={(e) => setChallengeFormData({ ...challengeFormData, clientSearch: e.target.value })} className="flex-1" />
