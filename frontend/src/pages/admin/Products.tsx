@@ -198,7 +198,7 @@ const Products = () => {
                                     )}
                                     <div className="absolute top-3 left-3">
                                         <span className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${getStockStatus(product) === 'out-of-stock' ? 'bg-red-500 text-white' : getStockStatus(product) === 'low-stock' ? 'bg-orange-500 text-white' : 'bg-green-500 text-white'}`}>
-                                            {getStockStatus(product) === 'out-of-stock' ? t('movement.types.out') : getStockStatus(product) === 'low-stock' ? 'Low' : 'In Stock'}
+                                            {getStockStatus(product) === 'out-of-stock' ? t('stock_status.out_of_stock') : getStockStatus(product) === 'low-stock' ? t('stock_status.low_stock') : t('stock_status.in_stock')}
                                         </span>
                                     </div>
                                     {product.category && (
@@ -230,7 +230,7 @@ const Products = () => {
                                         </div>
                                         <div className="text-right">
                                             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{t('form.stockQuantity')}</p>
-                                            <p className="text-sm font-bold text-gray-900">{product.stock_quantity} шт.</p>
+                                            <p className="text-sm font-bold text-gray-900">{product.stock_quantity}</p>
                                         </div>
                                     </div>
 
@@ -284,7 +284,7 @@ const Products = () => {
                             <Package size={48} className="text-gray-300" />
                         </div>
                         <h3 className="text-lg font-bold text-gray-900">{t('noProducts')}</h3>
-                        <p className="text-gray-500">{searchQuery ? 'Ничего не найдено по вашему запросу' : t('createFirst')}</p>
+                        <p className="text-gray-500">{searchQuery ? t('messages.noResults', 'Ничего не найдено по вашему запросу') : t('createFirst')}</p>
                     </div>
                 )}
             </div>
@@ -726,7 +726,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.totalSold', 'Продано всего')}</p>
-                                    <p className="text-xl font-black text-gray-900">{stats.total_quantity_sold} шт.</p>
+                                    <p className="text-xl font-black text-gray-900">{stats.total_quantity_sold} {t('unit_pcs', 'шт.')}</p>
                                 </div>
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.revenue', 'Выручка')}</p>
@@ -734,7 +734,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                                 </div>
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.last30Days', 'За 30 дней')}</p>
-                                    <p className="text-xl font-black text-gray-900">{stats.last_30_days.quantity} шт.</p>
+                                    <p className="text-xl font-black text-gray-900">{stats.last_30_days.quantity} {t('unit_pcs', 'шт.')}</p>
                                 </div>
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.avgPrice', 'Ср. цена')}</p>
@@ -774,7 +774,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <p className="font-bold text-gray-900">{m.quantity} шт.</p>
+                                                <p className="font-bold text-gray-900">{m.quantity} {t('unit_pcs', 'шт.')}</p>
                                                 {m.reason && <p className="text-[10px] text-gray-400 max-w-[120px] truncate" title={m.reason}>{m.reason}</p>}
                                             </div>
                                         </div>

@@ -45,7 +45,8 @@
     "productCreated": "Товар создан",
     "productUpdated": "Товар обновлен",
     "productDeleted": "Товар удален",
-    "movementAdded": "Движение добавлено"
+    "movementAdded": "Движение добавлено",
+    "noResults": "Ничего не найдено по вашему запросу"
   },
   "detail": {
     "noCategory": "Без категории",
@@ -61,5 +62,12 @@
     "totalRevenue": "Выручка",
     "last30Days": "За 30 дней",
     "avgPrice": "Ср. цена"
-  }
+  },
+  "search_placeholder": "Поиск по названию или категории...",
+  "stock_status": {
+    "in_stock": "В наличии",
+    "low_stock": "Мало",
+    "out_of_stock": "Нет в наличии"
+  },
+  "unit_pcs": "шт."
 }
