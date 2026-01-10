@@ -257,17 +257,26 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 label: t('menu.chat'),
                 path: `${rolePrefix}/chat`,
                 badge: unreadCount,
-                requirePermission: () => permissions.canViewInstagramChat || permissions.roleLevel >= 70 || user?.role === 'sales',
-                items: enabledMessengers.map(messenger => ({
-                    id: `chat-${messenger.type}`,
-                    icon: messenger.type === 'instagram' ? (props: any) => <InstagramIcon {...props} colorful={true} /> :
-                        messenger.type === 'telegram' ? (props: any) => <TelegramIcon {...props} colorful={true} /> :
-                            messenger.type === 'whatsapp' ? (props: any) => <WhatsAppIcon {...props} colorful={true} /> :
-                                messenger.type === 'tiktok' ? (props: any) => <TikTokIcon {...props} colorful={true} /> : MessageSquare,
-                    label: messenger.name,
-                    path: `${rolePrefix}/chat?messenger=${messenger.type}`,
-                    requirePermission: () => true
-                }))
+                requirePermission: () => permissions.canViewInstagramChat || permissions.roleLevel >= 70 || user?.role === 'sales' || permissions.canUseStaffChat,
+                items: [
+                    ...enabledMessengers.map(messenger => ({
+                        id: `chat-${messenger.type}`,
+                        icon: messenger.type === 'instagram' ? (props: any) => <InstagramIcon {...props} colorful={true} /> :
+                            messenger.type === 'telegram' ? (props: any) => <TelegramIcon {...props} colorful={true} /> :
+                                messenger.type === 'whatsapp' ? (props: any) => <WhatsAppIcon {...props} colorful={true} /> :
+                                    messenger.type === 'tiktok' ? (props: any) => <TikTokIcon {...props} colorful={true} /> : MessageSquare,
+                        label: messenger.name,
+                        path: `${rolePrefix}/chat?messenger=${messenger.type}`,
+                        requirePermission: () => true
+                    })),
+                    {
+                        id: 'internal-chat',
+                        icon: MessageCircle,
+                        label: t('menu.internal_chat'),
+                        path: `${rolePrefix}/internal-chat`,
+                        requirePermission: () => permissions.canUseStaffChat
+                    }
+                ]
             },
             { id: 'calendar', icon: Calendar, label: t('menu.calendar'), path: `${rolePrefix}/calendar`, requirePermission: () => permissions.canViewAllCalendars && user?.role !== 'employee' },
             { id: 'clients', icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, requirePermission: () => permissions.canViewAllClients && user?.role !== 'sales' },
@@ -310,7 +319,6 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                     { id: 'funnel', icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, requirePermission: () => permissions.canViewAnalytics || user?.role === 'sales' },
                     { id: 'visitors', icon: MapPinned, label: t('menu.visitors'), path: `${rolePrefix}/visitor-analytics`, requirePermission: () => permissions.canViewAnalytics },
                     { id: 'telephony', icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, requirePermission: () => permissions.roleLevel >= 80 || user?.role === 'sales' },
-                    { id: 'internal-chat', icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, requirePermission: () => permissions.canUseStaffChat },
                     { id: 'profile', icon: User, label: t('menu.profile'), path: `${rolePrefix}/profile`, requirePermission: () => user?.role === 'employee' || user?.role === 'sales' },
                 ]
             },
