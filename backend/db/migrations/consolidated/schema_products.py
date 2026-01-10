@@ -33,12 +33,21 @@ def migrate():
             supplier TEXT,
             notes TEXT,
             is_active BOOLEAN DEFAULT TRUE,
-            photos TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             created_by INTEGER,
             FOREIGN KEY (created_by) REFERENCES users(id)
         )''')
+        
+        # ✅ Добавляем колонку photos, если её нет
+        c.execute('''
+            DO $$ 
+            BEGIN 
+                IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='photos') THEN
+                    ALTER TABLE products ADD COLUMN photos TEXT;
+                END IF;
+            END $$;
+        ''')
         
         # Индексы
         c.execute('CREATE INDEX IF NOT EXISTS idx_products_category ON products(category)')
@@ -65,7 +74,7 @@ def migrate():
         c.execute('CREATE INDEX IF NOT EXISTS idx_product_movements_type ON product_movements(movement_type)')
         
         conn.commit()
-        log_info("✅ Таблица products создана успешно", "migration")
+        log_info("✅ Таблица products создана/обновлена успешно", "migration")
         
     except Exception as e:
         conn.rollback()

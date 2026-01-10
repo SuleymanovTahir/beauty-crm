@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Edit, Trash2, Package, TrendingUp, X, Image as ImageIcon } from 'lucide-react';
 import { api } from '../../services/api';
+import { toast } from 'sonner';
 import '../../styles/crm-pages.css';
 
 
@@ -15,6 +16,7 @@ interface Product {
     stock_quantity: number;
     min_stock_level: number;
     is_active: boolean;
+    photos?: string | string[];
 }
 
 const Products = () => {
@@ -38,7 +40,15 @@ const Products = () => {
         try {
             setLoading(true);
             const response = await api.getProducts(filterCategory);
-            setProducts(response.products);
+            const parsedProducts = response.products.map((p: any) => ({
+                ...p,
+                photos: Array.isArray(p.photos)
+                    ? p.photos
+                    : (typeof p.photos === 'string' && p.photos.startsWith('[')
+                        ? JSON.parse(p.photos)
+                        : (p.photos ? [p.photos] : []))
+            }));
+            setProducts(parsedProducts);
         } catch (error) {
             console.error('Error loading products:', error);
         } finally {
@@ -105,8 +115,12 @@ const Products = () => {
                     {products.map((product) => (
                         <div key={product.id} className="crm-card">
                             <div className="crm-card-header">
-                                <div className="crm-card-icon">
-                                    <Package size={24} />
+                                <div className="crm-card-icon overflow-hidden bg-gray-50 flex items-center justify-center">
+                                    {product.photos && product.photos.length > 0 ? (
+                                        <img src={product.photos[0]} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <Package size={24} className="text-gray-400" />
+                                    )}
                                 </div>
                                 <div className="crm-card-title">
                                     <h3>{product.name_ru || product.name}</h3>
@@ -244,16 +258,24 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
         supplier: product?.supplier || '',
         notes: product?.notes || '',
         is_active: product?.is_active ?? true,
-        photos: product?.photos || [] as string[]
+        photos: Array.isArray(product?.photos)
+            ? product.photos
+            : (typeof product?.photos === 'string' && product.photos.startsWith('[')
+                ? JSON.parse(product.photos)
+                : (product?.photos ? [product.photos] : []))
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            const payload = {
+                ...formData,
+                photos: JSON.stringify(formData.photos)
+            };
             if (product) {
-                await api.put(`/api/products/${product.id}`, formData);
+                await api.put(`/api/products/${product.id}`, payload);
             } else {
-                await api.post('/api/products', formData);
+                await api.post('/api/products', payload);
             }
             onSuccess();
         } catch (error) {
@@ -269,135 +291,140 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                 </button>
                 <h2>{product ? t('edit') : t('addProduct')}</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="crm-form-grid">
-                        <div className="crm-form-group">
-                            <label className="crm-label">{t('form.name')} *</label>
-                            <input className="crm-input"
-                                type="text"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                required
-                            />
+                    <div className="crm-form-content">
+                        <div className="crm-form-grid">
+                            <div className="crm-form-group">
+                                <label className="crm-label">{t('form.name')} *</label>
+                                <input className="crm-input"
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    required
+                                />
+                            </div>
+
+                            <div className="crm-form-group">
+                                <label className="crm-label">{t('form.category', 'Категория')}</label>
+                                <input className="crm-input"
+                                    type="text"
+                                    value={formData.category}
+                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="crm-form-group">
+                                <label className="crm-label">{t('form.price')} *</label>
+                                <input className="crm-input"
+                                    type="number"
+                                    step="0.01"
+                                    value={formData.price}
+                                    onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
+                                    required
+                                />
+                            </div>
+
+                            <div className="crm-form-group">
+                                <label className="crm-label">{t('form.costPrice')}</label>
+                                <input className="crm-input"
+                                    type="number"
+                                    step="0.01"
+                                    value={formData.cost_price}
+                                    onChange={(e) => setFormData({ ...formData, cost_price: parseFloat(e.target.value) })}
+                                />
+                            </div>
+
+                            <div className="crm-form-group">
+                                <label className="crm-label">{t('form.stockQuantity')}</label>
+                                <input className="crm-input"
+                                    type="number"
+                                    value={formData.stock_quantity}
+                                    onChange={(e) => setFormData({ ...formData, stock_quantity: parseInt(e.target.value) })}
+                                />
+                            </div>
+
+                            <div className="crm-form-group">
+                                <label className="crm-label">{t('form.minStockLevel')}</label>
+                                <input className="crm-input"
+                                    type="number"
+                                    value={formData.min_stock_level}
+                                    onChange={(e) => setFormData({ ...formData, min_stock_level: parseInt(e.target.value) })}
+                                />
+                            </div>
+
+                            <div className="crm-form-group">
+                                <label className="crm-label">{t('form.sku')}</label>
+                                <input className="crm-input"
+                                    type="text"
+                                    value={formData.sku}
+                                    onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                                />
+                            </div>
                         </div>
 
                         <div className="crm-form-group">
-                            <label className="crm-label">{t('form.category', 'Категория')}</label>
-                            <input className="crm-input"
-                                type="text"
-                                value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                            />
-                        </div>
+                            <label className="crm-label">{t('form.photos', 'Фото товара')}</label>
+                            <div className="crm-photo-upload mt-2">
+                                <label className="crm-photo-grid flex flex-wrap gap-2">
+                                    {formData.photos.map((photo: string, index: number) => (
+                                        <div key={index} className="relative w-24 h-24 border rounded-lg overflow-hidden group">
+                                            <img src={photo} alt="" className="w-full h-full object-cover" />
+                                            <button
+                                                type="button"
+                                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                onClick={() => setFormData({ ...formData, photos: formData.photos.filter((_: string, i: number) => i !== index) })}
+                                            >
+                                                <X size={12} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    <div className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:border-pink-500 hover:text-pink-500 transition-colors cursor-pointer relative">
+                                        <ImageIcon size={24} />
+                                        <span className="text-[10px] mt-1">{t('form.upload', 'Загрузить')}</span>
+                                        <input
+                                            type="file"
+                                            className="absolute inset-0 opacity-0 cursor-pointer"
+                                            accept="image/*"
+                                            multiple
+                                            onChange={async (e) => {
+                                                const files = Array.from(e.target.files || []);
+                                                if (files.length === 0) return;
 
-                        <div className="crm-form-group">
-                            <label className="crm-label">{t('form.price')} *</label>
-                            <input className="crm-input"
-                                type="number"
-                                step="0.01"
-                                value={formData.price}
-                                onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
-                                required
-                            />
-                        </div>
-
-                        <div className="crm-form-group">
-                            <label className="crm-label">{t('form.costPrice')}</label>
-                            <input className="crm-input"
-                                type="number"
-                                step="0.01"
-                                value={formData.cost_price}
-                                onChange={(e) => setFormData({ ...formData, cost_price: parseFloat(e.target.value) })}
-                            />
-                        </div>
-
-                        <div className="crm-form-group">
-                            <label className="crm-label">{t('form.stockQuantity')}</label>
-                            <input className="crm-input"
-                                type="number"
-                                value={formData.stock_quantity}
-                                onChange={(e) => setFormData({ ...formData, stock_quantity: parseInt(e.target.value) })}
-                            />
-                        </div>
-
-                        <div className="crm-form-group">
-                            <label className="crm-label">{t('form.minStockLevel')}</label>
-                            <input className="crm-input"
-                                type="number"
-                                value={formData.min_stock_level}
-                                onChange={(e) => setFormData({ ...formData, min_stock_level: parseInt(e.target.value) })}
-                            />
-                        </div>
-
-                        <div className="crm-form-group">
-                            <label className="crm-label">{t('form.sku')}</label>
-                            <input className="crm-input"
-                                type="text"
-                                value={formData.sku}
-                                onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('form.photos', 'Фото товара')}</label>
-                        <div className="crm-photo-upload mt-2">
-                            <label className="crm-photo-grid flex flex-wrap gap-2">
-                                {formData.photos.map((photo: string, index: number) => (
-                                    <div key={index} className="relative w-24 h-24 border rounded-lg overflow-hidden group">
-                                        <img src={photo} alt="" className="w-full h-full object-cover" />
-                                        <button
-                                            type="button"
-                                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                            onClick={() => setFormData({ ...formData, photos: formData.photos.filter((_: string, i: number) => i !== index) })}
-                                        >
-                                            <X size={12} />
-                                        </button>
+                                                // Upload each file to the server
+                                                try {
+                                                    const uploadPromises = files.map(file => api.uploadFile(file, 'products'));
+                                                    const results = await Promise.all(uploadPromises);
+                                                    const newPhotoUrls = results.map(res => res.file_url);
+                                                    setFormData({ ...formData, photos: [...formData.photos, ...newPhotoUrls] });
+                                                } catch (error) {
+                                                    console.error('Error uploading product photos:', error);
+                                                    toast.error(t('form.uploadError', 'Ошибка загрузки фото'));
+                                                }
+                                            }}
+                                        />
                                     </div>
-                                ))}
-                                <div className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:border-pink-500 hover:text-pink-500 transition-colors cursor-pointer relative">
-                                    <ImageIcon size={24} />
-                                    <span className="text-[10px] mt-1">{t('form.upload', 'Загрузить')}</span>
-                                    <input
-                                        type="file"
-                                        className="absolute inset-0 opacity-0 cursor-pointer"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={async (e) => {
-                                            const files = Array.from(e.target.files || []);
-                                            // Simplification: In a real app we'd upload to a server.
-                                            // For now, let's use base64 for preview.
-                                            const processFile = (file: File) => new Promise<string>((resolve) => {
-                                                const reader = new FileReader();
-                                                reader.onloadend = () => resolve(reader.result as string);
-                                                reader.readAsDataURL(file);
-                                            });
-                                            const newPhotos = await Promise.all(files.map(processFile));
-                                            setFormData({ ...formData, photos: [...formData.photos, ...newPhotos] });
-                                        }}
-                                    />
-                                </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('form.notes')}</label>
+                            <textarea className="crm-textarea"
+                                value={formData.notes}
+                                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                rows={3}
+                            />
+                        </div>
+
+                        <div className="crm-form-group">
+                            <label className="crm-checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    checked={formData.is_active}
+                                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                                />
+                                {t('form.isActive')}
                             </label>
                         </div>
-                    </div>
-
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('form.notes')}</label>
-                        <textarea className="crm-textarea"
-                            value={formData.notes}
-                            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                            rows={3}
-                        />
-                    </div>
-
-                    <div className="crm-form-group">
-                        <label className="crm-checkbox-label">
-                            <input
-                                type="checkbox"
-                                checked={formData.is_active}
-                                onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                            />
-                            {t('form.isActive')}
-                        </label>
                     </div>
 
                     <div className="crm-modal-footer">
@@ -493,12 +520,30 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
 const ProductDetailDialog = ({ product, onClose }: any) => {
     const { t } = useTranslation('admin/products');
     const [movements, setMovements] = useState<any[]>([]);
+    const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [activePhoto, setActivePhoto] = useState(product.photos?.[0] || null);
+
+    const parsedPhotos = Array.isArray(product.photos)
+        ? product.photos
+        : (typeof product.photos === 'string' && product.photos.startsWith('[')
+            ? JSON.parse(product.photos)
+            : (product.photos ? [product.photos] : []));
+
+    const [activePhoto, setActivePhoto] = useState(parsedPhotos[0] || null);
 
     useEffect(() => {
         loadMovements();
+        loadStats();
     }, [product.id]);
+
+    const loadStats = async () => {
+        try {
+            const data = await api.getProductStats(product.id);
+            setStats(data);
+        } catch (error) {
+            console.error('Error loading stats:', error);
+        }
+    };
 
     const loadMovements = async () => {
         try {
@@ -532,9 +577,9 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                             )}
                         </div>
 
-                        {product.photos && product.photos.length > 0 && (
+                        {parsedPhotos && parsedPhotos.length > 0 && (
                             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                                {product.photos.map((photo: string, idx: number) => (
+                                {parsedPhotos.map((photo: string, idx: number) => (
                                     <button
                                         key={idx}
                                         onClick={() => setActivePhoto(photo)}
@@ -566,6 +611,28 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                         {product.notes && (
                             <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                                 <p className="text-sm text-gray-600 italic">"{product.notes}"</p>
+                            </div>
+                        )}
+
+                        {/* Analytics Cards */}
+                        {stats && (
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.totalSold', 'Продано всего')}</p>
+                                    <p className="text-xl font-black text-gray-900">{stats.total_quantity_sold} шт.</p>
+                                </div>
+                                <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.revenue', 'Выручка')}</p>
+                                    <p className="text-xl font-black text-pink-600">{stats.total_revenue} AED</p>
+                                </div>
+                                <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.last30Days', 'За 30 дней')}</p>
+                                    <p className="text-xl font-black text-gray-900">{stats.last_30_days.quantity} шт.</p>
+                                </div>
+                                <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.avgPrice', 'Ср. цена')}</p>
+                                    <p className="text-xl font-black text-gray-900">{(stats.average_price || 0).toFixed(1)} AED</p>
+                                </div>
                             </div>
                         )}
 
