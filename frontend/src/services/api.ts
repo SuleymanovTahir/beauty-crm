@@ -15,8 +15,12 @@ export class ApiClient {
     const url = `${this.baseURL}${endpoint}`
 
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
       ...options.headers,
+    }
+
+    // Only add Content-Type if we have a body
+    if (options.body) {
+      (headers as any)['Content-Type'] = 'application/json';
     }
 
     const defaultOptions: RequestInit = {
@@ -1028,7 +1032,7 @@ export class ApiClient {
   }
 
   async getTotalUnread() {
-    return this.request<{ unread_count: number }>('/api/notifications/unread-count').then(data => ({ total: data.unread_count }))
+    return this.request<{ count: number }>('/api/unread-count').then(data => ({ total: data.count }))
   }
 
   // ===== BOT SETTINGS =====
