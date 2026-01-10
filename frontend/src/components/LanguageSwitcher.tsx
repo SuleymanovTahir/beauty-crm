@@ -85,7 +85,7 @@ export default function LanguageSwitcher() {
               type="button"
               className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center justify-between gap-3 transition-all ${
                 i18n.language === lang.code
-                  ? 'bg-purple-50 text-purple-700 font-medium'
+                  ? 'bg-blue-50 text-blue-700 font-medium'
                   : ''
               }`}
             >
@@ -94,7 +94,7 @@ export default function LanguageSwitcher() {
                 <span className="text-sm truncate">{lang.name}</span>
               </div>
               {i18n.language === lang.code && (
-                <span className="text-purple-600 flex-shrink-0">✓</span>
+                <span className="text-blue-600 flex-shrink-0">✓</span>
               )}
             </button>
           ))}

@@ -952,7 +952,7 @@ export default function Services() {
                           ) : <span className="text-gray-300">—</span>}
                         </td>
                         <td className="px-6 py-4">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-600 border border-purple-100">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600 border border-blue-100">
                             {t(`services:category_${service.category.toLowerCase().replace(/\s+/g, '_')}`, service.category)}
                           </span>
                         </td>
@@ -1080,9 +1080,9 @@ export default function Services() {
 
                   {/* Promo Code */}
                   {pkg.promo_code && (
-                    <div className="bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 mb-4 flex items-center gap-2">
-                      <Tag className="w-4 h-4 text-purple-600" />
-                      <span className="text-purple-900 font-mono font-medium">{pkg.promo_code}</span>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 mb-4 flex items-center gap-2">
+                      <Tag className="w-4 h-4 text-blue-600" />
+                      <span className="text-blue-900 font-mono font-medium">{pkg.promo_code}</span>
                     </div>
                   )}
 
@@ -1189,8 +1189,8 @@ export default function Services() {
       {
         activeTab === 'referrals' && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 px-4 sm:px-8 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="bg-purple-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Users className="w-10 h-10 text-purple-600" />
+            <div className="bg-blue-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Users className="w-10 h-10 text-blue-600" />
             </div>
             <h3 className="text-2xl font-black text-gray-900 mb-2">{t('services:referral_programs', 'Реферальные программы')}</h3>
             <p className="text-gray-500 mb-8 max-w-md mx-auto font-medium">
@@ -1198,7 +1198,7 @@ export default function Services() {
             </p>
             <div className="flex justify-center gap-4">
               <Button
-                className="bg-purple-600 hover:bg-purple-700 h-12 px-8 rounded-xl font-bold transition-all hover:scale-105"
+                className="bg-blue-600 hover:bg-blue-700 h-12 px-8 rounded-xl font-bold transition-all hover:scale-105"
                 onClick={() => navigate(`${basePath}/referrals`)}
               >
                 {t('services:open_marketing_panel', 'Управление кампаниями')}
@@ -1237,7 +1237,7 @@ export default function Services() {
           hideCloseButton
           className="w-[95vw] sm:w-[90vw] md:max-w-4xl p-0 flex flex-col h-[90vh] overflow-hidden border-none shadow-2xl rounded-2xl"
         >
-          <DialogHeader className="bg-gradient-to-r from-pink-600 to-purple-700 p-8 rounded-t-2xl relative">
+          <DialogHeader className="bg-gradient-to-r from-pink-600 to-blue-700 p-8 rounded-t-2xl relative">
             <DialogPrimitive.Close className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors outline-none focus:ring-2 focus:ring-white/30 z-50">
               <X className="w-5 h-5" />
               <span className="sr-only">Close</span>
@@ -1324,7 +1324,7 @@ export default function Services() {
               {/* Section 2: Pricing & Duration */}
               <div className="section-container">
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-1 h-6 bg-purple-500 rounded-full" />
+                  <div className="w-1 h-6 bg-blue-500 rounded-full" />
                   <h3 className="text-lg font-semibold text-gray-800">{t('services:pricing_timing')}</h3>
                 </div>
 
@@ -1664,7 +1664,7 @@ export default function Services() {
             </Button>
             <Button
               onClick={handleSaveService}
-              className="bg-gradient-to-r from-pink-600 to-purple-700 text-white font-bold h-12 px-10 shadow-lg shadow-pink-200 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="bg-gradient-to-r from-pink-600 to-blue-700 text-white font-bold h-12 px-10 shadow-lg shadow-pink-200 transition-all hover:scale-[1.02] active:scale-[0.98]"
               disabled={saving}
             >
               {saving ? t('services:saving') : t('services:save')}
@@ -1825,7 +1825,7 @@ export default function Services() {
               </div>
 
               {/* Scheduling Section */}
-              <div className="space-y-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
+              <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -2084,7 +2084,7 @@ export default function Services() {
                                           : referralFormData.client_ids.filter(id => id !== client.id);
                                         setReferralFormData({ ...referralFormData, client_ids: newClientIds });
                                       }}
-                                      className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                                      className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                                     />
                                     <span className="text-sm">{client.name || client.id}</span>
                                   </label>
@@ -2192,7 +2192,7 @@ export default function Services() {
                                           : referralFormData.client_ids.filter(id => id !== client.id);
                                         setReferralFormData({ ...referralFormData, client_ids: newClientIds });
                                       }}
-                                      className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                                      className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                                     />
                                     <span className="text-sm">{client.name || client.id}</span>
                                   </label>
@@ -2290,7 +2290,7 @@ export default function Services() {
                                         : referralFormData.client_ids.filter(id => id !== client.id);
                                       setReferralFormData({ ...referralFormData, client_ids: newClientIds });
                                     }}
-                                    className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                                   />
                                   <span className="text-sm">{client.name || client.id}</span>
                                 </label>
@@ -2310,7 +2310,7 @@ export default function Services() {
                   id="campaignActive"
                   checked={referralFormData.is_active}
                   onChange={(e) => setReferralFormData({ ...referralFormData, is_active: e.target.checked })}
-                  className="w-4 h-4 text-purple-600 rounded"
+                  className="w-4 h-4 text-blue-600 rounded"
                 />
                 <Label htmlFor="campaignActive" className="cursor-pointer">
                   {t('services:active_label', 'Активна (клиенты могут использовать)')}
@@ -2364,7 +2364,7 @@ export default function Services() {
                   toast.error(t('services:error_saving'));
                 }
               }}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-blue-600 hover:bg-blue-700"
             >
               {editingCampaign ? t('common:save', 'Сохранить') : t('common:create', 'Создать')}
             </Button>

@@ -413,7 +413,7 @@ export default function PlansManagement() {
                                         <h3 className="font-semibold text-lg text-gray-900">{getMetricLabel(plan.metric_type)}</h3>
                                         <p className="text-sm text-gray-500 capitalize">{t(`periods.${plan.period_type}`)}</p>
                                     </div>
-                                    <Badge className={plan.is_individual_plan ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}>
+                                    <Badge className={plan.is_individual_plan ? 'bg-blue-100 text-blue-800' : 'bg-blue-100 text-blue-800'}>
                                         {plan.is_individual_plan ? t('individual') : t('role_based')}
                                     </Badge>
                                 </div>

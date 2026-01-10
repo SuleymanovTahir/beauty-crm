@@ -306,7 +306,7 @@ export default function PhotoGallery() {
   const getCategoryColor = (categoryValue: string): string => {
     const colors = [
       'bg-blue-100 text-blue-700',
-      'bg-purple-100 text-purple-700',
+      'bg-blue-100 text-blue-700',
       'bg-pink-100 text-pink-700',
       'bg-green-100 text-green-700',
       'bg-orange-100 text-orange-700',
@@ -346,8 +346,8 @@ export default function PhotoGallery() {
       title: t('stats.featured_photos'),
       value: stats.featured_count.toString(),
       icon: ImageIcon,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100',
     },
     {
       title: t('stats.recent_uploads'),

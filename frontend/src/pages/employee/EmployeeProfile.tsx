@@ -201,7 +201,7 @@ export default function EmployeeProfile() {
                     className="w-32 h-32 rounded-full object-cover border-4 border-pink-200"
                   />
                 ) : (
-                  <div className="w-32 h-32 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
+                  <div className="w-32 h-32 rounded-full bg-gradient-to-br from-pink-500 to-blue-600 flex items-center justify-center text-white text-4xl font-bold">
                     {formData.full_name.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -347,7 +347,7 @@ export default function EmployeeProfile() {
             <Button
               type="submit"
               disabled={saving}
-              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+              className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
             >
               {saving ? (
                 <>

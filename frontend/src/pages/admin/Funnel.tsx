@@ -285,7 +285,7 @@ export default function Funnel() {
                         </div>
 
                         <Button
-                            className="bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-purple-500/20"
+                            className="bg-gradient-to-r from-pink-500 to-blue-600 text-white shadow-lg shadow-blue-500/20"
                             onClick={() => setCreateDialogOpen(true)}
                         >
                             <Plus className="w-4 h-4 mr-2" />
@@ -357,13 +357,13 @@ export default function Funnel() {
                             <div className="text-xs text-green-600 font-medium">{t('pipeline_value', 'Сумма в воронке')}</div>
                         </div>
                     </div>
-                    <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl flex items-center gap-4">
-                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
+                    <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
+                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
                             <TrendingUp className="w-6 h-6" />
                         </div>
                         <div>
-                            <div className="text-2xl font-bold text-purple-900">{funnelAnalytics.new_this_month}</div>
-                            <div className="text-xs text-purple-600 font-medium">{t('new_this_month', 'Новые за месяц')}</div>
+                            <div className="text-2xl font-bold text-blue-900">{funnelAnalytics.new_this_month}</div>
+                            <div className="text-xs text-blue-600 font-medium">{t('new_this_month', 'Новые за месяц')}</div>
                         </div>
                     </div>
                 </div>
@@ -480,7 +480,7 @@ export default function Funnel() {
                                                         <div className="flex items-center gap-2">
                                                             <Avatar className="w-6 h-6 border border-gray-100">
                                                                 <AvatarImage src={client.profile_pic || `https://instagram.com/${client.username}/profilepic`} />
-                                                                <AvatarFallback className="text-[10px] bg-purple-50 text-purple-600 font-medium">
+                                                                <AvatarFallback className="text-[10px] bg-blue-50 text-blue-600 font-medium">
                                                                     {client.username?.[0]?.toUpperCase()}
                                                                 </AvatarFallback>
                                                             </Avatar>
@@ -556,7 +556,7 @@ export default function Funnel() {
                                                             <div className="flex items-center gap-3">
                                                                 <Avatar className="w-9 h-9 border border-gray-100">
                                                                     <AvatarImage src={client.profile_pic} />
-                                                                    <AvatarFallback className="bg-purple-50 text-purple-600 font-medium text-xs">
+                                                                    <AvatarFallback className="bg-blue-50 text-blue-600 font-medium text-xs">
                                                                         {client.username?.[0]?.toUpperCase()}
                                                                     </AvatarFallback>
                                                                 </Avatar>

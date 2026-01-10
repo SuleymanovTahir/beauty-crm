@@ -166,8 +166,8 @@ export default function ReferralProgram() {
       title: t('stats.points_distributed'),
       value: stats.points_distributed.toLocaleString(),
       icon: Gift,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100',
     },
   ];
 
@@ -215,14 +215,14 @@ export default function ReferralProgram() {
       </div>
 
       {/* Current Settings Info */}
-      <Card className="bg-gradient-to-r from-purple-50 to-pink-50">
+      <Card className="bg-gradient-to-r from-blue-50 to-pink-50">
         <CardContent className="p-6">
           <div className="flex items-start justify-between">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('current_settings.title')}</h3>
               <div className="space-y-2 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
-                  <Gift className="w-4 h-4 text-purple-600" />
+                  <Gift className="w-4 h-4 text-blue-600" />
                   <span dangerouslySetInnerHTML={{ __html: t('current_settings.referrer_bonus', { points: settings.referrer_bonus }) }} />
                 </div>
                 <div className="flex items-center gap-2">

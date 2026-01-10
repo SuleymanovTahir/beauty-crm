@@ -906,7 +906,7 @@ export default function InternalChat() {
     return (
       <div className="p-8 flex items-center justify-center min-h-screen bg-background">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-2xl">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-2xl">
             <Loader className="w-8 h-8 text-white animate-spin" />
           </div>
           <p className="text-muted-foreground font-medium">
@@ -924,7 +924,7 @@ export default function InternalChat() {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
           <div className="bg-card rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-border">
             <div className="text-center mb-8">
-              <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4 shadow-lg">
+              <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-pink-600 rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4 shadow-lg">
                 {users.find(u => u.id === incomingCall.from)?.full_name.charAt(0).toUpperCase()}
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-2">
@@ -973,7 +973,7 @@ export default function InternalChat() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-pink-600">
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-600 to-pink-600">
                     <span className="text-4xl font-bold text-white">
                       {selectedUser?.full_name.charAt(0).toUpperCase()}
                     </span>
@@ -1046,7 +1046,7 @@ export default function InternalChat() {
                   )}
                 </div>
               ) : (
-                <div className="w-40 h-40 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white text-6xl font-bold shadow-2xl animate-pulse">
+                <div className="w-40 h-40 bg-gradient-to-br from-blue-500 to-pink-600 rounded-full flex items-center justify-center text-white text-6xl font-bold shadow-2xl animate-pulse">
                   {selectedUser?.full_name.charAt(0).toUpperCase()}
                 </div>
               )}
@@ -1198,7 +1198,7 @@ export default function InternalChat() {
         ) : (
           <>
             {/* Chat Header */}
-            <div className="p-4 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 border-b border-border flex items-center justify-between">
+            <div className="p-4 bg-gradient-to-r from-blue-600 via-pink-600 to-orange-500 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <button
                   onClick={() => setShowMobileUserList(true)}
@@ -1283,7 +1283,7 @@ export default function InternalChat() {
 
                         <div
                           className={`rounded-2xl px-4 py-2 shadow-sm ${isOwn
-                            ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white'
+                            ? 'bg-gradient-to-r from-blue-500 to-pink-600 text-white'
                             : 'bg-muted text-foreground'
                             }`}
                         >
@@ -1434,7 +1434,7 @@ export default function InternalChat() {
                         {[...Array(20)].map((_, i) => (
                           <div
                             key={i}
-                            className="w-1 bg-gradient-to-t from-purple-500 to-pink-600 rounded-full transition-all"
+                            className="w-1 bg-gradient-to-t from-blue-500 to-pink-600 rounded-full transition-all"
                             style={{
                               height: `${Math.random() * 24 + 8}px`,
                               animation: `pulse ${Math.random() * 0.5 + 0.5}s ease-in-out infinite`,
@@ -1458,7 +1458,7 @@ export default function InternalChat() {
 
                     <button
                       onClick={stopVoiceRecording}
-                      className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-full transition-all hover:scale-105 shadow-lg"
+                      className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-blue-500 to-pink-600 text-white rounded-full transition-all hover:scale-105 shadow-lg"
                     >
                       <Square className="w-5 h-5 fill-white" />
                       <span className="text-sm font-medium">Отправить</span>
@@ -1548,7 +1548,7 @@ export default function InternalChat() {
                     <button
                       onClick={() => handleSendMessage()}
                       disabled={sending || isUploadingFile}
-                      className="p-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-full transition-all hover:scale-110 disabled:opacity-50"
+                      className="p-3 bg-gradient-to-r from-blue-500 to-pink-600 text-white rounded-full transition-all hover:scale-110 disabled:opacity-50"
                     >
                       {sending || isUploadingFile ? (
                         <Loader className="w-5 h-5 animate-spin" />

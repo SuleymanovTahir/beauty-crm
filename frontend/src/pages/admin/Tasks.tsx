@@ -197,7 +197,7 @@ export default function Tasks() {
                             {t('manage_stages', 'Управление стадиями')}
                         </Button>
                         <Button
-                            className="bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-purple-500/20"
+                            className="bg-gradient-to-r from-pink-500 to-blue-600 text-white shadow-lg shadow-blue-500/20"
                             onClick={() => setCreateDialogOpen(true)}
                         >
                             <Plus className="w-4 h-4 mr-2" />
@@ -241,13 +241,13 @@ export default function Tasks() {
                                 <div className="text-xs text-red-600 font-medium">{t('analytics.overdue', 'Просрочено')}</div>
                             </div>
                         </div>
-                        <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl flex items-center gap-4">
-                            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
+                        <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
+                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
                                 <CheckCircle2 className="w-6 h-6" />
                             </div>
                             <div>
-                                <div className="text-2xl font-bold text-purple-900">{analytics.completed}</div>
-                                <div className="text-xs text-purple-600 font-medium">{t('analytics.completed', 'Выполнено')}</div>
+                                <div className="text-2xl font-bold text-blue-900">{analytics.completed}</div>
+                                <div className="text-xs text-blue-600 font-medium">{t('analytics.completed', 'Выполнено')}</div>
                             </div>
                         </div>
                         <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl flex items-center gap-4">

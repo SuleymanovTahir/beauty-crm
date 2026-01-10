@@ -172,8 +172,8 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                 <Card className="h-[400px] flex flex-col border-none shadow-md">
                     <CardHeader className="bg-white rounded-t-lg border-b border-gray-100 pb-3">
                         <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-800">
-                            <div className="p-1.5 bg-purple-50 rounded-md">
-                                <Pin className="w-4 h-4 text-purple-600" />
+                            <div className="p-1.5 bg-blue-50 rounded-md">
+                                <Pin className="w-4 h-4 text-blue-600" />
                             </div>
                             {t('tasks_control', 'Задачи для контроля')}
                         </CardTitle>

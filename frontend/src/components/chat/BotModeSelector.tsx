@@ -50,13 +50,13 @@ export default function BotModeSelector({ currentMode, onChange }: BotModeSelect
 
           const activeStyles = {
             manual: 'border-blue-500 bg-blue-50/30',
-            assistant: 'border-purple-500 bg-purple-50/30',
+            assistant: 'border-blue-500 bg-blue-50/30',
             autopilot: 'border-green-500 bg-green-50/30'
           };
 
           const iconStyles = {
             manual: isActive ? 'text-blue-600 bg-white' : 'text-gray-400 bg-gray-50',
-            assistant: isActive ? 'text-purple-600 bg-white' : 'text-gray-400 bg-gray-50',
+            assistant: isActive ? 'text-blue-600 bg-white' : 'text-gray-400 bg-gray-50',
             autopilot: isActive ? 'text-green-600 bg-white' : 'text-gray-400 bg-gray-50'
           };
 

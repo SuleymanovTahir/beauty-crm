@@ -195,7 +195,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
     return (
         <div className="space-y-6">
             {/* Profile Header Card */}
-            <div className="bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 rounded-2xl shadow-sm border border-gray-100 p-8">
+            <div className="bg-gradient-to-br from-pink-50 via-blue-50 to-blue-50 rounded-2xl shadow-sm border border-gray-100 p-8">
                 <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
                     {/* Avatar Section */}
                     <div className="flex flex-col items-center">
@@ -210,7 +210,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                         className="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg"
                                     />
                                 ) : (
-                                    <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-pink-500 via-purple-600 to-blue-600 flex items-center justify-center border-4 border-white shadow-lg">
+                                    <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-pink-500 via-blue-600 to-blue-600 flex items-center justify-center border-4 border-white shadow-lg">
                                         <User className="w-16 h-16 text-white" />
                                     </div>
                                 );
@@ -265,7 +265,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
             {/* Personal Information Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-blue-600 flex items-center justify-center">
                         <User className="w-5 h-5 text-white" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900">{t('personal_information', 'Personal Information')}</h3>
@@ -385,7 +385,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                         </Label>
                         <div className="flex flex-wrap gap-3">
                             {/* Instagram */}
-                            <div className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg border border-pink-200 group">
+                            <div className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-pink-50 to-blue-50 rounded-lg border border-pink-200 group">
                                 <Instagram className="w-5 h-5 text-pink-600" />
                                 {form.instagram_link ? (
                                     <a
@@ -645,7 +645,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                 <Button
                     onClick={handleSave}
                     disabled={saving}
-                    className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-8 py-3 text-lg"
+                    className="bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700 text-white px-8 py-3 text-lg"
                 >
                     {saving ? (
                         <>

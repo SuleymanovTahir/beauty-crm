@@ -164,7 +164,7 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
                     </DialogDescription>
                 </DialogHeader>
                 {/* Header with Avatar */}
-                <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 border-b border-gray-100">
+                <div className="bg-gradient-to-r from-pink-50 to-blue-50 p-6 border-b border-gray-100">
                     <div className="flex items-center gap-4">
                         <div className="w-16 h-16 rounded-full bg-white border-2 border-white shadow-sm flex items-center justify-center text-2xl font-bold text-pink-600 overflow-hidden relative">
                             {client.profile_pic ? (
@@ -187,7 +187,7 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
                             )}
                             <div className="text-sm text-gray-500">@{client.username}</div>
                             {!isEditing && (
-                                <div className="text-xs text-purple-600 font-medium mt-1 bg-purple-100 px-2 py-0.5 rounded-full w-fit">
+                                <div className="text-xs text-blue-600 font-medium mt-1 bg-blue-100 px-2 py-0.5 rounded-full w-fit">
                                     {currentStageName}
                                 </div>
                             )}

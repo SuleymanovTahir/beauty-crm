@@ -435,14 +435,14 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
-        <div className="inline-block animate-spin w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full"></div>
+        <div className="inline-block animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
         <p className="mt-4 text-gray-600">{t('common:loading')}</p>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-gray-50 via-white to-purple-50">
+    <div className="h-full flex flex-col bg-gradient-to-br from-gray-50 via-white to-blue-50">
       {/* Header */}
       <div className="flex-shrink-0 bg-white border-b border-gray-200 shadow-sm">
         <div className="p-3 md:p-4">
@@ -452,7 +452,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
               <Button
                 onClick={goToToday}
                 variant="outline"
-                className="rounded-xl border-2 hover:border-purple-400 hover:bg-purple-50 transition-all px-3 md:px-4 h-9 md:h-10 text-sm flex-1 sm:flex-none"
+                className="rounded-xl border-2 hover:border-blue-400 hover:bg-blue-50 transition-all px-3 md:px-4 h-9 md:h-10 text-sm flex-1 sm:flex-none"
               >
                 {t('calendar:today')}
               </Button>
@@ -461,7 +461,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   onClick={navigatePrevious}
                   variant="outline"
                   size="sm"
-                  className="h-9 md:h-10 w-9 md:w-10 p-0 rounded-xl border-2 hover:border-purple-400 hover:bg-purple-50"
+                  className="h-9 md:h-10 w-9 md:w-10 p-0 rounded-xl border-2 hover:border-blue-400 hover:bg-blue-50"
                 >
                   <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                 </Button>
@@ -469,7 +469,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   onClick={navigateNext}
                   variant="outline"
                   size="sm"
-                  className="h-9 md:h-10 w-9 md:w-10 p-0 rounded-xl border-2 hover:border-purple-400 hover:bg-purple-50"
+                  className="h-9 md:h-10 w-9 md:w-10 p-0 rounded-xl border-2 hover:border-blue-400 hover:bg-blue-50"
                 >
                   <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                 </Button>
@@ -481,7 +481,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 <Button
                   onClick={() => setShowFilters(!showFilters)}
                   variant="outline"
-                  className={`rounded-xl border-2 h-9 md:h-10 px-2 md:px-3 text-sm whitespace-nowrap ${showFilters ? 'bg-purple-100 border-purple-400' : 'hover:border-purple-400'
+                  className={`rounded-xl border-2 h-9 md:h-10 px-2 md:px-3 text-sm whitespace-nowrap ${showFilters ? 'bg-blue-100 border-blue-400' : 'hover:border-blue-400'
                     }`}
                 >
                   <Filter className="w-4 h-4 md:mr-2" />
@@ -502,7 +502,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
               {canEdit && (
                 <Button
                   onClick={() => openCreateModal()}
-                  className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-xl h-9 md:h-10 px-3 md:px-4 text-sm shadow-lg hover:shadow-xl transition-all whitespace-nowrap ml-auto sm:ml-0"
+                  className="bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700 text-white rounded-xl h-9 md:h-10 px-3 md:px-4 text-sm shadow-lg hover:shadow-xl transition-all whitespace-nowrap ml-auto sm:ml-0"
                 >
                   <Plus className="w-4 h-4 md:mr-2" />
                   <span className="hidden md:inline">{t('calendar:add')}</span>
@@ -513,9 +513,9 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
           {/* Period Display */}
           <div className="flex items-center justify-center">
-            <div className="flex items-center gap-2 bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-xl w-full sm:w-auto justify-center">
-              <CalendarIcon className="w-4 h-4 text-purple-600" />
-              <span className="text-sm font-semibold text-purple-900">
+            <div className="flex items-center gap-2 bg-gradient-to-r from-blue-100 to-pink-100 px-4 py-2 rounded-xl w-full sm:w-auto justify-center">
+              <CalendarIcon className="w-4 h-4 text-blue-600" />
+              <span className="text-sm font-semibold text-blue-900">
                 {getCurrentPeriod()}
               </span>
             </div>
@@ -523,7 +523,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
           {/* Filters Section */}
           {showFilters && (
-            <div className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-2 border-purple-200">
+            <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl border-2 border-blue-200">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1.5 flex items-center gap-1">
@@ -601,15 +601,15 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 return (
                   <div
                     key={index}
-                    className={`p-2 md:p-3 text-center border-r border-gray-200 ${isToday ? 'bg-gradient-to-br from-pink-100 to-purple-100' : 'bg-gray-50'
+                    className={`p-2 md:p-3 text-center border-r border-gray-200 ${isToday ? 'bg-gradient-to-br from-pink-100 to-blue-100' : 'bg-gray-50'
                       }`}
                   >
-                    <div className={`text-xs font-medium ${isToday ? 'text-purple-700' : 'text-gray-600'}`}>
+                    <div className={`text-xs font-medium ${isToday ? 'text-blue-700' : 'text-gray-600'}`}>
                       {formatted.dayName}
                     </div>
                     <div
                       className={`text-sm md:text-base font-bold mt-0.5 ${isToday
-                        ? 'bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent'
+                        ? 'bg-gradient-to-r from-pink-600 to-blue-600 bg-clip-text text-transparent'
                         : 'text-gray-900'
                         }`}
                     >
@@ -639,13 +639,13 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   return (
                     <div
                       key={dayIndex}
-                      className="min-h-[80px] md:min-h-[100px] p-1 md:p-2 border-r border-gray-200 hover:bg-purple-50/30 transition-colors relative group"
+                      className="min-h-[80px] md:min-h-[100px] p-1 md:p-2 border-r border-gray-200 hover:bg-blue-50/30 transition-colors relative group"
                     >
                       {/* Show All Bookings Button if multiple */}
                       {slotBookings.length > 2 && (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <button className="absolute top-1 right-1 bg-purple-600 text-white rounded-lg px-2 py-1 text-xs font-bold hover:bg-purple-700 shadow-lg z-10">
+                            <button className="absolute top-1 right-1 bg-blue-600 text-white rounded-lg px-2 py-1 text-xs font-bold hover:bg-blue-700 shadow-lg z-10">
                               +{slotBookings.length - 2}
                             </button>
                           </DropdownMenuTrigger>
@@ -675,7 +675,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                           <div
                             key={idx}
                             onClick={() => setSelectedBooking(booking)}
-                            className="bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg p-1.5 md:p-2 text-white shadow-md hover:shadow-lg transition-all cursor-pointer"
+                            className="bg-gradient-to-r from-pink-500 to-blue-600 rounded-lg p-1.5 md:p-2 text-white shadow-md hover:shadow-lg transition-all cursor-pointer"
                           >
                             <p className="font-semibold text-xs md:text-sm truncate">
                               {booking.name}
@@ -696,7 +696,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                       {canEdit && (
                         <button
                           onClick={() => openCreateModal(day, hour)}
-                          className="absolute bottom-1 right-1 w-6 h-6 bg-purple-600 hover:bg-purple-700 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-lg"
+                          className="absolute bottom-1 right-1 w-6 h-6 bg-blue-600 hover:bg-blue-700 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-lg"
                         >
                           <Plus className="w-3 h-3" />
                         </button>
@@ -733,13 +733,13 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
             {selectedService !== 'all' && (
               <Badge
                 variant="secondary"
-                className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-300"
+                className="bg-gradient-to-r from-blue-100 to-pink-100 text-blue-700 border-blue-300"
               >
                 <Scissors className="w-3 h-3 mr-1" />
                 {selectedService}
                 <button
                   onClick={() => setSelectedService('all')}
-                  className="ml-1 hover:bg-purple-200 rounded-full p-0.5"
+                  className="ml-1 hover:bg-blue-200 rounded-full p-0.5"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -802,7 +802,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                       setShowClientDropdown(true);
                       setShowServiceDropdown(false);
                     }}
-                    className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
+                    className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white transition-all"
                   />
                   {selectedClient && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
@@ -830,9 +830,9 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                               setShowClientDropdown(false);
                               setAddForm({ ...addForm, phone: client.phone || '' });
                             }}
-                            className="w-full px-4 py-3 text-left hover:bg-purple-50 border-b border-gray-100 flex items-center gap-3 transition-colors"
+                            className="w-full px-4 py-3 text-left hover:bg-blue-50 border-b border-gray-100 flex items-center gap-3 transition-colors"
                           >
-                            <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-pink-400 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
                               {(client.display_name || 'N').charAt(0).toUpperCase()}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -876,7 +876,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                       setShowServiceDropdown(true);
                       setShowClientDropdown(false);
                     }}
-                    className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
+                    className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white transition-all"
                   />
                   {selectedServiceItem && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
@@ -904,7 +904,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                               setShowServiceDropdown(false);
                               setAddForm({ ...addForm, revenue: service.price });
                             }}
-                            className="w-full px-4 py-3 text-left hover:bg-purple-50 border-b border-gray-100 transition-colors"
+                            className="w-full px-4 py-3 text-left hover:bg-blue-50 border-b border-gray-100 transition-colors"
                           >
                             <div className="flex justify-between items-center">
                               <div>
@@ -915,7 +915,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                                   {service.category}
                                 </div>
                               </div>
-                              <div className="text-sm font-semibold text-purple-600">
+                              <div className="text-sm font-semibold text-blue-600">
                                 {formatCurrency(service.price)}
                               </div>
                             </div>
@@ -939,7 +939,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 <select
                   value={addForm.master}
                   onChange={(e) => setAddForm({ ...addForm, master: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
                 >
                   <option value="">{t('calendar:select_master')}</option>
                   {masters.map((m) => (
@@ -960,7 +960,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   placeholder={t('calendar:phone_placeholder')}
                   value={addForm.phone}
                   onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
+                  className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white transition-all"
                 />
               </div>
 
@@ -974,7 +974,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                     type="date"
                     value={addForm.date}
                     onChange={(e) => setAddForm({ ...addForm, date: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
+                    className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white transition-all"
                   />
                 </div>
                 <div>
@@ -984,7 +984,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   <select
                     value={addForm.time}
                     onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
                   >
                     {TIME_SLOTS.map((slot, idx) => (
                       <option key={idx} value={slot.display}>
@@ -1005,7 +1005,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   placeholder={t('calendar:revenue_placeholder')}
                   value={addForm.revenue}
                   onChange={(e) => setAddForm({ ...addForm, revenue: Number(e.target.value) })}
-                  className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
+                  className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white transition-all"
                 />
               </div>
 
@@ -1021,7 +1021,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 <button
                   onClick={handleSaveBooking}
                   disabled={addingBooking}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-lg text-white font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-pink-500 hover:shadow-lg text-white font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {addingBooking ? t('calendar:creating') : isEditing ? t('calendar:save') : t('calendar:create')}
                 </button>
@@ -1190,7 +1190,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
               <button
                 onClick={() => setSelectedBooking(null)}
-                className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-lg text-white font-medium rounded-lg transition-all"
+                className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-pink-500 hover:shadow-lg text-white font-medium rounded-lg transition-all"
               >
                 {t('calendar:close')}
               </button>

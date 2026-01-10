@@ -329,7 +329,7 @@ export default function UniversalDashboard() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-          <div className="bg-gradient-to-br from-pink-500 to-purple-600 p-6 rounded-xl shadow-lg text-white">
+          <div className="bg-gradient-to-br from-pink-500 to-blue-600 p-6 rounded-xl shadow-lg text-white">
             <p className="text-sm opacity-80 mb-1">{isSales ? 'Выручка сделок' : 'Ваша выручка'}</p>
             <h3 className="text-3xl font-bold">{stats?.total_revenue?.toLocaleString()} {salonSettings?.currency}</h3>
             {stats?.growth?.revenue && (
@@ -405,7 +405,7 @@ export default function UniversalDashboard() {
     { icon: Users, label: t('admin/dashboard:total_clients'), value: stats.total_clients || 0, color: 'text-blue-600', bg: 'bg-blue-50', growth: stats.growth?.total_clients },
     { icon: Crown, label: t('admin/dashboard:vip_clients'), value: stats.vip_clients || 0, color: 'text-yellow-600', bg: 'bg-yellow-50', growth: stats.growth?.vip_clients },
     { icon: UserPlus, label: t('admin/dashboard:new_clients'), value: stats.new_clients || 0, color: 'text-green-600', bg: 'bg-green-50', growth: stats.growth?.new_clients },
-    { icon: UserCheck, label: t('admin/dashboard:active_clients'), value: stats.active_clients || 0, color: 'text-purple-600', bg: 'bg-purple-50', growth: stats.growth?.active_clients },
+    { icon: UserCheck, label: t('admin/dashboard:active_clients'), value: stats.active_clients || 0, color: 'text-blue-600', bg: 'bg-blue-50', growth: stats.growth?.active_clients },
   ];
 
   const getStatusBadge = (status: string) => {
@@ -496,7 +496,7 @@ export default function UniversalDashboard() {
 
       {/* Revenue & Conv */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-        <div className="bg-gradient-to-br from-pink-500 to-purple-600 p-6 rounded-xl shadow-lg text-white">
+        <div className="bg-gradient-to-br from-pink-500 to-blue-600 p-6 rounded-xl shadow-lg text-white">
           <p className="text-sm opacity-80 mb-1">Выручка</p>
           <h3 className="text-3xl font-bold mb-1">{stats.total_revenue?.toLocaleString()} {salonSettings?.currency}</h3>
           {stats.growth?.revenue && (
@@ -516,7 +516,7 @@ export default function UniversalDashboard() {
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <p className="text-sm text-gray-500 mb-1">Конверсия</p>
-          <h3 className="text-3xl font-bold text-purple-600">{stats.conversion_rate?.toFixed(1)}%</h3>
+          <h3 className="text-3xl font-bold text-blue-600">{stats.conversion_rate?.toFixed(1)}%</h3>
         </div>
       </div>
 
@@ -571,7 +571,7 @@ export default function UniversalDashboard() {
           </div>
 
           {botAnalytics && (
-            <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl shadow-lg p-6 text-white">
+            <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-xl shadow-lg p-6 text-white">
               <h3 className="font-bold flex items-center gap-2 mb-4">
                 <Bot className="w-5 h-5 text-white" />
                 Бот Аналитика
