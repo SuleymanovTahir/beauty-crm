@@ -36,7 +36,10 @@
     "invoices": "हिसाब किताब",
     "marketplace_integrations": "बाजारों",
     "payment_integrations": "भुगतान प्रणाली",
-    "products": "चीज़ें"
+    "products": "चीज़ें",
+    "finance": "वित्त",
+    "management": "नियंत्रण",
+    "tools": "औजार"
   },
   "no_new_notifications": "कोई सूचना नहीं",
   "notifications": "सूचनाएं",

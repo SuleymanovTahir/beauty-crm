@@ -112,5 +112,14 @@
   "week_2": "الأسبوع 2",
   "week_3": "الأسبوع 3",
   "week_4": "الأسبوع 4",
-  "welcome": "مرحباً"
+  "welcome": "مرحباً",
+  "bot_analytics_title": "تحليلات الذكاء الاصطناعي بوت",
+  "bookings_stat": "bookings",
+  "escalations": "التصعيد",
+  "last_30_days": "في 30 يوما",
+  "msg_short": "رسالة",
+  "peak_hours": "ساعات الذروة",
+  "sessions": "الجلسات",
+  "top_activity": "أعلى النشاط",
+  "to_manager": "→ مدير"
 }

@@ -47,6 +47,37 @@
     "confirmDelete": "هل أنت متأكد أنك تريد حذف هذه الاتفاقية؟",
     "contractCreated": "تم إنشاء العقد",
     "contractSent": "تم إرسال العقد",
-    "contractDeleted": "تم حذف العقد"
+    "contractDeleted": "تم حذف العقد",
+    "contractUpdated": "تم تحديث العقد"
+  },
+  "contractTypes": {
+    "service": "تقديم الخدمات",
+    "employment": "عقد العمل",
+    "rental": "استئجار مكان"
+  },
+  "editContract": "تحرير العقد",
+  "editButton": "يحرر",
+  "manageTypes": "أنواع العقود",
+  "type": "يكتب",
+  "typeManagement": {
+    "title": "أنواع العقود",
+    "editType": "تحرير النوع",
+    "createType": "إنشاء نوع",
+    "name": "اسم",
+    "code": "الرمز (خط العرض، فريد)",
+    "description": "وصف",
+    "add": "يضيف",
+    "deleteTitle": "إزالة النوع \"{{name}}\"",
+    "deletePrompt": "تريد حذف هذا النوع من العقود. ماذا تفعل بالعقود الحالية من هذا النوع؟",
+    "deleteWithDocs": "حذف كافة العقود",
+    "deleteWithDocsSub": "سيتم حذف جميع المستندات من هذا النوع نهائيًا.",
+    "keepDocs": "ترك العقود بدون نوع",
+    "keepDocsSub": "ستبقى العقود قائمة، ولكن سيتم مسح حقل \"النوع\".",
+    "confirmDelete": "تأكيد الحذف",
+    "messages": {
+      "updated": "تم تحديث النوع",
+      "created": "تم إنشاء النوع",
+      "deleted": "تمت إزالة النوع"
+    }
   }
 }

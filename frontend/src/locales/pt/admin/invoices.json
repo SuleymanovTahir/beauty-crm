@@ -21,7 +21,8 @@
     "sent": "Enviado",
     "partial": "Parcialmente pago",
     "paid": "Pago",
-    "overdue": "Expirado"
+    "overdue": "Expirado",
+    "cancelled": "Cancelado"
   },
   "form": {
     "selectClient": "Selecione o cliente",
@@ -62,6 +63,10 @@
     "invoiceCreated": "Conta criada",
     "invoiceSent": "Fatura enviada",
     "paymentAdded": "Pagamento adicionado",
-    "invoiceDeleted": "Conta excluída"
-  }
+    "invoiceDeleted": "Conta excluída",
+    "invoiceUpdated": "Conta atualizada"
+  },
+  "board": "Quadro",
+  "allInvoices": "Todas as contas",
+  "search_placeholder": "Pesquise até número ou cliente..."
 }

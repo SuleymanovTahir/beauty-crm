@@ -112,5 +112,14 @@
   "week_2": "Woche 2",
   "week_3": "Woche 3",
   "week_4": "Woche 4",
-  "welcome": "Willkommen"
+  "welcome": "Willkommen",
+  "bot_analytics_title": "KI-Bot-Analyse",
+  "bookings_stat": "bookings",
+  "escalations": "Eskalationen",
+  "last_30_days": "In 30 Tagen",
+  "msg_short": "Nachricht",
+  "peak_hours": "Spitzenzeiten",
+  "sessions": "Sitzungen",
+  "top_activity": "Top-Aktivität",
+  "to_manager": "→ Manager"
 }

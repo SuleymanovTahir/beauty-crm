@@ -45,7 +45,8 @@
     "productCreated": "उत्पाद बनाया गया",
     "productUpdated": "उत्पाद अद्यतन किया गया",
     "productDeleted": "उत्पाद हटा दिया गया",
-    "movementAdded": "आंदोलन जोड़ा गया"
+    "movementAdded": "आंदोलन जोड़ा गया",
+    "noResults": "आपके अनुरोध से मेल खाता कुछ भी नहीं मिला"
   },
   "detail": {
     "noCategory": "अवर्गीकृत",
@@ -61,5 +62,12 @@
     "totalRevenue": "आय",
     "last30Days": "30 दिनों में",
     "avgPrice": "बुध. कीमत"
-  }
+  },
+  "search_placeholder": "शीर्षक या श्रेणी के आधार पर खोजें...",
+  "stock_status": {
+    "in_stock": "स्टॉक में",
+    "low_stock": "कुछ",
+    "out_of_stock": "उपलब्ध नहीं है"
+  },
+  "unit_pcs": "पीसी."
 }

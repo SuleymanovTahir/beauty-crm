@@ -47,6 +47,37 @@
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet accord ?",
     "contractCreated": "Le contrat a été créé",
     "contractSent": "Le contrat a été envoyé",
-    "contractDeleted": "Contrat supprimé"
+    "contractDeleted": "Contrat supprimé",
+    "contractUpdated": "Le contrat a été mis à jour"
+  },
+  "contractTypes": {
+    "service": "Prestation de services",
+    "employment": "Contrat de travail",
+    "rental": "Louer un logement"
+  },
+  "editContract": "Modifier le contrat",
+  "editButton": "Modifier",
+  "manageTypes": "Types de contrats",
+  "type": "Taper",
+  "typeManagement": {
+    "title": "Types de contrats",
+    "editType": "Modifier le type",
+    "createType": "Créer un type",
+    "name": "Nom",
+    "code": "Code (lat., unique)",
+    "description": "Description",
+    "add": "Ajouter",
+    "deleteTitle": "Suppression du type \"{{name}}\"",
+    "deletePrompt": "Vous souhaitez supprimer ce type de contrat. Que faire des contrats existants de ce type ?",
+    "deleteWithDocs": "Supprimer tous les contrats",
+    "deleteWithDocsSub": "Tous les documents de ce type seront définitivement supprimés.",
+    "keepDocs": "Laisser les contrats sans type",
+    "keepDocsSub": "Les contrats resteront, mais le champ « Type » sera vidé.",
+    "confirmDelete": "Confirmer la suppression",
+    "messages": {
+      "updated": "Type mis à jour",
+      "created": "Type créé",
+      "deleted": "Type supprimé"
+    }
   }
 }

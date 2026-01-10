@@ -43,7 +43,7 @@
   "description": "Описание",
   "description_en": "Описание (EN)",
   "description_ru": "Описание (RU)",
-  "deselect_all": "Восстановление",
+  "deselect_all": "Сбросить всех",
   "disable": "Выключать",
   "discount": "Скидка",
   "duration": "Продолжительность",

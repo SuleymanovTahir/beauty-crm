@@ -21,7 +21,8 @@
     "sent": "مرسل",
     "partial": "مدفوعة جزئيا",
     "paid": "مدفوع",
-    "overdue": "منتهي الصلاحية"
+    "overdue": "منتهي الصلاحية",
+    "cancelled": "تم الإلغاء"
   },
   "form": {
     "selectClient": "حدد العميل",
@@ -62,6 +63,10 @@
     "invoiceCreated": "تم إنشاء الحساب",
     "invoiceSent": "تم إرسال الفاتورة",
     "paymentAdded": "تمت إضافة الدفع",
-    "invoiceDeleted": "تم حذف الحساب"
-  }
+    "invoiceDeleted": "تم حذف الحساب",
+    "invoiceUpdated": "تم تحديث الحساب"
+  },
+  "board": "سبورة",
+  "allInvoices": "جميع الحسابات",
+  "search_placeholder": "البحث بالرقم أو العميل..."
 }

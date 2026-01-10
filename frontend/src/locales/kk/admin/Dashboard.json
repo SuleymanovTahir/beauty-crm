@@ -112,5 +112,14 @@
   "week_2": "2-ші апта",
   "week_3": "3-апта",
   "week_4": "4-ші апта",
-  "welcome": "Өтінемін"
+  "welcome": "Өтінемін",
+  "bot_analytics_title": "AI Bot Analytics",
+  "bookings_stat": "bookings",
+  "escalations": "Эскалациялар",
+  "last_30_days": "30 күнде",
+  "msg_short": "хабар",
+  "peak_hours": "Ең жоғары сағаттар",
+  "sessions": "Сеанстар",
+  "top_activity": "жоғарғы белсенділік",
+  "to_manager": "→ менеджер"
 }

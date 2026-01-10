@@ -45,7 +45,8 @@
     "productCreated": "Өнім жасалды",
     "productUpdated": "Өнім жаңартылды",
     "productDeleted": "Өнім жойылды",
-    "movementAdded": "Қозғалыс қосылды"
+    "movementAdded": "Қозғалыс қосылды",
+    "noResults": "Сұрауыңызға сәйкес ештеңе табылмады"
   },
   "detail": {
     "noCategory": "Санатсыз",
@@ -61,5 +62,12 @@
     "totalRevenue": "Кіріс",
     "last30Days": "30 күнде",
     "avgPrice": "Сәр. бағасы"
-  }
+  },
+  "search_placeholder": "Тақырып немесе санат бойынша іздеу...",
+  "stock_status": {
+    "in_stock": "Қоймада",
+    "low_stock": "Аз",
+    "out_of_stock": "Жоқ"
+  },
+  "unit_pcs": "дана"
 }

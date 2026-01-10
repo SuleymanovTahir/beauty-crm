@@ -45,7 +45,8 @@
     "productCreated": "Produit créé",
     "productUpdated": "Produit mis à jour",
     "productDeleted": "Produit supprimé",
-    "movementAdded": "Mouvement ajouté"
+    "movementAdded": "Mouvement ajouté",
+    "noResults": "Rien trouvé correspondant à votre demande"
   },
   "detail": {
     "noCategory": "Non classé",
@@ -61,5 +62,12 @@
     "totalRevenue": "Revenu",
     "last30Days": "Dans 30 jours",
     "avgPrice": "Épouser. prix"
-  }
+  },
+  "search_placeholder": "Recherche à titre ou catégorie...",
+  "stock_status": {
+    "in_stock": "En stock",
+    "low_stock": "Peu",
+    "out_of_stock": "Pas disponible"
+  },
+  "unit_pcs": "pièces."
 }
