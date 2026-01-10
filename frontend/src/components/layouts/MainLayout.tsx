@@ -239,7 +239,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     // Фильтруем пункты меню на основе прав пользователя
     const menuItems = useMemo(() => {
         const allItems = [
-            // TOP LEVEL
+            // TOP LEVEL - Reordered as requested
             {
                 id: 'dashboard',
                 icon: LayoutDashboard,
@@ -249,6 +249,8 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 path: dashboardPath,
                 requirePermission: () => true
             },
+            { id: 'bookings', icon: FileText, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings || user?.role === 'employee' },
+            { id: 'clients', icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, requirePermission: () => permissions.canViewAllClients && user?.role !== 'sales' },
             {
                 id: 'chat',
                 icon: MessageSquare,
@@ -277,8 +279,6 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 ]
             },
             { id: 'calendar', icon: Calendar, label: t('menu.calendar'), path: `${rolePrefix}/calendar`, requirePermission: () => permissions.canViewAllCalendars && user?.role !== 'employee' },
-            { id: 'bookings', icon: FileText, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings || user?.role === 'employee' },
-            { id: 'clients', icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, requirePermission: () => permissions.canViewAllClients && user?.role !== 'sales' },
             { id: 'funnel', icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, requirePermission: () => permissions.canViewAnalytics || user?.role === 'sales' },
 
             // MANAGEMENT GROUP
@@ -345,14 +345,17 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             }
         ];
 
-        // Рекурсивная фильтрация
+        // Рекурсивная фильтрация с "выравниванием" (flattening)
         const filterItems = (items: any[]) => {
             return items.reduce((acc, item) => {
                 if (item.requirePermission && !item.requirePermission()) return acc;
 
                 if (item.items) {
                     const filteredChildren = filterItems(item.items);
-                    if (filteredChildren.length > 0) {
+                    if (filteredChildren.length === 1) {
+                        // Если доступен только один подпункт, выводим его как родительский
+                        acc.push(filteredChildren[0]);
+                    } else if (filteredChildren.length > 1) {
                         acc.push({ ...item, items: filteredChildren });
                     }
                 } else {

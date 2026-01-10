@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Send, Trash2, FileText, X } from 'lucide-react';
+import { Plus, Send, Trash2, FileText, X, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import '../../styles/crm-pages.css';
-
-
 
 interface Contract {
     id: number;
@@ -25,9 +23,10 @@ const Contracts = () => {
     const { t } = useTranslation('admin/contracts');
     const [contracts, setContracts] = useState<Contract[]>([]);
     const [loading, setLoading] = useState(true);
-    const [showAddDialog, setShowAddDialog] = useState(false);
+    const [showContractDialog, setShowContractDialog] = useState(false);
     const [showSendDialog, setShowSendDialog] = useState(false);
     const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+    const [editingContract, setEditingContract] = useState<Contract | null>(null);
     const [filterStatus, setFilterStatus] = useState<string>('');
 
     useEffect(() => {
@@ -76,7 +75,10 @@ const Contracts = () => {
                     <h1>{t('title')}</h1>
                     <p className="text-gray-600">{t('subtitle')}</p>
                 </div>
-                <button className="crm-btn-primary" onClick={() => setShowAddDialog(true)}>
+                <button className="crm-btn-primary" onClick={() => {
+                    setEditingContract(null);
+                    setShowContractDialog(true);
+                }}>
                     <Plus size={20} />
                     {t('addContract')}
                 </button>
@@ -136,6 +138,16 @@ const Contracts = () => {
                                             <button
                                                 className="crm-btn-icon"
                                                 onClick={() => {
+                                                    setEditingContract(contract);
+                                                    setShowContractDialog(true);
+                                                }}
+                                                title={t('editButton')}
+                                            >
+                                                <Edit size={16} />
+                                            </button>
+                                            <button
+                                                className="crm-btn-icon"
+                                                onClick={() => {
                                                     setSelectedContract(contract);
                                                     setShowSendDialog(true);
                                                 }}
@@ -159,11 +171,12 @@ const Contracts = () => {
                 </div>
             )}
 
-            {showAddDialog && (
-                <AddContractDialog
-                    onClose={() => setShowAddDialog(false)}
+            {showContractDialog && (
+                <ContractDialog
+                    contract={editingContract}
+                    onClose={() => setShowContractDialog(false)}
                     onSuccess={() => {
-                        setShowAddDialog(false);
+                        setShowContractDialog(false);
                         loadContracts();
                     }}
                 />
@@ -187,10 +200,16 @@ const Contracts = () => {
     );
 };
 
-const AddContractDialog = ({ onClose, onSuccess }: any) => {
+interface ContractDialogProps {
+    contract?: Contract | null;
+    onClose: () => void;
+    onSuccess: () => void;
+}
+
+const ContractDialog = ({ contract, onClose, onSuccess }: ContractDialogProps) => {
     const { t } = useTranslation('admin/contracts');
     const [clients, setClients] = useState<any[]>([]);
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<{ client_id: string; booking_id: number | null; contract_type: string; template_name: string }>({
         client_id: '',
         booking_id: null,
         contract_type: 'service',
@@ -199,7 +218,15 @@ const AddContractDialog = ({ onClose, onSuccess }: any) => {
 
     useEffect(() => {
         loadClients();
-    }, []);
+        if (contract) {
+            setFormData({
+                client_id: contract.client_id,
+                booking_id: contract.booking_id || null,
+                contract_type: contract.contract_type || 'service',
+                template_name: 'default' // Assuming template name isn't fully stored or retrieved yet, generic fallback
+            });
+        }
+    }, [contract]);
 
     const loadClients = async () => {
         try {
@@ -213,12 +240,17 @@ const AddContractDialog = ({ onClose, onSuccess }: any) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await api.post('/api/contracts', formData);
-            toast.success(t('messages.contractCreated'));
+            if (contract) {
+                await api.put(`/api/contracts/${contract.id}`, formData);
+                toast.success(t('messages.contractUpdated'));
+            } else {
+                await api.post('/api/contracts', formData);
+                toast.success(t('messages.contractCreated'));
+            }
             onSuccess();
         } catch (error) {
-            console.error('Error creating contract:', error);
-            toast.error(t('errors.createError', 'Error creating contract'));
+            console.error('Error saving contract:', error);
+            toast.error(t('errors.saveError', 'Error saving contract'));
         }
     };
 
@@ -228,7 +260,7 @@ const AddContractDialog = ({ onClose, onSuccess }: any) => {
                 <button className="crm-modal-close" onClick={onClose}>
                     <X size={20} />
                 </button>
-                <h2>{t('addContract')}</h2>
+                <h2>{contract ? t('editContract') : t('addContract')}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="crm-form-content">
                         <div className="crm-form-group">
@@ -238,6 +270,7 @@ const AddContractDialog = ({ onClose, onSuccess }: any) => {
                                 value={formData.client_id}
                                 onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
                                 required
+                                disabled={!!contract} // Disable client change on edit to preserve consistency
                             >
                                 <option value="">{t('form.selectClient')}</option>
                                 {clients.map((client) => (
