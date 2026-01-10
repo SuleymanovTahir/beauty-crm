@@ -376,3 +376,153 @@ async def delete_special_package_api(
     except Exception as e:
         log_error(f"Error deleting package: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
+
+@router.get("/services/{service_id}/positions")
+async def get_service_positions(
+    service_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить должности для услуги"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("""
+            SELECT p.id, p.name, p.name_ru, p.name_ar 
+            FROM positions p
+            JOIN service_positions sp ON p.id = sp.position_id
+            WHERE sp.service_id = %s
+        """, (service_id,))
+        
+        positions = []
+        for row in c.fetchall():
+            positions.append({
+                "id": row[0],
+                "name": row[1],
+                "name_ru": row[2],
+                "name_ar": row[3]
+            })
+        conn.close()
+        return {"positions": positions}
+    except Exception as e:
+        log_error(f"Error fetching service positions: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.put("/services/{service_id}/positions")
+async def update_service_positions(
+    service_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить должности для услуги"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    try:
+        data = await request.json()
+        position_ids = data.get("position_ids", [])
+        
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Удаляем старые связи
+        c.execute("DELETE FROM service_positions WHERE service_id = %s", (service_id,))
+        
+        # Добавляем новые
+        if position_ids:
+            for pid in position_ids:
+                c.execute("INSERT INTO service_positions (service_id, position_id) VALUES (%s, %s) ON CONFLICT DO NOTHING",
+                         (service_id, pid))
+        
+        conn.commit()
+        conn.close()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error updating service positions: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.get("/services/{service_id}/employees")
+async def get_service_employees(
+    service_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить список сотрудников, назначенных на данную услугу"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("""
+            SELECT u.id, u.full_name, u.full_name_ru, u.position, u.position_id
+            FROM users u
+            JOIN user_services us ON u.id = us.user_id
+            WHERE us.service_id = %s
+        """, (service_id,))
+        
+        employees = []
+        for row in c.fetchall():
+            employees.append({
+                "id": row[0],
+                "full_name": row[1],
+                "full_name_ru": row[2],
+                "position": row[3],
+                "position_id": row[4]
+            })
+        conn.close()
+        return {"employees": employees}
+    except Exception as e:
+        log_error(f"Error fetching service employees: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.put("/services/{service_id}/employees")
+async def update_service_employees(
+    service_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Массово обновить список сотрудников для услуги"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    try:
+        data = await request.json()
+        employee_ids = data.get("employee_ids", [])
+        
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Получаем текущую цену и длительность услуги для дефолтных значений
+        c.execute("SELECT price, duration FROM services WHERE id = %s", (service_id,))
+        svc = c.fetchone()
+        if not svc:
+            conn.close()
+            return JSONResponse({"error": "Service not found"}, status_code=404)
+        
+        default_price = svc[0]
+        default_duration = svc[1]
+        
+        # Удаляем старые назначения
+        c.execute("DELETE FROM user_services WHERE service_id = %s", (service_id,))
+        
+        # Добавляем новые
+        if employee_ids:
+            for uid in employee_ids:
+                c.execute("""
+                    INSERT INTO user_services (user_id, service_id, price, duration)
+                    VALUES (%s, %s, %s, %s)
+                    ON CONFLICT (user_id, service_id) DO NOTHING
+                """, (uid, service_id, default_price, default_duration))
+        
+        conn.commit()
+        conn.close()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error updating service employees: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
