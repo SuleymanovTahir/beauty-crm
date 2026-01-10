@@ -36,7 +36,10 @@
     "invoices": "Comptes",
     "marketplace_integrations": "Marchés",
     "payment_integrations": "Systèmes de paiement",
-    "products": "Marchandises"
+    "products": "Marchandises",
+    "finance": "Finance",
+    "management": "Contrôle",
+    "tools": "Outils"
   },
   "no_new_notifications": "Aucune notification",
   "notifications": "Notifications",

@@ -45,7 +45,8 @@
     "productCreated": "تم إنشاء المنتج",
     "productUpdated": "تم تحديث المنتج",
     "productDeleted": "تمت إزالة المنتج",
-    "movementAdded": "تمت إضافة الحركة"
+    "movementAdded": "تمت إضافة الحركة",
+    "noResults": "لم يتم العثور على أي شيء مطابق لطلبك"
   },
   "detail": {
     "noCategory": "غير مصنف",
@@ -61,5 +62,12 @@
     "totalRevenue": "ربح",
     "last30Days": "في 30 يوما",
     "avgPrice": "تزوج. سعر"
-  }
+  },
+  "search_placeholder": "البحث حسب العنوان أو الفئة...",
+  "stock_status": {
+    "in_stock": "في الأوراق المالية",
+    "low_stock": "عدد قليل",
+    "out_of_stock": "غير متوفر"
+  },
+  "unit_pcs": "جهاز كمبيوتر شخصى."
 }

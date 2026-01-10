@@ -47,6 +47,37 @@
     "confirmDelete": "Tem certeza de que deseja excluir este contrato?",
     "contractCreated": "O contrato foi criado",
     "contractSent": "O contrato foi enviado",
-    "contractDeleted": "Contrato excluído"
+    "contractDeleted": "Contrato excluído",
+    "contractUpdated": "O contrato foi atualizado"
+  },
+  "contractTypes": {
+    "service": "Prestação de serviços",
+    "employment": "Contrato de trabalho",
+    "rental": "Alugando um lugar"
+  },
+  "editContract": "Editar contrato",
+  "editButton": "Editar",
+  "manageTypes": "Tipos de contratos",
+  "type": "Tipo",
+  "typeManagement": {
+    "title": "Tipos de contratos",
+    "editType": "Tipo de edição",
+    "createType": "Criar tipo",
+    "name": "Nome",
+    "code": "Código (lat., único)",
+    "description": "Descrição",
+    "add": "Adicionar",
+    "deleteTitle": "Removendo tipo \"{{name}}\"",
+    "deletePrompt": "Você deseja excluir este tipo de contrato. O que fazer com os contratos deste tipo existentes?",
+    "deleteWithDocs": "Excluir todos os contratos",
+    "deleteWithDocsSub": "Todos os documentos deste tipo serão excluídos permanentemente.",
+    "keepDocs": "Deixe contratos sem tipo",
+    "keepDocsSub": "Os contratos permanecerão, mas o campo “Tipo” será limpo.",
+    "confirmDelete": "Confirmar exclusão",
+    "messages": {
+      "updated": "Tipo atualizado",
+      "created": "Tipo criado",
+      "deleted": "Tipo removido"
+    }
   }
 }

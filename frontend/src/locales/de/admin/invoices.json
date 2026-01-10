@@ -21,7 +21,8 @@
     "sent": "Gesendet",
     "partial": "Teilweise bezahlt",
     "paid": "Bezahlt",
-    "overdue": "Abgelaufen"
+    "overdue": "Abgelaufen",
+    "cancelled": "Abgesagt"
   },
   "form": {
     "selectClient": "Wählen Sie den Kunden aus",
@@ -62,6 +63,10 @@
     "invoiceCreated": "Konto erstellt",
     "invoiceSent": "Rechnung verschickt",
     "paymentAdded": "Zahlung hinzugefügt",
-    "invoiceDeleted": "Konto gelöscht"
-  }
+    "invoiceDeleted": "Konto gelöscht",
+    "invoiceUpdated": "Konto aktualisiert"
+  },
+  "board": "Planke",
+  "allInvoices": "Alle Konten",
+  "search_placeholder": "Suche nach Nummer oder Kunde..."
 }

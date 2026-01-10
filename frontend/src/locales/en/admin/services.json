@@ -162,5 +162,7 @@
   "service_details_subtitle": "Configure service parameters and assign a team",
   "name_placeholder": "e.g.: Women's Haircut",
   "unit_minute": "min",
-  "separate_through_pipe": "separate through pipe |"
+  "separate_through_pipe": "separate through pipe |",
+  "select_employees": "Select employees",
+  "no_employees_found": "No employees found"
 }

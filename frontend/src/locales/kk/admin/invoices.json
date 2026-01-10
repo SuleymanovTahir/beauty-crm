@@ -21,7 +21,8 @@
     "sent": "Жіберілді",
     "partial": "Ішінара төленген",
     "paid": "Ақылы",
-    "overdue": "Мерзімі бітті"
+    "overdue": "Мерзімі бітті",
+    "cancelled": "Бас тартылды"
   },
   "form": {
     "selectClient": "Клиентті таңдаңыз",
@@ -62,6 +63,10 @@
     "invoiceCreated": "Тіркелгі жасалды",
     "invoiceSent": "Шот-фактура жіберілді",
     "paymentAdded": "Төлем қосылды",
-    "invoiceDeleted": "Есептік жазба жойылды"
-  }
+    "invoiceDeleted": "Есептік жазба жойылды",
+    "invoiceUpdated": "Есептік жазба жаңартылды"
+  },
+  "board": "Басқарма",
+  "allInvoices": "Барлық тіркелгілер",
+  "search_placeholder": "Нөмір немесе клиент бойынша іздеу..."
 }

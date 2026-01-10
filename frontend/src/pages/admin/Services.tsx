@@ -1221,8 +1221,8 @@ export default function Services() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50/10 rounded-2xl border border-gray-100/50">
-                  <div className="md:col-span-1 space-y-2">
-                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block mb-1">
+                  <div className="md:col-span-1 space-y-1.5">
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block px-1">
                       {t('services:category')} <span className="text-pink-500">*</span>
                     </Label>
                     <Select value={serviceFormData.category} onValueChange={(value) => setServiceFormData({ ...serviceFormData, category: value })}>
@@ -1237,8 +1237,8 @@ export default function Services() {
                     </Select>
                   </div>
 
-                  <div className="md:col-span-1 space-y-2">
-                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block mb-1">
+                  <div className="md:col-span-1 space-y-1.5">
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block px-1">
                       {t('services:name')} <span className="text-pink-500">*</span>
                     </Label>
                     <Input
@@ -1441,7 +1441,7 @@ export default function Services() {
                           <PopoverTrigger asChild>
                             <Button
                               variant="outline"
-                              className="h-12 px-5 bg-white border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 flex items-center gap-3 min-w-[280px] justify-between group transition-all"
+                              className="h-12 px-5 bg-white border-gray-100 rounded-xl shadow-sm hover:border-pink-200 flex items-center gap-3 min-w-[280px] justify-between group transition-all"
                             >
                               <div className="flex items-center gap-2 overflow-hidden">
                                 <Users className="w-4 h-4 text-pink-500" />
@@ -1456,20 +1456,73 @@ export default function Services() {
                           </PopoverTrigger>
                           <PopoverContent className="w-[320px] p-0 rounded-2xl shadow-xl border-gray-100" align="start">
                             <Command className="rounded-2xl">
-                              <div className="flex items-center border-b px-3">
-                                <Search className="w-4 h-4 text-gray-400 mr-2 shrink-0" />
-                                <CommandInput
-                                  placeholder={t('services:search_employee', 'Поиск сотрудника...')}
-                                  className="h-12 border-none focus:ring-0 text-sm"
-                                  value={employeeSearchTerm}
-                                  onValueChange={setEmployeeSearchTerm}
-                                />
+                              <div className="flex flex-col border-b">
+                                <div className="flex items-center px-4 py-1 border-b">
+                                  <Search className="w-4 h-4 text-pink-500 mr-2 shrink-0" />
+                                  <CommandInput
+                                    placeholder={t('services:search_employee', 'Поиск сотрудника...')}
+                                    className="h-12 border-none focus:ring-0 text-sm w-full"
+                                    value={employeeSearchTerm}
+                                    onValueChange={setEmployeeSearchTerm}
+                                  />
+                                </div>
+                                <div className="px-4 py-2 bg-gray-50/50 flex items-center justify-between border-b">
+                                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                    {t('services:actions', 'Действия')}
+                                  </span>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-7 px-3 text-[10px] font-black uppercase text-pink-600 hover:text-pink-700 hover:bg-pink-50 rounded-lg transition-all"
+                                    onClick={() => {
+                                      const currentFiltered = employees.filter(emp => {
+                                        const matchesPos = serviceFormData.position_ids.length === 0 ||
+                                          !emp.position_id ||
+                                          serviceFormData.position_ids.includes(emp.position_id) ||
+                                          serviceFormData.employee_ids.includes(emp.id);
+                                        const employeeName = (i18n.language.startsWith('ru') ? emp.full_name_ru : emp.full_name) || '';
+                                        const matchesSearch = employeeName.toLowerCase().includes(employeeSearchTerm.toLowerCase());
+                                        return matchesPos && matchesSearch;
+                                      });
+
+                                      const allSelected = currentFiltered.every(emp => serviceFormData.employee_ids.includes(emp.id));
+
+                                      let newEmployeeIds;
+                                      if (allSelected) {
+                                        newEmployeeIds = serviceFormData.employee_ids.filter(id => !currentFiltered.find(f => f.id === id));
+                                      } else {
+                                        newEmployeeIds = Array.from(new Set([...serviceFormData.employee_ids, ...currentFiltered.map(e => e.id)]));
+                                      }
+                                      setServiceFormData({ ...serviceFormData, employee_ids: newEmployeeIds });
+                                    }}
+                                  >
+                                    {(() => {
+                                      const currentFiltered = employees.filter(emp => {
+                                        const matchesPos = serviceFormData.position_ids.length === 0 ||
+                                          !emp.position_id ||
+                                          serviceFormData.position_ids.includes(emp.position_id) ||
+                                          serviceFormData.employee_ids.includes(emp.id);
+                                        const employeeName = (i18n.language.startsWith('ru') ? emp.full_name_ru : emp.full_name) || '';
+                                        const matchesSearch = employeeName.toLowerCase().includes(employeeSearchTerm.toLowerCase());
+                                        return matchesPos && matchesSearch;
+                                      });
+                                      return currentFiltered.length > 0 && currentFiltered.every(emp => serviceFormData.employee_ids.includes(emp.id))
+                                        ? t('services:deselect_all', 'Сбросить всех')
+                                        : t('services:select_all', 'Выбрать всех');
+                                    })()}
+                                  </Button>
+                                </div>
                               </div>
                               <CommandList className="max-h-[300px] crm-scrollbar">
-                                <CommandEmpty className="p-4 text-center text-sm text-gray-500">
-                                  {t('services:no_employees_found', 'Сотрудники не найдены')}
+                                <CommandEmpty className="p-8 text-center bg-white">
+                                  <div className="bg-pink-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <Search className="w-5 h-5 text-pink-200" />
+                                  </div>
+                                  <p className="text-sm text-gray-500 font-medium">
+                                    {t('services:no_employees_found', 'Сотрудники не найдены')}
+                                  </p>
                                 </CommandEmpty>
-                                <CommandGroup>
+                                <CommandGroup className="p-2">
                                   {employees
                                     .filter(emp => {
                                       const matchesPos = serviceFormData.position_ids.length === 0 ||
@@ -1494,9 +1547,9 @@ export default function Services() {
                                               : [...serviceFormData.employee_ids, employee.id];
                                             setServiceFormData({ ...serviceFormData, employee_ids: newEmployeeIds });
                                           }}
-                                          className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-pink-50/50 transition-colors"
+                                          className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-lg hover:bg-pink-50 transition-colors mb-1 last:mb-0"
                                         >
-                                          <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${isSelected ? 'bg-pink-600 border-pink-600 rotate-0 scale-100' : 'border-gray-300 bg-white rotate-90 scale-90'}`}>
+                                          <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${isSelected ? 'bg-pink-600 border-pink-600 rotate-0 scale-100' : 'border-gray-200 bg-white rotate-90 scale-90'}`}>
                                             {isSelected && <Check className="w-3.5 h-3.5 text-white stroke-[3px]" />}
                                           </div>
                                           <div className="flex flex-col min-w-0">
@@ -1518,55 +1571,11 @@ export default function Services() {
                             </Command>
                           </PopoverContent>
                         </Popover>
-
-                        <div className="flex items-center gap-2 ml-auto">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-[10px] h-9 px-4 uppercase font-black text-pink-600 border-pink-100 hover:bg-pink-50 transition-all rounded-lg whitespace-nowrap shadow-sm"
-                            onClick={() => {
-                              const currentFiltered = employees.filter(emp => {
-                                const matchesPos = serviceFormData.position_ids.length === 0 ||
-                                  !emp.position_id ||
-                                  serviceFormData.position_ids.includes(emp.position_id) ||
-                                  serviceFormData.employee_ids.includes(emp.id);
-                                const employeeName = (i18n.language.startsWith('ru') ? emp.full_name_ru : emp.full_name) || '';
-                                const matchesSearch = employeeName.toLowerCase().includes(employeeSearchTerm.toLowerCase());
-                                return matchesPos && matchesSearch;
-                              });
-
-                              const allSelected = currentFiltered.every(emp => serviceFormData.employee_ids.includes(emp.id));
-
-                              let newEmployeeIds;
-                              if (allSelected) {
-                                newEmployeeIds = serviceFormData.employee_ids.filter(id => !currentFiltered.find(f => f.id === id));
-                              } else {
-                                newEmployeeIds = Array.from(new Set([...serviceFormData.employee_ids, ...currentFiltered.map(e => e.id)]));
-                              }
-                              setServiceFormData({ ...serviceFormData, employee_ids: newEmployeeIds });
-                            }}
-                          >
-                            {(() => {
-                              const currentFiltered = employees.filter(emp => {
-                                const matchesPos = serviceFormData.position_ids.length === 0 ||
-                                  !emp.position_id ||
-                                  serviceFormData.position_ids.includes(emp.position_id) ||
-                                  serviceFormData.employee_ids.includes(emp.id);
-                                const employeeName = (i18n.language.startsWith('ru') ? emp.full_name_ru : emp.full_name) || '';
-                                const matchesSearch = employeeName.toLowerCase().includes(employeeSearchTerm.toLowerCase());
-                                return matchesPos && matchesSearch;
-                              });
-                              return currentFiltered.length > 0 && currentFiltered.every(emp => serviceFormData.employee_ids.includes(emp.id))
-                                ? t('services:deselect_all', 'Сбросить всех')
-                                : t('services:select_all', 'Выбрать всех');
-                            })()}
-                          </Button>
-                        </div>
                       </div>
 
                       {/* Selected tags display */}
                       {serviceFormData.employee_ids.length > 0 && (
-                        <div className="flex flex-wrap gap-2 pt-2">
+                        <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-100/50">
                           {serviceFormData.employee_ids.map(eid => {
                             const emp = employees.find(e => e.id === eid);
                             if (!emp) return null;
