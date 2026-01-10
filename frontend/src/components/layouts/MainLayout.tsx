@@ -28,14 +28,12 @@ import {
     ShieldCheck,
     Send,
     MessageCircle,
-    User,
     FileSignature,
     Package,
     Receipt,
     CreditCard,
     Store,
-    Briefcase,
-    Wrench
+    Briefcase
 } from 'lucide-react';
 import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../icons/SocialIcons';
 import { toast } from 'sonner';
@@ -267,7 +265,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                     messenger.type === 'tiktok' ? (props: any) => <TikTokIcon {...props} colorful={true} /> : MessageSquare,
                         label: messenger.name,
                         path: `${rolePrefix}/chat?messenger=${messenger.type}`,
-                        requirePermission: () => true
+                        requirePermission: () => permissions.canViewInstagramChat || permissions.roleLevel >= 70 || user?.role === 'sales'
                     })),
                     {
                         id: 'internal-chat',
@@ -279,7 +277,9 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 ]
             },
             { id: 'calendar', icon: Calendar, label: t('menu.calendar'), path: `${rolePrefix}/calendar`, requirePermission: () => permissions.canViewAllCalendars && user?.role !== 'employee' },
+            { id: 'bookings', icon: FileText, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings || user?.role === 'employee' },
             { id: 'clients', icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, requirePermission: () => permissions.canViewAllClients && user?.role !== 'sales' },
+            { id: 'funnel', icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, requirePermission: () => permissions.canViewAnalytics || user?.role === 'sales' },
 
             // MANAGEMENT GROUP
             {
@@ -288,11 +288,19 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 label: t('menu.management', 'Управление'),
                 requirePermission: () => true,
                 items: [
-                    { id: 'bookings', icon: FileText, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings || user?.role === 'employee' },
                     { id: 'services', icon: Scissors, label: t('menu.services'), path: `${rolePrefix}/services`, requirePermission: () => permissions.canViewServices },
                     { id: 'products', icon: Package, label: t('menu.products'), path: `${rolePrefix}/products`, requirePermission: () => permissions.canViewServices },
-                    { id: 'users', icon: UserCog, label: t('menu.users'), path: `${rolePrefix}/users`, requirePermission: () => permissions.canViewAllUsers },
-                    { id: 'public-content', icon: Globe, label: t('menu.public_content'), path: `${rolePrefix}/public-content`, requirePermission: () => permissions.canViewSettings && permissions.roleLevel >= 80 },
+                ]
+            },
+            // ANALYTICS GROUP
+            {
+                id: 'analytics-group',
+                icon: BarChart3,
+                label: t('menu.analytics'),
+                requirePermission: () => true,
+                items: [
+                    { id: 'analytics', icon: BarChart3, label: t('menu.analytics'), path: `${rolePrefix}/analytics`, requirePermission: () => permissions.canViewAnalytics && user?.role !== 'marketer' && user?.role !== 'sales' },
+                    { id: 'visitors', icon: MapPinned, label: t('menu.visitors'), path: `${rolePrefix}/visitor-analytics`, requirePermission: () => permissions.canViewAnalytics },
                 ]
             },
             // FINANCE GROUP
@@ -309,17 +317,13 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             // TOOLS GROUP
             {
                 id: 'tools',
-                icon: Wrench,
+                icon: Package,
                 label: t('menu.tools', 'Инструменты'),
                 requirePermission: () => true,
                 items: [
                     { id: 'tasks', icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, requirePermission: () => permissions.canViewTasks || permissions.roleLevel >= 70 || user?.role === 'sales' },
                     { id: 'broadcasts', icon: Send, label: t('menu.broadcasts'), path: `${rolePrefix}/broadcasts`, requirePermission: () => permissions.canSendBroadcasts || user?.role === 'sales' },
-                    { id: 'analytics', icon: BarChart3, label: t('menu.analytics'), path: `${rolePrefix}/analytics`, requirePermission: () => permissions.canViewAnalytics && user?.role !== 'marketer' && user?.role !== 'sales' },
-                    { id: 'funnel', icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, requirePermission: () => permissions.canViewAnalytics || user?.role === 'sales' },
-                    { id: 'visitors', icon: MapPinned, label: t('menu.visitors'), path: `${rolePrefix}/visitor-analytics`, requirePermission: () => permissions.canViewAnalytics },
                     { id: 'telephony', icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, requirePermission: () => permissions.roleLevel >= 80 || user?.role === 'sales' },
-                    { id: 'profile', icon: User, label: t('menu.profile'), path: `${rolePrefix}/profile`, requirePermission: () => user?.role === 'employee' || user?.role === 'sales' },
                 ]
             },
             // SETTINGS GROUP
@@ -330,6 +334,8 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 requirePermission: () => true,
                 items: [
                     { id: 'app-settings', icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, requirePermission: () => (permissions.canViewSettings || user?.role === 'manager' || user?.role === 'sales') && user?.role !== 'employee' },
+                    { id: 'users', icon: UserCog, label: t('menu.users'), path: `${rolePrefix}/users`, requirePermission: () => permissions.canViewAllUsers },
+                    { id: 'public-content', icon: Globe, label: t('menu.public_content'), path: `${rolePrefix}/public-content`, requirePermission: () => permissions.canViewSettings && permissions.roleLevel >= 80 },
                     { id: 'bot-settings', icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, requirePermission: () => permissions.canViewBotSettings || user?.role === 'sales' },
                     { id: 'payment', icon: CreditCard, label: t('menu.payment_integrations'), path: `${rolePrefix}/payment-integrations`, requirePermission: () => permissions.roleLevel >= 80 },
                     { id: 'marketplace', icon: Store, label: t('menu.marketplace_integrations'), path: `${rolePrefix}/marketplace-integrations`, requirePermission: () => permissions.roleLevel >= 80 },
@@ -578,7 +584,14 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                             )}
                         </div>
 
-                        <div className="flex items-center gap-3 mb-3">
+                        <button
+                            onClick={() => {
+                                const profilePath = `${rolePrefix}/profile`;
+                                navigate(profilePath);
+                                setIsMobileMenuOpen(false);
+                            }}
+                            className="w-full flex items-center gap-3 mb-3 p-2 -ml-2 rounded-lg hover:bg-gray-100 transition-colors text-left"
+                        >
                             {userProfile?.photo ? (
                                 <img
                                     src={getPhotoUrl(userProfile.photo) || ''}
@@ -602,7 +615,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                 </span>
                                 <span className="text-[10px] text-gray-500 capitalize leading-tight">@{user?.username || 'user'}</span>
                             </div>
-                        </div>
+                        </button>
 
                         <div className="flex items-center gap-2">
                             <LanguageSwitcher />
