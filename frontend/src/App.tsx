@@ -38,6 +38,8 @@ const Products = React.lazy(() => import('./pages/admin/Products'));
 const Invoices = React.lazy(() => import('./pages/admin/Invoices'));
 const PaymentIntegrations = React.lazy(() => import('./pages/admin/PaymentIntegrations'));
 const MarketplaceIntegrations = React.lazy(() => import('./pages/admin/MarketplaceIntegrations'));
+const CRMReferrals = React.lazy(() => import('./pages/admin/Referrals'));
+const CRMChallenges = React.lazy(() => import('./pages/admin/Challenges'));
 
 
 // Admin Panel pages
@@ -327,8 +329,8 @@ export default function App() {
                 <Route path="invoices" element={<Invoices />} />
                 <Route path="payment-integrations" element={<PaymentIntegrations />} />
                 <Route path="marketplace-integrations" element={<MarketplaceIntegrations />} />
-                <Route path="referrals" element={<ReferralProgram />} />
-                <Route path="challenges" element={<Challenges />} />
+                <Route path="referrals" element={<CRMReferrals />} />
+                <Route path="challenges" element={<CRMChallenges />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 

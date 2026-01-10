@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import {
     Users, Gift, TrendingUp, Search, Settings,
     ArrowRight, CheckCircle2, XCircle, Clock,
-    Plus, Filter, ChevronRight, Award, Sparkles,
-    Share2
+    ChevronRight, Award, Sparkles, Share2
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '../../components/ui/card';
