@@ -367,8 +367,8 @@ export default function Services() {
         setPackages(data.packages || []);
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка загрузки';
-      toast.error(`Ошибка: ${message}`);
+      const message = err instanceof Error ? err.message : t('services:loading_error');
+      toast.error(`${t('services:error')}: ${message}`);
     } finally {
       setLoading(false);
     }
@@ -497,7 +497,7 @@ export default function Services() {
         });
       } catch (err) {
         console.error('Error saving service positions:', err);
-        toast.error('Ошибка сохранения должностей');
+        toast.error(t('services:error_saving_positions'));
       }
 
       // Save service employees
@@ -510,7 +510,7 @@ export default function Services() {
         });
       } catch (err) {
         console.error('Error saving service employees:', err);
-        toast.error('Ошибка сохранения сотрудников');
+        toast.error(t('services:error_saving_employees'));
       }
 
       await loadData();
@@ -1315,10 +1315,10 @@ export default function Services() {
 
               {/* Positions Multi-Select */}
               <div>
-                <Label htmlFor="positions">Должности, которые могут выполнять эту услугу</Label>
+                <Label htmlFor="positions">{t('services:positions_can_perform')}</Label>
                 <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
                   {positions.length === 0 ? (
-                    <p className="text-sm text-gray-500">Нет доступных должностей</p>
+                    <p className="text-sm text-gray-500">{t('services:no_available_positions')}</p>
                   ) : (
                     <div className="space-y-2">
                       {positions.map((position) => (
@@ -1355,19 +1355,19 @@ export default function Services() {
                   )}
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  Выберите должности сотрудников, которые могут оказывать эту услугу
+                  {t('services:choose_positions_description')}
                 </p>
               </div>
 
               {/* Employees Multi-Select (Filtered) */}
               <div>
-                <Label htmlFor="employees">Сотрудники, предоставляющие эту услугу</Label>
+                <Label htmlFor="employees">{t('services:employees_providing_service')}</Label>
                 <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
                   {employees.filter(emp => serviceFormData.position_ids.length === 0 || serviceFormData.position_ids.includes(emp.position_id)).length === 0 ? (
                     <p className="text-sm text-gray-500">
                       {serviceFormData.position_ids.length === 0
-                        ? "Сначала выберите должности"
-                        : "Нет сотрудников с выбранными должностями"}
+                        ? t('services:select_positions_first')
+                        : t('services:no_employees_with_positions')}
                     </p>
                   ) : (
                     <div className="space-y-2">
@@ -1398,7 +1398,7 @@ export default function Services() {
                   )}
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  Выберите конкретных сотрудников, которые будут выполнять эту услугу
+                  {t('services:choose_employees_description')}
                 </p>
               </div>
 
@@ -2093,14 +2093,14 @@ export default function Services() {
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify(payload)
                     });
-                    toast.success('Кампания обновлена');
+                    toast.success(t('services:referral_campaign_updated'));
                   } else {
                     await fetch('/api/referral-campaigns', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify(payload)
                     });
-                    toast.success('Кампания создана');
+                    toast.success(t('services:referral_campaign_created'));
                   }
 
                   const res = await fetch('/api/referral-campaigns');
@@ -2108,7 +2108,7 @@ export default function Services() {
                   setCampaigns(data.campaigns || []);
                   setIsReferralModalOpen(false);
                 } catch (e) {
-                  toast.error('Ошибка сохранения');
+                  toast.error(t('services:error_saving'));
                 }
               }}
               className="bg-purple-600 hover:bg-purple-700"
