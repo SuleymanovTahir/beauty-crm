@@ -19,6 +19,11 @@
     "signed": "Signed",
     "cancelled": "Canceled"
   },
+  "contractTypes": {
+    "service": "Service Contract",
+    "employment": "Employment Contract",
+    "rental": "Rental Agreement"
+  },
   "form": {
     "selectClient": "Select client",
     "contractType": "Contract type",

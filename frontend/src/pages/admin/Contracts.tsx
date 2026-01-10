@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Send, Trash2, FileText, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { api } from '../../services/api';
 import '../../styles/crm-pages.css';
 
@@ -50,9 +51,11 @@ const Contracts = () => {
 
         try {
             await api.delete(`/api/contracts/${id}`);
+            toast.success(t('messages.contractDeleted'));
             loadContracts();
         } catch (error) {
             console.error('Error deleting contract:', error);
+            toast.error(t('errors.deleteError', 'Error deleting contract'));
         }
     };
 
@@ -211,9 +214,11 @@ const AddContractDialog = ({ onClose, onSuccess }: any) => {
         e.preventDefault();
         try {
             await api.post('/api/contracts', formData);
+            toast.success(t('messages.contractCreated'));
             onSuccess();
         } catch (error) {
             console.error('Error creating contract:', error);
+            toast.error(t('errors.createError', 'Error creating contract'));
         }
     };
 
@@ -282,9 +287,11 @@ const SendContractDialog = ({ contract, onClose, onSuccess }: any) => {
         e.preventDefault();
         try {
             await api.post(`/api/contracts/${contract.id}/send?delivery_method=${formData.delivery_method}&recipient=${formData.recipient}`);
+            toast.success(t('messages.contractSent'));
             onSuccess();
         } catch (error) {
             console.error('Error sending contract:', error);
+            toast.error(t('errors.sendError', 'Error sending contract'));
         }
     };
 

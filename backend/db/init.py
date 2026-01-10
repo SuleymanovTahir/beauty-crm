@@ -1476,6 +1476,86 @@ def init_database():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )''')
+
+    # Таблица договоров
+    c.execute('''CREATE TABLE IF NOT EXISTS contracts (
+        id SERIAL PRIMARY KEY,
+        contract_number TEXT UNIQUE NOT NULL,
+        client_id TEXT,
+        booking_id INTEGER,
+        contract_type TEXT DEFAULT 'service',
+        template_name TEXT DEFAULT 'default',
+        status TEXT DEFAULT 'draft',
+        data TEXT DEFAULT '{}',
+        pdf_path TEXT,
+        created_by INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        sent_at TIMESTAMP,
+        signed_at TIMESTAMP,
+        FOREIGN KEY (client_id) REFERENCES clients(instagram_id),
+        FOREIGN KEY (booking_id) REFERENCES bookings(id),
+        FOREIGN KEY (created_by) REFERENCES users(id)
+    )''')
+
+    # Лог отправки договоров
+    c.execute('''CREATE TABLE IF NOT EXISTS contract_delivery_log (
+        id SERIAL PRIMARY KEY,
+        contract_id INTEGER NOT NULL,
+        delivery_method TEXT NOT NULL,
+        recipient TEXT NOT NULL,
+        status TEXT DEFAULT 'sent',
+        sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (contract_id) REFERENCES contracts(id)
+    )''')
+
+    # Таблица счетов
+    c.execute('''CREATE TABLE IF NOT EXISTS invoices (
+        id SERIAL PRIMARY KEY,
+        invoice_number TEXT UNIQUE NOT NULL,
+        client_id TEXT,
+        booking_id INTEGER,
+        status TEXT DEFAULT 'draft',
+        total_amount REAL DEFAULT 0,
+        paid_amount REAL DEFAULT 0,
+        currency TEXT DEFAULT 'AED',
+        items TEXT DEFAULT '[]',
+        notes TEXT,
+        due_date DATE,
+        pdf_path TEXT,
+        created_by INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        paid_at TIMESTAMP,
+        sent_at TIMESTAMP,
+        FOREIGN KEY (client_id) REFERENCES clients(instagram_id),
+        FOREIGN KEY (booking_id) REFERENCES bookings(id),
+        FOREIGN KEY (created_by) REFERENCES users(id)
+    )''')
+
+    # Платежи по счетам
+    c.execute('''CREATE TABLE IF NOT EXISTS invoice_payments (
+        id SERIAL PRIMARY KEY,
+        invoice_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        payment_method TEXT NOT NULL,
+        notes TEXT,
+        created_by INTEGER,
+        payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (invoice_id) REFERENCES invoices(id),
+        FOREIGN KEY (created_by) REFERENCES users(id)
+    )''')
+
+    # Лог отправки счетов
+    c.execute('''CREATE TABLE IF NOT EXISTS invoice_delivery_log (
+        id SERIAL PRIMARY KEY,
+        invoice_id INTEGER NOT NULL,
+        delivery_method TEXT NOT NULL,
+        recipient TEXT NOT NULL,
+        status TEXT DEFAULT 'sent',
+        sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (invoice_id) REFERENCES invoices(id)
+    )''')
     
     # Инициализация дефолтных настроек мессенджеров
     messenger_defaults = [
