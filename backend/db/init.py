@@ -1426,6 +1426,44 @@ def init_database():
         UNIQUE(user_id, subscription_type)
     )''')
 
+    # Таблица типов подписок для рассылок
+    c.execute('''CREATE TABLE IF NOT EXISTS broadcast_subscription_types (
+        id SERIAL PRIMARY KEY,
+        key TEXT UNIQUE NOT NULL,
+        target_role TEXT DEFAULT 'all',
+        name_ru TEXT,
+        name_en TEXT,
+        description_ru TEXT,
+        description_en TEXT,
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''')
+
+    # Заполняем типы подписок если пусто (из core/subscriptions.py)
+    c.execute("SELECT COUNT(*) FROM broadcast_subscription_types")
+    if c.fetchone()[0] == 0:
+        from core.subscriptions import CLIENT_SUBSCRIPTION_TYPES, STAFF_SUBSCRIPTION_TYPES
+        
+        # Клиентские подписки
+        for key, info in CLIENT_SUBSCRIPTION_TYPES.items():
+            name_key = info.get('name', f"subscription_{key}")
+            desc_key = info.get('description', f"subscription_{key}_desc")
+            c.execute("""
+                INSERT INTO broadcast_subscription_types (key, target_role, name_ru, name_en, description_ru, description_en)
+                VALUES (%s, 'client', %s, %s, %s, %s)
+            """, (key, name_key, name_key, desc_key, desc_key))
+            
+        # Подписки для сотрудников
+        for key, info in STAFF_SUBSCRIPTION_TYPES.items():
+            name_key = info.get('name', f"subscription_{key}")
+            desc_key = info.get('description', f"subscription_{key}_desc")
+            c.execute("""
+                INSERT INTO broadcast_subscription_types (key, target_role, name_ru, name_en, description_ru, description_en)
+                VALUES (%s, 'employee', %s, %s, %s, %s)
+            """, (key, name_key, name_key, desc_key, desc_key))
+            
+        log_info("✅ Заполнены дефолтные типы подписок для рассылок", "db")
+
     # Таблица настроек мессенджеров
     c.execute('''CREATE TABLE IF NOT EXISTS messenger_settings (
         id SERIAL PRIMARY KEY,
