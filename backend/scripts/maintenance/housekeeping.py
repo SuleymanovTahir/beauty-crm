@@ -29,7 +29,7 @@ def run_housekeeping():
         # We need to find entity_id and entity_type to delete from original tables
         c.execute("""
             SELECT entity_type, entity_id FROM deleted_items 
-            WHERE deleted_at < CURRENT_TIMESTAMP - INTERVAL '30 days'
+            WHERE created_at < CURRENT_TIMESTAMP - INTERVAL '30 days'
             AND restored_at IS NULL
         """)
         to_delete = c.fetchall()
@@ -39,7 +39,7 @@ def run_housekeeping():
                 if entity_type == 'booking':
                     c.execute("DELETE FROM bookings WHERE id = %s", (entity_id,))
                 elif entity_type == 'client':
-                    c.execute("DELETE FROM clients WHERE id = %s", (entity_id,))
+                    c.execute("DELETE FROM clients WHERE instagram_id = %s", (entity_id,))
                 elif entity_type == 'user':
                     c.execute("DELETE FROM users WHERE id = %s", (entity_id,))
                 

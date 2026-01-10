@@ -25,10 +25,16 @@ def create_cookie_consents_table(db_name=None):
         return True
     except Exception as e:
         print(f"❌ Ошибка создания таблицы cookie_consents: {e}")
-        conn.rollback()
+        try:
+            conn.rollback()
+        except:
+            pass
         return False
     finally:
-        conn.close()
+        try:
+            conn.close()
+        except:
+            pass
 
 def log_cookie_consent(ip: str, action: str, user_agent: str = None):
     """Логировать решение по куки"""

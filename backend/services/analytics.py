@@ -120,10 +120,17 @@ class AnalyticsService:
         """, tuple(params))
         avg_check = round(self.c.fetchone()[0] or 0, 2)
 
+        # Прогноз на остаток периода (упрощенно)
+        # Если прошло X дней из 30, то прогноз = (total / X) * 30
+        days_passed = (datetime.fromisoformat(end_date.replace(' ', 'T')) - datetime.fromisoformat(start_date.replace(' ', 'T'))).days
+        if days_passed <= 0: days_passed = 1
+        forecast = round((total_revenue / days_passed) * 30, 2) if days_passed < 30 else round(total_revenue, 2)
+
         return {
             "total": round(total_revenue, 2),
             "daily": daily_revenue,
-            "average_check": avg_check
+            "average_check": avg_check,
+            "forecast": forecast
         }
 
     def _get_booking_metrics(self, start_date: str, end_date: str, master: Optional[str] = None) -> Dict:
@@ -213,11 +220,24 @@ class AnalyticsService:
 
         retention_rate = round((returning_clients / total_active * 100) if total_active > 0 else 0, 2)
 
+        # LTV (Lifetime Value) - средний доход на одного клиента за все время
+        self.c.execute("""
+            SELECT COALESCE(AVG(total_revenue), 0)
+            FROM (
+                SELECT SUM(revenue) as total_revenue
+                FROM bookings
+                WHERE status = 'completed'
+                GROUP BY instagram_id
+            ) as client_revenues
+        """)
+        ltv = round(self.c.fetchone()[0] or 0, 2)
+
         return {
             "new": new_clients,
             "returning": returning_clients,
             "total_active": total_active,
-            "retention": retention_rate
+            "retention": retention_rate,
+            "ltv": ltv
         }
 
     def _get_master_metrics(self, start_date: str, end_date: str, master: Optional[str] = None) -> Dict:

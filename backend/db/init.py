@@ -10,6 +10,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
+from core.config import DATABASE_NAME
 from utils.logger import log_info, log_warning
 
 def init_database():
@@ -53,7 +54,8 @@ def init_database():
               preferred_messenger TEXT,
               language TEXT DEFAULT 'ru',
               bot_mode TEXT DEFAULT 'assistant',
-              temperature TEXT DEFAULT 'warm')''')
+              temperature TEXT DEFAULT 'warm',
+              reminder_date TIMESTAMP)''')
 
     # Таблица настроек бота
     c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (
@@ -666,10 +668,11 @@ def init_database():
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (employee_id) REFERENCES users(id)
     )''')            
-    # ✅ Таблица уведомлений (сарих уведомлений)
+    # ✅ Таблица уведомлений (поддерживает и сотрудников, и клиентов)
     c.execute('''CREATE TABLE IF NOT EXISTS notifications (
         id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL,
+        user_id INTEGER,
+        client_id TEXT,
         title TEXT NOT NULL,
         message TEXT NOT NULL,
         type TEXT DEFAULT 'info',
@@ -677,20 +680,23 @@ def init_database():
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         read_at TEXT,
         action_url TEXT,
-        FOREIGN KEY (user_id) REFERENCES users (id)
+        FOREIGN KEY (user_id) REFERENCES users (id),
+        FOREIGN KEY (client_id) REFERENCES clients (instagram_id) ON DELETE CASCADE
     )''')
     
     # Миграция: убедиться что таблица notifications правильная
     try:
-        c.execute("SELECT data_type FROM information_schema.columns WHERE table_name='notifications' AND column_name='user_id'")
-        row = c.fetchone()
-        if row and row[0].lower() == 'text':
-             # Если user_id TEXT (старая версия), нужно конвертировать или дропнуть (дропнуть проще так как это просто уведомления)
+        c.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name='notifications'")
+        columns_info = {row[0]: row[1] for row in c.fetchall()}
+        
+        # 1. Если user_id TEXT (старая версия), нужно пересоздать (или конвертировать, но DROP проще для уведомлений)
+        if columns_info.get('user_id', '').lower() == 'text':
              log_warning("⚠️ Таблица notifications имеет неправильный тип user_id (TEXT). Пересоздание...", "db")
              c.execute("DROP TABLE notifications")
              c.execute('''CREATE TABLE notifications (
                 id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL,
+                user_id INTEGER,
+                client_id TEXT,
                 title TEXT NOT NULL,
                 message TEXT NOT NULL,
                 type TEXT DEFAULT 'info',
@@ -698,16 +704,22 @@ def init_database():
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                 read_at TEXT,
                 action_url TEXT,
-                FOREIGN KEY (user_id) REFERENCES users (id)
+                FOREIGN KEY (user_id) REFERENCES users (id),
+                FOREIGN KEY (client_id) REFERENCES clients (instagram_id) ON DELETE CASCADE
             )''')
-
-        # Миграция: если есть client_id, делаем его nullable (для совместимости с рассылками)
-        c.execute("SELECT column_name, is_nullable FROM information_schema.columns WHERE table_name='notifications' AND column_name='client_id'")
-        client_id_col = c.fetchone()
-        if client_id_col and client_id_col[1] == 'NO':
-            log_warning("⚠️ Колонка client_id в notifications должна быть nullable. Исправляю...", "db")
-            c.execute("ALTER TABLE notifications ALTER COLUMN client_id DROP NOT NULL")
-            log_info("✅ Колонка client_id теперь nullable", "db")
+        else:
+            # 2. Если нет client_id, добавляем
+            if 'client_id' not in columns_info:
+                log_info("➕ Adding client_id column to notifications...", "db")
+                c.execute("ALTER TABLE notifications ADD COLUMN client_id TEXT")
+                c.execute("ALTER TABLE notifications ADD CONSTRAINT fk_notifications_client FOREIGN KEY (client_id) REFERENCES clients(instagram_id) ON DELETE CASCADE")
+            
+            # 3. Убедиться что user_id nullable
+            c.execute("SELECT is_nullable FROM information_schema.columns WHERE table_name='notifications' AND column_name='user_id'")
+            is_nullable = c.fetchone()
+            if is_nullable and is_nullable[0] == 'NO':
+                log_info("🔓 Making notifications.user_id nullable...", "db")
+                c.execute("ALTER TABLE notifications ALTER COLUMN user_id DROP NOT NULL")
 
     except Exception as e:
         log_warning(f"Ошибка проверки notifications: {e}", "db")
@@ -1841,35 +1853,35 @@ def init_database():
     employees_data = [
         {
             "username": "simo",
-            "full_name": "SIMO",
+            "full_name": "Mohamed Sabri",
             "position": "Hair Stylist",
             "role": "employee",
             "photo": restored_photos.get("simo", "/static/uploads/images/simo.webp")
         },
         {
             "username": "mestan",
-            "full_name": "MESTAN",
+            "full_name": "Amandurdyyeva Mestan",
             "position": "Hair Stylist",
             "role": "employee",
             "photo": restored_photos.get("mestan", "/static/uploads/images/mestan.webp")
         },
         {
             "username": "lyazzat",
-            "full_name": "LYAZZAT",
+            "full_name": "Kozhabay Lyazat",
             "position": "Nail Master",
             "role": "employee",
             "photo": restored_photos.get("lyazzat", "/static/uploads/images/lyazzat.webp")
         },
         {
             "username": "gulya",
-            "full_name": "GULYA",
+            "full_name": "Kasymova Gulcehre",
             "position": "Nail/Waxing",
             "role": "employee",
             "photo": restored_photos.get("gulya", "/static/uploads/images/gulya.webp")
         },
         {
             "username": "jennifer",
-            "full_name": "JENNIFER",
+            "full_name": "Peradilla Jennifer",
             "position": "Nail Master/Massages",
             "role": "employee",
             "photo": restored_photos.get("jennifer", "/static/uploads/images/jennifer.webp")
@@ -1925,7 +1937,7 @@ def init_database():
     # Run public content schema migration
     try:
         from db.migrations.consolidated.schema_public import migrate_public_schema
-        migrate_public_schema(DATABASE_NAME)
+        migrate_public_schema()
         log_info("✅ Public content tables migrated", "db")
     except Exception as e:
         log_warning(f"⚠️ Public content migration warning: {e}", "db")

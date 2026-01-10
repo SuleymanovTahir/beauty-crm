@@ -97,10 +97,7 @@ def test_database():
             'client_loyalty_points'
         ]
 
-        if DATABASE_TYPE == 'postgresql':
-            c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
-        else:
-            c.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
         
         existing_tables = [row[0] for row in c.fetchall()]
 

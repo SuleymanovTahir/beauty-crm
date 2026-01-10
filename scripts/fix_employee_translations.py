@@ -1,88 +1,60 @@
-import sqlite3
-from deep_translator import GoogleTranslator
+import os
+import sys
 
-DB_PATH = "backend/salon_bot.db"
+# Add backend directory to path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../backend')))
+from db.connection import get_db_connection
 
-def get_db_connection():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-def translate_text(text, target_lang):
-    if not text:
-        return None
-    try:
-        translator = GoogleTranslator(source='auto', target=target_lang)
-        return translator.translate(text)
-    except Exception as e:
-        print(f"Error translating '{text}' to {target_lang}: {e}")
-        return None
-
-def main():
-    print("🚀 Starting employee translation fix...\n")
+def fix_employee_translations():
+    print("Connecting to PostgreSQL database...")
     conn = get_db_connection()
     c = conn.cursor()
     
-    # Fetch employees
-    c.execute("SELECT * FROM users WHERE is_service_provider=1")
-    rows = c.fetchall()
+    # Check if columns exist
+    c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='users'")
+    columns = {col[0] for col in c.fetchall()}
     
-    updates = 0
+    for lang in ['ru', 'en', 'ar']:
+        for field in ['full_name', 'position', 'bio']:
+            col_name = f"{field}_{lang}"
+            if col_name not in columns:
+                print(f"  Adding missing column: {col_name}")
+                c.execute(f"ALTER TABLE users ADD COLUMN {col_name} TEXT")
     
-    for row in rows:
-        row_id = row['id']
-        position = row['position']
-        bio = row['bio']
-        
-        print(f"👤 Processing Employee [{row_id}] {position}")
-        
-        row_updates = {}
-        
-        # 1. Fix Position
-        # If position is ASCII (English), set position_en = position
-        if position and position.isascii():
-            print(f"   ✅ Position is English. Setting position_en = '{position}'")
-            row_updates['position_en'] = position
-        
-        # 2. Fix Bio
-        # If bio is Cyrillic (Russian), translate to En and Ar
-        # We assume bio is Russian if it contains Cyrillic characters
-        is_cyrillic = any('а' <= char.lower() <= 'я' for char in bio) if bio else False
-        
-        if is_cyrillic:
-            print(f"   🇷🇺 Bio is Russian. Translating...")
-            
-            # Translate to English
-            bio_en = translate_text(bio, 'en')
-            if bio_en:
-                print(f"     -> EN: {bio_en[:50]}...")
-                row_updates['bio_en'] = bio_en
-                
-            # Translate to Arabic
-            bio_ar = translate_text(bio, 'ar')
-            if bio_ar:
-                print(f"     -> AR: {bio_ar[:50]}...")
-                row_updates['bio_ar'] = bio_ar
-                
-            # Ensure bio_ru is set
-            if not row['bio_ru']:
-                row_updates['bio_ru'] = bio
-        
-        # 3. Translate Position to Arabic if missing
-        if not row['position_ar'] and position:
-            pos_ar = translate_text(position, 'ar')
-            if pos_ar:
-                row_updates['position_ar'] = pos_ar
+    conn.commit()
 
-        if row_updates:
-            set_clause = ", ".join([f"{k} = ?" for k in row_updates.keys()])
-            values = list(row_updates.values()) + [row_id]
-            c.execute(f"UPDATE users SET {set_clause} WHERE id = ?", values)
-            updates += 1
+    # Manual translations for specific employees
+    translations = {
+        'SIMO': {'ru': 'Симо', 'en': 'Simo', 'ar': 'سيمو'},
+        'MESTAN': {'ru': 'Местан', 'en': 'Mestan', 'ar': 'ميستان'},
+        'LYAZZAT': {'ru': 'Ляззат', 'en': 'Lyazzat', 'ar': 'лазат'},
+        'GULYA': {'ru': 'Гуля', 'en': 'Gulya', 'ar': 'جوليا'},
+        'JENNIFER': {'ru': 'Дженнифер', 'en': 'Jennifer', 'ar': 'جينيфер'},
+        'Турсунай': {'ru': 'Турсунай', 'en': 'Tursunay', 'ar': 'тұрсынай'}
+    }
+
+    c.execute("SELECT id, full_name FROM users WHERE is_service_provider = TRUE")
+    users = c.fetchall()
+    
+    for user_row in users:
+        user_id, name = user_row[0], user_row[1]
+        print(f"Processing: {name}")
+        trans = translations.get(name) or translations.get(name.upper())
+        if trans:
+            updates = []
+            params = []
+            for lang, val in trans.items():
+                updates.append(f"full_name_{lang} = %s")
+                params.append(val)
             
+            if updates:
+                params.append(user_id)
+                c.execute(f"UPDATE users SET {', '.join(updates)} WHERE id = %s", params)
+                print(f"  ✅ Updated translations for {name}")
+
     conn.commit()
     conn.close()
-    print(f"\n✨ Finished fixing {updates} employees.")
+    print("✨ Done!")
 
 if __name__ == "__main__":
-    main()
+    fix_employee_translations()

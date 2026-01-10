@@ -254,6 +254,18 @@ def run_all_migrations():
         "Таблица invoices (Счета)"
     )
 
+    from db.migrations.consolidated.schema_menu_settings import run_migration as migrate_menu_settings
+    results["consolidated/menu_settings"] = run_migration_function(
+        migrate_menu_settings,
+        "Таблица menu_settings (Настройки меню)"
+    )
+
+    from db.migrations.consolidated.plan_updates import migrate as migrate_plans
+    results["consolidated/plans"] = run_migration_function(
+        migrate_plans,
+        "Обновление планов (plans) и метрики (plan_metrics)"
+    )
+
     from db.migrations.consolidated.schema_funnel_checkpoints import migrate as migrate_funnel_checkpoints
     results["consolidated/funnel_checkpoints"] = run_migration_function(
         migrate_funnel_checkpoints,

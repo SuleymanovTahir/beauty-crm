@@ -64,7 +64,6 @@ class ComprehensiveTest:
 
     def __init__(self):
         self.results: List[TestResult] = []
-        self.db_path = DATABASE_NAME
         self.start_time = None
         self.end_time = None
 
@@ -131,7 +130,7 @@ class ComprehensiveTest:
         result = TestResult("Все необходимые таблицы существуют", "Database")
 
         required_tables = [
-            'users', 'clients', 'employees', 'services', 'bookings',
+            'users', 'clients', 'services', 'bookings',
             'positions', 'salon_settings', 'bot_settings'
         ]
 
@@ -154,7 +153,7 @@ class ComprehensiveTest:
                 ])
             else:
                 result.success(f"Все {len(required_tables)} таблиц существуют", {
-                    "required_tables": required_tables,
+                    "required_tables": list(required_tables),
                     "extra_tables": list(extra_tables)
                 })
 
@@ -195,14 +194,11 @@ class ComprehensiveTest:
                 ])
             else:
                 details = []
-                for col_info in columns_info:
-                    col_name = col_info['name']
-                    col_type = col_info['type']
-                    not_null = "NOT NULL" if col_info['notnull'] else "NULL"
-                    details.append(f"  • {col_name}: {col_type} ({not_null})")
+                for col in columns_info:
+                    details.append(f"  • {col[0]}")
 
                 result.success(f"Все {len(required_columns)} колонок присутствуют", {
-                    "columns": [f"{c['name']} ({c['type']})" for c in columns_info]
+                    "columns": list(existing_columns)
                 })
                 result.details.extend(details)
 

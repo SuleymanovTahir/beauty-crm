@@ -2,10 +2,12 @@
 API для управления настройками
 Settings management API
 """
-from fastapi import APIRouter, HTTPException, Request,Cookie
+from fastapi import APIRouter, HTTPException, Request, Cookie
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import Optional
-
+import os
+import shutil
 from datetime import datetime, timedelta
 
 from core.config import (
@@ -349,18 +351,47 @@ async def download_backup(session_token: Optional[str] = Cookie(None)):
         )
     
     try:
-        # Create a backup copy
+        # Create a backup using pg_dump
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_filename = f"salon_bot_backup_{timestamp}.db"
+        backup_filename = f"beauty_crm_backup_{timestamp}.sql"
         backup_path = f"backend/{backup_filename}"
         
-        # Copy database file
-        shutil.copy2(DATABASE_NAME, backup_path)
+        # Get DB params from env or config
+        from core.config import POSTGRES_CONFIG
         
+        db_host = POSTGRES_CONFIG['host']
+        db_port = POSTGRES_CONFIG['port']
+        db_name = POSTGRES_CONFIG['database']
+        db_user = POSTGRES_CONFIG['user']
+        db_pass = POSTGRES_CONFIG['password']
+        
+        import subprocess
+        
+        # Construct pg_dump command
+        # Note: We provide password via environment variable to avoid prompt
+        env = os.environ.copy()
+        if db_pass:
+            env["PGPASSWORD"] = db_pass
+            
+        cmd = [
+            "pg_dump",
+            "-h", db_host,
+            "-p", str(db_port),
+            "-U", db_user,
+            "-f", backup_path,
+            db_name
+        ]
+        
+        result = subprocess.run(cmd, env=env, capture_output=True, text=True)
+        
+        if result.returncode != 0:
+            log_error(f"pg_dump failed: {result.stderr}", "settings")
+            raise Exception(f"Backup failed: {result.stderr}")
+            
         return FileResponse(
             path=backup_path,
             filename=backup_filename,
-            media_type='application/octet-stream',
+            media_type='application/sql',
             headers={
                 "Content-Disposition": f"attachment; filename={backup_filename}"
             }

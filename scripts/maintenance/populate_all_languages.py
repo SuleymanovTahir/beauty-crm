@@ -1,30 +1,23 @@
-import sqlite3
 import os
 import sys
 
 # Add backend directory to path to import config
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../backend')))
-from core.config import DATABASE_NAME
-
-def get_db_path():
-    # Adjust path to point to backend/salon_bot.db
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), '../../backend/salon_bot.db'))
+from db.connection import get_db_connection
 
 def populate_all_languages():
-    db_path = get_db_path()
-    print(f"Connecting to database at: {db_path}")
-    
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
+    print("Connecting to PostgreSQL database...")
+    conn = get_db_connection()
     c = conn.cursor()
     
     languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
     
     # 1. Ensure columns exist (Double check)
     print("\n1. Checking columns...")
+    
     # Users columns
-    c.execute("PRAGMA table_info(users)")
-    user_cols = {col[1] for col in c.fetchall()}
+    c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='users'")
+    user_cols = {col[0] for col in c.fetchall()}
     
     for lang in languages:
         for field in ['full_name', 'position', 'bio']:
@@ -37,8 +30,8 @@ def populate_all_languages():
                     print(f"  Error adding {col_name}: {e}")
 
     # Public Reviews columns
-    c.execute("PRAGMA table_info(public_reviews)")
-    review_cols = {col[1] for col in c.fetchall()}
+    c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='public_reviews'")
+    review_cols = {col[0] for col in c.fetchall()}
     
     for lang in languages:
         for field in ['author_name', 'employee_name', 'employee_position']:
@@ -58,32 +51,32 @@ def populate_all_languages():
     # Dictionary of translations for known employees
     # Format: 'Original Name': { 'lang': 'Translated Name', ... }
     employee_translations = {
-        'SIMO': {
-            'ru': 'Симо', 'en': 'Simo', 'ar': 'سيمو', 'es': 'Simo', 'de': 'Simo', 'fr': 'Simo', 'hi': 'सिमो', 'kk': 'Симо', 'pt': 'Simo',
+        'Mohamed Sabri': {
+            'ru': 'Мохамед Сабри', 'en': 'Mohamed Sabri', 'ar': 'محمد صبري', 'es': 'Mohamed Sabri', 'de': 'Mohamed Sabri', 'fr': 'Mohamed Sabri', 'hi': 'मोहम्मद साबरी', 'kk': 'Мохамед Сабри', 'pt': 'Mohamed Sabri',
             'position': {
-                'ru': 'Стилист', 'en': 'Hair Stylist', 'ar': 'مصفف شعر', 'es': 'Estilista', 'de': 'Friseur', 'fr': 'Coiffeur', 'hi': 'हेयर स्टाइलिस्ट', 'kk': 'Стилист', 'pt': 'Cabeleireiro'
+                'ru': 'Стилист по волосам', 'en': 'Hair Stylist', 'ar': 'مصفف شعر', 'es': 'Estilista', 'de': 'Friseur', 'fr': 'Coiffeur', 'hi': 'हेयर स्टाइлист', 'kk': 'Стилист', 'pt': 'Cabeleireiro'
             }
         },
-        'MESTAN': {
-            'ru': 'Местан', 'en': 'Mestan', 'ar': 'ميستان', 'es': 'Mestan', 'de': 'Mestan', 'fr': 'Mestan', 'hi': 'मेस्तान', 'kk': 'Местан', 'pt': 'Mestan',
+        'Amandurdyyeva Mestan': {
+            'ru': 'Амандурдыева Местан', 'en': 'Amandurdyyeva Mestan', 'ar': 'ميستان', 'es': 'Amandurdyyeva Mestan', 'de': 'Amandurdyyeva Mestan', 'fr': 'Amandurdyyeva Mestan', 'hi': 'मेस्तान', 'kk': 'Амандурдиева Местан', 'pt': 'Amandurdyyeva Mestan',
             'position': {
-                'ru': 'Стилист', 'en': 'Hair Stylist', 'ar': 'مصفف شعر', 'es': 'Estilista', 'de': 'Friseur', 'fr': 'Coiffeur', 'hi': 'हेयर स्टाइलिस्ट', 'kk': 'Стилист', 'pt': 'Cabeleireiro'
+                'ru': 'Стилист по волосам', 'en': 'Hair Stylist', 'ar': 'مصفف شعر', 'es': 'Estilista', 'de': 'Friseur', 'fr': 'Coiffeur', 'hi': 'हेयर स्टाइлист', 'kk': 'Стилист', 'pt': 'Cabeleireiro'
             }
         },
-        'LYAZZAT': {
-            'ru': 'Ляззат', 'en': 'Lyazzat', 'ar': 'لازات', 'es': 'Lyazzat', 'de': 'Lyazzat', 'fr': 'Lyazzat', 'hi': 'ल्याज्जत', 'kk': 'Ләззат', 'pt': 'Lyazzat',
+        'Kozhabay Lyazat': {
+            'ru': 'Кожабай Ляззат', 'en': 'Kozhabay Lyazzat', 'ar': 'لازات', 'es': 'Kozhabay Lyazzat', 'de': 'Kozhabay Lyazzat', 'fr': 'Kozhabay Lyazzat', 'hi': 'ल्याज्जत', 'kk': 'Қожабай Ләззат', 'pt': 'Kozhabay Lyazzat',
             'position': {
                 'ru': 'Мастер маникюра', 'en': 'Nail Master', 'ar': 'خبيرة أظافر', 'es': 'Manicurista', 'de': 'Nageldesigner', 'fr': 'Prothésiste ongulaire', 'hi': 'नेल मास्टर', 'kk': 'Маникюр шебері', 'pt': 'Manicure'
             }
         },
-        'GULYA': {
-            'ru': 'Гуля', 'en': 'Gulya', 'ar': 'جوليا', 'es': 'Gulya', 'de': 'Gulya', 'fr': 'Gulya', 'hi': 'गुल्या', 'kk': 'Гуля', 'pt': 'Gulya',
+        'Kasymova Gulcehre': {
+            'ru': 'Касымова Гульчехра', 'en': 'Kasymova Gulcehre', 'ar': 'جوليا', 'es': 'Kasymova Gulcehre', 'de': 'Kasymova Gulcehre', 'fr': 'Kasymova Gulcehre', 'hi': 'गुल्या', 'kk': 'Касымова Гүлчехра', 'pt': 'Kasymova Gulcehre',
             'position': {
                 'ru': 'Мастер маникюра / Депиляция', 'en': 'Nail/Waxing', 'ar': 'أظافر / إزالة الشعر بالشمع', 'es': 'Uñas / Depilación', 'de': 'Nägel / Wachsen', 'fr': 'Ongles / Épilation', 'hi': 'नाखून / वैक्सिंग', 'kk': 'Маникюр / Депиляция', 'pt': 'Unhas / Depilação'
             }
         },
-        'JENNIFER': {
-            'ru': 'Дженнифер', 'en': 'Jennifer', 'ar': 'جينيفر', 'es': 'Jennifer', 'de': 'Jennifer', 'fr': 'Jennifer', 'hi': 'जेनिफर', 'kk': 'Дженнифер', 'pt': 'Jennifer',
+        'Peradilla Jennifer': {
+            'ru': 'Перадилла Дженнифер', 'en': 'Peradilla Jennifer', 'ar': 'جينيفر', 'es': 'Peradilla Jennifer', 'de': 'Peradilla Jennifer', 'fr': 'Peradilla Jennifer', 'hi': 'जेनिफर', 'kk': 'Перадилла Дженнифер', 'pt': 'Peradilla Jennifer',
             'position': {
                 'ru': 'Мастер маникюра / Массаж', 'en': 'Nail Master/Massages', 'ar': 'خبيرة أظافر / تدليك', 'es': 'Manicurista / Masajes', 'de': 'Nageldesigner', 'fr': 'Ongles / Massages', 'hi': 'नेल मास्टर / मालिश', 'kk': 'Маникюр / Массаж', 'pt': 'Manicure / Massagens'
             }
@@ -96,12 +89,12 @@ def populate_all_languages():
         }
     }
 
-    c.execute("SELECT id, full_name, position FROM users WHERE is_service_provider = 1")
+    c.execute("SELECT id, full_name, position FROM users WHERE is_service_provider = TRUE")
     users = c.fetchall()
     
     for user in users:
-        user_id = user['id']
-        name = user['full_name']
+        user_id = user[0]
+        name = user[1]
         
         print(f"  Processing user: {name}")
         
@@ -115,18 +108,18 @@ def populate_all_languages():
             for lang in languages:
                 # Name
                 if lang in trans:
-                    updates.append(f"full_name_{lang} = ?")
+                    updates.append(f"full_name_{lang} = %s")
                     params.append(trans[lang])
                 
                 # Position
                 if 'position' in trans and lang in trans['position']:
-                    updates.append(f"position_{lang} = ?")
+                    updates.append(f"position_{lang} = %s")
                     params.append(trans['position'][lang])
             
             if updates:
                 params.append(user_id)
-                sql = f"UPDATE users SET {', '.join(updates)} WHERE id = ?"
-                c.execute(sql, params)
+                sql_query = f"UPDATE users SET {', '.join(updates)} WHERE id = %s"
+                c.execute(sql_query, params)
                 print(f"    Updated translations for {name}")
         else:
             # Fallback: copy English/Russian name to other Latin scripts
@@ -135,12 +128,12 @@ def populate_all_languages():
             updates = []
             params = []
             for lang in ['es', 'de', 'fr', 'pt']:
-                 updates.append(f"full_name_{lang} = ?")
+                 updates.append(f"full_name_{lang} = %s")
                  params.append(name) # Assuming name is Latin
             
             if updates:
                 params.append(user_id)
-                c.execute(f"UPDATE users SET {', '.join(updates)} WHERE id = ?", params)
+                c.execute(f"UPDATE users SET {', '.join(updates)} WHERE id = %s", params)
 
     # 3. Populate Public Reviews
     print("\n3. Populating Public Reviews...")
@@ -151,7 +144,7 @@ def populate_all_languages():
             'ru': 'Анна Петрова', 'en': 'Anna Petrova', 'ar': 'آنا بتروفا', 'es': 'Anna Petrova', 'de': 'Anna Petrova', 'fr': 'Anna Petrova', 'hi': 'अन्ना पेट्रोवा', 'kk': 'Анна Петрова', 'pt': 'Anna Petrova'
         },
         'Мария Иванова': {
-            'ru': 'Мария Иванова', 'en': 'Maria Ivanova', 'ar': 'ماريا إيفانوفا', 'es': 'Maria Ivanova', 'de': 'Maria Ivanova', 'fr': 'Maria Ivanova', 'hi': 'मारिया इवानोवा', 'kk': 'Мария Иванова', 'pt': 'Maria Ivanova'
+            'ru': 'Мария Иванова', 'en': 'Maria Ivanova', 'ar': 'ماريا إيفانوفا', 'es': 'Maria Ivanova', 'de': 'Maria Ivanova', 'fr': 'Maria Ivanova', 'hi': 'मारिया इवानोва', 'kk': 'Мария Иванова', 'pt': 'Maria Ivanova'
         },
         'Елена Сидорова': {
             'ru': 'Елена Сидорова', 'en': 'Elena Sidorova', 'ar': 'إيلينا سيدوروفا', 'es': 'Elena Sidorova', 'de': 'Elena Sidorova', 'fr': 'Elena Sidorova', 'hi': 'एलेना सिडोरोवा', 'kk': 'Елена Сидорова', 'pt': 'Elena Sidorova'
@@ -180,8 +173,8 @@ def populate_all_languages():
     reviews = c.fetchall()
     
     for review in reviews:
-        review_id = review['id']
-        author = review['author_name']
+        review_id = review[0]
+        author = review[1]
         
         print(f"  Processing review by: {author}")
         
@@ -192,24 +185,24 @@ def populate_all_languages():
             params = []
             for lang in languages:
                 if lang in trans:
-                    updates.append(f"author_name_{lang} = ?")
+                    updates.append(f"author_name_{lang} = %s")
                     params.append(trans[lang])
             
             if updates:
                 params.append(review_id)
-                c.execute(f"UPDATE public_reviews SET {', '.join(updates)} WHERE id = ?", params)
+                c.execute(f"UPDATE public_reviews SET {', '.join(updates)} WHERE id = %s", params)
                 print(f"    Updated author translations for {author}")
         else:
              # Fallback
              updates = []
              params = []
              for lang in ['en', 'es', 'de', 'fr', 'pt']:
-                 updates.append(f"author_name_{lang} = ?")
+                 updates.append(f"author_name_{lang} = %s")
                  params.append(author) # Use original as fallback
              
              if updates:
                 params.append(review_id)
-                c.execute(f"UPDATE public_reviews SET {', '.join(updates)} WHERE id = ?", params)
+                c.execute(f"UPDATE public_reviews SET {', '.join(updates)} WHERE id = %s", params)
 
     conn.commit()
     conn.close()

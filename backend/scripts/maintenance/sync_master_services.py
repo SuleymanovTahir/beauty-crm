@@ -93,68 +93,74 @@ def remove_services_from_masters():
     total_removed = 0
     
     # === МЕСТАН ===
-    mestan_id = 3
-    services_to_remove_mestan = [
-        37, 39, 41,  # Brows
-        1, 2, 3, 4, 5,  # Permanent Makeup
-        18,  # Hair: Ровный срез кончиков
-        30,  # Hair: Наращивание волос за капсулу
-        97, 98, 99 # Promo
-    ]
-    
-    print("=" * 80)
-    print("🔧 УДАЛЕНИЕ УСЛУГ У МАСТЕРОВ")
-    print("=" * 80)
-    print()
-    print(f"📋 Местан (ID: {mestan_id})")
-    
-    mestan_removed = 0
-    for service_id in services_to_remove_mestan:
-        c.execute("SELECT name_ru, name FROM services WHERE id = %s", (service_id,))
-        service = c.fetchone()
-        if service:
-            service_name = service[0] or service[1]
-            try:
-                success = remove_employee_service(employee_id=mestan_id, service_id=service_id)
-                if success:
-                    print(f"   ✅ Убрана: {service_name} (ID: {service_id})")
-                    mestan_removed += 1
-            except Exception as e:
-                print(f"   ❌ Ошибка при удалении {service_name} (ID: {service_id}): {e}")
-    
-    print(f"   📊 Убрано услуг: {mestan_removed}")
-    total_removed += mestan_removed
-    print()
-    
-    # === ДЖЕНИФЕР ===
-    jennifer_id = 6
-    services_to_remove_jennifer = {
-        'hair': [18, 19, 20, 22, 23, 24, 25, 26, 27, 28, 54, 55, 56, 58, 59],
-        # Lashes НЕ убираем - Дженифер единственный мастер по ресницам!
-        'nails': [75, 76, 77, 74, 69, 71, 72],
-        'waxing': [8, 6, 16, 14, 13, 80, 82, 81],
-    }
-    
-    print(f"📋 Дженифер (ID: {jennifer_id})")
-    
-    jennifer_removed = 0
-    for category, service_ids in services_to_remove_jennifer.items():
-        for service_id in service_ids:
+    c.execute("SELECT id FROM users WHERE username = 'mestan'")
+    mestan_row = c.fetchone()
+    if mestan_row:
+        mestan_id = mestan_row[0]
+        services_to_remove_mestan = [
+            37, 39, 41,  # Brows
+            1, 2, 3, 4, 5,  # Permanent Makeup
+            18,  # Hair: Ровный срез кончиков
+            30,  # Hair: Наращивание волос за капсулу
+            97, 98, 99 # Promo
+        ]
+        
+        print("=" * 80)
+        print("🔧 УДАЛЕНИЕ УСЛУГ У МАСТЕРОВ")
+        print("=" * 80)
+        print()
+        print(f"📋 Местан (Username: mestan, ID: {mestan_id})")
+        
+        mestan_removed = 0
+        for service_id in services_to_remove_mestan:
             c.execute("SELECT name_ru, name FROM services WHERE id = %s", (service_id,))
             service = c.fetchone()
             if service:
                 service_name = service[0] or service[1]
                 try:
-                    success = remove_employee_service(employee_id=jennifer_id, service_id=service_id)
+                    success = remove_employee_service(employee_id=mestan_id, service_id=service_id)
                     if success:
                         print(f"   ✅ Убрана: {service_name} (ID: {service_id})")
-                        jennifer_removed += 1
+                        mestan_removed += 1
                 except Exception as e:
                     print(f"   ❌ Ошибка при удалении {service_name} (ID: {service_id}): {e}")
+        
+        print(f"   📊 Убрано услуг: {mestan_removed}")
+        total_removed += mestan_removed
+        print()
     
-    print(f"   📊 Убрано услуг: {jennifer_removed}")
-    total_removed += jennifer_removed
-    print()
+    # === ДЖЕНИФЕР ===
+    c.execute("SELECT id FROM users WHERE username = 'jennifer'")
+    jennifer_row = c.fetchone()
+    if jennifer_row:
+        jennifer_id = jennifer_row[0]
+        services_to_remove_jennifer = {
+            'hair': [18, 19, 20, 22, 23, 24, 25, 26, 27, 28, 54, 55, 56, 58, 59],
+            # Lashes НЕ убираем - Дженифер единственный мастер по ресницам!
+            'nails': [75, 76, 77, 74, 69, 71, 72],
+            'waxing': [8, 6, 16, 14, 13, 80, 82, 81],
+        }
+        
+        print(f"📋 Дженифер (Username: jennifer, ID: {jennifer_id})")
+        
+        jennifer_removed = 0
+        for category, service_ids in services_to_remove_jennifer.items():
+            for service_id in service_ids:
+                c.execute("SELECT name_ru, name FROM services WHERE id = %s", (service_id,))
+                service = c.fetchone()
+                if service:
+                    service_name = service[0] or service[1]
+                    try:
+                        success = remove_employee_service(employee_id=jennifer_id, service_id=service_id)
+                        if success:
+                            print(f"   ✅ Убрана: {service_name} (ID: {service_id})")
+                            jennifer_removed += 1
+                    except Exception as e:
+                        print(f"   ❌ Ошибка при удалении {service_name} (ID: {service_id}): {e}")
+        
+        print(f"   📊 Убрано услуг: {jennifer_removed}")
+        total_removed += jennifer_removed
+        print()
     
     conn.close()
     
