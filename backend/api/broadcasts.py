@@ -60,16 +60,15 @@ async def preview_broadcast(
         if not broadcast.force_send:
             query += " AND s.is_subscribed = TRUE"
 
-        # Фильтр по роли если указан
-        if broadcast.target_role and broadcast.target_role != 'all':
-            query += " AND u.role = %s"
-            params.append(broadcast.target_role)
-        
-        # Фильтр по конкретным пользователям если указаны
+        # Если указаны конкретные пользователи - отправляем только им (игнорируем target_role)
         if broadcast.user_ids:
             placeholders = ','.join(['%s'] * len(broadcast.user_ids))
             query += f" AND u.id IN ({placeholders})"
             params.extend(broadcast.user_ids)
+        # Иначе используем фильтр по роли
+        elif broadcast.target_role and broadcast.target_role != 'all':
+            query += " AND u.role = %s"
+            params.append(broadcast.target_role)
 
         c.execute(query, params)
         all_users = c.fetchall()
@@ -176,14 +175,15 @@ async def send_broadcast(
         if not broadcast.force_send:
             query += " AND (s.is_subscribed = TRUE OR s.is_subscribed IS NULL)"
 
-        if broadcast.target_role and broadcast.target_role != 'all':
-            query += " AND u.role = %s"
-            params.append(broadcast.target_role)
-
+        # Если указаны конкретные пользователи - отправляем только им (игнорируем target_role)
         if broadcast.user_ids:
             placeholders = ','.join(['%s'] * len(broadcast.user_ids))
             query += f" AND u.id IN ({placeholders})"
             params.extend(broadcast.user_ids)
+        # Иначе используем фильтр по роли
+        elif broadcast.target_role and broadcast.target_role != 'all':
+            query += " AND u.role = %s"
+            params.append(broadcast.target_role)
 
         c.execute(query, params)
         all_users = c.fetchall()
