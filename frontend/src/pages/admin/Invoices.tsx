@@ -5,6 +5,7 @@ import {
     Layout, LayoutDashboard, Search, ArrowUpDown,
     ArrowUp, ArrowDown, Clock
 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useCurrency } from '../../hooks/useSalonSettings';
@@ -36,11 +37,21 @@ const Invoices = () => {
     const [filterStatus, setFilterStatus] = useState<string>('');
     const [invoiceStages, setInvoiceStages] = useState<any[]>([]);
     const [showStagesDialog, setShowStagesDialog] = useState(false);
+    const [searchParams, setSearchParams] = useSearchParams();
     const [viewMode, setViewMode] = useState<'board' | 'list'>(() => {
+        const urlMode = searchParams.get('view');
+        if (urlMode === 'board' || urlMode === 'list') return urlMode;
         return localStorage.getItem('invoices_view_mode') as 'board' | 'list' || 'board';
     });
     const [searchQuery, setSearchQuery] = useState('');
     const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
+
+    useEffect(() => {
+        const currentParams = Object.fromEntries(searchParams.entries());
+        if (currentParams.view !== viewMode) {
+            setSearchParams({ ...currentParams, view: viewMode }, { replace: true });
+        }
+    }, [viewMode]);
 
     useEffect(() => {
         localStorage.setItem('invoices_view_mode', viewMode);
@@ -211,16 +222,45 @@ const Invoices = () => {
 
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 flex-wrap">
                     <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 min-w-0 flex-1">
-                        <select
-                            value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value)}
-                            className="crm-select text-sm h-9 min-w-[150px]"
-                        >
-                            <option value="">{t('allStatuses')}</option>
-                            {invoiceStages.map(s => (
-                                <option key={s.key} value={s.key}>{s.name}</option>
-                            ))}
-                        </select>
+                        {viewMode === 'list' && (
+                            <div className="flex items-center gap-2 mr-2">
+                                <button
+                                    onClick={() => setFilterStatus('')}
+                                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all border whitespace-nowrap ${filterStatus === ''
+                                        ? 'bg-pink-50 text-pink-600 border-pink-200'
+                                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                        }`}
+                                >
+                                    {t('allStatuses')}
+                                </button>
+                                {invoiceStages.map(stage => (
+                                    <button
+                                        key={stage.id}
+                                        onClick={() => setFilterStatus(stage.key)}
+                                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all border whitespace-nowrap ${filterStatus === stage.key
+                                            ? 'bg-pink-50 text-pink-600 border-pink-200'
+                                            : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        {stage.name}
+                                    </button>
+                                ))}
+                                <div className="h-4 w-[1px] bg-gray-200 mx-2 flex-shrink-0" />
+                            </div>
+                        )}
+                        <div className="relative flex-shrink-0">
+                            <select
+                                value={filterStatus}
+                                onChange={(e) => setFilterStatus(e.target.value)}
+                                className="crm-select text-sm h-10 min-w-[160px] py-2"
+                                style={{ lineHeight: '1.5' }}
+                            >
+                                <option value="">{t('allStatuses')}</option>
+                                {invoiceStages.map(s => (
+                                    <option key={s.key} value={s.key}>{s.name}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
                     <div className="relative">
