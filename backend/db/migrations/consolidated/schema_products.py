@@ -33,6 +33,7 @@ def migrate():
             supplier TEXT,
             notes TEXT,
             is_active BOOLEAN DEFAULT TRUE,
+            photos TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             created_by INTEGER,

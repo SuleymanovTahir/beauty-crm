@@ -46,9 +46,9 @@
   },
   "detail": {
     "noCategory": "Без категории",
-    "costPriceLabel": "Себестоимость: {price} AED",
+    "costPriceLabel": "Себестоимость: {{price}} AED",
     "movementHistory": "История движений",
-    "inStock": "В наличии: {count}",
+    "inStock": "В наличии: {{count}}",
     "loadingData": "Загрузка данных...",
     "noMovements": "Нет данных о движениях",
     "movementIn": "Поступление",
