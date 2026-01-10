@@ -139,10 +139,10 @@ export default function EmployeeProfile() {
       // Reload profile
       await loadProfile();
 
-      toast.success('✅ Профиль успешно обновлен');
+      toast.success('Профиль успешно обновлен');
     } catch (err: any) {
       const message = err.message || 'Ошибка обновления профиля';
-      toast.error(`❌ ${message}`);
+      toast.error(`${message}`);
       console.error('Error updating profile:', err);
     } finally {
       setSaving(false);
