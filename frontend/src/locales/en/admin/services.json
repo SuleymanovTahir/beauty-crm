@@ -144,5 +144,18 @@
   "Окрашивание бровей": "Eyebrow tinting",
   "Педикюр": "Pedicure",
   "Снятие ресниц": "Eyelash removal",
-  "Стрижка": "Haircut"
+  "Стрижка": "Haircut",
+  "positions_can_perform": "Positions that can perform this service",
+  "no_available_positions": "No available positions",
+  "choose_positions_description": "Select the positions of employees who can provide this service",
+  "employees_providing_service": "Employees providing this service",
+  "select_positions_first": "Select positions first",
+  "no_employees_with_positions": "No employees with selected positions",
+  "choose_employees_description": "Select the specific employees who will perform this service",
+  "enter_duration_in_minutes": "Enter duration in minutes (e.g.: 60, 90, 120)",
+  "error_saving_positions": "Error saving positions",
+  "error_saving_employees": "Error saving employees",
+  "referral_campaign_updated": "Referral campaign updated",
+  "referral_campaign_created": "Referral campaign created",
+  "loading_error": "Loading error"
 }
