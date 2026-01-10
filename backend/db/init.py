@@ -700,6 +700,15 @@ def init_database():
                 action_url TEXT,
                 FOREIGN KEY (user_id) REFERENCES users (id)
             )''')
+
+        # Миграция: если есть client_id, делаем его nullable (для совместимости с рассылками)
+        c.execute("SELECT column_name, is_nullable FROM information_schema.columns WHERE table_name='notifications' AND column_name='client_id'")
+        client_id_col = c.fetchone()
+        if client_id_col and client_id_col[1] == 'NO':
+            log_warning("⚠️ Колонка client_id в notifications должна быть nullable. Исправляю...", "db")
+            c.execute("ALTER TABLE notifications ALTER COLUMN client_id DROP NOT NULL")
+            log_info("✅ Колонка client_id теперь nullable", "db")
+
     except Exception as e:
         log_warning(f"Ошибка проверки notifications: {e}", "db")
 

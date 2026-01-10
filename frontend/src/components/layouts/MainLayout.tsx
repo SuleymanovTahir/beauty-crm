@@ -57,6 +57,8 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const [notifications, setNotifications] = useState<any[]>([]);
     const [notifCount, setNotifCount] = useState(0);
     const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+    const [selectedNotification, setSelectedNotification] = useState<any>(null);
+    const [showNotificationModal, setShowNotificationModal] = useState(false);
     const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
     const [userProfile, setUserProfile] = useState<any>(null);
     const [menuSettings, setMenuSettings] = useState<{ menu_order: string[] | null; hidden_items: string[] | null } | null>(null);
@@ -216,6 +218,30 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             loadNotifications();
         } catch (error) {
             console.error('Error marking notification read:', error);
+        }
+    };
+
+    const handleNotificationClick = (notif: any) => {
+        setSelectedNotification(notif);
+        setShowNotificationModal(true);
+        setShowNotifDropdown(false);
+        if (!notif.is_read) {
+            markNotificationRead(notif.id);
+        }
+    };
+
+    const handleClearAll = async () => {
+        if (!window.confirm(t('confirm_clear_all', 'Вы уверены что хотите удалить все уведомления?'))) {
+            return;
+        }
+        try {
+            await api.clearAllNotifications();
+            setNotifications([]);
+            setNotifCount(0);
+            toast.success(t('all_notifications_cleared', 'Все уведомления удалены'));
+        } catch (error) {
+            console.error('Error clearing notifications:', error);
+            toast.error(t('error_clearing', 'Ошибка при удалении уведомлений'));
         }
     };
 
@@ -552,37 +578,69 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                             </button>
 
                             {showNotifDropdown && (
-                                <div className="absolute bottom-full left-0 w-64 mb-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
-                                    <div className="p-3 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                                        <span className="font-semibold text-xs">{t('notifications')}</span>
+                                <div className="absolute bottom-full left-0 w-72 mb-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
+                                    <div className="p-3 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-pink-50 flex justify-between items-center">
+                                        <span className="font-semibold text-sm text-gray-900">{t('notifications', 'Уведомления')}</span>
                                         <button
                                             onClick={() => setShowNotifDropdown(false)}
-                                            className="text-gray-400 hover:text-gray-600"
+                                            className="text-gray-400 hover:text-gray-600 transition-colors"
                                         >
-                                            <X size={14} />
+                                            <X size={16} />
                                         </button>
                                     </div>
-                                    <div className="max-h-64 overflow-y-auto">
+                                    <div className="max-h-80 overflow-y-auto">
                                         {notifications.length > 0 ? (
                                             notifications.map((n) => (
                                                 <div
                                                     key={n.id}
-                                                    onClick={() => markNotificationRead(n.id)}
-                                                    className="p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors"
+                                                    onClick={() => handleNotificationClick(n)}
+                                                    className={`p-3 border-b border-gray-50 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 cursor-pointer transition-all ${!n.is_read ? 'bg-blue-50/50' : ''}`}
                                                 >
-                                                    <p className="text-xs font-medium text-gray-900 line-clamp-2">{n.title}</p>
-                                                    <p className="text-[10px] text-gray-500 mt-1 line-clamp-2">{n.message}</p>
-                                                    <span className="text-[9px] text-gray-400 mt-1 block">
-                                                        {new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                    </span>
+                                                    <div className="flex items-start gap-2">
+                                                        {!n.is_read && (
+                                                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                                                        )}
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-xs font-semibold text-gray-900 line-clamp-2">{n.title}</p>
+                                                            <p className="text-[10px] text-gray-600 mt-1 line-clamp-2">{n.message}</p>
+                                                            <span className="text-[9px] text-gray-400 mt-1 block">
+                                                                {new Date(n.created_at).toLocaleString('ru-RU', {
+                                                                    day: '2-digit',
+                                                                    month: '2-digit',
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit'
+                                                                })}
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             ))
                                         ) : (
-                                            <div className="p-4 text-center text-xs text-gray-400">
-                                                {t('no_new_notifications')}
+                                            <div className="p-8 text-center text-xs text-gray-400">
+                                                <Bell size={32} className="mx-auto mb-2 text-gray-300" />
+                                                {t('no_new_notifications', 'Нет новых уведомлений')}
                                             </div>
                                         )}
                                     </div>
+                                    {notifications.length > 0 && (
+                                        <div className="p-2 border-t border-gray-100 bg-gray-50 flex gap-2">
+                                            <button
+                                                onClick={() => {
+                                                    setShowNotifDropdown(false);
+                                                    navigate(`${rolePrefix}/notifications`);
+                                                }}
+                                                className="flex-1 px-3 py-2 text-xs font-medium text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                                            >
+                                                {t('view_all', 'Посмотреть все')}
+                                            </button>
+                                            <button
+                                                onClick={handleClearAll}
+                                                className="flex-1 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                            >
+                                                {t('clear_all', 'Очистить все')}
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -645,6 +703,55 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             <main className="flex-1 overflow-y-auto">
                 <Outlet />
             </main>
+
+            {/* Notification Detail Modal */}
+            {showNotificationModal && selectedNotification && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4"
+                    onClick={() => setShowNotificationModal(false)}
+                >
+                    <div
+                        className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
+                            <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                    <h2 className="text-xl font-bold text-gray-900">{selectedNotification.title}</h2>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        {new Date(selectedNotification.created_at).toLocaleString('ru-RU', {
+                                            day: '2-digit',
+                                            month: 'long',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        })}
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => setShowNotificationModal(false)}
+                                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                                >
+                                    <X size={24} />
+                                </button>
+                            </div>
+                        </div>
+                        <div className="p-6 overflow-y-auto max-h-[60vh]">
+                            <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                                {selectedNotification.message}
+                            </p>
+                        </div>
+                        <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-2">
+                            <button
+                                onClick={() => setShowNotificationModal(false)}
+                                className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+                            >
+                                {t('close', 'Закрыть')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
