@@ -553,6 +553,20 @@
   flex: 1;
 }
 
+.crm-form-content::-webkit-scrollbar {
+  width: 6px;
+  background-color: transparent;
+}
+
+.crm-form-content::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 3px;
+}
+
+.crm-form-content::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
 .crm-modal.modal-large,
 .modal-large {
   max-width: 1000px;
@@ -574,7 +588,6 @@
   justify-content: flex-end;
   gap: 0.75rem;
   margin-top: 1.5rem;
-  padding-top: 1.5rem;
   border-top: 1px solid #f3f4f6;
 }
 

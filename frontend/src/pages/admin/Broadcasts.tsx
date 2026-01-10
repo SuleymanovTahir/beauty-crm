@@ -771,7 +771,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
         </div>
 
         {editingType ? (
-          <form onSubmit={handleSave} className="flex flex-col h-full overflow-hidden">
+          <form onSubmit={handleSave} className="flex flex-col flex-1 min-h-0 overflow-hidden">
             <div className="crm-form-content">
               <div className="grid grid-cols-2 gap-4">
                 <div className="crm-form-group">
@@ -794,48 +794,36 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                     <option value="all">{t('all_users')}</option>
                     <option value="client">{t('common:role_client', 'Клиент')}</option>
                     <option value="employee">{t('common:role_employee', 'Сотрудник')}</option>
+                    <option value="manager">{t('common:role_manager', 'Менеджер')}</option>
+                    <option value="admin">{t('common:role_admin', 'Администратор')}</option>
+                    <option value="director">{t('common:role_director', 'Директор')}</option>
+                    <option value="sales">{t('common:role_sales', 'Продажник')}</option>
+                    <option value="marketer">{t('common:role_marketer', 'Маркетолог')}</option>
                   </select>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="crm-form-group">
-                  <Label>{t('name_ru')}</Label>
-                  <Input
-                    value={editingType.name_ru || ''}
-                    onChange={e => setEditingType({ ...editingType, name_ru: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="crm-form-group">
-                  <Label>{t('name_en')}</Label>
-                  <Input
-                    value={editingType.name_en || ''}
-                    onChange={e => setEditingType({ ...editingType, name_en: e.target.value })}
-                  />
-                </div>
+
+
+              <div className="crm-form-group">
+                <Label>{t('name_ru')}</Label>
+                <Input
+                  value={editingType.name_ru || ''}
+                  onChange={e => setEditingType({ ...editingType, name_ru: e.target.value })}
+                  required
+                />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="crm-form-group">
-                  <Label>{t('desc_ru')}</Label>
-                  <textarea
-                    className="crm-textarea"
-                    value={editingType.description_ru || ''}
-                    onChange={e => setEditingType({ ...editingType, description_ru: e.target.value })}
-                    rows={2}
-                  />
-                </div>
-                <div className="crm-form-group">
-                  <Label>{t('desc_en')}</Label>
-                  <textarea
-                    className="crm-textarea"
-                    value={editingType.description_en || ''}
-                    onChange={e => setEditingType({ ...editingType, description_en: e.target.value })}
-                    rows={2}
-                  />
-                </div>
+              <div className="crm-form-group">
+                <Label>{t('desc_ru')}</Label>
+                <textarea
+                  className="crm-textarea"
+                  value={editingType.description_ru || ''}
+                  onChange={e => setEditingType({ ...editingType, description_ru: e.target.value })}
+                  rows={2}
+                />
               </div>
+
             </div>
 
             <div className="crm-modal-footer">
@@ -851,83 +839,90 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
               </button>
             </div>
           </form>
-        ) : (
-          <div className="flex flex-col h-full">
-            <div className="crm-form-content">
-              <div className="flex justify-end mb-4">
-                <button
-                  onClick={() => {
-                    setEditingType({ key: '', target_role: 'all', name_ru: '', name_en: '', description_ru: '', description_en: '', is_active: true });
-                    setIsNew(true);
-                  }}
-                  className="crm-btn-primary flex items-center gap-2"
-                >
-                  <Plus size={20} />
-                  {t('add_type')}
-                </button>
-              </div>
-
-              <div className="crm-table-container">
-                <table className="crm-table">
-                  <thead>
-                    <tr>
-                      <th>{t('role_label')}</th>
-                      <th>{t('common:name', 'Название')}</th>
-                      <th className="w-24 text-right">{t('common:actions', 'Действия')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {loading ? (
-                      <tr><td colSpan={3} className="text-center py-4">{t('common:loading')}</td></tr>
-                    ) : types.length === 0 ? (
-                      <tr><td colSpan={3} className="text-center py-4 text-gray-500">{t('common:not_found', 'Типы подписок не найдены')}</td></tr>
-                    ) : types.map(type => (
-                      <tr key={type.id}>
-                        <td>
-                          <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${type.target_role === 'client' ? 'bg-green-100 text-green-800' :
-                            type.target_role === 'employee' ? 'bg-blue-100 text-blue-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
-                            {type.target_role === 'client' ? t('common:role_client', 'Клиент') :
-                              type.target_role === 'employee' ? t('common:role_employee', 'Сотрудник') :
-                                t('all_users')}
-                          </span>
-                        </td>
-                        <td className="font-medium">{t(type.name_ru || type.key)}</td>
-                        <td className="text-right">
-                          <div className="flex gap-2 justify-end">
-                            <button
-                              className="crm-btn-icon"
-                              onClick={() => { setEditingType(type); setIsNew(false); }}
-                              title={t('edit_type')}
-                            >
-                              <Edit size={16} />
-                            </button>
-                            <button
-                              className="crm-btn-icon text-red-600 hover:text-red-700 hover:bg-red-50"
-                              onClick={() => handleDelete(type.id)}
-                              title={t('delete_type')}
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="crm-modal-footer">
-              <button type="button" className="crm-btn-secondary" onClick={onClose}>
-                {t('cancel')}
-              </button>
-            </div>
+      ) : (
+      <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+        <div className="crm-form-content">
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={() => {
+                setEditingType({ key: '', target_role: 'all', name_ru: '', name_en: '', description_ru: '', description_en: '', is_active: true });
+                setIsNew(true);
+              }}
+              className="crm-btn-primary flex items-center gap-2"
+            >
+              <Plus size={20} />
+              {t('add_type')}
+            </button>
           </div>
-        )}
+
+          <div className="crm-table-container">
+            <table className="crm-table">
+              <thead>
+                <tr>
+                  <th>{t('role_label')}</th>
+                  <th>{t('common:name', 'Название')}</th>
+                  <th className="w-24 text-right">{t('common:actions', 'Действия')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr><td colSpan={3} className="text-center py-4">{t('common:loading')}</td></tr>
+                ) : types.length === 0 ? (
+                  <tr><td colSpan={3} className="text-center py-4 text-gray-500">{t('common:not_found', 'Типы подписок не найдены')}</td></tr>
+                ) : types.map(type => (
+                  <tr key={type.id}>
+                    <td>
+                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${type.target_role === 'client' ? 'bg-green-100 text-green-800' :
+                        type.target_role === 'employee' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                        {type.target_role === 'client' ? t('common:role_client', 'Клиент') :
+                          type.target_role === 'employee' ? t('common:role_employee', 'Сотрудник') :
+                            t('all_users')}
+                      </span>
+                    </td>
+                    <td className="font-medium">{t(type.name_ru || type.key)}</td>
+                    <td className="text-right">
+                      <div className="flex gap-2 justify-end">
+                        <button
+                          className="crm-btn-icon"
+                          onClick={() => {
+                            setEditingType({
+                              ...type,
+                              name_ru: t(type.name_ru || type.key),
+                              description_ru: t(type.description_ru || `${type.key}_desc`),
+                            });
+                            setIsNew(false);
+                          }}
+                          title={t('edit_type')}
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          className="crm-btn-icon text-red-600 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => handleDelete(type.id)}
+                          title={t('delete_type')}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="crm-modal-footer">
+          <button type="button" className="crm-btn-secondary" onClick={onClose}>
+            {t('cancel')}
+          </button>
+        </div>
       </div>
-    </div>,
-    document.body
+        )}
+    </div>
+    </div >,
+  document.body
   );
 };
