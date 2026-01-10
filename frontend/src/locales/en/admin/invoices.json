@@ -1,0 +1,67 @@
+{
+  "title": "Accounts",
+  "subtitle": "Account and payment management",
+  "addInvoice": "Create an account",
+  "addPayment": "Add payment",
+  "loading": "Loading...",
+  "allStatuses": "All statuses",
+  "invoiceNumber": "Account No.",
+  "client": "Client",
+  "totalAmount": "Sum",
+  "paidAmount": "Paid",
+  "status": "Status",
+  "dueDate": "Due date",
+  "actions": "Actions",
+  "sendButton": "Send",
+  "delete": "Delete",
+  "noInvoices": "No accounts yet",
+  "createFirst": "Create your first invoice for a client",
+  "statuses": {
+    "draft": "Draft",
+    "sent": "Sent",
+    "partial": "Partially paid",
+    "paid": "Paid",
+    "overdue": "Expired"
+  },
+  "form": {
+    "selectClient": "Select client",
+    "items": "Account positions",
+    "itemName": "Name",
+    "itemQuantity": "Qty",
+    "itemPrice": "Price",
+    "addItem": "Add a position",
+    "dueDate": "Due date",
+    "notes": "Notes",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "payment": {
+    "title": "Add payment",
+    "amount": "Sum",
+    "method": "Payment method",
+    "notes": "Notes",
+    "add": "Add",
+    "methods": {
+      "cash": "Cash",
+      "card": "Map",
+      "transfer": "Translation",
+      "online": "Online"
+    }
+  },
+  "sendDialog": {
+    "title": "Send invoice",
+    "method": "Shipping method",
+    "recipient": "Recipient",
+    "email": "Email",
+    "whatsapp": "whatsapp",
+    "telegram": "Telegram",
+    "sendButton": "Send"
+  },
+  "messages": {
+    "confirmDelete": "Are you sure you want to delete this account?",
+    "invoiceCreated": "Account created",
+    "invoiceSent": "Invoice sent",
+    "paymentAdded": "Payment added",
+    "invoiceDeleted": "Account deleted"
+  }
+}
