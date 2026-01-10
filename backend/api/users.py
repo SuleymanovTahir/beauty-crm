@@ -637,6 +637,9 @@ async def update_user_profile(
         birthday = data.get('birth_date')
         base_salary = data.get('base_salary')
         commission_rate = data.get('commission_rate')
+        telegram_id = data.get('telegram')
+        instagram_username = data.get('instagram')
+
         
         # Convert years_of_experience to int if possible
         try:
@@ -651,18 +654,18 @@ async def update_user_profile(
              c.execute("""UPDATE users
                     SET username = %s, full_name = %s, email = %s, position = %s, photo = %s,
                         bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
-                        base_salary = %s, commission_rate = %s
+                        base_salary = %s, commission_rate = %s, telegram_id = %s, instagram_username = %s
                     WHERE id = %s""",
                  (username, full_name, email, position, photo, bio, specialization, years_of_experience, phone, birthday, 
-                  base_salary, commission_rate, user_id))
+                  base_salary, commission_rate, telegram_id, instagram_username, user_id))
         else:
             c.execute("""UPDATE users
                         SET username = %s, full_name = %s, email = %s, position = %s,
                             bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
-                            base_salary = %s, commission_rate = %s
+                             base_salary = %s, commission_rate = %s, telegram_id = %s, instagram_username = %s
                         WHERE id = %s""",
                     (username, full_name, email, position, bio, specialization, years_of_experience, phone, birthday, 
-                     base_salary, commission_rate, user_id))
+                     base_salary, commission_rate, telegram_id, instagram_username, user_id))
         conn.commit()
         
         log_activity(user["id"], "update_profile", "user", str(user_id), 
@@ -791,5 +794,63 @@ async def update_user_notification_settings(
 
     except Exception as e:
         log_error(f"Error updating notification settings: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.post("/users/{user_id}/update-contact")
+async def update_user_contact(
+    user_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить контактные данные пользователя (Email, Telegram, Instagram)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    # Проверка прав: админ/директор
+    if user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        # Формируем запрос динамически
+        updates = []
+        params = []
+        
+        if 'email' in data:
+            updates.append("email = %s")
+            params.append(data['email'])
+            
+        if 'telegram_id' in data:
+            updates.append("telegram_id = %s")
+            params.append(data['telegram_id'])
+            
+        if 'instagram_username' in data:
+            updates.append("instagram_username = %s")
+            params.append(data['instagram_username'])
+            
+        if not updates:
+             return {"success": True, "message": "Нет данных для обновления"}
+             
+        params.append(user_id)
+        
+        query = f"UPDATE users SET {', '.join(updates)} WHERE id = %s"
+        c.execute(query, params)
+        conn.commit()
+        
+        log_activity(user["id"], "update_contact", "user", str(user_id), 
+                    f"Contact info updated: {data.keys()}")
+        
+        conn.close()
+        return {"success": True, "message": "Контактные данные обновлены"}
+        
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        log_error(f"Error updating user contact: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 

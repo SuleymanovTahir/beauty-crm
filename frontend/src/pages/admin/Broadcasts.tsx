@@ -52,9 +52,12 @@ export default function Broadcasts() {
   // Используем централизованную систему прав
   const userPermissions = usePermissions(currentUser?.role || 'employee');
 
+  const [showManageTypes, setShowManageTypes] = useState(false);
+  const [editingBroadcastUser, setEditingBroadcastUser] = useState<any>(null);
+
   const [form, setForm] = useState<BroadcastForm>({
     subscription_type: '',
-    channels: ['notification'],
+    channels: [],
     subject: '',
     message: '',
     target_role: '',
@@ -73,7 +76,6 @@ export default function Broadcasts() {
   const [users, setUsers] = useState<Array<{ id: number; username: string; full_name: string; role: string }>>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [showUserSelection, setShowUserSelection] = useState(true);
-  const [showManageTypes, setShowManageTypes] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [roles, setRoles] = useState<Array<{ key: string; name: string }>>([]);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
@@ -582,7 +584,7 @@ export default function Broadcasts() {
 
                           // Проверка размера файла (макс 10MB)
                           if (file.size > 10 * 1024 * 1024) {
-                            toast.error('Файл слишком большой. Максимальный размер 10MB');
+                            toast.error(t('file_too_large', 'Файл слишком большой. Максимальный размер 10MB'));
                             return;
                           }
 
@@ -591,7 +593,7 @@ export default function Broadcasts() {
                             const formData = new FormData();
                             formData.append('file', file);
 
-                            const response = await fetch('/api/upload/file', {
+                            const response = await fetch('/api/upload', {
                               method: 'POST',
                               body: formData,
                               credentials: 'include'
@@ -600,17 +602,17 @@ export default function Broadcasts() {
                             if (!response.ok) throw new Error('Upload failed');
 
                             const data = await response.json();
-                            const fileUrl = data.url || data.file_url;
+                            const fileUrl = data.file_url || data.url;
 
                             setForm({
                               ...form,
                               attachment_urls: [...(form.attachment_urls || []), fileUrl]
                             });
 
-                            toast.success('Файл успешно загружен');
+                            toast.success(t('file_uploaded', 'Файл успешно загружен'));
                           } catch (error) {
                             console.error('Upload error:', error);
-                            toast.error('Ошибка загрузки файла');
+                            toast.error(t('error_uploading_file', 'Ошибка загрузки файла'));
                           } finally {
                             setUploadingFile(false);
                             e.target.value = '';
@@ -625,17 +627,17 @@ export default function Broadcasts() {
                         {uploadingFile ? (
                           <>
                             <Loader className="w-4 h-4 animate-spin" />
-                            Загрузка...
+                            {t('common:loading', 'Загрузка...')}
                           </>
                         ) : (
                           <>
                             <Plus size={16} />
-                            Прикрепить файл
+                            {t('attach_file', 'Прикрепить файл')}
                           </>
                         )}
                       </label>
                       <p className="text-xs text-gray-500 flex items-center">
-                        PDF, DOC, XLS, изображения (макс 10MB)
+                        {t('file_formats_hint', 'PDF, DOC, XLS, изображения (макс 10MB)')}
                       </p>
                     </div>
                   </div>
@@ -874,7 +876,7 @@ export default function Broadcasts() {
 
                 <div className="border rounded-lg divide-y">
                   {preview.users_sample.slice(0, 10).map((user, idx) => (
-                    <div key={idx} className="p-3 flex items-center justify-between hover:bg-gray-50">
+                    <div key={idx} className="p-3 flex items-center justify-between hover:bg-gray-50 group">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-medium text-xs">
                           {user.full_name?.charAt(0) || '?'}
@@ -887,9 +889,18 @@ export default function Broadcasts() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className={`text-sm font-medium ${!user.contact || user.contact === '-' ? 'text-red-500' : 'text-blue-600'}`}>
-                          {user.contact || t('no_contact', 'Нет данных')}
-                        </p>
+                        <div className="flex items-center justify-end gap-2">
+                          <p className={`text-sm font-medium ${!user.contact || user.contact === '-' ? 'text-red-500' : 'text-blue-600'}`}>
+                            {user.contact || t('no_contact', 'Нет данных')}
+                          </p>
+                          <button
+                            onClick={() => setEditingBroadcastUser(user)}
+                            className="text-gray-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                            title={t('edit_contact', 'Изменить контакт')}
+                          >
+                            <Edit className="w-3 h-3" />
+                          </button>
+                        </div>
                         <p className="text-xs text-gray-400">{user.channel}</p>
                       </div>
                     </div>
@@ -910,7 +921,7 @@ export default function Broadcasts() {
             )}
           </div>
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="gap-4 sm:gap-4 pt-4">
             <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
               {t('cancel')}
             </Button>
@@ -930,6 +941,104 @@ export default function Broadcasts() {
                   {t('confirm_and_send', 'Подтвердить и отправить')}
                 </>
               )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog for editing user contact */}
+      <Dialog open={!!editingBroadcastUser} onOpenChange={(open) => !open && setEditingBroadcastUser(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('edit_contact_details', 'Редактировать контактные данные')}</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="p-3 bg-gray-50 rounded-lg mb-4">
+              <p className="font-medium text-sm">{editingBroadcastUser?.full_name}</p>
+              <p className="text-xs text-gray-500">{editingBroadcastUser?.role}</p>
+            </div>
+
+            {editingBroadcastUser?.channel === 'email' && (
+              <div className="space-y-2">
+                <Label htmlFor="edit-email">Email</Label>
+                <Input
+                  id="edit-email"
+                  defaultValue={editingBroadcastUser?.contact && editingBroadcastUser.contact !== '-' ? editingBroadcastUser.contact : ''}
+                  placeholder="user@example.com"
+                />
+              </div>
+            )}
+
+            {editingBroadcastUser?.channel === 'telegram' && (
+              <div className="space-y-2">
+                <Label htmlFor="edit-telegram">Telegram ID</Label>
+                <Input
+                  id="edit-telegram"
+                  defaultValue={editingBroadcastUser?.contact && editingBroadcastUser.contact !== '-' ? editingBroadcastUser.contact : ''}
+                  placeholder="12345678"
+                />
+                <p className="text-xs text-gray-500">
+                  {t('telegram_id_hint', 'Можно узнать у @userinfobot')}
+                </p>
+              </div>
+            )}
+
+            {editingBroadcastUser?.channel === 'instagram' && (
+              <div className="space-y-2">
+                <Label htmlFor="edit-instagram">Instagram Username</Label>
+                <Input
+                  id="edit-instagram"
+                  defaultValue={editingBroadcastUser?.contact && editingBroadcastUser.contact !== '-' ? editingBroadcastUser.contact : ''}
+                  placeholder="username"
+                />
+              </div>
+            )}
+
+            {editingBroadcastUser?.channel === 'notification' && (
+              <div className="text-amber-600 text-sm p-3 bg-amber-50 rounded border border-amber-200">
+                {t('cannot_edit_notification', 'Внутренние уведомления не требуют настройки контактов')}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingBroadcastUser(null)}>
+              {t('cancel')}
+            </Button>
+            <Button
+              onClick={async () => {
+                if (!editingBroadcastUser) return;
+
+                try {
+                  let data: any = {};
+                  if (editingBroadcastUser.channel === 'email') {
+                    const val = (document.getElementById('edit-email') as HTMLInputElement).value;
+                    if (!val) return toast.error('Email required');
+                    data.email = val;
+                  } else if (editingBroadcastUser.channel === 'telegram') {
+                    const val = (document.getElementById('edit-telegram') as HTMLInputElement).value;
+                    if (!val) return toast.error('Telegram ID required');
+                    data.telegram_id = val;
+                  } else if (editingBroadcastUser.channel === 'instagram') {
+                    const val = (document.getElementById('edit-instagram') as HTMLInputElement).value;
+                    if (!val) return toast.error('Instagram username required');
+                    data.instagram_username = val;
+                  } else {
+                    setEditingBroadcastUser(null);
+                    return;
+                  }
+
+                  await api.updateUserContact(editingBroadcastUser.id, data);
+                  toast.success(t('contact_updated', 'Контакт обновлен'));
+                  setEditingBroadcastUser(null);
+
+                  // Обновляем превью
+                  handlePreview();
+                } catch (e) {
+                  toast.error(t('error_updating_contact', 'Ошибка обновления контакта'));
+                }
+              }}
+            >
+              {t('save')}
             </Button>
           </DialogFooter>
         </DialogContent>

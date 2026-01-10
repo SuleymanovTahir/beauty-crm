@@ -484,6 +484,17 @@ export class ApiClient {
     })
   }
 
+  async updateUserContact(userId: number, data: {
+    email?: string;
+    telegram_id?: string;
+    instagram_username?: string;
+  }) {
+    return this.request(`/api/users/${userId}/update-contact`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   async changePassword(userId: number, data: { new_password: string; old_password?: string }) {
     return this.request(`/api/users/${userId}/change-password`, {
       method: 'POST',

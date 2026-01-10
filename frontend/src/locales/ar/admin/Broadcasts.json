@@ -84,5 +84,14 @@
   "channels_notification": "إشعارات",
   "error_loading_types": "حدث خطأ أثناء تحميل أنواع الاشتراكات",
   "placeholder_subscription_key": "الترقيات",
-  "telegram_limit_hint": "يوصى به حتى 4096 (تيلجرام)"
+  "telegram_limit_hint": "يوصى به حتى 4096 (تيلجرام)",
+  "confirm_broadcast_title": "تأكيد الإرسال",
+  "check_recipients": "تحقق من المستلمين",
+  "check_recipients_desc": "يرجى التأكد من صحة تفاصيل المستلم (البريد الإلكتروني، اسم المستخدم) قبل الإرسال.",
+  "showing_first_10": "عرض أول 10",
+  "no_contact": "لا توجد بيانات",
+  "and_more_users": "...وأيضًا __VAR0____ من المستخدمين",
+  "no_recipients_found": "لم يتم العثور على مستلمين",
+  "confirm_and_send": "تأكيد وإرسال",
+  "sending": "إرسال..."
 }

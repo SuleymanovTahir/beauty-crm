@@ -82,5 +82,14 @@
   "channels_notification": "Benachrichtigungen",
   "error_loading_types": "Fehler beim Laden der Abonnementtypen",
   "placeholder_subscription_key": "Werbeaktionen",
-  "telegram_limit_hint": "Empfohlen bis 4096 (Telegramm)"
+  "telegram_limit_hint": "Empfohlen bis 4096 (Telegramm)",
+  "confirm_broadcast_title": "Versandbestätigung",
+  "check_recipients": "Überprüfen Sie die Empfänger",
+  "check_recipients_desc": "Bitte stellen Sie vor dem Senden sicher, dass die Empfängerdaten (E-Mail-Adresse, Benutzername) korrekt sind.",
+  "showing_first_10": "Erste 10 angezeigt",
+  "no_contact": "Keine Daten",
+  "and_more_users": "...und auch {{count}} Benutzer",
+  "no_recipients_found": "Keine Empfänger gefunden",
+  "confirm_and_send": "Bestätigen und senden",
+  "sending": "Senden..."
 }
