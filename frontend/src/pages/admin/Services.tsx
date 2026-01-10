@@ -1038,212 +1038,214 @@ export default function Services() {
 
       {/* Service Modal */}
       <Dialog open={isServiceModalOpen} onOpenChange={setIsServiceModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-2xl p-0 flex flex-col max-h-[90vh]">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b">
             <DialogTitle>
               {editingService ? t('services:edit_service') : t('services:add_service')}
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+          <div className="crm-form-content px-6 py-4">
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="key">{t('services:key')} *</Label>
+                  <Input
+                    id="key"
+                    value={serviceFormData.key}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, key: e.target.value })}
+                    placeholder={t('services:permanent_makeup_brows')}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="category">{t('services:category')} *</Label>
+                  <Select value={serviceFormData.category} onValueChange={(value) => setServiceFormData({ ...serviceFormData, category: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('services:select_category')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map(cat => (
+                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               <div>
-                <Label htmlFor="key">{t('services:key')} *</Label>
+                <Label htmlFor="name">{t('services:name')} (EN) *</Label>
                 <Input
-                  id="key"
-                  value={serviceFormData.key}
-                  onChange={(e) => setServiceFormData({ ...serviceFormData, key: e.target.value })}
+                  id="name"
+                  value={serviceFormData.name}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, name: e.target.value })}
                   placeholder={t('services:permanent_makeup_brows')}
                 />
               </div>
+
               <div>
-                <Label htmlFor="category">{t('services:category')} *</Label>
-                <Select value={serviceFormData.category} onValueChange={(value) => setServiceFormData({ ...serviceFormData, category: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('services:select_category')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map(cat => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="name">{t('services:name')} (EN) *</Label>
-              <Input
-                id="name"
-                value={serviceFormData.name}
-                onChange={(e) => setServiceFormData({ ...serviceFormData, name: e.target.value })}
-                placeholder={t('services:permanent_makeup_brows')}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="nameRu">{t('services:name')} (RU) *</Label>
-              <Input
-                id="nameRu"
-                value={serviceFormData.name_ru}
-                onChange={(e) => setServiceFormData({ ...serviceFormData, name_ru: e.target.value })}
-                placeholder={t('services:permanent_makeup_brows')}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="nameAr">{t('services:name')} (AR)</Label>
-              <Input
-                id="nameAr"
-                value={serviceFormData.name_ar}
-                onChange={(e) => setServiceFormData({ ...serviceFormData, name_ar: e.target.value })}
-                placeholder={t('services:permanent_makeup_brows')}
-                dir="rtl"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="price">{t('services:base_price')} *</Label>
+                <Label htmlFor="nameRu">{t('services:name')} (RU) *</Label>
                 <Input
-                  id="price"
-                  type="number"
-                  value={serviceFormData.price}
-                  onChange={(e) => setServiceFormData({ ...serviceFormData, price: Number(e.target.value) })}
+                  id="nameRu"
+                  value={serviceFormData.name_ru}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, name_ru: e.target.value })}
+                  placeholder={t('services:permanent_makeup_brows')}
                 />
               </div>
-              <div>
-                <Label htmlFor="currency">{t('services:currency')}</Label>
-                <Select
-                  value={serviceFormData.currency}
-                  onValueChange={(value: string) =>
-                    setServiceFormData({ ...serviceFormData, currency: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="AED">AED</SelectItem>
-                    <SelectItem value="USD">USD</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label htmlFor="minPrice">{t('services:min_price')}</Label>
+                <Label htmlFor="nameAr">{t('services:name')} (AR)</Label>
                 <Input
-                  id="minPrice"
-                  type="number"
-                  value={serviceFormData.min_price}
-                  onChange={(e) => setServiceFormData({ ...serviceFormData, min_price: e.target.value })}
-                  placeholder={t('services:optional')}
+                  id="nameAr"
+                  value={serviceFormData.name_ar}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, name_ar: e.target.value })}
+                  placeholder={t('services:permanent_makeup_brows')}
+                  dir="rtl"
                 />
               </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="price">{t('services:base_price')} *</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    value={serviceFormData.price}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, price: Number(e.target.value) })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="currency">{t('services:currency')}</Label>
+                  <Select
+                    value={serviceFormData.currency}
+                    onValueChange={(value: string) =>
+                      setServiceFormData({ ...serviceFormData, currency: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="AED">AED</SelectItem>
+                      <SelectItem value="USD">USD</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="minPrice">{t('services:min_price')}</Label>
+                  <Input
+                    id="minPrice"
+                    type="number"
+                    value={serviceFormData.min_price}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, min_price: e.target.value })}
+                    placeholder={t('services:optional')}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="maxPrice">{t('services:max_price')}</Label>
+                  <Input
+                    id="maxPrice"
+                    type="number"
+                    value={serviceFormData.max_price}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, max_price: e.target.value })}
+                    placeholder={t('services:optional')}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="duration">{t('services:duration')}</Label>
+                  <Input
+                    id="duration"
+                    value={serviceFormData.duration}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, duration: e.target.value })}
+                    placeholder="90"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {t('services:enter_duration_in_minutes', 'Введите длительность в минутах (например: 60, 90, 120)')}
+                  </p>
+                </div>
+              </div>
+
               <div>
-                <Label htmlFor="maxPrice">{t('services:max_price')}</Label>
-                <Input
-                  id="maxPrice"
-                  type="number"
-                  value={serviceFormData.max_price}
-                  onChange={(e) => setServiceFormData({ ...serviceFormData, max_price: e.target.value })}
-                  placeholder={t('services:optional')}
+                <Label htmlFor="description">{t('services:description')} (EN)</Label>
+                <Textarea
+                  id="description"
+                  value={serviceFormData.description}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, description: e.target.value })}
+                  placeholder={t('services:professional_brow_tattooing')}
                 />
               </div>
+
               <div>
-                <Label htmlFor="duration">{t('services:duration')}</Label>
-                <Input
-                  id="duration"
-                  value={serviceFormData.duration}
-                  onChange={(e) => setServiceFormData({ ...serviceFormData, duration: e.target.value })}
-                  placeholder="90"
+                <Label htmlFor="descriptionRu">{t('services:description')} (RU)</Label>
+                <Textarea
+                  id="descriptionRu"
+                  value={serviceFormData.description_ru}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, description_ru: e.target.value })}
+                  placeholder={t('services:professional_brow_tattooing')}
                 />
+              </div>
+
+              <div>
+                <Label htmlFor="descriptionAr">{t('services:description')} (AR)</Label>
+                <Textarea
+                  id="descriptionAr"
+                  value={serviceFormData.description_ar}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, description_ar: e.target.value })}
+                  placeholder={t('services:professional_brow_tattooing')}
+                  dir="rtl"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="benefits">{t('services:benefits')} ({t('services:separate_through_pipe')})</Label>
+                <Textarea
+                  id="benefits"
+                  value={serviceFormData.benefits}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, benefits: e.target.value })}
+                  placeholder={t('services:long_lasting_natural_look_waterproof')}
+                />
+              </div>
+
+              {/* Positions Multi-Select */}
+              <div>
+                <Label htmlFor="positions">Должности, которые могут выполнять эту услугу</Label>
+                <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                  {positions.length === 0 ? (
+                    <p className="text-sm text-gray-500">Нет доступных должностей</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {positions.map((position) => (
+                        <label
+                          key={position.id}
+                          className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={serviceFormData.position_ids.includes(position.id)}
+                            onChange={(e) => {
+                              const newPositionIds = e.target.checked
+                                ? [...serviceFormData.position_ids, position.id]
+                                : serviceFormData.position_ids.filter(id => id !== position.id);
+                              setServiceFormData({ ...serviceFormData, position_ids: newPositionIds });
+                            }}
+                            className="w-4 h-4 text-pink-600 rounded focus:ring-pink-500"
+                          />
+                          <span className="text-sm">{position.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  {t('services:enter_duration_in_minutes', 'Введите длительность в минутах (например: 60, 90, 120)')}
+                  Выберите должности сотрудников, которые могут оказывать эту услугу
                 </p>
               </div>
             </div>
-
-            <div>
-              <Label htmlFor="description">{t('services:description')} (EN)</Label>
-              <Textarea
-                id="description"
-                value={serviceFormData.description}
-                onChange={(e) => setServiceFormData({ ...serviceFormData, description: e.target.value })}
-                placeholder={t('services:professional_brow_tattooing')}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="descriptionRu">{t('services:description')} (RU)</Label>
-              <Textarea
-                id="descriptionRu"
-                value={serviceFormData.description_ru}
-                onChange={(e) => setServiceFormData({ ...serviceFormData, description_ru: e.target.value })}
-                placeholder={t('services:professional_brow_tattooing')}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="descriptionAr">{t('services:description')} (AR)</Label>
-              <Textarea
-                id="descriptionAr"
-                value={serviceFormData.description_ar}
-                onChange={(e) => setServiceFormData({ ...serviceFormData, description_ar: e.target.value })}
-                placeholder={t('services:professional_brow_tattooing')}
-                dir="rtl"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="benefits">{t('services:benefits')} ({t('services:separate_through_pipe')})</Label>
-              <Textarea
-                id="benefits"
-                value={serviceFormData.benefits}
-                onChange={(e) => setServiceFormData({ ...serviceFormData, benefits: e.target.value })}
-                placeholder={t('services:long_lasting_natural_look_waterproof')}
-              />
-            </div>
-
-            {/* Positions Multi-Select */}
-            <div>
-              <Label htmlFor="positions">Должности, которые могут выполнять эту услугу</Label>
-              <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
-                {positions.length === 0 ? (
-                  <p className="text-sm text-gray-500">Нет доступных должностей</p>
-                ) : (
-                  <div className="space-y-2">
-                    {positions.map((position) => (
-                      <label
-                        key={position.id}
-                        className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={serviceFormData.position_ids.includes(position.id)}
-                          onChange={(e) => {
-                            const newPositionIds = e.target.checked
-                              ? [...serviceFormData.position_ids, position.id]
-                              : serviceFormData.position_ids.filter(id => id !== position.id);
-                            setServiceFormData({ ...serviceFormData, position_ids: newPositionIds });
-                          }}
-                          className="w-4 h-4 text-pink-600 rounded focus:ring-pink-500"
-                        />
-                        <span className="text-sm">{position.name}</span>
-                      </label>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Выберите должности сотрудников, которые могут оказывать эту услугу
-              </p>
-            </div>
           </div>
 
-          <DialogFooter>
+          <div className="crm-modal-footer px-6 py-4 border-t">
             <Button variant="outline" onClick={() => setIsServiceModalOpen(false)}>
               {t('services:cancel')}
             </Button>
@@ -1254,229 +1256,231 @@ export default function Services() {
             >
               {saving ? t('services:saving') : t('services:save')}
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
 
       {/* Package Modal */}
       <Dialog open={isPackageModalOpen} onOpenChange={setIsPackageModalOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-3xl p-0 flex flex-col max-h-[90vh]">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b">
             <DialogTitle>
               {editingPackage ? t('services:edit_package') : t('services:create_package')}
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="pkgName">{t('services:name')} (EN) *</Label>
-                <Input
-                  id="pkgName"
-                  value={packageFormData.name}
-                  onChange={(e) => setPackageFormData({ ...packageFormData, name: e.target.value })}
-                  placeholder={t('services:summer_special_package')}
-                />
-              </div>
-              <div>
-                <Label htmlFor="pkgNameRu">{t('services:name')} (RU) *</Label>
-                <Input
-                  id="pkgNameRu"
-                  value={packageFormData.name_ru}
-                  onChange={(e) => setPackageFormData({ ...packageFormData, name_ru: e.target.value })}
-                  placeholder={t('services:summer_special_package')}
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="pkgDescRu">{t('services:description')} (RU)</Label>
-              <Textarea
-                id="pkgDescRu"
-                value={packageFormData.description_ru}
-                onChange={(e) => setPackageFormData({ ...packageFormData, description_ru: e.target.value })}
-                placeholder={t('services:includes_manicure_pedicure_at_special_price')}
-                rows={2}
-              />
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="origPrice">{t('services:original_price')} *</Label>
-                <Input
-                  id="origPrice"
-                  type="number"
-                  value={packageFormData.original_price}
-                  onChange={(e) => setPackageFormData({ ...packageFormData, original_price: Number(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="specPrice">{t('services:special_price')} *</Label>
-                <Input
-                  id="specPrice"
-                  type="number"
-                  value={packageFormData.special_price}
-                  onChange={(e) => setPackageFormData({ ...packageFormData, special_price: Number(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label>{t('services:discount')}</Label>
-                <div className="h-10 flex items-center text-2xl font-bold text-green-600">
-                  {calculateDiscount()}%
+          <div className="crm-form-content px-6 py-4">
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="pkgName">{t('services:name')} (EN) *</Label>
+                  <Input
+                    id="pkgName"
+                    value={packageFormData.name}
+                    onChange={(e) => setPackageFormData({ ...packageFormData, name: e.target.value })}
+                    placeholder={t('services:summer_special_package')}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="pkgNameRu">{t('services:name')} (RU) *</Label>
+                  <Input
+                    id="pkgNameRu"
+                    value={packageFormData.name_ru}
+                    onChange={(e) => setPackageFormData({ ...packageFormData, name_ru: e.target.value })}
+                    placeholder={t('services:summer_special_package')}
+                  />
                 </div>
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="promoCode">{t('services:promo_code')}</Label>
-                <Input
-                  id="promoCode"
-                  value={packageFormData.promo_code}
-                  onChange={(e) => setPackageFormData({ ...packageFormData, promo_code: e.target.value.toUpperCase() })}
-                  placeholder={t('services:summer2026')}
+                <Label htmlFor="pkgDescRu">{t('services:description')} (RU)</Label>
+                <Textarea
+                  id="pkgDescRu"
+                  value={packageFormData.description_ru}
+                  onChange={(e) => setPackageFormData({ ...packageFormData, description_ru: e.target.value })}
+                  placeholder={t('services:includes_manicure_pedicure_at_special_price')}
+                  rows={2}
                 />
               </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="origPrice">{t('services:original_price')} *</Label>
+                  <Input
+                    id="origPrice"
+                    type="number"
+                    value={packageFormData.original_price}
+                    onChange={(e) => setPackageFormData({ ...packageFormData, original_price: Number(e.target.value) })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="specPrice">{t('services:special_price')} *</Label>
+                  <Input
+                    id="specPrice"
+                    type="number"
+                    value={packageFormData.special_price}
+                    onChange={(e) => setPackageFormData({ ...packageFormData, special_price: Number(e.target.value) })}
+                  />
+                </div>
+                <div>
+                  <Label>{t('services:discount')}</Label>
+                  <div className="h-10 flex items-center text-2xl font-bold text-green-600">
+                    {calculateDiscount()}%
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="promoCode">{t('services:promo_code')}</Label>
+                  <Input
+                    id="promoCode"
+                    value={packageFormData.promo_code}
+                    onChange={(e) => setPackageFormData({ ...packageFormData, promo_code: e.target.value.toUpperCase() })}
+                    placeholder={t('services:summer2026')}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="maxUsage">{t('services:max_usage')}</Label>
+                  <Input
+                    id="maxUsage"
+                    type="number"
+                    value={packageFormData.max_usage}
+                    onChange={(e) => setPackageFormData({ ...packageFormData, max_usage: Number(e.target.value) })}
+                    placeholder={t('services:0_no_limit')}
+                  />
+                </div>
+              </div>
+
               <div>
-                <Label htmlFor="maxUsage">{t('services:max_usage')}</Label>
-                <Input
-                  id="maxUsage"
-                  type="number"
-                  value={packageFormData.max_usage}
-                  onChange={(e) => setPackageFormData({ ...packageFormData, max_usage: Number(e.target.value) })}
-                  placeholder={t('services:0_no_limit')}
+                <Label htmlFor="keywords">{t('services:keywords')} ({t('services:separate_through_comma')}) *</Label>
+                <Textarea
+                  id="keywords"
+                  value={packageFormData.keywords}
+                  onChange={(e) => setPackageFormData({ ...packageFormData, keywords: e.target.value })}
+                  placeholder={t('services:summer_promo_manicure_pedicure_together')}
+                  rows={2}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {t('services:when_client_mentions_these_words_bot_will_offer_this_package')}
+                </p>
+              </div>
+
+              <div>
+                <Label htmlFor="services">{t('services:included_services')} ({t('services:separate_through_comma')})</Label>
+                <Textarea
+                  id="services"
+                  value={packageFormData.services_included}
+                  onChange={(e) => setPackageFormData({ ...packageFormData, services_included: e.target.value })}
+                  placeholder={t('services:manicure_gelish_pedicure_gelish')}
+                  rows={2}
                 />
               </div>
-            </div>
 
-            <div>
-              <Label htmlFor="keywords">{t('services:keywords')} ({t('services:separate_through_comma')}) *</Label>
-              <Textarea
-                id="keywords"
-                value={packageFormData.keywords}
-                onChange={(e) => setPackageFormData({ ...packageFormData, keywords: e.target.value })}
-                placeholder={t('services:summer_promo_manicure_pedicure_together')}
-                rows={2}
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                {t('services:when_client_mentions_these_words_bot_will_offer_this_package')}
-              </p>
-            </div>
-
-            <div>
-              <Label htmlFor="services">{t('services:included_services')} ({t('services:separate_through_comma')})</Label>
-              <Textarea
-                id="services"
-                value={packageFormData.services_included}
-                onChange={(e) => setPackageFormData({ ...packageFormData, services_included: e.target.value })}
-                placeholder={t('services:manicure_gelish_pedicure_gelish')}
-                rows={2}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="validFrom">{t('services:valid_from')} *</Label>
-                <Input
-                  id="validFrom"
-                  type="date"
-                  value={packageFormData.valid_from}
-                  onChange={(e) => setPackageFormData({ ...packageFormData, valid_from: e.target.value })}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="validFrom">{t('services:valid_from')} *</Label>
+                  <Input
+                    id="validFrom"
+                    type="date"
+                    value={packageFormData.valid_from}
+                    onChange={(e) => setPackageFormData({ ...packageFormData, valid_from: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="validUntil">{t('services:valid_until')} *</Label>
+                  <Input
+                    id="validUntil"
+                    type="date"
+                    value={packageFormData.valid_until}
+                    onChange={(e) => setPackageFormData({ ...packageFormData, valid_until: e.target.value })}
+                  />
+                </div>
               </div>
-              <div>
-                <Label htmlFor="validUntil">{t('services:valid_until')} *</Label>
-                <Input
-                  id="validUntil"
-                  type="date"
-                  value={packageFormData.valid_until}
-                  onChange={(e) => setPackageFormData({ ...packageFormData, valid_until: e.target.value })}
-                />
-              </div>
-            </div>
 
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="pkgActive"
-                checked={packageFormData.is_active}
-                onChange={(e) => setPackageFormData({ ...packageFormData, is_active: e.target.checked })}
-                className="w-4 h-4 text-pink-600 rounded"
-              />
-              <Label htmlFor="pkgActive" className="cursor-pointer">
-                {t('services:active')} ({t('services:available_for_clients')})
-              </Label>
-            </div>
-
-            {/* Scheduling Section */}
-            <div className="space-y-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  id="pkgScheduled"
-                  checked={packageFormData.scheduled}
-                  onChange={(e) => setPackageFormData({ ...packageFormData, scheduled: e.target.checked })}
-                  className="w-4 h-4"
+                  id="pkgActive"
+                  checked={packageFormData.is_active}
+                  onChange={(e) => setPackageFormData({ ...packageFormData, is_active: e.target.checked })}
+                  className="w-4 h-4 text-pink-600 rounded"
                 />
-                <Label htmlFor="pkgScheduled" className="cursor-pointer">
-                  {t('services:schedule_activation', { defaultValue: 'Schedule Activation' })}
+                <Label htmlFor="pkgActive" className="cursor-pointer">
+                  {t('services:active')} ({t('services:available_for_clients')})
                 </Label>
               </div>
 
-              {packageFormData.scheduled && (
-                <>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label>{t('services:activation_date', { defaultValue: 'Activation Date' })}</Label>
-                      <Input
-                        type="date"
-                        value={packageFormData.schedule_date}
-                        onChange={(e) => setPackageFormData({ ...packageFormData, schedule_date: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <Label>{t('services:activation_time', { defaultValue: 'Activation Time' })}</Label>
-                      <Input
-                        type="time"
-                        value={packageFormData.schedule_time}
-                        onChange={(e) => setPackageFormData({ ...packageFormData, schedule_time: e.target.value })}
-                      />
-                    </div>
-                  </div>
+              {/* Scheduling Section */}
+              <div className="space-y-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="pkgScheduled"
+                    checked={packageFormData.scheduled}
+                    onChange={(e) => setPackageFormData({ ...packageFormData, scheduled: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  <Label htmlFor="pkgScheduled" className="cursor-pointer">
+                    {t('services:schedule_activation', { defaultValue: 'Schedule Activation' })}
+                  </Label>
+                </div>
 
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="pkgAutoActivate"
-                        checked={packageFormData.auto_activate}
-                        onChange={(e) => setPackageFormData({ ...packageFormData, auto_activate: e.target.checked })}
-                        className="w-4 h-4"
-                      />
-                      <Label htmlFor="pkgAutoActivate" className="cursor-pointer">
-                        {t('services:auto_activate', { defaultValue: 'Auto-activate on schedule date' })}
-                      </Label>
+                {packageFormData.scheduled && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>{t('services:activation_date', { defaultValue: 'Activation Date' })}</Label>
+                        <Input
+                          type="date"
+                          value={packageFormData.schedule_date}
+                          onChange={(e) => setPackageFormData({ ...packageFormData, schedule_date: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <Label>{t('services:activation_time', { defaultValue: 'Activation Time' })}</Label>
+                        <Input
+                          type="time"
+                          value={packageFormData.schedule_time}
+                          onChange={(e) => setPackageFormData({ ...packageFormData, schedule_time: e.target.value })}
+                        />
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="pkgAutoDeactivate"
-                        checked={packageFormData.auto_deactivate}
-                        onChange={(e) => setPackageFormData({ ...packageFormData, auto_deactivate: e.target.checked })}
-                        className="w-4 h-4"
-                      />
-                      <Label htmlFor="pkgAutoDeactivate" className="cursor-pointer">
-                        {t('services:auto_deactivate', { defaultValue: 'Auto-deactivate after valid_until date' })}
-                      </Label>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="pkgAutoActivate"
+                          checked={packageFormData.auto_activate}
+                          onChange={(e) => setPackageFormData({ ...packageFormData, auto_activate: e.target.checked })}
+                          className="w-4 h-4"
+                        />
+                        <Label htmlFor="pkgAutoActivate" className="cursor-pointer">
+                          {t('services:auto_activate', { defaultValue: 'Auto-activate on schedule date' })}
+                        </Label>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="pkgAutoDeactivate"
+                          checked={packageFormData.auto_deactivate}
+                          onChange={(e) => setPackageFormData({ ...packageFormData, auto_deactivate: e.target.checked })}
+                          className="w-4 h-4"
+                        />
+                        <Label htmlFor="pkgAutoDeactivate" className="cursor-pointer">
+                          {t('services:auto_deactivate', { defaultValue: 'Auto-deactivate after valid_until date' })}
+                        </Label>
+                      </div>
                     </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
 
-          <DialogFooter>
+          <div className="crm-modal-footer px-6 py-4 border-t">
             <Button variant="outline" onClick={() => setIsPackageModalOpen(false)}>
               {t('services:cancel')}
             </Button>
@@ -1487,7 +1491,7 @@ export default function Services() {
             >
               {saving ? t('services:saving') : t('services:save')}
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
 

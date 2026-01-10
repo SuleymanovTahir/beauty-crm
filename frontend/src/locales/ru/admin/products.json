@@ -23,6 +23,9 @@
     "supplier": "Поставщик",
     "notes": "Примечания",
     "isActive": "Активен",
+    "photos": "Фото товара",
+    "upload": "Загрузить",
+    "uploadError": "Ошибка загрузки фото",
     "save": "Сохранить",
     "cancel": "Отмена"
   },
@@ -53,6 +56,10 @@
     "noMovements": "Нет данных о движениях",
     "movementIn": "Поступление",
     "movementOut": "Списание",
-    "movementAdjustment": "Корректировка"
+    "movementAdjustment": "Корректировка",
+    "totalSold": "Всего продано",
+    "totalRevenue": "Выручка",
+    "last30Days": "За 30 дней",
+    "avgPrice": "Ср. цена"
   }
 }

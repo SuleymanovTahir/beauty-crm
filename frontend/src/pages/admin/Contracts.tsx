@@ -225,34 +225,36 @@ const AddContractDialog = ({ onClose, onSuccess }: any) => {
                 </button>
                 <h2>{t('addContract')}</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('form.selectClient')}</label>
-                        <select
-                            className="crm-select"
-                            value={formData.client_id}
-                            onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
-                            required
-                        >
-                            <option value="">{t('form.selectClient')}</option>
-                            {clients.map((client) => (
-                                <option key={client.instagram_id} value={client.instagram_id}>
-                                    {client.name} - {client.phone}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    <div className="crm-form-content">
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('form.selectClient')}</label>
+                            <select
+                                className="crm-select"
+                                value={formData.client_id}
+                                onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
+                                required
+                            >
+                                <option value="">{t('form.selectClient')}</option>
+                                {clients.map((client) => (
+                                    <option key={client.instagram_id} value={client.instagram_id}>
+                                        {client.name} - {client.phone}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
 
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('form.contractType')}</label>
-                        <select
-                            className="crm-select"
-                            value={formData.contract_type}
-                            onChange={(e) => setFormData({ ...formData, contract_type: e.target.value })}
-                        >
-                            <option value="service">{t('types.service')}</option>
-                            <option value="product">{t('types.product')}</option>
-                            <option value="subscription">{t('types.subscription')}</option>
-                        </select>
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('form.contractType')}</label>
+                            <select
+                                className="crm-select"
+                                value={formData.contract_type}
+                                onChange={(e) => setFormData({ ...formData, contract_type: e.target.value })}
+                            >
+                                <option value="service">{t('contractTypes.service')}</option>
+                                <option value="employment">{t('contractTypes.employment')}</option>
+                                <option value="rental">{t('contractTypes.rental')}</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div className="crm-modal-footer">
@@ -294,29 +296,31 @@ const SendContractDialog = ({ contract, onClose, onSuccess }: any) => {
                 </button>
                 <h2>{t('sendDialog.title')}</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('sendDialog.method')}</label>
-                        <select
-                            className="crm-select"
-                            value={formData.delivery_method}
-                            onChange={(e) => setFormData({ ...formData, delivery_method: e.target.value })}
-                        >
-                            <option value="email">{t('sendDialog.email')}</option>
-                            <option value="whatsapp">{t('sendDialog.whatsapp')}</option>
-                            <option value="telegram">{t('sendDialog.telegram')}</option>
-                            <option value="instagram">{t('sendDialog.instagram')}</option>
-                        </select>
-                    </div>
+                    <div className="crm-form-content">
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('sendDialog.method')}</label>
+                            <select
+                                className="crm-select"
+                                value={formData.delivery_method}
+                                onChange={(e) => setFormData({ ...formData, delivery_method: e.target.value })}
+                            >
+                                <option value="email">{t('sendDialog.email')}</option>
+                                <option value="whatsapp">{t('sendDialog.whatsapp')}</option>
+                                <option value="telegram">{t('sendDialog.telegram')}</option>
+                                <option value="instagram">{t('sendDialog.instagram')}</option>
+                            </select>
+                        </div>
 
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('sendDialog.recipient')}</label>
-                        <input
-                            type="text"
-                            className="crm-input"
-                            value={formData.recipient}
-                            onChange={(e) => setFormData({ ...formData, recipient: e.target.value })}
-                            required
-                        />
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('sendDialog.recipient')}</label>
+                            <input
+                                type="text"
+                                className="crm-input"
+                                value={formData.recipient}
+                                onChange={(e) => setFormData({ ...formData, recipient: e.target.value })}
+                                required
+                            />
+                        </div>
                     </div>
 
                     <div className="crm-modal-footer">

@@ -1106,36 +1106,38 @@ export default function Clients() {
             <DialogTitle>{t('edit_client')}</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="edit_name">{t('name')}</Label>
-              <Input
-                id="edit_name"
-                value={editForm.name}
-                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                placeholder={t('name_placeholder')}
-              />
-            </div>
+          <div className="crm-form-content">
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="edit_name">{t('name')}</Label>
+                <Input
+                  id="edit_name"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  placeholder={t('name_placeholder')}
+                />
+              </div>
 
-            <div>
-              <Label htmlFor="edit_phone">{t('phone')}</Label>
-              <Input
-                id="edit_phone"
-                value={editForm.phone}
-                onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                placeholder={t('phone_placeholder')}
-              />
-            </div>
+              <div>
+                <Label htmlFor="edit_phone">{t('phone')}</Label>
+                <Input
+                  id="edit_phone"
+                  value={editForm.phone}
+                  onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                  placeholder={t('phone_placeholder')}
+                />
+              </div>
 
-            <div>
-              <Label htmlFor="edit_notes">{t('notes')}</Label>
-              <Textarea
-                id="edit_notes"
-                value={editForm.notes}
-                onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-                placeholder={t('notes_placeholder')}
-                className="min-h-[80px]"
-              />
+              <div>
+                <Label htmlFor="edit_notes">{t('notes')}</Label>
+                <Textarea
+                  id="edit_notes"
+                  value={editForm.notes}
+                  onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                  placeholder={t('notes_placeholder')}
+                  className="min-h-[80px]"
+                />
+              </div>
             </div>
           </div>
 
@@ -1175,48 +1177,50 @@ export default function Clients() {
             <DialogTitle>{t('add_client')}</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="name">{t('name')} *</Label>
-              <Input
-                id="name"
-                value={createForm.name}
-                onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
-                placeholder={t('name_placeholder')}
-              />
-            </div>
+          <div className="crm-form-content">
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="name">{t('name')} *</Label>
+                <Input
+                  id="name"
+                  value={createForm.name}
+                  onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
+                  placeholder={t('name_placeholder')}
+                />
+              </div>
 
-            <div>
-              <Label htmlFor="phone">{t('phone')}</Label>
-              <Input
-                id="phone"
-                value={createForm.phone}
-                onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
-                placeholder={t('phone_placeholder')}
-              />
-              <p className="text-xs text-gray-500 mt-1">{t('optional')}</p>
-            </div>
+              <div>
+                <Label htmlFor="phone">{t('phone')}</Label>
+                <Input
+                  id="phone"
+                  value={createForm.phone}
+                  onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
+                  placeholder={t('phone_placeholder')}
+                />
+                <p className="text-xs text-gray-500 mt-1">{t('optional')}</p>
+              </div>
 
-            <div>
-              <Label htmlFor="instagram">{t('instagram_id')}</Label>
-              <Input
-                id="instagram"
-                value={createForm.instagram_id}
-                onChange={(e) => setCreateForm({ ...createForm, instagram_id: e.target.value })}
-                placeholder={t('instagram_id_placeholder')}
-              />
-              <p className="text-xs text-gray-500 mt-1">{t('optional')}</p>
-            </div>
+              <div>
+                <Label htmlFor="instagram">{t('instagram_id')}</Label>
+                <Input
+                  id="instagram"
+                  value={createForm.instagram_id}
+                  onChange={(e) => setCreateForm({ ...createForm, instagram_id: e.target.value })}
+                  placeholder={t('instagram_id_placeholder')}
+                />
+                <p className="text-xs text-gray-500 mt-1">{t('optional')}</p>
+              </div>
 
-            <div>
-              <Label htmlFor="notes">{t('notes')}</Label>
-              <Textarea
-                id="notes"
-                value={createForm.notes}
-                onChange={(e) => setCreateForm({ ...createForm, notes: e.target.value })}
-                placeholder={t('notes_placeholder')}
-                className="min-h-[80px]"
-              />
+              <div>
+                <Label htmlFor="notes">{t('notes')}</Label>
+                <Textarea
+                  id="notes"
+                  value={createForm.notes}
+                  onChange={(e) => setCreateForm({ ...createForm, notes: e.target.value })}
+                  placeholder={t('notes_placeholder')}
+                  className="min-h-[80px]"
+                />
+              </div>
             </div>
           </div>
 
@@ -1232,109 +1236,74 @@ export default function Clients() {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      {
-        showDeleteDialog && clientToDelete && (
-          <div style={{
-            position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            zIndex: 9999, padding: '1rem'
-          }}>
-            <div style={{
-              backgroundColor: '#fff', borderRadius: '1rem',
-              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-              width: '100%', maxWidth: '420px', overflow: 'hidden'
-            }}>
-              <div style={{
-                backgroundColor: '#fef2f2', borderBottom: '2px solid #fecaca',
-                padding: '1.5rem'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{
-                    width: '40px', height: '40px', borderRadius: '50%',
-                    backgroundColor: '#fee2e2', display: 'flex',
-                    alignItems: 'center', justifyContent: 'center', flexShrink: 0
-                  }}>
-                    <AlertCircle style={{ width: '24px', height: '24px', color: '#dc2626' }} />
-                  </div>
-                  <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#7f1d1d' }}>
-                    {t('delete_client')}
-                  </h3>
+      {showDeleteDialog && clientToDelete && (
+        <div className="crm-modal-overlay" onClick={() => setShowDeleteDialog(false)}>
+          <div className="crm-modal max-w-md" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-red-50 border-b-2 border-red-100 p-6 -m-6 mb-6 rounded-t-2xl">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-6 h-6 text-red-600" />
                 </div>
-              </div>
-
-              <div style={{ backgroundColor: '#fff', padding: '1.5rem' }}>
-                <p style={{ color: '#1f2937', marginBottom: '1rem', fontSize: '0.95rem' }}>
-                  {t('you_are_deleting_client')} <strong>"{clientToDelete.name}"</strong>
-                </p>
-
-                <div style={{
-                  backgroundColor: '#fefce8', borderLeft: '4px solid #facc15',
-                  padding: '1rem', marginBottom: '1rem', borderRadius: '0.5rem'
-                }}>
-                  <div style={{ display: 'flex', gap: '0.75rem' }}>
-                    <AlertCircle style={{ width: '20px', height: '20px', color: '#b45309', flexShrink: 0, marginTop: '2px' }} />
-                    <div>
-                      <p style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#92400e', marginBottom: '0.5rem' }}>
-                        ⚠️ {t('this_action_is_irreversible')}!
-                      </p>
-                      <ul style={{ fontSize: '0.875rem', color: '#92400e', marginLeft: '1rem' }}>
-                        <li>✗ {t('all_messages_will_be_deleted')}</li>
-                        <li>✗ {t('all_records_will_be_deleted')}</li>
-                        <li>✗ {t('history_will_not_be_restored')}</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div style={{
-                backgroundColor: '#f9fafb', borderTop: '1px solid #e5e7eb',
-                padding: '1rem 1.5rem', display: 'flex',
-                justifyContent: 'flex-end', gap: '0.75rem'
-              }}>
-                <button
-                  onClick={() => {
-                    setShowDeleteDialog(false);
-                    setClientToDelete(null);
-                  }}
-                  disabled={deletingId !== null}
-                  style={{
-                    padding: '0.625rem 1.25rem', fontSize: '0.95rem',
-                    fontWeight: '500', color: '#374151', backgroundColor: '#fff',
-                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                    cursor: deletingId !== null ? 'not-allowed' : 'pointer',
-                    opacity: deletingId !== null ? 0.5 : 1
-                  }}
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  onClick={handleConfirmDelete}
-                  disabled={deletingId !== null}
-                  style={{
-                    padding: '0.625rem 1.25rem', fontSize: '0.95rem',
-                    fontWeight: '500', color: '#fff', backgroundColor: '#dc2626',
-                    border: '1px solid #dc2626', borderRadius: '0.5rem',
-                    cursor: deletingId !== null ? 'not-allowed' : 'pointer',
-                    opacity: deletingId !== null ? 0.5 : 1,
-                    display: 'flex', alignItems: 'center', gap: '0.5rem'
-                  }}
-                >
-                  {deletingId ? (
-                    <>
-                      <Loader style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
-                      {t('deleting')}...
-                    </>
-                  ) : (
-                    t('delete')
-                  )}
-                </button>
+                <h3 className="text-xl font-bold text-red-900">
+                  {t('delete_client')}
+                </h3>
               </div>
             </div>
-            <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+
+            <div className="space-y-4">
+              <p className="text-gray-900 font-medium">
+                {t('you_are_deleting_client')} <strong className="text-red-600">"{clientToDelete.name}"</strong>
+              </p>
+
+              <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-xl">
+                <div className="flex gap-3">
+                  <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-bold text-amber-900 mb-1">
+                      ⚠️ {t('this_action_is_irreversible')}!
+                    </p>
+                    <ul className="text-sm text-amber-800 space-y-1 list-disc list-inside">
+                      <li>{t('all_messages_will_be_deleted')}</li>
+                      <li>{t('all_records_will_be_deleted')}</li>
+                      <li>{t('history_will_not_be_restored')}</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="crm-modal-footer mt-8">
+              <button
+                onClick={() => {
+                  setShowDeleteDialog(false);
+                  setClientToDelete(null);
+                }}
+                disabled={deletingId !== null}
+                className="crm-btn-secondary"
+              >
+                {t('cancel')}
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                disabled={deletingId !== null}
+                className="crm-btn-primary bg-red-600 hover:bg-red-700 border-red-600 flex items-center gap-2"
+              >
+                {deletingId ? (
+                  <>
+                    <Loader className="w-4 h-4 animate-spin" />
+                    {t('deleting')}...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    {t('delete')}
+                  </>
+                )}
+              </button>
+            </div>
           </div>
-        )
-      }
+        </div>
+      )}
 
       {/* Export Dialog */}
       {

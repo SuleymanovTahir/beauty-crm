@@ -85,7 +85,7 @@ async def get_products(
             SELECT id, name, name_ru, name_en, name_ar, category, price, cost_price,
                    weight, weight_unit, volume, volume_unit, expiry_date,
                    stock_quantity, min_stock_level, sku, barcode, supplier,
-                   notes, is_active, created_at, updated_at
+                   notes, is_active, photos, created_at, updated_at
             FROM products
             WHERE 1=1
         """
@@ -185,7 +185,7 @@ async def get_product(
             SELECT id, name, name_ru, name_en, name_ar, category, price, cost_price,
                    weight, weight_unit, volume, volume_unit, expiry_date,
                    stock_quantity, min_stock_level, sku, barcode, supplier,
-                   notes, is_active, created_at, updated_at
+                   notes, is_active, photos, created_at, updated_at
             FROM products
             WHERE id = %s
         """, (product_id,))
@@ -449,6 +449,81 @@ async def get_product_movements(
         
     except Exception as e:
         log_warning(f"❌ Ошибка получения движений товара: {e}", "api")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+@router.get("/products/{product_id}/stats")
+async def get_product_stats(
+    product_id: int,
+    current_user: dict = Depends(get_current_user)
+):
+    """Получить статистику продаж товара"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        # Общая статистика по продажам (движения типа 'out')
+        c.execute("""
+            SELECT 
+                COUNT(*) as transactions,
+                SUM(quantity) as total_quantity,
+                SUM(quantity * price) as total_revenue,
+                AVG(price) as avg_price
+            FROM product_movements
+            WHERE product_id = %s AND movement_type = 'out'
+        """, (product_id,))
+        
+        row = c.fetchone()
+        stats = {
+            "total_sales_count": row[0] or 0,
+            "total_quantity_sold": row[1] or 0,
+            "total_revenue": row[2] or 0,
+            "average_price": row[3] or 0
+        }
+        
+        # Продажи за последние 30 дней
+        c.execute("""
+            SELECT 
+                SUM(quantity) as total_quantity,
+                SUM(quantity * price) as total_revenue
+            FROM product_movements
+            WHERE product_id = %s AND movement_type = 'out' 
+            AND created_at >= NOW() - INTERVAL '30 days'
+        """, (product_id,))
+        
+        row_30 = c.fetchone()
+        stats["last_30_days"] = {
+            "quantity": row_30[0] or 0,
+            "revenue": row_30[1] or 0
+        }
+        
+        # Последние 5 продаж
+        c.execute("""
+            SELECT pm.quantity, pm.price, pm.created_at, u.full_name as client_name
+            FROM product_movements pm
+            LEFT JOIN users u ON pm.created_by = u.id
+            WHERE pm.product_id = %s AND pm.movement_type = 'out'
+            ORDER BY pm.created_at DESC
+            LIMIT 5
+        """, (product_id,))
+        
+        recent_sales = []
+        for row in c.fetchall():
+            recent_sales.append({
+                "quantity": row[0],
+                "price": row[1],
+                "created_at": row[2],
+                "customer_name": row[3]
+            })
+        
+        stats["recent_sales"] = recent_sales
+        
+        return stats
+        
+    except Exception as e:
+        log_warning(f"❌ Ошибка получения статистики товара: {e}", "api")
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
