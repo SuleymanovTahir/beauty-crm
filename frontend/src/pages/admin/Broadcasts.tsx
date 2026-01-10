@@ -132,18 +132,19 @@ export default function Broadcasts() {
     }
   };
 
-  // Filter users by target role and auto-select them
-  useEffect(() => {
-    if (form.target_role && form.target_role !== 'all') {
-      const filteredUserIds = users
-        .filter(u => u.role === form.target_role)
-        .map(u => u.id);
-      setForm(prev => ({ ...prev, user_ids: filteredUserIds }));
-    } else if (form.target_role === '' || form.target_role === 'all') {
-      // Clear selection when "all users" selected
-      setForm(prev => ({ ...prev, user_ids: [] }));
-    }
-  }, [form.target_role, users]);
+  // Filter users by target role (do NOT auto-select - let user manually choose)
+  // This effect is disabled to prevent overriding manual user selection
+  // useEffect(() => {
+  //   if (form.target_role && form.target_role !== 'all') {
+  //     const filteredUserIds = users
+  //       .filter(u => u.role === form.target_role)
+  //       .map(u => u.id);
+  //     setForm(prev => ({ ...prev, user_ids: filteredUserIds }));
+  //   } else if (form.target_role === '' || form.target_role === 'all') {
+  //     // Clear selection when "all users" selected
+  //     setForm(prev => ({ ...prev, user_ids: [] }));
+  //   }
+  // }, [form.target_role, users]);
 
   const handleChannelToggle = (channel: string) => {
     if (form.channels.includes(channel)) {

@@ -156,13 +156,13 @@ export default function Challenges() {
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                     <div className="space-y-3">
-                        <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-pink-50 text-pink-600 text-[9px] font-black uppercase tracking-[0.2em]">
+                        <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-600 text-[9px] font-black uppercase tracking-[0.2em]">
                             <Sparkles className="w-2.5 h-2.5" />
                             Gamification Engine
                         </div>
                         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-none">
                             {t('title', 'Челленджи')}
-                            <span className="text-pink-600">.</span>
+                            <span className="text-purple-600">.</span>
                         </h1>
                         <p className="text-gray-500 font-medium max-w-lg text-sm leading-relaxed">
                             {t('subtitle', 'Повышайте лояльность клиентов с помощью игровых механик и автоматических наград.')}
@@ -237,19 +237,19 @@ export default function Challenges() {
                             </div>
 
                             <div className="space-y-2">
-                                <h3 className="text-2xl font-black text-gray-900 group-hover:text-pink-600 transition-colors leading-tight tracking-tight">{challenge.title}</h3>
+                                <h3 className="text-lg font-bold text-gray-900 group-hover:text-purple-600 transition-colors leading-tight tracking-tight">{challenge.title}</h3>
                                 <p className="text-gray-500 font-medium leading-relaxed max-w-md text-sm">{challenge.description}</p>
                             </div>
 
                             <div className="bg-gray-50/80 rounded-2xl p-6 border border-gray-100 space-y-4">
                                 <div className="flex justify-between items-end">
                                     <div className="space-y-1">
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">{t('card.progress', 'ПРОГРЕСС ВЫПОЛНЕНИЯ')}</p>
-                                        <p className="text-2xl font-black text-gray-900 leading-none">{challenge.completion_rate}%</p>
+                                        <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">{t('card.progress', 'ПРОГРЕСС ВЫПОЛНЕНИЯ')}</p>
+                                        <p className="text-lg font-bold text-gray-900 leading-none">{challenge.completion_rate}%</p>
                                     </div>
                                     <div className="text-right space-y-1">
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">{t('card.participants', 'УЧАСТНИКИ')}</p>
-                                        <p className="text-lg font-black text-gray-900 leading-none">{challenge.participants_count}</p>
+                                        <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">{t('card.participants', 'УЧАСТНИКИ')}</p>
+                                        <p className="text-base font-bold text-gray-900 leading-none">{challenge.participants_count}</p>
                                     </div>
                                 </div>
                                 <Progress value={challenge.completion_rate} className="h-2.5 bg-gray-200" />
@@ -277,7 +277,7 @@ export default function Challenges() {
                             </p>
                             <Button
                                 onClick={() => setShowAddDialog(true)}
-                                className="bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-black px-8 h-12"
+                                className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-black px-8 h-12"
                             >
                                 {t('buttons.create_challenge', 'Запустить челлендж')}
                             </Button>
@@ -298,7 +298,7 @@ export default function Challenges() {
                                 <DialogTitle className="text-2xl font-black text-white tracking-tight">
                                     {editingChallenge ? t('dialogs.edit_title', 'Правка челленджа') : t('dialogs.add_title', 'Новый челлендж')}
                                 </DialogTitle>
-                                <p className="text-pink-400 text-[9px] font-black uppercase tracking-[0.2em] mt-1 opacity-80">Loyalty Mechanics Builder</p>
+                                <p className="text-purple-300 text-[9px] font-black uppercase tracking-[0.2em] mt-1 opacity-80">Loyalty Mechanics Builder</p>
                             </div>
                         </div>
                     </DialogHeader>
