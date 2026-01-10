@@ -237,6 +237,19 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
         }
     };
 
+    const handleDeleteNotification = async (id: number, event: React.MouseEvent) => {
+        event.stopPropagation();
+        try {
+            await api.deleteNotification(id);
+            setNotifications(notifications.filter(n => n.id !== id));
+            setNotifCount(prev => Math.max(0, prev - 1));
+            toast.success('Уведомление удалено');
+        } catch (error) {
+            console.error('Error deleting notification:', error);
+            toast.error('Ошибка при удалении уведомления');
+        }
+    };
+
     const handleClearAll = async () => {
         if (!window.confirm(t('confirm_clear_all', 'Вы уверены что хотите удалить все уведомления?'))) {
             return;
@@ -601,7 +614,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                 <div
                                                     key={n.id}
                                                     onClick={() => handleNotificationClick(n)}
-                                                    className={`p-3 border-b border-gray-50 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 cursor-pointer transition-all ${!n.is_read ? 'bg-blue-50/50' : ''}`}
+                                                    className={`p-3 border-b border-gray-50 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 cursor-pointer transition-all group ${!n.is_read ? 'bg-blue-50/50' : ''}`}
                                                 >
                                                     <div className="flex items-start gap-2">
                                                         {!n.is_read && (
@@ -619,6 +632,13 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                                 })}
                                                             </span>
                                                         </div>
+                                                        <button
+                                                            onClick={(e) => handleDeleteNotification(n.id, e)}
+                                                            className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all p-1"
+                                                            title="Удалить"
+                                                        >
+                                                            <Trash2 size={14} />
+                                                        </button>
                                                     </div>
                                                 </div>
                                             ))

@@ -52,6 +52,17 @@ export default function NotificationsPage() {
         }
     };
 
+    const handleDeleteNotification = async (id: number) => {
+        try {
+            await api.deleteNotification(id);
+            setNotifications(notifications.filter(n => n.id !== id));
+            toast.success('Уведомление удалено');
+        } catch (error) {
+            console.error('Error deleting notification:', error);
+            toast.error('Ошибка при удалении уведомления');
+        }
+    };
+
     const handleClearAll = async () => {
         if (!window.confirm('Вы уверены что хотите удалить все уведомления?')) {
             return;
@@ -125,15 +136,17 @@ export default function NotificationsPage() {
                     {notifications.map((notif) => (
                         <div
                             key={notif.id}
-                            onClick={() => handleNotificationClick(notif)}
-                            className={`bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer transition-all hover:shadow-md hover:border-purple-300 ${!notif.is_read ? 'bg-gradient-to-r from-blue-50/50 to-purple-50/50 border-l-4 border-l-blue-500' : ''
+                            className={`bg-white rounded-xl shadow-sm border border-gray-200 p-6 transition-all hover:shadow-md hover:border-purple-300 group ${!notif.is_read ? 'bg-gradient-to-r from-blue-50/50 to-purple-50/50 border-l-4 border-l-blue-500' : ''
                                 }`}
                         >
                             <div className="flex items-start gap-4">
                                 {!notif.is_read && (
                                     <div className="w-3 h-3 bg-blue-500 rounded-full mt-1.5 flex-shrink-0 animate-pulse"></div>
                                 )}
-                                <div className="flex-1 min-w-0">
+                                <div
+                                    className="flex-1 min-w-0 cursor-pointer"
+                                    onClick={() => handleNotificationClick(notif)}
+                                >
                                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
                                         {notif.title}
                                     </h3>
@@ -161,6 +174,13 @@ export default function NotificationsPage() {
                                         )}
                                     </div>
                                 </div>
+                                <button
+                                    onClick={() => handleDeleteNotification(notif.id)}
+                                    className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-all"
+                                    title="Удалить уведомление"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
                             </div>
                         </div>
                     ))}

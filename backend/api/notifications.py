@@ -174,6 +174,43 @@ async def get_unread_count(
         log_error(f"Error getting unread count: {e}", "notifications")
         return JSONResponse({"error": str(e)}, status_code=500)
 
+@router.delete("/notifications/{notification_id}")
+async def delete_notification(
+    notification_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Удалить одно уведомление"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        c.execute("""
+            DELETE FROM notifications
+            WHERE id = %s AND user_id = %s
+        """, (notification_id, user["id"]))
+
+        if c.rowcount == 0:
+            conn.close()
+            return JSONResponse({"error": "Notification not found"}, status_code=404)
+
+        conn.commit()
+        conn.close()
+
+        log_info(f"Deleted notification {notification_id} for user {user['id']}", "notifications")
+
+        return {
+            "success": True,
+            "message": "Notification deleted"
+        }
+
+    except Exception as e:
+        log_error(f"Error deleting notification: {e}", "notifications")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
 @router.delete("/notifications/clear-all")
 async def clear_all_notifications(
     session_token: Optional[str] = Cookie(None)
