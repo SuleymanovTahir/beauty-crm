@@ -48,7 +48,7 @@ const stageDescriptions = [
 ];
 
 export default function Funnel() {
-  const { t } = useTranslation(['manager/Funnel', 'common']);
+  const { t } = useTranslation(['manager/funnel', 'common']);
   const { user: currentUser } = useAuth();
   const userPermissions = usePermissions(currentUser?.role || 'employee');
   const [funnel, setFunnel] = useState<FunnelData | null>(null);
@@ -112,7 +112,7 @@ export default function Funnel() {
               <p className="text-red-800 font-medium">{t('common:error_loading')}</p>
               <p className="text-red-700 text-sm mt-1">{error}</p>
               <Button onClick={loadFunnelData} className="mt-4 bg-red-600 hover:bg-red-700">
-              {t('common:try_again')}
+                {t('common:try_again')}
               </Button>
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function Funnel() {
 
   // Рекомендации на основе данных
   const recommendations = [];
-  
+
   if (funnel.conversion_rates.visitor_to_engaged < 60) {
     recommendations.push({
       title: t('funnel:recommendations.increase_engagement.title'),
@@ -205,12 +205,12 @@ export default function Funnel() {
               <SelectItem value="3months">{t('common:period.3months')}</SelectItem>
             </SelectContent>
           </Select>
-          
+
           <Button variant="outline" className="md:ml-auto" onClick={loadFunnelData}>
             <RefreshCw className="w-4 h-4 mr-2" />
             {t('common:refresh')}
           </Button>
-          
+
           <Button className="bg-pink-600 hover:bg-pink-700">
             <Download className="w-4 h-4 mr-2" />
             {t('common:export')}
@@ -223,7 +223,7 @@ export default function Funnel() {
         {conversionMetrics.map((metric, index) => {
           const isGood = metric.value >= 60;
           const isExcellent = metric.value >= 80;
-          
+
           return (
             <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
               <p className="text-gray-600 text-sm mb-2">{metric.label}</p>
@@ -244,7 +244,7 @@ export default function Funnel() {
           <Filter className="w-6 h-6 text-pink-600" />
           {t('funnel:funnel_chart')}
         </h2>
-        
+
         <div className="space-y-4">
           {stageNames.map((stage, index) => {
             const value = stageValues[index];
@@ -256,9 +256,9 @@ export default function Funnel() {
                 <div className="flex items-center gap-4">
                   {/* Funnel Bar */}
                   <div className="flex-1">
-                    <div 
+                    <div
                       className={`${stageColors[index]} text-white p-6 rounded-lg transition-all hover:shadow-lg cursor-pointer`}
-                      style={{ 
+                      style={{
                         width: `${percentage}%`,
                         minWidth: '200px'
                       }}
@@ -276,7 +276,7 @@ export default function Funnel() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Losses */}
                 {losses[index] > 0 && (
                   <div className="mt-2 ml-4 flex items-center gap-2 text-red-600 text-sm">
@@ -294,13 +294,13 @@ export default function Funnel() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Key Metrics */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h2 className="text-xl text-gray-900 mb-6">{t('funnel:key_metrics')}</h2>
+          <h2 className="text-xl text-gray-900 mb-6">{t('funnel:key_metrics')}</h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
               <div className="flex items-center gap-3">
                 <CheckCircle className="w-8 h-8 text-green-600" />
                 <div>
-                <p className="text-sm text-gray-600">{t('funnel:total_conversion')}</p>
+                  <p className="text-sm text-gray-600">{t('funnel:total_conversion')}</p>
                   <p className="text-2xl text-gray-900">{totalConversion.toFixed(1)}%</p>
                 </div>
               </div>
@@ -310,12 +310,12 @@ export default function Funnel() {
                 <TrendingDown className="w-6 h-6 text-yellow-600" />
               )}
             </div>
-            
+
             <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg">
               <div className="flex items-center gap-3">
                 <AlertTriangle className="w-8 h-8 text-red-600" />
                 <div>
-                <p className="text-sm text-gray-600">{t('funnel:total_losses')}</p>
+                  <p className="text-sm text-gray-600">{t('funnel:total_losses')}</p>
                   <p className="text-2xl text-gray-900">{funnel.visitors - funnel.completed}</p>
                 </div>
               </div>
@@ -326,7 +326,7 @@ export default function Funnel() {
               <div className="flex items-center gap-3">
                 <CheckCircle className="w-8 h-8 text-blue-600" />
                 <div>
-                <p className="text-sm text-gray-600">{t('funnel:successful_visits')}</p>
+                  <p className="text-sm text-gray-600">{t('funnel:successful_visits')}</p>
                   <p className="text-2xl text-gray-900">{funnel.completed}</p>
                 </div>
               </div>
@@ -336,22 +336,20 @@ export default function Funnel() {
 
         {/* Recommendations */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h2 className="text-xl text-gray-900 mb-6">{t('funnel:recommendations_title')}</h2>
+          <h2 className="text-xl text-gray-900 mb-6">{t('funnel:recommendations_title')}</h2>
           <div className="space-y-4">
             {recommendations.length > 0 ? (
               recommendations.map((rec, index) => (
-                <div 
-                  key={index} 
-                  className={`p-4 rounded-lg border-l-4 ${
-                    rec.priority === 'high' 
-                      ? 'border-red-500 bg-red-50' 
+                <div
+                  key={index}
+                  className={`p-4 rounded-lg border-l-4 ${rec.priority === 'high'
+                      ? 'border-red-500 bg-red-50'
                       : 'border-yellow-500 bg-yellow-50'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start gap-3">
-                    <AlertTriangle className={`w-5 h-5 flex-shrink-0 ${
-                      rec.priority === 'high' ? 'text-red-600' : 'text-yellow-600'
-                    }`} />
+                    <AlertTriangle className={`w-5 h-5 flex-shrink-0 ${rec.priority === 'high' ? 'text-red-600' : 'text-yellow-600'
+                      }`} />
                     <div className="flex-1">
                       <h3 className="text-sm text-gray-900 mb-1">{rec.title}</h3>
                       <p className="text-xs text-gray-600 mb-2">{rec.description}</p>
@@ -365,9 +363,9 @@ export default function Funnel() {
                 <div className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                   <div>
-                  <h3 className="text-sm text-green-900 font-medium">{t('funnel:all_good')}</h3>
+                    <h3 className="text-sm text-green-900 font-medium">{t('funnel:all_good')}</h3>
                     <p className="text-xs text-green-700 mt-1">
-                    {t('Your funnel shows good results. Keep it up!')}
+                      {t('Your funnel shows good results. Keep it up!')}
                     </p>
                   </div>
                 </div>
@@ -380,13 +378,13 @@ export default function Funnel() {
       {/* Stage Details Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="p-6 border-b border-gray-200">
-        <h2 className="text-xl text-gray-900">{t('funnel:stage_details')}</h2>
+          <h2 className="text-xl text-gray-900">{t('funnel:stage_details')}</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-              <th className="px-6 py-4 text-left text-sm text-gray-600">{t('funnel:table.stage')}</th>
+                <th className="px-6 py-4 text-left text-sm text-gray-600">{t('funnel:table.stage')}</th>
                 <th className="px-6 py-4 text-left text-sm text-gray-600">{t('funnel:table.count')}</th>
                 <th className="px-6 py-4 text-left text-sm text-gray-600">{t('funnel:table.percentage')}</th>
                 <th className="px-6 py-4 text-left text-sm text-gray-600">{t('funnel:table.losses')}</th>
