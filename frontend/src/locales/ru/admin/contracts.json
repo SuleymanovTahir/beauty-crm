@@ -1,15 +1,18 @@
 {
   "title": "Договоры",
+  "subtitle": "Управление договорами с клиентами",
   "addContract": "Создать договор",
   "loading": "Загрузка...",
   "allStatuses": "Все статусы",
-  "contractNumber": "Номер договора",
+  "contractNumber": "№ Договора",
   "client": "Клиент",
   "status": "Статус",
   "createdAt": "Дата создания",
   "actions": "Действия",
   "sendButton": "Отправить",
   "delete": "Удалить",
+  "noContracts": "Договоров пока нет",
+  "createFirst": "Создайте первый договор с клиентом",
   "statuses": {
     "draft": "Черновик",
     "sent": "Отправлен",
@@ -19,6 +22,9 @@
   "form": {
     "selectClient": "Выберите клиента",
     "contractType": "Тип договора",
+    "contractDate": "Дата договора",
+    "terms": "Условия договора",
+    "notes": "Примечания",
     "save": "Сохранить",
     "cancel": "Отмена"
   },
@@ -38,6 +44,9 @@
     "sendButton": "Отправить"
   },
   "messages": {
-    "confirmDelete": "Вы уверены, что хотите удалить этот договор?"
+    "confirmDelete": "Вы уверены, что хотите удалить этот договор?",
+    "contractCreated": "Договор создан",
+    "contractSent": "Договор отправлен",
+    "contractDeleted": "Договор удален"
   }
 }

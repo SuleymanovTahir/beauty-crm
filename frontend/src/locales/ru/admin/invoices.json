@@ -1,9 +1,11 @@
 {
   "title": "Счета",
+  "subtitle": "Управление счетами и платежами",
   "addInvoice": "Создать счет",
+  "addPayment": "Добавить оплату",
   "loading": "Загрузка...",
   "allStatuses": "Все статусы",
-  "invoiceNumber": "Номер счета",
+  "invoiceNumber": "№ Счета",
   "client": "Клиент",
   "totalAmount": "Сумма",
   "paidAmount": "Оплачено",
@@ -12,6 +14,8 @@
   "actions": "Действия",
   "sendButton": "Отправить",
   "delete": "Удалить",
+  "noInvoices": "Счетов пока нет",
+  "createFirst": "Создайте первый счет для клиента",
   "statuses": {
     "draft": "Черновик",
     "sent": "Отправлен",
@@ -21,10 +25,28 @@
   },
   "form": {
     "selectClient": "Выберите клиента",
-    "items": "Позиции",
+    "items": "Позиции счета",
+    "itemName": "Название",
+    "itemQuantity": "Кол-во",
+    "itemPrice": "Цена",
+    "addItem": "Добавить позицию",
     "dueDate": "Срок оплаты",
+    "notes": "Примечания",
     "save": "Сохранить",
     "cancel": "Отмена"
+  },
+  "payment": {
+    "title": "Добавить оплату",
+    "amount": "Сумма",
+    "method": "Способ оплаты",
+    "notes": "Примечания",
+    "add": "Добавить",
+    "methods": {
+      "cash": "Наличные",
+      "card": "Карта",
+      "transfer": "Перевод",
+      "online": "Онлайн"
+    }
   },
   "sendDialog": {
     "title": "Отправить счет",
@@ -36,6 +58,10 @@
     "sendButton": "Отправить"
   },
   "messages": {
-    "confirmDelete": "Вы уверены, что хотите удалить этот счет?"
+    "confirmDelete": "Вы уверены, что хотите удалить этот счет?",
+    "invoiceCreated": "Счет создан",
+    "invoiceSent": "Счет отправлен",
+    "paymentAdded": "Оплата добавлена",
+    "invoiceDeleted": "Счет удален"
   }
 }

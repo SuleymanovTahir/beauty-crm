@@ -77,7 +77,10 @@ const Invoices = () => {
     return (
         <div className="crm-page">
             <div className="crm-page-header">
-                <h1>{t('title')}</h1>
+                <div>
+                    <h1>{t('title')}</h1>
+                    <p className="text-gray-600">{t('subtitle')}</p>
+                </div>
                 <button className="crm-btn-primary" onClick={() => setShowAddDialog(true)}>
                     <Plus size={20} />
                     {t('addInvoice')}
@@ -301,8 +304,9 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                 <h2>{t('addInvoice')}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="crm-form-group">
-                        <label>{t('form.selectClient')}</label>
+                        <label className="crm-label">{t('form.selectClient')}</label>
                         <select
+                            className="crm-select"
                             value={formData.client_id}
                             onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
                             required
@@ -322,6 +326,7 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                             <div key={index} className="item-row">
                                 <input
                                     type="text"
+                                    className="crm-input"
                                     placeholder={t('form.itemName')}
                                     value={item.name}
                                     onChange={(e) => updateItem(index, 'name', e.target.value)}
@@ -329,6 +334,7 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                                 />
                                 <input
                                     type="number"
+                                    className="crm-input"
                                     placeholder={t('form.itemQuantity')}
                                     value={item.quantity}
                                     onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value))}
@@ -337,6 +343,7 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                                 />
                                 <input
                                     type="number"
+                                    className="crm-input"
                                     step="0.01"
                                     placeholder={t('form.itemPrice')}
                                     value={item.price}
@@ -367,17 +374,19 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                     </div>
 
                     <div className="crm-form-group">
-                        <label>{t('form.dueDate')}</label>
+                        <label className="crm-label">{t('form.dueDate')}</label>
                         <input
                             type="date"
+                            className="crm-input"
                             value={formData.due_date}
                             onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
                         />
                     </div>
 
                     <div className="crm-form-group">
-                        <label>{t('form.notes')}</label>
+                        <label className="crm-label">{t('form.notes')}</label>
                         <textarea
+                            className="crm-textarea"
                             value={formData.notes}
                             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                             rows={3}
@@ -425,9 +434,10 @@ const PaymentDialog = ({ invoice, onClose, onSuccess }: any) => {
                 </p>
                 <form onSubmit={handleSubmit}>
                     <div className="crm-form-group">
-                        <label>{t('payment.amount')}</label>
+                        <label className="crm-label">{t('payment.amount')}</label>
                         <input
                             type="number"
+                            className="crm-input"
                             step="0.01"
                             value={formData.amount}
                             onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) })}
@@ -437,8 +447,9 @@ const PaymentDialog = ({ invoice, onClose, onSuccess }: any) => {
                     </div>
 
                     <div className="crm-form-group">
-                        <label>{t('payment.method')}</label>
+                        <label className="crm-label">{t('payment.method')}</label>
                         <select
+                            className="crm-select"
                             value={formData.payment_method}
                             onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
                         >
@@ -450,8 +461,9 @@ const PaymentDialog = ({ invoice, onClose, onSuccess }: any) => {
                     </div>
 
                     <div className="crm-form-group">
-                        <label>{t('payment.notes')}</label>
+                        <label className="crm-label">{t('payment.notes')}</label>
                         <textarea
+                            className="crm-textarea"
                             value={formData.notes}
                             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                             rows={3}
@@ -495,8 +507,9 @@ const SendInvoiceDialog = ({ invoice, onClose, onSuccess }: any) => {
                 <h2>{t('sendDialog.title')}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="crm-form-group">
-                        <label>{t('sendDialog.method')}</label>
+                        <label className="crm-label">{t('sendDialog.method')}</label>
                         <select
+                            className="crm-select"
                             value={formData.delivery_method}
                             onChange={(e) => setFormData({ ...formData, delivery_method: e.target.value })}
                         >
@@ -507,9 +520,10 @@ const SendInvoiceDialog = ({ invoice, onClose, onSuccess }: any) => {
                     </div>
 
                     <div className="crm-form-group">
-                        <label>{t('sendDialog.recipient')}</label>
+                        <label className="crm-label">{t('sendDialog.recipient')}</label>
                         <input
                             type="text"
+                            className="crm-input"
                             value={formData.recipient}
                             onChange={(e) => setFormData({ ...formData, recipient: e.target.value })}
                             required
