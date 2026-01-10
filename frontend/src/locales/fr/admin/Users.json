@@ -294,5 +294,17 @@
   "view_details": "View details",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience"
+  "years_of_experience": "Years of Experience",
+  "salary_type": "Type de paie",
+  "salary_type_fixed": "Salaire fixe",
+  "salary_type_commission": "Salaire + % du chiffre d'affaires",
+  "salary_type_hourly": "Tarif horaire",
+  "salary_type_daily": "Paiement à jour",
+  "salary_type_per_booking": "Paiement à réservation",
+  "hourly_rate": "Tarif horaire",
+  "hourly_rate_hint": "Rémunération pour chaque heure travaillée",
+  "daily_rate": "Tarif à jour",
+  "daily_rate_hint": "Paiement pour chaque journée travaillée",
+  "per_booking_rate": "Paiement à réservation",
+  "per_booking_rate_hint": "Paiement pour chaque réservation complétée"
 }

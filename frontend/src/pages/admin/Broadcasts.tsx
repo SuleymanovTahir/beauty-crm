@@ -780,7 +780,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                     value={editingType.key}
                     onChange={e => setEditingType({ ...editingType, key: e.target.value })}
                     required
-                    placeholder="promotions"
+                    placeholder={t('placeholder_subscription_key', 'promotions')}
                     disabled={!isNew}
                   />
                 </div>
