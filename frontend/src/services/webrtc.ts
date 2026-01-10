@@ -67,7 +67,7 @@ export class WebRTCService {
       this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {
-        console.log('✅ WebRTC WebSocket connected');
+        console.log('WebRTC WebSocket connected');
         // Регистрируем пользователя
         this.sendSignal({
           type: 'register',
@@ -82,7 +82,7 @@ export class WebRTCService {
       };
 
       this.ws.onerror = (error) => {
-        console.error('❌ WebSocket error:', error);
+        console.error('WebSocket error:', error);
         this.onError?.('Ошибка подключения к серверу звонков');
         reject(error);
       };
@@ -100,7 +100,7 @@ export class WebRTCService {
   private async handleSignal(data: any): Promise<void> {
     switch (data.type) {
       case 'registered':
-        console.log('✅ Registered for WebRTC:', data.user_id);
+        console.log('Registered for WebRTC:', data.user_id);
         break;
 
       case 'incoming-call':
@@ -111,13 +111,13 @@ export class WebRTCService {
         break;
 
       case 'call-accepted':
-        console.log('✅ Call accepted by:', data.from);
+        console.log('Call accepted by:', data.from);
         this.onCallAccepted?.();
         await this.createOffer();
         break;
 
       case 'call-rejected':
-        console.log('❌ Call rejected by:', data.from);
+        console.log('Call rejected by:', data.from);
         this.onCallRejected?.();
         this.cleanup();
         break;
@@ -144,7 +144,7 @@ export class WebRTCService {
         break;
 
       case 'error':
-        console.error('❌ Server error:', data.message);
+        console.error('Server error:', data.message);
         this.onError?.(data.message);
         break;
 
@@ -188,7 +188,7 @@ export class WebRTCService {
 
       console.log(`📞 Calling user ${toUserId} (${callType})`);
     } catch (error) {
-      console.error('❌ Error starting call:', error);
+      console.error('Error starting call:', error);
       this.onError?.('Не удалось получить доступ к камере/микрофону');
       this.cleanup();
     }
@@ -215,9 +215,9 @@ export class WebRTCService {
       // Вызываем callback
       this.onCallAccepted?.();
 
-      console.log('✅ Call accepted');
+      console.log('Call accepted');
     } catch (error) {
-      console.error('❌ Error accepting call:', error);
+      console.error('Error accepting call:', error);
       this.onError?.('Не удалось получить доступ к камере/микрофону');
       this.cleanup();
     }
@@ -337,7 +337,7 @@ export class WebRTCService {
 
       console.log('📤 Offer sent');
     } catch (error) {
-      console.error('❌ Error creating offer:', error);
+      console.error('Error creating offer:', error);
     }
   }
 
@@ -365,7 +365,7 @@ export class WebRTCService {
       // Process queued ICE candidates
       this.processIceQueue();
     } catch (error) {
-      console.error('❌ Error handling offer:', error);
+      console.error('Error handling offer:', error);
     }
   }
 
@@ -378,12 +378,12 @@ export class WebRTCService {
     try {
       await this.peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
       this.isRemoteDescriptionSet = true;
-      console.log('✅ Answer applied');
+      console.log('Answer applied');
 
       // Process queued ICE candidates
       this.processIceQueue();
     } catch (error) {
-      console.error('❌ Error handling answer:', error);
+      console.error('Error handling answer:', error);
     }
   }
 
@@ -404,7 +404,7 @@ export class WebRTCService {
       await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
       console.log('🧊 ICE candidate added');
     } catch (error) {
-      console.error('❌ Error adding ICE candidate:', error);
+      console.error('Error adding ICE candidate:', error);
     }
   }
 
@@ -416,7 +416,7 @@ export class WebRTCService {
       try {
         await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
       } catch (error) {
-        console.error('❌ Error processing queued ICE candidate:', error);
+        console.error('Error processing queued ICE candidate:', error);
       }
     }
     this.iceCandidatesQueue = [];

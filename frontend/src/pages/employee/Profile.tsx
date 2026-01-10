@@ -1,6 +1,6 @@
 // /frontend/src/pages/employee/Profile.tsx
 // frontend/src/pages/employee/Profile.tsx
-// ✅ ПОЛНАЯ ВЕРСИЯ С ВСЕМИ УЛУЧШЕНИЯМИ
+// ПОЛНАЯ ВЕРСИЯ С ВСЕМИ УЛУЧШЕНИЯМИ
 
 import React, { useState, useEffect } from 'react';
 import { User, Mail, Save, AlertCircle, Key, Loader, Calendar, UserIcon, Camera, Instagram, Phone, Briefcase } from 'lucide-react';
@@ -86,7 +86,7 @@ export default function EmployeeProfile() {
     try {
       setLoading(true);
 
-      // ✅ Load user account data
+      // Load user account data
       const userData = await api.getUserProfile(userId);
 
       setUser(userData);
@@ -102,7 +102,7 @@ export default function EmployeeProfile() {
         setPhotoPreview(userData.photo);
       }
 
-      // ✅ Load employee profile data if user has employee_id
+      // Load employee profile data if user has employee_id
       if (userData.employee_id || currentUser.role === 'employee') {
         try {
           const empData = await api.getMyEmployeeProfile();
@@ -151,14 +151,14 @@ export default function EmployeeProfile() {
     try {
       setSaving(true);
       
-      // ✅ Обновляем профиль через API
+      // Обновляем профиль через API
       await api.updateUserProfile(userId, {
         username: profileData.username,
         full_name: profileData.full_name,
         email: profileData.email
       });
       
-      // ✅ Обновляем локальное хранилище
+      // Обновляем локальное хранилище
       const updatedUser = { 
         ...currentUser, 
         username: profileData.username,
@@ -173,7 +173,7 @@ export default function EmployeeProfile() {
       toast.success(t('profile:profile_successfully_updated'));
     } catch (err) {
       const message = err instanceof Error ? err.message : t('profile:error_updating_profile');
-      toast.error(`❌ ${message}`);
+      toast.error(`${message}`);
       console.error(t('profile:error_updating_profile'), err);
     } finally {
       setSaving(false);
@@ -202,7 +202,7 @@ export default function EmployeeProfile() {
     try {
       setSaving(true);
       
-      // ✅ Меняем пароль через API
+      // Меняем пароль через API
       await api.changePassword(userId, {
         old_password: passwordData.old_password,
         new_password: passwordData.new_password
@@ -218,14 +218,14 @@ export default function EmployeeProfile() {
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : t('profile:error_changing_password');
-      toast.error(`❌ ${message}`);
+      toast.error(`${message}`);
       console.error(t('profile:error_changing_password'), err);
     } finally {
       setSaving(false);
     }
   };
 
-  // ✅ НОВОЕ: Обработчик загрузки фото
+  // НОВОЕ: Обработчик загрузки фото
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -265,7 +265,7 @@ export default function EmployeeProfile() {
     }
   };
 
-  // ✅ НОВОЕ: Обработчик обновления employee профиля
+  // НОВОЕ: Обработчик обновления employee профиля
   const handleUpdateEmployeeProfile = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -288,17 +288,17 @@ export default function EmployeeProfile() {
       // Reload profile
       await loadProfile();
 
-      toast.success('✅ Профиль сотрудника успешно обновлен');
+      toast.success('Профиль сотрудника успешно обновлен');
     } catch (err: any) {
       const message = err.message || 'Ошибка обновления профиля';
-      toast.error(`❌ ${message}`);
+      toast.error(`${message}`);
       console.error('Error updating employee profile:', err);
     } finally {
       setSaving(false);
     }
   };
 
-  // ✅ Роли с красивыми метками
+  // Роли с красивыми метками
   const roleLabels: Record<string, { label: string; color: string }> = {
     admin: { label: t('profile:admin'), color: 'bg-purple-100 text-purple-800' },
     manager: { label: t('profile:manager'), color: 'bg-blue-100 text-blue-800' },
@@ -341,7 +341,7 @@ export default function EmployeeProfile() {
           <p className="text-gray-600">{t('profile:manage_personal_data_and_security_settings')}</p>
         </div>
 
-        {/* ✅ НОВОЕ: Карточка профиля с расширенной информацией */}
+        {/* НОВОЕ: Карточка профиля с расширенной информацией */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
           <div className="flex items-start gap-6">
             <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold flex-shrink-0">
@@ -373,7 +373,7 @@ export default function EmployeeProfile() {
           </div>
         </div>
 
-        {/* ✅ НОВОЕ: Вкладки для разделения функционала */}
+        {/* НОВОЕ: Вкладки для разделения функционала */}
         <Tabs defaultValue={employeeProfile ? "employee" : "profile"} className="space-y-6">
           <TabsList className={`grid w-full ${employeeProfile ? 'grid-cols-3' : 'grid-cols-2'}`}>
             {employeeProfile && (
@@ -392,14 +392,14 @@ export default function EmployeeProfile() {
             </TabsTrigger>
           </TabsList>
 
-          {/* ✅ Вкладка: Редактирование профиля (учетная запись) */}
+          {/* Вкладка: Редактирование профиля (учетная запись) */}
           <TabsContent value="profile">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
               <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('profile:account')}</h2>
 
               <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
-                  <strong>ℹ️ Информация:</strong> Здесь вы можете изменить данные для входа в систему. Для изменения публичной информации используйте вкладку "Профиль сотрудника".
+                  <strong>Информация:</strong> Здесь вы можете изменить данные для входа в систему. Для изменения публичной информации используйте вкладку "Профиль сотрудника".
                 </p>
               </div>
 
@@ -460,7 +460,7 @@ export default function EmployeeProfile() {
             </div>
           </TabsContent>
 
-          {/* ✅ НОВАЯ Вкладка: Смена пароля */}
+          {/* НОВАЯ Вкладка: Смена пароля */}
           <TabsContent value="password">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
               <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('profile:change_password')}</h2>
@@ -541,7 +541,7 @@ export default function EmployeeProfile() {
             </div>
           </TabsContent>
 
-          {/* ✅ НОВАЯ Вкладка: Профиль сотрудника */}
+          {/* НОВАЯ Вкладка: Профиль сотрудника */}
           {employeeProfile && (
             <TabsContent value="employee">
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
