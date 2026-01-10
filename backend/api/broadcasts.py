@@ -53,8 +53,9 @@ async def preview_broadcast(
             FROM users u
             LEFT JOIN user_subscriptions s ON u.id = s.user_id AND s.subscription_type = %s
             WHERE u.is_active = TRUE
+            AND u.id != %s
         """
-        params = [broadcast.subscription_type]
+        params = [broadcast.subscription_type, current_user.get('id')]
 
         if not broadcast.force_send:
             query += " AND s.is_subscribed = TRUE"
@@ -168,8 +169,9 @@ async def send_broadcast(
             FROM users u
             LEFT JOIN user_subscriptions s ON u.id = s.user_id AND s.subscription_type = %s
             WHERE u.is_active = TRUE
+            AND u.id != %s
         """
-        params = [broadcast.subscription_type]
+        params = [broadcast.subscription_type, current_user.get('id')]
 
         if not broadcast.force_send:
             query += " AND (s.is_subscribed = TRUE OR s.is_subscribed IS NULL)"

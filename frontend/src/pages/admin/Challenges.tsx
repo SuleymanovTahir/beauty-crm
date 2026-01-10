@@ -160,11 +160,11 @@ export default function Challenges() {
                             <Sparkles className="w-2.5 h-2.5" />
                             Gamification Engine
                         </div>
-                        <h1 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight leading-none">
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-none">
                             {t('title', 'Челленджи')}
                             <span className="text-pink-600">.</span>
                         </h1>
-                        <p className="text-gray-500 font-medium max-w-lg text-base leading-relaxed">
+                        <p className="text-gray-500 font-medium max-w-lg text-sm leading-relaxed">
                             {t('subtitle', 'Повышайте лояльность клиентов с помощью игровых механик и автоматических наград.')}
                         </p>
                     </div>
@@ -199,9 +199,9 @@ export default function Challenges() {
                                     <stat.icon className="w-7 h-7" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-2">{stat.title}</p>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-2">{stat.title}</p>
                                     <div className="flex items-baseline gap-1.5">
-                                        <p className="text-3xl font-black text-gray-900 leading-none tracking-tight">{stat.value}</p>
+                                        <p className="text-xl font-bold text-gray-900 leading-none tracking-tight">{stat.value}</p>
                                         <TrendingUp className="w-4 h-4 text-emerald-500" />
                                     </div>
                                 </div>
