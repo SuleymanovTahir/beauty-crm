@@ -1,0 +1,51 @@
+{
+  "marketplace": {
+    "title": "Брондау платформалары",
+    "subtitle": "Онлайн брондау және шолу қызметтерімен интеграция",
+    "totalBookings": "Жалпы жазбалар",
+    "activeSources": "Белсенді көздер",
+    "bookings": "bookings",
+    "reviews": "Пікірлер",
+    "lastSync": "Соңғы синхрондау",
+    "neverSynced": "Ешқашан",
+    "justNow": "Жаңа ғана",
+    "minutesAgo": "{{count}} мин бұрын",
+    "hoursAgo": "{{count}} сағат бұрын",
+    "daysAgo": "{{count}} күн бұрын",
+    "configure": "Баптау",
+    "sync": "Синхрондау",
+    "syncing": "Синхрондау...",
+    "syncStarted": "Синхрондау басталды",
+    "status": "Күй",
+    "active": "Белсенді",
+    "inactive": "Конфигурацияланбаған",
+    "configureProvider": "Параметрлер",
+    "apiKey": "API кілті",
+    "apiSecret": "API құпиясы",
+    "webhookUrl": "Вебхук URL",
+    "webhookHint": "Бұл URL мекенжайын платформадағы вебхук параметрлерінде көрсетіңіз",
+    "enableProvider": "Интеграцияны қосыңыз",
+    "urlCopied": "URL көшірілді",
+    "configSuccess": "Параметрлер сақталды"
+  },
+  "payment": {
+    "title": "Төлем жүйелері",
+    "subtitle": "Төлем провайдерлерін қосу",
+    "status": "Күй",
+    "active": "Белсенді",
+    "inactive": "Конфигурацияланбаған",
+    "configure": "Баптау",
+    "setup": "Қосылу",
+    "configureProvider": "Параметрлер",
+    "apiKey": "API кілті",
+    "secretKey": "Құпия кілт",
+    "webhookSecret": "Вебхук құпиясы",
+    "webhookUrl": "Вебхук URL",
+    "enableProvider": "Провайдерді қосыңыз"
+  },
+  "errors": {
+    "loadFailed": "Деректерді жүктеу қатесі",
+    "syncFailed": "Синхрондау қатесі",
+    "saveFailed": "Қатені сақтау"
+  }
+}

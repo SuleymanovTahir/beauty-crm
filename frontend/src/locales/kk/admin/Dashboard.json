@@ -31,7 +31,7 @@
   "engaged": "Қатысқан",
   "error_loading": "Жүктеу қатесі",
   "errors": {
-    "loading": "Қате: {message}",
+    "loading": "Қате: {{message}}",
     "loading_title": "Жүктеу қатесі"
   },
   "export_error": "Экспорттау қатесі туралы хабарлау",

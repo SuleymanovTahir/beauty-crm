@@ -294,5 +294,17 @@
   "view_details": "View details",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience"
+  "years_of_experience": "Years of Experience",
+  "salary_type": "Жалақы түрі",
+  "salary_type_fixed": "Тұрақты жалақы",
+  "salary_type_commission": "Жалақы + табыс %",
+  "salary_type_hourly": "Сағаттық тариф",
+  "salary_type_daily": "Күніне төлем",
+  "salary_type_per_booking": "Жазба үшін төлем",
+  "hourly_rate": "Сағатына баға",
+  "hourly_rate_hint": "Әрбір жұмыс істеген сағат үшін төлем",
+  "daily_rate": "Күніне мөлшерлеме",
+  "daily_rate_hint": "Әрбір жұмыс күні үшін төлем",
+  "per_booking_rate": "Жазба үшін төлем",
+  "per_booking_rate_hint": "Әрбір толтырылған жазба үшін төлем"
 }
