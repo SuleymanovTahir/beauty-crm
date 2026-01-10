@@ -46,10 +46,10 @@ export default function NotificationsPage() {
         try {
             await api.markAllNotificationsRead();
             await loadNotifications();
-            toast.success('Все уведомления отмечены как прочитанные');
+            toast.success(t('notifications_marked_read', 'Все уведомления отмечены как прочитанные'));
         } catch (error) {
             console.error('Error marking all read:', error);
-            toast.error('Ошибка при отметке уведомлений');
+            toast.error(t('error_marking_notifications', 'Ошибка при отметке уведомлений'));
         }
     };
 
@@ -58,25 +58,25 @@ export default function NotificationsPage() {
             await api.deleteNotification(id);
             setNotifications(notifications.filter(n => n.id !== id));
             setSelectedIds(selectedIds.filter(sid => sid !== id));
-            toast.success('Уведомление удалено');
+            toast.success(t('notification_deleted', 'Уведомление удалено'));
         } catch (error) {
             console.error('Error deleting notification:', error);
-            toast.error('Ошибка при удалении уведомления');
+            toast.error(t('error_deleting_notification', 'Ошибка при удалении уведомления'));
         }
     };
 
     const handleClearAll = async () => {
-        if (!window.confirm('Вы уверены что хотите удалить все уведомления?')) {
+        if (!window.confirm(t('confirm_delete_all', 'Вы уверены что хотите удалить все уведомления?'))) {
             return;
         }
         try {
             await api.clearAllNotifications();
             setNotifications([]);
             setSelectedIds([]);
-            toast.success('Все уведомления удалены');
+            toast.success(t('all_notifications_deleted', 'Все уведомления удалены'));
         } catch (error) {
             console.error('Error clearing notifications:', error);
-            toast.error('Ошибка при удалении уведомлений');
+            toast.error(t('error_deleting_notifications', 'Ошибка при удалении уведомлений'));
         }
     };
 
@@ -98,7 +98,7 @@ export default function NotificationsPage() {
 
     const handleDeleteSelected = async () => {
         if (selectedIds.length === 0) return;
-        if (!window.confirm(`Вы уверены что хотите удалить ${selectedIds.length} уведомлений?`)) return;
+        if (!window.confirm(t('confirm_delete_selected', { count: selectedIds.length, defaultValue: `Вы уверены что хотите удалить ${selectedIds.length} уведомлений?` }))) return;
 
         try {
             // Delete one by one as API doesn't seem to have bulk delete by IDs
@@ -111,10 +111,10 @@ export default function NotificationsPage() {
                 setNotifications(notifications.filter(n => !selectedIds.includes(n.id)));
             }
             setSelectedIds([]);
-            toast.success('Выбранные уведомления удалены');
+            toast.success(t('selected_notifications_deleted', 'Выбранные уведомления удалены'));
         } catch (error) {
             console.error('Error deleting selected:', error);
-            toast.error('Ошибка при удалении выбранных уведомлений');
+            toast.error(t('error_deleting_selected', 'Ошибка при удалении выбранных уведомлений'));
         }
     };
 
@@ -131,8 +131,8 @@ export default function NotificationsPage() {
                         </h1>
                         <p className="text-gray-600 mt-2">
                             {unreadCount > 0
-                                ? `У вас ${unreadCount} ${unreadCount === 1 ? 'непрочитанное уведомление' : 'непрочитанных уведомлений'}`
-                                : 'Все уведомления прочитаны'}
+                                ? t('unread_notifications_count', { count: unreadCount, defaultValue: `У вас ${unreadCount} непрочитанных уведомлений` })
+                                : t('all_read_message', 'Все уведомления прочитаны')}
                         </p>
                     </div>
                     <div className="flex gap-2">
@@ -142,7 +142,7 @@ export default function NotificationsPage() {
                                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm"
                             >
                                 <Trash2 size={16} />
-                                Удалить ({selectedIds.length})
+                                {t('delete', 'Удалить')} ({selectedIds.length})
                             </button>
                         )}
                         {unreadCount > 0 && (
@@ -151,7 +151,7 @@ export default function NotificationsPage() {
                                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-100"
                             >
                                 <CheckCheck size={16} />
-                                Отметить все прочитанными
+                                {t('mark_all_read', 'Отметить все прочитанными')}
                             </button>
                         )}
                         {notifications.length > 0 && (
@@ -160,7 +160,7 @@ export default function NotificationsPage() {
                                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
                             >
                                 <Trash2 size={16} />
-                                Очистить список
+                                {t('clear_list', 'Очистить список')}
                             </button>
                         )}
                     </div>
@@ -174,7 +174,7 @@ export default function NotificationsPage() {
                             onChange={toggleSelectAll}
                             className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300"
                         />
-                        <span className="text-sm text-gray-600 font-medium">Выбрать все</span>
+                        <span className="text-sm text-gray-600 font-medium">{t('select_all', 'Выбрать все')}</span>
                     </div>
                 )}
             </div>
@@ -187,10 +187,10 @@ export default function NotificationsPage() {
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center">
                     <Bell size={64} className="mx-auto mb-4 text-gray-300" />
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        Нет уведомлений
+                        {t('no_notifications', 'Нет уведомлений')}
                     </h3>
                     <p className="text-gray-600">
-                        У вас пока нет никаких уведомлений
+                        {t('no_notifications_desc', 'У вас пока нет никаких уведомлений')}
                     </p>
                 </div>
             ) : (
@@ -209,7 +209,7 @@ export default function NotificationsPage() {
                                     className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300 cursor-pointer"
                                 />
                                 {!notif.is_read && (
-                                    <div className="w-3 h-3 bg-blue-500 rounded-full flex-shrink-0 animate-pulse" title="Не прочитано"></div>
+                                    <div className="w-3 h-3 bg-blue-500 rounded-full flex-shrink-0 animate-pulse" title={t('unread', 'Не прочитано')}></div>
                                 )}
                             </div>
 
@@ -248,7 +248,7 @@ export default function NotificationsPage() {
                             <button
                                 onClick={(e) => { e.stopPropagation(); handleDeleteNotification(notif.id); }}
                                 className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-all self-center"
-                                title="Удалить"
+                                title={t('delete', 'Удалить')}
                             >
                                 <Trash2 size={18} />
                             </button>
@@ -302,7 +302,7 @@ export default function NotificationsPage() {
                                 onClick={() => setShowModal(false)}
                                 className="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-pink-500 hover:shadow-lg rounded-lg transition-all"
                             >
-                                Закрыть
+                                {t('close', 'Закрыть')}
                             </button>
                         </div>
                     </div>

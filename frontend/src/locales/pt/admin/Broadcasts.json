@@ -82,5 +82,14 @@
   "channels_notification": "Notificações",
   "error_loading_types": "Erro ao carregar tipos de assinatura",
   "placeholder_subscription_key": "promoções",
-  "telegram_limit_hint": "Recomendado até 4096 (Telegrama)"
+  "telegram_limit_hint": "Recomendado até 4096 (Telegrama)",
+  "confirm_broadcast_title": "Confirmação de envio",
+  "check_recipients": "Verifique os destinatários",
+  "check_recipients_desc": "Certifique-se de que os dados do destinatário (e-mail, nome de usuário) estejam corretos antes de enviar.",
+  "showing_first_10": "Mostrado os 10 primeiros",
+  "no_contact": "Sem dados",
+  "and_more_users": "...e também usuários {{count}}",
+  "no_recipients_found": "Nenhum destinatário encontrado",
+  "confirm_and_send": "Confirme e envie",
+  "sending": "Enviando..."
 }

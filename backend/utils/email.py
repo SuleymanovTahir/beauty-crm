@@ -442,7 +442,7 @@ async def send_email_async(recipients: list, subject: str, message: str, html: s
     # Запускаем синхронную функцию в отдельном потоке
     return await asyncio.to_thread(send_email_sync, recipients, subject, message, html)
 
-def send_broadcast_email(to_email: str, subject: str, message: str, full_name: str, unsubscribe_link: str) -> bool:
+def send_broadcast_email(to_email: str, subject: str, message: str, full_name: str, unsubscribe_link: str, salon_settings: dict = None, attachment_urls: list = None) -> bool:
     """
     Отправить broadcast email с новым дизайном (v2)
 
@@ -452,6 +452,8 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
         message: Текст письма
         full_name: Имя пользователя
         unsubscribe_link: Ссылка для отписки
+        salon_settings: Настройки салона (адрес, телефон и т.д.)
+        attachment_urls: Список URL или путей к вложениям
 
     Returns:
         bool: True если отправлено успешно
@@ -464,11 +466,33 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
         smtp_password = os.getenv('SMTP_PASSWORD')
         smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
 
-        # Получаем название салона и URL из .env
-        salon_name = os.getenv('SALON_BOT_NAME', 'M.Le Diamant').replace(' Bot', '')
-        base_url = os.getenv('BASE_URL', 'https://mlediamant.com')
-        clean_base_url = base_url.replace('https://', '').replace('http://', '')
+        # Настройки салона
+        if not salon_settings:
+            salon_settings = {}
+        
+        salon_name = salon_settings.get('name', os.getenv('SALON_BOT_NAME', 'M.Le Diamant')).replace(' Bot', '')
+        salon_address = salon_settings.get('address')
+        salon_phone = salon_settings.get('phone')
+        salon_email = salon_settings.get('email', smtp_user) # Fallback to sending email
+        salon_website = salon_settings.get('website', os.getenv('BASE_URL', 'https://mlediamant.com'))
+        
+        # Clean website URL for display
+        display_website = salon_website.replace('https://', '').replace('http://', '').strip('/')
 
+        base_url = os.getenv('BASE_URL', 'https://mlediamant.com')
+        
+        # Подготовка HTML блоков для контактов (показываем только если есть данные)
+        address_html = f'<div style="margin-bottom: 5px; color: #666666;">{salon_address}</div>' if salon_address else ""
+        phone_html = f'<div style="margin-bottom: 5px;"><a href="tel:{salon_phone.replace(" ", "")}" style="text-decoration: none; color: #666666;">{salon_phone}</a></div>' if salon_phone else ""
+        email_html = f'<div style="margin-bottom: 5px;"><a href="mailto:{salon_email}" style="text-decoration: none; color: #666666;">{salon_email}</a></div>' if salon_email else ""
+        website_html = f'<div style="margin-bottom: 5px;"><a href="{salon_website}" style="text-decoration: none; color: #666666;">{display_website}</a></div>' if salon_website else ""
+        
+        # Подготовка текстовых блоков
+        address_text = f"{salon_address}" if salon_address else ""
+        phone_text = f"{salon_phone}" if salon_phone else ""
+        email_text = f"{salon_email}" if salon_email else ""
+        website_text = f"{display_website}" if salon_website else ""
+        
         # Определяем URL для отписки
         if 'localhost' in base_url or '127.0.0.1' in base_url:
             unsubscribe_url = f"http://localhost:5173{unsubscribe_link}"
@@ -480,10 +504,14 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
             return False
 
         # Создаем сообщение
-        msg = MIMEMultipart('alternative')
+        msg = MIMEMultipart('mixed') # Changed to mixed to support attachments
         msg['Subject'] = subject
         msg['From'] = f"{salon_name} <{smtp_from}>"
         msg['To'] = to_email
+
+        # Create alternative part for text/html
+        msg_alternative = MIMEMultipart('alternative')
+        msg.attach(msg_alternative)
 
         # HTML версия письма - Minimalism Design
         html = f"""
@@ -545,10 +573,10 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
                           <tr>
                             <td style="padding-bottom: 24px;">
                               <div style="font-weight: 700; color: #000000; font-size: 14px; margin-bottom: 8px;">{salon_name}</div>
-                              <div>📍 Грузия, Батуми</div>
-                              <div>📞 <a href="tel:+995123456789" style="text-decoration: none; color: #666666;">+995 123 456 789</a></div>
-                              <div>✉️ <a href="mailto:ii3391609@gmail.com" style="text-decoration: none; color: #666666;">ii3391609@gmail.com</a></div>
-                              <div>🌐 <a href="{base_url}" style="text-decoration: none; color: #666666;">mlediamant.com</a></div>
+                              {address_html}
+                              {phone_html}
+                              {email_html}
+                              {website_html}
                             </td>
                           </tr>
                           <tr>
@@ -579,18 +607,80 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
 
         ---
         {salon_name}
-        📍 Грузия, Батуми
-        📞 +995 123 456 789
-        ✉️ ii3391609@gmail.com
-        🌐 mlediamant.com
+        {address_text}
+        {phone_text}
+        {email_text}
+        {website_text}
 
         Отписаться: {unsubscribe_url}
         """
 
         part1 = MIMEText(text, 'plain', 'utf-8')
         part2 = MIMEText(html, 'html', 'utf-8')
-        msg.attach(part1)
-        msg.attach(part2)
+        msg_alternative.attach(part1)
+        msg_alternative.attach(part2)
+
+        # Обработка вложений
+        if attachment_urls:
+             from email.mime.base import MIMEBase
+             from email import encoders
+             import mimetypes
+             import requests
+
+             for url in attachment_urls:
+                 try:
+                     # Check if it's a local file path (upload returns relative path usually)
+                     # Assuming uploads are in 'uploads/' directory relative to root or similar
+                     # If the URL starts with http, download it. If it starts with /uploads, read from disk
+                     
+                     filename = os.path.basename(url)
+                     file_data = None
+                     
+                     if url.startswith('http'):
+                         response = requests.get(url)
+                         if response.status_code == 200:
+                             file_data = response.content
+                     else:
+                         # Try to find local file
+                         # Adjust path resolution as needed based on project structure
+                         # Assuming backend is running in 'backend' dir and uploads are in 'uploads'?
+                         # Or maybe 'frontend/public/uploads'? 
+                         # Let's try to resolve relative to backend root or absolute
+                         possible_paths = [
+                             url.lstrip('/'),
+                             os.path.join('..', url.lstrip('/')),
+                             os.path.join('uploads', os.path.basename(url))
+                         ]
+                         
+                         for path in possible_paths:
+                             if os.path.exists(path):
+                                 with open(path, 'rb') as f:
+                                     file_data = f.read()
+                                 break
+                     
+                     if file_data:
+                         ctype, encoding = mimetypes.guess_type(filename)
+                         if ctype is None or encoding is not None:
+                             # No guess could be made, or the file is encoded (compressed), so
+                             # use a generic bag-of-bits type.
+                             ctype = 'application/octet-stream'
+                         
+                         maintype, subtype = ctype.split('/', 1)
+                         
+                         attachment = MIMEBase(maintype, subtype)
+                         attachment.set_payload(file_data)
+                         encoders.encode_base64(attachment)
+                         attachment.add_header(
+                             'Content-Disposition',
+                             'attachment',
+                             filename=filename
+                         )
+                         msg.attach(attachment)
+                     else:
+                         log_warning(f"Could not find attachment: {url}", "email")
+
+                 except Exception as e:
+                     log_error(f"Failed to attach file {url}: {e}", "email")
 
         # Отправляем
         with smtplib.SMTP(smtp_host, smtp_port) as server:

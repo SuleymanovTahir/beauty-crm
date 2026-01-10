@@ -82,5 +82,14 @@
   "channels_notification": "सूचनाएं",
   "error_loading_types": "सदस्यता प्रकार लोड करने में त्रुटि",
   "placeholder_subscription_key": "प्रचार",
-  "telegram_limit_hint": "4096 तक अनुशंसित (टेलीग्राम)"
+  "telegram_limit_hint": "4096 तक अनुशंसित (टेलीग्राम)",
+  "confirm_broadcast_title": "प्रेषण पुष्टिकरण",
+  "check_recipients": "प्राप्तकर्ताओं की जाँच करें",
+  "check_recipients_desc": "कृपया भेजने से पहले सुनिश्चित करें कि प्राप्तकर्ता का विवरण (ईमेल, उपयोगकर्ता नाम) सही है।",
+  "showing_first_10": "पहले 10 दिखाए गए",
+  "no_contact": "कोई डेटा नहीं",
+  "and_more_users": "...और {{count}} उपयोगकर्ता भी",
+  "no_recipients_found": "कोई प्राप्तकर्ता नहीं मिला",
+  "confirm_and_send": "पुष्टि करें और भेजें",
+  "sending": "भेजा जा रहा है..."
 }
