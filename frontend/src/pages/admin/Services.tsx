@@ -217,7 +217,7 @@ export default function Services() {
   const [saving, setSaving] = useState(false);
 
   // Positions state
-  const [positions, setPositions] = useState<Array<{ id: number; name: string }>>([]);
+  const [positions, setPositions] = useState<Array<{ id: number; name: string; name_en?: string }>>([]);
   const [employees, setEmployees] = useState<Array<{ id: number; full_name: string; full_name_ru: string; position_id: number }>>([]);
 
   const [serviceFormData, setServiceFormData] = useState({
@@ -1182,159 +1182,198 @@ export default function Services() {
 
       {/* Service Modal */}
       <Dialog open={isServiceModalOpen} onOpenChange={setIsServiceModalOpen}>
-        <DialogContent className="max-w-2xl p-0 flex flex-col max-h-[90vh]">
-          <DialogHeader className="px-6 pt-6 pb-4 border-b">
-            <DialogTitle>
-              {editingService ? t('services:edit_service') : t('services:add_service')}
-            </DialogTitle>
+        <DialogContent className="max-w-4xl p-0 flex flex-col max-h-[95vh] overflow-hidden border-none shadow-2xl rounded-2xl">
+          <DialogHeader className="bg-gradient-to-r from-pink-600 to-purple-700 p-8 rounded-t-2xl">
+            <div className="flex items-center gap-3 text-left">
+              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-md">
+                <Scissors className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-bold text-white leading-tight">
+                  {editingService ? t('services:edit_service') : t('services:add_service')}
+                </DialogTitle>
+                <p className="text-pink-100 text-sm opacity-90">
+                  {t('services:service_details_subtitle')}
+                </p>
+              </div>
+            </div>
           </DialogHeader>
 
-          <div className="crm-form-content px-6 py-4">
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="hidden">
-                  <Label htmlFor="key">{t('services:key')} *</Label>
-                  <Input
-                    id="key"
-                    value={serviceFormData.key}
-                    onChange={(e) => setServiceFormData({ ...serviceFormData, key: e.target.value })}
-                  />
+          <div className="flex-1 overflow-y-auto crm-scrollbar">
+            <div className="p-8 space-y-8">
+              {/* Section 1: Basic Information */}
+              <div className="section-container">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1 h-6 bg-pink-500 rounded-full" />
+                  <h3 className="text-lg font-semibold text-gray-800">{t('services:basic_info')}</h3>
                 </div>
-                <div className="col-span-2">
-                  <Label htmlFor="category">{t('services:category')} *</Label>
-                  <Select value={serviceFormData.category} onValueChange={(value) => setServiceFormData({ ...serviceFormData, category: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('services:select_category')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map(cat => (
-                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
 
-              <div>
-                <Label htmlFor="nameRu">{t('services:name')} *</Label>
-                <Input
-                  id="nameRu"
-                  value={serviceFormData.name_ru}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setServiceFormData({
-                      ...serviceFormData,
-                      name_ru: val,
-                      name: val,
-                      // Auto-generate key if not editing and key is empty
-                      key: editingService ? serviceFormData.key : val.toLowerCase().replace(/\s+/g, '_').replace(/[^\w]/g, '')
-                    });
-                  }}
-                  placeholder={t('services:name')}
-                />
-              </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50/50 rounded-2xl border border-gray-100/50">
+                  <div className="md:col-span-1">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                      {t('services:category')} <span className="text-pink-500">*</span>
+                    </Label>
+                    <Select value={serviceFormData.category} onValueChange={(value) => setServiceFormData({ ...serviceFormData, category: value })}>
+                      <SelectTrigger className="h-11 bg-white border-gray-200">
+                        <SelectValue placeholder={t('services:select_category')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map(cat => (
+                          <SelectItem key={cat} value={cat}>{t(`services:category_${cat.toLowerCase().replace(/\s+/g, '_')}`, cat)}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="price">{t('services:base_price')} *</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    value={serviceFormData.price}
-                    onChange={(e) => setServiceFormData({ ...serviceFormData, price: Number(e.target.value) })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="currency">{t('services:currency')}</Label>
-                  <Input
-                    value={serviceFormData.currency}
-                    disabled
-                    className="bg-gray-100"
-                  />
-                </div>
-              </div>
+                  <div className="md:col-span-1">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                      {t('services:name')} <span className="text-pink-500">*</span>
+                    </Label>
+                    <Input
+                      className="h-11 bg-white border-gray-200"
+                      value={serviceFormData.name_ru}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setServiceFormData({
+                          ...serviceFormData,
+                          name_ru: val,
+                          name: val,
+                          key: editingService ? serviceFormData.key : val.toLowerCase().replace(/\s+/g, '_').replace(/[^\w]/g, '')
+                        });
+                      }}
+                      placeholder={t('services:name_placeholder')}
+                    />
+                  </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="minPrice">{t('services:min_price')}</Label>
-                  <Input
-                    id="minPrice"
-                    type="number"
-                    value={serviceFormData.min_price}
-                    onChange={(e) => setServiceFormData({ ...serviceFormData, min_price: e.target.value })}
-                    placeholder={t('services:optional')}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="maxPrice">{t('services:max_price')}</Label>
-                  <Input
-                    id="maxPrice"
-                    type="number"
-                    value={serviceFormData.max_price}
-                    onChange={(e) => setServiceFormData({ ...serviceFormData, max_price: e.target.value })}
-                    placeholder={t('services:optional')}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="duration">{t('services:duration')}</Label>
-                  <Input
-                    id="duration"
-                    value={serviceFormData.duration}
-                    onChange={(e) => setServiceFormData({ ...serviceFormData, duration: e.target.value })}
-                    placeholder="90"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    {t('services:enter_duration_in_minutes', 'Введите длительность в минутах (например: 60, 90, 120)')}
-                  </p>
+                  <div className="md:col-span-2">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                      {t('services:description')}
+                    </Label>
+                    <Textarea
+                      className="min-h-[100px] bg-white border-gray-200"
+                      value={serviceFormData.description_ru}
+                      onChange={(e) => setServiceFormData({
+                        ...serviceFormData,
+                        description_ru: e.target.value,
+                        description: e.target.value
+                      })}
+                      placeholder={t('services:description')}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="descriptionRu">{t('services:description')}</Label>
-                <Textarea
-                  id="descriptionRu"
-                  value={serviceFormData.description_ru}
-                  onChange={(e) => setServiceFormData({
-                    ...serviceFormData,
-                    description_ru: e.target.value,
-                    description: e.target.value
-                  })}
-                  placeholder={t('services:description')}
-                />
+              {/* Section 2: Pricing & Duration */}
+              <div className="section-container">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1 h-6 bg-purple-500 rounded-full" />
+                  <h3 className="text-lg font-semibold text-gray-800">{t('services:pricing_timing')}</h3>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-gray-50/50 rounded-2xl border border-gray-100/50">
+                  <div className="col-span-2 md:col-span-1">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                      {t('services:base_price')} *
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        type="number"
+                        className="h-11 pl-3 pr-12 bg-white border-gray-200 font-bold"
+                        value={serviceFormData.price}
+                        onChange={(e) => setServiceFormData({ ...serviceFormData, price: Number(e.target.value) })}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium text-sm">
+                        {serviceFormData.currency}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="col-span-1">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                      {t('services:duration')}
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        className="h-11 pl-3 pr-12 bg-white border-gray-200 font-bold"
+                        value={serviceFormData.duration}
+                        onChange={(e) => setServiceFormData({ ...serviceFormData, duration: e.target.value })}
+                        placeholder="60"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium text-sm">
+                        {t('services:unit_minute', 'м')}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="col-span-1">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                      {t('services:min_price')}
+                    </Label>
+                    <Input
+                      type="number"
+                      className="h-11 bg-white border-gray-200"
+                      value={serviceFormData.min_price}
+                      onChange={(e) => setServiceFormData({ ...serviceFormData, min_price: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="col-span-1">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                      {t('services:max_price')}
+                    </Label>
+                    <Input
+                      type="number"
+                      className="h-11 bg-white border-gray-200"
+                      value={serviceFormData.max_price}
+                      onChange={(e) => setServiceFormData({ ...serviceFormData, max_price: e.target.value })}
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="benefits">{t('services:benefits')} ({t('services:separate_through_pipe')})</Label>
-                <Textarea
-                  id="benefits"
-                  value={serviceFormData.benefits}
-                  onChange={(e) => setServiceFormData({ ...serviceFormData, benefits: e.target.value })}
-                  placeholder={t('services:long_lasting_natural_look_waterproof')}
-                />
+              {/* Section 4: Benefits */}
+              <div className="section-container">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1 h-6 bg-green-500 rounded-full" />
+                  <h3 className="text-lg font-semibold text-gray-800">{t('services:benefits')}</h3>
+                </div>
+                <div className="p-6 bg-gray-50/50 rounded-2xl border border-gray-100/50">
+                  <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                    {t('services:benefits')} ({t('services:separate_through_pipe', '|')})
+                  </Label>
+                  <Textarea
+                    className="min-h-[80px] bg-white border-gray-200"
+                    value={serviceFormData.benefits}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, benefits: e.target.value })}
+                    placeholder={t('services:long_lasting_natural_look_waterproof')}
+                  />
+                </div>
               </div>
 
-              {/* Positions Multi-Select */}
-              <div>
-                <Label htmlFor="positions">{t('services:positions_can_perform')}</Label>
-                <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
-                  {positions.length === 0 ? (
-                    <p className="text-sm text-gray-500">{t('services:no_available_positions')}</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {positions.map((position) => (
-                        <label
-                          key={position.id}
-                          className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={serviceFormData.position_ids.includes(position.id)}
-                            onChange={(e) => {
-                              const newPositionIds = e.target.checked
-                                ? [...serviceFormData.position_ids, position.id]
-                                : serviceFormData.position_ids.filter(id => id !== position.id);
+              {/* Section 3: Staffing */}
+              <div className="section-container">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1 h-6 bg-blue-500 rounded-full" />
+                  <h3 className="text-lg font-semibold text-gray-800">{t('services:staff_settings')}</h3>
+                </div>
 
-                              // Filter out employees who don't have the remaining positions
+                <div className="space-y-6 p-6 bg-blue-50/30 rounded-2xl border border-blue-100/50 text-left">
+                  <div>
+                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-3 block">
+                      {t('services:positions_can_perform')}
+                    </Label>
+                    <div className="flex flex-wrap gap-2">
+                      {positions.map((pos) => {
+                        const isSelected = serviceFormData.position_ids.includes(pos.id);
+                        return (
+                          <button
+                            key={pos.id}
+                            type="button"
+                            onClick={() => {
+                              const newPositionIds = isSelected
+                                ? serviceFormData.position_ids.filter(id => id !== pos.id)
+                                : [...serviceFormData.position_ids, pos.id];
+
                               const filteredEmployeeIds = serviceFormData.employee_ids.filter(eid => {
                                 const emp = employees.find(e => e.id === eid);
                                 return emp && (newPositionIds.includes(emp.position_id) || newPositionIds.length === 0);
@@ -1346,72 +1385,74 @@ export default function Services() {
                                 employee_ids: filteredEmployeeIds
                               });
                             }}
-                            className="w-4 h-4 text-pink-600 rounded focus:ring-pink-500"
-                          />
-                          <span className="text-sm">{position.name}</span>
-                        </label>
-                      ))}
+                            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border ${isSelected
+                              ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200'
+                              : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
+                              }`}
+                          >
+                            {i18n.language.startsWith('ru') ? pos.name : (pos.name_en || pos.name)}
+                          </button>
+                        );
+                      })}
                     </div>
-                  )}
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  {t('services:choose_positions_description')}
-                </p>
-              </div>
+                  </div>
 
-              {/* Employees Multi-Select (Filtered) */}
-              <div>
-                <Label htmlFor="employees">{t('services:employees_providing_service')}</Label>
-                <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
-                  {employees.filter(emp => serviceFormData.position_ids.length === 0 || serviceFormData.position_ids.includes(emp.position_id)).length === 0 ? (
-                    <p className="text-sm text-gray-500">
-                      {serviceFormData.position_ids.length === 0
-                        ? t('services:select_positions_first')
-                        : t('services:no_employees_with_positions')}
-                    </p>
-                  ) : (
-                    <div className="space-y-2">
+                  <div className="space-y-3">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-1 block">
+                      {t('services:employees_providing_service')}
+                    </Label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                       {employees
                         .filter(emp => serviceFormData.position_ids.length === 0 || serviceFormData.position_ids.includes(emp.position_id))
-                        .map((employee) => (
-                          <label
-                            key={employee.id}
-                            className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={serviceFormData.employee_ids.includes(employee.id)}
-                              onChange={(e) => {
-                                const newEmployeeIds = e.target.checked
-                                  ? [...serviceFormData.employee_ids, employee.id]
-                                  : serviceFormData.employee_ids.filter(id => id !== employee.id);
-                                setServiceFormData({ ...serviceFormData, employee_ids: newEmployeeIds });
-                              }}
-                              className="w-4 h-4 text-pink-600 rounded focus:ring-pink-500"
-                            />
-                            <span className="text-sm">
-                              {i18n.language.startsWith('ru') ? employee.full_name_ru : employee.full_name}
-                            </span>
-                          </label>
-                        ))}
+                        .map((employee) => {
+                          const isSelected = serviceFormData.employee_ids.includes(employee.id);
+                          return (
+                            <label
+                              key={employee.id}
+                              className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer border transition-all duration-200 bg-white ${isSelected
+                                ? 'border-pink-500 ring-1 ring-pink-500 shadow-md'
+                                : 'border-gray-100 hover:border-pink-200'
+                                }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={(e) => {
+                                  const newEmployeeIds = e.target.checked
+                                    ? [...serviceFormData.employee_ids, employee.id]
+                                    : serviceFormData.employee_ids.filter(id => id !== employee.id);
+                                  setServiceFormData({ ...serviceFormData, employee_ids: newEmployeeIds });
+                                }}
+                                className="w-5 h-5 accent-pink-600 rounded cursor-pointer"
+                              />
+                              <div className="flex flex-col">
+                                <span className="text-sm font-semibold text-gray-800">
+                                  {i18n.language.startsWith('ru') ? employee.full_name_ru : employee.full_name}
+                                </span>
+                                <span className="text-[10px] uppercase tracking-tight text-gray-500 font-bold">
+                                  {(() => {
+                                    const pos = positions.find(p => p.id === employee.position_id);
+                                    return pos ? (i18n.language.startsWith('ru') ? pos.name : (pos.name_en || pos.name)) : '';
+                                  })()}
+                                </span>
+                              </div>
+                            </label>
+                          );
+                        })}
                     </div>
-                  )}
+                  </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  {t('services:choose_employees_description')}
-                </p>
               </div>
-
             </div>
           </div>
 
-          <div className="crm-modal-footer px-6 py-4 border-t">
-            <Button variant="outline" onClick={() => setIsServiceModalOpen(false)}>
+          <div className="p-6 bg-gray-50 border-t flex justify-end gap-4 rounded-b-2xl">
+            <Button variant="ghost" onClick={() => setIsServiceModalOpen(false)}>
               {t('services:cancel')}
             </Button>
             <Button
               onClick={handleSaveService}
-              className="bg-pink-600 hover:bg-pink-700"
+              className="bg-gradient-to-r from-pink-600 to-purple-700 text-white font-bold h-12 px-10 shadow-lg shadow-pink-200 transition-all hover:scale-[1.02] active:scale-[0.98]"
               disabled={saving}
             >
               {saving ? t('services:saving') : t('services:save')}

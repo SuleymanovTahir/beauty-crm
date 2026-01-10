@@ -103,7 +103,6 @@
   "select_service": "Выберите услугу",
   "selected_count": "Выбрано",
   "separate_through_comma": "Разделять запятыми",
-  "separate_through_pipe": "| разделить на",
   "service_activated": "Служба запущена",
   "service_added": "Служба включена",
   "service_deactivated": "Служба отключена",
@@ -124,7 +123,6 @@
   "title_ru": "Название (RU)",
   "toggle_failed": "Не удалось изменить статус",
   "unit_hour": "h",
-  "unit_minute": "m",
   "unknown_error": "Неизвестная ошибка",
   "used": "Использовал",
   "valid_from": "действителен с",
@@ -151,5 +149,12 @@
   "error_saving_employees": "Ошибка сохранения сотрудников",
   "referral_campaign_updated": "Реферальная кампания обновлена",
   "referral_campaign_created": "Реферальная кампания создана",
-  "loading_error": "Ошибка загрузки"
+  "loading_error": "Ошибка загрузки",
+  "basic_info": "Основная информация",
+  "pricing_timing": "Стоимость и время",
+  "staff_settings": "Команда и должности",
+  "service_details_subtitle": "Настройте параметры услуги и назначьте команду",
+  "name_placeholder": "Например: Женская стрижка",
+  "unit_minute": "м",
+  "separate_through_pipe": "разделите чертой |"
 }

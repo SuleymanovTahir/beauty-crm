@@ -103,7 +103,6 @@
   "select_service": "Select a service",
   "selected_count": "Selected",
   "separate_through_comma": "Separate with commas",
-  "separate_through_pipe": "| ",
   "service_activated": "Service started",
   "service_added": "Service is enabled",
   "service_deactivated": "Service disabled",
@@ -124,7 +123,6 @@
   "title_ru": "Name (RU)",
   "toggle_failed": "Failed to change status",
   "unit_hour": "h",
-  "unit_minute": "m",
   "unknown_error": "Unknown error",
   "used": "Used",
   "valid_from": "valid from",
@@ -157,5 +155,12 @@
   "error_saving_employees": "Error saving employees",
   "referral_campaign_updated": "Referral campaign updated",
   "referral_campaign_created": "Referral campaign created",
-  "loading_error": "Loading error"
+  "loading_error": "Loading error",
+  "basic_info": "Basic Information",
+  "pricing_timing": "Pricing & Timing",
+  "staff_settings": "Team & Positions",
+  "service_details_subtitle": "Configure service parameters and assign a team",
+  "name_placeholder": "e.g.: Women's Haircut",
+  "unit_minute": "min",
+  "separate_through_pipe": "separate through pipe |"
 }
