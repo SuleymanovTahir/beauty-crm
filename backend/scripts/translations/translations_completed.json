@@ -95,19 +95,6 @@
     {
       "id": 21,
       "fields": {
-        "text_ru": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "key": "public_reviews.21.text_ru.d04583b6",
-          "en": "The best beauty salon in Dubai!",
-          "ar": "أفضل صالون تجميل في دبي!",
-          "es": "¡El mejor salón de belleza de Dubai!",
-          "de": "Der beste Schönheitssalon in Dubai!",
-          "fr": "Le meilleur salon de beauté de Dubaï !",
-          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
-          "kk": "Дубайдағы ең жақсы сұлулық салоны!",
-          "pt": "O melhor salão de beleza de Dubai!",
-          "detected_language": "ru"
-        },
         "author_name": {
           "ru": "Сарах Дженкинс",
           "key": "public_reviews.21.author_name.ff715865",
@@ -139,19 +126,6 @@
     {
       "id": 22,
       "fields": {
-        "text_ru": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "key": "public_reviews.22.text_ru.784d2781",
-          "en": "Incredible service. ",
-          "ar": "خدمة لا تصدق. كان لدي وجه وبشرتي متوهجة. سأعود بالتأكيد!",
-          "es": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!",
-          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Service incroyable. J'ai eu un soin du visage et ma peau est éclatante. Je reviendrai certainement!",
-          "hi": "अविश्वसनीय सेवा. मैंने फेशियल करवाया और मेरी त्वचा चमक रही है। मैं निश्चित ही वापस आउंगा!",
-          "kk": "Керемет қызмет. Мен бет күтімін жасадым, терім жылтырап жатыр. Мен міндетті түрде қайтамын!",
-          "pt": "Serviço incrível. Fiz um tratamento facial e minha pele está brilhando. Eu definitivamente voltarei!",
-          "detected_language": "ru"
-        },
         "author_name": {
           "ru": "Мариа Гонзалез",
           "key": "public_reviews.22.author_name.653816a6",
@@ -183,19 +157,6 @@
     {
       "id": 23,
       "fields": {
-        "text_ru": {
-          "ru": "Отличный сервис и профессиональный персонал. ",
-          "key": "public_reviews.23.text_ru.33473c5f",
-          "en": "Excellent service and professional staff.",
-          "ar": "خدمة ممتازة وفريق عمل محترف.",
-          "es": "Excelente servicio y personal profesional.",
-          "de": "Exzellenter Service und professionelles Personal.",
-          "fr": "Excellent service et personnel professionnel.",
-          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी।",
-          "kk": "Тамаша қызмет көрсету және кәсіби персонал.",
-          "pt": "Excelente atendimento e equipe profissional.",
-          "detected_language": "ru"
-        },
         "author_name": {
           "ru": "Фатима Ал-Саыед",
           "key": "public_reviews.23.author_name.f26d4aa2",
