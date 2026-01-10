@@ -1010,6 +1010,12 @@ export class ApiClient {
     })
   }
 
+  async deleteNotification(id: number) {
+    return this.request(`/api/notifications/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
   async clearAllNotifications() {
     return this.request('/api/notifications/clear-all', {
       method: 'DELETE',
