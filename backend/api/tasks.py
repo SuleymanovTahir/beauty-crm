@@ -104,6 +104,12 @@ async def list_tasks(
     
     return get_tasks(filters)
 
+@router.get("/tasks/my")
+async def list_my_tasks(
+    current_user: dict = Depends(get_current_user)
+):
+    return get_tasks({'assignee_id': current_user['id']})
+
 @router.post("/tasks")
 async def new_task(
     task: TaskCreate,

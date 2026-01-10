@@ -1,6 +1,6 @@
 // /frontend/src/pages/admin/Broadcasts.tsx
 import { useState, useEffect } from 'react';
-import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield, Bell } from 'lucide-react';
+import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield, Bell, Settings, Plus, Trash2, Edit, X } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -60,6 +60,7 @@ export default function Broadcasts() {
   const [users, setUsers] = useState<Array<{ id: number; username: string; full_name: string; role: string }>>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [showUserSelection, setShowUserSelection] = useState(true);
+  const [showManageTypes, setShowManageTypes] = useState(false);
 
   useEffect(() => {
     loadSubscriptions();
@@ -136,10 +137,17 @@ export default function Broadcasts() {
   };
 
   const handleSelectAllUsers = () => {
-    if ((form.user_ids || []).length === users.length) {
-      setForm({ ...form, user_ids: [] });
+    const visibleUsers = users.filter(u => !form.target_role || form.target_role === 'all' || u.role === form.target_role);
+    const visibleUserIds = visibleUsers.map(u => u.id);
+    const currentSelectedInVisible = (form.user_ids || []).filter(id => visibleUserIds.includes(id));
+
+    if (currentSelectedInVisible.length === visibleUsers.length && visibleUsers.length > 0) {
+      // If all visible are selected, deselect them
+      setForm({ ...form, user_ids: (form.user_ids || []).filter(id => !visibleUserIds.includes(id)) });
     } else {
-      setForm({ ...form, user_ids: users.map(u => u.id) });
+      // Otherwise, select all visible (keeping others that might be selected but hidden)
+      const otherSelected = (form.user_ids || []).filter(id => !visibleUserIds.includes(id));
+      setForm({ ...form, user_ids: [...otherSelected, ...visibleUserIds] });
     }
   };
 
@@ -308,22 +316,35 @@ export default function Broadcasts() {
 
                 {/* Subscription Type */}
                 <div>
-                  <Label htmlFor="subscription_type">Тип подписки *</Label>
+                  <div className="flex justify-between items-center mb-1">
+                    <Label htmlFor="subscription_type">Тип подписки *</Label>
+                    <button
+                      type="button"
+                      onClick={() => setShowManageTypes(true)}
+                      className="text-pink-600 hover:text-pink-700 flex items-center gap-1 text-sm font-medium"
+                    >
+                      <Settings className="w-4 h-4" />
+                      Настроить типы
+                    </button>
+                  </div>
                   <Select
                     value={form.subscription_type}
                     onValueChange={(value) => setForm({ ...form, subscription_type: value })}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('select_type', 'Выберите тип')} />
+                    <SelectTrigger id="subscription_type">
+                      <SelectValue placeholder="Выберите категорию подписки" />
                     </SelectTrigger>
                     <SelectContent>
                       {Object.entries(availableSubscriptions)
                         .filter(([key]) => key && key.trim() !== '')
                         .map(([key, info]) => (
-                        <SelectItem key={key} value={key}>
-                          {t(info.name, info.name)} - {t(info.description, info.description)}
-                        </SelectItem>
-                      ))}
+                          <SelectItem key={key} value={key}>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{t(info.name, info.name)}</span>
+                              <span className="text-xs text-gray-500">{t(info.description, info.description)}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -383,7 +404,12 @@ export default function Broadcasts() {
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
                             type="checkbox"
-                            checked={(form.user_ids || []).length === users.filter(u => !form.target_role || form.target_role === 'all' || u.role === form.target_role).length && users.length > 0}
+                            checked={
+                              (() => {
+                                const visibleUsers = users.filter(u => !form.target_role || form.target_role === 'all' || u.role === form.target_role);
+                                return visibleUsers.length > 0 && visibleUsers.every(u => (form.user_ids || []).includes(u.id));
+                              })()
+                            }
                             onChange={handleSelectAllUsers}
                             className="w-4 h-4 text-pink-600 rounded"
                           />
@@ -401,22 +427,22 @@ export default function Broadcasts() {
                           {users
                             .filter(u => !form.target_role || form.target_role === 'all' || u.role === form.target_role)
                             .map((user) => (
-                            <label
-                              key={user.id}
-                              className="flex items-center gap-3 p-2 hover:bg-white rounded cursor-pointer transition-colors"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={(form.user_ids || []).includes(user.id)}
-                                onChange={() => handleUserToggle(user.id)}
-                                className="w-4 h-4 text-pink-600 rounded"
-                              />
-                              <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
-                                <p className="text-xs text-gray-500">@{user.username} · {user.role}</p>
-                              </div>
-                            </label>
-                          ))}
+                              <label
+                                key={user.id}
+                                className="flex items-center gap-3 p-2 hover:bg-white rounded cursor-pointer transition-colors"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={(form.user_ids || []).includes(user.id)}
+                                  onChange={() => handleUserToggle(user.id)}
+                                  className="w-4 h-4 text-pink-600 rounded"
+                                />
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
+                                  <p className="text-xs text-gray-500">@{user.username} · {user.role}</p>
+                                </div>
+                              </label>
+                            ))}
                         </div>
                       )}
                     </div>
@@ -636,6 +662,222 @@ export default function Broadcasts() {
           </div>
         </TabsContent>
       </Tabs>
+      {showManageTypes && (
+        <ManageSubscriptionTypesDialog
+          onClose={() => {
+            setShowManageTypes(false);
+            loadSubscriptions(); // Refresh after changes
+          }}
+        />
+      )}
     </div>
   );
 }
+
+const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => {
+  const [types, setTypes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingType, setEditingType] = useState<any>(null);
+  const [isNew, setIsNew] = useState(false);
+
+  useEffect(() => {
+    loadTypes();
+  }, []);
+
+  const loadTypes = async () => {
+    try {
+      const data = await api.getSubscriptionTypes();
+      setTypes(data);
+    } catch (error) {
+      toast.error('Ошибка загрузки типов подписок');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Вы уверены, что хотите удалить этот тип подписки?')) return;
+    try {
+      await api.deleteSubscriptionType(id);
+      toast.success('Тип подписки удален');
+      loadTypes();
+    } catch (error) {
+      toast.error('Ошибка удаления');
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (isNew) {
+        await api.createSubscriptionType(editingType);
+        toast.success('Тип подписки создан');
+      } else {
+        await api.updateSubscriptionType(editingType.id, editingType);
+        toast.success('Тип подписки обновлен');
+      }
+      setEditingType(null);
+      setIsNew(false);
+      loadTypes();
+    } catch (error) {
+      toast.error('Ошибка сохранения');
+    }
+  };
+
+  return (
+    <div className="crm-modal-overlay" onClick={onClose}>
+      <div className="crm-modal modal-large" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold">Управление типами подписок</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X size={24} />
+          </button>
+        </div>
+
+        {editingType ? (
+          <form onSubmit={handleSave} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="crm-form-group">
+                <Label>ID/Ключ (латиница)</Label>
+                <Input
+                  value={editingType.key}
+                  onChange={e => setEditingType({ ...editingType, key: e.target.value })}
+                  required
+                  placeholder="promotions"
+                  disabled={!isNew}
+                />
+              </div>
+              <div className="crm-form-group">
+                <Label>Роль</Label>
+                <select
+                  className="crm-select"
+                  value={editingType.target_role}
+                  onChange={e => setEditingType({ ...editingType, target_role: e.target.value })}
+                >
+                  <option value="all">Все</option>
+                  <option value="client">Клиенты</option>
+                  <option value="employee">Сотрудники</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="crm-form-group">
+                <Label>Название (RU)</Label>
+                <Input
+                  value={editingType.name_ru || ''}
+                  onChange={e => setEditingType({ ...editingType, name_ru: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="crm-form-group">
+                <Label>Название (EN)</Label>
+                <Input
+                  value={editingType.name_en || ''}
+                  onChange={e => setEditingType({ ...editingType, name_en: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="crm-form-group">
+                <Label>Описание (RU)</Label>
+                <textarea
+                  className="crm-textarea"
+                  value={editingType.description_ru || ''}
+                  onChange={e => setEditingType({ ...editingType, description_ru: e.target.value })}
+                  rows={2}
+                />
+              </div>
+              <div className="crm-form-group">
+                <Label>Описание (EN)</Label>
+                <textarea
+                  className="crm-textarea"
+                  value={editingType.description_en || ''}
+                  onChange={e => setEditingType({ ...editingType, description_en: e.target.value })}
+                  rows={2}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <button
+                type="button"
+                onClick={() => { setEditingType(null); setIsNew(false); }}
+                className="crm-btn-secondary"
+              >
+                Отмена
+              </button>
+              <button type="submit" className="crm-btn-primary">
+                Сохранить
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex justify-end">
+              <button
+                onClick={() => {
+                  setEditingType({ key: '', target_role: 'all', name_ru: '', name_en: '', description_ru: '', description_en: '', is_active: true });
+                  setIsNew(true);
+                }}
+                className="crm-btn-primary flex items-center gap-2"
+              >
+                <Plus size={20} />
+                Добавить тип
+              </button>
+            </div>
+
+            <div className="crm-table-container max-h-[400px] overflow-y-auto">
+              <table className="crm-table">
+                <thead>
+                  <tr>
+                    <th>Ключ</th>
+                    <th>Роль</th>
+                    <th>Название</th>
+                    <th>Действия</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr><td colSpan={4} className="text-center py-4">Загрузка...</td></tr>
+                  ) : types.length === 0 ? (
+                    <tr><td colSpan={4} className="text-center py-4 text-gray-500">Типы подписок не найдены</td></tr>
+                  ) : types.map(type => (
+                    <tr key={type.id}>
+                      <td className="font-mono text-sm">{type.key}</td>
+                      <td>
+                        <span className={`crm-badge ${type.target_role === 'client' ? 'paid' : type.target_role === 'employee' ? 'sent' : ''}`}>
+                          {type.target_role}
+                        </span>
+                      </td>
+                      <td>{type.name_ru}</td>
+                      <td>
+                        <div className="flex gap-2">
+                          <button
+                            className="crm-btn-icon"
+                            onClick={() => { setEditingType(type); setIsNew(false); }}
+                            title="Редактировать"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            className="crm-btn-icon text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleDelete(type.id)}
+                            title="Удалить"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
