@@ -464,6 +464,16 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
         smtp_password = os.getenv('SMTP_PASSWORD')
         smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
 
+        # Получаем название салона и URL из .env
+        salon_name = os.getenv('SALON_BOT_NAME', 'M.Le Diamant Bot').replace(' Bot', '')
+        base_url = os.getenv('BASE_URL', 'https://mlediamant.com')
+
+        # Определяем URL для отписки (localhost для разработки, base_url для продакшена)
+        if 'localhost' in base_url or '127.0.0.1' in base_url:
+            unsubscribe_url = f"http://localhost:5173{unsubscribe_link}"
+        else:
+            unsubscribe_url = f"{base_url}{unsubscribe_link}"
+
         if not smtp_user or not smtp_password:
             log_error("SMTP credentials not configured in .env", "email")
             return False
@@ -471,42 +481,140 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
         # Создаем сообщение
         msg = MIMEMultipart('alternative')
         msg['Subject'] = subject
-        msg['From'] = smtp_from
+        msg['From'] = f"{salon_name} <{smtp_from}>"
         msg['To'] = to_email
 
-        # HTML версия письма
+        # HTML версия письма - современный дизайн
         html = f"""
+        <!DOCTYPE html>
         <html>
-          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 30px; text-align: center;">
-              <h1 style="color: white; margin: 0;">💎 Beauty CRM</h1>
-            </div>
-            <div style="padding: 30px; background-color: #f7f7f7;">
-              <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
-              <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <p style="color: #666; font-size: 16px; white-space: pre-wrap;">{message}</p>
-              </div>
-              <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-              <p style="color: #999; font-size: 12px; text-align: center;">
-                Если вы не хотите получать такие письма, вы можете <a href="http://localhost:5173{unsubscribe_link}" style="color: #3b82f6;">отписаться</a>.
-              </p>
-            </div>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+            <table role="presentation" style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td align="center" style="padding: 40px 20px;">
+                  <!-- Main Container -->
+                  <table role="presentation" style="max-width: 600px; width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+
+                    <!-- Header with Gradient -->
+                    <tr>
+                      <td style="background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%); padding: 40px 30px; text-align: center;">
+                        <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
+                          💎 {salon_name}
+                        </h1>
+                      </td>
+                    </tr>
+
+                    <!-- Content -->
+                    <tr>
+                      <td style="padding: 40px 30px;">
+                        <p style="margin: 0 0 24px 0; color: #1f2937; font-size: 18px; font-weight: 600;">
+                          Здравствуйте, {full_name}!
+                        </p>
+
+                        <div style="background-color: #f9fafb; border-left: 4px solid #3b82f6; padding: 20px; border-radius: 8px; margin: 24px 0;">
+                          <p style="margin: 0; color: #374151; font-size: 16px; line-height: 1.6; white-space: pre-wrap;">{message}</p>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Unsubscribe Button -->
+                    <tr>
+                      <td style="padding: 0 30px 30px 30px; text-align: center;">
+                        <a href="{unsubscribe_url}" style="display: inline-block; background-color: #ef4444; color: #ffffff; text-decoration: none; padding: 12px 32px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: background-color 0.2s;">
+                          Отписаться от рассылки
+                        </a>
+                      </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                      <td style="background-color: #f9fafb; padding: 30px; border-top: 1px solid #e5e7eb;">
+                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                          <tr>
+                            <td style="text-align: center; padding-bottom: 16px;">
+                              <p style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600;">
+                                {salon_name}
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="text-align: center; padding-bottom: 8px;">
+                              <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                                📍 Грузия, Батуми
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="text-align: center; padding-bottom: 8px;">
+                              <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                                📞 <a href="tel:+995123456789" style="color: #3b82f6; text-decoration: none;">+995 123 456 789</a>
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="text-align: center; padding-bottom: 8px;">
+                              <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                                ✉️ <a href="mailto:{smtp_from}" style="color: #3b82f6; text-decoration: none;">{smtp_from}</a>
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="text-align: center; padding-bottom: 16px;">
+                              <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                                🌐 <a href="{base_url}" style="color: #3b82f6; text-decoration: none;">{base_url.replace('https://', '').replace('http://', '')}</a>
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="text-align: center; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+                              <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+                                © 2026 {salon_name}. Все права защищены.
+                              </p>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+
+                  </table>
+                </td>
+              </tr>
+            </table>
           </body>
         </html>
         """
 
         # Текстовая версия письма
         text = f"""
-        Здравствуйте, {full_name}!
+{salon_name}
 
-        {message}
+Здравствуйте, {full_name}!
 
-        ---
-        Если вы не хотите получать такие письма, перейдите по ссылке: http://localhost:5173{unsubscribe_link}
+{message}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+КОНТАКТНАЯ ИНФОРМАЦИЯ
+
+{salon_name}
+📍 Грузия, Батуми
+📞 +995 123 456 789
+✉️ {smtp_from}
+🌐 {base_url.replace('https://', '').replace('http://', '')}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Отписаться от рассылки: {unsubscribe_url}
+
+© 2026 {salon_name}. Все права защищены.
         """
 
-        part1 = MIMEText(text, 'plain')
-        part2 = MIMEText(html, 'html')
+        part1 = MIMEText(text, 'plain', 'utf-8')
+        part2 = MIMEText(html, 'html', 'utf-8')
         msg.attach(part1)
         msg.attach(part2)
 
