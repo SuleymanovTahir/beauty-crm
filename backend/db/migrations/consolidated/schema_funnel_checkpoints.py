@@ -27,7 +27,7 @@ def migrate():
             is_active BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (stage_id) REFERENCES funnel_stages(id) ON DELETE CASCADE
+            FOREIGN KEY (stage_id) REFERENCES pipeline_stages(id) ON DELETE CASCADE
         )''')
         
         # Таблица прогресса клиентов по контрольным точкам

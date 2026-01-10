@@ -18,32 +18,58 @@ conn = get_db_connection()
 c = conn.cursor()
 
 try:
-    print("🔧 Creating notifications table...")
+    print("🔧 Updating notifications table schema...")
 
+    # Check existing columns
     c.execute("""
-        CREATE TABLE IF NOT EXISTS notifications (
-            id SERIAL PRIMARY KEY,
-            client_id TEXT NOT NULL,
-            title TEXT NOT NULL,
-            message TEXT NOT NULL,
-            is_read BOOLEAN DEFAULT FALSE,
-            action_url TEXT,
-            created_at TEXT NOT NULL,
-            FOREIGN KEY (client_id) REFERENCES clients(instagram_id) ON DELETE CASCADE
-        )
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name='notifications'
     """)
-    print("✅ notifications table created")
+    existing_columns = [row[0] for row in c.fetchall()]
 
-    # Create index for faster queries
-    c.execute("""
-        CREATE INDEX IF NOT EXISTS idx_notifications_client_id ON notifications(client_id);
-    """)
-    print("✅ Index created for notifications")
+    if not existing_columns:
+        print("📝 Creating new notifications table...")
+        c.execute("""
+            CREATE TABLE notifications (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER,
+                client_id TEXT,
+                title TEXT NOT NULL,
+                message TEXT NOT NULL,
+                type TEXT DEFAULT 'info',
+                is_read BOOLEAN DEFAULT FALSE,
+                action_url TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                read_at TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (client_id) REFERENCES clients(instagram_id) ON DELETE CASCADE
+            )
+        """)
+        print("✅ notifications table created")
+    else:
+        # Add client_id if missing
+        if 'client_id' not in existing_columns:
+            print("➕ Adding client_id column...")
+            c.execute("ALTER TABLE notifications ADD COLUMN client_id TEXT")
+            c.execute("ALTER TABLE notifications ADD CONSTRAINT fk_notifications_client FOREIGN KEY (client_id) REFERENCES clients(instagram_id) ON DELETE CASCADE")
+            print("✅ client_id column added")
 
-    c.execute("""
-        CREATE INDEX IF NOT EXISTS idx_notifications_is_read ON notifications(is_read);
-    """)
-    print("✅ Index created for unread notifications")
+        # Make user_id nullable if it exists and is NOT NULL
+        if 'user_id' in existing_columns:
+            c.execute("SELECT is_nullable FROM information_schema.columns WHERE table_name='notifications' AND column_name='user_id'")
+            is_nullable = c.fetchone()[0]
+            if is_nullable == 'NO':
+                print("🔓 Making user_id nullable...")
+                c.execute("ALTER TABLE notifications ALTER COLUMN user_id DROP NOT NULL")
+                print("✅ user_id is now nullable")
+
+    # Create indexes for faster queries
+    print("🚀 Creating indexes...")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_notifications_client_id ON notifications(client_id)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_notifications_is_read ON notifications(is_read)")
+    print("✅ Indexes checked/created")
 
     conn.commit()
     print("\n🎉 Notifications table migration completed successfully!")

@@ -14,11 +14,6 @@ from db.migrations.consolidated.schema_cookies import log_cookie_consent, create
 
 router = APIRouter(tags=["Analytics"])
 
-@router.on_event("startup")
-async def startup_event():
-    """Инициализация таблицы при старте"""
-    create_cookie_consents_table()
-
 @router.get("/cookies/check")
 async def check_cookies(request: Request):
     """Проверить статус куки для IP"""

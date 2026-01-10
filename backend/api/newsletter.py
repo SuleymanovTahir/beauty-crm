@@ -13,11 +13,6 @@ class SubscribeRequest(BaseModel):
     email: EmailStr
     source: str = 'footer'
 
-@router.on_event("startup")
-async def startup_event():
-    """Инициализация таблицы при старте"""
-    create_newsletter_table()
-
 @router.post("/newsletter/subscribe")
 async def subscribe_newsletter(data: SubscribeRequest):
     """Подписаться на рассылку"""

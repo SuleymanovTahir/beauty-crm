@@ -37,6 +37,7 @@ def migrate_clients_schema():
             'source': 'TEXT',
             'language': 'TEXT DEFAULT \'ru\'',
             'last_retention_reminder_at': 'TIMESTAMP',  # To track retention ping
+            'reminder_date': 'TIMESTAMP',
         }
         
         # Add missing columns
@@ -85,17 +86,24 @@ def migrate_clients_schema():
         # Create indexes for analytics
         c.execute("CREATE INDEX IF NOT EXISTS idx_clients_created_at ON clients(created_at)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_clients_status ON clients(status)")
-        print("  ✅ Analytics indexes ensured")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_clients_reminder_date ON clients(reminder_date)")
+        print("  ✅ Analytics and reminder indexes ensured")
         
         conn.commit()
         return True
         
     except Exception as e:
         print(f"\n❌ Error: {e}")
-        conn.rollback()
+        try:
+            conn.rollback()
+        except:
+            pass
         raise
     finally:
-        conn.close()
+        try:
+            conn.close()
+        except:
+            pass
 
 if __name__ == "__main__":
     migrate_clients_schema()
