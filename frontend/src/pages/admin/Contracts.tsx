@@ -69,7 +69,10 @@ const Contracts = () => {
     return (
         <div className="crm-page">
             <div className="crm-page-header">
-                <h1>{t('title')}</h1>
+                <div>
+                    <h1>{t('title')}</h1>
+                    <p className="text-gray-600">{t('subtitle')}</p>
+                </div>
                 <button className="crm-btn-primary" onClick={() => setShowAddDialog(true)}>
                     <Plus size={20} />
                     {t('addContract')}

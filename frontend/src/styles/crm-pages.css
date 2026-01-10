@@ -147,7 +147,7 @@
 }
 
 .crm-grid-2 {
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
 /* Cards */
@@ -660,6 +660,124 @@
 @media (max-width: 640px) {
   .crm-form-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Invoice Items */
+.invoice-items {
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.invoice-items h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 1rem 0;
+}
+
+.item-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.item-row input {
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+}
+
+.item-row .item-amount {
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+}
+
+.invoice-total {
+  background: #f3f4f6;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: right;
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+}
+
+/* Table Enhancements */
+.invoice-number,
+.contract-number {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.client-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.client-name {
+  font-weight: 500;
+  color: #111827;
+}
+
+.client-phone {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.payment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.payment-info .amount {
+  font-weight: 500;
+  color: #111827;
+}
+
+.progress-bar {
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #10b981;
+  transition: width 0.3s;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.invoice-info,
+.product-name {
+  font-size: 0.9375rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .item-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .item-row .item-amount {
+    text-align: right;
   }
 }
 

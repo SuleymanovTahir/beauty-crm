@@ -81,7 +81,7 @@ const MarketplaceIntegrations = () => {
         },
         google_business: {
             name: 'Google Business',
-            description: 'Google Мой Бизнес',
+            description: 'Записи и отзывы в Google',
             icon: <Store size={20} />,
             brandClass: 'brand-google_business'
         },
@@ -93,7 +93,7 @@ const MarketplaceIntegrations = () => {
         },
         yclients: {
             name: 'YCLIENTS',
-            description: 'CRM для салонов красоты',
+            description: 'Платформа онлайн-записи',
             icon: <Store size={20} />,
             brandClass: 'brand-yclients'
         },
@@ -145,8 +145,8 @@ const MarketplaceIntegrations = () => {
         <div className="crm-page">
             <div className="crm-page-header">
                 <div>
-                    <h1>{t('marketplace.title', 'Маркетплейсы')}</h1>
-                    <p className="text-gray-600">{t('marketplace.subtitle', 'Интеграция с платформами бронирования')}</p>
+                    <h1>{t('marketplace.title', 'Платформы бронирования')}</h1>
+                    <p className="text-gray-600">{t('marketplace.subtitle', 'Интеграция с сервисами онлайн-записи и отзывов')}</p>
                 </div>
             </div>
 
@@ -206,28 +206,36 @@ const MarketplaceIntegrations = () => {
                                 </div>
 
                                 <div className="crm-provider-body">
-                                    {isActive && (
-                                        <div className="crm-provider-stats">
+                                    <div className="crm-provider-stats">
+                                        <div className="crm-detail-row">
+                                            <span className="crm-detail-label">{t('marketplace.status', 'Статус')}:</span>
+                                            <span className={`crm-detail-value ${isActive ? 'text-green-600' : 'text-gray-400'}`}>
+                                                {isActive ? t('marketplace.active', 'Активен') : t('marketplace.inactive', 'Не настроен')}
+                                            </span>
+                                        </div>
+                                        {isActive && bookingCount > 0 && (
                                             <div className="crm-detail-row">
                                                 <span className="crm-detail-label">{t('marketplace.bookings', 'Записей')}:</span>
                                                 <span className="crm-detail-value">{bookingCount}</span>
                                             </div>
-                                            {reviewData && (
-                                                <div className="crm-detail-row">
-                                                    <span className="crm-detail-label">{t('marketplace.reviews', 'Отзывов')}:</span>
-                                                    <span className="crm-detail-value">
-                                                        {reviewData.count} (⭐ {reviewData.avg_rating?.toFixed(1)})
-                                                    </span>
-                                                </div>
-                                            )}
+                                        )}
+                                        {isActive && reviewData && (
+                                            <div className="crm-detail-row">
+                                                <span className="crm-detail-label">{t('marketplace.reviews', 'Отзывов')}:</span>
+                                                <span className="crm-detail-value">
+                                                    {reviewData.count} (⭐ {reviewData.avg_rating?.toFixed(1)})
+                                                </span>
+                                            </div>
+                                        )}
+                                        {isActive && (
                                             <div className="crm-detail-row">
                                                 <span className="crm-detail-label">{t('marketplace.lastSync', 'Синхронизация')}:</span>
                                                 <span className="crm-detail-value text-sm">
                                                     {formatLastSync(providerData?.last_sync_at || null)}
                                                 </span>
                                             </div>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
 
                                     <div className="crm-provider-actions">
                                         <button

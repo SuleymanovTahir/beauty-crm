@@ -1,29 +1,30 @@
 {
-  "title": "Товары",
+  "title": "Товары и склад",
+  "subtitle": "Управление товарами и остатками",
   "addProduct": "Добавить товар",
   "edit": "Редактировать",
   "delete": "Удалить",
   "loading": "Загрузка...",
   "allCategories": "Все категории",
-  "sendButton": "Отправить",
+  "noProducts": "Товаров пока нет",
+  "createFirst": "Добавьте первый товар в систему",
   "form": {
     "name": "Название",
     "nameRu": "Название (RU)",
     "nameEn": "Название (EN)",
     "nameAr": "Название (AR)",
     "category": "Категория",
-    "price": "Цена",
+    "price": "Цена продажи",
     "costPrice": "Себестоимость",
-    "stockQuantity": "Количество на складе",
-    "minStockLevel": "Минимальный уровень",
+    "stockQuantity": "Остаток на складе",
+    "minStockLevel": "Минимальный остаток",
     "sku": "Артикул",
     "barcode": "Штрихкод",
     "supplier": "Поставщик",
     "notes": "Примечания",
     "isActive": "Активен",
     "save": "Сохранить",
-    "cancel": "Отмена",
-    "selectClient": "Выберите клиента"
+    "cancel": "Отмена"
   },
   "movement": {
     "title": "Движение товара",
@@ -37,6 +38,10 @@
     }
   },
   "messages": {
-    "confirmDelete": "Вы уверены, что хотите удалить этот товар?"
+    "confirmDelete": "Вы уверены, что хотите удалить этот товар?",
+    "productCreated": "Товар создан",
+    "productUpdated": "Товар обновлен",
+    "productDeleted": "Товар удален",
+    "movementAdded": "Движение добавлено"
   }
 }
