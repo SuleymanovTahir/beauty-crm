@@ -218,7 +218,7 @@ export default function Services() {
 
   // Positions state
   const [positions, setPositions] = useState<Array<{ id: number; name: string; name_en?: string }>>([]);
-  const [employees, setEmployees] = useState<Array<{ id: number; full_name: string; full_name_ru: string; position_id: number }>>([]);
+  const [employees, setEmployees] = useState<Array<{ id: number; full_name: string; full_name_ru: string; position_id: number; position?: string; role?: string; is_active?: boolean }>>([]);
 
   const [serviceFormData, setServiceFormData] = useState({
     key: '',
@@ -238,6 +238,8 @@ export default function Services() {
     position_ids: [] as number[],
     employee_ids: [] as number[],
   });
+
+  const [employeeSearchTerm, setEmployeeSearchTerm] = useState('');
 
   const [packageFormData, setPackageFormData] = useState({
     name: '',
@@ -288,7 +290,10 @@ export default function Services() {
       });
       if (!response.ok) throw new Error('Failed to load employees');
       const data = await response.json();
-      setEmployees(data.users || []);
+      // Filter only active employees (masters), excluding admins, directors, etc.
+      // Based on common beauty CRM logic, we only want users with role='employee'
+      const activeEmployees = (data.users || []).filter((u: any) => u.role === 'employee' && u.is_active);
+      setEmployees(activeEmployees);
     } catch (err) {
       console.error('Error loading employees:', err);
     }
@@ -1208,13 +1213,13 @@ export default function Services() {
                   <h3 className="text-lg font-semibold text-gray-800">{t('services:basic_info')}</h3>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50/50 rounded-2xl border border-gray-100/50">
-                  <div className="md:col-span-1">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50/10 rounded-2xl border border-gray-100/50">
+                  <div className="md:col-span-1 space-y-2">
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block mb-1">
                       {t('services:category')} <span className="text-pink-500">*</span>
                     </Label>
                     <Select value={serviceFormData.category} onValueChange={(value) => setServiceFormData({ ...serviceFormData, category: value })}>
-                      <SelectTrigger className="h-11 bg-white border-gray-200">
+                      <SelectTrigger className="h-12 bg-white border-gray-100 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-pink-500/20">
                         <SelectValue placeholder={t('services:select_category')} />
                       </SelectTrigger>
                       <SelectContent>
@@ -1225,12 +1230,12 @@ export default function Services() {
                     </Select>
                   </div>
 
-                  <div className="md:col-span-1">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                  <div className="md:col-span-1 space-y-2">
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block mb-1">
                       {t('services:name')} <span className="text-pink-500">*</span>
                     </Label>
                     <Input
-                      className="h-11 bg-white border-gray-200"
+                      className="h-12 bg-white border-gray-100 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-pink-500/20"
                       value={serviceFormData.name_ru}
                       onChange={(e) => {
                         const val = e.target.value;
@@ -1245,12 +1250,12 @@ export default function Services() {
                     />
                   </div>
 
-                  <div className="md:col-span-2">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                  <div className="md:col-span-2 space-y-2">
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block mb-1">
                       {t('services:description')}
                     </Label>
                     <Textarea
-                      className="min-h-[100px] bg-white border-gray-200"
+                      className="min-h-[100px] bg-white border-gray-100 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-pink-500/20"
                       value={serviceFormData.description_ru}
                       onChange={(e) => setServiceFormData({
                         ...serviceFormData,
@@ -1270,63 +1275,69 @@ export default function Services() {
                   <h3 className="text-lg font-semibold text-gray-800">{t('services:pricing_timing')}</h3>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-gray-50/50 rounded-2xl border border-gray-100/50">
-                  <div className="col-span-2 md:col-span-1">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6 bg-gray-50/10 rounded-2xl border border-gray-100/50">
+                  <div className="space-y-2">
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block mb-1">
                       {t('services:base_price')} *
                     </Label>
-                    <div className="relative">
+                    <div className="relative group">
                       <Input
                         type="number"
-                        className="h-11 pl-3 pr-12 bg-white border-gray-200 font-bold"
+                        className="h-12 pl-4 pr-14 bg-white border-gray-100 rounded-xl font-bold text-lg shadow-sm transition-all focus:ring-2 focus:ring-pink-500/20"
                         value={serviceFormData.price}
                         onChange={(e) => setServiceFormData({ ...serviceFormData, price: Number(e.target.value) })}
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium text-sm">
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">
                         {serviceFormData.currency}
                       </span>
                     </div>
                   </div>
 
-                  <div className="col-span-1">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                  <div className="space-y-2">
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block mb-1">
                       {t('services:duration')}
                     </Label>
-                    <div className="relative">
+                    <div className="relative group">
                       <Input
-                        className="h-11 pl-3 pr-12 bg-white border-gray-200 font-bold"
+                        className="h-12 pl-4 pr-14 bg-white border-gray-100 rounded-xl font-bold text-lg shadow-sm transition-all focus:ring-2 focus:ring-pink-500/20"
                         value={serviceFormData.duration}
                         onChange={(e) => setServiceFormData({ ...serviceFormData, duration: e.target.value })}
                         placeholder="60"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium text-sm">
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">
                         {t('services:unit_minute', 'м')}
                       </span>
                     </div>
                   </div>
 
-                  <div className="col-span-1">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                  <div className="space-y-2">
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block mb-1">
                       {t('services:min_price')}
                     </Label>
-                    <Input
-                      type="number"
-                      className="h-11 bg-white border-gray-200"
-                      value={serviceFormData.min_price}
-                      onChange={(e) => setServiceFormData({ ...serviceFormData, min_price: e.target.value })}
-                    />
+                    <div className="relative group">
+                      <Input
+                        type="number"
+                        className="h-12 pl-4 bg-white border-gray-100 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-pink-500/10 placeholder:text-gray-300"
+                        value={serviceFormData.min_price}
+                        onChange={(e) => setServiceFormData({ ...serviceFormData, min_price: e.target.value })}
+                        placeholder="0"
+                      />
+                    </div>
                   </div>
 
-                  <div className="col-span-1">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                  <div className="space-y-2">
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block mb-1">
                       {t('services:max_price')}
                     </Label>
-                    <Input
-                      type="number"
-                      className="h-11 bg-white border-gray-200"
-                      value={serviceFormData.max_price}
-                      onChange={(e) => setServiceFormData({ ...serviceFormData, max_price: e.target.value })}
-                    />
+                    <div className="relative group">
+                      <Input
+                        type="number"
+                        className="h-12 pl-4 bg-white border-gray-100 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-pink-500/10 placeholder:text-gray-300"
+                        value={serviceFormData.max_price}
+                        onChange={(e) => setServiceFormData({ ...serviceFormData, max_price: e.target.value })}
+                        placeholder="0"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1337,12 +1348,12 @@ export default function Services() {
                   <div className="w-1 h-6 bg-green-500 rounded-full" />
                   <h3 className="text-lg font-semibold text-gray-800">{t('services:benefits')}</h3>
                 </div>
-                <div className="p-6 bg-gray-50/50 rounded-2xl border border-gray-100/50">
-                  <Label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5 block">
+                <div className="p-6 bg-gray-50/10 rounded-2xl border border-gray-100/50 space-y-2">
+                  <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block mb-1">
                     {t('services:benefits')} ({t('services:separate_through_pipe', '|')})
                   </Label>
                   <Textarea
-                    className="min-h-[80px] bg-white border-gray-200"
+                    className="min-h-[80px] bg-white border-gray-100 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-pink-500/10"
                     value={serviceFormData.benefits}
                     onChange={(e) => setServiceFormData({ ...serviceFormData, benefits: e.target.value })}
                     placeholder={t('services:long_lasting_natural_look_waterproof')}
@@ -1397,42 +1408,117 @@ export default function Services() {
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-1 block">
-                      {t('services:employees_providing_service')}
-                    </Label>
+                  <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <Label className="text-[11px] font-black uppercase tracking-widest text-gray-600">
+                          {t('services:employees_providing_service')}
+                        </Label>
+                        <p className="text-[10px] text-gray-400 font-medium">
+                          {t('services:select_employees_desc', 'Выберите сотрудников, которые оказывают эту услугу')}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <div className="relative flex-1 sm:w-64">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                          <Input
+                            placeholder={t('services:search_employee', 'Поиск сотрудника...')}
+                            value={employeeSearchTerm}
+                            onChange={(e) => setEmployeeSearchTerm(e.target.value)}
+                            className="pl-9 h-9 text-xs bg-white border-gray-100 rounded-lg shadow-sm focus:ring-pink-500/10 transition-all"
+                          />
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-[10px] h-9 px-3 uppercase font-black text-pink-600 border-pink-100 hover:bg-pink-50 transition-all"
+                          onClick={() => {
+                            const currentFiltered = employees.filter(emp => {
+                              const matchesPos = serviceFormData.position_ids.length === 0 ||
+                                !emp.position_id ||
+                                serviceFormData.position_ids.includes(emp.position_id) ||
+                                serviceFormData.employee_ids.includes(emp.id);
+                              const employeeName = (i18n.language.startsWith('ru') ? emp.full_name_ru : emp.full_name) || '';
+                              const matchesSearch = employeeName.toLowerCase().includes(employeeSearchTerm.toLowerCase());
+                              return matchesPos && matchesSearch;
+                            });
+
+                            const allSelected = currentFiltered.every(emp => serviceFormData.employee_ids.includes(emp.id));
+
+                            let newEmployeeIds;
+                            if (allSelected) {
+                              newEmployeeIds = serviceFormData.employee_ids.filter(id => !currentFiltered.find(f => f.id === id));
+                            } else {
+                              newEmployeeIds = Array.from(new Set([...serviceFormData.employee_ids, ...currentFiltered.map(e => e.id)]));
+                            }
+                            setServiceFormData({ ...serviceFormData, employee_ids: newEmployeeIds });
+                          }}
+                        >
+                          {(() => {
+                            const currentFiltered = employees.filter(emp => {
+                              const matchesPos = serviceFormData.position_ids.length === 0 ||
+                                !emp.position_id ||
+                                serviceFormData.position_ids.includes(emp.position_id) ||
+                                serviceFormData.employee_ids.includes(emp.id);
+                              const employeeName = (i18n.language.startsWith('ru') ? emp.full_name_ru : emp.full_name) || '';
+                              const matchesSearch = employeeName.toLowerCase().includes(employeeSearchTerm.toLowerCase());
+                              return matchesPos && matchesSearch;
+                            });
+                            return currentFiltered.every(emp => serviceFormData.employee_ids.includes(emp.id))
+                              ? t('services:deselect_all', 'Сбросить всех')
+                              : t('services:select_all', 'Выбрать всех');
+                          })()}
+                        </Button>
+                      </div>
+                    </div>
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                       {employees
-                        .filter(emp => serviceFormData.position_ids.length === 0 || serviceFormData.position_ids.includes(emp.position_id))
+                        .filter(emp => {
+                          const matchesPos = serviceFormData.position_ids.length === 0 ||
+                            !emp.position_id ||
+                            serviceFormData.position_ids.includes(emp.position_id) ||
+                            serviceFormData.employee_ids.includes(emp.id);
+                          const employeeName = (i18n.language.startsWith('ru') ? emp.full_name_ru : emp.full_name) || '';
+                          const matchesSearch = employeeName.toLowerCase().includes(employeeSearchTerm.toLowerCase());
+                          return matchesPos && matchesSearch;
+                        })
                         .map((employee) => {
                           const isSelected = serviceFormData.employee_ids.includes(employee.id);
+                          const employeeName = i18n.language.startsWith('ru') ? employee.full_name_ru : employee.full_name;
+
+                          if (!employeeName || employeeName.trim() === '') return null; // Skip empty names to avoid empty cards
+
                           return (
                             <label
                               key={employee.id}
-                              className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer border transition-all duration-200 bg-white ${isSelected
-                                ? 'border-pink-500 ring-1 ring-pink-500 shadow-md'
-                                : 'border-gray-100 hover:border-pink-200'
+                              className={`flex items-center gap-3 p-4 rounded-xl cursor-pointer border transition-all duration-300 bg-white ${isSelected
+                                ? 'border-pink-500 ring-4 ring-pink-500/10 shadow-lg shadow-pink-100'
+                                : 'border-gray-100 hover:border-pink-200 hover:shadow-md'
                                 }`}
                             >
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={(e) => {
-                                  const newEmployeeIds = e.target.checked
-                                    ? [...serviceFormData.employee_ids, employee.id]
-                                    : serviceFormData.employee_ids.filter(id => id !== employee.id);
-                                  setServiceFormData({ ...serviceFormData, employee_ids: newEmployeeIds });
-                                }}
-                                className="w-5 h-5 accent-pink-600 rounded cursor-pointer"
-                              />
-                              <div className="flex flex-col">
-                                <span className="text-sm font-semibold text-gray-800">
-                                  {i18n.language.startsWith('ru') ? employee.full_name_ru : employee.full_name}
+                              <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${isSelected ? 'bg-pink-600 border-pink-600' : 'border-gray-300 bg-white'}`}>
+                                {isSelected && <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={(e) => {
+                                    const newEmployeeIds = e.target.checked
+                                      ? [...serviceFormData.employee_ids, employee.id]
+                                      : serviceFormData.employee_ids.filter(id => id !== employee.id);
+                                    setServiceFormData({ ...serviceFormData, employee_ids: newEmployeeIds });
+                                  }}
+                                  className="sr-only"
+                                />
+                              </div>
+                              <div className="flex flex-col overflow-hidden">
+                                <span className="text-sm font-bold text-gray-800 truncate">
+                                  {employeeName}
                                 </span>
-                                <span className="text-[10px] uppercase tracking-tight text-gray-500 font-bold">
+                                <span className="text-[10px] uppercase tracking-tight text-gray-400 font-bold">
                                   {(() => {
                                     const pos = positions.find(p => p.id === employee.position_id);
-                                    return pos ? (i18n.language.startsWith('ru') ? pos.name : (pos.name_en || pos.name)) : '';
+                                    return pos ? (i18n.language.startsWith('ru') ? pos.name : (pos.name_en || pos.name)) : (employee.position || '');
                                   })()}
                                 </span>
                               </div>
