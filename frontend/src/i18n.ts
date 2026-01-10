@@ -45,6 +45,8 @@ const namespaces = [
   'manager/settings',
   'employee/dashboard',
   'employee/profile',
+  'employee/bookings',
+  'employee/services',
   'public/about',
   'public/contacts',
   'public/cooperation',
@@ -152,6 +154,8 @@ for (const lang of languages) {
   // Employee pages
   resources[lang]['employeeDashboard'] = resources[lang]['employee/dashboard'];
   resources[lang]['employeeProfile'] = resources[lang]['employee/profile'];
+  resources[lang]['employeeBookings'] = resources[lang]['employee/bookings'];
+  resources[lang]['employeeServices'] = resources[lang]['employee/services'];
 
   // Auth pages
   resources[lang]['login'] = resources[lang]['auth/login'];
