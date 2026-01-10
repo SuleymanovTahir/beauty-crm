@@ -444,3 +444,21 @@ html {
     height: calc(var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom));
   }
 }
+
+/* CRM Scrollbar utility */
+.crm-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.crm-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.crm-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.crm-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
