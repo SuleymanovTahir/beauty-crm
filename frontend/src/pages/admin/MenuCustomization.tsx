@@ -185,7 +185,7 @@ export default function MenuCustomization() {
                         <Button
                             onClick={handleSave}
                             disabled={saving}
-                            className="bg-gradient-to-r from-pink-500 to-purple-600"
+                            className="bg-gradient-to-r from-pink-500 to-blue-600"
                         >
                             <Save className="w-4 h-4 mr-2" />
                             {saving ? 'Сохранение...' : 'Сохранить'}

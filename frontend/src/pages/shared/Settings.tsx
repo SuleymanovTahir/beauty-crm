@@ -2157,7 +2157,7 @@ export default function AdminSettings() {
 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <Camera className="w-4 h-4 text-purple-600" />
+                              <Camera className="w-4 h-4 text-blue-600" />
                               <span className="text-sm text-gray-700">Instagram</span>
                             </div>
                             <Switch
@@ -2262,7 +2262,7 @@ export default function AdminSettings() {
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('instagram')}
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('instagram')
-                              ? 'border-purple-500 bg-purple-50 text-purple-700'
+                              ? 'border-blue-500 bg-blue-50 text-blue-700'
                               : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                               }`}
                           >
@@ -2553,12 +2553,12 @@ export default function AdminSettings() {
                           )}
 
                           {broadcastPreview.by_channel.instagram > 0 && (
-                            <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+                            <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
                               <div className="flex items-center gap-2">
-                                <Camera className="w-4 h-4 text-purple-600" />
+                                <Camera className="w-4 h-4 text-blue-600" />
                                 <span className="text-sm text-gray-700">{t('settings:channel_instagram')}</span>
                               </div>
-                              <span className="font-bold text-purple-600">{broadcastPreview.by_channel.instagram}</span>
+                              <span className="font-bold text-blue-600">{broadcastPreview.by_channel.instagram}</span>
                             </div>
                           )}
                         </div>
@@ -2689,7 +2689,7 @@ export default function AdminSettings() {
                           ) : messenger.messenger_type === 'tiktok' ? (
                             <TikTokIcon className="w-9 h-9" colorful={true} />
                           ) : (
-                            <MessageCircle className="w-9 h-9 text-purple-600" />
+                            <MessageCircle className="w-9 h-9 text-blue-600" />
                           )}
                         </div>
                         <div>

@@ -53,12 +53,11 @@ async def preview_broadcast(
             FROM users u
             LEFT JOIN user_subscriptions s ON u.id = s.user_id AND s.subscription_type = %s
             WHERE u.is_active = TRUE
-            AND u.id != %s
         """
-        params = [broadcast.subscription_type, current_user.get('id')]
+        params = [broadcast.subscription_type]
 
         if not broadcast.force_send:
-            query += " AND s.is_subscribed = TRUE"
+            query += " AND (s.id IS NULL OR s.is_subscribed = TRUE)"
 
         # Если указаны конкретные пользователи - отправляем только им (игнорируем target_role)
         if broadcast.user_ids:
@@ -168,12 +167,11 @@ async def send_broadcast(
             FROM users u
             LEFT JOIN user_subscriptions s ON u.id = s.user_id AND s.subscription_type = %s
             WHERE u.is_active = TRUE
-            AND u.id != %s
         """
-        params = [broadcast.subscription_type, current_user.get('id')]
+        params = [broadcast.subscription_type]
 
         if not broadcast.force_send:
-            query += " AND (s.is_subscribed = TRUE OR s.is_subscribed IS NULL)"
+            query += " AND (s.id IS NULL OR s.is_subscribed = TRUE)"
 
         # Если указаны конкретные пользователи - отправляем только им (игнорируем target_role)
         if broadcast.user_ids:
@@ -187,6 +185,10 @@ async def send_broadcast(
 
         c.execute(query, params)
         all_users = c.fetchall()
+
+        # Логируем для отладки
+        log_info(f"Найдено {len(all_users)} получателей для рассылки. Query params: {params}", "broadcasts")
+        log_info(f"Запрос: {query}", "broadcasts")
 
         results = {
             "email": {"sent": 0, "failed": 0},

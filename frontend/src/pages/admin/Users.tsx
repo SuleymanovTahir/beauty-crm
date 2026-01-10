@@ -52,7 +52,7 @@ export default function Users() {
   // Цвета для ролей (статичные)
   const roleColors: Record<string, string> = {
     director: 'bg-red-100 text-red-800',
-    admin: 'bg-purple-100 text-purple-800',
+    admin: 'bg-blue-100 text-blue-800',
     manager: 'bg-blue-100 text-blue-800',
     sales: 'bg-green-100 text-green-800',
     marketer: 'bg-orange-100 text-orange-800',
@@ -526,7 +526,7 @@ export default function Users() {
                           <Badge className={
                             user.status === 'new' ? 'bg-green-100 text-green-800' :
                               user.status === 'active' ? 'bg-blue-100 text-blue-800' :
-                                user.status === 'lead' ? 'bg-purple-100 text-purple-800' :
+                                user.status === 'lead' ? 'bg-blue-100 text-blue-800' :
                                   'bg-gray-100 text-gray-800'
                           }>
                             {user.status || t('status_new', 'new')}
@@ -588,7 +588,7 @@ export default function Users() {
                                   setSelectedUser(user);
                                   setShowRoleDialog(true);
                                 }}
-                                className="h-8 w-8 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                                className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                                 title={t('action_change_role_title', 'Change role')}
                               >
                                 <Shield className="w-4 h-4" />

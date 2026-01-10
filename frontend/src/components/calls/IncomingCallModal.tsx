@@ -40,7 +40,7 @@ export default function IncomingCallModal({
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 animate-in slide-in-from-bottom-4 duration-300">
         {/* Caller Info */}
         <div className="text-center mb-8">
-          <div className={`w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center ${ringing ? 'animate-pulse' : ''}`}>
+          <div className={`w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-pink-500 to-blue-600 flex items-center justify-center ${ringing ? 'animate-pulse' : ''}`}>
             <img
               src={getDynamicAvatar(callerId.toString(), callerName)}
               alt={callerName}

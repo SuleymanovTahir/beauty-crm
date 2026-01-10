@@ -43,15 +43,15 @@ export default function PublicLanguageSwitcher() {
                 localStorage.setItem('i18nextLng', lang.code);
                 setOpen(false);
               }}
-              className={`w-full px-4 py-2.5 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors ${i18n.language === lang.code ? 'bg-purple-50 font-medium' : ''
+              className={`w-full px-4 py-2.5 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors ${i18n.language === lang.code ? 'bg-blue-50 font-medium' : ''
                 }`}
             >
               <span className="text-xl">{lang.flag}</span>
-              <span className={`text-sm flex-1 ${i18n.language === lang.code ? 'text-purple-700' : 'text-gray-700'}`}>
+              <span className={`text-sm flex-1 ${i18n.language === lang.code ? 'text-blue-700' : 'text-gray-700'}`}>
                 {lang.name}
               </span>
               {i18n.language === lang.code && (
-                <span className="text-purple-600 text-sm">✓</span>
+                <span className="text-blue-600 text-sm">✓</span>
               )}
             </button>
           ))}

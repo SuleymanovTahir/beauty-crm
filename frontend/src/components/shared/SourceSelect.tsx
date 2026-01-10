@@ -58,7 +58,7 @@ export function SourceSelect({ value, onChange }: SourceSelectProps) {
             telegram: 'bg-blue-100 text-blue-800 hover:bg-blue-200',
             whatsapp: 'bg-green-100 text-green-800 hover:bg-green-200',
             account: 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200',
-            guest_link: 'bg-purple-100 text-purple-800 hover:bg-purple-200',
+            guest_link: 'bg-blue-100 text-blue-800 hover:bg-blue-200',
         };
         return colors[sourceId] || 'bg-gray-100 text-gray-800 hover:bg-gray-200';
     };

@@ -512,13 +512,13 @@ export default function Telephony() {
                                     <div className="text-xs text-green-600 font-medium">Входящие</div>
                                 </div>
                             </div>
-                            <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl flex items-center gap-4">
-                                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
+                            <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
+                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
                                     <PhoneOutgoing className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <div className="text-2xl font-bold text-purple-900">{stats.outbound}</div>
-                                    <div className="text-xs text-purple-600 font-medium">Исходящие</div>
+                                    <div className="text-2xl font-bold text-blue-900">{stats.outbound}</div>
+                                    <div className="text-xs text-blue-600 font-medium">Исходящие</div>
                                 </div>
                             </div>
                             <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center gap-4">

@@ -156,7 +156,7 @@ export default function ManagerSettings() {
                 </div>
               </div>
 
-              <Button type="submit" className="bg-gradient-to-r from-pink-500 to-purple-600">
+              <Button type="submit" className="bg-gradient-to-r from-pink-500 to-blue-600">
               {t('common:save_settings')}
               </Button>
             </form>

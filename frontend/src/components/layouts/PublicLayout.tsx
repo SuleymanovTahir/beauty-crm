@@ -38,7 +38,7 @@ export default function PublicLayout() {
               {/* <img src="./logo.png" 
                 alt={salonInfo.name || "Logo"} 
                 className="w-12 h-12 object-contain rounded-full"/> */}
-              <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center">
                 <span className="text-white text-xl">✨</span>
               </div>
               <div>
@@ -99,7 +99,7 @@ export default function PublicLayout() {
               <PublicLanguageSwitcher />
               <Link
                 to="/cabinet"
-                className="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full hover:shadow-lg transition-shadow"
+                className="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-blue-600 text-white rounded-full hover:shadow-lg transition-shadow"
               >
                 {t('public:login')}
               </Link>
@@ -134,7 +134,7 @@ export default function PublicLayout() {
               ))}
               <Link
                 to="/cabinet"
-                className="block px-4 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-center rounded-lg"
+                className="block px-4 py-3 bg-gradient-to-r from-pink-500 to-blue-600 text-white text-center rounded-lg"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('public:personal_cabinet')}

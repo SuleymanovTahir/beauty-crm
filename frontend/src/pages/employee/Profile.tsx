@@ -300,7 +300,7 @@ export default function EmployeeProfile() {
 
   // Роли с красивыми метками
   const roleLabels: Record<string, { label: string; color: string }> = {
-    admin: { label: t('profile:admin'), color: 'bg-purple-100 text-purple-800' },
+    admin: { label: t('profile:admin'), color: 'bg-blue-100 text-blue-800' },
     manager: { label: t('profile:manager'), color: 'bg-blue-100 text-blue-800' },
     employee: { label: t('profile:employee'), color: 'bg-green-100 text-green-800' }
   };
@@ -344,7 +344,7 @@ export default function EmployeeProfile() {
         {/* НОВОЕ: Карточка профиля с расширенной информацией */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
           <div className="flex items-start gap-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold flex-shrink-0">
+            <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-bold flex-shrink-0">
               {user.full_name.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1">
@@ -442,7 +442,7 @@ export default function EmployeeProfile() {
                 <Button
                   type="submit"
                   disabled={saving}
-                  className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+                  className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
                 >
                   {saving ? (
                     <>
@@ -523,7 +523,7 @@ export default function EmployeeProfile() {
                 <Button 
                   type="submit" 
                   disabled={saving}
-                  className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+                  className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
                 >
                   {saving ? (
                     <>
@@ -562,7 +562,7 @@ export default function EmployeeProfile() {
                           }}
                         />
                       ) : (
-                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
+                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-pink-500 to-blue-600 flex items-center justify-center text-white text-4xl font-bold">
                           {employeeData.full_name.charAt(0).toUpperCase()}
                         </div>
                       )}
@@ -708,7 +708,7 @@ export default function EmployeeProfile() {
                   <Button
                     type="submit"
                     disabled={saving}
-                    className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+                    className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
                   >
                     {saving ? (
                       <>

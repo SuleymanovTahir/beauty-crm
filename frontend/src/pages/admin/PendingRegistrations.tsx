@@ -155,7 +155,7 @@ const PendingRegistrations: React.FC = () => {
 
     const getRoleBadgeColor = (role: string) => {
         const colors: { [key: string]: string } = {
-            'director': 'bg-purple-100 text-purple-800',
+            'director': 'bg-blue-100 text-blue-800',
             'manager': 'bg-blue-100 text-blue-800',
             'employee': 'bg-green-100 text-green-800',
             'admin': 'bg-red-100 text-red-800'
@@ -238,7 +238,7 @@ const PendingRegistrations: React.FC = () => {
                                 <div className="flex items-start justify-between mb-4">
                                     <div className="flex-1">
                                         <div className="flex items-center gap-3 mb-2">
-                                            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
                                                 {user.full_name.charAt(0).toUpperCase()}
                                             </div>
                                             <div>

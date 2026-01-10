@@ -278,8 +278,8 @@ export default function LoyaltyManagement() {
       title: t('stats.total_points_issued'),
       value: stats.total_points_issued.toLocaleString(),
       icon: Gift,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100',
     },
     {
       title: t('stats.points_redeemed'),

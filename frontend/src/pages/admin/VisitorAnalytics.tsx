@@ -433,7 +433,7 @@ export default function VisitorAnalytics() {
                         {cityBreakdown.length}
                     </h3>
                     <p className="text-xs md:text-sm text-gray-600 mb-2">{t('cities')}</p>
-                    <div className="text-xs md:text-sm text-purple-600">
+                    <div className="text-xs md:text-sm text-blue-600">
                         {t('unique_locations')}
                     </div>
                 </div>

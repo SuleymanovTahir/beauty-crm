@@ -320,7 +320,7 @@ export default function SpecialPackages() {
         <Button
           variant={activeSection === 'referrals' ? 'default' : 'outline'}
           onClick={() => setActiveSection('referrals')}
-          className={activeSection === 'referrals' ? 'bg-purple-600 hover:bg-purple-700' : ''}
+          className={activeSection === 'referrals' ? 'bg-blue-600 hover:bg-blue-700' : ''}
         >
           <Users className="w-4 h-4 mr-2" />
           Реферальные кампании
@@ -398,9 +398,9 @@ export default function SpecialPackages() {
 
                 {/* Promo Code */}
                 {pkg.promo_code && (
-                  <div className="bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 mb-4 flex items-center gap-2">
-                    <Tag className="w-4 h-4 text-purple-600" />
-                    <span className="text-purple-900 font-mono font-medium">{pkg.promo_code}</span>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 mb-4 flex items-center gap-2">
+                    <Tag className="w-4 h-4 text-blue-600" />
+                    <span className="text-blue-900 font-mono font-medium">{pkg.promo_code}</span>
                   </div>
                 )}
 
@@ -678,12 +678,12 @@ export default function SpecialPackages() {
       {activeSection === 'referrals' && (
         <div className="space-y-6">
           {/* Info Banner */}
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <Target className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+              <Target className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-purple-800 font-medium">Реферальные кампании</p>
-                <ul className="text-purple-700 text-sm mt-2 space-y-1 list-disc list-inside">
+                <p className="text-blue-800 font-medium">Реферальные кампании</p>
+                <ul className="text-blue-700 text-sm mt-2 space-y-1 list-disc list-inside">
                   <li>Создавайте кампании с разными бонусами для приглашающего и приглашенного</li>
                   <li>Выбирайте целевую аудиторию: все клиенты, по мастеру, по услуге, неактивные</li>
                   <li>Отслеживайте результаты и управляйте активностью кампаний</li>
@@ -695,7 +695,7 @@ export default function SpecialPackages() {
           {/* Create Button */}
           <div className="flex justify-end">
             <Button
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-blue-600 hover:bg-blue-700"
               onClick={() => {
                 setEditingCampaign(null);
                 setReferralFormData({
@@ -735,9 +735,9 @@ export default function SpecialPackages() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="bg-purple-50 p-3 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-purple-600">{campaign.bonus_points}</p>
-                    <p className="text-xs text-purple-700">{t('bonus_to_referee')}</p>
+                  <div className="bg-blue-50 p-3 rounded-lg text-center">
+                    <p className="text-2xl font-bold text-blue-600">{campaign.bonus_points}</p>
+                    <p className="text-xs text-blue-700">{t('bonus_to_referee')}</p>
                   </div>
                   <div className="bg-pink-50 p-3 rounded-lg text-center">
                     <p className="text-2xl font-bold text-pink-600">{campaign.referrer_bonus}</p>
@@ -816,7 +816,7 @@ export default function SpecialPackages() {
               <p className="text-gray-500">Реферальные кампании не найдены</p>
               <Button
                 onClick={() => setIsReferralModalOpen(true)}
-                className="mt-4 bg-purple-600 hover:bg-purple-700"
+                className="mt-4 bg-blue-600 hover:bg-blue-700"
               >
                 Создать первую кампанию
               </Button>
@@ -933,7 +933,7 @@ export default function SpecialPackages() {
                     id="campaignActive"
                     checked={referralFormData.is_active}
                     onChange={(e) => setReferralFormData({ ...referralFormData, is_active: e.target.checked })}
-                    className="w-4 h-4 text-purple-600 rounded"
+                    className="w-4 h-4 text-blue-600 rounded"
                   />
                   <Label htmlFor="campaignActive" className="cursor-pointer">
                     Активна (клиенты могут использовать)
@@ -987,7 +987,7 @@ export default function SpecialPackages() {
                       toast.error(t('error_saving_campaign'));
                     }
                   }}
-                  className="bg-purple-600 hover:bg-purple-700"
+                  className="bg-blue-600 hover:bg-blue-700"
                 >
                   {editingCampaign ? t('save_campaign') : t('create_campaign')}
                 </Button>
