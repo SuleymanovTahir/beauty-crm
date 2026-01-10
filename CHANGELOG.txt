@@ -1,5 +1,39 @@
 # CHANGELOG - Память проекта Beauty CRM
 
+## 2026-01-10: Исправление Статусов Услуг, API Контрактов и Рестайлинг
+### ПРОБЛЕМА
+1. **Forbidden (403)**: Ошибка при попытке переключить статус услуги для роли "director".
+2. **NameError**: Ошибка `NameError: name 'StageCreate' is not defined` в API контрактов и счетов.
+3. **UI Noise**: Избыточные поля (EN/RU/AR) в форме создания услуги и видимость ключа при редактировании.
+4. **Action Buttons**: Кнопки действий (Edit/Delete) в таблице услуг потеряли цветовую индикацию.
+5. **Цена услуг**: Необходимость небольшого снижения цен на все услуги.
+
+### РЕШЕНИЕ
+1. **Role Access Fix**: В `backend/api/services.py` обновлены проверки ролей. Добавлена роль `director` во все эндпоинты управления услугами.
+2. **API Models Fix**: В `backend/api/contracts.py` и `backend/api/invoices.py` добавлены недостающие Pydantic модели `StageCreate` и `StageUpdate`.
+3. **Service Form Simplification**:
+   - Поля `name_en`, `name_ru`, `name_ar` скрыты, оставлено одно поле "Name", которое автоматически заполняет основные поля.
+   - Поле "Key" скрыто в UI, но продолжает работать в фоновом режиме (автогенерация для новых услуг).
+   - То же самое проделано для описаний.
+4. **UI Button Styling**: Кнопкам Edit (синий) и Delete (красный) возвращены фоновые цвета (`bg-50`) и hover-эффекты для лучшей читаемости.
+5. **Price Reduction**: Запущен скрипт `scripts/maintenance/fix_data.py`, который снизил цены на все активные услуги на 5% (включая min_price и max_price).
+6. **Lint Fixes**: Удалены неиспользуемые переменные в `ManageStagesDialog.tsx`.
+
+### ВАЖНО ПОМНИТЬ
+- **Roles Hierarchy**: Роль `director` теперь имеет полный доступ к управлению услугами наравне с `admin`.
+- **SSOT Name**: При сохранении услуги через новую упрощенную форму, введенное имя записывается в `name` и `name_ru`.
+
+### ФАЙЛЫ
+**ИЗМЕНЕНЫ:**
+- `backend/api/services.py`
+- `backend/api/contracts.py`
+- `backend/api/invoices.py`
+- `frontend/src/pages/admin/Services.tsx`
+- `frontend/src/components/shared/ManageStagesDialog.tsx`
+- `scripts/maintenance/fix_data.py`
+
+---
+
 ## 2026-01-09: Расширение CRM - Договоры, Товары, Счета и Контрольные Точки Воронки
 
 ### ПРОБЛЕМА
