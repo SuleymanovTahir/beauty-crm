@@ -435,6 +435,9 @@ const PaymentDialog = ({ invoice, onClose, onSuccess }: any) => {
     return (
         <div className="crm-modal-overlay" onClick={onClose}>
             <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
+                <button className="crm-modal-close" onClick={onClose}>
+                    <X size={20} />
+                </button>
                 <h2>{t('payment.title')}</h2>
                 <p className="invoice-info">
                     {invoice.invoice_number} - {invoice.client_name}
@@ -513,6 +516,9 @@ const SendInvoiceDialog = ({ invoice, onClose, onSuccess }: any) => {
     return (
         <div className="crm-modal-overlay" onClick={onClose}>
             <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
+                <button className="crm-modal-close" onClick={onClose}>
+                    <X size={20} />
+                </button>
                 <h2>{t('sendDialog.title')}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="crm-form-content">
