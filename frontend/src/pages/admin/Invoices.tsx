@@ -306,94 +306,96 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                 </button>
                 <h2>{t('addInvoice')}</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('form.selectClient')}</label>
-                        <select
-                            className="crm-select"
-                            value={formData.client_id}
-                            onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
-                            required
-                        >
-                            <option value="">{t('form.selectClient')}</option>
-                            {clients.map((client) => (
-                                <option key={client.instagram_id} value={client.instagram_id}>
-                                    {client.name} - {client.phone}
-                                </option>
+                    <div className="crm-form-content">
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('form.selectClient')}</label>
+                            <select
+                                className="crm-select"
+                                value={formData.client_id}
+                                onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
+                                required
+                            >
+                                <option value="">{t('form.selectClient')}</option>
+                                {clients.map((client) => (
+                                    <option key={client.instagram_id} value={client.instagram_id}>
+                                        {client.name} - {client.phone}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="invoice-items">
+                            <h3>{t('form.items')}</h3>
+                            {items.map((item, index) => (
+                                <div key={index} className="item-row">
+                                    <input
+                                        type="text"
+                                        className="crm-input"
+                                        placeholder={t('form.itemName')}
+                                        value={item.name}
+                                        onChange={(e) => updateItem(index, 'name', e.target.value)}
+                                        required
+                                    />
+                                    <input
+                                        type="number"
+                                        className="crm-input"
+                                        placeholder={t('form.itemQuantity')}
+                                        value={item.quantity}
+                                        onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value))}
+                                        min="1"
+                                        required
+                                    />
+                                    <input
+                                        type="number"
+                                        className="crm-input"
+                                        step="0.01"
+                                        placeholder={t('form.itemPrice')}
+                                        value={item.price}
+                                        onChange={(e) => updateItem(index, 'price', parseFloat(e.target.value))}
+                                        required
+                                    />
+                                    <span className="item-amount">
+                                        {(item.quantity * item.price).toFixed(2)}
+                                    </span>
+                                    {items.length > 1 && (
+                                        <button
+                                            type="button"
+                                            className="crm-btn-icon"
+                                            onClick={() => removeItem(index)}
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    )}
+                                </div>
                             ))}
-                        </select>
-                    </div>
+                            <button type="button" className="crm-btn-secondary" onClick={addItem}>
+                                {t('form.addItem')}
+                            </button>
+                        </div>
 
-                    <div className="invoice-items">
-                        <h3>{t('form.items')}</h3>
-                        {items.map((item, index) => (
-                            <div key={index} className="item-row">
-                                <input
-                                    type="text"
-                                    className="crm-input"
-                                    placeholder={t('form.itemName')}
-                                    value={item.name}
-                                    onChange={(e) => updateItem(index, 'name', e.target.value)}
-                                    required
-                                />
-                                <input
-                                    type="number"
-                                    className="crm-input"
-                                    placeholder={t('form.itemQuantity')}
-                                    value={item.quantity}
-                                    onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value))}
-                                    min="1"
-                                    required
-                                />
-                                <input
-                                    type="number"
-                                    className="crm-input"
-                                    step="0.01"
-                                    placeholder={t('form.itemPrice')}
-                                    value={item.price}
-                                    onChange={(e) => updateItem(index, 'price', parseFloat(e.target.value))}
-                                    required
-                                />
-                                <span className="item-amount">
-                                    {(item.quantity * item.price).toFixed(2)}
-                                </span>
-                                {items.length > 1 && (
-                                    <button
-                                        type="button"
-                                        className="crm-btn-icon"
-                                        onClick={() => removeItem(index)}
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-                        <button type="button" className="crm-btn-secondary" onClick={addItem}>
-                            {t('form.addItem')}
-                        </button>
-                    </div>
+                        <div className="invoice-total">
+                            <strong>{t('totalAmount')}: {calculateTotal().toFixed(2)} AED</strong>
+                        </div>
 
-                    <div className="invoice-total">
-                        <strong>{t('totalAmount')}: {calculateTotal().toFixed(2)} AED</strong>
-                    </div>
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('form.dueDate')}</label>
+                            <input
+                                type="date"
+                                className="crm-input"
+                                value={formData.due_date}
+                                onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
+                            />
+                        </div>
 
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('form.dueDate')}</label>
-                        <input
-                            type="date"
-                            className="crm-input"
-                            value={formData.due_date}
-                            onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-                        />
-                    </div>
-
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('form.notes')}</label>
-                        <textarea
-                            className="crm-textarea"
-                            value={formData.notes}
-                            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                            rows={3}
-                        />
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('form.notes')}</label>
+                            <textarea
+                                className="crm-textarea"
+                                value={formData.notes}
+                                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                rows={3}
+                            />
+                        </div>
                     </div>
 
                     <div className="crm-modal-footer">
@@ -436,41 +438,43 @@ const PaymentDialog = ({ invoice, onClose, onSuccess }: any) => {
                     {invoice.invoice_number} - {invoice.client_name}
                 </p>
                 <form onSubmit={handleSubmit}>
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('payment.amount')}</label>
-                        <input
-                            type="number"
-                            className="crm-input"
-                            step="0.01"
-                            value={formData.amount}
-                            onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) })}
-                            max={invoice.total_amount - invoice.paid_amount}
-                            required
-                        />
-                    </div>
+                    <div className="crm-form-content">
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('payment.amount')}</label>
+                            <input
+                                type="number"
+                                className="crm-input"
+                                step="0.01"
+                                value={formData.amount}
+                                onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) })}
+                                max={invoice.total_amount - invoice.paid_amount}
+                                required
+                            />
+                        </div>
 
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('payment.method')}</label>
-                        <select
-                            className="crm-select"
-                            value={formData.payment_method}
-                            onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
-                        >
-                            <option value="cash">{t('payment.methods.cash')}</option>
-                            <option value="card">{t('payment.methods.card')}</option>
-                            <option value="transfer">{t('payment.methods.transfer')}</option>
-                            <option value="online">{t('payment.methods.online')}</option>
-                        </select>
-                    </div>
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('payment.method')}</label>
+                            <select
+                                className="crm-select"
+                                value={formData.payment_method}
+                                onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
+                            >
+                                <option value="cash">{t('payment.methods.cash')}</option>
+                                <option value="card">{t('payment.methods.card')}</option>
+                                <option value="transfer">{t('payment.methods.transfer')}</option>
+                                <option value="online">{t('payment.methods.online')}</option>
+                            </select>
+                        </div>
 
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('payment.notes')}</label>
-                        <textarea
-                            className="crm-textarea"
-                            value={formData.notes}
-                            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                            rows={3}
-                        />
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('payment.notes')}</label>
+                            <textarea
+                                className="crm-textarea"
+                                value={formData.notes}
+                                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                rows={3}
+                            />
+                        </div>
                     </div>
 
                     <div className="crm-modal-footer">
@@ -509,28 +513,30 @@ const SendInvoiceDialog = ({ invoice, onClose, onSuccess }: any) => {
             <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
                 <h2>{t('sendDialog.title')}</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('sendDialog.method')}</label>
-                        <select
-                            className="crm-select"
-                            value={formData.delivery_method}
-                            onChange={(e) => setFormData({ ...formData, delivery_method: e.target.value })}
-                        >
-                            <option value="email">{t('sendDialog.email')}</option>
-                            <option value="whatsapp">{t('sendDialog.whatsapp')}</option>
-                            <option value="telegram">{t('sendDialog.telegram')}</option>
-                        </select>
-                    </div>
+                    <div className="crm-form-content">
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('sendDialog.method')}</label>
+                            <select
+                                className="crm-select"
+                                value={formData.delivery_method}
+                                onChange={(e) => setFormData({ ...formData, delivery_method: e.target.value })}
+                            >
+                                <option value="email">{t('sendDialog.email')}</option>
+                                <option value="whatsapp">{t('sendDialog.whatsapp')}</option>
+                                <option value="telegram">{t('sendDialog.telegram')}</option>
+                            </select>
+                        </div>
 
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('sendDialog.recipient')}</label>
-                        <input
-                            type="text"
-                            className="crm-input"
-                            value={formData.recipient}
-                            onChange={(e) => setFormData({ ...formData, recipient: e.target.value })}
-                            required
-                        />
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('sendDialog.recipient')}</label>
+                            <input
+                                type="text"
+                                className="crm-input"
+                                value={formData.recipient}
+                                onChange={(e) => setFormData({ ...formData, recipient: e.target.value })}
+                                required
+                            />
+                        </div>
                     </div>
 
                     <div className="crm-modal-footer">

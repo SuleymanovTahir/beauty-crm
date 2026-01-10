@@ -1355,11 +1355,16 @@ export class ApiClient {
     })
   }
 
-  async uploadFile(file: File) {
+  async uploadFile(file: File, subfolder?: string) {
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await fetch(`${this.baseURL}/api/upload`, {
+    let url = `${this.baseURL}/api/upload`
+    if (subfolder) {
+      url += `?subfolder=${encodeURIComponent(subfolder)}`
+    }
+
+    const response = await fetch(url, {
       method: 'POST',
       body: formData,
       credentials: 'include',
@@ -1370,7 +1375,15 @@ export class ApiClient {
       throw new Error(error.error || error.detail || 'Upload failed')
     }
 
-    return response.json()
+    return response.json() as Promise<{
+      file_url: string;
+      full_url: string;
+      filename: string;
+      content_type: string;
+      size: number;
+      category: string;
+      subfolder?: string;
+    }>
   }
 
   // ===== USER MANAGEMENT =====
@@ -1915,6 +1928,10 @@ export class ApiClient {
 
   async getProductMovements(productId: number) {
     return this.request<any>(`/api/products/${productId}/movements`)
+  }
+
+  async getProductStats(productId: number) {
+    return this.request<any>(`/api/products/${productId}/stats`)
   }
 
   async getProductCategories() {

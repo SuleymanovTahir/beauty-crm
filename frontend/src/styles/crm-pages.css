@@ -528,18 +528,34 @@
 
 .crm-modal {
   background: white;
-  border-radius: 1rem;
-  padding: 2rem;
+  border-radius: 1.5rem;
+  padding: 2.5rem;
   max-width: 600px;
-  width: 90%;
-  max-height: 90vh;
+  width: 95%;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.crm-modal form {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.crm-form-content {
   overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding-right: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex: 1;
 }
 
 .crm-modal.modal-large,
 .modal-large {
-  max-width: 900px;
+  max-width: 1000px;
 }
 
 .crm-modal-header {

@@ -1,23 +1,28 @@
 {
   "users": [
     {
-      "id": 59,
+      "id": 2,
       "fields": {
-        "full_name": {
-          "ru": "Смирнова Екатерина",
-          "key": "users.59.full_name.dfcc4b09",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "position": {
-          "ru": "Парикмахер-стилист",
-          "key": "users.59.position.b8d173e8",
+          "ru": "Hair Stylist",
+          "key": "users.2.position.18612649",
+          "en": "Hair Stylist",
+          "ar": "مصفف الشعر",
+          "es": "estilista",
+          "de": "Friseur",
+          "fr": "Coiffeur",
+          "hi": "बालों की स्टाइल बनाने वाला",
+          "kk": "Шаш стилисті",
+          "pt": "Cabeleireiro"
+        }
+      }
+    },
+    {
+      "id": 62,
+      "fields": {
+        "bio": {
+          "ru": "Павлова Ирина — ведущий эксперт в области Макияж, визаж. С опытом работы 8 лет, создает неповторимые образы, учитывая каждое пожелание гостя.",
+          "key": "users.62.bio.7d6e104b",
           "en": null,
           "ar": null,
           "es": null,
@@ -26,10 +31,15 @@
           "hi": null,
           "kk": null,
           "pt": null
-        },
+        }
+      }
+    },
+    {
+      "id": 58,
+      "fields": {
         "bio": {
-          "ru": "Стрижки, окрашивание, укладки",
-          "key": "users.59.bio.4a81806f",
+          "ru": "Ваш эксперт по идеальному маникюру. Кузнецова Виктория — это тонкое чувство вкуса, безупречная стерильность и внимание к каждой детали.",
+          "key": "users.58.bio.bfb7e922",
           "en": null,
           "ar": null,
           "es": null,
@@ -44,33 +54,43 @@
     {
       "id": 60,
       "fields": {
-        "full_name": {
-          "ru": "Лебедева Татьяна",
-          "key": "users.60.full_name.257200e4",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "position": {
-          "ru": "Косметолог",
-          "key": "users.60.position.a4e20702",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "bio": {
-          "ru": "Уход за лицом и телом",
-          "key": "users.60.bio.6ef3bfcd",
+          "ru": "Профессионализм и творческий подход: Лебедева Татьяна специализируется на Facial, Promo. Мастер, для которого нет невыполнимых задач.",
+          "key": "users.60.bio.397804b5",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 61,
+      "fields": {
+        "bio": {
+          "ru": "Профессионализм и творческий подход: Федорова Наталья специализируется на Brows, Permanent Makeup, Promo. Мастер, для которого нет невыполнимых задач.",
+          "key": "users.61.bio.e6c24481",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 59,
+      "fields": {
+        "bio": {
+          "ru": "Мастер преображения ваших волос. Смирнова Екатерина использует авторские техники окрашивания и ухода, которые подчеркнут вашу индивидуальность.",
+          "key": "users.59.bio.1e462bd1",
           "en": null,
           "ar": null,
           "es": null,
@@ -88,23 +108,6 @@
         "position": {
           "ru": "Hair Stylist",
           "key": "users.3.position.18612649",
-          "en": "Hair Stylist",
-          "ar": "مصفف الشعر",
-          "es": "estilista",
-          "de": "Friseur",
-          "fr": "Coiffeur",
-          "hi": "बालों की स्टाइल बनाने वाला",
-          "kk": "Шаш стилисті",
-          "pt": "Cabeleireiro"
-        }
-      }
-    },
-    {
-      "id": 2,
-      "fields": {
-        "position": {
-          "ru": "Hair Stylist",
-          "key": "users.2.position.18612649",
           "en": "Hair Stylist",
           "ar": "مصفف الشعر",
           "es": "estilista",
@@ -139,14 +142,14 @@
         "position": {
           "ru": "Top Specialist",
           "key": "users.6.position.a527d6bd",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Top Specialist",
+          "ar": "أعلى متخصص",
+          "es": "Especialista superior",
+          "de": "Top-Spezialist",
+          "fr": "Spécialiste supérieur",
+          "hi": "शीर्ष विशेषज्ञ",
+          "kk": "Бас маман",
+          "pt": "Especialista superior"
         }
       }
     },
@@ -166,138 +169,138 @@
           "pt": "Mestre de unhas"
         }
       }
-    },
-    {
-      "id": 61,
-      "fields": {
-        "full_name": {
-          "ru": "Федорова Наталья",
-          "key": "users.61.full_name.5f17e491",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "position": {
-          "ru": "Мастер бровист",
-          "key": "users.61.position.5808e954",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "bio": {
-          "ru": "Оформление бровей и ресниц",
-          "key": "users.61.bio.aa13b138",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 58,
-      "fields": {
-        "full_name": {
-          "ru": "Кузнецова Виктория",
-          "key": "users.58.full_name.214f5191",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "position": {
-          "ru": "Мастер маникюра",
-          "key": "users.58.position.e36b15b4",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "bio": {
-          "ru": "Nail-art специалист",
-          "key": "users.58.bio.7ef1954e",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 62,
-      "fields": {
-        "full_name": {
-          "ru": "Павлова Ирина",
-          "key": "users.62.full_name.d3255765",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "position": {
-          "ru": "Визажист",
-          "key": "users.62.position.bc063e06",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "bio": {
-          "ru": "Профессиональный макияж",
-          "key": "users.62.bio.9379f3b7",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
     }
   ],
   "public_reviews": [
     {
-      "id": 18,
+      "id": 21,
       "fields": {
         "text_ru": {
           "ru": "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!",
-          "key": "public_reviews.18.text_ru.6f00ad70",
+          "key": "public_reviews.21.text_ru.6f00ad70",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.21.author_name.ff715865",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.21.employee_position.5b1b1d5e",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 22,
+      "fields": {
+        "text_ru": {
+          "ru": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
+          "key": "public_reviews.22.text_ru.f38138da",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.22.author_name.653816a6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.22.employee_position.9a3a91ca",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 23,
+      "fields": {
+        "text_ru": {
+          "ru": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
+          "key": "public_reviews.23.text_ru.ae85e84b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.23.author_name.f26d4aa2",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.23.employee_position.65d6c03d",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 18,
+      "fields": {
+        "text_ru": {
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.18.text_ru.d04583b6",
           "en": null,
           "ar": null,
           "es": null,
@@ -310,26 +313,26 @@
         "author_name": {
           "ru": "Sarah Jenkins",
           "key": "public_reviews.18.author_name.ff715865",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
         },
         "employee_position": {
           "ru": "Eyelashes",
           "key": "public_reviews.18.employee_position.5b1b1d5e",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Eyelashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas"
         }
       }
     },
@@ -337,8 +340,8 @@
       "id": 19,
       "fields": {
         "text_ru": {
-          "ru": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
-          "key": "public_reviews.19.text_ru.f38138da",
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.19.text_ru.784d2781",
           "en": null,
           "ar": null,
           "es": null,
@@ -351,26 +354,26 @@
         "author_name": {
           "ru": "Maria Gonzalez",
           "key": "public_reviews.19.author_name.653816a6",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González"
         },
         "employee_position": {
           "ru": "Facial Treatment",
           "key": "public_reviews.19.employee_position.9a3a91ca",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Facial Treatment",
+          "ar": "علاج الوجه",
+          "es": "Tratamiento Facial",
+          "de": "Gesichtsbehandlung",
+          "fr": "Traitement du visage",
+          "hi": "चेहरे का उपचार",
+          "kk": "Бет күтімі",
+          "pt": "Tratamento facial"
         }
       }
     },
@@ -378,8 +381,8 @@
       "id": 20,
       "fields": {
         "text_ru": {
-          "ru": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
-          "key": "public_reviews.20.text_ru.ae85e84b",
+          "ru": "Отличный сервис и профессиональный персонал. ",
+          "key": "public_reviews.20.text_ru.33473c5f",
           "en": null,
           "ar": null,
           "es": null,
@@ -392,26 +395,26 @@
         "author_name": {
           "ru": "Fatima Al-Sayed",
           "key": "public_reviews.20.author_name.f26d4aa2",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима әл-Сайед",
+          "pt": "Fátima Al-Sayed"
         },
         "employee_position": {
           "ru": "Microblading",
           "key": "public_reviews.20.employee_position.65d6c03d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading"
         }
       }
     },
@@ -972,12 +975,12 @@
       }
     },
     {
-      "id": 23,
+      "id": 90,
       "fields": {
         "description_ru": {
-          "ru": "Осветление корней с укладкой",
-          "key": "services.23.description_ru.785f83b1",
-          "en": "Root lightening with styling",
+          "ru": "Хотстоун",
+          "key": "services.90.description_ru.d0858203",
+          "en": "Hotstone",
           "ar": null,
           "es": null,
           "de": null,
@@ -989,12 +992,12 @@
       }
     },
     {
-      "id": 90,
+      "id": 23,
       "fields": {
         "description_ru": {
-          "ru": "Хотстоун",
-          "key": "services.90.description_ru.d0858203",
-          "en": "Hotstone",
+          "ru": "Осветление корней с укладкой",
+          "key": "services.23.description_ru.785f83b1",
+          "en": "Root lightening with styling",
           "ar": null,
           "es": null,
           "de": null,

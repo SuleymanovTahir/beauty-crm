@@ -640,9 +640,9 @@ export default function Users() {
       {/* Диалог смены роли */}
       {
         showRoleDialog && selectedUser && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-              <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white flex-shrink-0">
+          <div className="crm-modal-overlay" onClick={() => setShowRoleDialog(false)}>
+            <div className="crm-modal max-w-md" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white flex-shrink-0 -m-6 mb-6 rounded-t-2xl">
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 leading-tight">
                     {t('action_change_role_title')}: {selectedUser.full_name}
@@ -665,7 +665,7 @@ export default function Users() {
                 </Button>
               </div>
 
-              <div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
+              <div className="crm-form-content">
                 {loadingRoles ? (
                   <div className="flex justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
@@ -748,9 +748,9 @@ export default function Users() {
       {/* Диалог редактирования пользователя */}
       {
         showEditDialog && selectedUser && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
-              <div className="p-6 border-b border-gray-200">
+          <div className="crm-modal-overlay" onClick={() => setShowEditDialog(false)}>
+            <div className="crm-modal max-w-md" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6 border-b border-gray-200 -m-6 mb-6 rounded-t-2xl">
                 <h3 className="text-xl font-bold text-gray-900">
                   {t('edit_dialog_title')}: {selectedUser.full_name}
                 </h3>
@@ -759,69 +759,71 @@ export default function Users() {
                 </p>
               </div>
 
-              <div className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('edit_username_label')}
-                  </label>
-                  <Input
-                    type="text"
-                    value={editForm.username}
-                    onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
-                    placeholder={t('edit_username_placeholder')}
-                    disabled={savingEdit}
-                  />
-                </div>
+              <div className="crm-form-content">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('edit_username_label')}
+                    </label>
+                    <Input
+                      type="text"
+                      value={editForm.username}
+                      onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
+                      placeholder={t('edit_username_placeholder')}
+                      disabled={savingEdit}
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('edit_fullname_label')}
-                  </label>
-                  <Input
-                    type="text"
-                    value={editForm.full_name}
-                    onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
-                    placeholder={t('edit_fullname_placeholder')}
-                    disabled={savingEdit}
-                  />
-                </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('edit_fullname_label')}
+                    </label>
+                    <Input
+                      type="text"
+                      value={editForm.full_name}
+                      onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
+                      placeholder={t('edit_fullname_placeholder')}
+                      disabled={savingEdit}
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email
-                  </label>
-                  <Input
-                    type="email"
-                    value={editForm.email}
-                    onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                    placeholder="email@example.com"
-                    disabled={savingEdit}
-                  />
-                </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email
+                    </label>
+                    <Input
+                      type="email"
+                      value={editForm.email}
+                      onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                      placeholder="email@example.com"
+                      disabled={savingEdit}
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('position_label')}
-                  </label>
-                  <PositionSelector
-                    value={editForm.position}
-                    onChange={(value) => setEditForm({ ...editForm, position: value })}
-                    placeholder={t('edit_position_placeholder')}
-                    disabled={savingEdit}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    {t('edit_position_hint')}
-                  </p>
-                </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('position_label')}
+                    </label>
+                    <PositionSelector
+                      value={editForm.position}
+                      onChange={(value) => setEditForm({ ...editForm, position: value })}
+                      placeholder={t('edit_position_placeholder')}
+                      disabled={savingEdit}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {t('edit_position_hint')}
+                    </p>
+                  </div>
 
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                  <p className="text-sm text-yellow-800">
-                    <strong>⚠️ {t('edit_password_warning_title')}:</strong> {t('edit_password_warning_text')}
-                  </p>
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <p className="text-sm text-yellow-800">
+                      <strong>⚠️ {t('edit_password_warning_title')}:</strong> {t('edit_password_warning_text')}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="p-6 border-t border-gray-200 flex gap-3">
+              <div className="crm-modal-footer mt-8 border-t pt-4">
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -835,7 +837,7 @@ export default function Users() {
                 </Button>
                 <Button
                   onClick={handleEditUser}
-                  className="flex-1 bg-pink-600 hover:bg-pink-700"
+                  className="flex-1 bg-pink-600 hover:bg-pink-700 text-white"
                   disabled={savingEdit}
                 >
                   {savingEdit ? t('edit_saving') : t('edit_save')}
