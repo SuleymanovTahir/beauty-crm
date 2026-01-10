@@ -1,0 +1,51 @@
+{
+  "marketplace": {
+    "title": "Booking platforms",
+    "subtitle": "Integration with online booking and review services",
+    "totalBookings": "Total bookings",
+    "activeSources": "Active sources",
+    "bookings": "bookings",
+    "reviews": "Reviews",
+    "lastSync": "Last sync",
+    "neverSynced": "Never",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}} min ago",
+    "hoursAgo": "{{count}} hours ago",
+    "daysAgo": "{{count}} days ago",
+    "configure": "Tune",
+    "sync": "Synchronize",
+    "syncing": "Synchronization...",
+    "syncStarted": "Synchronization started",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Not configured",
+    "configureProvider": "Settings",
+    "apiKey": "API key",
+    "apiSecret": "API Secret",
+    "webhookUrl": "Webhook URL",
+    "webhookHint": "Specify this URL in the webhook settings on the platform",
+    "enableProvider": "Enable integration",
+    "urlCopied": "URL copied",
+    "configSuccess": "Settings saved"
+  },
+  "payment": {
+    "title": "Payment systems",
+    "subtitle": "Connecting payment providers",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Not configured",
+    "configure": "Tune",
+    "setup": "Connect",
+    "configureProvider": "Settings",
+    "apiKey": "API key",
+    "secretKey": "Secret key",
+    "webhookSecret": "Webhook Secret",
+    "webhookUrl": "Webhook URL",
+    "enableProvider": "Enable provider"
+  },
+  "errors": {
+    "loadFailed": "Error loading data",
+    "syncFailed": "Synchronization error",
+    "saveFailed": "Save error"
+  }
+}

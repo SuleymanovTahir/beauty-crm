@@ -228,11 +228,9 @@ export default function Broadcasts() {
         user_ids: [],
       });
       setPreview(null);
-
-      // Reload history
       await loadHistory();
     } catch (err: any) {
-      toast.error(err.message || 'Ошибка отправки');
+      toast.error(err.message || t('common:error_sending_message', 'Ошибка отправки'));
     } finally {
       setSending(false);
     }
@@ -296,7 +294,7 @@ export default function Broadcasts() {
                         }`}
                     >
                       <Mail className="w-5 h-5" />
-                      Email
+                      {t('channel_email', 'Email')}
                     </button>
 
                     <button
@@ -308,7 +306,7 @@ export default function Broadcasts() {
                         }`}
                     >
                       <MessageCircle className="w-5 h-5" />
-                      Telegram
+                      {t('channel_telegram', 'Telegram')}
                     </button>
 
                     <button
@@ -320,7 +318,7 @@ export default function Broadcasts() {
                         }`}
                     >
                       <Instagram className="w-5 h-5" />
-                      Instagram
+                      {t('channel_instagram', 'Instagram')}
                     </button>
 
                     <button
@@ -574,7 +572,7 @@ export default function Broadcasts() {
                       <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
                         <div className="flex items-center gap-2">
                           <Mail className="w-4 h-4 text-blue-600" />
-                          <span className="text-sm text-gray-700">Email</span>
+                          <span className="text-sm text-gray-700">{t('channel_email', 'Email')}</span>
                         </div>
                         <span className="font-bold text-blue-600">{preview.by_channel.email}</span>
                       </div>
@@ -584,7 +582,7 @@ export default function Broadcasts() {
                       <div className="flex items-center justify-between p-2 bg-green-50 rounded">
                         <div className="flex items-center gap-2">
                           <MessageCircle className="w-4 h-4 text-green-600" />
-                          <span className="text-sm text-gray-700">Telegram</span>
+                          <span className="text-sm text-gray-700">{t('channel_telegram', 'Telegram')}</span>
                         </div>
                         <span className="font-bold text-green-600">{preview.by_channel.telegram}</span>
                       </div>
@@ -594,7 +592,7 @@ export default function Broadcasts() {
                       <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
                         <div className="flex items-center gap-2">
                           <Instagram className="w-4 h-4 text-purple-600" />
-                          <span className="text-sm text-gray-700">Instagram</span>
+                          <span className="text-sm text-gray-700">{t('channel_instagram', 'Instagram')}</span>
                         </div>
                         <span className="font-bold text-purple-600">{preview.by_channel.instagram}</span>
                       </div>
@@ -604,7 +602,7 @@ export default function Broadcasts() {
                       <div className="flex items-center justify-between p-2 bg-pink-50 rounded">
                         <div className="flex items-center gap-2">
                           <Bell className="w-4 h-4 text-pink-600" />
-                          <span className="text-sm text-gray-700">Уведомления</span>
+                          <span className="text-sm text-gray-700">{t('channels_notification', 'Уведомления')}</span>
                         </div>
                         <span className="font-bold text-pink-600">{preview.by_channel.notification}</span>
                       </div>

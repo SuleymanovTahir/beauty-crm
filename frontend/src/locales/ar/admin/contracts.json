@@ -1,0 +1,52 @@
+{
+  "title": "المعاهدات",
+  "subtitle": "إدارة عقود العملاء",
+  "addContract": "إنشاء اتفاقية",
+  "loading": "تحميل...",
+  "allStatuses": "جميع الحالات",
+  "contractNumber": "رقم العقد",
+  "client": "عميل",
+  "status": "حالة",
+  "createdAt": "تاريخ الإنشاء",
+  "actions": "الإجراءات",
+  "sendButton": "يرسل",
+  "delete": "يمسح",
+  "noContracts": "لا توجد عقود بعد",
+  "createFirst": "أنشئ عقدك الأول مع العميل",
+  "statuses": {
+    "draft": "مسودة",
+    "sent": "مرسل",
+    "signed": "وقعت",
+    "cancelled": "تم الإلغاء"
+  },
+  "form": {
+    "selectClient": "حدد العميل",
+    "contractType": "نوع العقد",
+    "contractDate": "تاريخ العقد",
+    "terms": "شروط الاتفاقية",
+    "notes": "ملحوظات",
+    "save": "يحفظ",
+    "cancel": "يلغي"
+  },
+  "types": {
+    "service": "الخدمة",
+    "product": "منتج",
+    "subscription": "الاشتراك"
+  },
+  "sendDialog": {
+    "title": "إرسال العقد",
+    "method": "طريقة الشحن",
+    "recipient": "متلقي",
+    "email": "بريد إلكتروني",
+    "whatsapp": "واتس اب",
+    "telegram": "برقية",
+    "instagram": "انستغرام",
+    "sendButton": "يرسل"
+  },
+  "messages": {
+    "confirmDelete": "هل أنت متأكد أنك تريد حذف هذه الاتفاقية؟",
+    "contractCreated": "تم إنشاء العقد",
+    "contractSent": "تم إرسال العقد",
+    "contractDeleted": "تم حذف العقد"
+  }
+}

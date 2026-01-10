@@ -1,0 +1,52 @@
+{
+  "title": "Verträge",
+  "subtitle": "Verwaltung bis Kundenverträgen",
+  "addContract": "Erstellen Sie eine Vereinbarung",
+  "loading": "Laden...",
+  "allStatuses": "Alle Status",
+  "contractNumber": "Vertragsnr.",
+  "client": "Kunde",
+  "status": "Status",
+  "createdAt": "Erstellungsdatum",
+  "actions": "Aktionen",
+  "sendButton": "Schicken",
+  "delete": "Löschen",
+  "noContracts": "Noch keine Verträge",
+  "createFirst": "Erstellen Sie Ihren ersten Vertrag mit einem Kunden",
+  "statuses": {
+    "draft": "Entwurf",
+    "sent": "Gesendet",
+    "signed": "Unterzeichnet",
+    "cancelled": "Abgesagt"
+  },
+  "form": {
+    "selectClient": "Wählen Sie den Kunden aus",
+    "contractType": "Vertragstyp",
+    "contractDate": "Vertragsdatum",
+    "terms": "Bedingungen der Vereinbarung",
+    "notes": "Notizen",
+    "save": "Speichern",
+    "cancel": "Stornieren"
+  },
+  "types": {
+    "service": "Service",
+    "product": "Produkt",
+    "subscription": "Abonnement"
+  },
+  "sendDialog": {
+    "title": "Vertrag senden",
+    "method": "Versandart",
+    "recipient": "Empfänger",
+    "email": "E-Mail",
+    "whatsapp": "WhatsApp",
+    "telegram": "Telegramm",
+    "instagram": "Instagram",
+    "sendButton": "Schicken"
+  },
+  "messages": {
+    "confirmDelete": "Sind Sie sicher, dass Sie diese Vereinbarung löschen möchten?",
+    "contractCreated": "Der Vertrag wurde erstellt",
+    "contractSent": "Der Vertrag wurde verschickt",
+    "contractDeleted": "Vertrag gelöscht"
+  }
+}
