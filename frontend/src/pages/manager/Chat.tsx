@@ -351,7 +351,7 @@ export default function Chat() {
       lastMsg.id &&
       lastMsg.id !== lastProcessedMessageId.current
     ) {
-      console.log('🆕 Обнаружено новое сообщение от клиента:', lastMsg.id);
+      console.log('Обнаружено новое сообщение от клиента:', lastMsg.id);
 
       lastProcessedMessageId.current = lastMsg.id;
       isFetchingSuggestion.current = true;
@@ -468,7 +468,7 @@ export default function Chat() {
         setBotSuggestion(response.suggestion);
         setMessage(response.suggestion);
 
-        toast.info(`🤖 Бот предлагает ответ (${response.unread_count} сообщ.)`, {
+        toast.info(`Бот предлагает ответ (${response.unread_count} сообщ.)`, {
           description: response.suggestion.substring(0, 100) + '...',
           duration: 5000
         });
@@ -513,7 +513,7 @@ export default function Chat() {
     console.log('🔍 Проверка команды:', { original: cleanMessage, isBotHelp });
 
     if (isBotHelp) {
-      console.log('✅ Обнаружена команда бота - НЕ отправляем клиенту!');
+      console.log('Обнаружена команда бота - НЕ отправляем клиенту!');
 
       let fullText = cleanMessage
         .replace(/#бот\s*помоги#?/gi, '')
@@ -525,8 +525,8 @@ export default function Chat() {
         .trim();
 
       if (!fullText) {
-        toast.error('❌ Напишите вопрос после команды', {
-          description: 'Пример: #помоги клиент жалуется на цену',
+        toast.error(t('chat:error_empty_question', 'Напишите вопрос после команды'), {
+          description: t('chat:example_question', 'Пример: #помоги клиент жалуется на цену'),
           duration: 5000
         });
         return;
@@ -537,18 +537,18 @@ export default function Chat() {
       const context = lines.slice(1).join('\n').trim();
 
       try {
-        const loadingId = toast.loading('🤖 Бот анализирует ситуацию...');
+        const loadingId = toast.loading('Бот анализирует ситуацию...');
         const response = await api.askBotAdvice(question, context);
         toast.dismiss(loadingId);
 
-        toast.success('💡 Совет от AI-бота', {
+        toast.success(t('chat:ai_advice_title', 'Совет от AI-бота'), {
           description: response.advice,
           duration: 30000,
           action: {
-            label: '📋 Копировать',
+            label: t('common:copy', 'Копировать'),
             onClick: () => {
               navigator.clipboard.writeText(response.advice);
-              toast.success('✅ Скопировано!');
+              toast.success(t('common:copied', 'Скопировано!'));
             }
           }
         });
@@ -556,15 +556,15 @@ export default function Chat() {
         setMessage('');
         return;
       } catch (err) {
-        console.error('❌ Ошибка:', err);
-        toast.error('❌ Ошибка получения совета', {
+        console.error('Ошибка:', err);
+        toast.error('Ошибка получения совета', {
           description: err instanceof Error ? err.message : 'Неизвестная ошибка'
         });
         return;
       }
     }
 
-    console.log('📤 Отправка сообщения клиенту');
+    console.log('Отправка сообщения клиенту');
 
     try {
       if (attachedFiles.length > 0) {
@@ -598,10 +598,10 @@ export default function Chat() {
               type: fileType
             }]);
 
-            toast.success(`✅ ${file.name}`);
+            toast.success(file.name);
           } catch (err) {
             console.error(err);
-            toast.error(`❌ Ошибка: ${file.name}`);
+            toast.error(`${t('common:error', 'Ошибка')}: ${file.name}`);
           }
         }
 
@@ -631,14 +631,14 @@ export default function Chat() {
         }]);
 
         setMessage('');
-        setReplyToMessage(null);  // ✅ ДОБАВЛЕНО
-        toast.success('✅ Отправлено');
+        setReplyToMessage(null);  // ДОБАВЛЕНО
+        toast.success(t('chat:sent', 'Отправлено'));
       }
 
       setTimeout(() => loadMessages(selectedClient.id, false), 1000);
     } catch (err) {
       console.error(err);
-      toast.error('❌ Ошибка отправки');
+      toast.error(t('chat:error_sending', 'Ошибка отправки'));
     } finally {
       setIsUploadingFile(false);
     }
@@ -646,7 +646,7 @@ export default function Chat() {
 
   const handleAskBot = async () => {
     if (!botQuestion.trim()) {
-      toast.error('❌ Введите вопрос');
+      toast.error(t('chat:enter_question', 'Введите вопрос'));
       return;
     }
 
@@ -664,14 +664,14 @@ export default function Chat() {
 
       const response = await api.askBotAdvice(botQuestion, fullContext);
 
-      toast.success('💡 Совет от AI-бота', {
+      toast.success('Совет от AI-бота', {
         description: response.advice,
         duration: 60000,
         action: {
-          label: '📋 Копировать',
+          label: 'Копировать',
           onClick: () => {
             navigator.clipboard.writeText(response.advice);
-            toast.success('✅ Скопировано!');
+            toast.success('Скопировано!');
           }
         }
       });
@@ -682,8 +682,8 @@ export default function Chat() {
       setShowAIButtons(false);
 
     } catch (err) {
-      console.error('❌ Ошибка:', err);
-      toast.error('❌ Ошибка получения совета', {
+      console.error('Ошибка:', err);
+      toast.error('Ошибка получения совета', {
         description: err instanceof Error ? err.message : 'Неизвестная ошибка'
       });
     } finally {
@@ -693,7 +693,7 @@ export default function Chat() {
 
   const handleAskBotWithSelectedMessages = async () => {
     if (selectedMessageIds.size === 0) {
-      toast.error('❌ Выберите хотя бы одно сообщение');
+      toast.error('Выберите хотя бы одно сообщение');
       return;
     }
 
@@ -709,21 +709,21 @@ export default function Chat() {
         .join('\n');
 
       if (!selectedMessages) {
-        toast.error('❌ Не удалось собрать выбранные сообщения');
+        toast.error('Не удалось собрать выбранные сообщения');
         return;
       }
 
       const question = "Проанализируй эти сообщения и дай совет как лучше ответить клиенту";
       const response = await api.askBotAdvice(question, selectedMessages);
 
-      toast.success('💡 Совет от AI-бота', {
+      toast.success('Совет от AI-бота', {
         description: response.advice,
         duration: 60000,
         action: {
-          label: '📋 Копировать',
+          label: 'Копировать',
           onClick: () => {
             navigator.clipboard.writeText(response.advice);
-            toast.success('✅ Скопировано!');
+            toast.success('Скопировано!');
           }
         }
       });
@@ -733,8 +733,8 @@ export default function Chat() {
       setShowAIButtons(false);
 
     } catch (err) {
-      console.error('❌ Ошибка:', err);
-      toast.error('❌ Ошибка получения совета', {
+      console.error('Ошибка:', err);
+      toast.error('Ошибка получения совета', {
         description: err instanceof Error ? err.message : 'Неизвестная ошибка'
       });
     } finally {
@@ -1244,7 +1244,7 @@ export default function Chat() {
                               <button
                                 onClick={() => {
                                   navigator.clipboard.writeText(msg.message);
-                                  toast.success('📋 Текст скопирован');
+                                  toast.success('Текст скопирован');
                                   setActiveActionMenuId(null);
                                 }}
                                 className="p-2 hover:bg-purple-50 dark:hover:bg-purple-900/40 text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 rounded-full transition-all"
@@ -1631,7 +1631,7 @@ export default function Chat() {
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                     <MessageCircle className="w-5 h-5 text-blue-600" />
-                    🤖 Спросить AI-консультанта
+                    Спросить AI-консультанта
                   </h3>
                   <button
                     onClick={() => {
@@ -1676,13 +1676,13 @@ export default function Chat() {
                     rows={2}
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    💡 Последние 5 сообщений будут добавлены автоматически
+                    Последние 5 сообщений будут добавлены автоматически
                   </p>
                 </div>
 
                 {/* Подсказки */}
                 <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
-                  <p className="text-xs font-semibold text-blue-900 mb-2">💡 Примеры вопросов:</p>
+                  <p className="text-xs font-semibold text-blue-900 mb-2">Примеры вопросов:</p>
                   <ul className="text-xs text-blue-700 space-y-1">
                     <li>• Клиент жалуется на цену, что ответить?</li>
                     <li>• Как убедить записаться прямо сейчас?</li>
@@ -1779,13 +1779,13 @@ export default function Chat() {
                         key={client.id}
                         onClick={async () => {
                           try {
-                            await api.sendMessage(client.id, `📤 Переслано:\n\n${forwardMessage.message}`);
-                            toast.success(`✅ Отправлено ${client.display_name}`);
+                            await api.sendMessage(client.id, `Переслано:\n\n${forwardMessage.message}`);
+                            toast.success(`Отправлено ${client.display_name}`);
                             setShowForwardModal(false);
                             setForwardMessage(null);
                             setForwardSearchTerm('');
                           } catch (err) {
-                            toast.error('❌ Ошибка пересылки');
+                            toast.error('Ошибка пересылки');
                           }
                         }}
                         className="w-full p-3 flex items-center gap-3 hover:bg-gray-50 rounded-xl transition-colors"

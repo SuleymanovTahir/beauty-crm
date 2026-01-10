@@ -1518,7 +1518,7 @@ export default function Services() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="bonusPoints">Бонус приглашенному</Label>
+                  <Label htmlFor="bonusPoints">{t('services:bonus_for_invited', 'Бонус приглашенному')}</Label>
                   <Input
                     id="bonusPoints"
                     type="number"
@@ -1547,10 +1547,10 @@ export default function Services() {
                     <SelectValue placeholder={t('services:select_audience', 'Выберите аудиторию')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Все клиенты</SelectItem>
-                    <SelectItem value="by_inactivity">Неактивные клиенты</SelectItem>
-                    <SelectItem value="by_master">Клиенты мастера</SelectItem>
-                    <SelectItem value="by_service">Клиенты услуги</SelectItem>
+                    <SelectItem value="all">{t('services:all_clients', 'Все клиенты')}</SelectItem>
+                    <SelectItem value="by_inactivity">{t('services:inactive_clients', 'Неактивные клиенты')}</SelectItem>
+                    <SelectItem value="by_master">{t('services:clients_of_master', 'Клиенты мастера')}</SelectItem>
+                    <SelectItem value="by_service">{t('services:clients_of_service', 'Клиенты услуги')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -2004,10 +2004,10 @@ export default function Services() {
                 <Select value={challengeFormData.target_type} onValueChange={(value: any) => setChallengeFormData({ ...challengeFormData, target_type: value })}>
                   <SelectTrigger><SelectValue placeholder={t('services:select_audience', 'Выберите аудиторию')} /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Все клиенты</SelectItem>
-                    <SelectItem value="by_inactivity">Неактивные клиенты</SelectItem>
-                    <SelectItem value="by_master">Клиенты мастера</SelectItem>
-                    <SelectItem value="by_service">Клиенты услуги</SelectItem>
+                    <SelectItem value="all">{t('services:all_clients', 'Все клиенты')}</SelectItem>
+                    <SelectItem value="by_inactivity">{t('services:inactive_clients', 'Неактивные клиенты')}</SelectItem>
+                    <SelectItem value="by_master">{t('services:clients_of_master', 'Клиенты мастера')}</SelectItem>
+                    <SelectItem value="by_service">{t('services:clients_of_service', 'Клиенты услуги')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
