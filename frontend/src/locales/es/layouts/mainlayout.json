@@ -36,7 +36,10 @@
     "invoices": "Cuentas",
     "marketplace_integrations": "Mercados",
     "payment_integrations": "Sistemas de pago",
-    "products": "Bienes"
+    "products": "Bienes",
+    "finance": "Finanzas",
+    "management": "Control",
+    "tools": "Herramientas"
   },
   "no_new_notifications": "Sin notificaciones",
   "notifications": "Notificaciones",

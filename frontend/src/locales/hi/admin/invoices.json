@@ -21,7 +21,8 @@
     "sent": "भेजा",
     "partial": "आंशिक रूप से भुगतान किया",
     "paid": "चुकाया गया",
-    "overdue": "खत्म हो चुका"
+    "overdue": "खत्म हो चुका",
+    "cancelled": "रद्द कर दिया गया"
   },
   "form": {
     "selectClient": "ग्राहक का चयन करें",
@@ -62,6 +63,10 @@
     "invoiceCreated": "खाता बनाया गया",
     "invoiceSent": "चालान भेजा",
     "paymentAdded": "भुगतान जोड़ा गया",
-    "invoiceDeleted": "खाता हटा दिया गया"
-  }
+    "invoiceDeleted": "खाता हटा दिया गया",
+    "invoiceUpdated": "खाता अद्यतन किया गया"
+  },
+  "board": "तख़्ता",
+  "allInvoices": "सभी खाते",
+  "search_placeholder": "नंबर या क्लाइंट के आधार पर खोजें..."
 }

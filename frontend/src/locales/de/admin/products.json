@@ -45,7 +45,8 @@
     "productCreated": "Produkt erstellt",
     "productUpdated": "Produkt aktualisiert",
     "productDeleted": "Produkt entfernt",
-    "movementAdded": "Bewegung hinzugefügt"
+    "movementAdded": "Bewegung hinzugefügt",
+    "noResults": "Zu Ihrer Anfrage wurde nichts gefunden"
   },
   "detail": {
     "noCategory": "Nicht kategorisiert",
@@ -61,5 +62,12 @@
     "totalRevenue": "Einnahmen",
     "last30Days": "In 30 Tagen",
     "avgPrice": "Heiraten. Preis"
-  }
+  },
+  "search_placeholder": "Suche nach Titel oder Kategorie...",
+  "stock_status": {
+    "in_stock": "Auf Lager",
+    "low_stock": "Wenige",
+    "out_of_stock": "Nicht verfügbar"
+  },
+  "unit_pcs": "Stk."
 }

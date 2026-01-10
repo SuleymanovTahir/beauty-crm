@@ -36,7 +36,10 @@
     "invoices": "الحسابات",
     "marketplace_integrations": "الأسواق",
     "payment_integrations": "أنظمة الدفع",
-    "products": "بضائع"
+    "products": "بضائع",
+    "finance": "تمويل",
+    "management": "يتحكم",
+    "tools": "أدوات"
   },
   "no_new_notifications": "لا الإخطارات",
   "notifications": "إشعارات",

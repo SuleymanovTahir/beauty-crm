@@ -112,5 +112,14 @@
   "week_2": "सप्ताह 2",
   "week_3": "सप्ताह 3",
   "week_4": "सप्ताह 4",
-  "welcome": "स्वागत"
+  "welcome": "स्वागत",
+  "bot_analytics_title": "एआई बॉट एनालिटिक्स",
+  "bookings_stat": "bookings",
+  "escalations": "एस्केलेशन",
+  "last_30_days": "30 दिनों में",
+  "msg_short": "संदेश",
+  "peak_hours": "अधिकतम घंटे",
+  "sessions": "सत्र",
+  "top_activity": "शीर्ष गतिविधि",
+  "to_manager": "→ प्रबंधक"
 }

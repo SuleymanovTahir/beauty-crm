@@ -36,7 +36,10 @@
     "invoices": "Есептік жазбалар",
     "marketplace_integrations": "Базарлар",
     "payment_integrations": "Төлем жүйелері",
-    "products": "Тауарлар"
+    "products": "Тауарлар",
+    "finance": "Қаржы",
+    "management": "Бақылау",
+    "tools": "Құралдар"
   },
   "no_new_notifications": "Хабарландырулар жоқ",
   "notifications": "Хабарландырулар",

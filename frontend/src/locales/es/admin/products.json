@@ -45,7 +45,8 @@
     "productCreated": "Producto creado",
     "productUpdated": "Producto actualizado",
     "productDeleted": "Producto eliminado",
-    "movementAdded": "Movimiento agregado"
+    "movementAdded": "Movimiento agregado",
+    "noResults": "No se encontró nada que coincida con su solicitud"
   },
   "detail": {
     "noCategory": "Sin categoría",
@@ -61,5 +62,12 @@
     "totalRevenue": "Ganancia",
     "last30Days": "en 30 dias",
     "avgPrice": "Casarse. precio"
-  }
+  },
+  "search_placeholder": "Buscar hasta título o categoría...",
+  "stock_status": {
+    "in_stock": "En stock",
+    "low_stock": "Pocos",
+    "out_of_stock": "No disponible"
+  },
+  "unit_pcs": "uds."
 }

@@ -112,5 +112,14 @@
   "week_2": "2ème semaine",
   "week_3": "Semaine 3",
   "week_4": "4ème semaine",
-  "welcome": "S'il te plaît"
+  "welcome": "S'il te plaît",
+  "bot_analytics_title": "Analyse des robots IA",
+  "bookings_stat": "bookings",
+  "escalations": "Escalades",
+  "last_30_days": "Dans 30 jours",
+  "msg_short": "message",
+  "peak_hours": "Heures de pointe",
+  "sessions": "Séances",
+  "top_activity": "activité phare",
+  "to_manager": "→ gérant"
 }
