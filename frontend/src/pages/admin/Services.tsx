@@ -4,13 +4,14 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   Scissors, Search, Plus, Edit, Trash2, Loader,
-  AlertCircle, Gift, Tag, Calendar, Clock, ArrowUpDown, ArrowUp, ArrowDown
+  AlertCircle, Gift, Tag, Calendar, Clock, ArrowUpDown, ArrowUp, ArrowDown,
+  Users, Target
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { Badge } from '../../components/ui/badge';
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
@@ -127,7 +128,7 @@ export default function Services() {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
-  const { currency, formatCurrency } = useCurrency();
+  const { currency } = useCurrency();
   const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
 
   const handleSort = (key: string) => {
@@ -153,9 +154,9 @@ export default function Services() {
       maxPrice !== null &&
       minPrice !== maxPrice
     ) {
-      return `${formatCurrency(minPrice)} — ${formatCurrency(maxPrice)}`;
+      return `${minPrice} — ${maxPrice} ${service.currency}`;
     }
-    return formatCurrency(service.price);
+    return `${service.price} ${service.currency}`;
   };
 
   // Packages state
@@ -738,6 +739,26 @@ export default function Services() {
             <Gift className="w-5 h-5 inline-block mr-2" />
             {t('services:special_packages')} ({filteredAndSortedPackages.length})
           </button>
+          <button
+            onClick={() => handleTabChange('referrals')}
+            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'referrals'
+              ? 'bg-pink-600 text-white shadow-md'
+              : 'text-gray-600 hover:bg-gray-50'
+              }`}
+          >
+            <Users className="w-5 h-5 inline-block mr-2" />
+            {t('services:referrals')}
+          </button>
+          <button
+            onClick={() => handleTabChange('challenges')}
+            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'challenges'
+              ? 'bg-pink-600 text-white shadow-md'
+              : 'text-gray-600 hover:bg-gray-50'
+              }`}
+          >
+            <Target className="w-5 h-5 inline-block mr-2" />
+            {t('services:challenges')}
+          </button>
         </div>
       </div>
 
@@ -827,21 +848,21 @@ export default function Services() {
                               })()}
                             </div>
                           </td>
-                          <td className="px-6 py-4 font-black text-gray-900">
+                          <td className="px-6 py-4 font-bold text-gray-900 text-sm">
                             {formatPrice(service)}
                           </td>
                           <td className="px-6 py-4">
                             {service.duration && service.duration !== 'null' ? (
-                              <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-100 font-medium">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600 border border-blue-100">
                                 <Clock className="w-3 h-3 mr-1" />
                                 {formatDuration(service.duration, t)}
-                              </Badge>
+                              </span>
                             ) : <span className="text-gray-300">—</span>}
                           </td>
                           <td className="px-6 py-4">
-                            <Badge variant="outline" className="bg-purple-50 text-purple-600 border-purple-100 font-semibold">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-600 border border-purple-100">
                               {t(`services:category_${service.category.toLowerCase().replace(/\s+/g, '_')}`, service.category)}
-                            </Badge>
+                            </span>
                           </td>
                           <td className="px-6 py-4">
                             <button
@@ -855,13 +876,13 @@ export default function Services() {
                             </button>
                           </td>
                           <td className="px-6 py-4 text-right">
-                            <div className="flex justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                            <div className="flex justify-end gap-1">
                               {permissions.canEditServices && (
                                 <>
-                                  <button onClick={() => handleEditService(service)} className="p-2 hover:bg-blue-50 text-gray-400 hover:text-blue-600 rounded-lg transition-colors">
+                                  <button onClick={() => handleEditService(service)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors" title={t('common:edit')}>
                                     <Edit size={16} />
                                   </button>
-                                  <button onClick={() => handleDeleteService(service.id)} className="p-2 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded-lg transition-colors">
+                                  <button onClick={() => handleDeleteService(service.id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors" title={t('common:delete')}>
                                     <Trash2 size={16} />
                                   </button>
                                 </>
@@ -952,9 +973,9 @@ export default function Services() {
                       <h3 className="font-semibold text-gray-900 mb-1">{pkg.name_ru}</h3>
                       <p className="text-sm text-gray-500">{pkg.name}</p>
                     </div>
-                    <Badge className={pkg.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${pkg.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
                       {pkg.is_active ? t('services:active') : t('services:inactive')}
-                    </Badge>
+                    </span>
                   </div>
 
                   {/* Promo Code */}
@@ -976,7 +997,7 @@ export default function Services() {
                       </span>
                     </div>
                     <div className="text-sm text-green-600 font-medium">
-                      Скидка {pkg.discount_percent}%
+                      {t('services:discount')} {pkg.discount_percent}%
                     </div>
                   </div>
 
@@ -1063,6 +1084,48 @@ export default function Services() {
           </>
         )
       }
+
+      {/* REFERRALS TAB */}
+      {activeTab === 'referrals' && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="bg-purple-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Users className="w-10 h-10 text-purple-600" />
+          </div>
+          <h3 className="text-2xl font-black text-gray-900 mb-2">{t('services:referrals')}</h3>
+          <p className="text-gray-500 mb-8 max-w-md mx-auto font-medium">
+            {t('services:referral_programs_management_subtitle', 'Управление программами лояльности и мотивации клиентов через рекомендации.')}
+          </p>
+          <div className="flex justify-center gap-4">
+            <Button
+              className="bg-purple-600 hover:bg-purple-700 h-12 px-8 rounded-xl font-bold transition-all hover:scale-105"
+              onClick={() => window.location.href = '/admin/referrals'}
+            >
+              {t('services:open_marketing_panel', 'Управление кампаниями')}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* CHALLENGES TAB */}
+      {activeTab === 'challenges' && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="bg-pink-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Target className="w-10 h-10 text-pink-600" />
+          </div>
+          <h3 className="text-2xl font-black text-gray-900 mb-2">{t('services:challenges')}</h3>
+          <p className="text-gray-500 mb-8 max-w-md mx-auto font-medium">
+            {t('services:challenges_management_subtitle', 'Игровые механики и задания для повышения вовлеченности ваших клиентов.')}
+          </p>
+          <div className="flex justify-center gap-4">
+            <Button
+              className="bg-pink-600 hover:bg-pink-700 h-12 px-8 rounded-xl font-bold transition-all hover:scale-105"
+              onClick={() => window.location.href = '/admin/challenges'}
+            >
+              {t('services:open_challenges_panel', 'Управление челленджами')}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Service Modal */}
       <Dialog open={isServiceModalOpen} onOpenChange={setIsServiceModalOpen}>
