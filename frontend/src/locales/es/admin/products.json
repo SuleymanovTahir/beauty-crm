@@ -1,0 +1,65 @@
+{
+  "title": "Productos y almacén",
+  "subtitle": "Gestión de productos e inventario.",
+  "addProduct": "Añadir producto",
+  "edit": "Editar",
+  "delete": "Borrar",
+  "loading": "Cargando...",
+  "allCategories": "Todas las categorias",
+  "noProducts": "Aún no hay productos",
+  "createFirst": "Añadir el primer producto al sistema.",
+  "form": {
+    "name": "Nombre",
+    "nameRu": "Nombre (RU)",
+    "nameEn": "Título (ES)",
+    "nameAr": "Título (AR)",
+    "category": "Categoría",
+    "price": "precio de venta",
+    "costPrice": "precio de costo",
+    "stockQuantity": "Existencias restantes",
+    "minStockLevel": "Saldo mínimo",
+    "sku": "Artículo",
+    "barcode": "Código de barras",
+    "supplier": "Proveedor",
+    "notes": "Notas",
+    "isActive": "Activo",
+    "photos": "Foto del producto",
+    "upload": "Descargar",
+    "uploadError": "Error al cargar la foto",
+    "save": "Ahorrar",
+    "cancel": "Cancelar"
+  },
+  "movement": {
+    "title": "movimiento de mercancías",
+    "type": "tipo de movimiento",
+    "quantity": "Cantidad",
+    "reason": "Causa",
+    "types": {
+      "in": "Próximo",
+      "out": "Consumo",
+      "adjustment": "Ajuste"
+    }
+  },
+  "messages": {
+    "confirmDelete": "¿Está seguro de que desea eliminar este elemento?",
+    "productCreated": "Producto creado",
+    "productUpdated": "Producto actualizado",
+    "productDeleted": "Producto eliminado",
+    "movementAdded": "Movimiento agregado"
+  },
+  "detail": {
+    "noCategory": "Sin categoría",
+    "costPriceLabel": "Costo: {{price}} DEA",
+    "movementHistory": "Historia de los movimientos",
+    "inStock": "En stock: {{count}}",
+    "loadingData": "Cargando datos...",
+    "noMovements": "Sin datos de movimiento",
+    "movementIn": "Admisión",
+    "movementOut": "Pedir hasta escrito",
+    "movementAdjustment": "Ajuste",
+    "totalSold": "Total vendido",
+    "totalRevenue": "Ganancia",
+    "last30Days": "en 30 dias",
+    "avgPrice": "Casarse. precio"
+  }
+}

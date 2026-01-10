@@ -1,6 +1,5 @@
-// /frontend/src/pages/admin/PlansManagement.tsx
 import { useState, useEffect } from 'react';
-import { Target, Plus, Trash2, Loader, Users, User, Calendar, Save, Pencil } from 'lucide-react';
+import { Target, Plus, Trash2, Loader, Users, User, Calendar, Save, Pencil, MessageSquare } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -12,6 +11,7 @@ import { Textarea } from '../../components/ui/textarea';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { useCurrency } from '../../hooks/useSalonSettings';
 
 interface Plan {
     id: number;
@@ -56,6 +56,7 @@ interface UserData {
 export default function PlansManagement() {
     const { t, i18n } = useTranslation(['admin/plans', 'common']);
     const { user: currentUser } = useAuth();
+    const { currency } = useCurrency();
     const [activeTab, setActiveTab] = useState<'my_plans' | 'role_plans' | 'individual_plans'>('my_plans');
     const [loading, setLoading] = useState(true);
     const [plans, setPlans] = useState<Plan[]>([]);
@@ -611,7 +612,7 @@ export default function PlansManagement() {
                                 <Input
                                     value={metricFormData.unit}
                                     onChange={(e) => setMetricFormData({ ...metricFormData, unit: e.target.value })}
-                                    placeholder="AED, %, pcs"
+                                    placeholder={`${currency}, %, pcs`}
                                     className="h-11 bg-white border-gray-200 focus:ring-pink-500 focus:border-pink-500 transition-all"
                                 />
                             </div>

@@ -1,0 +1,65 @@
+{
+  "title": "Produkte und Lager",
+  "subtitle": "Produkt- und Bestandsverwaltung",
+  "addProduct": "Produkt hinzufügen",
+  "edit": "Bearbeiten",
+  "delete": "Löschen",
+  "loading": "Laden...",
+  "allCategories": "Alle Kategorien",
+  "noProducts": "Noch keine Produkte",
+  "createFirst": "Fügen Sie das erste Produkt zum System hinzu",
+  "form": {
+    "name": "Name",
+    "nameRu": "Name (RU)",
+    "nameEn": "Titel (EN)",
+    "nameAr": "Titel (AR)",
+    "category": "Kategorie",
+    "price": "Verkaufspreis",
+    "costPrice": "Selbstkostenpreis",
+    "stockQuantity": "Restposten",
+    "minStockLevel": "Mindestguthaben",
+    "sku": "Artikel",
+    "barcode": "Barcode",
+    "supplier": "Anbieter",
+    "notes": "Notizen",
+    "isActive": "Aktiv",
+    "photos": "Produktfoto",
+    "upload": "Herunterladen",
+    "uploadError": "Fehler beim Laden des Fotos",
+    "save": "Speichern",
+    "cancel": "Stornieren"
+  },
+  "movement": {
+    "title": "Warenverkehr",
+    "type": "Bewegungsart",
+    "quantity": "Menge",
+    "reason": "Ursache",
+    "types": {
+      "in": "Kommen",
+      "out": "Verbrauch",
+      "adjustment": "Einstellung"
+    }
+  },
+  "messages": {
+    "confirmDelete": "Möchten Sie dieses Element wirklich entfernen?",
+    "productCreated": "Produkt erstellt",
+    "productUpdated": "Produkt aktualisiert",
+    "productDeleted": "Produkt entfernt",
+    "movementAdded": "Bewegung hinzugefügt"
+  },
+  "detail": {
+    "noCategory": "Nicht kategorisiert",
+    "costPriceLabel": "Kosten: {{price}} AED",
+    "movementHistory": "Geschichte der Bewegungen",
+    "inStock": "Auf Lager: {{count}}",
+    "loadingData": "Daten werden geladen...",
+    "noMovements": "Keine Bewegungsdaten",
+    "movementIn": "Zulassung",
+    "movementOut": "Abschreibung",
+    "movementAdjustment": "Einstellung",
+    "totalSold": "Insgesamt verkauft",
+    "totalRevenue": "Einnahmen",
+    "last30Days": "In 30 Tagen",
+    "avgPrice": "Heiraten. Preis"
+  }
+}

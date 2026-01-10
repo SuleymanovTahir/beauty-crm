@@ -1,0 +1,52 @@
+{
+  "title": "Tratados",
+  "subtitle": "Gestão de contratos de clientes",
+  "addContract": "Crie um acordo",
+  "loading": "Carregando...",
+  "allStatuses": "Todos os status",
+  "contractNumber": "Contrato nº.",
+  "client": "Cliente",
+  "status": "Status",
+  "createdAt": "Data de criação",
+  "actions": "Ações",
+  "sendButton": "Enviar",
+  "delete": "Excluir",
+  "noContracts": "Ainda não há contratos",
+  "createFirst": "Crie seu primeiro contrato com um cliente",
+  "statuses": {
+    "draft": "Rascunho",
+    "sent": "Enviado",
+    "signed": "Assinado",
+    "cancelled": "Cancelado"
+  },
+  "form": {
+    "selectClient": "Selecione o cliente",
+    "contractType": "Tipo de contrato",
+    "contractDate": "Data do contrato",
+    "terms": "Termos do acordo",
+    "notes": "Notas",
+    "save": "Salvar",
+    "cancel": "Cancelar"
+  },
+  "types": {
+    "service": "Serviço",
+    "product": "Produto",
+    "subscription": "Subscrição"
+  },
+  "sendDialog": {
+    "title": "Enviar contrato",
+    "method": "Método de envio",
+    "recipient": "Destinatário",
+    "email": "E-mail",
+    "whatsapp": "whatsapp",
+    "telegram": "Telegrama",
+    "instagram": "Instagram",
+    "sendButton": "Enviar"
+  },
+  "messages": {
+    "confirmDelete": "Tem certeza de que deseja excluir este contrato?",
+    "contractCreated": "O contrato foi criado",
+    "contractSent": "O contrato foi enviado",
+    "contractDeleted": "Contrato excluído"
+  }
+}
