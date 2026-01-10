@@ -496,7 +496,9 @@ def init_database():
         'full_name_ar': 'TEXT',
         'base_salary': 'REAL DEFAULT 0',
         'commission_rate': 'REAL DEFAULT 0',
-        'position_id': 'INTEGER'
+        'position_id': 'INTEGER',
+        'telegram_id': 'TEXT',
+        'instagram_username': 'TEXT'
     }
 
     for column_name, column_type in user_migrations.items():

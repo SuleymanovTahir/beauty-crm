@@ -48,7 +48,7 @@ async def preview_broadcast(
 
         # Базовый запрос для получения подписчиков
         query = """
-            SELECT DISTINCT u.id, u.username, u.full_name, u.email, u.telegram_chat_id, NULL AS instagram_link, u.role
+            SELECT DISTINCT u.id, u.username, u.full_name, u.email, u.telegram_id, NULL AS instagram_link, u.role
             FROM users u
             LEFT JOIN user_subscriptions s ON u.id = s.user_id AND s.subscription_type = %s
             WHERE u.is_active = TRUE
@@ -73,8 +73,8 @@ async def preview_broadcast(
         all_users = c.fetchall()
 
         # Подсчитываем получателей по каналам
-        by_channel = {"email": 0, "telegram": 0, "instagram": 0}
-        users_by_channel = {"email": [], "telegram": [], "instagram": []}
+        by_channel = {"email": 0, "telegram": 0, "instagram": 0, "notification": 0}
+        users_by_channel = {"email": [], "telegram": [], "instagram": [], "notification": []}
 
         for user in all_users:
             user_id, username, full_name, email, telegram_chat_id, instagram_link, role = user
@@ -118,6 +118,12 @@ async def preview_broadcast(
                 by_channel["instagram"] += 1
                 if len(users_by_channel["instagram"]) < 5:
                     users_by_channel["instagram"].append({**user_info, "contact": instagram_link})
+
+            # In-app Notification
+            if "notification" in broadcast.channels:
+                by_channel["notification"] += 1
+                if len(users_by_channel["notification"]) < 5:
+                    users_by_channel["notification"].append({**user_info, "contact": "in-app"})
 
         conn.close()
 
@@ -165,7 +171,7 @@ async def send_broadcast(
         params = [broadcast.subscription_type]
 
         if not broadcast.force_send:
-            query += " AND s.is_subscribed = TRUE"
+            query += " AND (s.is_subscribed = TRUE OR s.is_subscribed IS NULL)"
 
         if broadcast.target_role and broadcast.target_role != 'all':
             query += " AND u.role = %s"
@@ -182,7 +188,8 @@ async def send_broadcast(
         results = {
             "email": {"sent": 0, "failed": 0},
             "telegram": {"sent": 0, "failed": 0},
-            "instagram": {"sent": 0, "failed": 0}
+            "instagram": {"sent": 0, "failed": 0},
+            "notification": {"sent": 0, "failed": 0}
         }
 
         for user in all_users:
@@ -203,13 +210,16 @@ async def send_broadcast(
             email_enabled, telegram_enabled, instagram_enabled = channels_data if channels_data else (True, True, True)
 
             # In-app notification (personal account)
-            try:
-                c.execute("""
-                    INSERT INTO notifications (user_id, title, message, type, created_at)
-                    VALUES (%s, %s, %s, %s, %s)
-                """, (user_id, broadcast.subject, broadcast.message, 'info', datetime.now().isoformat()))
-            except Exception as e:
-                log_error(f"In-app notification error for user {user_id}: {e}", "broadcasts")
+            if "notification" in broadcast.channels:
+                try:
+                    c.execute("""
+                        INSERT INTO notifications (user_id, title, message, type, created_at)
+                        VALUES (%s, %s, %s, %s, %s)
+                    """, (user_id, broadcast.subject, broadcast.message, 'info', datetime.now().isoformat()))
+                    results["notification"]["sent"] += 1
+                except Exception as e:
+                    log_error(f"In-app notification error for user {user_id}: {e}", "broadcasts")
+                    results["notification"]["failed"] += 1
 
             # Email
             if "email" in broadcast.channels and (email_enabled or broadcast.force_send) and email:

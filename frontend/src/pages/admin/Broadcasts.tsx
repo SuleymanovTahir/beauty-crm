@@ -46,7 +46,7 @@ export default function Broadcasts() {
 
   const [form, setForm] = useState<BroadcastForm>({
     subscription_type: '',
-    channels: [],
+    channels: ['notification'],
     subject: '',
     message: '',
     target_role: '',
@@ -772,8 +772,8 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
 
         {editingType ? (
           <form onSubmit={handleSave} className="flex flex-col flex-1 min-h-0 overflow-hidden">
-            <div className="crm-form-content">
-              <div className="grid grid-cols-2 gap-4">
+            <div className="crm-form-content crm-scrollbar">
+              <div className="grid grid-cols-2 gap-6">
                 {isNew && (
                   <div className="crm-form-group">
                     <Label className="mb-3 block">{t('key_label')}</Label>
@@ -806,7 +806,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
 
 
 
-              <div className="crm-form-group">
+              <div className="crm-form-group mt-4">
                 <Label className="mb-3 block">{t('name_ru')}</Label>
                 <Input
                   value={editingType.name_ru || ''}
@@ -815,10 +815,10 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                 />
               </div>
 
-              <div className="crm-form-group">
+              <div className="crm-form-group mt-4">
                 <Label className="mb-3 block">{t('desc_ru')}</Label>
                 <textarea
-                  className="crm-textarea"
+                  className="crm-textarea min-h-[100px]"
                   value={editingType.description_ru || ''}
                   onChange={e => setEditingType({ ...editingType, description_ru: e.target.value })}
                   rows={2}
@@ -842,11 +842,11 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
           </form>
         ) : (
           <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-            <div className="crm-form-content">
-              <div className="flex justify-end mb-4">
+            <div className="crm-form-content crm-scrollbar">
+              <div className="flex justify-end mb-6">
                 <button
                   onClick={() => {
-                    setEditingType({ key: '', target_role: 'all', name_ru: '', name_en: '', description_ru: '', description_en: '', is_active: true });
+                    setEditingType({ key: '', target_role: 'all', name_ru: '', description_ru: '', is_active: true });
                     setIsNew(true);
                   }}
                   className="crm-btn-primary flex items-center gap-2"
