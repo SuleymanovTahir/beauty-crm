@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Send, DollarSign, Trash2, FileText } from 'lucide-react';
+import { Plus, Send, DollarSign, Trash2, FileText, X } from 'lucide-react';
 import { api } from '../../services/api';
 import '../../styles/crm-pages.css';
 
@@ -50,7 +50,7 @@ const Invoices = () => {
         if (!confirm(t('messages.confirmDelete'))) return;
 
         try {
-            await api.delete(`/invoices/${id}`);
+            await api.delete(`/api/invoices/${id}`);
             loadInvoices();
         } catch (error) {
             console.error('Error deleting invoice:', error);
@@ -253,8 +253,8 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
 
     const loadClients = async () => {
         try {
-            const response = await api.get('/clients');
-            setClients(response.data.clients);
+            const response = await api.get('/api/clients');
+            setClients(response.clients || []);
         } catch (error) {
             console.error('Error loading clients:', error);
         }
@@ -288,7 +288,7 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                 amount: item.quantity * item.price
             }));
 
-            await api.post('/invoices', {
+            await api.post('/api/invoices', {
                 ...formData,
                 items: invoiceItems
             });
@@ -301,6 +301,9 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
     return (
         <div className="crm-modal-overlay" onClick={onClose}>
             <div className="crm-modal modal-large" onClick={(e) => e.stopPropagation()}>
+                <button className="crm-modal-close" onClick={onClose}>
+                    <X size={20} />
+                </button>
                 <h2>{t('addInvoice')}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="crm-form-group">
@@ -418,7 +421,7 @@ const PaymentDialog = ({ invoice, onClose, onSuccess }: any) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await api.post(`/invoices/${invoice.id}/payments`, formData);
+            await api.post(`/api/invoices/${invoice.id}/payments`, formData);
             onSuccess();
         } catch (error) {
             console.error('Error adding payment:', error);
@@ -494,7 +497,7 @@ const SendInvoiceDialog = ({ invoice, onClose, onSuccess }: any) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await api.post(`/invoices/${invoice.id}/send?delivery_method=${formData.delivery_method}&recipient=${formData.recipient}`);
+            await api.post(`/api/invoices/${invoice.id}/send?delivery_method=${formData.delivery_method}&recipient=${formData.recipient}`);
             onSuccess();
         } catch (error) {
             console.error('Error sending invoice:', error);

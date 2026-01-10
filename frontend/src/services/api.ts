@@ -1696,6 +1696,31 @@ export class ApiClient {
     }>(`/api/broadcasts/users?type=${type}${role ? `&role=${role}` : ''}`)
   }
 
+  // ===== SUBSCRIPTION TYPES =====
+  async getSubscriptionTypes() {
+    return this.request<any[]>('/api/subscription-types')
+  }
+
+  async createSubscriptionType(data: any) {
+    return this.request('/api/subscription-types', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateSubscriptionType(id: number, data: any) {
+    return this.request(`/api/subscription-types/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteSubscriptionType(id: number) {
+    return this.request(`/api/subscription-types/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
   async getSalonWorkingHours() {
     return this.get('/api/salon-settings/working-hours');
   }

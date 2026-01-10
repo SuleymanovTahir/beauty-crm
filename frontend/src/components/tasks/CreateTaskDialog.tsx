@@ -7,6 +7,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogFooter,
+    DialogDescription,
 } from "../../components/ui/dialog";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -21,6 +22,10 @@ import {
 } from "../../components/ui/select";
 import { api } from '../../services/api';
 import { toast } from 'sonner';
+import { Popover, PopoverContent, PopoverTrigger } from "../../components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../../components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "../../components/ui/utils";
 
 interface Stage {
     id: number;
@@ -111,6 +116,7 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
                 ...formData,
                 stage_id: parseInt(formData.stage_id),
                 assignee_id: formData.assignee_id ? parseInt(formData.assignee_id) : undefined,
+                due_date: formData.due_date || null,
             };
 
             if (taskToEdit) {
@@ -136,6 +142,9 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>{taskToEdit ? t('edit_task', 'Редактировать задачу') : t('create_new_task', 'Новая задача')}</DialogTitle>
+                    <DialogDescription>
+                        {taskToEdit ? t('edit_task_description', 'Измените данные задачи') : t('create_task_description', 'Заполните данные для новой задачи')}
+                    </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
@@ -178,7 +187,7 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="priority">{t('priority')}</Label>
+                            <Label htmlFor="priority">{t('priority_title', 'Приоритет')}</Label>
                             <Select
                                 value={formData.priority}
                                 onValueChange={(value) => setFormData({ ...formData, priority: value })}
@@ -206,23 +215,52 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
                     </div>
 
                     {!isEmployee && (
-                        <div className="space-y-2">
+                        <div className="space-y-2 flex flex-col">
                             <Label htmlFor="assignee">{t('assignee', 'Ответственный')}</Label>
-                            <Select
-                                value={formData.assignee_id}
-                                onValueChange={(value) => setFormData({ ...formData, assignee_id: value })}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder={t('select_assignee', 'Выберите ответственного')} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {users.map((user) => (
-                                        <SelectItem key={user.id} value={user.id.toString()}>
-                                            {user.full_name} (@{user.username})
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        className={cn(
+                                            "w-full justify-between font-normal",
+                                            !formData.assignee_id && "text-muted-foreground"
+                                        )}
+                                    >
+                                        {formData.assignee_id
+                                            ? users.find((user) => user.id.toString() === formData.assignee_id)?.full_name
+                                            : t('select_assignee', 'Выберите ответственного')}
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                                    <Command>
+                                        <CommandInput placeholder={t('search_assignee', 'Поиск ответственного...')} />
+                                        <CommandList>
+                                            <CommandEmpty>{t('no_user_found', 'Пользователь не найден')}</CommandEmpty>
+                                            <CommandGroup>
+                                                {users.map((user) => (
+                                                    <CommandItem
+                                                        key={user.id}
+                                                        value={user.full_name + " " + user.username}
+                                                        onSelect={() => {
+                                                            setFormData({ ...formData, assignee_id: user.id.toString() });
+                                                        }}
+                                                    >
+                                                        <Check
+                                                            className={cn(
+                                                                "mr-2 h-4 w-4",
+                                                                formData.assignee_id === user.id.toString() ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                        {user.full_name} (@{user.username})
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
                         </div>
                     )}
 

@@ -43,24 +43,49 @@ STAFF_SUBSCRIPTION_TYPES = {
     }
 }
 
+from db.connection import get_db_connection
+
 def get_subscription_types_for_role(role: str) -> dict:
     """
-    Получить типы подписок для определенной роли
-
-    Args:
-        role: роль пользователя (client, employee, manager, admin, director)
-
-    Returns:
-        dict: словарь с типами подписок для данной роли
+    Получить типы подписок для определенной роли из БД
     """
-    if role in ['employee', 'manager', 'admin', 'director']:
-        return STAFF_SUBSCRIPTION_TYPES
-    else:
-        return CLIENT_SUBSCRIPTION_TYPES
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        target_role = 'client' if role not in ['employee', 'manager', 'admin', 'director'] else 'employee'
+        
+        c.execute("""
+            SELECT key, name_ru, description_ru 
+            FROM broadcast_subscription_types 
+            WHERE (target_role = %s OR target_role = 'all') AND is_active = TRUE
+        """, (target_role,))
+        
+        rows = c.fetchall()
+        conn.close()
+        
+        if not rows:
+            # Fallback to constants if DB is empty
+            return STAFF_SUBSCRIPTION_TYPES if target_role == 'employee' else CLIENT_SUBSCRIPTION_TYPES
+            
+        return {row[0]: {"name": row[1], "description": row[2]} for row in rows}
+    except Exception:
+        # Fallback in case table doesn't exist yet
+        return STAFF_SUBSCRIPTION_TYPES if role in ['employee', 'manager', 'admin', 'director'] else CLIENT_SUBSCRIPTION_TYPES
 
 def get_all_subscription_types() -> dict:
-    """Получить все типы подписок"""
-    return {
-        **CLIENT_SUBSCRIPTION_TYPES,
-        **STAFF_SUBSCRIPTION_TYPES
-    }
+    """Получить все типы подписок из БД"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        c.execute("SELECT key, name_ru, description_ru FROM broadcast_subscription_types WHERE is_active = TRUE")
+        rows = c.fetchall()
+        conn.close()
+        
+        if not rows:
+            return {**CLIENT_SUBSCRIPTION_TYPES, **STAFF_SUBSCRIPTION_TYPES}
+            
+        return {row[0]: {"name": row[1], "description": row[2]} for row in rows}
+    except Exception:
+        return {**CLIENT_SUBSCRIPTION_TYPES, **STAFF_SUBSCRIPTION_TYPES}

@@ -15,6 +15,15 @@ from utils.logger import log_info, log_error
 
 router = APIRouter()
 
+class SubscriptionTypeModel(BaseModel):
+    key: str
+    target_role: str = 'all'
+    name_ru: Optional[str] = None
+    name_en: Optional[str] = None
+    description_ru: Optional[str] = None
+    description_en: Optional[str] = None
+    is_active: bool = True
+
 class SubscriptionUpdate(BaseModel):
     """Модель для обновления подписки"""
     subscription_type: str
@@ -271,4 +280,118 @@ async def delete_account(
         raise
     except Exception as e:
         log_error(f"Ошибка удаления аккаунта: {e}", "account")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Эндпоинты для управления ТИПАМИ подписок (для админов)
+
+@router.get("/subscription-types")
+async def get_all_subscription_types_api(current_user: dict = Depends(get_current_user)):
+    """Получить все типы подписок из БД"""
+    if current_user.get('role') not in ['admin', 'director']:
+        raise HTTPException(status_code=403, detail="Доступ запрещен")
+        
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("SELECT * FROM broadcast_subscription_types ORDER BY target_role, key")
+        
+        columns = [desc[0] for desc in c.description]
+        results = [dict(zip(columns, row)) for row in c.fetchall()]
+        
+        conn.close()
+        return results
+    except Exception as e:
+        log_error(f"Ошибка получения типов подписок: {e}", "subscriptions")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/subscription-types")
+async def create_subscription_type(
+    sub_type: SubscriptionTypeModel,
+    current_user: dict = Depends(get_current_user)
+):
+    """Создать новый тип подписки"""
+    if current_user.get('role') not in ['admin', 'director']:
+        raise HTTPException(status_code=403, detail="Доступ запрещен")
+        
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        c.execute("""
+            INSERT INTO broadcast_subscription_types 
+            (key, target_role, name_ru, name_en, description_ru, description_en, is_active)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+        """, (
+            sub_type.key, sub_type.target_role, 
+            sub_type.name_ru, sub_type.name_en,
+            sub_type.description_ru, sub_type.description_en,
+            sub_type.is_active
+        ))
+        
+        new_id = c.fetchone()[0]
+        conn.commit()
+        conn.close()
+        
+        return {"success": True, "id": new_id}
+    except Exception as e:
+        log_error(f"Ошибка создания типа подписки: {e}", "subscriptions")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.put("/subscription-types/{type_id}")
+async def update_subscription_type(
+    type_id: int,
+    sub_type: SubscriptionTypeModel,
+    current_user: dict = Depends(get_current_user)
+):
+    """Обновить тип подписки"""
+    if current_user.get('role') not in ['admin', 'director']:
+        raise HTTPException(status_code=403, detail="Доступ запрещен")
+        
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        c.execute("""
+            UPDATE broadcast_subscription_types 
+            SET key = %s, target_role = %s, name_ru = %s, name_en = %s, 
+                description_ru = %s, description_en = %s, is_active = %s
+            WHERE id = %s
+        """, (
+            sub_type.key, sub_type.target_role, 
+            sub_type.name_ru, sub_type.name_en,
+            sub_type.description_ru, sub_type.description_en,
+            sub_type.is_active,
+            type_id
+        ))
+        
+        conn.commit()
+        conn.close()
+        
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Ошибка обновления типа подписки: {e}", "subscriptions")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/subscription-types/{type_id}")
+async def delete_subscription_type(
+    type_id: int,
+    current_user: dict = Depends(get_current_user)
+):
+    """Удалить тип подписки"""
+    if current_user.get('role') not in ['admin', 'director']:
+        raise HTTPException(status_code=403, detail="Доступ запрещен")
+        
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        c.execute("DELETE FROM broadcast_subscription_types WHERE id = %s", (type_id,))
+        
+        conn.commit()
+        conn.close()
+        
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Ошибка удаления типа подписки: {e}", "subscriptions")
         raise HTTPException(status_code=500, detail=str(e))

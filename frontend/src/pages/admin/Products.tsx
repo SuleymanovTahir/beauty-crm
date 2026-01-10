@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Edit, Trash2, Package, TrendingUp } from 'lucide-react';
+import { Plus, Edit, Trash2, Package, TrendingUp, X, Image as ImageIcon } from 'lucide-react';
 import { api } from '../../services/api';
 import '../../styles/crm-pages.css';
 
@@ -58,7 +58,7 @@ const Products = () => {
         if (!confirm(t('messages.confirmDelete'))) return;
 
         try {
-            await api.delete(`/products/${id}`);
+            await api.delete(`/api/products/${id}`);
             loadProducts();
         } catch (error) {
             console.error('Error deleting product:', error);
@@ -226,16 +226,17 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
         barcode: product?.barcode || '',
         supplier: product?.supplier || '',
         notes: product?.notes || '',
-        is_active: product?.is_active ?? true
+        is_active: product?.is_active ?? true,
+        photos: product?.photos || [] as string[]
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             if (product) {
-                await api.put(`/products/${product.id}`, formData);
+                await api.put(`/api/products/${product.id}`, formData);
             } else {
-                await api.post('/products', formData);
+                await api.post('/api/products', formData);
             }
             onSuccess();
         } catch (error) {
@@ -246,6 +247,9 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
     return (
         <div className="crm-modal-overlay" onClick={onClose}>
             <div className="crm-modal modal-large" onClick={(e) => e.stopPropagation()}>
+                <button className="crm-modal-close" onClick={onClose}>
+                    <X size={20} />
+                </button>
                 <h2>{product ? t('edit') : t('addProduct')}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="crm-form-grid">
@@ -260,16 +264,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                         </div>
 
                         <div className="crm-form-group">
-                            <label className="crm-label">{t('form.nameRu')}</label>
-                            <input className="crm-input"
-                                type="text"
-                                value={formData.name_ru}
-                                onChange={(e) => setFormData({ ...formData, name_ru: e.target.value })}
-                            />
-                        </div>
-
-                        <div className="crm-form-group">
-                            <label className="crm-label">{t('form.category')}</label>
+                            <label className="crm-label">{t('form.category', 'Категория')}</label>
                             <input className="crm-input"
                                 type="text"
                                 value={formData.category}
@@ -327,6 +322,48 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                     </div>
 
                     <div className="crm-form-group">
+                        <label className="crm-label">{t('form.photos', 'Фото товара')}</label>
+                        <div className="crm-photo-upload mt-2">
+                            <label className="crm-photo-grid flex flex-wrap gap-2">
+                                {formData.photos.map((photo: string, index: number) => (
+                                    <div key={index} className="relative w-24 h-24 border rounded-lg overflow-hidden group">
+                                        <img src={photo} alt="" className="w-full h-full object-cover" />
+                                        <button
+                                            type="button"
+                                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            onClick={() => setFormData({ ...formData, photos: formData.photos.filter((_: string, i: number) => i !== index) })}
+                                        >
+                                            <X size={12} />
+                                        </button>
+                                    </div>
+                                ))}
+                                <div className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:border-pink-500 hover:text-pink-500 transition-colors cursor-pointer relative">
+                                    <ImageIcon size={24} />
+                                    <span className="text-[10px] mt-1">{t('form.upload', 'Загрузить')}</span>
+                                    <input
+                                        type="file"
+                                        className="absolute inset-0 opacity-0 cursor-pointer"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={async (e) => {
+                                            const files = Array.from(e.target.files || []);
+                                            // Simplification: In a real app we'd upload to a server.
+                                            // For now, let's use base64 for preview.
+                                            const processFile = (file: File) => new Promise<string>((resolve) => {
+                                                const reader = new FileReader();
+                                                reader.onloadend = () => resolve(reader.result as string);
+                                                reader.readAsDataURL(file);
+                                            });
+                                            const newPhotos = await Promise.all(files.map(processFile));
+                                            setFormData({ ...formData, photos: [...formData.photos, ...newPhotos] });
+                                        }}
+                                    />
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className="crm-form-group">
                         <label className="crm-label">{t('form.notes')}</label>
                         <textarea className="crm-textarea"
                             value={formData.notes}
@@ -372,7 +409,7 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await api.post('/products/movements', formData);
+            await api.post('/api/products/movements', formData);
             onSuccess();
         } catch (error) {
             console.error('Error creating movement:', error);
@@ -382,6 +419,9 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
     return (
         <div className="crm-modal-overlay" onClick={onClose}>
             <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
+                <button className="crm-modal-close" onClick={onClose}>
+                    <X size={20} />
+                </button>
                 <h2>{t('movement.title')}</h2>
                 <p className="product-name">{product.name}</p>
                 <form onSubmit={handleSubmit}>
