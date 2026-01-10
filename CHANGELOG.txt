@@ -1201,3 +1201,33 @@ format_duration_display(90, 'hi')  # → "1घंटा 30मिनट"
 - `frontend/src/pages/admin/Bookings.tsx` - MODIFIED
 - `frontend/src/pages/manager/Chat.tsx` - MODIFIED
 - `frontend/src/components/chat/InfoPanel.tsx` - MODIFIED
+
+## 2026-01-10: Исправление данных сотрудников и надежности скриптов обслуживания
+
+### ПРОБЛЕМА
+1. В тестах `test_employee_management.py` ожидались полные имена сотрудников (`Mohamed Sabri`, `Amandurdyyeva Mestan` и др.), в то время как в базе использовались технические логины (`simo`, `mestan`).
+2. Скрипты обслуживания (`fix_data.py`, `sync_master_services.py`) использовали хардкод ID, что приводило к ошибкам при пересоздании базы данных.
+3. Биографии мастеров затирались шаблонами при каждом запуске `fix_data.py`.
+4. Скрипты синхронизации переводов имели ошибки в путях к локалям фронтенда.
+
+### РЕШЕНИЕ
+1. **SSOT данные сотрудников**: В `db/init.py` обновлены `employees_data` — теперь полные имена установлены как стандарт.
+2. **Удаление хардкода ID**: 
+   - Скрипты `fix_data.py` и `sync_master_services.py` переведены на поиск по `username`.
+   - `fix_master_data.py` теперь поддерживает поиск как по полному имени, так и по логину (case-insensitive).
+3. **Защита данных пользователя**: В `fix_data.py` обновление биографий теперь использует `COALESCE(NULLIF(bio, ''), %s)`, чтобы не перезаписывать уже существующие (измененные вручную) описания.
+4. **Исправление инфраструктуры**:
+   - Исправлены пути в `sync_translations.py` и `populate_all_languages.py`.
+   - Проведена очистка дубликатов импортов и неиспользуемых переменных.
+
+### ВАЖНО ПОМНИТЬ
+- **Никогда не использовать хардкод ID** в скриптах обслуживания. Только `username` или `service_key`.
+- **Принцип SSOT**: Все изменения структуры или базовых данных должны быть в `db/init.py` или консолидированных миграциях.
+
+### ФАЙЛЫ
+- `backend/db/init.py` - MODIFIED
+- `backend/scripts/maintenance/fix_data.py` - MODIFIED
+- `backend/scripts/maintenance/sync_master_services.py` - MODIFIED
+- `backend/scripts/maintenance/fix_master_data.py` - MODIFIED
+- `backend/scripts/maintenance/sync_translations.py` - MODIFIED
+- `backend/scripts/maintenance/populate_all_languages.py` - MODIFIED
