@@ -848,7 +848,7 @@ export default function Services() {
                               })()}
                             </div>
                           </td>
-                          <td className="px-6 py-4 font-bold text-gray-900 text-sm">
+                          <td className="px-6 py-4 font-bold text-gray-900 text-[13px]">
                             {formatPrice(service)}
                           </td>
                           <td className="px-6 py-4">
@@ -879,10 +879,18 @@ export default function Services() {
                             <div className="flex justify-end gap-1">
                               {permissions.canEditServices && (
                                 <>
-                                  <button onClick={() => handleEditService(service)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors" title={t('common:edit')}>
+                                  <button
+                                    onClick={() => handleEditService(service)}
+                                    className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                                    title={t('common:edit')}
+                                  >
                                     <Edit size={16} />
                                   </button>
-                                  <button onClick={() => handleDeleteService(service.id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors" title={t('common:delete')}>
+                                  <button
+                                    onClick={() => handleDeleteService(service.id)}
+                                    className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                                    title={t('common:delete')}
+                                  >
                                     <Trash2 size={16} />
                                   </button>
                                 </>
@@ -1139,16 +1147,15 @@ export default function Services() {
           <div className="crm-form-content px-6 py-4">
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div>
+                <div className="hidden">
                   <Label htmlFor="key">{t('services:key')} *</Label>
                   <Input
                     id="key"
                     value={serviceFormData.key}
                     onChange={(e) => setServiceFormData({ ...serviceFormData, key: e.target.value })}
-                    placeholder={t('services:permanent_makeup_brows')}
                   />
                 </div>
-                <div>
+                <div className="col-span-2">
                   <Label htmlFor="category">{t('services:category')} *</Label>
                   <Select value={serviceFormData.category} onValueChange={(value) => setServiceFormData({ ...serviceFormData, category: value })}>
                     <SelectTrigger>
@@ -1164,33 +1171,21 @@ export default function Services() {
               </div>
 
               <div>
-                <Label htmlFor="name">{t('services:name')} (EN) *</Label>
-                <Input
-                  id="name"
-                  value={serviceFormData.name}
-                  onChange={(e) => setServiceFormData({ ...serviceFormData, name: e.target.value })}
-                  placeholder={t('services:permanent_makeup_brows')}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="nameRu">{t('services:name')} (RU) *</Label>
+                <Label htmlFor="nameRu">{t('services:name')} *</Label>
                 <Input
                   id="nameRu"
                   value={serviceFormData.name_ru}
-                  onChange={(e) => setServiceFormData({ ...serviceFormData, name_ru: e.target.value })}
-                  placeholder={t('services:permanent_makeup_brows')}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="nameAr">{t('services:name')} (AR)</Label>
-                <Input
-                  id="nameAr"
-                  value={serviceFormData.name_ar}
-                  onChange={(e) => setServiceFormData({ ...serviceFormData, name_ar: e.target.value })}
-                  placeholder={t('services:permanent_makeup_brows')}
-                  dir="rtl"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setServiceFormData({
+                      ...serviceFormData,
+                      name_ru: val,
+                      name: val,
+                      // Auto-generate key if not editing and key is empty
+                      key: editingService ? serviceFormData.key : val.toLowerCase().replace(/\s+/g, '_').replace(/[^\w]/g, '')
+                    });
+                  }}
+                  placeholder={t('services:name')}
                 />
               </div>
 
@@ -1250,33 +1245,16 @@ export default function Services() {
               </div>
 
               <div>
-                <Label htmlFor="description">{t('services:description')} (EN)</Label>
-                <Textarea
-                  id="description"
-                  value={serviceFormData.description}
-                  onChange={(e) => setServiceFormData({ ...serviceFormData, description: e.target.value })}
-                  placeholder={t('services:professional_brow_tattooing')}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="descriptionRu">{t('services:description')} (RU)</Label>
+                <Label htmlFor="descriptionRu">{t('services:description')}</Label>
                 <Textarea
                   id="descriptionRu"
                   value={serviceFormData.description_ru}
-                  onChange={(e) => setServiceFormData({ ...serviceFormData, description_ru: e.target.value })}
-                  placeholder={t('services:professional_brow_tattooing')}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="descriptionAr">{t('services:description')} (AR)</Label>
-                <Textarea
-                  id="descriptionAr"
-                  value={serviceFormData.description_ar}
-                  onChange={(e) => setServiceFormData({ ...serviceFormData, description_ar: e.target.value })}
-                  placeholder={t('services:professional_brow_tattooing')}
-                  dir="rtl"
+                  onChange={(e) => setServiceFormData({
+                    ...serviceFormData,
+                    description_ru: e.target.value,
+                    description: e.target.value
+                  })}
+                  placeholder={t('services:description')}
                 />
               </div>
 

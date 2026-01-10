@@ -38,7 +38,6 @@ interface ManageStagesDialogProps {
 export function ManageStagesDialog({ open, onOpenChange, onSuccess, apiUrl, title }: ManageStagesDialogProps) {
     const { t } = useTranslation(['common']);
     const [stages, setStages] = useState<Stage[]>([]);
-    const [loading, setLoading] = useState(false);
     const [draggedItem, setDraggedItem] = useState<number | null>(null);
 
     // New stage state
@@ -55,14 +54,11 @@ export function ManageStagesDialog({ open, onOpenChange, onSuccess, apiUrl, titl
     }, [open]);
 
     const loadStages = async () => {
-        setLoading(true);
         try {
             const data = await api.get(apiUrl);
             setStages(data.sort((a: Stage, b: Stage) => a.order_index - b.order_index));
         } catch (error) {
             toast.error(t('failed_to_load_stages'));
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -108,7 +104,7 @@ export function ManageStagesDialog({ open, onOpenChange, onSuccess, apiUrl, titl
         }
     };
 
-    const handleDragStart = (e: React.DragEvent, index: number) => {
+    const handleDragStart = (_e: React.DragEvent, index: number) => {
         setDraggedItem(index);
     };
 

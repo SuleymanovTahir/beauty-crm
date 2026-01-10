@@ -48,5 +48,37 @@ def fix_pipeline_stages():
     finally:
         conn.close()
 
-if __name__ == "__main__":
+def reduce_service_prices(reduction_percent=5):
+    """Slightly reduce service prices"""
+    print(f"🔧 Starting service price reduction ({reduction_percent}%)...")
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        # Update prices: price = price * (1 - reduction/100)
+        # We also need to update min_price and max_price if they exist
+        c.execute("""
+            UPDATE services 
+            SET 
+                price = ROUND(CAST(price * %s AS NUMERIC), 0),
+                min_price = CASE WHEN min_price IS NOT NULL THEN ROUND(CAST(min_price * %s AS NUMERIC), 0) ELSE min_price END,
+                max_price = CASE WHEN max_price IS NOT NULL THEN ROUND(CAST(max_price * %s AS NUMERIC), 0) ELSE max_price END
+            WHERE price > 0
+        """, (1 - reduction_percent/100.0, 1 - reduction_percent/100.0, 1 - reduction_percent/100.0))
+        
+        count = c.rowcount
+        conn.commit()
+        print(f"✅ Successfully reduced prices for {count} services by {reduction_percent}%.")
+        
+    except Exception as e:
+        print(f"❌ Error reducing service prices: {e}")
+        conn.rollback()
+    finally:
+        conn.close()
+
+def run_all_fixes():
     fix_pipeline_stages()
+    reduce_service_prices()
+
+if __name__ == "__main__":
+    run_all_fixes()

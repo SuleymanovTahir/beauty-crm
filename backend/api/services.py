@@ -102,7 +102,8 @@ async def create_service_api(
 ):
     """Создать новую услугу"""
     user = require_auth(session_token)
-    if not user or user["role"] != "admin":
+    # Позволяем администраторам и директорам создавать услуги
+    if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     data = await request.json()
@@ -142,7 +143,8 @@ async def update_service_api(
 ):
     """Обновить услугу"""
     user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager"]:
+    # Позволяем администраторам, менеджерам и директорам изменять услуги
+    if not user or user["role"] not in ["admin", "manager", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     data = await request.json()
@@ -159,8 +161,6 @@ async def update_service_api(
         log_error(f"Error updating service: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-# backend/api/services.py - ПОЛНОСТЬЮ ЗАМЕНИТЕ функцию toggle_service_status
-
 @router.post("/services/{service_id}/toggle-status")
 async def toggle_service_status(
     service_id: int,
@@ -168,11 +168,11 @@ async def toggle_service_status(
 ):
     """Переключить статус услуги (активна/неактивна)"""
     user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager"]:
+    # Позволяем администраторам, менеджерам и директорам переключать статус
+    if not user or user["role"] not in ["admin", "manager", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     try:
-
         from core.config import DATABASE_NAME
         from datetime import datetime
         
@@ -237,7 +237,8 @@ async def delete_service_api(
 ):
     """Удалить услугу"""
     user = require_auth(session_token)
-    if not user or user["role"] != "admin":
+    # Позволяем только администраторам и директорам удалять услуги
+    if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     try:
@@ -297,7 +298,7 @@ async def create_special_package_api(
 ):
     """Создать специальный пакет"""
     user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager"]:
+    if not user or user["role"] not in ["admin", "manager", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     data = await request.json()
@@ -343,7 +344,7 @@ async def update_special_package_api(
 ):
     """Обновить специальный пакет"""
     user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager"]:
+    if not user or user["role"] not in ["admin", "manager", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     data = await request.json()
@@ -364,7 +365,7 @@ async def delete_special_package_api(
 ):
     """Удалить специальный пакет"""
     user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager"]:
+    if not user or user["role"] not in ["admin", "manager", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     try:
