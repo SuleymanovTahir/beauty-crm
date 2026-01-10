@@ -177,19 +177,14 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 u.employee_id,
                 u.position_ru,
                 u.position_ar,
-                COALESCE(u.photo, u.photo_url) as photo
+                COALESCE(u.photo, u.photo_url) as photo,
+                u.position_id
             FROM users u
             ORDER BY u.created_at DESC
         """)
 
         users = []
         for row in c.fetchall():
-            # Use position from users table (index 5)
-            position_display = row[5]
-            
-            # Construct position object if needed or just use text
-            # For now, we'll just use the text position
-            
             user_data = {
                 "id": row[0],
                 "username": row[1],
@@ -198,7 +193,7 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 "email": row[4],
                 "role": row[5],
                 "position": row[6],
-                "position_id": None, # Legacy field
+                "position_id": row[13],
                 "employee_id": row[9],
                 "created_at": row[7],
                 "is_active": row[8],
