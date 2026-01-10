@@ -26,10 +26,16 @@ def create_newsletter_table(db_name=None):
         return True
     except Exception as e:
         print(f"❌ Ошибка создания таблицы newsletter_subscribers: {e}")
-        conn.rollback()
+        try:
+            conn.rollback()
+        except:
+            pass
         return False
     finally:
-        conn.close()
+        try:
+            conn.close()
+        except:
+            pass
 
 def add_subscriber(email: str, source: str = 'footer'):
     """Добавить подписчика"""

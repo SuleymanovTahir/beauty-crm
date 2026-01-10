@@ -11,130 +11,31 @@ from datetime import datetime
 # Добавляем путь к backend
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Тестовая база данных
-TEST_DB = 'test_salon.db'
-
-@pytest.fixture(scope="session")
-def test_db_path():
-    """Путь к тестовой базе данных"""
-    return TEST_DB
-
 @pytest.fixture(scope="function")
-def clean_database(test_db_path):
-    """Создает чистую базу данных для каждого теста"""
-    # Удаляем старую тестовую БД
-    if os.path.exists(test_db_path):
-        os.remove(test_db_path)
-
-    # Создаем новую
+def clean_database():
+    """Очищает базу данных для каждого теста"""
     conn = get_db_connection()
     c = conn.cursor()
 
-    # Создаем базовые таблицы
-    c.execute('''CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        username TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
-        full_name TEXT,
-        email TEXT,
-        role TEXT DEFAULT 'employee',
-        position TEXT,
-        employee_id INTEGER,
-        created_at TEXT,
-        is_active INTEGER DEFAULT 1
-    )''')
-
-    c.execute('''CREATE TABLE IF NOT EXISTS clients (
-        id SERIAL PRIMARY KEY,
-        name TEXT NOT NULL,
-        phone TEXT,
-        email TEXT,
-        instagram_id TEXT UNIQUE,
-        created_at TEXT,
-        notes TEXT
-    )''')
-
-    c.execute('''CREATE TABLE IF NOT EXISTS employees (
-        id SERIAL PRIMARY KEY,
-        full_name TEXT NOT NULL,
-        position TEXT,
-        phone TEXT,
-        email TEXT,
-        is_active INTEGER DEFAULT 1,
-        sort_order INTEGER DEFAULT 0,
-        created_at TEXT,
-        updated_at TEXT
-    )''')
-
-    c.execute('''CREATE TABLE IF NOT EXISTS services (
-        id SERIAL PRIMARY KEY,
-        name TEXT NOT NULL,
-        name_en TEXT,
-        name_ar TEXT,
-        category TEXT,
-        price REAL,
-        duration INTEGER,
-        description TEXT,
-        is_active INTEGER DEFAULT 1,
-        created_at TEXT
-    )''')
-
-    c.execute('''CREATE TABLE IF NOT EXISTS bookings (
-        id SERIAL PRIMARY KEY,
-        client_id INTEGER,
-        service_id INTEGER,
-        employee_id INTEGER,
-        date TEXT NOT NULL,
-        time TEXT NOT NULL,
-        status TEXT DEFAULT 'pending',
-        notes TEXT,
-        created_at TEXT,
-        FOREIGN KEY (client_id) REFERENCES clients(id),
-        FOREIGN KEY (service_id) REFERENCES services(id),
-        FOREIGN KEY (employee_id) REFERENCES employees(id)
-    )''')
-
-    c.execute('''CREATE TABLE IF NOT EXISTS positions (
-        id SERIAL PRIMARY KEY,
-        name TEXT NOT NULL UNIQUE,
-        name_en TEXT,
-        name_ar TEXT,
-        description TEXT,
-        is_active INTEGER DEFAULT 1,
-        sort_order INTEGER DEFAULT 0,
-        created_at TEXT,
-        updated_at TEXT
-    )''')
-
-    c.execute('''CREATE TABLE IF NOT EXISTS salon_settings (
-        id INTEGER PRIMARY KEY CHECK (id = 1),
-        name TEXT NOT NULL,
-        address TEXT,
-        phone TEXT,
-        email TEXT,
-        instagram TEXT,
-        booking_url TEXT,
-        google_maps TEXT,
-        hours TEXT,
-        city TEXT,
-        country TEXT,
-        currency TEXT,
-        created_at TEXT,
-        updated_at TEXT
-    )''')
+    # Очистка таблиц (только для тестов!)
+    tables = ['bookings', 'clients', 'users', 'services', 'employees', 'positions', 'salon_settings']
+    for table in tables:
+        try:
+            c.execute(f"TRUNCATE TABLE {table} CASCADE")
+        except:
+            conn.rollback()
+            try:
+                c.execute(f"DELETE FROM {table}")
+            except:
+                conn.rollback()
 
     conn.commit()
     conn.close()
-
-    yield test_db_path
-
-    # Очистка после теста
-    if os.path.exists(test_db_path):
-        os.remove(test_db_path)
+    yield
 
 @pytest.fixture
 def db_connection(clean_database):
-    """Подключение к тестовой базе данных"""
+    """Подключение к базе данных"""
     conn = get_db_connection()
     yield conn
     conn.close()
@@ -143,7 +44,6 @@ def db_connection(clean_database):
 def sample_user(db_connection):
     """Создает тестового пользователя"""
     import hashlib
-
     password_hash = hashlib.sha256("test123".encode()).hexdigest()
     now = datetime.now().isoformat()
 
@@ -151,10 +51,11 @@ def sample_user(db_connection):
     cursor.execute("""
         INSERT INTO users (username, password_hash, full_name, email, role, position, created_at)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
+        RETURNING id
     """, ("testuser", password_hash, "Test User", "test@example.com", "admin", "Администратор", now))
 
+    user_id = cursor.fetchone()[0]
     db_connection.commit()
-    user_id = cursor.lastrowid
 
     return {
         "id": user_id,
@@ -174,10 +75,11 @@ def sample_client(db_connection):
     cursor.execute("""
         INSERT INTO clients (name, phone, email, instagram_id, created_at)
         VALUES (%s, %s, %s, %s, %s)
+        RETURNING id
     """, ("John Doe", "+971501234567", "john@example.com", "john_doe", now))
 
+    client_id = cursor.fetchone()[0]
     db_connection.commit()
-    client_id = cursor.lastrowid
 
     return {
         "id": client_id,
@@ -196,10 +98,11 @@ def sample_employee(db_connection):
     cursor.execute("""
         INSERT INTO employees (full_name, position, phone, email, is_active, created_at, updated_at)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
+        RETURNING id
     """, ("Maria Smith", "Hair Stylist", "+971509876543", "maria@salon.com", 1, now, now))
 
+    employee_id = cursor.fetchone()[0]
     db_connection.commit()
-    employee_id = cursor.lastrowid
 
     return {
         "id": employee_id,
@@ -218,10 +121,11 @@ def sample_service(db_connection):
     cursor.execute("""
         INSERT INTO services (name, name_en, category, price, duration, is_active, created_at)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
+        RETURNING id
     """, ("Стрижка", "Haircut", "Hair", 150.0, 60, 1, now))
 
+    service_id = cursor.fetchone()[0]
     db_connection.commit()
-    service_id = cursor.lastrowid
 
     return {
         "id": service_id,
@@ -241,10 +145,11 @@ def sample_position(db_connection):
     cursor.execute("""
         INSERT INTO positions (name, name_en, description, is_active, sort_order, created_at, updated_at)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
+        RETURNING id
     """, ("Hair Stylist", "Hair Stylist", "Hair specialist", 1, 1, now, now))
 
+    position_id = cursor.fetchone()[0]
     db_connection.commit()
-    position_id = cursor.lastrowid
 
     return {
         "id": position_id,

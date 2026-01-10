@@ -23,10 +23,9 @@ if backend_dir not in sys.path:
 from core.config import DATABASE_NAME
 from scripts.data.seed_test_data import seed_data as seed_employees_and_services
 
-def get_db_connection():
-    conn = get_db_connection()
-    conn.execute("PRAGMA foreign_keys = ON")
-    return conn
+# def get_db_connection_with_pragma():
+#     conn = get_db_connection()
+#     return conn
 
 def seed_clients(conn):
     print("\n2. ДОБАВЛЕНИЕ КЛИЕНТОВ:")

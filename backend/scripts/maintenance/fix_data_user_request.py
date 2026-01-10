@@ -1,8 +1,6 @@
 from db.connection import get_db_connection
 import os
 
-DATABASE_NAME = "salon_bot.db"
-
 def fix_data():
     conn = get_db_connection()
     c = conn.cursor()

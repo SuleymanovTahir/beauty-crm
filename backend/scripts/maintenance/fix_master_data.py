@@ -117,8 +117,11 @@ def fix_master_data(csv_file_path=None):
     # Map CSV Header Name -> DB ID
     master_ids = {}
     for csv_name in master_columns:
-        # DB lookup (Case insensitive)
-        c.execute("SELECT id, full_name FROM users WHERE lower(full_name) = %s", (csv_name.lower(),))
+        # DB lookup (Check full_name OR username, case insensitive)
+        c.execute("""
+            SELECT id FROM users 
+            WHERE lower(full_name) = %s OR lower(username) = %s
+        """, (csv_name.lower(), csv_name.lower()))
         row = c.fetchone()
         if row:
             master_ids[csv_name] = row[0]

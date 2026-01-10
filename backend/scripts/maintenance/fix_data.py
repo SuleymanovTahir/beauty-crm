@@ -41,13 +41,18 @@ def merge_clients(main_id: str, redundant_id: str):
         updated_total = 0
         for table, col in tables:
             try:
+                # В PostgreSQL ошибка в транзакции прерывает её всю. 
+                # Используем SAVEPOINT чтобы игнорировать отсутствие таблиц.
+                c.execute(f"SAVEPOINT merge_{table}")
                 c.execute(f"UPDATE {table} SET {col} = %s WHERE {col} = %s", (main_id, redundant_id))
                 count = c.rowcount
                 if count > 0:
                     print(f"  ✅ Updated {count} rows in {table}")
                     updated_total += count
+                c.execute(f"RELEASE SAVEPOINT merge_{table}")
             except Exception as e:
-                # Some tables might not exist or columns might be missing in some environments
+                # Если таблицы нет или ошибка - откатываем только этот шаг
+                c.execute(f"ROLLBACK TO SAVEPOINT merge_{table}")
                 pass
         
         # Finally delete redundant client
@@ -123,20 +128,21 @@ def run_all_fixes():
                 """, (specialization, new_position, provider_id))
         
         # 2. Fix specific experience and details
-        print("🔍 Updating specific employee details...")
+        print("🔍 Updating specific employee details by username...")
         
-        # Lyazzat (id=4) - 7 years
-        c.execute("UPDATE users SET years_of_experience = 7 WHERE id = 4")
-        
-        # Mestan (id=3) - 15 years, phone
-        c.execute("UPDATE users SET years_of_experience = 15, phone = '+971 50 180 0346' WHERE id = 3")
-        
-        # Simo (id=2) - 13 years
-        c.execute("UPDATE users SET years_of_experience = 13 WHERE id = 2")
+        employee_fixes = [
+            ("lyazzat", 7, None),
+            ("mestan", 15, "+971 50 180 0346"),
+            ("simo", 13, None),
+            ("gulya", 9, None),
+            ("jennifer", 11, None)
+        ]
 
-        # Gulya (id=5), Jennifer (id=6) - random > 7
-        c.execute("UPDATE users SET years_of_experience = 9 WHERE id = 5")
-        c.execute("UPDATE users SET years_of_experience = 11 WHERE id = 6")
+        for username, exp, phone in employee_fixes:
+            if phone:
+                c.execute("UPDATE users SET years_of_experience = %s, phone = %s WHERE username = %s", (exp, phone, username))
+            else:
+                c.execute("UPDATE users SET years_of_experience = %s WHERE username = %s", (exp, username))
 
         # 3. Create Sales profile: Akbota
         print("🔍 Ensuring Sales profile: Akbota...")
