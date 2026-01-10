@@ -173,7 +173,7 @@ export default function AdminDashboard() {
         api.getBookings(),
         api.getClients(),
         api.get('/api/bot-analytics?days=30').catch(() => null),
-        api.getPublicSalonSettings().catch(() => ({ currency: 'AED' })),
+        api.getPublicSalonSettings().catch(() => ({ currency: '' })),
       ]);
 
       setStats(statsData);

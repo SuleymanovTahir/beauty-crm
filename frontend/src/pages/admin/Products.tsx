@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Plus, Edit, Trash2, Package, TrendingUp, X, Image as ImageIcon } from 'lucide-react';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
+import { useCurrency } from '../../hooks/useSalonSettings';
 import '../../styles/crm-pages.css';
 
 
@@ -21,6 +22,7 @@ interface Product {
 
 const Products = () => {
     const { t } = useTranslation('admin/products');
+    const { currency } = useCurrency();
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [showAddDialog, setShowAddDialog] = useState(false);
@@ -139,7 +141,7 @@ const Products = () => {
                             >
                                 <div className="crm-detail-row">
                                     <span className="crm-detail-label">{t('form.price')}:</span>
-                                    <span className="crm-detail-value font-bold text-pink-600">{product.price} AED</span>
+                                    <span className="crm-detail-value font-bold text-pink-600">{product.price} {currency}</span>
                                 </div>
                                 <div className="crm-detail-row text-xs mt-1">
                                     <span className="crm-detail-label">{t('form.stockQuantity')}:</span>
@@ -519,6 +521,7 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
 
 const ProductDetailDialog = ({ product, onClose }: any) => {
     const { t } = useTranslation('admin/products');
+    const { currency } = useCurrency();
     const [movements, setMovements] = useState<any[]>([]);
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -593,7 +596,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
 
                         <div className="bg-pink-50 rounded-2xl p-6 border border-pink-100">
                             <h3 className="font-bold text-pink-900 mb-2">{t('form.price')}</h3>
-                            <p className="text-3xl font-black text-pink-600">{product.price} AED</p>
+                            <p className="text-3xl font-black text-pink-600">{product.price} {currency}</p>
                             {product.cost_price > 0 && (
                                 <p className="text-sm text-pink-400 mt-1">{t('detail.costPriceLabel', { price: product.cost_price })}</p>
                             )}
@@ -623,7 +626,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                                 </div>
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.revenue', 'Выручка')}</p>
-                                    <p className="text-xl font-black text-pink-600">{stats.total_revenue} AED</p>
+                                    <p className="text-xl font-black text-pink-600">{stats.total_revenue} {currency}</p>
                                 </div>
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.last30Days', 'За 30 дней')}</p>
@@ -631,7 +634,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                                 </div>
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.avgPrice', 'Ср. цена')}</p>
-                                    <p className="text-xl font-black text-gray-900">{(stats.average_price || 0).toFixed(1)} AED</p>
+                                    <p className="text-xl font-black text-gray-900">{(stats.average_price || 0).toFixed(1)} {currency}</p>
                                 </div>
                             </div>
                         )}

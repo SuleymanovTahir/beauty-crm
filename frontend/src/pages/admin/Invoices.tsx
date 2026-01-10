@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Send, DollarSign, Trash2, FileText, X } from 'lucide-react';
 import { api } from '../../services/api';
+import { useCurrency } from '../../hooks/useSalonSettings';
 import '../../styles/crm-pages.css';
 
 
@@ -238,6 +239,7 @@ const Invoices = () => {
 
 const InvoiceDialog = ({ onClose, onSuccess }: any) => {
     const { t } = useTranslation('admin/invoices');
+    const { currency } = useCurrency();
     const [clients, setClients] = useState<any[]>([]);
     const [items, setItems] = useState([{ name: '', quantity: 1, price: 0 }]);
     const [formData, setFormData] = useState({
@@ -374,7 +376,7 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                         </div>
 
                         <div className="invoice-total">
-                            <strong>{t('totalAmount')}: {calculateTotal().toFixed(2)} AED</strong>
+                            <strong>{t('totalAmount')}: {calculateTotal().toFixed(2)} {currency}</strong>
                         </div>
 
                         <div className="crm-form-group">

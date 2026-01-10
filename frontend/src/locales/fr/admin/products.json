@@ -1,0 +1,65 @@
+{
+  "title": "Produits et entrepôt",
+  "subtitle": "Gestion des produits et des stocks",
+  "addProduct": "Ajouter un produit",
+  "edit": "Modifier",
+  "delete": "Supprimer",
+  "loading": "Chargement...",
+  "allCategories": "Toutes les catégories",
+  "noProducts": "Aucun produit pour l'instant",
+  "createFirst": "Ajouter le premier produit au système",
+  "form": {
+    "name": "Nom",
+    "nameRu": "Nom (RU)",
+    "nameEn": "Titre (EN)",
+    "nameAr": "Titre (AR)",
+    "category": "Catégorie",
+    "price": "Prix ​​de vente",
+    "costPrice": "Prix ​​de revient",
+    "stockQuantity": "Stock restant",
+    "minStockLevel": "Solde minimum",
+    "sku": "Article",
+    "barcode": "Code à barres",
+    "supplier": "Fournisseur",
+    "notes": "Remarques",
+    "isActive": "Actif",
+    "photos": "Photo du produit",
+    "upload": "Télécharger",
+    "uploadError": "Erreur lors du chargement de la photo",
+    "save": "Sauvegarder",
+    "cancel": "Annuler"
+  },
+  "movement": {
+    "title": "Mouvement des marchandises",
+    "type": "Type de mouvement",
+    "quantity": "Quantité",
+    "reason": "Cause",
+    "types": {
+      "in": "À venir",
+      "out": "Consommation",
+      "adjustment": "Ajustement"
+    }
+  },
+  "messages": {
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+    "productCreated": "Produit créé",
+    "productUpdated": "Produit mis à jour",
+    "productDeleted": "Produit supprimé",
+    "movementAdded": "Mouvement ajouté"
+  },
+  "detail": {
+    "noCategory": "Non classé",
+    "costPriceLabel": "Coût : {{price}} AED",
+    "movementHistory": "Histoire des mouvements",
+    "inStock": "En stock : {{count}}",
+    "loadingData": "Chargement des données...",
+    "noMovements": "Aucune donnée de mouvement",
+    "movementIn": "Admission",
+    "movementOut": "Radier",
+    "movementAdjustment": "Ajustement",
+    "totalSold": "Total vendu",
+    "totalRevenue": "Revenu",
+    "last30Days": "Dans 30 jours",
+    "avgPrice": "Épouser. prix"
+  }
+}

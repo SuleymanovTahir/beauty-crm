@@ -1,0 +1,52 @@
+{
+  "title": "संधियों",
+  "subtitle": "ग्राहक अनुबंध प्रबंधन",
+  "addContract": "एक समझौता बनाएं",
+  "loading": "लोड हो रहा है...",
+  "allStatuses": "सभी स्थितियाँ",
+  "contractNumber": "सम्पर्क का नम्बर।",
+  "client": "ग्राहक",
+  "status": "स्थिति",
+  "createdAt": "निर्माण तिथि",
+  "actions": "कार्रवाई",
+  "sendButton": "भेजना",
+  "delete": "मिटाना",
+  "noContracts": "अभी तक कोई अनुबंध नहीं",
+  "createFirst": "किसी ग्राहक के साथ अपना पहला अनुबंध बनाएं",
+  "statuses": {
+    "draft": "मसौदा",
+    "sent": "भेजा",
+    "signed": "पर हस्ताक्षर किए",
+    "cancelled": "रद्द कर दिया गया"
+  },
+  "form": {
+    "selectClient": "ग्राहक का चयन करें",
+    "contractType": "करार का प्रकार",
+    "contractDate": "अनुबंध की तारीख",
+    "terms": "समझौते की शर्तें",
+    "notes": "टिप्पणियाँ",
+    "save": "बचाना",
+    "cancel": "रद्द करना"
+  },
+  "types": {
+    "service": "ब्यूटी सैलून सेवा सेवा",
+    "product": "उत्पाद",
+    "subscription": "सदस्यता"
+  },
+  "sendDialog": {
+    "title": "अनुबंध भेजें",
+    "method": "शिपिंग का तरीका",
+    "recipient": "प्राप्तकर्ता",
+    "email": "ईमेल",
+    "whatsapp": "WHATSAPP",
+    "telegram": "टेलीग्राम",
+    "instagram": "Instagram",
+    "sendButton": "भेजना"
+  },
+  "messages": {
+    "confirmDelete": "क्या आप वाकई इस अनुबंध को हटाना चाहते हैं?",
+    "contractCreated": "अनुबंध बनाया गया है",
+    "contractSent": "अनुबंध भेज दिया गया है",
+    "contractDeleted": "अनुबंध हटा दिया गया"
+  }
+}
