@@ -1,6 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Send, Trash2, FileText, X, Edit, Settings } from 'lucide-react';
+import {
+    Plus, Send, Trash2, FileText, X, Edit, Settings,
+    Layout, LayoutDashboard, Search, Clock, Users,
+    ArrowUpDown, ArrowUp, ArrowDown, Lock
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import '../../styles/crm-pages.css';
@@ -40,11 +44,22 @@ const Contracts = () => {
     const [filterStatus, setFilterStatus] = useState<string>('');
     const [userRole, setUserRole] = useState<string>('');
 
+    const [viewMode, setViewMode] = useState<'board' | 'list'>(() => {
+        return localStorage.getItem('contracts_view_mode') as 'board' | 'list' || 'board';
+    });
+    const [subTab, setSubTab] = useState<'all' | 'client' | 'internal'>('all');
+    const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
+
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         setUserRole(user.role || '');
         loadData();
     }, [filterStatus]);
+
+    useEffect(() => {
+        localStorage.setItem('contracts_view_mode', viewMode);
+    }, [viewMode]);
 
     const loadData = async () => {
         try {
@@ -59,6 +74,80 @@ const Contracts = () => {
             console.error('Error loading data:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleSort = (key: string) => {
+        let direction: 'asc' | 'desc' = 'asc';
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const getSortIcon = (key: string) => {
+        if (!sortConfig || sortConfig.key !== key) return <ArrowUpDown size={14} className="ml-1 opacity-30" />;
+        return sortConfig.direction === 'asc' ? <ArrowUp size={14} className="ml-1" /> : <ArrowDown size={14} className="ml-1" />;
+    };
+
+    const filteredAndSortedContracts = useMemo(() => {
+        return contracts.filter(c => {
+            const matchesStatus = filterStatus ? c.status === filterStatus : true;
+            const matchesSearch = searchQuery ? (
+                c.contract_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                c.client_name.toLowerCase().includes(searchQuery.toLowerCase())
+            ) : true;
+
+            let matchesSubTab = true;
+            if (subTab === 'client') {
+                matchesSubTab = !['employment', 'rental'].includes(c.contract_type);
+            } else if (subTab === 'internal') {
+                matchesSubTab = ['employment', 'rental'].includes(c.contract_type);
+            }
+
+            return matchesStatus && matchesSearch && matchesSubTab;
+        }).sort((a, b) => {
+            if (!sortConfig) return 0;
+            const { key, direction } = sortConfig;
+
+            let aVal = a[key as keyof Contract];
+            let bVal = b[key as keyof Contract];
+
+            if (key === 'created_at') {
+                aVal = new Date(aVal as string).getTime();
+                bVal = new Date(bVal as string).getTime();
+            }
+
+            if (aVal! < bVal!) return direction === 'asc' ? -1 : 1;
+            if (aVal! > bVal!) return direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }, [contracts, filterStatus, searchQuery, subTab, sortConfig]);
+
+    const handleStatusMove = async (contractId: number, newStatus: string) => {
+        try {
+            await api.put(`/api/contracts/${contractId}`, { status: newStatus });
+            toast.success(t('messages.contractUpdated'));
+            loadData();
+        } catch (error) {
+            toast.error(t('errors.updateError', 'Failed to update status'));
+        }
+    };
+
+    const handleDragStart = (e: React.DragEvent, contractId: number) => {
+        e.dataTransfer.setData('contractId', contractId.toString());
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = (e: React.DragEvent, newStatus: string) => {
+        e.preventDefault();
+        const contractId = parseInt(e.dataTransfer.getData('contractId'));
+        const contract = contracts.find(c => c.id === contractId);
+        if (contract && contract.status !== newStatus) {
+            handleStatusMove(contractId, newStatus);
         }
     };
 
@@ -91,121 +180,306 @@ const Contracts = () => {
     }
 
     const canManageTypes = ['admin', 'director'].includes(userRole);
+    const statuses = ['draft', 'sent', 'signed', 'cancelled'];
 
     return (
-        <div className="crm-page">
-            <div className="crm-page-header">
-                <div>
-                    <h1>{t('title')}</h1>
-                    <p className="text-gray-600">{t('subtitle')}</p>
-                </div>
-                <div className="flex gap-2">
-                    {canManageTypes && (
-                        <button className="crm-btn-secondary" onClick={() => setShowTypesDialog(true)}>
-                            <Settings size={20} />
-                            {t('manageTypes', 'Типы договоров')}
+        <div className="crm-page p-0 bg-gray-50/50 flex flex-col h-full overflow-hidden">
+            <div className="px-8 py-6 bg-white border-b sticky top-0 z-20 shadow-sm">
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+                        <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
+                    </div>
+                    <div className="flex gap-3">
+                        <div className="bg-gray-100 p-1 rounded-lg flex items-center border border-gray-200">
+                            <button
+                                onClick={() => setViewMode('board')}
+                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center ${viewMode === 'board'
+                                    ? 'bg-white text-gray-900 shadow-sm'
+                                    : 'text-gray-500 hover:text-gray-900'
+                                    }`}
+                            >
+                                <Layout className="w-4 h-4 mr-2" />
+                                {t('board', 'Доска')}
+                            </button>
+                            <button
+                                onClick={() => setViewMode('list')}
+                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center ${viewMode === 'list'
+                                    ? 'bg-white text-gray-900 shadow-sm'
+                                    : 'text-gray-500 hover:text-gray-900'
+                                    }`}
+                            >
+                                <LayoutDashboard className="w-4 h-4 mr-2" />
+                                {t('allContracts', 'Все договоры')}
+                            </button>
+                        </div>
+
+                        {canManageTypes && (
+                            <button className="crm-btn-secondary h-10" onClick={() => setShowTypesDialog(true)}>
+                                <Settings size={18} />
+                                {t('manageTypes')}
+                            </button>
+                        )}
+                        <button className="crm-btn-primary h-10" onClick={() => {
+                            setEditingContract(null);
+                            setShowContractDialog(true);
+                        }}>
+                            <Plus size={18} />
+                            {t('addContract', 'Создать договор')}
                         </button>
-                    )}
-                    <button className="crm-btn-primary" onClick={() => {
-                        setEditingContract(null);
-                        setShowContractDialog(true);
-                    }}>
-                        <Plus size={20} />
-                        {t('addContract')}
-                    </button>
+                    </div>
                 </div>
-            </div>
 
-            <div className="crm-filters">
-                <select
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                    className="crm-filter-select"
-                >
-                    <option value="">{t('allStatuses')}</option>
-                    <option value="draft">{t('statuses.draft')}</option>
-                    <option value="sent">{t('statuses.sent')}</option>
-                    <option value="signed">{t('statuses.signed')}</option>
-                    <option value="cancelled">{t('statuses.cancelled')}</option>
-                </select>
-            </div>
-
-            {loading ? (
-                <div className="crm-loading">{t('loading')}</div>
-            ) : (
-                <div className="crm-table-container">
-                    <table className="crm-table">
-                        <thead>
-                            <tr>
-                                <th>{t('contractNumber')}</th>
-                                <th>{t('client')}</th>
-                                <th>{t('type', 'Тип')}</th>
-                                <th>{t('status')}</th>
-                                <th>{t('createdAt')}</th>
-                                <th>{t('actions')}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {contracts.map((contract) => (
-                                <tr key={contract.id}>
-                                    <td>
-                                        <div className="contract-number">
-                                            <FileText size={16} />
-                                            {contract.contract_number}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div className="client-info">
-                                            <div className="client-name">{contract.client_name}</div>
-                                            <div className="client-phone">{contract.client_phone}</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        {getTypeName(contract.contract_type)}
-                                    </td>
-                                    <td>
-                                        <span className={`crm-badge ${getStatusColor(contract.status)}`}>
-                                            {t(`statuses.${contract.status}`)}
-                                        </span>
-                                    </td>
-                                    <td>{new Date(contract.created_at).toLocaleDateString()}</td>
-                                    <td>
-                                        <div className="actions">
-                                            <button
-                                                className="crm-btn-icon"
-                                                onClick={() => {
-                                                    setEditingContract(contract);
-                                                    setShowContractDialog(true);
-                                                }}
-                                                title={t('editButton')}
-                                            >
-                                                <Edit size={16} />
-                                            </button>
-                                            <button
-                                                className="crm-btn-icon"
-                                                onClick={() => {
-                                                    setSelectedContract(contract);
-                                                    setShowSendDialog(true);
-                                                }}
-                                                title={t('sendButton')}
-                                            >
-                                                <Send size={16} />
-                                            </button>
-                                            <button
-                                                className="crm-btn-icon"
-                                                onClick={() => handleDelete(contract.id)}
-                                                title={t('delete')}
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                        {viewMode === 'list' && (
+                            <>
+                                <button
+                                    onClick={() => setSubTab('all')}
+                                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${subTab === 'all'
+                                        ? 'bg-pink-50 text-pink-600 border-pink-200'
+                                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                        }`}
+                                >
+                                    {t('all', 'Все')}
+                                </button>
+                                <button
+                                    onClick={() => setSubTab('client')}
+                                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${subTab === 'client'
+                                        ? 'bg-pink-50 text-pink-600 border-pink-200'
+                                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                        }`}
+                                >
+                                    {t('clientContracts', 'Клиентские')}
+                                </button>
+                                <button
+                                    onClick={() => setSubTab('internal')}
+                                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${subTab === 'internal'
+                                        ? 'bg-pink-50 text-pink-600 border-pink-200'
+                                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                        }`}
+                                >
+                                    {t('internalContracts', 'Внутренние')}
+                                </button>
+                                <div className="h-4 w-[1px] bg-gray-200 mx-2" />
+                            </>
+                        )}
+                        <select
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            className="crm-select text-sm h-9 min-w-[150px]"
+                        >
+                            <option value="">{t('allStatuses')}</option>
+                            {statuses.map(s => (
+                                <option key={s} value={s}>{t(`statuses.${s}`)}</option>
                             ))}
-                        </tbody>
-                    </table>
+                        </select>
+                    </div>
+
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder={t('search_placeholder', 'Поиск по номеру или клиенту...')}
+                            className="pl-9 pr-4 h-9 w-64 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
                 </div>
-            )}
+            </div>
+
+            <div className="flex-1 overflow-hidden p-6">
+                {loading ? (
+                    <div className="flex items-center justify-center h-full">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
+                    </div>
+                ) : viewMode === 'board' ? (
+                    <div className="h-full overflow-x-auto flex gap-6 pb-4">
+                        {statuses.map(status => (
+                            <div
+                                key={status}
+                                className="w-80 flex flex-col h-full bg-gray-100/50 rounded-xl border border-gray-200/60"
+                                onDragOver={handleDragOver}
+                                onDrop={(e) => handleDrop(e, status)}
+                            >
+                                <div className="p-4 border-b border-gray-200/60 bg-white/50 backdrop-blur-sm rounded-t-xl">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="font-semibold text-sm text-gray-700 uppercase tracking-tight">
+                                            {t(`statuses.${status}`)}
+                                        </h3>
+                                        <span className="px-2 py-0.5 rounded-full bg-white border text-xs font-mono text-gray-500 shadow-sm">
+                                            {filteredAndSortedContracts.filter(c => c.status === status).length}
+                                        </span>
+                                    </div>
+                                    <div className={`h-1 w-full rounded-full mt-3 bg-gray-200 overflow-hidden`}>
+                                        <div
+                                            className={`h-full transition-all duration-500`}
+                                            style={{
+                                                width: '100%',
+                                                backgroundColor: status === 'signed' ? '#10b981' :
+                                                    status === 'sent' ? '#3b82f6' :
+                                                        status === 'cancelled' ? '#ef4444' : '#64748b'
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-3 no-scrollbar">
+                                    {filteredAndSortedContracts.filter(c => c.status === status).map(contract => (
+                                        <div
+                                            key={contract.id}
+                                            draggable
+                                            onDragStart={(e) => handleDragStart(e, contract.id)}
+                                            className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing group relative"
+                                        >
+                                            <div className="flex items-start justify-between mb-2">
+                                                <div className="flex items-center gap-1.5 text-xs font-medium text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full">
+                                                    <FileText size={12} />
+                                                    {contract.contract_number}
+                                                </div>
+                                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button
+                                                        className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-blue-500"
+                                                        onClick={() => {
+                                                            setEditingContract(contract);
+                                                            setShowContractDialog(true);
+                                                        }}
+                                                    >
+                                                        <Edit size={14} />
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div className="font-bold text-gray-900 mb-1">{contract.client_name}</div>
+                                            <div className="text-xs text-gray-500 flex items-center gap-1 mb-3">
+                                                <Users size={12} />
+                                                {getTypeName(contract.contract_type)}
+                                            </div>
+
+                                            <div className="flex items-center justify-between pt-3 border-t border-gray-50">
+                                                <div className="text-[10px] text-gray-400 flex items-center gap-1">
+                                                    <Clock size={10} />
+                                                    {new Date(contract.created_at).toLocaleDateString()}
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                                                        onClick={() => {
+                                                            setSelectedContract(contract);
+                                                            setShowSendDialog(true);
+                                                        }}
+                                                    >
+                                                        <Send size={14} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {filteredAndSortedContracts.filter(c => c.status === status).length === 0 && (
+                                        <div className="text-center py-8 text-xs text-gray-400 italic">
+                                            {t('noContracts')}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="h-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+                        <div className="flex-1 overflow-auto">
+                            <table className="crm-table w-full">
+                                <thead className="sticky top-0 bg-gray-50 z-10 shadow-sm">
+                                    <tr>
+                                        <th onClick={() => handleSort('contract_number')} className="cursor-pointer hover:bg-gray-100 transition-colors">
+                                            <div className="flex items-center">{t('contractNumber')} {getSortIcon('contract_number')}</div>
+                                        </th>
+                                        <th onClick={() => handleSort('client_name')} className="cursor-pointer hover:bg-gray-100 transition-colors">
+                                            <div className="flex items-center">{t('client')} {getSortIcon('client_name')}</div>
+                                        </th>
+                                        <th onClick={() => handleSort('contract_type')} className="cursor-pointer hover:bg-gray-100 transition-colors">
+                                            <div className="flex items-center">{t('type')} {getSortIcon('contract_type')}</div>
+                                        </th>
+                                        <th onClick={() => handleSort('status')} className="cursor-pointer hover:bg-gray-100 transition-colors">
+                                            <div className="flex items-center">{t('status')} {getSortIcon('status')}</div>
+                                        </th>
+                                        <th onClick={() => handleSort('created_at')} className="cursor-pointer hover:bg-gray-100 transition-colors">
+                                            <div className="flex items-center">{t('createdAt')} {getSortIcon('created_at')}</div>
+                                        </th>
+                                        <th className="w-24">{t('actions')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredAndSortedContracts.map((contract) => (
+                                        <tr key={contract.id} className="hover:bg-gray-50 transition-colors">
+                                            <td>
+                                                <div className="flex items-center gap-2 font-medium text-pink-600">
+                                                    <FileText size={16} />
+                                                    {contract.contract_number}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="flex flex-col">
+                                                    <div className="font-semibold text-gray-900">{contract.client_name}</div>
+                                                    <div className="text-xs text-gray-500">{contract.client_phone}</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span className="text-sm px-2 py-1 bg-gray-100 rounded-md text-gray-700">
+                                                    {getTypeName(contract.contract_type)}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span className={`crm-badge ${getStatusColor(contract.status)}`}>
+                                                    {t(`statuses.${contract.status}`)}
+                                                </span>
+                                            </td>
+                                            <td className="text-gray-600 text-sm">
+                                                {new Date(contract.created_at).toLocaleDateString()}
+                                            </td>
+                                            <td>
+                                                <div className="flex gap-1">
+                                                    <button
+                                                        className="p-2 hover:bg-blue-50 text-gray-400 hover:text-blue-600 rounded-lg transition-colors"
+                                                        onClick={() => {
+                                                            setEditingContract(contract);
+                                                            setShowContractDialog(true);
+                                                        }}
+                                                    >
+                                                        <Edit size={16} />
+                                                    </button>
+                                                    <button
+                                                        className="p-2 hover:bg-green-50 text-gray-400 hover:text-green-600 rounded-lg transition-colors"
+                                                        onClick={() => {
+                                                            setSelectedContract(contract);
+                                                            setShowSendDialog(true);
+                                                        }}
+                                                    >
+                                                        <Send size={16} />
+                                                    </button>
+                                                    <button
+                                                        className="p-2 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded-lg transition-colors"
+                                                        onClick={() => handleDelete(contract.id)}
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {filteredAndSortedContracts.length === 0 && (
+                                        <tr>
+                                            <td colSpan={6} className="text-center py-12 text-gray-400">
+                                                {t('noContracts')}
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+            </div>
 
             {showContractDialog && (
                 <ContractDialog
@@ -302,7 +576,6 @@ const ContractDialog = ({ contract, contractTypes, onClose, onSuccess }: Contrac
         }
     };
 
-    // Filter types logic: restricted roles can't see office types (employment/rental)
     const displayedTypes = isRestricted
         ? contractTypes.filter(type => !['employment', 'rental'].includes(type.code))
         : contractTypes;
@@ -313,7 +586,7 @@ const ContractDialog = ({ contract, contractTypes, onClose, onSuccess }: Contrac
                 <button className="crm-modal-close" onClick={onClose}>
                     <X size={20} />
                 </button>
-                <h2>{contract ? t('editContract') : t('addContract')}</h2>
+                <h2 className="text-xl font-bold mb-4">{contract ? t('editContract') : t('addContract')}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="crm-form-content">
                         <div className="crm-form-group">
@@ -350,7 +623,7 @@ const ContractDialog = ({ contract, contractTypes, onClose, onSuccess }: Contrac
                         </div>
                     </div>
 
-                    <div className="crm-modal-footer">
+                    <div className="crm-modal-footer mt-6 flex justify-end gap-3">
                         <button type="button" className="crm-btn-secondary" onClick={onClose}>
                             {t('form.cancel')}
                         </button>
@@ -389,7 +662,7 @@ const SendContractDialog = ({ contract, onClose, onSuccess }: any) => {
                 <button className="crm-modal-close" onClick={onClose}>
                     <X size={20} />
                 </button>
-                <h2>{t('sendDialog.title')}</h2>
+                <h2 className="text-xl font-bold mb-4">{t('sendDialog.title')}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="crm-form-content">
                         <div className="crm-form-group">
@@ -418,7 +691,7 @@ const SendContractDialog = ({ contract, onClose, onSuccess }: any) => {
                         </div>
                     </div>
 
-                    <div className="crm-modal-footer">
+                    <div className="crm-modal-footer mt-6 flex justify-end gap-3">
                         <button type="button" className="crm-btn-secondary" onClick={onClose}>
                             {t('form.cancel')}
                         </button>
@@ -464,7 +737,6 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
                 await api.createContractType(formData);
                 toast.success(t('typeManagement.messages.created'));
             }
-            // Reset and reload
             setEditingType(null);
             setFormData({ name: '', code: '', description: '' });
             setMode('list');
@@ -496,7 +768,7 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
                     <button className="crm-modal-close" onClick={() => setMode('list')}>
                         <X size={20} />
                     </button>
-                    <h2>{editingType ? t('typeManagement.editType') : t('typeManagement.createType')}</h2>
+                    <h2 className="text-xl font-bold mb-4">{editingType ? t('typeManagement.editType') : t('typeManagement.createType')}</h2>
                     <form onSubmit={handleSave}>
                         <div className="crm-form-content">
                             <div className="crm-form-group">
@@ -509,12 +781,16 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
                             </div>
                             <div className="crm-form-group">
                                 <label className="crm-label">{t('typeManagement.description')}</label>
-                                <textarea className="crm-input" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
+                                <textarea className="crm-textarea" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
                             </div>
                         </div>
-                        <div className="crm-modal-footer">
-                            <button type="button" className="crm-btn-secondary" onClick={() => setMode('list')}>{t('form.cancel')}</button>
-                            <button type="submit" className="crm-btn-primary">{t('form.save')}</button>
+                        <div className="crm-modal-footer mt-6 flex justify-end gap-3">
+                            <button type="button" className="crm-btn-secondary" onClick={() => setMode('list')}>
+                                {t('form.cancel')}
+                            </button>
+                            <button type="submit" className="crm-btn-primary">
+                                {t('form.save')}
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -522,48 +798,34 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
         );
     }
 
-    if (mode === 'delete' && typeToDelete) {
+    if (mode === 'delete') {
         return (
             <div className="crm-modal-overlay" onClick={onClose}>
                 <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
-                    <button className="crm-modal-close" onClick={() => setMode('list')}>
-                        <X size={20} />
-                    </button>
-                    <h2>{t('typeManagement.deleteTitle', { name: typeToDelete.name })}</h2>
-                    <div className="crm-form-content">
-                        <p className="mb-4">{t('typeManagement.deletePrompt')}</p>
+                    <h2 className="text-xl font-bold mb-2 text-red-600">{t('typeManagement.deleteTitle', { name: typeToDelete?.name })}</h2>
+                    <p className="text-gray-600 mb-6">{t('typeManagement.deletePrompt')}</p>
 
-                        <div className="flex flex-col gap-2">
-                            <label className="flex items-center gap-2 cursor-pointer p-2 border rounded hover:bg-gray-50">
-                                <input
-                                    type="radio"
-                                    name="deleteOption"
-                                    checked={deleteWithDocs}
-                                    onChange={() => setDeleteWithDocs(true)}
-                                />
-                                <div>
-                                    <span className="font-medium">{t('typeManagement.deleteWithDocs')}</span>
-                                    <p className="text-sm text-gray-500">{t('typeManagement.deleteWithDocsSub')}</p>
-                                </div>
-                            </label>
+                    <div className="space-y-4 mb-8">
+                        <label className={`flex items-start p-4 rounded-xl border-2 transition-all cursor-pointer ${!deleteWithDocs ? 'border-pink-500 bg-pink-50' : 'border-gray-100 hover:border-pink-200'}`}>
+                            <input type="radio" name="deleteMode" checked={!deleteWithDocs} onChange={() => setDeleteWithDocs(false)} className="mt-1 mr-3" />
+                            <div>
+                                <div className="font-bold text-gray-900">{t('typeManagement.keepDocs')}</div>
+                                <div className="text-sm text-gray-500">{t('typeManagement.keepDocsSub')}</div>
+                            </div>
+                        </label>
 
-                            <label className="flex items-center gap-2 cursor-pointer p-2 border rounded hover:bg-gray-50">
-                                <input
-                                    type="radio"
-                                    name="deleteOption"
-                                    checked={!deleteWithDocs}
-                                    onChange={() => setDeleteWithDocs(false)}
-                                />
-                                <div>
-                                    <span className="font-medium">{t('typeManagement.keepDocs')}</span>
-                                    <p className="text-sm text-gray-500">{t('typeManagement.keepDocsSub')}</p>
-                                </div>
-                            </label>
-                        </div>
+                        <label className={`flex items-start p-4 rounded-xl border-2 transition-all cursor-pointer ${deleteWithDocs ? 'border-red-500 bg-red-50' : 'border-gray-100 hover:border-red-200'}`}>
+                            <input type="radio" name="deleteMode" checked={deleteWithDocs} onChange={() => setDeleteWithDocs(true)} className="mt-1 mr-3" />
+                            <div>
+                                <div className="font-bold text-red-600">{t('typeManagement.deleteWithDocs')}</div>
+                                <div className="text-sm text-red-500">{t('typeManagement.deleteWithDocsSub')}</div>
+                            </div>
+                        </label>
                     </div>
-                    <div className="crm-modal-footer">
-                        <button type="button" className="crm-btn-secondary" onClick={() => setMode('list')}>{t('form.cancel')}</button>
-                        <button type="button" className="crm-btn-danger" onClick={confirmDelete}>{t('typeManagement.confirmDelete')}</button>
+
+                    <div className="flex justify-end gap-3">
+                        <button className="crm-btn-secondary" onClick={() => setMode('list')}>{t('form.cancel')}</button>
+                        <button className="crm-btn-danger" onClick={confirmDelete}>{t('typeManagement.confirmDelete')}</button>
                     </div>
                 </div>
             </div>
@@ -572,54 +834,67 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
 
     return (
         <div className="crm-modal-overlay" onClick={onClose}>
-            <div className="crm-modal" style={{ maxWidth: '600px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="crm-modal modal-large" onClick={(e) => e.stopPropagation()}>
                 <button className="crm-modal-close" onClick={onClose}>
                     <X size={20} />
                 </button>
-                <div className="flex justify-between items-center mb-4">
-                    <h2>{t('typeManagement.title')}</h2>
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold">{t('typeManagement.title')}</h2>
                     <button className="crm-btn-primary" onClick={() => {
                         setEditingType(null);
                         setFormData({ name: '', code: '', description: '' });
                         setMode('edit');
                     }}>
-                        <Plus size={16} /> {t('typeManagement.add')}
+                        <Plus size={18} />
+                        {t('typeManagement.add')}
                     </button>
                 </div>
 
-                <div className="crm-table-container" style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                    <table className="crm-table">
+                <div className="overflow-auto max-h-[60vh]">
+                    <table className="crm-table w-full">
                         <thead>
                             <tr>
                                 <th>{t('typeManagement.name')}</th>
                                 <th>{t('typeManagement.code')}</th>
-                                <th style={{ width: '100px' }}>{t('actions')}</th>
+                                <th>{t('typeManagement.description')}</th>
+                                <th className="w-24 text-right">{t('actions')}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {types.map(type => (
+                            {types.map((type) => (
                                 <tr key={type.id}>
+                                    <td className="font-medium text-gray-900">{type.name}</td>
+                                    <td><code className="bg-gray-100 px-1.5 py-0.5 rounded text-pink-600">{type.code}</code></td>
+                                    <td className="text-gray-500">{type.description}</td>
                                     <td>
-                                        <div className="font-medium">{type.name}</div>
-                                        <div className="text-xs text-gray-500">{type.description}</div>
-                                    </td>
-                                    <td><code>{type.code}</code></td>
-                                    <td>
-                                        <div className="flex gap-2">
-                                            <button className="crm-btn-icon" onClick={() => {
-                                                setEditingType(type);
-                                                setFormData({ name: type.name, code: type.code, description: type.description });
-                                                setMode('edit');
-                                            }}>
-                                                <Edit size={16} />
-                                            </button>
-                                            <button className="crm-btn-icon text-red-500" onClick={() => {
-                                                setTypeToDelete(type);
-                                                setDeleteWithDocs(false); // Default to safe option
-                                                setMode('delete');
-                                            }}>
-                                                <Trash2 size={16} />
-                                            </button>
+                                        <div className="flex justify-end items-center gap-1">
+                                            {type.is_system ? (
+                                                <div className="flex items-center gap-2 pr-2">
+                                                    <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-400 border border-gray-200">
+                                                        {t('typeManagement.system', 'System')}
+                                                    </span>
+                                                    <div className="p-2 text-gray-300" title={t('typeManagement.systemProtected', 'System protected')}>
+                                                        <Lock size={16} className="opacity-40" />
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <button className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-blue-600 transition-colors" onClick={() => {
+                                                        setEditingType(type);
+                                                        setFormData({ name: type.name, code: type.code, description: type.description || '' });
+                                                        setMode('edit');
+                                                    }}>
+                                                        <Edit size={16} />
+                                                    </button>
+                                                    <button className="p-2 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-colors" onClick={() => {
+                                                        setTypeToDelete(type);
+                                                        setDeleteWithDocs(false);
+                                                        setMode('delete');
+                                                    }}>
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

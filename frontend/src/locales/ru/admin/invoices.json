@@ -4,6 +4,9 @@
   "addInvoice": "Создать счет",
   "addPayment": "Добавить оплату",
   "loading": "Загрузка...",
+  "board": "Доска",
+  "allInvoices": "Все счета",
+  "search_placeholder": "Поиск по номеру или клиенту...",
   "allStatuses": "Все статусы",
   "invoiceNumber": "№ Счета",
   "client": "Клиент",
@@ -21,7 +24,8 @@
     "sent": "Отправлен",
     "partial": "Частично оплачен",
     "paid": "Оплачен",
-    "overdue": "Просрочен"
+    "overdue": "Просрочен",
+    "cancelled": "Отменен"
   },
   "form": {
     "selectClient": "Выберите клиента",
@@ -62,6 +66,7 @@
     "invoiceCreated": "Счет создан",
     "invoiceSent": "Счет отправлен",
     "paymentAdded": "Оплата добавлена",
-    "invoiceDeleted": "Счет удален"
+    "invoiceDeleted": "Счет удален",
+    "invoiceUpdated": "Счет обновлен"
   }
 }
