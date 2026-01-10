@@ -1501,6 +1501,31 @@ def init_database():
             ON CONFLICT (code) DO NOTHING
         """, (name, code, desc, is_sys))
 
+    # Таблица стадий договоров (Contract Stages)
+    c.execute('''CREATE TABLE IF NOT EXISTS contract_stages (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        key VARCHAR(50),
+        order_index INTEGER DEFAULT 0,
+        color VARCHAR(50),
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''')
+
+    # Заполняем дефолтные стадии договоров если пусто
+    c.execute("SELECT COUNT(*) FROM contract_stages")
+    if c.fetchone()[0] == 0:
+        default_contract_stages = [
+            ('Черновик', 'draft', 0, '#94a3b8'),
+            ('Отправлен', 'sent', 1, '#3b82f6'),
+            ('Подписан', 'signed', 2, '#22c55e'),
+            ('Отменен', 'cancelled', 3, '#ef4444')
+        ]
+        c.executemany("""
+            INSERT INTO contract_stages (name, key, order_index, color) 
+            VALUES (%s, %s, %s, %s)
+        """, default_contract_stages)
+
     # Таблица договоров
     c.execute('''CREATE TABLE IF NOT EXISTS contracts (
         id SERIAL PRIMARY KEY,
@@ -1510,6 +1535,7 @@ def init_database():
         contract_type TEXT DEFAULT 'service',
         template_name TEXT DEFAULT 'default',
         status TEXT DEFAULT 'draft',
+        stage_id INTEGER REFERENCES contract_stages(id),
         data TEXT DEFAULT '{}',
         pdf_path TEXT,
         created_by INTEGER,
@@ -1533,6 +1559,33 @@ def init_database():
         FOREIGN KEY (contract_id) REFERENCES contracts(id)
     )''')
 
+    # Таблица стадий счетов (Invoice Stages)
+    c.execute('''CREATE TABLE IF NOT EXISTS invoice_stages (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        key VARCHAR(50),
+        order_index INTEGER DEFAULT 0,
+        color VARCHAR(50),
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''')
+
+    # Заполняем дефолтные стадии счетов если пусто
+    c.execute("SELECT COUNT(*) FROM invoice_stages")
+    if c.fetchone()[0] == 0:
+        default_invoice_stages = [
+            ('Черновик', 'draft', 0, '#94a3b8'),
+            ('Отправлен', 'sent', 1, '#3b82f6'),
+            ('Оплачен', 'paid', 2, '#22c55e'),
+            ('Частично оплачен', 'partially_paid', 3, '#eab308'),
+            ('Просрочен', 'overdue', 4, '#f97316'),
+            ('Отменен', 'cancelled', 5, '#ef4444')
+        ]
+        c.executemany("""
+            INSERT INTO invoice_stages (name, key, order_index, color) 
+            VALUES (%s, %s, %s, %s)
+        """, default_invoice_stages)
+
     # Таблица счетов
     c.execute('''CREATE TABLE IF NOT EXISTS invoices (
         id SERIAL PRIMARY KEY,
@@ -1540,6 +1593,7 @@ def init_database():
         client_id TEXT,
         booking_id INTEGER,
         status TEXT DEFAULT 'draft',
+        stage_id INTEGER REFERENCES invoice_stages(id),
         total_amount REAL DEFAULT 0,
         paid_amount REAL DEFAULT 0,
         currency TEXT DEFAULT 'AED',

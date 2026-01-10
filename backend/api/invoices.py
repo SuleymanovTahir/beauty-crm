@@ -15,6 +15,108 @@ from utils.utils import get_current_user
 router = APIRouter()
 
 
+@router.get("/invoices/stages")
+async def get_invoice_stages(current_user: dict = Depends(get_current_user)):
+    """Получить список стадий счетов"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("SELECT id, name, key, color, order_index FROM invoice_stages WHERE is_active = TRUE ORDER BY order_index")
+        stages = []
+        for row in c.fetchall():
+            stages.append({"id": row[0], "name": row[1], "key": row[2], "color": row[3], "order_index": row[4]})
+        return stages
+    finally:
+        conn.close()
+
+
+@router.post("/invoices/stages")
+async def create_invoice_stage(
+    stage: StageCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Создать новую стадию счета"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        key = stage.name.lower().replace(" ", "_")[:50]
+        c.execute("""
+            INSERT INTO invoice_stages (name, key, color, order_index)
+            VALUES (%s, %s, %s, %s)
+            RETURNING id
+        """, (stage.name, key, stage.color, stage.order_index))
+        stage_id = c.fetchone()[0]
+        conn.commit()
+        return {"id": stage_id, "success": True}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+@router.put("/invoices/stages/{stage_id}")
+async def update_invoice_stage(
+    stage_id: int,
+    stage: StageUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Обновить стадию счета"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("UPDATE invoice_stages SET name = %s, color = %s WHERE id = %s", (stage.name, stage.color, stage_id))
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+@router.delete("/invoices/stages/{stage_id}")
+async def delete_invoice_stage(
+    stage_id: int,
+    fallback_stage_id: Optional[int] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Удалить стадию счета"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        if fallback_stage_id:
+            c.execute("UPDATE invoices SET stage_id = %s WHERE stage_id = %s", (fallback_stage_id, stage_id))
+        c.execute("DELETE FROM invoice_stages WHERE id = %s", (stage_id,))
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+@router.post("/invoices/stages/reorder")
+async def reorder_invoice_stages(
+    request: ReorderStagesRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Изменить порядок стадий"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        for idx, stage_id in enumerate(request.ordered_ids):
+            c.execute("UPDATE invoice_stages SET order_index = %s WHERE id = %s", (idx, stage_id))
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
 class InvoiceCreate(BaseModel):
     client_id: str
     booking_id: Optional[int] = None
@@ -25,9 +127,25 @@ class InvoiceCreate(BaseModel):
 
 class InvoiceUpdate(BaseModel):
     status: Optional[str] = None
+    stage_id: Optional[int] = None
     items: Optional[List[dict]] = None
     notes: Optional[str] = None
     due_date: Optional[str] = None
+
+
+class StageCreate(BaseModel):
+    name: str
+    color: str
+    order_index: int = 0
+
+
+class StageUpdate(BaseModel):
+    name: str
+    color: str
+
+
+class ReorderStagesRequest(BaseModel):
+    ordered_ids: List[int]
 
 
 class InvoicePayment(BaseModel):
@@ -74,20 +192,21 @@ async def get_invoices(
                 "client_id": row[2],
                 "booking_id": row[3],
                 "status": row[4],
-                "total_amount": row[5],
-                "paid_amount": row[6],
-                "currency": row[7],
-                "items": row[8],
-                "notes": row[9],
-                "due_date": str(row[10]) if row[10] else None,
-                "pdf_path": row[11],
-                "created_at": row[12],
-                "updated_at": row[13],
-                "created_by": row[14],
-                "paid_at": row[15],
-                "sent_at": row[16],
-                "client_name": row[17],
-                "client_phone": row[18]
+                "stage_id": row[5],
+                "total_amount": row[6],
+                "paid_amount": row[7],
+                "currency": row[8],
+                "items": row[9],
+                "notes": row[10],
+                "due_date": str(row[11]) if row[11] else None,
+                "pdf_path": row[12],
+                "created_at": row[13],
+                "updated_at": row[14],
+                "created_by": row[15],
+                "paid_at": row[16],
+                "sent_at": row[17],
+                "client_name": row[18],
+                "client_phone": row[19]
             })
         
         return {"invoices": invoices}
@@ -122,18 +241,24 @@ async def create_invoice(
         currency_row = c.fetchone()
         currency = currency_row[0] if currency_row else "AED"
         
+        # Получение начальной стадии
+        c.execute("SELECT id FROM invoice_stages WHERE key = 'draft' LIMIT 1")
+        res = c.fetchone()
+        stage_id = res[0] if res else None
+
         # Создание счета
         c.execute("""
             INSERT INTO invoices 
-            (invoice_number, client_id, booking_id, status, total_amount, paid_amount,
+            (invoice_number, client_id, booking_id, status, stage_id, total_amount, paid_amount,
              currency, items, notes, due_date, created_by, created_at, updated_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
             RETURNING id
         """, (
             invoice_number,
             invoice.client_id,
             invoice.booking_id,
             "draft",
+            stage_id,
             total_amount,
             0,
             currency,
@@ -180,6 +305,16 @@ async def update_invoice(
         if invoice.status:
             updates.append("status = %s")
             params.append(invoice.status)
+        
+        if invoice.stage_id is not None:
+            updates.append("stage_id = %s")
+            params.append(invoice.stage_id)
+            # Синхронизация status с key стадии
+            c.execute("SELECT key FROM invoice_stages WHERE id = %s", (invoice.stage_id,))
+            res = c.fetchone()
+            if res:
+                updates.append("status = %s")
+                params.append(res[0])
         
         if invoice.items:
             total_amount = sum(item.get('amount', 0) for item in invoice.items)

@@ -45,7 +45,8 @@
     "productCreated": "Product created",
     "productUpdated": "Product updated",
     "productDeleted": "Product deleted",
-    "movementAdded": "Movement added"
+    "movementAdded": "Movement added",
+    "noResults": "No results found for your search"
   },
   "detail": {
     "noCategory": "No category",
@@ -61,5 +62,12 @@
     "totalRevenue": "Revenue",
     "last30Days": "Last 30 Days",
     "avgPrice": "Avg. Price"
-  }
+  },
+  "search_placeholder": "Search by name or category...",
+  "stock_status": {
+    "in_stock": "In Stock",
+    "low_stock": "Low Stock",
+    "out_of_stock": "Out of Stock"
+  },
+  "unit_pcs": "pcs."
 }

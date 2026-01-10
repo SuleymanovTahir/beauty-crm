@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { ManageStagesDialog } from '../../components/shared/ManageStagesDialog';
 import '../../styles/crm-pages.css';
 
 interface Contract {
@@ -42,6 +43,8 @@ const Contracts = () => {
     const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
     const [editingContract, setEditingContract] = useState<Contract | null>(null);
     const [filterStatus, setFilterStatus] = useState<string>('');
+    const [contractStages, setContractStages] = useState<any[]>([]);
+    const [showStagesDialog, setShowStagesDialog] = useState(false);
     const [userRole, setUserRole] = useState<string>('');
 
     const [viewMode, setViewMode] = useState<'board' | 'list'>(() => {
@@ -64,12 +67,14 @@ const Contracts = () => {
     const loadData = async () => {
         try {
             setLoading(true);
-            const [contractsRes, typesRes] = await Promise.all([
+            const [contractsRes, typesRes, stagesRes] = await Promise.all([
                 api.getContracts(undefined, filterStatus),
-                api.getContractTypes()
+                api.getContractTypes(),
+                api.get('/api/contracts/stages')
             ]);
             setContracts(contractsRes.contracts);
             setContractTypes(typesRes.types || []);
+            setContractStages(stagesRes || []);
         } catch (error) {
             console.error('Error loading data:', error);
         } finally {
@@ -124,9 +129,9 @@ const Contracts = () => {
         });
     }, [contracts, filterStatus, searchQuery, subTab, sortConfig]);
 
-    const handleStatusMove = async (contractId: number, newStatus: string) => {
+    const handleStatusMove = async (contractId: number, newStageId: number) => {
         try {
-            await api.put(`/api/contracts/${contractId}`, { status: newStatus });
+            await api.put(`/api/contracts/${contractId}`, { stage_id: newStageId });
             toast.success(t('messages.contractUpdated'));
             loadData();
         } catch (error) {
@@ -142,12 +147,11 @@ const Contracts = () => {
         e.preventDefault();
     };
 
-    const handleDrop = (e: React.DragEvent, newStatus: string) => {
+    const handleDrop = (e: React.DragEvent, newStageId: number) => {
         e.preventDefault();
-        const contractId = parseInt(e.dataTransfer.getData('contractId'));
-        const contract = contracts.find(c => c.id === contractId);
-        if (contract && contract.status !== newStatus) {
-            handleStatusMove(contractId, newStatus);
+        const contractIdStr = e.dataTransfer.getData('contractId');
+        if (contractIdStr) {
+            handleStatusMove(parseInt(contractIdStr), newStageId);
         }
     };
 
@@ -180,12 +184,12 @@ const Contracts = () => {
     }
 
     const canManageTypes = ['admin', 'director'].includes(userRole);
-    const statuses = ['draft', 'sent', 'signed', 'cancelled'];
+    const statuses = contractStages.map(s => s.key);
 
     return (
         <div className="crm-page p-0 bg-gray-50/50 flex flex-col h-full overflow-hidden">
             <div className="px-8 py-6 bg-white border-b sticky top-0 z-20 shadow-sm">
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
                         <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
@@ -215,9 +219,15 @@ const Contracts = () => {
                         </div>
 
                         {canManageTypes && (
+                            <button className="crm-btn-secondary h-10" onClick={() => setShowStagesDialog(true)}>
+                                <LayoutDashboard size={18} />
+                                <span className="hidden lg:inline ml-2">{t('manage_stages', 'Колонки')}</span>
+                            </button>
+                        )}
+                        {canManageTypes && (
                             <button className="crm-btn-secondary h-10" onClick={() => setShowTypesDialog(true)}>
                                 <Settings size={18} />
-                                {t('manageTypes')}
+                                <span className="hidden lg:inline ml-2">{t('manageTypes')}</span>
                             </button>
                         )}
                         <button className="crm-btn-primary h-10" onClick={() => {
@@ -225,13 +235,13 @@ const Contracts = () => {
                             setShowContractDialog(true);
                         }}>
                             <Plus size={18} />
-                            {t('addContract', 'Создать договор')}
+                            <span className="ml-2">{t('addContract', 'Создать')}</span>
                         </button>
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 flex-wrap">
+                    <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 min-w-0 flex-1">
                         {viewMode === 'list' && (
                             <>
                                 <button
@@ -281,7 +291,7 @@ const Contracts = () => {
                         <input
                             type="text"
                             placeholder={t('search_placeholder', 'Поиск по номеру или клиенту...')}
-                            className="pl-9 pr-4 h-9 w-64 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
+                            className="pl-9 pr-4 h-9 w-full md:w-64 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -296,20 +306,20 @@ const Contracts = () => {
                     </div>
                 ) : viewMode === 'board' ? (
                     <div className="h-full overflow-x-auto flex gap-6 pb-4">
-                        {statuses.map(status => (
+                        {contractStages.map(stage => (
                             <div
-                                key={status}
+                                key={stage.id}
                                 className="w-80 flex flex-col h-full bg-gray-100/50 rounded-xl border border-gray-200/60"
                                 onDragOver={handleDragOver}
-                                onDrop={(e) => handleDrop(e, status)}
+                                onDrop={(e) => handleDrop(e, stage.id)}
                             >
                                 <div className="p-4 border-b border-gray-200/60 bg-white/50 backdrop-blur-sm rounded-t-xl">
                                     <div className="flex items-center justify-between">
                                         <h3 className="font-semibold text-sm text-gray-700 uppercase tracking-tight">
-                                            {t(`statuses.${status}`)}
+                                            {stage.name}
                                         </h3>
                                         <span className="px-2 py-0.5 rounded-full bg-white border text-xs font-mono text-gray-500 shadow-sm">
-                                            {filteredAndSortedContracts.filter(c => c.status === status).length}
+                                            {filteredAndSortedContracts.filter(c => c.status === stage.key).length}
                                         </span>
                                     </div>
                                     <div className={`h-1 w-full rounded-full mt-3 bg-gray-200 overflow-hidden`}>
@@ -317,16 +327,14 @@ const Contracts = () => {
                                             className={`h-full transition-all duration-500`}
                                             style={{
                                                 width: '100%',
-                                                backgroundColor: status === 'signed' ? '#10b981' :
-                                                    status === 'sent' ? '#3b82f6' :
-                                                        status === 'cancelled' ? '#ef4444' : '#64748b'
+                                                backgroundColor: stage.color
                                             }}
                                         />
                                     </div>
                                 </div>
 
                                 <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-3 no-scrollbar">
-                                    {filteredAndSortedContracts.filter(c => c.status === status).map(contract => (
+                                    {filteredAndSortedContracts.filter(c => c.status === stage.key).map(contract => (
                                         <div
                                             key={contract.id}
                                             draggable
@@ -512,6 +520,16 @@ const Contracts = () => {
                 <ContractTypesDialog
                     onClose={() => setShowTypesDialog(false)}
                     onUpdate={() => loadData()}
+                />
+            )}
+
+            {showStagesDialog && (
+                <ManageStagesDialog
+                    open={showStagesDialog}
+                    onOpenChange={setShowStagesDialog}
+                    onSuccess={loadData}
+                    apiUrl="/api/contracts/stages"
+                    title={t('manage_stages')}
                 />
             )}
         </div>
@@ -775,10 +793,19 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
                                 <label className="crm-label">{t('typeManagement.name')}</label>
                                 <input className="crm-input" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
                             </div>
-                            <div className="crm-form-group">
-                                <label className="crm-label">{t('typeManagement.code')}</label>
-                                <input className="crm-input" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} required disabled={!!editingType} />
-                            </div>
+                            {/* Hide code field as requested by user */}
+                            {!editingType && (
+                                <div className="crm-form-group">
+                                    <label className="crm-label">{t('typeManagement.code')}</label>
+                                    <input
+                                        className="crm-input"
+                                        value={formData.code}
+                                        onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                                        required
+                                        placeholder="contract_type_code"
+                                    />
+                                </div>
+                            )}
                             <div className="crm-form-group">
                                 <label className="crm-label">{t('typeManagement.description')}</label>
                                 <textarea className="crm-textarea" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />

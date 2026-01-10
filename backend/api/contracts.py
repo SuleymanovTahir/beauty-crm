@@ -15,6 +15,108 @@ from utils.utils import get_current_user
 router = APIRouter()
 
 
+@router.get("/contracts/stages")
+async def get_contract_stages(current_user: dict = Depends(get_current_user)):
+    """Получить список стадий договоров"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("SELECT id, name, key, color, order_index FROM contract_stages WHERE is_active = TRUE ORDER BY order_index")
+        stages = []
+        for row in c.fetchall():
+            stages.append({"id": row[0], "name": row[1], "key": row[2], "color": row[3], "order_index": row[4]})
+        return stages
+    finally:
+        conn.close()
+
+
+@router.post("/contracts/stages")
+async def create_contract_stage(
+    stage: StageCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Создать новую стадию договора"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        key = stage.name.lower().replace(" ", "_")[:50]
+        c.execute("""
+            INSERT INTO contract_stages (name, key, color, order_index)
+            VALUES (%s, %s, %s, %s)
+            RETURNING id
+        """, (stage.name, key, stage.color, stage.order_index))
+        stage_id = c.fetchone()[0]
+        conn.commit()
+        return {"id": stage_id, "success": True}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+@router.put("/contracts/stages/{stage_id}")
+async def update_contract_stage(
+    stage_id: int,
+    stage: StageUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Обновить стадию договора"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("UPDATE contract_stages SET name = %s, color = %s WHERE id = %s", (stage.name, stage.color, stage_id))
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+@router.delete("/contracts/stages/{stage_id}")
+async def delete_contract_stage(
+    stage_id: int,
+    fallback_stage_id: Optional[int] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Удалить стадию договора"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        if fallback_stage_id:
+            c.execute("UPDATE contracts SET stage_id = %s WHERE stage_id = %s", (fallback_stage_id, stage_id))
+        c.execute("DELETE FROM contract_stages WHERE id = %s", (stage_id,))
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+@router.post("/contracts/stages/reorder")
+async def reorder_contract_stages(
+    request: ReorderStagesRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Изменить порядок стадий"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        for idx, stage_id in enumerate(request.ordered_ids):
+            c.execute("UPDATE contract_stages SET order_index = %s WHERE id = %s", (idx, stage_id))
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
 class ContractCreate(BaseModel):
     client_id: str
     booking_id: Optional[int] = None
@@ -25,9 +127,25 @@ class ContractCreate(BaseModel):
 
 class ContractUpdate(BaseModel):
     status: Optional[str] = None
+    stage_id: Optional[int] = None
     contract_type: Optional[str] = None
     data: Optional[dict] = None
     signed_at: Optional[str] = None
+
+
+class StageCreate(BaseModel):
+    name: str
+    color: str
+    order_index: int = 0
+
+
+class StageUpdate(BaseModel):
+    name: str
+    color: str
+
+
+class ReorderStagesRequest(BaseModel):
+    ordered_ids: List[int]
 
 
 class ContractSend(BaseModel):
@@ -83,16 +201,17 @@ async def get_contracts(
                 "contract_type": row[4],
                 "template_name": row[5],
                 "status": row[6],
-                "data": row[7],
-                "pdf_path": row[8],
-                "created_at": row[9],
-                "updated_at": row[10],
-                "created_by": row[11],
-                "signed_at": row[12],
+                "stage_id": row[7],
+                "data": row[8],
+                "pdf_path": row[9],
+                "created_by": row[10],
+                "created_at": row[11],
+                "updated_at": row[12],
                 "sent_at": row[13],
-                "client_name": row[14],
-                "client_phone": row[15],
-                "created_by_name": row[16]
+                "signed_at": row[14],
+                "client_name": row[15],
+                "client_phone": row[16],
+                "created_by_name": row[17]
             })
         
         return {"contracts": contracts}
@@ -172,12 +291,17 @@ async def create_contract(
                     "amount": booking_data[3]
                 }
         
+        # Получение начальной стадии
+        c.execute("SELECT id FROM contract_stages WHERE key = 'draft' LIMIT 1")
+        res = c.fetchone()
+        stage_id = res[0] if res else None
+
         # Создание договора
         c.execute("""
             INSERT INTO contracts 
             (contract_number, client_id, booking_id, contract_type, template_name, 
-             status, data, created_by, created_at, updated_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
+             status, stage_id, data, created_by, created_at, updated_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
             RETURNING id
         """, (
             contract_number,
@@ -186,6 +310,7 @@ async def create_contract(
             contract.contract_type,
             contract.template_name,
             "draft",
+            stage_id,
             json.dumps(contract_data),
             current_user["id"]
         ))
@@ -227,6 +352,16 @@ async def update_contract(
         if contract.status:
             updates.append("status = %s")
             params.append(contract.status)
+        
+        if contract.stage_id is not None:
+            updates.append("stage_id = %s")
+            params.append(contract.stage_id)
+            # Синхронизация status с key стадии для обратной совместимости
+            c.execute("SELECT key FROM contract_stages WHERE id = %s", (contract.stage_id,))
+            res = c.fetchone()
+            if res:
+                updates.append("status = %s")
+                params.append(res[0])
         
         if contract.contract_type:
             updates.append("contract_type = %s")
