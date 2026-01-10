@@ -774,20 +774,21 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
           <form onSubmit={handleSave} className="flex flex-col flex-1 min-h-0 overflow-hidden">
             <div className="crm-form-content">
               <div className="grid grid-cols-2 gap-4">
-                <div className="crm-form-group">
-                  <Label>{t('key_label')}</Label>
-                  <Input
-                    value={editingType.key}
-                    onChange={e => setEditingType({ ...editingType, key: e.target.value })}
-                    required
-                    placeholder={t('placeholder_subscription_key', 'promotions')}
-                    disabled={!isNew}
-                  />
-                </div>
-                <div className="crm-form-group">
-                  <Label>{t('role_label')}</Label>
+                {isNew && (
+                  <div className="crm-form-group">
+                    <Label className="mb-3 block">{t('key_label')}</Label>
+                    <Input
+                      value={editingType.key}
+                      onChange={e => setEditingType({ ...editingType, key: e.target.value })}
+                      required
+                      placeholder={t('placeholder_subscription_key', 'promotions')}
+                    />
+                  </div>
+                )}
+                <div className={`crm-form-group ${!isNew ? 'col-span-2' : ''}`}>
+                  <Label className="mb-3 block">{t('role_label')}</Label>
                   <select
-                    className="crm-select"
+                    className="crm-select w-full"
                     value={editingType.target_role}
                     onChange={e => setEditingType({ ...editingType, target_role: e.target.value })}
                   >
@@ -806,7 +807,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
 
 
               <div className="crm-form-group">
-                <Label>{t('name_ru')}</Label>
+                <Label className="mb-3 block">{t('name_ru')}</Label>
                 <Input
                   value={editingType.name_ru || ''}
                   onChange={e => setEditingType({ ...editingType, name_ru: e.target.value })}
@@ -815,7 +816,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
               </div>
 
               <div className="crm-form-group">
-                <Label>{t('desc_ru')}</Label>
+                <Label className="mb-3 block">{t('desc_ru')}</Label>
                 <textarea
                   className="crm-textarea"
                   value={editingType.description_ru || ''}
