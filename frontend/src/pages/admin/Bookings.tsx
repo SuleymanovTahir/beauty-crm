@@ -860,7 +860,7 @@ export default function Bookings() {
             {!isEmployee && (
               <button
                 onClick={() => setShowAddDialog(true)}
-                className="flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:from-pink-600 hover:to-purple-700 active:scale-95 transition-all shadow-md"
+                className="flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 bg-gradient-to-r from-pink-500 to-blue-600 text-white hover:from-pink-600 hover:to-blue-700 active:scale-95 transition-all shadow-md"
               >
                 <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 <span>Добавить</span>

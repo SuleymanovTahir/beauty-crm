@@ -61,7 +61,7 @@ export default function AdminDashboard() {
       description: t('quick_actions.loyalty_management.description'),
       icon: Gift,
       path: '/admin/loyalty',
-      color: 'from-purple-500 to-pink-500',
+      color: 'from-blue-500 to-pink-500',
     },
     {
       title: t('quick_actions.referral_program.title'),
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
       description: t('quick_actions.notifications.description'),
       icon: Bell,
       path: '/admin/notifications',
-      color: 'from-indigo-500 to-purple-500',
+      color: 'from-indigo-500 to-blue-500',
     },
     {
       title: t('quick_actions.photo_gallery.title'),
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -181,12 +181,12 @@ export default function AdminDashboard() {
                         <Icon className="w-6 h-6 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-purple-600 transition-colors">
+                        <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
                           {action.title}
                         </h3>
                         <p className="text-sm text-gray-500">{action.description}</p>
                       </div>
-                      <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 transition-colors" />
+                      <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
                     </div>
                   </CardContent>
                 </Card>
@@ -205,8 +205,8 @@ export default function AdminDashboard() {
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-              <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                <Gift className="w-5 h-5 text-purple-600" />
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <Gift className="w-5 h-5 text-blue-600" />
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-900">

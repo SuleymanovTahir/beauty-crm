@@ -324,7 +324,7 @@ export default function Broadcasts() {
                       type="button"
                       onClick={() => handleChannelToggle('instagram')}
                       className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl border-2 font-medium transition-all ${form.channels.includes('instagram')
-                        ? 'border-purple-500 bg-white text-purple-600 shadow-sm'
+                        ? 'border-blue-500 bg-white text-blue-600 shadow-sm'
                         : 'border-white bg-white text-gray-500 hover:border-gray-200 shadow-sm'
                         }`}
                     >
@@ -520,7 +520,7 @@ export default function Broadcasts() {
                     {form.attachment_urls && form.attachment_urls.length > 0 && (
                       <div className="space-y-2">
                         {form.attachment_urls.map((url, index) => (
-                          <div key={index} className="flex items-center gap-2 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                          <div key={index} className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
                             <span className="flex-1 text-sm text-gray-700 truncate">{url.split('/').pop()}</span>
                             <button
                               onClick={() => {
@@ -584,7 +584,7 @@ export default function Broadcasts() {
                       />
                       <label
                         htmlFor="file-upload"
-                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer"
                       >
                         {uploadingFile ? (
                           <>
@@ -629,7 +629,7 @@ export default function Broadcasts() {
                   <Button
                     onClick={handleSend}
                     disabled={sending}
-                    className="flex-1 h-12 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg hover:opacity-90 transition-all font-semibold text-white border-0"
+                    className="flex-1 h-12 rounded-xl bg-gradient-to-r from-pink-500 to-blue-600 hover:shadow-lg hover:opacity-90 transition-all font-semibold text-white border-0"
                   >
                     {sending ? (
                       <>
@@ -664,7 +664,7 @@ export default function Broadcasts() {
               ) : (
                 <div className="space-y-4">
                   {/* Total */}
-                  <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-lg p-4">
+                  <div className="bg-gradient-to-r from-pink-50 to-blue-50 border border-pink-200 rounded-lg p-4">
                     <p className="text-sm text-gray-600 mb-1">{t('total_recipients')}</p>
                     <p className="text-3xl font-bold text-pink-600">{preview.total_users}</p>
                   </div>
@@ -694,12 +694,12 @@ export default function Broadcasts() {
                     )}
 
                     {preview.by_channel.instagram > 0 && (
-                      <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+                      <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
                         <div className="flex items-center gap-2">
-                          <Instagram className="w-4 h-4 text-purple-600" />
+                          <Instagram className="w-4 h-4 text-blue-600" />
                           <span className="text-sm text-gray-700">{t('channel_instagram', 'Instagram')}</span>
                         </div>
-                        <span className="font-bold text-purple-600">{preview.by_channel.instagram}</span>
+                        <span className="font-bold text-blue-600">{preview.by_channel.instagram}</span>
                       </div>
                     )}
 

@@ -147,7 +147,7 @@ export function AddFunnelClientDialog({ open, onOpenChange, onSuccess, stages }:
                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                             {t('cancel')}
                         </Button>
-                        <Button type="submit" disabled={loading} className="bg-gradient-to-r from-pink-500 to-purple-600 text-white">
+                        <Button type="submit" disabled={loading} className="bg-gradient-to-r from-pink-500 to-blue-600 text-white">
                             {loading ? t('adding') : t('add')}
                         </Button>
                     </DialogFooter>

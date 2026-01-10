@@ -320,7 +320,7 @@ export default function BookingDetail() {
             {!isEditing ? (
               <Button
                 onClick={() => setIsEditing(true)}
-                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-2 rounded-lg"
+                className="bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-2 rounded-lg"
               >
                 <Pencil className="w-4 h-4 mr-2" />
                 {t('common:edit')}
@@ -398,8 +398,8 @@ export default function BookingDetail() {
               })()}
               {/* Service */}
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Briefcase className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Briefcase className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">{t('service')}</p>
@@ -425,7 +425,7 @@ export default function BookingDetail() {
                   ) : (
 
                     <p
-                      className="text-lg text-gray-900 font-medium cursor-pointer hover:text-purple-600 transition-colors"
+                      className="text-lg text-gray-900 font-medium cursor-pointer hover:text-blue-600 transition-colors"
                       onClick={() => navigate('/crm/bookings')}
                       title={t('common:view_bookings', 'Посмотреть записи')}
                     >
@@ -725,7 +725,7 @@ export default function BookingDetail() {
               <Button
                 onClick={handleStatusUpdate}
                 disabled={updating || newStatus === booking.status}
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600"
+                className="w-full bg-gradient-to-r from-pink-500 to-blue-600"
               >
                 {updating ? t('update') : t('update_status')}
               </Button>

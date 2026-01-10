@@ -275,8 +275,8 @@ export default function AdminDashboard() {
       icon: UserCheck,
       label: t('dashboard:active_clients'),
       value: stats.active_clients || 0,
-      color: 'text-purple-600',
-      bg: 'bg-purple-50',
+      color: 'text-blue-600',
+      bg: 'bg-blue-50',
       growth: stats.growth?.active_clients
     },
   ];
@@ -458,8 +458,8 @@ export default function AdminDashboard() {
               </h3>
               <p className="text-xs text-gray-500">{t('dashboard:lead_to_customer', 'лид → клиент')}</p>
             </div>
-            <div className="w-12 h-12 md:w-14 md:h-14 bg-purple-50 rounded-full flex items-center justify-center flex-shrink-0">
-              <Percent className="w-6 h-6 md:w-7 md:h-7 text-purple-600" />
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <Percent className="w-6 h-6 md:w-7 md:h-7 text-blue-600" />
             </div>
           </div>
         </div>
@@ -777,7 +777,7 @@ export default function AdminDashboard() {
 
       {/* Bot Analytics Widget */}
       {botAnalytics && botAnalytics.total_sessions > 0 && (
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-sm p-4 md:p-6 mb-6 text-white">
+        <div className="bg-gradient-to-r from-indigo-500 to-blue-600 rounded-xl shadow-sm p-4 md:p-6 mb-6 text-white">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg md:text-xl font-semibold flex items-center gap-2">
               <Bot className="w-5 h-5 text-white" />

@@ -101,7 +101,7 @@ const TrashBin: React.FC = () => {
         switch (type) {
             case 'booking': return <Calendar className="w-5 h-5 text-blue-400" />;
             case 'client': return <Users className="w-5 h-5 text-pink-400" />;
-            case 'user': return <User className="w-5 h-5 text-purple-400" />;
+            case 'user': return <User className="w-5 h-5 text-blue-400" />;
             default: return <AlertTriangle className="w-5 h-5 text-gray-400" />;
         }
     };

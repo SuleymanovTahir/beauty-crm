@@ -188,7 +188,7 @@ export default function Register() {
   // Verification step
   if (step === "verify") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-pink-100 via-blue-100 to-pink-50 flex items-center justify-center p-4">
         {/* Переключатель языка */}
         <div className="fixed top-4 right-4 z-50">
           <LanguageSwitcher />
@@ -231,7 +231,7 @@ export default function Register() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+                className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
                 size="lg"
               >
                 {loading ? (
@@ -272,7 +272,7 @@ export default function Register() {
   // Success step
   if (step === "success") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-pink-100 via-blue-100 to-pink-50 flex items-center justify-center p-4">
         {/* Переключатель языка */}
         <div className="fixed top-4 right-4 z-50">
           <LanguageSwitcher />
@@ -293,7 +293,7 @@ export default function Register() {
             </p>
 
             <Button
-              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+              className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
               onClick={() => navigate("/login")}
             >
               {t('back_to_login')}
@@ -305,7 +305,7 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-blue-100 to-pink-50 flex items-center justify-center p-4">
       {/* Переключатель языка */}
       <div className="fixed top-4 right-4 z-50">
         <LanguageSwitcher />
@@ -313,7 +313,7 @@ export default function Register() {
 
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg overflow-hidden p-0.5">
+          <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg overflow-hidden p-0.5">
             {salonSettings?.logo_url ? (
               <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
                 <img
@@ -553,7 +553,7 @@ export default function Register() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700 flex items-center justify-center gap-2"
               size="lg"
             >
               {loading ? (

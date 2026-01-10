@@ -105,7 +105,7 @@ const AuditLog: React.FC = () => {
             case 'update': return <Edit className="w-4 h-4 text-blue-400" />;
             case 'delete': return <Trash2 className="w-4 h-4 text-red-400" />;
             case 'restore': return <RefreshCcw className="w-4 h-4 text-amber-400" />;
-            case 'login': return <UserCheck className="w-4 h-4 text-purple-400" />;
+            case 'login': return <UserCheck className="w-4 h-4 text-blue-400" />;
             default: return <Activity className="w-4 h-4 text-gray-400" />;
         }
     };
@@ -159,7 +159,7 @@ const AuditLog: React.FC = () => {
                     {[
                         { label: t('stat_total'), value: summary.total_24h, icon: Activity, color: 'text-blue-400' },
                         { label: t('stat_errors'), value: summary.failures_24h, icon: AlertCircle, color: 'text-red-400' },
-                        { label: t('stat_active_users'), value: summary.active_users_24h, icon: User, color: 'text-purple-400' },
+                        { label: t('stat_active_users'), value: summary.active_users_24h, icon: User, color: 'text-blue-400' },
                         { label: t('stat_created'), value: summary.actions_breakdown?.create || 0, icon: Plus, color: 'text-green-400' },
                     ].map((stat, i) => (
                         <motion.div

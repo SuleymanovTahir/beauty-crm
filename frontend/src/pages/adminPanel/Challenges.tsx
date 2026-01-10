@@ -163,8 +163,8 @@ export default function Challenges() {
       title: t('stats.active_challenges'),
       value: challenges.filter(c => c.status === 'active').length.toString(),
       icon: Target,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100',
     },
     {
       title: t('stats.total_participants'),
@@ -282,7 +282,7 @@ export default function Challenges() {
                   </div>
                   <div>
                     <div className="text-sm text-gray-500">{t('card.reward')}</div>
-                    <div className="text-lg font-semibold text-purple-600">{challenge.reward_points} {t('card.pts')}</div>
+                    <div className="text-lg font-semibold text-blue-600">{challenge.reward_points} {t('card.pts')}</div>
                   </div>
                 </div>
 

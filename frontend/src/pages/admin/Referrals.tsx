@@ -146,9 +146,9 @@ export default function Referrals() {
             title: t('stats.points_distributed', 'Выдано бонусов'),
             value: stats.points_distributed.toLocaleString(),
             icon: Gift,
-            color: 'from-purple-500 to-purple-600',
-            lightColor: 'bg-purple-50 text-purple-600',
-            shadow: 'shadow-purple-100'
+            color: 'from-blue-500 to-blue-600',
+            lightColor: 'bg-blue-50 text-blue-600',
+            shadow: 'shadow-blue-100'
         },
     ];
 
@@ -176,8 +176,8 @@ export default function Referrals() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
                         <h1 className="text-2xl font-black text-gray-900 flex items-center gap-2.5">
-                            <div className="p-1.5 bg-purple-100 rounded-lg">
-                                <Gift className="w-6 h-6 text-purple-600" />
+                            <div className="p-1.5 bg-blue-100 rounded-lg">
+                                <Gift className="w-6 h-6 text-blue-600" />
                             </div>
                             {t('title', 'Реферальная программа')}
                         </h1>
@@ -218,7 +218,7 @@ export default function Referrals() {
                     <div className="p-5 border-b border-gray-50 bg-gray-50/30">
                         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                             <div className="flex items-center gap-2.5">
-                                <div className="w-1 h-5 bg-purple-500 rounded-full" />
+                                <div className="w-1 h-5 bg-blue-500 rounded-full" />
                                 <h3 className="text-base font-bold text-gray-900">{t('table.title', 'История рекомендаций')}</h3>
                             </div>
 
@@ -227,7 +227,7 @@ export default function Referrals() {
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                     <Input
                                         placeholder={t('table.search_placeholder', 'Поиск...')}
-                                        className="pl-9 h-10 bg-white border-gray-200 rounded-lg text-xs focus:ring-purple-500/10"
+                                        className="pl-9 h-10 bg-white border-gray-200 rounded-lg text-xs focus:ring-blue-500/10"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
@@ -239,7 +239,7 @@ export default function Referrals() {
                                             key={status}
                                             onClick={() => setStatusFilter(status)}
                                             className={`px-3 py-1.5 rounded-md text-[10px] font-bold transition-all ${statusFilter === status
-                                                ? 'bg-white text-purple-700 shadow-sm border border-gray-100'
+                                                ? 'bg-white text-blue-700 shadow-sm border border-gray-100'
                                                 : 'text-gray-500 hover:text-gray-700'
                                                 }`}
                                         >
@@ -266,7 +266,7 @@ export default function Referrals() {
                             </TableHeader>
                             <TableBody>
                                 {filteredReferrals.map((r) => (
-                                    <TableRow key={r.id} className="hover:bg-purple-50/30 transition-colors border-b border-gray-50 group">
+                                    <TableRow key={r.id} className="hover:bg-blue-50/30 transition-colors border-b border-gray-50 group">
                                         <TableCell className="py-3 px-5">
                                             <div className="flex items-center gap-2.5">
                                                 <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-600 font-bold text-xs">
@@ -285,7 +285,7 @@ export default function Referrals() {
                                         </TableCell>
                                         <TableCell className="py-3 px-5">
                                             <div className="flex items-center gap-2.5">
-                                                <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-xs">
+                                                <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs">
                                                     {r.referred_name[0]}
                                                 </div>
                                                 <div>
@@ -310,7 +310,7 @@ export default function Referrals() {
                                             )}
                                         </TableCell>
                                         <TableCell className="py-3 px-5 text-right">
-                                            <div className={`text-xs font-black ${r.points_awarded > 0 ? 'text-purple-600' : 'text-gray-300'}`}>
+                                            <div className={`text-xs font-black ${r.points_awarded > 0 ? 'text-blue-600' : 'text-gray-300'}`}>
                                                 {r.points_awarded > 0 ? `+${r.points_awarded}` : '—'}
                                             </div>
                                         </TableCell>
@@ -335,14 +335,14 @@ export default function Referrals() {
 
                 <Dialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog}>
                     <DialogContent className="max-w-md p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
-                        <DialogHeader className="bg-gradient-to-r from-purple-600 to-indigo-700 p-6">
+                        <DialogHeader className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6">
                             <div className="flex items-center gap-3">
                                 <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-md">
                                     <Settings className="w-5 h-5 text-white" />
                                 </div>
                                 <div>
                                     <DialogTitle className="text-xl font-bold text-white">{t('dialogs.settings.title', 'Правила программы')}</DialogTitle>
-                                    <p className="text-purple-100 text-xs opacity-90">Настройка вознаграждений</p>
+                                    <p className="text-blue-100 text-xs opacity-90">Настройка вознаграждений</p>
                                 </div>
                             </div>
                         </DialogHeader>
@@ -352,7 +352,7 @@ export default function Referrals() {
                                 <div className="flex flex-col gap-1.5">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">{t('dialogs.settings.referrer_bonus', 'Бонус пригласившему')}</Label>
                                     <div className="relative group">
-                                        <Gift className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
+                                        <Gift className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-400" />
                                         <Input
                                             type="number"
                                             className="pl-10 h-11 bg-gray-50 border-gray-100 rounded-xl font-bold text-base focus:bg-white"
@@ -401,7 +401,7 @@ export default function Referrals() {
                                 </Button>
                                 <Button
                                     onClick={handleSaveSettings}
-                                    className="flex-1 h-11 rounded-xl font-bold bg-purple-600 hover:bg-purple-700 text-white shadow-sm"
+                                    className="flex-1 h-11 rounded-xl font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
                                 >
                                     {t('buttons.save_changes', 'Сохранить')}
                                 </Button>

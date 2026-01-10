@@ -121,7 +121,7 @@ export default function AudioPlayer({ src, className = '' }: AudioPlayerProps) {
       {/* Play/Pause Button */}
       <button
         onClick={togglePlay}
-        className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-600 text-white flex items-center justify-center hover:scale-110 transition-transform"
+        className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-pink-600 text-white flex items-center justify-center hover:scale-110 transition-transform"
       >
         {isPlaying ? <Pause className="w-5 h-5 fill-white" /> : <Play className="w-5 h-5 fill-white ml-0.5" />}
       </button>
@@ -134,7 +134,7 @@ export default function AudioPlayer({ src, className = '' }: AudioPlayerProps) {
         >
           {/* Progress */}
           <div
-            className="absolute inset-y-0 left-0 bg-gradient-to-r from-purple-500 to-pink-600 transition-all"
+            className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-500 to-pink-600 transition-all"
             style={{ width: `${progress}%` }}
           />
 

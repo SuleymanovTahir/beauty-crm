@@ -107,7 +107,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
   const getCategoryColor = (category?: string) => {
     const colors: Record<string, string> = {
       greeting: 'from-blue-100 to-cyan-100 border-blue-300 text-blue-700',
-      booking: 'from-purple-100 to-pink-100 border-purple-300 text-purple-700',
+      booking: 'from-blue-100 to-pink-100 border-blue-300 text-blue-700',
       reminder: 'from-amber-100 to-yellow-100 border-amber-300 text-amber-700',
       thanks: 'from-pink-100 to-rose-100 border-pink-300 text-pink-700',
       info: 'from-green-100 to-emerald-100 border-green-300 text-green-700',
@@ -134,8 +134,8 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
   };
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 via-white to-pink-50 rounded-2xl border-2 border-purple-300 shadow-xl overflow-hidden animate-in slide-in-from-top duration-300">
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 flex items-center justify-between">
+    <div className="bg-gradient-to-br from-blue-50 via-white to-pink-50 rounded-2xl border-2 border-blue-300 shadow-xl overflow-hidden animate-in slide-in-from-top duration-300">
+      <div className="bg-gradient-to-r from-blue-600 to-pink-600 p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={onClose}
@@ -158,7 +158,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
       </div>
 
       {/* Search */}
-      <div className="p-4 border-b-2 border-purple-100">
+      <div className="p-4 border-b-2 border-blue-100">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
@@ -166,7 +166,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
             placeholder={t('search_templates') || 'Поиск шаблонов...'}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border-2 border-purple-200 focus:border-purple-400 rounded-xl bg-white text-gray-900 placeholder:text-gray-400 font-medium"
+            className="pl-10 border-2 border-blue-200 focus:border-blue-400 rounded-xl bg-white text-gray-900 placeholder:text-gray-400 font-medium"
           />
         </div>
       </div>
@@ -176,7 +176,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
         <div className="p-4 space-y-3">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader className="w-8 h-8 text-purple-600 animate-spin" />
+              <Loader className="w-8 h-8 text-blue-600 animate-spin" />
             </div>
           ) : (
             <>
@@ -184,7 +184,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
               {!isCreating && (
                 <button
                   onClick={() => setIsCreating(true)}
-                  className="w-full p-4 mb-3 rounded-xl border-2 border-dashed border-purple-300 hover:border-purple-500 hover:bg-purple-50 transition-all flex items-center justify-center gap-2 text-purple-700 font-semibold"
+                  className="w-full p-4 mb-3 rounded-xl border-2 border-dashed border-blue-300 hover:border-blue-500 hover:bg-blue-50 transition-all flex items-center justify-center gap-2 text-blue-700 font-semibold"
                 >
                   <Plus className="w-5 h-5" />
                   {t('create_template') || 'Создать шаблон'}
@@ -193,25 +193,25 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
 
               {/* Форма создания */}
               {isCreating && (
-                <div className="mb-3 p-4 bg-white rounded-xl border-2 border-purple-300">
+                <div className="mb-3 p-4 bg-white rounded-xl border-2 border-blue-300">
                   <Input
                     placeholder={t('template_name') || 'Название шаблона'}
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
-                    className="mb-2 text-gray-900 border-purple-200 placeholder:text-gray-500"
+                    className="mb-2 text-gray-900 border-blue-200 placeholder:text-gray-500"
                   />
                   <Textarea
                     placeholder={t('template_text')}
                     value={newContent}
                     onChange={(e) => setNewContent(e.target.value)}
-                    className="mb-2 text-gray-900 border-purple-200 placeholder:text-gray-500"
+                    className="mb-2 text-gray-900 border-blue-200 placeholder:text-gray-500"
                     rows={3}
                   />
                   <Input
                     placeholder={t('category') || 'Категория'}
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value)}
-                    className="mb-3 text-gray-900 border-purple-200 placeholder:text-gray-500"
+                    className="mb-3 text-gray-900 border-blue-200 placeholder:text-gray-500"
                   />
                   <div className="flex gap-2">
                     <Button onClick={handleCreate} size="sm" className="flex-1">
@@ -239,17 +239,17 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                 filteredTemplates.map((template) => (
                   <div key={template.id} className="mb-3">
                     {editingId === template.id ? (
-                      <div className="p-4 bg-white rounded-xl border-2 border-purple-300">
+                      <div className="p-4 bg-white rounded-xl border-2 border-blue-300">
                         <Input
                           id={`title-${template.id}`}
                           defaultValue={template.title}
-                          className="mb-2 text-gray-900 border-purple-200 placeholder:text-gray-500"
+                          className="mb-2 text-gray-900 border-blue-200 placeholder:text-gray-500"
                         />
                         <Textarea
                           id={`content-${template.id}`}
                           defaultValue={template.content}
                           rows={3}
-                          className="mb-2 text-gray-900 border-purple-200 placeholder:text-gray-500"
+                          className="mb-2 text-gray-900 border-blue-200 placeholder:text-gray-500"
                         />
                         <div className="flex gap-2">
                           <Button

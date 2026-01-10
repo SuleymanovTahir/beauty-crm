@@ -141,7 +141,7 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
                 value={newNoteText}
                 onChange={(e) => setNewNoteText(e.target.value)}
                 placeholder={t('new_note_placeholder') || 'Введите заметку...'}
-                className="min-h-[100px] border-2 border-purple-100 focus:border-purple-300 rounded-xl bg-purple-50/30 mb-3 text-gray-900 placeholder:text-gray-500 font-medium p-3"
+                className="min-h-[100px] border-2 border-blue-100 focus:border-blue-300 rounded-xl bg-blue-50/30 mb-3 text-gray-900 placeholder:text-gray-500 font-medium p-3"
                 rows={4}
                 disabled={isSaving}
               />

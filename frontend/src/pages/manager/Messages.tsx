@@ -543,13 +543,13 @@ export default function Messages() {
                           }}
                         />
                         <div
-                          className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium hidden"
+                          className="w-10 h-10 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center text-white font-medium hidden"
                         >
                           {message.avatar}
                         </div>
                       </>
                     ) : (
-                      <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium">
+                      <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center text-white font-medium">
                         {message.avatar}
                       </div>
                     )}

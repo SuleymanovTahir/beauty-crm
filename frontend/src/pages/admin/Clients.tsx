@@ -673,8 +673,8 @@ export default function Clients() {
                       t('common:for_period', { days: period })}
               </p>
             </div>
-            <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-purple-50 rounded-full flex items-center justify-center flex-shrink-0">
-              <UserCheck className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-purple-600" />
+            <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <UserCheck className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-blue-600" />
             </div>
           </div>
         </div>

@@ -120,7 +120,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             />
           ) : null}
           <div
-            className={`w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-sm flex-shrink-0 ${client.profile_pic ? 'hidden' : ''
+            className={`w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white shadow-sm flex-shrink-0 ${client.profile_pic ? 'hidden' : ''
               }`}
           >
             <span className="text-lg font-bold">
@@ -189,10 +189,10 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
         </div>
 
         {/* Status Field - Compact horizontal */}
-        <div className="bg-white rounded-xl border border-gray-100 p-2.5 shadow-sm hover:border-purple-200 transition-all group">
+        <div className="bg-white rounded-xl border border-gray-100 p-2.5 shadow-sm hover:border-blue-200 transition-all group">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-purple-500" />
+              <Check className="w-4 h-4 text-blue-500" />
               <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                 {t('status', 'Статус') || 'Статус'}
               </span>

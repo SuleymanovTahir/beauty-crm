@@ -145,15 +145,15 @@ export default function ManagerDashboard() {
         </Link>
 
         <Link to="/manager/funnel" className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-            <TrendingUp className="w-6 h-6 text-purple-600" />
+          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+            <TrendingUp className="w-6 h-6 text-blue-600" />
           </div>
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl text-gray-900 mb-1">{stats?.conversion_rate.toFixed(1)}%</h3>
               <p className="text-gray-600 text-sm">{t('dashboard:conversion_rate')}</p>
             </div>
-            <Badge className="bg-purple-100 text-purple-800">
+            <Badge className="bg-blue-100 text-blue-800">
               {stats && stats.conversion_rate > 15 ? t('dashboard:good') : t('dashboard:normal')}
             </Badge>
           </div>
@@ -193,7 +193,7 @@ export default function ManagerDashboard() {
             </Link>
 
             <Link to="/manager/messages">
-              <Button className="w-full justify-between bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700">
+              <Button className="w-full justify-between bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
                 <span className="flex items-center gap-2">
                   <MessageCircle className="w-5 h-5" />
                   {t('dashboard:messages')}

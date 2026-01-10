@@ -74,7 +74,7 @@ export default function NotificationsPage() {
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                            <Bell className="w-8 h-8 text-purple-600" />
+                            <Bell className="w-8 h-8 text-blue-600" />
                             Уведомления
                         </h1>
                         <p className="text-gray-600 mt-2">
@@ -87,7 +87,7 @@ export default function NotificationsPage() {
                         {unreadCount > 0 && (
                             <button
                                 onClick={handleMarkAllRead}
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors"
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
                             >
                                 <CheckCheck size={16} />
                                 Отметить все прочитанными
@@ -108,7 +108,7 @@ export default function NotificationsPage() {
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                 </div>
             ) : notifications.length === 0 ? (
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center">
@@ -126,7 +126,7 @@ export default function NotificationsPage() {
                         <div
                             key={notif.id}
                             onClick={() => handleNotificationClick(notif)}
-                            className={`bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer transition-all hover:shadow-md hover:border-purple-300 ${!notif.is_read ? 'bg-gradient-to-r from-blue-50/50 to-purple-50/50 border-l-4 border-l-blue-500' : ''
+                            className={`bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer transition-all hover:shadow-md hover:border-blue-300 ${!notif.is_read ? 'bg-gradient-to-r from-blue-50/50 to-blue-50/50 border-l-4 border-l-blue-500' : ''
                                 }`}
                         >
                             <div className="flex items-start gap-4">
@@ -177,7 +177,7 @@ export default function NotificationsPage() {
                         className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
+                        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-pink-50">
                             <div className="flex items-start justify-between">
                                 <div className="flex-1">
                                     <h2 className="text-2xl font-bold text-gray-900">
@@ -209,7 +209,7 @@ export default function NotificationsPage() {
                         <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-2">
                             <button
                                 onClick={() => setShowModal(false)}
-                                className="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-lg rounded-lg transition-all"
+                                className="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-pink-500 hover:shadow-lg rounded-lg transition-all"
                             >
                                 Закрыть
                             </button>

@@ -502,7 +502,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                     w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm
                                                     transition-all duration-200 relative
                                                     ${isChildActive || isActive
-                                                            ? 'bg-purple-50 text-purple-700 font-medium'
+                                                            ? 'bg-blue-50 text-blue-700 font-medium'
                                                             : 'text-gray-700 hover:bg-gray-100'
                                                         }
                                                 `}
@@ -536,7 +536,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                                         }}
                                                                         className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 
                                                                         ${isSubActive
-                                                                                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-sm'
+                                                                                ? 'bg-gradient-to-r from-blue-500 to-pink-500 text-white shadow-sm'
                                                                                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                                                                             }`}
                                                                     >
@@ -560,7 +560,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                 w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm
                                                 transition-all duration-200 relative
                                                 ${isActive
-                                                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
+                                                        ? 'bg-gradient-to-r from-blue-500 to-pink-500 text-white shadow-md'
                                                         : 'text-gray-700 hover:bg-gray-100'
                                                     }
                                             `}
@@ -599,7 +599,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
 
                             {showNotifDropdown && (
                                 <div className="absolute bottom-full left-0 w-72 mb-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
-                                    <div className="p-3 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-pink-50 flex justify-between items-center">
+                                    <div className="p-3 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-pink-50 flex justify-between items-center">
                                         <span className="font-semibold text-sm text-gray-900">{t('notifications', 'Уведомления')}</span>
                                         <button
                                             onClick={() => setShowNotifDropdown(false)}
@@ -614,7 +614,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                 <div
                                                     key={n.id}
                                                     onClick={() => handleNotificationClick(n)}
-                                                    className={`p-3 border-b border-gray-50 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 cursor-pointer transition-all group ${!n.is_read ? 'bg-blue-50/50' : ''}`}
+                                                    className={`p-3 border-b border-gray-50 hover:bg-gradient-to-r hover:from-blue-50 hover:to-pink-50 cursor-pointer transition-all group ${!n.is_read ? 'bg-blue-50/50' : ''}`}
                                                 >
                                                     <div className="flex items-start gap-2">
                                                         {!n.is_read && (
@@ -656,7 +656,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                     setShowNotifDropdown(false);
                                                     navigate(`${rolePrefix}/notifications`);
                                                 }}
-                                                className="flex-1 px-3 py-2 text-xs font-medium text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                                                className="flex-1 px-3 py-2 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                             >
                                                 {t('view_all', 'Посмотреть все')}
                                             </button>
@@ -684,7 +684,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                 <img
                                     src={getPhotoUrl(userProfile.photo) || ''}
                                     alt={userProfile.full_name}
-                                    className="w-10 h-10 rounded-full object-cover border-2 border-purple-100 shadow-sm"
+                                    className="w-10 h-10 rounded-full object-cover border-2 border-blue-100 shadow-sm"
                                 />
                             ) : (
                                 <img
@@ -694,7 +694,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                         user?.role === 'employee' || userProfile?.gender === 'female' ? 'female' : 'male'
                                     )}
                                     alt={userProfile?.full_name}
-                                    className="w-10 h-10 rounded-full object-cover border-2 border-purple-100 shadow-sm"
+                                    className="w-10 h-10 rounded-full object-cover border-2 border-blue-100 shadow-sm"
                                 />
                             )}
                             <div className="flex-1 overflow-hidden">
@@ -741,7 +741,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                         className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-hidden"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
+                        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-pink-50">
                             <div className="flex items-start justify-between">
                                 <div className="flex-1">
                                     <h2 className="text-xl font-bold text-gray-900">{selectedNotification.title}</h2>

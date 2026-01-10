@@ -118,7 +118,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-blue-100 to-pink-50 flex items-center justify-center p-4">
       {/* Переключатель языка */}
       <div className="fixed top-4 right-4 z-50">
         <LanguageSwitcher />
@@ -127,7 +127,7 @@ export default function Login() {
       <div className="w-full max-w-md">
         {/* Icon Circle or Logo - сверху над карточкой */}
         <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg overflow-hidden p-0.5">
+          <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg overflow-hidden p-0.5">
             {salonSettings?.logo_url ? (
               <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
                 <img
@@ -228,7 +228,7 @@ export default function Login() {
               disabled={
                 loading || !credentials.username || !credentials.password
               }
-              className="w-full h-11 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-medium"
+              className="w-full h-11 bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700 text-white font-medium"
             >
               {loading ? (
                 <div className="flex items-center justify-center gap-2">

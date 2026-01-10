@@ -206,8 +206,8 @@ export default function NotificationsDashboard() {
       title: t('stats.email_sent'),
       value: notifications.filter(n => n.type === 'email').reduce((sum, n) => sum + n.sent_count, 0).toString(),
       icon: Mail,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100',
     },
     {
       title: t('stats.push_sent'),
@@ -226,7 +226,7 @@ export default function NotificationsDashboard() {
   ];
 
   const typeColors: Record<Notification['type'], string> = {
-    email: 'bg-purple-100 text-purple-700',
+    email: 'bg-blue-100 text-blue-700',
     push: 'bg-green-100 text-green-700',
     sms: 'bg-orange-100 text-orange-700',
   };
@@ -576,7 +576,7 @@ export default function NotificationsDashboard() {
             )}
 
             {/* Scheduling section */}
-            <div className="space-y-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
+            <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"

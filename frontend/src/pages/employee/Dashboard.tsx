@@ -186,11 +186,11 @@ export default function EmployeeDashboard() {
           <h3 className="text-3xl font-bold">{stats?.today_bookings || 0}</h3>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-xl shadow-lg text-white">
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl shadow-lg text-white">
           <div className="flex items-center justify-between mb-2">
             <TrendingUp className="w-8 h-8 opacity-80" />
           </div>
-          <p className="text-purple-100 text-sm mb-1">{t('dashboard:week_bookings', 'За неделю')}</p>
+          <p className="text-blue-100 text-sm mb-1">{t('dashboard:week_bookings', 'За неделю')}</p>
           <h3 className="text-3xl font-bold">{stats?.week_bookings || 0}</h3>
         </div>
 
@@ -240,9 +240,9 @@ export default function EmployeeDashboard() {
 
         <button
           onClick={() => navigate('/employee/services')}
-          className="bg-white p-6 rounded-xl shadow-sm border-2 border-gray-200 hover:border-purple-500 transition-all group"
+          className="bg-white p-6 rounded-xl shadow-sm border-2 border-gray-200 hover:border-blue-500 transition-all group"
         >
-          <CheckCircle className="w-8 h-8 text-purple-600 mb-3 group-hover:scale-110 transition-transform" />
+          <CheckCircle className="w-8 h-8 text-blue-600 mb-3 group-hover:scale-110 transition-transform" />
           <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('dashboard:our_services', 'Услуги')}</h3>
           <p className="text-gray-600 text-sm">{t('dashboard:browse_available_services', 'Мои услуги и прайс-лист')}</p>
         </button>
@@ -290,7 +290,7 @@ export default function EmployeeDashboard() {
                     key={booking.id}
                     className={`border-l-4 rounded-lg p-4 transition-all ${isNow ? 'border-pink-500 bg-pink-50' :
                       isPast ? 'border-gray-300 bg-gray-50 opacity-60' :
-                        'border-purple-300 bg-white hover:bg-purple-50'
+                        'border-blue-300 bg-white hover:bg-blue-50'
                       }`}
                   >
                     <div className="flex items-center justify-between">
