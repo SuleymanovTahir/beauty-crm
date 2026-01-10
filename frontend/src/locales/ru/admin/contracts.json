@@ -19,6 +19,11 @@
     "signed": "Подписан",
     "cancelled": "Отменен"
   },
+  "contractTypes": {
+    "service": "Оказание услуг",
+    "employment": "Трудовой договор",
+    "rental": "Аренда места"
+  },
   "form": {
     "selectClient": "Выберите клиента",
     "contractType": "Тип договора",

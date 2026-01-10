@@ -9,7 +9,7 @@ import json
 import os
 
 from db.connection import get_db_connection
-from utils.logger import log_info, log_error
+from utils.logger import log_info, log_error, log_warning
 from utils.utils import get_current_user
 
 router = APIRouter()
