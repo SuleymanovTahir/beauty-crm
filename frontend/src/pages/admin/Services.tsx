@@ -2049,10 +2049,10 @@ export default function Services() {
                         <div className="space-y-2">
                           <div className="flex gap-2 mb-2">
                             <Input placeholder={t('services:search_clients', 'Поиск клиентов...')} value={challengeFormData.clientSearch || ''} onChange={(e) => setChallengeFormData({ ...challengeFormData, clientSearch: e.target.value })} className="flex-1" />
-                            <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: clientsOfMaster.map(c => c.id) })}>Все</Button>
-                            <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: [] })}>Сброс</Button>
+                            <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: clientsOfMaster.map(c => c.id) })}>{t('services:select_all', 'Все')}</Button>
+                            <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: [] })}>{t('services:deselect_all', 'Сброс')}</Button>
                           </div>
-                          <p className="text-xs text-gray-500">Выбрано: {challengeFormData.client_ids.length} / {clientsOfMaster.length}</p>
+                          <p className="text-xs text-gray-500">{t('services:selected_count', 'Выбрано')}: {challengeFormData.client_ids.length} / {clientsOfMaster.length}</p>
                           <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
                             <div className="space-y-1">{clientsOfMaster.filter(client => !challengeFormData.clientSearch || (client.name || client.id).toLowerCase().includes((challengeFormData.clientSearch || '').toLowerCase())).map((client) => (
                               <label key={client.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
@@ -2102,10 +2102,10 @@ export default function Services() {
                         <div className="space-y-2">
                           <div className="flex gap-2 mb-2">
                             <Input placeholder={t('services:search_clients', 'Поиск клиентов...')} value={challengeFormData.clientSearch || ''} onChange={(e) => setChallengeFormData({ ...challengeFormData, clientSearch: e.target.value })} className="flex-1" />
-                            <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: clientsOfMaster.map(c => c.id) })}>Все</Button>
-                            <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: [] })}>Сброс</Button>
+                            <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: clientsOfMaster.map(c => c.id) })}>{t('services:select_all', 'Все')}</Button>
+                            <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: [] })}>{t('services:deselect_all', 'Сброс')}</Button>
                           </div>
-                          <p className="text-xs text-gray-500">Выбрано: {challengeFormData.client_ids.length} / {clientsOfMaster.length}</p>
+                          <p className="text-xs text-gray-500">{t('services:selected_count', 'Выбрано')}: {challengeFormData.client_ids.length} / {clientsOfMaster.length}</p>
                           <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
                             <div className="space-y-1">{clientsOfMaster.filter(client => !challengeFormData.clientSearch || (client.name || client.id).toLowerCase().includes((challengeFormData.clientSearch || '').toLowerCase())).map((client) => (
                               <label key={client.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
@@ -2148,10 +2148,10 @@ export default function Services() {
                       <div className="space-y-2">
                         <div className="flex gap-2 mb-2">
                           <Input placeholder={t('services:search_clients', 'Поиск клиентов...')} value={challengeFormData.clientSearch || ''} onChange={(e) => setChallengeFormData({ ...challengeFormData, clientSearch: e.target.value })} className="flex-1" />
-                          <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: clientsOfMaster.map(c => c.id) })}>Все</Button>
-                          <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: [] })}>Сброс</Button>
+                          <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: clientsOfMaster.map(c => c.id) })}>{t('services:select_all', 'Все')}</Button>
+                          <Button type="button" variant="outline" size="sm" onClick={() => setChallengeFormData({ ...challengeFormData, client_ids: [] })}>{t('services:deselect_all', 'Сброс')}</Button>
                         </div>
-                        <p className="text-xs text-gray-500">Выбрано: {challengeFormData.client_ids.length} / {clientsOfMaster.length}</p>
+                        <p className="text-xs text-gray-500">{t('services:selected_count', 'Выбрано')}: {challengeFormData.client_ids.length} / {clientsOfMaster.length}</p>
                         <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
                           <div className="space-y-1">{clientsOfMaster.filter(client => !challengeFormData.clientSearch || (client.name || client.id).toLowerCase().includes((challengeFormData.clientSearch || '').toLowerCase())).map((client) => (
                             <label key={client.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">

@@ -1,0 +1,51 @@
+{
+  "marketplace": {
+    "title": "Buchungsplattformen",
+    "subtitle": "Integration mit Online-Buchungs- und Bewertungsdiensten",
+    "totalBookings": "Gesamtaufzeichnungen",
+    "activeSources": "Aktive Quellen",
+    "bookings": "bookings",
+    "reviews": "Rezensionen",
+    "lastSync": "Letzte Synchronisierung",
+    "neverSynced": "Niemals",
+    "justNow": "Soeben",
+    "minutesAgo": "Vor {{count}} Min",
+    "hoursAgo": "Vor {{count}} Stunden",
+    "daysAgo": "Vor {{count}} Tagen",
+    "configure": "Melodie",
+    "sync": "Synchronisieren",
+    "syncing": "Synchronisation...",
+    "syncStarted": "Die Synchronisierung wurde gestartet",
+    "status": "Status",
+    "active": "Aktiv",
+    "inactive": "Nicht konfiguriert",
+    "configureProvider": "Einstellungen",
+    "apiKey": "API-Schlüssel",
+    "apiSecret": "API-Geheimnis",
+    "webhookUrl": "Webhook-URL",
+    "webhookHint": "Geben Sie diese URL in den Webhook-Einstellungen auf der Plattform an",
+    "enableProvider": "Integration aktivieren",
+    "urlCopied": "URL kopiert",
+    "configSuccess": "Einstellungen gespeichert"
+  },
+  "payment": {
+    "title": "Zahlungssysteme",
+    "subtitle": "Anbindung bis Zahlungsanbietern",
+    "status": "Status",
+    "active": "Aktiv",
+    "inactive": "Nicht konfiguriert",
+    "configure": "Melodie",
+    "setup": "Verbinden",
+    "configureProvider": "Einstellungen",
+    "apiKey": "API-Schlüssel",
+    "secretKey": "Geheimer Schlüssel",
+    "webhookSecret": "Webhook-Geheimnis",
+    "webhookUrl": "Webhook-URL",
+    "enableProvider": "Anbieter aktivieren"
+  },
+  "errors": {
+    "loadFailed": "Fehler beim Laden der Daten",
+    "syncFailed": "Synchronisierungsfehler",
+    "saveFailed": "Fehler speichern"
+  }
+}

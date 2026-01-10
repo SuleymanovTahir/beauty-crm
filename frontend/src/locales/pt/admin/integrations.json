@@ -1,0 +1,51 @@
+{
+  "marketplace": {
+    "title": "Plataformas de reserva",
+    "subtitle": "Integração com serviços de reserva e avaliação online",
+    "totalBookings": "reservas totais",
+    "activeSources": "Fontes ativas",
+    "bookings": "bookings",
+    "reviews": "Avaliações",
+    "lastSync": "Última sincronização",
+    "neverSynced": "Nunca",
+    "justNow": "Agora mesmo",
+    "minutesAgo": "{{count}} minutos atrás",
+    "hoursAgo": "{{count}} horas atrás",
+    "daysAgo": "{{count}} dias atrás",
+    "configure": "Sintonia",
+    "sync": "Sincronizar",
+    "syncing": "Sincronização...",
+    "syncStarted": "A sincronização foi iniciada",
+    "status": "Status",
+    "active": "Ativo",
+    "inactive": "Não configurado",
+    "configureProvider": "Configurações",
+    "apiKey": "Chave de API",
+    "apiSecret": "Segredo da API",
+    "webhookUrl": "URL do webhook",
+    "webhookHint": "Especifique este URL nas configurações do webhook na plataforma",
+    "enableProvider": "Habilitar integração",
+    "urlCopied": "URL copiado",
+    "configSuccess": "Configurações salvas"
+  },
+  "payment": {
+    "title": "Sistemas de pagamento",
+    "subtitle": "Conectando provedores de pagamento",
+    "status": "Status",
+    "active": "Ativo",
+    "inactive": "Não configurado",
+    "configure": "Sintonia",
+    "setup": "Conectar",
+    "configureProvider": "Configurações",
+    "apiKey": "Chave de API",
+    "secretKey": "Chave secreta",
+    "webhookSecret": "Segredo do webhook",
+    "webhookUrl": "URL do webhook",
+    "enableProvider": "Habilitar provedor"
+  },
+  "errors": {
+    "loadFailed": "Erro ao carregar dados",
+    "syncFailed": "Erro de sincronização",
+    "saveFailed": "Erro ao salvar"
+  }
+}

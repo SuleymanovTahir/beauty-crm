@@ -1,0 +1,51 @@
+{
+  "marketplace": {
+    "title": "Plateformes de réservation",
+    "subtitle": "Intégration avec les services de réservation et d'avis en ligne",
+    "totalBookings": "Total des réservations",
+    "activeSources": "Sources actives",
+    "bookings": "bookings",
+    "reviews": "Avis",
+    "lastSync": "Dernière synchronisation",
+    "neverSynced": "Jamais",
+    "justNow": "Tout à l' heure",
+    "minutesAgo": "{{count}} il y a min",
+    "hoursAgo": "Il y a {{count}} heures",
+    "daysAgo": "Il y a {{count}} jours",
+    "configure": "Régler",
+    "sync": "Synchroniser",
+    "syncing": "Synchronisation...",
+    "syncStarted": "La synchronisation a démarré",
+    "status": "Statut",
+    "active": "Actif",
+    "inactive": "Non configuré",
+    "configureProvider": "Paramètres",
+    "apiKey": "Clé API",
+    "apiSecret": "Secret API",
+    "webhookUrl": "URL du webhook",
+    "webhookHint": "Précisez cette URL dans les paramètres du webhook sur la plateforme",
+    "enableProvider": "Activer l'intégration",
+    "urlCopied": "URL copiée",
+    "configSuccess": "Paramètres enregistrés"
+  },
+  "payment": {
+    "title": "Systèmes de paiement",
+    "subtitle": "Connecter les fournisseurs de paiement",
+    "status": "Statut",
+    "active": "Actif",
+    "inactive": "Non configuré",
+    "configure": "Régler",
+    "setup": "Connecter",
+    "configureProvider": "Paramètres",
+    "apiKey": "Clé API",
+    "secretKey": "Clé secrète",
+    "webhookSecret": "Secret du webhook",
+    "webhookUrl": "URL du webhook",
+    "enableProvider": "Activer le fournisseur"
+  },
+  "errors": {
+    "loadFailed": "Erreur de chargement des données",
+    "syncFailed": "Erreur de synchronisation",
+    "saveFailed": "Enregistrer l'erreur"
+  }
+}

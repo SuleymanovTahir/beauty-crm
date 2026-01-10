@@ -1,0 +1,51 @@
+{
+  "marketplace": {
+    "title": "منصات الحجز",
+    "subtitle": "التكامل مع خدمات الحجز والمراجعة عبر الإنترنت",
+    "totalBookings": "إجمالي السجلات",
+    "activeSources": "المصادر النشطة",
+    "bookings": "bookings",
+    "reviews": "التعليقات",
+    "lastSync": "آخر مزامنة",
+    "neverSynced": "أبداً",
+    "justNow": "الآن",
+    "minutesAgo": "__VAR0____ قبل دقيقة",
+    "hoursAgo": "__VAR0____ قبل ساعات",
+    "daysAgo": "__VAR0____ منذ أيام",
+    "configure": "لحن",
+    "sync": "تزامن",
+    "syncing": "المزامنة...",
+    "syncStarted": "بدأت المزامنة",
+    "status": "حالة",
+    "active": "نشيط",
+    "inactive": "لم يتم تكوينه",
+    "configureProvider": "إعدادات",
+    "apiKey": "مفتاح واجهة برمجة التطبيقات",
+    "apiSecret": "سر واجهة برمجة التطبيقات",
+    "webhookUrl": "عنوان URL للويب هوك",
+    "webhookHint": "حدد عنوان URL هذا في إعدادات webhook على النظام الأساسي",
+    "enableProvider": "تمكين التكامل",
+    "urlCopied": "تم نسخ عنوان URL",
+    "configSuccess": "تم حفظ الإعدادات"
+  },
+  "payment": {
+    "title": "أنظمة الدفع",
+    "subtitle": "ربط مقدمي خدمات الدفع",
+    "status": "حالة",
+    "active": "نشيط",
+    "inactive": "لم يتم تكوينه",
+    "configure": "لحن",
+    "setup": "يتصل",
+    "configureProvider": "إعدادات",
+    "apiKey": "مفتاح واجهة برمجة التطبيقات",
+    "secretKey": "المفتاح السري",
+    "webhookSecret": "سر الويب هوك",
+    "webhookUrl": "عنوان URL للويب هوك",
+    "enableProvider": "تمكين المزود"
+  },
+  "errors": {
+    "loadFailed": "حدث خطأ أثناء تحميل البيانات",
+    "syncFailed": "خطأ في المزامنة",
+    "saveFailed": "خطأ في الحفظ"
+  }
+}
