@@ -792,8 +792,8 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                     onChange={e => setEditingType({ ...editingType, target_role: e.target.value })}
                   >
                     <option value="all">{t('all_users')}</option>
-                    <option value="client">{t('common:role_client', 'Клиенты')}</option>
-                    <option value="employee">{t('common:role_employee', 'Сотрудники')}</option>
+                    <option value="client">{t('common:role_client', 'Клиент')}</option>
+                    <option value="employee">{t('common:role_employee', 'Сотрудник')}</option>
                   </select>
                 </div>
               </div>
@@ -871,30 +871,31 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                 <table className="crm-table">
                   <thead>
                     <tr>
-                      <th>{t('common:key', 'Ключ')}</th>
                       <th>{t('role_label')}</th>
                       <th>{t('common:name', 'Название')}</th>
-                      <th>{t('common:actions', 'Действия')}</th>
+                      <th className="w-24 text-right">{t('common:actions', 'Действия')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {loading ? (
-                      <tr><td colSpan={4} className="text-center py-4">{t('common:loading')}</td></tr>
+                      <tr><td colSpan={3} className="text-center py-4">{t('common:loading')}</td></tr>
                     ) : types.length === 0 ? (
-                      <tr><td colSpan={4} className="text-center py-4 text-gray-500">{t('common:not_found', 'Типы подписок не найдены')}</td></tr>
+                      <tr><td colSpan={3} className="text-center py-4 text-gray-500">{t('common:not_found', 'Типы подписок не найдены')}</td></tr>
                     ) : types.map(type => (
                       <tr key={type.id}>
-                        <td className="font-mono text-sm">{type.key}</td>
                         <td>
-                          <span className={`crm-badge ${type.target_role === 'client' ? 'paid' : type.target_role === 'employee' ? 'sent' : ''}`}>
-                            {type.target_role === 'client' ? String(t('common:role_client', 'Клиент')) :
-                              type.target_role === 'employee' ? String(t('common:role_employee', 'Сотрудник')) :
-                                String(type.target_role)}
+                          <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${type.target_role === 'client' ? 'bg-green-100 text-green-800' :
+                            type.target_role === 'employee' ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                            {type.target_role === 'client' ? t('common:role_client', 'Клиент') :
+                              type.target_role === 'employee' ? t('common:role_employee', 'Сотрудник') :
+                                t('all_users')}
                           </span>
                         </td>
-                        <td>{t(type.name_ru || type.key)}</td>
-                        <td>
-                          <div className="flex gap-2">
+                        <td className="font-medium">{t(type.name_ru || type.key)}</td>
+                        <td className="text-right">
+                          <div className="flex gap-2 justify-end">
                             <button
                               className="crm-btn-icon"
                               onClick={() => { setEditingType(type); setIsNew(false); }}
