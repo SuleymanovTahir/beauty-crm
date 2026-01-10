@@ -94,12 +94,9 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
         loadUserProfile();
         loadMenuSettings();
 
-        // Нотификации загружаем только если есть доступ (админ или менеджер)
-        if (permissions.roleLevel >= 70) {
-            loadNotifications();
-            const notifInterval = setInterval(loadNotifications, 30000);
-            return () => clearInterval(notifInterval);
-        }
+        // Загружаем уведомления для всех ролей
+        loadNotifications();
+        const notifInterval = setInterval(loadNotifications, 30000);
 
         const unreadInterval = setInterval(loadUnreadCount, 10000);
 
@@ -113,6 +110,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
         window.addEventListener('profile-updated', handleProfileUpdate);
 
         return () => {
+            clearInterval(notifInterval);
             clearInterval(unreadInterval);
             window.removeEventListener('messengers-updated', handleMessengersUpdate);
             window.removeEventListener('profile-updated', handleProfileUpdate);
@@ -485,21 +483,20 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
 
                     {/* User Profile */}
                     <div className="p-4 border-t border-gray-200">
-                        {/* Notifications Button (for Admin/Manager) */}
-                        {permissions.roleLevel >= 70 && (
-                            <div className="relative mb-4">
-                                <button
-                                    onClick={() => setShowNotifDropdown(!showNotifDropdown)}
-                                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors relative"
-                                >
-                                    <Bell size={18} />
-                                    <span>{t('menu.notifications')}</span>
-                                    {notifCount > 0 && (
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                                            {notifCount}
-                                        </span>
-                                    )}
-                                </button>
+                        {/* Notifications Button (for all roles) */}
+                        <div className="relative mb-4">
+                            <button
+                                onClick={() => setShowNotifDropdown(!showNotifDropdown)}
+                                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors relative"
+                            >
+                                <Bell size={18} />
+                                <span>{t('menu.notifications')}</span>
+                                {notifCount > 0 && (
+                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                                        {notifCount}
+                                    </span>
+                                )}
+                            </button>
 
                                 {showNotifDropdown && (
                                     <div className="absolute bottom-full left-0 w-64 mb-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
@@ -535,8 +532,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                         </div>
                                     </div>
                                 )}
-                            </div>
-                        )}
+                        </div>
 
                         <div className="flex items-center gap-3 mb-3">
                             {userProfile?.photo ? (

@@ -74,7 +74,10 @@ const Products = () => {
     return (
         <div className="crm-page">
             <div className="crm-page-header">
-                <h1>{t('title')}</h1>
+                <div>
+                    <h1>{t('title')}</h1>
+                    <p className="text-gray-600">{t('subtitle')}</p>
+                </div>
                 <button className="crm-btn-primary" onClick={() => setShowAddDialog(true)}>
                     <Plus size={20} />
                     {t('addProduct')}
@@ -384,7 +387,7 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
                 <form onSubmit={handleSubmit}>
                     <div className="crm-form-group">
                         <label className="crm-label">{t('movement.type')}</label>
-                        <select className="crm-select"
+                        <select
                             className="crm-select"
                             value={formData.movement_type}
                             onChange={(e) => setFormData({ ...formData, movement_type: e.target.value })}
@@ -397,7 +400,7 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
 
                     <div className="crm-form-group">
                         <label className="crm-label">{t('movement.quantity')}</label>
-                        <input className="crm-input"
+                        <input
                             type="number"
                             className="crm-input"
                             value={formData.quantity}
@@ -408,7 +411,7 @@ const MovementDialog = ({ product, onClose, onSuccess }: any) => {
 
                     <div className="crm-form-group">
                         <label className="crm-label">{t('movement.reason')}</label>
-                        <textarea className="crm-textarea"
+                        <textarea
                             className="crm-textarea"
                             value={formData.reason}
                             onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
