@@ -2,7 +2,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import {
   Users, Loader, AlertCircle, Crown, UserPlus, UserCheck,
-  TrendingUp, Calendar, FileText, Clock, Filter
+  TrendingUp, Calendar, FileText, Clock, Filter, Bot
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -572,7 +572,10 @@ export default function UniversalDashboard() {
 
           {botAnalytics && (
             <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl shadow-lg p-6 text-white">
-              <h3 className="font-bold flex items-center gap-2 mb-4">🤖 Бот Аналитика</h3>
+              <h3 className="font-bold flex items-center gap-2 mb-4">
+                <Bot className="w-5 h-5 text-white" />
+                Бот Аналитика
+              </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-[10px] opacity-70">Конверсия</p>

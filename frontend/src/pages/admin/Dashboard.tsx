@@ -1,7 +1,7 @@
 // /frontend/src/pages/admin/Dashboard.tsx
 //src/pages/Dashboard.tsx
 import { useEffect, useState } from 'react';
-import { Users, Loader, AlertCircle, Crown, UserPlus, UserCheck, TrendingUp, Calendar, CheckCircle, DollarSign, Percent, Star, XCircle, Clock, Filter, Download, Bell, FileText } from 'lucide-react';
+import { Users, Loader, AlertCircle, Crown, UserPlus, UserCheck, TrendingUp, Calendar, CheckCircle, DollarSign, Percent, Star, XCircle, Clock, Filter, Download, Bell, FileText, Bot } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
       setLoading(true);
       setError(null);
 
-      const dateRange = getDateRange();
+
 
       // Map dateFilter to comparison_period for backend
       let comparisonPeriod: string = dateFilter;
@@ -779,31 +779,34 @@ export default function AdminDashboard() {
       {botAnalytics && botAnalytics.total_sessions > 0 && (
         <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-sm p-4 md:p-6 mb-6 text-white">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg md:text-xl font-semibold">🤖 AI Бот Аналитика</h2>
-            <span className="text-sm opacity-80">За 30 дней</span>
+            <h2 className="text-lg md:text-xl font-semibold flex items-center gap-2">
+              <Bot className="w-5 h-5 text-white" />
+              {t('dashboard:bot_analytics_title', 'AI Бот Аналитика')}
+            </h2>
+            <span className="text-sm opacity-80">{t('dashboard:last_30_days', 'За 30 дней')}</span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white/10 rounded-lg p-3">
-              <p className="text-xs opacity-80">Конверсия</p>
+              <p className="text-xs opacity-80">{t('dashboard:conversion_rate', 'Конверсия')}</p>
               <p className="text-2xl font-bold">{botAnalytics.conversion_rate}%</p>
-              <p className="text-xs opacity-70">{botAnalytics.bookings_created} записей</p>
+              <p className="text-xs opacity-70">{botAnalytics.bookings_created} {t('dashboard:bookings_stat', 'записей')}</p>
             </div>
             <div className="bg-white/10 rounded-lg p-3">
-              <p className="text-xs opacity-80">Сессий</p>
+              <p className="text-xs opacity-80">{t('dashboard:sessions', 'Сессий')}</p>
               <p className="text-2xl font-bold">{botAnalytics.total_sessions}</p>
-              <p className="text-xs opacity-70">~{botAnalytics.avg_messages_per_session} сообщ.</p>
+              <p className="text-xs opacity-70">~{botAnalytics.avg_messages_per_session} {t('dashboard:msg_short', 'сообщ.')}</p>
             </div>
             <div className="bg-white/10 rounded-lg p-3">
-              <p className="text-xs opacity-80">Эскалаций</p>
+              <p className="text-xs opacity-80">{t('dashboard:escalations', 'Эскалаций')}</p>
               <p className="text-2xl font-bold">{botAnalytics.escalations}</p>
-              <p className="text-xs opacity-70">→ менеджеру</p>
+              <p className="text-xs opacity-70">{t('dashboard:to_manager', '→ менеджеру')}</p>
             </div>
             <div className="bg-white/10 rounded-lg p-3">
-              <p className="text-xs opacity-80">Пиковые часы</p>
+              <p className="text-xs opacity-80">{t('dashboard:peak_hours', 'Пиковые часы')}</p>
               <p className="text-lg font-bold">
                 {botAnalytics.popular_hours?.slice(0, 3).map((h: any) => `${h.hour}:00`).join(', ') || '—'}
               </p>
-              <p className="text-xs opacity-70">топ активность</p>
+              <p className="text-xs opacity-70">{t('dashboard:top_activity', 'топ активность')}</p>
             </div>
           </div>
         </div>

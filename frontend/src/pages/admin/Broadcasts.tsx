@@ -1,5 +1,6 @@
 // /frontend/src/pages/admin/Broadcasts.tsx
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield, Bell, Settings, Plus, Trash2, Edit, X } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -12,6 +13,7 @@ import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { useTranslation } from 'react-i18next';
+import '../../styles/crm-pages.css';
 
 interface BroadcastForm {
   subscription_type: string;
@@ -366,8 +368,8 @@ export default function Broadcasts() {
                         .map(([key, info]) => (
                           <SelectItem key={key} value={key}>
                             <div className="flex flex-col">
-                              <span className="font-medium">{info.name}</span>
-                              <span className="text-xs text-gray-500">{info.description}</span>
+                              <span className="font-medium">{t(info.name)}</span>
+                              <span className="text-xs text-gray-500">{t(info.description)}</span>
                             </div>
                           </SelectItem>
                         ))}
@@ -758,7 +760,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
     }
   };
 
-  return (
+  return createPortal(
     <div className="crm-modal-overlay" onClick={onClose}>
       <div className="crm-modal modal-large" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-6">
@@ -890,7 +892,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                                 String(type.target_role)}
                           </span>
                         </td>
-                        <td>{type.name_ru || type.key}</td>
+                        <td>{t(type.name_ru || type.key)}</td>
                         <td>
                           <div className="flex gap-2">
                             <button
@@ -924,6 +926,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
