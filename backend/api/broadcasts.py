@@ -23,6 +23,7 @@ class BroadcastRequest(BaseModel):
     target_role: Optional[str] = None  # Если None - все пользователи
     user_ids: Optional[List[int]] = None  # Конкретные ID пользователей для отправки
     force_send: bool = False  # Если true, игнорировать статус подписки (но проверять наличие контактов)
+    attachment_urls: Optional[List[str]] = []  # URLs прикрепленных файлов
 
 class BroadcastPreviewResponse(BaseModel):
     """Предпросмотр получателей рассылки"""

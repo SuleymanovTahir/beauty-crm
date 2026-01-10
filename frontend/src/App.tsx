@@ -332,6 +332,7 @@ export default function App() {
                 <Route path="marketplace-integrations" element={<MarketplaceIntegrations />} />
                 <Route path="referrals" element={<CRMReferrals />} />
                 <Route path="challenges" element={<CRMChallenges />} />
+                <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
@@ -358,6 +359,7 @@ export default function App() {
                 <Route path="analytics" element={<Analytics />} />
                 <Route path="settings/:tab?" element={<Settings />} />
                 <Route path="bot-settings" element={<BotSettings />} />
+                <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
@@ -383,6 +385,7 @@ export default function App() {
                 <Route path="chat" element={<Chat />} />
                 <Route path="analytics" element={<Analytics />} />
                 <Route path="internal-chat" element={<InternalChat />} />
+                <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="" element={<Navigate to="clients" replace />} />
               </Route>
 
@@ -406,6 +409,7 @@ export default function App() {
               >
                 <Route path="analytics" element={<Analytics />} />
                 <Route path="internal-chat" element={<InternalChat />} />
+                <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="" element={<Navigate to="analytics" replace />} />
               </Route>
 
@@ -434,7 +438,7 @@ export default function App() {
                 <Route path="bookings" element={<EmployeeBookings />} />
                 <Route path="tasks" element={<EmployeeTasks />} />
                 <Route path="services" element={<EmployeeServices />} />
-                <Route path="notifications" element={<EmployeeNotifications />} />
+                <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="internal-chat" element={<InternalChat />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
