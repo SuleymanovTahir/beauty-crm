@@ -310,8 +310,8 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 label: t('menu.finance', 'Финансы'),
                 requirePermission: () => true,
                 items: [
-                    { id: 'invoices', icon: Receipt, label: t('menu.invoices'), path: `${rolePrefix}/invoices`, requirePermission: () => permissions.canViewAllClients },
-                    { id: 'contracts', icon: FileSignature, label: t('menu.contracts'), path: `${rolePrefix}/contracts`, requirePermission: () => permissions.canViewAllClients },
+                    { id: 'invoices', icon: Receipt, label: t('menu.invoices'), path: `${rolePrefix}/invoices`, requirePermission: () => permissions.canViewAllClients || user?.role === 'sales' || user?.role === 'manager' },
+                    { id: 'contracts', icon: FileSignature, label: t('menu.contracts'), path: `${rolePrefix}/contracts`, requirePermission: () => permissions.canViewAllClients || user?.role === 'sales' || user?.role === 'manager' },
                 ]
             },
             // TOOLS GROUP

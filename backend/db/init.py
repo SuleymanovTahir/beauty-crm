@@ -1477,6 +1477,30 @@ def init_database():
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )''')
 
+    # Таблица типов договоров
+    c.execute('''CREATE TABLE IF NOT EXISTS contract_types (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        code TEXT UNIQUE NOT NULL,
+        description TEXT,
+        is_system BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''')
+
+    # Сидинг дефолтных типов договоров
+    contract_types = [
+        ('Оказание услуг', 'service', 'Договор на оказание услуг', True),
+        ('Трудовой договор', 'employment', 'Трудовой договор с сотрудником', True),
+        ('Аренда места', 'rental', 'Договор аренды рабочего места', True)
+    ]
+    
+    for name, code, desc, is_sys in contract_types:
+        c.execute("""
+            INSERT INTO contract_types (name, code, description, is_system)
+            VALUES (%s, %s, %s, %s)
+            ON CONFLICT (code) DO NOTHING
+        """, (name, code, desc, is_sys))
+
     # Таблица договоров
     c.execute('''CREATE TABLE IF NOT EXISTS contracts (
         id SERIAL PRIMARY KEY,
