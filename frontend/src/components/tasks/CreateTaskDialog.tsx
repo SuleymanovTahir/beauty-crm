@@ -45,11 +45,29 @@ interface CreateTaskDialogProps {
     stages: Stage[];
     defaultStageId?: number;
     taskToEdit?: Task | null;
+    isEmployee?: boolean; // For employee tasks, no assignee selection
 }
 
-export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaultStageId, taskToEdit }: CreateTaskDialogProps) {
+export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaultStageId, taskToEdit, isEmployee = false }: CreateTaskDialogProps) {
     const { t } = useTranslation(['admin/tasks', 'common']);
     const [loading, setLoading] = useState(false);
+    const [users, setUsers] = useState<Array<{ id: number; username: string; full_name: string; role: string }>>([]);
+
+    // Load users for assignee selection (only for admins/managers)
+    useEffect(() => {
+        const loadUsers = async () => {
+            try {
+                const response = await api.getUsers();
+                const usersArray = Array.isArray(response) ? response : (response?.users || []);
+                setUsers(usersArray);
+            } catch (err) {
+                console.error('Error loading users:', err);
+            }
+        };
+        if (open && !isEmployee) {
+            loadUsers();
+        }
+    }, [open, isEmployee]);
 
     // Initial state setup
     const initialFormState = {
@@ -186,6 +204,27 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
                             onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
                         />
                     </div>
+
+                    {!isEmployee && (
+                        <div className="space-y-2">
+                            <Label htmlFor="assignee">{t('assignee', 'Ответственный')}</Label>
+                            <Select
+                                value={formData.assignee_id}
+                                onValueChange={(value) => setFormData({ ...formData, assignee_id: value })}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder={t('select_assignee', 'Выберите ответственного')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {users.map((user) => (
+                                        <SelectItem key={user.id} value={user.id.toString()}>
+                                            {user.full_name} (@{user.username})
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
 
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
