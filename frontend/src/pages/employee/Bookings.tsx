@@ -1,10 +1,9 @@
-// /frontend/src/pages/employee/Bookings.tsx
 import { useEffect, useState } from 'react';
-import { Calendar, Clock, AlertCircle, Loader, User, Phone } from 'lucide-react';
+import { Calendar, Clock, AlertCircle, User, Phone } from 'lucide-react';
 import { Badge } from '../../components/ui/badge';
 import { Skeleton } from '../../components/ui/skeleton';
 import { useTranslation } from 'react-i18next';
-import { api } from '../../services/api';
+import i18n from 'i18next';
 
 interface Booking {
   id: number;
@@ -112,50 +111,47 @@ export default function EmployeeBookings() {
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <Calendar className="w-8 h-8 text-pink-600" />
-          {t('bookings:my_bookings')}
+          {t('employeeBookings:my_bookings')}
         </h1>
-        <p className="text-gray-600">{t('bookings:view_and_manage_bookings')}</p>
+        <p className="text-gray-600">{t('employeeBookings:view_and_manage_bookings')}</p>
       </div>
 
       {/* Filter Tabs */}
       <div className="mb-6 flex gap-2">
         <button
           onClick={() => setFilter('all')}
-          className={`px-4 py-2 rounded-lg transition-colors ${
-            filter === 'all'
-              ? 'bg-pink-600 text-white'
-              : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
-          }`}
+          className={`px-4 py-2 rounded-lg transition-colors ${filter === 'all'
+            ? 'bg-pink-600 text-white'
+            : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+            }`}
         >
-          {t('bookings:all')}
+          {t('employeeBookings:all')}
         </button>
         <button
           onClick={() => setFilter('upcoming')}
-          className={`px-4 py-2 rounded-lg transition-colors ${
-            filter === 'upcoming'
-              ? 'bg-pink-600 text-white'
-              : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
-          }`}
+          className={`px-4 py-2 rounded-lg transition-colors ${filter === 'upcoming'
+            ? 'bg-pink-600 text-white'
+            : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+            }`}
         >
-          {t('bookings:upcoming')}
+          {t('employeeBookings:upcoming')}
         </button>
         <button
           onClick={() => setFilter('past')}
-          className={`px-4 py-2 rounded-lg transition-colors ${
-            filter === 'past'
-              ? 'bg-pink-600 text-white'
-              : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
-          }`}
+          className={`px-4 py-2 rounded-lg transition-colors ${filter === 'past'
+            ? 'bg-pink-600 text-white'
+            : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+            }`}
         >
-          {t('bookings:past')}
+          {t('employeeBookings:past')}
         </button>
       </div>
 
       {bookings.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
           <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl text-gray-900 mb-2">{t('bookings:no_bookings')}</h3>
-          <p className="text-gray-600">{t('bookings:no_bookings_description')}</p>
+          <h3 className="text-xl text-gray-900 mb-2">{t('employeeBookings:no_bookings')}</h3>
+          <p className="text-gray-600">{t('employeeBookings:no_bookings_description')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -165,10 +161,10 @@ export default function EmployeeBookings() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="text-lg font-medium text-gray-900">
-                      {t('bookings:booking')} #{booking.id}
+                      {t('employeeBookings:booking')} #{booking.id}
                     </h3>
                     <Badge className={getStatusBadge(booking.status)}>
-                      {t(`bookings:status_${booking.status}`, booking.status)}
+                      {t(`employeeBookings:status_${booking.status}`, booking.status)}
                     </Badge>
                   </div>
                   <p className="text-gray-600 text-sm mb-3">{booking.service}</p>
@@ -178,22 +174,22 @@ export default function EmployeeBookings() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                 <div className="flex items-center gap-2 text-gray-600">
                   <User className="w-4 h-4" />
-                  <span>{booking.name || t('bookings:no_name')}</span>
+                  <span>{booking.name || t('employeeBookings:no_name')}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-600">
                   <Clock className="w-4 h-4" />
-                  <span>{new Date(booking.datetime).toLocaleString('ru-RU')}</span>
+                  <span>{new Date(booking.datetime).toLocaleString(i18n.language === 'ru' ? 'ru-RU' : 'en-US')}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-600">
                   <Phone className="w-4 h-4" />
-                  <span>{booking.phone || t('bookings:no_phone')}</span>
+                  <span>{booking.phone || t('employeeBookings:no_phone')}</span>
                 </div>
               </div>
 
               {booking.notes && (
                 <div className="mt-4 pt-4 border-t border-gray-200">
                   <p className="text-sm text-gray-600">
-                    <strong>{t('bookings:notes')}:</strong> {booking.notes}
+                    <strong>{t('employeeBookings:notes')}:</strong> {booking.notes}
                   </p>
                 </div>
               )}
