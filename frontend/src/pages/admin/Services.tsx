@@ -1,14 +1,17 @@
 // /frontend/src/pages/admin/Services.tsx
 // frontend/src/pages/admin/Services.tsx - С ВКЛАДКАМИ ДЛЯ СПЕЦПАКЕТОВ И НОВЫМИ ПОЛЯМИ
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Scissors, Search, Plus, Edit, Trash2, Loader, AlertCircle, Gift, Tag, Calendar, Clock } from 'lucide-react';
+import {
+  Scissors, Search, Plus, Edit, Trash2, Loader,
+  AlertCircle, Gift, Tag, Calendar, Clock, ArrowUpDown, ArrowUp, ArrowDown
+} from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Badge } from '../../components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { toast } from 'sonner';
@@ -120,12 +123,25 @@ export default function Services() {
   // Services state
   const [services, setServices] = useState<Service[]>([]);
   const { t, i18n } = useTranslation(['admin/Services', 'common', 'admin/users']);
-  const [filteredServices, setFilteredServices] = useState<Service[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const { currency, formatCurrency } = useCurrency();
+  const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
+
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key: string) => {
+    if (!sortConfig || sortConfig.key !== key) return <ArrowUpDown size={14} className="ml-1 opacity-30" />;
+    return sortConfig.direction === 'asc' ? <ArrowUp size={14} className="ml-1 text-pink-500" /> : <ArrowDown size={14} className="ml-1 text-pink-500" />;
+  };
 
   // Форматирование цены
   const formatPrice = (service: Service) => {
@@ -144,7 +160,6 @@ export default function Services() {
 
   // Packages state
   const [packages, setPackages] = useState<SpecialPackage[]>([]);
-  const [filteredPackages, setFilteredPackages] = useState<SpecialPackage[]>([]);
   const [packageSearchTerm, setPackageSearchTerm] = useState('');
   const [packageStatusFilter, setPackageStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [isPackageModalOpen, setIsPackageModalOpen] = useState(false);
@@ -262,28 +277,65 @@ export default function Services() {
     }
   };
 
-  useEffect(() => {
-    if (activeTab === 'services') {
-      const filtered = services.filter(service => {
-        const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          service.name_ru.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = categoryFilter === 'all' || service.category === categoryFilter;
-        return matchesSearch && matchesCategory;
+  const filteredAndSortedServices = useMemo(() => {
+    let result = services.filter(service => {
+      const lang = i18n.language.split('-')[0];
+      const localizedName = (service[`name_${lang}`] || service.name || '').toLowerCase();
+      const localizedDesc = (service[`description_${lang}`] || service.description || '').toLowerCase();
+      const search = searchTerm.toLowerCase();
+
+      const matchesSearch = localizedName.includes(search) || localizedDesc.includes(search);
+      const matchesCategory = categoryFilter === 'all' || service.category === categoryFilter;
+      return matchesSearch && matchesCategory;
+    });
+
+    if (sortConfig) {
+      result.sort((a, b) => {
+        const { key, direction } = sortConfig;
+        let aVal: any = a[key as keyof Service];
+        let bVal: any = b[key as keyof Service];
+
+        if (key === 'duration') {
+          aVal = parseInt(aVal || '0', 10);
+          bVal = parseInt(bVal || '0', 10);
+        }
+
+        if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+        if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+        return 0;
       });
-      setFilteredServices(filtered);
-    } else {
-      const filtered = packages.filter(pkg => {
-        const matchesSearch = pkg.name.toLowerCase().includes(packageSearchTerm.toLowerCase()) ||
-          pkg.name_ru.toLowerCase().includes(packageSearchTerm.toLowerCase()) ||
-          pkg.promo_code?.toLowerCase().includes(packageSearchTerm.toLowerCase());
-        const matchesStatus = packageStatusFilter === 'all' ||
-          (packageStatusFilter === 'active' && pkg.is_active) ||
-          (packageStatusFilter === 'inactive' && !pkg.is_active);
-        return matchesSearch && matchesStatus;
-      });
-      setFilteredPackages(filtered);
     }
-  }, [searchTerm, categoryFilter, packageSearchTerm, packageStatusFilter, services, packages, activeTab]);
+    return result;
+  }, [services, searchTerm, categoryFilter, sortConfig, i18n.language]);
+
+  const filteredAndSortedPackages = useMemo(() => {
+    let result = packages.filter(pkg => {
+      const lang = i18n.language.split('-')[0];
+      const name = ((pkg as any)[`name_${lang}`] || pkg.name || '').toLowerCase();
+      const desc = ((pkg as any)[`description_${lang}`] || pkg.description || '').toLowerCase();
+      const promo = (pkg.promo_code || '').toLowerCase();
+      const search = packageSearchTerm.toLowerCase();
+
+      const matchesSearch = name.includes(search) || desc.includes(search) || promo.includes(search);
+      const matchesStatus = packageStatusFilter === 'all' ||
+        (packageStatusFilter === 'active' && pkg.is_active) ||
+        (packageStatusFilter === 'inactive' && !pkg.is_active);
+      return matchesSearch && matchesStatus;
+    });
+
+    if (sortConfig) {
+      result.sort((a, b) => {
+        const { key, direction } = sortConfig;
+        let aVal = a[key as keyof SpecialPackage];
+        let bVal = b[key as keyof SpecialPackage];
+
+        if (aVal! < bVal!) return direction === 'asc' ? -1 : 1;
+        if (aVal! > bVal!) return direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return result;
+  }, [packages, packageSearchTerm, packageStatusFilter, sortConfig, i18n.language]);
 
   const loadData = async () => {
     try {
@@ -669,351 +721,348 @@ export default function Services() {
           <button
             onClick={() => handleTabChange('services')}
             className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'services'
-              ? 'bg-pink-100 text-pink-700'
+              ? 'bg-pink-600 text-white shadow-md'
               : 'text-gray-600 hover:bg-gray-50'
               }`}
           >
             <Scissors className="w-5 h-5 inline-block mr-2" />
-            {t('services:services')} ({filteredServices.length})
+            {t('services:services')} ({filteredAndSortedServices.length})
           </button>
           <button
             onClick={() => handleTabChange('packages')}
             className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'packages'
-              ? 'bg-pink-100 text-pink-700'
+              ? 'bg-pink-600 text-white shadow-md'
               : 'text-gray-600 hover:bg-gray-50'
               }`}
           >
             <Gift className="w-5 h-5 inline-block mr-2" />
-            {t('services:special_packages')} ({filteredPackages.length})
+            {t('services:special_packages')} ({filteredAndSortedPackages.length})
           </button>
         </div>
       </div>
 
       {/* SERVICES TAB */}
-      {activeTab === 'services' && (
-        <>
-          {/* Services Search and Filters */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder={t('services:search_services')}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+      {
+        activeTab === 'services' && (
+          <>
+            {/* Services Search and Filters */}
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder={t('services:search_services')}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="w-full md:w-[200px]">
+                    <SelectValue placeholder={t('services:category')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('services:all_categories')}</SelectItem>
+                    {categories.map(cat => (
+                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {/* Кнопка создания только если есть право */}
+                {permissions.canEditServices && (
+                  <Button
+                    className="bg-pink-600 hover:bg-pink-700"
+                    onClick={handleOpenAddService}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    {t('services:add_service')}
+                  </Button>
+                )}
               </div>
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-full md:w-[200px]">
-                  <SelectValue placeholder={t('services:category')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('services:all_categories')}</SelectItem>
-                  {categories.map(cat => (
-                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {/* Кнопка создания только если есть право */}
-              {permissions.canEditServices && (
-                <Button
-                  className="bg-pink-600 hover:bg-pink-700"
-                  onClick={handleOpenAddService}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {t('services:add_service')}
-                </Button>
+            </div>
+
+            {/* Services Table */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              {filteredAndSortedServices.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        <th onClick={() => handleSort('name')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
+                          <div className="flex items-center">{t('services:name')} {getSortIcon('name')}</div>
+                        </th>
+                        <th onClick={() => handleSort('price')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
+                          <div className="flex items-center">{t('services:price')} {getSortIcon('price')}</div>
+                        </th>
+                        <th onClick={() => handleSort('duration')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
+                          <div className="flex items-center">{t('services:duration')} {getSortIcon('duration')}</div>
+                        </th>
+                        <th onClick={() => handleSort('category')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
+                          <div className="flex items-center">{t('services:category')} {getSortIcon('category')}</div>
+                        </th>
+                        <th onClick={() => handleSort('is_active')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
+                          <div className="flex items-center">{t('services:status')} {getSortIcon('is_active')}</div>
+                        </th>
+                        <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-right">{t('services:actions')}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {filteredAndSortedServices.map((service) => (
+                        <tr key={service.id} className="hover:bg-gray-50/80 transition-colors group">
+                          <td className="px-6 py-4">
+                            <div>
+                              <p className="text-sm font-bold text-gray-900">
+                                {(() => {
+                                  const lang = i18n.language.split('-')[0];
+                                  return service[`name_${lang}`] || service.name;
+                                })()}
+                              </p>
+                              {(() => {
+                                const lang = i18n.language.split('-')[0];
+                                const description = service[`description_${lang}`] || service.description;
+                                return description ? (
+                                  <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{description}</p>
+                                ) : null;
+                              })()}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 font-black text-gray-900">
+                            {formatPrice(service)}
+                          </td>
+                          <td className="px-6 py-4">
+                            {service.duration && service.duration !== 'null' ? (
+                              <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-100 font-medium">
+                                <Clock className="w-3 h-3 mr-1" />
+                                {formatDuration(service.duration, t)}
+                              </Badge>
+                            ) : <span className="text-gray-300">—</span>}
+                          </td>
+                          <td className="px-6 py-4">
+                            <Badge variant="outline" className="bg-purple-50 text-purple-600 border-purple-100 font-semibold">
+                              {t(`services:category_${service.category.toLowerCase().replace(/\s+/g, '_')}`, service.category)}
+                            </Badge>
+                          </td>
+                          <td className="px-6 py-4">
+                            <button
+                              onClick={() => handleToggleServiceActive(service)}
+                              className={`px-3 py-1 rounded-full text-xs font-bold transition-all shadow-sm ${service.is_active
+                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                : 'bg-red-100 text-red-700 hover:bg-red-200'
+                                }`}
+                            >
+                              {service.is_active ? t('services:active') : t('services:inactive')}
+                            </button>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                              {permissions.canEditServices && (
+                                <>
+                                  <button onClick={() => handleEditService(service)} className="p-2 hover:bg-blue-50 text-gray-400 hover:text-blue-600 rounded-lg transition-colors">
+                                    <Edit size={16} />
+                                  </button>
+                                  <button onClick={() => handleDeleteService(service.id)} className="p-2 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded-lg transition-colors">
+                                    <Trash2 size={16} />
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="py-20 text-center text-gray-500">
+                  <Scissors className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <p>{t('services:services_not_found')}</p>
+                </div>
               )}
             </div>
-          </div>
-
-          {/* Services Table */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            {filteredServices.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('services:name')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('services:price')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('services:duration')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('services:category')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('services:status')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('services:actions')}</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {filteredServices.map((service) => (
-                      <tr key={service.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4">
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">
-                              {(() => {
-                                // Get base language code (e.g., 'es' from 'es-ES')
-                                const lang = i18n.language.split('-')[0];
-                                const localizedName = service[`name_${lang}`];
-                                return localizedName || service.name;
-                              })()}
-                            </p>
-                            {(() => {
-                              const lang = i18n.language.split('-')[0];
-                              const localizedDesc = service[`description_${lang}`];
-                              const description = localizedDesc || service.description;
-                              return description ? (
-                                <p className="text-xs text-gray-500 mt-1 line-clamp-2">{description}</p>
-                              ) : null;
-                            })()}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm font-semibold text-gray-900">
-                            {formatPrice(service)}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          {service.duration && service.duration !== 'null' ? (
-                            <Badge className="bg-blue-100 text-blue-800 flex items-center gap-1 w-fit">
-                              <Clock className="w-3 h-3" />
-                              {formatDuration(service.duration, t)}
-                            </Badge>
-                          ) : (
-                            <span className="text-xs text-gray-400">—</span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4">
-                          <Badge className="bg-purple-100 text-purple-800">
-                            {t(`services:category_${service.category.toLowerCase().replace(/\s+/g, '_')}`, service.category)}
-                          </Badge>
-                        </td>
-                        <td className="px-6 py-4">
-                          <button
-                            onClick={() => handleToggleServiceActive(service)}
-                            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${service.is_active
-                              ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                              : 'bg-red-100 text-red-800 hover:bg-red-200'
-                              }`}
-                          >
-                            {service.is_active ? t('services:active') : t('services:inactive')}
-                          </button>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            {/* Кнопки редактирования и удаления только если есть право */}
-                            {permissions.canEditServices && (
-                              <>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => handleEditService(service)}
-                                >
-                                  <Edit className="w-4 h-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="text-red-600 hover:text-red-700"
-                                  onClick={() => handleDeleteService(service.id)}
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="py-20 text-center text-gray-500">
-                <Scissors className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <p>{t('services:services_not_found')}</p>
-              </div>
-            )}
-          </div>
-        </>
-      )}
+          </>
+        )
+      }
 
       {/* PACKAGES TAB */}
-      {activeTab === 'packages' && (
-        <>
-          {/* Info Alert */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-blue-800 font-medium">{t('services:how_special_packages_work')}</p>
-                <ul className="text-blue-700 text-sm mt-2 space-y-1 list-disc list-inside">
-                  <li>{t('services:when_client_mentions_keywords_or_promo_code_bot_will_offer_special_price')}</li>
-                  <li>{t('services:bot_automatically_recognizes_the_context_of_the_advertising_campaign')}</li>
-                  <li>{t('services:packages_can_be_limited_by_time_and_usage_count')}</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {/* Packages Search and Filters */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder={t('services:search_packages_promo_codes')}
-                  value={packageSearchTerm}
-                  onChange={(e) => setPackageSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select value={packageStatusFilter} onValueChange={(value: any) => setPackageStatusFilter(value)}>
-                <SelectTrigger className="w-full md:w-[200px]">
-                  <SelectValue placeholder={t('services:status')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('services:all_packages')}</SelectItem>
-                  <SelectItem value="active">{t('services:active')}</SelectItem>
-                  <SelectItem value="inactive">{t('services:inactive')}</SelectItem>
-                </SelectContent>
-              </Select>
-              {/* Кнопка создания только если есть право */}
-              {permissions.canEditServices && (
-                <Button
-                  className="bg-pink-600 hover:bg-pink-700"
-                  onClick={handleOpenAddPackage}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {t('services:create_package')}
-                </Button>
-              )}
-            </div>
-          </div>
-
-          {/* Packages Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredPackages.map((pkg) => (
-              <div
-                key={pkg.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
-              >
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 mb-1">{pkg.name_ru}</h3>
-                    <p className="text-sm text-gray-500">{pkg.name}</p>
-                  </div>
-                  <Badge className={pkg.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-                    {pkg.is_active ? t('services:active') : t('services:inactive')}
-                  </Badge>
+      {
+        activeTab === 'packages' && (
+          <>
+            {/* Info Alert */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-blue-800 font-medium">{t('services:how_special_packages_work')}</p>
+                  <ul className="text-blue-700 text-sm mt-2 space-y-1 list-disc list-inside">
+                    <li>{t('services:when_client_mentions_keywords_or_promo_code_bot_will_offer_special_price')}</li>
+                    <li>{t('services:bot_automatically_recognizes_the_context_of_the_advertising_campaign')}</li>
+                    <li>{t('services:packages_can_be_limited_by_time_and_usage_count')}</li>
+                  </ul>
                 </div>
+              </div>
+            </div>
 
-                {/* Promo Code */}
-                {pkg.promo_code && (
-                  <div className="bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 mb-4 flex items-center gap-2">
-                    <Tag className="w-4 h-4 text-purple-600" />
-                    <span className="text-purple-900 font-mono font-medium">{pkg.promo_code}</span>
-                  </div>
+            {/* Packages Search and Filters */}
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder={t('services:search_packages_promo_codes')}
+                    value={packageSearchTerm}
+                    onChange={(e) => setPackageSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <Select value={packageStatusFilter} onValueChange={(value: any) => setPackageStatusFilter(value)}>
+                  <SelectTrigger className="w-full md:w-[200px]">
+                    <SelectValue placeholder={t('services:status')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('services:all_packages')}</SelectItem>
+                    <SelectItem value="active">{t('services:active')}</SelectItem>
+                    <SelectItem value="inactive">{t('services:inactive')}</SelectItem>
+                  </SelectContent>
+                </Select>
+                {/* Кнопка создания только если есть право */}
+                {permissions.canEditServices && (
+                  <Button
+                    className="bg-pink-600 hover:bg-pink-700"
+                    onClick={handleOpenAddPackage}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    {t('services:create_package')}
+                  </Button>
                 )}
+              </div>
+            </div>
 
-                {/* Price */}
-                <div className="mb-4">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-pink-600">
-                      {pkg.special_price} {pkg.currency}
-                    </span>
-                    <span className="text-lg text-gray-400 line-through">
-                      {pkg.original_price} {pkg.currency}
-                    </span>
+            {/* Packages Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredAndSortedPackages.map((pkg: SpecialPackage) => (
+                <div
+                  key={pkg.id}
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+                >
+                  {/* Header */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900 mb-1">{pkg.name_ru}</h3>
+                      <p className="text-sm text-gray-500">{pkg.name}</p>
+                    </div>
+                    <Badge className={pkg.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                      {pkg.is_active ? t('services:active') : t('services:inactive')}
+                    </Badge>
                   </div>
-                  <div className="text-sm text-green-600 font-medium">
-                    Скидка {pkg.discount_percent}%
-                  </div>
-                </div>
 
-                {/* Description */}
-                <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                  {pkg.description_ru || pkg.description}
-                </p>
+                  {/* Promo Code */}
+                  {pkg.promo_code && (
+                    <div className="bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 mb-4 flex items-center gap-2">
+                      <Tag className="w-4 h-4 text-purple-600" />
+                      <span className="text-purple-900 font-mono font-medium">{pkg.promo_code}</span>
+                    </div>
+                  )}
 
-                {/* Keywords */}
-                {pkg.keywords.length > 0 && (
+                  {/* Price */}
                   <div className="mb-4">
-                    <p className="text-xs text-gray-500 mb-1">{t('services:keywords')}:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {pkg.keywords.slice(0, 3).map((keyword, idx) => (
-                        <span key={idx} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
-                          {keyword}
-                        </span>
-                      ))}
-                      {pkg.keywords.length > 3 && (
-                        <span className="text-xs text-gray-500">+{pkg.keywords.length - 3}</span>
-                      )}
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold text-pink-600">
+                        {pkg.special_price} {pkg.currency}
+                      </span>
+                      <span className="text-lg text-gray-400 line-through">
+                        {pkg.original_price} {pkg.currency}
+                      </span>
+                    </div>
+                    <div className="text-sm text-green-600 font-medium">
+                      Скидка {pkg.discount_percent}%
                     </div>
                   </div>
-                )}
 
-                {/* Validity */}
-                <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
-                  <Calendar className="w-4 h-4" />
-                  <span>
-                    {new Date(pkg.valid_from).toLocaleDateString()} - {new Date(pkg.valid_until).toLocaleDateString()}
-                  </span>
+                  {/* Description */}
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                    {pkg.description_ru || pkg.description}
+                  </p>
+
+                  {/* Keywords */}
+                  {pkg.keywords.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs text-gray-500 mb-1">{t('services:keywords')}:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {pkg.keywords.slice(0, 3).map((keyword: string, idx: number) => (
+                          <span key={idx} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+                            {keyword}
+                          </span>
+                        ))}
+                        {pkg.keywords.length > 3 && (
+                          <span className="text-xs text-gray-500">+{pkg.keywords.length - 3}</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Validity */}
+                  <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
+                    <Calendar className="w-4 h-4" />
+                    <span>
+                      {new Date(pkg.valid_from).toLocaleDateString()} - {new Date(pkg.valid_until).toLocaleDateString()}
+                    </span>
+                  </div>
+
+                  {/* Stats */}
+                  {pkg.max_usage && (
+                    <div className="text-xs text-gray-500 mb-4">
+                      {t('services:used')}: {pkg.usage_count} / {pkg.max_usage}
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  {permissions.canEditServices && (
+                    <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleEditPackage(pkg)}
+                        className="flex-1"
+                      >
+                        <Edit className="w-4 h-4 mr-1" />
+                        {t('services:edit')}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleTogglePackageActive(pkg)}
+                        className={pkg.is_active ? 'text-orange-600' : 'text-green-600'}
+                      >
+                        {pkg.is_active ? t('services:disable') : t('services:enable')}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleDeletePackage(pkg.id)}
+                        className="text-red-600"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  )}
                 </div>
-
-                {/* Stats */}
-                {pkg.max_usage && (
-                  <div className="text-xs text-gray-500 mb-4">
-                    {t('services:used')}: {pkg.usage_count} / {pkg.max_usage}
-                  </div>
-                )}
-
-                {/* Actions */}
-                {permissions.canEditServices && (
-                  <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleEditPackage(pkg)}
-                      className="flex-1"
-                    >
-                      <Edit className="w-4 h-4 mr-1" />
-                      {t('services:edit')}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleTogglePackageActive(pkg)}
-                      className={pkg.is_active ? 'text-orange-600' : 'text-green-600'}
-                    >
-                      {pkg.is_active ? t('services:disable') : t('services:enable')}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDeletePackage(pkg.id)}
-                      className="text-red-600"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {filteredPackages.length === 0 && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 text-center">
-              <Gift className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 mb-4">{t('services:special_packages_not_found')}</p>
-              <Button onClick={handleOpenAddPackage} className="bg-pink-600 hover:bg-pink-700">
-                {t('services:create_first_package')}
-              </Button>
+              ))}
             </div>
-          )}
-        </>
-      )}
+
+            {filteredAndSortedPackages.length === 0 && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 text-center">
+                <Gift className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500 mb-4">{t('services:special_packages_not_found')}</p>
+                <Button onClick={handleOpenAddPackage} className="bg-pink-600 hover:bg-pink-700">
+                  {t('services:create_first_package')}
+                </Button>
+              </div>
+            )}
+          </>
+        )
+      }
 
       {/* Service Modal */}
       <Dialog open={isServiceModalOpen} onOpenChange={setIsServiceModalOpen}>
