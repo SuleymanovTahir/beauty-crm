@@ -314,7 +314,7 @@ export default function Broadcasts() {
                     onValueChange={(value) => setForm({ ...form, subscription_type: value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t('broadcasts:select_type', 'Выберите тип')} />
+                      <SelectValue placeholder={t('select_type', 'Выберите тип')} />
                     </SelectTrigger>
                     <SelectContent>
                       {Object.entries(availableSubscriptions)
@@ -336,7 +336,7 @@ export default function Broadcasts() {
                       id="subject"
                       value={form.subject}
                       onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                      placeholder={t('broadcasts:placeholder_subject', 'Специальное предложение для вас!')}
+                      placeholder={t('placeholder_subject', 'Специальное предложение для вас!')}
                     />
                   </div>
                 )}
@@ -349,7 +349,7 @@ export default function Broadcasts() {
                     onValueChange={(value) => setForm({ ...form, target_role: value === 'all' ? '' : value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t('broadcasts:placeholder_all_users', 'Все пользователи')} />
+                      <SelectValue placeholder={t('placeholder_all_users', 'Все пользователи')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Все пользователи</SelectItem>
@@ -434,7 +434,7 @@ export default function Broadcasts() {
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                     rows={8}
-                    placeholder={t('broadcasts:placeholder_message', 'Введите текст вашего сообщения...')}
+                    placeholder={t('placeholder_message', 'Введите текст вашего сообщения...')}
                   />
                   <p className="text-xs text-gray-500 mt-1">
                     {form.message.length} символов
@@ -494,7 +494,7 @@ export default function Broadcasts() {
                 <div className="text-center py-12">
                   <Eye className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-500 text-sm">
-                    {t('broadcasts:click_preview_to_see', 'Нажмите "Предпросмотр" чтобы увидеть получателей')}
+                    {t('click_preview_to_see', 'Нажмите "Предпросмотр" чтобы увидеть получателей')}
                   </p>
                 </div>
               ) : (
