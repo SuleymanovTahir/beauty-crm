@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Send, Trash2, FileText, X, Edit } from 'lucide-react';
+import { Plus, Send, Trash2, FileText, X, Edit, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import '../../styles/crm-pages.css';
@@ -19,27 +19,44 @@ interface Contract {
     signed_at?: string;
 }
 
+interface ContractType {
+    id: number;
+    name: string;
+    code: string;
+    description: string;
+    is_system: boolean;
+}
+
 const Contracts = () => {
     const { t } = useTranslation('admin/contracts');
     const [contracts, setContracts] = useState<Contract[]>([]);
+    const [contractTypes, setContractTypes] = useState<ContractType[]>([]);
     const [loading, setLoading] = useState(true);
     const [showContractDialog, setShowContractDialog] = useState(false);
     const [showSendDialog, setShowSendDialog] = useState(false);
+    const [showTypesDialog, setShowTypesDialog] = useState(false);
     const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
     const [editingContract, setEditingContract] = useState<Contract | null>(null);
     const [filterStatus, setFilterStatus] = useState<string>('');
+    const [userRole, setUserRole] = useState<string>('');
 
     useEffect(() => {
-        loadContracts();
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        setUserRole(user.role || '');
+        loadData();
     }, [filterStatus]);
 
-    const loadContracts = async () => {
+    const loadData = async () => {
         try {
             setLoading(true);
-            const response = await api.getContracts(undefined, filterStatus);
-            setContracts(response.contracts);
+            const [contractsRes, typesRes] = await Promise.all([
+                api.getContracts(undefined, filterStatus),
+                api.getContractTypes()
+            ]);
+            setContracts(contractsRes.contracts);
+            setContractTypes(typesRes.types || []);
         } catch (error) {
-            console.error('Error loading contracts:', error);
+            console.error('Error loading data:', error);
         } finally {
             setLoading(false);
         }
@@ -51,7 +68,7 @@ const Contracts = () => {
         try {
             await api.delete(`/api/contracts/${id}`);
             toast.success(t('messages.contractDeleted'));
-            loadContracts();
+            loadData();
         } catch (error) {
             console.error('Error deleting contract:', error);
             toast.error(t('errors.deleteError', 'Error deleting contract'));
@@ -68,6 +85,13 @@ const Contracts = () => {
         }
     };
 
+    const getTypeName = (code: string) => {
+        const type = contractTypes.find(t => t.code === code);
+        return type ? type.name : code;
+    }
+
+    const canManageTypes = ['admin', 'director'].includes(userRole);
+
     return (
         <div className="crm-page">
             <div className="crm-page-header">
@@ -75,13 +99,21 @@ const Contracts = () => {
                     <h1>{t('title')}</h1>
                     <p className="text-gray-600">{t('subtitle')}</p>
                 </div>
-                <button className="crm-btn-primary" onClick={() => {
-                    setEditingContract(null);
-                    setShowContractDialog(true);
-                }}>
-                    <Plus size={20} />
-                    {t('addContract')}
-                </button>
+                <div className="flex gap-2">
+                    {canManageTypes && (
+                        <button className="crm-btn-secondary" onClick={() => setShowTypesDialog(true)}>
+                            <Settings size={20} />
+                            {t('manageTypes', 'Типы договоров')}
+                        </button>
+                    )}
+                    <button className="crm-btn-primary" onClick={() => {
+                        setEditingContract(null);
+                        setShowContractDialog(true);
+                    }}>
+                        <Plus size={20} />
+                        {t('addContract')}
+                    </button>
+                </div>
             </div>
 
             <div className="crm-filters">
@@ -107,6 +139,7 @@ const Contracts = () => {
                             <tr>
                                 <th>{t('contractNumber')}</th>
                                 <th>{t('client')}</th>
+                                <th>{t('type', 'Тип')}</th>
                                 <th>{t('status')}</th>
                                 <th>{t('createdAt')}</th>
                                 <th>{t('actions')}</th>
@@ -126,6 +159,9 @@ const Contracts = () => {
                                             <div className="client-name">{contract.client_name}</div>
                                             <div className="client-phone">{contract.client_phone}</div>
                                         </div>
+                                    </td>
+                                    <td>
+                                        {getTypeName(contract.contract_type)}
                                     </td>
                                     <td>
                                         <span className={`crm-badge ${getStatusColor(contract.status)}`}>
@@ -174,10 +210,11 @@ const Contracts = () => {
             {showContractDialog && (
                 <ContractDialog
                     contract={editingContract}
+                    contractTypes={contractTypes}
                     onClose={() => setShowContractDialog(false)}
                     onSuccess={() => {
                         setShowContractDialog(false);
-                        loadContracts();
+                        loadData();
                     }}
                 />
             )}
@@ -192,8 +229,15 @@ const Contracts = () => {
                     onSuccess={() => {
                         setShowSendDialog(false);
                         setSelectedContract(null);
-                        loadContracts();
+                        loadData();
                     }}
+                />
+            )}
+
+            {showTypesDialog && (
+                <ContractTypesDialog
+                    onClose={() => setShowTypesDialog(false)}
+                    onUpdate={() => loadData()}
                 />
             )}
         </div>
@@ -202,11 +246,12 @@ const Contracts = () => {
 
 interface ContractDialogProps {
     contract?: Contract | null;
+    contractTypes: ContractType[];
     onClose: () => void;
     onSuccess: () => void;
 }
 
-const ContractDialog = ({ contract, onClose, onSuccess }: ContractDialogProps) => {
+const ContractDialog = ({ contract, contractTypes, onClose, onSuccess }: ContractDialogProps) => {
     const { t } = useTranslation('admin/contracts');
     const [clients, setClients] = useState<any[]>([]);
     const [formData, setFormData] = useState<{ client_id: string; booking_id: number | null; contract_type: string; template_name: string }>({
@@ -216,6 +261,9 @@ const ContractDialog = ({ contract, onClose, onSuccess }: ContractDialogProps) =
         template_name: 'default'
     });
 
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const isRestricted = ['sales', 'manager'].includes(user.role);
+
     useEffect(() => {
         loadClients();
         if (contract) {
@@ -223,7 +271,7 @@ const ContractDialog = ({ contract, onClose, onSuccess }: ContractDialogProps) =
                 client_id: contract.client_id,
                 booking_id: contract.booking_id || null,
                 contract_type: contract.contract_type || 'service',
-                template_name: 'default' // Assuming template name isn't fully stored or retrieved yet, generic fallback
+                template_name: 'default'
             });
         }
     }, [contract]);
@@ -254,6 +302,11 @@ const ContractDialog = ({ contract, onClose, onSuccess }: ContractDialogProps) =
         }
     };
 
+    // Filter types logic
+    const displayedTypes = isRestricted
+        ? contractTypes.filter(type => type.code === 'service')
+        : contractTypes;
+
     return (
         <div className="crm-modal-overlay" onClick={onClose}>
             <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
@@ -270,7 +323,7 @@ const ContractDialog = ({ contract, onClose, onSuccess }: ContractDialogProps) =
                                 value={formData.client_id}
                                 onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
                                 required
-                                disabled={!!contract} // Disable client change on edit to preserve consistency
+                                disabled={!!contract}
                             >
                                 <option value="">{t('form.selectClient')}</option>
                                 {clients.map((client) => (
@@ -288,9 +341,11 @@ const ContractDialog = ({ contract, onClose, onSuccess }: ContractDialogProps) =
                                 value={formData.contract_type}
                                 onChange={(e) => setFormData({ ...formData, contract_type: e.target.value })}
                             >
-                                <option value="service">{t('contractTypes.service')}</option>
-                                <option value="employment">{t('contractTypes.employment')}</option>
-                                <option value="rental">{t('contractTypes.rental')}</option>
+                                {displayedTypes.map((type) => (
+                                    <option key={type.code} value={type.code}>
+                                        {type.name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                     </div>
@@ -372,6 +427,206 @@ const SendContractDialog = ({ contract, onClose, onSuccess }: any) => {
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    );
+};
+
+const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
+    const { t } = useTranslation('admin/contracts');
+    const [types, setTypes] = useState<ContractType[]>([]);
+    const [editingType, setEditingType] = useState<ContractType | null>(null);
+    const [formData, setFormData] = useState({ name: '', code: '', description: '' });
+    const [mode, setMode] = useState<'list' | 'edit' | 'delete'>('list');
+    const [typeToDelete, setTypeToDelete] = useState<ContractType | null>(null);
+    const [deleteWithDocs, setDeleteWithDocs] = useState(false);
+
+    useEffect(() => {
+        loadTypes();
+    }, []);
+
+    const loadTypes = async () => {
+        try {
+            const response = await api.getContractTypes();
+            setTypes(response.types);
+        } catch (error) {
+            console.error('Error loading types:', error);
+        }
+    };
+
+    const handleSave = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            if (editingType) {
+                await api.updateContractType(editingType.id, formData);
+                toast.success('Тип обновлен');
+            } else {
+                await api.createContractType(formData);
+                toast.success('Тип создан');
+            }
+            // Reset and reload
+            setEditingType(null);
+            setFormData({ name: '', code: '', description: '' });
+            setMode('list');
+            loadTypes();
+            onUpdate();
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    };
+
+    const confirmDelete = async () => {
+        if (!typeToDelete) return;
+        try {
+            await api.deleteContractType(typeToDelete.id, deleteWithDocs);
+            toast.success('Тип удален');
+            setMode('list');
+            setTypeToDelete(null);
+            loadTypes();
+            onUpdate();
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    };
+
+    if (mode === 'edit') {
+        return (
+            <div className="crm-modal-overlay" onClick={onClose}>
+                <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
+                    <button className="crm-modal-close" onClick={() => setMode('list')}>
+                        <X size={20} />
+                    </button>
+                    <h2>{editingType ? 'Редактировать тип' : 'Создать тип'}</h2>
+                    <form onSubmit={handleSave}>
+                        <div className="crm-form-content">
+                            <div className="crm-form-group">
+                                <label className="crm-label">Название</label>
+                                <input className="crm-input" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+                            </div>
+                            <div className="crm-form-group">
+                                <label className="crm-label">Код (с-лат, уникальный)</label>
+                                <input className="crm-input" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} required disabled={!!editingType} />
+                            </div>
+                            <div className="crm-form-group">
+                                <label className="crm-label">Описание</label>
+                                <textarea className="crm-input" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
+                            </div>
+                        </div>
+                        <div className="crm-modal-footer">
+                            <button type="button" className="crm-btn-secondary" onClick={() => setMode('list')}>Отмена</button>
+                            <button type="submit" className="crm-btn-primary">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+
+    if (mode === 'delete' && typeToDelete) {
+        return (
+            <div className="crm-modal-overlay" onClick={onClose}>
+                <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
+                    <button className="crm-modal-close" onClick={() => setMode('list')}>
+                        <X size={20} />
+                    </button>
+                    <h2>Удаление типа "{typeToDelete.name}"</h2>
+                    <div className="crm-form-content">
+                        <p className="mb-4">Вы хотите удалить этот тип договора. Как поступить с существующими договорами этого типа?</p>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="flex items-center gap-2 cursor-pointer p-2 border rounded hover:bg-gray-50">
+                                <input
+                                    type="radio"
+                                    name="deleteOption"
+                                    checked={deleteWithDocs}
+                                    onChange={() => setDeleteWithDocs(true)}
+                                />
+                                <div>
+                                    <span className="font-medium">Удалить все договоры</span>
+                                    <p className="text-sm text-gray-500">Все документы этого типа будут удалены безвозвратно.</p>
+                                </div>
+                            </label>
+
+                            <label className="flex items-center gap-2 cursor-pointer p-2 border rounded hover:bg-gray-50">
+                                <input
+                                    type="radio"
+                                    name="deleteOption"
+                                    checked={!deleteWithDocs}
+                                    onChange={() => setDeleteWithDocs(false)}
+                                />
+                                <div>
+                                    <span className="font-medium">Оставить договоры без типа</span>
+                                    <p className="text-sm text-gray-500">Договоры останутся, но поле "Тип" будет очищено.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div className="crm-modal-footer">
+                        <button type="button" className="crm-btn-secondary" onClick={() => setMode('list')}>Отмена</button>
+                        <button type="button" className="crm-btn-danger" onClick={confirmDelete}>Подтвердить удаление</button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="crm-modal-overlay" onClick={onClose}>
+            <div className="crm-modal" style={{ maxWidth: '600px' }} onClick={(e) => e.stopPropagation()}>
+                <button className="crm-modal-close" onClick={onClose}>
+                    <X size={20} />
+                </button>
+                <div className="flex justify-between items-center mb-4">
+                    <h2>Типы договоров</h2>
+                    <button className="crm-btn-primary" onClick={() => {
+                        setEditingType(null);
+                        setFormData({ name: '', code: '', description: '' });
+                        setMode('edit');
+                    }}>
+                        <Plus size={16} /> Добавить
+                    </button>
+                </div>
+
+                <div className="crm-table-container" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                    <table className="crm-table">
+                        <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Код</th>
+                                <th style={{ width: '100px' }}>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {types.map(type => (
+                                <tr key={type.id}>
+                                    <td>
+                                        <div className="font-medium">{type.name}</div>
+                                        <div className="text-xs text-gray-500">{type.description}</div>
+                                    </td>
+                                    <td><code>{type.code}</code></td>
+                                    <td>
+                                        <div className="flex gap-2">
+                                            <button className="crm-btn-icon" onClick={() => {
+                                                setEditingType(type);
+                                                setFormData({ name: type.name, code: type.code, description: type.description });
+                                                setMode('edit');
+                                            }}>
+                                                <Edit size={16} />
+                                            </button>
+                                            <button className="crm-btn-icon text-red-500" onClick={() => {
+                                                setTypeToDelete(type);
+                                                setDeleteWithDocs(false); // Default to safe option
+                                                setMode('delete');
+                                            }}>
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

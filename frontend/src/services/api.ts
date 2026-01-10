@@ -2066,6 +2066,30 @@ export class ApiClient {
   async getMarketplaceStats() {
     return this.request<any>('/api/marketplace/stats')
   }
+  // ===== CONTRACT TYPES =====
+  async getContractTypes() {
+    return this.request<{ types: any[] }>('/api/contract-types')
+  }
+
+  async createContractType(data: any) {
+    return this.request('/api/contract-types', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    })
+  }
+
+  async updateContractType(id: number, data: any) {
+    return this.request(`/api/contract-types/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    })
+  }
+
+  async deleteContractType(id: number, deleteDocuments: boolean) {
+    return this.request(`/api/contract-types/${id}?delete_documents=${deleteDocuments}`, {
+      method: 'DELETE'
+    })
+  }
 }
 
 export const api = new ApiClient()

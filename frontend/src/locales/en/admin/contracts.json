@@ -56,5 +56,28 @@
     "contractUpdated": "The contract has been updated",
     "contractSent": "The contract has been sent",
     "contractDeleted": "Contract deleted"
+  },
+  "manageTypes": "Contract Types",
+  "type": "Type",
+  "typeManagement": {
+    "title": "Contract Types",
+    "editType": "Edit Type",
+    "createType": "Create Type",
+    "name": "Name",
+    "code": "Code (latin, unique)",
+    "description": "Description",
+    "add": "Add",
+    "deleteTitle": "Deleting type \"{{name}}\"",
+    "deletePrompt": "You are deleting this contract type. What should we do with existing contracts of this type?",
+    "deleteWithDocs": "Delete all contracts",
+    "deleteWithDocsSub": "All documents of this type will be permanently deleted.",
+    "keepDocs": "Keep contracts without type",
+    "keepDocsSub": "Contracts will remain, but the 'Type' field will be cleared.",
+    "confirmDelete": "Confirm Delete",
+    "messages": {
+      "updated": "Type updated",
+      "created": "Type created",
+      "deleted": "Type deleted"
+    }
   }
 }

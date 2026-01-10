@@ -64,6 +64,12 @@ async def get_contracts(
             query += " AND c.status = %s"
             params.append(status)
         
+        # Ограничение прав доступа для менеджеров и продажников
+        user_role = current_user.get("role")
+        if user_role in ["sales", "manager"]:
+            # Они видят только клиентские договоры (не офисные)
+            query += " AND c.contract_type = 'service'"
+        
         query += " ORDER BY c.created_at DESC"
         
         c.execute(query, params)
@@ -385,5 +391,126 @@ async def delete_contract(
         conn.rollback()
         log_warning(f"❌ Ошибка удаления договора: {e}", "api")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+# ===== ТИПЫ ДОГОВОРОВ =====
+
+class ContractTypeCreate(BaseModel):
+    name: str
+    code: str
+    description: Optional[str] = None
+
+class ContractTypeUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+
+@router.get("/contract-types")
+async def get_contract_types():
+    """Получить список типов договоров"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("SELECT id, name, code, description, is_system FROM contract_types ORDER BY id")
+        types = []
+        for row in c.fetchall():
+            types.append({
+                "id": row[0],
+                "name": row[1],
+                "code": row[2],
+                "description": row[3],
+                "is_system": row[4]
+            })
+        return {"types": types}
+    finally:
+        conn.close()
+
+@router.post("/contract-types")
+async def create_contract_type(
+    type_data: ContractTypeCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Создать новый тип договора"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        # Check if code exists
+        c.execute("SELECT 1 FROM contract_types WHERE code = %s", (type_data.code,))
+        if c.fetchone():
+            raise HTTPException(status_code=400, detail="Тип с таким кодом уже существует")
+
+        c.execute("""
+            INSERT INTO contract_types (name, code, description)
+            VALUES (%s, %s, %s)
+            RETURNING id
+        """, (type_data.name, type_data.code, type_data.description))
+        
+        type_id = c.fetchone()[0]
+        conn.commit()
+        log_info(f"✅ Тип договора '{type_data.name}' создан", "api")
+        return {"id": type_id, "message": "Тип создан"}
+    finally:
+        conn.close()
+
+@router.put("/contract-types/{type_id}")
+async def update_contract_type(
+    type_id: int,
+    type_data: ContractTypeUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Обновить тип договора"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        updates = []
+        params = []
+        if type_data.name:
+            updates.append("name = %s")
+            params.append(type_data.name)
+        if type_data.description:
+            updates.append("description = %s")
+            params.append(type_data.description)
+            
+        if not updates:
+            return {"message": "Нет данных для обновления"}
+            
+        params.append(type_id)
+        c.execute(f"UPDATE contract_types SET {', '.join(updates)} WHERE id = %s", params)
+        conn.commit()
+        return {"message": "Тип обновлен"}
+    finally:
+        conn.close()
+
+@router.delete("/contract-types/{type_id}")
+async def delete_contract_type(
+    type_id: int,
+    delete_documents: bool = Query(False, description="Удалить все документы этого типа"),
+    current_user: dict = Depends(get_current_user)
+):
+    """Удалить тип договора"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        # Get type info
+        c.execute("SELECT code, is_system FROM contract_types WHERE id = %s", (type_id,))
+        row = c.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Тип не найден")
+        
+        code, is_system = row
+        
+        # if is_system:
+        #    raise HTTPException(status_code=400, detail="Нельзя удалить системный тип")
+        
+        if delete_documents:
+            c.execute("DELETE FROM contracts WHERE contract_type = %s", (code,))
+        else:
+            c.execute("UPDATE contracts SET contract_type = NULL WHERE contract_type = %s", (code,))
+            
+        c.execute("DELETE FROM contract_types WHERE id = %s", (type_id,))
+        conn.commit()
+        log_info(f"✅ Тип договора {code} удален (delete_documents={delete_documents})", "api")
+        return {"message": "Тип удален"}
     finally:
         conn.close()
