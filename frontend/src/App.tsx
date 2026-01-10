@@ -1,6 +1,7 @@
 // /frontend/src/App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Toaster } from './components/ui/sonner';
 import './i18n';
 import { useAuth } from './contexts/AuthContext';
@@ -87,6 +88,7 @@ const ServiceDetail = React.lazy(() => import('../public_landing/pages/ServiceDe
 const AccountPage = React.lazy(() => import('../public_landing/pages/account/AccountPage').then(module => ({ default: module.AccountPage })));
 const UserBookingWizard = React.lazy(() => import('../public_landing/pages/account/UserBookingWizard').then(module => ({ default: module.UserBookingWizard })));
 const DataDeletionNew = React.lazy(() => import('../public_landing/pages/DataDeletion'));
+const Unsubscribe = React.lazy(() => import('./pages/public/Unsubscribe'));
 
 const Login = React.lazy(() => import('../public_landing/pages/LoginPage').then(module => ({ default: module.LoginPage })));
 const AdminLogin = React.lazy(() => import('./pages/auth/Login'));
@@ -144,6 +146,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 };
 
 export default function App() {
+  const { t } = useTranslation('common');
   const { user: currentUser, isLoading, logout } = useAuth();
 
   const handleLogout = () => {
@@ -157,7 +160,7 @@ export default function App() {
           <div className="inline-block animate-spin">
             <div className="w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full"></div>
           </div>
-          <p className="mt-4 text-gray-600">Загрузка...</p>
+          <p className="mt-4 text-gray-600">{t('loading')}</p>
         </div>
       </div>
     );
@@ -173,7 +176,7 @@ export default function App() {
                 <div className="inline-block animate-spin">
                   <div className="w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full"></div>
                 </div>
-                <p className="mt-4 text-gray-600">Загрузка...</p>
+                <p className="mt-4 text-gray-600">{t('loading')}</p>
               </div>
             </div>
           }>
@@ -450,6 +453,7 @@ export default function App() {
                 <Route path="/terms" element={<TermsOfUseNew />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
                 <Route path="/data-deletion" element={<DataDeletionNew />} />
+                <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route
                   path="/account/*"
                   element={currentUser ? <AccountPage /> : <Navigate to="/login" replace />}

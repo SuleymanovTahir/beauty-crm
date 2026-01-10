@@ -395,3 +395,62 @@ async def delete_subscription_type(
     except Exception as e:
         log_error(f"Ошибка удаления типа подписки: {e}", "subscriptions")
         raise HTTPException(status_code=500, detail=str(e))
+
+class PublicUnsubscribeRequest(BaseModel):
+    user_id: int
+    subscription_type: str
+    channel: str = 'email'
+
+@router.post("/subscriptions/public/unsubscribe")
+async def public_unsubscribe(req: PublicUnsubscribeRequest):
+    """
+    Публичный эндпоинт для отписаться (из email/ссылки)
+    Не требует авторизации
+    """
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Determine column to update
+        channel_col = None
+        if req.channel == 'email':
+            channel_col = "email_enabled"
+        elif req.channel == 'telegram':
+            channel_col = "telegram_enabled"
+        elif req.channel == 'instagram':
+            channel_col = "instagram_enabled"
+        
+        if channel_col:
+            # Update specific channel
+            c.execute(f"""
+                INSERT INTO user_subscriptions
+                (user_id, subscription_type, is_subscribed, {channel_col}, updated_at)
+                VALUES (%s, %s, TRUE, FALSE, %s)
+                ON CONFLICT(user_id, subscription_type)
+                DO UPDATE SET {channel_col} = FALSE, updated_at = %s
+            """, (
+                req.user_id, req.subscription_type, datetime.now().isoformat(),
+                datetime.now().isoformat()
+            ))
+        else:
+            # Full unsubscribe
+            c.execute(f"""
+                INSERT INTO user_subscriptions
+                (user_id, subscription_type, is_subscribed, updated_at)
+                VALUES (%s, %s, FALSE, %s)
+                ON CONFLICT(user_id, subscription_type)
+                DO UPDATE SET is_subscribed = FALSE, updated_at = %s
+            """, (
+                req.user_id, req.subscription_type, datetime.now().isoformat(),
+                datetime.now().isoformat()
+            ))
+
+        conn.commit()
+        conn.close()
+        
+        log_info(f"Public unsubscribe: User {req.user_id} unsubscribed from {req.subscription_type} ({req.channel})", "subscriptions")
+        return {"success": True}
+        
+    except Exception as e:
+        log_error(f"Public unsubscribe error: {e}", "subscriptions")
+        raise HTTPException(status_code=500, detail=str(e))

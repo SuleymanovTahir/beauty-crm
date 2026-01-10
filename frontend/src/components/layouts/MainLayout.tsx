@@ -244,10 +244,10 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             await api.deleteNotification(id);
             setNotifications(notifications.filter(n => n.id !== id));
             setNotifCount(prev => Math.max(0, prev - 1));
-            toast.success('Уведомление удалено');
+            toast.success(t('notification_deleted', 'Уведомление удалено'));
         } catch (error) {
             console.error('Error deleting notification:', error);
-            toast.error('Ошибка при удалении уведомления');
+            toast.error(t('error_deleting_notification', 'Ошибка при удалении уведомления'));
         }
     };
 
@@ -689,7 +689,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                             ) : (
                                 <img
                                     src={getDynamicAvatar(
-                                        userProfile?.full_name || user?.full_name || 'User',
+                                        userProfile?.full_name || user?.full_name || t('user', 'Пользователь'),
                                         'warm',
                                         user?.role === 'employee' || userProfile?.gender === 'female' ? 'female' : 'male'
                                     )}
@@ -699,7 +699,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                             )}
                             <div className="flex-1 overflow-hidden">
                                 <span className="text-sm font-semibold text-gray-900 block truncate">
-                                    {userProfile?.full_name || user?.full_name || 'Пользователь'}
+                                    {userProfile?.full_name || user?.full_name || t('user', 'Пользователь')}
                                 </span>
                                 <span className="text-[10px] text-gray-500 capitalize leading-tight">@{user?.username || 'user'}</span>
                             </div>

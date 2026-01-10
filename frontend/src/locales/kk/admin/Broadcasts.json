@@ -82,5 +82,14 @@
   "channels_notification": "Хабарландырулар",
   "error_loading_types": "Жазылым түрлерін жүктеу қатесі",
   "placeholder_subscription_key": "акциялар",
-  "telegram_limit_hint": "4096 дейін ұсынылады (Telegram)"
+  "telegram_limit_hint": "4096 дейін ұсынылады (Telegram)",
+  "confirm_broadcast_title": "Жіберуді растау",
+  "check_recipients": "Алушыларды тексеріңіз",
+  "check_recipients_desc": "Жібермес бұрын алушы мәліметтерінің (электрондық пошта, пайдаланушы аты) дұрыс екеніне көз жеткізіңіз.",
+  "showing_first_10": "Алғашқы 10 көрсетілген",
+  "no_contact": "Деректер жоқ",
+  "and_more_users": "...және сонымен қатар {{count}} пайдаланушылар",
+  "no_recipients_found": "Алушылар табылмады",
+  "confirm_and_send": "Растау және жіберу",
+  "sending": "Жіберілуде..."
 }

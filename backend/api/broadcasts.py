@@ -49,8 +49,9 @@ async def preview_broadcast(
         c = conn.cursor()
 
         # Базовый запрос для получения подписчиков
+        # Базовый запрос для получения подписчиков
         query = """
-            SELECT DISTINCT u.id, u.username, u.full_name, u.email, u.telegram_id, NULL AS instagram_link, u.role
+            SELECT DISTINCT u.id, u.username, u.full_name, u.email, u.telegram_id, u.instagram_username as instagram_link, u.role
             FROM users u
             LEFT JOIN user_subscriptions s ON u.id = s.user_id AND s.subscription_type = %s
             WHERE u.is_active = TRUE
@@ -180,6 +181,19 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int)
         c.execute(query, params)
         all_users = c.fetchall()
 
+        # Fetch salon settings for email footer
+        c.execute("SELECT name, address, phone, email, booking_url FROM salon_settings WHERE id = 1")
+        row = c.fetchone()
+        salon_settings = {}
+        if row:
+             salon_settings = {
+                 "name": row[0],
+                 "address": row[1],
+                 "phone": row[2],
+                 "email": row[3],
+                 "website": row[4]
+             }
+
         # Логируем для отладки
         log_info(f"Найдено {len(all_users)} получателей для рассылки. Query params: {params}", "broadcasts")
 
@@ -189,6 +203,8 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int)
             "instagram": {"sent": 0, "failed": 0},
             "notification": {"sent": 0, "failed": 0}
         }
+        
+        import asyncio # Ensure asyncio is available
 
         for user in all_users:
             user_id, username, full_name, email, telegram_id, instagram_username = user
@@ -230,7 +246,18 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int)
                 try:
                     from utils.email import send_broadcast_email
                     unsubscribe_link = f"/unsubscribe?user={user_id}&type={broadcast.subscription_type}&channel=email"
-                    send_broadcast_email(email, broadcast.subject, broadcast.message, full_name, unsubscribe_link)
+                    
+                    # Use asyncio.to_thread for non-blocking email sending
+                    await asyncio.to_thread(
+                        send_broadcast_email,
+                        email, 
+                        broadcast.subject, 
+                        broadcast.message, 
+                        full_name, 
+                        unsubscribe_link,
+                        salon_settings,
+                        broadcast.attachment_urls
+                    )
                     results["email"]["sent"] += 1
                 except Exception as e:
                     log_error(f"Email ошибка для {email}: {e}", "broadcasts")

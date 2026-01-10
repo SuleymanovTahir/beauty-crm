@@ -8,20 +8,19 @@ import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../../components/LanguageSwitcher";
 
 export default function VerifyEmail() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation('auth/verify_email');
 
   // Проверяем есть ли токен в URL
   const tokenFromUrl = searchParams.get("token");
   const email = (location.state as any)?.email || "";
-
-  console.log("VerifyEmail mounted");
-  console.log("Token from URL:", tokenFromUrl);
-  console.log("Email from state:", email);
 
   const [verificationCode, setVerificationCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,7 +41,7 @@ export default function VerifyEmail() {
         if (data.success && data.token && data.user) {
           console.log("Token verification successful, logging in");
           setVerified(true);
-          toast.success("Email подтвержден! Выполняется вход в систему...");
+          toast.success(t('email_verified_login', "Email подтвержден! Выполняется вход в систему..."));
 
           // Используем login из контекста
           login(data.user, data.token);
@@ -61,20 +60,20 @@ export default function VerifyEmail() {
             }
           }, 2000);
         } else {
-          setError(data.error || "Ошибка при подтверждении email");
-          toast.error(data.error || "Ошибка при подтверждении email");
+          setError(data.error || t('verification_error', "Ошибка при подтверждении email"));
+          toast.error(data.error || t('verification_error', "Ошибка при подтверждении email"));
           setLoading(false);
         }
       } catch (err) {
         console.error("Token verification error:", err);
-        setError("Ошибка при подтверждении email");
-        toast.error("Ошибка при подтверждении email");
+        setError(t('verification_error', "Ошибка при подтверждении email"));
+        toast.error(t('verification_error', "Ошибка при подтверждении email"));
         setLoading(false);
       }
     };
 
     verifyByToken();
-  }, [tokenFromUrl, navigate, login]);
+  }, [tokenFromUrl, navigate, login, t]);
 
   // Проверка email из state (для старой системы с кодами)
   useEffect(() => {
@@ -83,18 +82,18 @@ export default function VerifyEmail() {
     console.log("VerifyEmail useEffect running, email:", email);
     if (!email || email.trim() === "") {
       console.log("No email found, redirecting to login");
-      toast.error("Email не найден. Пожалуйста, войдите снова.");
+      toast.error(t('email_not_found', "Email не найден. Пожалуйста, войдите снова."));
       setTimeout(() => {
         navigate("/login");
       }, 2000);
     }
-  }, [email, tokenFromUrl, navigate]);
+  }, [email, tokenFromUrl, navigate, t]);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!verificationCode || verificationCode.length !== 6) {
-      setError("Код должен содержать 6 цифр");
+      setError(t('code_length_error', "Код должен содержать 6 цифр"));
       return;
     }
 
@@ -106,18 +105,18 @@ export default function VerifyEmail() {
 
       if (response.success) {
         setVerified(true);
-        toast.success("Email подтвержден!");
+        toast.success(t('email_verified', "Email подтвержден!"));
 
         // Перенаправляем на логин через 2 секунды
         setTimeout(() => {
-          navigate("/login", { state: { message: "Email подтвержден. Войдите в систему." } });
+          navigate("/login", { state: { message: t('email_verified_login_message', "Email подтвержден. Войдите в систему.") } });
         }, 2000);
       } else {
-        setError(response.error || "Ошибка верификации");
-        toast.error(response.error || "Ошибка верификации");
+        setError(response.error || t('verification_error_short', "Ошибка верификации"));
+        toast.error(response.error || t('verification_error_short', "Ошибка верификации"));
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Ошибка верификации";
+      const message = err instanceof Error ? err.message : t('verification_error_short', "Ошибка верификации");
       setError(message);
       toast.error(message);
       console.error("Verification error:", err);
@@ -134,12 +133,12 @@ export default function VerifyEmail() {
       const response = await api.resendVerification(email);
 
       if (response.success) {
-        toast.success("Новый код отправлен на вашу почту");
+        toast.success(t('new_code_sent', "Новый код отправлен на вашу почту"));
       } else {
-        toast.error(response.error || "Ошибка при отправке кода");
+        toast.error(response.error || t('send_code_error', "Ошибка при отправке кода"));
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Ошибка при отправке кода";
+      const message = err instanceof Error ? err.message : t('send_code_error', "Ошибка при отправке кода");
       toast.error(message);
       console.error("Resend error:", err);
     } finally {
@@ -150,13 +149,18 @@ export default function VerifyEmail() {
   if (verified) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-100 via-blue-100 to-pink-50 flex items-center justify-center p-4">
+        {/* Переключатель языка */}
+        <div className="fixed top-4 right-4 z-50">
+          <LanguageSwitcher />
+        </div>
+
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-4xl text-gray-900 mb-2">Email подтвержден!</h1>
-            <p className="text-gray-600">Перенаправление на страницу входа...</p>
+            <h1 className="text-4xl text-gray-900 mb-2">{t('email_verified_title', "Email подтвержден!")}</h1>
+            <p className="text-gray-600">{t('redirecting_login', "Перенаправление на страницу входа...")}</p>
           </div>
         </div>
       </div>
@@ -165,13 +169,18 @@ export default function VerifyEmail() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-blue-100 to-pink-50 flex items-center justify-center p-4">
+      {/* Переключатель языка */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher />
+      </div>
+
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <ShieldCheck className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl text-gray-900 mb-2">Подтверждение Email</h1>
-          <p className="text-gray-600">Введите код из письма, отправленного на:</p>
+          <h1 className="text-4xl text-gray-900 mb-2">{t('verify_email_title', "Подтверждение Email")}</h1>
+          <p className="text-gray-600">{t('enter_code_from_email', "Введите код из письма, отправленного на:")}</p>
           <p className="text-gray-900 font-semibold mt-2">{email}</p>
         </div>
 
@@ -184,7 +193,7 @@ export default function VerifyEmail() {
 
           <form onSubmit={handleVerify} className="space-y-6">
             <div>
-              <Label htmlFor="code">Код подтверждения</Label>
+              <Label htmlFor="code">{t('verification_code_label', "Код подтверждения")}</Label>
               <Input
                 id="code"
                 required
@@ -196,7 +205,7 @@ export default function VerifyEmail() {
                 className="text-center text-2xl tracking-widest"
               />
               <p className="text-sm text-gray-500 mt-2">
-                Введите 6-значный код из письма
+                {t('enter_6_digit_code', "Введите 6-значный код из письма")}
               </p>
             </div>
 
@@ -209,10 +218,10 @@ export default function VerifyEmail() {
               {loading ? (
                 <>
                   <Loader className="w-4 h-4 animate-spin mr-2" />
-                  Проверка...
+                  {t('verifying', "Проверка...")}
                 </>
               ) : (
-                "Подтвердить"
+                t('confirm_button', "Подтвердить")
               )}
             </Button>
           </form>
@@ -224,7 +233,7 @@ export default function VerifyEmail() {
               disabled={loading}
               className="text-sm"
             >
-              ← Назад к входу
+              ← {t('back_to_login', "Назад к входу")}
             </Button>
             <Button
               variant="ghost"
@@ -232,7 +241,7 @@ export default function VerifyEmail() {
               disabled={loading}
               className="text-sm"
             >
-              Отправить код заново
+              {t('resend_code', "Отправить код заново")}
             </Button>
           </div>
         </div>

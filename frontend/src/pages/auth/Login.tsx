@@ -67,7 +67,7 @@ export default function Login() {
       } else {
         // Проверяем, не подтвержден ли email
         if (response.error_type === "email_not_verified" && response.email) {
-          toast.error("Email не подтвержден. Перенаправление на страницу верификации...");
+          toast.error(t('login:email_not_verified_redirect', "Email не подтвержден. Перенаправление на страницу верификации..."));
           setTimeout(() => {
             navigate("/verify-email", { state: { email: response.email } });
           }, 1500);
@@ -86,7 +86,7 @@ export default function Login() {
       // Проверяем, есть ли информация о неподтвержденном email в ошибке
       if (err.error_type === "email_not_verified" && err.email) {
         console.log("Email not verified, redirecting to verification page with email:", err.email);
-        toast.error("Email не подтвержден. Перенаправление на страницу верификации...");
+        toast.error(t('login:email_not_verified_redirect', "Email не подтвержден. Перенаправление на страницу верификации..."));
         setTimeout(() => {
           console.log("Navigating to /verify-email with email:", err.email);
           navigate("/verify-email", { state: { email: err.email } });

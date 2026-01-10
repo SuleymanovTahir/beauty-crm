@@ -7,10 +7,12 @@ import { Label } from "../../components/ui/label";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
+import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
 
 export default function ResetPassword() {
   const navigate = useNavigate();
+  const { t } = useTranslation('auth/reset_password');
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") || "";
 
@@ -22,28 +24,28 @@ export default function ResetPassword() {
 
   useEffect(() => {
     if (!token) {
-      toast.error("Токен сброса пароля не найден");
+      toast.error(t('token_not_found', "Токен сброса пароля не найден"));
       setTimeout(() => {
         navigate("/forgot-password");
       }, 2000);
     }
-  }, [token, navigate]);
+  }, [token, navigate, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!newPassword || !confirmPassword) {
-      setError("Заполните все поля");
+      setError(t('fill_all_fields', "Заполните все поля"));
       return;
     }
 
     if (newPassword.length < 6) {
-      setError("Пароль должен содержать минимум 6 символов");
+      setError(t('password_too_short', "Пароль должен содержать минимум 6 символов"));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError("Пароли не совпадают");
+      setError(t('passwords_mismatch', "Пароли не совпадают"));
       return;
     }
 
@@ -55,18 +57,18 @@ export default function ResetPassword() {
 
       if (response.success) {
         setSuccess(true);
-        toast.success("Пароль успешно изменен!");
+        toast.success(t('password_changed_success', "Пароль успешно изменен!"));
 
         // Перенаправляем на логин через 2 секунды
         setTimeout(() => {
           navigate("/login");
         }, 2000);
       } else {
-        setError(response.error || "Ошибка при сбросе пароля");
-        toast.error(response.error || "Ошибка при сбросе пароля");
+        setError(response.error || t('reset_error', "Ошибка при сбросе пароля"));
+        toast.error(response.error || t('reset_error', "Ошибка при сбросе пароля"));
       }
     } catch (err: any) {
-      const message = err instanceof Error ? err.message : "Ошибка при сбросе пароля";
+      const message = err instanceof Error ? err.message : t('reset_error', "Ошибка при сбросе пароля");
       setError(message);
       toast.error(message);
       console.error("Reset password error:", err);
@@ -88,8 +90,8 @@ export default function ResetPassword() {
             <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-4xl text-gray-900 mb-2">Пароль изменен!</h1>
-            <p className="text-gray-600">Перенаправление на страницу входа...</p>
+            <h1 className="text-4xl text-gray-900 mb-2">{t('password_changed', "Пароль изменен!")}</h1>
+            <p className="text-gray-600">{t('redirecting_login', "Перенаправление на страницу входа...")}</p>
           </div>
         </div>
       </div>
@@ -108,8 +110,8 @@ export default function ResetPassword() {
           <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <Lock className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl text-gray-900 mb-2">Новый пароль</h1>
-          <p className="text-gray-600">Введите ваш новый пароль</p>
+          <h1 className="text-4xl text-gray-900 mb-2">{t('new_password_title', "Новый пароль")}</h1>
+          <p className="text-gray-600">{t('enter_new_password', "Введите ваш новый пароль")}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -121,7 +123,7 @@ export default function ResetPassword() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="newPassword">Новый пароль</Label>
+              <Label htmlFor="newPassword">{t('new_password_label', "Новый пароль")}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -131,7 +133,7 @@ export default function ResetPassword() {
                   disabled={loading}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Минимум 6 символов"
+                  placeholder={t('min_chars', "Минимум 6 символов")}
                   className="pl-10 pr-3"
                   minLength={6}
                 />
@@ -139,7 +141,7 @@ export default function ResetPassword() {
             </div>
 
             <div>
-              <Label htmlFor="confirmPassword">Подтвердите пароль</Label>
+              <Label htmlFor="confirmPassword">{t('confirm_password_label', "Подтвердите пароль")}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -149,7 +151,7 @@ export default function ResetPassword() {
                   disabled={loading}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Повторите пароль"
+                  placeholder={t('repeat_password', "Повторите пароль")}
                   className="pl-10 pr-3"
                   minLength={6}
                 />
@@ -165,10 +167,10 @@ export default function ResetPassword() {
               {loading ? (
                 <>
                   <Loader className="w-4 h-4 animate-spin mr-2" />
-                  Сохранение...
+                  {t('saving', "Сохранение...")}
                 </>
               ) : (
-                "Сохранить новый пароль"
+                t('save_new_password', "Сохранить новый пароль")
               )}
             </Button>
           </form>
@@ -180,7 +182,7 @@ export default function ResetPassword() {
               onClick={() => navigate("/login")}
               disabled={loading}
             >
-              Вернуться к входу
+              {t('back_to_login', "Вернуться к входу")}
             </Button>
           </div>
         </div>
