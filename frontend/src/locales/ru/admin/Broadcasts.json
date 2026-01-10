@@ -35,5 +35,21 @@
   "subtitle": "Отправка уведомлений пользователям по разным каналам",
   "target_role": "Целевая роль (опционально)",
   "title": "Массовые рассылки",
-  "total_recipients": "Всего получателей"
+  "total_recipients": "Всего получателей",
+  "subscription_promotions": "Акции и специальные предложения",
+  "subscription_promotions_desc": "Информация о скидках и акциях",
+  "subscription_news": "Новости салона",
+  "subscription_news_desc": "Обновления и новости салона",
+  "subscription_appointments": "Напоминания о записи",
+  "subscription_appointments_desc": "Уведомления о предстоящих визитах",
+  "subscription_new_services": "Новые услуги",
+  "subscription_new_services_desc": "Информация о новых услугах",
+  "subscription_schedule_changes": "Изменения в расписании",
+  "subscription_schedule_changes_desc": "Уведомления об изменениях расписания",
+  "subscription_staff_news": "Новости для персонала",
+  "subscription_staff_news_desc": "Внутренние новости и объявления",
+  "subscription_training": "Обучение и тренинги",
+  "subscription_training_desc": "Информация о тренингах и обучении",
+  "subscription_client_bookings": "Записи клиентов",
+  "subscription_client_bookings_desc": "Уведомления о новых записях"
 }

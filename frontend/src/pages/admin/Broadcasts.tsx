@@ -1,6 +1,6 @@
 // /frontend/src/pages/admin/Broadcasts.tsx
 import { useState, useEffect } from 'react';
-import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield } from 'lucide-react';
+import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield, Bell } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -36,7 +36,7 @@ interface PreviewData {
 }
 
 export default function Broadcasts() {
-  const { t } = useTranslation(['admin/Broadcasts', 'common']);
+  const { t } = useTranslation(['admin/broadcasts', 'common']);
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав
@@ -59,6 +59,7 @@ export default function Broadcasts() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [users, setUsers] = useState<Array<{ id: number; username: string; full_name: string; role: string }>>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [showUserSelection, setShowUserSelection] = useState(true);
 
   useEffect(() => {
     loadSubscriptions();
@@ -69,6 +70,7 @@ export default function Broadcasts() {
   const loadSubscriptions = async () => {
     try {
       const response = await api.getUserSubscriptions();
+      console.log('📋 Available subscriptions:', response.available_types);
       setAvailableSubscriptions(response.available_types);
     } catch (err) {
       console.error('Error loading subscriptions:', err);
@@ -102,6 +104,19 @@ export default function Broadcasts() {
       setLoadingUsers(false);
     }
   };
+
+  // Filter users by target role and auto-select them
+  useEffect(() => {
+    if (form.target_role && form.target_role !== 'all') {
+      const filteredUserIds = users
+        .filter(u => u.role === form.target_role)
+        .map(u => u.id);
+      setForm(prev => ({ ...prev, user_ids: filteredUserIds }));
+    } else if (form.target_role === '' || form.target_role === 'all') {
+      // Clear selection when "all users" selected
+      setForm(prev => ({ ...prev, user_ids: [] }));
+    }
+  }, [form.target_role, users]);
 
   const handleChannelToggle = (channel: string) => {
     if (form.channels.includes(channel)) {
@@ -237,27 +252,7 @@ export default function Broadcasts() {
               <h2 className="text-xl font-bold text-gray-900 mb-6">Параметры рассылки</h2>
 
               <div className="space-y-6">
-                {/* Subscription Type */}
-                <div>
-                  <Label htmlFor="subscription_type">Тип подписки *</Label>
-                  <Select
-                    value={form.subscription_type}
-                    onValueChange={(value) => setForm({ ...form, subscription_type: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('broadcasts:select_type', 'Выберите тип')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(availableSubscriptions).map(([key, info]) => (
-                        <SelectItem key={key} value={key}>
-                          {info.name} - {info.description}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Channels */}
+                {/* Channels - FIRST */}
                 <div>
                   <Label>Каналы отправки *</Label>
                   <div className="flex gap-4 mt-2">
@@ -296,67 +291,61 @@ export default function Broadcasts() {
                       <Instagram className="w-5 h-5" />
                       Instagram
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleChannelToggle('notification')}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${form.channels.includes('notification')
+                        ? 'border-pink-500 bg-pink-50 text-pink-700'
+                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                        }`}
+                    >
+                      <Bell className="w-5 h-5" />
+                      Уведомления
+                    </button>
                   </div>
                 </div>
 
-                {/* User Selection */}
+                {/* Subscription Type */}
                 <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-3 block">
-                    Выбор получателей
-                  </Label>
-                  <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
-                    <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={(form.user_ids || []).length === users.length && users.length > 0}
-                          onChange={handleSelectAllUsers}
-                          className="w-4 h-4 text-pink-600 rounded"
-                        />
-                        <span className="text-sm font-medium text-gray-700">
-                          Выбрать всех ({users.length})
-                        </span>
-                      </label>
-                      <span className="text-xs text-gray-500">
-                        Выбрано: {(form.user_ids || []).length}
-                      </span>
-                    </div>
-                    {loadingUsers ? (
-                      <div className="flex justify-center py-4">
-                        <Loader className="w-5 h-5 animate-spin text-pink-600" />
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        {users.map((user) => (
-                          <label
-                            key={user.id}
-                            className="flex items-center gap-3 p-2 hover:bg-white rounded cursor-pointer transition-colors"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={(form.user_ids || []).includes(user.id)}
-                              onChange={() => handleUserToggle(user.id)}
-                              className="w-4 h-4 text-pink-600 rounded"
-                            />
-                            <div className="flex-1">
-                              <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
-                              <p className="text-xs text-gray-500">@{user.username} · {user.role}</p>
-                            </div>
-                          </label>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2">
-                    Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам
-                  </p>
-                </div>
-
-                {/* Target Role (optional) */}
-                <div>
-                  <Label htmlFor="target_role">Целевая роль (опционально)</Label>
+                  <Label htmlFor="subscription_type">Тип подписки *</Label>
                   <Select
-                    value={form.target_role || undefined}
+                    value={form.subscription_type}
+                    onValueChange={(value) => setForm({ ...form, subscription_type: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('broadcasts:select_type', 'Выберите тип')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(availableSubscriptions)
+                        .filter(([key]) => key && key.trim() !== '')
+                        .map(([key, info]) => (
+                        <SelectItem key={key} value={key}>
+                          {t(info.name, info.name)} - {t(info.description, info.description)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Subject - Only show when email is selected */}
+                {form.channels.includes('email') && (
+                  <div>
+                    <Label htmlFor="subject">Тема (для Email) *</Label>
+                    <Input
+                      id="subject"
+                      value={form.subject}
+                      onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                      placeholder={t('broadcasts:placeholder_subject', 'Специальное предложение для вас!')}
+                    />
+                  </div>
+                )}
+
+                {/* Target Role */}
+                <div>
+                  <Label htmlFor="target_role">Целевая роль *</Label>
+                  <Select
+                    value={form.target_role || 'all'}
                     onValueChange={(value) => setForm({ ...form, target_role: value === 'all' ? '' : value })}
                   >
                     <SelectTrigger>
@@ -372,15 +361,69 @@ export default function Broadcasts() {
                   </Select>
                 </div>
 
-                {/* Subject */}
+                {/* User Selection */}
                 <div>
-                  <Label htmlFor="subject">Тема (для Email) *</Label>
-                  <Input
-                    id="subject"
-                    value={form.subject}
-                    onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                    placeholder={t('broadcasts:placeholder_subject', 'Специальное предложение для вас!')}
-                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowUserSelection(!showUserSelection)}
+                    className="w-full flex items-center justify-between text-sm font-medium text-gray-700 mb-3 hover:text-gray-900 transition-colors"
+                  >
+                    <span>Выбор получателей (опционально)</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-500">Выбрано: {(form.user_ids || []).length}</span>
+                      <svg className={`w-5 h-5 transition-transform ${showUserSelection ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </button>
+
+                  {showUserSelection && (
+                    <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
+                      <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={(form.user_ids || []).length === users.filter(u => !form.target_role || form.target_role === 'all' || u.role === form.target_role).length && users.length > 0}
+                            onChange={handleSelectAllUsers}
+                            className="w-4 h-4 text-pink-600 rounded"
+                          />
+                          <span className="text-sm font-medium text-gray-700">
+                            Выбрать всех ({users.filter(u => !form.target_role || form.target_role === 'all' || u.role === form.target_role).length})
+                          </span>
+                        </label>
+                      </div>
+                      {loadingUsers ? (
+                        <div className="flex justify-center py-4">
+                          <Loader className="w-5 h-5 animate-spin text-pink-600" />
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          {users
+                            .filter(u => !form.target_role || form.target_role === 'all' || u.role === form.target_role)
+                            .map((user) => (
+                            <label
+                              key={user.id}
+                              className="flex items-center gap-3 p-2 hover:bg-white rounded cursor-pointer transition-colors"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={(form.user_ids || []).includes(user.id)}
+                                onChange={() => handleUserToggle(user.id)}
+                                className="w-4 h-4 text-pink-600 rounded"
+                              />
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
+                                <p className="text-xs text-gray-500">@{user.username} · {user.role}</p>
+                              </div>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-500 mt-2">
+                    Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам
+                  </p>
                 </div>
 
                 {/* Message */}
@@ -493,6 +536,16 @@ export default function Broadcasts() {
                           <span className="text-sm text-gray-700">Instagram</span>
                         </div>
                         <span className="font-bold text-purple-600">{preview.by_channel.instagram}</span>
+                      </div>
+                    )}
+
+                    {preview.by_channel.notification > 0 && (
+                      <div className="flex items-center justify-between p-2 bg-pink-50 rounded">
+                        <div className="flex items-center gap-2">
+                          <Bell className="w-4 h-4 text-pink-600" />
+                          <span className="text-sm text-gray-700">Уведомления</span>
+                        </div>
+                        <span className="font-bold text-pink-600">{preview.by_channel.notification}</span>
                       </div>
                     )}
                   </div>
