@@ -1,0 +1,65 @@
+{
+  "title": "المنتجات والمستودعات",
+  "subtitle": "إدارة المنتجات والمخزون",
+  "addProduct": "أضف المنتج",
+  "edit": "يحرر",
+  "delete": "يمسح",
+  "loading": "تحميل...",
+  "allCategories": "جميع الفئات",
+  "noProducts": "لا توجد منتجات حتى الآن",
+  "createFirst": "إضافة المنتج الأول إلى النظام",
+  "form": {
+    "name": "اسم",
+    "nameRu": "الاسم (رو)",
+    "nameEn": "العنوان (بالإنكليزية)",
+    "nameAr": "العنوان (ع)",
+    "category": "فئة",
+    "price": "سعر البيع",
+    "costPrice": "سعر التكلفة",
+    "stockQuantity": "المخزون المتبقي",
+    "minStockLevel": "الحد الأدنى للرصيد",
+    "sku": "شرط",
+    "barcode": "الباركود",
+    "supplier": "مزود",
+    "notes": "ملحوظات",
+    "isActive": "نشيط",
+    "photos": "صورة المنتج",
+    "upload": "تحميل",
+    "uploadError": "حدث خطأ أثناء تحميل الصورة",
+    "save": "يحفظ",
+    "cancel": "يلغي"
+  },
+  "movement": {
+    "title": "حركة البضائع",
+    "type": "نوع الحركة",
+    "quantity": "كمية",
+    "reason": "سبب",
+    "types": {
+      "in": "آت",
+      "out": "استهلاك",
+      "adjustment": "تعديل"
+    }
+  },
+  "messages": {
+    "confirmDelete": "هل أنت متأكد أنك تريد إزالة هذا العنصر؟",
+    "productCreated": "تم إنشاء المنتج",
+    "productUpdated": "تم تحديث المنتج",
+    "productDeleted": "تمت إزالة المنتج",
+    "movementAdded": "تمت إضافة الحركة"
+  },
+  "detail": {
+    "noCategory": "غير مصنف",
+    "costPriceLabel": "التكلفة: {{price}}_ درهم إماراتي",
+    "movementHistory": "تاريخ الحركات",
+    "inStock": "متوفر في المخزون: {{count}}_",
+    "loadingData": "جارٍ تحميل البيانات...",
+    "noMovements": "لا توجد بيانات الحركة",
+    "movementIn": "قبول",
+    "movementOut": "لا تصلح",
+    "movementAdjustment": "تعديل",
+    "totalSold": "إجمالي المبيعات",
+    "totalRevenue": "ربح",
+    "last30Days": "في 30 يوما",
+    "avgPrice": "تزوج. سعر"
+  }
+}

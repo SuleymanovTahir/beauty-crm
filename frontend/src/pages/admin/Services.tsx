@@ -151,7 +151,7 @@ export default function Services() {
   const [editingPackage, setEditingPackage] = useState<SpecialPackage | null>(null);
 
   // Referrals state
-  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [, setCampaigns] = useState<any[]>([]);
   const [isReferralModalOpen, setIsReferralModalOpen] = useState(false);
   const [editingCampaign] = useState<any>(null);
   const [referralFormData, setReferralFormData] = useState({
@@ -177,7 +177,7 @@ export default function Services() {
   const [clientsLoading, setClientsLoading] = useState(false);
 
   // Challenges state
-  const [challenges, setChallenges] = useState<any[]>([]);
+  // Challenges state
   const [isChallengeModalOpen, setIsChallengeModalOpen] = useState(false);
   const [editingChallenge, setEditingChallenge] = useState<any>(null);
   const [challengeFormData, setChallengeFormData] = useState({
@@ -637,28 +637,7 @@ export default function Services() {
     }
   };
 
-  const handleDeleteChallenge = async (id: number) => {
-    if (!confirm(t('services:delete_challenge_confirm'))) return;
-    try {
-      await api.deleteChallenge(id);
-      setChallenges(challenges.filter(c => c.id !== id));
-      toast.success(t('services:challenge_deleted'));
-    } catch (error) {
-      toast.error(t('services:error_deleting'));
-    }
-  };
 
-  const handleToggleChallengeActive = async (challenge: any) => {
-    try {
-      await api.updateChallenge(challenge.id, { ...challenge, is_active: !challenge.is_active });
-      setChallenges(challenges.map(c =>
-        c.id === challenge.id ? { ...c, is_active: !c.is_active } : c
-      ));
-      toast.success(challenge.is_active ? 'Челлендж деактивирован' : 'Челлендж активирован');
-    } catch (error) {
-      toast.error('Ошибка изменения статуса');
-    }
-  };
 
   if (loading) {
     return (
@@ -1115,20 +1094,11 @@ export default function Services() {
                 </div>
                 <div>
                   <Label htmlFor="currency">{t('services:currency')}</Label>
-                  <Select
+                  <Input
                     value={serviceFormData.currency}
-                    onValueChange={(value: string) =>
-                      setServiceFormData({ ...serviceFormData, currency: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="AED">AED</SelectItem>
-                      <SelectItem value="USD">USD</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    disabled
+                    className="bg-gray-100"
+                  />
                 </div>
               </div>
 

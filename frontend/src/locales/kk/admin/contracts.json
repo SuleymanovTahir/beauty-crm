@@ -1,0 +1,52 @@
+{
+  "title": "Шарттар",
+  "subtitle": "Клиенттік келісім-шартты басқару",
+  "addContract": "Келісім жасаңыз",
+  "loading": "Жүктелуде...",
+  "allStatuses": "Барлық күйлер",
+  "contractNumber": "Келісім-шарт №",
+  "client": "Клиент",
+  "status": "Күй",
+  "createdAt": "Жасалу күні",
+  "actions": "Әрекеттер",
+  "sendButton": "Жіберу",
+  "delete": "Жою",
+  "noContracts": "Әзірге келісімшарттар жоқ",
+  "createFirst": "Клиентпен алғашқы келісім-шартыңызды жасаңыз",
+  "statuses": {
+    "draft": "Жоба",
+    "sent": "Жіберілді",
+    "signed": "Қол қойылған",
+    "cancelled": "Бас тартылды"
+  },
+  "form": {
+    "selectClient": "Клиентті таңдаңыз",
+    "contractType": "Шарт түрі",
+    "contractDate": "Келісімшарт күні",
+    "terms": "Келісім шарттары",
+    "notes": "Ескертпелер",
+    "save": "Сақтау",
+    "cancel": "Болдырмау"
+  },
+  "types": {
+    "service": "Қызмет",
+    "product": "Өнім",
+    "subscription": "Жазылым"
+  },
+  "sendDialog": {
+    "title": "Келісімшартты жіберу",
+    "method": "Жеткізу әдісі",
+    "recipient": "Алушы",
+    "email": "Электрондық пошта",
+    "whatsapp": "whatsapp",
+    "telegram": "Telegram",
+    "instagram": "Instagram",
+    "sendButton": "Жіберу"
+  },
+  "messages": {
+    "confirmDelete": "Осы келісімді шынымен жойғыңыз келе ме?",
+    "contractCreated": "Келісімшарт жасалды",
+    "contractSent": "Келісімшарт жіберілді",
+    "contractDeleted": "Келісімшарт жойылды"
+  }
+}
