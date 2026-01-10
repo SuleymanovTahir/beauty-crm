@@ -13,6 +13,13 @@ import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { useTranslation } from 'react-i18next';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from '../../components/ui/dialog';
 import '../../styles/crm-pages.css';
 
 interface BroadcastForm {
@@ -67,13 +74,25 @@ export default function Broadcasts() {
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [showUserSelection, setShowUserSelection] = useState(true);
   const [showManageTypes, setShowManageTypes] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [roles, setRoles] = useState<Array<{ key: string; name: string }>>([]);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     loadSubscriptions();
     loadHistory();
     loadUsers();
+    loadRoles();
   }, []);
+
+  const loadRoles = async () => {
+    try {
+      const response = await api.getRoles();
+      setRoles(response.roles);
+    } catch (err) {
+      console.error('Error loading roles:', err);
+    }
+  };
 
   const loadSubscriptions = async () => {
     try {
@@ -201,7 +220,7 @@ export default function Broadcasts() {
     }
   };
 
-  const handleSend = async () => {
+  const handleSendClick = async () => {
     const newErrors: Record<string, boolean> = {};
     if (!form.subscription_type) newErrors.subscription_type = true;
     if (!form.message) newErrors.message = true;
@@ -216,10 +235,24 @@ export default function Broadcasts() {
       return;
     }
 
-    if (!window.confirm(t('confirm_send'))) {
-      return;
+    // Ensure we have preview data before confirming
+    if (!preview) {
+      try {
+        setLoadingPreview(true);
+        const data = await api.previewBroadcast(form);
+        setPreview(data);
+      } catch (err: any) {
+        toast.error(err.message || t('error_preview'));
+        return;
+      } finally {
+        setLoadingPreview(false);
+      }
     }
 
+    setShowConfirmDialog(true);
+  };
+
+  const performSend = async () => {
     try {
       setSending(true);
       const response = await api.sendBroadcast(form);
@@ -239,6 +272,7 @@ export default function Broadcasts() {
         attachment_urls: [],
       });
       setPreview(null);
+      setShowConfirmDialog(false);
       await loadHistory();
     } catch (err: any) {
       toast.error(err.message || t('common:error_sending_message', 'Ошибка отправки'));
@@ -412,10 +446,12 @@ export default function Broadcasts() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t('all_users')}</SelectItem>
-                      <SelectItem value="admin">{t('common:role_admin', 'Администраторы')}</SelectItem>
-                      <SelectItem value="manager">{t('common:role_manager', 'Менеджеры')}</SelectItem>
-                      <SelectItem value="employee">{t('common:role_employee', 'Сотрудники')}</SelectItem>
-                      <SelectItem value="client">{t('common:role_client', 'Клиенты')}</SelectItem>
+                      {roles.map((role) => (
+                        <SelectItem key={role.key} value={role.key}>
+                          {/* Try to translate using common:role_[key], fallback to role name from DB */}
+                          {t(`common:role_${role.key}`, role.name)}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -627,7 +663,7 @@ export default function Broadcasts() {
                   </Button>
 
                   <Button
-                    onClick={handleSend}
+                    onClick={handleSendClick}
                     disabled={sending}
                     className="flex-1 h-12 rounded-xl bg-gradient-to-r from-pink-500 to-blue-600 hover:shadow-lg hover:opacity-90 transition-all font-semibold text-white border-0"
                   >
@@ -808,6 +844,95 @@ export default function Broadcasts() {
           }}
         />
       )}
+
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{t('confirm_broadcast_title', 'Подтверждение отправки')}</DialogTitle>
+          </DialogHeader>
+
+          <div className="py-4">
+            <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h4 className="font-medium text-yellow-800 mb-1">{t('check_recipients', 'Проверьте получателей')}</h4>
+                <p className="text-sm text-yellow-700">
+                  {t('check_recipients_desc', 'Пожалуйста, убедитесь, что данные получателей (Email, Username) корректны перед отправкой.')}
+                </p>
+              </div>
+            </div>
+
+            {preview && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
+                  <span>{t('total_recipients')}: <span className="font-bold text-gray-900">{preview.total_users}</span></span>
+                  {preview.total_users > 10 && (
+                    <span className="text-xs">{t('showing_first_10', 'Показаны первые 10')}</span>
+                  )}
+                </div>
+
+                <div className="border rounded-lg divide-y">
+                  {preview.users_sample.slice(0, 10).map((user, idx) => (
+                    <div key={idx} className="p-3 flex items-center justify-between hover:bg-gray-50">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-medium text-xs">
+                          {user.full_name?.charAt(0) || '?'}
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-900">{user.full_name || 'No Name'}</p>
+                          <div className="flex items-center gap-1 text-xs text-gray-500">
+                            <span className="capitalize">{user.role}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`text-sm font-medium ${!user.contact || user.contact === '-' ? 'text-red-500' : 'text-blue-600'}`}>
+                          {user.contact || t('no_contact', 'Нет данных')}
+                        </p>
+                        <p className="text-xs text-gray-400">{user.channel}</p>
+                      </div>
+                    </div>
+                  ))}
+                  {preview.total_users > 10 && (
+                    <div className="p-3 text-center text-sm text-gray-500 italic">
+                      {t('and_more_users', { count: preview.total_users - 10, defaultValue: `...и еще ${preview.total_users - 10} пользователей` })}
+                    </div>
+                  )}
+                </div>
+
+                {preview.total_users === 0 && (
+                  <div className="text-center py-4 text-gray-500">
+                    {t('no_recipients_found', 'Получатели не найдены')}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
+              {t('cancel')}
+            </Button>
+            <Button
+              onClick={performSend}
+              disabled={sending || (preview?.total_users === 0)}
+              className="bg-gradient-to-r from-pink-500 to-blue-600 text-white border-0"
+            >
+              {sending ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  {t('sending')}
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  {t('confirm_and_send', 'Подтвердить и отправить')}
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -896,13 +1021,11 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                     onChange={e => setEditingType({ ...editingType, target_role: e.target.value })}
                   >
                     <option value="all">{t('all_users')}</option>
-                    <option value="client">{t('common:role_client', 'Клиент')}</option>
-                    <option value="employee">{t('common:role_employee', 'Сотрудник')}</option>
-                    <option value="manager">{t('common:role_manager', 'Менеджер')}</option>
-                    <option value="admin">{t('common:role_admin', 'Администратор')}</option>
-                    <option value="director">{t('common:role_director', 'Директор')}</option>
-                    <option value="sales">{t('common:role_sales', 'Продажник')}</option>
-                    <option value="marketer">{t('common:role_marketer', 'Маркетолог')}</option>
+                    {roles.map((role) => (
+                      <option key={role.key} value={role.key}>
+                        {t(`common:role_${role.key}`, role.name)}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

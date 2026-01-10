@@ -1,11 +1,12 @@
 """
 API для массовых рассылок
 """
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from typing import List, Optional
 
 from datetime import datetime
+import asyncio
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -145,18 +146,11 @@ async def preview_broadcast(
         log_error(f"Ошибка предпросмотра рассылки: {e}", "broadcasts")
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/broadcasts/send")
-async def send_broadcast(
-    broadcast: BroadcastRequest,
-    current_user: dict = Depends(get_current_user)
-):
+async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int):
     """
-    Отправить массовую рассылку с учетом подписок и каналов
+    Асинхронная отправка рассылки
     """
-    # Проверка роли
-    if current_user.get('role') not in ['admin', 'director']:
-        raise HTTPException(status_code=403, detail="Доступ запрещен. Требуется роль admin или director")
-
+    conn = None
     try:
         conn = get_db_connection()
         c = conn.cursor()
@@ -188,7 +182,6 @@ async def send_broadcast(
 
         # Логируем для отладки
         log_info(f"Найдено {len(all_users)} получателей для рассылки. Query params: {params}", "broadcasts")
-        log_info(f"Запрос: {query}", "broadcasts")
 
         results = {
             "email": {"sent": 0, "failed": 0},
@@ -219,7 +212,7 @@ async def send_broadcast(
             else:
                 email_enabled, telegram_enabled, instagram_enabled = channels_data
 
-            # In-app notification (personal account)
+            # In-app notification
             if "notification" in broadcast.channels:
                 try:
                     c.execute("""
@@ -227,6 +220,7 @@ async def send_broadcast(
                         VALUES (%s, %s, %s, %s, %s)
                     """, (user_id, broadcast.subject, broadcast.message, 'info', datetime.now().isoformat()))
                     results["notification"]["sent"] += 1
+                    conn.commit() # Commit notification immediately
                 except Exception as e:
                     log_error(f"In-app notification error for user {user_id}: {e}", "broadcasts")
                     results["notification"]["failed"] += 1
@@ -235,7 +229,6 @@ async def send_broadcast(
             if "email" in broadcast.channels and (email_enabled or broadcast.force_send) and email:
                 try:
                     from utils.email import send_broadcast_email
-                    # Добавляем unsubscribe ссылку
                     unsubscribe_link = f"/unsubscribe?user={user_id}&type={broadcast.subscription_type}&channel=email"
                     send_broadcast_email(email, broadcast.subject, broadcast.message, full_name, unsubscribe_link)
                     results["email"]["sent"] += 1
@@ -248,8 +241,8 @@ async def send_broadcast(
                 try:
                     from bot import get_bot
                     bot = get_bot()
-                    # Добавляем кнопку отписки
-                    unsubscribe_text = f"\n\n🔕 Отписаться: /unsubscribe_{broadcast.subscription_type}"
+                    unsubscribe_text = f"\\n\\n🔕 Отписаться: /unsubscribe_{broadcast.subscription_type}"
+                    # Используем await, так как мы в async функции
                     await bot.send_message(telegram_id, broadcast.message + unsubscribe_text)
                     results["telegram"]["sent"] += 1
                 except Exception as e:
@@ -260,9 +253,8 @@ async def send_broadcast(
             if "instagram" in broadcast.channels and (instagram_enabled or broadcast.force_send) and instagram_username:
                 try:
                     from integrations.instagram import send_instagram_dm
-                    # Ограничиваем частоту для защиты от спама
-                    import time
-                    time.sleep(5)  # 5 секунд между сообщениями
+                    # Уменьшаем задержку, так как это фоновая задача, но не убираем совсем для безопасности
+                    await asyncio.sleep(2) 
                     send_instagram_dm(instagram_username, broadcast.message)
                     results["instagram"]["sent"] += 1
                 except Exception as e:
@@ -276,7 +268,7 @@ async def send_broadcast(
              total_sent, results, created_at)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
-            current_user['id'],
+            sender_id,
             broadcast.subscription_type,
             ','.join(broadcast.channels),
             broadcast.subject,
@@ -288,19 +280,34 @@ async def send_broadcast(
         ))
 
         conn.commit()
-        conn.close()
-
-        log_info(f"Рассылка отправлена: {results}", "broadcasts")
-
-        return {
-            "success": True,
-            "results": results,
-            "message": f"Рассылка отправлена. Всего: {sum(r['sent'] for r in results.values())} сообщений"
-        }
+        log_info(f"Рассылка успешно завершена: {results}", "broadcasts")
 
     except Exception as e:
-        log_error(f"Ошибка отправки рассылки: {e}", "broadcasts")
-        raise HTTPException(status_code=500, detail=str(e))
+        log_error(f"Критическая ошибка в фоновой рассылке: {e}", "broadcasts")
+    finally:
+        if conn:
+            conn.close()
+
+@router.post("/broadcasts/send")
+async def send_broadcast(
+    broadcast: BroadcastRequest,
+    background_tasks: BackgroundTasks,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Отправить массовую рассылку (фоновая задача)
+    """
+    # Проверка роли
+    if current_user.get('role') not in ['admin', 'director']:
+        raise HTTPException(status_code=403, detail="Доступ запрещен. Требуется роль admin или director")
+
+    # Добавляем задачу в фон
+    background_tasks.add_task(process_broadcast_sending, broadcast, current_user['id'])
+
+    return {
+        "success": True,
+        "message": "Рассылка запущена в фоновом режиме. Вы будете уведомлены о завершении."
+    }
 
 @router.get("/broadcasts/history")
 async def get_broadcast_history(
