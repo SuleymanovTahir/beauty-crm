@@ -5,6 +5,7 @@ import {
     Layout, LayoutDashboard, Search, Clock, Users,
     ArrowUpDown, ArrowUp, ArrowDown, Lock
 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { ManageStagesDialog } from '../../components/shared/ManageStagesDialog';
@@ -47,12 +48,26 @@ const Contracts = () => {
     const [showStagesDialog, setShowStagesDialog] = useState(false);
     const [userRole, setUserRole] = useState<string>('');
 
+    const [searchParams, setSearchParams] = useSearchParams();
     const [viewMode, setViewMode] = useState<'board' | 'list'>(() => {
+        const urlMode = searchParams.get('view');
+        if (urlMode === 'board' || urlMode === 'list') return urlMode;
         return localStorage.getItem('contracts_view_mode') as 'board' | 'list' || 'board';
     });
-    const [subTab, setSubTab] = useState<'all' | 'client' | 'internal'>('all');
+    const [subTab, setSubTab] = useState<'all' | 'client' | 'internal'>(() => {
+        const urlTab = searchParams.get('tab');
+        if (urlTab === 'all' || urlTab === 'client' || urlTab === 'internal') return urlTab;
+        return 'all';
+    });
     const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
+
+    useEffect(() => {
+        const currentParams = Object.fromEntries(searchParams.entries());
+        if (currentParams.view !== viewMode || currentParams.tab !== subTab) {
+            setSearchParams({ ...currentParams, view: viewMode, tab: subTab }, { replace: true });
+        }
+    }, [viewMode, subTab]);
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -273,16 +288,19 @@ const Contracts = () => {
                                 <div className="h-4 w-[1px] bg-gray-200 mx-2" />
                             </>
                         )}
-                        <select
-                            value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value)}
-                            className="crm-select text-sm h-9 min-w-[150px]"
-                        >
-                            <option value="">{t('allStatuses')}</option>
-                            {contractStages.map(s => (
-                                <option key={s.key} value={s.key}>{s.name}</option>
-                            ))}
-                        </select>
+                        <div className="relative flex-shrink-0">
+                            <select
+                                value={filterStatus}
+                                onChange={(e) => setFilterStatus(e.target.value)}
+                                className="crm-select text-sm h-10 min-w-[160px] py-2"
+                                style={{ lineHeight: '1.5' }}
+                            >
+                                <option value="">{t('allStatuses')}</option>
+                                {contractStages.map(s => (
+                                    <option key={s.key} value={s.key}>{s.name}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
                     <div className="relative">
