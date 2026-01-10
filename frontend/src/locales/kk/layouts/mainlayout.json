@@ -31,7 +31,12 @@
     "telephony": "Телефония",
     "trash": "Себет",
     "users": "Пайдаланушылар",
-    "visitors": "Келушілер"
+    "visitors": "Келушілер",
+    "contracts": "Шарттар",
+    "invoices": "Есептік жазбалар",
+    "marketplace_integrations": "Базарлар",
+    "payment_integrations": "Төлем жүйелері",
+    "products": "Тауарлар"
   },
   "no_new_notifications": "Хабарландырулар жоқ",
   "notifications": "Хабарландырулар",

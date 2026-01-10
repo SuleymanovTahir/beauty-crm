@@ -157,7 +157,7 @@ export default function UniversalDashboard() {
         api.getBookings(),
         api.getClients(),
         api.get('/api/bot-analytics?days=30').catch(() => null),
-        api.getPublicSalonSettings().catch(() => ({ currency: 'AED' })),
+        api.getPublicSalonSettings().catch(() => ({ currency: '' })),
       ]);
 
       // Transform kpiData to stats format for compatibility

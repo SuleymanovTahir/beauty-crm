@@ -1,0 +1,65 @@
+{
+  "title": "Өнімдер мен қойма",
+  "subtitle": "Өнімдер мен қорларды басқару",
+  "addProduct": "Өнімді қосыңыз",
+  "edit": "Өңдеу",
+  "delete": "Жою",
+  "loading": "Жүктелуде...",
+  "allCategories": "Барлық санаттар",
+  "noProducts": "Әзірге өнім жоқ",
+  "createFirst": "Жүйеге бірінші өнімді қосыңыз",
+  "form": {
+    "name": "Аты",
+    "nameRu": "Аты (RU)",
+    "nameEn": "Атауы (EN)",
+    "nameAr": "Атауы (AR)",
+    "category": "Санат",
+    "price": "Сату бағасы",
+    "costPrice": "Құн бағасы",
+    "stockQuantity": "Қалған қор",
+    "minStockLevel": "Минималды теңгерім",
+    "sku": "Мақала",
+    "barcode": "Штрих-код",
+    "supplier": "Жеткізуші",
+    "notes": "Ескертпелер",
+    "isActive": "Белсенді",
+    "photos": "Өнім фотосы",
+    "upload": "Жүктеп алу",
+    "uploadError": "Фотосуретті жүктеу қатесі",
+    "save": "Сақтау",
+    "cancel": "Болдырмау"
+  },
+  "movement": {
+    "title": "Тауарлардың қозғалысы",
+    "type": "Қозғалыс түрі",
+    "quantity": "Саны",
+    "reason": "Себеп",
+    "types": {
+      "in": "Келе жатыр",
+      "out": "Тұтыну",
+      "adjustment": "Реттеу"
+    }
+  },
+  "messages": {
+    "confirmDelete": "Бұл элементті шынымен жойғыңыз келе ме?",
+    "productCreated": "Өнім жасалды",
+    "productUpdated": "Өнім жаңартылды",
+    "productDeleted": "Өнім жойылды",
+    "movementAdded": "Қозғалыс қосылды"
+  },
+  "detail": {
+    "noCategory": "Санатсыз",
+    "costPriceLabel": "Құны: {{price}} AED",
+    "movementHistory": "Қозғалыстардың тарихы",
+    "inStock": "Қоймада: {{count}}",
+    "loadingData": "Деректер жүктелуде...",
+    "noMovements": "Қозғалыс деректері жоқ",
+    "movementIn": "Қабылдау",
+    "movementOut": "Есеп шоттан шығарып тастау",
+    "movementAdjustment": "Реттеу",
+    "totalSold": "Барлығы сатылды",
+    "totalRevenue": "Кіріс",
+    "last30Days": "30 күнде",
+    "avgPrice": "Сәр. бағасы"
+  }
+}

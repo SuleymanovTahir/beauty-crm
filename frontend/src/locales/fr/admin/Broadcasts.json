@@ -75,5 +75,12 @@
   "optional_recipients_hint": "Sélectionnez des destinataires spécifiques ou laissez vide pour envoyer à tous les abonnés",
   "type_created": "Type d'abonnement créé",
   "type_updated": "Type d'abonnement mis à jour",
-  "type_deleted": "Type d'abonnement supprimé"
+  "type_deleted": "Type d'abonnement supprimé",
+  "channel_email": "E-mail",
+  "channel_instagram": "Instagram",
+  "channel_telegram": "Télégramme",
+  "channels_notification": "Notifications",
+  "error_loading_types": "Erreur lors du chargement des types d'abonnement",
+  "placeholder_subscription_key": "promos",
+  "telegram_limit_hint": "Recommandé jusqu'à 4096 (Telegram)"
 }

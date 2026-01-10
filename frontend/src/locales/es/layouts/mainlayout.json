@@ -31,7 +31,12 @@
     "telephony": "Telefonía",
     "trash": "Cesta",
     "users": "Usuarios",
-    "visitors": "Visitantes"
+    "visitors": "Visitantes",
+    "contracts": "Tratados",
+    "invoices": "Cuentas",
+    "marketplace_integrations": "Mercados",
+    "payment_integrations": "Sistemas de pago",
+    "products": "Bienes"
   },
   "no_new_notifications": "Sin notificaciones",
   "notifications": "Notificaciones",

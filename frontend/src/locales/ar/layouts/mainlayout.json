@@ -31,7 +31,12 @@
     "telephony": "الاتصالات الهاتفية",
     "trash": "سلة",
     "users": "المستخدمين",
-    "visitors": "الزوار"
+    "visitors": "الزوار",
+    "contracts": "المعاهدات",
+    "invoices": "الحسابات",
+    "marketplace_integrations": "الأسواق",
+    "payment_integrations": "أنظمة الدفع",
+    "products": "بضائع"
   },
   "no_new_notifications": "لا الإخطارات",
   "notifications": "إشعارات",
