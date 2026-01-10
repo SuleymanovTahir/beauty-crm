@@ -67,8 +67,8 @@ async def get_contracts(
         # Ограничение прав доступа для менеджеров и продажников
         user_role = current_user.get("role")
         if user_role in ["sales", "manager"]:
-            # Они видят только клиентские договоры (не офисные)
-            query += " AND c.contract_type = 'service'"
+            # Они видят все кроме офисных (трудовой и аренда)
+            query += " AND (c.contract_type NOT IN ('employment', 'rental') OR c.contract_type IS NULL)"
         
         query += " ORDER BY c.created_at DESC"
         
