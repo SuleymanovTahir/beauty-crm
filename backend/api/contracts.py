@@ -25,6 +25,7 @@ class ContractCreate(BaseModel):
 
 class ContractUpdate(BaseModel):
     status: Optional[str] = None
+    contract_type: Optional[str] = None
     data: Optional[dict] = None
     signed_at: Optional[str] = None
 
@@ -220,6 +221,10 @@ async def update_contract(
         if contract.status:
             updates.append("status = %s")
             params.append(contract.status)
+        
+        if contract.contract_type:
+            updates.append("contract_type = %s")
+            params.append(contract.contract_type)
         
         if contract.data:
             updates.append("data = %s")

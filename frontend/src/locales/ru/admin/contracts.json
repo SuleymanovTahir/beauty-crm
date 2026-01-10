@@ -48,9 +48,12 @@
     "instagram": "Instagram",
     "sendButton": "Отправить"
   },
+  "editContract": "Редактировать договор",
+  "editButton": "Редактировать",
   "messages": {
     "confirmDelete": "Вы уверены, что хотите удалить этот договор?",
     "contractCreated": "Договор создан",
+    "contractUpdated": "Договор обновлен",
     "contractSent": "Договор отправлен",
     "contractDeleted": "Договор удален"
   }

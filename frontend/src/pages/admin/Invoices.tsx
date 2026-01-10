@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Send, DollarSign, Trash2, FileText, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useCurrency } from '../../hooks/useSalonSettings';
 import '../../styles/crm-pages.css';
@@ -52,9 +53,11 @@ const Invoices = () => {
 
         try {
             await api.delete(`/api/invoices/${id}`);
+            toast.success(t('messages.invoiceDeleted'));
             loadInvoices();
         } catch (error) {
             console.error('Error deleting invoice:', error);
+            toast.error(t('errors.deleteError', 'Error deleting invoice'));
         }
     };
 
@@ -294,9 +297,11 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
                 ...formData,
                 items: invoiceItems
             });
+            toast.success(t('messages.invoiceCreated'));
             onSuccess();
         } catch (error) {
             console.error('Error creating invoice:', error);
+            toast.error(t('errors.createError', 'Error creating invoice'));
         }
     };
 
@@ -426,9 +431,11 @@ const PaymentDialog = ({ invoice, onClose, onSuccess }: any) => {
         e.preventDefault();
         try {
             await api.post(`/api/invoices/${invoice.id}/payments`, formData);
+            toast.success(t('messages.paymentAdded'));
             onSuccess();
         } catch (error) {
             console.error('Error adding payment:', error);
+            toast.error(t('errors.paymentError', 'Error adding payment'));
         }
     };
 
@@ -507,9 +514,11 @@ const SendInvoiceDialog = ({ invoice, onClose, onSuccess }: any) => {
         e.preventDefault();
         try {
             await api.post(`/api/invoices/${invoice.id}/send?delivery_method=${formData.delivery_method}&recipient=${formData.recipient}`);
+            toast.success(t('messages.invoiceSent'));
             onSuccess();
         } catch (error) {
             console.error('Error sending invoice:', error);
+            toast.error(t('errors.sendError', 'Error sending invoice'));
         }
     };
 
