@@ -218,6 +218,7 @@ export default function Services() {
 
   // Positions state
   const [positions, setPositions] = useState<Array<{ id: number; name: string }>>([]);
+  const [employees, setEmployees] = useState<Array<{ id: number; full_name: string; full_name_ru: string; position_id: number }>>([]);
 
   const [serviceFormData, setServiceFormData] = useState({
     key: '',
@@ -235,6 +236,7 @@ export default function Services() {
     description_ar: '',
     benefits: '',
     position_ids: [] as number[],
+    employee_ids: [] as number[],
   });
 
   const [packageFormData, setPackageFormData] = useState({
@@ -263,6 +265,7 @@ export default function Services() {
   useEffect(() => {
     loadData();
     loadPositions();
+    loadEmployees();
   }, [activeTab]);
 
   const loadPositions = async () => {
@@ -275,6 +278,19 @@ export default function Services() {
       setPositions(data.positions || []);
     } catch (err) {
       console.error('Error loading positions:', err);
+    }
+  };
+
+  const loadEmployees = async () => {
+    try {
+      const response = await fetch('/api/users', {
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Failed to load employees');
+      const data = await response.json();
+      setEmployees(data.users || []);
+    } catch (err) {
+      console.error('Error loading employees:', err);
     }
   };
 
@@ -377,6 +393,7 @@ export default function Services() {
       description_ar: '',
       benefits: '',
       position_ids: [],
+      employee_ids: [],
     });
     setIsServiceModalOpen(true);
   };
@@ -398,6 +415,20 @@ export default function Services() {
       console.error('Error loading service positions:', err);
     }
 
+    // Load service employees
+    let employeeIds: number[] = [];
+    try {
+      const response = await fetch(`/api/services/${service.id}/employees`, {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        employeeIds = (data.employees || []).map((e: any) => e.id);
+      }
+    } catch (err) {
+      console.error('Error loading service employees:', err);
+    }
+
     setServiceFormData({
       key: service.key,
       name: service.name,
@@ -414,6 +445,7 @@ export default function Services() {
       description_ar: service.description_ar || '',
       benefits: Array.isArray(service.benefits) ? service.benefits.join(' | ') : '',
       position_ids: positionIds,
+      employee_ids: employeeIds,
     });
     setIsServiceModalOpen(true);
   };
@@ -466,6 +498,19 @@ export default function Services() {
       } catch (err) {
         console.error('Error saving service positions:', err);
         toast.error('Ошибка сохранения должностей');
+      }
+
+      // Save service employees
+      try {
+        await fetch(`/api/services/${serviceId}/employees`, {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ employee_ids: serviceFormData.employee_ids }),
+        });
+      } catch (err) {
+        console.error('Error saving service employees:', err);
+        toast.error('Ошибка сохранения сотрудников');
       }
 
       await loadData();
@@ -1288,7 +1333,18 @@ export default function Services() {
                               const newPositionIds = e.target.checked
                                 ? [...serviceFormData.position_ids, position.id]
                                 : serviceFormData.position_ids.filter(id => id !== position.id);
-                              setServiceFormData({ ...serviceFormData, position_ids: newPositionIds });
+
+                              // Filter out employees who don't have the remaining positions
+                              const filteredEmployeeIds = serviceFormData.employee_ids.filter(eid => {
+                                const emp = employees.find(e => e.id === eid);
+                                return emp && (newPositionIds.includes(emp.position_id) || newPositionIds.length === 0);
+                              });
+
+                              setServiceFormData({
+                                ...serviceFormData,
+                                position_ids: newPositionIds,
+                                employee_ids: filteredEmployeeIds
+                              });
                             }}
                             className="w-4 h-4 text-pink-600 rounded focus:ring-pink-500"
                           />
@@ -1302,6 +1358,50 @@ export default function Services() {
                   Выберите должности сотрудников, которые могут оказывать эту услугу
                 </p>
               </div>
+
+              {/* Employees Multi-Select (Filtered) */}
+              <div>
+                <Label htmlFor="employees">Сотрудники, предоставляющие эту услугу</Label>
+                <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                  {employees.filter(emp => serviceFormData.position_ids.length === 0 || serviceFormData.position_ids.includes(emp.position_id)).length === 0 ? (
+                    <p className="text-sm text-gray-500">
+                      {serviceFormData.position_ids.length === 0
+                        ? "Сначала выберите должности"
+                        : "Нет сотрудников с выбранными должностями"}
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {employees
+                        .filter(emp => serviceFormData.position_ids.length === 0 || serviceFormData.position_ids.includes(emp.position_id))
+                        .map((employee) => (
+                          <label
+                            key={employee.id}
+                            className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={serviceFormData.employee_ids.includes(employee.id)}
+                              onChange={(e) => {
+                                const newEmployeeIds = e.target.checked
+                                  ? [...serviceFormData.employee_ids, employee.id]
+                                  : serviceFormData.employee_ids.filter(id => id !== employee.id);
+                                setServiceFormData({ ...serviceFormData, employee_ids: newEmployeeIds });
+                              }}
+                              className="w-4 h-4 text-pink-600 rounded focus:ring-pink-500"
+                            />
+                            <span className="text-sm">
+                              {i18n.language.startsWith('ru') ? employee.full_name_ru : employee.full_name}
+                            </span>
+                          </label>
+                        ))}
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Выберите конкретных сотрудников, которые будут выполнять эту услугу
+                </p>
+              </div>
+
             </div>
           </div>
 

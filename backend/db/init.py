@@ -495,7 +495,8 @@ def init_database():
         'full_name_en': 'TEXT',
         'full_name_ar': 'TEXT',
         'base_salary': 'REAL DEFAULT 0',
-        'commission_rate': 'REAL DEFAULT 0'
+        'commission_rate': 'REAL DEFAULT 0',
+        'position_id': 'INTEGER'
     }
 
     for column_name, column_type in user_migrations.items():
@@ -577,6 +578,15 @@ def init_database():
         UNIQUE(user_id, service_id),
         FOREIGN KEY (user_id) REFERENCES users(id),
         FOREIGN KEY (service_id) REFERENCES services(id)
+    )''')
+    
+    # Таблица связи услуг с должностями (многие-ко-многим)
+    c.execute('''CREATE TABLE IF NOT EXISTS service_positions (
+        id SERIAL PRIMARY KEY,
+        service_id INTEGER NOT NULL REFERENCES services(id) ON DELETE CASCADE,
+        position_id INTEGER NOT NULL REFERENCES positions(id) ON DELETE CASCADE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(service_id, position_id)
     )''')
     
     # DEPRECATED: employees table consolidated into users with is_service_provider flag

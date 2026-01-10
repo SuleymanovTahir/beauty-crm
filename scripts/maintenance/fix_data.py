@@ -76,9 +76,52 @@ def reduce_service_prices(reduction_percent=5):
     finally:
         conn.close()
 
+def fix_user_position_ids():
+    """Link users to positions by name where position_id is missing"""
+    print("🔧 Starting user position_id fix...")
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        # 1. Get all positions
+        c.execute("SELECT id, name FROM positions")
+        positions = {row[1]: row[0] for row in c.fetchall()}
+        
+        # 2. Get all users with text positions but no position_id
+        c.execute("SELECT id, position FROM users WHERE position IS NOT NULL AND position_id IS NULL")
+        users = c.fetchall()
+        
+        if not users:
+            print("✅ All users already have a position_id linked.")
+            return
+
+        updated = 0
+        for uid, pos_name in users:
+            if pos_name in positions:
+                c.execute("UPDATE users SET position_id = %s WHERE id = %s", (positions[pos_name], uid))
+                updated += 1
+            elif pos_name == "Hair Stylist": # Special case
+                 if "Парикмахер" in positions:
+                     c.execute("UPDATE users SET position_id = %s WHERE id = %s", (positions["Парикмахер"], uid))
+                     updated += 1
+            elif "Director" in pos_name:
+                 if "Директор" in positions:
+                     c.execute("UPDATE users SET position_id = %s WHERE id = %s", (positions["Директор"], uid))
+                     updated += 1
+
+        conn.commit()
+        print(f"✅ Successfully linked {updated} users to positions.")
+        
+    except Exception as e:
+        print(f"❌ Error fixing user positions: {e}")
+        conn.rollback()
+    finally:
+        conn.close()
+
 def run_all_fixes():
     fix_pipeline_stages()
     reduce_service_prices()
+    fix_user_position_ids()
 
 if __name__ == "__main__":
     run_all_fixes()
