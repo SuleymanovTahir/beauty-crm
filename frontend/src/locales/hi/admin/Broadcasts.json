@@ -75,5 +75,12 @@
   "optional_recipients_hint": "विशिष्ट प्राप्तकर्ताओं का चयन करें या सभी ग्राहकों को भेजने के लिए खाली छोड़ दें",
   "type_created": "सदस्यता प्रकार बनाया गया",
   "type_updated": "सदस्यता प्रकार अपडेट किया गया",
-  "type_deleted": "सदस्यता प्रकार हटा दिया गया"
+  "type_deleted": "सदस्यता प्रकार हटा दिया गया",
+  "channel_email": "ईमेल",
+  "channel_instagram": "Instagram",
+  "channel_telegram": "टेलीग्राम",
+  "channels_notification": "सूचनाएं",
+  "error_loading_types": "सदस्यता प्रकार लोड करने में त्रुटि",
+  "placeholder_subscription_key": "प्रचार",
+  "telegram_limit_hint": "4096 तक अनुशंसित (टेलीग्राम)"
 }

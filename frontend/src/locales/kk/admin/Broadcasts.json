@@ -75,5 +75,12 @@
   "optional_recipients_hint": "Белгілі бір алушыларды таңдаңыз немесе барлық жазылушыларға жіберу үшін бос қалдырыңыз",
   "type_created": "Жазылым түрі жасалды",
   "type_updated": "Жазылым түрі жаңартылды",
-  "type_deleted": "Жазылым түрі жойылды"
+  "type_deleted": "Жазылым түрі жойылды",
+  "channel_email": "Электрондық пошта",
+  "channel_instagram": "Instagram",
+  "channel_telegram": "Telegram",
+  "channels_notification": "Хабарландырулар",
+  "error_loading_types": "Жазылым түрлерін жүктеу қатесі",
+  "placeholder_subscription_key": "акциялар",
+  "telegram_limit_hint": "4096 дейін ұсынылады (Telegram)"
 }
