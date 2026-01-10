@@ -1221,12 +1221,12 @@ export default function Services() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50/10 rounded-2xl border border-gray-100/50">
-                  <div className="md:col-span-1 space-y-1.5">
-                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block px-1">
+                  <div className="md:col-span-1 flex flex-col gap-1.5">
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 px-1 leading-none">
                       {t('services:category')} <span className="text-pink-500">*</span>
                     </Label>
                     <Select value={serviceFormData.category} onValueChange={(value) => setServiceFormData({ ...serviceFormData, category: value })}>
-                      <SelectTrigger className="h-12 bg-white border-gray-100 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-pink-500/20">
+                      <SelectTrigger className="!h-12 bg-white border-gray-100 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-pink-500/20 w-full overflow-hidden">
                         <SelectValue placeholder={t('services:select_category')} />
                       </SelectTrigger>
                       <SelectContent>
@@ -1237,12 +1237,12 @@ export default function Services() {
                     </Select>
                   </div>
 
-                  <div className="md:col-span-1 space-y-1.5">
-                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block px-1">
+                  <div className="md:col-span-1 flex flex-col gap-1.5">
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 px-1 leading-none">
                       {t('services:name')} <span className="text-pink-500">*</span>
                     </Label>
                     <Input
-                      className="h-12 bg-white border-gray-100 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-pink-500/20"
+                      className="!h-12 bg-white border-gray-100 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-pink-500/20 w-full"
                       value={serviceFormData.name_ru}
                       onChange={(e) => {
                         const val = e.target.value;
@@ -1455,17 +1455,14 @@ export default function Services() {
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-[320px] p-0 rounded-2xl shadow-xl border-gray-100" align="start">
-                            <Command className="rounded-2xl">
+                            <Command className="rounded-2xl h-auto ![&_[data-slot=command-input-wrapper]]:h-12 ![&_[data-slot=command-input-wrapper]]:border-b ![&_[data-slot=command-input-wrapper]_svg]:text-pink-500 ![&_[data-slot=command-input-wrapper]_svg]:opacity-100 ![&_[data-slot=command-input-wrapper]_svg]:size-4">
                               <div className="flex flex-col border-b">
-                                <div className="flex items-center px-4 py-1 border-b">
-                                  <Search className="w-4 h-4 text-pink-500 mr-2 shrink-0" />
-                                  <CommandInput
-                                    placeholder={t('services:search_employee', 'Поиск сотрудника...')}
-                                    className="h-12 border-none focus:ring-0 text-sm w-full"
-                                    value={employeeSearchTerm}
-                                    onValueChange={setEmployeeSearchTerm}
-                                  />
-                                </div>
+                                <CommandInput
+                                  placeholder={t('services:search_employee', 'Поиск сотрудника...')}
+                                  className="h-full border-none focus:ring-0 text-sm w-full"
+                                  value={employeeSearchTerm}
+                                  onValueChange={setEmployeeSearchTerm}
+                                />
                                 <div className="px-4 py-2 bg-gray-50/50 flex items-center justify-between border-b">
                                   <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                     {t('services:actions', 'Действия')}
