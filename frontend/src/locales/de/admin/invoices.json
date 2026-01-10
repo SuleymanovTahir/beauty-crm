@@ -1,0 +1,67 @@
+{
+  "title": "Konten",
+  "subtitle": "Konto- und Zahlungsverwaltung",
+  "addInvoice": "Ein Konto erstellen",
+  "addPayment": "Zahlung hinzufügen",
+  "loading": "Laden...",
+  "allStatuses": "Alle Status",
+  "invoiceNumber": "Konto-Nr.",
+  "client": "Kunde",
+  "totalAmount": "Summe",
+  "paidAmount": "Bezahlt",
+  "status": "Status",
+  "dueDate": "Fälligkeitsdatum",
+  "actions": "Aktionen",
+  "sendButton": "Schicken",
+  "delete": "Löschen",
+  "noInvoices": "Noch keine Konten",
+  "createFirst": "Erstellen Sie Ihre erste Rechnung für einen Kunden",
+  "statuses": {
+    "draft": "Entwurf",
+    "sent": "Gesendet",
+    "partial": "Teilweise bezahlt",
+    "paid": "Bezahlt",
+    "overdue": "Abgelaufen"
+  },
+  "form": {
+    "selectClient": "Wählen Sie den Kunden aus",
+    "items": "Kontostände",
+    "itemName": "Name",
+    "itemQuantity": "Menge",
+    "itemPrice": "Preis",
+    "addItem": "Fügen Sie eine Position hinzu",
+    "dueDate": "Fälligkeitsdatum",
+    "notes": "Notizen",
+    "save": "Speichern",
+    "cancel": "Stornieren"
+  },
+  "payment": {
+    "title": "Zahlung hinzufügen",
+    "amount": "Summe",
+    "method": "Zahlungsart",
+    "notes": "Notizen",
+    "add": "Hinzufügen",
+    "methods": {
+      "cash": "Kasse",
+      "card": "Karte",
+      "transfer": "Übersetzung",
+      "online": "Online"
+    }
+  },
+  "sendDialog": {
+    "title": "Rechnung senden",
+    "method": "Versandart",
+    "recipient": "Empfänger",
+    "email": "E-Mail",
+    "whatsapp": "WhatsApp",
+    "telegram": "Telegramm",
+    "sendButton": "Schicken"
+  },
+  "messages": {
+    "confirmDelete": "Sind Sie sicher, dass Sie dieses Konto löschen möchten?",
+    "invoiceCreated": "Konto erstellt",
+    "invoiceSent": "Rechnung verschickt",
+    "paymentAdded": "Zahlung hinzugefügt",
+    "invoiceDeleted": "Konto gelöscht"
+  }
+}

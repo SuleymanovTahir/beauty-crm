@@ -73,7 +73,7 @@ export default function Broadcasts() {
     try {
       // For admins on the broadcast page, we want ALL types, not just their own role types
       const types = await api.getSubscriptionTypes();
-      console.log('📋 Available subscriptions from DB:', types);
+      console.log('Available subscriptions from DB:', types);
 
       const formatted: Record<string, { name: string; description: string }> = {};
       types.forEach((t: any) => {
@@ -113,14 +113,14 @@ export default function Broadcasts() {
   const loadUsers = async () => {
     try {
       setLoadingUsers(true);
-      console.log('🔍 Loading users for broadcast selection...');
+      console.log('Loading users for broadcast selection...');
       const response = await api.getUsers();
-      console.log('✅ Users response:', response);
+      console.log('Users response:', response);
       const usersArray = Array.isArray(response) ? response : (response?.users || []);
-      console.log('✅ Users array:', usersArray);
+      console.log('Users array:', usersArray);
       setUsers(usersArray);
     } catch (err) {
-      console.error('❌ Error loading users:', err);
+      console.error('Error loading users:', err);
     } finally {
       setLoadingUsers(false);
     }
@@ -344,7 +344,6 @@ export default function Broadcasts() {
                       type="button"
                       onClick={(e) => {
                         e.preventDefault();
-                        e.stopPropagation();
                         setShowManageTypes(true);
                       }}
                       className="text-pink-600 hover:text-pink-700 flex items-center gap-1 text-sm font-medium relative z-10"
@@ -369,8 +368,8 @@ export default function Broadcasts() {
                         .map(([key, info]) => (
                           <SelectItem key={key} value={key}>
                             <div className="flex flex-col">
-                              <span className="font-medium">{t(info.name, info.name)}</span>
-                              <span className="text-xs text-gray-500">{t(info.description, info.description)}</span>
+                              <span className="font-medium">{info.name}</span>
+                              <span className="text-xs text-gray-500">{info.description}</span>
                             </div>
                           </SelectItem>
                         ))}
@@ -893,7 +892,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                                 String(type.target_role)}
                           </span>
                         </td>
-                        <td>{String(t(type.name_ru || type.key, type.name_ru || type.key))}</td>
+                        <td>{type.name_ru || type.key}</td>
                         <td>
                           <div className="flex gap-2">
                             <button
