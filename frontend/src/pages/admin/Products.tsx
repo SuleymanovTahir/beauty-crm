@@ -598,7 +598,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                             <h3 className="font-bold text-pink-900 mb-2">{t('form.price')}</h3>
                             <p className="text-3xl font-black text-pink-600">{product.price} {currency}</p>
                             {product.cost_price > 0 && (
-                                <p className="text-sm text-pink-400 mt-1">{t('detail.costPriceLabel', { price: product.cost_price })}</p>
+                                <p className="text-sm text-pink-400 mt-1">{t('detail.costPriceLabel', { price: product.cost_price, currency })}</p>
                             )}
                         </div>
                     </div>

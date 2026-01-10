@@ -31,7 +31,12 @@
     "telephony": "टेलीफ़ोनी",
     "trash": "टोकरी",
     "users": "उपयोगकर्ताओं",
-    "visitors": "आगंतुकों"
+    "visitors": "आगंतुकों",
+    "contracts": "संधियों",
+    "invoices": "हिसाब किताब",
+    "marketplace_integrations": "बाजारों",
+    "payment_integrations": "भुगतान प्रणाली",
+    "products": "चीज़ें"
   },
   "no_new_notifications": "कोई सूचना नहीं",
   "notifications": "सूचनाएं",

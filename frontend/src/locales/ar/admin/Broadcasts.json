@@ -77,5 +77,12 @@
   "optional_recipients_hint": "حدد مستلمين محددين أو اتركه فارغًا لإرساله إلى جميع المشتركين",
   "type_created": "تم إنشاء نوع الاشتراك",
   "type_updated": "تم تحديث نوع الاشتراك",
-  "type_deleted": "تمت إزالة نوع الاشتراك"
+  "type_deleted": "تمت إزالة نوع الاشتراك",
+  "channel_email": "بريد إلكتروني",
+  "channel_instagram": "انستغرام",
+  "channel_telegram": "برقية",
+  "channels_notification": "إشعارات",
+  "error_loading_types": "حدث خطأ أثناء تحميل أنواع الاشتراكات",
+  "placeholder_subscription_key": "الترقيات",
+  "telegram_limit_hint": "يوصى به حتى 4096 (تيلجرام)"
 }
