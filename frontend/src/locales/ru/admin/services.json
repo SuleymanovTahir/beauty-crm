@@ -156,5 +156,7 @@
   "service_details_subtitle": "Настройте параметры услуги и назначьте команду",
   "name_placeholder": "Например: Женская стрижка",
   "unit_minute": "м",
-  "separate_through_pipe": "разделите чертой |"
+  "separate_through_pipe": "разделите чертой |",
+  "select_employees": "Выбрать сотрудников",
+  "no_employees_found": "Сотрудники не найдены"
 }

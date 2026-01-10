@@ -1,8 +1,8 @@
-// /frontend/src/pages/employee/Services.tsx
 import { useEffect, useState } from 'react';
-import { Scissors, Clock, DollarSign, AlertCircle, Loader } from 'lucide-react';
+import { Scissors, Clock, AlertCircle } from 'lucide-react';
 import { Skeleton } from '../../components/ui/skeleton';
 import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 import { api } from '../../services/api';
 
 interface Service {
@@ -67,49 +67,54 @@ export default function EmployeeServices() {
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <Scissors className="w-8 h-8 text-pink-600" />
-          {t('services:our_services')}
+          {t('employeeServices:our_services')}
         </h1>
-        <p className="text-gray-600">{t('services:browse_available_services')}</p>
+        <p className="text-gray-600">{t('employeeServices:browse_available_services')}</p>
       </div>
 
       {services.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
           <Scissors className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl text-gray-900 mb-2">{t('services:no_services')}</h3>
-          <p className="text-gray-600">{t('services:no_services_description')}</p>
+          <h3 className="text-xl text-gray-900 mb-2">{t('employeeServices:no_services')}</h3>
+          <p className="text-gray-600">{t('employeeServices:no_services_description')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service) => (
-            <div key={service.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-medium text-gray-900 mb-1">{service.name}</h3>
-                  {service.category && (
-                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                      {service.category}
-                    </span>
-                  )}
+          {services.map((service: any) => {
+            const serviceName = i18n.language === 'ru' ? (service.name_ru || service.name) : (service.name_en || service.name);
+            const serviceDesc = i18n.language === 'ru' ? (service.description_ru || service.description) : (service.description_en || service.description);
+
+            return (
+              <div key={service.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-medium text-gray-900 mb-1">{serviceName}</h3>
+                    {service.category && (
+                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        {service.category}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <Scissors className="w-6 h-6 text-white" />
+                  </div>
                 </div>
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <Scissors className="w-6 h-6 text-white" />
+
+                <p className="text-gray-600 text-sm mb-4 line-clamp-2">{serviceDesc}</p>
+
+                <div className="flex items-center justify-between text-sm text-gray-600 pt-4 border-t border-gray-200">
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>{service.duration} {t('employeeServices:min')}</span>
+                  </div>
+                  <div className="flex items-center gap-1 font-medium text-pink-600">
+                    <span className="text-xs uppercase font-bold">{service.currency || 'USD'}</span>
+                    <span>{service.price}</span>
+                  </div>
                 </div>
               </div>
-
-              <p className="text-gray-600 text-sm mb-4 line-clamp-2">{service.description}</p>
-
-              <div className="flex items-center justify-between text-sm text-gray-600 pt-4 border-t border-gray-200">
-                <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  <span>{service.duration} {t('services:min')}</span>
-                </div>
-                <div className="flex items-center gap-1 font-medium text-pink-600">
-                  <DollarSign className="w-4 h-4" />
-                  <span>{service.price}</span>
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
