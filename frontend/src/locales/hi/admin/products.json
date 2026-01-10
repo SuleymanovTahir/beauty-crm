@@ -49,7 +49,7 @@
   },
   "detail": {
     "noCategory": "अवर्गीकृत",
-    "costPriceLabel": "लागत: {{price}} AED",
+    "costPriceLabel": "लागत: {{price}} {{currency}}",
     "movementHistory": "आंदोलनों का इतिहास",
     "inStock": "स्टॉक में: {{count}}",
     "loadingData": "डेटा लोड हो रहा है...",
