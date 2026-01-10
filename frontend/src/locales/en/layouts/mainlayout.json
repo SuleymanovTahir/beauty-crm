@@ -31,7 +31,12 @@
     "telephony": "Telephony",
     "trash": "Basket",
     "users": "Users",
-    "visitors": "Visitors"
+    "visitors": "Visitors",
+    "contracts": "Treaties",
+    "invoices": "Accounts",
+    "marketplace_integrations": "Marketplaces",
+    "payment_integrations": "Payment systems",
+    "products": "Goods"
   },
   "no_new_notifications": "No new notifications",
   "notifications": "Notifications",

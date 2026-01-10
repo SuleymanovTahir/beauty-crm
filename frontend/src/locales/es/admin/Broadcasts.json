@@ -75,5 +75,12 @@
   "optional_recipients_hint": "Seleccione destinatarios específicos o déjelo en blanco para enviarlo a todos los suscriptores",
   "type_created": "Tipo de suscripción creado",
   "type_updated": "Tipo de suscripción actualizado",
-  "type_deleted": "Tipo de suscripción eliminado"
+  "type_deleted": "Tipo de suscripción eliminado",
+  "channel_email": "Correo electrónico",
+  "channel_instagram": "Instagram",
+  "channel_telegram": "Telegrama",
+  "channels_notification": "Notificaciones",
+  "error_loading_types": "Error al cargar tipos de suscripción",
+  "placeholder_subscription_key": "promociones",
+  "telegram_limit_hint": "Recomendado hasta 4096 (Telegram)"
 }

@@ -17,7 +17,6 @@ import {
   Image as ImageIcon,
   Video,
   Shield,
-  Phone,
   Reply,
   Forward,
   Copy,
@@ -25,7 +24,6 @@ import {
 } from 'lucide-react';
 import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../../components/icons/SocialIcons';
 import { Button } from '../../components/ui/button';
-import { Textarea } from '../../components/ui/textarea';
 import TemplatesPanel from '../../components/chat/TemplatesPanel';
 import QuickReplies from '../../components/chat/QuickReplies';
 import MessageSearch from '../../components/chat/MessageSearch';
@@ -102,7 +100,7 @@ const ClientItem = React.memo(({ client, isSelected, onClick, t, selectionBg, av
       )}
       {(client.unread_count || 0) > 0 && (
         <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
-          {client.unread_count > 9 ? '9+' : client.unread_count}
+          {(client.unread_count || 0) > 9 ? '9+' : client.unread_count}
         </div>
       )}
     </div>
@@ -229,7 +227,6 @@ export default function Chat() {
   const [activeActionMenuId, setActiveActionMenuId] = useState<string | number | null>(null);
 
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
-  const [isUploadingFile, setIsUploadingFile] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -269,7 +266,6 @@ export default function Chat() {
     const clientIdFromUrl = searchParams.get('client_id');
     const messengerFromUrl = searchParams.get('messenger') || 'instagram';
 
-    const oldMessenger = currentMessenger;
     // Only update if it actually changed to avoid loop
     if (messengerFromUrl !== currentMessenger) {
       setCurrentMessenger(messengerFromUrl);
@@ -568,7 +564,6 @@ export default function Chat() {
 
     try {
       if (attachedFiles.length > 0) {
-        setIsUploadingFile(true);
 
         for (const file of attachedFiles) {
           try {
@@ -606,7 +601,6 @@ export default function Chat() {
         }
 
         setAttachedFiles([]);
-        setIsUploadingFile(false);
       }
 
       if (message.trim()) {
@@ -639,8 +633,6 @@ export default function Chat() {
     } catch (err) {
       console.error(err);
       toast.error(t('chat:error_sending', 'Ошибка отправки'));
-    } finally {
-      setIsUploadingFile(false);
     }
   };
 
@@ -691,56 +683,6 @@ export default function Chat() {
     }
   };
 
-  const handleAskBotWithSelectedMessages = async () => {
-    if (selectedMessageIds.size === 0) {
-      toast.error('Выберите хотя бы одно сообщение');
-      return;
-    }
-
-    try {
-      setIsAskingBot(true);
-
-      const selectedMessages = messages
-        .filter(msg => msg.id && selectedMessageIds.has(msg.id))
-        .map(msg => {
-          const sender = msg.sender === 'client' ? 'Клиент' : 'Менеджер';
-          return `${sender}: ${msg.message}`;
-        })
-        .join('\n');
-
-      if (!selectedMessages) {
-        toast.error('Не удалось собрать выбранные сообщения');
-        return;
-      }
-
-      const question = "Проанализируй эти сообщения и дай совет как лучше ответить клиенту";
-      const response = await api.askBotAdvice(question, selectedMessages);
-
-      toast.success('Совет от AI-бота', {
-        description: response.advice,
-        duration: 60000,
-        action: {
-          label: 'Копировать',
-          onClick: () => {
-            navigator.clipboard.writeText(response.advice);
-            toast.success('Скопировано!');
-          }
-        }
-      });
-
-      setIsSelectingMessages(false);
-      setSelectedMessageIds(new Set());
-      setShowAIButtons(false);
-
-    } catch (err) {
-      console.error('Ошибка:', err);
-      toast.error('Ошибка получения совета', {
-        description: err instanceof Error ? err.message : 'Неизвестная ошибка'
-      });
-    } finally {
-      setIsAskingBot(false);
-    }
-  };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -754,7 +696,7 @@ export default function Chat() {
     toast.error(`Системой ${currentMessenger} пока запрещено ${action}`);
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = () => {
     // Временно отключено по просьбе пользователя
     handleProhibitedAction('прикреплять файлы');
     /* 
@@ -779,7 +721,6 @@ export default function Chat() {
     return matchesSearch && matchesMessenger;
   });
 
-  const canSend = message.trim().length > 0 || attachedFiles.length > 0;
 
   // Check permissions
   if (!userPermissions.canViewAllClients) {
