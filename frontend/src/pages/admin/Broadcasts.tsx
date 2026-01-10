@@ -22,6 +22,7 @@ interface BroadcastForm {
   message: string;
   target_role?: string;
   user_ids?: number[];
+  attachment_urls?: string[];
 }
 
 interface PreviewData {
@@ -51,7 +52,10 @@ export default function Broadcasts() {
     message: '',
     target_role: '',
     user_ids: [],
+    attachment_urls: [],
   });
+
+  const [uploadingFile, setUploadingFile] = useState(false);
 
   const [availableSubscriptions, setAvailableSubscriptions] = useState<Record<string, { name: string; description: string }>>({});
   const [preview, setPreview] = useState<PreviewData | null>(null);
@@ -220,6 +224,9 @@ export default function Broadcasts() {
       const response = await api.sendBroadcast(form);
       toast.success(response.message);
 
+      // Триггерим событие для обновления уведомлений у всех пользователей
+      window.dispatchEvent(new CustomEvent('notifications-updated'));
+
       // Reset form
       setForm({
         subscription_type: '',
@@ -228,6 +235,7 @@ export default function Broadcasts() {
         message: '',
         target_role: '',
         user_ids: [],
+        attachment_urls: [],
       });
       setPreview(null);
       await loadHistory();
@@ -499,6 +507,100 @@ export default function Broadcasts() {
                       {form.message.length} {t('common:characters_count', 'символов')}
                     </p>
                     <p className="text-xs text-gray-400 font-medium">{t('telegram_limit_hint', 'Рекомендуется до 4096 (Telegram)')}</p>
+                  </div>
+                </div>
+
+                {/* File Attachments */}
+                <div>
+                  <Label className="block mb-2.5 text-sm font-semibold text-gray-700">
+                    {t('attachments', 'Прикрепленные файлы')} <span className="text-gray-400 font-normal text-xs">(опционально)</span>
+                  </Label>
+                  <div className="space-y-2">
+                    {form.attachment_urls && form.attachment_urls.length > 0 && (
+                      <div className="space-y-2">
+                        {form.attachment_urls.map((url, index) => (
+                          <div key={index} className="flex items-center gap-2 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                            <span className="flex-1 text-sm text-gray-700 truncate">{url.split('/').pop()}</span>
+                            <button
+                              onClick={() => {
+                                const newUrls = form.attachment_urls?.filter((_, i) => i !== index);
+                                setForm({ ...form, attachment_urls: newUrls });
+                              }}
+                              className="text-red-500 hover:text-red-700 transition-colors"
+                            >
+                              <X size={18} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <input
+                        type="file"
+                        id="file-upload"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+
+                          // Проверка размера файла (макс 10MB)
+                          if (file.size > 10 * 1024 * 1024) {
+                            toast.error('Файл слишком большой. Максимальный размер 10MB');
+                            return;
+                          }
+
+                          setUploadingFile(true);
+                          try {
+                            const formData = new FormData();
+                            formData.append('file', file);
+
+                            const response = await fetch('/api/upload/file', {
+                              method: 'POST',
+                              body: formData,
+                              credentials: 'include'
+                            });
+
+                            if (!response.ok) throw new Error('Upload failed');
+
+                            const data = await response.json();
+                            const fileUrl = data.url || data.file_url;
+
+                            setForm({
+                              ...form,
+                              attachment_urls: [...(form.attachment_urls || []), fileUrl]
+                            });
+
+                            toast.success('Файл успешно загружен');
+                          } catch (error) {
+                            console.error('Upload error:', error);
+                            toast.error('Ошибка загрузки файла');
+                          } finally {
+                            setUploadingFile(false);
+                            e.target.value = '';
+                          }
+                        }}
+                        accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"
+                      />
+                      <label
+                        htmlFor="file-upload"
+                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors cursor-pointer"
+                      >
+                        {uploadingFile ? (
+                          <>
+                            <Loader className="w-4 h-4 animate-spin" />
+                            Загрузка...
+                          </>
+                        ) : (
+                          <>
+                            <Plus size={16} />
+                            Прикрепить файл
+                          </>
+                        )}
+                      </label>
+                      <p className="text-xs text-gray-500 flex items-center">
+                        PDF, DOC, XLS, изображения (макс 10MB)
+                      </p>
+                    </div>
                   </div>
                 </div>
 

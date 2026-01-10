@@ -98,9 +98,15 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
 
         // Загружаем уведомления для всех ролей
         loadNotifications();
-        const notifInterval = setInterval(loadNotifications, 30000);
+        const notifInterval = setInterval(loadNotifications, 5000); // Проверяем каждые 5 секунд
 
-        const unreadInterval = setInterval(loadUnreadCount, 10000);
+        const unreadInterval = setInterval(loadUnreadCount, 5000); // Проверяем каждые 5 секунд
+
+        // Слушаем событие для немедленного обновления уведомлений
+        const handleNotificationsUpdate = () => {
+            loadNotifications();
+        };
+        window.addEventListener('notifications-updated', handleNotificationsUpdate);
 
         const handleMessengersUpdate = () => {
             loadEnabledMessengers();
@@ -116,6 +122,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             clearInterval(unreadInterval);
             window.removeEventListener('messengers-updated', handleMessengersUpdate);
             window.removeEventListener('profile-updated', handleProfileUpdate);
+            window.removeEventListener('notifications-updated', handleNotificationsUpdate);
         };
     }, [user?.role]);
 
