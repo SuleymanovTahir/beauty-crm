@@ -294,5 +294,17 @@
   "view_details": "विवरण देखें",
   "weeks_ahead": "सप्ताह पहले",
   "working_hours": "कार्य के घंटे",
-  "years_of_experience": "कार्य अनुभव (वर्ष)"
+  "years_of_experience": "कार्य अनुभव (वर्ष)",
+  "salary_type": "पेरोल प्रकार",
+  "salary_type_fixed": "निश्चित वेतन",
+  "salary_type_commission": "वेतन + राजस्व का %",
+  "salary_type_hourly": "प्रति घंटा - दर",
+  "salary_type_daily": "प्रति दिन भुगतान",
+  "salary_type_per_booking": "प्रति रिकॉर्डिंग भुगतान",
+  "hourly_rate": "प्रति घंटे की दर",
+  "hourly_rate_hint": "काम किए गए प्रत्येक घंटे के लिए भुगतान",
+  "daily_rate": "दर प्रति दिन",
+  "daily_rate_hint": "प्रत्येक कार्य दिवस का भुगतान",
+  "per_booking_rate": "प्रति रिकॉर्डिंग भुगतान",
+  "per_booking_rate_hint": "प्रत्येक पूर्ण प्रविष्टि के लिए भुगतान"
 }

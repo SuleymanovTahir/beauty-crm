@@ -294,5 +294,17 @@
   "view_details": "View details",
   "weeks_ahead": "weeks ahead",
   "working_hours": "Working hours",
-  "years_of_experience": "Years of Experience"
+  "years_of_experience": "Years of Experience",
+  "salary_type": "Art der Lohn- und Gehaltsabrechnung",
+  "salary_type_fixed": "Festgehalt",
+  "salary_type_commission": "Gehalt + % des Umsatzes",
+  "salary_type_hourly": "Stundensatz",
+  "salary_type_daily": "Zahlung pro Tag",
+  "salary_type_per_booking": "Bezahlung pro Aufnahme",
+  "hourly_rate": "Preis pro Stunde",
+  "hourly_rate_hint": "Bezahlung für jede geleistete Arbeitsstunde",
+  "daily_rate": "Preis pro Tag",
+  "daily_rate_hint": "Bezahlung für jeden geleisteten Arbeitstag",
+  "per_booking_rate": "Bezahlung pro Aufnahme",
+  "per_booking_rate_hint": "Bezahlung für jeden abgeschlossenen buchung"
 }
