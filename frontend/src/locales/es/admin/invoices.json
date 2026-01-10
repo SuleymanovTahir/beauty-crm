@@ -1,0 +1,67 @@
+{
+  "title": "Cuentas",
+  "subtitle": "Gestión de cuentas y pagos.",
+  "addInvoice": "Crea una cuenta",
+  "addPayment": "Agregar pago",
+  "loading": "Cargando...",
+  "allStatuses": "Todos los estados",
+  "invoiceNumber": "Número de cuenta",
+  "client": "Cliente",
+  "totalAmount": "Suma",
+  "paidAmount": "Pagado",
+  "status": "Estado",
+  "dueDate": "Fecha de vencimiento",
+  "actions": "Acciones",
+  "sendButton": "Enviar",
+  "delete": "Borrar",
+  "noInvoices": "Aún no hay cuentas",
+  "createFirst": "Crea tu primera factura para un cliente",
+  "statuses": {
+    "draft": "Borrador",
+    "sent": "Enviado",
+    "partial": "Parcialmente pagado",
+    "paid": "Pagado",
+    "overdue": "Venció"
+  },
+  "form": {
+    "selectClient": "Seleccionar cliente",
+    "items": "Posiciones de cuenta",
+    "itemName": "Nombre",
+    "itemQuantity": "Cantidad",
+    "itemPrice": "Precio",
+    "addItem": "Añadir una posición",
+    "dueDate": "Fecha de vencimiento",
+    "notes": "Notas",
+    "save": "Ahorrar",
+    "cancel": "Cancelar"
+  },
+  "payment": {
+    "title": "Agregar pago",
+    "amount": "Suma",
+    "method": "Método de pago",
+    "notes": "Notas",
+    "add": "Agregar",
+    "methods": {
+      "cash": "Dinero",
+      "card": "Mapa",
+      "transfer": "Traducción",
+      "online": "En línea"
+    }
+  },
+  "sendDialog": {
+    "title": "Enviar factura",
+    "method": "Método de envío",
+    "recipient": "Beneficiario",
+    "email": "Correo electrónico",
+    "whatsapp": "WhatsApp",
+    "telegram": "Telegrama",
+    "sendButton": "Enviar"
+  },
+  "messages": {
+    "confirmDelete": "¿Estás seguro de que deseas eliminar esta cuenta?",
+    "invoiceCreated": "Cuenta creada",
+    "invoiceSent": "factura enviada",
+    "paymentAdded": "Pago agregado",
+    "invoiceDeleted": "Cuenta eliminada"
+  }
+}

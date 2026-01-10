@@ -645,10 +645,10 @@ export default function Users() {
               <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white flex-shrink-0 -m-6 mb-6 rounded-t-2xl">
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 leading-tight">
-                    {t('action_change_role_title')}: {selectedUser.full_name}
+                    {t('action_change_role_title')}: {(selectedUser as any).full_name}
                   </h3>
                   <p className="text-sm text-gray-500 mt-1">
-                    {t('role_dialog_current')}: {roleConfig[selectedUser.role]?.label || selectedUser.role}
+                    {t('role_dialog_current')}: {roleConfig[(selectedUser as any).role]?.label || (selectedUser as any).role}
                   </p>
                 </div>
                 <Button
@@ -693,9 +693,9 @@ export default function Users() {
                           return (
                             <div key={role.key} className="space-y-2">
                               <button
-                                onClick={() => handleChangeRole(selectedUser.id, role.key)}
+                                onClick={() => handleChangeRole((selectedUser as any).id, role.key)}
                                 disabled={savingRole}
-                                className={`w-full p-3 rounded-lg border-2 transition-all text-left ${selectedUser.role === role.key
+                                className={`w-full p-3 rounded-lg border-2 transition-all text-left ${(selectedUser as any).role === role.key
                                   ? 'border-pink-500 bg-pink-50'
                                   : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
                                   }`}
@@ -707,7 +707,7 @@ export default function Users() {
                                       {getRoleDescription(role.key)}
                                     </p>
                                   </div>
-                                  {selectedUser.role === role.key && (
+                                  {(selectedUser as any).role === role.key && (
                                     <Badge className="bg-pink-100 text-pink-800">{t('role_dialog_current_badge')}</Badge>
                                   )}
                                 </div>
@@ -752,7 +752,7 @@ export default function Users() {
             <div className="crm-modal max-w-md" onClick={(e) => e.stopPropagation()}>
               <div className="p-6 border-b border-gray-200 -m-6 mb-6 rounded-t-2xl">
                 <h3 className="text-xl font-bold text-gray-900">
-                  {t('edit_dialog_title')}: {selectedUser.full_name}
+                  {t('edit_dialog_title')}: {(selectedUser as any).full_name}
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">
                   {t('edit_dialog_subtitle')}
@@ -856,10 +856,10 @@ export default function Users() {
               <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-white rounded-t-xl flex-shrink-0">
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">
-                    {t('permissions_dialog_title')}: {selectedUser.full_name}
+                    {t('permissions_dialog_title')}: {(selectedUser as any).full_name}
                   </h3>
                   <p className="text-xs text-gray-600 mt-1">
-                    {t('permissions_dialog_role')}: {roleConfig[selectedUser.role]?.label || selectedUser.role}
+                    {t('permissions_dialog_role')}: {roleConfig[(selectedUser as any).role]?.label || (selectedUser as any).role}
                   </p>
                 </div>
                 <Button
@@ -876,7 +876,7 @@ export default function Users() {
               </div>
 
               <div className="p-4 overflow-y-auto flex-1">
-                <PermissionsTab userId={selectedUser.id} />
+                <PermissionsTab userId={(selectedUser as any).id} />
               </div>
             </div>
           </div>

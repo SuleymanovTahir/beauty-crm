@@ -1,99 +1,11 @@
 {
   "users": [
     {
-      "id": 59,
-      "fields": {
-        "full_name": {
-          "ru": "Смирнова Екатерина",
-          "key": "users.59.full_name.dfcc4b09",
-          "en": "Smirnova Ekaterina",
-          "ar": "سميرنوفا ايكاترينا",
-          "es": "Smirnova Ekaterina",
-          "de": "Smirnova Ekaterina",
-          "fr": "Smirnova Ekaterina",
-          "hi": "स्मिर्नोवा एकातेरिना",
-          "kk": "Смирнова Екатерина",
-          "pt": "Smirnova Ekaterina",
-          "detected_language": "ru"
-        },
-        "position": {
-          "ru": "Парикмахер-стилист",
-          "key": "users.59.position.b8d173e8",
-          "en": "Hairdresser-stylist",
-          "ar": "مصفف شعر",
-          "es": "peluquero-estilista",
-          "de": "Friseur-Stylist",
-          "fr": "Coiffeuse-styliste",
-          "hi": "नाई-स्टाइलिस्ट",
-          "kk": "Шаштараз-стилист",
-          "pt": "Cabeleireiro-estilista",
-          "detected_language": "ru"
-        },
-        "bio": {
-          "ru": "Стрижки, окрашивание, укладки",
-          "key": "users.59.bio.4a81806f",
-          "en": "Haircuts, coloring, styling",
-          "ar": "قصات الشعر، التلوين، التصميم",
-          "es": "Cortes de pelo, coloración, peinado.",
-          "de": "Haarschnitte, Färben, Styling",
-          "fr": "Coupes de cheveux, colorations, stylisme",
-          "hi": "बाल काटना, रंगना, स्टाइल करना",
-          "kk": "Шаш қию, бояу, сәндеу",
-          "pt": "Cortes de cabelo, coloração, estilo",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 60,
-      "fields": {
-        "full_name": {
-          "ru": "Лебедева Татьяна",
-          "key": "users.60.full_name.257200e4",
-          "en": "Lebedeva Tatyana",
-          "ar": "ليبيديفا تاتيانا",
-          "es": "Lebedeva Tatyana",
-          "de": "Lebedeva Tatyana",
-          "fr": "Lebedeva Tatyana",
-          "hi": "लेबेदेवा तात्याना",
-          "kk": "Лебедева Татьяна",
-          "pt": "Lebedeva Tatyana",
-          "detected_language": "ru"
-        },
-        "position": {
-          "ru": "Косметолог",
-          "key": "users.60.position.a4e20702",
-          "en": "Beautician",
-          "ar": "التجميل",
-          "es": "Cosmetólogo",
-          "de": "Kosmetikerin",
-          "fr": "Esthéticien",
-          "hi": "कस्मेटिकस का बैग",
-          "kk": "Косметолог",
-          "pt": "Esteticista",
-          "detected_language": "uk"
-        },
-        "bio": {
-          "ru": "Уход за лицом и телом",
-          "key": "users.60.bio.6ef3bfcd",
-          "en": "Face and body care",
-          "ar": "العناية بالوجه والجسم",
-          "es": "Cuidados faciales y corporales",
-          "de": "Gesichts- und Körperpflege",
-          "fr": "Soins du visage et du corps",
-          "hi": "चेहरे और शरीर की देखभाल",
-          "kk": "Бет пен дене күтімі",
-          "pt": "Cuidados com o rosto e o corpo",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 3,
+      "id": 2,
       "fields": {
         "position": {
           "ru": "Стилист-парикмахер",
-          "key": "users.3.position.18612649",
+          "key": "users.2.position.18612649",
           "en": "Hair Stylist",
           "ar": "مصفف الشعر",
           "es": "estilista",
@@ -107,11 +19,101 @@
       }
     },
     {
-      "id": 2,
+      "id": 62,
+      "fields": {
+        "bio": {
+          "ru": "Павлова Ирина — ведущий эксперт в области Макияж, визаж. С опытом работы 8 лет, создает неповторимые образы, учитывая каждое пожелание гостя.",
+          "key": "users.62.bio.7d6e104b",
+          "en": "Pavlova Irina is a leading expert in the field of Makeup, visage. ",
+          "ar": "بافلوفا إيرينا هي خبيرة رائدة في مجال المكياج والوجه. مع 8 سنوات من الخبرة، تقوم بإنشاء صور فريدة من نوعها، مع مراعاة رغبات كل ضيف.",
+          "es": "Pavlova Irina es una destacada experta en el campo del maquillaje y el rostro. Con 8 años de experiencia, crea imágenes únicas, teniendo en cuenta los deseos de cada huésped.",
+          "de": "Pavlova Irina ist eine führende Expertin im Bereich Make-up und Visage. Mit 8 Jahren Erfahrung kreiert sie einzigartige Bilder und berücksichtigt dabei die Wünsche jedes Gastes.",
+          "fr": "Pavlova Irina est une experte de premier plan dans le domaine du maquillage et du visage. Forte de 8 ans d’expérience, elle crée des images uniques, en tenant compte des souhaits de chaque invité.",
+          "hi": "पावलोवा इरीना मेकअप, चेहरे के क्षेत्र में एक अग्रणी विशेषज्ञ हैं। 8 वर्षों के अनुभव के साथ, वह प्रत्येक अतिथि की इच्छाओं को ध्यान में रखते हुए अद्वितीय छवियां बनाती है।",
+          "kk": "Павлова Ирина - макияж, визаж саласындағы жетекші сарапшы. 8 жылдық тәжірибесі бар ол әр қонақтың қалауын ескере отырып, бірегей бейнелер жасайды.",
+          "pt": "Pavlova Irina é uma das maiores especialistas na área de maquiagem e rosto. Com 8 anos de experiência, cria imagens únicas, atendendo aos desejos de cada hóspede.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 58,
+      "fields": {
+        "bio": {
+          "ru": "Ваш эксперт по идеальному маникюру. Кузнецова Виктория — это тонкое чувство вкуса, безупречная стерильность и внимание к каждой детали.",
+          "key": "users.58.bio.bfb7e922",
+          "en": "Your expert for the perfect manicure. ",
+          "ar": "خبيرك للحصول على مانيكير مثالي. تتمتع Kuznetsova Victoria بإحساس دقيق بالذوق والعقم الذي لا تشوبه شائبة والاهتمام بكل التفاصيل.",
+          "es": "Tu experto para la manicura perfecta. Kuznetsova Victoria es un delicado sentido del gusto, una esterilidad impecable y atención a cada detalle.",
+          "de": "Ihr Experte für die perfekte Maniküre. Kuznetsova Victoria ist ein feiner Geschmackssinn, tadellose Sterilität und Liebe zum Detail.",
+          "fr": "Votre expert pour une manucure parfaite. Kuznetsova Victoria est un sens du goût délicat, une stérilité impeccable et une attention portée à chaque détail.",
+          "hi": "उत्तम मैनीक्योर के लिए आपका विशेषज्ञ। कुज़नेत्सोवा विक्टोरिया स्वाद, त्रुटिहीन बाँझपन और हर विवरण पर ध्यान देने की एक नाजुक भावना है।",
+          "kk": "Сіздің тамаша маникюр бойынша маманыңыз. Кузнецова Виктория - нәзік дәм сезімі, мінсіз бедеулік және әрбір бөлшекке назар аудару.",
+          "pt": "Seu especialista para a manicure perfeita. Kuznetsova Victoria tem um paladar delicado, esterilidade impecável e atenção a cada detalhe.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 60,
+      "fields": {
+        "bio": {
+          "ru": "Профессионализм и творческий подход: Лебедева Татьяна специализируется на Facial, Promo. Мастер, для которого нет невыполнимых задач.",
+          "key": "users.60.bio.397804b5",
+          "en": "Professionalism and creativity: Tatyana Lebedeva specializes in Facial, Promo. ",
+          "ar": "الاحتراف والإبداع: تاتيانا ليبيديفا متخصصة في الوجه والترويج. سيد لا توجد مهمة مستحيلة بالنسبة له.",
+          "es": "Profesionalismo y creatividad: Tatyana Lebedeva se especializa en tratamientos faciales y promocionales. Un maestro para quien ninguna tarea es imposible.",
+          "de": "Professionalität und Kreativität: Tatyana Lebedeva ist auf Gesichtsbehandlung und Promo spezialisiert. Ein Meister, für den keine Aufgabe unmöglich ist.",
+          "fr": "Professionnalisme et créativité : Tatyana Lebedeva est spécialisée dans le soin du visage, la promotion. Un maître pour qui aucune tâche n'est impossible.",
+          "hi": "व्यावसायिकता और रचनात्मकता: तात्याना लेबेडेवा फेशियल, प्रोमो में माहिर हैं। एक ऐसा गुरु जिसके लिए कोई भी कार्य असंभव नहीं है।",
+          "kk": "Кәсіби шеберлік және шығармашылық: Татьяна Лебедева бет күтімі, промо бойынша маманданған. Ешбір тапсырма орындалмайтын шебер.",
+          "pt": "Profissionalismo e criatividade: Tatyana Lebedeva é especialista em Facial, Promo. Um mestre para quem nenhuma tarefa é impossível.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 61,
+      "fields": {
+        "bio": {
+          "ru": "Профессионализм и творческий подход: Федорова Наталья специализируется на Brows, Permanent Makeup, Promo. Мастер, для которого нет невыполнимых задач.",
+          "key": "users.61.bio.e6c24481",
+          "en": "Professionalism and creativity: Natalya Fedorova specializes in Brows, Permanent Makeup, Promo. ",
+          "ar": "الاحترافية والإبداع: ناتاليا فيدوروفا متخصصة في الحواجب والمكياج الدائم والترويج. سيد لا توجد مهمة مستحيلة بالنسبة له.",
+          "es": "Profesionalismo y creatividad: Natalya Fedorova se especializa en cejas, maquillaje permanente y promociones. Un maestro para quien ninguna tarea es imposible.",
+          "de": "Professionalität und Kreativität: Natalya Fedorova ist auf Augenbrauen, Permanent Make-up und Promo spezialisiert. Ein Meister, für den keine Aufgabe unmöglich ist.",
+          "fr": "Professionnalisme et créativité : Natalya Fedorova est spécialisée dans les sourcils, le maquillage permanent et la promotion. Un maître pour qui aucune tâche n'est impossible.",
+          "hi": "व्यावसायिकता और रचनात्मकता: नताल्या फेडोरोवा ब्राउज, परमानेंट मेकअप, प्रोमो में माहिर हैं। एक ऐसा गुरु जिसके लिए कोई भी कार्य असंभव नहीं है।",
+          "kk": "Кәсіби шеберлік және шығармашылық: Наталья Федорова қастар, тұрақты макияж, промо бойынша маманданған. Ешбір тапсырма орындалмайтын шебер.",
+          "pt": "Profissionalismo e criatividade: Natalya Fedorova é especialista em Sobrancelhas, Maquiagem Permanente, Promo. Um mestre para quem nenhuma tarefa é impossível.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 59,
+      "fields": {
+        "bio": {
+          "ru": "Мастер преображения ваших волос. Смирнова Екатерина использует авторские техники окрашивания и ухода, которые подчеркнут вашу индивидуальность.",
+          "key": "users.59.bio.1e462bd1",
+          "en": "Master of transforming your hair. ",
+          "ar": "سيد تحويل شعرك. تستخدم سميرنوفا إيكاترينا تقنيات التلوين والعناية الخاصة بها والتي ستسلط الضوء على شخصيتك.",
+          "es": "Maestro en transformar tu cabello. Smirnova Ekaterina utiliza sus propias técnicas de coloración y cuidado que resaltarán su individualidad.",
+          "de": "Meister der Transformation Ihrer Haare. Smirnova Ekaterina verwendet ihre eigenen Färbe- und Pflegetechniken, die Ihre Individualität hervorheben.",
+          "fr": "Maître de la transformation de vos cheveux. Smirnova Ekaterina utilise ses propres techniques de coloration et de soins qui mettront en valeur votre individualité.",
+          "hi": "अपने बालों को बदलने में माहिर. स्मिर्नोवा एकातेरिना अपनी स्वयं की रंगाई और देखभाल तकनीकों का उपयोग करती हैं जो आपके व्यक्तित्व को उजागर करेंगी।",
+          "kk": "Шашыңызды түрлендіру шебері. Смирнова Екатерина сіздің даралығыңызды көрсететін өзінің бояу және күтім әдістерін пайдаланады.",
+          "pt": "Mestre em transformar seus cabelos. Smirnova Ekaterina utiliza técnicas próprias de coloração e cuidado que irão destacar sua individualidade.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 3,
       "fields": {
         "position": {
           "ru": "Стилист-парикмахер",
-          "key": "users.2.position.18612649",
+          "key": "users.3.position.18612649",
           "en": "Hair Stylist",
           "ar": "مصفف الشعر",
           "es": "estilista",
@@ -154,7 +156,7 @@
           "de": "Top-Spezialist",
           "fr": "Spécialiste supérieur",
           "hi": "शीर्ष विशेषज्ञ",
-          "kk": "Жоғарғы маман",
+          "kk": "Бас маман",
           "pt": "Especialista superior",
           "detected_language": "en"
         }
@@ -177,147 +179,15 @@
           "detected_language": "en"
         }
       }
-    },
-    {
-      "id": 61,
-      "fields": {
-        "full_name": {
-          "ru": "Федорова Наталья",
-          "key": "users.61.full_name.5f17e491",
-          "en": "Fedorova Natalya",
-          "ar": "فيدوروفا ناتاليا",
-          "es": "Fedorova Natalya",
-          "de": "Fedorova Natalya",
-          "fr": "Fedorova Natalya",
-          "hi": "फेडोरोवा नतालिया",
-          "kk": "Федорова Наталья",
-          "pt": "Fedorova Natalya",
-          "detected_language": "ru"
-        },
-        "position": {
-          "ru": "Мастер бровист",
-          "key": "users.61.position.5808e954",
-          "en": "Master eyebrow artist",
-          "ar": "فنان الحاجب الرئيسي",
-          "es": "Maestro artista de cejas",
-          "de": "Meisterhafter Augenbrauenkünstler",
-          "fr": "Maître artiste des sourcils",
-          "hi": "मास्टर आइब्रो आर्टिस्ट",
-          "kk": "Шебер қас суретшісі",
-          "pt": "Artista de sobrancelhas mestre",
-          "detected_language": "ru"
-        },
-        "bio": {
-          "ru": "Оформление бровей и ресниц",
-          "key": "users.61.bio.aa13b138",
-          "en": "Eyebrow and eyelash shaping",
-          "ar": "تشكيل الحواجب والرموش",
-          "es": "Modelado de cejas y pestañas",
-          "de": "Augenbrauen- und Wimpernkorrektur",
-          "fr": "Mise en forme des sourcils et des cils",
-          "hi": "भौहें और पलकों को आकार देना",
-          "kk": "Қас пен кірпікті пішіндеу",
-          "pt": "Modelagem de sobrancelhas e cílios",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 58,
-      "fields": {
-        "full_name": {
-          "ru": "Кузнецова Виктория",
-          "key": "users.58.full_name.214f5191",
-          "en": "Kuznetsova Viktoriya",
-          "ar": "كوزنتسوفا فيكتوريا",
-          "es": "Kuznetsova Viktoriya",
-          "de": "Kuznetsova Viktoriya",
-          "fr": "Kuznetsova Viktoriya",
-          "hi": "कुज़नेत्सोवा विक्टोरिया",
-          "kk": "Кузнецова Виктория",
-          "pt": "Kuznetsova Viktoriya",
-          "detected_language": "ru"
-        },
-        "position": {
-          "ru": "Мастер маникюра",
-          "key": "users.58.position.e36b15b4",
-          "en": "Manicurist",
-          "ar": "مانيكير",
-          "es": "Manicuro",
-          "de": "Maniküre",
-          "fr": "Manucure",
-          "hi": "manicurist",
-          "kk": "Маникюр шебері",
-          "pt": "Manicuro",
-          "detected_language": "ru"
-        },
-        "bio": {
-          "ru": "Специалист по нейл-арту",
-          "key": "users.58.bio.7ef1954e",
-          "en": "Nail art specialist",
-          "ar": "متخصص في فن الأظافر",
-          "es": "Especialista en arte de uñas",
-          "de": "Spezialist für Nailart",
-          "fr": "Spécialiste du nail art",
-          "hi": "नेल आर्ट विशेषज्ञ",
-          "kk": "Тырнақ өнерінің маманы",
-          "pt": "Especialista em nail art",
-          "detected_language": "sr"
-        }
-      }
-    },
-    {
-      "id": 62,
-      "fields": {
-        "full_name": {
-          "ru": "Ирина Павлова",
-          "key": "users.62.full_name.d3255765",
-          "en": "Irina Pavlova",
-          "ar": "ايرينا بافلوفا",
-          "es": "Irina Pávlova",
-          "de": "Irina Pawlowa",
-          "fr": "Irina Pavlova",
-          "hi": "इरीना पावलोवा",
-          "kk": "Ирина Павлова",
-          "pt": "Irina Pavlova",
-          "detected_language": "uk"
-        },
-        "position": {
-          "ru": "Визажист",
-          "key": "users.62.position.bc063e06",
-          "en": "Visagiste",
-          "ar": "فيزاجيستي",
-          "es": "Visagista",
-          "de": "Visagistin",
-          "fr": "Visagiste",
-          "hi": "विसागिस्ट",
-          "kk": "Визагист",
-          "pt": "Visagista",
-          "detected_language": "ru"
-        },
-        "bio": {
-          "ru": "Профессиональный макияж",
-          "key": "users.62.bio.9379f3b7",
-          "en": "Professional makeup",
-          "ar": "مكياج احترافي",
-          "es": "maquillaje profesional",
-          "de": "Professionelles Make-up",
-          "fr": "Maquillage professionnel",
-          "hi": "पेशेवर मेकअप",
-          "kk": "Кәсіби макияж",
-          "pt": "Maquiagem profissional",
-          "detected_language": "ru"
-        }
-      }
     }
   ],
   "public_reviews": [
     {
-      "id": 18,
+      "id": 21,
       "fields": {
         "text_ru": {
           "ru": "Лучший салон красоты в Дубае! ",
-          "key": "public_reviews.18.text_ru.6f00ad70",
+          "key": "public_reviews.21.text_ru.6f00ad70",
           "en": "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!",
           "ar": "أفضل صالون تجميل في دبي! ",
           "es": "¡El mejor salón de belleza en Dubai! ",
@@ -327,6 +197,138 @@
           "kk": "Дубайдағы ең жақсы сұлулық салоны! ",
           "pt": "Melhor salão de beleza em Dubai! ",
           "detected_language": "en"
+        },
+        "author_name": {
+          "ru": "Сарах Дженкинс",
+          "key": "public_reviews.21.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins",
+          "detected_language": "en"
+        },
+        "employee_position": {
+          "ru": "Ресницы",
+          "key": "public_reviews.21.employee_position.5b1b1d5e",
+          "en": "Eyelashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "fields": {
+        "text_ru": {
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.22.text_ru.f38138da",
+          "en": "Incredible service. ",
+          "ar": "خدمة لا تصدق. كان لدي وجه وبشرتي تتوهج. سأعود بالتأكيد!",
+          "es": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
+          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
+          "fr": "Service incroyable. J'ai eu un soin du visage et ma peau est éclatante. Je reviendrai c'est sûr !",
+          "hi": "अविश्वसनीय सेवा. मैंने फेशियल कराया और मेरी त्वचा चमक उठी। मै अवश्य ही लौट कर आउंगा!",
+          "kk": "Керемет қызмет. Менде бет күтімі болды, терім жылтырап кетті. Мен міндетті түрде ораламын!",
+          "pt": "Serviço incrível. Fiz um tratamento facial e minha pele brilha. Voltarei com certeza!",
+          "detected_language": "es"
+        },
+        "author_name": {
+          "ru": "Мариа Гонзалез",
+          "key": "public_reviews.22.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González",
+          "detected_language": "en"
+        },
+        "employee_position": {
+          "ru": "Уход за лицом",
+          "key": "public_reviews.22.employee_position.9a3a91ca",
+          "en": "Facial Treatment",
+          "ar": "علاج الوجه",
+          "es": "Tratamiento Facial",
+          "de": "Gesichtsbehandlung",
+          "fr": "Traitement du visage",
+          "hi": "चेहरे का उपचार",
+          "kk": "Бет күтімі",
+          "pt": "Tratamento facial",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 23,
+      "fields": {
+        "text_ru": {
+          "ru": "Отличный сервис и профессиональный персонал. ",
+          "key": "public_reviews.23.text_ru.ae85e84b",
+          "en": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
+          "ar": "خدمة ممتازة وفريق عمل محترف. ",
+          "es": "Excelente servicio y personal profesional. ",
+          "de": "Exzellenter Service und professionelles Personal. ",
+          "fr": "Excellent service et personnel professionnel. ",
+          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी। ",
+          "kk": "Тамаша қызмет көрсету және кәсіби персонал. ",
+          "pt": "Excelente atendimento e equipe profissional. ",
+          "detected_language": "en"
+        },
+        "author_name": {
+          "ru": "Фатима Ал-Саыед",
+          "key": "public_reviews.23.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима Әл-Сайед",
+          "pt": "Fátima Al-Sayed",
+          "detected_language": "en"
+        },
+        "employee_position": {
+          "ru": "Микроблейдинг",
+          "key": "public_reviews.23.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 18,
+      "fields": {
+        "text_ru": {
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.18.text_ru.d04583b6",
+          "en": "The best beauty salon in Dubai!",
+          "ar": "أفضل صالون تجميل في دبي!",
+          "es": "¡El mejor salón de belleza de Dubai!",
+          "de": "Der beste Schönheitssalon in Dubai!",
+          "fr": "Le meilleur salon de beauté de Dubaï !",
+          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
+          "kk": "Дубайдағы ең жақсы сұлулық салоны!",
+          "pt": "O melhor salão de beleza de Dubai!",
+          "detected_language": "ru"
         },
         "author_name": {
           "ru": "Сарах Дженкинс",
@@ -361,16 +363,16 @@
       "fields": {
         "text_ru": {
           "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "key": "public_reviews.19.text_ru.f38138da",
+          "key": "public_reviews.19.text_ru.784d2781",
           "en": "Incredible service. ",
-          "ar": "خدمة لا تصدق. كان لدي وجه وبشرتي تتوهج. سأعود بالتأكيد!",
-          "es": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
+          "ar": "خدمة لا تصدق. كان لدي وجه وبشرتي متوهجة. سأعود بالتأكيد!",
+          "es": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!",
           "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Service incroyable. J'ai eu un soin du visage et ma peau est éclatante. Je reviendrai c'est sûr !",
-          "hi": "अविश्वसनीय सेवा. मैंने फेशियल कराया और मेरी त्वचा चमक उठी। मै अवश्य ही लौट कर आउंगा!",
-          "kk": "Керемет қызмет. Менде бет күтімі болды, терім жылтырап кетті. Мен міндетті түрде ораламын!",
-          "pt": "Serviço incrível. Fiz um tratamento facial e minha pele brilha. Voltarei com certeza!",
-          "detected_language": "es"
+          "fr": "Service incroyable. J'ai eu un soin du visage et ma peau est éclatante. Je reviendrai certainement!",
+          "hi": "अविश्वसनीय सेवा. मैंने फेशियल करवाया और मेरी त्वचा चमक रही है। मैं निश्चित ही वापस आउंगा!",
+          "kk": "Керемет қызмет. Мен бет күтімін жасадым, терім жылтырап жатыр. Мен міндетті түрде қайтамын!",
+          "pt": "Serviço incrível. Fiz um tratamento facial e minha pele está brilhando. Eu definitivamente voltarei!",
+          "detected_language": "ru"
         },
         "author_name": {
           "ru": "Мариа Гонзалез",
@@ -405,16 +407,16 @@
       "fields": {
         "text_ru": {
           "ru": "Отличный сервис и профессиональный персонал. ",
-          "key": "public_reviews.20.text_ru.ae85e84b",
-          "en": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
-          "ar": "خدمة ممتازة وفريق عمل محترف. ",
-          "es": "Excelente servicio y personal profesional. ",
-          "de": "Exzellenter Service und professionelles Personal. ",
-          "fr": "Excellent service et personnel professionnel. ",
-          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी। ",
-          "kk": "Тамаша қызмет көрсету және кәсіби персонал. ",
-          "pt": "Excelente atendimento e equipe profissional. ",
-          "detected_language": "en"
+          "key": "public_reviews.20.text_ru.33473c5f",
+          "en": "Excellent service and professional staff.",
+          "ar": "خدمة ممتازة وفريق عمل محترف.",
+          "es": "Excelente servicio y personal profesional.",
+          "de": "Exzellenter Service und professionelles Personal.",
+          "fr": "Excellent service et personnel professionnel.",
+          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी।",
+          "kk": "Тамаша қызмет көрсету және кәсіби персонал.",
+          "pt": "Excelente atendimento e equipe profissional.",
+          "detected_language": "ru"
         },
         "author_name": {
           "ru": "Фатима Ал-Саыед",
@@ -425,7 +427,7 @@
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Әл-Сайед",
+          "kk": "Фатима әл-Сайед",
           "pt": "Fátima Al-Sayed",
           "detected_language": "en"
         },
@@ -1038,24 +1040,6 @@
       }
     },
     {
-      "id": 23,
-      "fields": {
-        "description_ru": {
-          "ru": "Осветление корней с укладкой",
-          "key": "services.23.description_ru.785f83b1",
-          "en": "Root lightening with styling",
-          "ar": "تفتيح الجذور مع التصفيف",
-          "es": "Aclaramiento de raíces con peinado.",
-          "de": "Ansatzaufhellung mit Styling",
-          "fr": "Éclaircissement des racines avec coiffage",
-          "hi": "स्टाइलिंग के साथ जड़ों को हल्का करना",
-          "kk": "Сәндеу арқылы тамырды жарықтандыру",
-          "pt": "Clareamento de raiz com estilo",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
       "id": 90,
       "fields": {
         "description_ru": {
@@ -1070,6 +1054,24 @@
           "kk": "Ыстық тас",
           "pt": "Pedra quente",
           "detected_language": "mk"
+        }
+      }
+    },
+    {
+      "id": 23,
+      "fields": {
+        "description_ru": {
+          "ru": "Осветление корней с укладкой",
+          "key": "services.23.description_ru.785f83b1",
+          "en": "Root lightening with styling",
+          "ar": "تفتيح الجذور مع التصفيف",
+          "es": "Aclaramiento de raíces con peinado.",
+          "de": "Ansatzaufhellung mit Styling",
+          "fr": "Éclaircissement des racines avec coiffage",
+          "hi": "स्टाइलिंग के साथ जड़ों को हल्का करना",
+          "kk": "Сәндеу арқылы тамырды жарықтандыру",
+          "pt": "Clareamento de raiz com estilo",
+          "detected_language": "ru"
         }
       }
     },
