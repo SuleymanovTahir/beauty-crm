@@ -15,13 +15,34 @@ from utils.utils import get_current_user
 class StageCreate(BaseModel):
     name: str
     color: str
-    order_index: int
+    order_index: int = 0
 
 class StageUpdate(BaseModel):
     name: Optional[str] = None
     color: Optional[str] = None
     order_index: Optional[int] = None
     is_active: Optional[bool] = None
+
+class ReorderStagesRequest(BaseModel):
+    ordered_ids: List[int]
+
+class ContractCreate(BaseModel):
+    client_id: str
+    booking_id: Optional[int] = None
+    contract_type: str = "service"
+    template_name: Optional[str] = None
+    data: dict = {}
+
+class ContractUpdate(BaseModel):
+    status: Optional[str] = None
+    stage_id: Optional[int] = None
+    contract_type: Optional[str] = None
+    data: Optional[dict] = None
+    signed_at: Optional[str] = None
+
+class ContractSend(BaseModel):
+    delivery_method: str  # email, whatsapp, telegram, instagram
+    recipient: str
 
 router = APIRouter()
 
@@ -128,40 +149,6 @@ async def reorder_contract_stages(
         conn.close()
 
 
-class ContractCreate(BaseModel):
-    client_id: str
-    booking_id: Optional[int] = None
-    contract_type: str = "service"
-    template_name: Optional[str] = None
-    data: dict = {}
-
-
-class ContractUpdate(BaseModel):
-    status: Optional[str] = None
-    stage_id: Optional[int] = None
-    contract_type: Optional[str] = None
-    data: Optional[dict] = None
-    signed_at: Optional[str] = None
-
-
-class StageCreate(BaseModel):
-    name: str
-    color: str
-    order_index: int = 0
-
-
-class StageUpdate(BaseModel):
-    name: str
-    color: str
-
-
-class ReorderStagesRequest(BaseModel):
-    ordered_ids: List[int]
-
-
-class ContractSend(BaseModel):
-    delivery_method: str  # email, whatsapp, telegram, instagram
-    recipient: str
 
 
 @router.get("/contracts")
