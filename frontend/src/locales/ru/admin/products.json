@@ -43,5 +43,16 @@
     "productUpdated": "Товар обновлен",
     "productDeleted": "Товар удален",
     "movementAdded": "Движение добавлено"
+  },
+  "detail": {
+    "noCategory": "Без категории",
+    "costPriceLabel": "Себестоимость: {price} AED",
+    "movementHistory": "История движений",
+    "inStock": "В наличии: {count}",
+    "loadingData": "Загрузка данных...",
+    "noMovements": "Нет данных о движениях",
+    "movementIn": "Поступление",
+    "movementOut": "Списание",
+    "movementAdjustment": "Корректировка"
   }
 }
