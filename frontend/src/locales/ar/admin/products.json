@@ -49,7 +49,7 @@
   },
   "detail": {
     "noCategory": "غير مصنف",
-    "costPriceLabel": "التكلفة: {{price}}_ درهم إماراتي",
+    "costPriceLabel": "التكلفة: {{price}}_ {{currency}}",
     "movementHistory": "تاريخ الحركات",
     "inStock": "متوفر في المخزون: {{count}}_",
     "loadingData": "جارٍ تحميل البيانات...",
