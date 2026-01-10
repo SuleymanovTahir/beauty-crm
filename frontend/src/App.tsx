@@ -63,6 +63,7 @@ const EmployeeTasks = React.lazy(() => import('./pages/employee/Tasks'));
 const EmployeeBookings = React.lazy(() => import('./pages/employee/Bookings'));
 const EmployeeServices = React.lazy(() => import('./pages/employee/Services'));
 const EmployeeDashboard = React.lazy(() => import('./pages/employee/Dashboard'));
+const NotificationsPage = React.lazy(() => import('./pages/common/Notifications'));
 
 // const PublicLayout = React.lazy(() => import('./components/layouts/PublicLayout'));
 // const Success = React.lazy(() => import('./pages/public/Success'));
@@ -433,6 +434,7 @@ export default function App() {
                 <Route path="bookings" element={<EmployeeBookings />} />
                 <Route path="tasks" element={<EmployeeTasks />} />
                 <Route path="services" element={<EmployeeServices />} />
+                <Route path="notifications" element={<EmployeeNotifications />} />
                 <Route path="internal-chat" element={<InternalChat />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
