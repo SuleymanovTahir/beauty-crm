@@ -167,7 +167,7 @@ export default function Broadcasts() {
       setLoadingPreview(true);
       const data = await api.previewBroadcast(form);
       setPreview(data);
-      toast.success(t('preview_found', { count: data.total_users }).replace('{count}', data.total_users.toString()));
+      toast.success(t('preview_found', { count: data.total_users }));
     } catch (err: any) {
       toast.error(err.message || t('error_preview'));
     } finally {
@@ -225,10 +225,9 @@ export default function Broadcasts() {
       <div className="p-8 flex items-center justify-center min-h-screen">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 max-w-md text-center">
           <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Доступ запрещен</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('access_denied_title')}</h2>
           <p className="text-gray-600">
-            Функция массовых рассылок доступна только для директора, администратора и продажника.
-            Обратитесь к администратору для получения доступа.
+            {t('access_denied_message')}
           </p>
         </div>
       </div>
@@ -718,7 +717,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
     if (!confirm(t('delete_confirm'))) return;
     try {
       await api.deleteSubscriptionType(id);
-      toast.success(t('type_deleted', 'Тип подписки удален'));
+      toast.success(t('type_deleted'));
       loadTypes();
     } catch (error) {
       toast.error(t('common:error_deleting', 'Ошибка удаления'));
@@ -730,10 +729,10 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
     try {
       if (isNew) {
         await api.createSubscriptionType(editingType);
-        toast.success(t('type_created', 'Тип подписки создан'));
+        toast.success(t('type_created'));
       } else {
         await api.updateSubscriptionType(editingType.id, editingType);
-        toast.success(t('type_updated', 'Тип подписки обновлен'));
+        toast.success(t('type_updated'));
       }
       setEditingType(null);
       setIsNew(false);

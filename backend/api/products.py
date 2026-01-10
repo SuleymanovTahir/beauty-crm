@@ -34,6 +34,7 @@ class ProductCreate(BaseModel):
     supplier: Optional[str] = None
     notes: Optional[str] = None
     is_active: bool = True
+    photos: Optional[str] = None
 
 
 class ProductUpdate(BaseModel):
@@ -56,6 +57,7 @@ class ProductUpdate(BaseModel):
     supplier: Optional[str] = None
     notes: Optional[str] = None
     is_active: Optional[bool] = None
+    photos: Optional[str] = None
 
 
 class ProductMovement(BaseModel):
@@ -128,8 +130,9 @@ async def get_products(
                 "supplier": row[17],
                 "notes": row[18],
                 "is_active": row[19],
-                "created_at": row[20],
-                "updated_at": row[21]
+                "photos": row[20],
+                "created_at": row[21],
+                "updated_at": row[22]
             })
         
         return {"products": products}
@@ -212,8 +215,9 @@ async def get_product(
             "supplier": row[17],
             "notes": row[18],
             "is_active": row[19],
-            "created_at": row[20],
-            "updated_at": row[21]
+            "photos": row[20],
+            "created_at": row[21],
+            "updated_at": row[22]
         }
         
     except HTTPException:
@@ -240,8 +244,8 @@ async def create_product(
             (name, name_ru, name_en, name_ar, category, price, cost_price,
              weight, weight_unit, volume, volume_unit, expiry_date,
              stock_quantity, min_stock_level, sku, barcode, supplier,
-             notes, is_active, created_by, created_at, updated_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
+             notes, is_active, photos, created_by, created_at, updated_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
             RETURNING id
         """, (
             product.name,
@@ -263,6 +267,7 @@ async def create_product(
             product.supplier,
             product.notes,
             product.is_active,
+            product.photos,
             current_user["id"]
         ))
         

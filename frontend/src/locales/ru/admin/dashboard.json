@@ -31,7 +31,7 @@
   "engaged": "Участвовал",
   "error_loading": "Ошибка загрузки",
   "errors": {
-    "loading": "Ошибка: {сообщение}",
+    "loading": "Ошибка: {{message}}",
     "loading_title": "Ошибка загрузки"
   },
   "export_error": "Сообщить об ошибке экспорта",
@@ -49,7 +49,7 @@
   "filter_this_month": "В этом месяце",
   "filter_today": "Сегодня",
   "filter_yesterday": "Вчера",
-  "funnel_details": "Подробнее о дырке",
+  "funnel_details": "Подробнее о воронке",
   "good": "Хороший",
   "key_metrics": "Ключевые показатели",
   "lead_to_customer": "руководитель → клиент",
