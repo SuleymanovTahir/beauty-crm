@@ -550,7 +550,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                             <h3 className="font-bold text-pink-900 mb-2">{t('form.price')}</h3>
                             <p className="text-3xl font-black text-pink-600">{product.price} AED</p>
                             {product.cost_price > 0 && (
-                                <p className="text-sm text-pink-400 mt-1">Себестоимость: {product.cost_price} AED</p>
+                                <p className="text-sm text-pink-400 mt-1">{t('detail.costPriceLabel', { price: product.cost_price })}</p>
                             )}
                         </div>
                     </div>
@@ -558,7 +558,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                     {/* Right: Info & Analytics */}
                     <div className="space-y-6">
                         <div>
-                            <span className="text-xs font-bold text-pink-500 uppercase tracking-wider">{product.category || 'Без категории'}</span>
+                            <span className="text-xs font-bold text-pink-500 uppercase tracking-wider">{product.category || t('detail.noCategory')}</span>
                             <h2 className="text-3xl font-black text-gray-900 leading-tight">{product.name_ru || product.name}</h2>
                             {product.sku && <p className="text-sm text-gray-500 mt-1 font-mono">SKU: {product.sku}</p>}
                         </div>
@@ -573,18 +573,18 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                             <div className="flex items-center justify-between">
                                 <h3 className="font-bold text-gray-900 flex items-center gap-2">
                                     <TrendingUp className="w-5 h-5 text-pink-500" />
-                                    История движений
+                                    {t('detail.movementHistory')}
                                 </h3>
                                 <div className={`px-3 py-1 rounded-full text-xs font-bold ${product.stock_quantity > product.min_stock_level ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                    В наличии: {product.stock_quantity}
+                                    {t('detail.inStock', { count: product.stock_quantity })}
                                 </div>
                             </div>
 
                             <div className="max-h-[300px] overflow-y-auto pr-2 space-y-2">
                                 {loading ? (
-                                    <div className="py-8 text-center text-gray-400">Загрузка данных...</div>
+                                    <div className="py-8 text-center text-gray-400">{t('detail.loadingData')}</div>
                                 ) : movements.length === 0 ? (
-                                    <div className="py-8 text-center text-gray-400">Нет данных о движениях</div>
+                                    <div className="py-8 text-center text-gray-400">{t('detail.noMovements')}</div>
                                 ) : (
                                     movements.map((m: any, idx: number) => (
                                         <div key={idx} className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-all">
@@ -594,7 +594,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                                                 </div>
                                                 <div>
                                                     <p className="text-sm font-bold text-gray-800">
-                                                        {m.movement_type === 'in' ? 'Поступление' : m.movement_type === 'out' ? 'Списание' : 'Корректировка'}
+                                                        {m.movement_type === 'in' ? t('detail.movementIn') : m.movement_type === 'out' ? t('detail.movementOut') : t('detail.movementAdjustment')}
                                                     </p>
                                                     <p className="text-[10px] text-gray-400">{new Date(m.created_at).toLocaleString()}</p>
                                                 </div>

@@ -240,20 +240,20 @@ export default function Broadcasts() {
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <Send className="w-8 h-8 text-pink-600" />
-          Массовые рассылки
+          {t('title')}
         </h1>
-        <p className="text-gray-600">Отправка уведомлений пользователям по разным каналам</p>
+        <p className="text-gray-600">{t('subtitle')}</p>
       </div>
 
       <Tabs defaultValue="compose" className="space-y-6">
         <TabsList>
           <TabsTrigger value="compose" className="flex items-center gap-2">
             <Send className="w-4 h-4" />
-            Создать рассылку
+            {t('create_broadcast')}
           </TabsTrigger>
           <TabsTrigger value="history" className="flex items-center gap-2">
             <History className="w-4 h-4" />
-            История
+            {t('history')}
           </TabsTrigger>
         </TabsList>
 
@@ -262,12 +262,12 @@ export default function Broadcasts() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Form */}
             <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-8 border-b pb-4">Параметры рассылки</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-8 border-b pb-4">{t('broadcast_params')}</h2>
 
               <div className="space-y-8">
                 {/* Channels - FIRST */}
                 <div>
-                  <Label className={`mb-3.5 block text-sm font-semibold ${errors.channels ? 'text-red-500' : 'text-gray-700'}`}>Каналы отправки *</Label>
+                  <Label className={`mb-3.5 block text-sm font-semibold ${errors.channels ? 'text-red-500' : 'text-gray-700'}`}>{t('channels')}</Label>
                   <div className={`flex flex-wrap gap-4 p-5 rounded-2xl border-2 transition-all ${errors.channels ? 'border-red-200 bg-red-50' : 'border-gray-50 bg-gray-50/50'}`}>
                     <button
                       type="button"
@@ -314,21 +314,25 @@ export default function Broadcasts() {
                         }`}
                     >
                       <Bell className="w-5 h-5" />
-                      Уведомления
+                      {t('channels_notification', 'Уведомления')}
                     </button>
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between items-center mb-2.5">
-                    <Label htmlFor="subscription_type" className={`text-sm font-semibold ${errors.subscription_type ? 'text-red-500' : 'text-gray-700'}`}>Тип подписки *</Label>
+                    <Label htmlFor="subscription_type" className={`text-sm font-semibold ${errors.subscription_type ? 'text-red-500' : 'text-gray-700'}`}>{t('subscription_type')}</Label>
                     <button
                       type="button"
-                      onClick={() => setShowManageTypes(true)}
-                      className="text-pink-600 hover:text-pink-700 flex items-center gap-1 text-sm font-medium"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowManageTypes(true);
+                      }}
+                      className="text-pink-600 hover:text-pink-700 flex items-center gap-1 text-sm font-medium relative z-10"
                     >
                       <Settings className="w-4 h-4" />
-                      Настроить типы
+                      {t('configure_types')}
                     </button>
                   </div>
                   <Select
@@ -339,7 +343,7 @@ export default function Broadcasts() {
                     }}
                   >
                     <SelectTrigger id="subscription_type" className={errors.subscription_type ? 'border-red-500' : ''}>
-                      <SelectValue placeholder="Выберите категорию подписки" />
+                      <SelectValue placeholder={t('select_type')} />
                     </SelectTrigger>
                     <SelectContent>
                       {Object.entries(availableSubscriptions)
@@ -359,7 +363,7 @@ export default function Broadcasts() {
                 {/* Subject - Only show when email is selected */}
                 {form.channels.includes('email') && (
                   <div>
-                    <Label htmlFor="subject" className={`block mb-2.5 text-sm font-semibold ${errors.subject ? 'text-red-500' : 'text-gray-700'}`}>Тема (для Email) *</Label>
+                    <Label htmlFor="subject" className={`block mb-2.5 text-sm font-semibold ${errors.subject ? 'text-red-500' : 'text-gray-700'}`}>{t('subject')}</Label>
                     <Input
                       id="subject"
                       className={`rounded-xl h-12 ${errors.subject ? 'border-red-500 bg-red-50/30' : 'bg-gray-50/30 border-gray-200 focus:bg-white transiton-all'}`}
@@ -372,20 +376,20 @@ export default function Broadcasts() {
 
                 {/* Target Role */}
                 <div>
-                  <Label htmlFor="target_role" className="block mb-2.5 text-sm font-semibold text-gray-700">Целевая роль *</Label>
+                  <Label htmlFor="target_role" className="block mb-2.5 text-sm font-semibold text-gray-700">{t('target_role')}</Label>
                   <Select
                     value={form.target_role || 'all'}
                     onValueChange={(value) => setForm({ ...form, target_role: value === 'all' ? '' : value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t('placeholder_all_users', 'Все пользователи')} />
+                      <SelectValue placeholder={t('all_users')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Все пользователи</SelectItem>
-                      <SelectItem value="admin">Администраторы</SelectItem>
-                      <SelectItem value="manager">Менеджеры</SelectItem>
-                      <SelectItem value="employee">Сотрудники</SelectItem>
-                      <SelectItem value="client">Клиенты</SelectItem>
+                      <SelectItem value="all">{t('all_users')}</SelectItem>
+                      <SelectItem value="admin">{t('common:role_admin', 'Администраторы')}</SelectItem>
+                      <SelectItem value="manager">{t('common:role_manager', 'Менеджеры')}</SelectItem>
+                      <SelectItem value="employee">{t('common:role_employee', 'Сотрудники')}</SelectItem>
+                      <SelectItem value="client">{t('common:role_client', 'Клиенты')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -397,9 +401,9 @@ export default function Broadcasts() {
                     onClick={() => setShowUserSelection(!showUserSelection)}
                     className="w-full flex items-center justify-between text-sm font-medium text-gray-700 mb-3 hover:text-gray-900 transition-colors"
                   >
-                    <span>Выбор получателей (опционально)</span>
+                    <span>{t('optional_recipients')}</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">Выбрано: {(form.user_ids || []).length}</span>
+                      <span className="text-xs text-gray-500">{t('recipients_selected', { count: (form.user_ids || []).length })}</span>
                       <svg className={`w-5 h-5 transition-transform ${showUserSelection ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
@@ -422,7 +426,7 @@ export default function Broadcasts() {
                             className="w-4 h-4 text-pink-600 rounded"
                           />
                           <span className="text-sm font-medium text-gray-700">
-                            Выбрать всех ({users.filter(u => !form.target_role || form.target_role === 'all' || u.role === form.target_role).length})
+                            {t('select_all', { count: users.filter(u => !form.target_role || form.target_role === 'all' || u.role === form.target_role).length })}
                           </span>
                         </label>
                       </div>
@@ -456,13 +460,13 @@ export default function Broadcasts() {
                     </div>
                   )}
                   <p className="text-xs text-gray-500 mt-2">
-                    Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам
+                    {t('optional_recipients_hint')}
                   </p>
                 </div>
 
                 {/* Message */}
                 <div>
-                  <Label htmlFor="message" className={`block mb-2.5 text-sm font-semibold ${errors.message ? 'text-red-500' : 'text-gray-700'}`}>Сообщение *</Label>
+                  <Label htmlFor="message" className={`block mb-2.5 text-sm font-semibold ${errors.message ? 'text-red-500' : 'text-gray-700'}`}>{t('message')}</Label>
                   <Textarea
                     id="message"
                     value={form.message}
@@ -475,9 +479,9 @@ export default function Broadcasts() {
                   />
                   <div className="flex justify-between items-center mt-2 px-1">
                     <p className={`text-xs font-medium ${form.message.length > 500 ? 'text-orange-500' : 'text-gray-400'}`}>
-                      {form.message.length} символов
+                      {form.message.length} {t('common:characters_count', 'символов')}
                     </p>
-                    <p className="text-xs text-gray-400 font-medium">Рекомендуется до 4096 (Telegram)</p>
+                    <p className="text-xs text-gray-400 font-medium">{t('telegram_limit_hint', 'Рекомендуется до 4096 (Telegram)')}</p>
                   </div>
                 </div>
 
@@ -492,12 +496,12 @@ export default function Broadcasts() {
                     {loadingPreview ? (
                       <>
                         <Loader className="w-5 h-5 mr-2 animate-spin" />
-                        Загрузка...
+                        {t('common:loading')}
                       </>
                     ) : (
                       <>
                         <Eye className="w-5 h-5 mr-2" />
-                        Предпросмотр
+                        {t('preview')}
                       </>
                     )}
                   </Button>
@@ -510,12 +514,12 @@ export default function Broadcasts() {
                     {sending ? (
                       <>
                         <Loader className="w-5 h-5 mr-2 animate-spin" />
-                        Отправка...
+                        {t('sending', 'Отправка...')}
                       </>
                     ) : (
                       <>
                         <Send className="w-5 h-5 mr-2" />
-                        Отправить
+                        {t('send')}
                       </>
                     )}
                   </Button>
@@ -527,7 +531,7 @@ export default function Broadcasts() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <Users className="w-5 h-5 text-pink-600" />
-                Получатели
+                {t('recipients')}
               </h2>
 
               {!preview ? (
@@ -541,13 +545,13 @@ export default function Broadcasts() {
                 <div className="space-y-4">
                   {/* Total */}
                   <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-lg p-4">
-                    <p className="text-sm text-gray-600 mb-1">Всего получателей</p>
+                    <p className="text-sm text-gray-600 mb-1">{t('total_recipients')}</p>
                     <p className="text-3xl font-bold text-pink-600">{preview.total_users}</p>
                   </div>
 
                   {/* By Channel */}
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-700">По каналам:</p>
+                    <p className="text-sm font-medium text-gray-700">{t('by_channel')}</p>
 
                     {preview.by_channel.email > 0 && (
                       <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
@@ -593,7 +597,7 @@ export default function Broadcasts() {
                   {/* Sample Users */}
                   {preview.users_sample.length > 0 && (
                     <div className="mt-4">
-                      <p className="text-sm font-medium text-gray-700 mb-2">Примеры получателей:</p>
+                      <p className="text-sm font-medium text-gray-700 mb-2">{t('sample_recipients')}</p>
                       <div className="space-y-2">
                         {preview.users_sample.map((user, idx) => (
                           <div key={idx} className="text-xs p-2 bg-gray-50 rounded">
@@ -611,7 +615,7 @@ export default function Broadcasts() {
                       <div className="flex items-start gap-2">
                         <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                         <p className="text-sm text-yellow-800">
-                          Нет подписанных пользователей для выбранных параметров
+                          {t('no_users')}
                         </p>
                       </div>
                     </div>
@@ -625,7 +629,7 @@ export default function Broadcasts() {
         {/* History Tab */}
         <TabsContent value="history">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">История рассылок</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-6">{t('history_title')}</h2>
 
             {loadingHistory ? (
               <div className="flex items-center justify-center py-12">
@@ -634,7 +638,7 @@ export default function Broadcasts() {
             ) : history.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
                 <History className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p>Рассылок еще не было</p>
+                <p>{t('no_history')}</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -655,7 +659,7 @@ export default function Broadcasts() {
                     <div className="flex items-center gap-4 text-sm">
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-600">Отправлено: {item.total_sent}</span>
+                        <span className="text-gray-600">{t('sent', { count: item.total_sent })}</span>
                       </div>
 
                       <div className="flex gap-2">
@@ -689,6 +693,7 @@ export default function Broadcasts() {
 }
 
 const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => {
+  const { t } = useTranslation(['admin/broadcasts', 'common']);
   const [types, setTypes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingType, setEditingType] = useState<any>(null);
@@ -703,20 +708,20 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
       const data = await api.getSubscriptionTypes();
       setTypes(data);
     } catch (error) {
-      toast.error('Ошибка загрузки типов подписок');
+      toast.error(t('error_loading_types', 'Ошибка загрузки типов подписок'));
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Вы уверены, что хотите удалить этот тип подписки?')) return;
+    if (!confirm(t('delete_confirm'))) return;
     try {
       await api.deleteSubscriptionType(id);
-      toast.success('Тип подписки удален');
+      toast.success(t('type_deleted', 'Тип подписки удален'));
       loadTypes();
     } catch (error) {
-      toast.error('Ошибка удаления');
+      toast.error(t('common:error_deleting', 'Ошибка удаления'));
     }
   };
 
@@ -725,16 +730,16 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
     try {
       if (isNew) {
         await api.createSubscriptionType(editingType);
-        toast.success('Тип подписки создан');
+        toast.success(t('type_created', 'Тип подписки создан'));
       } else {
         await api.updateSubscriptionType(editingType.id, editingType);
-        toast.success('Тип подписки обновлен');
+        toast.success(t('type_updated', 'Тип подписки обновлен'));
       }
       setEditingType(null);
       setIsNew(false);
       loadTypes();
     } catch (error) {
-      toast.error('Ошибка сохранения');
+      toast.error(t('common:error_saving', 'Ошибка сохранения'));
     }
   };
 
@@ -742,7 +747,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
     <div className="crm-modal-overlay" onClick={onClose}>
       <div className="crm-modal modal-large" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold">Управление типами подписок</h2>
+          <h2 className="text-xl font-bold">{t('manage_types_title')}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X size={24} />
           </button>
@@ -752,7 +757,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
           <form onSubmit={handleSave} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="crm-form-group">
-                <Label>ID/Ключ (латиница)</Label>
+                <Label>{t('key_label')}</Label>
                 <Input
                   value={editingType.key}
                   onChange={e => setEditingType({ ...editingType, key: e.target.value })}
@@ -762,22 +767,22 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                 />
               </div>
               <div className="crm-form-group">
-                <Label>Роль</Label>
+                <Label>{t('role_label')}</Label>
                 <select
                   className="crm-select"
                   value={editingType.target_role}
                   onChange={e => setEditingType({ ...editingType, target_role: e.target.value })}
                 >
-                  <option value="all">Все</option>
-                  <option value="client">Клиенты</option>
-                  <option value="employee">Сотрудники</option>
+                  <option value="all">{t('all_users')}</option>
+                  <option value="client">{t('common:role_client', 'Клиенты')}</option>
+                  <option value="employee">{t('common:role_employee', 'Сотрудники')}</option>
                 </select>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="crm-form-group">
-                <Label>Название (RU)</Label>
+                <Label>{t('name_ru')}</Label>
                 <Input
                   value={editingType.name_ru || ''}
                   onChange={e => setEditingType({ ...editingType, name_ru: e.target.value })}
@@ -785,7 +790,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                 />
               </div>
               <div className="crm-form-group">
-                <Label>Название (EN)</Label>
+                <Label>{t('name_en')}</Label>
                 <Input
                   value={editingType.name_en || ''}
                   onChange={e => setEditingType({ ...editingType, name_en: e.target.value })}
@@ -795,7 +800,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
 
             <div className="grid grid-cols-2 gap-4">
               <div className="crm-form-group">
-                <Label>Описание (RU)</Label>
+                <Label>{t('desc_ru')}</Label>
                 <textarea
                   className="crm-textarea"
                   value={editingType.description_ru || ''}
@@ -804,7 +809,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                 />
               </div>
               <div className="crm-form-group">
-                <Label>Описание (EN)</Label>
+                <Label>{t('desc_en')}</Label>
                 <textarea
                   className="crm-textarea"
                   value={editingType.description_en || ''}
@@ -820,10 +825,10 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                 onClick={() => { setEditingType(null); setIsNew(false); }}
                 className="crm-btn-secondary"
               >
-                Отмена
+                {t('cancel')}
               </button>
               <button type="submit" className="crm-btn-primary">
-                Сохранить
+                {t('save')}
               </button>
             </div>
           </form>
@@ -838,7 +843,7 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                 className="crm-btn-primary flex items-center gap-2"
               >
                 <Plus size={20} />
-                Добавить тип
+                {t('add_type')}
               </button>
             </div>
 
@@ -846,23 +851,25 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
               <table className="crm-table">
                 <thead>
                   <tr>
-                    <th>Ключ</th>
-                    <th>Роль</th>
-                    <th>Название</th>
-                    <th>Действия</th>
+                    <th>{t('common:key', 'Ключ')}</th>
+                    <th>{t('role_label')}</th>
+                    <th>{t('common:name', 'Название')}</th>
+                    <th>{t('common:actions', 'Действия')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {loading ? (
-                    <tr><td colSpan={4} className="text-center py-4">Загрузка...</td></tr>
+                    <tr><td colSpan={4} className="text-center py-4">{t('common:loading')}</td></tr>
                   ) : types.length === 0 ? (
-                    <tr><td colSpan={4} className="text-center py-4 text-gray-500">Типы подписок не найдены</td></tr>
+                    <tr><td colSpan={4} className="text-center py-4 text-gray-500">{t('common:not_found', 'Типы подписок не найдены')}</td></tr>
                   ) : types.map(type => (
                     <tr key={type.id}>
                       <td className="font-mono text-sm">{type.key}</td>
                       <td>
                         <span className={`crm-badge ${type.target_role === 'client' ? 'paid' : type.target_role === 'employee' ? 'sent' : ''}`}>
-                          {type.target_role}
+                          {type.target_role === 'client' ? t('common:role_client', 'Клиент') :
+                            type.target_role === 'employee' ? t('common:role_employee', 'Сотрудник') :
+                              type.target_role}
                         </span>
                       </td>
                       <td>{type.name_ru}</td>
@@ -871,14 +878,14 @@ const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => 
                           <button
                             className="crm-btn-icon"
                             onClick={() => { setEditingType(type); setIsNew(false); }}
-                            title="Редактировать"
+                            title={t('edit_type')}
                           >
                             <Edit size={16} />
                           </button>
                           <button
                             className="crm-btn-icon text-red-600 hover:text-red-700 hover:bg-red-50"
                             onClick={() => handleDelete(type.id)}
-                            title="Удалить"
+                            title={t('delete_type')}
                           >
                             <Trash2 size={16} />
                           </button>
