@@ -114,6 +114,7 @@ export default function Services() {
     return (tab === 'services' || tab === 'packages' || tab === 'referrals' || tab === 'challenges') ? tab : 'services';
   });
   const { user: currentUser } = useAuth();
+  const [activeTabDot, setActiveTabDot] = useState(0);
 
   // Используем централизованную систему прав
   const permissions = usePermissions(currentUser?.role || 'employee');
@@ -775,200 +776,221 @@ export default function Services() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 p-1">
-        <div className="flex gap-2">
-          <button
-            onClick={() => handleTabChange('services')}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'services'
-              ? 'bg-pink-600 text-white shadow-md'
-              : 'text-gray-600 hover:bg-gray-50'
-              }`}
+      <div className="w-full relative mb-6">
+        {activeTabDot < 2 && (
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white via-white/90 to-transparent z-20 pointer-events-none sm:hidden flex items-center justify-end pr-2">
+            <ChevronDown className="w-5 h-5 text-pink-500 animate-[bounce_1s_infinite] -rotate-90 opacity-100" />
+          </div>
+        )}
+        <div className="w-full bg-white rounded-xl shadow-sm border border-gray-200 p-1.5 overflow-hidden">
+          <div
+            className="flex gap-1.5 p-1 bg-gray-50/50 rounded-lg overflow-x-auto hide-scrollbar scroll-smooth"
+            onScroll={(e) => {
+              const el = e.currentTarget;
+              const progress = el.scrollLeft / (el.scrollWidth - el.clientWidth);
+              if (progress < 0.3) setActiveTabDot(0);
+              else if (progress < 0.7) setActiveTabDot(1);
+              else setActiveTabDot(2);
+            }}
           >
-            <Scissors className="w-5 h-5 inline-block mr-2" />
-            {t('services:services')} ({filteredAndSortedServices.length})
-          </button>
-          <button
-            onClick={() => handleTabChange('packages')}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'packages'
-              ? 'bg-pink-600 text-white shadow-md'
-              : 'text-gray-600 hover:bg-gray-50'
-              }`}
-          >
-            <Gift className="w-5 h-5 inline-block mr-2" />
-            {t('services:special_packages')} ({filteredAndSortedPackages.length})
-          </button>
-          <button
-            onClick={() => handleTabChange('referrals')}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'referrals'
-              ? 'bg-pink-600 text-white shadow-md'
-              : 'text-gray-600 hover:bg-gray-50'
-              }`}
-          >
-            <Users className="w-5 h-5 inline-block mr-2" />
-            {t('services:referrals')}
-          </button>
-          <button
-            onClick={() => handleTabChange('challenges')}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'challenges'
-              ? 'bg-pink-600 text-white shadow-md'
-              : 'text-gray-600 hover:bg-gray-50'
-              }`}
-          >
-            <Target className="w-5 h-5 inline-block mr-2" />
-            {t('services:challenges')}
-          </button>
+            <button
+              onClick={() => handleTabChange('services')}
+              className={`flex-shrink-0 min-w-fit px-3 sm:px-6 py-2.5 rounded-lg font-medium transition-all whitespace-nowrap text-sm sm:text-base ${activeTab === 'services'
+                ? 'bg-pink-600 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-50'
+                }`}
+            >
+              <Scissors className="w-4 h-4 sm:w-5 sm:h-5 inline-block mr-2" />
+              {t('services:services')} ({filteredAndSortedServices.length})
+            </button>
+            <button
+              onClick={() => handleTabChange('packages')}
+              className={`flex-shrink-0 min-w-fit px-4 sm:px-6 py-3 rounded-lg font-medium transition-all whitespace-nowrap ${activeTab === 'packages'
+                ? 'bg-pink-600 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-50'
+                }`}
+            >
+              <Gift className="w-5 h-5 inline-block mr-2" />
+              {t('services:special_packages')} ({filteredAndSortedPackages.length})
+            </button>
+            <button
+              onClick={() => handleTabChange('referrals')}
+              className={`flex-shrink-0 min-w-fit px-4 sm:px-6 py-3 rounded-lg font-medium transition-all whitespace-nowrap ${activeTab === 'referrals'
+                ? 'bg-pink-600 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-50'
+                }`}
+            >
+              <Users className="w-5 h-5 inline-block mr-2" />
+              {t('services:referral_programs', 'Реферальные программы')}
+            </button>
+            <button
+              onClick={() => handleTabChange('challenges')}
+              className={`flex-shrink-0 min-w-fit px-4 sm:px-6 py-3 rounded-lg font-medium transition-all whitespace-nowrap ${activeTab === 'challenges'
+                ? 'bg-pink-600 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-50'
+                }`}
+            >
+              <Target className="w-5 h-5 inline-block mr-2" />
+              {t('services:challenges', 'Челленджи')}
+            </button>
+          </div>
+        </div>
+        {/* Scroll Hint Dots */}
+        <div className="mt-2 flex justify-center gap-1.5 sm:hidden">
+          <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeTabDot === 0 ? 'bg-pink-600 w-3' : 'bg-gray-200'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeTabDot === 1 ? 'bg-pink-600 w-3' : 'bg-gray-200'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeTabDot === 2 ? 'bg-pink-600 w-3' : 'bg-gray-200'}`} />
         </div>
       </div>
 
       {/* SERVICES TAB */}
-      {
-        activeTab === 'services' && (
-          <>
-            {/* Services Search and Filters */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder={t('services:search_services')}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-full md:w-[200px]">
-                    <SelectValue placeholder={t('services:category')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t('services:all_categories')}</SelectItem>
-                    {categories.map(cat => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {/* Кнопка создания только если есть право */}
-                {permissions.canEditServices && (
-                  <Button
-                    className="bg-pink-600 hover:bg-pink-700"
-                    onClick={handleOpenAddService}
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    {t('services:add_service')}
-                  </Button>
-                )}
+      {activeTab === 'services' && (
+        <>
+          {/* Services Search and Filters */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder={t('services:search_services')}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
               </div>
-            </div>
-
-            {/* Services Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              {filteredAndSortedServices.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <thead className="bg-gray-50 border-b border-gray-200">
-                      <tr>
-                        <th onClick={() => handleSort('name')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
-                          <div className="flex items-center">{t('services:name')} {getSortIcon('name')}</div>
-                        </th>
-                        <th onClick={() => handleSort('price')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
-                          <div className="flex items-center">{t('services:price')} {getSortIcon('price')}</div>
-                        </th>
-                        <th onClick={() => handleSort('duration')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
-                          <div className="flex items-center">{t('services:duration')} {getSortIcon('duration')}</div>
-                        </th>
-                        <th onClick={() => handleSort('category')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
-                          <div className="flex items-center">{t('services:category')} {getSortIcon('category')}</div>
-                        </th>
-                        <th onClick={() => handleSort('is_active')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
-                          <div className="flex items-center">{t('services:status')} {getSortIcon('is_active')}</div>
-                        </th>
-                        <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-right">{t('services:actions')}</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {filteredAndSortedServices.map((service) => (
-                        <tr key={service.id} className="hover:bg-gray-50/80 transition-colors group">
-                          <td className="px-6 py-4">
-                            <div>
-                              <p className="text-sm font-bold text-gray-900">
-                                {(() => {
-                                  const lang = i18n.language.split('-')[0];
-                                  return service[`name_${lang}`] || service.name;
-                                })()}
-                              </p>
-                              {(() => {
-                                const lang = i18n.language.split('-')[0];
-                                const description = service[`description_${lang}`] || service.description;
-                                return description ? (
-                                  <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{description}</p>
-                                ) : null;
-                              })()}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 font-bold text-gray-900 text-[13px]">
-                            {formatPrice(service)}
-                          </td>
-                          <td className="px-6 py-4">
-                            {service.duration && service.duration !== 'null' ? (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600 border border-blue-100">
-                                <Clock className="w-3 h-3 mr-1" />
-                                {formatDuration(service.duration, t)}
-                              </span>
-                            ) : <span className="text-gray-300">—</span>}
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-600 border border-purple-100">
-                              {t(`services:category_${service.category.toLowerCase().replace(/\s+/g, '_')}`, service.category)}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <button
-                              onClick={() => handleToggleServiceActive(service)}
-                              className={`px-3 py-1 rounded-full text-xs font-bold transition-all shadow-sm ${service.is_active
-                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                                : 'bg-red-100 text-red-700 hover:bg-red-200'
-                                }`}
-                            >
-                              {service.is_active ? t('services:active') : t('services:inactive')}
-                            </button>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <div className="flex justify-end gap-1">
-                              {permissions.canEditServices && (
-                                <>
-                                  <button
-                                    onClick={() => handleEditService(service)}
-                                    className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
-                                    title={t('common:edit')}
-                                  >
-                                    <Edit size={16} />
-                                  </button>
-                                  <button
-                                    onClick={() => handleDeleteService(service.id)}
-                                    className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                                    title={t('common:delete')}
-                                  >
-                                    <Trash2 size={16} />
-                                  </button>
-                                </>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div className="py-20 text-center text-gray-500">
-                  <Scissors className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p>{t('services:services_not_found')}</p>
-                </div>
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-full md:w-[200px]">
+                  <SelectValue placeholder={t('services:category')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('services:all_categories')}</SelectItem>
+                  {categories.map(cat => (
+                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {/* Кнопка создания только если есть право */}
+              {permissions.canEditServices && (
+                <Button
+                  className="bg-pink-600 hover:bg-pink-700"
+                  onClick={handleOpenAddService}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  {t('services:add_service')}
+                </Button>
               )}
             </div>
-          </>
-        )
+          </div>
+
+          {/* Services Table */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            {filteredAndSortedServices.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th onClick={() => handleSort('name')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
+                        <div className="flex items-center">{t('services:name')} {getSortIcon('name')}</div>
+                      </th>
+                      <th onClick={() => handleSort('price')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
+                        <div className="flex items-center">{t('services:price')} {getSortIcon('price')}</div>
+                      </th>
+                      <th onClick={() => handleSort('duration')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
+                        <div className="flex items-center">{t('services:duration')} {getSortIcon('duration')}</div>
+                      </th>
+                      <th onClick={() => handleSort('category')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
+                        <div className="flex items-center">{t('services:category')} {getSortIcon('category')}</div>
+                      </th>
+                      <th onClick={() => handleSort('is_active')} className="px-6 py-4 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors">
+                        <div className="flex items-center">{t('services:status')} {getSortIcon('is_active')}</div>
+                      </th>
+                      <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-right">{t('services:actions')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {filteredAndSortedServices.map((service) => (
+                      <tr key={service.id} className="hover:bg-gray-50/80 transition-colors group">
+                        <td className="px-6 py-4">
+                          <div>
+                            <p className="text-sm font-bold text-gray-900">
+                              {(() => {
+                                const lang = i18n.language.split('-')[0];
+                                return service[`name_${lang}`] || service.name;
+                              })()}
+                            </p>
+                            {(() => {
+                              const lang = i18n.language.split('-')[0];
+                              const description = service[`description_${lang}`] || service.description;
+                              return description ? (
+                                <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{description}</p>
+                              ) : null;
+                            })()}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 font-bold text-gray-900 text-[13px]">
+                          {formatPrice(service)}
+                        </td>
+                        <td className="px-6 py-4">
+                          {service.duration && service.duration !== 'null' ? (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600 border border-blue-100">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {formatDuration(service.duration, t)}
+                            </span>
+                          ) : <span className="text-gray-300">—</span>}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-600 border border-purple-100">
+                            {t(`services:category_${service.category.toLowerCase().replace(/\s+/g, '_')}`, service.category)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <button
+                            onClick={() => handleToggleServiceActive(service)}
+                            className={`px-3 py-1 rounded-full text-xs font-bold transition-all shadow-sm ${service.is_active
+                              ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                              : 'bg-red-100 text-red-700 hover:bg-red-200'
+                              }`}
+                          >
+                            {service.is_active ? t('services:active') : t('services:inactive')}
+                          </button>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex justify-end gap-1">
+                            {permissions.canEditServices && (
+                              <>
+                                <button
+                                  onClick={() => handleEditService(service)}
+                                  className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                                  title={t('common:edit')}
+                                >
+                                  <Edit size={16} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteService(service.id)}
+                                  className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                                  title={t('common:delete')}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="py-20 text-center text-gray-500">
+                <Scissors className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p>{t('services:services_not_found')}</p>
+              </div>
+            )}
+          </div>
+        </>
+      )
       }
 
       {/* PACKAGES TAB */}
@@ -1152,50 +1174,57 @@ export default function Services() {
       }
 
       {/* REFERRALS TAB */}
-      {activeTab === 'referrals' && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="bg-purple-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Users className="w-10 h-10 text-purple-600" />
+      {
+        activeTab === 'referrals' && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 px-4 sm:px-8 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="bg-purple-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Users className="w-10 h-10 text-purple-600" />
+            </div>
+            <h3 className="text-2xl font-black text-gray-900 mb-2">{t('services:referral_programs', 'Реферальные программы')}</h3>
+            <p className="text-gray-500 mb-8 max-w-md mx-auto font-medium">
+              {t('services:referral_programs_management_subtitle', 'Управление программами лояльности и мотивации клиентов через рекомендации.')}
+            </p>
+            <div className="flex justify-center gap-4">
+              <Button
+                className="bg-purple-600 hover:bg-purple-700 h-12 px-8 rounded-xl font-bold transition-all hover:scale-105"
+                onClick={() => window.location.href = '/admin/referrals'}
+              >
+                {t('services:open_marketing_panel', 'Управление кампаниями')}
+              </Button>
+            </div>
           </div>
-          <h3 className="text-2xl font-black text-gray-900 mb-2">{t('services:referrals')}</h3>
-          <p className="text-gray-500 mb-8 max-w-md mx-auto font-medium">
-            {t('services:referral_programs_management_subtitle', 'Управление программами лояльности и мотивации клиентов через рекомендации.')}
-          </p>
-          <div className="flex justify-center gap-4">
-            <Button
-              className="bg-purple-600 hover:bg-purple-700 h-12 px-8 rounded-xl font-bold transition-all hover:scale-105"
-              onClick={() => window.location.href = '/admin/referrals'}
-            >
-              {t('services:open_marketing_panel', 'Управление кампаниями')}
-            </Button>
-          </div>
-        </div>
-      )}
+        )
+      }
 
       {/* CHALLENGES TAB */}
-      {activeTab === 'challenges' && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="bg-pink-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Target className="w-10 h-10 text-pink-600" />
+      {
+        activeTab === 'challenges' && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 px-4 sm:px-8 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="bg-pink-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Target className="w-10 h-10 text-pink-600" />
+            </div>
+            <h3 className="text-2xl font-black text-gray-900 mb-2">{t('services:challenges', 'Челленджи')}</h3>
+            <p className="text-gray-500 mb-8 max-w-md mx-auto font-medium">
+              {t('services:challenges_management_subtitle', 'Игровые механики и задания для повышения вовлеченности ваших клиентов.')}
+            </p>
+            <div className="flex justify-center gap-4">
+              <Button
+                className="bg-pink-600 hover:bg-pink-700 h-12 px-8 rounded-xl font-bold transition-all hover:scale-105"
+                onClick={() => window.location.href = '/admin/challenges'}
+              >
+                {t('services:open_challenges_panel', 'Управление челленджами')}
+              </Button>
+            </div>
           </div>
-          <h3 className="text-2xl font-black text-gray-900 mb-2">{t('services:challenges')}</h3>
-          <p className="text-gray-500 mb-8 max-w-md mx-auto font-medium">
-            {t('services:challenges_management_subtitle', 'Игровые механики и задания для повышения вовлеченности ваших клиентов.')}
-          </p>
-          <div className="flex justify-center gap-4">
-            <Button
-              className="bg-pink-600 hover:bg-pink-700 h-12 px-8 rounded-xl font-bold transition-all hover:scale-105"
-              onClick={() => window.location.href = '/admin/challenges'}
-            >
-              {t('services:open_challenges_panel', 'Управление челленджами')}
-            </Button>
-          </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Service Modal */}
       <Dialog open={isServiceModalOpen} onOpenChange={setIsServiceModalOpen}>
-        <DialogContent className="w-[95vw] sm:w-[90vw] md:max-w-4xl p-0 flex flex-col h-[90vh] overflow-hidden border-none shadow-2xl rounded-2xl">
+        <DialogContent
+          hideCloseButton
+          className="w-[95vw] sm:w-[90vw] md:max-w-4xl p-0 flex flex-col h-[90vh] overflow-hidden border-none shadow-2xl rounded-2xl"
+        >
           <DialogHeader className="bg-gradient-to-r from-pink-600 to-purple-700 p-8 rounded-t-2xl relative">
             <DialogPrimitive.Close className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors outline-none focus:ring-2 focus:ring-white/30 z-50">
               <X className="w-5 h-5" />
@@ -1216,7 +1245,7 @@ export default function Services() {
             </div>
           </DialogHeader>
 
-          <div tabIndex={0} className="flex-1 overflow-y-auto crm-scrollbar outline-none focus:bg-gray-50/5 transition-colors" style={{ pointerEvents: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          <div id="modal-scroll-viewport" className="flex-1 overflow-y-auto crm-scrollbar outline-none" style={{ WebkitOverflowScrolling: 'touch' }}>
             <div className="p-4 sm:p-8 space-y-8">
               {/* Section 1: Basic Information */}
               <div className="section-container">
@@ -1429,20 +1458,19 @@ export default function Services() {
                   </div>
 
                   <div className="space-y-4 max-w-full">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                      <div className="space-y-1">
-                        <Label className="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-[11px] font-black uppercase tracking-widest text-gray-600">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
+                      <div className="space-y-1 min-w-0 flex-1">
+                        <Label className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-gray-600 leading-tight">
                           {t('services:employees_providing_service')}
                         </Label>
-                        <p className="text-[10px] text-gray-400 font-medium">
+                        <p className="text-[10px] text-gray-400 font-medium leading-relaxed">
                           {t('services:select_employees_desc', 'Выберите сотрудников, которые оказывают эту услугу')}
                         </p>
                       </div>
                     </div>
-
-                    <div className="flex flex-col gap-4 w-full">
+                    <div className="flex flex-col gap-4 w-full relative">
                       <div className="flex flex-wrap items-center gap-3 w-full">
-                        <Popover modal={false}>
+                        <Popover>
                           <PopoverTrigger asChild>
                             <Button
                               variant="outline"
@@ -1460,12 +1488,17 @@ export default function Services() {
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent
-                            className="w-[320px] p-0 rounded-2xl shadow-xl border-gray-100"
-                            align="start"
+                            className="w-[calc(100vw-2rem)] sm:w-[320px] p-0 rounded-2xl shadow-2xl z-[70] overflow-hidden border border-gray-100 flex flex-col bg-white"
+                            align="center"
                             side="bottom"
                             sideOffset={8}
+                            collisionPadding={12}
+                            avoidCollisions={false}
+                            onWheel={(e) => e.stopPropagation()}
+                            onTouchMove={(e) => e.stopPropagation()}
+                            onOpenAutoFocus={(e) => e.preventDefault()}
                           >
-                            <Command className="rounded-2xl h-auto ![&_[data-slot=command-input-wrapper]]:h-12 ![&_[data-slot=command-input-wrapper]]:border-b ![&_[data-slot=command-input-wrapper]_svg]:text-pink-500 ![&_[data-slot=command-input-wrapper]_svg]:opacity-100 ![&_[data-slot=command-input-wrapper]_svg]:size-4">
+                            <Command className="flex flex-col h-full max-h-[320px] sm:max-h-[400px]">
                               <div className="flex flex-col border-b">
                                 <CommandInput
                                   placeholder={t('services:search_employee', 'Поиск сотрудника...')}
@@ -1520,7 +1553,7 @@ export default function Services() {
                                   </Button>
                                 </div>
                               </div>
-                              <CommandList className="max-h-[300px] crm-scrollbar">
+                              <CommandList className="flex-1 overflow-y-auto crm-scrollbar overscroll-contain">
                                 <CommandEmpty className="p-8 text-center bg-white">
                                   <div className="bg-pink-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
                                     <Search className="w-5 h-5 text-pink-200" />
@@ -1559,7 +1592,7 @@ export default function Services() {
                                           <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${isSelected ? 'bg-pink-600 border-pink-600 rotate-0 scale-100' : 'border-gray-200 bg-white rotate-90 scale-90'}`}>
                                             {isSelected && <Check className="w-3.5 h-3.5 text-white stroke-[3px]" />}
                                           </div>
-                                          <div className="flex flex-col min-w-0">
+                                          <div className="flex flex-col min-w-0 w-full">
                                             <span className={`text-sm font-semibold truncate ${isSelected ? 'text-pink-600' : 'text-gray-800'}`}>
                                               {employeeName}
                                             </span>

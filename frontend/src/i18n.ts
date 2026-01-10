@@ -82,7 +82,8 @@ const namespaces = [
   'adminPanel/ReferralProgram',
   'adminPanel/Challenges',
   'adminPanel/NotificationsDashboard',
-  'adminPanel/PhotoGallery'
+  'adminPanel/PhotoGallery',
+  'pages/funnel'
 ];
 // Используем import.meta as any для обхода ошибки типов с Vite
 const localeFiles = (import.meta as any).glob('./locales/**/*.json', { eager: true });
@@ -140,13 +141,13 @@ for (const lang of languages) {
   resources[lang]['settings'] = resources[lang]['admin/settings'];
   resources[lang]['specialPackages'] = resources[lang]['admin/specialpackages'];
   resources[lang]['users'] = resources[lang]['admin/users'];
-  resources[lang]['funnel'] = resources[lang]['admin/funnel'];
+  resources[lang]['funnel'] = resources[lang]['pages/funnel'] || resources[lang]['admin/funnel'];
   resources[lang]['tasks'] = resources[lang]['admin/tasks'];
   resources[lang]['telephony'] = resources[lang]['admin/telephony'];
 
   // Manager pages
   resources[lang]['chat'] = resources[lang]['manager/chat'];
-  resources[lang]['funnel'] = resources[lang]['manager/funnel'];
+  resources[lang]['managerFunnel'] = resources[lang]['manager/funnel'];
   resources[lang]['messages'] = resources[lang]['manager/messages'];
   resources[lang]['managerSettings'] = resources[lang]['manager/settings'];
   resources[lang]['managerDashboard'] = resources[lang]['manager/dashboard'];
