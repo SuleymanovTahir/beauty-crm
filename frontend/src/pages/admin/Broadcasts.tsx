@@ -838,6 +838,7 @@ export default function Broadcasts() {
       </Tabs>
       {showManageTypes && (
         <ManageSubscriptionTypesDialog
+          roles={roles}
           onClose={() => {
             setShowManageTypes(false);
             loadSubscriptions(); // Refresh after changes
@@ -937,7 +938,7 @@ export default function Broadcasts() {
   );
 }
 
-const ManageSubscriptionTypesDialog = ({ onClose }: { onClose: () => void }) => {
+const ManageSubscriptionTypesDialog = ({ onClose, roles }: { onClose: () => void; roles: Array<{ key: string; name: string }> }) => {
   const { t } = useTranslation(['admin/broadcasts', 'common']);
   const [types, setTypes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

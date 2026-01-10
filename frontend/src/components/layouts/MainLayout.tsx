@@ -4,6 +4,7 @@ import { getDynamicAvatar } from '../../utils/avatarUtils';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import {
+    Check,
     LayoutDashboard,
     Users,
     FileText,
@@ -453,22 +454,10 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                     <div className="p-6 border-b border-gray-200">
                         <div className="flex items-center gap-3">
                             <div className="flex-shrink-0">
-                                {salonSettings?.logo_url ? (
+                                {salonSettings?.logo_url && (
                                     <img
                                         src={salonSettings.logo_url}
                                         alt={salonSettings?.name || 'Logo'}
-                                        className="w-10 h-10 rounded-lg object-contain shadow-sm"
-                                        onError={(e) => {
-                                            const img = e.target as HTMLImageElement;
-                                            if (!img.src.includes('icons8.com')) {
-                                                img.src = 'https://img.icons8.com/color/96/diamond.png';
-                                            }
-                                        }}
-                                    />
-                                ) : (
-                                    <img
-                                        src="https://img.icons8.com/color/96/diamond.png"
-                                        alt="Diamond"
                                         className="w-10 h-10 rounded-lg object-contain shadow-sm"
                                     />
                                 )}
@@ -632,13 +621,24 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                                 })}
                                                             </span>
                                                         </div>
-                                                        <button
-                                                            onClick={(e) => handleDeleteNotification(n.id, e)}
-                                                            className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all p-1"
-                                                            title="Удалить"
-                                                        >
-                                                            <Trash2 size={14} />
-                                                        </button>
+                                                        <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            {!n.is_read && (
+                                                                <button
+                                                                    onClick={(e) => { e.stopPropagation(); markNotificationRead(n.id); }}
+                                                                    className="text-gray-400 hover:text-blue-500 p-1"
+                                                                    title={t('mark_as_read', 'Прочитать')}
+                                                                >
+                                                                    <Check size={14} />
+                                                                </button>
+                                                            )}
+                                                            <button
+                                                                onClick={(e) => handleDeleteNotification(n.id, e)}
+                                                                className="text-gray-400 hover:text-red-500 p-1"
+                                                                title={t('delete', 'Удалить')}
+                                                            >
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             ))
