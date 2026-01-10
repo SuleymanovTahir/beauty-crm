@@ -33,7 +33,9 @@ import {
     Package,
     Receipt,
     CreditCard,
-    Store
+    Store,
+    Briefcase,
+    Wrench
 } from 'lucide-react';
 import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../icons/SocialIcons';
 import { toast } from 'sonner';
@@ -52,7 +54,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const { t } = useTranslation(['layouts/mainlayout', 'common']);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
-    const [showChatSubmenu, setShowChatSubmenu] = useState(false);
+    const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
     const [enabledMessengers, setEnabledMessengers] = useState<Array<{ type: string; name: string }>>([]);
     const [notifications, setNotifications] = useState<any[]>([]);
     const [notifCount, setNotifCount] = useState(0);
@@ -239,8 +241,9 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     // Фильтруем пункты меню на основе прав пользователя
     const menuItems = useMemo(() => {
         const allItems = [
-            // ГРУППА 1: Ежедневная работа (Операции)
+            // TOP LEVEL
             {
+                id: 'dashboard',
                 icon: LayoutDashboard,
                 label: user?.role === 'employee' ? t('menu.my_bookings') :
                     user?.role === 'sales' ? t('menu.dashboard_sales') :
@@ -248,81 +251,108 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 path: dashboardPath,
                 requirePermission: () => true
             },
-            { icon: Calendar, label: t('menu.calendar'), path: `${rolePrefix}/calendar`, requirePermission: () => permissions.canViewAllCalendars && user?.role !== 'employee' },
-            { icon: FileText, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings || user?.role === 'employee' },
-            { icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, requirePermission: () => permissions.canViewTasks || permissions.roleLevel >= 70 || user?.role === 'sales' },
-            { icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: unreadCount, hasSubmenu: true, requirePermission: () => permissions.canViewInstagramChat || permissions.roleLevel >= 70 || user?.role === 'sales' },
-            { icon: User, label: t('menu.profile'), path: `${rolePrefix}/profile`, requirePermission: () => user?.role === 'employee' || user?.role === 'sales' },
+            {
+                id: 'chat',
+                icon: MessageSquare,
+                label: t('menu.chat'),
+                path: `${rolePrefix}/chat`,
+                badge: unreadCount,
+                requirePermission: () => permissions.canViewInstagramChat || permissions.roleLevel >= 70 || user?.role === 'sales',
+                items: enabledMessengers.map(messenger => ({
+                    id: `chat-${messenger.type}`,
+                    icon: messenger.type === 'instagram' ? (props: any) => <InstagramIcon {...props} colorful={true} /> :
+                        messenger.type === 'telegram' ? (props: any) => <TelegramIcon {...props} colorful={true} /> :
+                            messenger.type === 'whatsapp' ? (props: any) => <WhatsAppIcon {...props} colorful={true} /> :
+                                messenger.type === 'tiktok' ? (props: any) => <TikTokIcon {...props} colorful={true} /> : MessageSquare,
+                    label: messenger.name,
+                    path: `${rolePrefix}/chat?messenger=${messenger.type}`,
+                    requirePermission: () => true
+                }))
+            },
+            { id: 'calendar', icon: Calendar, label: t('menu.calendar'), path: `${rolePrefix}/calendar`, requirePermission: () => permissions.canViewAllCalendars && user?.role !== 'employee' },
+            { id: 'clients', icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, requirePermission: () => permissions.canViewAllClients && user?.role !== 'sales' },
 
-            // ГРУППА 2: Управление (Базы данных)
-            { icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, requirePermission: () => permissions.canViewAllClients && user?.role !== 'sales' },
-            { icon: Scissors, label: t('menu.services'), path: `${rolePrefix}/services`, requirePermission: () => permissions.canViewServices },
-            { icon: FileSignature, label: t('menu.contracts'), path: `${rolePrefix}/contracts`, requirePermission: () => permissions.canViewAllClients },
-            { icon: Package, label: t('menu.products'), path: `${rolePrefix}/products`, requirePermission: () => permissions.canViewServices },
-            { icon: Receipt, label: t('menu.invoices'), path: `${rolePrefix}/invoices`, requirePermission: () => permissions.canViewAllClients },
-            { icon: UserCog, label: t('menu.users'), path: `${rolePrefix}/users`, requirePermission: () => permissions.canViewAllUsers },
-
-            // ГРУППА 3: Маркетинг и Аналитика
-            { icon: BarChart3, label: t('menu.analytics'), path: `${rolePrefix}/analytics`, requirePermission: () => permissions.canViewAnalytics && user?.role !== 'marketer' && user?.role !== 'sales' },
-            { icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, requirePermission: () => permissions.canViewAnalytics || user?.role === 'sales' },
-            { icon: MapPinned, label: t('menu.visitors'), path: `${rolePrefix}/visitor-analytics`, requirePermission: () => permissions.canViewAnalytics },
-            { icon: Send, label: t('menu.broadcasts'), path: `${rolePrefix}/broadcasts`, requirePermission: () => permissions.canSendBroadcasts || user?.role === 'sales' },
-
-            // ГРУППА 4: Контент и Каналы
-            { icon: Globe, label: t('menu.public_content'), path: `${rolePrefix}/public-content`, requirePermission: () => permissions.canViewSettings && permissions.roleLevel >= 80 },
-            { icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, requirePermission: () => permissions.roleLevel >= 80 || user?.role === 'sales' },
-            { icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, requirePermission: () => permissions.canUseStaffChat },
-            { icon: CreditCard, label: t('menu.payment_integrations'), path: `${rolePrefix}/payment-integrations`, requirePermission: () => permissions.roleLevel >= 80 },
-            { icon: Store, label: t('menu.marketplace_integrations'), path: `${rolePrefix}/marketplace-integrations`, requirePermission: () => permissions.roleLevel >= 80 },
-
-            // ГРУППА 5: Системные настройки
-            { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, requirePermission: () => (permissions.canViewSettings || user?.role === 'manager' || user?.role === 'sales') && user?.role !== 'employee' },
-            { icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, requirePermission: () => permissions.canViewBotSettings || user?.role === 'sales' },
-            { icon: ShieldCheck, label: t('menu.audit_log'), path: `${rolePrefix}/audit-log`, requirePermission: () => permissions.roleLevel >= 80 },
-            { icon: Trash2, label: t('menu.trash'), path: `${rolePrefix}/trash`, requirePermission: () => permissions.roleLevel >= 80 },
+            // MANAGEMENT GROUP
+            {
+                id: 'management',
+                icon: Briefcase,
+                label: t('menu.management', 'Управление'),
+                requirePermission: () => true,
+                items: [
+                    { id: 'bookings', icon: FileText, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings || user?.role === 'employee' },
+                    { id: 'services', icon: Scissors, label: t('menu.services'), path: `${rolePrefix}/services`, requirePermission: () => permissions.canViewServices },
+                    { id: 'products', icon: Package, label: t('menu.products'), path: `${rolePrefix}/products`, requirePermission: () => permissions.canViewServices },
+                    { id: 'users', icon: UserCog, label: t('menu.users'), path: `${rolePrefix}/users`, requirePermission: () => permissions.canViewAllUsers },
+                    { id: 'public-content', icon: Globe, label: t('menu.public_content'), path: `${rolePrefix}/public-content`, requirePermission: () => permissions.canViewSettings && permissions.roleLevel >= 80 },
+                ]
+            },
+            // FINANCE GROUP
+            {
+                id: 'finance',
+                icon: Receipt,
+                label: t('menu.finance', 'Финансы'),
+                requirePermission: () => true,
+                items: [
+                    { id: 'invoices', icon: Receipt, label: t('menu.invoices'), path: `${rolePrefix}/invoices`, requirePermission: () => permissions.canViewAllClients },
+                    { id: 'contracts', icon: FileSignature, label: t('menu.contracts'), path: `${rolePrefix}/contracts`, requirePermission: () => permissions.canViewAllClients },
+                ]
+            },
+            // TOOLS GROUP
+            {
+                id: 'tools',
+                icon: Wrench,
+                label: t('menu.tools', 'Инструменты'),
+                requirePermission: () => true,
+                items: [
+                    { id: 'tasks', icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, requirePermission: () => permissions.canViewTasks || permissions.roleLevel >= 70 || user?.role === 'sales' },
+                    { id: 'broadcasts', icon: Send, label: t('menu.broadcasts'), path: `${rolePrefix}/broadcasts`, requirePermission: () => permissions.canSendBroadcasts || user?.role === 'sales' },
+                    { id: 'analytics', icon: BarChart3, label: t('menu.analytics'), path: `${rolePrefix}/analytics`, requirePermission: () => permissions.canViewAnalytics && user?.role !== 'marketer' && user?.role !== 'sales' },
+                    { id: 'funnel', icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, requirePermission: () => permissions.canViewAnalytics || user?.role === 'sales' },
+                    { id: 'visitors', icon: MapPinned, label: t('menu.visitors'), path: `${rolePrefix}/visitor-analytics`, requirePermission: () => permissions.canViewAnalytics },
+                    { id: 'telephony', icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, requirePermission: () => permissions.roleLevel >= 80 || user?.role === 'sales' },
+                    { id: 'internal-chat', icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, requirePermission: () => permissions.canUseStaffChat },
+                    { id: 'profile', icon: User, label: t('menu.profile'), path: `${rolePrefix}/profile`, requirePermission: () => user?.role === 'employee' || user?.role === 'sales' },
+                ]
+            },
+            // SETTINGS GROUP
+            {
+                id: 'settings',
+                icon: Settings,
+                label: t('menu.settings', 'Настройки'),
+                requirePermission: () => true,
+                items: [
+                    { id: 'app-settings', icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, requirePermission: () => (permissions.canViewSettings || user?.role === 'manager' || user?.role === 'sales') && user?.role !== 'employee' },
+                    { id: 'bot-settings', icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, requirePermission: () => permissions.canViewBotSettings || user?.role === 'sales' },
+                    { id: 'payment', icon: CreditCard, label: t('menu.payment_integrations'), path: `${rolePrefix}/payment-integrations`, requirePermission: () => permissions.roleLevel >= 80 },
+                    { id: 'marketplace', icon: Store, label: t('menu.marketplace_integrations'), path: `${rolePrefix}/marketplace-integrations`, requirePermission: () => permissions.roleLevel >= 80 },
+                    { id: 'audit', icon: ShieldCheck, label: t('menu.audit_log'), path: `${rolePrefix}/audit-log`, requirePermission: () => permissions.roleLevel >= 80 },
+                    { id: 'trash', icon: Trash2, label: t('menu.trash'), path: `${rolePrefix}/trash`, requirePermission: () => permissions.roleLevel >= 80 },
+                ]
+            }
         ];
 
-        // Фильтруем только те пункты, к которым есть доступ
-        let filteredItems = allItems.filter(item => item.requirePermission());
+        // Рекурсивная фильтрация
+        const filterItems = (items: any[]) => {
+            return items.reduce((acc, item) => {
+                if (item.requirePermission && !item.requirePermission()) return acc;
 
-        // Применяем настройки меню (только для админов/директоров пока)
-        if (permissions.roleLevel >= 80 && menuSettings?.menu_order && menuSettings.menu_order.length > 0) {
-            const ordered = menuSettings.menu_order
-                .map(id => filteredItems.find(item => item.path.includes(id)))
-                .filter(Boolean) as typeof allItems;
-
-            filteredItems.forEach(item => {
-                if (!ordered.find(o => o?.path === item.path)) {
-                    ordered.push(item);
+                if (item.items) {
+                    const filteredChildren = filterItems(item.items);
+                    if (filteredChildren.length > 0) {
+                        acc.push({ ...item, items: filteredChildren });
+                    }
+                } else {
+                    acc.push(item);
                 }
-            });
-            filteredItems = ordered;
-        }
+                return acc;
+            }, []);
+        };
 
-        // Фильтруем скрытые пункты
-        if (permissions.roleLevel >= 80 && menuSettings?.hidden_items && menuSettings.hidden_items.length > 0) {
-            filteredItems = filteredItems.filter(item => {
-                const itemId = item.path.split('/').pop();
-                return !menuSettings.hidden_items?.includes(itemId || '');
-            });
-        }
+        const filtered = filterItems(allItems);
 
-        return filteredItems;
-    }, [permissions, unreadCount, menuSettings, t, rolePrefix, user?.role]);
-
-    const chatSubmenuItems = enabledMessengers.map(messenger => ({
-        icon: messenger.type === 'instagram' ? (props: any) => <InstagramIcon {...props} colorful={true} /> :
-            messenger.type === 'telegram' ? (props: any) => <TelegramIcon {...props} colorful={true} /> :
-                messenger.type === 'whatsapp' ? (props: any) => <WhatsAppIcon {...props} colorful={true} /> :
-                    messenger.type === 'tiktok' ? (props: any) => <TikTokIcon {...props} colorful={true} /> : MessageSquare,
-        label: messenger.name,
-        type: messenger.type,
-        path: `${rolePrefix}/chat?messenger=${messenger.type}`,
-        color: messenger.type === 'instagram' ? 'from-pink-500 to-purple-600' :
-            messenger.type === 'whatsapp' ? 'from-green-500 to-green-600' :
-                messenger.type === 'telegram' ? 'from-blue-500 to-blue-600' :
-                    'from-gray-900 to-black'
-    }));
+        // TODO: Восстановить сортировку menuSettings, если необходимо для групп
+        return filtered;
+    }, [permissions, unreadCount, menuSettings, t, rolePrefix, user?.role, enabledMessengers, dashboardPath]);
 
     const getRoleLabel = () => {
         switch (user?.role) {
@@ -392,90 +422,96 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                     {/* Menu Items */}
                     <nav ref={navContainerRef} className="flex-1 overflow-y-auto p-3">
                         <ul className="space-y-1">
-                            {menuItems.map((item, index) => {
-                                const isActive = location.pathname.startsWith(item.path);
+                            {menuItems.map((item: any, index: number) => {
+                                const isExpanded = expandedMenu === item.id;
+                                const isActive = item.path ? location.pathname.startsWith(item.path) : false;
+                                // Check if any child is active
+                                const isChildActive = item.items?.some((sub: any) => location.pathname.startsWith(sub.path));
+
                                 return (
-                                <li key={index}>
-                                    {item.hasSubmenu ? (
-                                        <div>
+                                    <li key={item.id || index}>
+                                        {item.items ? (
+                                            <div>
+                                                <button
+                                                    ref={(isActive || isChildActive) ? activeMenuItemRef : null}
+                                                    onClick={() => setExpandedMenu(isExpanded ? null : item.id)}
+                                                    className={`
+                                                    w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm
+                                                    transition-all duration-200 relative
+                                                    ${isChildActive || isActive
+                                                            ? 'bg-purple-50 text-purple-700 font-medium'
+                                                            : 'text-gray-700 hover:bg-gray-100'
+                                                        }
+                                                `}
+                                                >
+                                                    <item.icon size={18} />
+                                                    <span className="flex-1 text-left">{item.label}</span>
+                                                    <ChevronDown
+                                                        size={16}
+                                                        className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                                                    />
+                                                    {item.badge != null && Number(item.badge) > 0 && (
+                                                        <span className="absolute right-10 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
+                                                            {Number(item.badge) > 99 ? '99+' : item.badge}
+                                                        </span>
+                                                    )}
+                                                </button>
+
+                                                {/* Submenu Items */}
+                                                {isExpanded && (
+                                                    <ul className="mt-1 ml-4 border-l border-gray-200 pl-4 space-y-1">
+                                                        {item.items.map((subItem: any, subIndex: number) => {
+                                                            const isSubActive = location.pathname.startsWith(subItem.path) ||
+                                                                (subItem.path.includes('?') && location.search.includes(subItem.path.split('?')[1]));
+
+                                                            return (
+                                                                <li key={subItem.id || subIndex}>
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            navigate(subItem.path);
+                                                                            setIsMobileMenuOpen(false);
+                                                                        }}
+                                                                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 
+                                                                        ${isSubActive
+                                                                                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-sm'
+                                                                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                                                            }`}
+                                                                    >
+                                                                        <subItem.icon size={16} />
+                                                                        <span>{subItem.label}</span>
+                                                                    </button>
+                                                                </li>
+                                                            );
+                                                        })}
+                                                    </ul>
+                                                )}
+                                            </div>
+                                        ) : (
                                             <button
                                                 ref={isActive ? activeMenuItemRef : null}
-                                                onClick={() => setShowChatSubmenu(!showChatSubmenu)}
+                                                onClick={() => {
+                                                    navigate(item.path);
+                                                    setIsMobileMenuOpen(false);
+                                                }}
                                                 className={`
-                          w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm
-                          transition-all duration-200 relative
-                          ${location.pathname.startsWith(item.path)
+                                                w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm
+                                                transition-all duration-200 relative
+                                                ${isActive
                                                         ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
                                                         : 'text-gray-700 hover:bg-gray-100'
                                                     }
-                        `}
+                                            `}
                                             >
                                                 <item.icon size={18} />
                                                 <span>{item.label}</span>
-                                                <ChevronDown
-                                                    size={16}
-                                                    className={`ml-auto transition-transform ${showChatSubmenu ? 'rotate-180' : ''}`}
-                                                />
                                                 {item.badge != null && Number(item.badge) > 0 && (
-                                                    <span className="absolute right-10 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
+                                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
                                                         {Number(item.badge) > 99 ? '99+' : item.badge}
                                                     </span>
                                                 )}
                                             </button>
-
-                                            {/* Submenu Items */}
-                                            {showChatSubmenu && (
-                                                <ul className="mt-1 ml-8 space-y-1">
-                                                    {chatSubmenuItems.map((subItem, subIndex) => {
-                                                        const params = new URLSearchParams(location.search);
-                                                        const currentMessenger = params.get('messenger') || 'instagram';
-                                                        const isActive = location.pathname.includes('/chat') && subItem.type === currentMessenger;
-
-                                                        return (
-                                                            <li key={subIndex}>
-                                                                <button
-                                                                    onClick={() => {
-                                                                        navigate(subItem.path);
-                                                                        setIsMobileMenuOpen(false);
-                                                                    }}
-                                                                    className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all duration-200 ${isActive ? 'bg-purple-50 text-purple-600 font-medium' : 'hover:bg-gray-50 text-gray-700'
-                                                                        }`}
-                                                                >
-                                                                    <subItem.icon size={20} />
-                                                                    <span>{subItem.label}</span>
-                                                                </button>
-                                                            </li>
-                                                        );
-                                                    })}
-                                                </ul>
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <button
-                                            ref={isActive ? activeMenuItemRef : null}
-                                            onClick={() => {
-                                                navigate(item.path);
-                                                setIsMobileMenuOpen(false);
-                                            }}
-                                            className={`
-                        w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm
-                        transition-all duration-200 relative
-                        ${location.pathname.startsWith(item.path)
-                                                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
-                                                    : 'text-gray-700 hover:bg-gray-100'
-                                                }
-                      `}
-                                        >
-                                            <item.icon size={18} />
-                                            <span>{item.label}</span>
-                                            {item.badge != null && Number(item.badge) > 0 && (
-                                                <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
-                                                    {Number(item.badge) > 99 ? '99+' : item.badge}
-                                                </span>
-                                            )}
-                                        </button>
-                                    )}
-                                </li>
+                                        )}
+                                    </li>
                                 );
                             })}
                         </ul>
@@ -498,40 +534,40 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                 )}
                             </button>
 
-                                {showNotifDropdown && (
-                                    <div className="absolute bottom-full left-0 w-64 mb-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
-                                        <div className="p-3 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                                            <span className="font-semibold text-xs">{t('notifications')}</span>
-                                            <button
-                                                onClick={() => setShowNotifDropdown(false)}
-                                                className="text-gray-400 hover:text-gray-600"
-                                            >
-                                                <X size={14} />
-                                            </button>
-                                        </div>
-                                        <div className="max-h-64 overflow-y-auto">
-                                            {notifications.length > 0 ? (
-                                                notifications.map((n) => (
-                                                    <div
-                                                        key={n.id}
-                                                        onClick={() => markNotificationRead(n.id)}
-                                                        className="p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors"
-                                                    >
-                                                        <p className="text-xs font-medium text-gray-900 line-clamp-2">{n.title}</p>
-                                                        <p className="text-[10px] text-gray-500 mt-1 line-clamp-2">{n.message}</p>
-                                                        <span className="text-[9px] text-gray-400 mt-1 block">
-                                                            {new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                        </span>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <div className="p-4 text-center text-xs text-gray-400">
-                                                    {t('no_new_notifications')}
-                                                </div>
-                                            )}
-                                        </div>
+                            {showNotifDropdown && (
+                                <div className="absolute bottom-full left-0 w-64 mb-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
+                                    <div className="p-3 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                                        <span className="font-semibold text-xs">{t('notifications')}</span>
+                                        <button
+                                            onClick={() => setShowNotifDropdown(false)}
+                                            className="text-gray-400 hover:text-gray-600"
+                                        >
+                                            <X size={14} />
+                                        </button>
                                     </div>
-                                )}
+                                    <div className="max-h-64 overflow-y-auto">
+                                        {notifications.length > 0 ? (
+                                            notifications.map((n) => (
+                                                <div
+                                                    key={n.id}
+                                                    onClick={() => markNotificationRead(n.id)}
+                                                    className="p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors"
+                                                >
+                                                    <p className="text-xs font-medium text-gray-900 line-clamp-2">{n.title}</p>
+                                                    <p className="text-[10px] text-gray-500 mt-1 line-clamp-2">{n.message}</p>
+                                                    <span className="text-[9px] text-gray-400 mt-1 block">
+                                                        {new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="p-4 text-center text-xs text-gray-400">
+                                                {t('no_new_notifications')}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex items-center gap-3 mb-3">
