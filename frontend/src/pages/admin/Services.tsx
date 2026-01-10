@@ -1,7 +1,7 @@
 // /frontend/src/pages/admin/Services.tsx
 // frontend/src/pages/admin/Services.tsx - С ВКЛАДКАМИ ДЛЯ СПЕЦПАКЕТОВ И НОВЫМИ ПОЛЯМИ
 import { useState, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Scissors, Search, Plus, Edit, Trash2, Loader,
   AlertCircle, Gift, Tag, Calendar, Clock, ArrowUpDown, ArrowUp, ArrowDown,
@@ -114,6 +114,11 @@ export default function Services() {
     return (tab === 'services' || tab === 'packages' || tab === 'referrals' || tab === 'challenges') ? tab : 'services';
   });
   const { user: currentUser } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isCrmPath = location.pathname.startsWith('/crm');
+  const basePath = isCrmPath ? '/crm' : '/admin';
+
   const [activeTabDot, setActiveTabDot] = useState(0);
 
   // Используем централизованную систему прав
@@ -777,9 +782,9 @@ export default function Services() {
 
       {/* Tabs */}
       <div className="w-full relative mb-6">
-        {activeTabDot < 2 && (
-          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white via-white/90 to-transparent z-20 pointer-events-none sm:hidden flex items-center justify-end pr-2">
-            <ChevronDown className="w-5 h-5 text-pink-500 animate-[bounce_1s_infinite] -rotate-90 opacity-100" />
+        {activeTabDot < 3 && (
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white via-white/90 to-transparent z-20 pointer-events-none sm:hidden flex items-center justify-end pr-2 transition-opacity duration-300">
+            <ChevronDown className={`w-5 h-5 text-pink-500 -rotate-90 ${activeTabDot === 0 ? 'animate-[bounce_1.5s_infinite]' : 'opacity-50'}`} />
           </div>
         )}
         <div className="w-full bg-white rounded-xl shadow-sm border border-gray-200 p-1.5 overflow-hidden">
@@ -787,10 +792,16 @@ export default function Services() {
             className="flex gap-1.5 p-1 bg-gray-50/50 rounded-lg overflow-x-auto hide-scrollbar scroll-smooth"
             onScroll={(e) => {
               const el = e.currentTarget;
-              const progress = el.scrollLeft / (el.scrollWidth - el.clientWidth);
-              if (progress < 0.3) setActiveTabDot(0);
-              else if (progress < 0.7) setActiveTabDot(1);
-              else setActiveTabDot(2);
+              const scrollLeft = el.scrollLeft;
+              const maxScroll = el.scrollWidth - el.clientWidth;
+              if (maxScroll <= 0) return;
+
+              const progress = scrollLeft / maxScroll;
+              // more precise dot switching
+              if (progress < 0.2) setActiveTabDot(0);
+              else if (progress < 0.5) setActiveTabDot(1);
+              else if (progress < 0.85) setActiveTabDot(2);
+              else setActiveTabDot(3); // Added 4th state for the last bit
             }}
           >
             <button
@@ -837,9 +848,10 @@ export default function Services() {
         </div>
         {/* Scroll Hint Dots */}
         <div className="mt-2 flex justify-center gap-1.5 sm:hidden">
-          <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeTabDot === 0 ? 'bg-pink-600 w-3' : 'bg-gray-200'}`} />
-          <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeTabDot === 1 ? 'bg-pink-600 w-3' : 'bg-gray-200'}`} />
-          <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeTabDot === 2 ? 'bg-pink-600 w-3' : 'bg-gray-200'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeTabDot === 0 ? 'bg-pink-600 w-3 shadow-[0_0_8px_rgba(219,39,119,0.4)]' : 'bg-gray-200'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeTabDot === 1 ? 'bg-pink-600 w-3 shadow-[0_0_8px_rgba(219,39,119,0.4)]' : 'bg-gray-200'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeTabDot === 2 ? 'bg-pink-600 w-3 shadow-[0_0_8px_rgba(219,39,119,0.4)]' : 'bg-gray-200'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeTabDot === 3 ? 'bg-pink-600 w-3 shadow-[0_0_8px_rgba(219,39,119,0.4)]' : 'bg-gray-200'}`} />
         </div>
       </div>
 
@@ -1187,7 +1199,7 @@ export default function Services() {
             <div className="flex justify-center gap-4">
               <Button
                 className="bg-purple-600 hover:bg-purple-700 h-12 px-8 rounded-xl font-bold transition-all hover:scale-105"
-                onClick={() => window.location.href = '/admin/referrals'}
+                onClick={() => navigate(`${basePath}/referrals`)}
               >
                 {t('services:open_marketing_panel', 'Управление кампаниями')}
               </Button>
@@ -1210,7 +1222,7 @@ export default function Services() {
             <div className="flex justify-center gap-4">
               <Button
                 className="bg-pink-600 hover:bg-pink-700 h-12 px-8 rounded-xl font-bold transition-all hover:scale-105"
-                onClick={() => window.location.href = '/admin/challenges'}
+                onClick={() => navigate(`${basePath}/challenges`)}
               >
                 {t('services:open_challenges_panel', 'Управление челленджами')}
               </Button>
@@ -1488,17 +1500,18 @@ export default function Services() {
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent
-                            className="w-[calc(100vw-2rem)] sm:w-[320px] p-0 rounded-2xl shadow-2xl z-[70] overflow-hidden border border-gray-100 flex flex-col bg-white"
+                            className="w-[calc(100vw-2rem)] sm:w-[320px] p-0 rounded-2xl shadow-2xl z-[80] border border-gray-100 flex flex-col bg-white overflow-hidden max-h-[var(--radix-popover-content-available-height)]"
+                            style={{ maxHeight: 'var(--radix-popover-content-available-height)' }}
                             align="center"
                             side="bottom"
-                            sideOffset={8}
+                            sideOffset={4}
                             collisionPadding={12}
-                            avoidCollisions={false}
+                            avoidCollisions={true}
                             onWheel={(e) => e.stopPropagation()}
                             onTouchMove={(e) => e.stopPropagation()}
                             onOpenAutoFocus={(e) => e.preventDefault()}
                           >
-                            <Command className="flex flex-col h-full max-h-[320px] sm:max-h-[400px]">
+                            <Command className="flex flex-col w-full h-full max-h-[300px] sm:max-h-[380px]">
                               <div className="flex flex-col border-b">
                                 <CommandInput
                                   placeholder={t('services:search_employee', 'Поиск сотрудника...')}
