@@ -7,6 +7,7 @@ from datetime import datetime
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from db.connection import get_db_connection
+from db.init import init_database
 
 def merge_clients(main_id: str, redundant_id: str):
     """Объединить двух клиентов в одного"""
@@ -61,6 +62,10 @@ def merge_clients(main_id: str, redundant_id: str):
 
 def run_all_fixes():
     print("🔧 Starting data fixes...")
+    
+    # 0. Initialize database schema if missing
+    print("🚀 Initializing database schema...")
+    init_database()
     
     # 0. Merge known duplicates
     merge_clients('admin', '1') # Tahir duplication fix

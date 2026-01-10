@@ -61,6 +61,7 @@ export default function Broadcasts() {
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [showUserSelection, setShowUserSelection] = useState(true);
   const [showManageTypes, setShowManageTypes] = useState(false);
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     loadSubscriptions();
@@ -175,13 +176,17 @@ export default function Broadcasts() {
   };
 
   const handleSend = async () => {
-    if (!form.subscription_type || !form.subject || !form.message) {
-      toast.error(t('fill_required_fields'));
-      return;
-    }
+    const newErrors: Record<string, boolean> = {};
+    if (!form.subscription_type) newErrors.subscription_type = true;
+    if (!form.message) newErrors.message = true;
+    if (form.channels.includes('email') && !form.subject) newErrors.subject = true;
+    if (form.channels.length === 0) newErrors.channels = true;
 
-    if (form.channels.length === 0) {
-      toast.error(t('select_channel_error'));
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      toast.error(t('fill_required_fields'));
+      if (newErrors.channels) toast.error(t('select_channel_error'));
       return;
     }
 
@@ -256,20 +261,20 @@ export default function Broadcasts() {
         <TabsContent value="compose">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Form */}
-            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Параметры рассылки</h2>
+            <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-8 border-b pb-4">Параметры рассылки</h2>
 
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {/* Channels - FIRST */}
                 <div>
-                  <Label>Каналы отправки *</Label>
-                  <div className="flex gap-4 mt-2">
+                  <Label className={`mb-3.5 block text-sm font-semibold ${errors.channels ? 'text-red-500' : 'text-gray-700'}`}>Каналы отправки *</Label>
+                  <div className={`flex flex-wrap gap-4 p-5 rounded-2xl border-2 transition-all ${errors.channels ? 'border-red-200 bg-red-50' : 'border-gray-50 bg-gray-50/50'}`}>
                     <button
                       type="button"
                       onClick={() => handleChannelToggle('email')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${form.channels.includes('email')
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                      className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl border-2 font-medium transition-all ${form.channels.includes('email')
+                        ? 'border-pink-500 bg-white text-pink-600 shadow-sm'
+                        : 'border-white bg-white text-gray-500 hover:border-gray-200 shadow-sm'
                         }`}
                     >
                       <Mail className="w-5 h-5" />
@@ -279,9 +284,9 @@ export default function Broadcasts() {
                     <button
                       type="button"
                       onClick={() => handleChannelToggle('telegram')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${form.channels.includes('telegram')
-                        ? 'border-green-500 bg-green-50 text-green-700'
-                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                      className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl border-2 font-medium transition-all ${form.channels.includes('telegram')
+                        ? 'border-green-500 bg-white text-green-600 shadow-sm'
+                        : 'border-white bg-white text-gray-500 hover:border-gray-200 shadow-sm'
                         }`}
                     >
                       <MessageCircle className="w-5 h-5" />
@@ -291,9 +296,9 @@ export default function Broadcasts() {
                     <button
                       type="button"
                       onClick={() => handleChannelToggle('instagram')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${form.channels.includes('instagram')
-                        ? 'border-purple-500 bg-purple-50 text-purple-700'
-                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                      className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl border-2 font-medium transition-all ${form.channels.includes('instagram')
+                        ? 'border-purple-500 bg-white text-purple-600 shadow-sm'
+                        : 'border-white bg-white text-gray-500 hover:border-gray-200 shadow-sm'
                         }`}
                     >
                       <Instagram className="w-5 h-5" />
@@ -303,9 +308,9 @@ export default function Broadcasts() {
                     <button
                       type="button"
                       onClick={() => handleChannelToggle('notification')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${form.channels.includes('notification')
-                        ? 'border-pink-500 bg-pink-50 text-pink-700'
-                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                      className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl border-2 font-medium transition-all ${form.channels.includes('notification')
+                        ? 'border-pink-500 bg-white text-pink-600 shadow-sm'
+                        : 'border-white bg-white text-gray-500 hover:border-gray-200 shadow-sm'
                         }`}
                     >
                       <Bell className="w-5 h-5" />
@@ -314,10 +319,9 @@ export default function Broadcasts() {
                   </div>
                 </div>
 
-                {/* Subscription Type */}
                 <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <Label htmlFor="subscription_type">Тип подписки *</Label>
+                  <div className="flex justify-between items-center mb-2.5">
+                    <Label htmlFor="subscription_type" className={`text-sm font-semibold ${errors.subscription_type ? 'text-red-500' : 'text-gray-700'}`}>Тип подписки *</Label>
                     <button
                       type="button"
                       onClick={() => setShowManageTypes(true)}
@@ -329,9 +333,12 @@ export default function Broadcasts() {
                   </div>
                   <Select
                     value={form.subscription_type}
-                    onValueChange={(value) => setForm({ ...form, subscription_type: value })}
+                    onValueChange={(value) => {
+                      setForm({ ...form, subscription_type: value });
+                      if (errors.subscription_type) setErrors({ ...errors, subscription_type: false });
+                    }}
                   >
-                    <SelectTrigger id="subscription_type">
+                    <SelectTrigger id="subscription_type" className={errors.subscription_type ? 'border-red-500' : ''}>
                       <SelectValue placeholder="Выберите категорию подписки" />
                     </SelectTrigger>
                     <SelectContent>
@@ -352,9 +359,10 @@ export default function Broadcasts() {
                 {/* Subject - Only show when email is selected */}
                 {form.channels.includes('email') && (
                   <div>
-                    <Label htmlFor="subject">Тема (для Email) *</Label>
+                    <Label htmlFor="subject" className={`block mb-2.5 text-sm font-semibold ${errors.subject ? 'text-red-500' : 'text-gray-700'}`}>Тема (для Email) *</Label>
                     <Input
                       id="subject"
+                      className={`rounded-xl h-12 ${errors.subject ? 'border-red-500 bg-red-50/30' : 'bg-gray-50/30 border-gray-200 focus:bg-white transiton-all'}`}
                       value={form.subject}
                       onChange={(e) => setForm({ ...form, subject: e.target.value })}
                       placeholder={t('placeholder_subject', 'Специальное предложение для вас!')}
@@ -364,7 +372,7 @@ export default function Broadcasts() {
 
                 {/* Target Role */}
                 <div>
-                  <Label htmlFor="target_role">Целевая роль *</Label>
+                  <Label htmlFor="target_role" className="block mb-2.5 text-sm font-semibold text-gray-700">Целевая роль *</Label>
                   <Select
                     value={form.target_role || 'all'}
                     onValueChange={(value) => setForm({ ...form, target_role: value === 'all' ? '' : value })}
@@ -454,35 +462,41 @@ export default function Broadcasts() {
 
                 {/* Message */}
                 <div>
-                  <Label htmlFor="message">Сообщение *</Label>
+                  <Label htmlFor="message" className={`block mb-2.5 text-sm font-semibold ${errors.message ? 'text-red-500' : 'text-gray-700'}`}>Сообщение *</Label>
                   <Textarea
                     id="message"
                     value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    rows={8}
-                    placeholder={t('placeholder_message', 'Введите текст вашего сообщения...')}
+                    onChange={(e) => {
+                      setForm({ ...form, message: e.target.value });
+                      if (errors.message) setErrors({ ...errors, message: false });
+                    }}
+                    placeholder={t('placeholder_message', 'Введите текст рассылки...')}
+                    className={`min-h-[180px] rounded-2xl p-4 text-base ${errors.message ? 'border-red-500 bg-red-50/30 ring-red-100' : 'bg-gray-50/50 border-gray-200 focus:bg-white transition-all'}`}
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    {form.message.length} символов
-                  </p>
+                  <div className="flex justify-between items-center mt-2 px-1">
+                    <p className={`text-xs font-medium ${form.message.length > 500 ? 'text-orange-500' : 'text-gray-400'}`}>
+                      {form.message.length} символов
+                    </p>
+                    <p className="text-xs text-gray-400 font-medium">Рекомендуется до 4096 (Telegram)</p>
+                  </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <Button
                     onClick={handlePreview}
                     disabled={loadingPreview}
                     variant="outline"
-                    className="flex-1"
+                    className="flex-1 h-12 rounded-xl border-2 border-gray-200 hover:border-pink-500 transition-all font-semibold"
                   >
                     {loadingPreview ? (
                       <>
-                        <Loader className="w-4 h-4 mr-2 animate-spin" />
+                        <Loader className="w-5 h-5 mr-2 animate-spin" />
                         Загрузка...
                       </>
                     ) : (
                       <>
-                        <Eye className="w-4 h-4 mr-2" />
+                        <Eye className="w-5 h-5 mr-2" />
                         Предпросмотр
                       </>
                     )}
@@ -491,16 +505,16 @@ export default function Broadcasts() {
                   <Button
                     onClick={handleSend}
                     disabled={sending}
-                    className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600"
+                    className="flex-1 h-12 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg hover:opacity-90 transition-all font-semibold text-white border-0"
                   >
                     {sending ? (
                       <>
-                        <Loader className="w-4 h-4 mr-2 animate-spin" />
+                        <Loader className="w-5 h-5 mr-2 animate-spin" />
                         Отправка...
                       </>
                     ) : (
                       <>
-                        <Send className="w-4 h-4 mr-2" />
+                        <Send className="w-5 h-5 mr-2" />
                         Отправить
                       </>
                     )}
