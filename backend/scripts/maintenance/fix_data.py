@@ -221,9 +221,12 @@ def run_all_fixes():
             elif "Nail" in str(use_spec) or "маникюр" in str(use_spec).lower():
                 bio_ru = f"Ваш эксперт по идеальному маникюру. {name} — это тонкое чувство вкуса, безупречная стерильность и внимание к каждой детали."
             
+            # Use COALESCE with NULLIF to only set bio if it's empty/null
             c.execute("""
                 UPDATE users 
-                SET bio = %s, bio_ru = %s, bio_en = %s
+                SET bio = COALESCE(NULLIF(bio, ''), %s), 
+                    bio_ru = COALESCE(NULLIF(bio_ru, ''), %s), 
+                    bio_en = COALESCE(NULLIF(bio_en, ''), %s)
                 WHERE id = %s
             """, (bio_ru, bio_ru, bio_en, pid))
 

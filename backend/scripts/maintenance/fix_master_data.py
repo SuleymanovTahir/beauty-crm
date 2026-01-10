@@ -9,10 +9,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 from db.connection import get_db_connection
 
-import io
-import csv
-import re
-
 def parse_duration(duration_str):
     """Parse duration string to minutes.
     Examples: 

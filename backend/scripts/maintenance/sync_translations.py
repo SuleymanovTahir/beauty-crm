@@ -165,5 +165,5 @@ def sync_translations(base_path: Path):
     print("\n✅ Синхронизация завершена!")
 
 if __name__ == "__main__":
-    base_path = Path(__file__).parent / "frontend" / "src" / "locales"
+    base_path = Path(__file__).parent.parent.parent.parent / "frontend" / "src" / "locales"
     sync_translations(base_path)
