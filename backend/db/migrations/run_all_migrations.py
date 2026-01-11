@@ -242,6 +242,12 @@ def run_all_migrations():
         "Таблица call_logs (Телефония)"
     )
 
+    from db.migrations.consolidated.schema_recording_folders import run_migration as migrate_recording_folders
+    results["consolidated/recording_folders"] = run_migration_function(
+        migrate_recording_folders,
+        "Таблицы для управления папками записей (recording_folders, chat_recordings)"
+    )
+
     from db.migrations.consolidated.schema_contracts import migrate as migrate_contracts
     results["consolidated/contracts"] = run_migration_function(
         migrate_contracts,

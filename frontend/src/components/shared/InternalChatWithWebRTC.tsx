@@ -31,6 +31,9 @@ import {
   Smile,
   PhoneIncoming,
   PhoneOutgoing,
+  Upload,
+  Folder,
+  Headphones,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
@@ -81,6 +84,7 @@ export default function InternalChat() {
   const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
   const [activeActionMenuId, setActiveActionMenuId] = useState<number | null>(null);
   const [showMobileUserList, setShowMobileUserList] = useState(true);
+  const [showHeaderMenu, setShowHeaderMenu] = useState(false);
 
   // Voice recording state
   const [voiceRecorder, setVoiceRecorder] = useState<VoiceRecorder>({
@@ -104,6 +108,7 @@ export default function InternalChat() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const headerMenuRef = useRef<HTMLDivElement>(null);
 
   const currentUserData = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -197,6 +202,9 @@ export default function InternalChat() {
     const handleClickOutside = (event: MouseEvent) => {
       if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
         setShowEmojiPicker(false);
+      }
+      if (headerMenuRef.current && !headerMenuRef.current.contains(event.target as Node)) {
+        setShowHeaderMenu(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -727,6 +735,69 @@ export default function InternalChat() {
                 >
                   <Video className="w-5 h-5" />
                 </button>
+
+                {/* Menu button */}
+                <div className="relative" ref={headerMenuRef}>
+                  <button
+                    onClick={() => setShowHeaderMenu(!showHeaderMenu)}
+                    className="p-2 text-white hover:bg-white/10 rounded-full transition-colors"
+                    title="Меню"
+                  >
+                    <MoreVertical className="w-5 h-5" />
+                  </button>
+
+                  {showHeaderMenu && (
+                    <div className="absolute right-0 top-full mt-2 w-56 bg-card rounded-lg shadow-xl border border-border z-50 overflow-hidden">
+                      <button
+                        onClick={() => {
+                          toast.info('🎙️ Запись будет доступна во время звонка');
+                          setShowHeaderMenu(false);
+                        }}
+                        disabled={!isInCall}
+                        className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-accent transition-colors text-left ${
+                          !isInCall ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
+                      >
+                        <Headphones className="w-4 h-4" />
+                        <span className="text-sm">Начать запись звонка</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'audio/*,.mp3,.wav,.ogg,.m4a,.webm';
+                          input.onchange = async (e: Event) => {
+                            const target = e.target as HTMLInputElement;
+                            const file = target.files?.[0];
+                            if (file) {
+                              toast.info('🎵 Загрузка аудио файла...');
+                              // TODO: implement upload
+                            }
+                          };
+                          input.click();
+                          setShowHeaderMenu(false);
+                        }}
+                        className="w-full px-4 py-3 flex items-center gap-3 hover:bg-accent transition-colors text-left border-t border-border"
+                      >
+                        <Upload className="w-4 h-4" />
+                        <span className="text-sm">Загрузить аудио файл</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          toast.info('📁 Открытие моих записей...');
+                          setShowHeaderMenu(false);
+                          // TODO: open recordings modal
+                        }}
+                        className="w-full px-4 py-3 flex items-center gap-3 hover:bg-accent transition-colors text-left border-t border-border"
+                      >
+                        <Folder className="w-4 h-4" />
+                        <span className="text-sm">Мои записи</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 

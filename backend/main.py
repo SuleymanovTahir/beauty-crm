@@ -121,6 +121,7 @@ from api.invoices import router as invoices_router
 from api.funnel_checkpoints import router as funnel_checkpoints_router
 from api.payment_integrations import router as payment_integrations_router
 from api.marketplace_integrations import router as marketplace_integrations_router
+from api.recordings import router as recordings_router
 
 
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -218,6 +219,7 @@ app.include_router(invoices_router, prefix="/api")  # Invoices API
 app.include_router(funnel_checkpoints_router, prefix="/api")  # Funnel Checkpoints API
 app.include_router(payment_integrations_router, prefix="/api")  # Payment Integrations API
 app.include_router(marketplace_integrations_router, prefix="/api")  # Marketplace Integrations API
+app.include_router(recordings_router, prefix="/api")  # Recordings & Folders API
  # Menu Settings API
 
 
@@ -545,8 +547,8 @@ async def startup_event():
     # 2. Инициализация базовых таблиц (init_database)
     # 3. Все консолидированные миграции
     from db.migrations.run_all_migrations import run_all_migrations
-    log_info("🔧 Запуск миграций...", "startup")
-    run_all_migrations()
+    # log_info("🔧 Запуск миграций...", "startup")
+    # run_all_migrations()
     
     # ================================
     # УДАЛЕНИЕ БАЗЫ ДАННЫХ (ОПЦИОНАЛЬНО)
@@ -585,15 +587,15 @@ async def startup_event():
     # Раскомментируйте для запуска ВСЕХ тестов при старте
     # Рекомендуется только для development окружения
     # NOTE: Закомментировано - запускайте вручную: python3 tests/run_all_tests.py
-    from scripts.run_all_fixes import main as run_all_fixes
-    log_info("🔧 Запуск всех исправлений...", "startup")
-    await run_all_fixes()
+    # from scripts.run_all_fixes import main as run_all_fixes
+    # log_info("🔧 Запуск всех исправлений...", "startup")
+    # await run_all_fixes()
 
-    # from tests.run_all_tests import run_all_tests
-    # log_info("🧪 Запуск всех тестов...", "startup")
-    # run_all_tests()
+    from tests.run_all_tests import run_all_tests
+    log_info("🧪 Запуск всех тестов...", "startup")
+    run_all_tests()
 
-    # run_all_migrations()
+    # run_all_migrations()  # Автоматически создаст таблицы для системы записей
     # await run_all_fixes()
     # run_all_tests()
 

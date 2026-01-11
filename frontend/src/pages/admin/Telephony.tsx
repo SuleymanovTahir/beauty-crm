@@ -4,6 +4,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import RecordingsManager from '../../components/recordings/RecordingsManager';
 import {
     Phone,
     Search,
@@ -484,6 +485,9 @@ export default function Telephony() {
                         <TabsTrigger value="list" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-pink-600 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
                             {t('telephony:call_list_tab', 'Список звонков')}
                         </TabsTrigger>
+                        <TabsTrigger value="recordings" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-pink-600 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
+                            {t('telephony:recordings_tab', 'Записи')}
+                        </TabsTrigger>
                         <TabsTrigger value="analytics" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-pink-600 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
                             {t('telephony:analytics_tab', 'Аналитика')}
                         </TabsTrigger>
@@ -904,6 +908,10 @@ export default function Telephony() {
                         </div>
 
 
+                    </TabsContent>
+
+                    <TabsContent value="recordings" className="space-y-6 focus-visible:outline-none">
+                        <RecordingsManager type="telephony" />
                     </TabsContent>
 
                     <TabsContent value="analytics" className="space-y-6 focus-visible:outline-none">
