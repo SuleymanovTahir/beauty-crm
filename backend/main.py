@@ -509,7 +509,7 @@ async def run_full_diagnostics_endpoint():
         log_info("🔍 Запуск полной диагностики через API...", "diagnostics")
 
         # Импортируем и запускаем диагностику
-        from diagnostic_full import run_full_diagnostics
+        from scripts.diagnostics.diagnostic_full import run_full_diagnostics
 
         result = await run_full_diagnostics()
 
@@ -555,10 +555,11 @@ async def startup_event():
     # ================================
     # Раскомментируй для полного удаления и пересоздания БД
     # ВНИМАНИЕ: Это удалит ВСЕ данные!
-    # from scripts.maintenance.recreate_database import drop_database
-    # log_info("⚠️  Удаление базы данных...", "startup")
-    # drop_database()
-    # Миграции запустятся автоматически ниже (строка 598)
+    from scripts.maintenance.recreate_database import drop_database
+    log_info("⚠️  Удаление базы данных...", "startup")
+    drop_database()
+    from db.migrations.run_all_migrations import run_all_migrations
+    run_all_migrations()  # Пересоздать после удаления
 
     # ================================
     # ПОЛУЧЕНИЕ НАСТРОЕК САЛОНА
@@ -586,9 +587,9 @@ async def startup_event():
     # Раскомментируйте для запуска ВСЕХ тестов при старте
     # Рекомендуется только для development окружения
     # NOTE: Закомментировано - запускайте вручную: python3 tests/run_all_tests.py
-    # from scripts.run_all_fixes import main as run_all_fixes
-    # log_info("🔧 Запуск всех исправлений...", "startup")
-    # await run_all_fixes()
+    from scripts.run_all_fixes import main as run_all_fixes
+    log_info("🔧 Запуск всех исправлений...", "startup")
+    await run_all_fixes()
 
     from tests.run_all_tests import run_all_tests
     log_info("🧪 Запуск всех тестов...", "startup")

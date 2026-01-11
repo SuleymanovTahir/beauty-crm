@@ -22,18 +22,15 @@ client = TestClient(app)
 
 def setup_test_data():
     """Create test user"""
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    
+    from tests.test_utils import create_test_user
+
     try:
-        # Create a test user
-        cursor.execute("INSERT INTO users (username, password_hash, full_name, role, is_active, is_service_provider) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id", ('test_schedule_user', 'hash', 'Test Schedule User', 'employee', True, True))
-        user_id = cursor.fetchone()[0]
-        
-        conn.commit()
+        # Create a test user with unique username
+        user_id = create_test_user("test_schedule_user", "Test Schedule User", "employee", "Stylist")
+
+        conn = get_db_connection()
         return {'user_id': user_id, 'employee_id': None}, conn
     except Exception as e:
-        conn.close()
         raise e
 
 def cleanup_test_data(conn, data):

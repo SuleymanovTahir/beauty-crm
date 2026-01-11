@@ -316,28 +316,10 @@ def test_master_schedule_detailed():
         print_step(1, 9, "Инициализация MasterScheduleService")
         try:
             # Создаем тестового мастера в базе данных
-            from core.config import DATABASE_NAME
-            from db.connection import get_db_connection
-            import uuid
-            conn = get_db_connection()
-            c = conn.cursor()
+            from tests.test_utils import create_test_user
 
-            # Generate unique username using UUID to avoid duplicates
-            unique_username = f"test_detailed_{int(datetime.now().timestamp())}_{uuid.uuid4().hex[:8]}"
-
-            # Delete any existing test user with similar username (cleanup)
-            c.execute("DELETE FROM users WHERE username LIKE 'test_detailed_%'")
-
-            # Insert into users table
-            c.execute("""
-                INSERT INTO users (username, password_hash, full_name, role, position, is_active, is_service_provider)
-                VALUES (%s, 'dummy_hash', %s, %s, %s, TRUE, TRUE)
-                RETURNING id
-            """, (unique_username, test_master, "employee", "Stylist"))
-            user_id = c.fetchone()[0]
-
-            conn.commit()
-            conn.close()
+            # Создаем пользователя с уникальным username
+            user_id = create_test_user("test_detailed", test_master, "employee", "Stylist")
 
             schedule = MasterScheduleService()
             print_success("MasterScheduleService создан")
