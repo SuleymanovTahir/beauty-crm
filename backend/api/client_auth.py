@@ -164,7 +164,7 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         if row:
             photo = row[4]
             if photo and photo.startswith('/static'):
-                photo = f"http://localhost:8000{photo}"
+                photo = f"{photo}"
             next_booking = {"id": row[0], "service": row[1], "date": row[2], "master": row[5] or row[3], "master_photo": photo}
         else:
             next_booking = None
@@ -190,7 +190,7 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             if key not in seen and len(recent_visits) < 5:
                 photo = row[5]
                 if photo and photo.startswith('/static'):
-                    photo = f"http://localhost:8000{photo}"
+                    photo = f"{photo}"
                 
                 recent_visits.append({
                     "id": row[0],
@@ -696,7 +696,7 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
         for r in c.fetchall():
             photo = r[6]
             if photo and photo.startswith('/static'):
-                photo = f"http://localhost:8000{photo}"
+                photo = f"{photo}"
             items.append({
                 "id": r[0],
                 "service_name": r[1],
@@ -982,7 +982,7 @@ async def get_fav_masters(session_token: Optional[str] = Cookie(None)):
         for row in c.fetchall():
             photo = row[3]
             if photo and photo.startswith('/static'):
-                photo = f"http://localhost:8000{photo}"
+                photo = f"{photo}"
 
             masters.append({
                 "id": row[0],
