@@ -782,6 +782,18 @@ def init_database():
         FOREIGN KEY (user_id) REFERENCES users(id)
     )''')
     
+    # Таблица перерывов (Breaks)
+    c.execute('''CREATE TABLE IF NOT EXISTS schedule_breaks (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        day_of_week INTEGER,
+        start_time TEXT NOT NULL,
+        end_time TEXT NOT NULL,
+        reason TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    )''')
+    
     # Таблица праздников салона
     c.execute('''CREATE TABLE IF NOT EXISTS salon_holidays (
         id SERIAL PRIMARY KEY,
@@ -935,7 +947,7 @@ def init_database():
                      VALUES (1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                   ("M Le Diamant",
                    "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
-                   "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
+                   "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1806.63583569841!2d55.1278216!3d25.0745229!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f13459ada2307%3A0x6b453a232f6b3e8c!2sM%20Le%20Diamant!5e0!3m2!1sen!2sae!4v1704980000000!5m2!1sen!2sae",
                    "Daily 10:30 - 21:00",
                    "Ежедневно 10:30 - 21:00",
                    "يوميًا 10:30 - 21:00",

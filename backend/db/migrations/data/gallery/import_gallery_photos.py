@@ -14,8 +14,20 @@ def import_gallery_photos():
     conn = get_db_connection()
     c = conn.cursor()
     
-    from core.config import UPLOAD_DIR, BASE_DIR
-    project_root = Path(BASE_DIR).parent
+    from core.config import UPLOAD_DIR
+    # Пытаемся найти корень проекта, где есть backend и frontend
+    current_file = Path(os.path.abspath(__file__))
+    project_root = None
+    
+    # Идем вверх до тех пор, пока не найдем директорию с backend и frontend
+    for parent in current_file.parents:
+        if (parent / "backend").exists() and (parent / "frontend").exists():
+            project_root = parent
+            break
+            
+    if not project_root:
+        # Fallback if structure is slightly different
+        project_root = current_file.parents[5]
     
     try:
         print(f"📂 Project root: {project_root}")
@@ -59,11 +71,9 @@ def import_gallery_photos():
                 if img_file.suffix.lower() not in ['.jpg', '.jpeg', '.png', '.webp', '.gif']:
                     continue
                     
-                # Копируем файл
-                dest_file = dest_dir / img_file.name
-                if not dest_file.exists():
-                    shutil.copy2(img_file, dest_file)
-                    print(f"  📋 Скопировано: {img_file.name}")
+                # Копируем файл (всегда перезаписываем, чтобы обновить если изменился)
+                shutil.copy2(img_file, dest_file)
+                print(f"  📋 Скопировано/Обновлено: {img_file.name}")
                 
                 # Добавляем в базу данных (для галереи используем gallery_images)
                 # Только если это не "images" (сотрудники), так как они в таблице users
@@ -94,9 +104,8 @@ def import_gallery_photos():
             dest_dir.mkdir(parents=True, exist_ok=True)
             
             dest_file = dest_dir / img_file.name
-            if not dest_file.exists():
-                shutil.copy2(img_file, dest_file)
-                print(f"  📋 Скопировано (root): {img_file.name}")
+            shutil.copy2(img_file, dest_file)
+            print(f"  📋 Скопировано (root): {img_file.name}")
                 
             image_path = f"/static/uploads/images/{category}/{img_file.name}"
             c.execute("SELECT id FROM gallery_images WHERE image_path = %s", (image_path,))

@@ -25,7 +25,7 @@ class CacheControlStaticFiles(StaticFiles):
 
     def file_response(self, *args, **kwargs) -> Response:
         response = super().file_response(*args, **kwargs)
-        response.headers["Cache-Control"] = "public, max-age=31536000" # 1 year
+        response.headers["Cache-Control"] = "public, max-age=3600" # 1 hour
         return response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
