@@ -153,7 +153,7 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
         query = """
             SELECT *
             FROM gallery_images
-            WHERE is_visible = 1
+            WHERE is_visible = TRUE
         """
         
         if category:
@@ -171,8 +171,12 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
         gallery = [dict(zip(columns, row)) for row in rows]
-        
-        log_info(f"Получено {len(gallery)} элементов галереи", "db")
+
+        log_info(f"📸 [Gallery DB] Получено {len(gallery)} элементов галереи (category: {category})", "db")
+
+        # Пути уже корректные в БД, sanitize_url не требуется
+        # (sanitize_url вызывается в api/gallery.py если нужно)
+
         return gallery
         
     except Exception as e:

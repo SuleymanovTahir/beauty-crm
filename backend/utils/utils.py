@@ -58,35 +58,32 @@ def sanitize_filename(filename: str) -> str:
 def sanitize_url(url: str) -> Optional[str]:
     """
     Очистить URL от локальных хостов и привести к относительному пути или BASE_URL
-    
+
     Args:
         url: Исходный URL
-        
+
     Returns:
         Санитизированный URL или None
     """
-    if not url: 
+    if not url:
         return None
-        
+
     # Импортируем внутри чтобы избежать циклических зависимостей
     from core.config import BASE_URL
     import re
-    
+
     # Шаблон для поиска localhost и 127.0.0.1 с любым портом
     local_pattern = r'https?://(localhost|127\.0\.0\.1)(:\d+)?'
-    
+
     # Очистка от localhost
     if re.search(local_pattern, url):
         if "localhost" not in BASE_URL and "127.0.0.1" not in BASE_URL:
             url = re.sub(local_pattern, BASE_URL.rstrip('/'), url)
         else:
             url = re.sub(local_pattern, '', url)
-            
-    # Кодируем спецсимволы (кириллица, пробелы), если это путь
-    if url.startswith('/') or url.startswith('http'):
-        # Сохраняем протокол и домен если они есть
-        return urllib.parse.quote(url, safe='/:?=&%')
-        
+
+    # НЕ кодируем URL - FastAPI StaticFiles работает с исходными именами файлов
+    # Кириллица в путях допустима и работает корректно
     return url
 
 def validate_file_upload(file, max_size_mb: int = 10, allowed_extensions: list = None):
