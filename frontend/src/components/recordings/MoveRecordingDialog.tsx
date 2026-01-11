@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import axios from 'axios';
+import { api } from "@/services/api";;
 
 interface FolderNode {
   id: number;
@@ -64,7 +64,7 @@ const MoveRecordingDialog: React.FC<MoveRecordingDialogProps> = ({
 
     try {
       setMoving(true);
-      await axios.post(`/api/recordings/${recording.id}/move`, {
+      await api.post(`/api/recordings/${recording.id}/move`, {
         folder_id: selectedFolderId,
       });
 

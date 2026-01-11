@@ -3,6 +3,8 @@ from fastapi.responses import JSONResponse
 import os
 from pathlib import Path
 from typing import Optional
+from datetime import datetime
+import re
 
 router = APIRouter(tags=["Upload"])
 
@@ -50,10 +52,21 @@ async def upload_file(
         
         # Определяем категорию
         category = get_file_category(file.content_type or 'application/octet-stream')
-        
-        # Используем оригинальное имя файла (перезаписываем если существует)
-        filename = file.filename or 'uploaded_file'
-        
+
+        # Генерируем имя файла с timestamp для избежания кэширования
+        original_filename = file.filename or 'uploaded_file'
+        timestamp = int(datetime.now().timestamp())
+
+        # Разделяем имя и расширение
+        if '.' in original_filename:
+            name_parts = original_filename.rsplit('.', 1)
+            base_name = re.sub(r'[^a-zA-Z0-9_-]', '_', name_parts[0])  # Безопасное имя
+            extension = name_parts[1]
+            filename = f"{base_name}_{timestamp}.{extension}"
+        else:
+            base_name = re.sub(r'[^a-zA-Z0-9_-]', '_', original_filename)
+            filename = f"{base_name}_{timestamp}"
+
         # Путь для сохранения (с учетом подпапки)
         if subfolder and category == 'images':
             target_dir = UPLOAD_DIR_PATH / category / subfolder

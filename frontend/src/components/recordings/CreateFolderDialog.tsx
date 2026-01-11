@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import axios from 'axios';
+import { api } from "@/services/api";;
 
 interface FolderNode {
   id: number;
@@ -60,7 +60,7 @@ const CreateFolderDialog: React.FC<CreateFolderDialogProps> = ({
 
     try {
       setCreating(true);
-      await axios.post('/api/recordings/folders', {
+      await api.post('/api/recordings/folders', {
         name: name.trim(),
         parent_id: selectedParentId,
       });

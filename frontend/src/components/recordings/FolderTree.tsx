@@ -28,7 +28,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import axios from 'axios';
+import { api } from "@/services/api";;
 import CreateFolderDialog from './CreateFolderDialog';
 import RenameFolderDialog from './RenameFolderDialog';
 
@@ -87,7 +87,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
   const handleDelete = async () => {
     try {
       setDeleting(true);
-      await axios.delete(`/api/recordings/folders/${folder.id}`);
+      await api.delete(`/api/recordings/folders/${folder.id}`);
       toast.success(t('telephony:success', 'Успешно'), {
         description: 'Папка удалена',
       });

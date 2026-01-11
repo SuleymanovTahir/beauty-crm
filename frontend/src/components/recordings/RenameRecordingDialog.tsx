@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import axios from 'axios';
+import { api } from "@/services/api";;
 
 interface Recording {
   id: number;
@@ -56,7 +56,7 @@ const RenameRecordingDialog: React.FC<RenameRecordingDialogProps> = ({
 
     try {
       setSaving(true);
-      await axios.put(`/api/recordings/${recording.id}`, {
+      await api.put(`/api/recordings/${recording.id}`, {
         custom_name: name.trim(),
         notes: notes.trim() || null,
       });
