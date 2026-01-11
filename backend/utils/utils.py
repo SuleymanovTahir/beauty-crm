@@ -4,6 +4,7 @@
 """
 import os
 import re
+import urllib.parse
 from typing import Optional
 from fastapi import Cookie, HTTPException
 
@@ -66,10 +67,6 @@ def sanitize_url(url: str) -> Optional[str]:
     if not url: 
         return None
         
-    # Пути начинающиеся с /static/ уже корректны
-    if url.startswith('/static/'):
-        return url
-        
     # Импортируем внутри чтобы избежать циклических зависимостей
     from core.config import BASE_URL
     import re
@@ -77,14 +74,17 @@ def sanitize_url(url: str) -> Optional[str]:
     # Шаблон для поиска localhost и 127.0.0.1 с любым портом
     local_pattern = r'https?://(localhost|127\.0\.0\.1)(:\d+)?'
     
+    # Очистка от localhost
     if re.search(local_pattern, url):
-        # Если BASE_URL — это внешний домен, заменяем локальный хост на него
         if "localhost" not in BASE_URL and "127.0.0.1" not in BASE_URL:
-            # Заменяем протокол и хост на BASE_URL, сохраняя остальной путь
-            return re.sub(local_pattern, BASE_URL.rstrip('/'), url)
-        
-        # Если мы все еще на локалке, возвращаем относительный путь
-        return re.sub(local_pattern, '', url)
+            url = re.sub(local_pattern, BASE_URL.rstrip('/'), url)
+        else:
+            url = re.sub(local_pattern, '', url)
+            
+    # Кодируем спецсимволы (кириллица, пробелы), если это путь
+    if url.startswith('/') or url.startswith('http'):
+        # Сохраняем протокол и домен если они есть
+        return urllib.parse.quote(url, safe='/:?=&%')
         
     return url
 

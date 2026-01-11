@@ -322,7 +322,7 @@ def run_all_migrations():
             print("✅ Таблица notifications создана успешно")
             results["migrations/notifications"] = True
         else:
-            print(f"❌ Ошибка в миграции notifications:\n{result.stderr}")
+            print(f"❌ Ошибка в миграции notifications:\nSTDOUT: {result.stdout}\nSTDERR: {result.stderr}")
             results["migrations/notifications"] = False
     except Exception as e:
         print(f"❌ Ошибка запуска миграции notifications: {e}")
