@@ -33,7 +33,7 @@ async def get_gallery_images(
         params = [category]
 
         if visible_only:
-            query += " AND is_visible = 1"
+            query += " AND is_visible = TRUE"
 
         query += " ORDER BY sort_order ASC, id ASC"
 
