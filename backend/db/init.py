@@ -35,7 +35,7 @@ def init_database():
               profile_pic TEXT,
               notes TEXT,
               is_pinned BOOLEAN DEFAULT FALSE,
-              detected_language TEXT DEFAULT 'ru',
+              detected_language TEXT,
               gender TEXT,
               card_number TEXT,
               discount REAL DEFAULT 0,
@@ -52,9 +52,10 @@ def init_database():
               last_login TEXT,
               is_verified BOOLEAN DEFAULT FALSE,
               preferred_messenger TEXT,
-              language TEXT DEFAULT 'ru',
+              language TEXT,
               bot_mode TEXT DEFAULT 'assistant',
               temperature TEXT DEFAULT 'warm',
+              loyalty_points INTEGER DEFAULT 0,
               reminder_date TIMESTAMP)''')
 
     # Таблица настроек бота

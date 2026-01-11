@@ -318,17 +318,24 @@ def test_master_schedule_detailed():
             # Создаем тестового мастера в базе данных
             from core.config import DATABASE_NAME
             from db.connection import get_db_connection
+            import uuid
             conn = get_db_connection()
             c = conn.cursor()
-            
+
+            # Generate unique username using UUID to avoid duplicates
+            unique_username = f"test_detailed_{int(datetime.now().timestamp())}_{uuid.uuid4().hex[:8]}"
+
+            # Delete any existing test user with similar username (cleanup)
+            c.execute("DELETE FROM users WHERE username LIKE 'test_detailed_%'")
+
             # Insert into users table
             c.execute("""
-                INSERT INTO users (username, password_hash, full_name, role, position, is_active, is_service_provider) 
+                INSERT INTO users (username, password_hash, full_name, role, position, is_active, is_service_provider)
                 VALUES (%s, 'dummy_hash', %s, %s, %s, TRUE, TRUE)
                 RETURNING id
-            """, (f"test_detailed_{int(datetime.now().timestamp())}", test_master, "employee", "Stylist"))
+            """, (unique_username, test_master, "employee", "Stylist"))
             user_id = c.fetchone()[0]
-            
+
             conn.commit()
             conn.close()
 
