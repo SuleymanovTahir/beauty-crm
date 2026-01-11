@@ -408,17 +408,40 @@ async def create_call(call: CallLogCreate, current_user: dict = Depends(get_curr
                 call.booking_id = booking_row[0]
 
         created_at = call.created_at if call.created_at else datetime.now().isoformat()
+
+        # Получить ID папки "Телефония" для автоматического назначения
+        folder_id = None
+        try:
+            c.execute("SELECT id FROM recording_folders WHERE name = 'Телефония' AND parent_id IS NULL AND is_deleted = FALSE LIMIT 1")
+            folder_row = c.fetchone()
+            if folder_row:
+                folder_id = folder_row[0]
+        except:
+            pass  # Если таблица еще не создана
+
+        # Генерируем автоматическое имя для записи если есть запись
+        custom_name = None
+        if call.recording_url or call.recording_file:
+            # Формат: {client_name} - {manager_name} - DD.MM.YYYY HH:MM
+            client_name = call.manual_client_name if call.manual_client_name else "Клиент"
+            manager_name = call.manual_manager_name if call.manual_manager_name else "Менеджер"
+            call_datetime = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+            date_str = call_datetime.strftime('%d.%m.%Y %H:%M')
+            custom_name = f"{client_name} - {manager_name} - {date_str}"
+
         c.execute("""
             INSERT INTO call_logs (
-                phone, client_id, booking_id, direction, status, duration, recording_url, 
-                created_at, transcription, notes, external_id, 
-                manual_client_name, manual_manager_name, manual_service_name
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                phone, client_id, booking_id, direction, status, duration, recording_url,
+                created_at, transcription, notes, external_id,
+                manual_client_name, manual_manager_name, manual_service_name,
+                folder_id, custom_name
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """, (
             call.phone, call.client_id, call.booking_id, call.direction, call.status, call.duration,
             call.recording_url, created_at, call.transcription, call.notes, call.external_id,
-            call.manual_client_name, call.manual_manager_name, call.manual_service_name
+            call.manual_client_name, call.manual_manager_name, call.manual_service_name,
+            folder_id, custom_name
         ))
         call_id = c.fetchone()[0]
         conn.commit()
@@ -452,24 +475,29 @@ async def upload_recording(
         # Save file
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-        
+
+        # Get file size
+        file_size = os.path.getsize(file_path)
+
         # Update database
         conn = get_db_connection()
         c = conn.cursor()
         try:
             c.execute("""
-                UPDATE call_logs 
-                SET recording_file = %s 
+                UPDATE call_logs
+                SET recording_file = %s, file_size = %s, file_format = %s
                 WHERE id = %s
-            """, (filename, call_id))
+            """, (filename, file_size, file_ext.lstrip('.'), call_id))
             conn.commit()
         finally:
             conn.close()
-        
+
         return {
             "success": True,
             "filename": filename,
-            "url": f"/static/recordings/{filename}"
+            "url": f"/static/recordings/{filename}",
+            "file_size": file_size,
+            "file_format": file_ext.lstrip('.')
         }
     except Exception as e:
         logger.error(f"Error uploading recording: {e}")

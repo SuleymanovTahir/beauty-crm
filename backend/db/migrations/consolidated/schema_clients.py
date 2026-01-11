@@ -35,7 +35,7 @@ def migrate_clients_schema():
             'birthday': 'TEXT',
             'gender': 'TEXT',
             'source': 'TEXT',
-            'language': 'TEXT DEFAULT \'ru\'',
+            'language': 'TEXT',
             'last_retention_reminder_at': 'TIMESTAMP',  # To track retention ping
             'reminder_date': 'TIMESTAMP',
             'total_visits': 'INTEGER DEFAULT 0',

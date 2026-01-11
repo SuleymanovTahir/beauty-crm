@@ -7,6 +7,8 @@ from typing import Optional
 
 import asyncio
 from datetime import datetime
+import os
+import base64
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -15,6 +17,10 @@ from utils.logger import log_error, log_info
 from utils.email import send_email_async
 
 router = APIRouter(tags=["Internal Chat"], prefix="/api/internal-chat")
+
+# Директория для хранения записей
+RECORDINGS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static", "recordings")
+os.makedirs(RECORDINGS_DIR, exist_ok=True)
 
 # === HELPER FUNCTIONS ===
 
@@ -566,3 +572,252 @@ async def set_offline(session_token: Optional[str] = Cookie(None)):
     conn.close()
 
     return {"success": True}
+
+# ==================== RECORDINGS ENDPOINTS ====================
+
+@router.post("/start-recording")
+async def start_recording(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Начать запись WebRTC звонка"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Требуется авторизация"}, status_code=401)
+
+    data = await request.json()
+    receiver_id = data.get('receiver_id')
+
+    if not receiver_id:
+        return JSONResponse({"error": "Не указан получатель"}, status_code=400)
+
+    # Создаем запись в БД для последующего сохранения
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            INSERT INTO chat_recordings (sender_id, receiver_id, recording_type, created_at)
+            VALUES (%s, %s, 'audio', %s)
+            RETURNING id
+        """, (user['id'], receiver_id, datetime.now().isoformat()))
+
+        recording_id = c.fetchone()[0]
+        conn.commit()
+
+        log_info(f"Recording started: {recording_id} by {user.get('full_name')}", "internal_chat")
+
+        return {
+            "success": True,
+            "recording_id": recording_id
+        }
+
+    except Exception as e:
+        conn.rollback()
+        log_error(f"Error starting recording: {e}", "internal_chat")
+        return JSONResponse({"error": str(e)}, status_code=500)
+    finally:
+        conn.close()
+
+@router.post("/stop-recording")
+async def stop_recording(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Остановить и сохранить запись WebRTC звонка"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Требуется авторизация"}, status_code=401)
+
+    data = await request.json()
+    recording_id = data.get('recording_id')
+    audio_blob = data.get('audio_blob')  # base64 encoded audio
+
+    if not recording_id or not audio_blob:
+        return JSONResponse({"error": "Неполные данные"}, status_code=400)
+
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        # Получить информацию о записи
+        c.execute("""
+            SELECT sender_id, receiver_id
+            FROM chat_recordings
+            WHERE id = %s
+        """, (recording_id,))
+
+        row = c.fetchone()
+        if not row:
+            return JSONResponse({"error": "Запись не найдена"}, status_code=404)
+
+        sender_id, receiver_id = row
+
+        # Проверить, что пользователь имеет право сохранять эту запись
+        if sender_id != user['id'] and receiver_id != user['id']:
+            return JSONResponse({"error": "Нет прав для сохранения этой записи"}, status_code=403)
+
+        # Получить имена участников для автоматического названия
+        c.execute("SELECT full_name FROM users WHERE id = %s", (sender_id,))
+        sender_name = c.fetchone()[0]
+
+        c.execute("SELECT full_name FROM users WHERE id = %s", (receiver_id,))
+        receiver_name = c.fetchone()[0]
+
+        # Генерируем имя файла
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"chat_{recording_id}_{timestamp}.webm"
+        file_path = os.path.join(RECORDINGS_DIR, filename)
+
+        # Декодируем и сохраняем файл
+        audio_data = base64.b64decode(audio_blob.split(',')[1] if ',' in audio_blob else audio_blob)
+        with open(file_path, 'wb') as f:
+            f.write(audio_data)
+
+        # Получить размер файла
+        file_size = os.path.getsize(file_path)
+
+        # Получить ID папки "Внутренний чат"
+        folder_id = None
+        try:
+            c.execute("SELECT id FROM recording_folders WHERE name = 'Внутренний чат' AND parent_id IS NULL AND is_deleted = FALSE LIMIT 1")
+            folder_row = c.fetchone()
+            if folder_row:
+                folder_id = folder_row[0]
+        except:
+            pass
+
+        # Генерируем автоматическое название
+        date_str = datetime.now().strftime('%d.%m.%Y %H:%M')
+        custom_name = f"{sender_name} - {receiver_name} - {date_str}"
+
+        # Обновляем запись в БД
+        c.execute("""
+            UPDATE chat_recordings
+            SET recording_file = %s,
+                recording_url = %s,
+                file_size = %s,
+                file_format = 'webm',
+                custom_name = %s,
+                folder_id = %s
+            WHERE id = %s
+        """, (filename, f"/static/recordings/{filename}", file_size, custom_name, folder_id, recording_id))
+
+        conn.commit()
+
+        log_info(f"Recording saved: {recording_id} - {custom_name}", "internal_chat")
+
+        return {
+            "success": True,
+            "recording_id": recording_id,
+            "filename": filename,
+            "url": f"/static/recordings/{filename}",
+            "custom_name": custom_name
+        }
+
+    except Exception as e:
+        conn.rollback()
+        log_error(f"Error stopping recording: {e}", "internal_chat")
+        return JSONResponse({"error": str(e)}, status_code=500)
+    finally:
+        conn.close()
+
+@router.get("/recordings")
+async def get_chat_recordings(
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить список записей для текущего пользователя"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Требуется авторизация"}, status_code=401)
+
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        # Director и Admin видят все записи
+        is_admin = user.get('role') in ['director', 'admin']
+
+        if is_admin:
+            c.execute("""
+                SELECT
+                    cr.id,
+                    cr.sender_id,
+                    cr.receiver_id,
+                    cr.custom_name,
+                    cr.recording_file,
+                    cr.recording_url,
+                    cr.duration,
+                    cr.file_size,
+                    cr.file_format,
+                    cr.created_at,
+                    cr.folder_id,
+                    cr.is_archived,
+                    cr.tags,
+                    cr.notes,
+                    u1.full_name as sender_name,
+                    u2.full_name as receiver_name
+                FROM chat_recordings cr
+                LEFT JOIN users u1 ON u1.id = cr.sender_id
+                LEFT JOIN users u2 ON u2.id = cr.receiver_id
+                WHERE cr.recording_file IS NOT NULL
+                ORDER BY cr.created_at DESC
+            """)
+        else:
+            c.execute("""
+                SELECT
+                    cr.id,
+                    cr.sender_id,
+                    cr.receiver_id,
+                    cr.custom_name,
+                    cr.recording_file,
+                    cr.recording_url,
+                    cr.duration,
+                    cr.file_size,
+                    cr.file_format,
+                    cr.created_at,
+                    cr.folder_id,
+                    cr.is_archived,
+                    cr.tags,
+                    cr.notes,
+                    u1.full_name as sender_name,
+                    u2.full_name as receiver_name
+                FROM chat_recordings cr
+                LEFT JOIN users u1 ON u1.id = cr.sender_id
+                LEFT JOIN users u2 ON u2.id = cr.receiver_id
+                WHERE (cr.sender_id = %s OR cr.receiver_id = %s)
+                  AND cr.recording_file IS NOT NULL
+                ORDER BY cr.created_at DESC
+            """, (user['id'], user['id']))
+
+        rows = c.fetchall()
+
+        recordings = [
+            {
+                'id': row[0],
+                'sender_id': row[1],
+                'receiver_id': row[2],
+                'custom_name': row[3],
+                'recording_file': row[4],
+                'recording_url': row[5],
+                'duration': row[6],
+                'file_size': row[7],
+                'file_format': row[8],
+                'created_at': row[9].isoformat() if row[9] else None,
+                'folder_id': row[10],
+                'is_archived': row[11],
+                'tags': row[12] or [],
+                'notes': row[13],
+                'sender_name': row[14],
+                'receiver_name': row[15]
+            }
+            for row in rows
+        ]
+
+        return {"recordings": recordings}
+
+    except Exception as e:
+        log_error(f"Error fetching chat recordings: {e}", "internal_chat")
+        return JSONResponse({"error": str(e)}, status_code=500)
+    finally:
+        conn.close()
