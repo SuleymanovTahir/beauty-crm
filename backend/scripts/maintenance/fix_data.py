@@ -282,6 +282,27 @@ def run_all_fixes():
                 """, (master_id, day, "10:30", "21:00"))
         print(f"✅ Set default schedule for {len(all_masters)} masters.")
 
+        # 9. Clean up gallery and fix image paths
+        print("🔍 Cleaning up gallery and fixing image paths...")
+        # Fix paths (add /images/ if missing)
+        c.execute("""
+            UPDATE public_banners SET image_url = REPLACE(image_url, '/static/uploads/', '/static/uploads/images/') 
+            WHERE image_url LIKE '/static/uploads/%' AND image_url NOT LIKE '/static/uploads/images/%'
+        """)
+        c.execute("""
+            UPDATE gallery_images SET image_path = REPLACE(image_path, '/static/uploads/', '/static/uploads/images/') 
+            WHERE image_path LIKE '/static/uploads/%' AND image_path NOT LIKE '/static/uploads/images/%'
+        """)
+        # Specific fix for salon images if they are in root uploads but not in salon folder
+        # (Already handled by previous steps mostly)
+        
+        # Remove duplicates
+        c.execute("""
+            DELETE FROM gallery_images a USING gallery_images b 
+            WHERE a.id > b.id AND a.image_path = b.image_path
+        """)
+        print("✅ Gallery cleanup and path fixing completed.")
+
         conn.commit()
         print("✅ Data fixes completed successfully!")
         
