@@ -722,3 +722,77 @@ def save_webhook_call(call_data: Dict[str, Any]):
         logger.error(f"Error saving webhook call: {e}")
     finally:
         conn.close()
+
+
+@router.get("/telephony/settings")
+async def get_telephony_settings(current_user: dict = Depends(get_current_user)):
+    """Получить настройки телефонии"""
+    return {
+        "provider": None,
+        "webhook_url": f"{os.getenv('API_URL', '')}/api/telephony/webhook",
+        "api_key": None,
+        "is_configured": False
+    }
+
+
+@router.get("/telephony/stats")
+async def get_telephony_stats(
+    period: str = "today",
+    current_user: dict = Depends(get_current_user)
+):
+    """Получить статистику звонков"""
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        # Определяем период
+        if period == "today":
+            date_filter = "DATE(created_at) = CURRENT_DATE"
+        elif period == "week":
+            date_filter = "created_at >= CURRENT_DATE - INTERVAL '7 days'"
+        elif period == "month":
+            date_filter = "created_at >= CURRENT_DATE - INTERVAL '30 days'"
+        else:
+            date_filter = "1=1"
+
+        c.execute(f"""
+            SELECT
+                COUNT(*) as total,
+                COUNT(*) FILTER (WHERE direction = 'inbound') as inbound,
+                COUNT(*) FILTER (WHERE direction = 'outbound') as outbound,
+                COUNT(*) FILTER (WHERE status = 'missed') as missed,
+                AVG(duration) as avg_duration
+            FROM call_logs
+            WHERE {date_filter}
+        """)
+
+        row = c.fetchone()
+        return {
+            "total_calls": row[0] or 0,
+            "inbound": row[1] or 0,
+            "outbound": row[2] or 0,
+            "missed": row[3] or 0,
+            "average_duration": int(row[4]) if row[4] else 0
+        }
+    finally:
+        conn.close()
+
+
+@router.get("/telephony/analytics")
+async def get_telephony_analytics(
+    period: str = "month",
+    current_user: dict = Depends(get_current_user)
+):
+    """Получить аналитику звонков"""
+    return {
+        "dynamics": [],
+        "distribution": {
+            "inbound": 0,
+            "outbound": 0,
+            "missed": 0
+        },
+        "efficiency": {
+            "answer_rate": 0,
+            "average_duration": 0
+        }
+    }
