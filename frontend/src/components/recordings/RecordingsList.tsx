@@ -34,7 +34,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import axios from 'axios';
+import { api } from "@/services/api";;
 import RenameRecordingDialog from './RenameRecordingDialog';
 import MoveRecordingDialog from './MoveRecordingDialog';
 
@@ -159,7 +159,7 @@ const RecordingsList: React.FC<RecordingsListProps> = ({
   const handleArchive = async (recording: Recording) => {
     try {
       setArchiving(true);
-      await axios.post(`/api/recordings/${recording.id}/archive`, {
+      await api.post(`/api/recordings/${recording.id}/archive`, {
         is_archived: !recording.is_archived,
       });
 
@@ -183,7 +183,7 @@ const RecordingsList: React.FC<RecordingsListProps> = ({
 
     try {
       setDeleting(true);
-      await axios.delete(`/api/recordings/${selectedRecording.id}`);
+      await api.delete(`/api/recordings/${selectedRecording.id}`);
 
       toast.success(t('telephony:success', 'Успешно'), {
         description: 'Запись удалена',

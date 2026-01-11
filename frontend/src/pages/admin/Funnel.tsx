@@ -83,16 +83,22 @@ export default function Funnel() {
     }, []);
 
     const loadData = async () => {
+        console.log('🔍 [Funnel] Starting to load funnel data...');
         try {
             // 1. Load stages
+            console.log('📊 [Funnel] Loading stages from /api/funnel/stages...');
             const stagesData = await api.get('/api/funnel/stages');
+            console.log('✅ [Funnel] Stages loaded:', stagesData);
             setStages(stagesData);
 
             // 2. Load clients for each stage
             // In a real app, you might want to load this more efficiently
             const clientsMap: Record<number, Client[]> = {};
+            console.log(`👥 [Funnel] Loading clients for ${stagesData.length} stages...`);
             await Promise.all(stagesData.map(async (stage: Stage) => {
+                console.log(`📋 [Funnel] Loading clients for stage: ${stage.name} (ID: ${stage.id})`);
                 const clientsData = await api.get(`/api/funnel/clients?stage_id=${stage.id}&limit=20`);
+                console.log(`✅ [Funnel] Loaded ${clientsData.length} clients for stage ${stage.name}`);
 
                 // Sort by reminder_date if stage is Reminder
                 if (stage.key === 'remind_later' || stage.name.toLowerCase().includes('напомнить') || stage.name.toLowerCase().includes('remind')) {
@@ -106,8 +112,14 @@ export default function Funnel() {
                 clientsMap[stage.id] = clientsData;
             }));
             setClients(clientsMap);
+            console.log('🎉 [Funnel] All data loaded successfully!');
         } catch (error) {
-            console.error('Error loading funnel:', error);
+            console.error('❌ [Funnel] Error loading funnel:', error);
+            console.error('❌ [Funnel] Error details:', {
+                message: error instanceof Error ? error.message : 'Unknown error',
+                response: (error as any)?.response?.data,
+                status: (error as any)?.response?.status
+            });
             toast.error('Failed to load funnel data');
         }
     };

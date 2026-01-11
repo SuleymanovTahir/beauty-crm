@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/select';
 import { Upload } from 'lucide-react';
 import { toast } from 'sonner';
-import axios from 'axios';
+import { api } from "@/services/api";;
 
 interface FolderNode {
   id: number;
@@ -109,7 +109,7 @@ const UploadRecordingDialog: React.FC<UploadRecordingDialogProps> = ({
         formData.append('folder_id', folderId.toString());
       }
 
-      await axios.post('/api/internal-chat/upload-recording', formData, {
+      await api.post('/api/internal-chat/upload-recording', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

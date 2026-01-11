@@ -64,18 +64,24 @@ export default function Analytics() {
   }, [period]);
 
   const loadData = async () => {
+    console.log('🔍 [Analytics] Starting to load analytics data...');
     try {
       setLoading(true);
       setError(null);
 
+      console.log('📊 [Analytics] Loading stats...');
       const statsData = await api.getStats();
+      console.log('✅ [Analytics] Stats loaded:', statsData);
       setStats(statsData);
 
+      console.log('📈 [Analytics] Loading funnel data from /api/analytics/funnel...');
       const funnelData = await api.get('/api/analytics/funnel');
+      console.log('✅ [Analytics] Funnel data loaded:', funnelData);
       setFunnel(funnelData);
 
       let analyticsData;
       if (dateFrom && dateTo) {
+        console.log(`📅 [Analytics] Loading analytics with custom dates: ${dateFrom} to ${dateTo}`);
         analyticsData = await api.getAnalytics(0, dateFrom, dateTo);
       } else {
         // Handle special period values
@@ -90,14 +96,22 @@ export default function Analytics() {
             throw new Error(t('analytics:errors.invalid_period'));
           }
         }
+        console.log(`📅 [Analytics] Loading analytics for period: ${periodNum} days`);
         analyticsData = await api.getAnalytics(periodNum);
       }
+      console.log('✅ [Analytics] Analytics data loaded:', analyticsData);
       setAnalytics(analyticsData);
+      console.log('🎉 [Analytics] All data loaded successfully!');
     } catch (err) {
       const message = err instanceof Error ? err.message : t('analytics:errors.loading_error');
+      console.error('❌ [Analytics] Error loading analytics:', err);
+      console.error('❌ [Analytics] Error details:', {
+        message: message,
+        response: (err as any)?.response?.data,
+        status: (err as any)?.response?.status
+      });
       setError(message);
       toast.error(`${t('analytics:errors.loading_error')}: ${message}`);
-      console.error('Analytics error:', err);
     } finally {
       setLoading(false);
     }

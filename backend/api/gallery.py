@@ -200,22 +200,38 @@ async def upload_gallery_image(
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
+
     try:
         # Используем центральный UPLOAD_DIR из конфига
         from core.config import UPLOAD_DIR
+        from datetime import datetime
+        import re
+
         target_dir = Path(UPLOAD_DIR) / "images" / category
         target_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Сохраняем файл
-        file_path = target_dir / file.filename
+
+        # Генерируем уникальное имя файла с timestamp
+        original_filename = file.filename or 'image'
+        timestamp = int(datetime.now().timestamp())
+
+        if '.' in original_filename:
+            name_parts = original_filename.rsplit('.', 1)
+            base_name = re.sub(r'[^a-zA-Z0-9_-]', '_', name_parts[0])
+            extension = name_parts[1]
+            unique_filename = f"{base_name}_{timestamp}.{extension}"
+        else:
+            base_name = re.sub(r'[^a-zA-Z0-9_-]', '_', original_filename)
+            unique_filename = f"{base_name}_{timestamp}.jpg"
+
+        # Сохраняем файл с уникальным именем
+        file_path = target_dir / unique_filename
         with open(file_path, "wb") as f:
             content = await file.read()
             f.write(content)
-        
+
         # URL должен начинаться с /static, так как мы маунтим static папку
         # Путь теперь вложен в /images/
-        image_path = f"/static/uploads/images/{category}/{file.filename}"
+        image_path = f"/static/uploads/images/{category}/{unique_filename}"
         
         conn = get_db_connection()
         c = conn.cursor()
@@ -228,7 +244,7 @@ async def upload_gallery_image(
         c.execute("""
             INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
             VALUES (%s, %s, %s, %s, TRUE)
-        """, (category, image_path, file.filename, max_order + 1))
+        """, (category, image_path, original_filename, max_order + 1))
         
         image_id = c.lastrowid
         conn.commit()
