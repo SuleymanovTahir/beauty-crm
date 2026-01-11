@@ -248,6 +248,12 @@ def run_all_migrations():
         "Таблицы для управления папками записей (recording_folders, chat_recordings)"
     )
 
+    from db.migrations.consolidated.schema_user_status import run_migration as migrate_user_status
+    results["consolidated/user_status"] = run_migration_function(
+        migrate_user_status,
+        "Таблица user_status для отслеживания онлайн статуса пользователей"
+    )
+
     from db.migrations.consolidated.schema_contracts import migrate as migrate_contracts
     results["consolidated/contracts"] = run_migration_function(
         migrate_contracts,
