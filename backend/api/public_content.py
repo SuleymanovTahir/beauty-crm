@@ -64,6 +64,13 @@ async def get_gallery(
     - **category**: Категория (опционально)
     - **limit**: Максимальное количество элементов
     """
-    log_info(f"API: Запрос галереи", "api")
-    gallery = get_active_gallery(category=category, limit=limit)
-    return {"images": gallery}
+    log_info(f"API: Запрос галереи (category: {category})", "api")
+    try:
+        gallery = get_active_gallery(category=category, limit=limit)
+        log_info(f"API: Получено {len(gallery)} изображений", "api")
+        return {"success": True, "images": gallery}
+    except Exception as e:
+        log_info(f"API: Ошибка получения галереи: {e}", "api")
+        import traceback
+        log_info(f"API: Traceback: {traceback.format_exc()}", "api")
+        return {"success": False, "images": [], "error": str(e)}
