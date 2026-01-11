@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
-from utils.utils import require_auth
+from utils.utils import require_auth, sanitize_url
 from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["Gallery"])
@@ -41,7 +41,7 @@ async def get_gallery_images(
         for row in c.fetchall():
             images.append({
                 "id": row[0],
-                "image_path": row[1],
+                "image_path": sanitize_url(row[1]),
                 "title": row[2],
                 "description": row[3],
                 "sort_order": row[4],

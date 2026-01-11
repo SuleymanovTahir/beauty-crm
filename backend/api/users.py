@@ -9,7 +9,7 @@ import hashlib
 from db import get_all_users, delete_user, log_activity
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
-from utils.utils import require_auth
+from utils.utils import require_auth, sanitize_url
 from utils.logger import log_error
 from core.auth import get_current_user_or_redirect as get_current_user
 import psycopg2
@@ -139,7 +139,7 @@ async def get_user_by_id(
             "position": row[6],
             "phone": row[7],
             "bio": row[8],
-            "photo": row[9],
+            "photo": sanitize_url(row[9]),
             "is_active": bool(row[10]),
             "is_service_provider": bool(row[11]),
             "position_ru": row[12],
@@ -199,7 +199,7 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 "is_active": row[8],
                 "position_ru": row[10],
                 "position_ar": row[11],
-                "photo": row[12]
+                "photo": sanitize_url(row[12])
             }
 
             users.append(user_data)

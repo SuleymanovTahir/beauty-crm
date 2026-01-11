@@ -1,14 +1,13 @@
 """
 Инициализация базы данных
 """
-from db.connection import get_db_connection
-from datetime import datetime
-import hashlib
-
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from db.connection import get_db_connection
+from datetime import datetime
+import hashlib
 
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_warning
