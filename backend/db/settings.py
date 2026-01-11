@@ -69,8 +69,7 @@ def get_salon_settings() -> dict:
                 "facebook_pixel_id": row_dict.get("facebook_pixel_id"),
                 "latitude": row_dict.get("latitude", 25.2048),  # JBR Dubai default
                 "longitude": row_dict.get("longitude", 55.2708),  # JBR Dubai default
-                "logo_url": row_dict.get("logo_url", "/assets/logo.webp"),
-                "logo_url": row_dict.get("logo_url", "/assets/logo.webp"),
+                "logo_url": row_dict.get("logo_url", "/static/uploads/images/salon/logo.webp"),
                 "base_url": row_dict.get("base_url", "https://mlediamant.com"),
                 # Feature Management
                 "points_expiration_days": row_dict.get("points_expiration_days", 365),
@@ -132,8 +131,7 @@ def _get_default_salon_settings() -> dict:
         "facebook_pixel_id": None,
         "latitude": 25.2048,  # JBR Dubai
         "longitude": 55.2708,  # JBR Dubai
-        "logo_url": "/assets/logo.webp",
-        "logo_url": "/assets/logo.webp",
+        "logo_url": "/static/uploads/images/salon/logo.webp",
         "base_url": "https://mlediamant.com",
         "points_expiration_days": 365,
         "feature_flags": "{}"

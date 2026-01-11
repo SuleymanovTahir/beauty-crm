@@ -40,7 +40,7 @@ def init_database():
               card_number TEXT,
               discount REAL DEFAULT 0,
               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-              total_visits BOOLEAN DEFAULT FALSE,
+              total_visits INTEGER DEFAULT 0,
               additional_phone TEXT,
               newsletter_agreed BOOLEAN DEFAULT FALSE,
               personal_data_agreed BOOLEAN DEFAULT FALSE,

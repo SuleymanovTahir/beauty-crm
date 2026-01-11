@@ -18,6 +18,7 @@ from .schema_bot_analytics import migrate_bot_analytics_schema
 from .schema_service_assignments import run_migration as migrate_service_assignments
 from .schema_account_enhancements import migrate_account_enhancements
 from .schema_challenges import migrate_challenges_schema
+from .schema_admin_features import migrate_admin_features_schema
 
 
 __all__ = [
@@ -47,6 +48,8 @@ __all__ = [
     'migrate_account_enhancements',
     # Challenges
     'migrate_challenges_schema',
+    # Admin Features
+    'migrate_admin_features_schema',
 ]
 
 

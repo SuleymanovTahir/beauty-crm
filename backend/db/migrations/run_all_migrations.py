@@ -90,6 +90,7 @@ def run_all_migrations():
         add_show_on_public_page_to_users,
         import_gallery_images,
         migrate_account_enhancements,
+        migrate_admin_features_schema,
     )
 
     
@@ -228,6 +229,11 @@ def run_all_migrations():
     results["consolidated/account_enhancements"] = run_migration_function(
         migrate_account_enhancements,
         "Расширение ЛК (рефералки, галерея, достижения, избранные мастера)"
+    )
+
+    results["consolidated/admin_features"] = run_migration_function(
+        migrate_admin_features_schema,
+        "Админские функции (Лояльность, Уведомления, Настройки)"
     )
 
     from db.migrations.consolidated.schema_telephony import run_migration as migrate_telephony

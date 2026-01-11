@@ -303,6 +303,37 @@ def run_all_fixes():
         """)
         print("✅ Gallery cleanup and path fixing completed.")
 
+        # 10. Fix localhost URLs and logo
+        print("🔍 Fixing localhost URLs and logo settings...")
+        
+        # Lists of tables and columns to clean from localhost prefixes
+        url_fields = [
+            ('public_banners', 'image_url'),
+            ('public_reviews', 'avatar_url'),
+            ('public_gallery', 'image_url'),
+            ('users', 'photo'),
+            ('salon_settings', 'logo_url'),
+            ('gallery_images', 'image_path')
+        ]
+        
+        for table, col in url_fields:
+            try:
+                c.execute(f"SAVEPOINT fix_url_{table}")
+                c.execute(f"UPDATE {table} SET {col} = REPLACE({col}, 'http://localhost:8000', '') WHERE {col} LIKE 'http://localhost:8000%'")
+                c.execute(f"RELEASE SAVEPOINT fix_url_{table}")
+            except Exception:
+                c.execute(f"ROLLBACK TO SAVEPOINT fix_url_{table}")
+        
+        # Specific fix for default logo path
+        try:
+             c.execute("""
+                UPDATE salon_settings 
+                SET logo_url = '/static/uploads/images/salon/logo.webp' 
+                WHERE (logo_url IS NULL OR logo_url = '' OR logo_url = '/assets/logo.webp')
+            """)
+        except Exception:
+            pass
+
         conn.commit()
         print("✅ Data fixes completed successfully!")
         

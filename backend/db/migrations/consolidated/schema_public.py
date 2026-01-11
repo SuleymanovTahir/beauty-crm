@@ -129,7 +129,8 @@ def migrate_public_schema():
             'employee_position': 'TEXT',
             'employee_position_ru': 'TEXT', 'employee_position_en': 'TEXT', 'employee_position_ar': 'TEXT',
             'employee_position_es': 'TEXT', 'employee_position_de': 'TEXT', 'employee_position_fr': 'TEXT',
-            'employee_position_hi': 'TEXT', 'employee_position_kk': 'TEXT', 'employee_position_pt': 'TEXT'
+            'employee_position_hi': 'TEXT', 'employee_position_kk': 'TEXT', 'employee_position_pt': 'TEXT',
+            'image_url': 'TEXT'
         }
         
         for col, dtype in columns_to_add.items():
