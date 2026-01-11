@@ -546,7 +546,7 @@ async def startup_event():
     # 1. Создание БД если не существует (recreate_database)
     # 2. Инициализация базовых таблиц (init_database)
     # 3. Все консолидированные миграции
-    from db.migrations.run_all_migrations import run_all_migrations
+    # from db.migrations.run_all_migrations import run_all_migrations
     # log_info("🔧 Запуск миграций...", "startup")
     # run_all_migrations()
     
@@ -558,8 +558,7 @@ async def startup_event():
     # from scripts.maintenance.recreate_database import drop_database
     # log_info("⚠️  Удаление базы данных...", "startup")
     # drop_database()
-    # from db.migrations.run_all_migrations import run_all_migrations
-    # run_all_migrations()  # Пересоздать после удаления
+    # Миграции запустятся автоматически ниже (строка 598)
 
     # ================================
     # ПОЛУЧЕНИЕ НАСТРОЕК САЛОНА
