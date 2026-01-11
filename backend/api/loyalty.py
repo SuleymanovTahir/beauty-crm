@@ -375,3 +375,25 @@ async def delete_loyalty_category_api(
     except Exception as e:
         log_error(f"Error deleting category rule: {e}", "loyalty")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+
+# Admin endpoints with /admin prefix (for frontend compatibility)
+@router.get("/admin/loyalty/config")
+async def get_loyalty_config_admin(session_token: Optional[str] = Cookie(None)):
+    """[Admin] Получить конфигурацию программы лояльности (admin prefix)"""
+    return await get_loyalty_config_api(session_token)
+
+
+@router.post("/admin/loyalty/config")
+async def update_loyalty_config_admin(
+    config: dict,
+    session_token: Optional[str] = Cookie(None)
+):
+    """[Admin] Обновить конфигурацию программы лояльности (admin prefix)"""
+    return await update_loyalty_config_api(config, session_token)
+
+
+@router.get("/admin/loyalty/categories")
+async def get_loyalty_categories_admin(session_token: Optional[str] = Cookie(None)):
+    """[Admin] Получить правила по категориям (admin prefix)"""
+    return await get_loyalty_categories_api(session_token)
