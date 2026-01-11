@@ -414,11 +414,17 @@ class MasterScheduleService:
 
             # ✅ Parse hours and minutes for optimization logic (handle HH:MM and HH:MM:SS)
             try:
+                if not start_time_str or not end_time_str:
+                    # Fallback if somehow empty but reached here
+                    from core.config import DEFAULT_HOURS_START, DEFAULT_HOURS_END
+                    start_time_str = start_time_str or DEFAULT_HOURS_START
+                    end_time_str = end_time_str or DEFAULT_HOURS_END
+                
                 start_parts = start_time_str.split(':')
                 start_hour, start_minute = int(start_parts[0]), int(start_parts[1])
                 end_parts = end_time_str.split(':')
                 end_hour, end_minute = int(end_parts[0]), int(end_parts[1])
-            except:
+            except (ValueError, AttributeError, IndexError):
                 from core.config import DEFAULT_HOURS_START, DEFAULT_HOURS_END
                 try:
                     start_parts = DEFAULT_HOURS_START.split(':')

@@ -119,7 +119,7 @@ def recreate_database():
     
     # ВАЖНО: Для операций CREATE DATABASE нужны права владельца БД или суперюзера
     # На production используем 'ubuntu', на macOS - текущий пользователь
-    superuser = os.getenv('POSTGRES_SUPERUSER', os.getenv('USER', 'postgres'))
+    superuser = os.getenv('POSTGRES_SUPERUSER', 'postgres')
     
     print(f"⚙️  Параметры подключения: host={db_host}, superuser={superuser}, db={db_name}")
     print(f"⚙️  Пользователь приложения: {app_user}")
