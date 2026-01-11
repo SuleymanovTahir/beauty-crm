@@ -9,7 +9,7 @@ from db.connection import get_db_connection
 def create_test_user(username_prefix, full_name, role="employee", position="Stylist", is_service_provider=True):
     """
     Создает тестового пользователя с уникальным username.
-    Автоматически очищает старых тестовых пользователей с таким префиксом.
+    Автоматически очищает старых тестовых пользователей с таким префиксом и их связанные данные.
 
     Args:
         username_prefix: префикс для username (например, "test_master")
@@ -28,7 +28,21 @@ def create_test_user(username_prefix, full_name, role="employee", position="Styl
         # Генерируем уникальный username
         unique_username = f"{username_prefix}_{int(datetime.now().timestamp())}_{uuid.uuid4().hex[:8]}"
 
-        # Удаляем старых тестовых пользователей с таким префиксом (cleanup)
+        # Получаем ID старых тестовых пользователей для очистки связанных данных
+        c.execute(f"SELECT id FROM users WHERE username LIKE '{username_prefix}_%'")
+        old_user_ids = [row[0] for row in c.fetchall()]
+
+        # Удаляем связанные данные для старых тестовых пользователей
+        if old_user_ids:
+            user_ids_str = ','.join(map(str, old_user_ids))
+            # Удаляем расписание (user_schedule)
+            c.execute(f"DELETE FROM user_schedule WHERE user_id IN ({user_ids_str})")
+            # Удаляем перерывы (schedule_breaks)
+            c.execute(f"DELETE FROM schedule_breaks WHERE user_id IN ({user_ids_str})")
+            # Удаляем выходные (time_off)
+            c.execute(f"DELETE FROM time_off WHERE user_id IN ({user_ids_str})")
+
+        # Удаляем старых тестовых пользователей
         c.execute(f"DELETE FROM users WHERE username LIKE '{username_prefix}_%'")
 
         # Создаем пользователя
