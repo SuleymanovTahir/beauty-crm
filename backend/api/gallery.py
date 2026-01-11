@@ -24,35 +24,56 @@ async def get_gallery_images(
     category: 'portfolio' или 'salon'
     """
     try:
+        log_info(f"📸 [Gallery] Fetching images for category: {category}, visible_only: {visible_only}", "api")
+
         conn = get_db_connection()
         c = conn.cursor()
-        
+
         query = "SELECT id, image_path, title, description, sort_order, is_visible FROM gallery_images WHERE category = %s"
         params = [category]
-        
+
         if visible_only:
             query += " AND is_visible = 1"
-        
+
         query += " ORDER BY sort_order ASC, id ASC"
-        
+
+        log_info(f"📊 [Gallery] Executing query: {query} with params: {params}", "api")
         c.execute(query, params)
+
+        rows = c.fetchall()
+        log_info(f"✅ [Gallery] Found {len(rows)} images in database", "api")
+
         images = []
-        
-        for row in c.fetchall():
+        for row in rows:
+            image_path = row[1]
+            log_info(f"🖼️ [Gallery] Processing image ID {row[0]}: {image_path}", "api")
+
+            # Fallback если sanitize_url не работает
+            try:
+                clean_path = sanitize_url(image_path) if image_path else image_path
+            except Exception as sanitize_error:
+                log_error(f"⚠️ [Gallery] sanitize_url failed: {sanitize_error}, using original path", "api")
+                clean_path = image_path
+
             images.append({
                 "id": row[0],
-                "image_path": sanitize_url(row[1]),
+                "image_path": clean_path,
                 "title": row[2],
                 "description": row[3],
                 "sort_order": row[4],
                 "is_visible": row[5]
             })
-        
+            log_info(f"✓ [Gallery] Added image: {clean_path}", "api")
+
         conn.close()
+
+        log_info(f"🎉 [Gallery] Successfully returning {len(images)} images for {category}", "api")
         return {"success": True, "images": images}
-        
+
     except Exception as e:
-        log_error(f"Error getting gallery images: {e}", "api")
+        log_error(f"❌ [Gallery] Error getting gallery images: {e}", "api")
+        import traceback
+        log_error(f"❌ [Gallery] Traceback: {traceback.format_exc()}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/gallery")
