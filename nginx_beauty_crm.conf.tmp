@@ -26,10 +26,6 @@ server {
     gzip_http_version 1.1;
     gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml;
 
-    # 🚀 ОПТИМИЗАЦИЯ: Буферы прокси
-    proxy_buffers 16 16k;
-    proxy_buffer_size 32k;
-
     # API эндпоинты
     location /api/ {
         proxy_pass http://127.0.0.1:8000;
@@ -70,17 +66,11 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    # 🚀 МГНОВЕННОЕ ОБНОВЛЕНИЕ КАРТИНОК И СТАТИКИ БЭКЕНДА
+    # ⭐ СТАТИКА КАРТИНКИ (МГНОВЕННОЕ ОБНОВЛЕНИЕ)
     location /static/ {
         alias /home/ubuntu/beauty_crm/backend/static/;
-        
-        # Редирект для путей без /images/ (если файл не найден в корне uploads)
-        if (!-f $request_filename) {
-            rewrite ^/static/uploads/(.*)$ /static/uploads/images/$1 last;
-        }
-
         expires -1;
-        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
+        add_header Cache-Control "no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0";
         access_log off;
     }
 
@@ -92,19 +82,25 @@ server {
         access_log off;
     }
 
-    # Изображения фронтенда (без кэша для мгновенного обновления)
+    # Изображения фронтенда (также без кэша для мгновенного обновления если меняются)
     location ~* ^/images/.+\.(png|jpg|jpeg|gif|ico|svg|webp)$ {
         root /home/ubuntu/beauty_crm/frontend/dist;
         expires -1;
-        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
+        add_header Cache-Control "no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0";
         access_log off;
     }
 
     # Остальная статика фронтенда
+    location = /favicon.ico {
+        alias /home/ubuntu/beauty_crm/frontend/dist/favicon.svg;
+        expires 30d;
+        add_header Content-Type image/svg+xml;
+    }
+
     location ~* \.(ico|png|svg|txt)$ {
         root /home/ubuntu/beauty_crm/frontend/dist;
         expires -1;
-        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
+        add_header Cache-Control "no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0";
         access_log off;
     }
 
@@ -113,6 +109,6 @@ server {
         root /home/ubuntu/beauty_crm/frontend/dist;
         try_files $uri /index.html;
         expires -1;
-        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
+        add_header Cache-Control "no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0";
     }
 }

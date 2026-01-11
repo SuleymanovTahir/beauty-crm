@@ -38,15 +38,34 @@ def migrate_clients_schema():
             'language': 'TEXT DEFAULT \'ru\'',
             'last_retention_reminder_at': 'TIMESTAMP',  # To track retention ping
             'reminder_date': 'TIMESTAMP',
+            'total_visits': 'INTEGER DEFAULT 0',
         }
         
-        # Add missing columns
+        # Add missing columns or fix types
         added_count = 0
         for column_name, column_type in columns_to_add.items():
             if column_name not in existing_columns:
                 print(f"  ➕ Adding column: {column_name}")
                 c.execute(f"ALTER TABLE clients ADD COLUMN {column_name} {column_type}")
                 added_count += 1
+            else:
+                # Специальная обработка для типов если колонка уже есть (PostgreSQL)
+                if column_name == 'loyalty_points':
+                    # Проверяем тип
+                    c.execute("SELECT data_type FROM information_schema.columns WHERE table_name='clients' AND column_name='loyalty_points'")
+                    if c.fetchone()[0] == 'boolean':
+                        print("  🔧 Converting loyalty_points from BOOLEAN to INTEGER")
+                        c.execute("ALTER TABLE clients ALTER COLUMN loyalty_points DROP DEFAULT")
+                        c.execute("ALTER TABLE clients ALTER COLUMN loyalty_points TYPE INTEGER USING (CASE WHEN loyalty_points THEN 1 ELSE 0 END)")
+                        c.execute("ALTER TABLE clients ALTER COLUMN loyalty_points SET DEFAULT 0")
+                
+                if column_name == 'total_visits':
+                    c.execute("SELECT data_type FROM information_schema.columns WHERE table_name='clients' AND column_name='total_visits'")
+                    if c.fetchone()[0] == 'boolean':
+                        print("  🔧 Converting total_visits from BOOLEAN to INTEGER")
+                        c.execute("ALTER TABLE clients ALTER COLUMN total_visits DROP DEFAULT")
+                        c.execute("ALTER TABLE clients ALTER COLUMN total_visits TYPE INTEGER USING (CASE WHEN total_visits THEN 1 ELSE 0 END)")
+                        c.execute("ALTER TABLE clients ALTER COLUMN total_visits SET DEFAULT 0")
         
         # Create conversations table if not exists
         c.execute("""
