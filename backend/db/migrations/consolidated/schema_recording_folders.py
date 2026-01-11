@@ -19,9 +19,13 @@ def run_migration():
     try:
         logging.info("Creating recording_folders and updating call_logs...")
 
+        # Удаляем таблицы если существуют (для идемпотентности при пересоздании БД)
+        c.execute("DROP TABLE IF EXISTS chat_recordings CASCADE;")
+        c.execute("DROP TABLE IF EXISTS recording_folders CASCADE;")
+
         # Таблица для папок записей
         c.execute("""
-            CREATE TABLE IF NOT EXISTS recording_folders (
+            CREATE TABLE recording_folders (
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 parent_id INTEGER REFERENCES recording_folders(id) ON DELETE CASCADE,
@@ -66,7 +70,7 @@ def run_migration():
 
         # Таблица для записей внутреннего чата
         c.execute("""
-            CREATE TABLE IF NOT EXISTS chat_recordings (
+            CREATE TABLE chat_recordings (
                 id SERIAL PRIMARY KEY,
                 sender_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
                 receiver_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
