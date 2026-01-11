@@ -567,7 +567,7 @@ async def get_public_gallery(category: Optional[str] = None):
             images.append({
                 "id": row[0],
                 "category": row[1],
-                "image_path": row[2],
+                "image_path": sanitize_url(row[2]),
                 "title": row[3],
                 "description": row[4],
                 "sort_order": row[5]

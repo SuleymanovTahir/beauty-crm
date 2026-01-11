@@ -7,6 +7,7 @@ from typing import Optional, List, Dict
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info
+from utils.utils import sanitize_url
 
 router = APIRouter()
 
@@ -130,8 +131,8 @@ async def get_public_employees(
                 "role": row_dict["position"] or "Специалист",
                 "position": row_dict["position"] or "Специалист",  # Для совместимости с фронтендом
                 "specialty": row_dict["specialization"] or row_dict["bio"] or "",
-                "image": row_dict["photo"] or "/static/avatars/default_female.webp",
-                "photo": row_dict["photo"] or "/static/avatars/default_female.webp",  # Для совместимости с фронтендом
+                "image": sanitize_url(row_dict["photo"]) or "/static/avatars/default_female.webp",
+                "photo": sanitize_url(row_dict["photo"]) or "/static/avatars/default_female.webp",  # Для совместимости с фронтендом
                 "experience": (exp_text or "").strip(),
                 "age": age,
                 "instagram": row_dict["instagram"] or "",
