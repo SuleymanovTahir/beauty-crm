@@ -63,7 +63,10 @@ export class WebRTCService {
    */
   private async connectWebSocket(): Promise<void> {
     return new Promise((resolve, reject) => {
-      const wsUrl = `ws://${window.location.hostname}:8000/api/webrtc/signal`;
+      // Используем wss:// для HTTPS и ws:// для HTTP
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.hostname}:8000/api/webrtc/signal`;
+      console.log(`🔌 [WebRTC] Connecting to WebSocket: ${wsUrl}`);
       this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {

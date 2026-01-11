@@ -95,13 +95,22 @@ async def get_public_employees(
             if n1 == 1: return one
             return five
 
+        log_info(f"👥 [Public] Processing {len(rows)} employees from database", "api")
+
         for row in rows:
             row_dict = dict(zip(columns, row))
-            
+
+            employee_id = row_dict["id"]
+            employee_name = row_dict["full_name"]
+            original_photo = row_dict["photo"]
+
+            log_info(f"👤 [Public] Processing employee ID {employee_id}: {employee_name}", "api")
+            log_info(f"📸 [Public] Original photo path: {original_photo}", "api")
+
             # Handle experience fallback
             exp_text = row_dict.get("experience")
             years = row_dict.get("years_of_experience")
-            
+
             if (not exp_text or not str(exp_text).strip()) and years:
                 # Basic localization for experience
                 if language == 'ru':
@@ -121,18 +130,28 @@ async def get_public_employees(
             # Calculate age
             age = calculate_age(row_dict.get("birthday"))
 
-            employee_id = row_dict["id"]
             service_ids = employee_services_map.get(employee_id, [])
+
+            # Sanitize photo URL
+            try:
+                sanitized_photo = sanitize_url(original_photo) if original_photo else None
+                log_info(f"✅ [Public] Sanitized photo: {sanitized_photo}", "api")
+            except Exception as e:
+                log_info(f"⚠️ [Public] sanitize_url failed for {employee_name}: {e}, using original", "api")
+                sanitized_photo = original_photo
+
+            final_photo = sanitized_photo or "/static/avatars/default_female.webp"
+            log_info(f"🖼️ [Public] Final photo URL for {employee_name}: {final_photo}", "api")
 
             employees.append({
                 "id": employee_id,
-                "name": row_dict["full_name"],
-                "full_name": row_dict["full_name"],  # Для совместимости с фронтендом
+                "name": employee_name,
+                "full_name": employee_name,  # Для совместимости с фронтендом
                 "role": row_dict["position"] or "Специалист",
                 "position": row_dict["position"] or "Специалист",  # Для совместимости с фронтендом
                 "specialty": row_dict["specialization"] or row_dict["bio"] or "",
-                "image": sanitize_url(row_dict["photo"]) or "/static/avatars/default_female.webp",
-                "photo": sanitize_url(row_dict["photo"]) or "/static/avatars/default_female.webp",  # Для совместимости с фронтендом
+                "image": final_photo,
+                "photo": final_photo,  # Для совместимости с фронтендом
                 "experience": (exp_text or "").strip(),
                 "age": age,
                 "instagram": row_dict["instagram"] or "",
