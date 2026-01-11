@@ -517,13 +517,13 @@ async def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None))
 
         # Get counts for PREVIOUS 30 days to calculate REAL dynamics
         c.execute("""
-            SELECT s.category, COUNT(*) 
+            SELECT s.category, COUNT(*)
             FROM bookings b
             JOIN services s ON (LOWER(b.service_name) = LOWER(s.name) OR LOWER(b.service_name) = LOWER(s.name_ru))
             WHERE (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
             AND b.status = 'completed'
-            AND b.datetime < (CURRENT_DATE - INTERVAL '30 days')
-            AND b.datetime > (CURRENT_DATE - INTERVAL '60 days')
+            AND b.datetime::timestamp < (CURRENT_DATE - INTERVAL '30 days')
+            AND b.datetime::timestamp > (CURRENT_DATE - INTERVAL '60 days')
             GROUP BY s.category
         """, (client_id, user_phone, user_id))
         prev_counts = {r[0]: r[1] for r in c.fetchall()}

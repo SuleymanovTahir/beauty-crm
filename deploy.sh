@@ -1,37 +1,30 @@
 #!/bin/bash
 
 # 🚀 Скрипт деплоя Beauty CRM
-# Использование: ./deploy.sh [server_ip]
+# Использование: ./deploy.sh
 
 set -e  # Остановка при ошибке
 
-SERVER_IP="${1:-32.235}"  # IP сервера (по умолчанию 32.235)
+SERVER_IP="91.201.215.32"
 SERVER_USER="ubuntu"
 SERVER_PATH="/home/ubuntu/beauty_crm"
 
 echo "======================================================================"
-echo "🚀 ДЕПЛОЙ BEAUTY CRM"
+echo "🚀 ДЕПЛОЙ BEAUTY CRM - HOTFIX"
 echo "======================================================================"
 echo "Сервер: $SERVER_USER@$SERVER_IP"
+echo "Домен: mlediamant.com"
 echo "Путь: $SERVER_PATH"
 echo ""
-
-# Проверка SSH доступа
-echo "📡 Проверка SSH доступа..."
-if ! ssh -o ConnectTimeout=5 "$SERVER_USER@$SERVER_IP" "echo 'SSH OK'" > /dev/null 2>&1; then
-    echo "❌ Не удалось подключиться к серверу!"
-    echo "Проверьте:"
-    echo "  1. IP адрес сервера: $SERVER_IP"
-    echo "  2. SSH ключ настроен"
-    echo "  3. Сервер доступен"
-    exit 1
-fi
-echo "✅ SSH доступ OK"
+echo "🔥 Исправления:"
+echo "  ✅ user_status таблица"
+echo "  ✅ loyalty API endpoints (/admin/loyalty/*)"
+echo "  ✅ beauty metrics SQL ошибка"
+echo "  ✅ 20+ недостающих API endpoints"
 echo ""
 
 # Синхронизация файлов
-echo "📦 Синхронизация файлов..."
-echo "Backend..."
+echo "📦 Синхронизация backend..."
 rsync -avz --progress \
     --exclude='venv/' \
     --exclude='__pycache__/' \
@@ -40,15 +33,6 @@ rsync -avz --progress \
     --exclude='static/uploads/*' \
     --exclude='static/recordings/*' \
     ./backend/ "$SERVER_USER@$SERVER_IP:$SERVER_PATH/backend/"
-
-echo ""
-echo "Frontend..."
-rsync -avz --progress \
-    --exclude='node_modules/' \
-    --exclude='dist/' \
-    --exclude='build/' \
-    --exclude='.DS_Store' \
-    ./frontend/ "$SERVER_USER@$SERVER_IP:$SERVER_PATH/frontend/"
 
 echo ""
 echo "✅ Файлы синхронизированы"
@@ -73,27 +57,20 @@ ssh "$SERVER_USER@$SERVER_IP" << 'EOF'
     echo ""
 
     # Проверка статуса
-    echo "📊 Проверка статуса сервисов..."
-    echo ""
-    echo "Beauty CRM:"
-    sudo systemctl status beauty_crm --no-pager -l | head -5
-    echo ""
-    echo "Nginx:"
-    sudo systemctl status nginx --no-pager -l | head -5
+    echo "📊 Статус beauty_crm:"
+    sudo systemctl status beauty_crm --no-pager -l | head -10
 EOF
 
 echo ""
 echo "======================================================================"
-echo "✅ ДЕПЛОЙ ЗАВЕРШЕН УСПЕШНО!"
+echo "✅ ДЕПЛОЙ ЗАВЕРШЕН!"
 echo "======================================================================"
 echo ""
-echo "📋 Полезные команды:"
-echo "  Логи в реальном времени:"
-echo "    ssh $SERVER_USER@$SERVER_IP 'sudo journalctl -u beauty_crm -f'"
+echo "🔍 Проверка:"
+echo "  1. Откройте: https://mlediamant.com/crm"
+echo "  2. Проверьте внутренний чат (должен работать)"
+echo "  3. Проверьте программу лояльности"
 echo ""
-echo "  Статус сервиса:"
-echo "    ssh $SERVER_USER@$SERVER_IP 'sudo systemctl status beauty_crm'"
-echo ""
-echo "  Перезапуск сервиса:"
-echo "    ssh $SERVER_USER@$SERVER_IP 'sudo systemctl restart beauty_crm'"
+echo "📋 Логи в реальном времени:"
+echo "  ssh $SERVER_USER@$SERVER_IP 'sudo journalctl -u beauty_crm -f'"
 echo ""
