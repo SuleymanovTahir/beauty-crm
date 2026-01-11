@@ -11,8 +11,9 @@ from fastapi import Cookie, HTTPException
 from db import get_user_by_session, get_all_clients, get_unread_messages_count
 from db.settings import get_custom_statuses
 from db.connection import get_db_connection
-from core.config import CLIENT_STATUSES
-from utils.logger import log_info, log_error, log_debug
+from core.config import DATABASE_NAME, CLIENT_STATUSES
+from utils.logger import log_info, log_error, log_debug, log_warning
+import subprocess
 
 # ===== ДИРЕКТОРИИ И ФАЙЛЫ =====
 
@@ -232,6 +233,10 @@ def get_current_user(session_token: Optional[str] = Cookie(None)):
     return user
 
 def check_role_permission(user: dict, required_role: str) -> bool:
+    # ВАЖНО: Для операций CREATE DATABASE нужны права владельца БД или суперюзера
+    # На production используем 'ubuntu', на macOS - текущий пользователь
+    superuser = os.getenv('POSTGRES_SUPERUSER', 'postgres') # Default to postgres instead of USER
+    
     """
     Проверить роль пользователя с учетом иерархии
     

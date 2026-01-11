@@ -313,8 +313,16 @@ def run_all_fixes():
             ('public_gallery', 'image_url'),
             ('users', 'photo'),
             ('salon_settings', 'logo_url'),
-            ('gallery_images', 'image_path')
+            ('gallery_images', 'image_path'),
+            ('salon_settings', 'google_maps')
         ]
+        
+        # Specific fix for Google Maps URL
+        c.execute("""
+            UPDATE salon_settings 
+            SET google_maps = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1806.63583569841!2d55.1278216!3d25.0745229!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f13459ada2307%3A0x6b453a232f6b3e8c!2sM%20Le%20Diamant!5e0!3m2!1sen!2sae!4v1704980000000!5m2!1sen!2sae'
+            WHERE google_maps LIKE '%maps.app.goo.gl%' OR google_maps IS NULL OR google_maps = ''
+        """)
         
         for table, col in url_fields:
             try:

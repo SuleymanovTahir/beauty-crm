@@ -36,6 +36,7 @@ def run_migration_function(func, description):
 
 def run_all_migrations():
     """Run all consolidated migrations"""
+    import subprocess
     print_header("ЗАПУСК ВСЕХ МИГРАЦИЙ CRM (КОНСОЛИДИРОВАННЫЕ)")
     print(f"Дата: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"База данных: PostgreSQL")
