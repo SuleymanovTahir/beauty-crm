@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
-import axios from 'axios';
+import { api } from '@/services/api';
 import FolderTree from './FolderTree';
 import RecordingsList from './RecordingsList';
 import CreateFolderDialog from './CreateFolderDialog';
@@ -98,12 +98,12 @@ const RecordingsManager: React.FC<RecordingsManagerProps> = ({ type = 'all' }) =
   const loadFolders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/recordings/folders');
-      setFolders(response.data.folders || []);
+      const response = await api.get('/api/recordings/folders');
+      setFolders(response.folders || []);
 
       // Auto-select first folder if none selected
-      if (!selectedFolderId && response.data.folders?.length > 0) {
-        setSelectedFolderId(response.data.folders[0].id);
+      if (!selectedFolderId && response.folders?.length > 0) {
+        setSelectedFolderId(response.folders[0].id);
       }
     } catch (error: any) {
       console.error('Failed to load folders:', error);
@@ -129,8 +129,16 @@ const RecordingsManager: React.FC<RecordingsManagerProps> = ({ type = 'all' }) =
         order: filters.order,
       };
 
-      const response = await axios.get('/api/recordings', { params });
-      setRecordings(response.data.recordings || []);
+      // Build query string from params
+      const queryParams = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, String(value));
+        }
+      });
+
+      const response = await api.get(`/api/recordings?${queryParams.toString()}`);
+      setRecordings(response.recordings || []);
     } catch (error: any) {
       console.error('Failed to load recordings:', error);
       toast.error(t('telephony:error', 'Ошибка'), {

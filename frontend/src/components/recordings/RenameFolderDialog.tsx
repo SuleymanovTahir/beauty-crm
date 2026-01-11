@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import axios from 'axios';
+import { api } from "@/services/api";;
 
 interface FolderNode {
   id: number;
@@ -58,7 +58,7 @@ const RenameFolderDialog: React.FC<RenameFolderDialogProps> = ({
 
     try {
       setRenaming(true);
-      await axios.put(`/api/recordings/folders/${folder.id}`, {
+      await api.put(`/api/recordings/folders/${folder.id}`, {
         name: name.trim(),
       });
 
