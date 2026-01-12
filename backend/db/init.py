@@ -262,6 +262,13 @@ def init_database():
                   is_read BOOLEAN DEFAULT FALSE,
                   message_type TEXT DEFAULT 'text')''')
 
+    # Индексы для истории чата
+    c.execute('''CREATE INDEX IF NOT EXISTS idx_chat_history_instagram_id ON chat_history(instagram_id)''')
+    c.execute('''CREATE INDEX IF NOT EXISTS idx_chat_history_timestamp ON chat_history(timestamp DESC)''')
+    
+    # Индексы для предпочтений клиентов
+    c.execute('''CREATE INDEX IF NOT EXISTS idx_client_preferences_client_id ON client_preferences(client_id)''')
+
     # Таблица записей
     c.execute('''CREATE TABLE IF NOT EXISTS bookings
                  (id SERIAL PRIMARY KEY,

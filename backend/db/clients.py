@@ -65,26 +65,32 @@ def ensure_client_columns(conn=None):
         if should_close:
             conn.close()
 
-def get_all_clients():
+def get_all_clients(limit: int = 2000):
     """Получить всех клиентов"""
     conn = get_db_connection()
     c = conn.cursor()
     
     try:
-        c.execute("""SELECT instagram_id, username, phone, name, first_contact,
+        query = """SELECT instagram_id, username, phone, name, first_contact,
                      last_contact, total_messages, labels, status, lifetime_value,
                      profile_pic, notes, is_pinned,
                      total_spend, total_visits, discount, card_number, gender
                       FROM clients 
                       WHERE deleted_at IS NULL
-                      ORDER BY is_pinned DESC, last_contact DESC""")
+                      ORDER BY is_pinned DESC, last_contact DESC"""
+        if limit:
+            query += f" LIMIT {limit}"
+        c.execute(query)
     except psycopg2.OperationalError:
         # Fallback для старой версии БД
-        c.execute("""SELECT instagram_id, username, phone, name, first_contact, 
+        query = """SELECT instagram_id, username, phone, name, first_contact, 
                      last_contact, total_messages, labels, 'new' as status, 
                      0 as lifetime_value, NULL as profile_pic, NULL as notes, 
                      0 as is_pinned
-                     FROM clients ORDER BY last_contact DESC""")
+                     FROM clients ORDER BY last_contact DESC"""
+        if limit:
+            query += f" LIMIT {limit}"
+        c.execute(query)
     
     clients = c.fetchall()
     conn.close()
