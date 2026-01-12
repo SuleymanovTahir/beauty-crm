@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 from utils.logger import log_info, log_error
 
-router = APIRouter(tags=["Notifications"], prefix="/api")
+router = APIRouter(tags=["Notifications"])
 
 class NotificationsConnectionManager:
     """Управление WebSocket соединениями для уведомлений"""
@@ -57,7 +57,7 @@ class NotificationsConnectionManager:
 notifications_manager = NotificationsConnectionManager()
 
 
-@router.websocket("/ws/notifications")
+@router.websocket("/notifications")
 async def notifications_websocket(websocket: WebSocket):
     """
     WebSocket endpoint для real-time уведомлений
