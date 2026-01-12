@@ -32,18 +32,19 @@ def create_test_user(username_prefix, full_name, role="employee", position="Styl
         c.execute(f"SELECT id FROM users WHERE username LIKE '{username_prefix}_%'")
         old_user_ids = [row[0] for row in c.fetchall()]
 
-        # Удаляем связанные данные для старых тестовых пользователей
+        # Удаляем расписание и другие связанные данные для старых тестовых пользователей
         if old_user_ids:
             user_ids_str = ','.join(map(str, old_user_ids))
-            # Удаляем расписание (user_schedule)
+            # Удаляем все связанные данные в правильном порядке
             c.execute(f"DELETE FROM user_schedule WHERE user_id IN ({user_ids_str})")
-            # Удаляем перерывы (schedule_breaks)
             c.execute(f"DELETE FROM schedule_breaks WHERE user_id IN ({user_ids_str})")
-            # Удаляем выходные (user_time_off)
             c.execute(f"DELETE FROM user_time_off WHERE user_id IN ({user_ids_str})")
-
-        # Удаляем старых тестовых пользователей
-        c.execute(f"DELETE FROM users WHERE username LIKE '{username_prefix}_%'")
+            c.execute(f"DELETE FROM user_permissions WHERE user_id IN ({user_ids_str})")
+            c.execute(f"DELETE FROM notification_settings WHERE user_id IN ({user_ids_str})")
+            c.execute(f"DELETE FROM user_services WHERE user_id IN ({user_ids_str})")
+            
+            # Теперь можно безопасно удалить самих пользователей по их ID
+            c.execute(f"DELETE FROM users WHERE id IN ({user_ids_str})")
 
         # Создаем пользователя
         c.execute("""

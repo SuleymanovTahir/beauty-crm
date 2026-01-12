@@ -69,60 +69,19 @@ export default defineConfig({
       output: {
         // Разделить vendor код на отдельные чанки (оптимизация для производительности)
         manualChunks: (id) => {
-          // Группируем крупные библиотеки отдельно
-          if (id.includes("node_modules")) {
-            if (id.includes("react") || id.includes("react-dom") || id.includes("react-router")) {
-              return "react-vendor";
-            }
-            if (id.includes("recharts") || id.includes("d3")) {
-              return "chart-vendor";
-            }
-            if (id.includes("react-hook-form")) {
-              return "form-vendor";
-            }
-            if (id.includes("i18next") || id.includes("react-i18next")) {
-              return "i18n-vendor";
-            }
-            if (id.includes("emoji-picker-react")) {
-              return "emoji-picker-react.esm";
-            }
-            if (id.includes("@radix-ui")) {
-              return "radix-vendor";
-            }
-            if (id.includes("framer-motion") || id.includes("motion")) {
-              return "motion-vendor";
-            }
-            if (id.includes("sonner") || id.includes("vaul")) {
-              return "ui-vendor";
-            }
-            // Остальные node_modules в общий vendor чанк
-            return "vendor";
+          // Переводы в отдельный чанк
+          if (id.includes("/src/locales/")) {
+            return "locales-data";
           }
 
-          // Переводы в отдельный чанк, так как они весят 3.6МБ
-          if (id.includes("/src/i18n.ts") || id.includes("/src/locales/")) {
-            return "i18n-data";
-          }
-
-          // Административные страницы в отдельные чанки
+          // Страницы в отдельные чанки для ленивой загрузки
           if (id.includes("/pages/admin/")) {
             const match = id.match(/pages\/admin\/([^/.]+)/);
-            if (match) {
-              return `admin-${match[1].toLowerCase()}`;
-            }
+            if (match) return `admin-${match[1].toLowerCase()}`;
           }
-          // CRM страницы в отдельные чанки
-          if (id.includes("/pages/crm/")) {
-            return "crm-pages";
-          }
-          // Менеджерские страницы
-          if (id.includes("/pages/manager/")) {
-            return "manager-pages";
-          }
-          // Публичные страницы
-          if (id.includes("/pages/public/")) {
-            return "public-pages";
-          }
+          if (id.includes("/pages/crm/")) return "crm-pages";
+          if (id.includes("/pages/manager/")) return "manager-pages";
+          if (id.includes("/pages/public/")) return "public-pages";
         },
         chunkFileNames: "js/[name]-[hash].js",
         entryFileNames: "js/[name]-[hash].js",
