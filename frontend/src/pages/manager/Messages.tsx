@@ -15,6 +15,7 @@ import {
   AlertCircle,
   ArchiveRestore,
   Shield,
+  XCircle,
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -70,7 +71,7 @@ const statuses = [
 
 export default function Messages() {
   const navigate = useNavigate();
-  useTranslation(['manager/Messages', 'common']);
+  const { t } = useTranslation(['manager/Messages', 'common']);
   const { user: currentUser } = useAuth();
   const userPermissions = usePermissions(currentUser?.role || 'employee');
   const [messages, setMessages] = useState<ExtendedMessage[]>([]);
@@ -651,13 +652,23 @@ export default function Messages() {
                 Вы собираетесь удалить сообщение с клиентом <span className="font-bold">"{messageToDelete?.name}"</span>.
               </p>
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                <p className="text-sm text-yellow-800 font-semibold mb-2">
-                  ⚠️ Внимание:
+                <p className="text-sm text-yellow-800 font-semibold mb-2 flex items-center gap-1.5">
+                  <AlertCircle className="w-4 h-4 text-yellow-600" />
+                  {t('caution', 'Внимание:')}
                 </p>
-                <ul className="text-sm text-yellow-800 space-y-1 ml-4">
-                  <li>✗ Это действие необратимо</li>
-                  <li>✗ Будет удалена вся история сообщений</li>
-                  <li>✗ Данные не смогут быть восстановлены</li>
+                <ul className="text-sm text-yellow-800 space-y-2 ml-1">
+                  <li className="flex items-center gap-2">
+                    <XCircle className="w-4 h-4 text-red-500" />
+                    <span>{t('action_irreversible', 'Это действие необратимо')}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <XCircle className="w-4 h-4 text-red-500" />
+                    <span>{t('history_deleted', 'Будет удалена вся история сообщений')}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <XCircle className="w-4 h-4 text-red-500" />
+                    <span>{t('data_not_restorable', 'Данные не смогут быть восстановлены')}</span>
+                  </li>
                 </ul>
               </div>
             </div>

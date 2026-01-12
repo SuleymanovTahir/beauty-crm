@@ -6,11 +6,15 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useTranslation } from 'react-i18next';
-import { Save, Bot, MessageSquare, DollarSign, Sparkles, BookOpen, Shield, Zap, MessageCircle, Bell } from 'lucide-react';
+import {
+  Save, Bot, MessageSquare, DollarSign, Sparkles, BookOpen, Shield, Zap, MessageCircle, Bell,
+  BarChart3, Layout, Activity, Flag, Smile, Info, HelpCircle, AlertCircle, User, Heart, Mic, XCircle, MapPin, Users,
+  CheckCircle, Target, Star, ShieldCheck
+} from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { useNavigate, useParams } from 'react-router-dom';
-import { BarChart3 } from 'lucide-react';
+
 import BotAnalyticsWidget from '../../components/admin/BotAnalyticsWidget';
 
 interface BotSettings {
@@ -293,8 +297,8 @@ export default function BotSettings() {
     <div style={{ padding: '1.5rem', backgroundColor: '#f9fafb', minHeight: '100vh' }}>
       {/* Header */}
       <div style={{ marginBottom: '1.5rem' }}>
-        <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.25rem' }}>
-          🤖 {t('title')}
+        <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Bot size={32} className="text-pink-600" /> {t('title')}
         </h1>
         <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
           {t('full_configuration_of_ai_assistant')}
@@ -347,8 +351,8 @@ export default function BotSettings() {
         {/* GENERAL TAB */}
         {activeTab === 'general' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🏢 {t('main_information')}
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Layout size={20} className="text-blue-600" /> {t('main_information')}
             </h2>
 
             <div>
@@ -371,8 +375,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.75rem' }}>
-                🎯 {t('response_style') || 'Стиль ответов бота'}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.75rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Flag size={18} className="text-pink-500" /> {t('response_style') || 'Стиль ответов бота'}
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
                 {/* Concise / Деловой */}
@@ -451,8 +455,8 @@ export default function BotSettings() {
         {/* ANALYTICS TAB */}
         {activeTab === 'analytics' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', marginBottom: '1rem' }}>
-              📊 {t('bot_analytics_title')}
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <BarChart3 size={20} className="text-indigo-600" /> {t('bot_analytics_title')}
             </h2>
             <BotAnalyticsWidget />
           </div>
@@ -461,8 +465,8 @@ export default function BotSettings() {
         {/* PERSONALITY TAB */}
         {activeTab === 'personality' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              ✨ {t('personality_of_the_bot')}
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Sparkles size={20} className="text-yellow-500" /> {t('personality_of_the_bot')}
             </h2>
 
             <div>
@@ -486,8 +490,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                👋 {t('greeting')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <MessageSquare size={18} className="text-blue-400" /> {t('greeting')}
               </label>
               <textarea
                 value={settings.greeting_message}
@@ -506,8 +510,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                👋 {t('farewell')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <MessageSquare size={18} className="text-gray-400" /> {t('farewell')}
               </label>
               <textarea
                 value={settings.farewell_message}
@@ -526,8 +530,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🎨 {t('communication_style')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Activity size={18} className="text-purple-500" /> {t('communication_style')}
               </label>
               <textarea
                 value={settings.communication_style}
@@ -546,8 +550,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                😊 {t('emoji')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Smile size={18} className="text-yellow-500" /> {t('emoji')}
               </label>
               <input
                 type="text"
@@ -569,8 +573,8 @@ export default function BotSettings() {
         {/* PRICING TAB */}
         {activeTab === 'pricing' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              💰 {t('working_with_prices')}
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <DollarSign size={20} className="text-green-600" /> {t('working_with_prices')}
             </h2>
 
             <div>
@@ -594,8 +598,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📝 {t('price_response_template')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <BookOpen size={18} className="text-blue-500" /> {t('price_response_template')}
               </label>
               <textarea
                 value={settings.price_response_template}
@@ -615,8 +619,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🛡️ {t('high_price_justification')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Shield size={18} className="text-pink-600" /> {t('high_price_justification')}
               </label>
               <textarea
                 value={settings.premium_justification}
@@ -635,8 +639,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ⚡ {t('fomo_messages')} ({t('separate_with_pipe')})
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Zap size={18} className="text-yellow-500" /> {t('fomo_messages')} ({t('separate_with_pipe')})
               </label>
               <textarea
                 value={settings.fomo_messages}
@@ -655,8 +659,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🚀 {t('upsell_techniques')} ({t('separate_with_pipe')})
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Sparkles size={18} className="text-purple-500" /> {t('upsell_techniques')} ({t('separate_with_pipe')})
               </label>
               <textarea
                 value={settings.upsell_techniques}
@@ -675,8 +679,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📱 {t('booking_message')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <MessageSquare size={18} className="text-blue-500" /> {t('booking_message')}
               </label>
               <textarea
                 value={settings.booking_redirect_message}
@@ -770,13 +774,13 @@ export default function BotSettings() {
         {/* OBJECTIONS TAB */}
         {activeTab === 'objections' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🛡️ {t('working_with_objections')}
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Shield size={20} className="text-red-500" /> {t('working_with_objections')}
             </h2>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💸 {t('expensive')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <DollarSign size={18} className="text-red-500" /> {t('expensive')}
               </label>
               <textarea
                 value={settings.objection_expensive}
@@ -795,8 +799,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🤔 {t('think_about_it')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <HelpCircle size={18} className="text-blue-500" /> {t('think_about_it')}
               </label>
               <textarea
                 value={settings.objection_think_about_it}
@@ -815,8 +819,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ⏰ {t('no_time')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Bell size={18} className="text-orange-500" /> {t('no_time')}
               </label>
               <textarea
                 value={settings.objection_no_time}
@@ -835,8 +839,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                😰 {t('afraid_of_pain')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <AlertCircle size={18} className="text-red-400" /> {t('afraid_of_pain')}
               </label>
               <textarea
                 value={settings.objection_pain}
@@ -855,8 +859,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ❓ {t('not_sure_about_the_result')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <HelpCircle size={18} className="text-blue-400" /> {t('not_sure_about_the_result')}
               </label>
               <textarea
                 value={settings.objection_result_doubt}
@@ -875,8 +879,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🏪 {t('cheaper_elsewhere')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Layout size={18} className="text-orange-500" /> {t('cheaper_elsewhere')}
               </label>
               <textarea
                 value={settings.objection_cheaper_elsewhere}
@@ -895,8 +899,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🚗 {t('too_far')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <MapPin size={18} className="text-red-500" /> {t('too_far')}
               </label>
               <textarea
                 value={settings.objection_too_far}
@@ -915,8 +919,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💑 {t('consult_with_husband')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Users size={18} className="text-pink-500" /> {t('consult_with_husband')}
               </label>
               <textarea
                 value={settings.objection_consult_husband}
@@ -935,8 +939,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🆕 {t('first_time')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <User size={18} className="text-green-500" /> {t('first_time')}
               </label>
               <textarea
                 value={settings.objection_first_time}
@@ -955,8 +959,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                😟 {t('if_not_liked')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <AlertCircle size={18} className="text-gray-400" /> {t('if_not_liked')}
               </label>
               <textarea
                 value={settings.objection_not_happy}
@@ -979,13 +983,13 @@ export default function BotSettings() {
         {/* COMMUNICATION TAB */}
         {activeTab === 'communication' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              💬 {t('communication_and_emotions')}
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <MessageCircle size={20} className="text-blue-500" /> {t('communication_and_emotions')}
             </h2>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💖 {t('emotional_triggers')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Heart size={18} className="text-pink-500" /> {t('emotional_triggers')}
               </label>
               <textarea
                 value={settings.emotional_triggers}
@@ -1005,8 +1009,8 @@ export default function BotSettings() {
 
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ⭐ {t('social_proof')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Sparkles size={18} className="text-yellow-500" /> {t('social_proof')}
               </label>
               <textarea
                 value={settings.social_proof_phrases}
@@ -1025,8 +1029,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                👤 {t('personalization_rules')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <User size={18} className="text-blue-500" /> {t('personalization_rules')}
               </label>
               <textarea
                 value={settings.personalization_rules}
@@ -1045,8 +1049,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                😊 {t('emotional_responses')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Smile size={18} className="text-green-500" /> {t('emotional_responses')}
               </label>
               <textarea
                 value={settings.emotional_responses}
@@ -1065,8 +1069,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🎙️ {t('voice_message_response')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Mic size={18} className="text-blue-500" /> {t('voice_message_response')}
               </label>
               <textarea
                 value={settings.voice_message_response}
@@ -1085,8 +1089,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ❌ {t('anti_patterns')} ({t('what_not_to_do')})
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <XCircle size={18} className="text-red-500" /> {t('anti_patterns')} ({t('what_not_to_do')})
               </label>
               <textarea
                 value={settings.anti_patterns}
@@ -1104,8 +1108,8 @@ export default function BotSettings() {
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📋 {t('pre_booking_data_collection')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <BookOpen size={18} className="text-blue-500" /> {t('pre_booking_data_collection')}
               </label>
               <textarea
                 value={settings.pre_booking_data_collection}
@@ -1129,8 +1133,8 @@ export default function BotSettings() {
             {/* ← ad_campaign_detection идет после этого */}
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🤝 {t('manager_consultation_prompt')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Users size={18} className="text-pink-500" /> {t('manager_consultation_prompt')}
               </label>
               <textarea
                 value={settings.manager_consultation_prompt}
@@ -1153,8 +1157,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🎯 {t('ad_campaign_detection')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Target size={18} className="text-purple-500" /> {t('ad_campaign_detection')}
               </label>
               <textarea
                 value={settings.ad_campaign_detection}
@@ -1180,13 +1184,13 @@ export default function BotSettings() {
         {/* ADVANCED TAB */}
         {activeTab === 'advanced' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🎓 {t('advanced_settings')}
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Zap size={20} className="text-yellow-500" /> {t('advanced_settings')}
             </h2>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📋 {t('algorithm_actions')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <CheckCircle size={18} className="text-green-500" /> {t('algorithm_actions')}
               </label>
               <textarea
                 value={settings.algorithm_actions}
@@ -1205,8 +1209,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📍 {t('location_features')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <MapPin size={18} className="text-red-500" /> {t('location_features')}
               </label>
               <textarea
                 value={settings.location_features}
@@ -1225,8 +1229,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🌡️ {t('seasonality')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Activity size={18} className="text-blue-500" /> {t('seasonality')}
               </label>
               <textarea
                 value={settings.seasonality}
@@ -1245,8 +1249,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🌍 {t('contextual_rules')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Info size={18} className="text-indigo-500" /> {t('contextual_rules')}
               </label>
               <textarea
                 value={settings.contextual_rules}
@@ -1265,8 +1269,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📊 {t('success_metrics')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <BarChart3 size={18} className="text-green-600" /> {t('success_metrics')}
               </label>
               <textarea
                 value={settings.success_metrics}
@@ -1289,8 +1293,9 @@ export default function BotSettings() {
         {/* SAFETY TAB */}
         {activeTab === 'safety' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🛡️ {t('safety_and_ethics')}
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Shield size={24} />
+              {t('safety_and_ethics')}
             </h2>
 
             <div style={{
@@ -1313,8 +1318,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🔒 {t('safety_rules')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <ShieldCheck size={18} className="text-blue-600" /> {t('safety_rules')}
               </label>
               <textarea
                 value={settings.safety_guidelines}
@@ -1333,8 +1338,8 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🚨 {t('emergency_situations')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <AlertCircle size={18} className="text-red-600" /> {t('emergency_situations')}
               </label>
               <textarea
                 value={settings.emergency_situations}
@@ -1357,13 +1362,13 @@ export default function BotSettings() {
         {/* EXAMPLES TAB */}
         {activeTab === 'examples' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              💡 {t('examples_and_dialogues')}
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Layout size={20} className="text-yellow-600" /> {t('examples_and_dialogues')}
             </h2>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ✅ {t('good_responses')}
+              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+                <CheckCircle size={18} className="text-green-500" /> {t('good_responses')}
               </label>
               <textarea
                 value={settings.example_good_responses}
@@ -1410,15 +1415,15 @@ export default function BotSettings() {
         {/* NOTIFICATIONS TAB */}
         {activeTab === 'notifications' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🔔 {t('notifications_and_reminders_settings')}
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Bell size={20} className="text-pink-600" /> {t('notifications_and_reminders_settings')}
             </h2>
 
             {/* 1. Abandoned Cart */}
             <div style={{ padding: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.75rem', backgroundColor: '#f9fafb' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937' }}>
-                  ⏳ {t('abandoned_cart')}
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Activity size={18} className="text-yellow-500" /> {t('abandoned_cart')}
                 </h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <input
@@ -1458,8 +1463,8 @@ export default function BotSettings() {
             {/* 2. Feedback Request */}
             <div style={{ padding: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.75rem', backgroundColor: '#f9fafb' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937' }}>
-                  ⭐️ {t('feedback_request')}
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Star size={18} className="text-yellow-400" /> {t('feedback_request')}
                 </h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <input
@@ -1499,8 +1504,8 @@ export default function BotSettings() {
             {/* 3. Retention */}
             <div style={{ padding: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.75rem', backgroundColor: '#f9fafb', opacity: 0.7 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937' }}>
-                  🔄 {t('client_retention')} <span style={{ fontSize: '0.7rem', backgroundColor: '#e5e7eb', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>{t('beta')}</span>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Activity size={18} className="text-blue-500" /> {t('client_retention')} <span style={{ fontSize: '0.7rem', backgroundColor: '#e5e7eb', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>{t('beta')}</span>
                 </h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <input

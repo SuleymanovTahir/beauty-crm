@@ -20,7 +20,9 @@ import {
   Crown,
   UserPlus,
   UserCheck,
-  ChevronDown
+  ChevronDown,
+  AlertTriangle,
+  CheckCircle,
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -368,7 +370,7 @@ export default function Clients() {
       setEditingClient(null);
     } catch (err) {
       const message = err instanceof Error ? err.message : t('error_updating_client');
-      toast.error(`❌ Ошибка: ${message}`);
+      toast.error(`❌ ${t('error_updating_client')}: ${message}`);
       console.error("Error:", err);
     } finally {
       setSavingEdit(false);
@@ -516,7 +518,7 @@ export default function Clients() {
   // ✅ НОВОЕ: Обработчик импорта
   const handleImport = async () => {
     if (!importFile) {
-      toast.error('Пожалуйста, выберите файл');
+      toast.error(t('error_selecting_file'));
       return;
     }
 
@@ -534,11 +536,11 @@ export default function Clients() {
       }
 
       if (response.results.errors.length > 0) {
-        toast.warning(`⚠️ Ошибок: ${response.results.errors.length}`);
+        toast.warning(t('import_errors_count', { count: response.results.errors.length }), { icon: <AlertTriangle className="h-4 w-4 text-yellow-500" /> });
       }
 
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка импорта';
+      const message = err instanceof Error ? err.message : t('error_importing');
       toast.error(`❌ ${message}`);
       console.error('Import error:', err);
     } finally {
@@ -1259,8 +1261,9 @@ export default function Clients() {
                 <div className="flex gap-3">
                   <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-bold text-amber-900 mb-1">
-                      ⚠️ {t('this_action_is_irreversible')}!
+                    <p className="text-sm font-bold text-amber-900 mb-1 flex items-center gap-1">
+                      <AlertTriangle className="w-4 h-4 text-amber-600" />
+                      {t('this_action_is_irreversible')}!
                     </p>
                     <ul className="text-sm text-amber-800 space-y-1 list-disc list-inside">
                       <li>{t('all_messages_will_be_deleted')}</li>
@@ -1517,8 +1520,9 @@ export default function Clients() {
             <div className="flex-1 overflow-y-auto px-6 py-4">
               <div className="space-y-4">
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <p className="text-lg font-bold text-green-900 mb-2">
-                    ✅ {t('import_completed')}
+                  <p className="text-lg font-bold text-green-900 mb-2 flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    {t('import_completed')}
                   </p>
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
@@ -1544,8 +1548,9 @@ export default function Clients() {
 
                 {importResults.errors.length > 0 && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-h-60 overflow-y-auto">
-                    <p className="text-sm font-medium text-red-900 mb-2">
-                      ⚠️ {t('import_error_list')}:
+                    <p className="text-sm font-medium text-red-900 mb-2 flex items-center gap-1">
+                      <AlertTriangle className="w-4 h-4 text-red-600" />
+                      {t('import_error_list')}:
                     </p>
                     <ul className="text-sm text-red-800 space-y-1">
                       {importResults.errors.map((err: any, idx: number) => (

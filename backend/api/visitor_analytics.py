@@ -11,6 +11,7 @@ from utils.logger import log_info, log_error
 import csv
 import io
 from db.migrations.consolidated.schema_cookies import log_cookie_consent, create_cookie_consents_table, check_cookie_consent
+import time
 
 router = APIRouter(tags=["Analytics"])
 
@@ -394,6 +395,7 @@ async def get_visitor_dashboard(
     if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
+    start_time = time.time()
     try:
         # Calculate date range based on period
         end_date = datetime.now()
@@ -409,6 +411,9 @@ async def get_visitor_dashboard(
         # Используем одну функцию для получения всех данных
         from db.visitor_tracking import get_all_visitor_analytics
         data = get_all_visitor_analytics(start_date, end_date, max_distance)
+
+        duration = time.time() - start_time
+        log_info(f"⏱️ get_visitor_dashboard took {duration:.4f}s for {period}", "api")
 
         return {
             "success": True,

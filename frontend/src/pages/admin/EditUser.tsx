@@ -1,6 +1,6 @@
 // /frontend/src/pages/admin/EditUser.tsx
 import React, { useState, useEffect } from 'react';
-import { UserCog, ArrowLeft, Loader, Key, User as UserIcon, Shield } from 'lucide-react';
+import { UserCog, ArrowLeft, Loader, Key, User as UserIcon, Shield, AlertTriangle } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -385,12 +385,11 @@ export default function EditUser() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
               <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('users:change_password')}</h2>
 
-              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-sm text-yellow-800">
-                  <strong>⚠️ {t('users:important')}:</strong> {t('users:admin_can_change_password_without_knowing_current')}
-                  {t('users:after_changing_user_must_login_with_new_password')}
-                </p>
-              </div>
+              <p className="text-sm text-yellow-800 flex items-center gap-1.5">
+                <AlertTriangle className="w-4 h-4 text-yellow-600" />
+                <strong>{t('users:important')}:</strong> {t('users:admin_can_change_password_without_knowing_current')}
+                {t('users:after_changing_user_must_login_with_new_password')}
+              </p>
 
               <form onSubmit={handleChangePassword} className="space-y-6">
                 <div>

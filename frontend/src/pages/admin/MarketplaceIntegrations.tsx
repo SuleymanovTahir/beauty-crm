@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Store, Settings, CheckCircle, XCircle, RefreshCw, BarChart3 } from 'lucide-react';
+import { Store, Settings, CheckCircle, XCircle, RefreshCw, BarChart3, Star } from 'lucide-react';
 import { api } from '../../services/api';
 import '../../styles/crm-pages.css';
 
@@ -223,7 +223,7 @@ const MarketplaceIntegrations = () => {
                                             <div className="crm-detail-row">
                                                 <span className="crm-detail-label">{t('marketplace.reviews', 'Отзывов')}:</span>
                                                 <span className="crm-detail-value">
-                                                    {reviewData.count} (⭐ {reviewData.avg_rating?.toFixed(1)})
+                                                    {reviewData.count} (<Star size={14} className="inline-block text-yellow-500 fill-yellow-500 mb-0.5" /> {reviewData.avg_rating?.toFixed(1)})
                                                 </span>
                                             </div>
                                         )}

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send, Trash2, Clock, CheckCircle2, CalendarDays, DollarSign, ChevronDown, Users, } from 'lucide-react';
+import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send, Trash2, Clock, CheckCircle2, CalendarDays, DollarSign, ChevronDown, Users, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { ExportDropdown } from '../../components/shared/ExportDropdown';
 import { StatusSelect } from '../../components/shared/StatusSelect';
@@ -1463,7 +1463,10 @@ export default function Bookings() {
                     <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>{t('bookings:import_results')}:</p>
                     <ul style={{ fontSize: '0.875rem', marginLeft: '1rem' }}>
                       <li>✅ {t('bookings:imported')}: {importResult.imported}</li>
-                      <li>⚠️ {t('bookings:skipped')}: {importResult.skipped}</li>
+                      <li className="flex items-center gap-1">
+                        <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                        {t('bookings:skipped')}: {importResult.skipped}
+                      </li>
                       {importResult.errors && importResult.errors.length > 0 && (
                         <li style={{ color: '#991b1b', marginTop: '0.5rem' }}>
                           {t('bookings:errors')}: {importResult.errors.slice(0, 3).join('; ')}

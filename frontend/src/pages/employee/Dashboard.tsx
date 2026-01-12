@@ -312,7 +312,11 @@ export default function EmployeeDashboard() {
                                 ? 'bg-green-100 text-green-800 text-xs'
                                 : 'bg-yellow-100 text-yellow-800 text-xs'
                             }>
-                              {booking.status === 'confirmed' ? '✓' : '⏱'}
+                              {booking.status === 'confirmed' ? (
+                                <CheckCircle className="w-3 h-3" />
+                              ) : (
+                                <Clock className="w-3 h-3" />
+                              )}
                             </Badge>
                           </div>
                           <p className="text-gray-700 text-sm mb-1">{getServiceName(booking.service)}</p>

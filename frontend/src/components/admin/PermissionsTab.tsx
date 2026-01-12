@@ -2,8 +2,8 @@
 /**
  * Компонент для управления правами и ролями пользователя
  */
-import React, { useState, useEffect } from 'react';
-import { Shield, Check, X, Loader, AlertCircle, Save } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Shield, Check, X, Loader, AlertCircle, Save, Info } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { toast } from 'sonner';
@@ -80,7 +80,7 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
 
     try {
       setSaving(true);
-      const result = await api.updateUserRole(userId, selectedRole);
+      const result = (await api.updateUserRole(userId, selectedRole)) as { message: string };
       toast.success(result.message);
       await loadData(); // Перезагружаем данные
     } catch (err: any) {
@@ -237,8 +237,9 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
 
         {currentUser?.role === 'director' && (
           <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4">
-            <p className="text-sm text-blue-800">
-              <strong>ℹ️ {t('individual_permissions')}:</strong> {t('individual_permissions_description')}
+            <p className="text-sm text-blue-800 flex items-center gap-1.5">
+              <Info className="w-4 h-4 text-blue-600" />
+              <strong>{t('individual_permissions')}:</strong> {t('individual_permissions_description')}
             </p>
           </div>
         )}

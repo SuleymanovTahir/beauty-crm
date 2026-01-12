@@ -360,6 +360,8 @@ export default function App() {
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="chat" element={<Chat />} />
                 <Route path="analytics" element={<Analytics />} />
+                <Route path="employees" element={<EmployeeManagement />} />
+                <Route path="employees/:id" element={<EmployeeManagement />} />
                 <Route path="settings/:tab?" element={<Settings />} />
                 <Route path="bot-settings" element={<BotSettings />} />
                 <Route path="notifications" element={<NotificationsPage />} />

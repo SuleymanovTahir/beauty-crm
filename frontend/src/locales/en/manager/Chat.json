@@ -28,5 +28,11 @@
   "select_chat": "Select chat",
   "select_dialog_from_list": "Select a conversation from the list on the left",
   "templates": "Templates",
-  "try_again": "Try again"
+  "try_again": "Try again",
+  "ask_ai_consultant": "Ask an AI consultant",
+  "your_question": "Your Question",
+  "additional_context": "Additional Context (optional)",
+  "ask_bot_placeholder": "e.g. Client says it's expensive, how to reply?",
+  "send_to_ai": "Send AI",
+  "ai_thinking": "AI thinks..."
 }

@@ -28,5 +28,11 @@
   "select_chat": "Selecione bate-papo",
   "select_dialog_from_list": "Selecione uma conversa na lista à esquerda",
   "templates": "Modelos",
-  "try_again": "Tente novamente"
+  "try_again": "Tente novamente",
+  "ask_ai_consultant": "Pergunte a um consultor de IA",
+  "your_question": "Sua pergunta",
+  "additional_context": "Contexto adicional (opcional)",
+  "ask_bot_placeholder": "até exemplo: O cliente fala que é caro, como responder?",
+  "send_to_ai": "Enviar IA",
+  "ai_thinking": "A IA pensa..."
 }
