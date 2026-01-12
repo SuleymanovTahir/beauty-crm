@@ -279,6 +279,11 @@ def init_database():
                   special_package_id INTEGER,
                   source TEXT DEFAULT 'manual')''')
 
+    # Индексы для оптимизации поиска записей
+    c.execute('''CREATE INDEX IF NOT EXISTS idx_bookings_instagram_id ON bookings(instagram_id)''')
+    c.execute('''CREATE INDEX IF NOT EXISTS idx_bookings_phone ON bookings(phone)''')
+    c.execute('''CREATE INDEX IF NOT EXISTS idx_bookings_datetime ON bookings(datetime)''')
+
     # Таблица настроек напоминаний о записях
     c.execute('''CREATE TABLE IF NOT EXISTS booking_reminder_settings
                  (id SERIAL PRIMARY KEY,
@@ -500,7 +505,9 @@ def init_database():
         'commission_rate': 'REAL DEFAULT 0',
         'position_id': 'INTEGER',
         'telegram_id': 'TEXT',
-        'instagram_username': 'TEXT'
+        'instagram_username': 'TEXT',
+        'is_public_visible': 'BOOLEAN DEFAULT TRUE',
+        'sort_order': 'INTEGER DEFAULT 0'
     }
 
     for column_name, column_type in user_migrations.items():

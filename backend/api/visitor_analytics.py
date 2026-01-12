@@ -368,3 +368,56 @@ async def get_hours(
     except Exception as e:
         log_error(f"Error getting peak hours: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/analytics/visitors/dashboard")
+async def get_visitor_dashboard(
+    period: str = "week",
+    max_distance: float = 50,
+    session_token: Optional[str] = Cookie(None)
+):
+    """
+    Консолидированный endpoint для получения всех данных аналитики посетителей одним запросом.
+    Оптимизация производительности: 8 запросов -> 1 запрос
+
+    Возвращает все данные для страницы Visitor Analytics:
+    - visitors: статистика посетителей
+    - location_breakdown: распределение local/non-local
+    - countries: распределение по странам
+    - cities: распределение по городам
+    - distance_breakdown: распределение по дистанции
+    - trend: тренд посещений
+    - sections: популярные секции
+    - hours: пиковые часы активности
+    """
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    try:
+        # Calculate date range based on period
+        end_date = datetime.now()
+        if period == "day":
+            start_date = end_date - timedelta(days=1)
+        elif period == "week":
+            start_date = end_date - timedelta(weeks=1)
+        elif period == "month":
+            start_date = end_date - timedelta(days=30)
+        else:
+            start_date = end_date - timedelta(weeks=1)
+
+        # Используем одну функцию для получения всех данных
+        from db.visitor_tracking import get_all_visitor_analytics
+        data = get_all_visitor_analytics(start_date, end_date, max_distance)
+
+        return {
+            "success": True,
+            "period": period,
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+            "data": data
+        }
+
+    except Exception as e:
+        log_error(f"Error getting visitor dashboard: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)

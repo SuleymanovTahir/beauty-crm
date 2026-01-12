@@ -3,6 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
+import { useNotificationsWebSocket } from '../../hooks/useNotificationsWebSocket';
 import {
     Check,
     LayoutDashboard,
@@ -90,18 +91,35 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
         return `${rolePrefix}/dashboard`;
     }, [user?.role, rolePrefix]);
 
+    // WebSocket для real-time уведомлений (заменяет HTTP polling)
+    const { unreadCount: wsUnreadCount, isConnected: wsConnected } = useNotificationsWebSocket({
+        userId: user?.id || null,
+        onNotification: (data) => {
+            console.log('🔔 New notification via WebSocket:', data);
+            loadNotifications(); // Обновляем список уведомлений
+            toast.info(data.title || 'Новое уведомление');
+        },
+        onUnreadCountUpdate: (count) => {
+            console.log('🔔 Unread count update via WebSocket:', count);
+            setNotifCount(count);
+        },
+        onConnected: () => {
+            console.log('🔔 WebSocket connected - notifications will be real-time');
+        },
+        onDisconnected: () => {
+            console.log('🔔 WebSocket disconnected - will try to reconnect');
+        }
+    });
+
     useEffect(() => {
-        loadUnreadCount();
         loadEnabledMessengers();
         loadSalonSettings();
         loadUserProfile();
         loadMenuSettings();
 
-        // Загружаем уведомления для всех ролей
+        // Загружаем уведомления один раз при загрузке
         loadNotifications();
-        const notifInterval = setInterval(loadNotifications, 5000); // Проверяем каждые 5 секунд
-
-        const unreadInterval = setInterval(loadUnreadCount, 5000); // Проверяем каждые 5 секунд
+        loadUnreadCount();
 
         // Слушаем событие для немедленного обновления уведомлений
         const handleNotificationsUpdate = () => {
@@ -119,8 +137,6 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
         window.addEventListener('profile-updated', handleProfileUpdate);
 
         return () => {
-            clearInterval(notifInterval);
-            clearInterval(unreadInterval);
             window.removeEventListener('messengers-updated', handleMessengersUpdate);
             window.removeEventListener('profile-updated', handleProfileUpdate);
             window.removeEventListener('notifications-updated', handleNotificationsUpdate);

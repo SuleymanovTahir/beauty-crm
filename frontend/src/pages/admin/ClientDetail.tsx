@@ -104,26 +104,25 @@ export default function ClientDetail() {
   useEffect(() => {
     if (id) {
       loadClient();
-      loadEnabledMessengers();
     }
   }, [id]);
-
-  const loadEnabledMessengers = async () => {
-    try {
-      const response = await api.getEnabledMessengers();
-      setEnabledMessengers(response.enabled_messengers);
-    } catch (err) {
-      console.error('Error loading enabled messengers:', err);
-    }
-  };
 
   const loadClient = async () => {
     try {
       setLoading(true);
-      const data = await api.getClient(id!);
+
+      // Параллельная загрузка всех данных для ускорения (оптимизация производительности)
+      const [data, messengersResponse] = await Promise.all([
+        api.getClient(id!),
+        api.getEnabledMessengers().catch(err => {
+          console.error('Error loading enabled messengers:', err);
+          return { enabled_messengers: [] };
+        })
+      ]);
 
       setClient(data.client);
       setStats(data.stats);
+      setEnabledMessengers(messengersResponse.enabled_messengers);
 
       // Handle phone for edit form (take first if array)
       let phoneVal = data.client?.phone || '';
@@ -148,6 +147,8 @@ export default function ClientDetail() {
 
       setMessages(data.chat_history || []);
       setBookings(data.bookings || []);
+
+      // Загрузка галереи параллельно с основными данными
       loadClientGallery(data.client?.instagram_id || id!);
     } catch (err) {
       toast.error(t('common:loading_error'));
