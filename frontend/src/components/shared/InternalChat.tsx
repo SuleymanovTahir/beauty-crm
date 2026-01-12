@@ -403,7 +403,7 @@ export default function InternalChat() {
       setUsers(loadedUsers);
     } catch (err) {
       console.error('Error loading users:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
+      const errorMessage = err instanceof Error ? err.message : t('common:unknown_error', 'Неизвестная ошибка');
       setError(errorMessage);
       toast.error(t('common:error_loading_data', 'Ошибка загрузки данных'));
     } finally {
@@ -544,7 +544,7 @@ export default function InternalChat() {
           toast.success(`✅ ${file.name}`);
         } catch (err) {
           console.error(err);
-          toast.error(`❌ Ошибка: ${file.name}`);
+          toast.error(`${t('common:error', 'Ошибка')}: ${file.name}`);
         }
       }
 
@@ -592,7 +592,7 @@ export default function InternalChat() {
           toast.success(t('chat.voice_sent', 'Голосовое сообщение отправлено'));
         } catch (err) {
           console.error(err);
-          toast.error('❌ Ошибка отправки голосового');
+          toast.error(t('chat.voice_error', 'Ошибка отправки голосового'));
         } finally {
           setIsUploadingFile(false);
         }
@@ -626,7 +626,7 @@ export default function InternalChat() {
       toast.info(t('chat.recording_started', 'Запись началась'));
     } catch (err) {
       console.error('Error starting recording:', err);
-      toast.error('❌ Нет доступа к микрофону');
+      toast.error(t('common:no_mic_access', 'Нет доступа к микрофону'));
     }
   };
 
@@ -663,7 +663,7 @@ export default function InternalChat() {
         isRecording: false,
         recordingTime: 0
       });
-      toast.info('🚫 Запись отменена');
+      toast.info(t('chat.recording_cancelled', 'Запись отменена'));
     }
   };
 
@@ -682,7 +682,7 @@ export default function InternalChat() {
     const localStream = webrtcService.getLocalStream();
 
     if (!remoteStream && !localStream) {
-      toast.error('Нет потоков для записи');
+      toast.error(t('calls.no_streams', 'Нет потоков для записи'));
       return;
     }
 
@@ -718,16 +718,16 @@ export default function InternalChat() {
         a.download = `call_recording_${new Date().toISOString()}.webm`;
         a.click();
         URL.revokeObjectURL(url);
-        toast.success('Запись звонка сохранена');
+        toast.success(t('calls.recording_saved', 'Запись звонка сохранена'));
       };
 
       recorder.start();
       callRecorderRef.current = recorder;
       setIsCallRecording(true);
-      toast.info('🔴 Запись звонка началась');
+      toast.info(t('calls.recording_started_toast', 'Запись звонка началась'));
     } catch (e) {
       console.error('Recording failed:', e);
-      toast.error('Не удалось начать запись');
+      toast.error(t('calls.failed_to_record', 'Не удалось начать запись'));
     }
   };
 
@@ -756,10 +756,10 @@ export default function InternalChat() {
 
       // Local video will be attached by useEffect
 
-      toast.success(`📞 Звоним ${selectedUser.full_name}...`);
+      toast.success(`${t('calls.calling', 'Звоним')} ${selectedUser.full_name}...`);
     } catch (err) {
       console.error('Error starting call:', err);
-      toast.error('❌ Ошибка при начале звонка');
+      toast.error(t('calls.error_starting', 'Ошибка при начале звонка'));
     }
   };
 
@@ -782,7 +782,7 @@ export default function InternalChat() {
       // Local video will be attached by useEffect
     } catch (err) {
       console.error('Error accepting call:', err);
-      toast.error('❌ Ошибка при приёме звонка');
+      toast.error(t('calls.error_accepting', 'Ошибка при приёме звонка'));
     }
   };
 
@@ -883,7 +883,7 @@ export default function InternalChat() {
           <div className="w-16 h-16 bg-red-500 rounded-2xl flex items-center justify-center shadow-2xl">
             <X className="w-8 h-8 text-white" />
           </div>
-          <p className="text-foreground font-medium">Ошибка загрузки</p>
+          <p className="text-foreground font-medium">{t('common:error_loading', 'Ошибка загрузки')}</p>
           <p className="text-sm text-muted-foreground">{error}</p>
           <button
             onClick={() => {
@@ -893,7 +893,7 @@ export default function InternalChat() {
             }}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
           >
-            Попробовать снова
+            {t('common:try_again', 'Попробовать снова')}
           </button>
         </div>
       </div>
@@ -1055,7 +1055,7 @@ export default function InternalChat() {
                   onClick={toggleMic}
                   className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isMicMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
                     }`}
-                  title={isMicMuted ? 'Включить микрофон' : 'Выключить микрофон'}
+                  title={isMicMuted ? t('calls.unmute', 'Включить микрофон') : t('calls.mute', 'Выключить микрофон')}
                 >
                   {isMicMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
                 </button>
@@ -1065,7 +1065,7 @@ export default function InternalChat() {
                     onClick={toggleVideo}
                     className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isVideoOff ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
                       }`}
-                    title={isVideoOff ? 'Включить видео' : 'Выключить видео'}
+                    title={isVideoOff ? t('calls.enable_video', 'Включить видео') : t('calls.disable_video', 'Выключить видео')}
                   >
                     {isVideoOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
                   </button>
@@ -1074,7 +1074,7 @@ export default function InternalChat() {
                 <button
                   onClick={isCallRecording ? stopCallRecording : startCallRecording}
                   className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isCallRecording ? 'bg-red-500 animate-pulse' : 'bg-gray-700 hover:bg-gray-600'}`}
-                  title={isCallRecording ? 'Остановить запись' : 'Начать запись'}
+                  title={isCallRecording ? t('calls.stop_recording', 'Остановить запись') : t('calls.start_recording', 'Начать запись')}
                 >
                   <Square className={`w-6 h-6 ${isCallRecording ? 'fill-current' : ''}`} />
                 </button>
@@ -1106,7 +1106,7 @@ export default function InternalChat() {
             <button
               onClick={() => setShowSettings(true)}
               className="p-2 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground transition-colors"
-              title="Настройки звука"
+              title={t('settings.audio_settings', 'Настройки звука')}
             >
               <Settings className="w-5 h-5" />
             </button>
@@ -1156,7 +1156,7 @@ export default function InternalChat() {
                   <div className="flex justify-between items-start">
                     <span className="font-medium text-gray-900 truncate pr-2">
                       {user.full_name || user.username}
-                      {user.id === currentUserData.id && " (Вы)"}
+                      {user.id === currentUserData.id && ` (${t('common:you', 'Вы')})`}
                     </span>
                   </div>
                   <div className="flex items-center text-xs text-gray-500 mt-1">
@@ -1238,7 +1238,7 @@ export default function InternalChat() {
                   onClick={() => startCall('audio')}
                   disabled={isInCall}
                   className="p-2 text-white hover:bg-white/10 rounded-full transition-colors disabled:opacity-50"
-                  title="Аудиозвонок"
+                  title={t('calls.audio_call', 'Аудиозвонок')}
                 >
                   <Phone className="w-5 h-5" />
                 </button>
@@ -1246,7 +1246,7 @@ export default function InternalChat() {
                   onClick={() => startCall('video')}
                   disabled={isInCall}
                   className="p-2 text-white hover:bg-white/10 rounded-full transition-colors disabled:opacity-50"
-                  title="Видеозвонок"
+                  title={t('calls.video_call', 'Видеозвонок')}
                 >
                   <Video className="w-5 h-5" />
                 </button>
@@ -1324,7 +1324,7 @@ export default function InternalChat() {
                               className="flex items-center gap-2 hover:underline"
                             >
                               <FileText className="w-5 h-5" />
-                              <span className="text-sm">Открыть файл</span>
+                              <span className="text-sm">{t('chat.open_file', 'Открыть файл')}</span>
                             </a>
                           ) : (
                             <p className="text-sm whitespace-pre-wrap break-words">
@@ -1363,11 +1363,11 @@ export default function InternalChat() {
                               <button
                                 onClick={() => {
                                   setReplyToMessage(msg);
-                                  toast.info('💬 Напишите ответ');
+                                  toast.info(t('chat.write_reply', 'Напишите ответ'));
                                   setActiveActionMenuId(null);
                                 }}
                                 className="p-2 hover:bg-accent rounded-full transition-all"
-                                title="Ответить"
+                                title={t('chat.reply', 'Ответить')}
                               >
                                 <Reply className="w-4 h-4" />
                               </button>
@@ -1375,11 +1375,11 @@ export default function InternalChat() {
                               <button
                                 onClick={() => {
                                   navigator.clipboard.writeText(msg.message);
-                                  toast.success('📋 Текст скопирован');
+                                  toast.success(t('chat.text_copied', 'Текст скопирован'));
                                   setActiveActionMenuId(null);
                                 }}
                                 className="p-2 hover:bg-accent rounded-full transition-all"
-                                title="Копировать"
+                                title={t('common:copy', 'Копировать')}
                               >
                                 <Copy className="w-4 h-4" />
                               </button>
@@ -1402,7 +1402,7 @@ export default function InternalChat() {
                     <div className="flex items-center gap-2 mb-1">
                       <Reply className="w-4 h-4 text-primary flex-shrink-0" />
                       <span className="text-xs font-bold text-foreground">
-                        Ответ на {replyToMessage.sender_name}
+                        {t('chat.reply_to_user', 'Ответ на {{name}}', { name: replyToMessage.sender_name })}
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground truncate italic">
@@ -1456,7 +1456,7 @@ export default function InternalChat() {
                       className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-full transition-all"
                     >
                       <Trash2 className="w-5 h-5" />
-                      <span className="text-sm font-medium">Отменить</span>
+                      <span className="text-sm font-medium">{t('common:cancel', 'Отменить')}</span>
                     </button>
 
                     <button
@@ -1464,7 +1464,7 @@ export default function InternalChat() {
                       className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-blue-500 to-pink-600 text-white rounded-full transition-all hover:scale-105 shadow-lg"
                     >
                       <Square className="w-5 h-5 fill-white" />
-                      <span className="text-sm font-medium">Отправить</span>
+                      <span className="text-sm font-medium">{t('common:send', 'Отправить')}</span>
                     </button>
                   </div>
                 </div>
@@ -1476,7 +1476,7 @@ export default function InternalChat() {
                     onClick={() => imageInputRef.current?.click()}
                     disabled={isUploadingFile}
                     className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-full transition-all"
-                    title="Прикрепить изображение"
+                    title={t('chat.attach_image', 'Прикрепить изображение')}
                   >
                     <ImageIcon className="w-5 h-5" />
                   </button>
@@ -1486,7 +1486,7 @@ export default function InternalChat() {
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploadingFile}
                     className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-full transition-all"
-                    title="Прикрепить файл"
+                    title={t('chat.attach_file', 'Прикрепить файл')}
                   >
                     <Paperclip className="w-5 h-5" />
                   </button>
@@ -1563,7 +1563,7 @@ export default function InternalChat() {
                     <button
                       onClick={startVoiceRecording}
                       className="p-3 text-muted-foreground hover:text-foreground hover:bg-accent rounded-full transition-all"
-                      title="Голосовое сообщение"
+                      title={t('chat.voice_message', 'Голосовое сообщение')}
                     >
                       <Mic className="w-5 h-5" />
                     </button>
@@ -1607,7 +1607,7 @@ export default function InternalChat() {
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold flex items-center gap-2">
                 <Settings className="w-6 h-6 text-primary" />
-                Настройки звука
+                {t('settings.audio_settings', 'Настройки звука')}
               </h3>
               <button
                 onClick={() => setShowSettings(false)}
@@ -1619,7 +1619,7 @@ export default function InternalChat() {
 
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Мелодия звонка</label>
+                <label className="block text-sm font-medium mb-2">{t('settings.ringtone', 'Мелодия звонка')}</label>
                 <input
                   type="file"
                   accept="audio/*"
@@ -1627,7 +1627,7 @@ export default function InternalChat() {
                     const file = e.target.files?.[0];
                     if (file) {
                       if (file.size > 2 * 1024 * 1024) {
-                        toast.error("Файл слишком большой (макс 2MB)");
+                        toast.error(t('settings.file_too_large', 'Файл слишком большой (макс 2MB)'));
                         return;
                       }
                       const reader = new FileReader();
@@ -1635,7 +1635,7 @@ export default function InternalChat() {
                         const result = evt.target?.result as string;
                         setCustomRingtone(result);
                         localStorage.setItem('chat_ringtone', result);
-                        toast.success("Мелодия сохранена");
+                        toast.success(t('settings.ringtone_saved', 'Мелодия сохранена'));
 
                         // Preview
                         const audio = new Audio(result);
@@ -1652,24 +1652,24 @@ export default function InternalChat() {
                               hover:file:bg-violet-100"
                 />
                 <p className="text-xs text-muted-foreground mt-2">
-                  Загрузите свой файл (mp3, wav). Макс 2MB.
+                  {t('settings.ringtone_hint', 'Загрузите свой файл (mp3, wav). Макс 2MB.')}
                 </p>
               </div>
 
               {customRingtone && (
                 <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-xl">
                   <div className="flex-1 overflow-hidden">
-                    <p className="text-sm font-medium truncate">Установлена пользовательская мелодия</p>
+                    <p className="text-sm font-medium truncate">{t('settings.custom_ringtone_set', 'Установлена пользовательская мелодия')}</p>
                   </div>
                   <button
                     onClick={() => {
                       setCustomRingtone(null);
                       localStorage.removeItem('chat_ringtone');
-                      toast.success("Сброшено на стандартную");
+                      toast.success(t('settings.ringtone_reset', 'Сброшено на стандартную'));
                     }}
                     className="text-sm text-red-500 hover:text-red-600 font-medium"
                   >
-                    Сбросить
+                    {t('common:reset', 'Сбросить')}
                   </button>
                 </div>
               )}

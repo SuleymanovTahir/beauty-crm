@@ -55,28 +55,16 @@ class MasterScheduleService:
         c = conn.cursor()
 
         try:
-            # Проверяем, есть ли уже запись
+            # Используем атомарный UPSERT (INSERT ... ON CONFLICT) для предотвращения race conditions
             c.execute("""
-                SELECT id FROM user_schedule
-                WHERE user_id = %s AND day_of_week = %s
-            """, (user_id, day_of_week))
-
-            existing = c.fetchone()
-
-            if existing:
-                # Обновляем
-                c.execute("""
-                    UPDATE user_schedule
-                    SET start_time = %s, end_time = %s, is_active = TRUE
-                    WHERE user_id = %s AND day_of_week = %s
-                """, (start_time, end_time, user_id, day_of_week))
-            else:
-                # Создаем новую
-                c.execute("""
-                    INSERT INTO user_schedule
-                    (user_id, day_of_week, start_time, end_time, is_active)
-                    VALUES (%s, %s, %s, %s, TRUE)
-                """, (user_id, day_of_week, start_time, end_time))
+                INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
+                VALUES (%s, %s, %s, %s, TRUE)
+                ON CONFLICT (user_id, day_of_week) DO UPDATE 
+                SET start_time = EXCLUDED.start_time,
+                    end_time = EXCLUDED.end_time,
+                    is_active = TRUE,
+                    updated_at = CURRENT_TIMESTAMP
+            """, (user_id, day_of_week, start_time, end_time))
 
             conn.commit()
             log_info(f"Working hours set for {master_name} on day {day_of_week}: {start_time}-{end_time}", "schedule")

@@ -62,14 +62,16 @@ async def update_user_schedule(
         conn = get_db_connection()
         c = conn.cursor()
         
-        # Delete existing schedule
-        c.execute("DELETE FROM user_schedule WHERE user_id = %s", (user_id,))
-        
-        # Insert new schedule
+        # Используем атомарный UPSERT (INSERT ... ON CONFLICT)
         for entry in schedule:
             c.execute("""
                 INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
                 VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT (user_id, day_of_week) DO UPDATE 
+                SET start_time = EXCLUDED.start_time,
+                    end_time = EXCLUDED.end_time,
+                    is_active = EXCLUDED.is_active,
+                    updated_at = CURRENT_TIMESTAMP
             """, (
                 user_id,
                 entry["day_of_week"],

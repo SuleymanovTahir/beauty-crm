@@ -98,15 +98,17 @@ async def update_user_schedule(user_id: int, data: WorkScheduleUpdate):
     try:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         
-        # Удаляем старое расписание
-        cursor.execute("DELETE FROM user_schedule WHERE user_id = %s", (user_id,))
-        
-        # Добавляем новое
+        # Добавляем/обновляем расписание атомарно
         for item in data.schedule:
             cursor.execute("""
                 INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
                 VALUES (%s, %s, %s, %s, %s)
-            """, (user_id, item.day_of_week, item.start_time, item.end_time, True if item.is_working else False))
+                ON CONFLICT (user_id, day_of_week) DO UPDATE
+                SET start_time = EXCLUDED.start_time,
+                    end_time = EXCLUDED.end_time,
+                    is_active = EXCLUDED.is_active,
+                    updated_at = CURRENT_TIMESTAMP
+            """, (user_id, item.day_of_week, item.start_time, item.end_time, bool(item.is_working)))
             
         conn.commit()
         return {"status": "success"}
