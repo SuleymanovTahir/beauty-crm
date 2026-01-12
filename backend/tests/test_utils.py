@@ -39,8 +39,8 @@ def create_test_user(username_prefix, full_name, role="employee", position="Styl
             c.execute(f"DELETE FROM user_schedule WHERE user_id IN ({user_ids_str})")
             # Удаляем перерывы (schedule_breaks)
             c.execute(f"DELETE FROM schedule_breaks WHERE user_id IN ({user_ids_str})")
-            # Удаляем выходные (time_off)
-            c.execute(f"DELETE FROM time_off WHERE user_id IN ({user_ids_str})")
+            # Удаляем выходные (user_time_off)
+            c.execute(f"DELETE FROM user_time_off WHERE user_id IN ({user_ids_str})")
 
         # Удаляем старых тестовых пользователей
         c.execute(f"DELETE FROM users WHERE username LIKE '{username_prefix}_%'")

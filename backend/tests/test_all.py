@@ -160,21 +160,11 @@ def test_new_features():
         # 2.2 Master Schedule
         print("\n   [2.2] Расписание мастеров...")
         try:
-            # Создаем тестового мастера в таблице users
-            from core.config import DATABASE_NAME
-            from db.connection import get_db_connection
-            conn = get_db_connection()
-            c = conn.cursor()
+            from tests.test_utils import create_test_user
             test_master = "Тест Мастер"
             
-            # Insert into users table
-            c.execute("""
-                INSERT INTO users (username, password_hash, full_name, role, position, is_active, is_service_provider) 
-                VALUES (%s, 'dummy_hash', %s, %s, %s, TRUE, TRUE)
-            """, (f"test_master_{int(datetime.now().timestamp())}", test_master, "employee", "Stylist"))
-            user_id = c.lastrowid
-            conn.commit()
-            conn.close()
+            # Используем надежную функцию создания тестового пользователя
+            user_id = create_test_user("test_master", test_master, "employee", "Stylist")
 
             schedule = MasterScheduleService()
 
