@@ -603,8 +603,23 @@ async def update_user_profile(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     # Проверка прав: директор/админ может редактировать всех, остальные только себя
-    if user["role"] not in ["admin", "director"] and user["id"] != user_id:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    # Менеджеры могут редактировать специалистов (service providers)
+    is_admin_or_director = user["role"] in ["admin", "director"]
+    is_self = user["id"] == user_id
+    
+    if not is_admin_or_director and not is_self:
+        if user["role"] == "manager":
+            # Проверяем является ли целевой пользователь специалистом
+            conn_check = get_db_connection()
+            c_check = conn_check.cursor()
+            c_check.execute("SELECT is_service_provider FROM users WHERE id = %s", (user_id,))
+            target_is_sp = c_check.fetchone()
+            conn_check.close()
+            
+            if not target_is_sp or not target_is_sp[0]:
+                return JSONResponse({"error": "Forbidden: Managers can only edit service providers"}, status_code=403)
+        else:
+            return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     data = await request.json()
     username = data.get('username')
@@ -717,7 +732,7 @@ async def get_user_notification_settings(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    if user["id"] != user_id and user["role"] not in ["admin", "director"]:
+    if user["id"] != user_id and user["role"] not in ["admin", "director", "manager"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     try:
@@ -776,7 +791,7 @@ async def update_user_notification_settings(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    if user["id"] != user_id and user["role"] not in ["admin", "director"]:
+    if user["id"] != user_id and user["role"] not in ["admin", "director", "manager"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     data = await request.json()
@@ -889,7 +904,7 @@ async def reorder_users(
 ):
     """Update sort_order for multiple users"""
     user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "director"]:
+    if not user or user["role"] not in ["admin", "director", "manager"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     data = await request.json()

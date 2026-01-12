@@ -28,5 +28,11 @@
   "select_chat": "Выберите чат",
   "select_dialog_from_list": "Выберите разговор из списка слева",
   "templates": "Образцы",
-  "try_again": "Попробуйте еще раз"
+  "try_again": "Попробуйте еще раз",
+  "ask_ai_consultant": "Спросить AI-консультанта",
+  "your_question": "Ваш вопрос",
+  "additional_context": "Дополнительный контекст (необязательно)",
+  "ask_bot_placeholder": "Например: Клиент говорит что дорого, как ответить?",
+  "send_to_ai": "Отправить ИИ",
+  "ai_thinking": "ИИ думает..."
 }

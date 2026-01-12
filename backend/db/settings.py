@@ -74,7 +74,11 @@ def get_salon_settings() -> dict:
                 # Feature Management
                 "points_expiration_days": row_dict.get("points_expiration_days", 365),
                 "feature_flags": row_dict.get("feature_flags", "{}"),
-                "telephony_settings": row_dict.get("telephony_settings", "{}")
+                "telephony_settings": row_dict.get("telephony_settings", "{}"),
+                "gallery_display_count": row_dict.get("gallery_display_count", 6),
+                "portfolio_display_count": row_dict.get("portfolio_display_count", 6),
+                "services_display_count": row_dict.get("services_display_count", 6),
+                "faces_display_count": row_dict.get("faces_display_count", 6)
             }
         else:
             log_warning(
@@ -181,7 +185,11 @@ def update_salon_settings(data: dict) -> bool:
             'base_url': 'base_url',
             'points_expiration_days': 'points_expiration_days',
             'feature_flags': 'feature_flags',
-            'telephony_settings': 'telephony_settings'
+            'telephony_settings': 'telephony_settings',
+            'gallery_display_count': 'gallery_display_count',
+            'portfolio_display_count': 'portfolio_display_count',
+            'services_display_count': 'services_display_count',
+            'faces_display_count': 'faces_display_count'
         }
 
         # Формируем SET часть запроса только для предоставленных полей

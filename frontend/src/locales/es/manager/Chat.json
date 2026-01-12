@@ -28,5 +28,11 @@
   "select_chat": "Seleccionar chat",
   "select_dialog_from_list": "Seleccione una conversación de la lista de la izquierda",
   "templates": "Plantillas",
-  "try_again": "Intentar otra vez"
+  "try_again": "Intentar otra vez",
+  "ask_ai_consultant": "Pregúntele a un consultor de IA",
+  "your_question": "Tu pregunta",
+  "additional_context": "Contexto adicional (opcional)",
+  "ask_bot_placeholder": "hasta ejemplo: El cliente dice que es caro, ¿cómo responder?",
+  "send_to_ai": "Enviar IA",
+  "ai_thinking": "La IA piensa..."
 }

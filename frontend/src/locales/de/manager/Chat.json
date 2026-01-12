@@ -28,5 +28,11 @@
   "select_chat": "Wählen Sie Chat aus",
   "select_dialog_from_list": "Wählen Sie eine Konversation aus der Liste links aus",
   "templates": "Vorlagen",
-  "try_again": "Versuchen Sie es erneut"
+  "try_again": "Versuchen Sie es erneut",
+  "ask_ai_consultant": "Fragen Sie einen KI-Berater",
+  "your_question": "Deine Frage",
+  "additional_context": "Zusätzlicher Kontext (optional)",
+  "ask_bot_placeholder": "Zum Beispiel: Der Kunde sagt, dass es teuer ist. Wie soll ich antworten?",
+  "send_to_ai": "Senden Sie KI",
+  "ai_thinking": "KI denkt..."
 }

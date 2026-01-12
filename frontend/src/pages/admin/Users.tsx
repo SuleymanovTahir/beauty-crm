@@ -1,6 +1,6 @@
 // /frontend/src/pages/admin/Users.tsx
 import { useState, useEffect } from 'react';
-import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle, Shield, Key, Filter, X, Calendar } from 'lucide-react';
+import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle, Shield, Key, Filter, X, Calendar, Info, AlertTriangle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -27,15 +27,22 @@ interface DateRange {
 }
 
 interface User {
+  id: number;
   instagram_id: string;
   username: string;
   name: string;
+  full_name: string;
   phone: string;
   email: string;
   created_at: string;
   total_spend: number;
   status: string;
+  role: string;
+  position?: string;
+  is_active?: boolean;
+  is_service_provider?: boolean;
   profile_pic?: string;
+  photo?: string;
   first_contact?: string;
   last_contact?: string;
 }
@@ -733,8 +740,9 @@ export default function Users() {
                       </div>
                     )}
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
-                      <p className="text-xs text-blue-800">
-                        <strong>ℹ️ {t('role_hierarchy_label')}:</strong> {t('role_hierarchy_description')}
+                      <p className="text-xs text-blue-800 flex items-center gap-1">
+                        <Info className="w-3 h-3 text-blue-600" />
+                        <strong>{t('role_hierarchy_label')}:</strong> {t('role_hierarchy_description')}
                       </p>
                     </div>
                   </>
@@ -816,8 +824,9 @@ export default function Users() {
                   </div>
 
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="text-sm text-yellow-800">
-                      <strong>⚠️ {t('edit_password_warning_title')}:</strong> {t('edit_password_warning_text')}
+                    <p className="text-sm text-yellow-800 flex items-center gap-1">
+                      <AlertTriangle className="w-4 h-4 text-yellow-600" />
+                      <strong>{t('edit_password_warning_title')}:</strong> {t('edit_password_warning_text')}
                     </p>
                   </div>
                 </div>

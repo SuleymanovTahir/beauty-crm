@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, Users, Activity } from 'lucide-react';
+import { Save, Users, Activity, Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
@@ -33,7 +33,7 @@ function UsersIcon({ className }: { className?: string }) {
     return <Users className={className} />;
 }
 function TrophyIcon({ className }: { className?: string }) {
-    return <div className={className}>🏆</div>;
+    return <Trophy className={className} />;
 }
 
 export default function FeatureManagement() {

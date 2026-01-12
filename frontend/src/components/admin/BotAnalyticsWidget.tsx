@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { apiClient } from '../../api/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
-import { Loader2 } from 'lucide-react';
+import { Loader2, MessageSquare, CheckCircle, UserCog, BarChart3 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface BotAnalyticsData {
@@ -77,25 +77,25 @@ const BotAnalyticsWidget: React.FC = () => {
                     title={t('analytics.total_dialogs', 'Total Dialogs')}
                     value={data.summary.total_sessions}
                     subValue={`+${data.summary.sessions_last_7d} ${t('analytics.this_week', 'this week')}`}
-                    Icon="💬"
+                    Icon={<MessageSquare className="w-6 h-6 text-blue-500" />}
                 />
                 <StatsCard
                     title={t('analytics.conversion_to_booking', 'Conversion to Booking')}
                     value={`${data.summary.conversion_rate}%`}
                     subValue={`${data.summary.bookings_created} ${t('analytics.bookings', 'bookings')}`}
-                    Icon="✅"
+                    Icon={<CheckCircle className="w-6 h-6 text-green-500" />}
                 />
                 <StatsCard
                     title={t('analytics.escalations', 'Manager Escalations')}
                     value={data.summary.escalated_to_manager}
                     subValue={t('analytics.needs_attention', 'Needs attention')}
-                    Icon="👨‍💻"
+                    Icon={<UserCog className="w-6 h-6 text-orange-500" />}
                 />
                 <StatsCard
                     title={t('analytics.messages_per_dialog', 'Messages per Dialog')}
                     value={data.summary.messages_avg}
                     subValue={t('analytics.average', 'Average')}
-                    Icon="📊"
+                    Icon={<BarChart3 className="w-6 h-6 text-gray-500" />}
                 />
             </div>
 
@@ -165,7 +165,7 @@ const StatsCard = ({ title, value, subValue, Icon }: any) => (
         <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-gray-500">{title}</h3>
-                <span className="text-2xl">{Icon}</span>
+                <span className="flex-shrink-0">{Icon}</span>
             </div>
             <div className="text-2xl font-bold">{value}</div>
             <p className="text-xs text-gray-400 mt-1">{subValue}</p>

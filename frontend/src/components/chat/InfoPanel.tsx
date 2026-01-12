@@ -1,6 +1,6 @@
 // /frontend/src/components/chat/InfoPanel.tsx
 import { useState } from 'react';
-import { User, Phone, Instagram, Check, X, Loader, Edit2, Save, Send, MessageCircle } from 'lucide-react';
+import { User, Phone, Instagram, Check, X, Loader, Edit2, Save, Send } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { StatusSelect } from '../shared/StatusSelect';
@@ -238,19 +238,20 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
                 className="text-[10px] font-bold text-blue-600 bg-blue-50/50 px-2 py-0.5 rounded-lg border border-blue-200 focus:outline-none"
               >
                 <option value="manual">{t('source.manual', 'Вручную') || 'Вручную'}</option>
-                <option value="instagram">📷 Instagram</option>
-                <option value="telegram">✈️ Telegram</option>
-                <option value="whatsapp">📱 WhatsApp</option>
-                <option value="account">👤 ЛК</option>
-                <option value="guest_link">🔗 Ссылка</option>
+                <option value="manual">{t('source.manual', 'Вручную') || 'Вручную'}</option>
+                <option value="instagram">Instagram</option>
+                <option value="telegram">Telegram</option>
+                <option value="whatsapp">WhatsApp</option>
+                <option value="account">{t('source_account', 'Personal Cabinet')}</option>
+                <option value="guest_link">{t('source_guest_link', 'Link')}</option>
               </select>
             ) : (
-              <div className="text-[10px] font-bold text-blue-600 bg-blue-50/50 px-2 py-0.5 rounded-lg border border-blue-100">
-                {client.source === 'instagram' ? '📷 Instagram' :
-                  client.source === 'telegram' ? '✈️ Telegram' :
-                    client.source === 'whatsapp' ? '📱 WhatsApp' :
-                      client.source === 'account' ? '👤 ЛК' :
-                        client.source === 'guest_link' ? '🔗 Ссылка' :
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-blue-600 bg-blue-50/50 px-2 py-0.5 rounded-lg border border-blue-100">
+                {client.source === 'instagram' ? <><Instagram className="w-3 h-3" /> Instagram</> :
+                  client.source === 'telegram' ? <><Send className="w-3 h-3" /> Telegram</> :
+                    client.source === 'whatsapp' ? <><Phone className="w-3 h-3" /> WhatsApp</> :
+                      client.source === 'account' ? <><User className="w-3 h-3" /> {t('source.account', 'ЛК') || 'ЛК'}</> :
+                        client.source === 'guest_link' ? <><Send className="w-3 h-3 rotate-45" /> {t('source.guest_link', 'Ссылка') || 'Ссылка'}</> :
                           t(`source.${client.source || 'manual'}`, client.source || 'Вручную') || (client.source || 'Вручную')}
               </div>
             )}
