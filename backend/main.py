@@ -592,20 +592,19 @@ async def startup_event():
     # ================================
     # ТЕСТЫ
     # ================================
-    # Раскомментируйте для запуска ВСЕХ тестов при старте
-    # Рекомендуется только для development окружения
-    # NOTE: Закомментировано - запускайте вручную: python3 tests/run_all_tests.py
-    from scripts.run_all_fixes import main as run_all_fixes
-    log_info("🔧 Запуск всех исправлений...", "startup")
-    await run_all_fixes()
+    # ================================
+    # ТЕСТЫ И ИСПРАВЛЕНИЯ (ТОЛЬКО ДЛЯ DEV)
+    # ================================
+    if os.getenv("ENVIRONMENT") != "production":
+        from scripts.run_all_fixes import main as run_all_fixes
+        log_info("🔧 Запуск всех исправлений...", "startup")
+        await run_all_fixes()
 
-    from tests.run_all_tests import run_all_tests
-    log_info("🧪 Запуск всех тестов...", "startup")
-    run_all_tests()
-
-    run_all_migrations()  # Автоматически создаст таблицы для системы записей
-    # await run_all_fixes()
-    # run_all_tests()
+        from tests.run_all_tests import run_all_tests
+        log_info("🧪 Запуск всех тестов...", "startup")
+        run_all_tests()
+    else:
+        log_info("ℹ️ Skip fixes and tests in production", "startup")
 
     # Инициализация бота
     bot = get_bot()
@@ -614,6 +613,10 @@ async def startup_event():
     # Загрузка модулей
     from modules import print_modules_status, is_module_enabled
     print_modules_status()
+
+    # run_all_migrations()  # Автоматически создаст таблицы для системы записей
+    # await run_all_fixes()
+    # run_all_tests()
 
     # ================================
     # ПЛАНИРОВЩИКИ (исправлено: теперь используют asyncio.create_task)

@@ -18,7 +18,6 @@ class NotificationsConnectionManager:
 
     async def connect(self, user_id: int, websocket: WebSocket):
         """Добавить новое соединение"""
-        await websocket.accept()
         if user_id not in self.active_connections:
             self.active_connections[user_id] = set()
         self.active_connections[user_id].add(websocket)
@@ -75,7 +74,8 @@ async def notifications_websocket(websocket: WebSocket):
     user_id = None
 
     try:
-        log_info("🔔 New WS connection attempt", "notifications")
+        await websocket.accept()
+        log_info("🔔 New WS connection accepted", "notifications")
 
         # Ждём аутентификацию от клиента
         auth_message = await websocket.receive_json()

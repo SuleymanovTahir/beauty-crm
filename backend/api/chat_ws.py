@@ -21,7 +21,6 @@ class ChatConnectionManager:
 
     async def connect_admin(self, user_id: int, websocket: WebSocket):
         """Добавить новое соединение админа"""
-        await websocket.accept()
         if user_id not in self.admin_connections:
             self.admin_connections[user_id] = set()
         self.admin_connections[user_id].add(websocket)
@@ -59,6 +58,9 @@ async def chat_websocket(websocket: WebSocket):
     """
     user_id = None
     try:
+        await websocket.accept()
+        log_info("💬 New Chat WS connection accepted", "chat")
+        
         # Ждём аутентификацию
         try:
             auth_message = await websocket.receive_json()
