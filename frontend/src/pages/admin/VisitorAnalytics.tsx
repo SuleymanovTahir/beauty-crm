@@ -195,25 +195,20 @@ export default function VisitorAnalytics() {
             const periodValue = period === 'today' ? 'day' : period === '7' ? 'week' : period === '30' ? 'month' : 'week';
             const maxDist = Number(distanceTo);
 
-            const [visitorsData, locationData, countryData, cityData, distanceData, trendData, sectionsData, hoursData] = await Promise.all([
-                visitorApi.getVisitors(periodValue),
-                visitorApi.getLocationBreakdown(periodValue),
-                visitorApi.getCountryBreakdown(periodValue),
-                visitorApi.getCityBreakdown(periodValue),
-                visitorApi.getDistanceBreakdown(periodValue, maxDist),
-                visitorApi.getVisitorTrend(periodValue),
-                visitorApi.getLandingSections(periodValue),
-                visitorApi.getPeakHours(periodValue)
-            ]);
+            // Используем консолидированный endpoint для оптимизации (1 запрос вместо 8)
+            const dashboardData = await visitorApi.getDashboard(periodValue, maxDist);
 
-            setVisitors(visitorsData.visitors || []);
-            setLocationBreakdown(locationData.distribution);
-            setCountryBreakdown(countryData.countries || []);
-            setCityBreakdown(cityData.cities || []);
-            setDistanceBreakdown(distanceData.distribution);
-            setVisitorTrend(trendData.trend || []);
-            setLandingSections(sectionsData.sections || []);
-            setPeakHours(hoursData.hours || []);
+            if (dashboardData.success && dashboardData.data) {
+                const data = dashboardData.data;
+                setVisitors(data.visitors || []);
+                setLocationBreakdown(data.location_breakdown);
+                setCountryBreakdown(data.countries || []);
+                setCityBreakdown(data.cities || []);
+                setDistanceBreakdown(data.distance_breakdown);
+                setVisitorTrend(data.trend || []);
+                setLandingSections(data.sections || []);
+                setPeakHours(data.hours || []);
+            }
             setCurrentPage(1);
         } catch (error) {
             console.error('Error loading visitor data:', error);

@@ -29,9 +29,16 @@ async def list_services(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    services = get_all_services(active_only=active_only)
+    # Попытка получить из кэша
+    from utils.cache import cache
+    cache_key = f"services_list_{active_only}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
 
-    return {
+    services = get_all_services(active_only=active_only)
+    
+    result = {
         "services": [
             {
                 "id": s[0],
@@ -71,6 +78,11 @@ async def list_services(
         ],
         "count": len(services)
     }
+
+    # Сохраняем в кэш на 1 час
+    cache.set(cache_key, result, expire=3600)
+    
+    return result
 
 @router.get("/services/{service_key}/price")
 async def get_service_price(
@@ -127,6 +139,11 @@ async def create_service_api(
         if success:
             log_activity(user["id"], "create_service", "service",
                          data.get('key'), "Service created")
+            
+            # Инвалидация кэша
+            from utils.cache import cache
+            cache.clear_by_pattern("services_list_*")
+            
             return {"success": True, "message": "Service created"}
         else:
             return JSONResponse({"error": "Service key already exists"},
@@ -156,6 +173,11 @@ async def update_service_api(
         update_service(service_id, **data)
         log_activity(user["id"], "update_service", "service",
                      str(service_id), f"Service updated: {data}")
+        
+        # Инвалидация кэша
+        from utils.cache import cache
+        cache.clear_by_pattern("services_list_*")
+        
         return {"success": True, "message": "Service updated"}
     except Exception as e:
         log_error(f"Error updating service: {e}", "api")
@@ -208,6 +230,10 @@ async def toggle_service_status(
         
         conn.commit()
         
+        # Инвалидация кэша
+        from utils.cache import cache
+        cache.clear_by_pattern("services_list_*")
+        
         # Проверяем результат
         c.execute("SELECT is_active FROM services WHERE id = %s", (service_id,))
         updated = c.fetchone()
@@ -245,6 +271,11 @@ async def delete_service_api(
         delete_service(service_id)
         log_activity(user["id"], "delete_service", "service",
                      str(service_id), "Service deleted")
+        
+        # Инвалидация кэша
+        from utils.cache import cache
+        cache.clear_by_pattern("services_list_*")
+        
         return {"success": True, "message": "Service deleted"}
     except Exception as e:
         log_error(f"Error deleting service: {e}", "api")

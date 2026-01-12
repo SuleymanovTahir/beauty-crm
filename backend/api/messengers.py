@@ -11,6 +11,8 @@ from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
+from api.chat_ws import notify_new_message
+from datetime import datetime
 
 router = APIRouter(tags=["Messengers"])
 
@@ -275,6 +277,16 @@ async def send_messenger_message(
 
         message_id = c.lastrowid
         conn.commit()
+
+        # Уведомляем админов через WebSocket
+        import asyncio
+        asyncio.create_task(notify_new_message(client_id, {
+            "id": message_id,
+            "message_text": message_text,
+            "sender_type": "admin",
+            "created_at": datetime.now().isoformat(),
+            "message_type": "text"
+        }))
 
         # TODO: Здесь должна быть реальная отправка через API мессенджера
         # Для Instagram - используем существующий метод

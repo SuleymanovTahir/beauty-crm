@@ -8,6 +8,7 @@ from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info
 from utils.utils import sanitize_url
+import time
 
 router = APIRouter()
 
@@ -21,6 +22,7 @@ async def get_public_employees(
     - **language**: Код языка (по умолчанию 'ru')
     """
     log_info(f"API: Запрос сотрудников на языке {language}", "api")
+    start_time = time.time()
     
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -48,12 +50,14 @@ async def get_public_employees(
                 u.years_of_experience,
                 u.birthday,
                 NULL as instagram,
-                u.public_page_order as sort_order
+                u.sort_order,
+                u.id as updated_timestamp
             FROM users u
             WHERE u.is_service_provider = TRUE
             AND u.is_active = TRUE
             AND u.role != 'director'
-            ORDER BY u.public_page_order DESC, u.full_name ASC
+            AND u.is_public_visible = TRUE
+            ORDER BY u.sort_order ASC, u.full_name ASC
         """
 
         cursor.execute(query)
@@ -141,7 +145,16 @@ async def get_public_employees(
                 sanitized_photo = original_photo
 
             final_photo = sanitized_photo or "/static/avatars/default_female.webp"
-            log_info(f"🖼️ [Public] Final photo URL for {employee_name}: {final_photo}", "api")
+
+            # Add cache-busting parameter based on actual update timestamp
+            # This ensures the URL changes only when the employee record is updated
+            updated_timestamp = row_dict.get("updated_timestamp", 0)
+            if final_photo and '?' not in final_photo and updated_timestamp:
+                final_photo_with_cache = f"{final_photo}?v={updated_timestamp}"
+            else:
+                final_photo_with_cache = final_photo
+
+            log_info(f"🖼️ [Public] Final photo URL for {employee_name}: {final_photo_with_cache}", "api")
 
             employees.append({
                 "id": employee_id,
@@ -150,14 +163,17 @@ async def get_public_employees(
                 "role": row_dict["position"] or "Специалист",
                 "position": row_dict["position"] or "Специалист",  # Для совместимости с фронтендом
                 "specialty": row_dict["specialization"] or row_dict["bio"] or "",
-                "image": final_photo,
-                "photo": final_photo,  # Для совместимости с фронтендом
+                "image": final_photo_with_cache,
+                "photo": final_photo_with_cache,  # Для совместимости с фронтендом
                 "experience": (exp_text or "").strip(),
                 "age": age,
                 "instagram": row_dict["instagram"] or "",
                 "service_ids": service_ids  # Добавляем список ID услуг
             })
         
+        duration = time.time() - start_time
+        log_info(f"⏱️ get_public_employees took {duration:.4f}s returning {len(employees)} employees", "api")
+
         log_info(f"Получено {len(employees)} сотрудников на языке {language}", "api")
         return employees
         

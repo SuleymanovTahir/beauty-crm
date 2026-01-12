@@ -28,8 +28,11 @@ class CacheControlMiddleware(BaseHTTPMiddleware):
             "/api/public/initial-load"
         ]
 
-        
-        if any(request.url.path.startswith(path) for path in cacheable_paths):
+        # Employees have shorter cache due to photo updates
+        if request.url.path.startswith("/api/public/employees"):
+            # Кэшируем на 5 минут для сотрудников (чтобы фото обновлялись быстрее)
+            response.headers["Cache-Control"] = "public, max-age=300"
+        elif any(request.url.path.startswith(path) for path in cacheable_paths):
             # Кэшируем на 10 минут
             response.headers["Cache-Control"] = "public, max-age=600"
         elif request.url.path.startswith("/api/"):

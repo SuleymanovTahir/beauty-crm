@@ -145,6 +145,28 @@ class TelegramBot:
                 # Логируем получение сообщения
                 log_info(f"Received Telegram message from {user.get('username', user.get('first_name'))}: {text}", "telegram")
 
+                # Уведомляем админов через WebSocket (делаем это СРАЗУ для UX)
+                client_id = f"telegram_{chat_id}"
+                from api.chat_ws import notify_new_message
+                import asyncio
+                
+                # Сообщение для уведомления
+                ws_message = {
+                    "id": message["message_id"],
+                    "message_text": text,
+                    "sender_type": "client",
+                    "created_at": datetime.now().isoformat(),
+                    "message_type": "text"
+                }
+                
+                # Запускаем уведомление в фоне
+                try:
+                    loop = asyncio.get_event_loop()
+                    if loop.is_running():
+                        loop.create_task(notify_new_message(client_id, ws_message))
+                except Exception as e:
+                    log_error(f"Error sending Telegram WS notification: {e}", "telegram")
+
                 # Сохраняем сообщение в БД
                 self.save_message(
                     chat_id=chat_id,

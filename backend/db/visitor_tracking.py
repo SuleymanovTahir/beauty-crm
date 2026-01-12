@@ -437,3 +437,142 @@ def get_peak_hours(start_date: Optional[datetime] = None, end_date: Optional[dat
         })
     
     return peak_hours
+
+def get_all_visitor_analytics(start_date: datetime, end_date: datetime, max_distance: float = 50) -> Dict:
+    """
+    Получить ВСЕ данные аналитики одним проходом (оптимизация)
+    """
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        # 1. Основные посетители
+        c.execute("""
+            SELECT ip_hash, city, country, distance_km, is_local, page_url, visited_at, ip_address
+            FROM visitor_tracking
+            WHERE visited_at >= %s AND visited_at <= %s
+            ORDER BY visited_at DESC LIMIT 100
+        """, (start_date, end_date))
+        visitors = [{
+            'ip_hash': r[0], 'city': r[1], 'country': r[2], 'distance_km': r[3],
+            'is_local': r[4], 'page_url': r[5], 'visited_at': r[6].isoformat() if r[6] else None,
+            'ip_address': r[7]
+        } for r in c.fetchall()]
+
+        # 2. Распределение local/non-local
+        c.execute("""
+            SELECT 
+                COUNT(CASE WHEN is_local = TRUE THEN 1 END),
+                COUNT(CASE WHEN is_local = FALSE THEN 1 END),
+                COUNT(*)
+            FROM visitor_tracking
+            WHERE visited_at >= %s AND visited_at <= %s AND is_local IS NOT NULL
+        """, (start_date, end_date))
+        local_row = c.fetchone()
+        local_count = local_row[0] or 0
+        non_local_count = local_row[1] or 0
+        total = local_row[2] or 0
+        
+        location_breakdown = {
+            'local': local_count, 'non_local': non_local_count, 'total': total,
+            'local_percentage': round((local_count / total * 100) if total > 0 else 0, 1),
+            'non_local_percentage': round((non_local_count / total * 100) if total > 0 else 0, 1)
+        }
+
+        # 3. Страны
+        c.execute("""
+            SELECT country, COUNT(*) as count FROM visitor_tracking
+            WHERE visited_at >= %s AND visited_at <= %s AND country IS NOT NULL
+            GROUP BY country ORDER BY count DESC
+        """, (start_date, end_date))
+        countries = [{'country': r[0], 'count': r[1]} for r in c.fetchall()]
+        c_total = sum(c['count'] for c in countries)
+        for country in countries:
+            country['percentage'] = round((country['count'] / c_total * 100) if c_total > 0 else 0, 1)
+
+        # 4. Города
+        c.execute("""
+            SELECT city, country, COUNT(*) as count FROM visitor_tracking
+            WHERE visited_at >= %s AND visited_at <= %s AND city IS NOT NULL
+            GROUP BY city, country ORDER BY count DESC LIMIT 20
+        """, (start_date, end_date))
+        cities = [{'city': r[0], 'country': r[1], 'count': r[2]} for r in c.fetchall()]
+        city_total = sum(c['count'] for c in cities)
+        for city in cities:
+            city['percentage'] = round((city['count'] / city_total * 100) if city_total > 0 else 0, 1)
+
+        # 5. Дистанция
+        c.execute("""
+            SELECT 
+                COUNT(CASE WHEN distance_km <= 1 THEN 1 END),
+                COUNT(CASE WHEN distance_km > 1 AND distance_km <= 2 THEN 1 END),
+                COUNT(CASE WHEN distance_km > 2 AND distance_km <= 5 THEN 1 END),
+                COUNT(CASE WHEN distance_km > 5 AND distance_km <= 10 THEN 1 END),
+                COUNT(CASE WHEN distance_km > 10 AND distance_km <= 15 THEN 1 END),
+                COUNT(CASE WHEN distance_km > 15 AND distance_km <= 20 THEN 1 END),
+                COUNT(CASE WHEN distance_km > 20 AND distance_km <= %s THEN 1 END),
+                COUNT(CASE WHEN distance_km > %s THEN 1 END),
+                COUNT(*)
+            FROM visitor_tracking
+            WHERE visited_at >= %s AND visited_at <= %s AND distance_km IS NOT NULL
+        """, (max_distance, max_distance, start_date, end_date))
+        dist_row = c.fetchone()
+        distance_breakdown = {
+            'within_1km': dist_row[0] or 0, 'within_2km': dist_row[1] or 0,
+            'within_5km': dist_row[2] or 0, 'within_10km': dist_row[3] or 0,
+            'within_15km': dist_row[4] or 0, 'within_20km': dist_row[5] or 0,
+            f'within_{int(max_distance)}km': dist_row[6] or 0,
+            f'beyond_{int(max_distance)}km': dist_row[7] or 0,
+            'total': dist_row[8] or 0
+        }
+
+        # 6. Тренд
+        c.execute("""
+            SELECT DATE(visited_at) as visit_date, COUNT(*) as count FROM visitor_tracking
+            WHERE visited_at >= %s AND visited_at <= %s
+            GROUP BY DATE(visited_at) ORDER BY visit_date ASC
+        """, (start_date, end_date))
+        trend = [{'date': r[0].isoformat() if r[0] else None, 'count': r[1]} for r in c.fetchall()]
+
+        # 7. Секции
+        c.execute("""
+            SELECT page_url, COUNT(*) as count FROM visitor_tracking
+            WHERE visited_at >= %s AND visited_at <= %s AND page_url IS NOT NULL
+            GROUP BY page_url ORDER BY count DESC
+        """, (start_date, end_date))
+        sections_count = {}
+        for r in c.fetchall():
+            url, count = r[0], r[1]
+            section = 'hero'
+            if '#' in url: section = url.split('#')[-1].split('?')[0] or 'hero'
+            elif url.endswith('/'): section = 'hero'
+            section = section.lower().strip() or 'hero'
+            sections_count[section] = sections_count.get(section, 0) + count
+        
+        sec_total = sum(sections_count.values())
+        sections = [{
+            'section': k.capitalize(), 'count': v,
+            'percentage': round((v / sec_total * 100) if sec_total > 0 else 0, 1)
+        } for k, v in sorted(sections_count.items(), key=lambda x: x[1], reverse=True)[:10]]
+
+        # 8. Часы
+        c.execute("""
+            SELECT EXTRACT(HOUR FROM visited_at) as hour, COUNT(*) as count FROM visitor_tracking
+            WHERE visited_at >= %s AND visited_at <= %s
+            GROUP BY hour ORDER BY hour ASC
+        """, (start_date, end_date))
+        hours_raw = {int(r[0]): r[1] for r in c.fetchall()}
+        hours = [{'hour': f'{h:02d}:00', 'count': hours_raw.get(h, 0)} for h in range(24)]
+
+        return {
+            'visitors': visitors,
+            'location_breakdown': location_breakdown,
+            'countries': countries,
+            'cities': cities,
+            'distance_breakdown': distance_breakdown,
+            'trend': trend,
+            'sections': sections,
+            'hours': hours
+        }
+    finally:
+        conn.close()

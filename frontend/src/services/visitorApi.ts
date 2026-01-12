@@ -81,5 +81,18 @@ export const visitorApi = {
         );
         if (!response.ok) throw new Error('Failed to load peak hours');
         return response.json();
+    },
+
+    /**
+     * Консолидированный endpoint для получения всех данных аналитики одним запросом.
+     * Оптимизация производительности: 8 запросов -> 1 запрос
+     */
+    async getDashboard(period: string = 'week', maxDistance: number = 50) {
+        const response = await fetch(
+            `${API_URL}/api/analytics/visitors/dashboard?period=${period}&max_distance=${maxDistance}`,
+            { credentials: 'include' }
+        );
+        if (!response.ok) throw new Error('Failed to load visitor dashboard');
+        return response.json();
     }
 };
