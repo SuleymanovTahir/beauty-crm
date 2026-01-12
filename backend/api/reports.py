@@ -21,20 +21,22 @@ async def get_sales_report(
     date_from: Optional[str] = Query(None),
     date_to: Optional[str] = Query(None),
     format: str = Query("json"),
+    limit: int = Query(1000, ge=1, le=10000),
+    offset: int = Query(0, ge=0),
     session_token: Optional[str] = Cookie(None)
 ):
-    """Отчет по продажам"""
+    """Отчет по продажам (с пагинацией для производительности)"""
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "manager", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
+
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        
+
         # Базовый запрос
         query = """
-            SELECT 
+            SELECT
                 b.id,
                 b.instagram_id,
                 c.username,
@@ -49,17 +51,18 @@ async def get_sales_report(
             WHERE 1=1
         """
         params = []
-        
+
         if date_from:
-            query += " AND DATE(b.datetime) >=%s"
+            query += " AND DATE(b.datetime) >= %s"
             params.append(date_from)
-        
+
         if date_to:
-            query += " AND DATE(b.datetime) <=%s"
+            query += " AND DATE(b.datetime) <= %s"
             params.append(date_to)
-        
-        query += " ORDER BY b.datetime DESC"
-        
+
+        query += " ORDER BY b.datetime DESC LIMIT %s OFFSET %s"
+        params.extend([limit, offset])
+
         c.execute(query, params)
         bookings = c.fetchall()
         

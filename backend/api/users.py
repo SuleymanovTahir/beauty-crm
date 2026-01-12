@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 
 import hashlib
+import time
 from db import get_all_users, delete_user, log_activity
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -169,6 +170,7 @@ async def get_users(current_user: dict = Depends(get_current_user)):
         conn = get_db_connection()
         c = conn.cursor()
 
+        start_time = time.time()
         # Query users directly (employees table is consolidated)
         c.execute("""
             SELECT
@@ -178,9 +180,11 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 u.position_ru,
                 u.position_ar,
                 COALESCE(u.photo, u.photo_url) as photo,
-                u.position_id
+                u.position_id,
+                u.is_public_visible,
+                u.sort_order
             FROM users u
-            ORDER BY u.created_at DESC
+            ORDER BY u.sort_order ASC, u.created_at DESC
         """)
 
         users = []
@@ -199,7 +203,9 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 "is_active": row[8],
                 "position_ru": row[10],
                 "position_ar": row[11],
-                "photo": sanitize_url(row[12])
+                "photo": sanitize_url(row[12]),
+                "is_public_visible": bool(row[14]),
+                "sort_order": row[15]
             }
 
             users.append(user_data)
@@ -230,6 +236,10 @@ async def get_users(current_user: dict = Depends(get_current_user)):
 
         for user in users:
             user["services"] = services_map.get(user["id"], [])
+
+        duration = time.time() - start_time
+        from utils.logger import log_info
+        log_info(f"⏱️ get_users took {duration:.4f}s returning {len(users)} users", "api")
 
         return {"users": users}  # ✅ Обёрнуто в объект
 
@@ -639,6 +649,10 @@ async def update_user_profile(
         commission_rate = data.get('commission_rate')
         telegram_id = data.get('telegram')
         instagram_username = data.get('instagram')
+        is_public_visible = data.get('is_public_visible', True)
+        sort_order = data.get('sort_order', 0)
+
+        start_time = time.time()
 
         
         # Convert years_of_experience to int if possible
@@ -651,23 +665,36 @@ async def update_user_profile(
             years_of_experience = None
 
         if photo is not None:
-             c.execute("""UPDATE users
-                    SET username = %s, full_name = %s, email = %s, position = %s, photo = %s,
-                        bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
-                        base_salary = %s, commission_rate = %s, telegram_id = %s, instagram_username = %s
-                    WHERE id = %s""",
-                 (username, full_name, email, position, photo, bio, specialization, years_of_experience, phone, birthday, 
-                  base_salary, commission_rate, telegram_id, instagram_username, user_id))
+            # ✅ Удаляем старое фото если оно есть и отличается от нового
+            c.execute("SELECT photo FROM users WHERE id = %s", (user_id,))
+            old_photo_row = c.fetchone()
+            if old_photo_row:
+                from api.uploads import delete_old_photo_if_exists
+                delete_old_photo_if_exists(old_photo_row[0], photo)
+
+            c.execute("""UPDATE users
+                   SET username = %s, full_name = %s, email = %s, position = %s, photo = %s,
+                       bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
+                       base_salary = %s, commission_rate = %s, telegram_id = %s, instagram_username = %s,
+                       is_public_visible = %s, sort_order = %s
+                   WHERE id = %s""",
+                (username, full_name, email, position, photo, bio, specialization, years_of_experience, phone, birthday, 
+                 base_salary, commission_rate, telegram_id, instagram_username, is_public_visible, sort_order, user_id))
         else:
             c.execute("""UPDATE users
                         SET username = %s, full_name = %s, email = %s, position = %s,
                             bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
-                             base_salary = %s, commission_rate = %s, telegram_id = %s, instagram_username = %s
+                             base_salary = %s, commission_rate = %s, telegram_id = %s, instagram_username = %s,
+                             is_public_visible = %s, sort_order = %s
                         WHERE id = %s""",
                     (username, full_name, email, position, bio, specialization, years_of_experience, phone, birthday, 
-                     base_salary, commission_rate, telegram_id, instagram_username, user_id))
+                     base_salary, commission_rate, telegram_id, instagram_username, is_public_visible, sort_order, user_id))
         conn.commit()
         
+        duration = time.time() - start_time
+        from utils.logger import log_info
+        log_info(f"⏱️ Update profile took {duration:.4f}s for user_id={user_id}", "api")
+
         log_activity(user["id"], "update_profile", "user", str(user_id), 
                     f"Profile updated: {username}")
         
@@ -854,3 +881,44 @@ async def update_user_contact(
         log_error(f"Error updating user contact: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
+
+@router.post("/users/reorder")
+async def reorder_users(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Update sort_order for multiple users"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    orders = data.get('orders', []) # List of {id: int, sort_order: int}
+    
+    if not orders:
+        return JSONResponse({"error": "No data provided"}, status_code=400)
+        
+    start_time = time.time()
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        for item in orders:
+            user_id = item.get('id')
+            sort_order = item.get('sort_order')
+            if user_id is not None and sort_order is not None:
+                c.execute("UPDATE users SET sort_order = %s WHERE id = %s", (sort_order, user_id))
+        
+        conn.commit()
+        duration = time.time() - start_time
+        from utils.logger import log_info
+        log_info(f"⏱️ reorder_users took {duration:.4f}s for {len(orders)} users", "api")
+        
+        return {"success": True, "message": "Order updated"}
+        
+    except Exception as e:
+        conn.rollback()
+        log_error(f"Error reordering users: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+    finally:
+        conn.close()

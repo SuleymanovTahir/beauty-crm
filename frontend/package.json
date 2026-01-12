@@ -29,6 +29,7 @@
     "@radix-ui/react-toggle": "*",
     "@radix-ui/react-toggle-group": "*",
     "@radix-ui/react-tooltip": "*",
+    "@tanstack/react-query": "^5.90.16",
     "class-variance-authority": "*",
     "clsx": "*",
     "cmdk": "*",

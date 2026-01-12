@@ -52,17 +52,25 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
     c = conn.cursor()
 
     if messenger_type == 'instagram':
-        # Для Instagram показываем только клиентов с сообщениями в chat_history или messenger_messages
+        # Для Instagram - оптимизированный запрос с JOIN вместо подзапросов (N+1 fix)
         c.execute("""
             SELECT DISTINCT
                 c.instagram_id, c.username, c.phone, c.name, c.first_contact,
                 c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
                 c.profile_pic, c.notes, c.is_pinned, c.gender, 1 as has_messages,
                 c.created_at,
-                COALESCE((SELECT SUM(revenue) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed'), 0) as total_spend,
-                COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed'), 0) as total_bookings,
+                COALESCE(b.total_spend, 0) as total_spend,
+                COALESCE(b.total_bookings, 0) as total_bookings,
                 c.temperature
             FROM clients c
+            LEFT JOIN (
+                SELECT instagram_id,
+                       SUM(revenue) as total_spend,
+                       COUNT(*) as total_bookings
+                FROM bookings
+                WHERE status = 'completed'
+                GROUP BY instagram_id
+            ) b ON c.instagram_id = b.instagram_id
             WHERE EXISTS (
                 SELECT 1 FROM chat_history ch WHERE ch.instagram_id = c.instagram_id
             ) OR EXISTS (
@@ -71,17 +79,25 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
             ORDER BY c.is_pinned DESC, c.last_contact DESC
         """)
     else:
-        # Для других мессенджеров показываем только тех, у кого есть сообщения
+        # Для других мессенджеров - оптимизированный запрос с JOIN (N+1 fix)
         c.execute("""
             SELECT DISTINCT
                 c.instagram_id, c.username, c.phone, c.name, c.first_contact,
                 c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
                 c.profile_pic, c.notes, c.is_pinned, c.gender, 1 as has_messages,
                 c.created_at,
-                COALESCE((SELECT SUM(revenue) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed'), 0) as total_spend,
-                COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed'), 0) as total_bookings,
+                COALESCE(b.total_spend, 0) as total_spend,
+                COALESCE(b.total_bookings, 0) as total_bookings,
                 c.temperature
             FROM clients c
+            LEFT JOIN (
+                SELECT instagram_id,
+                       SUM(revenue) as total_spend,
+                       COUNT(*) as total_bookings
+                FROM bookings
+                WHERE status = 'completed'
+                GROUP BY instagram_id
+            ) b ON c.instagram_id = b.instagram_id
             JOIN messenger_messages mm ON c.instagram_id = mm.client_id
             WHERE mm.messenger_type = %s
             ORDER BY c.is_pinned DESC, c.last_contact DESC
@@ -361,7 +377,10 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
             )
     
     history = get_chat_history(real_id, limit=50)
-    bookings = [b for b in get_all_bookings() if b[1] == real_id]
+    
+    # Оптимизация: получаем только записи этого конкретного клиента напрямую из БД
+    from db.bookings import get_bookings_by_client
+    bookings = get_bookings_by_client(instagram_id=real_id)
     
     from collections import Counter
     from datetime import datetime

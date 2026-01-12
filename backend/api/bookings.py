@@ -27,7 +27,7 @@ from notifications.master_notifications import notify_master_about_booking, get_
 router = APIRouter(tags=["Bookings"])
 
 def get_client_messengers_for_bookings(client_id: str):
-    """Получить список мессенджеров клиента для bookings"""
+    """Получить список мессенджеров клиента для bookings (DEPRECATED - use get_all_client_messengers)"""
     conn = get_db_connection()
     c = conn.cursor()
 
@@ -51,6 +51,45 @@ def get_client_messengers_for_bookings(client_id: str):
 
     conn.close()
     return messengers
+
+def get_all_client_messengers(client_ids: list):
+    """Получить мессенджеры для всех клиентов за один запрос (оптимизировано)"""
+    if not client_ids:
+        return {}
+
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    # Результат: {client_id: [messenger1, messenger2, ...]}
+    client_messengers = {client_id: [] for client_id in client_ids}
+
+    # Получаем Instagram мессенджеры одним запросом
+    c.execute("""
+        SELECT DISTINCT instagram_id
+        FROM chat_history
+        WHERE instagram_id = ANY(%s)
+    """, (client_ids,))
+
+    for row in c.fetchall():
+        client_id = row[0]
+        if client_id in client_messengers and 'instagram' not in client_messengers[client_id]:
+            client_messengers[client_id].append('instagram')
+
+    # Получаем другие мессенджеры одним запросом
+    c.execute("""
+        SELECT client_id, messenger_type
+        FROM messenger_messages
+        WHERE client_id = ANY(%s)
+        GROUP BY client_id, messenger_type
+    """, (client_ids,))
+
+    for row in c.fetchall():
+        client_id, messenger_type = row
+        if client_id in client_messengers and messenger_type not in client_messengers[client_id]:
+            client_messengers[client_id].append(messenger_type)
+
+    conn.close()
+    return client_messengers
 
 @router.get("/client/bookings")
 async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
@@ -141,32 +180,32 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
 
     # Добавляем информацию о мессенджерах для каждой записи
     bookings_with_messengers = []
-    
-    # Cache for client phones to avoid multiple DB lookups for same client
+
+    # Оптимизация: получаем всех мессенджеров одним запросом
+    client_ids = list(set([b[1] for b in bookings if b[1]]))  # Уникальные client_id
+    all_messengers = get_all_client_messengers(client_ids)
+
+    # Оптимизация: получаем все телефоны клиентов одним запросом
     client_phones = {}
+    if client_ids:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("SELECT instagram_id, phone FROM clients WHERE instagram_id = ANY(%s)", (client_ids,))
+        for row in c.fetchall():
+            if row[0] and row[1]:
+                client_phones[row[0]] = row[1]
+        conn.close()
 
     for b in bookings:
         client_id = b[1]
-        messengers = get_client_messengers_for_bookings(client_id)
-        
+        messengers = all_messengers.get(client_id, [])
+
         # Get phone from booking row
         phone = b[4] if len(b) > 4 else ''
-        
+
         # Fallback to clients table if phone is missing in booking
         if not phone and client_id:
-            if client_id in client_phones:
-                phone = client_phones[client_id]
-            else:
-                conn = get_db_connection()
-                c = conn.cursor()
-                c.execute("SELECT phone FROM clients WHERE instagram_id = %s", (client_id,))
-                client_row = c.fetchone()
-                conn.close()
-                if client_row and client_row[0]:
-                    phone = client_row[0]
-                    client_phones[client_id] = phone
-                else:
-                    client_phones[client_id] = ''
+            phone = client_phones.get(client_id, '')
 
         bookings_with_messengers.append({
             "id": b[0],

@@ -35,6 +35,8 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
+import { useChatWebSocket } from '../../hooks/useChatWebSocket';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface Client {
   id: string;
@@ -203,18 +205,11 @@ export default function Chat() {
     }
   };
 
-  const [clients, setClients] = useState<Client[]>([]);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState('');
   const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
   const [botMode, setBotMode] = useState<'manual' | 'assistant' | 'autopilot'>('assistant');
   const [botSuggestion, setBotSuggestion] = useState<string | null>(null);
   const [isLoadingSuggestion, setIsLoadingSuggestion] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [loadingMessages, setLoadingMessages] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showForwardModal, setShowForwardModal] = useState(false);
   const [forwardMessage, setForwardMessage] = useState<Message | null>(null);
   const [forwardSearchTerm, setForwardSearchTerm] = useState('');
@@ -261,6 +256,76 @@ export default function Chat() {
     return searchParams.get('messenger') || 'instagram';
   });
 
+  // React Query для списка клиентов
+  const {
+    data: clientsResponse,
+    isLoading: isLoadingClients,
+    error: clientsError,
+  } = useQuery({
+    queryKey: ['clients', currentMessenger],
+    queryFn: async () => {
+      const data = await api.getClients(currentMessenger);
+      const clientsArray = data.clients || (Array.isArray(data) ? data : []);
+
+      // Параллельно получаем unread count для каждого
+      return Promise.all(
+        clientsArray.map(async (client: any) => {
+          try {
+            const unreadData = await api.getClientUnreadCount(client.id);
+            return {
+              ...client,
+              unread_count: unreadData?.unread_count || 0
+            };
+          } catch {
+            return { ...client, unread_count: 0 };
+          }
+        })
+      );
+    },
+    staleTime: 60 * 1000,
+  });
+
+  const [clients, setClients] = useState<Client[]>([]);
+
+  // Синхронизируем локальный стейт с React Query (для WS обновлений)
+  useEffect(() => {
+    if (clientsResponse) {
+      setClients(clientsResponse);
+    }
+  }, [clientsResponse]);
+
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // React Query для сообщений выбранного клиента
+  const {
+    data: messagesResponse,
+    isLoading: isLoadingMessagesQuery,
+  } = useQuery({
+    queryKey: ['messages', selectedClient?.id],
+    queryFn: async () => {
+      if (!selectedClient?.id) return [];
+      const data = await api.getChatMessages(selectedClient.id, 50, currentMessenger);
+      return (data && typeof data === 'object' && 'messages' in data)
+        ? data.messages
+        : (Array.isArray(data) ? data : []);
+    },
+    enabled: !!selectedClient?.id,
+    staleTime: 30 * 1000,
+  });
+
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  // Синхронизируем сообщения
+  useEffect(() => {
+    if (messagesResponse) {
+      setMessages(messagesResponse);
+    }
+  }, [messagesResponse]);
+
+  const [isTyping, setIsTyping] = useState(false);
+  const shouldAutoScroll = true;
+
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const clientIdFromUrl = searchParams.get('client_id');
@@ -278,22 +343,16 @@ export default function Chat() {
     }
   }, [location.search]);
 
-  useEffect(() => {
-    loadClients();
-    // Do NOT clear selectedClient/messages here blindly, as it might flash content.
-    // The previous useEffect handles the clearing on change.
-  }, [currentMessenger]);
 
 
   useEffect(() => {
-    if (clients.length > 0) {
+    if (clients && clients.length > 0) {
       const selectedClientId = localStorage.getItem('selectedClientId');
 
       if (selectedClientId) {
         const client = clients.find(c => c.id === selectedClientId);
         if (client) {
           setSelectedClient(client);
-          loadMessages(selectedClientId, true);
           localStorage.removeItem('selectedClientId');
         }
       }
@@ -310,7 +369,49 @@ export default function Chat() {
   }, []);
 
 
-  const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
+  const queryClient = useQueryClient();
+
+  // Hook для WebSocket
+  useChatWebSocket({
+    userId: currentUser?.id || null,
+    onNewMessage: (clientId, newMessage) => {
+      console.log('📬 WS: New message received:', clientId, newMessage);
+
+      // Самый простой способ обновить интерфейс - инвалидировать кэш для сообщений этого клиента
+      queryClient.invalidateQueries({ queryKey: ['messages', clientId] });
+
+      // Если клиент в списке есть, обновляем его данные (последнее сообщение, время)
+      setClients(prev => prev.map(c =>
+        c.id === clientId
+          ? {
+            ...c,
+            last_contact: new Date().toISOString(),
+            total_messages: (c.total_messages || 0) + 1,
+            unread_count: selectedClient?.id === clientId ? (c.unread_count || 0) : (c.unread_count || 0) + 1
+          }
+          : c
+      ));
+
+      // Если сейчас открыт этот клиент, добавляем сообщение в список напрямую для мгновенности
+      if (selectedClient?.id === clientId) {
+        setMessages(prev => {
+          // Проверка на дубликаты (по id или тексту если id нет)
+          const isDuplicate = prev.some(m =>
+            (m.id && m.id === newMessage.id) ||
+            (m.message === newMessage.message && m.timestamp === newMessage.timestamp)
+          );
+          if (isDuplicate) return prev;
+          return [...prev, newMessage];
+        });
+      }
+    },
+    onTyping: (clientId, isTyping) => {
+      if (selectedClient?.id === clientId) {
+        setIsTyping(isTyping);
+      }
+    }
+  });
+
 
   useEffect(() => {
     if (shouldAutoScroll) {
@@ -318,15 +419,7 @@ export default function Chat() {
     }
   }, [messages, shouldAutoScroll]);
 
-  useEffect(() => {
-    if (!selectedClient) return;
-
-    const interval = setInterval(() => {
-      loadMessages(selectedClient.id, false);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [selectedClient]);
+  // Удалён setInterval polling
 
   useEffect(() => {
     if (message.startsWith('/')) {
@@ -365,73 +458,11 @@ export default function Chat() {
     isFetchingSuggestion.current = false;
   }, [selectedClient]);
 
-  const loadClients = async () => {
-    try {
-      setInitialLoading(true);
-      setError(null);
-      const data = await api.getClients(currentMessenger);
-
-      const clientsArray = data.clients || (Array.isArray(data) ? data : []);
-
-      const clientsWithUnread = await Promise.all(
-        clientsArray.map(async (client: any) => {
-          try {
-            const unreadData = await api.getClientUnreadCount(client.id);
-            return {
-              ...client,
-              unread_count: unreadData?.unread_count || 0
-            };
-          } catch {
-            return { ...client, unread_count: 0 };
-          }
-        })
-      );
-
-      setClients(clientsWithUnread);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : t('chat:error_loading_clients');
-      setError(message);
-      toast.error(t('chat:error') + (message ? ': ' + message : ''));
-    } finally {
-      setInitialLoading(false);
-    }
-  };
-
-  const loadMessages = async (clientId: string, isInitial: boolean = false) => {
-    try {
-      if (isInitial) {
-        setLoadingMessages(true);
-      }
-
-      const data = await api.getChatMessages(clientId, 50, currentMessenger);
-      const messagesArray = (data && typeof data === 'object' && 'messages' in data)
-        ? data.messages
-        : (Array.isArray(data) ? data : []);
-
-      if (!isInitial && JSON.stringify(messagesArray) === JSON.stringify(messages)) {
-        return;
-      }
-
-      const hasNewClientMessages = !isInitial && messagesArray.length > messages.length &&
-        messagesArray[messagesArray.length - 1]?.sender === 'client';
-
-      setShouldAutoScroll(isInitial || hasNewClientMessages);
-
-      setMessages(messagesArray as Message[]);
-
-    } catch (err) {
-      console.error('Error loading messages:', err instanceof Error ? err.message : err);
-    } finally {
-      if (isInitial) {
-        setLoadingMessages(false);
-      }
-    }
-  };
 
   const handleSelectClient = async (client: Client) => {
     setSelectedClient(client);
     setBotMode((client as any).bot_mode || 'assistant');
-    loadMessages(client.id, true);
+    // loadMessages(client.id); // React Query подхватит изменение selectedClient.id автоматически
     setShowNotes(false);
     setShowClientInfo(false);
     setShowTemplates(false);
@@ -464,7 +495,7 @@ export default function Chat() {
         setBotSuggestion(response.suggestion);
         setMessage(response.suggestion);
 
-        toast.info(`Бот предлагает ответ (${response.unread_count} сообщ.)`, {
+        toast.info(t('chat:bot_suggestion_title', 'Bot suggests a response ({{count}} messages)', { count: response.unread_count }), {
           description: response.suggestion.substring(0, 100) + '...',
           duration: 5000
         });
@@ -533,7 +564,7 @@ export default function Chat() {
       const context = lines.slice(1).join('\n').trim();
 
       try {
-        const loadingId = toast.loading('Бот анализирует ситуацию...');
+        const loadingId = toast.loading(t('chat:analyzing', 'Bot is analyzing the situation...'));
         const response = await api.askBotAdvice(question, context);
         toast.dismiss(loadingId);
 
@@ -553,8 +584,8 @@ export default function Chat() {
         return;
       } catch (err) {
         console.error('Ошибка:', err);
-        toast.error('Ошибка получения совета', {
-          description: err instanceof Error ? err.message : 'Неизвестная ошибка'
+        toast.error(t('chat:error_advice', 'Error getting advice'), {
+          description: err instanceof Error ? err.message : t('common:error_occurred')
         });
         return;
       }
@@ -611,7 +642,7 @@ export default function Chat() {
           const quotedText = replyToMessage.message.length > 50
             ? replyToMessage.message.substring(0, 50) + '...'
             : replyToMessage.message;
-          finalMessage = `↩️ Ответ на: "${quotedText}"\n\n${message}`;
+          finalMessage = `↩️ ${t('chat:reply_to', 'Reply to')}: "${quotedText}"\n\n${message}`;
         }
 
         await api.sendMessage(selectedClient.id, finalMessage);
@@ -629,7 +660,7 @@ export default function Chat() {
         toast.success(t('chat:sent', 'Отправлено'));
       }
 
-      setTimeout(() => loadMessages(selectedClient.id, false), 1000);
+      setTimeout(() => queryClient.invalidateQueries({ queryKey: ['messages', selectedClient.id] }), 1000);
     } catch (err) {
       console.error(err);
       toast.error(t('chat:error_sending', 'Ошибка отправки'));
@@ -656,14 +687,14 @@ export default function Chat() {
 
       const response = await api.askBotAdvice(botQuestion, fullContext);
 
-      toast.success('Совет от AI-бота', {
+      toast.success(t('chat:ai_advice_title', 'Advice from AI-bot'), {
         description: response.advice,
         duration: 60000,
         action: {
           label: 'Копировать',
           onClick: () => {
             navigator.clipboard.writeText(response.advice);
-            toast.success('Скопировано!');
+            toast.success(t('common:copied', 'Copied!'));
           }
         }
       });
@@ -725,32 +756,54 @@ export default function Chat() {
   // Check permissions
   if (!userPermissions.canViewAllClients) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 max-w-md text-center">
-          <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Доступ запрещен</h2>
-          <p className="text-gray-600">
-            У вас нет прав для просмотра чата с клиентами. Обратитесь к администратору.
-          </p>
-        </div>
-      </div>
-    );
-  }
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50">
+        <div className="bg-white/80 backdrop-blur-xl rounded-[32px] shadow-2xl border border-white p-12 max-w-md w-full text-center relative overflow-hidden group">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
 
-  if (initialLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-2xl">
-            <Loader className="w-8 h-8 text-white animate-spin" />
+          <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 relative">
+            <div className="absolute inset-0 bg-red-100 rounded-full animate-ping opacity-25"></div>
+            <Shield className="w-12 h-12 text-red-500 relative z-10" />
           </div>
-          <p className="text-gray-600 font-medium">{t('chat:loading_chats')}</p>
+
+          <h2 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">
+            {t('common:access_denied', 'Access Denied')}
+          </h2>
+
+          <p className="text-gray-600 leading-relaxed mb-8">
+            {t('chat:no_permission_msg', 'You do not have permission to view customer chats. Please contact your administrator.')}
+          </p>
+
+          <button
+            onClick={() => window.history.back()}
+            className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold text-sm hover:bg-black transition-all shadow-lg hover:shadow-black/20"
+          >
+            {t('common:go_back', 'Go Back')}
+          </button>
         </div>
       </div>
     );
   }
 
-  if (error) {
+  if (isLoadingClients) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50">
+        <div className="flex flex-col items-center gap-6">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-pink-400 rounded-3xl blur-xl opacity-20 animate-pulse"></div>
+            <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-xl border border-white relative z-10">
+              <Loader className="w-10 h-10 text-blue-600 animate-spin" strokeWidth={2.5} />
+            </div>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-gray-900 font-black text-lg tracking-tight">{t('chat:loading_chats', 'Loading Chats...')}</p>
+            <p className="text-gray-400 text-sm font-medium">{t('chat:please_wait', 'Please wait a moment')}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (clientsError) {
     return (
       <div className="p-4 md:p-8">
         <div className="bg-gradient-to-br from-red-50 to-pink-50 border-2 border-red-200 rounded-2xl p-6 shadow-lg">
@@ -760,9 +813,9 @@ export default function Chat() {
             </div>
             <div className="flex-1">
               <p className="text-red-900 font-bold text-lg">{t('chat:error_loading')}</p>
-              <p className="text-red-700 mt-2">{error}</p>
+              <p className="text-red-700 mt-2">{(clientsError as Error).message}</p>
               <Button
-                onClick={loadClients}
+                onClick={() => queryClient.invalidateQueries({ queryKey: ['clients'] })}
                 className="mt-4 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 shadow-lg"
               >
                 {t('chat:try_again')}
@@ -971,7 +1024,7 @@ export default function Chat() {
               <div
                 className="flex-1 overflow-y-auto p-4 space-y-3 chat-messages-area"
               >
-                {loadingMessages ? (
+                {isLoadingMessagesQuery ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="flex flex-col items-center gap-3">
                       <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl">
@@ -1021,7 +1074,7 @@ export default function Chat() {
                             }`}
                         >
                           {/* Reply Preview */}
-                          {msg.message.includes('↩️ Ответ на:') && (
+                          {msg.message.includes('↩️') && (
                             <div className="border-l-2 border-current/20 bg-current/5 px-2.5 py-1.5 mb-2">
                               <div className="flex items-center gap-1.5 mb-0.5">
                                 <svg className="w-3 h-3 flex-shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1032,7 +1085,7 @@ export default function Chat() {
                                 </p>
                               </div>
                               <p className="text-xs opacity-80 line-clamp-2">
-                                {msg.message.split('\n\n')[0].replace('↩️ Ответ на: "', '').replace('"', '')}
+                                {msg.message.split('\n\n')[0].replace('↩️ ', '').replace(`${t('chat:reply_to', 'Reply to')}: "`, '').replace('"', '')}
                               </p>
                             </div>
                           )}
@@ -1124,7 +1177,7 @@ export default function Chat() {
                             </div>
                           ) : (
                             <div className="px-4 py-2">
-                              {msg.message.includes('↩️ Ответ на:') ? (
+                              {msg.message.includes('↩️') ? (
                                 <p className="text-sm whitespace-pre-wrap break-words leading-relaxed text-inherit">
                                   {msg.message.split('\n\n')[1] || msg.message}
                                 </p>
@@ -1173,11 +1226,11 @@ export default function Chat() {
                               <button
                                 onClick={() => {
                                   setReplyToMessage(msg);
-                                  toast.info('💬 Напишите ответ');
+                                  toast.info(t('chat:type_reply', '💬 Type your reply'));
                                   setActiveActionMenuId(null);
                                 }}
                                 className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-full transition-all"
-                                title="Ответить"
+                                title={t('common:reply', 'Reply')}
                               >
                                 <Reply className="w-4 h-4" />
                               </button>
@@ -1185,11 +1238,11 @@ export default function Chat() {
                               <button
                                 onClick={() => {
                                   navigator.clipboard.writeText(msg.message);
-                                  toast.success('Текст скопирован');
+                                  toast.success(t('common:copied', 'Copied!'));
                                   setActiveActionMenuId(null);
                                 }}
                                 className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-full transition-all"
-                                title="Копировать"
+                                title={t('common:copy', 'Copy')}
                               >
                                 <Copy className="w-4 h-4" />
                               </button>
@@ -1201,7 +1254,7 @@ export default function Chat() {
                                   setActiveActionMenuId(null);
                                 }}
                                 className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-full transition-all"
-                                title="Переслать"
+                                title={t('common:forward', 'Forward')}
                               >
                                 <Forward className="w-4 h-4" />
                               </button>
@@ -1209,7 +1262,7 @@ export default function Chat() {
                               <button
                                 onClick={() => setActiveActionMenuId(null)}
                                 className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-gray-500 hover:text-red-500 dark:hover:text-red-400 rounded-full transition-all"
-                                title="Нравится"
+                                title={t('common:like', 'Like')}
                               >
                                 <Heart className="w-4 h-4" />
                               </button>
@@ -1226,6 +1279,15 @@ export default function Chat() {
                         <MessageCircle className="w-8 h-8 text-gray-400" />
                       </div>
                       <p className="text-gray-500 font-medium text-sm">{t('chat:no_messages')}</p>
+                    </div>
+                  </div>
+                )}
+                {isTyping && (
+                  <div className="flex items-start gap-4 flex-row mb-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl px-4 py-2 flex items-center gap-1 shadow-sm border border-gray-200/50">
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
                     </div>
                   </div>
                 )}
@@ -1307,7 +1369,7 @@ export default function Chat() {
                         className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-pink-500 text-white rounded-xl font-bold text-xs hover:from-blue-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-md"
                       >
                         {isLoadingSuggestion ? <Loader className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                        <span>АВТОПОДСКАЗКА</span>
+                        <span>{t('chat:auto_hint', 'AUTO-HINT')}</span>
                       </button>
                     )}
                     <button
@@ -1315,7 +1377,7 @@ export default function Chat() {
                       className="flex-1 px-4 py-2.5 bg-gray-900 text-white rounded-xl font-bold text-xs hover:bg-black transition-all flex items-center justify-center gap-2 shadow-md"
                     >
                       <MessageCircle className="w-4 h-4" />
-                      <span>СПРОСИТЬ AI</span>
+                      <span>{t('chat:ask_ai', 'ASK AI')}</span>
                     </button>
                     <button
                       onClick={() => setShowAIButtons(false)}
@@ -1341,7 +1403,7 @@ export default function Chat() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                           </svg>
                           <span className="text-xs font-bold text-gray-700">
-                            Ответ на {replyToMessage.sender === 'client' ? selectedClient?.display_name : 'ваше сообщение'}
+                            {t('chat:reply_to', 'Reply to')} {replyToMessage.sender === 'client' ? selectedClient?.display_name : t('chat:your_message', 'your message')}
                           </span>
                         </div>
                         <p className="text-xs text-gray-500 truncate italic">
@@ -1362,12 +1424,10 @@ export default function Chat() {
                   {/* Image Attachment (Allowed) */}
                   <button
                     onClick={() => imageInputRef.current?.click()}
-                    className="p-3 text-gray-500 hover:bg-white hover:text-blue-600 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-md"
-                    title="Прикрепить изображение"
+                    className="p-3 bg-white text-gray-500 hover:text-blue-600 rounded-2xl transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-md border border-gray-100"
+                    title={t('chat:attach_image', 'Attach image')}
                   >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                    <ImageIcon className="w-6 h-6" strokeWidth={2.2} />
                   </button>
 
                   <input
@@ -1403,7 +1463,7 @@ export default function Chat() {
                       type="text"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Сообщение..."
+                      placeholder={t('chat:message_placeholder', 'Message...')}
                       className="w-full bg-transparent border-none py-3 px-2 text-sm text-gray-900 placeholder:text-gray-400 focus:ring-0"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
@@ -1442,9 +1502,9 @@ export default function Chat() {
                     <button
                       onClick={handleSendMessage}
                       disabled={!message.trim()}
-                      className={`p-3 text-white rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg active:scale-95 flex items-center justify-center ${!message.trim() ? 'opacity-50 cursor-not-allowed' : ''} ${messengerStyles[currentMessenger]?.sendButton || messengerStyles.instagram.sendButton}`}
+                      className={`w-12 h-12 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center shadow-lg hover:shadow-xl ${!message.trim() ? 'opacity-50 grayscale cursor-not-allowed' : ''} ${messengerStyles[currentMessenger]?.sendButton || messengerStyles.instagram.sendButton}`}
                     >
-                      <Send className="w-5 h-5" />
+                      <Send className="w-5 h-5 text-white" fill="currentColor" />
                     </button>
                     {/* Voice message temporarily disabled
                     {message.trim() ? (
@@ -1456,7 +1516,7 @@ export default function Chat() {
                       </button>
                     ) : (
                       <button
-                        onClick={() => handleProhibitedAction('отправлять голосовые сообщения')}
+                        onClick={() => handleProhibitedAction(t('chat:send_voice', 'send voice messages'))}
                         className="p-3 text-gray-500 hover:bg-white hover:text-blue-600 rounded-full transition-all duration-300"
                         title="Голосовое сообщение"
                       >
@@ -1607,27 +1667,27 @@ export default function Chat() {
                 {/* Контекст (опционально) */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    📝 Дополнительный контекст (опционально)
+                    {t('chat:additional_context', '📝 Additional context (optional)')}
                   </label>
                   <textarea
                     value={botContext}
                     onChange={(e) => setBotContext(e.target.value)}
-                    placeholder="Например: Клиент уже был у нас, но недоволен результатом"
+                    placeholder={t('chat:context_example', 'Example: Client has been with us before but is unhappy with the result')}
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
                     rows={2}
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Последние 5 сообщений будут добавлены автоматически
+                    {t('chat:context_hint', 'The last 5 messages will be added automatically')}
                   </p>
                 </div>
 
                 {/* Подсказки */}
                 <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
-                  <p className="text-xs font-semibold text-blue-900 mb-2">Примеры вопросов:</p>
+                  <p className="text-xs font-semibold text-blue-900 mb-2">{t('chat:question_examples', 'Question examples:')}</p>
                   <ul className="text-xs text-blue-700 space-y-1">
-                    <li>• Клиент жалуется на цену, что ответить?</li>
-                    <li>• Как убедить записаться прямо сейчас?</li>
-                    <li>• Клиент молчит час после моего ответа, что делать?</li>
+                    <li>• {t('chat:example_1', 'Client complains about price, what to answer?')}</li>
+                    <li>• {t('chat:example_2', 'How to convince to book right now?')}</li>
+                    <li>• {t('chat:example_3', 'Client is silent for an hour after my answer, what to do?')}</li>
                   </ul>
                 </div>
               </div>
@@ -1642,7 +1702,7 @@ export default function Chat() {
                   }}
                   className="flex-1 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-medium text-sm hover:bg-gray-50 transition-colors"
                 >
-                  Отмена
+                  {t('common:cancel', 'Cancel')}
                 </button>
                 <button
                   onClick={handleAskBot}
@@ -1652,12 +1712,12 @@ export default function Chat() {
                   {isAskingBot ? (
                     <>
                       <Loader className="w-4 h-4 animate-spin" />
-                      <span>Думаю...</span>
+                      <span>{t('chat:thinking', 'Thinking...')}</span>
                     </>
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4" />
-                      <span>Получить совет</span>
+                      <span>{t('chat:get_advice', 'Get advice')}</span>
                     </>
                   )}
                 </button>
@@ -1675,7 +1735,7 @@ export default function Chat() {
               {/* Header */}
               <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-pink-50">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-gray-900">Переслать</h3>
+                  <h3 className="text-lg font-bold text-gray-900">{t('common:forward', 'Forward')}</h3>
                   <button
                     onClick={() => {
                       setShowForwardModal(false);
@@ -1695,7 +1755,7 @@ export default function Chat() {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Поиск..."
+                    placeholder={t('common:search', 'Search...')}
                     value={forwardSearchTerm}
                     onChange={(e) => setForwardSearchTerm(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1707,7 +1767,7 @@ export default function Chat() {
               {/* Clients List */}
               <div className="flex-1 overflow-y-auto">
                 <div className="p-2">
-                  <p className="text-xs font-semibold text-gray-500 uppercase px-3 mb-2">Рекомендуемые</p>
+                  <p className="text-xs font-semibold text-gray-500 uppercase px-3 mb-2">{t('chat:recommended', 'Recommended')}</p>
                   {clients
                     .filter(c =>
                       c.id !== selectedClient?.id &&
@@ -1720,13 +1780,13 @@ export default function Chat() {
                         key={client.id}
                         onClick={async () => {
                           try {
-                            await api.sendMessage(client.id, `Переслано:\n\n${forwardMessage.message}`);
-                            toast.success(`Отправлено ${client.display_name}`);
+                            await api.sendMessage(client.id, `${t('chat:forwarded', 'Forwarded')}:\n\n${forwardMessage.message}`);
+                            toast.success(`${t('chat:sent_to', 'Sent to')} ${client.display_name}`);
                             setShowForwardModal(false);
                             setForwardMessage(null);
                             setForwardSearchTerm('');
                           } catch (err) {
-                            toast.error('Ошибка пересылки');
+                            toast.error(t('chat:error_forward', 'Forwarding error'));
                           }
                         }}
                         className="w-full p-3 flex items-center gap-3 hover:bg-gray-50 rounded-xl transition-colors"
@@ -1759,7 +1819,7 @@ export default function Chat() {
                   disabled
                   className="w-full px-4 py-2.5 bg-gray-300 text-gray-500 rounded-xl font-medium text-sm cursor-not-allowed"
                 >
-                  Отправить
+                  {t('common:send', 'Send')}
                 </button>
               </div>
             </div>

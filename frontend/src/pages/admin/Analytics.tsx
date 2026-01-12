@@ -69,39 +69,35 @@ export default function Analytics() {
       setLoading(true);
       setError(null);
 
-      console.log('📊 [Analytics] Loading stats...');
-      const statsData = await api.getStats();
-      console.log('✅ [Analytics] Stats loaded:', statsData);
-      setStats(statsData);
-
-      console.log('📈 [Analytics] Loading funnel data from /api/analytics/funnel...');
-      const funnelData = await api.get('/api/analytics/funnel');
-      console.log('✅ [Analytics] Funnel data loaded:', funnelData);
-      setFunnel(funnelData);
-
-      let analyticsData;
+      // Определяем параметры периода для аналитики
+      let periodNum: number;
       if (dateFrom && dateTo) {
-        console.log(`📅 [Analytics] Loading analytics with custom dates: ${dateFrom} to ${dateTo}`);
-        analyticsData = await api.getAnalytics(0, dateFrom, dateTo);
+        periodNum = 0; // будет использоваться dateFrom, dateTo
+      } else if (period === 'today') {
+        periodNum = 1;
+      } else if (period === 'all') {
+        periodNum = 365;
       } else {
-        // Handle special period values
-        let periodNum: number;
-        if (period === 'today') {
-          periodNum = 1;
-        } else if (period === 'all') {
-          periodNum = 365; // or any large number to get all data
-        } else {
-          periodNum = parseInt(period);
-          if (isNaN(periodNum)) {
-            throw new Error(t('analytics:errors.invalid_period'));
-          }
+        periodNum = parseInt(period);
+        if (isNaN(periodNum)) {
+          throw new Error(t('analytics:errors.invalid_period'));
         }
-        console.log(`📅 [Analytics] Loading analytics for period: ${periodNum} days`);
-        analyticsData = await api.getAnalytics(periodNum);
       }
-      console.log('✅ [Analytics] Analytics data loaded:', analyticsData);
+
+      // Параллельная загрузка всех данных для ускорения (оптимизация производительности)
+      console.log('📊 [Analytics] Loading all data in parallel...');
+      const [statsData, funnelData, analyticsData] = await Promise.all([
+        api.getStats(),
+        api.get('/api/analytics/funnel'),
+        dateFrom && dateTo
+          ? api.getAnalytics(0, dateFrom, dateTo)
+          : api.getAnalytics(periodNum)
+      ]);
+
+      console.log('✅ [Analytics] All data loaded successfully!');
+      setStats(statsData);
+      setFunnel(funnelData);
       setAnalytics(analyticsData);
-      console.log('🎉 [Analytics] All data loaded successfully!');
     } catch (err) {
       const message = err instanceof Error ? err.message : t('analytics:errors.loading_error');
       console.error('❌ [Analytics] Error loading analytics:', err);

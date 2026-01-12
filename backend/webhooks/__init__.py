@@ -27,6 +27,7 @@ from db.bookings import (
 from bot import get_bot
 from integrations import send_message, send_typing_indicator
 from utils.logger import logger, log_info, log_warning, log_error
+from api.chat_ws import notify_new_message
 
 router = APIRouter(tags=["Webhooks"])
 
@@ -158,7 +159,19 @@ async def process_message_background(messaging_event: dict):
         sender_id = messaging_event.get("sender", {}).get("id")
         sender_id = await get_instagram_scoped_id(sender_id)
         
-        if not sender_id or "message" not in messaging_event:
+        if not sender_id:
+            return
+
+        # ✅ ОБРАБОТКА ИНДИКАТОРА НАБОРА ТЕКСТА (TYPING)
+        sender_action = messaging_event.get("sender_action")
+        if sender_action:
+            is_typing = sender_action == "typing_on"
+            logger.info(f"⌨️ Client {sender_id} is typing: {is_typing}")
+            from api.chat_ws import notify_typing
+            await notify_typing(sender_id, is_typing)
+            return
+
+        if "message" not in messaging_event:
             return
 
         message_data = messaging_event["message"]
@@ -184,6 +197,7 @@ async def process_message_background(messaging_event: dict):
                 # Проверяем: это НЕ fallback-сообщение бота
                 if 'я сейчас перегружен' not in message_text.lower() and '#бот помоги#' not in message_text.lower():
                     save_message(client_id, message_text, "manager", message_type="text")
+                    await notify_new_message(client_id, message_text, "manager", message_type="text")
                     logger.info(f"💾 Manager message saved: {message_text[:50]}")
             
             # Сохраняем файлы
@@ -194,6 +208,7 @@ async def process_message_background(messaging_event: dict):
                     payload = attachment.get("payload", {})
                     file_url = payload.get("url")
                     save_message(client_id, file_url, "manager", message_type=attachment_type)
+                    await notify_new_message(client_id, file_url, "manager", message_type=attachment_type)
             
             return
 
@@ -291,7 +306,9 @@ async def process_message_background(messaging_event: dict):
             
             # Сохраняем уведомление о голосовом
             save_message(sender_id, "[VOICE MESSAGE]", "client", message_type="audio")
+            await notify_new_message(sender_id, "[VOICE MESSAGE]", "client", message_type="audio")
             save_message(sender_id, response, "bot", message_type="text")
+            await notify_new_message(sender_id, response, "bot", message_type="text")
             
             await send_message(sender_id, response)
             return
@@ -309,7 +326,9 @@ async def process_message_background(messaging_event: dict):
             response = await generate_ai_response('photo_response', client_language)
             
             save_message(sender_id, "[IMAGE]", "client", message_type="image")
+            await notify_new_message(sender_id, "[IMAGE]", "client", message_type="image")
             save_message(sender_id, response, "bot", message_type="text")
+            await notify_new_message(sender_id, response, "bot", message_type="text")
             
             await send_message(sender_id, response)
             return
@@ -389,6 +408,7 @@ async def process_message_background(messaging_event: dict):
                 "client",
                 message_type="text"
             )
+            await notify_new_message(sender_id, message_text, "client", message_type="text")
             log_info(f"💾 Сообщение сохранено в БД: {message_text[:30]}...", "webhook")
             
             # ✅ ОБРАБОТКА ОТЗЫВОВ (если ждем ответ)
@@ -803,6 +823,7 @@ async def process_message_background(messaging_event: dict):
                 "bot",
                 message_type="text"
             )
+            await notify_new_message(sender_id, ai_response, "bot", message_type="text")
             await send_message(sender_id, ai_response)
             
             logger.info("📤 Message sent!")

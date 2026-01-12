@@ -14,6 +14,7 @@ interface Employee {
     full_name: string;
     base_salary?: number;
     commission_rate?: number;
+    is_public_visible?: boolean;
 }
 
 interface NotificationSettings {
@@ -39,7 +40,8 @@ export function EmployeeSettings({ employee, onUpdate }: EmployeeSettingsProps) 
 
     const [formData, setFormData] = useState({
         base_salary: employee.base_salary || 0,
-        commission_rate: employee.commission_rate || 0
+        commission_rate: employee.commission_rate || 0,
+        is_public_visible: employee.is_public_visible !== false // Default to true
     });
 
     const [notifSettings, setNotifSettings] = useState<NotificationSettings>({
@@ -56,7 +58,8 @@ export function EmployeeSettings({ employee, onUpdate }: EmployeeSettingsProps) 
     useEffect(() => {
         setFormData({
             base_salary: employee.base_salary || 0,
-            commission_rate: employee.commission_rate || 0
+            commission_rate: employee.commission_rate || 0,
+            is_public_visible: employee.is_public_visible !== false
         });
         loadNotificationSettings();
     }, [employee]);
@@ -79,7 +82,8 @@ export function EmployeeSettings({ employee, onUpdate }: EmployeeSettingsProps) 
             await api.post(`/api/users/${employee.id}/update-profile`, {
                 ...employee,
                 base_salary: Number(formData.base_salary),
-                commission_rate: Number(formData.commission_rate)
+                commission_rate: Number(formData.commission_rate),
+                is_public_visible: formData.is_public_visible
             });
             toast.success(t('settings_updated', 'Settings updated successfully'));
             onUpdate();
@@ -115,6 +119,13 @@ export function EmployeeSettings({ employee, onUpdate }: EmployeeSettingsProps) 
                         <DollarSign className="w-5 h-5" />
                         {t('payroll_settings', 'Payroll Settings')}
                     </CardTitle>
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-gray-500">{t('public_visibility', 'Public Visibility')}</span>
+                        <Switch
+                            checked={formData.is_public_visible}
+                            onCheckedChange={(val) => setFormData({ ...formData, is_public_visible: val })}
+                        />
+                    </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

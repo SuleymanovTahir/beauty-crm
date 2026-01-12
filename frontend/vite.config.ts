@@ -114,13 +114,54 @@ export default defineConfig({
         landing: path.resolve(__dirname, "public_landing.html"),
       },
       output: {
-        // Разделить vendor код на отдельные чанки
-        manualChunks: {
-          "react-vendor": ["react", "react-dom", "react-router-dom"],
-          "ui-vendor": ["lucide-react", "sonner"],
-          "chart-vendor": ["recharts"],
-          "form-vendor": ["react-hook-form"],
-          "i18n-vendor": ["react-i18next", "i18next"],
+        // Разделить vendor код на отдельные чанки (оптимизация для производительности)
+        manualChunks: (id) => {
+          // Группируем большие библиотеки отдельно
+          if (id.includes("node_modules")) {
+            if (id.includes("react") || id.includes("react-dom") || id.includes("react-router")) {
+              return "react-vendor";
+            }
+            // ВАЖНО: lucide-react не разделяем, чтобы избежать конфликтов иконок
+            if (id.includes("sonner")) {
+              return "ui-vendor";
+            }
+            if (id.includes("recharts") || id.includes("d3-")) {
+              return "chart-vendor";
+            }
+            if (id.includes("react-hook-form")) {
+              return "form-vendor";
+            }
+            if (id.includes("i18next") || id.includes("react-i18next")) {
+              return "i18n-vendor";
+            }
+            if (id.includes("emoji-picker-react")) {
+              return "emoji-picker-react.esm";
+            }
+            if (id.includes("@radix-ui")) {
+              return "radix-vendor";
+            }
+            // Остальные node_modules (включая lucide-react) в общий vendor чанк
+            return "vendor";
+          }
+          // Административные страницы в отдельные чанки
+          if (id.includes("/pages/admin/")) {
+            const match = id.match(/pages\/admin\/([^/]+)/);
+            if (match) {
+              return `admin-${match[1].toLowerCase()}`;
+            }
+          }
+          // CRM страницы в отдельные чанки
+          if (id.includes("/pages/crm/")) {
+            return "crm-pages";
+          }
+          // Менеджерские страницы
+          if (id.includes("/pages/manager/")) {
+            return "manager-pages";
+          }
+          // Публичные страницы
+          if (id.includes("/pages/public/")) {
+            return "public-pages";
+          }
         },
         // Именование файлов
         entryFileNames: "js/[name]-[hash].js",

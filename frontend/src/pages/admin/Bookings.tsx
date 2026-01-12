@@ -426,48 +426,34 @@ export default function Bookings() {
       setLoading(true);
       setError(null);
 
-      console.log('🔄 [Bookings] Загрузка данных...');
+      console.log('🔄 [Bookings] Загрузка данных параллельно...');
 
-      let bookingsData, clientsData, servicesData, usersData;
+      // Параллельная загрузка всех данных для ускорения
+      const [bookingsData, clientsData, servicesData, usersData] = await Promise.all([
+        api.getBookings().catch(err => {
+          console.error('❌ [Bookings] Ошибка загрузки bookings:', err);
+          throw new Error(`getBookings() failed: ${err.message}`);
+        }),
+        api.getClients().catch(err => {
+          console.error('❌ [Bookings] Ошибка загрузки clients:', err);
+          throw new Error(`getClients() failed: ${err.message}`);
+        }),
+        api.getServices().catch(err => {
+          console.error('❌ [Bookings] Ошибка загрузки services:', err);
+          throw new Error(`getServices() failed: ${err.message}`);
+        }),
+        (async () => {
+          if (typeof api.getUsers !== 'function') {
+            throw new Error(t('bookings:api_error_users'));
+          }
+          return api.getUsers().catch(err => {
+            console.error('❌ [Bookings] Ошибка загрузки users:', err);
+            throw new Error(`getUsers() failed: ${err.message}`);
+          });
+        })()
+      ]);
 
-      try {
-        console.log('📋 [Bookings] Загрузка bookings...');
-        bookingsData = await api.getBookings();
-        console.log('✅ [Bookings] Bookings загружены:', bookingsData);
-      } catch (err: any) {
-        console.error('❌ [Bookings] Ошибка загрузки bookings:', err);
-        throw new Error(`getBookings() failed: ${err.message}`);
-      }
-
-      try {
-        console.log('👥 [Bookings] Загрузка clients...');
-        clientsData = await api.getClients();
-        console.log('✅ [Bookings] Clients загружены:', clientsData);
-      } catch (err: any) {
-        console.error('❌ [Bookings] Ошибка загрузки clients:', err);
-        throw new Error(`getClients() failed: ${err.message}`);
-      }
-
-      try {
-        console.log('💅 [Bookings] Загрузка services...');
-        servicesData = await api.getServices();
-        console.log('✅ [Bookings] Services загружены:', servicesData);
-      } catch (err: any) {
-        console.error('❌ [Bookings] Ошибка загрузки services:', err);
-        throw new Error(`getServices() failed: ${err.message}`);
-      }
-
-      try {
-        console.log('🧑‍💼 [Bookings] Загрузка users (masters)...');
-        if (typeof api.getUsers !== 'function') {
-          throw new Error(t('bookings:api_error_users'));
-        }
-        usersData = await api.getUsers();
-        console.log('✅ [Bookings] Users загружены:', usersData);
-      } catch (err: any) {
-        console.error('❌ [Bookings] Ошибка загрузки users:', err);
-        throw new Error(`getUsers() failed: ${err.message}`);
-      }
+      console.log('✅ [Bookings] Все данные загружены параллельно!');
 
       setBookings(bookingsData.bookings || []);
       setClients(clientsData.clients || []);

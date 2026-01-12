@@ -38,7 +38,7 @@ from db import init_database
 from db.settings import get_salon_settings
 from bot import get_bot
 from utils.utils import ensure_upload_directories, get_current_user
-from middleware import CacheControlMiddleware
+from middleware import CacheControlMiddleware, TimingMiddleware
 
 # Force reload check 3
 
@@ -115,6 +115,7 @@ from api.menu_settings import router as menu_settings_router
 from api.trash import router as trash_router
 from api.audit import router as audit_router
 from api.webrtc_signaling import router as webrtc_router
+from api.notifications_ws import router as notifications_ws_router
 from api.contracts import router as contracts_router
 from api.products import router as products_router
 from api.invoices import router as invoices_router
@@ -123,6 +124,7 @@ from api.payment_integrations import router as payment_integrations_router
 from api.marketplace_integrations import router as marketplace_integrations_router
 from api.recordings import router as recordings_router
 from api.admin_stubs import router as admin_stubs_router
+from api.chat_ws import router as chat_ws_router
 
 
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -214,6 +216,8 @@ app.include_router(menu_settings_router, prefix="/api")
 app.include_router(trash_router, prefix="/api")
 app.include_router(audit_router, prefix="/api")
 app.include_router(webrtc_router)  # WebRTC signaling for video/audio calls
+app.include_router(notifications_ws_router)  # WebSocket for real-time notifications
+app.include_router(chat_ws_router)           # WebSocket for real-time chat
 app.include_router(contracts_router, prefix="/api")  # Contracts API
 app.include_router(products_router, prefix="/api")  # Products API
 app.include_router(invoices_router, prefix="/api")  # Invoices API
@@ -280,10 +284,13 @@ async def log_requests(request: Request, call_next):
 # ===== Middleware Layer (FastAPI Middleware Stack) =====
 # Note: Middlewares are executed in reverse order of addition (Onion model)
 
-# 1. Cache Control (Inner layer)
+# 1. Timing (Inner layer - closest to app)
+app.add_middleware(TimingMiddleware)
+
+# 2. Cache Control
 app.add_middleware(CacheControlMiddleware)
 
-# 2. GZip Compression
+# 3. GZip Compression
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # 3. CORS Layer (Outer layer)

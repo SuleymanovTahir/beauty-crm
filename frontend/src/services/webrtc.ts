@@ -54,6 +54,12 @@ export class WebRTCService {
    * Инициализация WebRTC сервиса
    */
   async initialize(userId: number): Promise<void> {
+    // Skip if already initialized with the same user and WebSocket is open
+    if (this.currentUserId === userId && this.ws && this.ws.readyState === WebSocket.OPEN) {
+      console.log('🔌 [WebRTC] Already initialized and connected, skipping...');
+      return;
+    }
+
     this.currentUserId = userId;
     await this.connectWebSocket();
   }
@@ -65,7 +71,9 @@ export class WebRTCService {
     return new Promise((resolve, reject) => {
       // Используем wss:// для HTTPS и ws:// для HTTP
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${window.location.hostname}:8000/api/webrtc/signal`;
+      // Use same port as current location for WebSocket
+      const port = window.location.port || (protocol === 'wss:' ? '443' : '80');
+      const wsUrl = `${protocol}//${window.location.hostname}${port !== '443' && port !== '80' ? ':' + port : ''}/api/webrtc/signal`;
       console.log(`🔌 [WebRTC] Connecting to WebSocket: ${wsUrl}`);
       this.ws = new WebSocket(wsUrl);
 
