@@ -1,12 +1,11 @@
 // /frontend/src/pages/admin/Analytics.tsx
 import { useState, useEffect } from 'react';
-import { BarChart3, Download, RefreshCw, AlertCircle, Loader, Filter, ArrowRight, TrendingUp, TrendingDown } from 'lucide-react';
+import { BarChart3, Download, RefreshCw, AlertCircle, Loader, Filter, TrendingUp, TrendingDown } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
-import i18n from '../../i18n';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 import { useCurrency } from '../../hooks/useSalonSettings';
 
@@ -48,7 +47,7 @@ export default function Analytics() {
   const [funnel, setFunnel] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const { t } = useTranslation(['analytics', 'common']);
+  const { t, i18n: i18nInstance } = useTranslation(['analytics', 'common']);
   const { currency, formatCurrency } = useCurrency();
 
   useEffect(() => {
@@ -190,8 +189,8 @@ export default function Analytics() {
 
   const bookingsTrendData = analytics?.bookings_by_day?.map(([date, count]) => ({
     name: isMobile
-      ? new Date(date).toLocaleDateString(i18n.language, { day: 'numeric', month: 'numeric' })
-      : new Date(date).toLocaleDateString(i18n.language, { day: 'numeric', month: 'short' }),
+      ? new Date(date).toLocaleDateString(i18nInstance.language, { day: 'numeric', month: 'numeric' })
+      : new Date(date).toLocaleDateString(i18nInstance.language, { day: 'numeric', month: 'short' }),
     [t('analytics:bookings')]: count
   })) || [];
 
