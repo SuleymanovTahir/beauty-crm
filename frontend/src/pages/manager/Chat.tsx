@@ -21,6 +21,8 @@ import {
   Forward,
   Copy,
   Heart,
+  HelpCircle,
+  Smartphone,
 } from 'lucide-react';
 import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../../components/icons/SocialIcons';
 import { Button } from '../../components/ui/button';
@@ -37,6 +39,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { useChatWebSocket } from '../../hooks/useChatWebSocket';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 
 interface Client {
   id: string;
@@ -642,7 +645,7 @@ export default function Chat() {
           const quotedText = replyToMessage.message.length > 50
             ? replyToMessage.message.substring(0, 50) + '...'
             : replyToMessage.message;
-          finalMessage = `↩️ ${t('chat:reply_to', 'Reply to')}: "${quotedText}"\n\n${message}`;
+          finalMessage = `${t('chat:reply_to', 'Reply to')}: "${quotedText}"\n\n${message}`;
         }
 
         await api.sendMessage(selectedClient.id, finalMessage);
@@ -676,13 +679,20 @@ export default function Chat() {
     try {
       setIsAskingBot(true);
 
-      const recentMessages = messages.slice(-5).map(msg => {
-        const sender = msg.sender === 'client' ? 'Клиент' : 'Менеджер';
-        return `${sender}: ${msg.message}`;
-      }).join('\n');
+      const recentMessages = selectedMessageIds.size > 0
+        ? messages.filter(m => selectedMessageIds.has(m.id!))
+          .map(msg => {
+            const sender = msg.sender === 'client' ? t('chat:client', 'Client') : t('chat:manager', 'Manager');
+            return `${sender}: ${msg.message}`;
+          })
+          .join('\n')
+        : messages.slice(-5).map(msg => {
+          const sender = msg.sender === 'client' ? t('chat:client', 'Client') : t('chat:manager', 'Manager');
+          return `${sender}: ${msg.message}`;
+        }).join('\n');
 
       const fullContext = botContext.trim()
-        ? `${recentMessages}\n\nДополнительно:\n${botContext}`
+        ? `${recentMessages}\n\n${t('chat:additional_context', 'Additional context')}:\n${botContext}`
         : recentMessages;
 
       const response = await api.askBotAdvice(botQuestion, fullContext);
@@ -705,9 +715,9 @@ export default function Chat() {
       setShowAIButtons(false);
 
     } catch (err) {
-      console.error('Ошибка:', err);
-      toast.error('Ошибка получения совета', {
-        description: err instanceof Error ? err.message : 'Неизвестная ошибка'
+      console.error('Error asking bot:', err);
+      toast.error(t('chat:error_getting_advice', 'Error getting advice'), {
+        description: err instanceof Error ? err.message : t('common:unknown_error', 'Unknown error')
       });
     } finally {
       setIsAskingBot(false);
@@ -849,7 +859,7 @@ export default function Chat() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Поиск"
+                placeholder={t('common:search', 'Search...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-11 pr-4 py-2.5 bg-[#F1F5F9] border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500 transition-all"
@@ -1010,12 +1020,12 @@ export default function Chat() {
               {/* Подсказка для режима выделения */}
               {isSelectingMessages && (
                 <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-3 mx-4 mb-3">
-                  <p className="text-sm font-medium text-blue-900 mb-1">
-                    📱 Режим выделения сообщений
+                  <p className="text-sm font-medium text-blue-900 mb-1 flex items-center gap-1.5">
+                    <Smartphone className="w-4 h-4 text-blue-500" />
+                    {t('chat:selection_mode_title', 'Selection mode')}
                   </p>
                   <p className="text-xs text-blue-700">
-                    Нажимайте на кружки рядом с сообщениями чтобы выбрать их.
-                    Бот проанализирует только выбранные сообщения.
+                    {t('chat:selection_mode_desc', 'Click circles next to messages to select them. The bot will only analyze selected messages.')}
                   </p>
                 </div>
               )}
@@ -1074,18 +1084,16 @@ export default function Chat() {
                             }`}
                         >
                           {/* Reply Preview */}
-                          {msg.message.includes('↩️') && (
-                            <div className="border-l-2 border-current/20 bg-current/5 px-2.5 py-1.5 mb-2">
+                          {msg.message.includes(t('chat:reply_to', 'Reply to')) && (
+                            <div className="border-l-2 border-current/20 bg-current/5 px-2.5 py-1.5 mb-2 rounded">
                               <div className="flex items-center gap-1.5 mb-0.5">
-                                <svg className="w-3 h-3 flex-shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                                </svg>
+                                <Reply className="w-3 h-3 flex-shrink-0 opacity-70" />
                                 <p className="text-xs font-bold opacity-90">
-                                  Ответ для {selectedClient?.display_name}
+                                  {t('chat:reply_to_client', 'Reply to {{name}}', { name: selectedClient?.display_name })}
                                 </p>
                               </div>
                               <p className="text-xs opacity-80 line-clamp-2">
-                                {msg.message.split('\n\n')[0].replace('↩️ ', '').replace(`${t('chat:reply_to', 'Reply to')}: "`, '').replace('"', '')}
+                                {msg.message.split('\n\n')[0].replace(`${t('chat:reply_to', 'Reply to')}: "`, '').replace('"', '')}
                               </p>
                             </div>
                           )}
@@ -1110,7 +1118,10 @@ export default function Chat() {
                                   }`}
                               >
                                 <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
-                                <p className="text-sm">📷 {t('chat:image_not_available')}</p>
+                                <p className="text-sm flex items-center gap-1">
+                                  <ImageIcon className="w-4 h-4" />
+                                  {t('chat:image_not_available')}
+                                </p>
                               </div>
                               <div className={`px-4 py-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
                                 <p className="text-xs">
@@ -1164,7 +1175,7 @@ export default function Chat() {
                                 className="flex items-center gap-2 hover:underline text-inherit"
                               >
                                 <FileText className="w-5 h-5" />
-                                <span className="text-sm font-medium">Открыть файл</span>
+                                <span className="text-sm font-medium">{t('chat:open_file', 'Open file')}</span>
                               </a>
                               <div className="mt-2 opacity-70">
                                 <p className="text-xs">
@@ -1177,7 +1188,7 @@ export default function Chat() {
                             </div>
                           ) : (
                             <div className="px-4 py-2">
-                              {msg.message.includes('↩️') ? (
+                              {msg.message.includes(t('chat:reply_to', 'Reply to')) ? (
                                 <p className="text-sm whitespace-pre-wrap break-words leading-relaxed text-inherit">
                                   {msg.message.split('\n\n')[1] || msg.message}
                                 </p>
@@ -1532,7 +1543,10 @@ export default function Chat() {
                 {botSuggestion && (
                   <div className="max-w-5xl mx-auto mt-4 relative animate-in slide-in-from-top-4">
                     <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 pr-12 shadow-sm">
-                      <p className="text-sm text-blue-900 font-medium">✨ Совет от бота:</p>
+                      <p className="text-sm text-blue-900 font-medium flex items-center gap-1.5">
+                        <Sparkles className="w-4 h-4 text-blue-500" />
+                        {t('chat:bot_advice_title', 'AI bot advice:')}
+                      </p>
                       <p className="text-sm text-blue-700 mt-1">{botSuggestion}</p>
                       <button
                         onClick={() => {
@@ -1632,7 +1646,7 @@ export default function Chat() {
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                     <MessageCircle className="w-5 h-5 text-blue-600" />
-                    Спросить AI-консультанта
+                    {t('chat:ask_ai_consultant')}
                   </h3>
                   <button
                     onClick={() => {
@@ -1651,13 +1665,14 @@ export default function Chat() {
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {/* Вопрос */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    ❓ Ваш вопрос <span className="text-red-500">*</span>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+                    <HelpCircle className="w-4 h-4 text-blue-500" />
+                    {t('chat:your_question')} <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     value={botQuestion}
                     onChange={(e) => setBotQuestion(e.target.value)}
-                    placeholder="Например: Клиент говорит что дорого, как ответить?"
+                    placeholder={t('chat:ask_bot_placeholder')}
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
                     rows={3}
                     autoFocus
@@ -1666,8 +1681,9 @@ export default function Chat() {
 
                 {/* Контекст (опционально) */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    {t('chat:additional_context', '📝 Additional context (optional)')}
+                  <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+                    <FileText className="w-4 h-4 text-gray-500" />
+                    {t('chat:additional_context')}
                   </label>
                   <textarea
                     value={botContext}
@@ -1826,6 +1842,45 @@ export default function Chat() {
           </div>
         )
       }
+      {/* Messenger Sidebar (Desktop) */}
+      <div className="hidden md:flex flex-col gap-4 p-4 border-r border-gray-100 bg-gray-50/50">
+        {['instagram', 'telegram', 'whatsapp', 'tiktok'].map((m) => (
+          <motion.button
+            key={m}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setCurrentMessenger(m)}
+            className={`
+              relative group p-4 rounded-2xl transition-all duration-500 flex items-center justify-center
+              ${currentMessenger === m
+                ? 'bg-gradient-to-br from-gray-900 to-gray-800 shadow-xl shadow-black/20 scale-105'
+                : 'bg-white hover:bg-gray-50 shadow-sm border border-gray-100'
+              }
+            `}
+          >
+            <div className={`
+              absolute inset-0 bg-gradient-to-br rounded-2xl opacity-0 transition-opacity duration-500
+              ${m === 'instagram' ? 'from-purple-500/10 to-pink-500/10' :
+                m === 'telegram' ? 'from-blue-500/10 to-indigo-500/10' :
+                  m === 'whatsapp' ? 'from-green-500/10 to-emerald-500/10' :
+                    'from-gray-500/10 to-black/10'}
+              group-hover:opacity-100
+            `} />
+
+            {m === 'instagram' && <InstagramIcon size={24} colorful={currentMessenger === m} />}
+            {m === 'telegram' && <TelegramIcon size={24} colorful={currentMessenger === m} />}
+            {m === 'whatsapp' && <WhatsAppIcon size={24} colorful={currentMessenger === m} />}
+            {m === 'tiktok' && <TikTokIcon size={24} colorful={currentMessenger === m} />}
+
+            {currentMessenger === m && (
+              <motion.div
+                layoutId="messenger-active"
+                className="absolute -left-1 w-1 h-8 bg-pink-500 rounded-full"
+              />
+            )}
+          </motion.button>
+        ))}
+      </div>
     </div >
   );
 }

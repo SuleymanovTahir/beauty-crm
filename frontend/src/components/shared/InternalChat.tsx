@@ -364,9 +364,7 @@ export default function InternalChat() {
     }
   }, [currentUserData?.id]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+
 
   const loadData = async () => {
     try {
@@ -443,7 +441,7 @@ export default function InternalChat() {
         const quotedText = replyToMessage.message.length > 50
           ? replyToMessage.message.substring(0, 50) + '...'
           : replyToMessage.message;
-        finalMessage = `↩️ ${t('chat.reply_to', 'Ответ на:')} "${quotedText}"\n\n${textToSend}`;
+        finalMessage = `${t('chat.reply_to', 'Ответ на:')} "${quotedText}"\n\n${textToSend}`;
       }
 
       const response = await fetch('/api/internal-chat/send', {
@@ -478,7 +476,7 @@ export default function InternalChat() {
       setNewMessage('');
       setReplyToMessage(null);
 
-      toast.success('✅ Отправлено');
+      toast.success(t('common:sent', 'Sent'));
       await loadMessagesWithUser(selectedUser.id);
     } catch (err) {
       console.error('Error sending message:', err);
@@ -511,10 +509,10 @@ export default function InternalChat() {
             file.type.startsWith('video/') ? 'video' : 'file';
 
           await handleSendMessage('', fileType, file_url);
-          toast.success(`✅ ${file.name}`);
+          toast.success(`${file.name}`);
         } catch (err) {
           console.error(err);
-          toast.error(`❌ Ошибка: ${file.name}`);
+          toast.error(`${t('common:error', 'Error')}: ${file.name}`);
         }
       }
 
@@ -821,7 +819,7 @@ export default function InternalChat() {
     if (callStartTime && selectedUser) {
       const duration = Date.now() - callStartTime;
       const durationText = formatDuration(duration);
-      handleSendMessage(`📞 ${t('calls.ended', 'Звонок завершен')}. ${t('calls.duration', 'Длительность')}: ${durationText}`, 'text');
+      handleSendMessage(`${t('calls.ended', 'Звонок завершен')}. ${t('calls.duration', 'Длительность')}: ${durationText}`, 'text');
       setCallStartTime(null);
     }
 
@@ -930,9 +928,10 @@ export default function InternalChat() {
               <h3 className="text-2xl font-bold text-foreground mb-2">
                 {users.find(u => u.id === incomingCall.from)?.full_name}
               </h3>
-              <p className="text-muted-foreground">
-                {incomingCall.type === 'video' ? `📹 ${t('calls.video_call', 'Видеозвонок')}` : `📞 ${t('calls.audio_call', 'Аудиозвонок')}`}
-              </p>
+              <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                {incomingCall.type === 'video' ? <Video className="w-5 h-5 text-blue-500" /> : <Phone className="w-5 h-5 text-blue-500" />}
+                <span>{incomingCall.type === 'video' ? t('calls.video_call', 'Видеозвонок') : t('calls.audio_call', 'Аудиозвонок')}</span>
+              </div>
             </div>
 
             <div className="flex gap-4">
@@ -1288,10 +1287,14 @@ export default function InternalChat() {
                             }`}
                         >
                           {/* Reply Preview */}
-                          {msg.message.includes('↩️ Ответ на:') && (
+                          {msg.message.includes(t('chat.reply_to', 'Ответ на:')) && (
                             <div className="border-l-2 border-current/20 bg-current/5 px-2.5 py-1.5 mb-2 rounded">
+                              <div className="flex items-center gap-1.5 mb-0.5">
+                                <Reply className="w-3 h-3 flex-shrink-0 opacity-70" />
+                                <p className="text-xs font-bold opacity-90">{t('chat.reply_to', 'Ответ на:')}</p>
+                              </div>
                               <p className="text-xs opacity-80 line-clamp-2">
-                                {msg.message.split('\n\n')[0].replace('↩️ Ответ на: "', '').replace('"', '')}
+                                {msg.message.split('\n\n')[0].replace(t('chat.reply_to', 'Ответ на:'), '').replace('"', '').replace('"', '')}
                               </p>
                             </div>
                           )}
@@ -1325,7 +1328,7 @@ export default function InternalChat() {
                             </a>
                           ) : (
                             <p className="text-sm whitespace-pre-wrap break-words">
-                              {msg.message.includes('↩️ Ответ на:')
+                              {msg.message.includes(t('chat.reply_to', 'Ответ на:'))
                                 ? msg.message.split('\n\n')[1] || msg.message
                                 : msg.message
                               }

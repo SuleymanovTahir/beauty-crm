@@ -1,6 +1,6 @@
 // /frontend/src/components/chat/TemplatesPanel.tsx
 import { useState, useEffect } from 'react';
-import { FileText, X, Search, Clock, Plus, Trash2, Edit2, Save, Loader, ArrowLeft } from 'lucide-react';
+import { FileText, X, Search, Clock, Plus, Trash2, Edit2, Save, Loader, ArrowLeft, Heart, Info, Calendar, UserCircle } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
@@ -119,17 +119,17 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
   const getCategoryIcon = (category?: string) => {
     switch (category) {
       case 'greeting':
-        return '👋';
+        return <UserCircle className="w-5 h-5 text-blue-500" />;
       case 'booking':
-        return '📅';
+        return <Calendar className="w-5 h-5 text-pink-500" />;
       case 'reminder':
-        return '⏰';
+        return <Clock className="w-5 h-5 text-amber-500" />;
       case 'thanks':
-        return '💖';
+        return <Heart className="w-5 h-5 text-pink-500" />;
       case 'info':
-        return 'ℹ️';
+        return <Info className="w-5 h-5 text-green-500" />;
       default:
-        return '📝';
+        return <FileText className="w-5 h-5 text-gray-500" />;
     }
   };
 
@@ -321,7 +321,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                         >
                           <div className="flex items-start justify-between mb-2 pr-16">
                             <div className="flex items-center gap-2">
-                              <span className="text-2xl">{getCategoryIcon(template.category)}</span>
+                              {getCategoryIcon(template.category)}
                               <h4 className="font-bold text-sm hover:scale-105 transition-transform">
                                 {template.title}
                               </h4>

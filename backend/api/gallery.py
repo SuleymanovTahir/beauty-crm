@@ -11,6 +11,7 @@ from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.utils import require_auth, sanitize_url
 from utils.logger import log_info, log_error
+import time
 
 router = APIRouter(tags=["Gallery"])
 
@@ -23,6 +24,7 @@ async def get_gallery_images(
     Получить фото галереи
     category: 'portfolio' или 'salon'
     """
+    start_time = time.time()
     try:
         log_info(f"📸 [Gallery] Fetching images for category: {category}, visible_only: {visible_only}", "api")
 
@@ -67,7 +69,8 @@ async def get_gallery_images(
 
         conn.close()
 
-        log_info(f"🎉 [Gallery] Successfully returning {len(images)} images for {category}", "api")
+        duration = time.time() - start_time
+        log_info(f"⏱️ get_gallery_images took {duration:.4f}s returning {len(images)} images", "api")
         return {"success": True, "images": images}
 
     except Exception as e:
@@ -152,6 +155,13 @@ async def update_gallery_image(
             params.append(True if data['is_visible'] else False)
 
         if 'image_path' in data:
+            # ✅ Удаляем старое фото если оно есть и отличается от нового
+            c.execute("SELECT image_path FROM gallery_images WHERE id = %s", (image_id,))
+            old_row = c.fetchone()
+            if old_row:
+                from api.uploads import delete_old_photo_if_exists
+                delete_old_photo_if_exists(old_row[0], data['image_path'])
+                
             updates.append("image_path = %s")
             params.append(data['image_path'])
         
@@ -178,6 +188,7 @@ async def delete_gallery_image(
     session_token: Optional[str] = Cookie(None)
 ):
     """Удалить фото из галереи"""
+    start_time = time.time()
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
@@ -205,6 +216,8 @@ async def delete_gallery_image(
         conn.close()
         
         log_info(f"Deleted gallery image {image_id}", "api")
+        duration = time.time() - start_time
+        log_info(f"⏱️ delete_gallery_image took {duration:.4f}s for ID {image_id}", "api")
         return {"success": True}
         
     except Exception as e:

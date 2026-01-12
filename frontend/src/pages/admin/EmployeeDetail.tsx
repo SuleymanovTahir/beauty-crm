@@ -45,8 +45,11 @@ export default function EmployeeDetail() {
 
     const activeTab = tab || 'information';
 
+    const rolePrefix = window.location.pathname.startsWith('/manager') ? '/manager' : '/crm';
+    const usersPath = rolePrefix === '/manager' ? 'employees' : 'users';
+
     const handleTabChange = (value: string) => {
-        navigate(`/crm/users/${id}/${value}`);
+        navigate(`${rolePrefix}/${usersPath}/${id}/${value}`);
     };
 
     const [employee, setEmployee] = useState<Employee | null>(null);
@@ -154,7 +157,7 @@ export default function EmployeeDetail() {
                 <div className="p-4 border-b border-gray-200">
                     <Button
                         variant="ghost"
-                        onClick={() => navigate('/crm/users')}
+                        onClick={() => navigate(`${rolePrefix}/${usersPath}`)}
                         className="w-full justify-start text-gray-600 hover:text-gray-900"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2" />
@@ -181,7 +184,7 @@ export default function EmployeeDetail() {
                     {filteredEmployees.map((emp) => (
                         <button
                             key={emp.id}
-                            onClick={() => navigate(`/crm/users/${emp.id}/${activeTab}`)}
+                            onClick={() => navigate(`${rolePrefix}/${usersPath}/${emp.id}/${activeTab}`)}
                             className={`w-full p-3 flex items-center gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 ${emp.id === employee.id ? 'bg-gray-100' : ''
                                 }`}
                         >
@@ -202,16 +205,18 @@ export default function EmployeeDetail() {
                     ))}
                 </div>
 
-                {/* Add Team Member Button */}
-                <div className="p-4 border-t border-gray-200">
-                    <Button
-                        variant="outline"
-                        onClick={() => navigate('/crm/users/create')}
-                        className="w-full text-sm"
-                    >
-                        + {t('add_team_member', 'Add team member')}
-                    </Button>
-                </div>
+                {/* Add Team Member Button - only if allowed */}
+                {JSON.parse(localStorage.getItem('user') || '{}').role !== 'manager' && (
+                    <div className="p-4 border-t border-gray-200">
+                        <Button
+                            variant="outline"
+                            onClick={() => navigate(`${rolePrefix}/users/create`)}
+                            className="w-full text-sm"
+                        >
+                            + {t('add_team_member', 'Add team member')}
+                        </Button>
+                    </div>
+                )}
             </div>
 
             {/* Main Content */}

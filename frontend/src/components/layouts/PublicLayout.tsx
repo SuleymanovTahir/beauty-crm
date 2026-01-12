@@ -2,7 +2,7 @@
 //src/components/PublicLayout.tsx
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Phone, Mail, Instagram, Menu, X, MessageCircle } from 'lucide-react';
+import { Phone, Mail, Instagram, Menu, X, MessageCircle, Sparkles } from 'lucide-react';
 import { apiClient } from '../../api/client';
 import PublicLanguageSwitcher from '../PublicLanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -39,7 +39,7 @@ export default function PublicLayout() {
                 alt={salonInfo.name || "Logo"} 
                 className="w-12 h-12 object-contain rounded-full"/> */}
               <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-white text-xl">✨</span>
+                <Sparkles className="text-white w-6 h-6" />
               </div>
               <div>
                 <h1 className="text-xl text-gray-900">{salonInfo.name}</h1>

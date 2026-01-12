@@ -9,7 +9,7 @@ import { Textarea } from '../ui/textarea';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
 import { ScrollArea } from '../ui/scroll-area';
-import { CalendarDays, Clock, Phone, Trash2, Edit2, Plus, Save, User as UserIcon, Bell } from 'lucide-react';
+import { CalendarDays, Clock, Phone, Trash2, Edit2, Plus, Save, User as UserIcon, Bell, Snowflake, Flame, Zap } from 'lucide-react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import {
@@ -232,9 +232,24 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
                                                 <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="cold">❄️ Cold</SelectItem>
-                                                <SelectItem value="warm">🔥 Warm</SelectItem>
-                                                <SelectItem value="hot">💥 Hot</SelectItem>
+                                                <SelectItem value="cold">
+                                                    <div className="flex items-center gap-2">
+                                                        <Snowflake className="w-4 h-4 text-blue-400" />
+                                                        <span>Cold</span>
+                                                    </div>
+                                                </SelectItem>
+                                                <SelectItem value="warm">
+                                                    <div className="flex items-center gap-2">
+                                                        <Flame className="w-4 h-4 text-orange-500" />
+                                                        <span>Warm</span>
+                                                    </div>
+                                                </SelectItem>
+                                                <SelectItem value="hot">
+                                                    <div className="flex items-center gap-2">
+                                                        <Zap className="w-4 h-4 text-red-500" />
+                                                        <span>Hot</span>
+                                                    </div>
+                                                </SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>

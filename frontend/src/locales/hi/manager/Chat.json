@@ -28,5 +28,11 @@
   "select_chat": "चैट चुनें",
   "select_dialog_from_list": "बाईं ओर की सूची से एक वार्तालाप चुनें",
   "templates": "टेम्पलेट्स",
-  "try_again": "पुनः प्रयास करें"
+  "try_again": "पुनः प्रयास करें",
+  "ask_ai_consultant": "किसी एआई सलाहकार से पूछें",
+  "your_question": "आपका प्रश्न",
+  "additional_context": "अतिरिक्त संदर्भ (वैकल्पिक)",
+  "ask_bot_placeholder": "उदाहरण के लिए: ग्राहक कहता है कि यह महंगा है, कैसे उत्तर दें?",
+  "send_to_ai": "एआई भेजें",
+  "ai_thinking": "एआई सोचता है..."
 }
