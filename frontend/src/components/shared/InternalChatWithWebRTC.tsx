@@ -932,7 +932,7 @@ export default function InternalChat() {
                                   setActiveActionMenuId(null);
                                 }}
                                 className="p-2 hover:bg-accent rounded-full transition-all"
-                                title="Копировать"
+                                title={t('common:copy', 'Копировать')}
                               >
                                 <Copy className="w-4 h-4" />
                               </button>
