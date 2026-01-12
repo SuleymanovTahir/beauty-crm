@@ -556,7 +556,7 @@ async def startup_event():
     # 3. Все консолидированные миграции
     from db.migrations.run_all_migrations import run_all_migrations
     log_info("🔧 Запуск миграций...", "startup")
-    # run_all_migrations()  # Will be called later at line 599
+    run_all_migrations()  # Will be called later at line 599
     
     # ================================
     # УДАЛЕНИЕ БАЗЫ ДАННЫХ (ОПЦИОНАЛЬНО)
@@ -595,13 +595,13 @@ async def startup_event():
     # Раскомментируйте для запуска ВСЕХ тестов при старте
     # Рекомендуется только для development окружения
     # NOTE: Закомментировано - запускайте вручную: python3 tests/run_all_tests.py
-    # from scripts.run_all_fixes import main as run_all_fixes
-    # log_info("🔧 Запуск всех исправлений...", "startup")
-    # await run_all_fixes()
+    from scripts.run_all_fixes import main as run_all_fixes
+    log_info("🔧 Запуск всех исправлений...", "startup")
+    await run_all_fixes()
 
-    # from tests.run_all_tests import run_all_tests
-    # log_info("🧪 Запуск всех тестов...", "startup")
-    # run_all_tests()
+    from tests.run_all_tests import run_all_tests
+    log_info("🧪 Запуск всех тестов...", "startup")
+    run_all_tests()
 
     run_all_migrations()  # Автоматически создаст таблицы для системы записей
     # await run_all_fixes()

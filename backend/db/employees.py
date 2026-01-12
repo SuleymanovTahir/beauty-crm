@@ -352,16 +352,16 @@ def set_employee_schedule(employee_id: int, day_of_week: int,
     conn = get_db_connection()
     c = conn.cursor()
     
-    # Удаляем старое расписание для этого дня
-    c.execute("""DELETE FROM user_schedule 
-                 WHERE user_id = %s AND day_of_week = %s""",
-              (employee_id, day_of_week))
-    
-    # Добавляем новое
-    c.execute("""INSERT INTO user_schedule 
-                 (user_id, day_of_week, start_time, end_time)
-                 VALUES (%s, %s, %s, %s)""",
-              (employee_id, day_of_week, start_time, end_time))
+    # Используем атомарный UPSERT (INSERT ... ON CONFLICT)
+    c.execute("""
+        INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
+        VALUES (%s, %s, %s, %s, TRUE)
+        ON CONFLICT (user_id, day_of_week) DO UPDATE 
+        SET start_time = EXCLUDED.start_time,
+            end_time = EXCLUDED.end_time,
+            is_active = TRUE,
+            updated_at = CURRENT_TIMESTAMP
+    """, (employee_id, day_of_week, start_time, end_time))
     
     conn.commit()
     conn.close()
