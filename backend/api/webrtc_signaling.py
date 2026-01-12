@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 from utils.logger import log_info, log_error
 
-router = APIRouter(tags=["WebRTC"], prefix="/api/webrtc")
+router = APIRouter(tags=["WebRTC"])
 
 # Хранилище активных WebSocket соединений
 # Структура: {user_id: Set[WebSocket]}
@@ -27,7 +27,6 @@ class ConnectionManager:
 
     async def connect(self, user_id: int, websocket: WebSocket):
         """Добавить новое соединение"""
-        await websocket.accept()
         if user_id not in self.active_connections:
             self.active_connections[user_id] = set()
         self.active_connections[user_id].add(websocket)
@@ -97,13 +96,8 @@ async def websocket_endpoint(websocket: WebSocket):
     user_id = None
 
     try:
-        # Note: We don't accept here immediately, let connect() handle acceptance logic or pre-acceptance if needed
-        # But for compatibility with existing flow where we wait for register message:
-        await websocket.accept() # Accept first to receive register message
-        
-        # NOTE: Standard flow usually authenticates/registers immediately via query params or headers, 
-        # but here we rely on "register" message.
-        # So we keep connection open but not managed until "register"
+        await websocket.accept()
+        log_info("🔌 WebRTC WS: Connection accepted", "webrtc")
 
         while True:
             # Получаем сообщение от клиента
