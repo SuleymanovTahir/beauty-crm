@@ -32,19 +32,8 @@ def create_test_user(username_prefix, full_name, role="employee", position="Styl
         c.execute(f"SELECT id FROM users WHERE username LIKE '{username_prefix}_%'")
         old_user_ids = [row[0] for row in c.fetchall()]
 
-        # Удаляем расписание и другие связанные данные для старых тестовых пользователей
         if old_user_ids:
-            user_ids_str = ','.join(map(str, old_user_ids))
-            # Удаляем все связанные данные в правильном порядке
-            c.execute(f"DELETE FROM user_schedule WHERE user_id IN ({user_ids_str})")
-            c.execute(f"DELETE FROM schedule_breaks WHERE user_id IN ({user_ids_str})")
-            c.execute(f"DELETE FROM user_time_off WHERE user_id IN ({user_ids_str})")
-            c.execute(f"DELETE FROM user_permissions WHERE user_id IN ({user_ids_str})")
-            c.execute(f"DELETE FROM notification_settings WHERE user_id IN ({user_ids_str})")
-            c.execute(f"DELETE FROM user_services WHERE user_id IN ({user_ids_str})")
-            
-            # Теперь можно безопасно удалить самих пользователей по их ID
-            c.execute(f"DELETE FROM users WHERE id IN ({user_ids_str})")
+            _cleanup_user_data(c, old_user_ids)
 
         # Создаем пользователя
         c.execute("""
@@ -65,18 +54,53 @@ def create_test_user(username_prefix, full_name, role="employee", position="Styl
         conn.close()
 
 
+def _cleanup_user_data(c, user_ids):
+    """Вспомогательная функция для удаления данных пользователя из всех таблиц"""
+    if not user_ids:
+        return
+    
+    user_ids_str = ','.join(map(str, user_ids))
+    
+    # Список таблиц для очистки в правильном порядке (сначала зависимые)
+    tables = [
+        "user_schedule",
+        "schedule_breaks",
+        "user_time_off",
+        "user_permissions",
+        "notification_settings",
+        "user_services",
+        "payroll_payments",
+        "notifications",
+        "activity_log",
+        "sessions"
+    ]
+    
+    for table in tables:
+        try:
+            c.execute(f"DELETE FROM {table} WHERE user_id IN ({user_ids_str})")
+        except Exception:
+            # Игнорируем ошибки если таблицы нет или другие проблемы
+            pass
+            
+    # После удаления всех зависимостей удаляем самих пользователей
+    c.execute(f"DELETE FROM users WHERE id IN ({user_ids_str})")
+
+
 def cleanup_test_users(username_prefix):
     """
     Удаляет всех тестовых пользователей с заданным префиксом.
-
-    Args:
-        username_prefix: префикс username для удаления (например, "test_master")
     """
     conn = get_db_connection()
     c = conn.cursor()
 
     try:
-        c.execute(f"DELETE FROM users WHERE username LIKE '{username_prefix}_%'")
+        # Находим всех пользователей с префиксом
+        c.execute(f"SELECT id FROM users WHERE username LIKE '{username_prefix}_%'")
+        user_ids = [row[0] for row in c.fetchall()]
+        
+        if user_ids:
+            _cleanup_user_data(c, user_ids)
+            
         conn.commit()
     except Exception as e:
         conn.rollback()
@@ -93,8 +117,13 @@ def cleanup_all_test_users():
     c = conn.cursor()
 
     try:
-        c.execute("DELETE FROM users WHERE username LIKE 'test_%'")
-        deleted_count = c.rowcount
+        c.execute("SELECT id FROM users WHERE username LIKE 'test_%'")
+        user_ids = [row[0] for row in c.fetchall()]
+        
+        deleted_count = len(user_ids)
+        if user_ids:
+            _cleanup_user_data(c, user_ids)
+            
         conn.commit()
         return deleted_count
     except Exception as e:

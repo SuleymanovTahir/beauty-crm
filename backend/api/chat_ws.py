@@ -59,8 +59,6 @@ async def chat_websocket(websocket: WebSocket):
     """
     user_id = None
     try:
-        await websocket.accept()
-        
         # Ждём аутентификацию
         try:
             auth_message = await websocket.receive_json()

@@ -134,16 +134,8 @@ def test_master_schedule():
     finally:
         # Cleanup test employee
         try:
-            from db.connection import get_db_connection
-            from core.config import DATABASE_NAME
-            conn = get_db_connection()
-            c = conn.cursor()
-            if 'user_id' in locals():
-                c.execute("DELETE FROM user_schedule WHERE user_id = %s", (user_id,))
-                c.execute("DELETE FROM user_time_off WHERE user_id = %s", (user_id,))
-            c.execute("DELETE FROM users WHERE full_name = %s", (test_master,))
-            conn.commit()
-            conn.close()
+            from tests.test_utils import cleanup_test_users
+            cleanup_test_users("test_anna")
         except Exception:
             pass
 

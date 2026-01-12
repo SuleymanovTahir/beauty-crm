@@ -75,7 +75,6 @@ async def notifications_websocket(websocket: WebSocket):
     user_id = None
 
     try:
-        await websocket.accept()
         log_info("🔔 New WS connection attempt", "notifications")
 
         # Ждём аутентификацию от клиента

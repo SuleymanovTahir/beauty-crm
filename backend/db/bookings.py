@@ -8,27 +8,36 @@ from db.connection import get_db_connection
 from utils.datetime_utils import get_current_time
 import psycopg2
 
-def get_all_bookings():
-    """Получить все записи"""
+def get_all_bookings(limit: int = 1000):
+    """Получить все записи с лимитом для оптимизации"""
     conn = get_db_connection()
     c = conn.cursor()
 
     try:
-        c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
+        query = """SELECT id, instagram_id, service_name, datetime, phone,
                      name, status, created_at, revenue, master, user_id, source
                      FROM bookings 
                      WHERE deleted_at IS NULL
-                     ORDER BY created_at DESC""")
+                     ORDER BY created_at DESC"""
+        if limit:
+            query += f" LIMIT {limit}"
+        c.execute(query)
     except psycopg2.OperationalError:
         # Fallback для старой схемы без master/user_id
         try:
-            c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
+            query = """SELECT id, instagram_id, service_name, datetime, phone,
                          name, status, created_at, revenue, master, NULL as user_id, source
-                         FROM bookings ORDER BY created_at DESC""")
+                         FROM bookings ORDER BY created_at DESC"""
+            if limit:
+                query += f" LIMIT {limit}"
+            c.execute(query)
         except:
-            c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
+            query = """SELECT id, instagram_id, service_name, datetime, phone,
                          name, status, created_at, 0 as revenue, NULL as master, NULL as user_id
-                         FROM bookings ORDER BY created_at DESC""")
+                         FROM bookings ORDER BY created_at DESC"""
+            if limit:
+                query += f" LIMIT {limit}"
+            c.execute(query)
 
     bookings = c.fetchall()
     conn.close()
