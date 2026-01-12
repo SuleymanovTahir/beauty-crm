@@ -380,27 +380,17 @@ def cleanup_test_data_safe():
     """Безопасная очистка тестовых данных для test_all.py"""
     print("\n🧹 Очистка тестовых данных (test_all)...")
     try:
+        from tests.test_utils import cleanup_test_users
         from db.connection import get_db_connection
+        
+        # 1. Очистка пользователей (сотрудников)
+        cleanup_test_users("test_master")
+
+        # 2. Очистка клиентов
+        users_to_clean = ["test_user_123"]
         conn = get_db_connection()
         c = conn.cursor()
         
-        # Список пользователей/клиентов создаваемых в этом файле
-        users_to_clean = ["test_user_123"]
-        masters_to_clean = ["Тест Мастер"]
-        
-        # 1. Очистка пользователей (сотрудников)
-        for master in masters_to_clean:
-            # Находим ID
-            c.execute("SELECT id FROM users WHERE full_name = %s", (master,))
-            row = c.fetchone()
-            if row:
-                user_id = row[0]
-                c.execute("DELETE FROM user_schedule WHERE user_id = %s", (user_id,))
-                c.execute("DELETE FROM user_time_off WHERE user_id = %s", (user_id,))
-                c.execute("DELETE FROM users WHERE id = %s", (user_id,))
-                print(f"✅ Сотрудник '{master}' удален")
-
-        # 2. Очистка клиентов
         for client_id in users_to_clean:
             c.execute("DELETE FROM conversations WHERE client_id = %s", (client_id,))
             c.execute("DELETE FROM clients WHERE instagram_id = %s", (client_id,))

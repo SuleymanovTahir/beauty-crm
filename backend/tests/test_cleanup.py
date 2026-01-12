@@ -51,17 +51,18 @@ class TestDataCleaner:
                 
                 if user_ids:
                     id_placeholders = ','.join(['%s' for _ in user_ids])
-                    c.execute(f"DELETE FROM user_schedule WHERE user_id IN ({id_placeholders})", tuple(user_ids))
-                    c.execute(f"DELETE FROM user_time_off WHERE user_id IN ({id_placeholders})", tuple(user_ids))
-                    # Check if tables exist before deleting
-                    c.execute("SELECT table_name FROM information_schema.tables WHERE table_name='user_subscriptions'")
-                    if c.fetchone():
-                        c.execute(f"DELETE FROM user_subscriptions WHERE user_id IN ({id_placeholders})", tuple(user_ids))
-                    
-                    c.execute("SELECT table_name FROM information_schema.tables WHERE table_name='broadcast_history'")
-                    if c.fetchone():
-                        c.execute(f"DELETE FROM broadcast_history WHERE sender_id IN ({id_placeholders})", tuple(user_ids))
-                        
+                    # Список таблиц для очистки в правильном порядке
+                    dep_tables = [
+                        "user_schedule", "schedule_breaks", "user_time_off",
+                        "user_permissions", "notification_settings", "user_services",
+                        "payroll_payments", "notifications", "activity_log", "sessions"
+                    ]
+                    for table in dep_tables:
+                        try:
+                            c.execute(f"DELETE FROM {table} WHERE user_id IN ({id_placeholders})", tuple(user_ids))
+                        except Exception:
+                            pass
+
                     c.execute(f"DELETE FROM users WHERE id IN ({id_placeholders})", tuple(user_ids))
                     deleted = c.rowcount
             else:
@@ -76,17 +77,17 @@ class TestDataCleaner:
                 
                 if test_user_ids:
                     placeholders = ','.join(['%s' for _ in test_user_ids])
-                    c.execute(f"DELETE FROM user_schedule WHERE user_id IN ({placeholders})", tuple(test_user_ids))
-                    c.execute(f"DELETE FROM user_time_off WHERE user_id IN ({placeholders})", tuple(test_user_ids))
-                    
-                    # Check if tables exist before deleting
-                    c.execute("SELECT table_name FROM information_schema.tables WHERE table_name='user_subscriptions'")
-                    if c.fetchone():
-                        c.execute(f"DELETE FROM user_subscriptions WHERE user_id IN ({placeholders})", tuple(test_user_ids))
-                    
-                    c.execute("SELECT table_name FROM information_schema.tables WHERE table_name='broadcast_history'")
-                    if c.fetchone():
-                        c.execute(f"DELETE FROM broadcast_history WHERE sender_id IN ({placeholders})", tuple(test_user_ids))
+                    # Список таблиц для очистки в правильном порядке
+                    dep_tables = [
+                        "user_schedule", "schedule_breaks", "user_time_off",
+                        "user_permissions", "notification_settings", "user_services",
+                        "payroll_payments", "notifications", "activity_log", "sessions"
+                    ]
+                    for table in dep_tables:
+                        try:
+                            c.execute(f"DELETE FROM {table} WHERE user_id IN ({placeholders})", tuple(test_user_ids))
+                        except Exception:
+                            pass
                         
                     c.execute(f"DELETE FROM users WHERE id IN ({placeholders})", tuple(test_user_ids))
                     deleted = c.rowcount

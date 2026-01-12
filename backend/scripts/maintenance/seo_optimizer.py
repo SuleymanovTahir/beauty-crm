@@ -117,7 +117,7 @@ def check_alt_attributes():
                     src_match = re.search(r'src=["\']([^"\']+)["\']', tag, re.DOTALL)
                     if not src_match:
                         # Try to find src in dynamic expressions
-                        src_match = re.search(r'src=\{[^}]+\}', tag)
+                        src_match = re.search(r'src=\{([^}]+)\}', tag)
                     
                     src = src_match.group(1) if src_match else "unknown"
                     
