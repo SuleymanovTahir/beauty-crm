@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 from utils.logger import log_info, log_error
 
-router = APIRouter(tags=["Chat"], prefix="/api")
+router = APIRouter(tags=["Chat"])
 
 class ChatConnectionManager:
     """Управление WebSocket соединениями для чата"""
@@ -47,7 +47,7 @@ class ChatConnectionManager:
 
 chat_manager = ChatConnectionManager()
 
-@router.websocket("/ws/chat")
+@router.websocket("/chat")
 async def chat_websocket(websocket: WebSocket):
     """
     WebSocket endpoint для чата

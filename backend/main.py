@@ -151,6 +151,11 @@ BASE_DIR = Path(__file__).resolve().parent
 app.mount("/static", CacheControlStaticFiles(directory=str(BASE_DIR / "static")), name="static/dist")
 
 # Подключение роутеров
+# 1. WebSocket и Real-time (в начале для приоритета)
+app.include_router(webrtc_router, prefix="/api/webrtc")
+app.include_router(notifications_ws_router, prefix="/api/ws")
+app.include_router(chat_ws_router, prefix="/api/ws")
+
 # API роутеры (все через /api)
 app.include_router(api_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
@@ -215,9 +220,7 @@ app.include_router(telephony_router, prefix="/api") # Telephony API
 app.include_router(menu_settings_router, prefix="/api")
 app.include_router(trash_router, prefix="/api")
 app.include_router(audit_router, prefix="/api")
-app.include_router(webrtc_router)  # WebRTC signaling for video/audio calls
-app.include_router(notifications_ws_router)  # WebSocket for real-time notifications
-app.include_router(chat_ws_router)           # WebSocket for real-time chat
+# webrtc, notifications_ws, chat_ws moved to the top
 app.include_router(contracts_router, prefix="/api")  # Contracts API
 app.include_router(products_router, prefix="/api")  # Products API
 app.include_router(invoices_router, prefix="/api")  # Invoices API
