@@ -12,7 +12,7 @@ import { Label } from '../../components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { api } from '../../services/api';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart, Area } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { useCurrency } from '../../hooks/useSalonSettings';
 
 interface Client {
@@ -614,7 +614,7 @@ export default function ClientDetail() {
                     <TrendingUp className="w-5 h-5 text-pink-500" />
                     {t('visits_dynamics', 'Visit dynamics')}
                   </p>
-                  <ResponsiveContainer width="100%" height="200">
+                  <ResponsiveContainer width="100%" height={200}>
                     <BarChart data={stats.visits_chart} margin={{ top: 20, right: 10, left: 0, bottom: 0 }}>
                       <defs>
                         <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
@@ -827,13 +827,13 @@ export default function ClientDetail() {
                 </div>
                 <div className="grid grid-cols-2 gap-px bg-gray-200 h-48">
                   <div className="relative">
-                    <img src={entry.before_photo} alt="Before" className="w-full h-full object-cover" />
+                    <img src={entry.before_photo} alt={t('photo_before')} className="w-full h-full object-cover" />
                     <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded">
                       {t('before')}
                     </div>
                   </div>
                   <div className="relative">
-                    <img src={entry.after_photo} alt="After" className="w-full h-full object-cover" />
+                    <img src={entry.after_photo} alt={t('photo_after')} className="w-full h-full object-cover" />
                     <div className="absolute top-2 left-2 bg-pink-600 text-white text-[10px] px-1.5 py-0.5 rounded">
                       {t('after')}
                     </div>
@@ -867,7 +867,7 @@ export default function ClientDetail() {
               <Label>{t('photo_before')}</Label>
               <div className="aspect-square border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center relative overflow-hidden bg-gray-50">
                 {galleryFormData.before_photo ? (
-                  <img src={galleryFormData.before_photo} className="w-full h-full object-cover" />
+                  <img src={galleryFormData.before_photo} alt={t('photo_before')} className="w-full h-full object-cover" />
                 ) : (
                   <Upload className="w-8 h-8 text-gray-300" />
                 )}
@@ -888,7 +888,7 @@ export default function ClientDetail() {
               <Label>{t('photo_after')}</Label>
               <div className="aspect-square border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center relative overflow-hidden bg-gray-50">
                 {galleryFormData.after_photo ? (
-                  <img src={galleryFormData.after_photo} className="w-full h-full object-cover" />
+                  <img src={galleryFormData.after_photo} alt={t('photo_after')} className="w-full h-full object-cover" />
                 ) : (
                   <Upload className="w-8 h-8 text-gray-300" />
                 )}
