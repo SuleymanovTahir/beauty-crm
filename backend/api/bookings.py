@@ -197,6 +197,9 @@ async def list_bookings(
         # get_filtered_bookings handles user_id check.
 
     # Fetch data
+    import time
+    start_time = time.time()
+    
     bookings, total_results = get_filtered_bookings(
         limit=limit,
         offset=offset,
@@ -209,6 +212,9 @@ async def list_bookings(
         sort_by=sort,
         order=order
     )
+    
+    db_duration = time.time() - start_time
+    log_info(f"⏱️ get_filtered_bookings took {db_duration:.4f}s for {limit} items", "perf")
 
     # Fetch Stats (Global or Filtered)
     stats = get_booking_stats(

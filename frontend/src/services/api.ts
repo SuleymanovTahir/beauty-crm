@@ -8,6 +8,9 @@ export class ApiClient {
     this.baseURL = baseURL
   }
 
+  static longestRequest = { url: '', duration: 0 }
+
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -36,8 +39,29 @@ export class ApiClient {
     defaultOptions.signal = controller.signal
 
     try {
+      const startTime = performance.now()
       const response = await fetch(url, defaultOptions)
+      const endTime = performance.now()
+      const duration = endTime - startTime
       clearTimeout(timeoutId)
+
+      // Log request timing
+      const durationFormatted = duration.toFixed(2) + 'ms'
+
+      if (duration > 1000) {
+        console.warn(`⚠️ SLOW REQUEST: ${endpoint} took ${durationFormatted}`, {
+          url: url,
+          duration: duration
+        })
+      } else {
+        console.log(`⏱️ API Request: ${endpoint} took ${durationFormatted}`)
+      }
+
+      // Track longest request
+      if (duration > ApiClient.longestRequest.duration) {
+        ApiClient.longestRequest = { url: endpoint, duration: duration }
+        console.log(`🐢 NEW RECORD: Slowest request so far is ${endpoint} (${durationFormatted})`)
+      }
 
       if (response.status === 401) {
         localStorage.removeItem('user')

@@ -36,7 +36,11 @@ async def list_services(
     if cached_data:
         return cached_data
 
+    import time
+    start_time = time.time()
     services = get_all_services(active_only=active_only)
+    duration = time.time() - start_time
+    log_info(f"⏱️ get_all_services took {duration:.4f}s returning {len(services)} items", "perf")
     
     result = {
         "services": [
