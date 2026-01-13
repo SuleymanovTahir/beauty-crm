@@ -215,21 +215,34 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
     });
   };
 
-  // СТАЛО:
-  const getBookingsForSlot = (date: Date, hour: number) => {
-    return bookings.filter(b => {
-      const bookingDate = new Date(b.datetime);
-      const bookingHour = bookingDate.getHours();
+  // ОПТИМИЗАЦИЯ: Предварительное вычисление карты бронирований
+  // Ключ: "YYYY-MM-DD-HH" (например "2023-10-25-14")
+  const bookingsMap = useMemo(() => {
+    const map: Record<string, Booking[]> = {};
 
-      return (
-        bookingDate.toDateString() === date.toDateString() &&
-        bookingHour === hour &&
-        b.status !== 'cancelled' && // ✅ Exclude cancelled bookings
-        (!employeeId || (b.master && b.master.toUpperCase() === employeeId.toUpperCase())) &&  // ✅ Case-insensitive
-        (selectedEmployee === 'all' || !selectedEmployee || !b.master || b.master.toUpperCase() === selectedEmployee.toUpperCase()) &&  // ✅ Case-insensitive
-        (selectedService === 'all' || !selectedService || b.service === selectedService)
-      );
+    bookings.forEach(b => {
+      // Исключаем отмененные
+      if (b.status === 'cancelled') return;
+
+      // Фильтры
+      if (employeeId && b.master && b.master.toUpperCase() !== employeeId.toUpperCase()) return;
+      if (selectedEmployee !== 'all' && selectedEmployee && b.master && b.master.toUpperCase() !== selectedEmployee.toUpperCase()) return;
+      if (selectedService !== 'all' && selectedService && b.service !== selectedService) return;
+
+      const d = new Date(b.datetime);
+      // Ключ: YYYY-MM-DD-HH
+      const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}`;
+
+      if (!map[key]) map[key] = [];
+      map[key].push(b);
     });
+
+    return map;
+  }, [bookings, employeeId, selectedEmployee, selectedService]);
+
+  const getBookingsForSlot = (date: Date, hour: number) => {
+    const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${hour}`;
+    return bookingsMap[key] || [];
   };
 
   const getBookingsForDay = (day: Date) => {

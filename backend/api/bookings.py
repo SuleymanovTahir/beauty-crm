@@ -217,6 +217,7 @@ async def list_bookings(
     log_info(f"⏱️ get_filtered_bookings took {db_duration:.4f}s for {limit} items", "perf")
 
     # Fetch Stats (Global or Filtered)
+    t1 = time.time()
     stats = get_booking_stats(
         search=search,
         master=master,
@@ -224,15 +225,19 @@ async def list_bookings(
         date_to=date_to,
         user_id=filter_user_id
     )
+    log_info(f"⏱️ get_booking_stats took {time.time() - t1:.4f}s", "perf")
 
     # Добавляем информацию о мессенджерах для каждой записи
     bookings_with_messengers = []
 
     # Оптимизация: получаем всех мессенджеров одним запросом
+    t2 = time.time()
     client_ids = list(set([b[1] for b in bookings if b[1]]))  # Уникальные client_id
-    all_messengers = get_all_client_messengers(client_ids)
+    all_messengers = get_all_client_messengers(client_ids) if client_ids else {}
+    log_info(f"⏱️ get_all_client_messengers took {time.time() - t2:.4f}s for {len(client_ids)} clients", "perf")
 
     # Оптимизация: получаем все телефоны клиентов одним запросом
+    t3 = time.time()
     client_phones = {}
     if client_ids:
         conn = get_db_connection()
@@ -242,7 +247,9 @@ async def list_bookings(
             if row[0] and row[1]:
                 client_phones[row[0]] = row[1]
         conn.close()
+    log_info(f"⏱️ fetching_client_phones took {time.time() - t3:.4f}s", "perf")
 
+    t4 = time.time()
     for b in bookings:
         client_id = b[1]
         messengers = all_messengers.get(client_id, [])
@@ -270,6 +277,8 @@ async def list_bookings(
             "source": b[11] if len(b) > 11 else 'manual',
             "messengers": messengers
         })
+    log_info(f"⏱️ formatting_response took {time.time() - t4:.4f}s", "perf")
+    log_info(f"⏱️ TOTAL list_bookings took {time.time() - start_time:.4f}s", "perf")
 
     return {
         "bookings": bookings_with_messengers,
