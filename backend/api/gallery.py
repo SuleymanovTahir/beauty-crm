@@ -70,8 +70,12 @@ async def get_gallery_images(
         conn.close()
 
         duration = time.time() - start_time
+        duration = time.time() - start_time
         log_info(f"⏱️ get_gallery_images took {duration:.4f}s returning {len(images)} images", "api")
-        return {"success": True, "images": images}
+        
+        response = JSONResponse({"success": True, "images": images})
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        return response
 
     except Exception as e:
         log_error(f"❌ [Gallery] Error getting gallery images: {e}", "api")

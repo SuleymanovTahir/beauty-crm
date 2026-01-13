@@ -50,6 +50,9 @@ from .bookings import (
     check_if_urgent_booking,              # #18
     get_clients_for_rebooking,            # #16
     get_upcoming_bookings,                # #15
+    get_filtered_bookings,                # ✅ Pagination
+    count_all_bookings,                   # ✅ Pagination
+    get_booking_stats,                    # ✅ Stats
 )
 
 # Услуги
@@ -171,6 +174,9 @@ __all__ = [
     "get_bookings_by_phone",
     "get_bookings_by_client",
     "get_bookings_by_master",
+    "get_filtered_bookings",
+    "count_all_bookings",
+    "get_booking_stats",
 
     # Services
     "get_all_services",

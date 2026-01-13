@@ -265,8 +265,10 @@ async def get_chat_users(session_token: Optional[str] = Cookie(None)):
     } for row in c.fetchall()]
 
     conn.close()
-
-    return {"users": users}
+    
+    response = JSONResponse({"users": users})
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    return response
 
 @router.get("/unread-count")
 async def get_unread_count(session_token: Optional[str] = Cookie(None)):

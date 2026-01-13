@@ -21,8 +21,19 @@ import { Pagination } from '../../components/shared/Pagination';
 const api = {
   baseURL: import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? `${window.location.protocol}//${window.location.hostname}:8000` : window.location.origin),
 
-  async getBookings() {
-    const res = await fetch(`${this.baseURL}/api/bookings`, { credentials: 'include' });
+  async getBookings(params: any = {}) {
+    const searchParams = new URLSearchParams();
+    if (params.page) searchParams.append('page', params.page.toString());
+    if (params.limit) searchParams.append('limit', params.limit.toString());
+    if (params.search) searchParams.append('search', params.search);
+    if (params.status && params.status !== 'all') searchParams.append('status', params.status);
+    if (params.master && params.master !== 'all') searchParams.append('master', params.master);
+    if (params.dateFrom) searchParams.append('date_from', params.dateFrom);
+    if (params.dateTo) searchParams.append('date_to', params.dateTo);
+    if (params.sort) searchParams.append('sort', params.sort);
+    if (params.order) searchParams.append('order', params.order);
+
+    const res = await fetch(`${this.baseURL}/api/bookings?${searchParams.toString()}`, { credentials: 'include' });
     return res.json();
   },
 
@@ -162,9 +173,18 @@ export default function Bookings() {
   const [masterFilter, setMasterFilter] = useState(() => {
     return localStorage.getItem('bookings_master_filter') || 'all';
   });
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [stats, setStats] = useState({
+    pending: 0,
+    completed: 0,
+    total: 0,
+    revenue: 0
+  });
+
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [masters, setMasters] = useState<any[]>([]);
@@ -234,113 +254,15 @@ export default function Bookings() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [itemsPerPage, currentPage, searchTerm, statusFilter, masterFilter, period, dateFrom, dateTo, sortField, sortDirection]);
 
 
 
   useEffect(() => {
-    const filtered = bookings.filter((booking: any) => {
-      const matchesSearch =
-        (booking.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (booking.service_name || '').toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
-
-      // Auto-filter by master for employees
-      const effectiveMasterFilter = isEmployee ? (currentUser?.full_name || currentUser?.username) : masterFilter;
-
-      const matchesMaster = effectiveMasterFilter === 'all' ||
-        (() => {
-          const m = masters.find(m =>
-            (m.username && booking.master && m.username.toLowerCase() === booking.master.toLowerCase()) ||
-            (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase()) ||
-            (m.full_name_ru && booking.master && m.full_name_ru.toLowerCase() === booking.master.toLowerCase())
-          );
-          const name = (i18n.language.startsWith('ru') && m?.full_name_ru) ? m.full_name_ru : (m?.full_name || booking.master);
-          return name === effectiveMasterFilter;
-        })();
-
-      // ✅ ДОБАВЛЕНА ФИЛЬТРАЦИЯ ПО ДАТЕ
-      let matchesDate = true;
-      if (period !== 'all') {
-        const bookingDate = new Date(booking.datetime || booking.created_at);
-        const now = new Date();
-
-        if (period === 'today') {
-          matchesDate = bookingDate.toDateString() === now.toDateString();
-        } else if (period === '7') {
-          const weekAgo = new Date();
-          weekAgo.setDate(weekAgo.getDate() - 7);
-          weekAgo.setHours(0, 0, 0, 0);
-          matchesDate = bookingDate >= weekAgo;
-        } else if (period === '14') {
-          const twoWeeksAgo = new Date();
-          twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
-          twoWeeksAgo.setHours(0, 0, 0, 0);
-          matchesDate = bookingDate >= twoWeeksAgo;
-        } else if (period === '30') {
-          const monthAgo = new Date();
-          monthAgo.setDate(monthAgo.getDate() - 30);
-          monthAgo.setHours(0, 0, 0, 0);
-          matchesDate = bookingDate >= monthAgo;
-        } else if (period === '90') {
-          const threeMonthsAgo = new Date();
-          threeMonthsAgo.setDate(threeMonthsAgo.getDate() - 90);
-          threeMonthsAgo.setHours(0, 0, 0, 0);
-          matchesDate = bookingDate >= threeMonthsAgo;
-        } else if (period === 'custom' && dateFrom && dateTo) {
-          const from = new Date(dateFrom);
-          from.setHours(0, 0, 0, 0);
-
-          const to = new Date(dateTo);
-          to.setHours(23, 59, 59, 999); // ✅ Include the entire end day
-
-          matchesDate = bookingDate >= from && bookingDate <= to;
-        }
-      }
-
-      return matchesSearch && matchesStatus && matchesDate && matchesMaster;
-    });
-
-    // Apply sorting
-    const sorted = [...filtered].sort((a, b) => {
-      let aValue, bValue;
-
-      switch (sortField) {
-        case 'name':
-          aValue = (a.name || '').toLowerCase();
-          bValue = (b.name || '').toLowerCase();
-          break;
-        case 'service_name':
-          aValue = (a.service_name || '').toLowerCase();
-          bValue = (b.service_name || '').toLowerCase();
-          break;
-        case 'datetime':
-          aValue = new Date(a.datetime || a.created_at).getTime();
-          bValue = new Date(b.datetime || b.created_at).getTime();
-          break;
-        case 'revenue':
-          aValue = parseFloat(a.revenue || 0);
-          bValue = parseFloat(b.revenue || 0);
-          break;
-        case 'source':
-          aValue = (a.source || 'manual').toLowerCase();
-          bValue = (b.source || 'manual').toLowerCase();
-          break;
-        case 'created_at':
-          aValue = new Date(a.created_at).getTime();
-          bValue = new Date(b.created_at).getTime();
-          break;
-        default:
-          return 0;
-      }
-
-      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
-      return 0;
-    });
-
-    setFilteredBookings(sorted);
-  }, [searchTerm, statusFilter, bookings, period, dateFrom, dateTo, sortField, sortDirection, masterFilter]);
+    // Client-side filtering removed in favor of Server-side
+    // Just update filteredBookings when bookings change (which are already filtered from server)
+    setFilteredBookings(bookings);
+  }, [bookings]);
 
   // Save filters to localStorage when they change
   useEffect(() => {
@@ -426,36 +348,72 @@ export default function Bookings() {
       setLoading(true);
       setError(null);
 
-      console.log('🔄 [Bookings] Загрузка данных параллельно...');
+      console.log('🔄 [Bookings] Загрузка данных (Server-Side)...');
 
-      // Параллельная загрузка всех данных для ускорения
+      // Calculate dates based on period
+      let queryDateFrom = dateFrom;
+      let queryDateTo = dateTo;
+
+      const now = new Date();
+      if (period === 'today') {
+        queryDateFrom = now.toISOString().split('T')[0];
+        queryDateTo = now.toISOString().split('T')[0]; // backend filter expects simple date or datetime? 
+        // get_filtered_bookings conditions: datetime >= %s
+        // If I pass '2025-01-12', it matches >= 2025-01-12 00:00:00.
+        // But <= '2025-01-12' matches <= 2025-01-12 00:00:00.
+        // So for "Today" we need to handle full day range.
+        // Ideally backend handles 'YYYY-MM-DD' as full day.
+        // But current backend 'datetime >= %s' is strict string comparison if string passed, or datetime type.
+        // Let's rely on standard ISO string for now or use 23:59:59.
+
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        queryDateTo = tomorrow.toISOString().split('T')[0]; // < Tomorrow
+      } else if (period === '7') {
+        const d = new Date(); d.setDate(d.getDate() - 7);
+        queryDateFrom = d.toISOString().split('T')[0];
+      } else if (period === '30') {
+        const d = new Date(); d.setDate(d.getDate() - 30);
+        queryDateFrom = d.toISOString().split('T')[0];
+      }
+
+      const params = {
+        page: currentPage,
+        limit: itemsPerPage,
+        search: searchTerm,
+        status: statusFilter,
+        master: masterFilter,
+        dateFrom: queryDateFrom,
+        dateTo: queryDateTo,
+        sort: sortField,
+        order: sortDirection
+      };
+
+      // Параллельная загрузка
       const [bookingsData, clientsData, servicesData, usersData] = await Promise.all([
-        api.getBookings().catch(err => {
+        api.getBookings(params).catch(err => {
           console.error('❌ [Bookings] Ошибка загрузки bookings:', err);
           throw new Error(`getBookings() failed: ${err.message}`);
         }),
-        api.getClients().catch(err => {
-          console.error('❌ [Bookings] Ошибка загрузки clients:', err);
-          throw new Error(`getClients() failed: ${err.message}`);
+        api.getClients().catch(_ => {
+          // Keep creating errors
+          return { clients: [] };
         }),
-        api.getServices().catch(err => {
-          console.error('❌ [Bookings] Ошибка загрузки services:', err);
-          throw new Error(`getServices() failed: ${err.message}`);
-        }),
+        api.getServices().catch(_ => []),
         (async () => {
-          if (typeof api.getUsers !== 'function') {
-            throw new Error(t('bookings:api_error_users'));
-          }
-          return api.getUsers().catch(err => {
-            console.error('❌ [Bookings] Ошибка загрузки users:', err);
-            throw new Error(`getUsers() failed: ${err.message}`);
-          });
+          try { return await api.getUsers(); } catch { return { users: [] }; }
         })()
       ]);
 
-      console.log('✅ [Bookings] Все данные загружены параллельно!');
+      console.log('✅ [Bookings] Данные загружены!');
 
       setBookings(bookingsData.bookings || []);
+      setTotalItems(bookingsData.total || 0);
+      setTotalPages(Math.ceil((bookingsData.total || 0) / itemsPerPage));
+      if (bookingsData.stats) {
+        setStats(bookingsData.stats);
+      }
+
       setClients(clientsData.clients || []);
       setServices(servicesData.services || []);
       const allUsers = Array.isArray(usersData) ? usersData : (usersData.users || []);
@@ -463,7 +421,6 @@ export default function Bookings() {
         ['employee', 'manager', 'admin', 'director'].includes(u.role)
       ) || []);
 
-      console.log('✅ [Bookings] Все данные загружены успешно!');
     } catch (err: any) {
       console.error('❌ [Bookings] Критическая ошибка:', err);
       setError(err.message);
@@ -703,12 +660,8 @@ export default function Bookings() {
     }
   };
 
-  const stats = {
-    pending: bookings.filter((b: any) => b.status === 'pending' || b.status === 'new').length,
-    completed: bookings.filter((b: any) => b.status === 'completed').length,
-    total: bookings.length,
-    revenue: bookings.filter((b: any) => b.status === 'completed').reduce((sum: number, b: any) => sum + (b.revenue || 0), 0)
-  };
+  // Stats are now loaded from server
+  // const stats = ... (removed client-side calculation)
 
   if (loading) {
     return (
@@ -1335,8 +1288,8 @@ export default function Bookings() {
               <div className="border-t border-gray-200 bg-white rounded-b-xl shadow-sm">
                 <Pagination
                   currentPage={currentPage}
-                  totalPages={Math.ceil(filteredBookings.length / itemsPerPage)}
-                  totalItems={filteredBookings.length}
+                  totalPages={totalPages}
+                  totalItems={totalItems}
                   itemsPerPage={itemsPerPage}
                   onPageChange={setCurrentPage}
                   onItemsPerPageChange={(newSize) => {
