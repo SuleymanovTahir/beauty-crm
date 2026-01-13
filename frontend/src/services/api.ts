@@ -849,6 +849,12 @@ export class ApiClient {
     })
   }
 
+  async emptyTrash() {
+    return this.request('/api/admin/trash/empty', {
+      method: 'DELETE',
+    })
+  }
+
   // ===== ЖУРНАЛ АУДИТА (AUDIT LOG) =====
   async getAuditLog(filters: { entity_type?: string; entity_id?: string; user_id?: number; action?: string; limit?: number } = {}) {
     const params = new URLSearchParams()

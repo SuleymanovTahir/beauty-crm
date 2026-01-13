@@ -31,6 +31,20 @@ export const useChatWebSocket = ({
     autoReconnect = true,
     reconnectInterval = 5000
 }: UseChatWebSocketOptions) => {
+    // Store callbacks in refs to avoid reconnection on re-renders
+    const onNewMessageRef = useRef(onNewMessage);
+    const onTypingRef = useRef(onTyping);
+    const onConnectedRef = useRef(onConnected);
+    const onDisconnectedRef = useRef(onDisconnected);
+
+    // Update refs when props change
+    useEffect(() => {
+        onNewMessageRef.current = onNewMessage;
+        onTypingRef.current = onTyping;
+        onConnectedRef.current = onConnected;
+        onDisconnectedRef.current = onDisconnected;
+    }, [onNewMessage, onTyping, onConnected, onDisconnected]);
+
     const [isConnected, setIsConnected] = useState(false);
     const wsRef = useRef<WebSocket | null>(null);
     const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -72,7 +86,7 @@ export const useChatWebSocket = ({
                     case 'connected':
                         console.log('💬 [Chat WS] Authenticated');
                         setIsConnected(true);
-                        onConnected?.();
+                        if (onConnectedRef.current) onConnectedRef.current();
 
                         // Начинаем ping для поддержания соединения
                         if (pingIntervalRef.current) clearInterval(pingIntervalRef.current);
@@ -86,13 +100,13 @@ export const useChatWebSocket = ({
                     case 'new_message':
                         console.log('💬 [Chat WS] New message for client:', data.client_id);
                         if (data.client_id && data.message) {
-                            onNewMessage?.(data.client_id, data.message);
+                            if (onNewMessageRef.current) onNewMessageRef.current(data.client_id, data.message);
                         }
                         break;
 
                     case 'typing':
                         if (data.client_id) {
-                            onTyping?.(data.client_id, !!data.is_typing);
+                            if (onTypingRef.current) onTypingRef.current(data.client_id, !!data.is_typing);
                         }
                         break;
 
@@ -118,7 +132,7 @@ export const useChatWebSocket = ({
         ws.onclose = () => {
             console.log('💬 [Chat WS] Disconnected');
             setIsConnected(false);
-            onDisconnected?.();
+            if (onDisconnectedRef.current) onDisconnectedRef.current();
 
             if (pingIntervalRef.current) {
                 clearInterval(pingIntervalRef.current);
@@ -133,7 +147,7 @@ export const useChatWebSocket = ({
         };
 
         wsRef.current = ws;
-    }, [userId, onNewMessage, onTyping, onConnected, onDisconnected, autoReconnect, reconnectInterval]);
+    }, [userId, autoReconnect, reconnectInterval]);
 
     const disconnect = useCallback(() => {
         if (reconnectTimeoutRef.current) {

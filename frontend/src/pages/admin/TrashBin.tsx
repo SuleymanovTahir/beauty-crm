@@ -129,6 +129,27 @@ const TrashBin: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
+                    {items.length > 0 && (
+                        <Button
+                            onClick={async () => {
+                                if (window.confirm(t('confirm_empty_trash') || 'Are you sure you want to permanently delete all items?')) {
+                                    try {
+                                        await api.emptyTrash();
+                                        toast.success(t('toast.trash_emptied') || 'Trash emptied');
+                                        fetchItems();
+                                    } catch (e) {
+                                        toast.error(t('toast.empty_error') || 'Error emptying trash');
+                                    }
+                                }
+                            }}
+                            variant="destructive"
+                            size="sm"
+                            className="mr-2"
+                        >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            {t('empty_trash') || 'Empty Trash'}
+                        </Button>
+                    )}
                     <Button
                         onClick={handleRefresh}
                         variant="outline"
