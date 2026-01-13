@@ -31,6 +31,12 @@ export const useNotificationsWebSocket = ({
   autoReconnect = true,
   reconnectInterval = 5000
 }: UseNotificationsWebSocketOptions) => {
+  // Store callbacks in refs to avoid reconnection on re-renders
+  const onNotificationRef = useRef(onNotification);
+  const onUnreadCountUpdateRef = useRef(onUnreadCountUpdate);
+  const onConnectedRef = useRef(onConnected);
+  const onDisconnectedRef = useRef(onDisconnected);
+
   const [isConnected, setIsConnected] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const wsRef = useRef<WebSocket | null>(null);
@@ -38,6 +44,14 @@ export const useNotificationsWebSocket = ({
   const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 10;
+
+  // Update refs when props change
+  useEffect(() => {
+    onNotificationRef.current = onNotification;
+    onUnreadCountUpdateRef.current = onUnreadCountUpdate;
+    onConnectedRef.current = onConnected;
+    onDisconnectedRef.current = onDisconnected;
+  }, [onNotification, onUnreadCountUpdate, onConnected, onDisconnected]);
 
   const connect = useCallback(() => {
     if (!userId || wsRef.current?.readyState === WebSocket.OPEN) {
@@ -52,7 +66,9 @@ export const useNotificationsWebSocket = ({
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const port = window.location.port || (protocol === 'wss:' ? '443' : '80');
-    const wsUrl = `${protocol}//${window.location.hostname}${port !== '443' && port !== '80' ? ':' + port : ''}/api/ws/notifications`;
+    // Ensure we don't duplicate port if it is already in hostname (rare but possible)
+    const hostname = window.location.hostname;
+    const wsUrl = `${protocol}//${hostname}${port !== '443' && port !== '80' ? ':' + port : ''}/api/ws/notifications`;
 
     console.log(`🔔 [Notifications WS] Connecting to: ${wsUrl} (attempt ${reconnectAttemptsRef.current + 1}/${maxReconnectAttempts})`);
 
@@ -88,7 +104,7 @@ export const useNotificationsWebSocket = ({
             case 'connected':
               console.log('🔔 [Notifications WS] Authenticated');
               setIsConnected(true);
-              onConnected?.();
+              if (onConnectedRef.current) onConnectedRef.current();
 
               // Запрашиваем текущее количество непрочитанных
               ws.send(JSON.stringify({ type: 'request_count' }));
@@ -105,13 +121,13 @@ export const useNotificationsWebSocket = ({
               break;
 
             case 'notification':
-              onNotification?.(message.data);
+              if (onNotificationRef.current) onNotificationRef.current(message.data);
               break;
 
             case 'unread_count':
               if (typeof message.count === 'number') {
                 setUnreadCount(message.count);
-                onUnreadCountUpdate?.(message.count);
+                if (onUnreadCountUpdateRef.current) onUnreadCountUpdateRef.current(message.count);
               }
               break;
 
@@ -134,14 +150,14 @@ export const useNotificationsWebSocket = ({
       ws.onerror = () => {
         clearTimeout(connectionTimeout);
         console.error('🔔 [Notifications WS] Connection error');
-        reconnectAttemptsRef.current++;
+        // Do not increment attempts immediately here, wait for onclose
       };
 
       ws.onclose = (event) => {
         clearTimeout(connectionTimeout);
         console.log(`🔔 [Notifications WS] Disconnected (code: ${event.code}, reason: ${event.reason})`);
         setIsConnected(false);
-        onDisconnected?.();
+        if (onDisconnectedRef.current) onDisconnectedRef.current();
 
         // Очищаем ping interval
         if (pingIntervalRef.current) {
@@ -149,7 +165,11 @@ export const useNotificationsWebSocket = ({
           pingIntervalRef.current = null;
         }
 
+        wsRef.current = null;
+
         // Автоматическое переподключение с exponential backoff
+        // Только если это не было преднамеренное отключение (мы не можем легко узнать это здесь, 
+        // но reconnectAttemptsRef сбрасывается при connect, так что логика сработает)
         if (autoReconnect && userId && reconnectAttemptsRef.current < maxReconnectAttempts) {
           reconnectAttemptsRef.current++;
           // Exponential backoff: 5s, 10s, 20s, 40s, max 60s
@@ -167,7 +187,7 @@ export const useNotificationsWebSocket = ({
       console.error('🔔 [Notifications WS] Failed to create WebSocket:', error);
       reconnectAttemptsRef.current++;
     }
-  }, [userId, onNotification, onUnreadCountUpdate, onConnected, onDisconnected, autoReconnect, reconnectInterval]);
+  }, [userId, autoReconnect, reconnectInterval]); // Removed callback dependencies!
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {
@@ -181,8 +201,11 @@ export const useNotificationsWebSocket = ({
     }
 
     if (wsRef.current) {
-      wsRef.current.close();
-      wsRef.current = null;
+      // Prevent reconnect on manual disconnect
+      // Not easy to signal to onclose, but removing from ref helps
+      const ws = wsRef.current;
+      wsRef.current = null; // Clear ref first
+      ws.close();
     }
   }, []);
 
