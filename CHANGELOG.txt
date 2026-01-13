@@ -1058,13 +1058,16 @@ format_duration_display(90, 'hi')  # → "1घंटा 30मिनट"
     - Ported BookingMenu, ServicesStep, ProfessionalStep, DateTimeStep, and ConfirmStep for pixel-perfect design.
     - Isolated UI components (Calendar, Button, Card) to ensure high-fidelity without global side-effects.
     - Preserved and integrated existing api service, i18n, and state management.
+    - Fixed schedule race condition with UPSERT (ON CONFLICT) in master_schedule.py and api/schedule.py
     - Fixed relative import paths for deeper nested components to ensure successful build.
+- [Gallery] Added `is_visible` column to `gallery_photos` for visibility control.
+- [Gallery] Fixed photo deletion to correctly remove `before` and `after` images.
+- [Gallery] Added visibility toggle button in Admin Panel. successful build.
     - Synchronized core CSS variables and design tokens from `new_admin/theme.css`.
     - Fully synchronized the entire style system, including @theme and typography layers.
     - Updated `UserBookingWizard.tsx` layout to match the original app container and header classes.
 - ✅ Implemented complete redesign of `UserBookingWizard.tsx` matching `new_admin` aesthetics.
 - ✅ Integrated premium design tokens (gradients, shadows, blurs) into `UserBookingWizard.css`.
-- ✅ Redesigned `BookingMenu` with modern step cards and session summary.
 - ✅ Modernized `ServicesStep` with search, category pills, and premium service cards.
 - ✅ Updated `ProfessionalStep` with large avatars, ratings, and bottom persistence bar.
 - ✅ Polished `DateTimeStep` calendar and time slot selection grid (preserving core logic).

@@ -184,6 +184,7 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 u.is_public_visible,
                 u.sort_order
             FROM users u
+            WHERE u.deleted_at IS NULL
             ORDER BY u.sort_order ASC, u.created_at DESC
         """)
 

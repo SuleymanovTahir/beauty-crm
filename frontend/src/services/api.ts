@@ -477,6 +477,7 @@ export class ApiClient {
     telegram?: string;
     whatsapp?: string;
     instagram_link?: string;
+    is_public_visible?: boolean;
   }) {
     return this.request(`/api/users/${userId}/update-profile`, {
       method: 'POST',

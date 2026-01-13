@@ -15,6 +15,7 @@ import { PermissionsTab } from '../../components/admin/PermissionsTab';
 import { ScheduleDialog } from '../../components/admin/ScheduleDialog';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { useCurrency } from '../../hooks/useSalonSettings';
+import { Switch } from '../../components/ui/switch';
 
 import { getPhotoUrl } from '../../utils/photoUtils';
 
@@ -45,6 +46,7 @@ interface User {
   photo?: string;
   first_contact?: string;
   last_contact?: string;
+  is_public_visible?: boolean;
 }
 
 export default function Users() {
@@ -233,6 +235,21 @@ export default function Users() {
       const message = err instanceof Error ? err.message : t('error_deleting_user');
       toast.error(`${t('error')}: ${message} `);
       console.error('Error deleting user:', err);
+    }
+  };
+
+  const handleToggleVisibility = async (user: User, newValue: boolean) => {
+    try {
+      // Optimistic update
+      setUsers(users.map(u => u.id === user.id ? { ...u, is_public_visible: newValue } : u));
+
+      await api.updateUserProfile(user.id, { is_public_visible: newValue });
+      toast.success(t('visibility_updated', 'Видимость обновлена'));
+    } catch (err) {
+      // Revert on error
+      setUsers(users.map(u => u.id === user.id ? { ...u, is_public_visible: !newValue } : u));
+      const message = err instanceof Error ? err.message : t('error_updating_user');
+      toast.error(message);
     }
   };
 
@@ -445,13 +462,23 @@ export default function Users() {
           </div>
           {/* Кнопка создания только для тех, у кого есть право */}
           {permissions.canCreateUsers && (
-            <Button
-              className="bg-pink-600 hover:bg-pink-700"
-              onClick={() => navigate('/crm/users/create')}
-            >
-              <UserPlus className="w-4 h-4 mr-2" />
-              {t('add_user')}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                className="text-gray-700 hover:text-gray-900 border-gray-300"
+                onClick={() => navigate('/crm/employees')}
+              >
+                <UsersIcon className="w-4 h-4 mr-2" />
+                {t('manage_public_order', 'Порядок на сайте')}
+              </Button>
+              <Button
+                className="bg-pink-600 hover:bg-pink-700"
+                onClick={() => navigate('/crm/users/create')}
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                {t('add_user')}
+              </Button>
+            </div>
           )}
         </div>
       </div>
@@ -473,6 +500,7 @@ export default function Users() {
                     <>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_role', 'Роль')}</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_position', 'Должность')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_public', 'Сайт')}</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_is_active', 'Активен')}</th>
                     </>
                   ) : (
@@ -521,6 +549,13 @@ export default function Users() {
                           </Badge>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">{(user as any).position || '-'}</td>
+                        <td className="px-6 py-4">
+                          <Switch
+                            checked={!!(user as any).is_public_visible}
+                            onCheckedChange={(checked) => handleToggleVisibility(user, checked)}
+                            disabled={!permissions.canEditUsers}
+                          />
+                        </td>
                         <td className="px-6 py-4">
                           <Badge className={(user as any).is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
                             {(user as any).is_active ? t('active', 'Активен') : t('inactive', 'Неактивен')}

@@ -175,7 +175,11 @@ async def get_public_employees(
         log_info(f"⏱️ get_public_employees took {duration:.4f}s returning {len(employees)} employees", "api")
 
         log_info(f"Получено {len(employees)} сотрудников на языке {language}", "api")
-        return employees
+        
+        from fastapi.responses import JSONResponse
+        response = JSONResponse(employees)
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        return response
         
     except Exception as e:
         log_info(f"Ошибка получения сотрудников: {e}", "api")

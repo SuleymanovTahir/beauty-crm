@@ -1,8 +1,8 @@
 // /frontend/src/pages/adminPanel/PhotoGallery.tsx
 import { useState, useEffect } from 'react';
-import { Plus, Upload, Trash2, Eye, Image as ImageIcon, Search, Filter } from 'lucide-react';
+import { Plus, Upload, Trash2, Eye, EyeOff, Image as ImageIcon, Search, Filter, Maximize2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
@@ -30,6 +30,7 @@ interface GalleryPhoto {
   before_photo_url?: string;
   after_photo_url?: string;
   client_id?: string;
+  is_visible?: boolean;
 }
 
 interface UploadStats {
@@ -296,6 +297,26 @@ export default function PhotoGallery() {
     }
   };
 
+  const handleToggleVisibility = async (id: string, currentStatus: boolean) => {
+    try {
+      const response = await fetch(`/api/admin/gallery/photos/${id}/visibility`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ is_visible: !currentStatus }),
+      });
+
+      if (response.ok) {
+        toast.success(t('toasts.visibility_updated', 'Visibility updated'));
+        loadPhotos();
+      } else {
+        throw new Error('Failed to update visibility');
+      }
+    } catch (error) {
+      toast.error(t('toasts.failed_visibility', 'Failed to update visibility'));
+    }
+  };
+
   // Функция для получения label категории
   const getCategoryLabel = (categoryValue: string): string => {
     const category = categories.find(cat => cat.value === categoryValue);
@@ -357,6 +378,14 @@ export default function PhotoGallery() {
       bgColor: 'bg-orange-100',
     },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -429,7 +458,7 @@ export default function PhotoGallery() {
       {/* Photo Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredPhotos.map((photo) => (
-          <Card key={photo.id} className="overflow-hidden group">
+          <Card key={photo.id} className={`overflow-hidden group ${photo.is_visible === false ? 'opacity-75 border-dashed' : ''}`}>
             <div className="relative aspect-square">
               <img
                 src={photo.url}
@@ -445,7 +474,15 @@ export default function PhotoGallery() {
                     setShowPreviewDialog(true);
                   }}
                 >
-                  <Eye className="w-4 h-4" />
+                  <Maximize2 className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => handleToggleVisibility(photo.id, photo.is_visible !== false)}
+                  title={photo.is_visible !== false ? t('actions.hide', 'Hide') : t('actions.show', 'Show')}
+                >
+                  {photo.is_visible !== false ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                 </Button>
                 <Button
                   variant="secondary"

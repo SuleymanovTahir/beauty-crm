@@ -109,7 +109,7 @@ async def notifications_websocket(websocket: WebSocket):
                     from db.connection import get_db_connection
                     conn = get_db_connection()
                     c = conn.cursor()
-                    c.execute("SELECT COUNT(*) FROM notifications WHERE user_id = %s AND read = FALSE", (user_id,))
+                    c.execute("SELECT COUNT(*) FROM notifications WHERE user_id = %s AND is_read = FALSE", (user_id,))
                     count = c.fetchone()[0]
                     conn.close()
 

@@ -1,7 +1,7 @@
 // /frontend/src/pages/admin/EmployeeManagement.tsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Search, Plus, ArrowLeft, GripVertical, Save, X } from 'lucide-react';
+import { Search, Plus, ArrowLeft, GripVertical, Save, X, EyeOff } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +19,7 @@ interface Employee {
     photo?: string;
     gender?: string;
     is_service_provider: boolean;
+    is_public_visible?: boolean;
 }
 
 export default function EmployeeManagement() {
@@ -204,6 +205,12 @@ export default function EmployeeManagement() {
                                                 {(i18n.language === 'ru' && employee.position_ru) ? employee.position_ru : (employee.position || t('employee'))}
                                             </p>
                                         </div>
+                                        {/* Visibility indicator */}
+                                        {employee.is_public_visible === false && (
+                                            <div title={t('hidden_from_public', 'Hidden from site')} className="text-gray-400">
+                                                <EyeOff className="w-4 h-4" />
+                                            </div>
+                                        )}
                                     </Link>
                                 </div>
                             ))}
