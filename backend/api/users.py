@@ -171,7 +171,6 @@ async def get_users(current_user: dict = Depends(get_current_user)):
         c = conn.cursor()
 
         start_time = time.time()
-        # Query users directly (employees table is consolidated)
         c.execute("""
             SELECT
                 u.id, u.username, u.full_name, u.full_name_ru, u.email, u.role,
@@ -182,7 +181,8 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 COALESCE(u.photo, u.photo_url) as photo,
                 u.position_id,
                 u.is_public_visible,
-                u.sort_order
+                u.sort_order,
+                u.updated_at
             FROM users u
             WHERE u.deleted_at IS NULL
             ORDER BY u.sort_order ASC, u.created_at DESC
@@ -190,6 +190,17 @@ async def get_users(current_user: dict = Depends(get_current_user)):
 
         users = []
         for row in c.fetchall():
+            # Add cache buster to photo
+            photo_url = sanitize_url(row[12])
+            updated_at = row[16]
+            if photo_url and updated_at:
+                try:
+                    ts = int(updated_at.timestamp())
+                    if '?' not in photo_url:
+                        photo_url = f"{photo_url}?v={ts}"
+                except:
+                    pass
+
             user_data = {
                 "id": row[0],
                 "username": row[1],
@@ -204,7 +215,7 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 "is_active": row[8],
                 "position_ru": row[10],
                 "position_ar": row[11],
-                "photo": sanitize_url(row[12]),
+                "photo": photo_url,
                 "is_public_visible": bool(row[14]),
                 "sort_order": row[15]
             }
@@ -692,7 +703,7 @@ async def update_user_profile(
                    SET username = %s, full_name = %s, email = %s, position = %s, photo = %s,
                        bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
                        base_salary = %s, commission_rate = %s, telegram_id = %s, instagram_username = %s,
-                       is_public_visible = %s, sort_order = %s
+                       is_public_visible = %s, sort_order = %s, updated_at = CURRENT_TIMESTAMP
                    WHERE id = %s""",
                 (username, full_name, email, position, photo, bio, specialization, years_of_experience, phone, birthday, 
                  base_salary, commission_rate, telegram_id, instagram_username, is_public_visible, sort_order, user_id))
@@ -701,7 +712,7 @@ async def update_user_profile(
                         SET username = %s, full_name = %s, email = %s, position = %s,
                             bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
                              base_salary = %s, commission_rate = %s, telegram_id = %s, instagram_username = %s,
-                             is_public_visible = %s, sort_order = %s
+                             is_public_visible = %s, sort_order = %s, updated_at = CURRENT_TIMESTAMP
                         WHERE id = %s""",
                     (username, full_name, email, position, bio, specialization, years_of_experience, phone, birthday, 
                      base_salary, commission_rate, telegram_id, instagram_username, is_public_visible, sort_order, user_id))

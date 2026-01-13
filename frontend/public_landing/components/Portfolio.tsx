@@ -28,7 +28,7 @@ export function Portfolio() {
       try {
         // Используем относительный путь для работы через Vite proxy
         console.log('📸 [Portfolio] Fetching portfolio images...');
-        const res = await fetch(`/api/public/gallery?category=portfolio&language=${i18n.language}`);
+        const res = await fetch(`/api/public/gallery?category=portfolio&language=${i18n.language}&t=${Date.now()}`);
         const data = await res.json();
         console.log('✅ [Portfolio] Received data:', data);
 

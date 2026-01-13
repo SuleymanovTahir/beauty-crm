@@ -68,9 +68,13 @@ async def get_gallery(
     try:
         gallery = get_active_gallery(category=category, limit=limit)
         log_info(f"API: Получено {len(gallery)} изображений", "api")
-        return {"success": True, "images": gallery}
+        
+        from fastapi.responses import JSONResponse
+        response = JSONResponse({"success": True, "images": gallery})
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        return response
     except Exception as e:
         log_info(f"API: Ошибка получения галереи: {e}", "api")
         import traceback
         log_info(f"API: Traceback: {traceback.format_exc()}", "api")
-        return {"success": False, "images": [], "error": str(e)}
+        return JSONResponse({"success": False, "images": [], "error": str(e)}, status_code=500)
