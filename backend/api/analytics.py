@@ -7,7 +7,9 @@ from typing import Optional
 
 from db import get_stats, get_analytics_data, get_funnel_data
 from utils.utils import require_auth, get_total_unread
+from utils.utils import require_auth, get_total_unread
 from utils.logger import log_warning, log_info
+from utils.cache import cache
 
 router = APIRouter(tags=["Analytics"])
 
@@ -78,6 +80,15 @@ async def get_dashboard(session_token: Optional[str] = Cookie(None)):
     
     log_info(f"📊 User {user['username']} ({user['role']}) accessing dashboard (level: {access_level})", "analytics")
     
+    # Try cache
+    cache_key = f"dashboard_{access_level}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        # Update unread count as it's real-time
+        if "unread_count" in cached_data and access_level != "stats_only":
+             cached_data["unread_count"] = get_total_unread()
+        return cached_data
+
     # Получаем данные
     stats = get_stats()
     analytics = get_analytics_data()
@@ -92,6 +103,9 @@ async def get_dashboard(session_token: Optional[str] = Cookie(None)):
         "access_level": access_level  # Информируем frontend об уровне доступа
     }
     
+    # Cache for 5 minutes
+    cache.set(cache_key, response, expire=300)
+
     return response
 
 @router.get("/analytics")
@@ -134,8 +148,16 @@ async def get_funnel_api(session_token: Optional[str] = Cookie(None)):
         log_warning(f"User {user['username']} ({user['role']}) attempted to access funnel", "security")
         raise HTTPException(status_code=403, detail="Access denied")
     
+    cache_key = f"funnel_{access_level}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
     data = get_funnel_data()
-    return anonymize_analytics_data(data, access_level)
+    result = anonymize_analytics_data(data, access_level)
+    
+    cache.set(cache_key, result, expire=300)
+    return result
 
 @router.get("/stats")
 async def get_stats_api(
