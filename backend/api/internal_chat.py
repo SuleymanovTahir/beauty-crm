@@ -246,23 +246,58 @@ async def get_chat_users(session_token: Optional[str] = Cookie(None)):
 
     c.execute("""
         SELECT u.id, u.username, u.full_name, u.role, u.email, u.photo,
-               us.is_online, us.last_seen
+               us.is_online, us.last_seen, u.updated_at
         FROM users u
         LEFT JOIN user_status us ON u.id = us.user_id
         WHERE u.id != %s AND u.is_active = TRUE
         ORDER BY u.full_name
     """, (user['id'],))
 
-    users = [{
-        'id': row[0],
-        'username': row[1],
-        'full_name': row[2],
-        'role': row[3],
-        'email': row[4],
-        'photo': row[5],
-        'is_online': row[6] if row[6] is not None else False,
-        'last_seen': row[7].isoformat() if row[7] else None
-    } for row in c.fetchall()]
+    def get_photo_url_with_cache_buster(photo_path, updated_at):
+        if not photo_path:
+            return None
+        
+        # Если updated_at есть, добавляем timestamp
+        if updated_at:
+            ts = int(updated_timestamp.timestamp()) if hasattr(updated_at, 'timestamp') else str(updated_at)
+            # handle case where ts might be object
+            try:
+                if isinstance(updated_at, str):
+                    from datetime import datetime
+                    dt = datetime.fromisoformat(updated_at)
+                    ts = int(dt.timestamp())
+                else: 
+                     ts = int(updated_at.timestamp())
+            except:
+                ts = int(datetime.now().timestamp())
+                
+            return f"{photo_path}?v={ts}"
+        return photo_path
+
+    users = []
+    for row in c.fetchall():
+        uid, username, full_name, role, email, photo, is_online, last_seen, updated_at = row
+        
+        # Logic to add cache buster
+        final_photo = photo
+        if photo and updated_at:
+            try:
+                # updated_at is usually datetime object in psycopg2
+                ts = int(updated_at.timestamp())
+                final_photo = f"{photo}?v={ts}"
+            except Exception:
+                pass
+
+        users.append({
+            'id': uid,
+            'username': username,
+            'full_name': full_name,
+            'role': role,
+            'email': email,
+            'photo': final_photo,
+            'is_online': is_online if is_online is not None else False,
+            'last_seen': last_seen.isoformat() if last_seen else None
+        })
 
     conn.close()
     

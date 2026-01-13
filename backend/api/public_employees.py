@@ -66,13 +66,81 @@ async def get_public_employees(
         columns = [desc[0] for desc in cursor.description]
         employees = []
 
-        # ... (keep existing code up to loop)
+        # Получить service_ids для каждого мастера (используем user_services, не employee_services)
+        cursor.execute("""
+            SELECT user_id, array_agg(service_id) as service_ids
+            FROM user_services
+            GROUP BY user_id
+        """)
+        employee_services_map = {row[0]: row[1] for row in cursor.fetchall()}
+        
+        from datetime import date, datetime
+
+        def calculate_age(birthday_str):
+            if not birthday_str:
+                return None
+            try:
+                # Try common formats
+                for fmt in ('%Y-%m-%d', '%d.%m.%Y', '%d/%m/%Y'):
+                    try:
+                        birth_date = datetime.strptime(birthday_str, fmt).date()
+                        today = date.today()
+                        return today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+                    except ValueError:
+                        continue
+                return None
+            except:
+                return None
+
+        def get_russian_plural(number, one, two, five):
+            n = abs(number) % 100
+            n1 = n % 10
+            if n > 10 and n < 20: return five
+            if n1 > 1 and n1 < 5: return two
+            if n1 == 1: return one
+            return five
+
+        log_info(f"👥 [Public] Processing {len(rows)} employees from database", "api")
 
         for row in rows:
             row_dict = dict(zip(columns, row))
-            # ... (keep existing code)
-            
-            # Add cache-busting parameter based on actual update timestamp
+
+            employee_id = row_dict["id"]
+            employee_name = row_dict["full_name"]
+            original_photo = row_dict["photo"]
+
+            log_info(f"👤 [Public] Processing employee ID {employee_id}: {employee_name}", "api")
+
+            # Handle experience fallback
+            exp_text = row_dict.get("experience")
+            years = row_dict.get("years_of_experience")
+
+            if (not exp_text or not str(exp_text).strip()) and years:
+                # Basic localization for experience
+                if language == 'ru':
+                    plural = get_russian_plural(years, "год", "года", "лет")
+                    exp_text = f"{years} {plural} опыта"
+                elif language == 'ar':
+                    exp_text = f"{years} سنوات خبرة"
+                else:
+                    exp_text = f"{years} years experience"
+            elif exp_text and years and language == 'ru':
+                plural = get_russian_plural(years, "год", "года", "лет")
+                exp_text = f"{years} {plural} опыта"
+
+            # Calculate age
+            age = calculate_age(row_dict.get("birthday"))
+
+            service_ids = employee_services_map.get(employee_id, [])
+
+            # Sanitize photo URL
+            try:
+                sanitized_photo = sanitize_url(original_photo) if original_photo else None
+            except Exception as e:
+                log_info(f"⚠️ [Public] sanitize_url failed for {employee_name}: {e}, using original", "api")
+                sanitized_photo = original_photo
+
+            final_photo = sanitized_photo or "/static/avatars/default_female.webp"
             updated_timestamp = row_dict.get("updated_timestamp")
             if updated_timestamp:
                 # Convert datetime to timestamp if needed
