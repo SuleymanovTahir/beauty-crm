@@ -24,6 +24,7 @@ from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_warning, log_info
+from utils.cache import cache
 from services.smart_assistant import SmartAssistant
 from notifications.master_notifications import notify_master_about_booking, get_master_info, save_notification_log
 
@@ -477,6 +478,10 @@ async def create_booking_api(
         if booking_id:
             background_tasks.add_task(process_booking_background_tasks, booking_id, data, user_id)
 
+        # Invalidate analytics cache
+        cache.clear_by_pattern("dashboard_*")
+        cache.clear_by_pattern("funnel_*")
+
         return {"success": True, "message": "Booking created", "booking_id": booking_id}
     except Exception as e:
         log_error(f"Booking creation error: {e}", "api")
@@ -720,6 +725,10 @@ async def update_booking_status_api(
             except Exception as e:
                 log_error(f"Error earning loyalty points: {e}", "api")
 
+        # Invalidate analytics cache
+        cache.clear_by_pattern("dashboard_*")
+        cache.clear_by_pattern("funnel_*")
+
         return {"success": True, "message": "Booking status updated"}
     
     return JSONResponse({"error": "Update failed"}, status_code=400)
@@ -748,6 +757,11 @@ async def update_booking_api(
     
     if success:
         log_activity(user["id"], "update_booking_details", "booking", str(booking_id), f"Updated details: {data.keys()}")
+        
+        # Invalidate analytics cache
+        cache.clear_by_pattern("dashboard_*")
+        cache.clear_by_pattern("funnel_*")
+        
         return {"success": True, "message": "Booking updated"}
     
     return JSONResponse({"error": "Update failed"}, status_code=400)
