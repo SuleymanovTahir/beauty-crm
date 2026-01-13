@@ -103,3 +103,50 @@ async def permanent_delete_item(
     except Exception as e:
         if conn: conn.close()
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/admin/trash/empty")
+async def empty_trash(
+    current_user: dict = Depends(get_current_user)
+):
+    """Очистить корзину полностью (только Директор)"""
+    if current_user["role"] != "director":
+        raise HTTPException(status_code=403, detail="Forbidden: Only Director can empty trash")
+
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        # Get all deleted items that can be restored
+        c.execute("SELECT entity_type, entity_id FROM deleted_items WHERE can_restore = TRUE")
+        items = c.fetchall()
+        
+        count = 0
+        for entity_type, entity_id in items:
+            if entity_type == 'booking':
+                c.execute("DELETE FROM bookings WHERE id = %s", (entity_id,))
+            elif entity_type == 'client':
+                c.execute("DELETE FROM clients WHERE id = %s", (entity_id,))
+            elif entity_type == 'user':
+                c.execute("DELETE FROM users WHERE id = %s", (entity_id,))
+            count += c.rowcount
+
+        # Mark all as permanently deleted in deleted_items or just clear the table depending on logic?
+        # Usually we keep audit log, so let's mark them as not restorable
+        c.execute("UPDATE deleted_items SET can_restore = FALSE, reason = reason || ' (Purged)' WHERE can_restore = TRUE")
+        
+        conn.commit()
+        conn.close()
+        
+        log_audit(
+            user=current_user,
+            action='delete_all',
+            entity_type='trash',
+            entity_id='all',
+            new_value={"count": count},
+            success=True
+        )
+
+        return {"success": True, "message": f"Trash emptied. {count} items permanently deleted."}
+        
+    except Exception as e:
+        if conn: conn.close()
+        raise HTTPException(status_code=500, detail=str(e))

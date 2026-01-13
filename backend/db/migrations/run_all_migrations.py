@@ -27,12 +27,16 @@ def run_migration_function(func, description):
         print(f"\n📄 Миграция: {description}")
         print("-"*80)
         result = func()
-        return result if result is not None else True
+        if result is False: # Explicitly check for False return
+             print(f"❌ Миграция вернула False (ошибка). ОСТАНОВКА.")
+             sys.exit(1)
+        return True
     except Exception as e:
-        print(f"❌ Ошибка: {e}")
+        print(f"❌ Ошибка в миграции: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        print("❌ Критическая ошибка миграции. ОСТАНОВКА.")
+        sys.exit(1)
 
 def run_all_migrations():
     """Run all consolidated migrations"""
