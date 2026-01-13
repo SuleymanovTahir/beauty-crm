@@ -41,8 +41,8 @@ export default defineConfig({
     outDir: "dist",
     emptyOutDir: true,
 
-    // Минификация (terser для лучшего результата)
-    minify: "terser",
+    // Минификация (esbuild быстрее и ест меньше памяти)
+    minify: "esbuild",
 
     chunkSizeWarningLimit: 5000,
 
@@ -53,11 +53,8 @@ export default defineConfig({
     target: "esnext",
 
     // Опции терсера
-    terserOptions: {
-      compress: {
-        drop_console: true, // Удалить console.log в продакшене
-      },
-    },
+    // Опции терсера (удалены для переключения на esbuild)
+    // terserOptions removed
 
     // Оптимизация чанков
     rollupOptions: {
