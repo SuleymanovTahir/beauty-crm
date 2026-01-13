@@ -8,7 +8,7 @@ from db.connection import get_db_connection
 from utils.datetime_utils import get_current_time
 import psycopg2
 
-def get_all_bookings(limit: int = 1000):
+def get_all_bookings(limit: int = 1000, offset: int = 0):
     """Получить все записи с лимитом для оптимизации"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -21,6 +21,8 @@ def get_all_bookings(limit: int = 1000):
                      ORDER BY created_at DESC"""
         if limit:
             query += f" LIMIT {limit}"
+        if offset:
+            query += f" OFFSET {offset}"
         c.execute(query)
     except psycopg2.OperationalError:
         # Fallback для старой схемы без master/user_id
@@ -42,6 +44,200 @@ def get_all_bookings(limit: int = 1000):
     bookings = c.fetchall()
     conn.close()
     return bookings
+
+def count_all_bookings():
+    """Получить общее количество записей"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("SELECT COUNT(*) FROM bookings WHERE deleted_at IS NULL")
+        count = c.fetchone()[0]
+    except:
+        count = 0
+    conn.close()
+    return count
+
+def get_filtered_bookings(
+    limit: int = 50,
+    offset: int = 0,
+    search: str = None,
+    status: str = None,
+    master: str = None,
+    date_from: str = None,
+    date_to: str = None,
+    user_id: int = None,
+    sort_by: str = 'datetime',
+    order: str = 'desc'
+):
+    """Получить отфильтрованные записи с пагинацией и сортировкой"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    conditions = ["deleted_at IS NULL"]
+    params = []
+    
+    # 1. Search
+    if search:
+        search_term = f"%{search}%"
+        conditions.append("""
+            (service_name ILIKE %s OR 
+             name ILIKE %s OR 
+             phone ILIKE %s OR
+             instagram_id ILIKE %s)
+        """)
+        params.extend([search_term, search_term, search_term, search_term])
+        
+    # 2. Status
+    if status and status != 'all':
+        conditions.append("status = %s")
+        params.append(status)
+        
+    # 3. Master
+    if master and master != 'all':
+        conditions.append("master = %s")
+        params.append(master)
+        
+    # 4. Dates
+    if date_from:
+        conditions.append("datetime >= %s")
+        params.append(date_from)
+    if date_to:
+        conditions.append("datetime <= %s")
+        params.append(date_to)
+        
+    # 5. User (RBAC)
+    if user_id:
+        conditions.append("user_id = %s")
+        params.append(user_id)
+
+    where_clause = " AND ".join(conditions)
+    
+    # Sorting
+    sort_column = 'datetime'
+    if sort_by == 'revenue':
+        sort_column = 'revenue'
+    elif sort_by == 'service_name':
+        sort_column = 'service_name'
+    elif sort_by == 'master':
+        sort_column = 'master'
+    elif sort_by == 'name':
+        sort_column = 'name'
+    elif sort_by == 'status':
+        sort_column = 'status'
+    elif sort_by == 'source':
+        sort_column = 'source'
+        
+    sort_dir = 'DESC' if order.lower() == 'desc' else 'ASC'
+    
+    # Count Query
+    count_query = f"SELECT COUNT(*) FROM bookings WHERE {where_clause}"
+    c.execute(count_query, tuple(params))
+    total_count = c.fetchone()[0]
+    
+    # Data Query
+    query = f"""
+        SELECT id, instagram_id, service_name, datetime, phone,
+               name, status, created_at, revenue, master, user_id, source
+        FROM bookings
+        WHERE {where_clause}
+        ORDER BY {sort_column} {sort_dir}
+        LIMIT %s OFFSET %s
+    """
+    params.append(limit)
+    params.append(offset)
+    
+    try:
+        c.execute(query, tuple(params))
+        bookings = c.fetchall()
+    except Exception as e:
+        print(f"Error filtering bookings: {e}")
+        bookings = []
+        
+    conn.close()
+    return bookings, total_count
+
+def get_booking_stats(
+    search: str = None,
+    master: str = None,
+    date_from: str = None,
+    date_to: str = None,
+    user_id: int = None
+):
+    """Получить статистику записей с фильтрацией"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    conditions = ["deleted_at IS NULL"]
+    params = []
+    
+    # Reuse filter logic (simplified copy)
+    if search:
+        search_term = f"%{search}%"
+        conditions.append("""
+            (service_name ILIKE %s OR 
+             name ILIKE %s OR 
+             phone ILIKE %s OR
+             instagram_id ILIKE %s)
+        """)
+        params.extend([search_term, search_term, search_term, search_term])
+        
+    if master and master != 'all':
+        conditions.append("master = %s")
+        params.append(master)
+        
+    if date_from:
+        conditions.append("datetime >= %s")
+        params.append(date_from)
+    if date_to:
+        conditions.append("datetime <= %s")
+        params.append(date_to)
+        
+    if user_id:
+        conditions.append("user_id = %s")
+        params.append(user_id)
+
+    where_clause = " AND ".join(conditions)
+
+    try:
+        query = f"""
+            SELECT 
+                status,
+                COUNT(*),
+                COALESCE(SUM(revenue), 0)
+            FROM bookings
+            WHERE {where_clause}
+            GROUP BY status
+        """
+        c.execute(query, tuple(params))
+        rows = c.fetchall()
+        
+        stats = {
+            "pending": 0,
+            "confirmed": 0,
+            "cancelled": 0,
+            "completed": 0,
+            "no_show": 0,
+            "total": 0,
+            "revenue": 0
+        }
+        
+        for row in rows:
+            status = row[0]
+            count = row[1]
+            revenue = row[2]
+            
+            stats[status] = count
+            stats["total"] += count
+            if status == 'completed':
+                stats["revenue"] += revenue
+                
+    except Exception as e:
+        print(f"Error getting booking stats: {e}")
+        stats = {}
+        
+    conn.close()
+    return stats
+
 
 def get_bookings_by_master(master_name: str):
     """Получить записи по имени мастера"""

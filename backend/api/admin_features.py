@@ -1024,7 +1024,7 @@ async def get_gallery_photos(session_token: Optional[str] = Cookie(None)):
             SELECT
                 id, url, title, description, category,
                 uploaded_by, created_at, is_featured, views,
-                before_photo_url, after_photo_url, client_id
+                before_photo_url, after_photo_url, client_id, is_visible
             FROM gallery_photos
             ORDER BY created_at DESC
         """)
@@ -1043,7 +1043,8 @@ async def get_gallery_photos(session_token: Optional[str] = Cookie(None)):
                 "views": row[8] or 0,
                 "before_photo_url": row[9] or "",
                 "after_photo_url": row[10] or "",
-                "client_id": row[11] or ""
+                "client_id": row[11] or "",
+                "is_visible": row[12] if len(row) > 12 else True
             })
 
         conn.close()
@@ -1255,16 +1256,34 @@ async def delete_gallery_photo(photo_id: int, session_token: Optional[str] = Coo
         c = conn.cursor()
 
         # Получить URL фото
-        c.execute("SELECT url FROM gallery_photos WHERE id = %s", (photo_id,))
+        c.execute("SELECT url, before_photo_url, after_photo_url FROM gallery_photos WHERE id = %s", (photo_id,))
         result = c.fetchone()
 
         if result:
             photo_url = result[0]
-            # Удалить файл
-            if photo_url.startswith("/uploads/"):
-                file_path = photo_url[1:]  # Remove leading /
-                if os.path.exists(file_path):
-                    os.remove(file_path)
+            before_url = result[1]
+            after_url = result[2]
+            
+            # Helper to delete file
+            def delete_file(path_url):
+                if path_url and path_url.startswith("/uploads/"):
+                    file_path = path_url[1:]  # Remove leading /
+                    if os.path.exists(file_path):
+                        try:
+                            os.remove(file_path)
+                            log_info(f"Deleted file: {file_path}", "api")
+                        except Exception as e:
+                            log_error(f"Error deleting file {file_path}: {e}", "api")
+
+            # Удаляем основное фото
+            delete_file(photo_url)
+            
+            # Удаляем фото до/после если есть (и если отличаются от основного)
+            if before_url and before_url != photo_url:
+                delete_file(before_url)
+            
+            if after_url and after_url != photo_url:
+                delete_file(after_url)
 
         # Удалить из БД
         c.execute("DELETE FROM gallery_photos WHERE id = %s", (photo_id,))
@@ -1300,4 +1319,34 @@ async def toggle_featured_photo(photo_id: int, request: Request, session_token: 
         return {"success": True}
     except Exception as e:
         log_error(f"Error toggling featured photo: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.put("/admin/gallery/photos/{photo_id}/visibility")
+async def toggle_gallery_photo_visibility(
+    photo_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Переключить видимость фото"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    try:
+        data = await request.json()
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        c.execute("""
+            UPDATE gallery_photos
+            SET is_visible = %s
+            WHERE id = %s
+        """, (data.get("is_visible", True), photo_id))
+
+        conn.commit()
+        conn.close()
+
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error toggling photo visibility: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)

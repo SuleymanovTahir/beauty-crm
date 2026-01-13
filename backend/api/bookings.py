@@ -14,8 +14,11 @@ from db import (
     get_bookings_by_phone,
     get_bookings_by_client,
     get_bookings_by_master,
+    get_bookings_by_master,
     get_booking_progress,
     update_booking_progress,
+    get_filtered_bookings,
+    get_booking_stats
 )
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -160,8 +163,19 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
     }
 
 @router.get("/bookings")
-async def list_bookings(session_token: Optional[str] = Cookie(None)):
-    """Получить все записи (или записи конкретного мастера для employees)"""
+async def list_bookings(
+    session_token: Optional[str] = Cookie(None),
+    page: int = 1,
+    limit: int = 50,
+    search: Optional[str] = None,
+    status: Optional[str] = None,
+    master: Optional[str] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    sort: Optional[str] = 'datetime',
+    order: Optional[str] = 'desc'
+):
+    """Получить записи с пагинацией и фильтрацией"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
@@ -170,13 +184,39 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
     if user["role"] == "client":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
-    # Если сотрудник - показываем только его записи
+    offset = (page - 1) * limit
+    
+    # RBAC: Employees see only their bookings (via user_id or master filter)
+    filter_user_id = None
     if user["role"] == "employee":
-        full_name = user.get("full_name", "")
-        bookings = get_bookings_by_master(full_name)
-    else:
-        # Админ/менеджер видят все записи
-        bookings = get_all_bookings()
+        # We can pass user_id to filter by that
+        filter_user_id = user["id"]
+        # Or if master name filter is preferred, keep as is.
+        # Ideally we use user_id to filter where user_id=... OR master=...
+        # get_filtered_bookings handles user_id check.
+
+    # Fetch data
+    bookings, total_results = get_filtered_bookings(
+        limit=limit,
+        offset=offset,
+        search=search,
+        status=status,
+        master=master,
+        date_from=date_from,
+        date_to=date_to,
+        user_id=filter_user_id,
+        sort_by=sort,
+        order=order
+    )
+
+    # Fetch Stats (Global or Filtered)
+    stats = get_booking_stats(
+        search=search,
+        master=master,
+        date_from=date_from,
+        date_to=date_to,
+        user_id=filter_user_id
+    )
 
     # Добавляем информацию о мессенджерах для каждой записи
     bookings_with_messengers = []
@@ -220,12 +260,17 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
             "revenue": b[8] if len(b) > 8 else 0,
             "master": b[9] if len(b) > 9 else None,
             "user_id": b[10] if len(b) > 10 else None,
+            "source": b[11] if len(b) > 11 else 'manual',
             "messengers": messengers
         })
 
     return {
         "bookings": bookings_with_messengers,
-        "count": len(bookings)
+        "count": len(bookings_with_messengers), # Legacy count of items in this page
+        "total": total_results,                   # Total items in DB
+        "page": page,
+        "limit": limit,
+        "stats": stats
     }
 
 @router.get("/bookings/{booking_id}")
