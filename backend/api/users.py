@@ -634,93 +634,101 @@ async def update_user_profile(
             return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     data = await request.json()
-    username = data.get('username')
-    full_name = data.get('full_name')
-    email = data.get('email')
-    position = data.get('position')
-
-    if not username or len(username) < 3:
-        return JSONResponse(
-            {"error": "Логин должен быть минимум 3 символа"},
-            status_code=400
-        )
-
-    if not full_name or len(full_name) < 2:
-        return JSONResponse(
-            {"error": "Имя должно быть минимум 2 символа"},
-            status_code=400
-        )
-
+    
     conn = get_db_connection()
     c = conn.cursor()
 
     try:
-        # Проверяем что логин не занят
-        c.execute("SELECT id FROM users WHERE username = %s AND id != %s",
-                 (username, user_id))
-        if c.fetchone():
-            conn.close()
-            return JSONResponse(
-                {"error": "Логин уже занят"},
-                status_code=400
-            )
-
-        # Обновляем профиль
-        photo = data.get('photo')
-        bio = data.get('about_me')
-        specialization = data.get('specialization')
-        years_of_experience = data.get('years_of_experience')
-        phone = data.get('phone_number')
-        birthday = data.get('birth_date')
-        base_salary = data.get('base_salary')
-        commission_rate = data.get('commission_rate')
-        telegram_id = data.get('telegram')
-        instagram_username = data.get('instagram')
-        is_public_visible = data.get('is_public_visible', True)
-        sort_order = data.get('sort_order', 0)
-
-        start_time = time.time()
-
+        # 1. Fetch current user data for partial updates
+        c.execute("""
+            SELECT username, full_name, email, position, photo, bio, specialization, 
+                   years_of_experience, phone, birthday, base_salary, commission_rate, 
+                   telegram_id, instagram_username, is_public_visible, sort_order
+            FROM users WHERE id = %s
+        """, (user_id,))
+        curr = c.fetchone()
         
-        # Convert years_of_experience to int if possible
-        try:
-            if years_of_experience is not None and years_of_experience != '':
-                years_of_experience = int(years_of_experience)
-            else:
+        if not curr:
+            conn.close()
+            return JSONResponse({"error": "User not found"}, status_code=404)
+
+        # 2. Merge data (incoming takes precedence, fallback to current)
+        # Note: We must handle field mapping between JSON keys and DB columns
+        
+        username = data.get('username', curr[0])
+        full_name = data.get('full_name', curr[1])
+        email = data.get('email', curr[2])
+        position = data.get('position', curr[3])
+        # photo handled specially below
+        
+        # Mapped fields
+        bio = data.get('about_me', curr[5])
+        specialization = data.get('specialization', curr[6])
+        phone = data.get('phone_number', curr[8])
+        birthday = data.get('birth_date', curr[9])
+        base_salary = data.get('base_salary', curr[10])
+        commission_rate = data.get('commission_rate', curr[11])
+        telegram_id = data.get('telegram', curr[12])
+        instagram_username = data.get('instagram', curr[13])
+        is_public_visible = data.get('is_public_visible', curr[14])
+        sort_order = data.get('sort_order', curr[15])
+        
+        # Handle years_of_experience specially due to conversion
+        if 'years_of_experience' in data:
+            raw_years = data.get('years_of_experience')
+            try:
+                if raw_years is not None and raw_years != '':
+                    years_of_experience = int(raw_years)
+                else:
+                    years_of_experience = None
+            except (ValueError, TypeError):
                 years_of_experience = None
-        except (ValueError, TypeError):
-            years_of_experience = None
-
-        if photo is not None:
-            # ✅ Удаляем старое фото если оно есть и отличается от нового
-            c.execute("SELECT photo FROM users WHERE id = %s", (user_id,))
-            old_photo_row = c.fetchone()
-            if old_photo_row:
-                from api.uploads import delete_old_photo_if_exists
-                delete_old_photo_if_exists(old_photo_row[0], photo)
-
-            c.execute("""UPDATE users
-                   SET username = %s, full_name = %s, email = %s, position = %s, photo = %s,
-                       bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
-                       base_salary = %s, commission_rate = %s, telegram_id = %s, instagram_username = %s,
-                       is_public_visible = %s, sort_order = %s, updated_at = CURRENT_TIMESTAMP
-                   WHERE id = %s""",
-                (username, full_name, email, position, photo, bio, specialization, years_of_experience, phone, birthday, 
-                 base_salary, commission_rate, telegram_id, instagram_username, is_public_visible, sort_order, user_id))
         else:
-            c.execute("""UPDATE users
-                        SET username = %s, full_name = %s, email = %s, position = %s,
-                            bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
-                             base_salary = %s, commission_rate = %s, telegram_id = %s, instagram_username = %s,
-                             is_public_visible = %s, sort_order = %s, updated_at = CURRENT_TIMESTAMP
-                        WHERE id = %s""",
-                    (username, full_name, email, position, bio, specialization, years_of_experience, phone, birthday, 
-                     base_salary, commission_rate, telegram_id, instagram_username, is_public_visible, sort_order, user_id))
+            years_of_experience = curr[7]
+
+        # 3. Validation
+        if not username or len(username) < 3:
+            return JSONResponse({"error": "Логин должен быть минимум 3 символа"}, status_code=400)
+
+        if not full_name or len(full_name) < 2:
+            return JSONResponse({"error": "Имя должно быть минимум 2 символа"}, status_code=400)
+
+        # 4. Check uniqueness only if username changed
+        if username != curr[0]:
+            c.execute("SELECT id FROM users WHERE username = %s AND id != %s", (username, user_id))
+            if c.fetchone():
+                conn.close()
+                return JSONResponse({"error": "Логин уже занят"}, status_code=400)
+
+        # 5. Handle photo update
+        photo = data.get('photo')
+        current_photo_path = curr[4]
+        
+        if 'photo' in data: # Explicit update logic
+             if photo is not None and photo != current_photo_path:
+                from api.uploads import delete_old_photo_if_exists
+                delete_old_photo_if_exists(current_photo_path, photo)
+             # photo var is already set from data
+        else:
+             photo = current_photo_path
+
+        # 6. Execute Update
+        start_time = time.time()
+        
+        c.execute("""UPDATE users
+               SET username = %s, full_name = %s, email = %s, position = %s, photo = %s,
+                   bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
+                   base_salary = %s, commission_rate = %s, telegram_id = %s, instagram_username = %s,
+                   is_public_visible = %s, sort_order = %s, updated_at = CURRENT_TIMESTAMP
+               WHERE id = %s""",
+            (username, full_name, email, position, photo, bio, specialization, years_of_experience, phone, birthday, 
+             base_salary, commission_rate, telegram_id, instagram_username, is_public_visible, sort_order, user_id))
+        
         conn.commit()
         
         duration = time.time() - start_time
         from utils.logger import log_info
-        log_info(f"⏱️ Update profile took {duration:.4f}s for user_id={user_id}", "api")
+        log_info(f"⏱️ Update profile took {duration:.4f}s for user_id={user_id} (Partial: {'username' not in data})", "api")
 
         log_activity(user["id"], "update_profile", "user", str(user_id), 
                     f"Profile updated: {username}")

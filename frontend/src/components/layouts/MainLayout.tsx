@@ -353,7 +353,6 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 items: [
                     { id: 'services', icon: Scissors, label: t('menu.services'), path: `${rolePrefix}/services`, requirePermission: () => permissions.canViewServices },
                     { id: 'products', icon: Package, label: t('menu.products'), path: `${rolePrefix}/products`, requirePermission: () => permissions.canViewServices },
-                    { id: 'employees', icon: Users, label: t('menu.employees', 'Сотрудники'), path: `${rolePrefix}/employees`, requirePermission: () => user?.role === 'manager' || permissions.roleLevel >= 80 },
                 ]
             },
             // ANALYTICS GROUP

@@ -244,14 +244,20 @@ async def get_chat_users(session_token: Optional[str] = Cookie(None)):
     conn = get_db_connection()
     c = conn.cursor()
 
+    import time
+    start_time = time.time()
+
     c.execute("""
         SELECT u.id, u.username, u.full_name, u.role, u.email, u.photo,
                us.is_online, us.last_seen, u.updated_at
         FROM users u
         LEFT JOIN user_status us ON u.id = us.user_id
-        WHERE u.id != %s AND u.is_active = TRUE
+        WHERE u.id != %s AND u.is_active = TRUE AND u.deleted_at IS NULL
         ORDER BY u.full_name
     """, (user['id'],))
+    
+    db_duration = time.time() - start_time
+    log_info(f"⏱️ get_chat_users query took {db_duration:.4f}s", "perf")
 
     def get_photo_url_with_cache_buster(photo_path, updated_at):
         if not photo_path:
