@@ -153,7 +153,12 @@ async def get_funnel_api(session_token: Optional[str] = Cookie(None)):
     if cached_data:
         return cached_data
 
+    import time
+    start_time = time.time()
     data = get_funnel_data()
+    duration = time.time() - start_time
+    log_info(f"⏱️ get_funnel_data took {duration:.4f}s", "perf")
+
     result = anonymize_analytics_data(data, access_level)
     
     cache.set(cache_key, result, expire=300)
