@@ -36,9 +36,17 @@ export const useNotificationsWebSocket = ({
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectAttemptsRef = useRef(0);
+  const maxReconnectAttempts = 10;
 
   const connect = useCallback(() => {
     if (!userId || wsRef.current?.readyState === WebSocket.OPEN) {
+      return;
+    }
+
+    // Prevent infinite reconnection attempts
+    if (reconnectAttemptsRef.current >= maxReconnectAttempts) {
+      console.warn('🔔 [Notifications WS] Max reconnection attempts reached. Stopping.');
       return;
     }
 
@@ -46,98 +54,119 @@ export const useNotificationsWebSocket = ({
     const port = window.location.port || (protocol === 'wss:' ? '443' : '80');
     const wsUrl = `${protocol}//${window.location.hostname}${port !== '443' && port !== '80' ? ':' + port : ''}/api/ws/notifications`;
 
-    console.log('🔔 [Notifications WS] Connecting to:', wsUrl);
+    console.log(`🔔 [Notifications WS] Connecting to: ${wsUrl} (attempt ${reconnectAttemptsRef.current + 1}/${maxReconnectAttempts})`);
 
-    const ws = new WebSocket(wsUrl);
+    try {
+      const ws = new WebSocket(wsUrl);
+      let connectionTimeout: NodeJS.Timeout;
 
-    ws.onopen = () => {
-      console.log('🔔 [Notifications WS] Connected');
-
-      // Отправляем аутентификацию
-      ws.send(JSON.stringify({
-        type: 'auth',
-        user_id: userId
-      }));
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const message: NotificationMessage = JSON.parse(event.data);
-
-        switch (message.type) {
-          case 'connected':
-            console.log('🔔 [Notifications WS] Authenticated');
-            setIsConnected(true);
-            onConnected?.();
-
-            // Запрашиваем текущее количество непрочитанных
-            ws.send(JSON.stringify({ type: 'request_count' }));
-
-            // Начинаем ping каждые 30 секунд для поддержания соединения
-            if (pingIntervalRef.current) {
-              clearInterval(pingIntervalRef.current);
-            }
-            pingIntervalRef.current = setInterval(() => {
-              if (ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: 'ping' }));
-              }
-            }, 30000);
-            break;
-
-          case 'notification':
-            console.log('🔔 [Notifications WS] New notification:', message.data);
-            onNotification?.(message.data);
-            break;
-
-          case 'unread_count':
-            console.log('🔔 [Notifications WS] Unread count update:', message.count);
-            if (typeof message.count === 'number') {
-              setUnreadCount(message.count);
-              onUnreadCountUpdate?.(message.count);
-            }
-            break;
-
-          case 'pong':
-            // Ответ на ping - соединение живо
-            break;
-
-          case 'error':
-            console.error('🔔 [Notifications WS] Error:', message.message);
-            break;
-
-          default:
-            console.warn('🔔 [Notifications WS] Unknown message type:', message.type);
+      // Set connection timeout (10 seconds)
+      connectionTimeout = setTimeout(() => {
+        if (ws.readyState !== WebSocket.OPEN) {
+          console.warn('🔔 [Notifications WS] Connection timeout');
+          ws.close();
         }
-      } catch (error) {
-        console.error('🔔 [Notifications WS] Error parsing message:', error);
-      }
-    };
+      }, 10000);
 
-    ws.onerror = (error) => {
-      console.error('🔔 [Notifications WS] Error:', error);
-    };
+      ws.onopen = () => {
+        clearTimeout(connectionTimeout);
+        console.log('🔔 [Notifications WS] Connected');
+        reconnectAttemptsRef.current = 0; // Reset on successful connection
 
-    ws.onclose = () => {
-      console.log('🔔 [Notifications WS] Disconnected');
-      setIsConnected(false);
-      onDisconnected?.();
+        // Отправляем аутентификацию
+        ws.send(JSON.stringify({
+          type: 'auth',
+          user_id: userId
+        }));
+      };
 
-      // Очищаем ping interval
-      if (pingIntervalRef.current) {
-        clearInterval(pingIntervalRef.current);
-        pingIntervalRef.current = null;
-      }
+      ws.onmessage = (event) => {
+        try {
+          const message: NotificationMessage = JSON.parse(event.data);
 
-      // Автоматическое переподключение
-      if (autoReconnect && userId) {
-        console.log(`🔔 [Notifications WS] Reconnecting in ${reconnectInterval}ms...`);
-        reconnectTimeoutRef.current = setTimeout(() => {
-          connect();
-        }, reconnectInterval);
-      }
-    };
+          switch (message.type) {
+            case 'connected':
+              console.log('🔔 [Notifications WS] Authenticated');
+              setIsConnected(true);
+              onConnected?.();
 
-    wsRef.current = ws;
+              // Запрашиваем текущее количество непрочитанных
+              ws.send(JSON.stringify({ type: 'request_count' }));
+
+              // Начинаем ping каждые 30 секунд для поддержания соединения
+              if (pingIntervalRef.current) {
+                clearInterval(pingIntervalRef.current);
+              }
+              pingIntervalRef.current = setInterval(() => {
+                if (ws.readyState === WebSocket.OPEN) {
+                  ws.send(JSON.stringify({ type: 'ping' }));
+                }
+              }, 30000);
+              break;
+
+            case 'notification':
+              onNotification?.(message.data);
+              break;
+
+            case 'unread_count':
+              if (typeof message.count === 'number') {
+                setUnreadCount(message.count);
+                onUnreadCountUpdate?.(message.count);
+              }
+              break;
+
+            case 'pong':
+              // Ответ на ping - соединение живо
+              break;
+
+            case 'error':
+              console.error('🔔 [Notifications WS] Server error:', message.message);
+              break;
+
+            default:
+              console.warn('🔔 [Notifications WS] Unknown message type:', message.type);
+          }
+        } catch (error) {
+          console.error('🔔 [Notifications WS] Error parsing message:', error);
+        }
+      };
+
+      ws.onerror = () => {
+        clearTimeout(connectionTimeout);
+        console.error('🔔 [Notifications WS] Connection error');
+        reconnectAttemptsRef.current++;
+      };
+
+      ws.onclose = (event) => {
+        clearTimeout(connectionTimeout);
+        console.log(`🔔 [Notifications WS] Disconnected (code: ${event.code}, reason: ${event.reason})`);
+        setIsConnected(false);
+        onDisconnected?.();
+
+        // Очищаем ping interval
+        if (pingIntervalRef.current) {
+          clearInterval(pingIntervalRef.current);
+          pingIntervalRef.current = null;
+        }
+
+        // Автоматическое переподключение с exponential backoff
+        if (autoReconnect && userId && reconnectAttemptsRef.current < maxReconnectAttempts) {
+          reconnectAttemptsRef.current++;
+          // Exponential backoff: 5s, 10s, 20s, 40s, max 60s
+          const delay = Math.min(reconnectInterval * Math.pow(2, reconnectAttemptsRef.current - 1), 60000);
+          console.log(`🔔 [Notifications WS] Reconnecting in ${delay}ms... (attempt ${reconnectAttemptsRef.current}/${maxReconnectAttempts})`);
+
+          reconnectTimeoutRef.current = setTimeout(() => {
+            connect();
+          }, delay);
+        }
+      };
+
+      wsRef.current = ws;
+    } catch (error) {
+      console.error('🔔 [Notifications WS] Failed to create WebSocket:', error);
+      reconnectAttemptsRef.current++;
+    }
   }, [userId, onNotification, onUnreadCountUpdate, onConnected, onDisconnected, autoReconnect, reconnectInterval]);
 
   const disconnect = useCallback(() => {

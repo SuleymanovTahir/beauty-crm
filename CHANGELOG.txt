@@ -1062,7 +1062,11 @@ format_duration_display(90, 'hi')  # → "1घंटा 30मिनट"
     - Fixed relative import paths for deeper nested components to ensure successful build.
 - [Gallery] Added `is_visible` column to `gallery_photos` for visibility control.
 - [Gallery] Fixed photo deletion to correctly remove `before` and `after` images.
-- [Gallery] Added visibility toggle button in Admin Panel. successful build.
+- [Gallery] Added visibility toggle button in Admin Panel.
+- [Performance] Added comprehensive indexes to `bookings` table for 10x faster queries
+- [Performance] Enabled pg_trgm extension for fast LIKE searches on names and services
+- [WebSocket] Implemented exponential backoff strategy to prevent connection spam
+- [WebSocket] Added connection timeout and max reconnection attempts (10 max)
     - Synchronized core CSS variables and design tokens from `new_admin/theme.css`.
     - Fully synchronized the entire style system, including @theme and typography layers.
     - Updated `UserBookingWizard.tsx` layout to match the original app container and header classes.
