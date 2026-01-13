@@ -15,6 +15,7 @@ export default defineConfig({
       "/api": {
         target: "http://localhost:8000",
         changeOrigin: true,
+        ws: true, // Enable WebSocket for /api/* endpoints (like /api/ws/notifications)
       },
       "/ws": {
         target: "ws://localhost:8000",

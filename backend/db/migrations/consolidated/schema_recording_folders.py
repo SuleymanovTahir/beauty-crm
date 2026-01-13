@@ -57,11 +57,28 @@ def run_migration():
             'file_format': 'VARCHAR(20)', # mp3, wav, ogg, m4a, webm
         }
 
-        for column_name, column_type in columns_to_add.items():
-            try:
-                c.execute(f"ALTER TABLE call_logs ADD COLUMN IF NOT EXISTS {column_name} {column_type};")
-            except Exception as e:
-                logging.warning(f"Column {column_name} might already exist: {e}")
+        # Проверяем существование call_logs
+        c.execute("SELECT to_regclass('public.call_logs');")
+        if not c.fetchone()[0]:
+             # Если таблицы нет, создаем её (минимальная версия, schema_telephony должна дополнить)
+             # Но лучше просто пропустить или создать, если это критично.
+             # Предположим что schema_telephony должна быть запущена ДО этого.
+             logging.warning("Table call_logs does not exist! Skipping column additions.")
+        else:
+            for column_name, column_type in columns_to_add.items():
+                # Проверяем существование колонки безопасным способом
+                c.execute("""
+                    SELECT 1 
+                    FROM information_schema.columns 
+                    WHERE table_name='call_logs' AND column_name=%s;
+                """, (column_name,))
+                
+                if not c.fetchone():
+                    # Колонка не существует, добавляем
+                    logging.info(f"Adding column {column_name} to call_logs...")
+                    c.execute(f"ALTER TABLE call_logs ADD COLUMN {column_name} {column_type};")
+                else:
+                    logging.info(f"Column {column_name} already exists in call_logs.")
 
         # Индексы для call_logs
         c.execute("CREATE INDEX IF NOT EXISTS idx_call_logs_folder ON call_logs(folder_id);")
