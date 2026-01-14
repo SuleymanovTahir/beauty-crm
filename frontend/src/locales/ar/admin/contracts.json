@@ -1,83 +1,98 @@
 {
-  "title": "المعاهدات",
-  "subtitle": "إدارة عقود العملاء",
-  "addContract": "إنشاء اتفاقية",
-  "loading": "تحميل...",
-  "allStatuses": "جميع الحالات",
-  "contractNumber": "رقم العقد",
-  "client": "عميل",
-  "status": "حالة",
-  "createdAt": "تاريخ الإنشاء",
   "actions": "الإجراءات",
-  "sendButton": "يرسل",
-  "delete": "يمسح",
-  "noContracts": "لا توجد عقود بعد",
+  "addContract": "إنشاء اتفاقية",
+  "all": "الجميع",
+  "allContracts": "جميع العقود",
+  "allStatuses": "جميع الحالات",
+  "board": "سبورة",
+  "client": "عميل",
+  "clientContracts": "عميل",
+  "contractNumber": "رقم العقد",
+  "contractTypes": {
+    "employment": "عقد العمل",
+    "rental": "استئجار مكان",
+    "service": "تقديم الخدمات"
+  },
+  "createdAt": "تاريخ الإنشاء",
   "createFirst": "أنشئ عقدك الأول مع العميل",
-  "statuses": {
-    "draft": "مسودة",
-    "sent": "مرسل",
-    "signed": "وقعت",
-    "cancelled": "تم الإلغاء"
+  "delete": "يمسح",
+  "editButton": "يحرر",
+  "editContract": "تحرير العقد",
+  "errors": {
+    "deleteError": "حدث خطأ أثناء حذف العقد",
+    "saveError": "حدث خطأ أثناء حفظ العقد",
+    "sendError": "حدث خطأ أثناء إرسال العقد",
+    "updateError": "فشل تحديث الحالة"
   },
   "form": {
-    "selectClient": "حدد العميل",
-    "contractType": "نوع العقد",
+    "cancel": "يلغي",
     "contractDate": "تاريخ العقد",
-    "terms": "شروط الاتفاقية",
+    "contractType": "نوع العقد",
     "notes": "ملحوظات",
     "save": "يحفظ",
-    "cancel": "يلغي"
+    "selectClient": "حدد العميل",
+    "terms": "شروط الاتفاقية"
   },
-  "types": {
-    "service": "الخدمة",
-    "product": "منتج",
-    "subscription": "الاشتراك"
-  },
-  "sendDialog": {
-    "title": "إرسال العقد",
-    "method": "طريقة الشحن",
-    "recipient": "متلقي",
-    "email": "بريد إلكتروني",
-    "whatsapp": "واتس اب",
-    "telegram": "برقية",
-    "instagram": "انستغرام",
-    "sendButton": "يرسل"
-  },
+  "internalContracts": "محلي",
+  "loading": "تحميل...",
+  "manage_stages": "أعمدة",
+  "manageTypes": "أنواع العقود",
   "messages": {
     "confirmDelete": "هل أنت متأكد أنك تريد حذف هذه الاتفاقية؟",
     "contractCreated": "تم إنشاء العقد",
-    "contractSent": "تم إرسال العقد",
     "contractDeleted": "تم حذف العقد",
+    "contractSent": "تم إرسال العقد",
     "contractUpdated": "تم تحديث العقد"
   },
-  "contractTypes": {
-    "service": "تقديم الخدمات",
-    "employment": "عقد العمل",
-    "rental": "استئجار مكان"
+  "noContracts": "لا توجد عقود بعد",
+  "search_placeholder": "البحث بالرقم أو العميل...",
+  "sendButton": "يرسل",
+  "sendDialog": {
+    "email": "بريد إلكتروني",
+    "instagram": "انستغرام",
+    "method": "طريقة الشحن",
+    "recipient": "متلقي",
+    "sendButton": "يرسل",
+    "telegram": "برقية",
+    "title": "إرسال العقد",
+    "whatsapp": "واتس اب"
   },
-  "editContract": "تحرير العقد",
-  "editButton": "يحرر",
-  "manageTypes": "أنواع العقود",
+  "status": "حالة",
+  "statuses": {
+    "cancelled": "تم الإلغاء",
+    "draft": "مسودة",
+    "sent": "مرسل",
+    "signed": "وقعت"
+  },
+  "subtitle": "إدارة عقود العملاء",
+  "title": "المعاهدات",
   "type": "يكتب",
   "typeManagement": {
-    "title": "أنواع العقود",
-    "editType": "تحرير النوع",
-    "createType": "إنشاء نوع",
-    "name": "اسم",
-    "code": "الرمز (خط العرض، فريد)",
-    "description": "وصف",
     "add": "يضيف",
-    "deleteTitle": "إزالة النوع \"{{name}}\"",
+    "code": "الرمز (خط العرض، فريد)",
+    "confirmDelete": "تأكيد الحذف",
+    "createType": "إنشاء نوع",
     "deletePrompt": "تريد حذف هذا النوع من العقود. ماذا تفعل بالعقود الحالية من هذا النوع؟",
+    "deleteTitle": "إزالة النوع \"{{name}}\"",
     "deleteWithDocs": "حذف كافة العقود",
     "deleteWithDocsSub": "سيتم حذف جميع المستندات من هذا النوع نهائيًا.",
+    "description": "وصف",
+    "editType": "تحرير النوع",
     "keepDocs": "ترك العقود بدون نوع",
     "keepDocsSub": "ستبقى العقود قائمة، ولكن سيتم مسح حقل \"النوع\".",
-    "confirmDelete": "تأكيد الحذف",
     "messages": {
-      "updated": "تم تحديث النوع",
       "created": "تم إنشاء النوع",
-      "deleted": "تمت إزالة النوع"
-    }
+      "deleted": "تمت إزالة النوع",
+      "updated": "تم تحديث النوع"
+    },
+    "name": "اسم",
+    "system": "نظام",
+    "systemProtected": "النظام محمي",
+    "title": "أنواع العقود"
+  },
+  "types": {
+    "product": "منتج",
+    "service": "الخدمة",
+    "subscription": "الاشتراك"
   }
 }

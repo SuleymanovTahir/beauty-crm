@@ -1,72 +1,80 @@
 {
-  "title": "Счета",
-  "subtitle": "Управление счетами и платежами",
+  "actions": "Действия",
   "addInvoice": "Создать счет",
   "addPayment": "Добавить оплату",
-  "loading": "Загрузка...",
-  "board": "Доска",
   "allInvoices": "Все счета",
-  "search_placeholder": "Поиск по номеру или клиенту...",
   "allStatuses": "Все статусы",
-  "invoiceNumber": "№ Счета",
+  "board": "Доска",
   "client": "Клиент",
-  "totalAmount": "Сумма",
-  "paidAmount": "Оплачено",
-  "status": "Статус",
-  "dueDate": "Срок оплаты",
-  "actions": "Действия",
-  "sendButton": "Отправить",
-  "delete": "Удалить",
-  "noInvoices": "Счетов пока нет",
   "createFirst": "Создайте первый счет для клиента",
-  "statuses": {
-    "draft": "Черновик",
-    "sent": "Отправлен",
-    "partial": "Частично оплачен",
-    "paid": "Оплачен",
-    "overdue": "Просрочен",
-    "cancelled": "Отменен"
+  "delete": "Удалить",
+  "dueDate": "Срок оплаты",
+  "errors": {
+    "createError": "Error creating invoice",
+    "deleteError": "Error deleting invoice",
+    "paymentError": "Error adding payment",
+    "sendError": "Error sending invoice",
+    "updateError": "Failed to update status"
   },
   "form": {
-    "selectClient": "Выберите клиента",
-    "items": "Позиции счета",
-    "itemName": "Название",
-    "itemQuantity": "Кол-во",
-    "itemPrice": "Цена",
     "addItem": "Добавить позицию",
+    "cancel": "Отмена",
     "dueDate": "Срок оплаты",
+    "itemName": "Название",
+    "itemPrice": "Цена",
+    "itemQuantity": "Кол-во",
+    "items": "Позиции счета",
     "notes": "Примечания",
     "save": "Сохранить",
-    "cancel": "Отмена"
+    "selectClient": "Выберите клиента"
   },
-  "payment": {
-    "title": "Добавить оплату",
-    "amount": "Сумма",
-    "method": "Способ оплаты",
-    "notes": "Примечания",
-    "add": "Добавить",
-    "methods": {
-      "cash": "Наличные",
-      "card": "Карта",
-      "transfer": "Перевод",
-      "online": "Онлайн"
-    }
-  },
-  "sendDialog": {
-    "title": "Отправить счет",
-    "method": "Способ отправки",
-    "recipient": "Получатель",
-    "email": "Email",
-    "whatsapp": "WhatsApp",
-    "telegram": "Telegram",
-    "sendButton": "Отправить"
-  },
+  "invoiceNumber": "№ Счета",
+  "loading": "Загрузка...",
+  "manage_stages": "Колонки",
   "messages": {
     "confirmDelete": "Вы уверены, что хотите удалить этот счет?",
     "invoiceCreated": "Счет создан",
-    "invoiceSent": "Счет отправлен",
-    "paymentAdded": "Оплата добавлена",
     "invoiceDeleted": "Счет удален",
-    "invoiceUpdated": "Счет обновлен"
-  }
+    "invoiceSent": "Счет отправлен",
+    "invoiceUpdated": "Счет обновлен",
+    "paymentAdded": "Оплата добавлена"
+  },
+  "noInvoices": "Счетов пока нет",
+  "paidAmount": "Оплачено",
+  "payment": {
+    "add": "Добавить",
+    "amount": "Сумма",
+    "method": "Способ оплаты",
+    "methods": {
+      "card": "Карта",
+      "cash": "Наличные",
+      "online": "Онлайн",
+      "transfer": "Перевод"
+    },
+    "notes": "Примечания",
+    "title": "Добавить оплату"
+  },
+  "search_placeholder": "Поиск по номеру или клиенту...",
+  "sendButton": "Отправить",
+  "sendDialog": {
+    "email": "Email",
+    "method": "Способ отправки",
+    "recipient": "Получатель",
+    "sendButton": "Отправить",
+    "telegram": "Telegram",
+    "title": "Отправить счет",
+    "whatsapp": "WhatsApp"
+  },
+  "status": "Статус",
+  "statuses": {
+    "cancelled": "Отменен",
+    "draft": "Черновик",
+    "overdue": "Просрочен",
+    "paid": "Оплачен",
+    "partial": "Частично оплачен",
+    "sent": "Отправлен"
+  },
+  "subtitle": "Управление счетами и платежами",
+  "title": "Счета",
+  "totalAmount": "Сумма"
 }

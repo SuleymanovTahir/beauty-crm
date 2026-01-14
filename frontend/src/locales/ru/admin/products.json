@@ -1,73 +1,83 @@
 {
-  "title": "Товары и склад",
-  "subtitle": "Управление товарами и остатками",
   "addProduct": "Добавить товар",
-  "edit": "Редактировать",
-  "delete": "Удалить",
-  "loading": "Загрузка...",
   "allCategories": "Все категории",
-  "noProducts": "Товаров пока нет",
+  "analytics": {
+    "avgPrice": "Ср. цена",
+    "last30Days": "За 30 дней",
+    "revenue": "Выручка",
+    "totalSold": "Продано всего"
+  },
   "createFirst": "Добавьте первый товар в систему",
-  "form": {
-    "name": "Название",
-    "nameRu": "Название (RU)",
-    "nameEn": "Название (EN)",
-    "nameAr": "Название (AR)",
-    "category": "Категория",
-    "price": "Цена продажи",
-    "costPrice": "Себестоимость",
-    "stockQuantity": "Остаток на складе",
-    "minStockLevel": "Минимальный остаток",
-    "sku": "Артикул",
-    "barcode": "Штрихкод",
-    "supplier": "Поставщик",
-    "notes": "Примечания",
-    "isActive": "Активен",
-    "photos": "Фото товара",
-    "upload": "Загрузить",
-    "uploadError": "Ошибка загрузки фото",
-    "save": "Сохранить",
-    "cancel": "Отмена"
-  },
-  "movement": {
-    "title": "Движение товара",
-    "type": "Тип движения",
-    "quantity": "Количество",
-    "reason": "Причина",
-    "types": {
-      "in": "Приход",
-      "out": "Расход",
-      "adjustment": "Корректировка"
-    }
-  },
-  "messages": {
-    "confirmDelete": "Вы уверены, что хотите удалить этот товар?",
-    "productCreated": "Товар создан",
-    "productUpdated": "Товар обновлен",
-    "productDeleted": "Товар удален",
-    "movementAdded": "Движение добавлено",
-    "noResults": "Ничего не найдено по вашему запросу"
-  },
+  "delete": "Удалить",
   "detail": {
-    "noCategory": "Без категории",
+    "avgPrice": "Ср. цена",
     "costPriceLabel": "Себестоимость: {{price}} {{currency}}",
-    "movementHistory": "История движений",
     "inStock": "В наличии: {{count}}",
+    "inStock_one": "",
+    "inStock_few": "",
+    "inStock_many": "",
+    "inStock_other": "",
+    "last30Days": "За 30 дней",
     "loadingData": "Загрузка данных...",
-    "noMovements": "Нет данных о движениях",
+    "movementAdjustment": "Корректировка",
+    "movementHistory": "История движений",
     "movementIn": "Поступление",
     "movementOut": "Списание",
-    "movementAdjustment": "Корректировка",
-    "totalSold": "Всего продано",
+    "noCategory": "Без категории",
+    "noMovements": "Нет данных о движениях",
     "totalRevenue": "Выручка",
-    "last30Days": "За 30 дней",
-    "avgPrice": "Ср. цена"
+    "totalSold": "Всего продано"
   },
+  "edit": "Редактировать",
+  "form": {
+    "barcode": "Штрихкод",
+    "cancel": "Отмена",
+    "category": "Категория",
+    "costPrice": "Себестоимость",
+    "isActive": "Активен",
+    "minStockLevel": "Минимальный остаток",
+    "name": "Название",
+    "nameAr": "Название (AR)",
+    "nameEn": "Название (EN)",
+    "nameRu": "Название (RU)",
+    "notes": "Примечания",
+    "photos": "Фото товара",
+    "price": "Цена продажи",
+    "save": "Сохранить",
+    "sku": "Артикул",
+    "stockQuantity": "Остаток на складе",
+    "supplier": "Поставщик",
+    "upload": "Загрузить",
+    "uploadError": "Ошибка загрузки фото"
+  },
+  "loading": "Загрузка...",
+  "messages": {
+    "confirmDelete": "Вы уверены, что хотите удалить этот товар?",
+    "movementAdded": "Движение добавлено",
+    "noResults": "Ничего не найдено по вашему запросу",
+    "productCreated": "Товар создан",
+    "productDeleted": "Товар удален",
+    "productUpdated": "Товар обновлен"
+  },
+  "movement": {
+    "quantity": "Количество",
+    "reason": "Причина",
+    "title": "Движение товара",
+    "type": "Тип движения",
+    "types": {
+      "adjustment": "Корректировка",
+      "in": "Приход",
+      "out": "Расход"
+    }
+  },
+  "noProducts": "Товаров пока нет",
   "search_placeholder": "Поиск по названию или категории...",
   "stock_status": {
     "in_stock": "В наличии",
     "low_stock": "Мало",
     "out_of_stock": "Нет в наличии"
   },
+  "subtitle": "Управление товарами и остатками",
+  "title": "Товары и склад",
   "unit_pcs": "шт."
 }

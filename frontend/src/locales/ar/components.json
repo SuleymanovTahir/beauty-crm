@@ -56,8 +56,12 @@
   "saving": "توفير...",
   "search_templates": "البحث عن القوالب...",
   "source": {
+    "account": "نعم",
+    "guest_link": "وصلة",
     "manual": "يدويا"
   },
+  "source_account": "خزانة شخصية",
+  "source_guest_link": "وصلة",
   "source_title": "مصدر",
   "status": "حالة",
   "status_color_label": "لون الحالة",

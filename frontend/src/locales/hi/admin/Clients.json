@@ -40,7 +40,9 @@
   "error_creating_client": "क्लाइंट बनाने में त्रुटि",
   "error_deleting_client": "क्लाइंट हटाने में त्रुटि",
   "error_exporting": "निर्यात त्रुटि",
+  "error_importing": "",
   "error_loading_clients": "क्लाइंट लोड करने में त्रुटि",
+  "error_selecting_file": "",
   "error_updating_client": "क्लाइंट अद्यतन त्रुटि",
   "error_updating_status": "स्थिति अद्यतन त्रुटि",
   "export_includes": "निर्यात शामिल है",
@@ -77,6 +79,8 @@
   "import_error_list": "आयात त्रुटियाँ",
   "import_error_message": "आयात त्रुटि",
   "import_errors": "त्रुटियाँ",
+  "import_errors_count_one": "",
+  "import_errors_count_other": "",
   "import_example_structure": "न्यूनतम संरचना उदाहरण",
   "import_excel": "एक्सेल (.xlsx, .xls)",
   "import_important_info": "महत्वपूर्ण सूचना",
@@ -139,5 +143,7 @@
   "warm": "गरम",
   "warm_client": "गर्म ग्राहक",
   "write_message": "एक सन्देश लिखिए",
-  "you_are_deleting_client": "आप एक ग्राहक को हटा रहे हैं"
+  "you_are_deleting_client": "आप एक ग्राहक को हटा रहे हैं",
+  "import_errors_count_few": "",
+  "import_errors_count_many": ""
 }

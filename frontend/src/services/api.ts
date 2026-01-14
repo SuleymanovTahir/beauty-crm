@@ -855,6 +855,20 @@ export class ApiClient {
     })
   }
 
+  async restoreTrashItemsBatch(items: { type: string; id: string }[]) {
+    return this.request<{ success: boolean; count: number }>('/api/admin/trash/restore-batch', {
+      method: 'POST',
+      body: JSON.stringify({ items })
+    })
+  }
+
+  async deleteTrashItemsBatch(items: { type: string; id: string }[]) {
+    return this.request<{ success: boolean; count: number }>('/api/admin/trash/delete-batch', {
+      method: 'POST',
+      body: JSON.stringify({ items })
+    })
+  }
+
   // ===== ЖУРНАЛ АУДИТА (AUDIT LOG) =====
   async getAuditLog(filters: { entity_type?: string; entity_id?: string; user_id?: number; action?: string; limit?: number } = {}) {
     const params = new URLSearchParams()
@@ -874,6 +888,19 @@ export class ApiClient {
   async clearAuditLog() {
     return this.request<{ success: boolean; message: string }>('/api/admin/audit-log/clear', {
       method: 'DELETE'
+    })
+  }
+
+  async deleteAuditLog(logId: number) {
+    return this.request<{ success: boolean; message: string }>(`/api/admin/audit-log/${logId}`, {
+      method: 'DELETE'
+    })
+  }
+
+  async deleteAuditLogsBatch(ids: number[]) {
+    return this.request<{ success: boolean; count: number }>('/api/admin/audit-log/delete-batch', {
+      method: 'POST',
+      body: JSON.stringify({ ids })
     })
   }
 

@@ -462,3 +462,39 @@ html {
 .crm-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #cbd5e1;
 }
+
+.trash-icon-booking {
+    @apply text-blue-400;
+}
+
+.trash-icon-client {
+    @apply text-pink-400;
+}
+
+.trash-icon-user {
+    @apply text-blue-400;
+}
+
+.trash-icon-default {
+    @apply text-muted-foreground;
+}
+
+.trash-info-warning {
+    @apply bg-amber-50/50 border-amber-200;
+}
+
+.trash-info-warning-icon {
+    @apply text-amber-500;
+}
+
+.trash-info-warning-title {
+    @apply text-amber-600;
+}
+
+.trash-restore-button {
+    @apply text-green-600 border-green-200 hover:bg-green-50;
+}
+
+.trash-empty-button {
+    @apply text-red-500 border-red-200 hover:bg-red-50;
+}

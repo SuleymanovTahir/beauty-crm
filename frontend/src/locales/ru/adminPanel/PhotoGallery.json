@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "hide": "Hide",
+    "show": "Show"
+  },
   "buttons": {
     "cancel": "Отмена",
     "close": "Закрыть",
@@ -75,9 +79,11 @@
     "failed_featured": "Не удалось обновить статус избранного",
     "failed_load": "Не удалось загрузить фотографии",
     "failed_upload": "Не удалось загрузить фото",
+    "failed_visibility": "Failed to update visibility",
     "featured_updated": "Статус избранного обновлен",
     "select_both_photos": "Please select both before and after photos",
-    "uploaded": "Фото успешно загружено"
+    "uploaded": "Фото успешно загружено",
+    "visibility_updated": "Visibility updated"
   },
   "upload_photo": "Загрузить фото"
 }

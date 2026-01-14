@@ -1,0 +1,51 @@
+{
+  "buttons": {
+    "add_challenge": "Crear una tarea",
+    "create_challenge": "Iniciar un desafío"
+  },
+  "card": {
+    "details": "Más detalles",
+    "participants": "PARTICIPANTES",
+    "progress": "PROGRESO"
+  },
+  "dialogs": {
+    "add_title": "Nuevo desafío",
+    "edit_title": "Editar un desafío"
+  },
+  "empty": {
+    "subtitle": "Crea tu primer desafío de juego para animar a los clientes a registrarse con más frecuencia.",
+    "title": "Los desafíos no están configurados"
+  },
+  "fields": {
+    "dates": "límite de tiempo",
+    "description": "Descripción pública",
+    "reward": "Premio",
+    "target_value": "Plan (meta)",
+    "title": "Título profesional",
+    "type": "Metodología de objetivos"
+  },
+  "placeholders": {
+    "description": "¿Cómo verá el cliente esta tarea?",
+    "title": "hasta ejemplo: estado oro"
+  },
+  "stats": {
+    "active_challenges": "TAREAS ACTIVAS",
+    "completed_today": "COMPLETADO HOY",
+    "total_participants": "TOTAL DE PARTICIPANTES"
+  },
+  "status": {
+    "active": "ACTIVO",
+    "inactive": "PAUSA"
+  },
+  "subtitle": "Aumente la lealtad de los clientes con mecánicas de juego y recompensas automáticas.",
+  "title": "Desafíos",
+  "toasts": {
+    "created": "Tarea creada",
+    "updated": "Misión actualizada"
+  },
+  "types": {
+    "service": "Categoría de servicio",
+    "spend": "Gasto total",
+    "visits": "Número de visitas"
+  }
+}

@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "hide": "Hide",
+    "show": "Show"
+  },
   "buttons": {
     "cancel": "Болдырмау",
     "close": "Жабу",
@@ -75,9 +79,11 @@
     "failed_featured": "Таңдаулы күйді жаңарту мүмкін болмады",
     "failed_load": "Фотосуреттерді жүктеп салу орындалмады",
     "failed_upload": "Фотосурет жүктеп салынбады",
+    "failed_visibility": "Failed to update visibility",
     "featured_updated": "Таңдаулы күй жаңартылды",
     "select_both_photos": "Please select both before and after photos",
-    "uploaded": "Фото жүктеп салынды"
+    "uploaded": "Фото жүктеп салынды",
+    "visibility_updated": "Visibility updated"
   },
   "upload_photo": "Фотосуретті жүктеп салу"
 }

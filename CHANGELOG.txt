@@ -1,5 +1,19 @@
 # CHANGELOG - Память проекта Beauty CRM
 
+## [2026-01-14] UI Reorganization & API Fixes
+- 🏗️ **Navigation Reorganization**: Grouped "Payment Systems", "Marketplaces", and "Messengers" under a new "Integrations" group in `MainLayout`.
+- 🔄 **Menu Persistence**: Sidebar groups now remember their expanded state on page refresh or navigation within the group, preventing annoying collapses.
+- 🗑️ **Trash Bin Transactions**: Fixed "current transaction is aborted" errors by implementing PostgreSQL savepoints for individual item deletions. This allows the trash cleaning to continue even if some items fail due to foreign key constraints.
+- 🛠️ **Gunicorn Boot Fix**: Resolved a critical boot failure caused by a syntax error in `backend/api/trash.py`.
+- ⚡ **Unread Count Optimization**: Устранена проблема N+1 запросов в эндпоинте `/api/unread-count`. Цикл по 2000+ клиентам заменен на один агрегированный SQL запрос, что снизило время ответа с 27с до нескольких миллисекунд.
+- 🗄 **Database Indexes**: Добавлены критические индексы для таблиц `chat_history`, `sessions`, `internal_chat` и `user_services` для ускорения поиска и авторизации.
+- 🧹 **Scheduled Housekeeping**: В планировщик добавлена ежедневная задача очистки (03:00):
+  * Удаление старых сессий.
+  * Окончательное удаление объектов из корзины (старше 30 дней).
+  * Очистка старых логов аудита.
+- 🚀 **Middleware Optimization**: Проверено и оптимизировано время выполнения `TimingMiddleware` и `CacheControlMiddleware`.
+
+
 ## [2026-01-13] - Багфиксы: Корзина, Записи и Внутренний чат
 - 🗑️ **Trash Bin**: Добавлена функция "Очистить корзину" (Empty Trash) для безвозвратного удаления всех объектов.
 - 🛠 **Recordings Fix**: Исправлена ошибка 500 на странице записей звонков (восстановлена и исправлена схема таблицы `chat_recordings` и `call_logs`).

@@ -1,73 +1,83 @@
 {
-  "title": "Products & Stock",
-  "subtitle": "Product and Inventory Management",
   "addProduct": "Add Product",
-  "edit": "Edit",
-  "delete": "Delete",
-  "loading": "Loading...",
   "allCategories": "All Categories",
-  "noProducts": "No products yet",
+  "analytics": {
+    "avgPrice": "Wed. ",
+    "last30Days": "In 30 days",
+    "revenue": "Revenue",
+    "totalSold": "Total sold"
+  },
   "createFirst": "Add your first product to the system",
-  "form": {
-    "name": "Name",
-    "nameRu": "Name (RU)",
-    "nameEn": "Title (EN)",
-    "nameAr": "Title (AR)",
-    "category": "Category",
-    "price": "Sale Price",
-    "costPrice": "Cost Price",
-    "stockQuantity": "In Stock",
-    "minStockLevel": "Min Stock",
-    "sku": "Article",
-    "barcode": "Barcode",
-    "supplier": "Supplier",
-    "notes": "Notes",
-    "isActive": "Active",
-    "photos": "Product Photos",
-    "upload": "Upload",
-    "uploadError": "Photo upload error",
-    "save": "Save",
-    "cancel": "Cancel"
-  },
-  "movement": {
-    "title": "Product Movement",
-    "type": "Movement Type",
-    "quantity": "Quantity",
-    "reason": "Reason",
-    "types": {
-      "in": "In",
-      "out": "Out",
-      "adjustment": "Adjustment"
-    }
-  },
-  "messages": {
-    "confirmDelete": "Are you sure you want to delete this product?",
-    "productCreated": "Product created",
-    "productUpdated": "Product updated",
-    "productDeleted": "Product deleted",
-    "movementAdded": "Movement added",
-    "noResults": "No results found for your search"
-  },
+  "delete": "Delete",
   "detail": {
-    "noCategory": "No category",
+    "avgPrice": "Avg. Price",
     "costPriceLabel": "Cost: {{price}} {{currency}}",
-    "movementHistory": "Movement History",
     "inStock": "In Stock: {{count}}",
+    "inStock_one": "",
+    "inStock_other": "",
+    "last30Days": "Last 30 Days",
     "loadingData": "Loading data...",
-    "noMovements": "No movement data",
+    "movementAdjustment": "Adjustment",
+    "movementHistory": "Movement History",
     "movementIn": "Stock In",
     "movementOut": "Stock Out",
-    "movementAdjustment": "Adjustment",
-    "totalSold": "Total Sold",
+    "noCategory": "No category",
+    "noMovements": "No movement data",
     "totalRevenue": "Revenue",
-    "last30Days": "Last 30 Days",
-    "avgPrice": "Avg. Price"
+    "totalSold": "Total Sold",
+    "inStock_few": "",
+    "inStock_many": ""
   },
+  "edit": "Edit",
+  "form": {
+    "barcode": "Barcode",
+    "cancel": "Cancel",
+    "category": "Category",
+    "costPrice": "Cost Price",
+    "isActive": "Active",
+    "minStockLevel": "Min Stock",
+    "name": "Name",
+    "nameAr": "Title (AR)",
+    "nameEn": "Title (EN)",
+    "nameRu": "Name (RU)",
+    "notes": "Notes",
+    "photos": "Product Photos",
+    "price": "Sale Price",
+    "save": "Save",
+    "sku": "Article",
+    "stockQuantity": "In Stock",
+    "supplier": "Supplier",
+    "upload": "Upload",
+    "uploadError": "Photo upload error"
+  },
+  "loading": "Loading...",
+  "messages": {
+    "confirmDelete": "Are you sure you want to delete this product?",
+    "movementAdded": "Movement added",
+    "noResults": "No results found for your search",
+    "productCreated": "Product created",
+    "productDeleted": "Product deleted",
+    "productUpdated": "Product updated"
+  },
+  "movement": {
+    "quantity": "Quantity",
+    "reason": "Reason",
+    "title": "Product Movement",
+    "type": "Movement Type",
+    "types": {
+      "adjustment": "Adjustment",
+      "in": "In",
+      "out": "Out"
+    }
+  },
+  "noProducts": "No products yet",
   "search_placeholder": "Search by name or category...",
   "stock_status": {
     "in_stock": "In Stock",
     "low_stock": "Low Stock",
     "out_of_stock": "Out of Stock"
   },
+  "subtitle": "Product and Inventory Management",
+  "title": "Products & Stock",
   "unit_pcs": "pcs."
 }

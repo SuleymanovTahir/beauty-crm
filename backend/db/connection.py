@@ -36,14 +36,37 @@ class CursorWrapper:
         self._conn_obj = conn_obj
 
     def execute(self, query, params=None):
+        import time
+        from utils.logger import log_warning
+        
         if query:
             query = query.replace('%s', '%s')
-        return self._cursor.execute(query, params)
+            
+        start_time = time.time()
+        try:
+            return self._cursor.execute(query, params)
+        finally:
+            duration = (time.time() - start_time) * 1000
+            if duration > 1000:
+                # Truncate query for logging
+                q_snippet = str(query)[:100].replace('\n', ' ')
+                log_warning(f"🐢 SLOW QUERY ({duration:.2f}ms): {q_snippet}...", "db_performance")
 
     def executemany(self, query, params=None):
+        import time
+        from utils.logger import log_warning
+        
         if query:
             query = query.replace('%s', '%s')
-        return self._cursor.executemany(query, params)
+            
+        start_time = time.time()
+        try:
+            return self._cursor.executemany(query, params)
+        finally:
+            duration = (time.time() - start_time) * 1000
+            if duration > 1000:
+                q_snippet = str(query)[:100].replace('\n', ' ')
+                log_warning(f"🐢 SLOW EXECUTEMANY ({duration:.2f}ms): {q_snippet}...", "db_performance")
 
     def __getattr__(self, name):
         return getattr(self._cursor, name)
@@ -93,11 +116,16 @@ def get_db_connection():
     if _connection_pool is None:
         init_connection_pool()
     
+    import time
+    start_time = time.time()
     try:
         conn = _connection_pool.getconn()
+        duration = (time.time() - start_time) * 1000
+        if duration > 500:
+            log_warning(f"🕒 Connection acquisition took {duration:.2f}ms", "db")
         return ConnectionWrapper(conn)
     except Exception as e:
-        log_error(f"Failed to get connection from pool: {e}", "db")
+        log_error(f"Failed to get connection from pool: {e} (Attempt took {(time.time()-start_time)*1000:.2f}ms)", "db")
         # Fallback to direct connection if pool fails
         try:
             direct_conn = psycopg2.connect(

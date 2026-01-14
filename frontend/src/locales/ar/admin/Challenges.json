@@ -1,0 +1,51 @@
+{
+  "buttons": {
+    "add_challenge": "قم بإنشاء مهمة",
+    "create_challenge": "ابدأ التحدي"
+  },
+  "card": {
+    "details": "مزيد من التفاصيل",
+    "participants": "مشاركون",
+    "progress": "تقدم"
+  },
+  "dialogs": {
+    "add_title": "تحدي جديد",
+    "edit_title": "تحرير التحدي"
+  },
+  "empty": {
+    "subtitle": "قم بإنشاء تحدي لعبتك الأول لتشجيع العملاء على الاشتراك في كثير من الأحيان.",
+    "title": "لم يتم إعداد التحديات"
+  },
+  "fields": {
+    "dates": "الحد الزمني",
+    "description": "الوصف العام",
+    "reward": "جائزة",
+    "target_value": "الخطة (الهدف)",
+    "title": "مسمى وظيفي",
+    "type": "منهجية الهدف"
+  },
+  "placeholders": {
+    "description": "كيف سيرى العميل هذه المهمة؟",
+    "title": "على سبيل المثال: الحالة الذهبية"
+  },
+  "stats": {
+    "active_challenges": "المهام النشطة",
+    "completed_today": "اكتمل اليوم",
+    "total_participants": "إجمالي المشاركين"
+  },
+  "status": {
+    "active": "نشيط",
+    "inactive": "يوقف"
+  },
+  "subtitle": "قم بزيادة ولاء العملاء باستخدام آليات اللعبة والمكافآت التلقائية.",
+  "title": "التحديات",
+  "toasts": {
+    "created": "تم إنشاء المهمة",
+    "updated": "تم تحديث المهمة"
+  },
+  "types": {
+    "service": "فئة الخدمة",
+    "spend": "إجمالي الإنفاق",
+    "visits": "عدد الزيارات"
+  }
+}

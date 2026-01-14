@@ -16,6 +16,7 @@
   "client_deleted": "Клиент удален",
   "client_details_description": "Детальная информация и управление записями клиента",
   "client_list": "Список клиентов",
+  "client_updated": "Данные клиента обновлены",
   "clients": "клиентов",
   "close": "Закрыть",
   "confirm_delete_client": "Вы уверены, что хотите удалить этого клиента?",

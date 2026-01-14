@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Store, Settings, CheckCircle, XCircle, RefreshCw, BarChart3, Star } from 'lucide-react';
+import { Store, Settings, CheckCircle, XCircle, RefreshCw, BarChart3, Star, ExternalLink } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import '../../styles/crm-pages.css';
 
@@ -24,6 +25,7 @@ const MarketplaceIntegrations = () => {
     const [showConfigDialog, setShowConfigDialog] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
     const [syncing, setSyncing] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         loadProviders();
@@ -158,7 +160,7 @@ const MarketplaceIntegrations = () => {
                         </div>
                         <div className="crm-stat-content">
                             <div className="crm-stat-value">
-                                {Object.values(stats.bookings_by_provider || {}).reduce((a: any, b: any) => a + b, 0)}
+                                {(Object.values(stats.bookings_by_provider || {}).reduce((a: any, b: any) => a + b, 0) as number)}
                             </div>
                             <div className="crm-stat-label">{t('marketplace.totalBookings', 'Всего записей')}</div>
                         </div>
@@ -257,6 +259,16 @@ const MarketplaceIntegrations = () => {
                                             >
                                                 <RefreshCw size={16} className={syncing === key ? 'crm-animate-spin' : ''} />
                                                 {syncing === key ? t('marketplace.syncing', 'Синхронизация...') : t('marketplace.sync', 'Синхронизировать')}
+                                            </button>
+                                        )}
+                                        {isActive && (
+                                            <button
+                                                className="crm-btn-primary flex-1"
+                                                onClick={() => navigate('/crm/bookings?source=' + key)}
+                                                style={{ marginLeft: '10px' }}
+                                            >
+                                                <ExternalLink size={16} />
+                                                {t('marketplace.viewBookings', 'Перейти к записям')}
                                             </button>
                                         )}
                                     </div>

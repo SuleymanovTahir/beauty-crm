@@ -56,8 +56,12 @@
   "saving": "Ahorro...",
   "search_templates": "Buscar plantillas...",
   "source": {
+    "account": "Cuenta",
+    "guest_link": "Enlace",
     "manual": "A mano"
   },
+  "source_account": "Personal Cabinet",
+  "source_guest_link": "Link",
   "source_title": "Fuente",
   "status": "Estado",
   "status_color_label": "Color de estado",

@@ -1,83 +1,98 @@
 {
-  "title": "Tratados",
-  "subtitle": "Gestión de contratos con clientes.",
-  "addContract": "Crear un acuerdo",
-  "loading": "Cargando...",
-  "allStatuses": "Todos los estados",
-  "contractNumber": "Contrato No.",
-  "client": "Cliente",
-  "status": "Estado",
-  "createdAt": "Fecha de creación",
   "actions": "Acciones",
-  "sendButton": "Enviar",
-  "delete": "Borrar",
-  "noContracts": "Aún no hay contratos",
+  "addContract": "Crear un acuerdo",
+  "all": "Todo",
+  "allContracts": "Todos los contratos",
+  "allStatuses": "Todos los estados",
+  "board": "Junta",
+  "client": "Cliente",
+  "clientContracts": "Cliente",
+  "contractNumber": "Contrato No.",
+  "contractTypes": {
+    "employment": "Contrato de trabajo",
+    "rental": "Alquilar un lugar",
+    "service": "Prestación de servicios"
+  },
+  "createdAt": "Fecha de creación",
   "createFirst": "Crea tu primer contrato con un cliente",
-  "statuses": {
-    "draft": "Borrador",
-    "sent": "Enviado",
-    "signed": "Firmado",
-    "cancelled": "Cancelado"
+  "delete": "Borrar",
+  "editButton": "Editar",
+  "editContract": "Editar contrato",
+  "errors": {
+    "deleteError": "Error deleting contract",
+    "saveError": "Error saving contract",
+    "sendError": "Error sending contract",
+    "updateError": "Failed to update status"
   },
   "form": {
-    "selectClient": "Seleccionar cliente",
-    "contractType": "Tipo de contrato",
+    "cancel": "Cancelar",
     "contractDate": "Fecha del contrato",
-    "terms": "Términos del acuerdo",
+    "contractType": "Tipo de contrato",
     "notes": "Notas",
     "save": "Ahorrar",
-    "cancel": "Cancelar"
+    "selectClient": "Seleccionar cliente",
+    "terms": "Términos del acuerdo"
   },
-  "types": {
-    "service": "Servicio",
-    "product": "Producto",
-    "subscription": "Suscripción"
-  },
-  "sendDialog": {
-    "title": "Enviar contrato",
-    "method": "Método de envío",
-    "recipient": "Beneficiario",
-    "email": "Correo electrónico",
-    "whatsapp": "WhatsApp",
-    "telegram": "Telegrama",
-    "instagram": "Instagram",
-    "sendButton": "Enviar"
-  },
+  "internalContracts": "Doméstico",
+  "loading": "Cargando...",
+  "manage_stages": "columnas",
+  "manageTypes": "Tipos de contratos",
   "messages": {
     "confirmDelete": "¿Está seguro de que desea eliminar este acuerdo?",
     "contractCreated": "El contrato ha sido creado.",
-    "contractSent": "El contrato ha sido enviado.",
     "contractDeleted": "Contrato eliminado",
+    "contractSent": "El contrato ha sido enviado.",
     "contractUpdated": "El contrato ha sido actualizado."
   },
-  "contractTypes": {
-    "service": "Prestación de servicios",
-    "employment": "Contrato de trabajo",
-    "rental": "Alquilar un lugar"
+  "noContracts": "Aún no hay contratos",
+  "search_placeholder": "Buscar hasta número o cliente...",
+  "sendButton": "Enviar",
+  "sendDialog": {
+    "email": "Correo electrónico",
+    "instagram": "Instagram",
+    "method": "Método de envío",
+    "recipient": "Beneficiario",
+    "sendButton": "Enviar",
+    "telegram": "Telegrama",
+    "title": "Enviar contrato",
+    "whatsapp": "WhatsApp"
   },
-  "editContract": "Editar contrato",
-  "editButton": "Editar",
-  "manageTypes": "Tipos de contratos",
+  "status": "Estado",
+  "statuses": {
+    "cancelled": "Cancelado",
+    "draft": "Borrador",
+    "sent": "Enviado",
+    "signed": "Firmado"
+  },
+  "subtitle": "Gestión de contratos con clientes.",
+  "title": "Tratados",
   "type": "Tipo",
   "typeManagement": {
-    "title": "Tipos de contratos",
-    "editType": "Tipo de edición",
-    "createType": "Crear tipo",
-    "name": "Nombre",
-    "code": "Código (lat., único)",
-    "description": "Descripción",
     "add": "Agregar",
-    "deleteTitle": "Eliminando el tipo \"{{name}}\"",
+    "code": "Código (lat., único)",
+    "confirmDelete": "Confirmar eliminación",
+    "createType": "Crear tipo",
     "deletePrompt": "Quiere eliminar este tipo de contrato. ¿Qué hacer con los contratos existentes de este tipo?",
+    "deleteTitle": "Eliminando el tipo \"{{name}}\"",
     "deleteWithDocs": "Eliminar todos los contratos",
     "deleteWithDocsSub": "Todos los documentos de este tipo se eliminarán permanentemente.",
+    "description": "Descripción",
+    "editType": "Tipo de edición",
     "keepDocs": "Dejar contratos sin tipo",
     "keepDocsSub": "Los contratos permanecerán, pero se borrará el campo \"Tipo\".",
-    "confirmDelete": "Confirmar eliminación",
     "messages": {
-      "updated": "Tipo actualizado",
       "created": "Tipo creado",
-      "deleted": "Tipo eliminado"
-    }
+      "deleted": "Tipo eliminado",
+      "updated": "Tipo actualizado"
+    },
+    "name": "Nombre",
+    "system": "System",
+    "systemProtected": "System protected",
+    "title": "Tipos de contratos"
+  },
+  "types": {
+    "product": "Producto",
+    "service": "Servicio",
+    "subscription": "Suscripción"
   }
 }

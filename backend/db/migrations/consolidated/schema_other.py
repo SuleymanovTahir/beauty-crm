@@ -43,11 +43,20 @@ def migrate_other_schema():
                 message TEXT NOT NULL,
                 timestamp TEXT NOT NULL,
                 is_read BOOLEAN DEFAULT FALSE,
+                type TEXT DEFAULT 'text',
+                edited BOOLEAN DEFAULT FALSE,
+                edited_at TEXT,
+                deleted_for_sender BOOLEAN DEFAULT FALSE,
+                deleted_for_receiver BOOLEAN DEFAULT FALSE,
+                reactions JSONB,
                 FOREIGN KEY (sender_id) REFERENCES users(id),
                 FOREIGN KEY (receiver_id) REFERENCES users(id)
             )
         """)
-        print("  ✅ internal_chat table ensured")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_internal_chat_receiver_unread ON internal_chat(receiver_id, is_read)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_internal_chat_sender_receiver ON internal_chat(sender_id, receiver_id)")
+        print("  ✅ internal_chat table ensured with indexes")
+
         
         # Create permissions table if not exists
         c.execute("""

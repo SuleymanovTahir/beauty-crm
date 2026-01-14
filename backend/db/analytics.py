@@ -506,10 +506,10 @@ def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
     
     # Активность клиентов по дням
     c.execute("""
-        SELECT DATE(created_at) as date, COUNT(DISTINCT instagram_id) as unique_clients
-        FROM messages 
-        WHERE created_at >= %s AND created_at <= %s
-        GROUP BY DATE(created_at)
+        SELECT DATE(timestamp) as date, COUNT(DISTINCT instagram_id) as unique_clients
+        FROM chat_history 
+        WHERE timestamp >= %s AND timestamp <= %s
+        GROUP BY DATE(timestamp)
         ORDER BY date
     """, (start_date, end_date))
     daily_activity = c.fetchall()
@@ -519,8 +519,8 @@ def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
         SELECT c.instagram_id, c.username, c.name, COUNT(m.id) as message_count,
                c.total_messages, c.lifetime_value
         FROM clients c
-        LEFT JOIN messages m ON c.instagram_id = m.instagram_id 
-            AND m.created_at >= %s AND m.created_at <= %s
+        LEFT JOIN chat_history m ON c.instagram_id = m.instagram_id 
+            AND m.timestamp >= %s AND m.timestamp <= %s
         GROUP BY c.instagram_id
         HAVING message_count > 0
         ORDER BY message_count DESC
@@ -530,10 +530,10 @@ def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
     
     # Распределение сообщений по времени суток (Postgres compatible)
     c.execute("""
-        SELECT EXTRACT(HOUR FROM created_at::TIMESTAMP) as hour, COUNT(*) as count
-        FROM messages 
-        WHERE created_at >= %s AND created_at <= %s
-        GROUP BY EXTRACT(HOUR FROM created_at::TIMESTAMP)
+        SELECT EXTRACT(HOUR FROM timestamp::TIMESTAMP) as hour, COUNT(*) as count
+        FROM chat_history 
+        WHERE timestamp >= %s AND timestamp <= %s
+        GROUP BY EXTRACT(HOUR FROM timestamp::TIMESTAMP)
         ORDER BY hour
     """, (start_date, end_date))
     hourly_distribution = c.fetchall()
@@ -541,18 +541,18 @@ def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
     # Статистика по типам сообщений
     c.execute("""
         SELECT message_type, COUNT(*) as count
-        FROM messages 
-        WHERE created_at >= %s AND created_at <= %s
+        FROM chat_history 
+        WHERE timestamp >= %s AND timestamp <= %s
         GROUP BY message_type
     """, (start_date, end_date))
     message_types = c.fetchall()
     
     # Средняя длина сообщений
     c.execute("""
-        SELECT AVG(LENGTH(message_text)) as avg_length
-        FROM messages 
-        WHERE created_at >= %s AND created_at <= %s 
-        AND message_text IS NOT NULL
+        SELECT AVG(LENGTH(message)) as avg_length
+        FROM chat_history 
+        WHERE timestamp >= %s AND timestamp <= %s 
+        AND message IS NOT NULL
     """, (start_date, end_date))
     avg_message_length = c.fetchone()[0] or 0
     
@@ -617,10 +617,10 @@ def get_client_insights_data(client_id):
     
     # История сообщений
     c.execute("""
-        SELECT message_text, sender, message_type, created_at
-        FROM messages 
+        SELECT message, sender, message_type, timestamp
+        FROM chat_history 
         WHERE instagram_id = %s
-        ORDER BY created_at DESC
+        ORDER BY timestamp DESC
         LIMIT 50
     """, (client_id,))
     message_history = c.fetchall()
@@ -632,9 +632,9 @@ def get_client_insights_data(client_id):
             COUNT(CASE WHEN sender = 'client' THEN 1 END) as client_messages,
             COUNT(CASE WHEN sender = 'bot' THEN 1 END) as bot_messages,
             COUNT(CASE WHEN sender = 'manager' THEN 1 END) as manager_messages,
-            MIN(created_at) as first_message,
-            MAX(created_at) as last_message
-        FROM messages 
+            MIN(timestamp) as first_message,
+            MAX(timestamp) as last_message
+        FROM chat_history 
         WHERE instagram_id = %s
     """, (client_id,))
     activity_stats = c.fetchone()
@@ -652,10 +652,10 @@ def get_client_insights_data(client_id):
     c.execute("""
         SELECT 
             AVG(CASE 
-                WHEN sender = 'client' AND LAG(sender) OVER (ORDER BY created_at) = 'bot' 
-                THEN EXTRACT(EPOCH FROM (created_at::TIMESTAMP - LAG(created_at::TIMESTAMP) OVER (ORDER BY created_at))) / 60
+                WHEN sender = 'client' AND LAG(sender) OVER (ORDER BY timestamp) = 'bot' 
+                THEN EXTRACT(EPOCH FROM (timestamp::TIMESTAMP - LAG(timestamp::TIMESTAMP) OVER (ORDER BY timestamp))) / 60
                 END) as avg_response_time_minutes
-        FROM messages 
+        FROM chat_history 
         WHERE instagram_id = %s
     """, (client_id,))
     response_time = c.fetchone()[0]
@@ -714,7 +714,7 @@ def get_performance_metrics_data(period=30):
     c.execute("SELECT COUNT(*) FROM clients")
     total_clients = c.fetchone()[0]
     
-    c.execute("SELECT COUNT(*) FROM messages WHERE created_at >= %s", (start_date,))
+    c.execute("SELECT COUNT(*) FROM chat_history WHERE timestamp >= %s", (start_date,))
     total_messages = c.fetchone()[0]
     
     c.execute("SELECT COUNT(*) FROM bookings WHERE created_at >= %s", (start_date,))
@@ -723,8 +723,8 @@ def get_performance_metrics_data(period=30):
     # Метрики вовлеченности
     c.execute("""
         SELECT COUNT(DISTINCT instagram_id) 
-        FROM messages 
-        WHERE created_at >= %s AND sender = 'client'
+        FROM chat_history 
+        WHERE timestamp >= %s AND sender = 'client'
     """, (start_date,))
     active_clients = c.fetchone()[0]
     
@@ -732,8 +732,8 @@ def get_performance_metrics_data(period=30):
         SELECT AVG(message_count) 
         FROM (
             SELECT instagram_id, COUNT(*) as message_count
-            FROM messages 
-            WHERE created_at >= %s AND sender = 'client'
+            FROM chat_history 
+            WHERE timestamp >= %s AND sender = 'client'
             GROUP BY instagram_id
         )
     """, (start_date,))
@@ -762,10 +762,10 @@ def get_performance_metrics_data(period=30):
     # Время ответа (приблизительно)
     c.execute("""
         SELECT AVG(
-            EXTRACT(EPOCH FROM (created_at::TIMESTAMP - LAG(created_at::TIMESTAMP) OVER (ORDER BY created_at))) / 60
+            EXTRACT(EPOCH FROM (timestamp::TIMESTAMP - LAG(timestamp::TIMESTAMP) OVER (ORDER BY timestamp))) / 60
         )
-        FROM messages 
-        WHERE created_at >= %s AND sender = 'bot'
+        FROM chat_history 
+        WHERE timestamp >= %s AND sender = 'bot'
     """, (start_date,))
     avg_response_time = c.fetchone()[0]
     

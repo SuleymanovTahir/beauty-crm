@@ -1,6 +1,9 @@
 {
   "clear_all": "Borrar todo",
   "clear_confirm": "¿Está seguro de que desea borrar completamente el reserva de auditoría? Esta acción es irreversible.",
+  "delete_batch_confirm": "¿Eliminar reservas seleccionados ({{count}}) de forma permanente?",
+  "delete_confirm": "¿Debo eliminar permanentemente esta reserva?",
+  "delete_selected": "Eliminar seleccionado",
   "details": {
     "error_msg": "Mensaje de error",
     "ip": "IP",
@@ -13,6 +16,7 @@
   "filter_all": "Todas las acciones",
   "filter_create": "Creación",
   "filter_delete": "Eliminación",
+  "filter_delete_all": "Borrar el reserva",
   "filter_login": "Iniciar sesión",
   "filter_restore": "Recuperación",
   "filter_update": "Cambiar",
@@ -37,6 +41,8 @@
   "toast": {
     "clear_error": "Error al borrar el reserva",
     "clear_success": "reserva de auditoría borrado exitosamente",
+    "delete_error": "Error durante la eliminación",
+    "delete_success": "reservas eliminadas",
     "load_error": "Error al cargar el reserva de auditoría"
   }
 }

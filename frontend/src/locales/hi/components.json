@@ -56,8 +56,12 @@
   "saving": "सहेजा जा रहा है...",
   "search_templates": "टेम्प्लेट खोजें...",
   "source": {
+    "account": "ठीक है",
+    "guest_link": "जोड़ना",
     "manual": "मैन्युअल"
   },
+  "source_account": "व्यक्तिगत कैबिनेट",
+  "source_guest_link": "जोड़ना",
   "source_title": "स्रोत",
   "status": "स्थिति",
   "status_color_label": "स्थिति का रंग",

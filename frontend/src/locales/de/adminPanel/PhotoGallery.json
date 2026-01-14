@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "hide": "Hide",
+    "show": "Show"
+  },
   "buttons": {
     "cancel": "Stornieren",
     "close": "Schließen",
@@ -75,9 +79,11 @@
     "failed_featured": "Der Favoritenstatus konnte nicht aktualisiert werden",
     "failed_load": "Fotos konnten nicht hochgeladen werden",
     "failed_upload": "Foto konnte nicht hochgeladen werden",
+    "failed_visibility": "Failed to update visibility",
     "featured_updated": "Favoritenstatus aktualisiert",
     "select_both_photos": "Please select both before and after photos",
-    "uploaded": "Foto erfolgreich hochgeladen"
+    "uploaded": "Foto erfolgreich hochgeladen",
+    "visibility_updated": "Visibility updated"
   },
   "upload_photo": "Foto hochladen"
 }

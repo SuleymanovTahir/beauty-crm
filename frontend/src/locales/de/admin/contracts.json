@@ -1,83 +1,98 @@
 {
-  "title": "Verträge",
-  "subtitle": "Verwaltung bis Kundenverträgen",
-  "addContract": "Erstellen Sie eine Vereinbarung",
-  "loading": "Laden...",
-  "allStatuses": "Alle Status",
-  "contractNumber": "Vertragsnr.",
-  "client": "Kunde",
-  "status": "Status",
-  "createdAt": "Erstellungsdatum",
   "actions": "Aktionen",
-  "sendButton": "Schicken",
-  "delete": "Löschen",
-  "noContracts": "Noch keine Verträge",
+  "addContract": "Erstellen Sie eine Vereinbarung",
+  "all": "Alle",
+  "allContracts": "Alle Verträge",
+  "allStatuses": "Alle Status",
+  "board": "Planke",
+  "client": "Kunde",
+  "clientContracts": "Kunde",
+  "contractNumber": "Vertragsnr.",
+  "contractTypes": {
+    "employment": "Arbeitsvertrag",
+    "rental": "Einen Platz mieten",
+    "service": "Erbringung bis Dienstleistungen"
+  },
+  "createdAt": "Erstellungsdatum",
   "createFirst": "Erstellen Sie Ihren ersten Vertrag mit einem Kunden",
-  "statuses": {
-    "draft": "Entwurf",
-    "sent": "Gesendet",
-    "signed": "Unterzeichnet",
-    "cancelled": "Abgesagt"
+  "delete": "Löschen",
+  "editButton": "Bearbeiten",
+  "editContract": "Vertrag bearbeiten",
+  "errors": {
+    "deleteError": "Error deleting contract",
+    "saveError": "Error saving contract",
+    "sendError": "Error sending contract",
+    "updateError": "Failed to update status"
   },
   "form": {
-    "selectClient": "Wählen Sie den Kunden aus",
-    "contractType": "Vertragstyp",
+    "cancel": "Stornieren",
     "contractDate": "Vertragsdatum",
-    "terms": "Bedingungen der Vereinbarung",
+    "contractType": "Vertragstyp",
     "notes": "Notizen",
     "save": "Speichern",
-    "cancel": "Stornieren"
+    "selectClient": "Wählen Sie den Kunden aus",
+    "terms": "Bedingungen der Vereinbarung"
   },
-  "types": {
-    "service": "Service",
-    "product": "Produkt",
-    "subscription": "Abonnement"
-  },
-  "sendDialog": {
-    "title": "Vertrag senden",
-    "method": "Versandart",
-    "recipient": "Empfänger",
-    "email": "E-Mail",
-    "whatsapp": "WhatsApp",
-    "telegram": "Telegramm",
-    "instagram": "Instagram",
-    "sendButton": "Schicken"
-  },
+  "internalContracts": "Inländisch",
+  "loading": "Laden...",
+  "manage_stages": "Spalten",
+  "manageTypes": "Arten bis Verträgen",
   "messages": {
     "confirmDelete": "Sind Sie sicher, dass Sie diese Vereinbarung löschen möchten?",
     "contractCreated": "Der Vertrag wurde erstellt",
-    "contractSent": "Der Vertrag wurde verschickt",
     "contractDeleted": "Vertrag gelöscht",
+    "contractSent": "Der Vertrag wurde verschickt",
     "contractUpdated": "Der Vertrag wurde aktualisiert"
   },
-  "contractTypes": {
-    "service": "Erbringung bis Dienstleistungen",
-    "employment": "Arbeitsvertrag",
-    "rental": "Einen Platz mieten"
+  "noContracts": "Noch keine Verträge",
+  "search_placeholder": "Suche nach Nummer oder Kunde...",
+  "sendButton": "Schicken",
+  "sendDialog": {
+    "email": "E-Mail",
+    "instagram": "Instagram",
+    "method": "Versandart",
+    "recipient": "Empfänger",
+    "sendButton": "Schicken",
+    "telegram": "Telegramm",
+    "title": "Vertrag senden",
+    "whatsapp": "WhatsApp"
   },
-  "editContract": "Vertrag bearbeiten",
-  "editButton": "Bearbeiten",
-  "manageTypes": "Arten bis Verträgen",
+  "status": "Status",
+  "statuses": {
+    "cancelled": "Abgesagt",
+    "draft": "Entwurf",
+    "sent": "Gesendet",
+    "signed": "Unterzeichnet"
+  },
+  "subtitle": "Verwaltung bis Kundenverträgen",
+  "title": "Verträge",
   "type": "Typ",
   "typeManagement": {
-    "title": "Arten bis Verträgen",
-    "editType": "Typ bearbeiten",
-    "createType": "Typ erstellen",
-    "name": "Name",
-    "code": "Code (lat., eindeutig)",
-    "description": "Beschreibung",
     "add": "Hinzufügen",
-    "deleteTitle": "Typ „{{name}}“ wird entfernt",
+    "code": "Code (lat., eindeutig)",
+    "confirmDelete": "Bestätigen Sie den Löschvorgang",
+    "createType": "Typ erstellen",
     "deletePrompt": "Sie möchten diesen Vertragstyp löschen. Was tun mit bestehenden Verträgen dieser Art?",
+    "deleteTitle": "Typ „{{name}}“ wird entfernt",
     "deleteWithDocs": "Alle Verträge löschen",
     "deleteWithDocsSub": "Alle Dokumente dieser Art werden dauerhaft gelöscht.",
+    "description": "Beschreibung",
+    "editType": "Typ bearbeiten",
     "keepDocs": "Lassen Sie Verträge ohne Typ",
     "keepDocsSub": "Die Verträge bleiben bestehen, das Feld „Typ“ wird jedoch gelöscht.",
-    "confirmDelete": "Bestätigen Sie den Löschvorgang",
     "messages": {
-      "updated": "Typ aktualisiert",
       "created": "Typ erstellt",
-      "deleted": "Typ entfernt"
-    }
+      "deleted": "Typ entfernt",
+      "updated": "Typ aktualisiert"
+    },
+    "name": "Name",
+    "system": "System",
+    "systemProtected": "System protected",
+    "title": "Arten bis Verträgen"
+  },
+  "types": {
+    "product": "Produkt",
+    "service": "Service",
+    "subscription": "Abonnement"
   }
 }
