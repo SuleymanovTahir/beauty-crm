@@ -39,6 +39,7 @@ const Products = React.lazy(() => import('./pages/admin/Products'));
 const Invoices = React.lazy(() => import('./pages/admin/Invoices'));
 const PaymentIntegrations = React.lazy(() => import('./pages/admin/PaymentIntegrations'));
 const MarketplaceIntegrations = React.lazy(() => import('./pages/admin/MarketplaceIntegrations'));
+const Messengers = React.lazy(() => import('./pages/admin/Messengers'));
 const CRMReferrals = React.lazy(() => import('./pages/admin/Referrals'));
 const CRMChallenges = React.lazy(() => import('./pages/admin/Challenges'));
 
@@ -330,6 +331,7 @@ export default function App() {
                 <Route path="contracts" element={<Contracts />} />
                 <Route path="products" element={<Products />} />
                 <Route path="invoices" element={<Invoices />} />
+                <Route path="messengers" element={<Messengers />} />
                 <Route path="payment-integrations" element={<PaymentIntegrations />} />
                 <Route path="marketplace-integrations" element={<MarketplaceIntegrations />} />
                 <Route path="referrals" element={<CRMReferrals />} />
@@ -361,6 +363,7 @@ export default function App() {
                 <Route path="analytics" element={<Analytics />} />
                 <Route path="employees" element={<EmployeeManagement />} />
                 <Route path="employees/:id" element={<EmployeeManagement />} />
+                <Route path="messengers" element={<Messengers />} />
                 <Route path="settings/:tab?" element={<Settings />} />
                 <Route path="bot-settings" element={<BotSettings />} />
                 <Route path="notifications" element={<NotificationsPage />} />

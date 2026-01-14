@@ -1,8 +1,11 @@
 {
+  "confirm_empty_trash": "Are you sure you want to permanently delete all items in the trash?",
+  "delete_selected": "Delete Selected",
   "deleted_at": "Deleted at",
   "deleted_by": "Deleted by",
   "empty_desc": "Deleted items will appear here",
   "empty_title": "Trash is empty",
+  "empty_trash": "Empty Trash",
   "entity": {
     "booking": "Booking",
     "client": "Client",
@@ -18,21 +21,24 @@
   "not_restorable": "Not restorable",
   "objects_count": "{{count}} objects",
   "objects_count_one": "",
+  "objects_count_few": "",
+  "objects_count_many": "",
   "objects_count_other": "",
   "permanent_delete": "Permanent Delete",
   "permanent_delete_confirm": "Are you sure? This action cannot be undone!",
   "restore": "Restore",
+  "restore_selected": "Restore Selected",
   "search_placeholder": "Search by ID, reason or author...",
   "subtitle": "Manage deleted items and restoration",
   "title": "Trash Bin",
   "toast": {
     "delete_error": "Error during permanent deletion",
     "delete_success": "Object permanently deleted",
+    "empty_error": "Error emptying trash",
     "load_error": "Error loading trash bin",
     "refreshed": "Refreshed",
     "restore_error": "Failed to restore object",
-    "restore_success": "{{type}} successfully restored"
-  },
-  "objects_count_few": "",
-  "objects_count_many": ""
+    "restore_success": "{{type}} successfully restored",
+    "trash_emptied": "Trash emptied"
+  }
 }

@@ -1,8 +1,11 @@
 {
+  "confirm_empty_trash": "क्या आप वाकई ट्रैश से सभी आइटम स्थायी रूप से हटाना चाहते हैं?",
+  "delete_selected": "चयनित हटाएं",
   "deleted_at": "हटाए गए",
   "deleted_by": "हटाए गए",
   "empty_desc": "हटाए गए ऑब्जेक्ट यहां प्रदर्शित किए जाएंगे",
   "empty_title": "कार्ट खाली है",
+  "empty_trash": "कचरा खाली करें",
   "entity": {
     "booking": "booking",
     "client": "ग्राहक",
@@ -18,21 +21,24 @@
   "not_restorable": "पुनर्प्राप्त करने योग्य नहीं",
   "objects_count": "{{count}} ऑब्जेक्ट",
   "objects_count_one": "",
+  "objects_count_few": "",
+  "objects_count_many": "",
   "objects_count_other": "",
   "permanent_delete": "स्थायी रूप से हटाएँ",
   "permanent_delete_confirm": "क्या आपको यकीन है? इस एक्शन को वापस नहीं किया जा सकता!",
   "restore": "पुनर्स्थापित करना",
+  "restore_selected": "चयनित पुनर्स्थापित करें",
   "search_placeholder": "आईडी, कारण या लेखक के आधार पर खोजें...",
   "subtitle": "हटाए गए डेटा को प्रबंधित करना और पुनर्स्थापित करना",
   "title": "टोकरी",
   "toast": {
     "delete_error": "अंतिम विलोपन के दौरान त्रुटि",
     "delete_success": "ऑब्जेक्ट स्थायी रूप से हटा दिया गया है",
+    "empty_error": "रीसायकल बिन खाली करते समय त्रुटि",
     "load_error": "कार्ट लोड करने में त्रुटि",
     "refreshed": "अद्यतन",
     "restore_error": "ऑब्जेक्ट पुनर्स्थापित करने में विफल",
-    "restore_success": "{{type}} सफलतापूर्वक पुनर्स्थापित किया गया"
-  },
-  "objects_count_few": "",
-  "objects_count_many": ""
+    "restore_success": "{{type}} सफलतापूर्वक पुनर्स्थापित किया गया",
+    "trash_emptied": "कचरा खाली"
+  }
 }

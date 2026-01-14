@@ -1,83 +1,98 @@
 {
-  "title": "संधियों",
-  "subtitle": "ग्राहक अनुबंध प्रबंधन",
-  "addContract": "एक समझौता बनाएं",
-  "loading": "लोड हो रहा है...",
-  "allStatuses": "सभी स्थितियाँ",
-  "contractNumber": "सम्पर्क का नम्बर।",
-  "client": "ग्राहक",
-  "status": "स्थिति",
-  "createdAt": "निर्माण तिथि",
   "actions": "कार्रवाई",
-  "sendButton": "भेजना",
-  "delete": "मिटाना",
-  "noContracts": "अभी तक कोई अनुबंध नहीं",
+  "addContract": "एक समझौता बनाएं",
+  "all": "सभी",
+  "allContracts": "सभी अनुबंध",
+  "allStatuses": "सभी स्थितियाँ",
+  "board": "तख़्ता",
+  "client": "ग्राहक",
+  "clientContracts": "ग्राहक",
+  "contractNumber": "सम्पर्क का नम्बर।",
+  "contractTypes": {
+    "employment": "रोजगार अनुबंध",
+    "rental": "एक जगह किराए पर लेना",
+    "service": "सेवाओं के प्रावधान"
+  },
+  "createdAt": "निर्माण तिथि",
   "createFirst": "किसी ग्राहक के साथ अपना पहला अनुबंध बनाएं",
-  "statuses": {
-    "draft": "मसौदा",
-    "sent": "भेजा",
-    "signed": "पर हस्ताक्षर किए",
-    "cancelled": "रद्द कर दिया गया"
+  "delete": "मिटाना",
+  "editButton": "संपादन करना",
+  "editContract": "अनुबंध संपादित करें",
+  "errors": {
+    "deleteError": "अनुबंध हटाने में त्रुटि",
+    "saveError": "अनुबंध सहेजने में त्रुटि",
+    "sendError": "अनुबंध भेजने में त्रुटि",
+    "updateError": "स्थिति अपडेट करने में विफल"
   },
   "form": {
-    "selectClient": "ग्राहक का चयन करें",
-    "contractType": "करार का प्रकार",
+    "cancel": "रद्द करना",
     "contractDate": "अनुबंध की तारीख",
-    "terms": "समझौते की शर्तें",
+    "contractType": "करार का प्रकार",
     "notes": "टिप्पणियाँ",
     "save": "बचाना",
-    "cancel": "रद्द करना"
+    "selectClient": "ग्राहक का चयन करें",
+    "terms": "समझौते की शर्तें"
   },
-  "types": {
-    "service": "ब्यूटी सैलून सेवा सेवा",
-    "product": "उत्पाद",
-    "subscription": "सदस्यता"
-  },
-  "sendDialog": {
-    "title": "अनुबंध भेजें",
-    "method": "शिपिंग का तरीका",
-    "recipient": "प्राप्तकर्ता",
-    "email": "ईमेल",
-    "whatsapp": "WHATSAPP",
-    "telegram": "टेलीग्राम",
-    "instagram": "Instagram",
-    "sendButton": "भेजना"
-  },
+  "internalContracts": "घरेलू",
+  "loading": "लोड हो रहा है...",
+  "manage_stages": "कॉलम",
+  "manageTypes": "अनुबंधों के प्रकार",
   "messages": {
     "confirmDelete": "क्या आप वाकई इस अनुबंध को हटाना चाहते हैं?",
     "contractCreated": "अनुबंध बनाया गया है",
-    "contractSent": "अनुबंध भेज दिया गया है",
     "contractDeleted": "अनुबंध हटा दिया गया",
+    "contractSent": "अनुबंध भेज दिया गया है",
     "contractUpdated": "अनुबंध अद्यतन कर दिया गया है"
   },
-  "contractTypes": {
-    "service": "सेवाओं के प्रावधान",
-    "employment": "रोजगार अनुबंध",
-    "rental": "एक जगह किराए पर लेना"
+  "noContracts": "अभी तक कोई अनुबंध नहीं",
+  "search_placeholder": "नंबर या क्लाइंट के आधार पर खोजें...",
+  "sendButton": "भेजना",
+  "sendDialog": {
+    "email": "ईमेल",
+    "instagram": "Instagram",
+    "method": "शिपिंग का तरीका",
+    "recipient": "प्राप्तकर्ता",
+    "sendButton": "भेजना",
+    "telegram": "टेलीग्राम",
+    "title": "अनुबंध भेजें",
+    "whatsapp": "WHATSAPP"
   },
-  "editContract": "अनुबंध संपादित करें",
-  "editButton": "संपादन करना",
-  "manageTypes": "अनुबंधों के प्रकार",
+  "status": "स्थिति",
+  "statuses": {
+    "cancelled": "रद्द कर दिया गया",
+    "draft": "मसौदा",
+    "sent": "भेजा",
+    "signed": "पर हस्ताक्षर किए"
+  },
+  "subtitle": "ग्राहक अनुबंध प्रबंधन",
+  "title": "संधियों",
   "type": "प्रकार",
   "typeManagement": {
-    "title": "अनुबंधों के प्रकार",
-    "editType": "संपादित प्रकार",
-    "createType": "प्रकार बनाएँ",
-    "name": "नाम",
-    "code": "कोड (अव्य., अद्वितीय)",
-    "description": "विवरण",
     "add": "जोड़ना",
-    "deleteTitle": "\"{{name}}\" प्रकार को हटाना",
+    "code": "कोड (अव्य., अद्वितीय)",
+    "confirmDelete": "हटाने की पुष्टि करें",
+    "createType": "प्रकार बनाएँ",
     "deletePrompt": "आप इस अनुबंध प्रकार को हटाना चाहते हैं. इस प्रकार के मौजूदा अनुबंधों का क्या करें?",
+    "deleteTitle": "\"{{name}}\" प्रकार को हटाना",
     "deleteWithDocs": "सभी अनुबंध हटाएं",
     "deleteWithDocsSub": "इस प्रकार के सभी दस्तावेज़ स्थायी रूप से हटा दिए जाएंगे.",
+    "description": "विवरण",
+    "editType": "संपादित प्रकार",
     "keepDocs": "बिना प्रकार के अनुबंध छोड़ें",
     "keepDocsSub": "अनुबंध बने रहेंगे, लेकिन \"प्रकार\" फ़ील्ड साफ़ कर दिया जाएगा।",
-    "confirmDelete": "हटाने की पुष्टि करें",
     "messages": {
-      "updated": "अद्यतन प्रकार",
       "created": "प्रकार बनाया गया",
-      "deleted": "प्रकार हटा दिया गया"
-    }
+      "deleted": "प्रकार हटा दिया गया",
+      "updated": "अद्यतन प्रकार"
+    },
+    "name": "नाम",
+    "system": "प्रणाली",
+    "systemProtected": "सिस्टम संरक्षित",
+    "title": "अनुबंधों के प्रकार"
+  },
+  "types": {
+    "product": "उत्पाद",
+    "service": "ब्यूटी सैलून सेवा सेवा",
+    "subscription": "सदस्यता"
   }
 }

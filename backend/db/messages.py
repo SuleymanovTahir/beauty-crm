@@ -81,7 +81,7 @@ def mark_messages_as_read(instagram_id: str, user_id: int = None):
     conn.close()
 
 def get_unread_messages_count(instagram_id: str) -> int:
-    """Получить количество непрочитанных сообщений"""
+    """Получить количество непрочитанных сообщений для конкретного клиента"""
     conn = get_db_connection()
     c = conn.cursor()
     
@@ -93,6 +93,23 @@ def get_unread_messages_count(instagram_id: str) -> int:
     conn.close()
     
     return count
+
+def get_global_unread_count() -> int:
+    """Получить общее количество непрочитанных сообщений (оптимизировано)"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        c.execute("""SELECT COUNT(*) FROM chat_history 
+                     WHERE sender = 'client' AND is_read = FALSE""")
+        count = c.fetchone()[0]
+        return count
+    except Exception as e:
+        print(f"❌ Error getting global unread count: {e}")
+        return 0
+    finally:
+        conn.close()
+
 
 def save_reaction(message_id: int, emoji: str, user_id: int = None):
     """Сохранить реакцию на сообщение"""

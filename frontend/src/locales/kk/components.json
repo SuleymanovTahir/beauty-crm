@@ -56,8 +56,12 @@
   "saving": "Сақталуда...",
   "search_templates": "Үлгілерді іздеу...",
   "source": {
+    "account": "Жарайды",
+    "guest_link": "Сілтеме",
     "manual": "Қолмен"
   },
+  "source_account": "Personal Cabinet",
+  "source_guest_link": "Link",
   "source_title": "Дереккөз",
   "status": "Күй",
   "status_color_label": "Күй түсі",

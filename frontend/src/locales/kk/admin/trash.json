@@ -1,8 +1,11 @@
 {
+  "confirm_empty_trash": "Себеттен барлық элементтерді біржола жойғыңыз келетініне сенімдісіз бе?",
+  "delete_selected": "Таңдалған жою",
   "deleted_at": "Жойылды",
   "deleted_by": "Жойылды",
   "empty_desc": "Жойылған нысандар осы жерде көрсетіледі",
   "empty_title": "Себет бос",
+  "empty_trash": "Қоқысты босату",
   "entity": {
     "booking": "booking",
     "client": "Клиент",
@@ -18,21 +21,24 @@
   "not_restorable": "Қалпына келтіру мүмкін емес",
   "objects_count": "{{count}} нысандар",
   "objects_count_one": "",
+  "objects_count_few": "",
+  "objects_count_many": "",
   "objects_count_other": "",
   "permanent_delete": "Біржола жою",
   "permanent_delete_confirm": "Сіз сенімдісіз бе? Бұл әрекетті қайтару мүмкін емес!",
   "restore": "Қалпына келтіру",
+  "restore_selected": "Таңдалған қалпына келтіру",
   "search_placeholder": "Жеке куәлік, себеп немесе автор бойынша іздеу...",
   "subtitle": "Жойылған деректерді басқару және қалпына келтіру",
   "title": "Себет",
   "toast": {
     "delete_error": "Соңғы жою кезіндегі қате",
     "delete_success": "Нысан біржола жойылады",
+    "empty_error": "Қоқыс жәшігін босату кезіндегі қате",
     "load_error": "Арбаны жүктеу қатесі",
     "refreshed": "Жаңартылған",
     "restore_error": "Нысан қалпына келтірілмеді",
-    "restore_success": "{{type}} сәтті қалпына келтірілді"
-  },
-  "objects_count_few": "",
-  "objects_count_many": ""
+    "restore_success": "{{type}} сәтті қалпына келтірілді",
+    "trash_emptied": "Себет бос"
+  }
 }

@@ -1,6 +1,9 @@
 {
   "clear_all": "Limpar tudo",
   "clear_confirm": "Tem certeza de que deseja limpar completamente o log de auditoria? Esta ação é irreversível.",
+  "delete_batch_confirm": "Excluir reservas selecionados ({{count}}) permanentemente?",
+  "delete_confirm": "Devo excluir permanentemente esta reserva?",
+  "delete_selected": "Remover selecionado",
   "details": {
     "error_msg": "Mensagem de erro",
     "ip": "PI",
@@ -13,6 +16,7 @@
   "filter_all": "Todas as ações",
   "filter_create": "Criação",
   "filter_delete": "Remoção",
+  "filter_delete_all": "Limpando o reserva",
   "filter_login": "Login",
   "filter_restore": "Recuperação",
   "filter_update": "Mudar",
@@ -37,6 +41,8 @@
   "toast": {
     "clear_error": "Erro ao limpar o reserva",
     "clear_success": "Log de auditoria limpo com sucesso",
+    "delete_error": "Erro durante a exclusão",
+    "delete_success": "reservas excluídas",
     "load_error": "Erro ao carregar o log de auditoria"
   }
 }

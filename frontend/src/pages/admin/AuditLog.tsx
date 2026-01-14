@@ -48,6 +48,8 @@ const AuditLog: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedEntry, setSelectedEntry] = useState<AuditEntry | null>(null);
     const [filterAction, setFilterAction] = useState<string>('all');
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [isClearing, setIsClearing] = useState(false);
 
     // Get current user role
@@ -58,6 +60,7 @@ const AuditLog: React.FC = () => {
     useEffect(() => {
         fetchData();
         fetchSummary();
+        setSelectedIds([]);
     }, [filterAction]);
 
     const fetchData = async () => {
@@ -92,10 +95,54 @@ const AuditLog: React.FC = () => {
             setHistory([]);
             setSummary(null);
             fetchSummary();
+            setSelectedIds([]);
         } catch (error) {
             toast.error(t('toast.clear_error'));
         } finally {
             setIsClearing(false);
+        }
+    };
+
+    const handleDeleteEntry = async (id: number) => {
+        if (!window.confirm(t('delete_confirm') || 'Удалить эту запись?')) return;
+        try {
+            await api.deleteAuditLog(id);
+            toast.success(t('toast.delete_success') || 'Запись удалена');
+            setHistory(history.filter(h => h.id !== id));
+            setSelectedIds(selectedIds.filter(sid => sid !== id));
+        } catch (error) {
+            toast.error(t('toast.delete_error') || 'Ошибка при удалении');
+        }
+    };
+
+    const handleDeleteBatch = async () => {
+        if (!window.confirm(t('delete_batch_confirm') || `Удалить ${selectedIds.length} записей?`)) return;
+        try {
+            setIsDeleting(true);
+            await api.deleteAuditLogsBatch(selectedIds);
+            toast.success(t('toast.delete_success') || 'Записи удалены');
+            setHistory(history.filter(h => !selectedIds.includes(h.id)));
+            setSelectedIds([]);
+        } catch (error) {
+            toast.error(t('toast.delete_error') || 'Ошибка при удалении');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedIds.length === filteredHistory.length) {
+            setSelectedIds([]);
+        } else {
+            setSelectedIds(filteredHistory.map(h => h.id));
+        }
+    };
+
+    const toggleSelect = (id: number) => {
+        if (selectedIds.includes(id)) {
+            setSelectedIds(selectedIds.filter(sid => sid !== id));
+        } else {
+            setSelectedIds([...selectedIds, id]);
         }
     };
 
@@ -106,6 +153,7 @@ const AuditLog: React.FC = () => {
             case 'delete': return <Trash2 className="w-4 h-4 text-red-400" />;
             case 'restore': return <RefreshCcw className="w-4 h-4 text-amber-400" />;
             case 'login': return <UserCheck className="w-4 h-4 text-blue-400" />;
+            case 'delete_all': return <Trash2 className="w-4 h-4 text-red-600" />;
             default: return <Activity className="w-4 h-4 text-gray-400" />;
         }
     };
@@ -133,13 +181,24 @@ const AuditLog: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
+                    {isDirector && selectedIds.length > 0 && (
+                        <Button
+                            onClick={handleDeleteBatch}
+                            disabled={isDeleting}
+                            variant="destructive"
+                        >
+                            <Trash2 size={18} className="mr-2" />
+                            <span>{t('delete_selected') || 'Удалить выбранные'} ({selectedIds.length})</span>
+                        </Button>
+                    )}
                     {isDirector && (
                         <Button
                             onClick={handleClearLogs}
                             disabled={isClearing || history.length === 0}
-                            variant="destructive"
+                            variant="outline"
+                            className="text-red-500 border-red-200 hover:bg-red-50"
                         >
-                            <Trash2 size={18} />
+                            <Trash2 size={18} className="mr-2" />
                             <span className="hidden md:inline">{t('clear_all')}</span>
                         </Button>
                     )}
@@ -205,6 +264,7 @@ const AuditLog: React.FC = () => {
                         <option value="delete">{t('filter_delete')}</option>
                         <option value="restore">{t('filter_restore')}</option>
                         <option value="login">{t('filter_login')}</option>
+                        <option value="delete_all">{t('filter_delete_all') || 'Очистка'}</option>
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                 </div>
@@ -216,26 +276,45 @@ const AuditLog: React.FC = () => {
                     <table className="w-full text-left">
                         <thead>
                             <tr className="border-b bg-muted/50">
+                                <th className="px-6 py-4 w-10">
+                                    <input
+                                        type="checkbox"
+                                        className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                                        checked={filteredHistory.length > 0 && selectedIds.length === filteredHistory.length}
+                                        onChange={toggleSelectAll}
+                                    />
+                                </th>
                                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('table.action')}</th>
                                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('table.user')}</th>
                                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('table.entity')}</th>
                                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('table.status')}</th>
                                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('table.time')}</th>
-                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground"></th>
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-right"></th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={6} className="py-20 text-center text-muted-foreground">{t('table.loading')}</td>
+                                    <td colSpan={7} className="py-20 text-center text-muted-foreground">{t('table.loading')}</td>
                                 </tr>
                             ) : filteredHistory.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="py-20 text-center text-muted-foreground">{t('table.empty')}</td>
+                                    <td colSpan={7} className="py-20 text-center text-muted-foreground">{t('table.empty')}</td>
                                 </tr>
                             ) : (
                                 filteredHistory.map((entry) => (
-                                    <tr key={entry.id} className="border-b hover:bg-muted/30 transition-colors group">
+                                    <tr
+                                        key={entry.id}
+                                        className={`border-b hover:bg-muted/30 transition-colors group ${selectedIds.includes(entry.id) ? 'bg-primary/5' : ''}`}
+                                    >
+                                        <td className="px-6 py-4">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                                                checked={selectedIds.includes(entry.id)}
+                                                onChange={() => toggleSelect(entry.id)}
+                                            />
+                                        </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="p-2 rounded-lg bg-muted border">
@@ -273,14 +352,26 @@ const AuditLog: React.FC = () => {
                                             {new Date(entry.created_at).toLocaleString()}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Button
-                                                onClick={() => setSelectedEntry(entry)}
-                                                variant="outline"
-                                                size="icon"
-                                                className="opacity-0 group-hover:opacity-100 transition-all"
-                                            >
-                                                <Eye size={16} />
-                                            </Button>
+                                            <div className="flex items-center justify-end gap-2">
+                                                <Button
+                                                    onClick={() => setSelectedEntry(entry)}
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                                >
+                                                    <Eye size={16} />
+                                                </Button>
+                                                {isDirector && (
+                                                    <Button
+                                                        onClick={() => handleDeleteEntry(entry.id)}
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 ))

@@ -1,6 +1,9 @@
 {
   "clear_all": "Alles löschen",
   "clear_confirm": "Sind Sie sicher, dass Sie das Audit-Protokoll vollständig löschen möchten? Diese Aktion ist irreversibel.",
+  "delete_batch_confirm": "Ausgewählte buchungen ({{count}}) dauerhaft löschen?",
+  "delete_confirm": "Soll ich diesen buchung dauerhaft löschen?",
+  "delete_selected": "Ausgewählte entfernen",
   "details": {
     "error_msg": "Fehlermeldung",
     "ip": "IP",
@@ -13,6 +16,7 @@
   "filter_all": "Alle Aktionen",
   "filter_create": "Schaffung",
   "filter_delete": "Entfernung",
+  "filter_delete_all": "Löschen des Protokolls",
   "filter_login": "Anmelden",
   "filter_restore": "Erholung",
   "filter_update": "Ändern",
@@ -37,6 +41,8 @@
   "toast": {
     "clear_error": "Fehler beim Löschen des Protokolls",
     "clear_success": "Audit-Protokoll erfolgreich gelöscht",
+    "delete_error": "Fehler beim Löschen",
+    "delete_success": "buchung(e) gelöscht",
     "load_error": "Fehler beim Laden des Audit-Protokolls"
   }
 }

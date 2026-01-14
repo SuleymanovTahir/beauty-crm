@@ -1,72 +1,80 @@
 {
-  "title": "हिसाब किताब",
-  "subtitle": "खाता और भुगतान प्रबंधन",
+  "actions": "कार्रवाई",
   "addInvoice": "खाता बनाएं",
   "addPayment": "भुगतान जोड़ें",
-  "loading": "लोड हो रहा है...",
+  "allInvoices": "सभी खाते",
   "allStatuses": "सभी स्थितियाँ",
-  "invoiceNumber": "खाता नंबर।",
+  "board": "तख़्ता",
   "client": "ग्राहक",
-  "totalAmount": "जोड़",
-  "paidAmount": "चुकाया गया",
-  "status": "स्थिति",
-  "dueDate": "नियत तारीख",
-  "actions": "कार्रवाई",
-  "sendButton": "भेजना",
-  "delete": "मिटाना",
-  "noInvoices": "अभी तक कोई खाता नहीं",
   "createFirst": "किसी ग्राहक के लिए अपना पहला इनवॉइस बनाएं",
-  "statuses": {
-    "draft": "मसौदा",
-    "sent": "भेजा",
-    "partial": "आंशिक रूप से भुगतान किया",
-    "paid": "चुकाया गया",
-    "overdue": "खत्म हो चुका",
-    "cancelled": "रद्द कर दिया गया"
+  "delete": "मिटाना",
+  "dueDate": "नियत तारीख",
+  "errors": {
+    "createError": "चालान बनाने में त्रुटि",
+    "deleteError": "चालान हटाने में त्रुटि",
+    "paymentError": "भुगतान जोड़ने में त्रुटि",
+    "sendError": "चालान भेजने में त्रुटि",
+    "updateError": "स्थिति अपडेट करने में विफल"
   },
   "form": {
-    "selectClient": "ग्राहक का चयन करें",
-    "items": "खाता स्थिति",
-    "itemName": "नाम",
-    "itemQuantity": "मात्रा",
-    "itemPrice": "कीमत",
     "addItem": "एक पद जोड़ें",
+    "cancel": "रद्द करना",
     "dueDate": "नियत तारीख",
+    "itemName": "नाम",
+    "itemPrice": "कीमत",
+    "itemQuantity": "मात्रा",
+    "items": "खाता स्थिति",
     "notes": "टिप्पणियाँ",
     "save": "बचाना",
-    "cancel": "रद्द करना"
+    "selectClient": "ग्राहक का चयन करें"
   },
-  "payment": {
-    "title": "भुगतान जोड़ें",
-    "amount": "जोड़",
-    "method": "भुगतान विधि",
-    "notes": "टिप्पणियाँ",
-    "add": "जोड़ना",
-    "methods": {
-      "cash": "नकद",
-      "card": "मानचित्र",
-      "transfer": "अनुवाद",
-      "online": "ऑनलाइन"
-    }
-  },
-  "sendDialog": {
-    "title": "चालान भेजें",
-    "method": "शिपिंग का तरीका",
-    "recipient": "प्राप्तकर्ता",
-    "email": "ईमेल",
-    "whatsapp": "WHATSAPP",
-    "telegram": "टेलीग्राम",
-    "sendButton": "भेजना"
-  },
+  "invoiceNumber": "खाता नंबर।",
+  "loading": "लोड हो रहा है...",
+  "manage_stages": "कॉलम",
   "messages": {
     "confirmDelete": "क्या आप वाकई यह खाता हटाना चाहते हैं?",
     "invoiceCreated": "खाता बनाया गया",
-    "invoiceSent": "चालान भेजा",
-    "paymentAdded": "भुगतान जोड़ा गया",
     "invoiceDeleted": "खाता हटा दिया गया",
-    "invoiceUpdated": "खाता अद्यतन किया गया"
+    "invoiceSent": "चालान भेजा",
+    "invoiceUpdated": "खाता अद्यतन किया गया",
+    "paymentAdded": "भुगतान जोड़ा गया"
   },
-  "board": "तख़्ता",
-  "allInvoices": "सभी खाते",
-  "search_placeholder": "नंबर या क्लाइंट के आधार पर खोजें..."
+  "noInvoices": "अभी तक कोई खाता नहीं",
+  "paidAmount": "चुकाया गया",
+  "payment": {
+    "add": "जोड़ना",
+    "amount": "जोड़",
+    "method": "भुगतान विधि",
+    "methods": {
+      "card": "मानचित्र",
+      "cash": "नकद",
+      "online": "ऑनलाइन",
+      "transfer": "अनुवाद"
+    },
+    "notes": "टिप्पणियाँ",
+    "title": "भुगतान जोड़ें"
+  },
+  "search_placeholder": "नंबर या क्लाइंट के आधार पर खोजें...",
+  "sendButton": "भेजना",
+  "sendDialog": {
+    "email": "ईमेल",
+    "method": "शिपिंग का तरीका",
+    "recipient": "प्राप्तकर्ता",
+    "sendButton": "भेजना",
+    "telegram": "टेलीग्राम",
+    "title": "चालान भेजें",
+    "whatsapp": "WHATSAPP"
+  },
+  "status": "स्थिति",
+  "statuses": {
+    "cancelled": "रद्द कर दिया गया",
+    "draft": "मसौदा",
+    "overdue": "खत्म हो चुका",
+    "paid": "चुकाया गया",
+    "partial": "आंशिक रूप से भुगतान किया",
+    "sent": "भेजा"
+  },
+  "subtitle": "खाता और भुगतान प्रबंधन",
+  "title": "हिसाब किताब",
+  "totalAmount": "जोड़"
 }

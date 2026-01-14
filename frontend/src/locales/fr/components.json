@@ -56,8 +56,12 @@
   "saving": "Économie...",
   "search_templates": "Rechercher des modèles...",
   "source": {
+    "account": "Compte",
+    "guest_link": "Lien",
     "manual": "Manuellement"
   },
+  "source_account": "Personal Cabinet",
+  "source_guest_link": "Link",
   "source_title": "Source",
   "status": "Statut",
   "status_color_label": "Couleur d'état",

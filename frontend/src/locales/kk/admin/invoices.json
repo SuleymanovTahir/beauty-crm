@@ -1,72 +1,80 @@
 {
-  "title": "Есептік жазбалар",
-  "subtitle": "Есептік жазбаны және төлемді басқару",
+  "actions": "Әрекеттер",
   "addInvoice": "Аккаунты құру",
   "addPayment": "Төлем қосыңыз",
-  "loading": "Жүктелуде...",
+  "allInvoices": "Барлық тіркелгілер",
   "allStatuses": "Барлық күйлер",
-  "invoiceNumber": "Есептік жазба №",
+  "board": "Басқарма",
   "client": "Клиент",
-  "totalAmount": "сомасы",
-  "paidAmount": "Ақылы",
-  "status": "Күй",
-  "dueDate": "Мерзімі",
-  "actions": "Әрекеттер",
-  "sendButton": "Жіберу",
-  "delete": "Жою",
-  "noInvoices": "Әлі тіркелгі жоқ",
   "createFirst": "Клиент үшін бірінші шот-фактураңызды жасаңыз",
-  "statuses": {
-    "draft": "Жоба",
-    "sent": "Жіберілді",
-    "partial": "Ішінара төленген",
-    "paid": "Ақылы",
-    "overdue": "Мерзімі бітті",
-    "cancelled": "Бас тартылды"
+  "delete": "Жою",
+  "dueDate": "Мерзімі",
+  "errors": {
+    "createError": "Error creating invoice",
+    "deleteError": "Error deleting invoice",
+    "paymentError": "Error adding payment",
+    "sendError": "Error sending invoice",
+    "updateError": "Failed to update status"
   },
   "form": {
-    "selectClient": "Клиентті таңдаңыз",
-    "items": "Есептік позициялар",
-    "itemName": "Аты",
-    "itemQuantity": "Саны",
-    "itemPrice": "Бағасы",
     "addItem": "Позицияны қосыңыз",
+    "cancel": "Болдырмау",
     "dueDate": "Мерзімі",
+    "itemName": "Аты",
+    "itemPrice": "Бағасы",
+    "itemQuantity": "Саны",
+    "items": "Есептік позициялар",
     "notes": "Ескертпелер",
     "save": "Сақтау",
-    "cancel": "Болдырмау"
+    "selectClient": "Клиентті таңдаңыз"
   },
-  "payment": {
-    "title": "Төлем қосыңыз",
-    "amount": "сомасы",
-    "method": "Төлем әдісі",
-    "notes": "Ескертпелер",
-    "add": "қосу",
-    "methods": {
-      "cash": "Қолма-қол ақша",
-      "card": "Карта",
-      "transfer": "Аударма",
-      "online": "Онлайн"
-    }
-  },
-  "sendDialog": {
-    "title": "Шот-фактураны жіберу",
-    "method": "Жеткізу әдісі",
-    "recipient": "Алушы",
-    "email": "Электрондық пошта",
-    "whatsapp": "whatsapp",
-    "telegram": "Telegram",
-    "sendButton": "Жіберу"
-  },
+  "invoiceNumber": "Есептік жазба №",
+  "loading": "Жүктелуде...",
+  "manage_stages": "Бағандар",
   "messages": {
     "confirmDelete": "Бұл есептік жазбаны шынымен жойғыңыз келе ме?",
     "invoiceCreated": "Тіркелгі жасалды",
-    "invoiceSent": "Шот-фактура жіберілді",
-    "paymentAdded": "Төлем қосылды",
     "invoiceDeleted": "Есептік жазба жойылды",
-    "invoiceUpdated": "Есептік жазба жаңартылды"
+    "invoiceSent": "Шот-фактура жіберілді",
+    "invoiceUpdated": "Есептік жазба жаңартылды",
+    "paymentAdded": "Төлем қосылды"
   },
-  "board": "Басқарма",
-  "allInvoices": "Барлық тіркелгілер",
-  "search_placeholder": "Нөмір немесе клиент бойынша іздеу..."
+  "noInvoices": "Әлі тіркелгі жоқ",
+  "paidAmount": "Ақылы",
+  "payment": {
+    "add": "қосу",
+    "amount": "сомасы",
+    "method": "Төлем әдісі",
+    "methods": {
+      "card": "Карта",
+      "cash": "Қолма-қол ақша",
+      "online": "Онлайн",
+      "transfer": "Аударма"
+    },
+    "notes": "Ескертпелер",
+    "title": "Төлем қосыңыз"
+  },
+  "search_placeholder": "Нөмір немесе клиент бойынша іздеу...",
+  "sendButton": "Жіберу",
+  "sendDialog": {
+    "email": "Электрондық пошта",
+    "method": "Жеткізу әдісі",
+    "recipient": "Алушы",
+    "sendButton": "Жіберу",
+    "telegram": "Telegram",
+    "title": "Шот-фактураны жіберу",
+    "whatsapp": "whatsapp"
+  },
+  "status": "Күй",
+  "statuses": {
+    "cancelled": "Бас тартылды",
+    "draft": "Жоба",
+    "overdue": "Мерзімі бітті",
+    "paid": "Ақылы",
+    "partial": "Ішінара төленген",
+    "sent": "Жіберілді"
+  },
+  "subtitle": "Есептік жазбаны және төлемді басқару",
+  "title": "Есептік жазбалар",
+  "totalAmount": "сомасы"
 }

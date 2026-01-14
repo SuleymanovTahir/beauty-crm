@@ -683,6 +683,17 @@ async def startup_event():
             minutes=30,
             id='appointment_reminders'
         )
+
+        # ✅ Ежедневная очистка (housekeeping) в 03:00 ночи
+        from scripts.maintenance.housekeeping import run_housekeeping
+        scheduler.add_job(
+            run_housekeeping,
+            'cron',
+            hour=3,
+            minute=0,
+            id='housekeeping_task'
+        )
+
         
         # ✅ Очистка устаревших сессий (каждые 6 часов)
         from scripts.cleanup_sessions import cleanup_expired_sessions

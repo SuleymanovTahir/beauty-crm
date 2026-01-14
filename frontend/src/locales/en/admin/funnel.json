@@ -16,6 +16,7 @@
   "client_deleted": "Client deleted",
   "client_details_description": "Detailed information and customer booking management",
   "client_list": "Client list",
+  "client_updated": "Client details updated",
   "clients": "clients",
   "close": "Close",
   "confirm_delete_client": "Are you sure you want to delete this client?",

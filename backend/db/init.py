@@ -55,7 +55,8 @@ def init_database():
               bot_mode TEXT DEFAULT 'assistant',
               temperature TEXT DEFAULT 'warm',
               loyalty_points INTEGER DEFAULT 0,
-              reminder_date TIMESTAMP)''')
+              reminder_date TIMESTAMP,
+              deleted_at TIMESTAMP NULL)''')
 
     # Таблица настроек бота
     c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (
@@ -265,6 +266,7 @@ def init_database():
     # Индексы для оптимизации
     try:
         c.execute('''CREATE INDEX IF NOT EXISTS idx_chat_history_instagram_id ON chat_history(instagram_id)''')
+        c.execute('''CREATE INDEX IF NOT EXISTS idx_chat_history_is_read_sender ON chat_history(is_read, sender)''')
         c.execute('''CREATE INDEX IF NOT EXISTS idx_chat_history_timestamp ON chat_history(timestamp DESC)''')
         c.execute('''CREATE INDEX IF NOT EXISTS idx_client_preferences_client_id ON client_preferences(client_id)''')
     except Exception as e:
@@ -285,7 +287,8 @@ def init_database():
                   revenue REAL DEFAULT 0,
                   notes TEXT,
                   special_package_id INTEGER,
-                  source TEXT DEFAULT 'manual')''')
+                  source TEXT DEFAULT 'manual',
+                  deleted_at TIMESTAMP NULL)''')
 
     # Индексы для оптимизации поиска записей
     c.execute('''CREATE INDEX IF NOT EXISTS idx_bookings_instagram_id ON bookings(instagram_id)''')
@@ -484,7 +487,8 @@ def init_database():
                   certificates TEXT,
                   is_service_provider BOOLEAN DEFAULT FALSE,
                   base_salary REAL DEFAULT 0,
-                  commission_rate REAL DEFAULT 0)''')
+                  commission_rate REAL DEFAULT 0,
+                  deleted_at TIMESTAMP NULL)''')
 
     # Миграция: добавить отсутствующие колонки в users
     try:
@@ -533,6 +537,9 @@ def init_database():
                   created_at TEXT,
                   expires_at TEXT,
                   FOREIGN KEY (user_id) REFERENCES users(id))''')
+    c.execute("CREATE INDEX IF NOT EXISTS idx_sessions_token_expires ON sessions(session_token, expires_at)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id)")
+
     
     # Индексы для оптимизации производительности аутентификации
     c.execute('''CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(session_token)''')
@@ -598,6 +605,9 @@ def init_database():
         FOREIGN KEY (user_id) REFERENCES users(id),
         FOREIGN KEY (service_id) REFERENCES services(id)
     )''')
+    c.execute("CREATE INDEX IF NOT EXISTS idx_user_services_user_id ON user_services(user_id)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_user_services_service_id ON user_services(service_id)")
+
     
     # Таблица связи услуг с должностями (многие-ко-многим)
     c.execute('''CREATE TABLE IF NOT EXISTS service_positions (
@@ -797,7 +807,27 @@ def init_database():
         FOREIGN KEY (user_id) REFERENCES users(id)
     )''')
     
-    # Таблица перерывов (Breaks)
+    # Таблица для хранения удаленных данных (корзина)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS deleted_items (
+            id SERIAL PRIMARY KEY,
+            entity_type VARCHAR(50) NOT NULL,
+            entity_id VARCHAR(255) NOT NULL,
+            deleted_by INTEGER REFERENCES users(id),
+            deleted_by_role VARCHAR(50),
+            reason TEXT,
+            can_restore BOOLEAN DEFAULT TRUE,
+            restored_at TIMESTAMP NULL,
+            restored_by INTEGER REFERENCES users(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    
+    # Индексы для корзины
+    c.execute("CREATE INDEX IF NOT EXISTS idx_deleted_items_entity ON deleted_items(entity_type, entity_id)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_deleted_items_created ON deleted_items(created_at)")
+
+
     c.execute('''CREATE TABLE IF NOT EXISTS schedule_breaks (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
@@ -1536,6 +1566,93 @@ def init_database():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )''')
+
+    # Таблица провайдеров платежей
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS payment_providers (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(50) UNIQUE NOT NULL,
+            api_key TEXT,
+            secret_key TEXT,
+            webhook_secret TEXT,
+            is_active BOOLEAN DEFAULT TRUE,
+            settings JSONB,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    # Таблица транзакций
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS payment_transactions (
+            id SERIAL PRIMARY KEY,
+            invoice_id INTEGER REFERENCES invoices(id) ON DELETE CASCADE,
+            amount DECIMAL(10, 2) NOT NULL,
+            currency VARCHAR(3) DEFAULT 'AED',
+            provider VARCHAR(50) NOT NULL,
+            status VARCHAR(20) DEFAULT 'pending',
+            provider_transaction_id TEXT,
+            metadata JSONB,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            completed_at TIMESTAMP,
+            error_message TEXT
+        )
+    """)
+
+    # Таблица провайдеров маркетплейсов
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS marketplace_providers (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(50) UNIQUE NOT NULL,
+            api_key TEXT,
+            api_secret TEXT,
+            webhook_url TEXT,
+            is_active BOOLEAN DEFAULT TRUE,
+            sync_enabled BOOLEAN DEFAULT FALSE,
+            settings JSONB,
+            last_sync_at TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    # Таблица записей из маркетплейсов
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS marketplace_bookings (
+            id SERIAL PRIMARY KEY,
+            booking_id INTEGER REFERENCES bookings(id) ON DELETE CASCADE,
+            provider VARCHAR(50) NOT NULL,
+            external_id TEXT,
+            raw_data JSONB,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(provider, external_id)
+        )
+    """)
+
+    # Таблица отзывов из маркетплейсов
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS marketplace_reviews (
+            id SERIAL PRIMARY KEY,
+            provider VARCHAR(50) NOT NULL,
+            external_id TEXT,
+            author_name VARCHAR(255),
+            rating INTEGER,
+            text TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            raw_data JSONB,
+            UNIQUE(provider, external_id)
+        )
+    """)
+
+    # Индексы для интеграций
+    try:
+        c.execute("CREATE INDEX IF NOT EXISTS idx_payment_transactions_invoice ON payment_transactions(invoice_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_payment_transactions_status ON payment_transactions(status)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_marketplace_bookings_provider ON marketplace_bookings(provider)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_marketplace_bookings_booking ON marketplace_bookings(booking_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_marketplace_reviews_provider ON marketplace_reviews(provider)")
+    except Exception as e:
+        log_warning(f"⚠️ Integration indexes creation skipped: {e}", "db")
 
     # Таблица типов договоров
     c.execute('''CREATE TABLE IF NOT EXISTS contract_types (

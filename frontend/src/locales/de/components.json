@@ -56,8 +56,12 @@
   "saving": "Sparen...",
   "search_templates": "Nach Vorlagen suchen...",
   "source": {
+    "account": "Konto",
+    "guest_link": "Link",
     "manual": "Manuell"
   },
+  "source_account": "Personal Cabinet",
+  "source_guest_link": "Link",
   "source_title": "Quelle",
   "status": "Status",
   "status_color_label": "Statusfarbe",

@@ -105,13 +105,19 @@ async def notifications_websocket(websocket: WebSocket):
 
                 elif message.get("type") == "request_count":
                     # Клиент запросил текущее количество непрочитанных
-                    # Здесь можно запросить из БД и отправить
-                    from db.connection import get_db_connection
-                    conn = get_db_connection()
-                    c = conn.cursor()
-                    c.execute("SELECT COUNT(*) FROM notifications WHERE user_id = %s AND is_read = FALSE", (user_id,))
-                    count = c.fetchone()[0]
-                    conn.close()
+                    from starlette.concurrency import run_in_threadpool
+                    
+                    def get_count():
+                        from db.connection import get_db_connection
+                        conn = get_db_connection()
+                        c = conn.cursor()
+                        try:
+                            c.execute("SELECT COUNT(*) FROM notifications WHERE user_id = %s AND is_read = FALSE", (user_id,))
+                            return c.fetchone()[0]
+                        finally:
+                            conn.close()
+
+                    count = await run_in_threadpool(get_count)
 
                     await websocket.send_json({
                         "type": "unread_count",

@@ -212,12 +212,13 @@ def get_deleted_items(
         query = """
             SELECT 
                 di.*,
+                di.created_at as deleted_at,
                 u1.username as deleted_by_username,
                 u2.username as restored_by_username
             FROM deleted_items di
             LEFT JOIN users u1 ON di.deleted_by = u1.id
             LEFT JOIN users u2 ON di.restored_by = u2.id
-            WHERE di.restored_at IS NULL
+            WHERE di.restored_at IS NULL AND di.can_restore = TRUE
         """
         
         params = []

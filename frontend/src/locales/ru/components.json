@@ -56,8 +56,12 @@
   "saving": "Сохранение...",
   "search_templates": "Поиск шаблонов...",
   "source": {
+    "account": "ЛК",
+    "guest_link": "Ссылка",
     "manual": "Вручную"
   },
+  "source_account": "Personal Cabinet",
+  "source_guest_link": "Link",
   "source_title": "Источник",
   "status": "Статус",
   "status_color_label": "Цвет статуса",

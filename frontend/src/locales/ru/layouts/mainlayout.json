@@ -1,11 +1,19 @@
 {
   "admin": "Администратор",
   "admin_panel": "Админ панель",
+  "all_notifications_cleared": "Все уведомления удалены",
+  "clear_all": "Очистить все",
+  "close": "Закрыть",
+  "confirm_clear_all": "Вы уверены что хотите удалить все уведомления?",
   "crm": "CRM Панель",
+  "delete": "Удалить",
   "employee": "Сотрудник",
+  "error_clearing": "Ошибка при удалении уведомлений",
+  "error_deleting_notification": "Ошибка при удалении уведомления",
   "logout": "Выйти",
   "logout_success": "Вы успешно вышли из системы",
   "manager": "Менеджер",
+  "mark_as_read": "Прочитать",
   "menu": {
     "analytics": "Аналитика",
     "audit_log": "Логи аудита",
@@ -21,10 +29,12 @@
     "feedback": "Feedback",
     "finance": "Финансы",
     "funnel": "Воронка",
+    "integrations": "Интеграции",
     "internal_chat": "Внутренняя связь",
     "invoices": "Счета",
     "management": "Управление",
     "marketplace_integrations": "Маркетплейсы",
+    "messengers": "Мессенджеры",
     "my_bookings": "Мои бронирования",
     "notifications": "Уведомления",
     "payment_integrations": "Платежные системы",
@@ -42,10 +52,13 @@
     "visitors": "Посетители"
   },
   "no_new_notifications": "Нет уведомлений",
+  "notification_deleted": "Уведомление удалено",
   "notifications": "Уведомления",
   "roles": {
     "director": "Директор",
     "marketer": "Маркетинг",
     "sales": "Продажи"
-  }
+  },
+  "user": "Пользователь",
+  "view_all": "Посмотреть все"
 }

@@ -1,73 +1,83 @@
 {
-  "title": "Productos y almacén",
-  "subtitle": "Gestión de productos e inventario.",
   "addProduct": "Añadir producto",
-  "edit": "Editar",
-  "delete": "Borrar",
-  "loading": "Cargando...",
   "allCategories": "Todas las categorias",
-  "noProducts": "Aún no hay productos",
+  "analytics": {
+    "avgPrice": "Casarse. precio",
+    "last30Days": "en 30 dias",
+    "revenue": "Ganancia",
+    "totalSold": "Total vendido"
+  },
   "createFirst": "Añadir el primer producto al sistema.",
-  "form": {
-    "name": "Nombre",
-    "nameRu": "Nombre (RU)",
-    "nameEn": "Título (ES)",
-    "nameAr": "Título (AR)",
-    "category": "Categoría",
-    "price": "precio de venta",
-    "costPrice": "precio de costo",
-    "stockQuantity": "Existencias restantes",
-    "minStockLevel": "Saldo mínimo",
-    "sku": "Artículo",
-    "barcode": "Código de barras",
-    "supplier": "Proveedor",
-    "notes": "Notas",
-    "isActive": "Activo",
-    "photos": "Foto del producto",
-    "upload": "Descargar",
-    "uploadError": "Error al cargar la foto",
-    "save": "Ahorrar",
-    "cancel": "Cancelar"
-  },
-  "movement": {
-    "title": "movimiento de mercancías",
-    "type": "tipo de movimiento",
-    "quantity": "Cantidad",
-    "reason": "Causa",
-    "types": {
-      "in": "Próximo",
-      "out": "Consumo",
-      "adjustment": "Ajuste"
-    }
-  },
-  "messages": {
-    "confirmDelete": "¿Está seguro de que desea eliminar este elemento?",
-    "productCreated": "Producto creado",
-    "productUpdated": "Producto actualizado",
-    "productDeleted": "Producto eliminado",
-    "movementAdded": "Movimiento agregado",
-    "noResults": "No se encontró nada que coincida con su solicitud"
-  },
+  "delete": "Borrar",
   "detail": {
-    "noCategory": "Sin categoría",
+    "avgPrice": "Casarse. precio",
     "costPriceLabel": "Costo: {{price}} {{currency}}",
-    "movementHistory": "Historia de los movimientos",
     "inStock": "En stock: {{count}}",
+    "inStock_one": "",
+    "inStock_many": "",
+    "inStock_other": "",
+    "last30Days": "en 30 dias",
     "loadingData": "Cargando datos...",
-    "noMovements": "Sin datos de movimiento",
+    "movementAdjustment": "Ajuste",
+    "movementHistory": "Historia de los movimientos",
     "movementIn": "Admisión",
     "movementOut": "Pedir hasta escrito",
-    "movementAdjustment": "Ajuste",
-    "totalSold": "Total vendido",
+    "noCategory": "Sin categoría",
+    "noMovements": "Sin datos de movimiento",
     "totalRevenue": "Ganancia",
-    "last30Days": "en 30 dias",
-    "avgPrice": "Casarse. precio"
+    "totalSold": "Total vendido",
+    "inStock_few": ""
   },
+  "edit": "Editar",
+  "form": {
+    "barcode": "Código de barras",
+    "cancel": "Cancelar",
+    "category": "Categoría",
+    "costPrice": "precio de costo",
+    "isActive": "Activo",
+    "minStockLevel": "Saldo mínimo",
+    "name": "Nombre",
+    "nameAr": "Título (AR)",
+    "nameEn": "Título (ES)",
+    "nameRu": "Nombre (RU)",
+    "notes": "Notas",
+    "photos": "Foto del producto",
+    "price": "precio de venta",
+    "save": "Ahorrar",
+    "sku": "Artículo",
+    "stockQuantity": "Existencias restantes",
+    "supplier": "Proveedor",
+    "upload": "Descargar",
+    "uploadError": "Error al cargar la foto"
+  },
+  "loading": "Cargando...",
+  "messages": {
+    "confirmDelete": "¿Está seguro de que desea eliminar este elemento?",
+    "movementAdded": "Movimiento agregado",
+    "noResults": "No se encontró nada que coincida con su solicitud",
+    "productCreated": "Producto creado",
+    "productDeleted": "Producto eliminado",
+    "productUpdated": "Producto actualizado"
+  },
+  "movement": {
+    "quantity": "Cantidad",
+    "reason": "Causa",
+    "title": "movimiento de mercancías",
+    "type": "tipo de movimiento",
+    "types": {
+      "adjustment": "Ajuste",
+      "in": "Próximo",
+      "out": "Consumo"
+    }
+  },
+  "noProducts": "Aún no hay productos",
   "search_placeholder": "Buscar hasta título o categoría...",
   "stock_status": {
     "in_stock": "En stock",
     "low_stock": "Pocos",
     "out_of_stock": "No disponible"
   },
+  "subtitle": "Gestión de productos e inventario.",
+  "title": "Productos y almacén",
   "unit_pcs": "uds."
 }

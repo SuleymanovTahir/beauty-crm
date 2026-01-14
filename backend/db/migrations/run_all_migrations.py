@@ -96,6 +96,8 @@ def run_all_migrations():
         import_gallery_images,
         migrate_account_enhancements,
         migrate_admin_features_schema,
+        schema_soft_delete,
+        schema_performance_indexes,
     )
 
     
@@ -300,9 +302,8 @@ def run_all_migrations():
     # ========================================================================
     print_header("УЛУЧШЕНИЯ БЕЗОПАСНОСТИ")
     
-    from db.migrations.add_soft_delete import run as migrate_soft_delete
     results["security/soft_delete"] = run_migration_function(
-        migrate_soft_delete,
+        schema_soft_delete.run_migration,
         "Soft Delete (deleted_at, deleted_items)"
     )
     
@@ -310,6 +311,11 @@ def run_all_migrations():
     results["security/audit_log"] = run_migration_function(
         migrate_audit_log,
         "Audit Log (audit_log, critical_actions)"
+    )
+
+    results["performance/indexes"] = run_migration_function(
+        schema_performance_indexes.run_migration,
+        "Performance Indexes (bookings, chat, notifications)"
     )
 
     # ========================================================================

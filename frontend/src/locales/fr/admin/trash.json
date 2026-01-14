@@ -1,8 +1,11 @@
 {
+  "confirm_empty_trash": "Êtes-vous sûr de vouloir supprimer définitivement tous les éléments de la corbeille ?",
+  "delete_selected": "Supprimer la sélection",
   "deleted_at": "Supprimé",
   "deleted_by": "Supprimé",
   "empty_desc": "Les objets supprimés seront affichés ici",
   "empty_title": "Le panier est vide",
+  "empty_trash": "Vider la corbeille",
   "entity": {
     "booking": "booking",
     "client": "Client",
@@ -18,21 +21,24 @@
   "not_restorable": "Non récupérable",
   "objects_count": "{{count}} objets",
   "objects_count_one": "",
+  "objects_count_few": "",
   "objects_count_many": "",
   "objects_count_other": "",
   "permanent_delete": "Supprimer définitivement",
   "permanent_delete_confirm": "Es-tu sûr? Cette action est irréversible !",
   "restore": "Restaurer",
+  "restore_selected": "Restaurer la sélection",
   "search_placeholder": "Recherche à identifiant, motif ou auteur...",
   "subtitle": "Gestion et restauration des données supprimées",
   "title": "Panier",
   "toast": {
     "delete_error": "Erreur lors de la suppression définitive",
     "delete_success": "L'objet est définitivement supprimé",
+    "empty_error": "Erreur lors du vidage de la corbeille",
     "load_error": "Erreur lors du chargement du panier",
     "refreshed": "Mis à jour",
     "restore_error": "Échec de la restauration de l'objet",
-    "restore_success": "{{type}} restauré avec succès"
-  },
-  "objects_count_few": ""
+    "restore_success": "{{type}} restauré avec succès",
+    "trash_emptied": "Corbeille vide"
+  }
 }

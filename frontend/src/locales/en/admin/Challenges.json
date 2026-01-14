@@ -1,0 +1,51 @@
+{
+  "buttons": {
+    "add_challenge": "Create a task",
+    "create_challenge": "Start a challenge"
+  },
+  "card": {
+    "details": "More details",
+    "participants": "PARTICIPANTS",
+    "progress": "PROGRESS"
+  },
+  "dialogs": {
+    "add_title": "New challenge",
+    "edit_title": "Editing a challenge"
+  },
+  "empty": {
+    "subtitle": "Create your first game challenge to encourage customers to sign up more often.",
+    "title": "Challenges are not set up"
+  },
+  "fields": {
+    "dates": "Time limit",
+    "description": "Public description",
+    "reward": "Reward",
+    "target_value": "Plan (goal)",
+    "title": "Job title",
+    "type": "Goal Methodology"
+  },
+  "placeholders": {
+    "description": "How will the client see this task?",
+    "title": "For example: Gold status"
+  },
+  "stats": {
+    "active_challenges": "ACTIVE TASKS",
+    "completed_today": "COMPLETED TODAY",
+    "total_participants": "TOTAL PARTICIPANTS"
+  },
+  "status": {
+    "active": "ACTIVE",
+    "inactive": "PAUSE"
+  },
+  "subtitle": "Increase customer loyalty with game mechanics and automatic rewards.",
+  "title": "Challenges",
+  "toasts": {
+    "created": "Task created",
+    "updated": "Quest updated"
+  },
+  "types": {
+    "service": "Service category",
+    "spend": "Total spend",
+    "visits": "Number of visits"
+  }
+}

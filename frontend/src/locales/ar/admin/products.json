@@ -1,73 +1,85 @@
 {
-  "title": "المنتجات والمستودعات",
-  "subtitle": "إدارة المنتجات والمخزون",
   "addProduct": "أضف المنتج",
-  "edit": "يحرر",
-  "delete": "يمسح",
-  "loading": "تحميل...",
   "allCategories": "جميع الفئات",
-  "noProducts": "لا توجد منتجات حتى الآن",
+  "analytics": {
+    "avgPrice": "تزوج. سعر",
+    "last30Days": "في 30 يوما",
+    "revenue": "ربح",
+    "totalSold": "إجمالي المبيعات"
+  },
   "createFirst": "إضافة المنتج الأول إلى النظام",
-  "form": {
-    "name": "اسم",
-    "nameRu": "الاسم (رو)",
-    "nameEn": "العنوان (بالإنكليزية)",
-    "nameAr": "العنوان (ع)",
-    "category": "فئة",
-    "price": "سعر البيع",
-    "costPrice": "سعر التكلفة",
-    "stockQuantity": "المخزون المتبقي",
-    "minStockLevel": "الحد الأدنى للرصيد",
-    "sku": "شرط",
-    "barcode": "الباركود",
-    "supplier": "مزود",
-    "notes": "ملحوظات",
-    "isActive": "نشيط",
-    "photos": "صورة المنتج",
-    "upload": "تحميل",
-    "uploadError": "حدث خطأ أثناء تحميل الصورة",
-    "save": "يحفظ",
-    "cancel": "يلغي"
-  },
-  "movement": {
-    "title": "حركة البضائع",
-    "type": "نوع الحركة",
-    "quantity": "كمية",
-    "reason": "سبب",
-    "types": {
-      "in": "آت",
-      "out": "استهلاك",
-      "adjustment": "تعديل"
-    }
-  },
-  "messages": {
-    "confirmDelete": "هل أنت متأكد أنك تريد إزالة هذا العنصر؟",
-    "productCreated": "تم إنشاء المنتج",
-    "productUpdated": "تم تحديث المنتج",
-    "productDeleted": "تمت إزالة المنتج",
-    "movementAdded": "تمت إضافة الحركة",
-    "noResults": "لم يتم العثور على أي شيء مطابق لطلبك"
-  },
+  "delete": "يمسح",
   "detail": {
-    "noCategory": "غير مصنف",
+    "avgPrice": "تزوج. سعر",
     "costPriceLabel": "التكلفة: {{price}}_ {{currency}}",
-    "movementHistory": "تاريخ الحركات",
     "inStock": "متوفر في المخزون: {{count}}_",
+    "inStock_zero": "",
+    "inStock_one": "",
+    "inStock_two": "",
+    "inStock_few": "",
+    "inStock_many": "",
+    "inStock_other": "",
+    "last30Days": "في 30 يوما",
     "loadingData": "جارٍ تحميل البيانات...",
-    "noMovements": "لا توجد بيانات الحركة",
+    "movementAdjustment": "تعديل",
+    "movementHistory": "تاريخ الحركات",
     "movementIn": "قبول",
     "movementOut": "لا تصلح",
-    "movementAdjustment": "تعديل",
-    "totalSold": "إجمالي المبيعات",
+    "noCategory": "غير مصنف",
+    "noMovements": "لا توجد بيانات الحركة",
     "totalRevenue": "ربح",
-    "last30Days": "في 30 يوما",
-    "avgPrice": "تزوج. سعر"
+    "totalSold": "إجمالي المبيعات"
   },
+  "edit": "يحرر",
+  "form": {
+    "barcode": "الباركود",
+    "cancel": "يلغي",
+    "category": "فئة",
+    "costPrice": "سعر التكلفة",
+    "isActive": "نشيط",
+    "minStockLevel": "الحد الأدنى للرصيد",
+    "name": "اسم",
+    "nameAr": "العنوان (ع)",
+    "nameEn": "العنوان (بالإنكليزية)",
+    "nameRu": "الاسم (رو)",
+    "notes": "ملحوظات",
+    "photos": "صورة المنتج",
+    "price": "سعر البيع",
+    "save": "يحفظ",
+    "sku": "شرط",
+    "stockQuantity": "المخزون المتبقي",
+    "supplier": "مزود",
+    "upload": "تحميل",
+    "uploadError": "حدث خطأ أثناء تحميل الصورة"
+  },
+  "loading": "تحميل...",
+  "messages": {
+    "confirmDelete": "هل أنت متأكد أنك تريد إزالة هذا العنصر؟",
+    "movementAdded": "تمت إضافة الحركة",
+    "noResults": "لم يتم العثور على أي شيء مطابق لطلبك",
+    "productCreated": "تم إنشاء المنتج",
+    "productDeleted": "تمت إزالة المنتج",
+    "productUpdated": "تم تحديث المنتج"
+  },
+  "movement": {
+    "quantity": "كمية",
+    "reason": "سبب",
+    "title": "حركة البضائع",
+    "type": "نوع الحركة",
+    "types": {
+      "adjustment": "تعديل",
+      "in": "آت",
+      "out": "استهلاك"
+    }
+  },
+  "noProducts": "لا توجد منتجات حتى الآن",
   "search_placeholder": "البحث حسب العنوان أو الفئة...",
   "stock_status": {
     "in_stock": "في الأوراق المالية",
     "low_stock": "عدد قليل",
     "out_of_stock": "غير متوفر"
   },
+  "subtitle": "إدارة المنتجات والمخزون",
+  "title": "المنتجات والمستودعات",
   "unit_pcs": "جهاز كمبيوتر شخصى."
 }

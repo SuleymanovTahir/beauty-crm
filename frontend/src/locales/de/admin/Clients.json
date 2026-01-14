@@ -40,7 +40,9 @@
   "error_creating_client": "Fehler beim Erstellen des Clients",
   "error_deleting_client": "Fehler beim Löschen des Clients",
   "error_exporting": "Exportfehler",
+  "error_importing": "",
   "error_loading_clients": "Fehler beim Laden der Clients",
+  "error_selecting_file": "",
   "error_updating_client": "Client-Update-Fehler",
   "error_updating_status": "Fehler bei der Statusaktualisierung",
   "export_includes": "Der Export beinhaltet",
@@ -77,6 +79,8 @@
   "import_error_list": "Importfehler",
   "import_error_message": "Importfehler",
   "import_errors": "Fehler",
+  "import_errors_count_one": "",
+  "import_errors_count_other": "",
   "import_example_structure": "Minimales Strukturbeispiel",
   "import_excel": "Excel (.xlsx, .xls)",
   "import_important_info": "Wichtige Informationen",
@@ -139,5 +143,7 @@
   "warm": "Warm",
   "warm_client": "Herzlicher Kunde",
   "write_message": "Nachricht schreiben",
-  "you_are_deleting_client": "Sie löschen einen Kunden"
+  "you_are_deleting_client": "Sie löschen einen Kunden",
+  "import_errors_count_few": "",
+  "import_errors_count_many": ""
 }

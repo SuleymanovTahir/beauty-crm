@@ -83,9 +83,63 @@ async def clear_audit_log(
     c = conn.cursor()
     
     try:
-        c.execute("TRUNCATE TABLE audit_log")
+        # Use CASCADE to also clear critical_actions table which depends on audit_log
+        c.execute("TRUNCATE TABLE audit_log CASCADE")
         conn.commit()
         return {"success": True, "message": "Audit log cleared successfully"}
+    except Exception as e:
+        conn.rollback()
+        from utils.logger import log_error
+        log_error(f"Error clearing audit log: {e}", "audit")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.delete("/admin/audit-log/{log_id}")
+async def delete_audit_log(
+    log_id: int,
+    current_user: dict = Depends(get_current_user)
+):
+    """API: Удаление одной записи аудита"""
+    if current_user["role"] != "director":
+        raise HTTPException(status_code=403, detail="Forbidden")
+        
+    from db.connection import get_db_connection
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        c.execute("DELETE FROM audit_log WHERE id = %s", (log_id,))
+        conn.commit()
+        return {"success": True, "message": "Entry deleted"}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.post("/admin/audit-log/delete-batch")
+async def delete_audit_logs_batch(
+    request: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """API: Массовое удаление записей аудита"""
+    if current_user["role"] != "director":
+        raise HTTPException(status_code=403, detail="Forbidden")
+        
+    log_ids = request.get("ids", [])
+    if not log_ids:
+        return {"success": True, "count": 0}
+        
+    from db.connection import get_db_connection
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        c.execute("DELETE FROM audit_log WHERE id IN %s", (tuple(log_ids),))
+        count = c.rowcount
+        conn.commit()
+        return {"success": True, "count": count}
     except Exception as e:
         conn.rollback()
         raise HTTPException(status_code=500, detail=str(e))

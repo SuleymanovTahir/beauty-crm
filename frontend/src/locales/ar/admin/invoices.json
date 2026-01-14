@@ -1,72 +1,80 @@
 {
-  "title": "الحسابات",
-  "subtitle": "إدارة الحساب والدفع",
+  "actions": "الإجراءات",
   "addInvoice": "إنشاء حساب",
   "addPayment": "إضافة الدفع",
-  "loading": "تحميل...",
+  "allInvoices": "جميع الحسابات",
   "allStatuses": "جميع الحالات",
-  "invoiceNumber": "رقم الحساب",
+  "board": "سبورة",
   "client": "عميل",
-  "totalAmount": "مجموع",
-  "paidAmount": "مدفوع",
-  "status": "حالة",
-  "dueDate": "تاريخ الاستحقاق",
-  "actions": "الإجراءات",
-  "sendButton": "يرسل",
-  "delete": "يمسح",
-  "noInvoices": "لا توجد حسابات حتى الآن",
   "createFirst": "قم بإنشاء فاتورتك الأولى للعميل",
-  "statuses": {
-    "draft": "مسودة",
-    "sent": "مرسل",
-    "partial": "مدفوعة جزئيا",
-    "paid": "مدفوع",
-    "overdue": "منتهي الصلاحية",
-    "cancelled": "تم الإلغاء"
+  "delete": "يمسح",
+  "dueDate": "تاريخ الاستحقاق",
+  "errors": {
+    "createError": "حدث خطأ أثناء إنشاء الفاتورة",
+    "deleteError": "حدث خطأ أثناء حذف الفاتورة",
+    "paymentError": "حدث خطأ أثناء إضافة الدفع",
+    "sendError": "حدث خطأ أثناء إرسال الفاتورة",
+    "updateError": "فشل تحديث الحالة"
   },
   "form": {
-    "selectClient": "حدد العميل",
-    "items": "مواقف الحساب",
-    "itemName": "اسم",
-    "itemQuantity": "الكمية",
-    "itemPrice": "سعر",
     "addItem": "أضف منصبًا",
+    "cancel": "يلغي",
     "dueDate": "تاريخ الاستحقاق",
+    "itemName": "اسم",
+    "itemPrice": "سعر",
+    "itemQuantity": "الكمية",
+    "items": "مواقف الحساب",
     "notes": "ملحوظات",
     "save": "يحفظ",
-    "cancel": "يلغي"
+    "selectClient": "حدد العميل"
   },
-  "payment": {
-    "title": "إضافة الدفع",
-    "amount": "مجموع",
-    "method": "طريقة الدفع",
-    "notes": "ملحوظات",
-    "add": "يضيف",
-    "methods": {
-      "cash": "نقدي",
-      "card": "رسم خريطة",
-      "transfer": "ترجمة",
-      "online": "متصل"
-    }
-  },
-  "sendDialog": {
-    "title": "إرسال الفاتورة",
-    "method": "طريقة الشحن",
-    "recipient": "متلقي",
-    "email": "بريد إلكتروني",
-    "whatsapp": "واتس اب",
-    "telegram": "برقية",
-    "sendButton": "يرسل"
-  },
+  "invoiceNumber": "رقم الحساب",
+  "loading": "تحميل...",
+  "manage_stages": "أعمدة",
   "messages": {
     "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا الحساب؟",
     "invoiceCreated": "تم إنشاء الحساب",
-    "invoiceSent": "تم إرسال الفاتورة",
-    "paymentAdded": "تمت إضافة الدفع",
     "invoiceDeleted": "تم حذف الحساب",
-    "invoiceUpdated": "تم تحديث الحساب"
+    "invoiceSent": "تم إرسال الفاتورة",
+    "invoiceUpdated": "تم تحديث الحساب",
+    "paymentAdded": "تمت إضافة الدفع"
   },
-  "board": "سبورة",
-  "allInvoices": "جميع الحسابات",
-  "search_placeholder": "البحث بالرقم أو العميل..."
+  "noInvoices": "لا توجد حسابات حتى الآن",
+  "paidAmount": "مدفوع",
+  "payment": {
+    "add": "يضيف",
+    "amount": "مجموع",
+    "method": "طريقة الدفع",
+    "methods": {
+      "card": "رسم خريطة",
+      "cash": "نقدي",
+      "online": "متصل",
+      "transfer": "ترجمة"
+    },
+    "notes": "ملحوظات",
+    "title": "إضافة الدفع"
+  },
+  "search_placeholder": "البحث بالرقم أو العميل...",
+  "sendButton": "يرسل",
+  "sendDialog": {
+    "email": "بريد إلكتروني",
+    "method": "طريقة الشحن",
+    "recipient": "متلقي",
+    "sendButton": "يرسل",
+    "telegram": "برقية",
+    "title": "إرسال الفاتورة",
+    "whatsapp": "واتس اب"
+  },
+  "status": "حالة",
+  "statuses": {
+    "cancelled": "تم الإلغاء",
+    "draft": "مسودة",
+    "overdue": "منتهي الصلاحية",
+    "paid": "مدفوع",
+    "partial": "مدفوعة جزئيا",
+    "sent": "مرسل"
+  },
+  "subtitle": "إدارة الحساب والدفع",
+  "title": "الحسابات",
+  "totalAmount": "مجموع"
 }

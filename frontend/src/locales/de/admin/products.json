@@ -1,73 +1,83 @@
 {
-  "title": "Produkte und Lager",
-  "subtitle": "Produkt- und Bestandsverwaltung",
   "addProduct": "Produkt hinzufügen",
-  "edit": "Bearbeiten",
-  "delete": "Löschen",
-  "loading": "Laden...",
   "allCategories": "Alle Kategorien",
-  "noProducts": "Noch keine Produkte",
+  "analytics": {
+    "avgPrice": "Heiraten. Preis",
+    "last30Days": "In 30 Tagen",
+    "revenue": "Einnahmen",
+    "totalSold": "Insgesamt verkauft"
+  },
   "createFirst": "Fügen Sie das erste Produkt zum System hinzu",
-  "form": {
-    "name": "Name",
-    "nameRu": "Name (RU)",
-    "nameEn": "Titel (EN)",
-    "nameAr": "Titel (AR)",
-    "category": "Kategorie",
-    "price": "Verkaufspreis",
-    "costPrice": "Selbstkostenpreis",
-    "stockQuantity": "Restposten",
-    "minStockLevel": "Mindestguthaben",
-    "sku": "Artikel",
-    "barcode": "Barcode",
-    "supplier": "Anbieter",
-    "notes": "Notizen",
-    "isActive": "Aktiv",
-    "photos": "Produktfoto",
-    "upload": "Herunterladen",
-    "uploadError": "Fehler beim Laden des Fotos",
-    "save": "Speichern",
-    "cancel": "Stornieren"
-  },
-  "movement": {
-    "title": "Warenverkehr",
-    "type": "Bewegungsart",
-    "quantity": "Menge",
-    "reason": "Ursache",
-    "types": {
-      "in": "Kommen",
-      "out": "Verbrauch",
-      "adjustment": "Einstellung"
-    }
-  },
-  "messages": {
-    "confirmDelete": "Möchten Sie dieses Element wirklich entfernen?",
-    "productCreated": "Produkt erstellt",
-    "productUpdated": "Produkt aktualisiert",
-    "productDeleted": "Produkt entfernt",
-    "movementAdded": "Bewegung hinzugefügt",
-    "noResults": "Zu Ihrer Anfrage wurde nichts gefunden"
-  },
+  "delete": "Löschen",
   "detail": {
-    "noCategory": "Nicht kategorisiert",
+    "avgPrice": "Heiraten. Preis",
     "costPriceLabel": "Kosten: {{price}} {{currency}}",
-    "movementHistory": "Geschichte der Bewegungen",
     "inStock": "Auf Lager: {{count}}",
+    "inStock_one": "",
+    "inStock_other": "",
+    "last30Days": "In 30 Tagen",
     "loadingData": "Daten werden geladen...",
-    "noMovements": "Keine Bewegungsdaten",
+    "movementAdjustment": "Einstellung",
+    "movementHistory": "Geschichte der Bewegungen",
     "movementIn": "Zulassung",
     "movementOut": "Abschreibung",
-    "movementAdjustment": "Einstellung",
-    "totalSold": "Insgesamt verkauft",
+    "noCategory": "Nicht kategorisiert",
+    "noMovements": "Keine Bewegungsdaten",
     "totalRevenue": "Einnahmen",
-    "last30Days": "In 30 Tagen",
-    "avgPrice": "Heiraten. Preis"
+    "totalSold": "Insgesamt verkauft",
+    "inStock_few": "",
+    "inStock_many": ""
   },
+  "edit": "Bearbeiten",
+  "form": {
+    "barcode": "Barcode",
+    "cancel": "Stornieren",
+    "category": "Kategorie",
+    "costPrice": "Selbstkostenpreis",
+    "isActive": "Aktiv",
+    "minStockLevel": "Mindestguthaben",
+    "name": "Name",
+    "nameAr": "Titel (AR)",
+    "nameEn": "Titel (EN)",
+    "nameRu": "Name (RU)",
+    "notes": "Notizen",
+    "photos": "Produktfoto",
+    "price": "Verkaufspreis",
+    "save": "Speichern",
+    "sku": "Artikel",
+    "stockQuantity": "Restposten",
+    "supplier": "Anbieter",
+    "upload": "Herunterladen",
+    "uploadError": "Fehler beim Laden des Fotos"
+  },
+  "loading": "Laden...",
+  "messages": {
+    "confirmDelete": "Möchten Sie dieses Element wirklich entfernen?",
+    "movementAdded": "Bewegung hinzugefügt",
+    "noResults": "Zu Ihrer Anfrage wurde nichts gefunden",
+    "productCreated": "Produkt erstellt",
+    "productDeleted": "Produkt entfernt",
+    "productUpdated": "Produkt aktualisiert"
+  },
+  "movement": {
+    "quantity": "Menge",
+    "reason": "Ursache",
+    "title": "Warenverkehr",
+    "type": "Bewegungsart",
+    "types": {
+      "adjustment": "Einstellung",
+      "in": "Kommen",
+      "out": "Verbrauch"
+    }
+  },
+  "noProducts": "Noch keine Produkte",
   "search_placeholder": "Suche nach Titel oder Kategorie...",
   "stock_status": {
     "in_stock": "Auf Lager",
     "low_stock": "Wenige",
     "out_of_stock": "Nicht verfügbar"
   },
+  "subtitle": "Produkt- und Bestandsverwaltung",
+  "title": "Produkte und Lager",
   "unit_pcs": "Stk."
 }

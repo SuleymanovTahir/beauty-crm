@@ -1,72 +1,80 @@
 {
-  "title": "Konten",
-  "subtitle": "Konto- und Zahlungsverwaltung",
+  "actions": "Aktionen",
   "addInvoice": "Ein Konto erstellen",
   "addPayment": "Zahlung hinzufügen",
-  "loading": "Laden...",
+  "allInvoices": "Alle Konten",
   "allStatuses": "Alle Status",
-  "invoiceNumber": "Konto-Nr.",
+  "board": "Planke",
   "client": "Kunde",
-  "totalAmount": "Summe",
-  "paidAmount": "Bezahlt",
-  "status": "Status",
-  "dueDate": "Fälligkeitsdatum",
-  "actions": "Aktionen",
-  "sendButton": "Schicken",
-  "delete": "Löschen",
-  "noInvoices": "Noch keine Konten",
   "createFirst": "Erstellen Sie Ihre erste Rechnung für einen Kunden",
-  "statuses": {
-    "draft": "Entwurf",
-    "sent": "Gesendet",
-    "partial": "Teilweise bezahlt",
-    "paid": "Bezahlt",
-    "overdue": "Abgelaufen",
-    "cancelled": "Abgesagt"
+  "delete": "Löschen",
+  "dueDate": "Fälligkeitsdatum",
+  "errors": {
+    "createError": "Error creating invoice",
+    "deleteError": "Error deleting invoice",
+    "paymentError": "Error adding payment",
+    "sendError": "Error sending invoice",
+    "updateError": "Failed to update status"
   },
   "form": {
-    "selectClient": "Wählen Sie den Kunden aus",
-    "items": "Kontostände",
-    "itemName": "Name",
-    "itemQuantity": "Menge",
-    "itemPrice": "Preis",
     "addItem": "Fügen Sie eine Position hinzu",
+    "cancel": "Stornieren",
     "dueDate": "Fälligkeitsdatum",
+    "itemName": "Name",
+    "itemPrice": "Preis",
+    "itemQuantity": "Menge",
+    "items": "Kontostände",
     "notes": "Notizen",
     "save": "Speichern",
-    "cancel": "Stornieren"
+    "selectClient": "Wählen Sie den Kunden aus"
   },
-  "payment": {
-    "title": "Zahlung hinzufügen",
-    "amount": "Summe",
-    "method": "Zahlungsart",
-    "notes": "Notizen",
-    "add": "Hinzufügen",
-    "methods": {
-      "cash": "Kasse",
-      "card": "Karte",
-      "transfer": "Übersetzung",
-      "online": "Online"
-    }
-  },
-  "sendDialog": {
-    "title": "Rechnung senden",
-    "method": "Versandart",
-    "recipient": "Empfänger",
-    "email": "E-Mail",
-    "whatsapp": "WhatsApp",
-    "telegram": "Telegramm",
-    "sendButton": "Schicken"
-  },
+  "invoiceNumber": "Konto-Nr.",
+  "loading": "Laden...",
+  "manage_stages": "Spalten",
   "messages": {
     "confirmDelete": "Sind Sie sicher, dass Sie dieses Konto löschen möchten?",
     "invoiceCreated": "Konto erstellt",
-    "invoiceSent": "Rechnung verschickt",
-    "paymentAdded": "Zahlung hinzugefügt",
     "invoiceDeleted": "Konto gelöscht",
-    "invoiceUpdated": "Konto aktualisiert"
+    "invoiceSent": "Rechnung verschickt",
+    "invoiceUpdated": "Konto aktualisiert",
+    "paymentAdded": "Zahlung hinzugefügt"
   },
-  "board": "Planke",
-  "allInvoices": "Alle Konten",
-  "search_placeholder": "Suche nach Nummer oder Kunde..."
+  "noInvoices": "Noch keine Konten",
+  "paidAmount": "Bezahlt",
+  "payment": {
+    "add": "Hinzufügen",
+    "amount": "Summe",
+    "method": "Zahlungsart",
+    "methods": {
+      "card": "Karte",
+      "cash": "Kasse",
+      "online": "Online",
+      "transfer": "Übersetzung"
+    },
+    "notes": "Notizen",
+    "title": "Zahlung hinzufügen"
+  },
+  "search_placeholder": "Suche nach Nummer oder Kunde...",
+  "sendButton": "Schicken",
+  "sendDialog": {
+    "email": "E-Mail",
+    "method": "Versandart",
+    "recipient": "Empfänger",
+    "sendButton": "Schicken",
+    "telegram": "Telegramm",
+    "title": "Rechnung senden",
+    "whatsapp": "WhatsApp"
+  },
+  "status": "Status",
+  "statuses": {
+    "cancelled": "Abgesagt",
+    "draft": "Entwurf",
+    "overdue": "Abgelaufen",
+    "paid": "Bezahlt",
+    "partial": "Teilweise bezahlt",
+    "sent": "Gesendet"
+  },
+  "subtitle": "Konto- und Zahlungsverwaltung",
+  "title": "Konten",
+  "totalAmount": "Summe"
 }

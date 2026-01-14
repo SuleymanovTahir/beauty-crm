@@ -40,7 +40,9 @@
   "error_creating_client": "Клиент жасау қатесі",
   "error_deleting_client": "Клиентті жою қатесі",
   "error_exporting": "Экспорт қатесі",
+  "error_importing": "",
   "error_loading_clients": "Клиент тізімін жүктеу қатесі",
+  "error_selecting_file": "",
   "error_updating_client": "Клиентті жаңарту қатесі",
   "error_updating_status": "Күйді жаңарту қатесі",
   "export_includes": "Экспортқа қосу",
@@ -77,6 +79,8 @@
   "import_error_list": "Импорттау кезіндегі қателер",
   "import_error_message": "Импорттау кезінде қате орын алды",
   "import_errors": "Қателер",
+  "import_errors_count_one": "",
+  "import_errors_count_other": "",
   "import_example_structure": "Файл құрылымының мысалы",
   "import_excel": "Excel (.xlsx, .xls)",
   "import_important_info": "Маңызды ақпарат",
@@ -139,5 +143,7 @@
   "warm": "Жылы",
   "warm_client": "Жылы",
   "write_message": "Хабарлама жазыңыз",
-  "you_are_deleting_client": "Сіз клиентті жоясыз"
+  "you_are_deleting_client": "Сіз клиентті жоясыз",
+  "import_errors_count_few": "",
+  "import_errors_count_many": ""
 }
