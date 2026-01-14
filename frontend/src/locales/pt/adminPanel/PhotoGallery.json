@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "hide": "Hide",
+    "show": "Show"
+  },
   "buttons": {
     "cancel": "Cancelar",
     "close": "Fechar",
@@ -75,9 +79,11 @@
     "failed_featured": "Falha ao atualizar o status de favorito",
     "failed_load": "Falha ao enviar fotos",
     "failed_upload": "Falha ao enviar foto",
+    "failed_visibility": "Failed to update visibility",
     "featured_updated": "Status de favorito atualizado",
     "select_both_photos": "Please select both before and after photos",
-    "uploaded": "Foto enviada com sucesso"
+    "uploaded": "Foto enviada com sucesso",
+    "visibility_updated": "Visibility updated"
   },
   "upload_photo": "Carregar foto"
 }

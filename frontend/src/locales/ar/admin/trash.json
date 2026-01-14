@@ -1,8 +1,11 @@
 {
+  "confirm_empty_trash": "هل أنت متأكد أنك تريد حذف كافة العناصر من سلة المهملات بشكل دائم؟",
+  "delete_selected": "إزالة المحدد",
   "deleted_at": "تم الحذف",
   "deleted_by": "تم الحذف",
   "empty_desc": "سيتم عرض الكائنات المحذوفة هنا",
   "empty_title": "العربة فارغة",
+  "empty_trash": "سلة المهملات الفارغة",
   "entity": {
     "booking": "booking",
     "client": "عميل",
@@ -26,15 +29,18 @@
   "permanent_delete": "حذف نهائيا",
   "permanent_delete_confirm": "هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء!",
   "restore": "يعيد",
+  "restore_selected": "استعادة المحدد",
   "search_placeholder": "البحث حسب المعرف أو السبب أو المؤلف...",
   "subtitle": "إدارة واستعادة البيانات المحذوفة",
   "title": "سلة",
   "toast": {
     "delete_error": "حدث خطأ أثناء الحذف النهائي",
     "delete_success": "يتم حذف الكائن نهائيًا",
+    "empty_error": "حدث خطأ أثناء إفراغ سلة المحذوفات",
     "load_error": "حدث خطأ أثناء تحميل العربة",
     "refreshed": "تم التحديث",
     "restore_error": "فشل في استعادة الكائن",
-    "restore_success": "تمت استعادة __VAR0____ بنجاح"
+    "restore_success": "تمت استعادة __VAR0____ بنجاح",
+    "trash_emptied": "سلة المهملات فارغة"
   }
 }

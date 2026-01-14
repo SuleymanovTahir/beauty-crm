@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "hide": "Hide",
+    "show": "Show"
+  },
   "buttons": {
     "cancel": "Annuler",
     "close": "Fermer",
@@ -75,9 +79,11 @@
     "failed_featured": "Échec de la mise à jour du statut de favori",
     "failed_load": "Échec du téléchargement des photos",
     "failed_upload": "Échec du téléchargement de la photo",
+    "failed_visibility": "Failed to update visibility",
     "featured_updated": "Statut de favori mis à jour",
     "select_both_photos": "Please select both before and after photos",
-    "uploaded": "Photo téléchargée avec succès"
+    "uploaded": "Photo téléchargée avec succès",
+    "visibility_updated": "Visibility updated"
   },
   "upload_photo": "Télécharger une photo"
 }

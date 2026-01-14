@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CreditCard, Settings, CheckCircle, XCircle, Plus, Edit, Trash2 } from 'lucide-react';
+import { CreditCard, Settings, CheckCircle, XCircle, ExternalLink } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import '../../styles/crm-pages.css';
 
@@ -21,6 +22,7 @@ const PaymentIntegrations = () => {
     const [loading, setLoading] = useState(true);
     const [showConfigDialog, setShowConfigDialog] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         loadProviders();
@@ -173,6 +175,17 @@ const PaymentIntegrations = () => {
                                         <Settings size={16} />
                                         {isActive ? t('payment.configure', 'Настроить') : t('payment.setup', 'Подключить')}
                                     </button>
+
+                                    {isActive && (
+                                        <button
+                                            className="crm-btn-secondary"
+                                            style={{ width: '100%', marginTop: '10px' }}
+                                            onClick={() => navigate('/crm/finance')}
+                                        >
+                                            <ExternalLink size={16} />
+                                            {t('payment.viewTransactions', 'История транзакций')}
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         );

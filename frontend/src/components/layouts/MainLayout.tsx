@@ -35,7 +35,8 @@ import {
     Receipt,
     CreditCard,
     Store,
-    Briefcase
+    Briefcase,
+    Link
 } from 'lucide-react';
 import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../icons/SocialIcons';
 import { toast } from 'sonner';
@@ -54,7 +55,17 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const { t } = useTranslation(['layouts/mainlayout', 'common']);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
-    const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
+    const [expandedMenu, setExpandedMenu] = useState<string | null>(() => {
+        const path = window.location.pathname;
+        if (path.includes('/chat') || path.includes('/internal-chat')) return 'chat';
+        if (path.includes('/services') || path.includes('/products')) return 'management';
+        if (path.includes('/analytics') || path.includes('/visitor-analytics')) return 'analytics-group';
+        if (path.includes('/invoices') || path.includes('/contracts')) return 'finance';
+        if (path.includes('/tasks') || path.includes('/broadcasts') || path.includes('/telephony')) return 'tools';
+        if (path.includes('/payment-integrations') || path.includes('/marketplace-integrations') || path.includes('/settings/messengers')) return 'integrations';
+        if (path.includes('/users') || path.includes('/public-content') || path.includes('/bot-settings') || path.includes('/audit-log') || path.includes('/trash') || path.includes('/settings')) return 'settings';
+        return null;
+    });
     const [enabledMessengers, setEnabledMessengers] = useState<Array<{ type: string; name: string }>>([]);
     const [notifications, setNotifications] = useState<any[]>([]);
     const [notifCount, setNotifCount] = useState(0);
@@ -389,6 +400,18 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                     { id: 'telephony', icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, requirePermission: () => permissions.roleLevel >= 80 || user?.role === 'sales' },
                 ]
             },
+            // INTEGRATIONS GROUP
+            {
+                id: 'integrations',
+                icon: Link,
+                label: t('menu.integrations', 'Интеграции'),
+                requirePermission: () => (permissions.roleLevel >= 70 || user?.role === 'sales'),
+                items: [
+                    { id: 'messengers', icon: MessageSquare, label: t('menu.messengers', 'Мессенджеры'), path: `${rolePrefix}/messengers`, requirePermission: () => (permissions.canViewSettings || user?.role === 'sales') },
+                    { id: 'payment', icon: CreditCard, label: t('menu.payment_integrations'), path: `${rolePrefix}/payment-integrations`, requirePermission: () => (permissions.roleLevel >= 70 || user?.role === 'sales') },
+                    { id: 'marketplace', icon: Store, label: t('menu.marketplace_integrations'), path: `${rolePrefix}/marketplace-integrations`, requirePermission: () => (permissions.roleLevel >= 70 || user?.role === 'sales') },
+                ]
+            },
             // SETTINGS GROUP
             {
                 id: 'settings',
@@ -400,8 +423,6 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                     { id: 'users', icon: UserCog, label: t('menu.users'), path: `${rolePrefix}/users`, requirePermission: () => permissions.canViewAllUsers },
                     { id: 'public-content', icon: Globe, label: t('menu.public_content'), path: `${rolePrefix}/public-content`, requirePermission: () => permissions.canViewSettings && permissions.roleLevel >= 80 },
                     { id: 'bot-settings', icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, requirePermission: () => permissions.canViewBotSettings || user?.role === 'sales' },
-                    { id: 'payment', icon: CreditCard, label: t('menu.payment_integrations'), path: `${rolePrefix}/payment-integrations`, requirePermission: () => permissions.roleLevel >= 80 },
-                    { id: 'marketplace', icon: Store, label: t('menu.marketplace_integrations'), path: `${rolePrefix}/marketplace-integrations`, requirePermission: () => permissions.roleLevel >= 80 },
                     { id: 'audit', icon: ShieldCheck, label: t('menu.audit_log'), path: `${rolePrefix}/audit-log`, requirePermission: () => permissions.roleLevel >= 80 },
                     { id: 'trash', icon: Trash2, label: t('menu.trash'), path: `${rolePrefix}/trash`, requirePermission: () => permissions.roleLevel >= 80 },
                 ]

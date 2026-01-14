@@ -1,0 +1,21 @@
+{
+  "back_to_login": "De volta à reserva",
+  "code_length_error": "O código deve conter 6 dígitos",
+  "confirm_button": "Confirmar",
+  "email_not_found": "E-mail não encontrado. Faça login novamente.",
+  "email_verified": "E-mail confirmado!",
+  "email_verified_login": "E-mail confirmado! Fazendo login...",
+  "email_verified_login_message": "E-mail confirmado. Entrar.",
+  "email_verified_title": "E-mail confirmado!",
+  "enter_6_digit_code": "Digite o código de 6 dígitos do e-mail",
+  "enter_code_from_email": "Digite o código da carta enviada para:",
+  "new_code_sent": "Novo código enviado para seu e-mail",
+  "redirecting_login": "Redirecionar para a página de login...",
+  "resend_code": "Reenviar código",
+  "send_code_error": "Erro ao enviar código",
+  "verification_code_label": "Código de verificação",
+  "verification_error": "Erro ao confirmar e-mail",
+  "verification_error_short": "Erro de verificação",
+  "verify_email_title": "Confirmação até e-mail",
+  "verifying": "Exame..."
+}

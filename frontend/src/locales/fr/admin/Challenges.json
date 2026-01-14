@@ -1,0 +1,51 @@
+{
+  "buttons": {
+    "add_challenge": "Créer une tâche",
+    "create_challenge": "Démarrer un défi"
+  },
+  "card": {
+    "details": "Plus de détails",
+    "participants": "PARTICIPANTS",
+    "progress": "PROGRÈS"
+  },
+  "dialogs": {
+    "add_title": "Nouveau défi",
+    "edit_title": "Modifier un défi"
+  },
+  "empty": {
+    "subtitle": "Créez votre premier défi de jeu pour encourager les clients à s'inscrire plus souvent.",
+    "title": "Les défis ne sont pas mis en place"
+  },
+  "fields": {
+    "dates": "Délai",
+    "description": "Description publique",
+    "reward": "Récompense",
+    "target_value": "Plan (objectif)",
+    "title": "Titre d'emploi",
+    "type": "Méthodologie des objectifs"
+  },
+  "placeholders": {
+    "description": "Comment le client verra-t-il cette tâche ?",
+    "title": "à exemple : statut Gold"
+  },
+  "stats": {
+    "active_challenges": "TÂCHES ACTIVES",
+    "completed_today": "TERMINÉ AUJOURD'HUI",
+    "total_participants": "TOTAL DES PARTICIPANTS"
+  },
+  "status": {
+    "active": "ACTIF",
+    "inactive": "PAUSE"
+  },
+  "subtitle": "Augmentez la fidélité des clients grâce à des mécanismes de jeu et des récompenses automatiques.",
+  "title": "Défis",
+  "toasts": {
+    "created": "Tâche créée",
+    "updated": "Quête mise à jour"
+  },
+  "types": {
+    "service": "Catégorie de service",
+    "spend": "Dépense totale",
+    "visits": "Nombre de visites"
+  }
+}

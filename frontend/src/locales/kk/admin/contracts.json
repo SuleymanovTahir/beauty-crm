@@ -1,83 +1,98 @@
 {
-  "title": "Шарттар",
-  "subtitle": "Клиенттік келісім-шартты басқару",
-  "addContract": "Келісім жасаңыз",
-  "loading": "Жүктелуде...",
-  "allStatuses": "Барлық күйлер",
-  "contractNumber": "Келісім-шарт №",
-  "client": "Клиент",
-  "status": "Күй",
-  "createdAt": "Жасалу күні",
   "actions": "Әрекеттер",
-  "sendButton": "Жіберу",
-  "delete": "Жою",
-  "noContracts": "Әзірге келісімшарттар жоқ",
+  "addContract": "Келісім жасаңыз",
+  "all": "Барлығы",
+  "allContracts": "Барлық келісімшарттар",
+  "allStatuses": "Барлық күйлер",
+  "board": "Басқарма",
+  "client": "Клиент",
+  "clientContracts": "Клиент",
+  "contractNumber": "Келісім-шарт №",
+  "contractTypes": {
+    "employment": "Еңбек шарты",
+    "rental": "Орынды жалға алу",
+    "service": "Қызмет көрсету"
+  },
+  "createdAt": "Жасалу күні",
   "createFirst": "Клиентпен алғашқы келісім-шартыңызды жасаңыз",
-  "statuses": {
-    "draft": "Жоба",
-    "sent": "Жіберілді",
-    "signed": "Қол қойылған",
-    "cancelled": "Бас тартылды"
+  "delete": "Жою",
+  "editButton": "Өңдеу",
+  "editContract": "Келісімшартты өңдеу",
+  "errors": {
+    "deleteError": "Error deleting contract",
+    "saveError": "Error saving contract",
+    "sendError": "Error sending contract",
+    "updateError": "Failed to update status"
   },
   "form": {
-    "selectClient": "Клиентті таңдаңыз",
-    "contractType": "Шарт түрі",
+    "cancel": "Болдырмау",
     "contractDate": "Келісімшарт күні",
-    "terms": "Келісім шарттары",
+    "contractType": "Шарт түрі",
     "notes": "Ескертпелер",
     "save": "Сақтау",
-    "cancel": "Болдырмау"
+    "selectClient": "Клиентті таңдаңыз",
+    "terms": "Келісім шарттары"
   },
-  "types": {
-    "service": "Қызмет",
-    "product": "Өнім",
-    "subscription": "Жазылым"
-  },
-  "sendDialog": {
-    "title": "Келісімшартты жіберу",
-    "method": "Жеткізу әдісі",
-    "recipient": "Алушы",
-    "email": "Электрондық пошта",
-    "whatsapp": "whatsapp",
-    "telegram": "Telegram",
-    "instagram": "Instagram",
-    "sendButton": "Жіберу"
-  },
+  "internalContracts": "Отандық",
+  "loading": "Жүктелуде...",
+  "manage_stages": "Бағандар",
+  "manageTypes": "Келісімшарттардың түрлері",
   "messages": {
     "confirmDelete": "Осы келісімді шынымен жойғыңыз келе ме?",
     "contractCreated": "Келісімшарт жасалды",
-    "contractSent": "Келісімшарт жіберілді",
     "contractDeleted": "Келісімшарт жойылды",
+    "contractSent": "Келісімшарт жіберілді",
     "contractUpdated": "Келісімшарт жаңартылды"
   },
-  "contractTypes": {
-    "service": "Қызмет көрсету",
-    "employment": "Еңбек шарты",
-    "rental": "Орынды жалға алу"
+  "noContracts": "Әзірге келісімшарттар жоқ",
+  "search_placeholder": "Нөмір немесе клиент бойынша іздеу...",
+  "sendButton": "Жіберу",
+  "sendDialog": {
+    "email": "Электрондық пошта",
+    "instagram": "Instagram",
+    "method": "Жеткізу әдісі",
+    "recipient": "Алушы",
+    "sendButton": "Жіберу",
+    "telegram": "Telegram",
+    "title": "Келісімшартты жіберу",
+    "whatsapp": "whatsapp"
   },
-  "editContract": "Келісімшартты өңдеу",
-  "editButton": "Өңдеу",
-  "manageTypes": "Келісімшарттардың түрлері",
+  "status": "Күй",
+  "statuses": {
+    "cancelled": "Бас тартылды",
+    "draft": "Жоба",
+    "sent": "Жіберілді",
+    "signed": "Қол қойылған"
+  },
+  "subtitle": "Клиенттік келісім-шартты басқару",
+  "title": "Шарттар",
   "type": "Түр",
   "typeManagement": {
-    "title": "Келісімшарттардың түрлері",
-    "editType": "Түрді өңдеу",
-    "createType": "Түр жасау",
-    "name": "Аты",
-    "code": "Код (лат., бірегей)",
-    "description": "Сипаттама",
     "add": "қосу",
-    "deleteTitle": "\"{{name}}\" түрі жойылуда",
+    "code": "Код (лат., бірегей)",
+    "confirmDelete": "Жоюды растаңыз",
+    "createType": "Түр жасау",
     "deletePrompt": "Бұл келісімшарт түрін жойғыңыз келеді. Осы түрдегі қолданыстағы келісімшарттармен не істеу керек?",
+    "deleteTitle": "\"{{name}}\" түрі жойылуда",
     "deleteWithDocs": "Барлық келісімшарттарды жойыңыз",
     "deleteWithDocsSub": "Осы түрдегі барлық құжаттар біржола жойылады.",
+    "description": "Сипаттама",
+    "editType": "Түрді өңдеу",
     "keepDocs": "Келісімшарттарды түрінсіз қалдырыңыз",
     "keepDocsSub": "Келісімшарттар қалады, бірақ «Түрі» өрісі тазаланады.",
-    "confirmDelete": "Жоюды растаңыз",
     "messages": {
-      "updated": "Түрі жаңартылды",
       "created": "Түр құрылды",
-      "deleted": "Түр жойылды"
-    }
+      "deleted": "Түр жойылды",
+      "updated": "Түрі жаңартылды"
+    },
+    "name": "Аты",
+    "system": "System",
+    "systemProtected": "System protected",
+    "title": "Келісімшарттардың түрлері"
+  },
+  "types": {
+    "product": "Өнім",
+    "service": "Қызмет",
+    "subscription": "Жазылым"
   }
 }

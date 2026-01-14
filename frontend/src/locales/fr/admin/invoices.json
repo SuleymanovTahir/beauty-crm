@@ -1,72 +1,80 @@
 {
-  "title": "Comptes",
-  "subtitle": "Gestion des comptes et des paiements",
+  "actions": "Actes",
   "addInvoice": "Créer un compte",
   "addPayment": "Ajouter un paiement",
-  "loading": "Chargement...",
+  "allInvoices": "Tous les comptes",
   "allStatuses": "Tous les statuts",
-  "invoiceNumber": "Numéro de compte",
+  "board": "Conseil",
   "client": "Client",
-  "totalAmount": "Somme",
-  "paidAmount": "Payé",
-  "status": "Statut",
-  "dueDate": "Date d'échéance",
-  "actions": "Actes",
-  "sendButton": "Envoyer",
-  "delete": "Supprimer",
-  "noInvoices": "Aucun compte pour l'instant",
   "createFirst": "Créez votre première facture pour un client",
-  "statuses": {
-    "draft": "Brouillon",
-    "sent": "Envoyé",
-    "partial": "Partiellement payé",
-    "paid": "Payé",
-    "overdue": "Expiré",
-    "cancelled": "Annulé"
+  "delete": "Supprimer",
+  "dueDate": "Date d'échéance",
+  "errors": {
+    "createError": "Error creating invoice",
+    "deleteError": "Error deleting invoice",
+    "paymentError": "Error adding payment",
+    "sendError": "Error sending invoice",
+    "updateError": "Failed to update status"
   },
   "form": {
-    "selectClient": "Sélectionner un client",
-    "items": "Positions de compte",
-    "itemName": "Nom",
-    "itemQuantity": "Quantité",
-    "itemPrice": "Prix",
     "addItem": "Ajouter un poste",
+    "cancel": "Annuler",
     "dueDate": "Date d'échéance",
+    "itemName": "Nom",
+    "itemPrice": "Prix",
+    "itemQuantity": "Quantité",
+    "items": "Positions de compte",
     "notes": "Remarques",
     "save": "Sauvegarder",
-    "cancel": "Annuler"
+    "selectClient": "Sélectionner un client"
   },
-  "payment": {
-    "title": "Ajouter un paiement",
-    "amount": "Somme",
-    "method": "Mode de paiement",
-    "notes": "Remarques",
-    "add": "Ajouter",
-    "methods": {
-      "cash": "Espèces",
-      "card": "Carte",
-      "transfer": "Traduction",
-      "online": "En ligne"
-    }
-  },
-  "sendDialog": {
-    "title": "Envoyer la facture",
-    "method": "Méthode d'expédition",
-    "recipient": "Destinataire",
-    "email": "E-mail",
-    "whatsapp": "WhatsApp",
-    "telegram": "Télégramme",
-    "sendButton": "Envoyer"
-  },
+  "invoiceNumber": "Numéro de compte",
+  "loading": "Chargement...",
+  "manage_stages": "Colonnes",
   "messages": {
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce compte ?",
     "invoiceCreated": "Compte créé",
-    "invoiceSent": "Facture envoyée",
-    "paymentAdded": "Paiement ajouté",
     "invoiceDeleted": "Compte supprimé",
-    "invoiceUpdated": "Compte mis à jour"
+    "invoiceSent": "Facture envoyée",
+    "invoiceUpdated": "Compte mis à jour",
+    "paymentAdded": "Paiement ajouté"
   },
-  "board": "Conseil",
-  "allInvoices": "Tous les comptes",
-  "search_placeholder": "Recherche à numéro ou client..."
+  "noInvoices": "Aucun compte pour l'instant",
+  "paidAmount": "Payé",
+  "payment": {
+    "add": "Ajouter",
+    "amount": "Somme",
+    "method": "Mode de paiement",
+    "methods": {
+      "card": "Carte",
+      "cash": "Espèces",
+      "online": "En ligne",
+      "transfer": "Traduction"
+    },
+    "notes": "Remarques",
+    "title": "Ajouter un paiement"
+  },
+  "search_placeholder": "Recherche à numéro ou client...",
+  "sendButton": "Envoyer",
+  "sendDialog": {
+    "email": "E-mail",
+    "method": "Méthode d'expédition",
+    "recipient": "Destinataire",
+    "sendButton": "Envoyer",
+    "telegram": "Télégramme",
+    "title": "Envoyer la facture",
+    "whatsapp": "WhatsApp"
+  },
+  "status": "Statut",
+  "statuses": {
+    "cancelled": "Annulé",
+    "draft": "Brouillon",
+    "overdue": "Expiré",
+    "paid": "Payé",
+    "partial": "Partiellement payé",
+    "sent": "Envoyé"
+  },
+  "subtitle": "Gestion des comptes et des paiements",
+  "title": "Comptes",
+  "totalAmount": "Somme"
 }

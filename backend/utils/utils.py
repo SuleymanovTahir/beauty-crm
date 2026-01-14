@@ -8,7 +8,8 @@ import urllib.parse
 from typing import Optional
 from fastapi import Cookie, HTTPException
 
-from db import get_user_by_session, get_all_clients, get_unread_messages_count
+from db import get_user_by_session, get_all_clients, get_unread_messages_count, get_global_unread_count
+
 from db.settings import get_custom_statuses
 from db.connection import get_db_connection
 from core.config import DATABASE_NAME, CLIENT_STATUSES
@@ -296,32 +297,10 @@ def get_client_display_name(client) -> str:
 
 def get_total_unread() -> int:
     """
-    Получить общее количество непрочитанных сообщений
-
-    Returns:
-        int: Количество непрочитанных
+    Получить общее количество непрочитанных сообщений (оптимизировано)
     """
-    try:
-        clients = get_all_clients()
-        if not clients:
-            return 0
+    return get_global_unread_count()
 
-        total = 0
-        for client in clients:
-            try:
-                count = get_unread_messages_count(client[0])
-                total += count
-            except Exception as e:
-                # Логируем ошибку для конкретного клиента, но продолжаем
-                from utils.logger import log_error
-                log_error(f"Error getting unread count for client {client[0]}: {e}", "utils")
-                continue
-
-        return total
-    except Exception as e:
-        from utils.logger import log_error
-        log_error(f"Error in get_total_unread: {e}", "utils")
-        return 0
 
 # ===== СТАТУСЫ =====
 

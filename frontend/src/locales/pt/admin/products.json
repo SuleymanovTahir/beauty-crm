@@ -1,73 +1,83 @@
 {
-  "title": "Produtos e armazém",
-  "subtitle": "Gerenciamento de produtos e estoque",
   "addProduct": "Adicionar produto",
-  "edit": "Editar",
-  "delete": "Excluir",
-  "loading": "Carregando...",
   "allCategories": "Todas as categorias",
-  "noProducts": "Nenhum produto ainda",
+  "analytics": {
+    "avgPrice": "Qua. preço",
+    "last30Days": "Em 30 dias",
+    "revenue": "Receita",
+    "totalSold": "Total vendido"
+  },
   "createFirst": "Adicione o primeiro produto ao sistema",
-  "form": {
-    "name": "Nome",
-    "nameRu": "Nome (RU)",
-    "nameEn": "Título (PT)",
-    "nameAr": "Título (AR)",
-    "category": "Categoria",
-    "price": "Preço de venda",
-    "costPrice": "Preço de custo",
-    "stockQuantity": "Estoque restante",
-    "minStockLevel": "Saldo mínimo",
-    "sku": "Artigo",
-    "barcode": "Código de barras",
-    "supplier": "Fornecedor",
-    "notes": "Notas",
-    "isActive": "Ativo",
-    "photos": "Foto do produto",
-    "upload": "Download",
-    "uploadError": "Erro ao carregar a foto",
-    "save": "Salvar",
-    "cancel": "Cancelar"
-  },
-  "movement": {
-    "title": "Movimento de mercadorias",
-    "type": "Tipo de movimento",
-    "quantity": "Quantidade",
-    "reason": "Causa",
-    "types": {
-      "in": "Chegando",
-      "out": "Consumo",
-      "adjustment": "Ajuste"
-    }
-  },
-  "messages": {
-    "confirmDelete": "Tem certeza de que deseja remover este item?",
-    "productCreated": "Produto criado",
-    "productUpdated": "Produto atualizado",
-    "productDeleted": "Produto removido",
-    "movementAdded": "Movimento adicionado",
-    "noResults": "Nada encontrado que corresponda à sua solicitação"
-  },
+  "delete": "Excluir",
   "detail": {
-    "noCategory": "Sem categoria",
+    "avgPrice": "Qua. preço",
     "costPriceLabel": "Custo: {{price}} {{currency}}",
-    "movementHistory": "História dos movimentos",
     "inStock": "Em estoque: {{count}}",
+    "inStock_one": "",
+    "inStock_many": "",
+    "inStock_other": "",
+    "last30Days": "Em 30 dias",
     "loadingData": "Carregando dados...",
-    "noMovements": "Nenhum dado de movimento",
+    "movementAdjustment": "Ajuste",
+    "movementHistory": "História dos movimentos",
     "movementIn": "Admissão",
     "movementOut": "Eliminar",
-    "movementAdjustment": "Ajuste",
-    "totalSold": "Total vendido",
+    "noCategory": "Sem categoria",
+    "noMovements": "Nenhum dado de movimento",
     "totalRevenue": "Receita",
-    "last30Days": "Em 30 dias",
-    "avgPrice": "Qua. preço"
+    "totalSold": "Total vendido",
+    "inStock_few": ""
   },
+  "edit": "Editar",
+  "form": {
+    "barcode": "Código de barras",
+    "cancel": "Cancelar",
+    "category": "Categoria",
+    "costPrice": "Preço de custo",
+    "isActive": "Ativo",
+    "minStockLevel": "Saldo mínimo",
+    "name": "Nome",
+    "nameAr": "Título (AR)",
+    "nameEn": "Título (PT)",
+    "nameRu": "Nome (RU)",
+    "notes": "Notas",
+    "photos": "Foto do produto",
+    "price": "Preço de venda",
+    "save": "Salvar",
+    "sku": "Artigo",
+    "stockQuantity": "Estoque restante",
+    "supplier": "Fornecedor",
+    "upload": "Download",
+    "uploadError": "Erro ao carregar a foto"
+  },
+  "loading": "Carregando...",
+  "messages": {
+    "confirmDelete": "Tem certeza de que deseja remover este item?",
+    "movementAdded": "Movimento adicionado",
+    "noResults": "Nada encontrado que corresponda à sua solicitação",
+    "productCreated": "Produto criado",
+    "productDeleted": "Produto removido",
+    "productUpdated": "Produto atualizado"
+  },
+  "movement": {
+    "quantity": "Quantidade",
+    "reason": "Causa",
+    "title": "Movimento de mercadorias",
+    "type": "Tipo de movimento",
+    "types": {
+      "adjustment": "Ajuste",
+      "in": "Chegando",
+      "out": "Consumo"
+    }
+  },
+  "noProducts": "Nenhum produto ainda",
   "search_placeholder": "Pesquise até título ou categoria...",
   "stock_status": {
     "in_stock": "Em estoque",
     "low_stock": "Alguns",
     "out_of_stock": "Não disponível"
   },
+  "subtitle": "Gerenciamento de produtos e estoque",
+  "title": "Produtos e armazém",
   "unit_pcs": "peças."
 }

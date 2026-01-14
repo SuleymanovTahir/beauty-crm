@@ -19,6 +19,8 @@ from .schema_service_assignments import run_migration as migrate_service_assignm
 from .schema_account_enhancements import migrate_account_enhancements
 from .schema_challenges import migrate_challenges_schema
 from .schema_admin_features import migrate_admin_features_schema
+from . import schema_soft_delete
+
 
 
 __all__ = [
@@ -50,6 +52,8 @@ __all__ = [
     'migrate_challenges_schema',
     # Admin Features
     'migrate_admin_features_schema',
+    'schema_soft_delete',
+
 ]
 
 

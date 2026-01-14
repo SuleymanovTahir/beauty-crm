@@ -119,8 +119,10 @@ from .messages import (
     get_chat_history,
     mark_messages_as_read,
     get_unread_messages_count,
+    get_global_unread_count,
     get_all_messages
 )
+
 
 # Аналитика
 from .analytics import (
@@ -230,7 +232,9 @@ __all__ = [
     "get_chat_history",
     "mark_messages_as_read",
     "get_unread_messages_count",
+    "get_global_unread_count",
     "get_all_messages",
+
     
     # Analytics
     "get_stats",

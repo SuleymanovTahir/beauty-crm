@@ -1,6 +1,9 @@
 {
   "clear_all": "مسح الكل",
   "clear_confirm": "هل أنت متأكد أنك تريد مسح حجز التدقيق بالكامل؟ هذا الإجراء لا رجعة فيه.",
+  "delete_batch_confirm": "هل تريد حذف السجلات المحددة ({{count}}_) نهائيًا؟",
+  "delete_confirm": "هل يجب علي حذف هذا الإدخال نهائيًا؟",
+  "delete_selected": "إزالة المحدد",
   "details": {
     "error_msg": "رسالة خطأ",
     "ip": "الملكية الفكرية",
@@ -13,6 +16,7 @@
   "filter_all": "جميع الإجراءات",
   "filter_create": "الخلق",
   "filter_delete": "إزالة",
+  "filter_delete_all": "مسح السجل",
   "filter_login": "تسجيل الدخول",
   "filter_restore": "استعادة",
   "filter_update": "يتغير",
@@ -37,6 +41,8 @@
   "toast": {
     "clear_error": "خطأ في مسح السجل",
     "clear_success": "تم مسح حجز التدقيق بنجاح",
+    "delete_error": "حدث خطأ أثناء الحذف",
+    "delete_success": "تم حذف المشاركة (المشاركات).",
     "load_error": "حدث خطأ أثناء تحميل حجز التدقيق"
   }
 }
