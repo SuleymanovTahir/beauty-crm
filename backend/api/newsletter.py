@@ -1,11 +1,12 @@
 """
 API для подписки на рассылку
 """
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, EmailStr
 from utils.logger import log_error, log_info
 from db.migrations.consolidated.schema_newsletter import add_subscriber, create_newsletter_table
+from utils.email_service import send_newsletter_welcome_email
 
 router = APIRouter(tags=["Newsletter"])
 
@@ -14,7 +15,7 @@ class SubscribeRequest(BaseModel):
     source: str = 'footer'
 
 @router.post("/newsletter/subscribe")
-async def subscribe_newsletter(data: SubscribeRequest):
+async def subscribe_newsletter(data: SubscribeRequest, background_tasks: BackgroundTasks):
     """Подписаться на рассылку"""
     try:
         # Валидация email происходит автоматически через Pydantic EmailStr
@@ -22,7 +23,8 @@ async def subscribe_newsletter(data: SubscribeRequest):
         result = add_subscriber(data.email, data.source)
         
         if result:
-            # TODO: Отправить приветственное письмо (в будущем)
+            # Отправить приветственное письмо в фоне
+            background_tasks.add_task(send_newsletter_welcome_email, data.email)
             log_info(f"📧 Новый подписчик: {data.email}", "newsletter")
             return {"success": True, "message": "Successfully subscribed"}
         else:

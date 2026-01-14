@@ -59,8 +59,12 @@ class TestDataCleaner:
                     ]
                     for table in dep_tables:
                         try:
+                            # Use SAVEPOINT to prevent transaction abortion
+                            c.execute(f"SAVEPOINT cleanup_{table}")
                             c.execute(f"DELETE FROM {table} WHERE user_id IN ({id_placeholders})", tuple(user_ids))
+                            c.execute(f"RELEASE SAVEPOINT cleanup_{table}")
                         except Exception:
+                            c.execute(f"ROLLBACK TO SAVEPOINT cleanup_{table}")
                             pass
 
                     c.execute(f"DELETE FROM users WHERE id IN ({id_placeholders})", tuple(user_ids))
@@ -85,8 +89,12 @@ class TestDataCleaner:
                     ]
                     for table in dep_tables:
                         try:
+                            # Use SAVEPOINT to prevent transaction abortion
+                            c.execute(f"SAVEPOINT cleanup_gen_{table}")
                             c.execute(f"DELETE FROM {table} WHERE user_id IN ({placeholders})", tuple(test_user_ids))
+                            c.execute(f"RELEASE SAVEPOINT cleanup_gen_{table}")
                         except Exception:
+                            c.execute(f"ROLLBACK TO SAVEPOINT cleanup_gen_{table}")
                             pass
                         
                     c.execute(f"DELETE FROM users WHERE id IN ({placeholders})", tuple(test_user_ids))

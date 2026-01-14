@@ -339,7 +339,7 @@ export default function EditUser() {
 
                           const data = await response.json();
 
-                          // Extract path from full URL (remove http://localhost:8000 part)
+                          // Extract path from full URL (remove domain part)
                           const photoPath = data.file_url.replace(/^https?:\/\/[^\/]+/, '');
 
                           // Update local state

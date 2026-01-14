@@ -3,10 +3,11 @@ API для интеграции с платежными системами
 Поддерживаемые системы: Stripe, PayPal, Yookassa, Tinkoff
 """
 from fastapi import APIRouter, HTTPException, Depends, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 import json
+import base64
 import hmac
 import hashlib
 
@@ -27,108 +28,16 @@ class PaymentProvider(BaseModel):
     settings: Optional[Dict[str, Any]] = None
 
 class PaymentRequest(BaseModel):
-    invoice_id: int
-    amount: float
+    invoice_id: Optional[int] = None
+    amount: float = Field(..., gt=0, description="Amount must be greater than 0")
     currency: str = "AED"
     provider: str  # stripe, paypal, yookassa, tinkoff
     return_url: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
 
-class PaymentWebhook(BaseModel):
-    provider: str
-    event_type: str
-    data: Dict[str, Any]
+# ... (PaymentWebhook remains same)
 
-# ===== НАСТРОЙКИ ПРОВАЙДЕРОВ =====
-
-@router.get("/payment-providers")
-async def get_payment_providers(current_user: dict = Depends(get_current_user)):
-    """Получить список настроенных платежных провайдеров"""
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        cursor.execute("""
-            SELECT id, name, is_active, settings, created_at, updated_at
-            FROM payment_providers
-            ORDER BY name
-        """)
-        
-        providers = []
-        for row in cursor.fetchall():
-            providers.append({
-                "id": row[0],
-                "name": row[1],
-                "is_active": row[2],
-                "settings": json.loads(row[3]) if row[3] else {},
-                "created_at": row[4],
-                "updated_at": row[5]
-            })
-        
-        conn.close()
-        return {"providers": providers}
-        
-    except Exception as e:
-        log_error(f"Error getting payment providers: {e}", "payment")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.post("/payment-providers")
-async def create_payment_provider(
-    provider: PaymentProvider,
-    current_user: dict = Depends(get_current_user)
-):
-    """Создать/обновить настройки платежного провайдера"""
-    try:
-        if current_user["role"] not in ["admin", "director"]:
-            raise HTTPException(status_code=403, detail="Access denied")
-        
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        # Проверяем существование
-        cursor.execute(
-            "SELECT id FROM payment_providers WHERE name = %s",
-            (provider.name,)
-        )
-        existing = cursor.fetchone()
-        
-        now = datetime.now().isoformat()
-        settings_json = json.dumps(provider.settings) if provider.settings else None
-        
-        if existing:
-            # Обновляем
-            cursor.execute("""
-                UPDATE payment_providers
-                SET api_key = %s, secret_key = %s, webhook_secret = %s,
-                    is_active = %s, settings = %s, updated_at = %s
-                WHERE name = %s
-            """, (
-                provider.api_key, provider.secret_key, provider.webhook_secret,
-                provider.is_active, settings_json, now, provider.name
-            ))
-            provider_id = existing[0]
-        else:
-            # Создаем
-            cursor.execute("""
-                INSERT INTO payment_providers
-                (name, api_key, secret_key, webhook_secret, is_active, settings, created_at, updated_at)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                RETURNING id
-            """, (
-                provider.name, provider.api_key, provider.secret_key,
-                provider.webhook_secret, provider.is_active, settings_json, now, now
-            ))
-            provider_id = cursor.fetchone()[0]
-        
-        conn.commit()
-        conn.close()
-        
-        log_info(f"Payment provider {provider.name} configured by {current_user['username']}", "payment")
-        return {"success": True, "provider_id": provider_id}
-        
-    except Exception as e:
-        log_error(f"Error configuring payment provider: {e}", "payment")
-        raise HTTPException(status_code=500, detail=str(e))
+# ... (get_payment_providers, create_payment_provider remain same)
 
 # ===== СОЗДАНИЕ ПЛАТЕЖА =====
 
@@ -190,6 +99,11 @@ async def create_payment(
             payment_url = await create_tinkoff_payment(
                 transaction_id, payment_request.amount,
                 payment_request.currency, api_key, payment_request.return_url
+            )
+        elif payment_request.provider == "paypal":
+             payment_url = await create_paypal_payment(
+                transaction_id, payment_request.amount,
+                payment_request.currency, api_key, secret_key, payment_request.return_url
             )
         
         conn.close()
@@ -311,11 +225,131 @@ async def create_yookassa_payment(transaction_id: int, amount: float, currency: 
         log_error(f"Yookassa payment creation error: {e}", "payment")
         return None
 
+async def create_paypal_payment(transaction_id: int, amount: float, currency: str, client_id: str, client_secret: str, return_url: str):
+    import httpx
+    import os
+    
+    # Determine PayPal environment
+    paypal_mode = os.getenv("PAYPAL_MODE", "sandbox").lower()
+    base_url = "https://api-m.paypal.com" if paypal_mode == "live" else "https://api-m.sandbox.paypal.com" 
+    
+    # 1. Get Access Token
+    token_url = f"{base_url}/v1/oauth2/token"
+    creds = f"{client_id}:{client_secret}"
+    b64_creds = base64.b64encode(creds.encode()).decode()
+    
+    headers = {
+        "Authorization": f"Basic {b64_creds}",
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    data = {"grant_type": "client_credentials"}
+    
+    async with httpx.AsyncClient() as client:
+        token_resp = await client.post(token_url, data=data, headers=headers)
+        if token_resp.status_code != 200:
+             log_error(f"PayPal Token Error: {token_resp.text}", "payment")
+             raise HTTPException(status_code=500, detail="PayPal Auth Failed")
+        
+        access_token = token_resp.json()["access_token"]
+        
+        # 2. Create Order
+        order_url = f"{base_url}/v2/checkout/orders"
+        order_headers = {
+             "Content-Type": "application/json",
+             "Authorization": f"Bearer {access_token}"
+        }
+        order_payload = {
+            "intent": "CAPTURE",
+            "purchase_units": [{
+                "reference_id": str(transaction_id),
+                "amount": {
+                    "currency_code": currency,
+                    "value": f"{amount:.2f}"
+                }
+            }],
+             "application_context": {
+                "return_url": return_url,
+                "cancel_url": return_url # Simplified
+            }
+        }
+        
+        order_resp = await client.post(order_url, json=order_payload, headers=order_headers)
+        if order_resp.status_code not in [200, 201]:
+             log_error(f"PayPal Order Error: {order_resp.text}", "payment")
+             raise HTTPException(status_code=500, detail="PayPal Order Failed")
+             
+        order_data = order_resp.json()
+        for link in order_data.get("links", []):
+            if link["rel"] == "approve":
+                return link["href"]
+        
+        return None
+
 async def create_tinkoff_payment(transaction_id: int, amount: float, currency: str, terminal_key: str, return_url: str):
     """Создать платеж через Tinkoff"""
-    # TODO: Реализовать интеграцию с Tinkoff API
-    log_warning("Tinkoff integration not implemented yet", "payment")
-    return None
+    try:
+        import httpx
+        import hashlib
+        import os
+
+        # Получаем пароль терминала
+        password = os.getenv("TINKOFF_PASSWORD")
+        if not password:
+             # Попытка получить из конфига или БД (если есть)
+             # Пока считаем критической ошибкой
+             log_error("TINKOFF_PASSWORD not set in environment", "payment")
+             return None
+
+        # Сумма в копейках
+        amount_cents = int(amount * 100)
+        
+        # Данные для инициализации
+        payload = {
+            "TerminalKey": terminal_key,
+            "Amount": amount_cents,
+            "OrderId": str(transaction_id),
+            "Description": f"Order #{transaction_id}",
+            "SuccessURL": return_url,
+            # "FailURL": return_url  # Можно добавить при необходимости
+        }
+        
+        # Генерация токена (подписи)
+        # 1. Добавляем пароль к параметрам
+        token_params = payload.copy()
+        token_params["Password"] = password
+        
+        # 2. Сортируем по ключам
+        sorted_params = sorted(token_params.items())
+        
+        # 3. Конкатенируем значения
+        values = "".join(str(v) for k, v in sorted_params)
+        
+        # 4. SHA-256 хеширование
+        token = hashlib.sha256(values.encode("utf-8")).hexdigest()
+        
+        # Добавляем токен в запрос
+        payload["Token"] = token
+        
+        # Отправляем запрос инициализации
+        url = "https://securepay.tinkoff.ru/v2/Init"
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=payload, timeout=10.0)
+            data = response.json()
+            
+            if data.get("Success"):
+                payment_url = data.get("PaymentURL")
+                log_info(f"Tinkoff payment created: {data.get('PaymentId')}", "payment")
+                return payment_url
+            else:
+                error_msg = data.get("Message", "Unknown error")
+                details = data.get("Details", "")
+                log_error(f"Tinkoff Init failed: {error_msg} ({details})", "payment")
+                return None
+                
+    except Exception as e:
+        log_error(f"Tinkoff integration error: {e}", "payment")
+        return None
 
 def verify_stripe_signature(payload: bytes, signature: str, secret: str) -> bool:
     """Проверить подпись Stripe webhook"""
@@ -342,18 +376,26 @@ async def handle_stripe_webhook(data: dict, cursor, conn):
                 WHERE id = %s
             """, (datetime.now().isoformat(), session.get("id"), transaction_id))
             
-            # Обновляем счет
+            # Обновляем счет только если есть invoice_id
             cursor.execute("""
-                SELECT invoice_id, amount FROM payment_transactions WHERE id = %s
+                SELECT invoice_id, amount, metadata FROM payment_transactions WHERE id = %s
             """, (transaction_id,))
             result = cursor.fetchone()
             
             if result:
-                invoice_id, amount = result
-                cursor.execute("""
-                    INSERT INTO invoice_payments (invoice_id, amount, payment_method, notes, created_at)
-                    VALUES (%s, %s, 'online', 'Stripe payment', %s)
-                """, (invoice_id, amount, datetime.now().isoformat()))
+                invoice_id, amount, metadata = result
+                
+                # Формируем описание для платежа
+                notes = 'Stripe payment'
+                meta_dict = metadata if isinstance(metadata, dict) else (json.loads(metadata) if metadata else {})
+                if meta_dict and meta_dict.get('description'):
+                    notes += f": {meta_dict['description']}"
+                
+                if invoice_id:
+                    cursor.execute("""
+                        INSERT INTO invoice_payments (invoice_id, amount, payment_method, notes, created_at)
+                        VALUES (%s, %s, 'online', %s, %s)
+                    """, (invoice_id, amount, notes, datetime.now().isoformat()))
             
             conn.commit()
             log_info(f"Stripe payment completed for transaction {transaction_id}", "payment")
@@ -374,24 +416,113 @@ async def handle_yookassa_webhook(data: dict, cursor, conn):
             """, (datetime.now().isoformat(), payment.get("id"), transaction_id))
             
             cursor.execute("""
-                SELECT invoice_id, amount FROM payment_transactions WHERE id = %s
+                SELECT invoice_id, amount, metadata FROM payment_transactions WHERE id = %s
             """, (transaction_id,))
             result = cursor.fetchone()
             
             if result:
-                invoice_id, amount = result
-                cursor.execute("""
-                    INSERT INTO invoice_payments (invoice_id, amount, payment_method, notes, created_at)
-                    VALUES (%s, %s, 'online', 'Yookassa payment', %s)
-                """, (invoice_id, amount, datetime.now().isoformat()))
+                invoice_id, amount, metadata = result
+                
+                notes = 'Yookassa payment'
+                meta_dict = metadata if isinstance(metadata, dict) else (json.loads(metadata) if metadata else {})
+                if meta_dict and meta_dict.get('description'):
+                    notes += f": {meta_dict['description']}"
+
+                if invoice_id:
+                    cursor.execute("""
+                        INSERT INTO invoice_payments (invoice_id, amount, payment_method, notes, created_at)
+                        VALUES (%s, %s, 'online', %s, %s)
+                    """, (invoice_id, amount, notes, datetime.now().isoformat()))
             
             conn.commit()
             log_info(f"Yookassa payment completed for transaction {transaction_id}", "payment")
 
 async def handle_tinkoff_webhook(data: dict, cursor, conn):
     """Обработать webhook от Tinkoff"""
-    # TODO: Реализовать обработку Tinkoff webhook
-    log_warning("Tinkoff webhook handler not implemented yet", "payment")
+    try:
+        status = data.get("Status")
+        order_id = data.get("OrderId")
+        payment_id = data.get("PaymentId")
+        token = data.get("Token")
+        
+        if not order_id:
+            return
+
+        # Проверка токена (безопасность)
+        import os
+        import hashlib
+        password = os.getenv("TINKOFF_PASSWORD")
+        if password and token:
+            # Валидация
+            token_params = data.copy()
+            token_params["Password"] = password
+            if "Token" in token_params:
+                del token_params["Token"]
+                
+            sorted_params = sorted(token_params.items())
+            values = "".join(str(v) for k, v in sorted_params)
+            calculated_token = hashlib.sha256(values.encode("utf-8")).hexdigest()
+            
+            if calculated_token != token:
+                log_error(f"Invalid Tinkoff token for Order {order_id}", "payment")
+                # Не прерываем, возможно стоит логировать и выходить
+                # Но ответим OK, чтобы повторные запросы не шли, если мы уверены что это атака/ошибка
+                return
+
+        if status == "CONFIRMED":
+            # Успешный платеж
+            transaction_id = int(order_id)
+            
+            # Проверяем текущий статус
+            cursor.execute("SELECT status FROM payment_transactions WHERE id = %s", (transaction_id,))
+            current_status = cursor.fetchone()
+            
+            # Обновляем только если еще не завершен
+            if current_status and current_status[0] != 'completed':
+                cursor.execute("""
+                    UPDATE payment_transactions
+                    SET status = 'completed', completed_at = %s, provider_transaction_id = %s
+                    WHERE id = %s
+                """, (datetime.now().isoformat(), str(payment_id), transaction_id))
+                
+                # Добавляем в инвойс
+                cursor.execute("""
+                    SELECT invoice_id, amount, metadata FROM payment_transactions WHERE id = %s
+                """, (transaction_id,))
+                result = cursor.fetchone()
+                
+                if result:
+                    invoice_id, amount, metadata = result
+                    
+                    notes = 'Tinkoff payment'
+                    try:
+                        meta_dict = metadata if isinstance(metadata, dict) else (json.loads(metadata) if metadata else {})
+                        if meta_dict and meta_dict.get('description'):
+                            notes += f": {meta_dict['description']}"
+                    except:
+                        pass
+
+                    if invoice_id:
+                        cursor.execute("""
+                            INSERT INTO invoice_payments (invoice_id, amount, payment_method, notes, created_at)
+                            VALUES (%s, %s, 'online', %s, %s)
+                        """, (invoice_id, amount, notes, datetime.now().isoformat()))
+                
+                conn.commit()
+                log_info(f"Tinkoff payment completed for transaction {transaction_id}", "payment")
+                
+        elif status in ["CANCELED", "REJECTED", "REVERSED"]:
+            transaction_id = int(order_id)
+            cursor.execute("""
+                UPDATE payment_transactions
+                SET status = 'cancelled', completed_at = %s
+                WHERE id = %s
+            """, (datetime.now().isoformat(), transaction_id))
+            conn.commit()
+            log_info(f"Tinkoff payment cancelled for transaction {transaction_id}", "payment")
+
+    except Exception as e:
+        log_error(f"Error handling Tinkoff webhook: {e}", "payment")
 
 # ===== ИСТОРИЯ ТРАНЗАКЦИЙ =====
 

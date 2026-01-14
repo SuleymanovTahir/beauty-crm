@@ -1849,70 +1849,70 @@ export class ApiClient {
   }
   // ===== ADMIN PANEL =====
   async getAdminStats() {
-    return this.request<any>('/api/admin-panel/stats')
+    return this.request<any>('/api/admin/stats')
   }
 
   async getLoyaltyTransactions(limit: number = 50) {
-    return this.request<any>(`/api/admin-panel/loyalty/transactions?limit=${limit}`)
+    return this.request<any>(`/api/admin/loyalty/transactions?limit=${limit}`)
   }
 
   async adjustLoyaltyPoints(data: { client_email: string; points: number; reason: string }) {
-    return this.request('/api/admin-panel/loyalty/adjust', {
+    return this.request('/api/admin/loyalty/adjust', {
       method: 'POST',
       body: JSON.stringify(data),
     })
   }
 
   async getLoyaltyStats() {
-    return this.request<any>('/api/admin-panel/loyalty/stats')
+    return this.request<any>('/api/admin/loyalty/stats')
   }
 
   async getReferrals(limit: number = 100) {
-    return this.request<any>(`/api/admin-panel/referrals?limit=${limit}`)
+    return this.request<any>(`/api/admin/referrals?limit=${limit}`)
   }
 
   async getReferralStats() {
-    return this.request<any>('/api/admin-panel/referrals/stats')
+    return this.request<any>('/api/admin/referrals/stats')
   }
 
   async getReferralSettings() {
-    return this.request<any>('/api/admin-panel/referrals/settings')
+    return this.request<any>('/api/admin/referrals/settings')
   }
 
   async updateReferralSettings(data: { referrer_bonus?: number; referred_bonus?: number; min_purchase_amount?: number }) {
-    return this.request('/api/admin-panel/referrals/settings', {
+    return this.request('/api/admin/referrals/settings', {
       method: 'POST',
       body: JSON.stringify(data),
     })
   }
 
   async getAdminChallenges() {
-    return this.request<any>('/api/admin-panel/challenges')
+    return this.request<any>('/api/admin/challenges')
   }
 
   async createAdminChallenge(data: any) {
-    return this.request('/api/admin-panel/challenges', {
+    return this.request('/api/admin/challenges', {
       method: 'POST',
       body: JSON.stringify(data),
     })
   }
 
   async deleteAdminChallenge(challengeId: number) {
-    return this.request(`/api/admin-panel/challenges/${challengeId}`, {
+    return this.request(`/api/admin/challenges/${challengeId}`, {
       method: 'DELETE',
     })
   }
 
   async getChallengesStats() {
-    return this.request<any>('/api/admin-panel/challenges/stats')
+    return this.request<any>('/api/admin/challenges/stats')
   }
 
   async getAdminNotifications(limit: number = 50) {
-    return this.request<any>(`/api/admin-panel/notifications?limit=${limit}`)
+    return this.request<any>(`/api/admin/notifications?limit=${limit}`)
   }
 
   async sendAdminNotification(data: any) {
-    return this.request('/api/admin-panel/notifications', {
+    return this.request('/api/admin/notifications', {
       method: 'POST',
       body: JSON.stringify(data),
     })
@@ -1920,18 +1920,18 @@ export class ApiClient {
 
   async getGalleryPhotos(category?: string) {
     const params = category ? `?category=${category}` : ''
-    return this.request<any>(`/api/admin-panel/gallery${params}`)
+    return this.request<any>(`/api/admin/gallery${params}`)
   }
 
   async uploadGalleryPhoto(data: any) {
-    return this.request('/api/admin-panel/gallery', {
+    return this.request('/api/admin/gallery', {
       method: 'POST',
       body: JSON.stringify(data),
     })
   }
 
   async deleteGalleryPhoto(photoId: string) {
-    return this.request(`/api/admin-panel/gallery/${photoId}`, {
+    return this.request(`/api/admin/gallery/${photoId}`, {
       method: 'DELETE',
     })
   }

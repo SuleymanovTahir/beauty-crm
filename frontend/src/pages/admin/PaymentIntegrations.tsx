@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CreditCard, Settings, CheckCircle, XCircle, ExternalLink } from 'lucide-react';
+import { CreditCard, Settings, CheckCircle, XCircle, ExternalLink, Link as LinkIcon, Copy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import '../../styles/crm-pages.css';
@@ -21,6 +21,7 @@ const PaymentIntegrations = () => {
     const [providers, setProviders] = useState<PaymentProvider[]>([]);
     const [loading, setLoading] = useState(true);
     const [showConfigDialog, setShowConfigDialog] = useState(false);
+    const [showPaymentDialog, setShowPaymentDialog] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
     const navigate = useNavigate();
 
@@ -177,14 +178,28 @@ const PaymentIntegrations = () => {
                                     </button>
 
                                     {isActive && (
-                                        <button
-                                            className="crm-btn-secondary"
-                                            style={{ width: '100%', marginTop: '10px' }}
-                                            onClick={() => navigate('/crm/finance')}
-                                        >
-                                            <ExternalLink size={16} />
-                                            {t('payment.viewTransactions', 'История транзакций')}
-                                        </button>
+                                        <>
+                                            <button
+                                                className="crm-btn-secondary"
+                                                style={{ width: '100%', marginTop: '10px' }}
+                                                onClick={() => {
+                                                    setSelectedProvider(key);
+                                                    setShowPaymentDialog(true);
+                                                }}
+                                            >
+                                                <LinkIcon size={16} />
+                                                {t('payment.createLink', 'Создать ссылку')}
+                                            </button>
+
+                                            <button
+                                                className="crm-btn-secondary"
+                                                style={{ width: '100%', marginTop: '10px' }}
+                                                onClick={() => navigate('/crm/finance')}
+                                            >
+                                                <ExternalLink size={16} />
+                                                {t('payment.viewTransactions', 'История транзакций')}
+                                            </button>
+                                        </>
                                     )}
                                 </div>
                             </div>
@@ -209,11 +224,145 @@ const PaymentIntegrations = () => {
                     }}
                 />
             )}
+
+            {showPaymentDialog && selectedProvider && (
+                <CreatePaymentDialog
+                    provider={selectedProvider}
+                    providerInfo={providerInfo[selectedProvider as keyof typeof providerInfo]}
+                    onClose={() => {
+                        setShowPaymentDialog(false);
+                        setSelectedProvider(null);
+                    }}
+                />
+            )}
+        </div>
+    );
+};
+
+const CreatePaymentDialog = ({ provider, providerInfo, onClose }: any) => {
+    const { t } = useTranslation('admin/integrations');
+    const [amount, setAmount] = useState('');
+    const [currency, setCurrency] = useState('AED');
+    const [description, setDescription] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [createdLink, setCreatedLink] = useState<string | null>(null);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const res = await api.post('/api/create-payment', {
+                amount: parseFloat(amount),
+                currency,
+                provider,
+                description,
+                metadata: { description: description || 'Manual Payment Link' }
+            });
+
+            if (res.payment_url) {
+                setCreatedLink(res.payment_url);
+            } else {
+                // Fallback if no real URL is returned (e.g. simulation or manual provider)
+                setCreatedLink(`${window.location.origin}/pay/${res.transaction_id}`);
+            }
+            toast.success(t('payment.linkCreated', 'Ссылка успешно создана'));
+        } catch (error) {
+            console.error(error);
+            toast.error(t('errors.createLinkFailed', 'Ошибка создания ссылки'));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="crm-modal-overlay" onClick={onClose}>
+            <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
+                <h2>{t('payment.createLinkTitle', 'Создать платежную ссылку')} ({providerInfo.name})</h2>
+
+                {!createdLink ? (
+                    <form onSubmit={handleSubmit}>
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('payment.amount', 'Сумма')}</label>
+                            <input
+                                type="number"
+                                className="crm-input"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                placeholder="0.00"
+                                required
+                                min="1"
+                            />
+                        </div>
+
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('payment.currency', 'Валюта')}</label>
+                            <select
+                                className="crm-select"
+                                value={currency}
+                                onChange={(e) => setCurrency(e.target.value)}
+                            >
+                                <option value="AED">AED</option>
+                                <option value="USD">USD</option>
+                                <option value="RUB">RUB</option>
+                                <option value="KZT">KZT</option>
+                            </select>
+                        </div>
+
+                        <div className="crm-form-group">
+                            <label className="crm-label">{t('common:description', 'Описание')}</label>
+                            <input
+                                type="text"
+                                className="crm-input"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                placeholder={t('payment.descriptionPlaceholder', 'За что оплата...')}
+                            />
+                        </div>
+
+                        <div className="crm-modal-footer">
+                            <button type="button" className="crm-btn-secondary" onClick={onClose}>
+                                {t('common:cancel', 'Отмена')}
+                            </button>
+                            <button type="submit" className="crm-btn-primary" disabled={loading}>
+                                {loading ? t('common:creating', 'Создание...') : t('common:create', 'Создать')}
+                            </button>
+                        </div>
+                    </form>
+                ) : (
+                    <div className="space-y-4">
+                        <div className="p-4 bg-gray-50 rounded border border-gray-200 break-all">
+                            {createdLink}
+                        </div>
+                        <div className="crm-modal-footer">
+                            <button
+                                type="button"
+                                className="crm-btn-secondary"
+                                onClick={onClose}
+                            >
+                                {t('common:close', 'Закрыть')}
+                            </button>
+                            <button
+                                type="button"
+                                className="crm-btn-primary flex items-center gap-2"
+                                onClick={() => {
+                                    navigator.clipboard.writeText(createdLink);
+                                    toast.success(t('common:copied', 'Скопировано'));
+                                }}
+                            >
+                                <Copy size={16} />
+                                {t('common:copy', 'Копировать')}
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
 
 const ConfigDialog = ({ provider, providerInfo, onClose, onSuccess }: any) => {
+    // ... existing ConfigDialog code ...
+
     const { t } = useTranslation('admin/integrations');
     const [formData, setFormData] = useState({
         name: provider,
