@@ -98,7 +98,7 @@ from api.sitemap import router as sitemap_router
 from api.feedback import router as feedback_router
 from api.sitemap import router as sitemap_router
 from api.seo_metadata import router as seo_metadata_router
-from api.admin_panel import router as admin_panel_router
+
 from api.holidays import router as holidays_router
 from api.visitor_analytics import router as visitor_analytics_router
 from api.analytics import router as analytics_router
@@ -131,7 +131,12 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
-limiter = Limiter(key_func=get_remote_address)
+# Rate Limiting configuration
+if os.getenv("ENVIRONMENT") == "production":
+    limiter = Limiter(key_func=get_remote_address)
+else:
+    # Disable rate limiting for dev/test to prevent 429 errors during automated testing
+    limiter = Limiter(key_func=get_remote_address, enabled=False)
 
 # Создаём директории для загрузок
 ensure_upload_directories()
@@ -211,7 +216,7 @@ app.include_router(analytics_router, prefix="/api")  # для аналитики
 app.include_router(admin_registrations_router, prefix="/api")  # Admin Registrations Management
 app.include_router(challenges_router, prefix="/api")  # Challenges API
 app.include_router(client_gallery_admin_router, prefix="/api")  # Client Gallery Admin API
-app.include_router(admin_panel_router, prefix="/api")  # Admin Panel API
+
 app.include_router(admin_features_router, prefix="/api")  # Admin Features API (Challenges, Referrals, Loyalty, Notifications, Gallery)
 app.include_router(users_router, prefix="/api")  # Users API
 app.include_router(funnel_router, prefix="/api") # Funnel API

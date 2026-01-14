@@ -283,6 +283,7 @@ const MarketplaceIntegrations = () => {
                 <ConfigDialog
                     provider={selectedProvider}
                     providerInfo={marketplaceInfo[selectedProvider as keyof typeof marketplaceInfo]}
+                    initialData={getProviderData(selectedProvider)}
                     onClose={() => {
                         setShowConfigDialog(false);
                         setSelectedProvider(null);
@@ -299,17 +300,36 @@ const MarketplaceIntegrations = () => {
     );
 };
 
-const ConfigDialog = ({ provider, providerInfo, onClose, onSuccess }: any) => {
+const ConfigDialog = ({ provider, providerInfo, initialData, onClose, onSuccess }: any) => {
     const { t } = useTranslation('admin/integrations');
+    const [activeTab, setActiveTab] = useState('settings');
+    const [services, setServices] = useState<any[]>([]);
+
     const [formData, setFormData] = useState({
         name: provider,
-        api_key: '',
-        api_secret: '',
-        webhook_url: '',
-        is_active: true,
-        settings: {}
+        api_key: initialData?.api_key || '',
+        api_secret: initialData?.api_secret || '',
+        webhook_url: initialData?.webhook_url || '',
+        is_active: initialData?.is_active ?? true,
+        settings: initialData?.settings || { service_mapping: {} }
     });
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (activeTab === 'mapping' && services.length === 0) {
+            loadServices();
+        }
+    }, [activeTab]);
+
+    const loadServices = async () => {
+        try {
+            const res = await api.get('/api/services');
+            setServices(res.services || res || []);
+        } catch (error) {
+            console.error('Error loading services:', error);
+            toast.error(t('errors.loadServicesFailed', 'Ошибка загрузки услуг'));
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -326,72 +346,126 @@ const ConfigDialog = ({ provider, providerInfo, onClose, onSuccess }: any) => {
         }
     };
 
+    const handleMappingChange = (serviceId: number, externalId: string) => {
+        setFormData(prev => ({
+            ...prev,
+            settings: {
+                ...prev.settings,
+                service_mapping: {
+                    ...(prev.settings?.service_mapping || {}),
+                    [serviceId]: externalId
+                }
+            }
+        }));
+    };
+
     const webhookUrl = `${window.location.origin}/api/marketplace/webhook/${provider}`;
 
     return (
         <div className="crm-modal-overlay" onClick={onClose}>
-            <div className="crm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="crm-modal" style={{ maxWidth: '600px' }} onClick={(e) => e.stopPropagation()}>
                 <h2>{t('marketplace.configureProvider', 'Настройка')} {providerInfo.name}</h2>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('marketplace.apiKey', 'API ключ')}</label>
-                        <input
-                            type="text"
-                            className="crm-input"
-                            value={formData.api_key}
-                            onChange={(e) => setFormData({ ...formData, api_key: e.target.value })}
-                            placeholder="API Key"
-                        />
-                    </div>
+                <div className="crm-tabs">
+                    <button
+                        className={`crm-tab ${activeTab === 'settings' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('settings')}
+                    >
+                        {t('marketplace.settings', 'Настройки')}
+                    </button>
+                    <button
+                        className={`crm-tab ${activeTab === 'mapping' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('mapping')}
+                    >
+                        {t('marketplace.serviceMapping', 'Маппинг услуг')}
+                    </button>
+                </div>
 
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('marketplace.apiSecret', 'API Secret')}</label>
-                        <input
-                            type="password"
-                            className="crm-input"
-                            value={formData.api_secret}
-                            onChange={(e) => setFormData({ ...formData, api_secret: e.target.value })}
-                            placeholder="API Secret"
-                        />
-                    </div>
+                <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
+                    {activeTab === 'settings' ? (
+                        <>
+                            <div className="crm-form-group">
+                                <label className="crm-label">{t('marketplace.apiKey', 'API ключ')}</label>
+                                <input
+                                    type="text"
+                                    className="crm-input"
+                                    value={formData.api_key}
+                                    onChange={(e) => setFormData({ ...formData, api_key: e.target.value })}
+                                    placeholder="API Key"
+                                />
+                            </div>
 
-                    <div className="crm-form-group">
-                        <label className="crm-label">{t('marketplace.webhookUrl', 'URL для вебхука')}</label>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                            <input
-                                type="text"
-                                className="crm-input"
-                                value={webhookUrl}
-                                readOnly
-                                style={{ flex: 1, backgroundColor: '#f9fafb' }}
-                            />
-                            <button
-                                type="button"
-                                className="crm-btn-secondary"
-                                onClick={() => {
-                                    navigator.clipboard.writeText(webhookUrl);
-                                    toast.success(t('marketplace.urlCopied', 'URL скопирован'));
-                                }}
-                            >
-                                {t('common:copy', 'Копировать')}
-                            </button>
+                            <div className="crm-form-group">
+                                <label className="crm-label">{t('marketplace.apiSecret', 'API Secret')}</label>
+                                <input
+                                    type="password"
+                                    className="crm-input"
+                                    value={formData.api_secret}
+                                    onChange={(e) => setFormData({ ...formData, api_secret: e.target.value })}
+                                    placeholder="API Secret"
+                                />
+                            </div>
+
+                            <div className="crm-form-group">
+                                <label className="crm-label">{t('marketplace.webhookUrl', 'URL для вебхука')}</label>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <input
+                                        type="text"
+                                        className="crm-input"
+                                        value={webhookUrl}
+                                        readOnly
+                                        style={{ flex: 1, backgroundColor: '#f9fafb' }}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="crm-btn-secondary"
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(webhookUrl);
+                                            toast.success(t('marketplace.urlCopied', 'URL скопирован'));
+                                        }}
+                                    >
+                                        {t('common:copy', 'Копировать')}
+                                    </button>
+                                </div>
+                                <small className="text-gray-600 text-sm">
+                                    {t('marketplace.webhookHint', 'Укажите этот URL в настройках вебхуков на платформе')}
+                                </small>
+                            </div>
+
+                            <div className="crm-form-group">
+                                <label className="crm-checkbox-label">
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.is_active}
+                                        onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                                    />
+                                    {t('marketplace.enableProvider', 'Включить интеграцию')}
+                                </label>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="crm-mapping-list" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                            <p className="text-sm text-gray-500 mb-4">
+                                {t('marketplace.mappingHint', 'Укажите ID услуг из маркетплейса для синхронизации.')}
+                            </p>
+                            {services.map((service) => {
+                                const currentMapping = formData.settings?.service_mapping?.[service.id] || '';
+                                return (
+                                    <div key={service.id} className="crm-form-group" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                        <label style={{ flex: 1 }}>{service.name}</label>
+                                        <input
+                                            type="text"
+                                            className="crm-input"
+                                            style={{ width: '150px' }}
+                                            placeholder="External ID"
+                                            value={currentMapping}
+                                            onChange={(e) => handleMappingChange(service.id, e.target.value)}
+                                        />
+                                    </div>
+                                );
+                            })}
                         </div>
-                        <small className="text-gray-600 text-sm">
-                            {t('marketplace.webhookHint', 'Укажите этот URL в настройках вебхуков на платформе')}
-                        </small>
-                    </div>
-
-                    <div className="crm-form-group">
-                        <label className="crm-checkbox-label">
-                            <input
-                                type="checkbox"
-                                checked={formData.is_active}
-                                onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                            />
-                            {t('marketplace.enableProvider', 'Включить интеграцию')}
-                        </label>
-                    </div>
+                    )}
 
                     <div className="crm-modal-footer">
                         <button type="button" className="crm-btn-secondary" onClick={onClose}>

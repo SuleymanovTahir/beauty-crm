@@ -1,11 +1,11 @@
 // /frontend/src/pages/adminPanel/Dashboard.tsx
 import { useEffect, useState } from 'react';
-import { Users, Gift, Award, Target, Bell, Image, TrendingUp, ArrowRight } from 'lucide-react';
+import { Users, Gift, Award, Target, Bell, Image, TrendingUp, ArrowRight, Download } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
-import { api } from '../../services/api';
+
 
 export default function AdminDashboard() {
   const { t } = useTranslation(['adminPanel/Dashboard', 'common']);
@@ -25,7 +25,7 @@ export default function AdminDashboard() {
   const loadStats = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin-panel/stats', {
+      const response = await fetch('/api/admin/stats', {
         credentials: 'include',
       });
 
@@ -37,7 +37,7 @@ export default function AdminDashboard() {
             active_challenges: data.stats.active_challenges || 0,
             total_loyalty_points: data.stats.total_loyalty_points || 0,
             total_referrals: data.stats.total_referrals || 0,
-            pending_notifications: 0, // TODO: Add to backend
+            pending_notifications: 0,
           });
         }
       }
@@ -45,6 +45,36 @@ export default function AdminDashboard() {
       console.error('Error loading stats:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExport = async () => {
+    try {
+      const response = await fetch('/api/admin/export-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          start_date: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString(),
+          end_date: new Date().toISOString(),
+          format: 'csv'
+        }),
+      });
+
+      if (!response.ok) throw new Error('Export failed');
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `report_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error exporting report:', error);
     }
   };
 
@@ -135,9 +165,15 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
-        <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+          <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
+        </div>
+        <Button onClick={handleExport} variant="outline" className="flex items-center gap-2">
+          <Download className="w-4 h-4" />
+          {t('common:export_report')}
+        </Button>
       </div>
 
       {/* Stats Grid */}

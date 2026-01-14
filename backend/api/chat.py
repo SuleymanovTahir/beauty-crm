@@ -232,7 +232,7 @@ async def send_chat_file(
                 from pathlib import Path
                 
                 # Извлекаем путь к файлу из URL
-                url_path = file_url.replace('https://mlediamant.com', '')
+                url_path = file_url.replace(BASE_URL, '')
                 # Убираем дублирование static/ если есть
                 if url_path.startswith('/static/'):
                     url_path = url_path[7:]  # убираем '/static/'
@@ -269,7 +269,7 @@ async def send_chat_file(
         # ✅ БЫСТРАЯ ПРОВЕРКА РАЗМЕРА ФАЙЛА (только для локальных файлов)
         if file_url.startswith(BASE_URL):
             try:
-                url_path = file_url.replace('https://mlediamant.com', '')
+                url_path = file_url.replace(BASE_URL, '')
                 # Убираем дублирование static/ если есть
                 if url_path.startswith('/static/'):
                     url_path = url_path[7:]  # убираем '/static/'

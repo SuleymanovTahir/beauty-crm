@@ -11,7 +11,7 @@ import psycopg2
 from db import (
     verify_user, create_session, delete_session,
 )
-from core.config import DATABASE_NAME
+from core.config import DATABASE_NAME, PUBLIC_URL
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error, log_warning
 from utils.utils import require_auth
@@ -854,8 +854,8 @@ async def forgot_password(email: str = Form(...)):
         if not email_sent and os.getenv("ENVIRONMENT") != "production":
             log_warning(f"SMTP not configured - showing reset token in response", "auth")
             response_data["reset_token"] = reset_token
-            response_data["reset_url"] = f"http://localhost:5173/reset-password?token={reset_token}"
-            response_data["message"] = f"⚠️ SMTP не настроен. Ссылка для сброса: http://localhost:5173/reset-password%stoken={reset_token}"
+            response_data["reset_url"] = f"{PUBLIC_URL}/reset-password?token={reset_token}"
+            response_data["message"] = f"⚠️ SMTP не настроен. Ссылка для сброса: {PUBLIC_URL}/reset-password?token={reset_token}"
 
         log_info(f"Password reset token generated for user {username} (ID: {user_id})", "auth")
 
