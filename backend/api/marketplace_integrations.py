@@ -265,6 +265,14 @@ async def handle_2gis_webhook(data: dict, cursor, conn):
                 cursor,
                 conn
             )
+        elif event_type == "booking.updated":
+            booking_data = data.get("data", {})
+            await update_booking_from_marketplace(
+                "2gis",
+                booking_data,
+                cursor,
+                conn
+            )
             
     except Exception as e:
         log_error(f"Error handling 2GIS webhook: {e}", "marketplace")
@@ -309,6 +317,14 @@ async def handle_booksy_webhook(data: dict, cursor, conn):
                 cursor,
                 conn
             )
+        elif event == "appointment.updated":
+            appointment = data.get("appointment", {})
+            await update_booking_from_marketplace(
+                "booksy",
+                appointment,
+                cursor,
+                conn
+            )
             
     except Exception as e:
         log_error(f"Error handling Booksy webhook: {e}", "marketplace")
@@ -321,6 +337,14 @@ async def handle_yclients_webhook(data: dict, cursor, conn):
         if event_type == "record" and data.get("action") == "create":
             record = data.get("data", {})
             await create_booking_from_marketplace(
+                "yclients",
+                record,
+                cursor,
+                conn
+            )
+        elif event_type == "record" and data.get("action") == "update":
+            record = data.get("data", {})
+            await update_booking_from_marketplace(
                 "yclients",
                 record,
                 cursor,
@@ -465,6 +489,39 @@ def normalize_order_data(provider: str, data: dict) -> dict:
 
 # ===== СОЗДАНИЕ ЗАПИСИ ИЗ МАРКЕТПЛЕЙСА =====
 
+async def resolve_service_name(provider: str, external_service_id: str, default_name: str, cursor) -> str:
+    """Разрешить имя услуги используя маппинг"""
+    try:
+        if not external_service_id:
+            return default_name
+
+        cursor.execute("SELECT settings FROM marketplace_providers WHERE name = %s", (provider,))
+        provider_row = cursor.fetchone()
+        
+        if provider_row and provider_row[0]:
+            settings = json.loads(provider_row[0])
+            service_mapping = settings.get("service_mapping", {}) # {internal_id: external_id}
+            
+            # Инвертируем маппинг: {external_id: internal_id}
+            ext_to_int = {str(v): str(k) for k, v in service_mapping.items() if v}
+            
+            ext_svc_id = str(external_service_id)
+            
+            if ext_svc_id in ext_to_int:
+                internal_id = ext_to_int[ext_svc_id]
+                
+                # Получаем имя внутренней услуги
+                cursor.execute("SELECT name FROM services WHERE id = %s", (internal_id,))
+                svc_row = cursor.fetchone()
+                if svc_row:
+                    log_info(f"Mapped external service {ext_svc_id} to internal {svc_row[0]}", "marketplace")
+                    return svc_row[0]
+                    
+        return default_name
+    except Exception as e:
+        log_error(f"Error resolving service name: {e}", "marketplace")
+        return default_name
+
 async def create_booking_from_marketplace(
     provider: str,
     booking_data: dict,
@@ -475,6 +532,14 @@ async def create_booking_from_marketplace(
     try:
         # Нормализуем данные в зависимости от провайдера
         normalized = normalize_booking_data(provider, booking_data)
+        
+        # Разрешаем имя услуги через маппинг
+        final_service_name = await resolve_service_name(
+            provider, 
+            normalized.get("external_service_id"), 
+            normalized["service_name"], 
+            cursor
+        )
         
         # Ищем или создаем клиента
         cursor.execute("""
@@ -505,22 +570,23 @@ async def create_booking_from_marketplace(
         
         # Создаем запись
         now = datetime.now().isoformat()
+        
+        # Комбинируем date и time в datetime
+        booking_datetime = f"{normalized['booking_date']} {normalized['booking_time']}"
+        
         cursor.execute("""
             INSERT INTO bookings
-            (client_id, service_name, booking_date, booking_time, duration,
-             price, status, source, notes, created_at, updated_at)
-            VALUES (%s, %s, %s, %s, %s, %s, 'pending', %s, %s, %s, %s)
+            (instagram_id, service_name, datetime,
+             revenue, status, source, notes, created_at)
+            VALUES (%s, %s, %s, %s, 'pending', %s, %s, %s)
             RETURNING id
         """, (
             client_id,
-            normalized["service_name"],
-            normalized["booking_date"],
-            normalized["booking_time"],
-            normalized.get("duration", 60),
+            final_service_name, # Используем смапленное имя
+            booking_datetime,
             normalized.get("price", 0),
             provider,
             normalized.get("notes", f"Booking from {provider}"),
-            now,
             now
         ))
         
@@ -547,6 +613,79 @@ async def create_booking_from_marketplace(
         conn.rollback()
         log_error(f"Error creating booking from marketplace: {e}", "marketplace")
 
+async def update_booking_from_marketplace(
+    provider: str,
+    booking_data: dict,
+    cursor,
+    conn
+):
+    """Обновить запись из данных маркетплейса"""
+    try:
+        # Нормализуем данные
+        normalized = normalize_booking_data(provider, booking_data)
+        external_id = normalized.get("external_id")
+        
+        if not external_id:
+            log_warning(f"Cannot update booking from {provider}: no external_id", "marketplace")
+            return
+
+        # Ищем существующую запись
+        cursor.execute("""
+            SELECT booking_id FROM marketplace_bookings 
+            WHERE provider = %s AND external_id = %s
+        """, (provider, str(external_id)))
+        
+        row = cursor.fetchone()
+        if not row:
+            log_warning(f"Booking not found for update: {provider} {external_id}", "marketplace")
+            # Можно попробовать создать, если нужно
+            return
+            
+        booking_id = row[0]
+        
+        # Разрешаем имя услуги через маппинг
+        final_service_name = await resolve_service_name(
+            provider, 
+            normalized.get("external_service_id"), 
+            normalized["service_name"], 
+            cursor
+        )
+        
+        now = datetime.now().isoformat()
+        
+        # Комбинируем date и time в datetime
+        booking_datetime = f"{normalized['booking_date']} {normalized['booking_time']}"
+        
+        # Обновляем запись
+        cursor.execute("""
+            UPDATE bookings
+            SET service_name = %s,
+                datetime = %s,
+                revenue = %s,
+                notes = %s
+            WHERE id = %s
+        """, (
+            final_service_name,
+            booking_datetime,
+            normalized.get("price", 0),
+            normalized.get("notes", f"Updated from {provider}"),
+            booking_id
+        ))
+        
+        # Обновляем сырые данные
+        cursor.execute("""
+            UPDATE marketplace_bookings
+            SET raw_data = %s
+            WHERE booking_id = %s
+        """, (json.dumps(booking_data), booking_id))
+        
+        conn.commit()
+        log_info(f"Updated booking {booking_id} from {provider}", "marketplace")
+        
+    except Exception as e:
+        conn.rollback()
+        log_error(f"Error updating booking from marketplace: {e}", "marketplace")
+
 def normalize_booking_data(provider: str, data: dict) -> dict:
     """Нормализовать данные записи в зависимости от провайдера"""
     normalized = {}
@@ -554,6 +693,7 @@ def normalize_booking_data(provider: str, data: dict) -> dict:
     if provider == "yandex_maps":
         normalized = {
             "external_id": data.get("id"),
+            "external_service_id": data.get("service", {}).get("id"),
             "client_name": data.get("client", {}).get("name"),
             "client_phone": data.get("client", {}).get("phone"),
             "client_email": data.get("client", {}).get("email"),
@@ -567,6 +707,7 @@ def normalize_booking_data(provider: str, data: dict) -> dict:
     elif provider == "2gis":
         normalized = {
             "external_id": data.get("id"),
+            "external_service_id": data.get("service_id"),
             "client_name": data.get("customer_name"),
             "client_phone": data.get("customer_phone"),
             "service_name": data.get("service_name"),
@@ -575,23 +716,27 @@ def normalize_booking_data(provider: str, data: dict) -> dict:
             "duration": data.get("duration", 60)
         }
     elif provider == "booksy":
+        svc = data.get("services", [{}])[0] if data.get("services") else {}
         normalized = {
             "external_id": data.get("id"),
+            "external_service_id": svc.get("id"),
             "client_name": f"{data.get('client', {}).get('first_name')} {data.get('client', {}).get('last_name')}",
             "client_phone": data.get("client", {}).get("phone"),
             "client_email": data.get("client", {}).get("email"),
-            "service_name": data.get("services", [{}])[0].get("name") if data.get("services") else "Unknown",
+            "service_name": svc.get("name", "Unknown"),
             "booking_date": data.get("start_date"),
             "booking_time": data.get("start_time"),
             "duration": data.get("duration", 60),
             "price": data.get("price")
         }
     elif provider == "yclients":
+        svc = data.get("services", [{}])[0] if data.get("services") else {}
         normalized = {
             "external_id": data.get("id"),
+            "external_service_id": svc.get("id"),
             "client_name": data.get("client", {}).get("name"),
             "client_phone": data.get("client", {}).get("phone"),
-            "service_name": data.get("services", [{}])[0].get("title") if data.get("services") else "Unknown",
+            "service_name": svc.get("title", "Unknown"),
             "booking_date": data.get("date"),
             "booking_time": data.get("datetime").split(" ")[1] if data.get("datetime") else None,
             "duration": data.get("seance_length", 60)
@@ -670,7 +815,11 @@ async def run_marketplace_sync(provider: str):
         settings = json.loads(settings) if settings else {}
         
         # Выполняем синхронизацию в зависимости от провайдера
-        # TODO: Реализовать для каждого провайдера
+        if provider == "yclients":
+            await sync_yclients(api_key, settings, cursor, conn)
+        elif provider == "booksy":
+            await sync_booksy(api_key, api_secret, settings, cursor, conn)
+        # Add other providers here
         
         # Обновляем время последней синхронизации
         cursor.execute("""
@@ -686,6 +835,50 @@ async def run_marketplace_sync(provider: str):
         
     except Exception as e:
         log_error(f"Error in marketplace sync: {e}", "marketplace")
+
+async def sync_yclients(api_key: str, settings: dict, cursor, conn):
+    """Синхронизация с YCLIENTS"""
+    try:
+        # В реальной реализации здесь был бы запрос к API YCLIENTS
+        # async with httpx.AsyncClient() as client:
+        #     response = await client.get(f"https://api.yclients.com/api/v1/records/...", headers=...)
+        #     data = response.json()
+        
+        # Для демонстрации используем заглушку, если это тестовый режим
+        if settings.get("test_mode"):
+            bookings_data = [
+                {
+                    "id": "mock_yc_1",
+                    "services": [{"id": "1", "title": "Мужская стрижка"}],
+                    "client": {"name": "Test YClient", "phone": "79990000001", "email": "test@example.com"},
+                    "date": "2024-03-20 10:00:00",
+                    "datetime": "2024-03-20 10:00:00",
+                    "seance_length": 3600
+                }
+            ]
+            
+            for record in bookings_data:
+                # Проверяем существование
+                cursor.execute("SELECT booking_id FROM marketplace_bookings WHERE provider = 'yclients' AND external_id = %s", (str(record["id"]),))
+                if cursor.fetchone():
+                    await update_booking_from_marketplace("yclients", record, cursor, conn)
+                else:
+                    await create_booking_from_marketplace("yclients", record, cursor, conn)
+                    
+            log_info(f"Sync yclients: processed {len(bookings_data)} records (mock)", "marketplace")
+
+    except Exception as e:
+        log_error(f"Error syncing YCLIENTS: {e}", "marketplace")
+        raise e
+
+async def sync_booksy(api_key: str, api_secret: str, settings: dict, cursor, conn):
+    """Синхронизация с Booksy"""
+    try:
+        # Аналогично, здесь был бы реальный запрос к API
+        pass
+    except Exception as e:
+        log_error(f"Error syncing Booksy: {e}", "marketplace")
+        raise e
 
 # ===== СТАТИСТИКА =====
 

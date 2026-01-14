@@ -15,6 +15,21 @@ from datetime import datetime, timedelta
 from utils.logger import log_info, log_error, log_warning
 
 
+def get_salon_name() -> str:
+    """
+    Получить название салона из базы данных
+    Returns: Название салона или 'Beauty Salon' по умолчанию
+    """
+    try:
+        from db import get_salon_settings
+        salon_settings = get_salon_settings()
+        return salon_settings.get('salon_name', 'Beauty Salon')
+    except Exception as e:
+        log_warning(f"Could not get salon name: {e}", "email")
+        return 'Beauty Salon'
+
+
+
 def configure_smtp() -> dict:
     """
     Конфигурация SMTP из переменных окружения
@@ -26,7 +41,7 @@ def configure_smtp() -> dict:
         'user': os.getenv('SMTP_USER', ''),
         'password': os.getenv('SMTP_PASSWORD', ''),
         'from_email': os.getenv('SMTP_FROM_EMAIL', os.getenv('SMTP_USER', '')),
-        'from_name': os.getenv('SMTP_FROM_NAME', 'Beauty CRM')
+        'from_name': os.getenv('SMTP_FROM_NAME', get_salon_name())
     }
     
     if not smtp_config['user'] or not smtp_config['password']:
@@ -122,7 +137,8 @@ def send_verification_code_email(email: str, code: str, name: str, user_type: st
     
     Returns: True если отправлено успешно
     """
-    subject = "Подтверждение email - Beauty CRM"
+    salon_name = get_salon_name()
+    subject = f"Подтверждение email - {salon_name}"
     
     html_body = f"""
     <!DOCTYPE html>
@@ -147,7 +163,7 @@ def send_verification_code_email(email: str, code: str, name: str, user_type: st
     <body>
         <div class="container">
             <div class="header">
-                <h1>💎 Beauty CRM</h1>
+                <h1>💎 {salon_name}</h1>
                 <p>Подтверждение регистрации</p>
             </div>
             <div class="content">
@@ -158,10 +174,10 @@ def send_verification_code_email(email: str, code: str, name: str, user_type: st
                 
                 <p><strong>Код действителен в течение 15 минут.</strong></p>
                 
-                <p>Если вы не регистрировались в Beauty CRM, просто проигнорируйте это письмо.</p>
+                <p>Если вы не регистрировались в {salon_name}, просто проигнорируйте это письмо.</p>
                 
                 <div class="footer">
-                    <p>С уважением,<br>Команда Beauty CRM</p>
+                    <p>С уважением,<br>Команда {salon_name}</p>
                     <p>Это автоматическое письмо, пожалуйста, не отвечайте на него.</p>
                 </div>
             </div>
@@ -171,7 +187,7 @@ def send_verification_code_email(email: str, code: str, name: str, user_type: st
     """
     
     text_body = f"""
-    Beauty CRM - Подтверждение email
+    {salon_name} - Подтверждение email
     
     Здравствуйте, {name}!
     
@@ -182,10 +198,10 @@ def send_verification_code_email(email: str, code: str, name: str, user_type: st
     
     Код действителен в течение 15 минут.
     
-    Если вы не регистрировались в Beauty CRM, просто проигнорируйте это письмо.
+    Если вы не регистрировались в {salon_name}, просто проигнорируйте это письмо.
     
     С уважением,
-    Команда Beauty CRM
+    Команда {salon_name}
     """
     
     return send_email(email, subject, html_body, text_body)
@@ -201,6 +217,7 @@ def send_admin_notification_email(admin_email: str, user_data: dict) -> bool:
     
     Returns: True если отправлено успешно
     """
+    salon_name = get_salon_name()
     subject = f"Новая регистрация: {user_data.get('full_name', 'Unknown')}"
     
     admin_panel_url = os.getenv('ADMIN_PANEL_URL', 'http://localhost:5173/admin/registrations')
@@ -247,7 +264,7 @@ def send_admin_notification_email(admin_email: str, user_data: dict) -> bool:
     """
     
     text_body = f"""
-    Новая регистрация в Beauty CRM
+    Новая регистрация в {salon_name}
     
     Новый пользователь зарегистрировался в системе и ожидает одобрения:
     
@@ -275,7 +292,8 @@ def send_registration_approved_email(email: str, name: str) -> bool:
     
     Returns: True если отправлено успешно
     """
-    subject = "Регистрация одобрена - Beauty CRM"
+    salon_name = get_salon_name()
+    subject = f"Регистрация одобрена - {salon_name}"
     
     login_url = os.getenv('APP_URL', 'http://localhost:5173') + '/login'
     
@@ -301,12 +319,12 @@ def send_registration_approved_email(email: str, name: str) -> bool:
             </div>
             <div class="content">
                 <h2>Здравствуйте, {name}!</h2>
-                <p>Ваша регистрация в Beauty CRM была одобрена администратором.</p>
+                <p>Ваша регистрация в {salon_name} была одобрена администратором.</p>
                 <p>Теперь вы можете войти в систему используя свои учетные данные:</p>
                 
                 <a href="{login_url}" class="button">Войти в систему</a>
                 
-                <p>Добро пожаловать в Beauty CRM!</p>
+                <p>Добро пожаловать в {salon_name}!</p>
             </div>
         </div>
     </body>
@@ -314,16 +332,16 @@ def send_registration_approved_email(email: str, name: str) -> bool:
     """
     
     text_body = f"""
-    Beauty CRM - Регистрация одобрена
+    {salon_name} - Регистрация одобрена
     
     Здравствуйте, {name}!
     
-    Ваша регистрация в Beauty CRM была одобрена администратором.
+    Ваша регистрация в {salon_name} была одобрена администратором.
     Теперь вы можете войти в систему используя свои учетные данные:
     
     {login_url}
     
-    Добро пожаловать в Beauty CRM!
+    Добро пожаловать в {salon_name}!
     """
     
     return send_email(email, subject, html_body, text_body)
@@ -340,7 +358,8 @@ def send_registration_rejected_email(email: str, name: str, reason: str = "") ->
     
     Returns: True если отправлено успешно
     """
-    subject = "Регистрация отклонена - Beauty CRM"
+    salon_name = get_salon_name()
+    subject = f"Регистрация отклонена - {salon_name}"
     
     reason_text = f"<p><strong>Причина:</strong> {reason}</p>" if reason else ""
     reason_plain = f"\nПричина: {reason}\n" if reason else ""
@@ -364,7 +383,7 @@ def send_registration_rejected_email(email: str, name: str, reason: str = "") ->
             </div>
             <div class="content">
                 <h2>Здравствуйте, {name}!</h2>
-                <p>К сожалению, ваша регистрация в Beauty CRM была отклонена администратором.</p>
+                <p>К сожалению, ваша регистрация в {salon_name} была отклонена администратором.</p>
                 {reason_text}
                 <p>Если у вас есть вопросы, пожалуйста, свяжитесь с администратором.</p>
             </div>
@@ -374,13 +393,57 @@ def send_registration_rejected_email(email: str, name: str, reason: str = "") ->
     """
     
     text_body = f"""
-    Beauty CRM - Регистрация отклонена
+    {salon_name} - Регистрация отклонена
     
     Здравствуйте, {name}!
     
-    К сожалению, ваша регистрация в Beauty CRM была отклонена администратором.
+    К сожалению, ваша регистрация в {salon_name} была отклонена администратором.
     {reason_plain}
     Если у вас есть вопросы, пожалуйста, свяжитесь с администратором.
+    """
+    
+    return send_email(email, subject, html_body, text_body)
+
+
+def send_newsletter_welcome_email(email: str) -> bool:
+    """
+    Отправить приветственное письмо подписчику рассылки
+    """
+    salon_name = get_salon_name()
+    subject = f"Welcome to {salon_name} Newsletter!"
+    
+    html_body = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background: #db2777; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
+            .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Welcome to {salon_name}!</h1>
+            </div>
+            <div class="content">
+                <p>Thank you for subscribing to {salon_name} newsletter.</p>
+                <p>You will now receive updates about our latest features, beauty trends, and special offers.</p>
+                <p>Stay tuned!</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    text_body = """
+    Welcome to {salon_name}!
+    
+    Thank you for subscribing to our newsletter.
+    You will now receive updates about our latest features, beauty trends, and special offers.
     """
     
     return send_email(email, subject, html_body, text_body)

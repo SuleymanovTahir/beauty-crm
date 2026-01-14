@@ -2,7 +2,7 @@
 API endpoints for admin panel features: Challenges, Referrals, Loyalty, Notifications, Gallery
 """
 from fastapi import APIRouter, Request, Cookie, HTTPException, UploadFile, File, Form
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from typing import Optional, List
 from db.connection import get_db_connection
 from utils.utils import require_auth
@@ -13,6 +13,52 @@ import uuid
 import json
 
 router = APIRouter(tags=["Admin Features"])
+
+# ============================================================================
+# DASHBOARD STATS
+# ============================================================================
+
+@router.get("/admin/stats")
+async def get_admin_stats(session_token: Optional[str] = Cookie(None)):
+    """Получить статистику для админ дашборда"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        # Total clients (not users)
+        c.execute("SELECT COUNT(*) FROM clients")
+        total_users = c.fetchone()[0]
+
+        # Active challenges
+        c.execute("SELECT COUNT(*) FROM active_challenges WHERE is_active = TRUE")
+        active_challenges = c.fetchone()[0]
+
+        # Total loyalty points issued
+        c.execute("SELECT COALESCE(SUM(points), 0) FROM loyalty_transactions WHERE points > 0")
+        total_loyalty_points = c.fetchone()[0]
+
+        # Total referrals
+        c.execute("SELECT COUNT(*) FROM client_referrals")
+        total_referrals = c.fetchone()[0]
+
+        conn.close()
+
+        return {
+            "success": True,
+            "stats": {
+                "total_users": total_users,
+                "active_challenges": active_challenges,
+                "total_loyalty_points": int(total_loyalty_points),
+                "total_referrals": total_referrals
+            }
+        }
+    except Exception as e:
+        log_error(f"Error getting admin stats: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 # ============================================================================
 # CHALLENGES API
@@ -878,56 +924,59 @@ async def send_notification(request: Request, session_token: Optional[str] = Coo
         service_filter = data.get("service_filter", "")
 
         # Получить список клиентов
+        # Выбираем instagram_id и telegram_id для отправки
+        columns = "instagram_id, telegram_id"
+        
         if target_segment == "all":
-            c.execute("SELECT instagram_id FROM clients WHERE telegram_id IS NOT NULL")
+            c.execute(f"SELECT {columns} FROM clients WHERE telegram_id IS NOT NULL OR instagram_id LIKE 'telegram_%'")
         elif target_segment == "active":
-            c.execute("SELECT instagram_id FROM clients WHERE telegram_id IS NOT NULL AND is_active = TRUE")
+            c.execute(f"SELECT {columns} FROM clients WHERE (telegram_id IS NOT NULL OR instagram_id LIKE 'telegram_%') AND is_active = TRUE")
         elif target_segment == "inactive":
-            c.execute("SELECT instagram_id FROM clients WHERE telegram_id IS NOT NULL AND is_active = FALSE")
+            c.execute(f"SELECT {columns} FROM clients WHERE (telegram_id IS NOT NULL OR instagram_id LIKE 'telegram_%') AND is_active = FALSE")
         elif target_segment == "tier" and tier_filter:
-            c.execute("SELECT instagram_id FROM clients WHERE telegram_id IS NOT NULL AND loyalty_tier = %s", (tier_filter,))
+            c.execute(f"SELECT {columns} FROM clients WHERE (telegram_id IS NOT NULL OR instagram_id LIKE 'telegram_%') AND loyalty_tier = %s", (tier_filter,))
         elif target_segment == "appointment-based":
             # Фильтр по датам записей
             if appointment_filter == "tomorrow":
-                c.execute("""
-                    SELECT DISTINCT c.instagram_id
+                c.execute(f"""
+                    SELECT DISTINCT c.instagram_id, c.telegram_id
                     FROM clients c
                     JOIN bookings b ON c.instagram_id = b.client_id
-                    WHERE c.telegram_id IS NOT NULL
-                      AND b.booking_date = CURRENT_DATE + INTERVAL '1 day'
+                    WHERE (c.telegram_id IS NOT NULL OR c.instagram_id LIKE 'telegram_%')
+                      AND b.datetime::date = CURRENT_DATE + INTERVAL '1 day'
                       AND b.status IN ('pending', 'confirmed')
                 """)
             elif appointment_filter == "specific_date" and appointment_date:
-                c.execute("""
-                    SELECT DISTINCT c.instagram_id
+                c.execute(f"""
+                    SELECT DISTINCT c.instagram_id, c.telegram_id
                     FROM clients c
                     JOIN bookings b ON c.instagram_id = b.client_id
-                    WHERE c.telegram_id IS NOT NULL
-                      AND b.booking_date = %s
+                    WHERE (c.telegram_id IS NOT NULL OR c.instagram_id LIKE 'telegram_%')
+                      AND b.datetime::date = %s::date
                       AND b.status IN ('pending', 'confirmed')
                 """, (appointment_date,))
             elif appointment_filter == "date_range" and appointment_start_date and appointment_end_date:
-                c.execute("""
-                    SELECT DISTINCT c.instagram_id
+                c.execute(f"""
+                    SELECT DISTINCT c.instagram_id, c.telegram_id
                     FROM clients c
                     JOIN bookings b ON c.instagram_id = b.client_id
-                    WHERE c.telegram_id IS NOT NULL
-                      AND b.booking_date BETWEEN %s AND %s
+                    WHERE (c.telegram_id IS NOT NULL OR c.instagram_id LIKE 'telegram_%')
+                      AND b.datetime BETWEEN %s AND %s
                       AND b.status IN ('pending', 'confirmed')
                 """, (appointment_start_date, appointment_end_date))
             else:
-                c.execute("SELECT instagram_id FROM clients WHERE telegram_id IS NOT NULL")
+                c.execute(f"SELECT {columns} FROM clients WHERE telegram_id IS NOT NULL OR instagram_id LIKE 'telegram_%'")
         elif target_segment == "service-based" and service_filter:
             # Фильтр по процедурам/услугам
-            c.execute("""
-                SELECT DISTINCT c.instagram_id
+            c.execute(f"""
+                SELECT DISTINCT c.instagram_id, c.telegram_id
                 FROM clients c
                 JOIN bookings b ON c.instagram_id = b.client_id
-                WHERE c.telegram_id IS NOT NULL
+                WHERE (c.telegram_id IS NOT NULL OR c.instagram_id LIKE 'telegram_%')
                   AND (b.service_name ILIKE %s OR b.service_id::text = %s)
             """, (f"%{service_filter}%", service_filter))
         else:
-            c.execute("SELECT instagram_id FROM clients WHERE telegram_id IS NOT NULL")
+            c.execute(f"SELECT {columns} FROM clients WHERE telegram_id IS NOT NULL OR instagram_id LIKE 'telegram_%'")
 
         recipients = c.fetchall()
         recipients_count = len(recipients)
@@ -987,14 +1036,42 @@ async def send_notification(request: Request, session_token: Optional[str] = Coo
         notification_id = c.fetchone()[0]
 
         # Если не запланировано - отправить сразу
+        # Если не запланировано - отправить сразу
         if not scheduled:
-            # TODO: Реальная отправка уведомлений через Telegram/Email/SMS
-            # Для теста просто помечаем как отправленные
+            # Реальная отправка уведомлений через Telegram
+            from integrations.telegram_bot import telegram_bot
+            
+            sent_count = 0
+            failed_count = 0
+            message_text = data.get("message")
+            
+            for row in recipients:
+                inst_id = row[0]
+                tg_id = row[1] if len(row) > 1 else None
+                
+                chat_id = None
+                if tg_id:
+                     chat_id = tg_id
+                elif inst_id and str(inst_id).startswith('telegram_'):
+                     chat_id = str(inst_id).replace('telegram_', '')
+                
+                if chat_id:
+                    try:
+                        res = telegram_bot.send_message(int(chat_id), message_text)
+                        if res.get("ok"):
+                            sent_count += 1
+                        else:
+                            failed_count += 1
+                            log_error(f"Telegram send failed for {chat_id}: {res}", "api")
+                    except Exception as e:
+                        failed_count += 1
+                        log_error(f"Error sending to {chat_id}: {e}", "api")
+
             c.execute("""
                 UPDATE notification_history
-                SET sent_count = %s, sent_at = CURRENT_TIMESTAMP
+                SET sent_count = %s, failed_count = %s, sent_at = CURRENT_TIMESTAMP, status = 'sent'
                 WHERE id = %s
-            """, (recipients_count, notification_id))
+            """, (sent_count, failed_count, notification_id))
 
         conn.commit()
         conn.close()
@@ -1350,3 +1427,175 @@ async def toggle_gallery_photo_visibility(
     except Exception as e:
         log_error(f"Error toggling photo visibility: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/admin/export-report")
+async def export_report(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Экспорт отчета в CSV/PDF/Excel"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+        
+    try:
+        data = await request.json()
+        export_format = data.get('format', 'csv').lower()
+        
+        # Получаем данные
+        from db import get_stats
+        stats = get_stats()
+        
+        report_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        period_str = f"{data.get('start_date', 'All')} - {data.get('end_date', 'Now')}"
+        
+        if export_format == 'csv':
+            import io
+            import csv
+            
+            output = io.StringIO()
+            writer = csv.writer(output)
+            
+            writer.writerow(["Report Generated", report_date])
+            writer.writerow(["Period", period_str])
+            writer.writerow([])
+            writer.writerow(["Metric", "Value"])
+            
+            if stats:
+                for k, v in stats.items():
+                    if isinstance(v, (int, float, str)):
+                        writer.writerow([k.replace('_', ' ').title(), v])
+                    elif isinstance(v, dict) and 'value' in v:
+                        writer.writerow([k.replace('_', ' ').title(), v['value']])
+
+            output.seek(0)
+            
+            return StreamingResponse(
+                iter([output.getvalue()]),
+                media_type="text/csv",
+                headers={
+                    "Content-Disposition": f"attachment; filename=report_{datetime.now().strftime('%Y%m%d')}.csv"
+                }
+            )
+            
+        elif export_format == 'excel':
+            try:
+                from openpyxl import Workbook
+                from openpyxl.styles import Font, Alignment
+                import io
+                
+                wb = Workbook()
+                ws = wb.active
+                ws.title = "Report"
+                
+                # Header
+                ws['A1'] = "Report Generated"
+                ws['B1'] = report_date
+                ws['A1'].font = Font(bold=True)
+                
+                ws['A2'] = "Period"
+                ws['B2'] = period_str
+                ws['A2'].font = Font(bold=True)
+                
+                # Data headers
+                ws['A4'] = "Metric"
+                ws['B4'] = "Value"
+                ws['A4'].font = Font(bold=True)
+                ws['B4'].font = Font(bold=True)
+                
+                row = 5
+                if stats:
+                    for k, v in stats.items():
+                        if isinstance(v, (int, float, str)):
+                            ws[f'A{row}'] = k.replace('_', ' ').title()
+                            ws[f'B{row}'] = v
+                            row += 1
+                        elif isinstance(v, dict) and 'value' in v:
+                            ws[f'A{row}'] = k.replace('_', ' ').title()
+                            ws[f'B{row}'] = v['value']
+                            row += 1
+                
+                # Auto-size columns
+                ws.column_dimensions['A'].width = 30
+                ws.column_dimensions['B'].width = 20
+                
+                output = io.BytesIO()
+                wb.save(output)
+                output.seek(0)
+                
+                return StreamingResponse(
+                    iter([output.getvalue()]),
+                    media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    headers={
+                        "Content-Disposition": f"attachment; filename=report_{datetime.now().strftime('%Y%m%d')}.xlsx"
+                    }
+                )
+            except ImportError:
+                log_error("openpyxl not installed", "api")
+                raise HTTPException(status_code=501, detail="Excel export not available. Install openpyxl.")
+                
+        elif export_format == 'pdf':
+            try:
+                from reportlab.lib.pagesizes import letter, A4
+                from reportlab.lib import colors
+                from reportlab.lib.styles import getSampleStyleSheet
+                from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+                import io
+                
+                buffer = io.BytesIO()
+                doc = SimpleDocTemplate(buffer, pagesize=A4)
+                elements = []
+                styles = getSampleStyleSheet()
+                
+                # Title
+                title = Paragraph(f"<b>Report Generated: {report_date}</b>", styles['Heading1'])
+                elements.append(title)
+                elements.append(Spacer(1, 12))
+                
+                # Period
+                period = Paragraph(f"<b>Period:</b> {period_str}", styles['Normal'])
+                elements.append(period)
+                elements.append(Spacer(1, 20))
+                
+                # Data table
+                data = [['Metric', 'Value']]
+                if stats:
+                    for k, v in stats.items():
+                        if isinstance(v, (int, float, str)):
+                            data.append([k.replace('_', ' ').title(), str(v)])
+                        elif isinstance(v, dict) and 'value' in v:
+                            data.append([k.replace('_', ' ').title(), str(v['value'])])
+                
+                table = Table(data)
+                table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 14),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black)
+                ]))
+                
+                elements.append(table)
+                doc.build(elements)
+                
+                buffer.seek(0)
+                return StreamingResponse(
+                    iter([buffer.getvalue()]),
+                    media_type="application/pdf",
+                    headers={
+                        "Content-Disposition": f"attachment; filename=report_{datetime.now().strftime('%Y%m%d')}.pdf"
+                    }
+                )
+            except ImportError:
+                log_error("reportlab not installed", "api")
+                raise HTTPException(status_code=501, detail="PDF export not available. Install reportlab.")
+        else:
+            raise HTTPException(status_code=400, detail=f"Unsupported format: {export_format}")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_error(f"Export error: {e}", "api")
+        raise HTTPException(status_code=500, detail=str(e))
+

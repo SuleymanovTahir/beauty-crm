@@ -43,7 +43,10 @@
     "totalBookings": "Всего записей",
     "urlCopied": "URL скопирован",
     "webhookHint": "Укажите этот URL в настройках вебхуков на платформе",
-    "webhookUrl": "URL для вебхука"
+    "webhookUrl": "URL для вебхука",
+    "serviceMapping": "Маппинг услуг",
+    "settings": "Настройки",
+    "mappingHint": "Укажите ID услуг из маркетплейса для синхронизации."
   },
   "payment": {
     "active": "Активен",
@@ -59,6 +62,13 @@
     "subtitle": "Подключение платежных провайдеров",
     "title": "Платежные системы",
     "webhookSecret": "Webhook Secret",
-    "webhookUrl": "URL для вебхука"
+    "webhookUrl": "URL для вебхука",
+    "createLink": "Создать ссылку",
+    "linkCreated": "Ссылка успешно создана",
+    "createLinkTitle": "Создать платежную ссылку",
+    "amount": "Сумма",
+    "currency": "Валюта",
+    "viewTransactions": "История транзакций",
+    "descriptionPlaceholder": "Например: Предоплата за маникюр"
   }
 }

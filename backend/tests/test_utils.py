@@ -77,9 +77,14 @@ def _cleanup_user_data(c, user_ids):
     
     for table in tables:
         try:
+            # Use SAVEPOINT to prevent transaction abortion if table doesn't exist
+            # or if other errors occur during cleanup
+            c.execute(f"SAVEPOINT cleanup_{table}")
             c.execute(f"DELETE FROM {table} WHERE user_id IN ({user_ids_str})")
+            c.execute(f"RELEASE SAVEPOINT cleanup_{table}")
         except Exception:
-            # Игнорируем ошибки если таблицы нет или другие проблемы
+            # If error (e.g. table not found), rollback to savepoint and continue
+            c.execute(f"ROLLBACK TO SAVEPOINT cleanup_{table}")
             pass
             
     # После удаления всех зависимостей удаляем самих пользователей

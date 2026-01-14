@@ -222,7 +222,7 @@ export default function UniversalDashboard() {
     }
   };
 
-  const handleExportReport = async (format: 'pdf' | 'excel') => {
+  const handleExportReport = async (format: 'csv' | 'pdf' | 'excel') => {
     try {
       const dateRange = getDateRange();
       toast.info(`Generating ${format.toUpperCase()} report...`);
@@ -238,7 +238,8 @@ export default function UniversalDashboard() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `report-${new Date().toISOString().split('T')[0]}.${format === 'pdf' ? 'pdf' : 'xlsx'}`;
+        const ext = format === 'excel' ? 'xlsx' : format === 'pdf' ? 'pdf' : 'csv';
+        a.download = `report-${new Date().toISOString().split('T')[0]}.${ext}`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -251,6 +252,7 @@ export default function UniversalDashboard() {
       toast.error('Export error');
     }
   };
+
 
   if (loading) {
     return (
@@ -432,11 +434,14 @@ export default function UniversalDashboard() {
 
         {permissions.roleLevel >= 80 && (
           <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => handleExportReport('csv')}>
+              <FileText className="w-4 h-4 mr-2" /> {t('common:export_to_csv')}
+            </Button>
             <Button variant="outline" size="sm" onClick={() => handleExportReport('pdf')}>
-              <FileText className="w-4 h-4 mr-2" /> PDF
+              <FileText className="w-4 h-4 mr-2" /> {t('common:export_to_pdf')}
             </Button>
             <Button variant="outline" size="sm" onClick={() => handleExportReport('excel')}>
-              <FileText className="w-4 h-4 mr-2" /> Excel
+              <FileText className="w-4 h-4 mr-2" /> {t('common:export_to_excel')}
             </Button>
           </div>
         )}

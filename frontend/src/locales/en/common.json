@@ -123,6 +123,7 @@
   "export_to_csv": "Export to CSV",
   "export_to_excel": "Export to Excel",
   "export_to_pdf": "Export to PDF",
+  "export_report": "Export Report",
   "exporting": "Export...",
   "failed_to_load_stages": "Error loading stages",
   "file_upload_error": "File upload error",

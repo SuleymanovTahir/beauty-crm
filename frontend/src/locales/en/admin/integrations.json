@@ -43,7 +43,10 @@
     "hoursAgo_few": "{{count}} hours ago",
     "hoursAgo_many": "{{count}} hours ago",
     "minutesAgo_few": "{{count}} min ago",
-    "minutesAgo_many": "{{count}} min ago"
+    "minutesAgo_many": "{{count}} min ago",
+    "serviceMapping": "Service Mapping",
+    "settings": "Settings",
+    "mappingHint": "Specify the service IDs from the marketplace for synchronization."
   },
   "payment": {
     "active": "Active",
@@ -59,6 +62,13 @@
     "subtitle": "Connecting payment providers",
     "title": "Payment systems",
     "webhookSecret": "Webhook Secret",
-    "webhookUrl": "Webhook URL"
+    "webhookUrl": "Webhook URL",
+    "createLink": "Create Link",
+    "linkCreated": "Link created successfully",
+    "createLinkTitle": "Create Payment Link",
+    "amount": "Amount",
+    "currency": "Currency",
+    "viewTransactions": "Transaction History",
+    "descriptionPlaceholder": "E.g.: Prepayment for manicure"
   }
 }

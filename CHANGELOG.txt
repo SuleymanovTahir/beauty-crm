@@ -1,5 +1,46 @@
 # CHANGELOG - Память проекта Beauty CRM
 
+## [2026-01-14] Integrations: Payments & Marketplace Mappings
+- 🚀 **Finalizing Core Functionality:**
+  - **Tinkoff Payments:** Implemented full V2 integration (token generation, init request, webhook with token validation).
+  - **Messenger Sending:** Implemented real Telegram message sending & broadcasts.
+  - **Security:** Secured `settings` and `notifications` endpoints with session-based auth.
+  - **Reporting:** Added CSV export for Admin Dashboard (`/api/admin/export-report`).
+  - **Cleanup:** Eliminated all critical backend stubs (TODOs) and deleted duplicate `admin_panel.py`.
+  - **Refactoring:** Consolidated admin logic in `admin_features.py` and updated Frontend API paths.
+  - **Frontend:** Added "Export Report" button to Admin Dashboard and implemented CSV download.
+  - **Payments:** Added PayPal REST API support.
+  - **Messengers:** Implemented WhatsApp (GreenAPI) and Instagram (Graph API) sending logic.
+- **Fixes & Cleanup:**
+  - Removed deprecated `admin/Dashboard.tsx` file.
+  - Implemented Newsletter Welcome Email using BackgroundTasks.
+  - Updated Frontend Dashboard to prioritize CSV export.
+  - **Hardcode Removal (Complete):**
+    - PayPal: URL now depends on `PAYPAL_MODE` env variable (sandbox/live).
+    - Client Auth: Replaced `localhost:8000` with dynamic `BASE_URL` from config.
+    - Messengers: Extracted API URLs to constants (`GREEN_API_BASE`, `FACEBOOK_GRAPH_API_BASE`).
+    - Dashboard: Replaced hardcoded button text with i18n translation keys (`export_to_csv`, `export_report`).
+    - Chat: Replaced hardcoded production URL with `BASE_URL` in file handling logic.
+    - EditUser: Updated comment to be environment-agnostic.
+- 🛠 **Payment Rate Limiting Fix**: Disabled API Rate Limiting in non-production environments (`backend/main.py`) to resolve 429 errors blocking automated tests.
+- 💳 **Payment Link Enhancements**:
+  - Added `description` field to Payment Generator UI and Backend API.
+  - Descriptions are now saved in transaction metadata and transferred to invoice notes upon payment completion.
+  - Implemented secure `invoice_id` handling for ad-hoc payment links.
+- 🔄 **Marketplace Service Mapping**:
+  - Implemented backend logic to actively use `service_mapping` from provider settings when creating bookings from marketplaces.
+  - External Service IDs are now correctly translated to Internal Service Names, preventing "Unknown Service" entries.
+- 🖥️ **UI Verification**: Verified Sidebar menu persistence logic (URL-based) and Payment Dialog UI updates.
+- 🔗 **Marketplace Sync Logic**:
+  - Implemented `run_marketplace_sync` with dedicated handlers for **YClients** and **Booksy**.
+  - Added `update_booking_from_marketplace` to support modification of existing bookings via webhooks (e.g. `appointment.updated`).
+  - Webhooks for **2GIS**, **Booksy**, and **YClients** now support update events, ensuring data consistency when external bookings are modified.
+- ✅ **Comprehensive Test Suite**:
+  - Created `test_marketplace_integration.py` with full coverage of all marketplace features.
+  - All 5 test scenarios pass: Provider Management, Service Mapping, Booking Creation, Booking Updates, Data Normalization.
+  - Automated cleanup ensures tests are idempotent and can be run multiple times.
+- 📚 **Documentation**: Added `MARKETPLACE_INTEGRATION.md` with complete setup guide, API reference, and troubleshooting tips.
+
 ## [2026-01-14] UI Reorganization & API Fixes
 - 🏗️ **Navigation Reorganization**: Grouped "Payment Systems", "Marketplaces", and "Messengers" under a new "Integrations" group in `MainLayout`.
 - 🔄 **Menu Persistence**: Sidebar groups now remember their expanded state on page refresh or navigation within the group, preventing annoying collapses.

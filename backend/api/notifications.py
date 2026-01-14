@@ -358,12 +358,18 @@ async def notify_manager_urgent_booking(client_id: str, reason: str):
 # ===== НАСТРОЙКИ УВЕДОМЛЕНИЙ =====
 
 @router.get("/notifications/settings")
-async def get_notification_settings_api():
+async def get_notification_settings_api(
+    session_token: Optional[str] = Cookie(None)
+):
     """
     Получить настройки уведомлений
     """
     try:
-        user_id = 1  # TODO: Get from session
+        from utils.utils import require_auth
+        user = require_auth(session_token)
+        if not user:
+             raise HTTPException(status_code=401, detail="Unauthorized")
+        user_id = user['id']
 
         conn = get_db_connection()
         c = conn.cursor()
@@ -433,7 +439,10 @@ async def get_notification_settings_api():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/notifications/settings")
-async def save_notification_settings(request: Request):
+async def save_notification_settings(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
     """
     Сохранить настройки уведомлений
     """
@@ -441,8 +450,11 @@ async def save_notification_settings(request: Request):
         data = await request.json()
         log_info(f"Saving notification settings: {data}", "notifications")
 
-        # TODO: Получить user_id из сессии когда будет авторизация
-        user_id = 1  # По умолчанию для первого пользователя
+        from utils.utils import require_auth
+        user = require_auth(session_token)
+        if not user:
+             raise HTTPException(status_code=401, detail="Unauthorized")
+        user_id = user['id']
 
         conn = get_db_connection()
         c = conn.cursor()

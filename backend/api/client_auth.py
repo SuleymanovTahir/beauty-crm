@@ -13,6 +13,7 @@ from utils.utils import require_auth
 from utils.logger import log_error, log_info
 from services.features import FeatureService
 import traceback
+from core.config import BASE_URL
 
 # No prefix here because it's added in main.py
 router = APIRouter(tags=["Client Auth"])
@@ -923,9 +924,9 @@ async def get_gallery(session_token: Optional[str] = Cookie(None)):
             
             # Ensure absolute URLs for local paths
             if before_url and before_url.startswith('/static'):
-                before_url = f"http://localhost:8000{before_url}" # TODO: use config for base URL
+                before_url = f"{BASE_URL}{before_url}"
             if after_url and after_url.startswith('/static'):
-                after_url = f"http://localhost:8000{after_url}"
+                after_url = f"{BASE_URL}{after_url}"
                 
             items.append({
                 "id": row[0],

@@ -40,13 +40,19 @@ class NotificationSettings(BaseModel):
     reportTime: str = DEFAULT_REPORT_TIME  # ✅ Используем константу
 
 @router.post("/settings/notifications")
-async def save_notification_settings(request: Request, settings: NotificationSettings):
+async def save_notification_settings(
+    settings: NotificationSettings,
+    session_token: Optional[str] = Cookie(None)
+):
     """
     Сохранить настройки уведомлений для пользователя
     """
     try:
-        # TODO: Получить user_id из сессии когда будет авторизация
-        user_id = 1  # По умолчанию для первого пользователя
+        from utils.utils import require_auth
+        user = require_auth(session_token)
+        if not user:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        user_id = user['id']
 
         conn = get_db_connection()
         c = conn.cursor()
@@ -176,12 +182,18 @@ async def save_notification_settings(request: Request, settings: NotificationSet
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/settings/notifications")
-async def get_notification_settings():
+async def get_notification_settings(
+    session_token: Optional[str] = Cookie(None)
+):
     """
     Получить настройки уведомлений для пользователя
     """
     try:
-        user_id = 1  # TODO: Получить из сессии
+        from utils.utils import require_auth
+        user = require_auth(session_token)
+        if not user:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        user_id = user['id']
 
         conn = get_db_connection()
         c = conn.cursor()
