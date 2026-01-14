@@ -138,7 +138,7 @@ UPLOAD_DIR = os.path.join(BASE_DIR, "static", "uploads")
 # Приоритет: 
 # 1. Переменная окружения BASE_URL (если установлена)
 # 2. http://localhost:{PORT} (если мы на локалке)
-# 3. https://mlediamant.com (fallback для продакшена)
+# 3. PRODUCTION_URL env variable or error (fallback для продакшена)
 _env_base_url = os.getenv("BASE_URL")
 _env_port = os.getenv("PORT", "8000")
 
@@ -149,8 +149,9 @@ elif is_localhost():
     BASE_URL = f"http://localhost:{_env_port}"
     PUBLIC_URL = f"http://localhost:{_env_port}"
 else:
-    BASE_URL = "https://mlediamant.com"
-    PUBLIC_URL = os.getenv("PUBLIC_URL") or "https://mlediamant.com"
+    # Production: требуется установить PRODUCTION_URL
+    BASE_URL = os.getenv("PRODUCTION_URL", "https://your-domain.com")
+    PUBLIC_URL = os.getenv("PUBLIC_URL") or BASE_URL
 
 # ===== СТАТУСЫ КЛИЕНТОВ =====
 CLIENT_STATUSES = {
