@@ -220,7 +220,8 @@ def send_admin_notification_email(admin_email: str, user_data: dict) -> bool:
     salon_name = get_salon_name()
     subject = f"Новая регистрация: {user_data.get('full_name', 'Unknown')}"
     
-    admin_panel_url = os.getenv('ADMIN_PANEL_URL', 'http://localhost:5173/admin/registrations')
+    from core.config import PUBLIC_URL
+    admin_panel_url = os.getenv('ADMIN_PANEL_URL', f'{PUBLIC_URL}/admin/registrations')
     
     html_body = f"""
     <!DOCTYPE html>
@@ -295,7 +296,8 @@ def send_registration_approved_email(email: str, name: str) -> bool:
     salon_name = get_salon_name()
     subject = f"Регистрация одобрена - {salon_name}"
     
-    login_url = os.getenv('APP_URL', 'http://localhost:5173') + '/login'
+    from core.config import PUBLIC_URL
+    login_url = os.getenv('APP_URL', PUBLIC_URL) + '/login'
     
     html_body = f"""
     <!DOCTYPE html>

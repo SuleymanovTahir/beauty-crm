@@ -91,6 +91,13 @@
   "select_to_continue": "Select a service or technician to continue",
   "services": {
     "allCategories": "All",
+    "category_Brows": "Brows",
+    "category_Facial": "Facial",
+    "category_Hair": "Hair",
+    "category_Lashes": "Lashes",
+    "category_Nails": "Nails",
+    "category_Permanent Makeup": "Permanent Makeup",
+    "category_Waxing": "Waxing",
     "notFound": "No services found",
     "search": "Search services...",
     "selected": "selected",
