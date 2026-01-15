@@ -52,7 +52,7 @@ def send_verification_email(to_email: str, code: str, full_name: str) -> bool:
         <html>
           <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background: #000; padding: 20px; text-align: center;">
-              <h1 style="color: white; margin: 0; font-size: 24px;">Beauty CRM</h1>
+              <h1 style="color: white; margin: 0; font-size: 24px;">{os.getenv('SALON_NAME', 'Beauty Salon')}</h1>
             </div>
             <div style="padding: 30px; background-color: #f7f7f7;">
               <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
@@ -123,7 +123,8 @@ def send_verification_link_email(to_email: str, verification_token: str, full_na
             return False
 
         # Формируем ссылку для верификации
-        verification_url = f"http://localhost:5173/verify-email?token={verification_token}"
+        from core.config import PUBLIC_URL
+        verification_url = f"{PUBLIC_URL}/verify-email?token={verification_token}"
 
         # Создаем сообщение
         msg = MIMEMultipart('alternative')
@@ -136,11 +137,11 @@ def send_verification_link_email(to_email: str, verification_token: str, full_na
         <html>
           <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background: #000; padding: 20px; text-align: center;">
-              <h1 style="color: white; margin: 0; font-size: 24px;">Beauty CRM</h1>
+              <h1 style="color: white; margin: 0; font-size: 24px;">{os.getenv('SALON_NAME', 'Beauty Salon')}</h1>
             </div>
             <div style="padding: 30px; background-color: #f7f7f7;">
               <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
-              <p style="color: #666; font-size: 16px;">Добро пожаловать в Beauty CRM!</p>
+              <p style="color: #666; font-size: 16px;">Добро пожаловать!</p>
               <p style="color: #666; font-size: 16px;">Нажмите на кнопку ниже, чтобы подтвердить ваш email и активировать аккаунт:</p>
               <div style="text-align: center; margin: 30px 0;">
                 <a href="{verification_url}" style="background-color: #000; color: white; padding: 15px 40px; text-decoration: none; border-radius: 4px; display: inline-block; font-size: 16px;">
@@ -164,7 +165,7 @@ def send_verification_link_email(to_email: str, verification_token: str, full_na
         text = f"""
         Здравствуйте, {full_name}!
 
-        Добро пожаловать в Beauty CRM!
+        Добро пожаловать!
 
         Перейдите по этой ссылке, чтобы подтвердить ваш email:
         {verification_url}
@@ -225,7 +226,7 @@ def send_approval_notification(to_email: str, full_name: str, approved: bool) ->
             <html>
               <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                 <div style="background: #000; padding: 20px; text-align: center;">
-                  <h1 style="color: white; margin: 0; font-size: 24px;">Beauty CRM</h1>
+                  <h1 style="color: white; margin: 0; font-size: 24px;">{os.getenv('SALON_NAME', 'Beauty Salon')}</h1>
                 </div>
                 <div style="padding: 30px; background-color: #f7f7f7;">
                   <h2 style="color: #333;">Поздравляем, {full_name}!</h2>
@@ -247,7 +248,7 @@ def send_approval_notification(to_email: str, full_name: str, approved: bool) ->
             <html>
               <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                 <div style="background: #000; padding: 20px; text-align: center;">
-                  <h1 style="color: white; margin: 0; font-size: 24px;">Beauty CRM</h1>
+                  <h1 style="color: white; margin: 0; font-size: 24px;">{os.getenv('SALON_NAME', 'Beauty Salon')}</h1>
                 </div>
                 <div style="padding: 30px; background-color: #f7f7f7;">
                   <h2 style="color: #333;">{full_name},</h2>
@@ -301,8 +302,8 @@ def send_password_reset_email(to_email: str, reset_token: str, full_name: str) -
             return False
 
         # Формируем ссылку для сброса пароля
-        # В продакшене это должен быть реальный домен
-        reset_url = f"http://localhost:5173/reset-password?token={reset_token}"
+        from core.config import PUBLIC_URL
+        reset_url = f"{PUBLIC_URL}/reset-password?token={reset_token}"
 
         # Создаем сообщение
         msg = MIMEMultipart('alternative')
@@ -315,7 +316,7 @@ def send_password_reset_email(to_email: str, reset_token: str, full_name: str) -
         <html>
           <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background: #000; padding: 20px; text-align: center;">
-              <h1 style="color: white; margin: 0; font-size: 24px;">Beauty CRM</h1>
+              <h1 style="color: white; margin: 0; font-size: 24px;">{os.getenv('SALON_NAME', 'Beauty Salon')}</h1>
             </div>
             <div style="padding: 30px; background-color: #f7f7f7;">
               <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
@@ -494,10 +495,8 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
         website_text = f"{display_website}" if salon_website else ""
         
         # Определяем URL для отписки
-        if 'localhost' in base_url or '127.0.0.1' in base_url:
-            unsubscribe_url = f"http://localhost:5173{unsubscribe_link}"
-        else:
-            unsubscribe_url = f"{base_url}{unsubscribe_link}"
+        from core.config import PUBLIC_URL
+        unsubscribe_url = f"{PUBLIC_URL}{unsubscribe_link}"
 
         if not smtp_user or not smtp_password:
             log_error("SMTP credentials not configured in .env", "email")

@@ -91,6 +91,13 @@
   "select_to_continue": "Выберите услугу или мастера для продолжения",
   "services": {
     "allCategories": "Все категории",
+    "category_Brows": "Брови",
+    "category_Facial": "Уход за лицом",
+    "category_Hair": "Волосы",
+    "category_Lashes": "Ресницы",
+    "category_Nails": "Ногти",
+    "category_Permanent Makeup": "Перманентный макияж",
+    "category_Waxing": "Эпиляция",
     "notFound": "No services found",
     "search": "Поиск услуг...",
     "selected": "выбрано",

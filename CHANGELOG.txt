@@ -15,16 +15,21 @@
   - Removed deprecated `admin/Dashboard.tsx` file.
   - Implemented Newsletter Welcome Email using BackgroundTasks.
   - **Restored PDF/Excel Export:** Re-added PDF and Excel export buttons with full backend support (openpyxl, reportlab).
-  - **Hardcode Removal (Complete):**
+  - **Complete Hardcode Removal & Universalization:**
     - **"Beauty CRM":** Replaced all 23 occurrences with dynamic `get_salon_name()` from database in email templates.
+    - **Salon Name:** All references now use `os.getenv('SALON_NAME', 'Beauty Salon')` as fallback.
+    - **Contact Details:** Phone, email now use environment variables (`SALON_PHONE`, `SALON_EMAIL`).
+    - **Bot Names:** Replaced hardcoded bot names with `BOT_NAME`, `BOT_NAME_EN`, `BOT_NAME_AR` env vars.
+    - **Google Maps:** Updated to new link `BTw4X1gzgyFhmkYF8`, added `google_maps_embed_url` column.
     - **PayPal:** URL now depends on `PAYPAL_MODE` env variable (sandbox/live).
     - **Client Auth:** Replaced `localhost:8000` with dynamic `BASE_URL` from config.
     - **Password Reset:** Replaced `localhost:5173` with `PUBLIC_URL` from config.
     - **Production URL:** Replaced `mlediamant.com` with `PRODUCTION_URL` env variable.
     - **Messengers:** Extracted API URLs to constants (`GREEN_API_BASE`, `FACEBOOK_GRAPH_API_BASE`).
-    - **Dashboard:** Replaced hardcoded button text with i18n translation keys.
-    - **Chat:** Replaced hardcoded production URL with `BASE_URL` in file handling logic.
-    - **EditUser:** Updated comment to be environment-agnostic.
+    - **Public API:** Contact form now uses dynamic salon name from database.
+    - **Frontend:** Replaced hardcoded button text with i18n translation keys.
+    - **Services Categories:** Added proper translations for all service categories (Brows, Hair, Nails, etc.).
+  - **Documentation:** Created `ENV_VARIABLES.md` with all configurable environment variables.
 - 🛠 **Payment Rate Limiting Fix**: Disabled API Rate Limiting in non-production environments (`backend/main.py`) to resolve 429 errors blocking automated tests.
 - 💳 **Payment Link Enhancements**:
   - Added `description` field to Payment Generator UI and Backend API.

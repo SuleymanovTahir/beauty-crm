@@ -4,6 +4,7 @@
 
 from datetime import datetime
 import json
+import os
 import psycopg2
 from psycopg2 import errors as pg_errors
 
@@ -102,11 +103,11 @@ def _get_default_salon_settings() -> dict:
     """Дефолтные настройки салона"""
     return {
         "id": 1,
-        "name": "M Le Diamant",  # Fallback only
+        "name": os.getenv('SALON_NAME', 'Beauty Salon'),  # Fallback only
         "name_ar": None,
         "address": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
         "address_ar": None,
-        "google_maps": "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
+        "google_maps": "https://maps.app.goo.gl/BTw4X1gzgyFhmkYF8",
         "hours": "Daily 10:30 - 21:00",
         "hours_ru": "Ежедневно 10:30 - 21:00",
         "hours_ar": "يوميًا 10:30 - 21:00",
@@ -115,13 +116,13 @@ def _get_default_salon_settings() -> dict:
         "lunch_start": DEFAULT_LUNCH_START,  # ✅ Используем константу
         "lunch_end": DEFAULT_LUNCH_END,  # ✅ Используем константу
         "booking_url": "https://n1314037.alteg.io",
-        "phone": "+971526961100",  # Fallback only
-        "email": "mladiamontuae@gmail.com",  # Fallback only
+        "phone": os.getenv('SALON_PHONE', ''),  # Fallback only
+        "email": os.getenv('SALON_EMAIL', ''),  # Fallback only
         "instagram": "https://www.instagram.com/mlediamant/",
         "whatsapp": None,
-        "bot_name": "M Le Diamant Assistant",
-        "bot_name_en": "M Le Diamant Assistant",
-        "bot_name_ar": "مساعد M Le Diamant",
+        "bot_name": os.getenv('BOT_NAME', 'Beauty Assistant'),
+        "bot_name_en": os.getenv('BOT_NAME_EN', 'Beauty Assistant'),
+        "bot_name_ar": os.getenv('BOT_NAME_AR', 'مساعد الجمال'),
         "city": "Dubai",
         "country": "UAE",
         "timezone": "Asia/Dubai",
@@ -369,15 +370,15 @@ def _get_default_bot_settings() -> dict:
     
     try:
         salon = get_salon_settings()
-        bot_name = salon.get('bot_name', 'M Le Diamant Assistant')
+        bot_name = salon.get('bot_name', os.getenv('BOT_NAME', 'Beauty Assistant'))
     except:
-        bot_name = 'M Le Diamant Assistant'
+        bot_name = os.getenv('BOT_NAME', 'Beauty Assistant')
 
     return {
         "id": 1,
         "bot_name": bot_name,
         "personality_traits": "Профессионал с международным опытом\nУверенный, харизматичный, НЕ навязчивый",
-        "greeting_message": "Привет! 😊 Добро пожаловать в M Le Diamant!",
+        "greeting_message": f"Привет! 😊 Добро пожаловать в {os.getenv('SALON_NAME', 'наш салон')}!",
         "farewell_message": "Спасибо! До встречи! 💖",
         "price_explanation": "Мы в премиум-сегменте 💎",
         "price_response_template": "{SERVICE} {PRICE} AED 💎\n{DESCRIPTION}\nЗаписаться%s",

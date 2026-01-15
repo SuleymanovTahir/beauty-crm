@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent } from './ui/card';
 import { Input } from './ui/input';
-import { Badge } from './ui/badge';
-import { Checkbox } from './ui/checkbox';
-import { Search } from 'lucide-react';
+import { Search, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getLocalizedName } from '../../../../src/utils/i18nUtils';
 import { useCurrency } from '../../../../src/hooks/useSalonSettings';
@@ -17,7 +14,7 @@ interface ServicesStepProps {
     selectedProfessional?: { id: number; service_ids?: number[] } | null;
 }
 
-export function ServicesStep({ selectedServices, onServicesChange, salonSettings, preloadedServices, selectedProfessional = null }: ServicesStepProps) {
+export function ServicesStep({ selectedServices, onServicesChange, preloadedServices, selectedProfessional = null }: ServicesStepProps) {
     const { t, i18n } = useTranslation(['booking', 'common']);
     const { formatCurrency } = useCurrency();
     // Use preloaded services if available, otherwise empty (or start fetch)
@@ -126,7 +123,7 @@ export function ServicesStep({ selectedServices, onServicesChange, salonSettings
                                 : 'bg-white text-gray-500 border-gray-100 hover:border-gray-200'
                                 }`}
                         >
-                            {category === 'all' ? t('services.allCategories', 'All') : category}
+                            {category === 'all' ? t('services.allCategories', 'All') : (t(`services.category_${category}`, { defaultValue: category }) as string)}
                         </button>
                     ))}
                 </div>

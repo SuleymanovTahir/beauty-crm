@@ -194,11 +194,16 @@ def process_contact_notifications(form: ContactForm):
     
     # 3. Отправляем подтверждение пользователю
     if form.email:
-        user_subject = "Ваша заявка принята | M Le Diamant"
+        # Получаем название салона из настроек
+        from db.settings import get_salon_settings
+        salon_settings = get_salon_settings()
+        salon_name = salon_settings.get('name', 'Beauty Salon')
+        
+        user_subject = f"Ваша заявка принята | {salon_name}"
         user_message = (
             f"Здравствуйте, {form.name}!\n\n"
             f"Спасибо за ваше обращение. Мы получили вашу заявку и свяжемся с вами в ближайшее время.\n\n"
-            f"С уважением,\nКоманда M Le Diamant"
+            f"С уважением,\nКоманда {salon_name}"
         )
         send_email_sync([form.email], user_subject, user_message)
     
