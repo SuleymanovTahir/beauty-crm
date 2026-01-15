@@ -143,7 +143,7 @@ def format_booking_reminder_email(booking: Dict, salon_settings: Dict) -> tuple:
     salon_name = salon_settings.get('name')
     salon_address = salon_settings.get('address')
     salon_phone = salon_settings.get('phone')
-    google_maps = salon_settings.get('google_maps', 'https://maps.app.goo.gl/Puh5X1bNEjWPiToz6')
+    google_maps = salon_settings.get('google_maps', 'https://maps.app.goo.gl/BTw4X1gzgyFhmkYF8')
 
     # Plain text версия
     plain = f"""

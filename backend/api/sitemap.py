@@ -12,7 +12,9 @@ router = APIRouter()
 async def generate_sitemap():
     """Generate XML sitemap for search engines"""
     
-    base_url = "https://mlediamant.com"
+    from db.settings import get_salon_settings
+    salon_settings = get_salon_settings()
+    base_url = salon_settings.get('base_url', 'https://your-domain.com')
     today = datetime.now().strftime("%Y-%m-%d")
     
     sitemap = f"""<?xml version="1.0" encoding="UTF-8"?>
