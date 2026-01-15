@@ -2,10 +2,10 @@ import { useTranslation } from 'react-i18next';
 import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Scissors, User, Calendar, Check, ChevronRight, MapPin, X, Edit } from 'lucide-react';
+import { Scissors, User, Calendar, Check, ChevronRight, X, Edit } from 'lucide-react';
 import { motion } from 'motion/react';
 import { getLocalizedName } from '../../../../src/utils/i18nUtils';
+import { DEFAULT_VALUES } from '../../utils/constants';
 
 interface BookingMenuProps {
     bookingState: any;
@@ -90,8 +90,8 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
                         <Scissors size={24} />
                     </div>
                     <div>
-                        <h2 className="font-bold text-sm text-gray-900">{salonSettings?.name || 'Beauty Lounge'}</h2>
-                        <p className="text-xs text-gray-500 mt-0.5">{salonSettings?.address || 'Shop 13, Amwaj 3 Plaza Level, JBR, Dubai'}</p>
+                        <h2 className="font-bold text-sm text-gray-900">{salonSettings?.name || DEFAULT_VALUES.DEFAULT_SALON_NAME}</h2>
+                        <p className="text-xs text-gray-500 mt-0.5">{salonSettings?.address || DEFAULT_VALUES.DEFAULT_ADDRESS}</p>
                     </div>
                 </div>
                 {(isServicesComplete || isProfessionalComplete || isDateTimeComplete) && (

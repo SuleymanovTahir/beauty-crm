@@ -8,29 +8,25 @@ import {
 import { Button } from "./ui/button";
 import { Calendar, Phone } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { getApiUrl } from "../utils/apiUtils";
+import { safeFetch } from "../utils/errorHandler";
+import { useSalonInfo } from "../hooks/useSalonInfo";
 
 export function FAQ() {
   const { t, i18n } = useTranslation(['public_landing', 'common']);
-  const [salonPhone, setSalonPhone] = useState("");
+  const { phone: salonPhone } = useSalonInfo();
 
   // Use translations for FAQs. Ensure your translation files structure matches this.
   const [faqs, setFaqs] = useState<{ id: number; question: string; answer: string }[]>([]);
 
   useEffect(() => {
-    // Fetch salon info and FAQs
+    // Fetch FAQs
     const fetchData = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+        const API_URL = getApiUrl();
 
-        // 1. Fetch Salon Info for phone
-        const resInfo = await fetch(`${API_URL}/api/public/salon-info?language=${i18n.language}`);
-        const dataInfo = await resInfo.json();
-        if (dataInfo.phone) {
-          setSalonPhone(dataInfo.phone);
-        }
-
-        // 2. Fetch FAQs from DB
-        const resFaq = await fetch(`${API_URL}/api/public/faq?language=${i18n.language}`);
+        // Fetch FAQs from DB
+        const resFaq = await safeFetch(`${API_URL}/api/public/faq?language=${i18n.language}`);
         const dataFaq = await resFaq.json();
 
         if (dataFaq.faqItems && dataFaq.faqItems.length > 0) {

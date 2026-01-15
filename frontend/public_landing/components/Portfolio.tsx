@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
+import { getApiUrl } from "../utils/apiUtils";
+import { safeFetch } from "../utils/errorHandler";
 
 interface PortfolioItem {
   id: number;
@@ -27,10 +29,9 @@ export function Portfolio() {
     const fetchPortfolio = async () => {
       try {
         // Используем относительный путь для работы через Vite proxy
-        console.log('📸 [Portfolio] Fetching portfolio images...');
-        const res = await fetch(`/api/public/gallery?category=portfolio&language=${i18n.language}&t=${Date.now()}`);
+        const API_URL = getApiUrl();
+        const res = await safeFetch(`${API_URL}/api/public/gallery?category=portfolio&language=${i18n.language}&t=${Date.now()}`);
         const data = await res.json();
-        console.log('✅ [Portfolio] Received data:', data);
 
         if (data.images && data.images.length > 0) {
           const currentLang = i18n.language;
@@ -41,10 +42,8 @@ export function Portfolio() {
             title: img[`title_${currentLang}`] || img.title_ru || img.title || "",
             description: img[`description_${currentLang}`] || img.description_ru || img.description || ""
           }));
-          console.log(`✅ [Portfolio] Mapped ${mappedImages.length} portfolio images`);
           setPortfolio(mappedImages);
         } else {
-          console.log('⚠️ [Portfolio] No images found');
           setPortfolio([]);
         }
       } catch (error) {
@@ -63,17 +62,13 @@ export function Portfolio() {
   const displayedItems = filteredPortfolio.slice(0, displayCount);
 
   if (loading) {
-    console.log('⏳ [Portfolio] Still loading...');
     return null; // Or loading spinner
   }
-
-  console.log(`🎨 [Portfolio] Rendering with ${portfolio.length} items`);
 
   // If no items, maybe show empty state or just null. Ref shows 'noWorksFound'.
   // But since we have categories, we might have items in OTHER categories.
   // If TOTAL portfolio is 0, show empty message instead of hiding section
   if (portfolio.length === 0) {
-    console.log('⚠️ [Portfolio] No portfolio items, showing empty message');
     return (
       <section className="py-12 sm:py-16 lg:py-20 bg-background" id="portfolio">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">

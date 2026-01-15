@@ -84,7 +84,7 @@ export function ConfirmStep({
     }, [user, bookingState.phone, profileLoaded, onPhoneChange]);
 
     const handlePhoneSubmit = () => {
-        if (!phone || phone.length < 5) {
+        if (!phone || phone.length < 5) { // Minimum phone length
             toast.error(t('invalid_phone', 'Please enter a valid phone number'));
             return;
         }

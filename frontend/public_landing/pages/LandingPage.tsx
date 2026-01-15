@@ -37,11 +37,8 @@ export function LandingPage() {
     // 2. Fetch fresh data from unified endpoint
     const fetchInitialData = async () => {
       try {
-        const start = performance.now();
         const response = await fetch('/api/public/initial-load');
         const data = await response.json();
-        const end = performance.now();
-        console.log(`🚀 Initial data loaded in ${(end - start).toFixed(2)}ms`);
 
         setInitialData(data);
         localStorage.setItem('landing_initial_data', JSON.stringify(data));

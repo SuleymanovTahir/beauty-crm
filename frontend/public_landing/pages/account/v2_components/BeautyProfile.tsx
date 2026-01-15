@@ -8,10 +8,13 @@ import { Progress } from './ui/progress';
 import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../../../src/api/client';
 import { toast } from 'sonner';
+import { formatWhatsAppUrlWithText } from '../../../utils/urlUtils';
+import { useSalonSettings } from '../../../hooks/useSalonSettings';
 
 export function BeautyProfile() {
   const { t } = useTranslation(['account', 'common']);
   const navigate = useNavigate();
+  const { phone: salonPhone } = useSalonSettings();
   const [loading, setLoading] = useState(true);
   const [beautyData, setBeautyData] = useState<any>(null);
 
@@ -35,20 +38,20 @@ export function BeautyProfile() {
   };
 
   const requestConsultation = () => {
-    const phone = localStorage.getItem('salon_phone') || '+971501234567';
+    const phone = salonPhone;
     const message = encodeURIComponent(
       t('beauty.consultation_message', 'Здравствуйте! Я хотел(а) бы получить консультацию по уходу за красотой. Меня интересуют рекомендации по процедурам.')
     );
-    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+    window.open(formatWhatsAppUrlWithText(phone, message), '_blank');
     toast.success(t('beauty.consultation_requested', 'Запрос на консультацию отправлен'));
   };
 
   const viewAllRecommendations = () => {
-    const phone = localStorage.getItem('salon_phone') || '+971501234567';
+    const phone = salonPhone;
     const message = encodeURIComponent(
       t('beauty.recommendations_message', 'Здравствуйте! Я хотел(а) бы получить полный список персональных рекомендаций по уходу.')
     );
-    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+    window.open(formatWhatsAppUrlWithText(phone, message), '_blank');
     toast.success(t('beauty.recommendations_requested', 'Запрос отправлен'));
   };
 

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { getApiUrl } from "../utils/apiUtils";
+import { safeFetch } from "../utils/errorHandler";
 import { Button } from "./ui/button";
 import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -17,8 +19,8 @@ export function CookieConsent() {
 
       // Not decided locally, check server (IP based)
       try {
-        const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-        const res = await fetch(`${API_URL}/api/cookies/check`);
+        const API_URL = getApiUrl();
+        const res = await safeFetch(`${API_URL}/api/cookies/check`);
         const data = await res.json();
 
         if (data.status === 'accept') {
@@ -45,8 +47,8 @@ export function CookieConsent() {
 
   const logConsent = async (action: 'accept' | 'decline') => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-      await fetch(`${API_URL}/api/cookies/consent`, {
+      const API_URL = getApiUrl();
+      await safeFetch(`${API_URL}/api/cookies/consent`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action })

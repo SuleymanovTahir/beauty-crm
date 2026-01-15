@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { api } from '../../src/services/api';
+import { useSalonSettings } from '../hooks/useSalonSettings';
+import { DEFAULT_VALUES } from '../utils/constants';
 import logo from '../styles/img/logo.png';
 
 interface LoginPageProps {
@@ -22,11 +24,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
   const [isLogin, setIsLogin] = useState(initialView === 'login');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
-
-  useEffect(() => {
-    api.getSalonSettings().then(setSalonSettings).catch(console.error);
-  }, []);
+  const { settings: salonSettings } = useSalonSettings();
 
   // Form states
   const [formData, setFormData] = useState({
@@ -138,7 +136,8 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
         <div className="text-center mb-8">
           <img
             src={salonSettings?.logo_url || logo}
-            alt={salonSettings?.name || 'M Le Diamant'}
+            alt={salonSettings?.name || DEFAULT_VALUES.DEFAULT_SALON_NAME_ALT}
+            alt={salonSettings?.name || DEFAULT_VALUES.DEFAULT_SALON_NAME_ALT}
             className="h-16 w-auto mx-auto mb-4 object-contain"
           />
           <p className="text-muted-foreground">

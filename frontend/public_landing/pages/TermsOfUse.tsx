@@ -14,8 +14,8 @@ export function TermsOfUse() {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-                const res = await fetch(`${API_URL}/api/public/services?language=${i18n.language}`);
+                const API_URL = getApiUrl();
+                const res = await safeFetch(`${API_URL}/api/public/services?language=${i18n.language}`);
                 if (res.ok) {
                     const data = await res.json();
                     setServices(data.slice(0, 10)); // Limit to first 10

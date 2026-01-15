@@ -16,10 +16,28 @@ export default defineConfig({
         target: "http://localhost:8000",
         changeOrigin: true,
         ws: true, // Enable WebSocket for /api/* endpoints (like /api/ws/notifications)
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            // Ignore WebSocket connection errors
+            if (err.message && err.message.includes('socket')) {
+              return;
+            }
+            console.error('Proxy error:', err);
+          });
+        },
       },
       "/ws": {
         target: "ws://localhost:8000",
         ws: true,
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            // Ignore WebSocket connection errors
+            if (err.message && err.message.includes('socket')) {
+              return;
+            }
+            console.error('WebSocket proxy error:', err);
+          });
+        },
       },
       "/uploads": {
         target: "http://localhost:8000",

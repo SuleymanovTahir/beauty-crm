@@ -11,6 +11,10 @@ import { apiClient } from '../../../../src/api/client';
 import { toast } from 'sonner';
 import { RescheduleDialog } from './RescheduleDialog';
 import { useCurrency } from '../../../../src/hooks/useSalonSettings';
+import { formatGoogleCalendarUrl } from '../../../utils/urlUtils';
+import { TIME_INTERVALS } from '../../../utils/constants';
+import { formatDateForGoogle } from '../../../utils/dateUtils';
+import { useSalonSettings } from '../../../hooks/useSalonSettings';
 
 export function Appointments() {
   const { t } = useTranslation(['account', 'common']);
@@ -25,21 +29,15 @@ export function Appointments() {
   const addToGoogleCalendar = (appointment: any) => {
     const startDate = new Date(appointment.date.replace(' ', 'T'));
     if (isNaN(startDate.getTime())) return;
-    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // +1 hour
+    const endDate = new Date(startDate.getTime() + TIME_INTERVALS.ONE_HOUR_MS);
 
-    const formatDateForGoogle = (date: Date) => {
-      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-    };
-
-    const params = new URLSearchParams({
+    window.open(formatGoogleCalendarUrl({
       action: 'TEMPLATE',
       text: appointment.service_name,
       dates: `${formatDateForGoogle(startDate)}/${formatDateForGoogle(endDate)}`,
       details: `${t('appointments.master', 'Мастер')}: ${appointment.master_name}`,
-      location: localStorage.getItem('salon_name') || 'Beauty Salon',
-    });
-
-    window.open(`https://calendar.google.com/calendar/render?${params.toString()}`, '_blank');
+      location: salonName,
+    }), '_blank');
     toast.success(t('appointments.added_to_calendar', 'Добавлено в календарь'));
   };
 

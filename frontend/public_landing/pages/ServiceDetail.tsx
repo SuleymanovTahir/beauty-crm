@@ -6,6 +6,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "../components/ui/button";
 import { useCurrency } from '../../src/hooks/useSalonSettings';
+import { getApiUrl } from "../utils/apiUtils";
 
 export function ServiceDetail() {
     const { t, i18n } = useTranslation(['public_landing/services', 'public_landing', 'common']);
@@ -18,7 +19,7 @@ export function ServiceDetail() {
     const [services, setServices] = useState<any[]>([]);
 
     useEffect(() => {
-        const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+        const API_URL = getApiUrl();
 
         // Load masters
         fetch(`${API_URL}/api/public/employees?language=${language}`)

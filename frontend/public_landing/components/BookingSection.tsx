@@ -21,9 +21,11 @@ import {
   PopoverTrigger,
 } from "./ui/popover";
 import { PhoneInputWithSearch } from './ui/PhoneInputWithSearch';
+import { DEFAULT_VALUES, EXTERNAL_SERVICES } from '../utils/constants';
+import { safeFetch } from '../utils/errorHandler';
 
 export const BookingSection = () => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(['booking', 'public_landing', 'common']);
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [defaultCountry, setDefaultCountry] = useState<string>('ae');
@@ -31,11 +33,11 @@ export const BookingSection = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    service: '', // This will hold the ID initially
+    service: '', // Теперь хранит категорию
     date: '',
     time: ''
   });
-  const [availableServices, setAvailableServices] = useState<any[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Detect country from geolocation or use saved preference
@@ -44,19 +46,22 @@ export const BookingSection = () => {
     if (savedCountry) {
       setDefaultCountry(savedCountry.toLowerCase());
     } else {
-      // Try to detect country from IP
-      fetch('https://ipapi.co/json/')
-        .then(res => res.json())
-        .then(data => {
+      // Try to detect country from IP with error handling
+      safeExternalApiCall(
+        async () => {
+          const res = await safeFetch(EXTERNAL_SERVICES.IP_API);
+          return res.json();
+        },
+        'IP API',
+        { country_code: DEFAULT_VALUES.COUNTRY_CODE.toUpperCase() }
+      ).then(data => {
           if (data.country_code) {
             const countryCode = data.country_code.toLowerCase();
             setDefaultCountry(countryCode);
             localStorage.setItem('preferred_phone_country', countryCode);
+        } else {
+          setDefaultCountry(DEFAULT_VALUES.COUNTRY_CODE);
           }
-        })
-        .catch(() => {
-          // Default to UAE if detection fails
-          setDefaultCountry('ae');
         });
     }
   }, []);
@@ -77,13 +82,14 @@ export const BookingSection = () => {
     }
   }, [user]);
 
-  // Listen for service selection from URL hash
+  // Listen for category selection from URL hash
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      const match = hash.match(/booking\?service=(\d+)/);
+      const match = hash.match(/booking\?category=([^&]+)/);
       if (match && match[1]) {
-        setFormData(prev => ({ ...prev, service: match[1] }));
+        const category = decodeURIComponent(match[1]);
+        setFormData(prev => ({ ...prev, service: category }));
         // Clean the hash
         window.history.replaceState(null, '', '#booking');
       }
@@ -94,62 +100,64 @@ export const BookingSection = () => {
   }, []);
 
   useEffect(() => {
-    // Fetch services for dropdown
-    const fetchServices = async () => {
+    // Fetch services and extract unique categories
+    const fetchCategories = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-        const res = await fetch(`${API_URL}/api/public/services?language=${i18n.language}`);
+        const API_URL = getApiUrl();
+        const res = await safeFetch(`${API_URL}/api/public/services?language=${i18n.language}`);
         const data = await res.json();
 
+        let services: any[] = [];
         if (Array.isArray(data)) {
-          setAvailableServices(data);
+          services = data;
         } else if (data.categories) {
           // Flatten categories to get all services (fallback)
-          const services: any[] = [];
           data.categories.forEach((cat: any) => {
             if (cat.items) {
               services.push(...cat.items);
             }
           });
-          setAvailableServices(services);
         }
+
+        // Extract unique categories, filter out empty/null values
+        const categories = services
+          .map((s: any) => s.category)
+          .filter((cat: any) => cat && typeof cat === 'string' && cat.trim() !== '');
+
+        const uniqueCategories = Array.from(new Set(categories)).sort();
+        
+        setAvailableCategories(uniqueCategories);
       } catch (err) {
-        console.error('Error fetching services for booking:', err);
+        console.error('Error fetching categories for booking:', err);
       }
     };
-    fetchServices();
+    fetchCategories();
   }, [i18n.language]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.service) {
-      toast.error(t('formServicePlaceholder', { defaultValue: 'Выберите услугу' }));
+      toast.error(t('formServicePlaceholder', { defaultValue: 'Выберите категорию услуги' }));
       return;
     }
 
     try {
       setLoading(true);
 
-      // Find service name from ID
-      const selectedService = availableServices.find(s => s.id.toString() === formData.service.toString());
-      const serviceName = selectedService ? (selectedService.name || selectedService.title) : 'Unknown Service';
-
       // Generate client ID (instagram_id)
-      // Use pending user logic: if logged in, use their ID/username. 
-      // If guest, generate ephemeral ID based on phone.
       const instagramId = user?.username || `web_${formData.phone.replace(/\D/g, '')}`;
 
       const bookingData = {
         instagram_id: instagramId,
-        service: serviceName, // Backend expects Name
+        service: formData.service, // Отправляем категорию
         name: formData.name,
         phone: formData.phone,
-        service_id: parseInt(formData.service),
+        service_id: null, // Нет конкретного ID услуги, только категория
         date: formData.date,
         time: formData.time,
-        source: 'website', // Explicitly setting source
-        status: 'pending_confirmation' // Explicitly expecting pending status
+        source: 'website',
+        status: 'pending_confirmation'
       };
 
       await api.createPublicBooking(bookingData);
@@ -170,6 +178,25 @@ export const BookingSection = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to get category display name
+  const getCategoryDisplayName = (category: string) => {
+    if (!category) return category;
+    
+    // Try translation from booking.json services section
+    // Format: services.category_Brows, services.category_Facial, etc.
+    // Note: "Permanent Makeup" has a space, so we keep it as is
+    const translationKey = `services.category_${category}`;
+    
+    // Use t with booking namespace, same format as ServicesStep.tsx
+    const translated = t(translationKey, { 
+      ns: 'booking',
+      defaultValue: category 
+    });
+    
+    // Return translated value (if translation not found, defaultValue will be used)
+    return translated;
   };
 
   return (
@@ -211,7 +238,7 @@ export const BookingSection = () => {
           </div>
 
           <div>
-            <label className="form-label-custom">{t('formService', { defaultValue: 'Услуга' })}</label>
+            <label className="form-label-custom">{t('formService', { defaultValue: 'Категория услуги' })}</label>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -221,38 +248,38 @@ export const BookingSection = () => {
                   className="w-full justify-between h-10 sm:h-11 px-3 bg-muted/20 hover:bg-muted/30 text-left font-normal border-primary/20"
                 >
                   {formData.service
-                    ? availableServices.find((s) => s.id.toString() === formData.service.toString())?.[`name_${i18n.language}`] ||
-                    availableServices.find((s) => s.id.toString() === formData.service.toString())?.name_ru ||
-                    availableServices.find((s) => s.id.toString() === formData.service.toString())?.name ||
-                    t('formServicePlaceholder', { defaultValue: 'Выберите услугу' })
-                    : t('formServicePlaceholder', { defaultValue: 'Выберите услугу' })}
+                    ? getCategoryDisplayName(formData.service)
+                    : t('formServicePlaceholder', { defaultValue: 'Выберите категорию услуги' })}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-[300px] p-0" align="start">
                 <Command>
-                  <CommandInput placeholder={t('searchService', { defaultValue: 'Найти услугу...' })} />
+                  <CommandInput placeholder={t('searchCategory', { defaultValue: 'Найти категорию...' })} />
                   <CommandList>
-                    <CommandEmpty>{t('noServicesFound', { defaultValue: 'Услуги не найдены.' })}</CommandEmpty>
+                    <CommandEmpty>{t('noCategoriesFound', { defaultValue: 'Категории не найдены.' })}</CommandEmpty>
                     <CommandGroup>
-                      {availableServices.map((srv: any) => (
+                      {availableCategories.map((category: string) => {
+                        const displayName = getCategoryDisplayName(category);
+                        return (
                         <CommandItem
-                          key={srv.id}
-                          value={srv[`name_${i18n.language}`] || srv.name_ru || srv.name}
+                            key={category}
+                            value={displayName}
                           onSelect={() => {
-                            setFormData({ ...formData, service: srv.id.toString() });
+                              setFormData({ ...formData, service: category });
                             setOpen(false);
                           }}
                         >
                           <Check
                             className={cn(
                               "mr-2 h-4 w-4",
-                              formData.service === srv.id.toString() ? "opacity-100" : "opacity-0"
+                                formData.service === category ? "opacity-100" : "opacity-0"
                             )}
                           />
-                          {srv[`name_${i18n.language}`] || srv.name_ru || srv.name}
+                            {displayName}
                         </CommandItem>
-                      ))}
+                        );
+                      })}
                     </CommandGroup>
                   </CommandList>
                 </Command>
@@ -271,7 +298,7 @@ export const BookingSection = () => {
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                   className="h-10 sm:h-11 pl-10 form-input-custom"
-                  min={new Date().toISOString().split('T')[0]}
+                  min={getTodayDate()}
                 />
               </div>
             </div>

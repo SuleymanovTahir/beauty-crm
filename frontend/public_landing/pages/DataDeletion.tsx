@@ -2,9 +2,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
+import { useSalonSettings } from '../hooks/useSalonSettings';
 
 const DataDeletion: React.FC = () => {
     const { t } = useTranslation('public_landing');
+    const { email: salonEmail } = useSalonSettings();
 
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
@@ -36,7 +38,7 @@ const DataDeletion: React.FC = () => {
 
                     <div className="bg-muted/30 p-6 rounded-lg border border-border">
                         <h3 className="text-xl font-semibold mb-2">{t('dataDeletion.contact', 'Contact Us')}</h3>
-                        <p>Email: <a href="mailto:support@beauty-crm.com" className="text-primary hover:underline">support@beauty-crm.com</a></p>
+                        <p>Email: <a href={`mailto:${salonEmail}`} className="text-primary hover:underline">{salonEmail}</a></p>
                     </div>
                 </div>
             </main>

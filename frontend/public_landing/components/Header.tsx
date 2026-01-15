@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from '../../src/contexts/AuthContext';
 import { supportedLanguages } from "../../src/utils/i18nUtils";
+import { formatInstagramUrl, formatWhatsAppUrl } from "../utils/urlUtils";
+import { useSalonInfo } from "../hooks/useSalonInfo";
+import { DEFAULT_VALUES } from "../utils/constants";
 import logo from "../styles/img/logo.png";
 
 const navigation = [
@@ -32,7 +35,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
   const { user, logout } = useAuth();
   const language = i18n.language;
   const changeLanguage = (lang: string) => i18n.changeLanguage(lang);
-  const [salonInfo, setSalonInfo] = useState(propSalonInfo || {});
+  const { salonInfo, salonName, logoUrl } = useSalonInfo(propSalonInfo);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
@@ -59,19 +62,6 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
     };
   }, []);
 
-  useEffect(() => {
-    // Fetch salon info if not provided
-    if (propSalonInfo && Object.keys(propSalonInfo).length > 0) {
-      setSalonInfo(propSalonInfo);
-      return;
-    }
-
-    const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-    fetch(`${API_URL}/api/public/salon-info?language=${language}`)
-      .then(res => res.json())
-      .then(setSalonInfo)
-      .catch(err => console.error('Error loading salon info:', err));
-  }, [propSalonInfo, language]);
 
 
   useEffect(() => {
@@ -137,8 +127,8 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
             <div className="flex-shrink-0">
               <a href="/" className="block">
                 <img
-                  src={salonInfo?.logo_url || logo}
-                  alt={salonInfo?.name || "M Le Diamant"}
+                  src={logoUrl || logo}
+                  alt={salonName || DEFAULT_VALUES.DEFAULT_SALON_NAME_ALT}
                   className="h-10 sm:h-12 w-auto object-contain"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
@@ -217,7 +207,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
               <div className="flex items-center gap-3">
                 {salonInfo?.instagram && (
                   <a
-                    href={salonInfo.instagram?.startsWith('http') ? salonInfo.instagram : `https://${salonInfo.instagram?.replace(/^(https?:\/\/)?(www\.)?/, '')}`}
+                    href={formatInstagramUrl(salonInfo.instagram)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary hover:text-primary/80 transition-colors"
@@ -227,7 +217,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 )}
                 {(salonInfo?.whatsapp || salonInfo?.phone) && (
                   <a
-                    href={`https://wa.me/${(salonInfo?.whatsapp || salonInfo?.phone)?.replace(/\D/g, '')}`}
+                    href={formatWhatsAppUrl(salonInfo?.whatsapp || salonInfo?.phone || '')}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-whatsapp hover:text-whatsapp-hover transition-colors"
@@ -444,7 +434,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   <div className="flex items-center justify-center gap-6 mb-4">
                     {salonInfo?.instagram && (
                       <a
-                        href={salonInfo.instagram?.startsWith('http') ? salonInfo.instagram : `https://${salonInfo.instagram?.replace(/^(https?:\/\/)?(www\.)?/, '')}`}
+                        href={formatInstagramUrl(salonInfo.instagram)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
@@ -456,7 +446,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                     {/* WhatsApp */}
                     {(salonInfo?.whatsapp || salonInfo?.phone) && (
                       <a
-                        href={`https://wa.me/${(salonInfo?.whatsapp || salonInfo?.phone)?.replace(/\D/g, '')}`}
+                        href={formatWhatsAppUrl(salonInfo?.whatsapp || salonInfo?.phone || '')}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-whatsapp hover:text-whatsapp-hover transition-colors flex items-center gap-2"

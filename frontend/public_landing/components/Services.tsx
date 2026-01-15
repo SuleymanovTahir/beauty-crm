@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "../../src/hooks/useSalonSettings";
+import { LIMITS } from "../utils/constants";
 
 interface Service {
   id: number;
@@ -20,11 +21,11 @@ interface ServicesProps {
 }
 
 export function Services({ initialServices }: ServicesProps) {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const { t, i18n } = useTranslation(['public_landing', 'booking', 'common']);
   const { formatCurrency } = useCurrency();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [displayCount, setDisplayCount] = useState(12);
+  const [displayCount, setDisplayCount] = useState<number>(LIMITS.DISPLAY_SERVICES_COUNT);
   const [services, setServices] = useState<Service[]>(initialServices || []);
   const [categories, setCategories] = useState<{ id: string, label: string }[]>([]);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
@@ -39,8 +40,18 @@ export function Services({ initialServices }: ServicesProps) {
 
       uniqueCategories.forEach(cat => {
         if (cat) {
-          const catId = String(cat).toLowerCase();
-          let label = t(catId, { defaultValue: catId.charAt(0).toUpperCase() + catId.slice(1) });
+          // Try to get translation from booking.json services section
+          const translationKey = `services.category_${cat}`;
+          let label = t(translationKey, { 
+            ns: 'booking',
+            defaultValue: undefined 
+          });
+          
+          // If translation not found, use capitalized category name
+          if (!label || label === translationKey) {
+            label = cat.charAt(0).toUpperCase() + cat.slice(1);
+          }
+          
           if (!cats.find(c => c.id === cat)) {
             cats.push({ id: cat, label: label });
           }
@@ -164,7 +175,7 @@ export function Services({ initialServices }: ServicesProps) {
                       onClick={() => {
                         setActiveCategory(category.id);
                         setIsCategoryDropdownOpen(false);
-                        setDisplayCount(12);
+                        setDisplayCount(LIMITS.DISPLAY_SERVICES_COUNT);
                       }}
                       className={`w-full text-left px-4 py-3 text-sm transition-colors ${activeCategory === category.id
                         ? 'bg-primary text-primary-foreground'
@@ -210,8 +221,12 @@ export function Services({ initialServices }: ServicesProps) {
                     size="sm"
                     className="rounded-full bg-transparent border border-primary/30 text-primary group-hover:bg-primary group-hover:text-primary-foreground h-7 text-xs px-4 transition-all duration-300"
                     onClick={() => {
-                      window.location.hash = `booking?service=${service.id}`;
+                      // Передаем категорию вместо ID услуги
+                      if (service.category) {
+                        const category = encodeURIComponent(service.category);
+                        window.location.hash = `booking?category=${category}`;
                       document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
+                      }
                     }}
                   >
                     {t('book', { defaultValue: 'Записаться' })}
@@ -233,7 +248,7 @@ export function Services({ initialServices }: ServicesProps) {
           <div className="text-center mt-8 sm:mt-12">
             <Button
               variant="outline"
-              onClick={() => setDisplayCount((prev) => prev + 12)}
+              onClick={() => setDisplayCount((prev) => prev + LIMITS.DISPLAY_SERVICES_COUNT)}
               className="rounded-full px-8 border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground"
             >
               {t('showMore', { defaultValue: 'Показать еще' })} ({filteredServices.length - displayCount})
