@@ -4,6 +4,8 @@ import { Input } from './ui/input';
 import { Search, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getLocalizedName } from '../../../../src/utils/i18nUtils';
+import { getApiUrl } from '../../../utils/apiUtils';
+import { safeFetch } from '../../../utils/errorHandler';
 import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 
 interface ServicesStepProps {
@@ -26,11 +28,8 @@ export function ServicesStep({ selectedServices, onServicesChange, preloadedServ
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
     useEffect(() => {
-        console.log('[ServicesStep] Received preloadedServices:', preloadedServices?.length, preloadedServices);
-
         // Always use preloadedServices if provided, even if it's being populated
         if (preloadedServices) {
-            console.log('[ServicesStep] Setting services from preloaded:', preloadedServices.length);
             setServices(preloadedServices);
             // If preloaded is empty, it means parent is still loading, don't fetch ourselves
             if (preloadedServices.length > 0) {
@@ -41,15 +40,14 @@ export function ServicesStep({ selectedServices, onServicesChange, preloadedServ
         // Fallback: Fetch if not provided at all (preloadedServices is undefined/null)
         // Don't fetch if preloadedServices is an empty array (parent will populate it)
         if (preloadedServices === undefined || preloadedServices === null) {
-            console.log('[ServicesStep] No preloaded services, fetching from public API...');
             const fetchServices = async () => {
                 setLoading(true);
                 try {
                     // Use public services endpoint to avoid auth issues
-                    const res = await fetch('/api/public/services');
+                    const API_URL = getApiUrl();
+                    const res = await safeFetch(`${API_URL}/api/public/services`);
                     const data = await res.json();
                     const servicesArray = Array.isArray(data) ? data : (data.services || []);
-                    console.log('[ServicesStep] Fetched services:', servicesArray.length);
                     setServices(servicesArray);
                 } catch (error) {
                     console.error('[ServicesStep] Failed to fetch services:', error);

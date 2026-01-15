@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
+import { getApiUrl } from "../utils/apiUtils";
+import { safeFetch } from "../utils/errorHandler";
 
 interface GalleryImage {
   id: number;
@@ -16,9 +18,9 @@ export function Gallery() {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+        const API_URL = getApiUrl();
         // Fetch salon category images
-        const res = await fetch(`${API_URL}/api/public/gallery?category=salon&language=${i18n.language}`);
+        const res = await safeFetch(`${API_URL}/api/public/gallery?category=salon&language=${i18n.language}`);
         const data = await res.json();
 
         if (data.images && data.images.length > 0) {

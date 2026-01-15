@@ -122,7 +122,7 @@ export function ProfessionalStep({
 
         // Fallback: Individual fetching (OPTIMIZED PATH)
         const fetchNextSlots = async () => {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getTodayDate();
             try {
                 // Use batch endpoint instead of N requests
                 const res = await api.getPublicBatchAvailability(today);

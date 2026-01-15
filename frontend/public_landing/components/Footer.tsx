@@ -1,34 +1,17 @@
-import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useSalonInfo } from "../hooks/useSalonInfo";
+import { DEFAULT_VALUES } from "../utils/constants";
+import { getApiUrl } from "../utils/apiUtils";
+import { safeFetch } from "../utils/errorHandler";
 
 interface FooterProps {
   salonInfo?: any;
 }
 
 export function Footer({ salonInfo }: FooterProps) {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
-  const [salonName, setSalonName] = useState(salonInfo?.name || "M Le Diamant");
+  const { t } = useTranslation(['public_landing', 'common']);
+  const { salonName } = useSalonInfo(salonInfo);
   const currentYear = new Date().getFullYear();
-
-  useEffect(() => {
-    if (salonInfo?.name) {
-      setSalonName(salonInfo.name);
-      return;
-    }
-    const fetchSalonInfo = async () => {
-      try {
-        const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-        const res = await fetch(`${API_URL}/api/public/salon-info?language=${i18n.language}`);
-        const data = await res.json();
-        if (data.name) {
-          setSalonName(data.name);
-        }
-      } catch (error) {
-        console.error('Error loading salon info:', error);
-      }
-    };
-    fetchSalonInfo();
-  }, [salonInfo, i18n.language]);
 
 
   const handleSubscribe = async (e: React.FormEvent) => {
@@ -36,8 +19,8 @@ export function Footer({ salonInfo }: FooterProps) {
     const email = (e.target as HTMLFormElement).email.value;
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-      const res = await fetch(`${API_URL}/api/newsletter/subscribe`, {
+      const API_URL = getApiUrl();
+      const res = await safeFetch(`${API_URL}/api/newsletter/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -81,7 +64,7 @@ export function Footer({ salonInfo }: FooterProps) {
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
             <p className="text-xs sm:text-sm text-primary-foreground/70">
-              © {currentYear} {salonName}. {t('allRightsReserved', { defaultValue: 'Все права защищены.' })}
+              © {currentYear} {salonName || DEFAULT_VALUES.DEFAULT_SALON_NAME_ALT}. {t('allRightsReserved', { defaultValue: 'Все права защищены.' })}
             </p>
             <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 text-xs sm:text-sm text-primary-foreground/70 justify-center">
               <a href="/privacy-policy" className="hover:text-primary-foreground transition-colors">

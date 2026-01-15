@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Award } from 'lucide-react';
 import { useTranslation } from "react-i18next";
+import { getApiUrl } from "../utils/apiUtils";
+import { safeFetch } from "../utils/errorHandler";
 
 interface TeamMember {
   id: number;
@@ -38,8 +40,8 @@ export function TeamSection() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-        const res = await fetch(`${API_URL}/api/public/employees?language=${language}`);
+        const API_URL = getApiUrl();
+        const res = await safeFetch(`${API_URL}/api/public/employees?language=${language}`);
         const data = await res.json();
 
         if (Array.isArray(data)) {

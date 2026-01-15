@@ -19,6 +19,7 @@ import { apiClient } from '../../../src/api/client';
 import LanguageSwitcher from '../../../src/components/LanguageSwitcher';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { useSalonSettings } from '../../hooks/useSalonSettings';
 
 type Tab = 'dashboard' | 'appointments' | 'gallery' | 'loyalty' | 'achievements' | 'masters' | 'beauty' | 'notifications' | 'settings';
 
@@ -34,7 +35,7 @@ export function AccountPage() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
 
-  const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
+  const { salonName, logoUrl } = useSalonSettings();
   const [features, setFeatures] = useState<Record<string, boolean>>({
     loyalty_program: true, // default to true until loaded to avoid flickering
     referral_program: true,
@@ -66,8 +67,6 @@ export function AccountPage() {
   useEffect(() => {
     loadUserData();
     loadNotifications();
-
-    loadSalonSettings();
     loadFeatures();
 
     // Set up polling for notifications every 30 seconds
@@ -75,17 +74,14 @@ export function AccountPage() {
 
     // Window event listeners for reactive updates
     const handleProfileUpdated = () => {
-      console.log('Profile updated event received');
       loadUserData();
     };
 
     const handleMessengersUpdated = () => {
-      console.log('Messengers updated event received');
       loadUserData();
     };
 
     const handleNotificationReceived = () => {
-      console.log('New notification received');
       loadNotifications();
     };
 
@@ -184,19 +180,7 @@ export function AccountPage() {
     }
   };
 
-  const loadSalonSettings = async () => {
-    try {
-      const settings = await apiClient.getSalonSettings();
-      setSalonSettings(settings);
-      if (settings?.name) {
-        localStorage.setItem('salon_name', settings.name);
-      }
-      if (settings?.phone) {
-        localStorage.setItem('salon_phone', settings.phone);
-      }
-    } catch (error) {
-    }
-  };
+  // Salon settings теперь загружаются через хук useSalonSettings
 
   const loadFeatures = async () => {
     try {
@@ -334,7 +318,7 @@ export function AccountPage() {
           </button>
         </div>
         <div className="text-xs text-center text-muted-foreground">
-          {salonSettings?.name || 'Beauty Salon'} App
+          {salonName}
           <br />
           v1.0.0
         </div>
@@ -421,12 +405,12 @@ export function AccountPage() {
           </Sheet>
 
           <div className="flex items-center gap-2">
-            {salonSettings?.logo_url ? (
-              <img src={salonSettings.logo_url} alt={salonSettings.name} className="w-6 h-6 object-contain" />
+            {logoUrl ? (
+              <img src={logoUrl} alt={salonName} className="w-6 h-6 object-contain" />
             ) : (
               <Sparkles className="w-6 h-6 text-pink-500" />
             )}
-            <span className="font-bold">{salonSettings?.name || 'Beauty Salon'}</span>
+            <span className="font-bold">{salonName}</span>
           </div>
 
           <Avatar className="w-8 h-8">
@@ -441,12 +425,12 @@ export function AccountPage() {
         <aside className="hidden lg:flex lg:flex-col w-[280px] bg-white border-r flex-shrink-0">
           <div className="p-6 border-b flex-shrink-0">
             <div className="flex items-center gap-2">
-              {salonSettings?.logo_url ? (
-                <img src={salonSettings.logo_url} alt={salonSettings.name} className="w-8 h-8 object-contain" />
+              {logoUrl ? (
+                <img src={logoUrl} alt={salonName} className="w-8 h-8 object-contain" />
               ) : (
                 <Sparkles className="w-8 h-8 text-pink-500" />
               )}
-              <span className="text-sm font-semibold truncate">{salonSettings?.name || 'Beauty Salon'}</span>
+              <span className="text-sm font-semibold truncate">{salonName}</span>
             </div>
           </div>
           <div className="flex-1 flex flex-col min-h-0">

@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../src/contexts/AuthContext';
 import { format, parseISO } from 'date-fns';
 import { AnimatePresence, motion } from 'motion/react';
-import { X, Scissors, User, Edit } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Toaster } from '../../components/ui/sonner';
 import { api } from '../../../src/services/api';
 import PublicLanguageSwitcher from '../../../src/components/PublicLanguageSwitcher';
@@ -22,8 +22,11 @@ import { RescheduleDialog } from './v2_components/RescheduleDialog';
 
 import './UserBookingWizard.css';
 
+import { TIMEOUTS, LIMITS } from '../../utils/constants';
+import { getTodayDate } from '../../utils/dateUtils';
+
 const STORAGE_KEY = 'booking-state-v2';
-const STATE_EXPIRY_TIME = 60 * 60 * 1000; // 1 hour
+const STATE_EXPIRY_TIME = TIMEOUTS.STATE_EXPIRY; // 1 hour
 
 // --- Types ---
 export interface Service {
@@ -46,6 +49,7 @@ export interface Master {
   position?: string;
   rating?: number;
   reviews?: number;
+  service_ids?: number[]; // IDs услуг, которые предоставляет мастер
 }
 
 export interface BookingState {
@@ -63,7 +67,6 @@ interface Props {
   onSuccess?: () => void;
 }
 
-import { Button } from './booking/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
 export function UserBookingWizard({ onClose, onSuccess }: Props) {
@@ -72,7 +75,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
   const step = searchParams.get('booking') || 'menu';
   const { t, i18n } = useTranslation(['booking', 'common']);
-  const { formatCurrency, currency } = useCurrency();
+  const { formatCurrency } = useCurrency();
   const { user } = useAuth();
 
   // Helper for Russian pluralization
@@ -142,10 +145,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
   const handleGlobalBack = () => {
     if (step === 'menu') {
-      if (window.history.length > 2) {
+      if (window.history.length > LIMITS.HISTORY_LENGTH_THRESHOLD) {
         navigate(-1);
       } else {
-        window.location.href = 'http://localhost:5173';
+        // Use current origin instead of hardcoded localhost
+        window.location.href = window.location.origin;
       }
     } else {
       setStep('menu');
@@ -168,7 +172,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     const initCorrect = async () => {
       try {
         setLoading(true);
-        const today = new Date().toISOString().split('T')[0];
+        const today = getTodayDate();
 
         // PARALLEL DATA FETCHING: Settings, Active Services, All Masters
         // Removed availability fetching from critical path to speed up initial load
@@ -181,12 +185,10 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         setSalonSettings(settingsRes);
 
         const servicesData = Array.isArray(servicesRes) ? servicesRes : (servicesRes.services || []);
-        console.log('[UserBookingWizard] Loaded services:', servicesData.length);
         setInitialServices(servicesData);
 
         // API возвращает массив напрямую, не объект с полем employees
         const employeesData = Array.isArray(employeesRes) ? employeesRes : [];
-        console.log('[UserBookingWizard] Loaded employees from public API:', employeesData.length);
         setInitialMasters(employeesData);
 
         // Fetch availability in background to not block UI
@@ -223,9 +225,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           // Prefill master/professional
           const masterId = state?.prefillMaster || (queryPrefillMaster ? parseInt(queryPrefillMaster) : null);
           if (masterId) {
-            console.log('[UserBookingWizard] Searching for master with ID:', masterId);
             const master = employeesData.find((m: any) => m.id === masterId);
-            console.log('[UserBookingWizard] Found master:', master);
             if (master) {
               newState.professional = master;
               newState.professionalSelected = true;
@@ -249,7 +249,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
           // Update booking state with prefilled data
           if (Object.keys(newState).length > 0) {
-            console.log('[UserBookingWizard] Prefilling booking state:', newState);
             setBookingState(prev => ({ ...prev, ...newState }));
 
             // If both service and master are prefilled, skip to datetime
@@ -282,7 +281,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     if (loading || initialMasters.length === 0) return;
 
     const state = location.state as any;
-    console.log('[UserBookingWizard] Location state changed:', state);
 
     if (state?.prefillMaster) {
       const prefillMasterId = state.prefillMaster;
@@ -290,9 +288,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
       // Only update if master is different or not set
       if (currentMasterId !== prefillMasterId) {
-        console.log('[UserBookingWizard] Attempting to prefill master:', prefillMasterId);
         const master = initialMasters.find((m: any) => m.id === prefillMasterId);
-        console.log('[UserBookingWizard] Found master from initialMasters:', master);
 
         if (master) {
           setBookingState(prev => ({

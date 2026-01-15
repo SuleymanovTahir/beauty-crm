@@ -1,41 +1,16 @@
 import { MapPin, Phone, Clock, Mail } from "lucide-react";
 import { Button } from "./ui/button";
-import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { formatGoogleMapsUrl } from "../utils/urlUtils";
+import { useSalonInfo } from "../hooks/useSalonInfo";
 
 interface MapSectionProps {
   salonInfo?: any;
 }
 
 export function MapSection({ salonInfo: initialSalonInfo }: MapSectionProps) {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
-  const [salonInfo, setSalonInfo] = useState<any>(initialSalonInfo || null);
-
-  useEffect(() => {
-    // Only fetch if we don't have initial data
-    if (initialSalonInfo) {
-      setSalonInfo(initialSalonInfo);
-      return;
-    }
-
-    const fetchSalonInfo = async () => {
-      try {
-        const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-        const res = await fetch(`${API_URL}/api/public/salon-info?language=${i18n.language}`);
-        const data = await res.json();
-        setSalonInfo(data);
-      } catch (error) {
-        console.error('Error loading salon info:', error);
-      }
-    };
-    fetchSalonInfo();
-  }, [i18n.language, initialSalonInfo]);
-
-  const phone = salonInfo?.phone || "";
-  const email = salonInfo?.email || "";
-  const address = salonInfo?.address || "";
-  // Working hours handling
-  const workingHours = salonInfo?.hours || "";
+  const { t } = useTranslation(['public_landing', 'common']);
+  const { salonInfo, phone, email, address, workingHours, mapUrl } = useSalonInfo(initialSalonInfo);
 
   return (
     <section id="map-section" className="py-12 sm:py-16 bg-background">
@@ -105,7 +80,7 @@ export function MapSection({ salonInfo: initialSalonInfo }: MapSectionProps) {
 
             <div className="flex gap-2 sm:gap-3 pt-2">
               <Button
-                onClick={() => window.open(salonInfo?.map_url || 'https://maps.google.com', '_blank')}
+                onClick={() => window.open(mapUrl || formatGoogleMapsUrl(address), '_blank')}
                 variant="outline"
                 className="flex-1 border-primary text-primary hover:bg-primary hover:text-primary-foreground h-9 sm:h-10 text-xs sm:text-sm"
               >

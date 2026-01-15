@@ -1,5 +1,7 @@
 // /frontend/public_landing/components/PromoTimer.tsx
 import { useState, useEffect } from "react";
+import { getApiUrl } from "../utils/apiUtils";
+import { safeFetch } from "../utils/errorHandler";
 import { useTranslation } from "react-i18next";
 
 export function PromoTimer() {
@@ -16,8 +18,8 @@ export function PromoTimer() {
         // Fetch promo end date from API
         const fetchSettings = async () => {
             try {
-                const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-                const res = await fetch(`${API_URL}/api/salon-settings`);
+                const API_URL = getApiUrl();
+                const res = await safeFetch(`${API_URL}/api/salon-settings`);
                 if (res.ok) {
                     const settings = await res.json();
                     if (settings.promo_end_date) {

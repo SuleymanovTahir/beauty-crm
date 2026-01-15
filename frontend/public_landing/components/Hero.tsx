@@ -3,6 +3,8 @@ import { Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PromoTimer } from "./PromoTimer";
+import { getApiUrl } from "../utils/apiUtils";
+import { safeFetch } from "../utils/errorHandler";
 
 interface HeroProps {
   initialBanner?: any;
@@ -18,8 +20,8 @@ export function Hero({ initialBanner }: HeroProps) {
       setHeroBanner(initialBanner);
       return;
     }
-    const api_url = import.meta.env.VITE_API_URL || window.location.origin;
-    fetch(`${api_url}/api/public/banners`)
+    const api_url = getApiUrl();
+    safeFetch(`${api_url}/api/public/banners`)
       .then(res => res.json())
       .then(data => {
         if (data.banners && data.banners.length > 0) {
@@ -35,7 +37,7 @@ export function Hero({ initialBanner }: HeroProps) {
     return banner[`${field}_${language}`] || banner[`${field}_en`] || banner[`${field}_ru`] || '';
   };
 
-  const API_URL_VAR = import.meta.env.VITE_API_URL || window.location.origin;
+  const API_URL_VAR = getApiUrl();
   const rawImageUrl = heroBanner?.image_url;
   const backgroundImage = rawImageUrl && !rawImageUrl.startsWith('http')
     ? `${API_URL_VAR}${rawImageUrl}`

@@ -4,10 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../../../src/api/client';
 import { toast } from 'sonner';
 import { useCurrency } from '../../../../src/hooks/useSalonSettings';
+import { formatWhatsAppUrlWithText } from '../../../utils/urlUtils';
+import { useSalonSettings } from '../../../hooks/useSalonSettings';
 
 export function Loyalty() {
   const { t } = useTranslation(['account', 'common']);
   const { currency: globalCurrency, formatCurrency } = useCurrency();
+  const { phone: salonPhone, salonName } = useSalonSettings();
   const [loading, setLoading] = useState(true);
   const [loyaltyData, setLoyaltyData] = useState<any>(null);
 
@@ -82,7 +85,7 @@ export function Loyalty() {
 
   const shareWhatsApp = () => {
     const text = `${t('loyalty.share_text', 'Join the beauty salon! Use my promo code')} ${loyaltyInfo.referral_code} ${t('loyalty.share_bonus', 'and get bonuses!')}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(formatWhatsAppUrlWithText(salonPhone, text), '_blank');
   };
 
   const shareInstagram = async () => {
@@ -91,7 +94,7 @@ export function Loyalty() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Beauty Salon',
+          title: salonName,
           text: referralText,
         });
         toast.success(t('loyalty.shared', 'Successfully shared'));

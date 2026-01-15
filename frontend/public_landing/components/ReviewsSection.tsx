@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from "react-i18next";
+import { getApiUrl } from "../utils/apiUtils";
+import { safeFetch } from "../utils/errorHandler";
 
 interface Review {
   id: number;
@@ -20,8 +22,8 @@ export function ReviewsSection() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-        const res = await fetch(`${API_URL}/api/public/reviews?language=${i18n.language}`);
+        const API_URL = getApiUrl();
+        const res = await safeFetch(`${API_URL}/api/public/reviews?language=${i18n.language}`);
         const data = await res.json();
 
         if (data.reviews && data.reviews.length > 0) {

@@ -10,11 +10,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../../../src/api/client';
 import { toast } from 'sonner';
+import { formatGoogleCalendarUrl, formatWhatsAppUrl } from '../../../utils/urlUtils';
+import { TIME_INTERVALS, EXTERNAL_SERVICES, DEFAULT_VALUES } from '../../../utils/constants';
+import { formatDateForGoogle } from '../../../utils/dateUtils';
+import { useSalonSettings } from '../../../hooks/useSalonSettings';
 
 export function Dashboard() {
   const { t } = useTranslation(['account', 'common']);
   const navigate = useNavigate();
   const { currency: globalCurrency, formatCurrency } = useCurrency();
+  const { salonName, phone: salonPhone } = useSalonSettings();
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [showRepeatModal, setShowRepeatModal] = useState(false);
@@ -58,21 +63,15 @@ export function Dashboard() {
   const addToGoogleCalendar = (appointment: any) => {
     const startDate = new Date(appointment.date.replace(' ', 'T'));
     if (isNaN(startDate.getTime())) return;
-    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // +1 hour
+    const endDate = new Date(startDate.getTime() + TIME_INTERVALS.ONE_HOUR_MS);
 
-    const formatDateForGoogle = (date: Date) => {
-      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-    };
-
-    const params = new URLSearchParams({
+    window.open(formatGoogleCalendarUrl({
       action: 'TEMPLATE',
       text: appointment.service,
       dates: `${formatDateForGoogle(startDate)}/${formatDateForGoogle(endDate)}`,
       details: `${t('dashboard.master', 'Мастер')}: ${appointment.master}`,
-      location: localStorage.getItem('salon_name') || 'Beauty Salon',
-    });
-
-    window.open(`https://calendar.google.com/calendar/render?${params.toString()}`, '_blank');
+      location: salonName,
+    }), '_blank');
     toast.success(t('dashboard.added_to_calendar', 'Добавлено в календарь'));
   };
 
@@ -273,8 +272,8 @@ export function Dashboard() {
           variant="outline"
           className="h-20 flex-col gap-2"
           onClick={() => {
-            const phone = localStorage.getItem('salon_phone') || '+971501234567';
-            window.open(`https://wa.me/${phone}`, '_blank');
+            const phone = salonPhone;
+            window.open(formatWhatsAppUrl(phone), '_blank');
           }}
         >
           <MessageCircle className="w-5 h-5" />
@@ -300,7 +299,7 @@ export function Dashboard() {
               variant="outline"
               onClick={() => {
                 const googleReviewUrl = import.meta.env.VITE_GOOGLE_REVIEWS_URL ||
-                  'https://www.google.com/search?q=' + encodeURIComponent((localStorage.getItem('salon_name') || 'Beauty Salon') + ' reviews');
+                  `${EXTERNAL_SERVICES.GOOGLE_SEARCH}?q=` + encodeURIComponent(salonName + ' reviews');
                 window.open(googleReviewUrl, '_blank');
               }}
             >
