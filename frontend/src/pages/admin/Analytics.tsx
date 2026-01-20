@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 import { useCurrency } from '../../hooks/useSalonSettings';
+import './Analytics.css';
 
 interface AnalyticsData {
   bookings_by_day: [string, number][];
@@ -34,7 +35,14 @@ interface Stats {
   conversion_rate: number;
 }
 
-const COLORS = ['#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
+const COLORS = [
+  'var(--chart-pink)',
+  'var(--chart-purple)',
+  'var(--chart-cyan)',
+  'var(--chart-green)',
+  'var(--chart-amber)',
+  'var(--chart-red)'
+];
 
 export default function Analytics() {
   const [period, setPeriod] = useState<string>('30');
@@ -159,14 +167,14 @@ export default function Analytics() {
 
   if (error) {
     return (
-      <div className="p-4 md:p-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div className="analytics-error-container p-4 md:p-8">
+        <div className="analytics-error-box bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 md:w-6 md:h-6 text-red-600 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="analytics-error-icon w-5 h-5 md:w-6 md:h-6 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm md:text-base text-red-800 font-medium">{t('analytics:errors.loading_error')}</p>
-              <p className="text-xs md:text-sm text-red-700 mt-1">{error}</p>
-              <Button onClick={loadData} className="mt-4 bg-red-600 hover:bg-red-700 text-sm">
+              <p className="analytics-error-title text-sm md:text-base text-red-800 font-medium">{t('analytics:errors.loading_error')}</p>
+              <p className="analytics-error-message text-xs md:text-sm text-red-700 mt-1">{error}</p>
+              <Button onClick={loadData} className="analytics-error-button mt-4 bg-red-600 hover:bg-red-700 text-sm">
                 {t('analytics:try_again')}
               </Button>
             </div>
@@ -215,17 +223,17 @@ export default function Analytics() {
   return (
     <div className="analytics-container p-4 md:p-8 pb-20 md:pb-8">
       {/* Header */}
-      <div className="mb-6 md:mb-8">
-        <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-2 md:gap-3">
-          <BarChart3 className="w-6 h-6 md:w-8 md:h-8 text-pink-600" />
+      <div className="analytics-header mb-6 md:mb-8">
+        <h1 className="analytics-title text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-2 md:gap-3">
+          <BarChart3 className="analytics-title-icon w-6 h-6 md:w-8 md:h-8" />
           <span>{t('analytics:title')}</span>
         </h1>
-        <p className="text-sm md:text-base text-gray-600">{t('analytics:detailed_analysis')}</p>
+        <p className="analytics-subtitle text-sm md:text-base text-gray-600">{t('analytics:detailed_analysis')}</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 mb-4 md:mb-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 sm:flex-wrap sm:items-end">
+      <div className="analytics-filter-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 mb-4 md:mb-6">
+        <div className="analytics-filter-row flex flex-col gap-3 sm:flex-row sm:gap-4 sm:flex-wrap sm:items-end">
           <PeriodFilter
             period={period}
             dateFrom={dateFrom}
@@ -237,7 +245,7 @@ export default function Analytics() {
           />
 
           {period === 'custom' && (
-            <Button onClick={handleApplyCustomDates} className="bg-pink-600 hover:bg-pink-700 w-full sm:w-auto text-sm md:text-base">
+            <Button onClick={handleApplyCustomDates} className="analytics-apply-button bg-pink-600 hover:bg-pink-700 w-full sm:w-auto text-sm md:text-base">
               {t('analytics:apply')}
             </Button>
           )}
@@ -245,7 +253,7 @@ export default function Analytics() {
           <Button
             variant="outline"
             onClick={loadData}
-            className="md:ml-auto"
+            className="analytics-refresh-button md:ml-auto"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             {t('analytics:refresh')}
@@ -253,7 +261,7 @@ export default function Analytics() {
           <Button
             onClick={handleExportCSV}
             disabled={exporting}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 gap-2"
+            className="analytics-export-button bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 gap-2"
           >
             <Download className="w-4 h-4" />
             {exporting ? t('analytics:exporting') : t('analytics:export')}
@@ -265,41 +273,41 @@ export default function Analytics() {
       {stats && (
         <div className="analytics-stats-grid grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
           <div className="analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
-            <h3 className="text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
+            <h3 className="analytics-stat-value text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
               {stats.conversion_rate.toFixed(1)}%
             </h3>
-            <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:conversion')}</p>
-            <div className="text-xs md:text-sm text-green-600">
+            <p className="analytics-stat-label text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:conversion')}</p>
+            <div className="analytics-stat-note text-xs md:text-sm text-green-600">
               {isMobile ? t('analytics:conversion') : t('analytics:from_visitors')}
             </div>
           </div>
 
           <div className="analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
-            <h3 className="text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
+            <h3 className="analytics-stat-value text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
               {analytics?.avg_response_time.toFixed(0) || 0} {t('analytics:min')}
             </h3>
-            <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:response_time')}</p>
-            <div className="text-xs md:text-sm text-blue-600">
+            <p className="analytics-stat-label text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:response_time')}</p>
+            <div className="analytics-stat-note text-xs md:text-sm text-blue-600">
               {t('analytics:avg_time')}
             </div>
           </div>
 
           <div className="analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
-            <h3 className="text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
+            <h3 className="analytics-stat-value text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
               {isMobile ? `${(stats.total_revenue / 1000).toFixed(1)}k ${currency}` : formatCurrency(stats.total_revenue)}
             </h3>
-            <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:revenue')}</p>
-            <div className="text-xs md:text-sm text-green-600">
+            <p className="analytics-stat-label text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:revenue')}</p>
+            <div className="analytics-stat-note text-xs md:text-sm text-green-600">
               {t('analytics:for_period')}
             </div>
           </div>
 
           <div className="analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
-            <h3 className="text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
+            <h3 className="analytics-stat-value text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
               {stats.total_revenue > 0 ? formatCurrency(stats.total_revenue / stats.total_bookings) : formatCurrency(0)}
             </h3>
-            <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:avg_check')}</p>
-            <div className="text-xs md:text-sm text-green-600">
+            <p className="analytics-stat-label text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:avg_check')}</p>
+            <div className="analytics-stat-note text-xs md:text-sm text-green-600">
               {t('analytics:per_booking')}
             </div>
           </div>
@@ -310,11 +318,11 @@ export default function Analytics() {
       <div className="analytics-chart-grid grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
         {/* Bookings Trend */}
         {bookingsTrendData.length > 0 && (
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <h2 className="text-xl text-gray-900 mb-6">{t('analytics:bookings_trend')}</h2>
+          <div className="analytics-chart-card bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <h2 className="analytics-chart-title text-xl text-gray-900 mb-6">{t('analytics:bookings_trend')}</h2>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={bookingsTrendData}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
@@ -322,9 +330,9 @@ export default function Analytics() {
                 <Line
                   type="monotone"
                   dataKey={t('analytics:bookings')}
-                  stroke="#ec4899"
+                  stroke="var(--chart-pink)"
                   strokeWidth={2}
-                  dot={{ fill: '#ec4899' }}
+                  dot={{ fill: 'var(--chart-pink)' }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -333,8 +341,8 @@ export default function Analytics() {
 
         {/* Services Distribution */}
         {servicesData.length > 0 && (
-          <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
-            <h2 className="text-base md:text-xl text-gray-900 mb-4 md:mb-6">{t('analytics:services_distribution')}</h2>
+          <div className="analytics-chart-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
+            <h2 className="analytics-chart-title text-base md:text-xl text-gray-900 mb-4 md:mb-6">{t('analytics:services_distribution')}</h2>
             <ResponsiveContainer width="100%" height={isMobile ? 350 : 300}>
               <PieChart>
                 <Pie
@@ -391,11 +399,11 @@ export default function Analytics() {
 
         {/* Status Chart */}
         {statusData.length > 0 && (
-          <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
-            <h2 className="text-base md:text-xl text-gray-900 mb-4 md:mb-6">{t('analytics:booking_statuses')}</h2>
+          <div className="analytics-chart-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
+            <h2 className="analytics-chart-title text-base md:text-xl text-gray-900 mb-4 md:mb-6">{t('analytics:booking_statuses')}</h2>
             <ResponsiveContainer width="100%" height={isMobile ? 250 : 300}>
               <BarChart data={statusData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                 <XAxis
                   dataKey="name"
                   tick={{ fontSize: isMobile ? 10 : 12 }}
@@ -407,7 +415,7 @@ export default function Analytics() {
                 <YAxis tick={{ fontSize: isMobile ? 10 : 12 }} />
                 <Tooltip contentStyle={{ fontSize: isMobile ? 12 : 14 }} />
                 {!isMobile && <Legend />}
-                <Bar dataKey={t('analytics:bookings')} fill="#8b5cf6" radius={[8, 8, 0, 0]} />
+                <Bar dataKey={t('analytics:bookings')} fill="var(--chart-purple)" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -415,15 +423,15 @@ export default function Analytics() {
 
         {/* Peak Hours Chart */}
         {analytics?.peak_hours && analytics.peak_hours.length > 0 && (
-          <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2">
-            <h2 className="text-base md:text-xl text-gray-900 mb-4 md:mb-6">{t('analytics:peak_hours')}</h2>
+          <div className="analytics-chart-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2">
+            <h2 className="analytics-chart-title text-base md:text-xl text-gray-900 mb-4 md:mb-6">{t('analytics:peak_hours')}</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={analytics.peak_hours}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                 <XAxis dataKey="hour" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="count" name={t('analytics:bookings')} fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" name={t('analytics:bookings')} fill="var(--chart-amber)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -432,9 +440,9 @@ export default function Analytics() {
 
       {/* Top Services Table */}
       {topServices.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="p-4 md:p-6 border-b border-gray-200">
-            <h2 className="text-base md:text-xl text-gray-900">{t('analytics:top_services')}</h2>
+        <div className="analytics-table-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="analytics-table-header p-4 md:p-6 border-b border-gray-200">
+            <h2 className="analytics-table-title text-base md:text-xl text-gray-900">{t('analytics:top_services')}</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -499,19 +507,19 @@ export default function Analytics() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
-            <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-2">
-              <Filter className="w-6 h-6 text-pink-600" />
+          <div className="analytics-funnel-card bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
+            <h2 className="analytics-funnel-title text-2xl text-gray-900 mb-6 flex items-center gap-2">
+              <Filter className="analytics-funnel-icon w-6 h-6 text-pink-600" />
               {t('analytics:funnel_chart')}
             </h2>
 
             <div className="space-y-4">
               {[
-                { name: t('analytics:funnel.stages.visitors'), value: funnel.visitors, color: 'bg-blue-500', desc: t('analytics:funnel.desc.visitors') },
-                { name: t('analytics:funnel.stages.engaged'), value: funnel.engaged, color: 'bg-cyan-500', desc: t('analytics:funnel.desc.engaged') },
-                { name: t('analytics:funnel.stages.started_booking'), value: funnel.started_booking, color: 'bg-green-500', desc: t('analytics:funnel.desc.started_booking') },
-                { name: t('analytics:funnel.stages.booked'), value: funnel.booked, color: 'bg-amber-500', desc: t('analytics:funnel.desc.booked') },
-                { name: t('analytics:funnel.stages.completed'), value: funnel.completed, color: 'bg-pink-500', desc: t('analytics:funnel.desc.completed') }
+                { name: t('analytics:funnel.stages.visitors'), value: funnel.visitors, color: 'funnel-stage-visitors', desc: t('analytics:funnel.desc.visitors') },
+                { name: t('analytics:funnel.stages.engaged'), value: funnel.engaged, color: 'funnel-stage-engaged', desc: t('analytics:funnel.desc.engaged') },
+                { name: t('analytics:funnel.stages.started_booking'), value: funnel.started_booking, color: 'funnel-stage-started', desc: t('analytics:funnel.desc.started_booking') },
+                { name: t('analytics:funnel.stages.booked'), value: funnel.booked, color: 'funnel-stage-booked', desc: t('analytics:funnel.desc.booked') },
+                { name: t('analytics:funnel.stages.completed'), value: funnel.completed, color: 'funnel-stage-completed', desc: t('analytics:funnel.desc.completed') }
               ].map((stage, index, arr) => {
                 const maxValue = Math.max(...arr.map(s => s.value));
                 const percentage = (stage.value / (maxValue || 1)) * 100;
@@ -525,7 +533,7 @@ export default function Analytics() {
                       {/* Funnel Bar */}
                       <div className="flex-1">
                         <div
-                          className={`${stage.color} text-white p-6 rounded-lg transition-all hover:shadow-lg cursor-pointer`}
+                          className={`analytics-funnel-bar ${stage.color} text-white p-6 rounded-lg transition-all hover:shadow-lg cursor-pointer`}
                           style={{
                             width: `${Math.max(percentage, 5)}%`,
                             minWidth: '200px'
@@ -605,10 +613,10 @@ export default function Analytics() {
                       <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900">
                         <div className="flex items-center gap-2">
                           <div
-                            className="w-2 h-2 rounded-full"
+                            className="analytics-drop-off-dot w-2 h-2 rounded-full"
                             style={{
-                              backgroundColor: point.percentage > 50 ? '#ef4444' :
-                                point.percentage > 30 ? '#f59e0b' : '#10b981'
+                              backgroundColor: point.percentage > 50 ? 'var(--chart-red)' :
+                                point.percentage > 30 ? 'var(--chart-amber)' : 'var(--chart-green)'
                             }}
                           />
                           {t(`analytics:stages.${point.stage}`)}
@@ -624,8 +632,8 @@ export default function Analytics() {
                               className="h-2 rounded-full transition-all"
                               style={{
                                 width: `${point.percentage}%`,
-                                backgroundColor: point.percentage > 50 ? '#ef4444' :
-                                  point.percentage > 30 ? '#f59e0b' : '#10b981'
+                                backgroundColor: point.percentage > 50 ? 'var(--chart-red)' :
+                                  point.percentage > 30 ? 'var(--chart-amber)' : 'var(--chart-green)'
                               }}
                             />
                           </div>
