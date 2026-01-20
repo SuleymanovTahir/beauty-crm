@@ -1,7 +1,7 @@
 {
   "analyze_further": "Analyze further",
   "apply": "Apply",
-  "avg_check": "Average check",
+  "avg_check": "Average Check",
   "avg_time": "Average time",
   "booked": "Signed up",
   "booking_statuses": "Booking statuses",
@@ -36,19 +36,18 @@
     },
     "desc": {
       "booked": "Completed registration",
-      "completed": "Service provided",
+      "completed": "Service Rendered",
       "engaged": "Showed interest",
       "started_booking": "Opened the registration form",
       "visitors": "Website/social media visitors"
     },
-    "losses": "Losses: {{count}}",
     "losses_few": "Losses: {{count}}",
     "losses_many": "Losses: {{count}}",
     "losses_one": "Loss: {{count}}",
     "losses_other": "Losses: {{count}}",
     "stages": {
       "booked": "Signed up",
-      "completed": "Visited",
+      "completed": "Service Rendered",
       "engaged": "Involved",
       "started_booking": "Started booking",
       "visitors": "Visitors"
@@ -62,9 +61,9 @@
   "name": "Name",
   "need_more_masters": "Need more masters",
   "optimization_tip": "Optimization tip",
-  "peak_hours": "Peak hours",
+  "peak_hours": "Peak Hours",
   "per_booking": "For each booking",
-  "percentage": "Percent",
+  "percentage": "Percentage",
   "quantity": "Quantity",
   "recommendation": "Recommendation",
   "refresh": "Update",

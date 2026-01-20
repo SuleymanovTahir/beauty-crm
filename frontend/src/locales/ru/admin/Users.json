@@ -273,10 +273,7 @@
   "unavailable_for_online_booking": "Недоступен для онлайн-записи",
   "unit_hour": "ч",
   "unit_minute": "мин",
-  "user_count_one": "{{count}} пользователь",
-  "user_count_few": "{{count}} пользователя",
-  "user_count_many": "{{count}} пользователей",
-  "user_count_other": "{{count}} пользователей",
+  "user_count": "",
   "user_deleted": "Пользователь удален",
   "user_updated": "Данные пользователя обновлены",
   "username": "Логин",
@@ -284,10 +281,7 @@
   "view_booking": "Посмотреть запись",
   "view_details": "Посмотреть детали",
   "visibility_updated": "Видимость обновлена",
-  "weeks_ahead_one": "{{count}} неделя вперед",
-  "weeks_ahead_few": "{{count}} недели вперед",
-  "weeks_ahead_many": "{{count}} недель вперед",
-  "weeks_ahead_other": "{{count}} недель вперед",
+  "weeks_ahead": "недели вперед",
   "working_hours": "Рабочие часы",
   "years_of_experience": "Опыт работы (лет)"
 }

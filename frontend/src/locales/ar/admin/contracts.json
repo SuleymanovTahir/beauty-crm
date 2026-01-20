@@ -11,8 +11,8 @@
   "createdAt": "تاريخ الإنشاء",
   "editContract": "تحرير العقد",
   "errors": {
-    "deleteError": "حدث خطأ أثناء حذف العقد",
-    "saveError": "حدث خطأ أثناء حفظ العقد",
+    "deleteError": "حدث خطأ أثناء حذف العقد.",
+    "saveError": "حدث خطأ أثناء حفظ العقد.",
     "sendError": "حدث خطأ أثناء إرسال العقد",
     "updateError": "فشل تحديث الحالة"
   },
@@ -36,17 +36,17 @@
   "search_placeholder": "البحث بالرقم أو العميل...",
   "sendDialog": {
     "email": "بريد إلكتروني",
-    "instagram": "انستغرام",
+    "instagram": "Instagram",
     "method": "طريقة الشحن",
     "recipient": "متلقي",
     "sendButton": "يرسل",
-    "telegram": "برقية",
+    "telegram": "Telegram",
     "title": "إرسال العقد",
     "whatsapp": "واتس اب"
   },
   "status": "حالة",
   "subtitle": "إدارة عقود العملاء",
-  "title": "المعاهدات",
+  "title": "العقود",
   "type": "يكتب",
   "typeManagement": {
     "add": "يضيف",

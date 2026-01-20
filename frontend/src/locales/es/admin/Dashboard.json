@@ -1,11 +1,11 @@
 {
   "active_clients": "Clientes activos",
-  "date_filter": "Período:",
-  "filter_custom": "tu periodo",
+  "date_filter": "Término:",
+  "filter_custom": "Tu periodo",
+  "filter_last_month": "Mes pasado",
   "filter_last30days": "Últimos {{count}} días",
   "filter_last7days": "Últimos {{count}} días",
-  "filter_last_month": "Mes pasado",
-  "filter_this_month": "este mes",
+  "filter_this_month": "Este mes",
   "filter_today": "Hoy",
   "filter_yesterday": "Ayer",
   "new_clients": "Nuevos clientes",
@@ -17,7 +17,7 @@
   "status_pending": "Espera",
   "title": "Panel de control",
   "total_clients": "Clientes totales",
-  "vip_clients": "clientes vip",
-  "vip_clients_section": "clientes vip",
+  "vip_clients": "Clientes vip",
+  "vip_clients_section": "Clientes vip",
   "welcome": "Bienvenido"
 }

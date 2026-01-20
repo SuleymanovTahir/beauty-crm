@@ -44,9 +44,9 @@
   "visit_time": "وقت الزيارة",
   "visitor_trend": "زيارة الاتجاه",
   "visitors": "الزوار",
-  "visitors_count": "الزوار",
+  "visitors_count": "",
+  "visitors_count_one": "{{count}} زائر",
   "visitors_count_few": "{{count}} زائر",
   "visitors_count_many": "{{count}} زوار",
-  "visitors_count_one": "{{count}} زائر",
   "visitors_count_other": "{{count}} زوار"
 }

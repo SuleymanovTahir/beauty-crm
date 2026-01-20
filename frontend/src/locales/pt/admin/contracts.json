@@ -11,10 +11,10 @@
   "createdAt": "Data de criação",
   "editContract": "Editar contrato",
   "errors": {
-    "deleteError": "Error deleting contract",
-    "saveError": "Error saving contract",
-    "sendError": "Error sending contract",
-    "updateError": "Failed to update status"
+    "deleteError": "Erro ao excluir contrato.",
+    "saveError": "Erro ao salvar o contrato.",
+    "sendError": "Erro ao enviar contrato",
+    "updateError": "Falha ao atualizar o status"
   },
   "form": {
     "cancel": "Cancelar",
@@ -42,7 +42,7 @@
     "sendButton": "Enviar",
     "telegram": "Telegrama",
     "title": "Enviar contrato",
-    "whatsapp": "whatsapp"
+    "whatsapp": "Whatsapp"
   },
   "status": "Status",
   "subtitle": "Gestão de contratos de clientes",
@@ -67,8 +67,8 @@
       "updated": "Tipo atualizado"
     },
     "name": "Nome",
-    "system": "System",
-    "systemProtected": "System protected",
+    "system": "Sistema",
+    "systemProtected": "O sistema está protegido",
     "title": "Tipos de contratos"
   }
 }

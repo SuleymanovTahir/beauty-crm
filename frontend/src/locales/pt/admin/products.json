@@ -11,9 +11,9 @@
   "delete": "Excluir",
   "detail": {
     "costPriceLabel": "Custo: {{price}} {{currency}}",
+    "inStock_one": "Em estoque {{count}} unid.",
     "inStock_few": "Em estoque {{count}} unid.",
     "inStock_many": "Em estoque {{count}} unid.",
-    "inStock_one": "Em estoque {{count}} unid.",
     "inStock_other": "Em estoque {{count}} unid.",
     "loadingData": "Carregando dados...",
     "movementAdjustment": "Ajuste",

@@ -44,9 +44,9 @@
   "visit_time": "Besuchszeit",
   "visitor_trend": "Besuchen Sie trend",
   "visitors": "Besucher",
-  "visitors_count": "besucher",
+  "visitors_count": "",
+  "visitors_count_one": "{{count}} Besucher",
   "visitors_count_few": "{{count}} Besucher",
   "visitors_count_many": "{{count}} Besucher",
-  "visitors_count_one": "{{count}} Besucher",
   "visitors_count_other": "{{count}} Besucher"
 }

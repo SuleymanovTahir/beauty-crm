@@ -2,10 +2,10 @@
   "authorization_error": "L'autorisation a échoué",
   "enter_login": "Entrez votre identifiant",
   "fill_both_fields": "Veuillez remplir les deux champs",
-  "login": "Se connecter",
+  "login": "Connexion",
   "login_error": "Erreur de connexion",
   "login_title": "Connectez-vous à votre compte",
   "password": "Mot de passe",
-  "username": "Se connecter",
+  "username": "Nom d'utilisateur",
   "welcome": "Accueillir"
 }

@@ -1,7 +1,7 @@
 {
   "admin_can_change_password_without_knowing_current": "Un administrateur peut modifier le mot de passe d'un utilisateur sans connaître le mot de passe actuel.",
   "after_changing_user_must_login_with_new_password": "Après le changement, l'utilisateur doit se connecter avec le nouveau mot de passe.",
-  "back_to_users": "Retour aux utilisateurs",
+  "back_to_users": "Service salon de beauté Retour aux utilisateurs",
   "basic_information": "Informations de base",
   "change_password": "Changer le mot de passe",
   "changing": "Changement",
@@ -16,11 +16,17 @@
   "full_name": "Nom et prénom",
   "full_name_placeholder": "Ivan Ivanov",
   "important": "Important",
-  "name_must_be_at_least_2_characters": "Le nom doit contenir au moins le caractère {{count}}",
+  "name_must_be_at_least_2_characters_few": "Le nom doit contenir au moins {{count}} caractères",
+  "name_must_be_at_least_2_characters_many": "Le nom doit contenir au moins {{count}} caractères",
+  "name_must_be_at_least_2_characters_one": "Le nom doit contenir au moins {{count}} caractères",
+  "name_must_be_at_least_2_characters_other": "Le nom doit contenir au moins {{count}} caractères",
   "new_password": "Nouveau mot de passe",
   "password": "Mot de passe",
   "password_changed": "Mot de passe modifié",
-  "password_must_be_at_least_6_characters": "Le mot de passe doit contenir au moins {{count}} caractères",
+  "password_must_be_at_least_6_characters_few": "Le mot de passe doit contenir au moins {{count}} caractère",
+  "password_must_be_at_least_6_characters_many": "Le mot de passe doit contenir au moins {{count}} caractères",
+  "password_must_be_at_least_6_characters_one": "Le mot de passe doit contenir au moins {{count}} caractère",
+  "password_must_be_at_least_6_characters_other": "Le mot de passe doit contenir au moins {{count}} caractères",
   "passwords_do_not_match": "Les mots de passe ne correspondent pas",
   "permissions_label": "Droits d'accès",
   "profile": "Profil",
@@ -28,5 +34,8 @@
   "save_changes": "Enregistrer les modifications",
   "saving": "Économie",
   "username": "Se connecter",
-  "username_must_be_at_least_3_characters": "Le login doit contenir au moins le caractère {{count}}"
+  "username_must_be_at_least_3_characters_few": "La connexion doit contenir au moins {{count}} caractère",
+  "username_must_be_at_least_3_characters_many": "La connexion doit contenir au moins {{count}} caractères",
+  "username_must_be_at_least_3_characters_one": "Le login doit contenir un minimum de {{count}} caractères",
+  "username_must_be_at_least_3_characters_other": "Le login doit contenir un minimum de {{count}} caractères"
 }

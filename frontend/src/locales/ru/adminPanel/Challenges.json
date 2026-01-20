@@ -8,7 +8,7 @@
     "check_progress": "Проверить прогресс",
     "completed": "завершено",
     "progress": "Прогресс",
-    "pts": "баллов",
+    "pts": "",
     "reward": "Награда",
     "target": "Цель"
   },
@@ -22,7 +22,7 @@
         "description_placeholder": "Напр: Посетите салон {{count}} раза в этом месяце",
         "end_date": "Дата окончания",
         "reward_placeholder": "{{points}}",
-        "reward_points": "Начислить баллов",
+        "reward_points": "",
         "start_date": "Дата начала",
         "target_placeholder": "{{count}}",
         "target_value": "Целевое количество",
@@ -50,9 +50,9 @@
     "failed_create": "Ошибка при создании активности",
     "failed_delete": "Ошибка при удалении",
     "failed_load": "Не удалось загрузить данные",
+    "progress_checked_one": "Прогресс обновлен для {{count}} участника",
     "progress_checked_few": "Прогресс обновлен для {{count}} участников",
     "progress_checked_many": "Прогресс обновлен для {{count}} участников",
-    "progress_checked_one": "Прогресс обновлен для {{count}} участника",
     "progress_checked_other": "Прогресс обновлен для {{count}} участников"
   },
   "types": {

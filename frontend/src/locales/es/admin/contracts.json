@@ -11,10 +11,10 @@
   "createdAt": "Fecha de creación",
   "editContract": "Editar contrato",
   "errors": {
-    "deleteError": "Error deleting contract",
-    "saveError": "Error saving contract",
-    "sendError": "Error sending contract",
-    "updateError": "Failed to update status"
+    "deleteError": "Error al eliminar el contrato.",
+    "saveError": "Error al guardar el contrato.",
+    "sendError": "Error al enviar contrato",
+    "updateError": "No se pudo actualizar el estado"
   },
   "form": {
     "cancel": "Cancelar",
@@ -24,7 +24,7 @@
   },
   "internalContracts": "Doméstico",
   "manageTypes": "Tipos de contratos",
-  "manage_stages": "columnas",
+  "manage_stages": "Columnas",
   "messages": {
     "confirmDelete": "¿Está seguro de que desea eliminar este acuerdo?",
     "contractCreated": "El contrato ha sido creado.",
@@ -40,7 +40,7 @@
     "method": "Método de envío",
     "recipient": "Beneficiario",
     "sendButton": "Enviar",
-    "telegram": "Telegrama",
+    "telegram": "Telegram",
     "title": "Enviar contrato",
     "whatsapp": "WhatsApp"
   },
@@ -67,8 +67,8 @@
       "updated": "Tipo actualizado"
     },
     "name": "Nombre",
-    "system": "System",
-    "systemProtected": "System protected",
+    "system": "Sistema",
+    "systemProtected": "El sistema está protegido.",
     "title": "Tipos de contratos"
   }
 }

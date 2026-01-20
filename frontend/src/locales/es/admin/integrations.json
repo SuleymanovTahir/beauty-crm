@@ -9,8 +9,8 @@
   "marketplace": {
     "active": "Activo",
     "activeSources": "Fuentes activas",
-    "apiKey": "Clave API",
-    "apiSecret": "Secreto de API",
+    "apiKey": "clave API",
+    "apiSecret": "API secreta",
     "bookings": "Bookings",
     "configSuccess": "Configuración guardada",
     "configure": "Melodía",
@@ -51,7 +51,7 @@
   "payment": {
     "active": "Activo",
     "amount": "Suma",
-    "apiKey": "Clave API",
+    "apiKey": "clave API",
     "configSuccess": "Configuración guardada",
     "configure": "Melodía",
     "configureProvider": "Ajustes",

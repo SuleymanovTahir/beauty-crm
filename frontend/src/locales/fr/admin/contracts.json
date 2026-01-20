@@ -11,10 +11,10 @@
   "createdAt": "Date de création",
   "editContract": "Modifier le contrat",
   "errors": {
-    "deleteError": "Error deleting contract",
-    "saveError": "Error saving contract",
-    "sendError": "Error sending contract",
-    "updateError": "Failed to update status"
+    "deleteError": "Erreur lors de la suppression du contrat.",
+    "saveError": "Erreur lors de la sauvegarde du contrat.",
+    "sendError": "Erreur lors de l'envoi du contrat",
+    "updateError": "Échec de la mise à jour du statut"
   },
   "form": {
     "cancel": "Annuler",
@@ -67,8 +67,8 @@
       "updated": "Type mis à jour"
     },
     "name": "Nom",
-    "system": "System",
-    "systemProtected": "System protected",
+    "system": "Système",
+    "systemProtected": "Le système est protégé",
     "title": "Types de contrats"
   }
 }

@@ -27,7 +27,10 @@
         "title": "Matériaux haut de gamme"
       },
       "schedule": {
-        "description": "Nous sommes ouverts {{count}} jours à la date semaine aux horaires qui vous conviennent.",
+        "description_few": "Nous sommes ouverts {{count}} jours à la date semaine à l'heure qui vous convient.",
+        "description_many": "Nous sommes ouverts {{count}} jours à la date semaine à l'heure qui vous convient.",
+        "description_one": "Nous sommes ouverts {{count}} jours à la date semaine à l'heure qui vous convient.",
+        "description_other": "Nous sommes ouverts {{count}} jours à la date semaine à l'heure qui vous convient. pour vous.",
         "title": "Horaire pratique"
       }
     },
@@ -52,14 +55,14 @@
   },
   "services": {
     "items": [
-      "Перманентный макияж бровей",
-      "Маникюр",
-      "Педикюр",
-      "Массаж лица",
-      "Наращивание ресниц",
-      "Стрижка и укладка",
-      "Окрашивание волос",
-      "Чистка лица"
+      "Maquillage permanent des sourcils",
+      "Manucure",
+      "Pédicure",
+      "Massage du visage",
+      "Extensions de cils",
+      "Coupe et coiffage",
+      "Coloration des cheveux",
+      "Nettoyage du visage"
     ]
   },
   "team": {

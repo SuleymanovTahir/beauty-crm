@@ -10,7 +10,7 @@
   "fill_all_password_fields": "Құпия сөзді өзгерту үшін барлық өрістерді толтырыңыз",
   "full_name": "Толық аты-жөні",
   "full_name_placeholder": "Иван Иванов",
-  "full_name_validation": "Атауда кемінде {{count}} таңба болуы керек",
+  "full_name_validation": "Аты кемінде {{count}} таңбасын қамтуы керек",
   "manage_account_settings": "Тіркелгі параметрлерін басқару",
   "my_settings": "Менің параметрлерім",
   "new_password": "Жаңа құпия сөз",

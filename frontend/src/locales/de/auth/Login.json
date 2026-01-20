@@ -2,10 +2,10 @@
   "authorization_error": "Die Autorisierung ist fehlgeschlagen",
   "enter_login": "Geben Sie Ihr Login ein",
   "fill_both_fields": "Bitte füllen Sie beide Felder aus",
-  "login": "Login",
+  "login": "Anmelden",
   "login_error": "Anmeldefehler",
   "login_title": "Melden Sie sich bei Ihrem Konto an",
   "password": "Passwort",
-  "username": "Login",
+  "username": "Benutzername",
   "welcome": "Willkommen"
 }

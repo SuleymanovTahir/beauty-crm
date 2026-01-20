@@ -11,7 +11,7 @@
   "not_restorable": "Қалпына келтіру мүмкін емес",
   "objects_count_few": "Себеттегі нысандар: {{count}}",
   "objects_count_many": "Себеттегі нысандар: {{count}}",
-  "objects_count_one": "Арбада {{count}} нысаны",
+  "objects_count_one": "Себеттегі нысандар {{count}} нысан",
   "objects_count_other": "Себеттегі нысандар: {{count}}",
   "permanent_delete": "Біржола жою",
   "permanent_delete_confirm": "Сіз сенімдісіз бе? Бұл әрекетті қайтару мүмкін емес!",

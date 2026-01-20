@@ -81,7 +81,7 @@
     "filters": {
       "all": "جميع القنوات",
       "email": "البريد الإلكتروني",
-      "push": "إشعار دفع",
+      "push": "دفع الإخطار",
       "sms": "SMS"
     },
     "scheduled": "المخطط لها",
@@ -99,7 +99,7 @@
   "send_notification": "يرسل",
   "stats": {
     "email_sent": "البريد الإلكتروني",
-    "push_sent": "إشعار دفع",
+    "push_sent": "دفع الإخطار",
     "sms_sent": "SMS",
     "total_sent": "إجمالي المرسلة"
   },

@@ -8,7 +8,7 @@
     "check_progress": "प्रगति की जाँच करें",
     "completed": "पुरा होना",
     "progress": "प्रगति",
-    "pts": "अंक",
+    "pts": "",
     "reward": "इनाम",
     "target": "लक्ष्य"
   },
@@ -22,7 +22,7 @@
         "description_placeholder": "उदाहरण: इस महीने सैलून में {{count}} बार जाएँ",
         "end_date": "अंतिम तिथि",
         "reward_placeholder": "{{points}}",
-        "reward_points": "अंक जोड़ें",
+        "reward_points": "",
         "start_date": "आरंभ करने की तिथि",
         "target_placeholder": "{{points}}",
         "target_value": "लक्ष्य मात्रा",
@@ -50,9 +50,9 @@
     "failed_create": "गतिविधि बनाने में त्रुटि",
     "failed_delete": "हटाने के दौरान त्रुटि",
     "failed_load": "डेटा लोड करने में विफल",
+    "progress_checked_one": "{{count}} सदस्य के लिए प्रगति अद्यतन की गई",
     "progress_checked_few": "{{count}} प्रतिभागियों के लिए प्रगति अद्यतन की गई",
     "progress_checked_many": "{{count}} प्रतिभागियों के लिए प्रगति अद्यतन की गई",
-    "progress_checked_one": "{{count}} सदस्य के लिए प्रगति अद्यतन की गई",
     "progress_checked_other": "{{count}} प्रतिभागियों के लिए प्रगति अद्यतन की गई"
   },
   "types": {

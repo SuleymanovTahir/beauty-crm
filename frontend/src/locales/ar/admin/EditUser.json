@@ -1,7 +1,7 @@
 {
   "admin_can_change_password_without_knowing_current": "يمكن للمسؤول تغيير كلمة مرور المستخدم دون معرفة كلمة المرور الحالية.",
   "after_changing_user_must_login_with_new_password": "بعد التغيير، يجب على المستخدم تسجيل الدخول باستخدام كلمة المرور الجديدة.",
-  "back_to_users": "العودة إلى المستخدمين",
+  "back_to_users": "العودة للمستخدمين",
   "basic_information": "المعلومات الأساسية",
   "change_password": "تغيير كلمة المرور",
   "changing": "يتغير",
@@ -16,11 +16,17 @@
   "full_name": "الاسم الكامل",
   "full_name_placeholder": "إيفان إيفانوف",
   "important": "مهم",
-  "name_must_be_at_least_2_characters": "يجب أن يحتوي الاسم على حرف {{count}} على الأقل",
+  "name_must_be_at_least_2_characters_few": "يجب أن يحتوي الاسم على {{count}} حرف على الأقل",
+  "name_must_be_at_least_2_characters_many": "يجب أن يحتوي الاسم على {{count}} حرف على الأقل",
+  "name_must_be_at_least_2_characters_one": "يجب أن يحتوي الاسم على {{count}} حرف على الأقل",
+  "name_must_be_at_least_2_characters_other": "يجب أن يحتوي الاسم على {{count}} حرف على الأقل",
   "new_password": "كلمة المرور الجديدة",
   "password": "كلمة المرور",
   "password_changed": "تم تغيير كلمة المرور",
-  "password_must_be_at_least_6_characters": "يجب أن تحتوي كلمة المرور على {{count}} من الأحرف على الأقل",
+  "password_must_be_at_least_6_characters_few": "يجب أن تحتوي كلمة المرور على {{count}} حرف على الأقل",
+  "password_must_be_at_least_6_characters_many": "يجب أن تحتوي كلمة المرور على {{count}} حرف على الأقل",
+  "password_must_be_at_least_6_characters_one": "يجب أن تحتوي كلمة المرور على {{count}} حرف على الأقل",
+  "password_must_be_at_least_6_characters_other": "يجب أن تحتوي كلمة المرور على {{count}} حرف على الأقل",
   "passwords_do_not_match": "كلمات المرور غير متطابقة",
   "permissions_label": "حقوق الوصول",
   "profile": "حساب تعريفي",
@@ -28,5 +34,8 @@
   "save_changes": "حفظ التغييرات",
   "saving": "توفير",
   "username": "تسجيل الدخول",
-  "username_must_be_at_least_3_characters": "يجب أن يحتوي تسجيل الدخول على حرف {{count}} على الأقل"
+  "username_must_be_at_least_3_characters_few": "يجب أن يحتوي تسجيل الدخول على {{count}} حرف على الأقل",
+  "username_must_be_at_least_3_characters_many": "يجب أن يحتوي تسجيل الدخول على {{count}} حرف على الأقل",
+  "username_must_be_at_least_3_characters_one": "يجب أن يحتوي تسجيل الدخول على {{count}} من الأحرف كحد أدنى",
+  "username_must_be_at_least_3_characters_other": "يجب أن يحتوي تسجيل الدخول على {{count}} من الأحرف كحد أدنى"
 }

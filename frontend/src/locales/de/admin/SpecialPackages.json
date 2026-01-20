@@ -24,10 +24,6 @@
   "target_audience": "Zielgruppe",
   "target_by_master": "Vom Meister",
   "target_by_service": "Durch Service",
-  "target_inactive_days": "Inaktive {{days}} Tage",
-  "target_inactive_days_few": "Inaktive {{count}} Tage",
-  "target_inactive_days_many": "Inaktive {{count}} Tage",
-  "target_inactive_days_one": "Inaktiver {{count}} Tag",
-  "target_inactive_days_other": "Inaktive {{count}} Tage",
+  "target_inactive_days": "",
   "target_specific_users": "Ausgewählte Kunden"
 }

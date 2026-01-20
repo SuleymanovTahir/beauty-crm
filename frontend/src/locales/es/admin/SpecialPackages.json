@@ -24,10 +24,6 @@
   "target_audience": "Público objetivo",
   "target_by_master": "Hasta fecha maestro",
   "target_by_service": "Hasta fecha servicio",
-  "target_inactive_days": "{{days}} días inactivos",
-  "target_inactive_days_few": "{{count}} días inactivos",
-  "target_inactive_days_many": "{{count}} días inactivos",
-  "target_inactive_days_one": "{{count}} día inactivo",
-  "target_inactive_days_other": "{{count}} días inactivos",
+  "target_inactive_days": "",
   "target_specific_users": "Clientes seleccionados"
 }

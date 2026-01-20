@@ -59,12 +59,12 @@
     "method": "طريقة الشحن",
     "recipient": "متلقي",
     "sendButton": "يرسل",
-    "telegram": "برقية",
+    "telegram": "Telegram",
     "title": "إرسال الفاتورة",
     "whatsapp": "واتس اب"
   },
   "status": "حالة",
   "subtitle": "إدارة الحساب والدفع",
-  "title": "الحسابات",
+  "title": "الفواتير",
   "totalAmount": "مجموع"
 }

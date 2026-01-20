@@ -27,7 +27,10 @@
         "title": "Materiales de primera calidad"
       },
       "schedule": {
-        "description": "Estamos abiertos {{count}} días a la semana en horarios convenientes para usted.",
+        "description_few": "Estamos abiertos {{count}} días a la semana a la hora que sea conveniente para usted.",
+        "description_many": "Estamos abiertos {{count}} días a la semana a la hora que sea conveniente para usted.",
+        "description_one": "Estamos abiertos {{count}} días a la semana a la hora que sea conveniente para usted.",
+        "description_other": "Estamos abiertos {{count}} días a la semana a la hora que sea conveniente para usted para ti.",
         "title": "Horario conveniente"
       }
     },
@@ -52,14 +55,14 @@
   },
   "services": {
     "items": [
-      "Перманентный макияж бровей",
-      "Маникюр",
-      "Педикюр",
-      "Массаж лица",
-      "Наращивание ресниц",
-      "Стрижка и укладка",
-      "Окрашивание волос",
-      "Чистка лица"
+      "Maquillaje permanente de cejas",
+      "Manicura",
+      "Pedicura",
+      "Masaje facial",
+      "Extensiones de pestañas",
+      "Corte y peinado",
+      "Coloración del cabello",
+      "Limpieza facial"
     ]
   },
   "team": {

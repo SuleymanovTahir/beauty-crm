@@ -68,7 +68,7 @@
         "title_placeholder": "Заголовок уведомления",
         "type": "Тип канала",
         "types": {
-          "email": "Email",
+          "email": "Электронная почта",
           "push": "Push-уведомление",
           "sms": "SMS"
         }
@@ -80,8 +80,8 @@
     "description": "Список ранее созданных и текущих рассылок",
     "filters": {
       "all": "Все каналы",
-      "email": "Email",
-      "push": "Push",
+      "email": "Электронная почта",
+      "push": "Push-уведомление",
       "sms": "SMS"
     },
     "scheduled": "Запланировано",
@@ -98,8 +98,8 @@
   "save_template": "Сохранить шаблон",
   "send_notification": "Отправить",
   "stats": {
-    "email_sent": "Email",
-    "push_sent": "Push",
+    "email_sent": "Электронная почта",
+    "push_sent": "Push-уведомление",
     "sms_sent": "SMS",
     "total_sent": "Всего отправлено"
   },
@@ -118,7 +118,7 @@
     "template_saved": "Шаблон сохранен"
   },
   "types": {
-    "email": "Email",
+    "email": "Электронная почта",
     "push": "Push-уведомление",
     "sms": "SMS"
   }

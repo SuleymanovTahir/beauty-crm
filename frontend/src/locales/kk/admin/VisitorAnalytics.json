@@ -1,6 +1,6 @@
 {
   "apply": "Қолдану",
-  "check_range": "Ауқымды тексеріңіз ({{min}}-{{max}}км, \"Кімге\" > \"Кімнен\")",
+  "check_range": "Тексеру диапазоны ({{min}}-{{max}}км, \"Кімге\" > \"Кімнен\")",
   "cities": "Қалалар",
   "city": "Қала",
   "countries": "Елдер",
@@ -44,9 +44,9 @@
   "visit_time": "Келу уақыты",
   "visitor_trend": "Трендке кіру",
   "visitors": "Келушілер",
-  "visitors_count": "келушілер",
-  "visitors_count_few": "[[VAR0]]] келуші",
-  "visitors_count_many": "[[VAR0]]] келушілер",
-  "visitors_count_one": "[[VAR0]]] келуші",
-  "visitors_count_other": "[[VAR0]]] келушілер"
+  "visitors_count": "",
+  "visitors_count_few": "{{count}} келуші",
+  "visitors_count_many": "{{count}} келушілер",
+  "visitors_count_one": "{{count}} келуші",
+  "visitors_count_other": "{{count}} келушілер"
 }
