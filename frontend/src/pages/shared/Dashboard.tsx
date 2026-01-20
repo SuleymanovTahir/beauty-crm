@@ -375,7 +375,7 @@ export default function UniversalDashboard() {
                       </div>
                       <div>
                         <p className="font-bold text-gray-900">
-                          {new Date(booking.datetime).toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(booking.datetime).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
                         </p>
                         <p className="text-gray-900 text-sm">{booking.name}</p>
                         <p className="text-gray-500 text-xs">{booking.service}</p>
@@ -547,7 +547,7 @@ export default function UniversalDashboard() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold">{new Date(booking.datetime).toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' })}</p>
+                    <p className="text-sm font-bold">{new Date(booking.datetime).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</p>
                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${badge.bg} ${badge.color}`}>{badge.text}</span>
                   </div>
                 </div>

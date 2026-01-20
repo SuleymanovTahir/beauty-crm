@@ -34,7 +34,7 @@ export function TeamSection() {
       if (n1 === 1) return `${age} год`;
       return `${age} лет`;
     }
-    return `${age} years old`;
+    return `${age} ${t('age_years', { defaultValue: 'years old' })}`;
   };
 
   useEffect(() => {

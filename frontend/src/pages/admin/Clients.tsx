@@ -1001,7 +1001,7 @@ export default function Clients() {
                       />
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900 text-center">
-                      {new Date(client.last_contact).toLocaleDateString(i18n.language)}
+                      {new Date(client.last_contact).toLocaleDateString('ru-RU')}
                     </td>
                     <td className="px-6 py-4 text-center" onClick={(e) => e.stopPropagation()}>
                       <StatusSelect

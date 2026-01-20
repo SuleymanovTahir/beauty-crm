@@ -296,12 +296,12 @@ export default function Challenges() {
                   <div className="flex items-center gap-4 text-sm text-gray-500">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      <span>{new Date(challenge.start_date).toLocaleDateString()}</span>
+                      <span>{new Date(challenge.start_date).toLocaleDateString('ru-RU')}</span>
                     </div>
                     <span>-</span>
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      <span>{new Date(challenge.end_date).toLocaleDateString()}</span>
+                      <span>{new Date(challenge.end_date).toLocaleDateString('ru-RU')}</span>
                     </div>
                   </div>
                   {challenge.status === 'active' && (

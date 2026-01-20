@@ -51,7 +51,7 @@ interface User {
 
 export default function Users() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['admin/users', 'common']);
+  const { t, i18n } = useTranslation(['admin/users', 'common']);
   const { formatCurrency } = useCurrency();
   const { user: currentUser } = useAuth();
 

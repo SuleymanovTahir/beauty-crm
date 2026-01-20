@@ -143,7 +143,7 @@ const PendingRegistrations: React.FC = () => {
     const formatDate = (dateString: string) => {
         try {
             const date = new Date(dateString);
-            return date.toLocaleString(i18n.language, {
+            return date.toLocaleString('ru-RU', {
                 day: '2-digit',
                 month: '2-digit',
                 year: 'numeric',

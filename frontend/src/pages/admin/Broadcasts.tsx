@@ -46,7 +46,7 @@ interface PreviewData {
 }
 
 export default function Broadcasts() {
-  const { t } = useTranslation(['admin/broadcasts', 'common']);
+  const { t, i18n } = useTranslation(['admin/broadcasts', 'common']);
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав

@@ -19,6 +19,26 @@
 | **В ожидании** | Pending | قيد الانتظار | Күтуде | Ausstehend | En espera | En attente | Pendente | लंबित |
 | **Мастер** | Stylist/Master | خبير | Маман/Шебер | Spezialist | Especialista | Spécialiste | Especialista | विशेषज्ञ |
 
+## [2026-01-22] Internationalization (i18n) & UI Consistency Refinement
+- 🌍 **Internationalization (i18n) & UI Fixes:**
+  - **Standardized Date Format:** Implemented a unified `DD.MM.YYYY` date format across the entire application (Booking form, Admin panel, Manager chat, Public landing) using `toLocaleDateString('ru-RU')` to ensure consistency regardless of the selected language.
+  - **Locale-Aware Formatting:** Updated all `toLocaleDateString` and `toLocaleTimeString` calls to be dynamically aware of the user's language or strictly adhere to the requested numerical format for dates.
+  - **Translation Terminology:** Conducted a comprehensive audit of English translations, replacing unprofessional terms:
+    - "Wizard" → "Master / Stylist / Specialist".
+    - "Recording" (for bookings/entries) → "Booking / Appointment".
+    - "Laying" (for hair) → "Styling / Blow Dry".
+    - "Recordings clients" → "Client bookings".
+    - "Reminders records" → "Appointment reminders".
+  - **Russian Corrections:** Added "trim" (подравнивание) and "removal" (снятие) to the core dictionary to prevent "обрезка" or other unprofessional terms.
+  - **Translation Auto-Sync:** Ran `npm run db:i18n:auto` to synchronize missing keys across all 9 languages and update database-driven content.
+- 🖼️ **Asset Management:**
+  - **Employee Photo Reliability:** Optimized `public_employees.py` to handle image paths more robustly with timestamp-based versioning to bypass aggressive browser caching.
+  - **Public Landing UI:** Fixed missing translations in FAQ section and improved the booking form hint for date input.
+- 🧹 **Code Quality & Maintenance:**
+  - **Dead Code Cleanup:** Removed dozens of unused imports and variables across major components (`Chat.tsx`, `InternalChat.tsx`, `MainLayout.tsx`, `Challenges.tsx`).
+  - **Emoji Sanitization:** Began replacing Unicode emojis with Lucide icons in user-facing UI elements (ongoing).
+  - **Translation Dictionary SSOT:** Updated `backend/scripts/translations/beauty_translator.py` with new prohibited terms and their corrections to ensure future auto-translations remain professional.
+
 ## [2026-01-21] Settings & Localization Refinement
 - 🗺️ **Map & Location Precision:**
   - **Corrected Coordinates:** Updated default salon coordinates to `25.0738739, 55.1315886` (M Le Diamant exact location) in `settings.py` and `public.py`, resolving map displacement issues.

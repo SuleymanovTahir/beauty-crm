@@ -31,10 +31,10 @@ export function ReviewsSection() {
           // Backend returns: id, name (or author_name), avatar_url, rating, employee_position, text (or text_xx), created_at
           const mappedReviews = data.reviews.map((review: any) => ({
             id: review.id,
-            name: review.name || review.author_name || "Client",
+            name: review.name || review.author_name || t('common:client', { defaultValue: 'Client' }),
             avatar_url: review.avatar_url || "",
             rating: review.rating || 5,
-            employee_position: review.employee_position || 'Service',
+            employee_position: review.employee_position || t('common:service', { defaultValue: 'Service' }),
             text: review.text || review.text_ru || "",
             created_at: review.created_at || ""
           }));

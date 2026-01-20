@@ -56,6 +56,7 @@
   "continue_datetime": "Күн мен уақытты таңдауды жалғастырыңыз",
   "continue_professional": "Шеберді таңдауды жалғастырыңыз",
   "continue_services": "Қызметтерді таңдауды жалғастырыңыз",
+  "date_format_hint": "Формат: ДД.ММ.ГГГГ",
   "datetime": {
     "date": "Күнді таңдаңыз",
     "noSlots": "Терезелер жоқ",
@@ -86,10 +87,10 @@
   "newBooking": "Брондау",
   "noServicesFound": "Ешқандай қызметтер табылмады.",
   "phone_too_short": "Телефон нөмірі ел кодын қоса алғанда, кемінде {{count}} сандардан тұруы керек",
-  "phone_too_short_one": "",
-  "phone_too_short_few": "",
-  "phone_too_short_many": "",
-  "phone_too_short_other": "",
+  "phone_too_short_one": "Ең аз {{count}} сан",
+  "phone_too_short_few": "Ең аз {{count}} сан",
+  "phone_too_short_many": "Ең аз {{count}} сан",
+  "phone_too_short_other": "Ең аз {{count}} сан",
   "privacyAgreementStart": "Түймені басу арқылы сіз келісесіз",
   "privacyPolicy": "құпиялылық саясаты",
   "professional": {
