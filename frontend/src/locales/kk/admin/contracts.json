@@ -23,8 +23,8 @@
     "selectClient": "Клиентті таңдаңыз"
   },
   "internalContracts": "Отандық",
-  "manage_stages": "Бағандар",
   "manageTypes": "Келісімшарттардың түрлері",
+  "manage_stages": "Бағандар",
   "messages": {
     "confirmDelete": "Осы келісімді шынымен жойғыңыз келе ме?",
     "contractCreated": "Келісімшарт жасалды",
@@ -49,7 +49,7 @@
   "title": "Шарттар",
   "type": "Түр",
   "typeManagement": {
-    "add": "қосу",
+    "add": "Қосу",
     "code": "Код (лат., бірегей)",
     "confirmDelete": "Жоюды растаңыз",
     "createType": "Түр жасау",

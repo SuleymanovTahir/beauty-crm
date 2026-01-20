@@ -27,24 +27,24 @@
     }
   },
   "recent_activity": {
-    "challenge_completed_one": "Пайдаланушы {{count}} орындаған \"{{name}}\" сайысын",
     "challenge_completed_few": "{{count}} пайдаланушылары орындаған \"{{name}}\" сайысын",
     "challenge_completed_many": "{{count}} пайдаланушылары орындаған \"{{name}}\" сайысын",
+    "challenge_completed_one": "Пайдаланушы {{count}} орындаған \"{{name}}\" сайысын",
     "challenge_completed_other": "{{count}} пайдаланушылары орындаған \"{{name}}\" сайысын",
-    "day_ago_one": "{{count}} күн бұрын",
     "day_ago_few": "[[VAR0]]] күн бұрын",
     "day_ago_many": "[[VAR0]]] күн бұрын",
+    "day_ago_one": "{{count}} күн бұрын",
     "day_ago_other": "[[VAR0]]] күн бұрын",
-    "hours_ago_one": "{{count}} бір сағат бұрын",
     "hours_ago_few": "{{count}} сағат бұрын",
     "hours_ago_many": "{{count}} сағат бұрын",
+    "hours_ago_one": "{{count}} бір сағат бұрын",
     "hours_ago_other": "{{count}} сағат бұрын",
     "new_tier_activated": "Жаңа адалдық деңгейі іске қосылды",
     "subtitle": "Әкімші тақтасындағы соңғы әрекеттер",
     "title": "Соңғы әрекет",
-    "users_registered_one": "{{count}} жаңа пайдаланушы тіркелді",
     "users_registered_few": "{{count}} жаңа пайдаланушы тіркелді",
     "users_registered_many": "[[VAR0]]] жаңа пайдаланушылар тіркелді",
+    "users_registered_one": "{{count}} жаңа пайдаланушы тіркелді",
     "users_registered_other": "[[VAR0]]] жаңа пайдаланушылар тіркелді"
   },
   "stats": {
