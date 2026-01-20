@@ -64,7 +64,7 @@
   "one_booking_today": "आज के लिए {{count}} प्रविष्टि",
   "pending": "इंतज़ार में",
   "phone": "टेलीफ़ोन",
-  "phone_placeholder": "{{points}}",
+  "phone_placeholder": "{{phone_placeholder}}",
   "reset": "रीदिनांक सेट करें",
   "revenue": "आय",
   "revenue_placeholder": "0",

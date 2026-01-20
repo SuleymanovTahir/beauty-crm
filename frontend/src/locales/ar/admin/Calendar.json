@@ -64,7 +64,7 @@
   "one_booking_today": "لإدخال {{count}} اليوم",
   "pending": "منتظر",
   "phone": "هاتف",
-  "phone_placeholder": "{{points}}",
+  "phone_placeholder": "{{phone_placeholder}}",
   "reset": "إعادة ضبط",
   "revenue": "ربح",
   "revenue_placeholder": "0",

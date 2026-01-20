@@ -1,4 +1,108 @@
 {
+  "users": [
+    {
+      "id": 4,
+      "fields": {
+        "position": {
+          "ru": "Nail Master",
+          "key": "users.4.position.1c34eb1b",
+          "en": "Nail service master",
+          "ar": "سيد خدمة الأظافر",
+          "es": "Maestro del servicio de uñas",
+          "de": "Nagelservice-Meister",
+          "fr": "Maître du service des ongles",
+          "hi": "नेल सर्विस मास्टर",
+          "kk": "Тырнақ күтімінің шебері",
+          "pt": "Mestre de serviço de unhas"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "position": {
+          "ru": "Hair Stylist",
+          "key": "users.3.position.18612649",
+          "en": "Hair stylist",
+          "ar": "مصفف شعر",
+          "es": "Estilista",
+          "de": "Friseur",
+          "fr": "Coiffeur",
+          "hi": "बालों की स्टाइल बनाने वाला",
+          "kk": "Шаш стилисті",
+          "pt": "Cabeleireiro"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "fields": {
+        "position": {
+          "ru": "Nail/Waxing",
+          "key": "users.5.position.0e33fa6b",
+          "en": "Nails/waxing",
+          "ar": "الأظافر/الصبح",
+          "es": "Uñas/cera",
+          "de": "Nägel/Wachsen",
+          "fr": "Ongles/épilation",
+          "hi": "नाखून/वैक्सिंग",
+          "kk": "Тырнақ/балауыз",
+          "pt": "Unhas/depilação"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "position": {
+          "ru": "Hair Stylist",
+          "key": "users.2.position.18612649",
+          "en": "Hair stylist",
+          "ar": "مصفف شعر",
+          "es": "Estilista",
+          "de": "Friseur",
+          "fr": "Coiffeur",
+          "hi": "बालों की स्टाइल बनाने वाला",
+          "kk": "Шаш стилисті",
+          "pt": "Cabeleireiro"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "position": {
+          "ru": "Nail Master/Massages",
+          "key": "users.6.position.d68a2270",
+          "en": "Nail technician/massage",
+          "ar": "فني أظافر/تدليك",
+          "es": "Técnico de uñas/masaje",
+          "de": "Nageltechnikerin/Massage",
+          "fr": "Technicienne en ongles/massage",
+          "hi": "नाखून तकनीशियन/मालिश",
+          "kk": "Тырнақ техникі/массаж",
+          "pt": "Técnica de unhas/massagem"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "fields": {
+        "position": {
+          "ru": "Director",
+          "key": "users.7.position.7c5ba892",
+          "en": "Stylist / Director",
+          "ar": "المصمم / المخرج",
+          "es": "Estilista / Directora",
+          "de": "Stylist/Regisseur",
+          "fr": "Styliste / Réalisateur",
+          "hi": "स्टाइलिस्ट/निर्देशक",
+          "kk": "Стилист/директор",
+          "pt": "Estilista / Diretor"
+        }
+      }
+    }
+  ],
   "public_reviews": [
     {
       "id": 17,
@@ -122,6 +226,388 @@
           "pt": null
         }
       }
+    },
+    {
+      "id": 12,
+      "fields": {
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.12.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.12.employee_position.5b1b1d5e",
+          "en": "Lashes",
+          "ar": "lashes",
+          "es": "Lashes",
+          "de": "Lashes",
+          "fr": "Lashes",
+          "hi": "lashes",
+          "kk": "Кірпіктер",
+          "pt": "Lashes"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "employee_position": {
+          "ru": "Manicure & Pedicure",
+          "key": "public_reviews.3.employee_position.8e5cfdfa",
+          "en": "Manicure and pedicure",
+          "ar": "مانيكير وباديكير",
+          "es": "Manicura y pedicura",
+          "de": "Maniküre und Pediküre",
+          "fr": "Manucure et pédicure",
+          "hi": "नख प्रसाधन व पाद चिकित्सा",
+          "kk": "Маникюр және педикюр",
+          "pt": "Manicura e pedicura"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "fields": {
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.13.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González"
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.13.employee_position.9a3a91ca",
+          "en": "Facial care",
+          "ar": "العناية بالوجه",
+          "es": "Cuidado facial",
+          "de": "Gesichtspflege",
+          "fr": "Soins du visage",
+          "hi": "चेहरे की देखभाल",
+          "kk": "Бет күтімі",
+          "pt": "Cuidados faciais"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "fields": {
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.14.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима әл-Сайед",
+          "pt": "Fátima Al-Sayed"
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.14.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "Microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "fields": {
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.9.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.9.employee_position.5b1b1d5e",
+          "en": "Lashes",
+          "ar": "lashes",
+          "es": "Lashes",
+          "de": "Lashes",
+          "fr": "Lashes",
+          "hi": "lashes",
+          "kk": "Кірпіктер",
+          "pt": "Lashes"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "fields": {
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.10.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González"
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.10.employee_position.9a3a91ca",
+          "en": "Facial care",
+          "ar": "العناية بالوجه",
+          "es": "Cuidado facial",
+          "de": "Gesichtspflege",
+          "fr": "Soins du visage",
+          "hi": "चेहरे की देखभाल",
+          "kk": "Бет күтімі",
+          "pt": "Cuidados faciais"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "fields": {
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.11.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима әл-Сайед",
+          "pt": "Fátima Al-Sayed"
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.11.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "Microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.2.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.2.employee_position.5b1b1d5e",
+          "en": "Lashes",
+          "ar": "lashes",
+          "es": "Lashes",
+          "de": "Lashes",
+          "fr": "Lashes",
+          "hi": "lashes",
+          "kk": "Кірпіктер",
+          "pt": "Lashes"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.6.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.6.employee_position.5b1b1d5e",
+          "en": "Lashes",
+          "ar": "lashes",
+          "es": "Lashes",
+          "de": "Lashes",
+          "fr": "Lashes",
+          "hi": "lashes",
+          "kk": "Кірпіктер",
+          "pt": "Lashes"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "fields": {
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.7.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González"
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.7.employee_position.9a3a91ca",
+          "en": "Facial care",
+          "ar": "العناية بالوجه",
+          "es": "Cuidado facial",
+          "de": "Gesichtspflege",
+          "fr": "Soins du visage",
+          "hi": "चेहरे की देखभाल",
+          "kk": "Бет күтімі",
+          "pt": "Cuidados faciais"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "fields": {
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.8.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима әл-Сайед",
+          "pt": "Fátima Al-Sayed"
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.8.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "Microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading"
+        }
+      }
+    },
+    {
+      "id": 1,
+      "fields": {
+        "employee_position": {
+          "ru": "Permanent Makeup",
+          "key": "public_reviews.1.employee_position.4075aad3",
+          "en": "Permanent makeup",
+          "ar": "مكياج دائم",
+          "es": "Maquillaje permanente",
+          "de": "Permanentes Make-up",
+          "fr": "Maquillage permanent",
+          "hi": "स्थायी श्रृंगार",
+          "kk": "Тұрақты макияж",
+          "pt": "Maquiagem definitiva"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "fields": {
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.4.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González"
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.4.employee_position.9a3a91ca",
+          "en": "Facial care",
+          "ar": "العناية بالوجه",
+          "es": "Cuidado facial",
+          "de": "Gesichtspflege",
+          "fr": "Soins du visage",
+          "hi": "चेहरे की देखभाल",
+          "kk": "Бет күтімі",
+          "pt": "Cuidados faciais"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "fields": {
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.5.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима әл-Сайед",
+          "pt": "Fátima Al-Sayed"
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.5.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "Microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading"
+        }
+      }
     }
   ],
   "services": [
@@ -216,7 +702,7 @@
         "description_ru": {
           "ru": "Микроблейдинг или пудровые брови",
           "key": "services.2.description_ru.d9f305a2",
-          "en": "Microblading or powder eyebrows",
+          "en": "Microblading or powder brows",
           "ar": null,
           "es": null,
           "de": null,
@@ -573,7 +1059,7 @@
         "description_ru": {
           "ru": "Простой срез без мытья",
           "key": "services.18.description_ru.6a0312d4",
-          "en": "Quick trim without wash",
+          "en": "Easy cutting without washing",
           "ar": null,
           "es": null,
           "de": null,

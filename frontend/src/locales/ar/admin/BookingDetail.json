@@ -6,7 +6,7 @@
   "client": "عميل",
   "client_profile": "الملف الشخصي للعميل",
   "created_at": "تاريخ الإنشاء",
-  "currency": "{{points}}",
+  "currency": "{{currency}}",
   "current_status": "الوضع الحالي",
   "custom_range": "دورتك الشهرية",
   "date_time": "التاريخ والوقت",

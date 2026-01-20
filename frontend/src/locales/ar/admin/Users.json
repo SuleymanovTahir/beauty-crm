@@ -168,7 +168,7 @@
   "permissions_label": "حقوق الوصول",
   "personal_information": "معلومات شخصية",
   "phone_number": "رقم التليفون",
-  "phone_placeholder": "{{points}}",
+  "phone_placeholder": "{{phone_placeholder}}",
   "photo_updated": "تم تحديث الصورة",
   "position": "المنصب",
   "position_label": "مسمى وظيفي",
