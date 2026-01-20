@@ -8,7 +8,7 @@
   "error": "Fehler",
   "error_creating": "Fehler beim Erstellen des Benutzers",
   "full_name_label": "Vollständiger Name *",
-  "full_name_placeholder": "Iwanow Iwan Iwanowitsch",
+  "full_name_placeholder": "Hans Müller",
   "full_name_required": "Name erforderlich",
   "no_position_found": "Position nicht gefunden",
   "password_hint": "",

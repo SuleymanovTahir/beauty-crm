@@ -1,7 +1,9 @@
 {
   "clear_all": "مسح الكل",
   "clear_confirm": "هل أنت متأكد أنك تريد مسح حجز التدقيق بالكامل؟ هذا الإجراء لا رجعة فيه.",
+  "delete_batch_confirm_zero": "",
   "delete_batch_confirm_one": "هل تريد حذف {{count}} الإدخال المحدد؟",
+  "delete_batch_confirm_two": "",
   "delete_batch_confirm_few": "هل تريد حذف {{count}} الإدخالات المحددة؟",
   "delete_batch_confirm_many": "هل تريد حذف {{count}} الإدخالات المحددة؟",
   "delete_batch_confirm_other": "هل تريد حذف سجلات {{count}}؟",

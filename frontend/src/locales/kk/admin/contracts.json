@@ -23,8 +23,8 @@
     "selectClient": "Клиентті таңдаңыз"
   },
   "internalContracts": "Отандық",
-  "manageTypes": "Келісімшарттардың түрлері",
   "manage_stages": "Бағандар",
+  "manageTypes": "Келісімшарттардың түрлері",
   "messages": {
     "confirmDelete": "Осы келісімді шынымен жойғыңыз келе ме?",
     "contractCreated": "Келісімшарт жасалды",

@@ -23,8 +23,8 @@
     "selectClient": "Seleccionar cliente"
   },
   "internalContracts": "Doméstico",
-  "manageTypes": "Tipos de contratos",
   "manage_stages": "Columnas",
+  "manageTypes": "Tipos de contratos",
   "messages": {
     "confirmDelete": "¿Está seguro de que desea eliminar este acuerdo?",
     "contractCreated": "El contrato ha sido creado.",

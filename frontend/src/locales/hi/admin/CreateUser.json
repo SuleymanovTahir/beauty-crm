@@ -8,7 +8,7 @@
   "error": "गलती",
   "error_creating": "उपयोगकर्ता बनाने में त्रुटि",
   "full_name_label": "पूरा नाम *",
-  "full_name_placeholder": "इवानोव इवान इवानोविच",
+  "full_name_placeholder": "राहुल कुमार",
   "full_name_required": "नाम आवश्यक है",
   "no_position_found": "पद नहीं मिला",
   "password_hint": "",
@@ -36,6 +36,6 @@
   "username_hint": "",
   "username_label": "लॉग इन करें *",
   "username_min_length": "",
-  "username_placeholder": "इवान_इवानोव",
+  "username_placeholder": "rahul_kumar",
   "username_required": "लॉगिन आवश्यक है"
 }

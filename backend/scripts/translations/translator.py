@@ -127,7 +127,9 @@ SALON_TERMINOLOGY = {
         'nail overlay': 'nail overlay',
         'vaxing': 'waxing',
         'fix': 'repair',
+        'иванов иван иванович': 'John Doe',
         'ivanov ivan ivanovich': 'John Doe',
+        'иван_иванов': 'john_doe',
         'ivan_ivanov': 'john_doe',
     },
     # Corrections for Spanish
@@ -157,12 +159,16 @@ SALON_TERMINOLOGY = {
         'wallet': 'Wallet',
         'nfc apple/google wallet': 'NFC Apple/Google Wallet',
         'agujas': 'puntos',
+        'иванов иван иванович': 'Juan García',
         'ivanov ivan ivanovich': 'Juan García',
+        'иван_иванов': 'juan_garcia',
         'ivan_ivanov': 'juan_garcia',
     },
     # Corrections for Portuguese
     'pt': {
+        'иванов иван иванович': 'João Silva',
         'ivanov ivan ivanovich': 'João Silva',
+        'иван_иванов': 'joao_silva',
         'ivan_ivanov': 'joao_silva',
         'postagens': 'reservas',
         'postagem': 'reserva',
@@ -188,7 +194,9 @@ SALON_TERMINOLOGY = {
     },
     # Corrections for French
     'fr': {
+        'иванов иван иванович': 'Jean Dupont',
         'ivanov ivan ivanovich': 'Jean Dupont',
+        'иван_иванов': 'jean_dupont',
         'ivan_ivanov': 'jean_dupont',
         'publications': 'réservations',
         'enregistrement': 'réservation',
@@ -229,7 +237,9 @@ SALON_TERMINOLOGY = {
         'beliebiger meister': 'beliebiger mitarbeiter',
         'abгелехнт': 'storniert',
         'er hat es verpasst': 'übersprungen',
+        'иванов иван иванович': 'Hans Müller',
         'ivanov ivan ivanovich': 'Hans Müller',
+        'иван_иванов': 'hans_mueller',
         'ivan_ivanov': 'hans_mueller',
     },
     # Corrections for Arabic
@@ -256,7 +266,9 @@ SALON_TERMINOLOGY = {
         'manicure': 'مانيكير',
         'pedicure': 'باديكير',
         'waxing': 'واكس',
+        'иванов иван иванович': 'محمد أحمد',
         'ivanov ivan ivanovich': 'محمد أحمد',
+        'иван_иванов': 'mohamed_ahmed',
         'ivan_ivanov': 'mohamed_ahmed',
     },
     # Corrections for Hindi
@@ -273,7 +285,9 @@ SALON_TERMINOLOGY = {
         'record': 'रिकॉर्ड',
         'recording': 'रिकॉर्डिंग',
         'push': 'पुश नोटिफिकेशन',
+        'иванов иван иванович': 'राहुल कुमार',
         'ivanov ivan ivanovich': 'राहुल कुमार',
+        'иван_иванов': 'rahul_kumar',
         'ivan_ivanov': 'rahul_kumar',
     },
     # Corrections for Kazakh
@@ -288,7 +302,9 @@ SALON_TERMINOLOGY = {
         'booking': 'жазба',
         'record': 'жазба',
         'push': 'Push хабарлама',
+        'иванов иван иванович': 'Ахметов Алихан',
         'ivanov ivan ivanovich': 'Ахметов Алихан',
+        'иван_иванов': 'alikhan_akhmetov',
         'ivan_ivanov': 'alikhan_akhmetov',
     }
 }
@@ -455,7 +471,11 @@ class Translator:
         text_lower = text.lower().strip()
         for wrong_term, correct_term in corrections.items():
             if text_lower == wrong_term.lower():
-                if text and text[0].isupper(): return correct_term.capitalize()
+                if text and text[0].isupper(): 
+                    # If the source was capitalized, ensure the translation is at least capitalized
+                    # but don't force lowercase on the rest (to preserve names like John Doe)
+                    if correct_term and not correct_term[0].isupper():
+                        return correct_term[0].upper() + correct_term[1:]
                 return correct_term
         for wrong_term, correct_term in corrections.items():
             pattern = r'\b' + re.escape(wrong_term) + r'\b'
@@ -472,6 +492,14 @@ class Translator:
             if not text or not text.strip(): results[i] = text; continue
             kp = key_paths[i] if key_paths else None
             if kp and target in self.key_glossary and kp in self.key_glossary[target]: results[i] = self.key_glossary[target][kp]; continue
+            
+            # Terminology Check
+            if target in SALON_TERMINOLOGY:
+                lower_text = text.strip().lower()
+                if lower_text in SALON_TERMINOLOGY[target]:
+                    results[i] = SALON_TERMINOLOGY[target][lower_text]
+                    continue
+                    
             cached = self._get_cached_translation(text + ("|ctx" if use_context else ""), source, target)
             if cached: results[i] = self._apply_terminology_corrections(cached, target); continue
             to_translate_indices.append(i); to_translate_texts.append(text)

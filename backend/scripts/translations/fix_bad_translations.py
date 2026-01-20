@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-Fix bad translations in frontend locale files.
-Detects untranslated keys (containing underscores or English words) and re-translates them.
+Fix bad translations in frontend locale files - HIGH SPEED BATCHING VERSION.
+Detects untranslated keys (underscores, English residue, etc.) and re-translates them via batch API.
 """
 
 import json
 import sys
 import re
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 
 # Add backend to path
 backend_dir = Path(__file__).parent.parent.parent
@@ -25,236 +26,128 @@ LANGUAGES = ["ru", "en", "ar", "es", "de", "fr", "hi", "kk", "pt"]
 SOURCE_LANG = 'ru'
 
 def is_bad_translation(value: str, target_lang: str) -> bool:
-    """
-    Detect if a translation is bad (untranslated or poorly translated).
-    Bad translations typically contain:
-    - Underscores (e.g., "Add_reminder", "14_days")
-    - Mixed case English words (e.g., "inay_roles_system")
-    - All uppercase English (e.g., "AIOLIONS_FOUND")
-    - "Imported from CSV" text
-    - Number_word patterns (e.g., "14_days", "3_months")
-    """
-    if not isinstance(value, str):
+    if not isinstance(value, str) or not value or not value.strip():
         return False
-    
-    if not value or len(value.strip()) == 0:
-        return False  # Empty values are not "bad", just empty
-    
-    # Check for "Imported from CSV" - always bad
     if "Imported from CSV" in value or "imported from csv" in value.lower():
         return True
-    
-    # Check for underscores - common in untranslated keys
-    # Allow underscores in URLs and technical terms
-    if '_' in value and not value.startswith('http'):
+    if '_' in value and not value.startswith('http') and not re.search(r'{{|}}', value):
         return True
-    
-    # Check for patterns like "word_word" or "number_word"
-    if re.search(r'[a-zA-Z0-9]+_[a-zA-Z0-9]+', value):
+    if re.search(r'[a-zA-Z0-9]+_[a-zA-Z0-9]+', value) and not value.startswith('http'):
         return True
-    
-    # Check for all caps words (more than 3 chars) - likely untranslated
-    # This works for any language using Latin alphabet
-    if re.search(r'\b[A-Z]{4,}\b', value):
+    if target_lang != 'ru' and re.search(r'\b[A-Z]{4,}\b', value): # All caps words
         return True
-    
-    # Check for mixed case patterns that suggest untranslated text
-    # e.g., "Beauty salon service LYAZZAT" or "Add_reminder"
-    if re.search(r'[A-Z]{2,}', value):
-        # Has multiple consecutive uppercase letters, likely untranslated
-        return True
-    
-    # NEW: Check for Cyrillic in non-Cyrillic locales (en, es, de, fr, pt, hi, ar)
+    # Cyrillic in non-Cyrillic locales
     if target_lang not in ['ru', 'kk']:
-        has_cyrillic = bool(re.search(r'[а-яА-ЯёЁ]', value))
-        if has_cyrillic:
-            return True # Cyrillic in non-Cyrillic file is bad
-
-    # Check for English residue in non-Latin locales (Arabic, Hindi, etc.)
+        if bool(re.search(r'[а-яА-ЯёЁ]', value)): return True
+    # English residue in non-Latin
     if target_lang in ['ar', 'hi']:
-        # Exclude common technical terms and currencies
         EXCLUSIONS = {'AED', 'USD', 'EUR', 'SMS', 'API', 'VIP', 'SPA', 'ID', 'URL', 'CSV', 'PDF', 'min', 'h', 'm'}
-        if value.strip().upper() in EXCLUSIONS or value.strip().lower() in EXCLUSIONS:
-            return False
-            
-        # If it's purely Latin (English) but should be Arabic/Hindi, it's bad
-        has_latin = bool(re.search(r'[a-zA-Z]', value))
-        if has_latin:
-            if target_lang == 'ar':
-                has_arabic = bool(re.search(r'[\u0600-\u06FF]', value))
-                if not has_arabic: return True # Pure Latin in Arabic
-            elif target_lang == 'hi':
-                has_hindi = bool(re.search(r'[\u0900-\u097F]', value))
-                if not has_hindi: return True # Pure Latin in Hindi
-    
-    # NEW: Check for English in Russian files - if no Cyrillic but has Latin words
+        if value.strip().upper() not in EXCLUSIONS and not bool(re.search(r'[\u0600-\u06FF]|[\u0900-\u097F]', value)):
+             if bool(re.search(r'[a-zA-Z]', value)): return True
+    # English in Russian
     if target_lang == 'ru':
-        has_cyrillic = bool(re.search(r'[а-яА-ЯёЁ]', value))
-        has_latin_words = bool(re.search(r'[a-zA-Z]{3,}', value))
-        # If it's English in a Russian file, it's bad
-        if has_latin_words and not has_cyrillic:
-            # Skip technical terms and placeholders
-            if value.startswith('http') or '{{' in value:
-                return False
-            return True
-            
+        if bool(re.search(r'[a-zA-Z]{4,}', value)) and not bool(re.search(r'[а-яА-ЯёЁ]', value)):
+            if not value.startswith('http') and '{{' not in value: return True
     return False
 
-def fix_dict_recursive(source_dict: dict, target_dict: dict, source_lang: str, target_lang: str, translator: Translator, path: str = "") -> int:
-    """Recursively fix translations in nested dictionaries"""
-    fixed_count = 0
-    
-    for key, source_value in source_dict.items():
-        current_path = f"{path}.{key}" if path else key
-        
-        # Handle nested dictionaries
-        if isinstance(source_value, dict):
-            if key not in target_dict or not isinstance(target_dict[key], dict):
-                target_dict[key] = {}
-            fixed_count += fix_dict_recursive(source_value, target_dict[key], source_lang, target_lang, translator, current_path)
-            continue
-        
-        # Handle lists
-        if isinstance(source_value, list):
-            if key not in target_dict or not isinstance(target_dict[key], list):
-                target_dict[key] = []
-            
-            # Ensure target list has same length as source
-            while len(target_dict[key]) < len(source_value):
-                target_dict[key].append("")
-            
-            # Fix each item in the list
-            for i, (s_item, t_item) in enumerate(zip(source_value, target_dict[key])):
-                if isinstance(s_item, str) and (not t_item or is_bad_translation(t_item, target_lang)):
-                    translated = translator.translate(s_item, source_lang if target_lang != 'ru' else 'en', target_lang)
-                    target_dict[key][i] = translated
-                    fixed_count += 1
-                    print(f"    🔧 {current_path}[{i}]: '{t_item}' → '{translated}'")
-            continue
-
-        # Skip non-string values
-        if not isinstance(source_value, str):
-            target_dict[key] = source_value
-            continue
-        
-        # Skip empty source values
-        if not source_value or len(source_value.strip()) == 0:
-            target_dict[key] = source_value
-            continue
-        
-        target_value = target_dict.get(key, "")
-        
-        # Check if translation is missing or bad
-        if not target_value or is_bad_translation(target_value, target_lang):
-            # Re-translate
-            if target_lang == 'ru':
-                # If RU, translate FROM EN to RU
-                translated = translator.translate(source_value, 'en', 'ru')
+def collect_bad_recursive(source_node, target_node, target_lang, path=""):
+    tasks = []
+    if isinstance(source_node, dict):
+        # 1. Collect bad or missing
+        for k, v in source_node.items():
+            cp = f"{path}.{k}" if path else k
+            if isinstance(v, (dict, list)):
+                if k not in target_node or not isinstance(target_node[k], type(v)):
+                    target_node[k] = {} if isinstance(v, dict) else []
+                tasks.extend(collect_bad_recursive(v, target_node[k], target_lang, cp))
+            elif isinstance(v, str) and v.strip():
+                tv = target_node.get(k, "")
+                if not tv or is_bad_translation(tv, target_lang):
+                    tasks.append({'parent': target_node, 'key': k, 'value': v, 'path': cp})
             else:
-                # If other, translate FROM RU to target
-                translated = translator.translate(source_value, source_lang, target_lang)
-                
-            target_dict[key] = translated
-            fixed_count += 1
-            
-            if target_value:
-                print(f"    🔧 {current_path}: '{target_value}' → '{translated}'")
-            else:
-                print(f"    ➕ {current_path}: '{source_value}' → '{translated}'")
-    
-    # 🗑️ NEW: Cleanup keys not present in source (Russian)
-    keys_to_remove = []
-    for key in target_dict.keys():
-        if key not in source_dict:
-            keys_to_remove.append(key)
-    
-    for key in keys_to_remove:
-        print(f"    🗑️ Removing unused key: {path}.{key}" if path else f"    🗑️ Removing unused key: {key}")
-        del target_dict[key]
-        fixed_count += 1
-            
-    return fixed_count
+                target_node[k] = v
+        # 2. Cleanup unused keys
+        for k in list(target_node.keys()):
+            if k not in source_node:
+                del target_node[k]
+    elif isinstance(source_node, list):
+        if not isinstance(target_node, list): target_node[:] = []
+        while len(target_node) < len(source_node): target_node.append("")
+        while len(target_node) > len(source_node): target_node.pop()
+        for i, v in enumerate(source_node):
+            cp = f"{path}[{i}]"
+            if isinstance(v, (dict, list)):
+                if not target_node[i] or not isinstance(target_node[i], type(v)):
+                    target_node[i] = {} if isinstance(v, dict) else []
+                tasks.extend(collect_bad_recursive(v, target_node[i], target_lang, cp))
+            elif isinstance(v, str) and v.strip():
+                tv = target_node[i] if i < len(target_node) else ""
+                if not tv or is_bad_translation(tv, target_lang):
+                    tasks.append({'parent': target_node, 'key': i, 'value': v, 'path': cp})
+    return tasks
 
-def fix_json_file(source_file: Path, target_file: Path, source_lang: str, target_lang: str, translator: Translator):
-    """Fix bad translations in a JSON file"""
-    
-    # Load source
-    with open(source_file, 'r', encoding='utf-8') as f:
-        source_data = json.load(f)
-    
-    # Load existing target
-    if not target_file.exists():
-        print(f"    ⚠️  Target file doesn't exist, will create: {target_file}")
-        target_data = {}
-    else:
-        try:
-            with open(target_file, 'r', encoding='utf-8') as f:
-                target_data = json.load(f)
-        except Exception as e:
-            print(f"    ⚠️  Error loading target file: {e}")
-            target_data = {}
-    
-    # Fix bad translations recursively
-    fixed_count = fix_dict_recursive(source_data, target_data, source_lang, target_lang, translator)
-    
-    # Save target
-    target_file.parent.mkdir(parents=True, exist_ok=True)
-    with open(target_file, 'w', encoding='utf-8') as f:
-        json.dump(target_data, f, ensure_ascii=False, indent=2)
-    
-    return fixed_count
-
-def main():
-    print("🔧 Fixing bad translations in frontend locale files...")
-    print(f"📁 Locales directory: {LOCALES_DIR}\n")
-    
-    translator = Translator(use_cache=True)
-    
-    # Find all Russian JSON files
-    ru_dir = LOCALES_DIR / SOURCE_LANG
-    if not ru_dir.exists():
-        print(f"❌ Russian locale directory not found: {ru_dir}")
-        return
-    
-    # Find all JSON files recursively
-    ru_files = list(ru_dir.rglob("*.json"))
-    
-    if not ru_files:
-        print(f"❌ No JSON files found in {ru_dir}")
-        return
-    
-    print(f"📋 Found {len(ru_files)} Russian locale file(s)\n")
-    
-    total_fixed = 0
+def process_lang(lang, ru_files, ru_dir, translator):
+    print(f"  🌐 {lang.upper()}: Checking for bad translations...")
+    all_tasks = []
+    file_data = {} # rel_path -> (target_data, target_path)
     
     for ru_file in ru_files:
-        # Get relative path from ru directory
         rel_path = ru_file.relative_to(ru_dir)
-        print(f"📄 Processing: {rel_path}")
+        target_path = LOCALES_DIR / lang / rel_path
         
-        # Fix translations in all languages
-        for lang in LANGUAGES:
-            target_file = LOCALES_DIR / lang / rel_path
-            
-            print(f"  → {lang}:")
-            count = fix_json_file(ru_file, target_file, SOURCE_LANG, lang, translator)
-            
-            if count == 0:
-                print(f"    ✅ All translations are good")
-            else:
-                print(f"    ✅ Fixed {count} translations")
-                total_fixed += count
+        with open(ru_file, 'r', encoding='utf-8') as f: source_data = json.load(f)
+        target_data = {}
+        if target_path.exists():
+            try:
+                with open(target_path, 'r', encoding='utf-8') as f: target_data = json.load(f)
+            except: pass
         
-        print()
+        file_tasks = collect_bad_recursive(source_data, target_data, lang)
+        for t in file_tasks: t['rel_path'] = str(rel_path)
+        all_tasks.extend(file_tasks)
+        file_data[str(rel_path)] = (target_data, target_path)
+        
+    if not all_tasks:
+        print(f"    ✅ {lang.upper()}: Everything looks good")
+        return 0
+        
+    print(f"    🔧 {lang.upper()}: Fixing {len(all_tasks)} bad/missing translations in batch...")
     
-    # Save cache
+    # Batch translate
+    texts = [t['value'] for t in all_tasks]
+    key_paths = [f"{t['rel_path']}:{t['path']}" for t in all_tasks]
+    results = translator.translate_batch(texts, SOURCE_LANG if lang != 'ru' else 'en', lang, key_paths=key_paths)
+    
+    # Apply
+    affected_files = set()
+    for i, t in enumerate(all_tasks):
+        t['parent'][t['key']] = results[i]
+        affected_files.add(t['rel_path'])
+        
+    # Save
+    for rel_path in affected_files:
+        data, path = file_data[rel_path]
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2, sort_keys=True)
+            
+    print(f"    ✅ {lang.upper()}: Fixed {len(all_tasks)} issues across {len(affected_files)} files")
+    return len(all_tasks)
+
+def main():
+    print("🔧 Fixing bad translations in frontend locale files (HIGH SPEED MODE)...")
+    translator = Translator(use_cache=True)
+    ru_dir = LOCALES_DIR / SOURCE_LANG
+    if not ru_dir.exists(): return
+    ru_files = list(ru_dir.rglob("*.json"))
+    
+    total_fixed = 0
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = {executor.submit(process_lang, lang, ru_files, ru_dir, translator): lang for lang in LANGUAGES}
+        for f in futures: total_fixed += f.result()
+        
     translator.save_cache_to_disk()
-    
-    print(f"\n✅ Fix complete!")
-    print(f"   Total fixed translations: {total_fixed}")
-    
-    if total_fixed == 0:
-        print("   All locale files are good!")
+    print(f"\n✅ Total fixed: {total_fixed}")
 
 if __name__ == "__main__":
     main()

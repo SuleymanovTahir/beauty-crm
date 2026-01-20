@@ -8,7 +8,7 @@
   "error": "Error",
   "error_creating": "Error creating user",
   "full_name_label": "Full name *",
-  "full_name_placeholder": "John doe",
+  "full_name_placeholder": "John Doe",
   "full_name_required": "Name required",
   "no_position_found": "Position not found",
   "password_hint": "",
