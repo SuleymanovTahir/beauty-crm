@@ -749,7 +749,7 @@ def get_initial_load_data(language: str = "ru"):
             "whatsapp": settings.get("whatsapp"),
             "logo_url": settings.get("logo_url"),
             "currency": settings.get("currency", "AED"),
-            "google_maps_embed_url": f"https://maps.google.com/maps?q={settings.get('latitude', 25.0738739)},{settings.get('longitude', 55.1315886)}&z=15&output=embed" if settings.get('latitude') else settings.get("google_maps"),
+            "google_maps_embed_url": f"https://maps.google.com/maps?q={settings.get('latitude', 25.0744782)},{settings.get('longitude', 55.1317665)}&z=15&output=embed" if settings.get('latitude') else settings.get("google_maps"),
             "google_maps": settings.get("google_maps"),
             "map_url": settings.get("google_maps"),
             "hours": settings.get("hours"),
