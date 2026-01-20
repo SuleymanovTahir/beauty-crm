@@ -296,7 +296,7 @@ export default function UniversalDashboard() {
               {t('common:welcome')}, {currentUser.full_name || currentUser.username}!
             </h1>
             <p className="text-sm md:text-base text-gray-600">
-              {isSales ? 'Ваши показатели продаж и воронки' : t('employee/Dashboard:my_bookings')}
+              {isSales ? t('admin/dashboard:sales_metrics') : t('employee/Dashboard:my_bookings')}
             </p>
           </div>
         </div>
@@ -306,7 +306,7 @@ export default function UniversalDashboard() {
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <div className="flex items-center gap-2 text-gray-700">
               <Filter className="w-5 h-5" />
-              <span className="font-medium">{t('admin/dashboard:date_filter', 'Период:')}</span>
+              <span className="font-medium">{t('admin/dashboard:date_filter')}</span>
             </div>
             <DateFilterDropdown
               value={dateFilter}
@@ -319,11 +319,11 @@ export default function UniversalDashboard() {
           {showDatePicker && (
             <div className="mt-4 flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
               <div className="flex-1">
-                <label className="block text-xs text-gray-600 mb-1">От:</label>
+                <label className="block text-xs text-gray-600 mb-1">{t('admin/dashboard:from')}</label>
                 <input type="date" className="w-full px-3 py-2 border rounded-lg" value={customDateRange.start.split('T')[0]} onChange={(e) => setCustomDateRange({ ...customDateRange, start: new Date(e.target.value).toISOString() })} />
               </div>
               <div className="flex-1">
-                <label className="block text-xs text-gray-600 mb-1">До:</label>
+                <label className="block text-xs text-gray-600 mb-1">{t('admin/dashboard:to')}</label>
                 <input type="date" className="w-full px-3 py-2 border rounded-lg" value={customDateRange.end.split('T')[0]} onChange={(e) => setCustomDateRange({ ...customDateRange, end: new Date(e.target.value).toISOString() })} />
               </div>
             </div>
@@ -332,37 +332,37 @@ export default function UniversalDashboard() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
           <div className="bg-gradient-to-br from-pink-500 to-blue-600 p-6 rounded-xl shadow-lg text-white">
-            <p className="text-sm opacity-80 mb-1">{isSales ? 'Выручка сделок' : 'Ваша выручка'}</p>
+            <p className="text-sm opacity-80 mb-1">{isSales ? t('admin/dashboard:deal_revenue') : t('admin/dashboard:your_revenue')}</p>
             <h3 className="text-3xl font-bold">{stats?.total_revenue?.toLocaleString()} {salonSettings?.currency}</h3>
             {stats?.growth?.revenue && (
               <div className="flex items-center gap-1 text-xs mt-1">
                 <TrendingUp className={`w-3 h-3 ${stats.growth.revenue.trend === 'down' ? 'rotate-180' : ''}`} />
-                <span>{stats.growth.revenue.percentage}% к прошлому периоду</span>
+                <span>{stats.growth.revenue.percentage}% {t('admin/dashboard:vs_previous_period')}</span>
               </div>
             )}
           </div>
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p className="text-gray-500 text-sm mb-1">{isSales ? 'Всего лидов' : t('employee/Dashboard:today_bookings')}</p>
+            <p className="text-gray-500 text-sm mb-1">{isSales ? t('admin/dashboard:total_leads') : t('employee/Dashboard:today_bookings')}</p>
             <h3 className="text-3xl text-gray-900 font-bold">{stats?.total_bookings || 0}</h3>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p className="text-gray-500 text-sm mb-1">{isSales ? 'Конверсия в сделку' : 'Моя конверсия'}</p>
+            <p className="text-gray-500 text-sm mb-1">{isSales ? t('admin/dashboard:deal_conversion') : t('admin/dashboard:my_conversion')}</p>
             <h3 className="text-3xl text-green-600 font-bold">{stats?.conversion_rate?.toFixed(1)}%</h3>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p className="text-gray-500 text-sm mb-1">Новых клиентов</p>
+            <p className="text-gray-500 text-sm mb-1">{t('admin/dashboard:new_clients')}</p>
             <h3 className="text-3xl text-blue-600 font-bold">{stats?.new_clients || 0}</h3>
           </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-xl text-gray-900 font-bold mb-6">
-            {isSales ? 'Последние лиды' : t('employee/Dashboard:schedule_for_today')}
+            {isSales ? t('admin/dashboard:recent_leads') : t('employee/Dashboard:schedule_for_today')}
           </h2>
           {recentBookings.length === 0 ? (
             <div className="flex flex-col items-center py-12 text-center">
               <Calendar className="w-12 h-12 text-gray-300 mb-4" />
-              <p className="text-gray-500">{isSales ? 'У вас пока нет активных лидов' : t('employee/Dashboard:no_bookings_today')}</p>
+              <p className="text-gray-500">{isSales ? t('admin/dashboard:no_active_leads') : t('employee/Dashboard:no_bookings_today')}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -452,7 +452,7 @@ export default function UniversalDashboard() {
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <div className="flex items-center gap-2 text-gray-700">
             <Filter className="w-5 h-5" />
-            <span className="font-medium">{t('admin/dashboard:date_filter', 'Период:')}</span>
+            <span className="font-medium">{t('admin/dashboard:date_filter')}</span>
           </div>
           <DateFilterDropdown
             value={dateFilter}
@@ -465,11 +465,11 @@ export default function UniversalDashboard() {
         {showDatePicker && (
           <div className="mt-4 flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
             <div className="flex-1">
-              <label className="block text-xs text-gray-600 mb-1">От:</label>
+              <label className="block text-xs text-gray-600 mb-1">{t('admin/dashboard:from')}</label>
               <input type="date" className="w-full px-3 py-2 border rounded-lg" value={customDateRange.start.split('T')[0]} onChange={(e) => setCustomDateRange({ ...customDateRange, start: new Date(e.target.value).toISOString() })} />
             </div>
             <div className="flex-1">
-              <label className="block text-xs text-gray-600 mb-1">До:</label>
+              <label className="block text-xs text-gray-600 mb-1">{t('admin/dashboard:to')}</label>
               <input type="date" className="w-full px-3 py-2 border rounded-lg" value={customDateRange.end.split('T')[0]} onChange={(e) => setCustomDateRange({ ...customDateRange, end: new Date(e.target.value).toISOString() })} />
             </div>
           </div>
@@ -502,7 +502,7 @@ export default function UniversalDashboard() {
       {/* Revenue & Conv */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
         <div className="bg-gradient-to-br from-pink-500 to-blue-600 p-6 rounded-xl shadow-lg text-white">
-          <p className="text-sm opacity-80 mb-1">Выручка</p>
+          <p className="text-sm opacity-80 mb-1">{t('admin/dashboard:revenue')}</p>
           <h3 className="text-3xl font-bold mb-1">{stats.total_revenue?.toLocaleString()} {salonSettings?.currency}</h3>
           {stats.growth?.revenue && (
             <div className="flex items-center gap-1 text-xs">
@@ -512,15 +512,15 @@ export default function UniversalDashboard() {
           )}
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-sm text-gray-500 mb-1">Средний чек</p>
+          <p className="text-sm text-gray-500 mb-1">{t('admin/dashboard:average_check')}</p>
           <h3 className="text-3xl font-bold text-gray-900">{stats.avg_booking_value?.toLocaleString()} {salonSettings?.currency}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-sm text-gray-500 mb-1">Отмены</p>
+          <p className="text-sm text-gray-500 mb-1">{t('admin/dashboard:cancellations')}</p>
           <h3 className="text-3xl font-bold text-red-600">{stats.cancellation_rate?.toFixed(1)}%</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-sm text-gray-500 mb-1">Конверсия</p>
+          <p className="text-sm text-gray-500 mb-1">{t('admin/dashboard:conversion')}</p>
           <h3 className="text-3xl font-bold text-blue-600">{stats.conversion_rate?.toFixed(1)}%</h3>
         </div>
       </div>
@@ -529,8 +529,8 @@ export default function UniversalDashboard() {
         {/* Recent Bookings */}
         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold">Последние записи</h2>
-            <Link to={`${rolePrefix}/bookings`} className="text-pink-600 text-sm font-medium hover:underline">Все записи</Link>
+            <h2 className="text-xl font-bold">{t('admin/dashboard:latest_bookings')}</h2>
+            <Link to={`${rolePrefix}/bookings`} className="text-pink-600 text-sm font-medium hover:underline">{t('admin/dashboard:all_bookings')}</Link>
           </div>
           <div className="space-y-4">
             {filteredRecentBookings.map((booking) => {
@@ -559,17 +559,17 @@ export default function UniversalDashboard() {
         {/* Quick Actions & Notifications */}
         <div className="space-y-6">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-bold mb-4">Быстрые действия</h2>
+            <h2 className="text-lg font-bold mb-4">{t('admin/dashboard:quick_actions')}</h2>
             <div className="space-y-2">
               <Button className="w-full justify-start gap-2 bg-pink-600 hover:bg-pink-700" onClick={() => navigate(`${rolePrefix}/bookings`)}>
-                <Calendar className="w-4 h-4" /> Новая запись
+                <Calendar className="w-4 h-4" /> {t('admin/dashboard:new_booking')}
               </Button>
               <Button variant="outline" className="w-full justify-start gap-2" onClick={() => navigate(`${rolePrefix}/clients`)}>
-                <Users className="w-4 h-4" /> База клиентов
+                <Users className="w-4 h-4" /> {t('admin/dashboard:client_database')}
               </Button>
               {permissions.canViewAnalytics && (
                 <Button variant="outline" className="w-full justify-start gap-2" onClick={() => navigate(`${rolePrefix}/analytics`)}>
-                  <TrendingUp className="w-4 h-4" /> Аналитика
+                  <TrendingUp className="w-4 h-4" /> {t('admin/dashboard:analytics')}
                 </Button>
               )}
             </div>
@@ -579,15 +579,15 @@ export default function UniversalDashboard() {
             <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-xl shadow-lg p-6 text-white">
               <h3 className="font-bold flex items-center gap-2 mb-4">
                 <Bot className="w-5 h-5 text-white" />
-                Бот Аналитика
+                {t('admin/dashboard:bot_analytics')}
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-[10px] opacity-70">Конверсия</p>
+                  <p className="text-[10px] opacity-70">{t('admin/dashboard:conversion')}</p>
                   <p className="text-xl font-bold">{botAnalytics.conversion_rate}%</p>
                 </div>
                 <div>
-                  <p className="text-[10px] opacity-70">Активных сессий</p>
+                  <p className="text-[10px] opacity-70">{t('admin/dashboard:active_sessions')}</p>
                   <p className="text-xl font-bold">{botAnalytics.total_sessions}</p>
                 </div>
               </div>

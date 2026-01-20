@@ -236,10 +236,41 @@ def get_clients_stats_only():
 
 
 
+def get_clients_all():
+    """Получить ВСЕХ клиентов (независимо от мессенджера)"""
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT DISTINCT
+            c.instagram_id, c.username, c.phone, c.name, c.first_contact,
+            c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
+            c.profile_pic, c.notes, c.is_pinned, c.gender, 
+            CASE WHEN EXISTS (SELECT 1 FROM chat_history ch WHERE ch.instagram_id = c.instagram_id) THEN 1 ELSE 0 END as has_messages,
+            c.created_at,
+            COALESCE(b.total_spend, 0) as total_spend,
+            COALESCE(b.total_bookings, 0) as total_bookings,
+            c.temperature
+        FROM clients c
+        LEFT JOIN (
+            SELECT instagram_id,
+                   SUM(revenue) as total_spend,
+                   COUNT(*) as total_bookings
+            FROM bookings
+            WHERE status = 'completed'
+            GROUP BY instagram_id
+        ) b ON c.instagram_id = b.instagram_id
+        ORDER BY c.is_pinned DESC, c.last_contact DESC
+    """)
+
+    clients = c.fetchall()
+    conn.close()
+    return clients
+
 @router.get("/clients")
 async def list_clients(
     session_token: Optional[str] = Cookie(None),
-    messenger: Optional[str] = Query('instagram'),
+    messenger: Optional[str] = Query('all'), # Default to 'all' here too, or keep as is and let frontend drive
     master_id: Optional[int] = Query(None)
 ):
     """Получить всех клиентов с фильтрацией по мессенджеру и/или мастеру"""
@@ -263,9 +294,9 @@ async def list_clients(
         return {"clients": clients}
 
     # Валидируем тип мессенджера
-    valid_messengers = ['instagram', 'telegram', 'whatsapp', 'tiktok']
+    valid_messengers = ['instagram', 'telegram', 'whatsapp', 'tiktok', 'all']
     if messenger not in valid_messengers:
-        messenger = 'instagram'
+        messenger = 'all'
 
     # RBAC: Разные уровни доступа в зависимости от роли
     if user["role"] == "employee":
@@ -287,7 +318,10 @@ async def list_clients(
         return {"clients_stats": stats, "access_level": "stats_only"}
     else:
         # Admin/Manager/Director видят всех клиентов с полными данными
-        clients = get_clients_by_messenger(messenger)
+        if messenger == 'all':
+            clients = get_clients_all()
+        else:
+            clients = get_clients_by_messenger(messenger)
     return {
         "clients": [
             {

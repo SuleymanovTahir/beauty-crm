@@ -68,8 +68,8 @@ def get_salon_settings() -> dict:
                 # SEO & Analytics fields
                 "google_analytics_id": row_dict.get("google_analytics_id"),
                 "facebook_pixel_id": row_dict.get("facebook_pixel_id"),
-                "latitude": row_dict.get("latitude", 25.2048),  # JBR Dubai default
-                "longitude": row_dict.get("longitude", 55.2708),  # JBR Dubai default
+                "latitude": row_dict.get("latitude", 25.0738739),  # M Le Diamant default
+                "longitude": row_dict.get("longitude", 55.1315886),  # M Le Diamant default
                 "logo_url": row_dict.get("logo_url", "/static/uploads/images/salon/logo.webp"),
                 "base_url": row_dict.get("base_url", "https://mlediamant.com"),
                 # Feature Management
@@ -134,8 +134,8 @@ def _get_default_salon_settings() -> dict:
         # SEO & Analytics fields
         "google_analytics_id": None,
         "facebook_pixel_id": None,
-        "latitude": 25.2048,  # JBR Dubai
-        "longitude": 55.2708,  # JBR Dubai
+        "latitude": 25.0738739,  # M Le Diamant
+        "longitude": 55.1315886,  # M Le Diamant
         "logo_url": "/static/uploads/images/salon/logo.webp",
         "base_url": "https://mlediamant.com",
         "points_expiration_days": 365,
