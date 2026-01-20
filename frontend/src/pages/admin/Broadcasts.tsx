@@ -431,7 +431,7 @@ export default function Broadcasts() {
                       className={`rounded-xl h-12 ${errors.subject ? 'border-red-500 bg-red-50/30' : 'bg-gray-50/30 border-gray-200 focus:bg-white transiton-all'}`}
                       value={form.subject}
                       onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                      placeholder={t('placeholder_subject', 'Специальное предложение для вас!')}
+                      placeholder={t('placeholder_subject')}
                     />
                   </div>
                 )}
@@ -538,14 +538,14 @@ export default function Broadcasts() {
                       setForm({ ...form, message: e.target.value });
                       if (errors.message) setErrors({ ...errors, message: false });
                     }}
-                    placeholder={t('placeholder_message', 'Введите текст рассылки...')}
+                    placeholder={t('placeholder_message')}
                     className={`min-h-[180px] rounded-2xl p-4 text-base ${errors.message ? 'border-red-500 bg-red-50/30 ring-red-100' : 'bg-gray-50/50 border-gray-200 focus:bg-white transition-all'}`}
                   />
                   <div className="flex justify-between items-center mt-2 px-1">
                     <p className={`text-xs font-medium ${form.message.length > 500 ? 'text-orange-500' : 'text-gray-400'}`}>
-                      {form.message.length} {t('common:characters_count', 'символов')}
+                      {t('common:characters_count', { count: form.message.length })}
                     </p>
-                    <p className="text-xs text-gray-400 font-medium">{t('telegram_limit_hint', 'Рекомендуется до 4096 (Telegram)')}</p>
+                    <p className="text-xs text-gray-400 font-medium">{t('telegram_limit_hint', { count: 4096 })}</p>
                   </div>
                 </div>
 
@@ -584,7 +584,7 @@ export default function Broadcasts() {
 
                           // Проверка размера файла (макс 10MB)
                           if (file.size > 10 * 1024 * 1024) {
-                            toast.error(t('file_too_large', 'Файл слишком большой. Максимальный размер 10MB'));
+                            toast.error(t('file_too_large', { max: 10 }));
                             return;
                           }
 
@@ -609,10 +609,10 @@ export default function Broadcasts() {
                               attachment_urls: [...(form.attachment_urls || []), fileUrl]
                             });
 
-                            toast.success(t('file_uploaded', 'Файл успешно загружен'));
+                            toast.success(t('file_uploaded'));
                           } catch (error) {
                             console.error('Upload error:', error);
-                            toast.error(t('error_uploading_file', 'Ошибка загрузки файла'));
+                            toast.error(t('error_uploading_file'));
                           } finally {
                             setUploadingFile(false);
                             e.target.value = '';
@@ -627,17 +627,17 @@ export default function Broadcasts() {
                         {uploadingFile ? (
                           <>
                             <Loader className="w-4 h-4 animate-spin" />
-                            {t('common:loading', 'Загрузка...')}
+                            {t('common:loading')}
                           </>
                         ) : (
                           <>
                             <Plus size={16} />
-                            {t('attach_file', 'Прикрепить файл')}
+                            {t('attach_file')}
                           </>
                         )}
                       </label>
                       <p className="text-xs text-gray-500 flex items-center">
-                        {t('file_formats_hint', 'PDF, DOC, XLS, изображения (макс 10MB)')}
+                        {t('file_formats_hint', { max: 10 })}
                       </p>
                     </div>
                   </div>
@@ -858,9 +858,9 @@ export default function Broadcasts() {
             <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-medium text-yellow-800 mb-1">{t('check_recipients', 'Проверьте получателей')}</h4>
+                <h4 className="font-medium text-yellow-800 mb-1">{t('check_recipients')}</h4>
                 <p className="text-sm text-yellow-700">
-                  {t('check_recipients_desc', 'Пожалуйста, убедитесь, что данные получателей (Email, Username) корректны перед отправкой.')}
+                  {t('check_recipients_desc')}
                 </p>
               </div>
             </div>
@@ -907,7 +907,7 @@ export default function Broadcasts() {
                   ))}
                   {preview.total_users > 10 && (
                     <div className="p-3 text-center text-sm text-gray-500 italic">
-                      {t('and_more_users', { count: preview.total_users - 10, defaultValue: `...и еще ${preview.total_users - 10} пользователей` })}
+                      {t('and_more_users', { count: preview.total_users - 10 })}
                     </div>
                   )}
                 </div>

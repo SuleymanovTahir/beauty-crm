@@ -60,7 +60,10 @@
     "video_call": "Видеозвонок"
   },
   "cancel": "Отмена",
-  "characters_count": "символов",
+  "characters_count_one": "{{count}} символ",
+  "characters_count_few": "{{count}} символа",
+  "characters_count_many": "{{count}} символов",
+  "characters_count_other": "{{count}} символов",
   "chat": {
     "attach_file": "Прикрепить файл",
     "attach_image": "Прикрепить изображение",

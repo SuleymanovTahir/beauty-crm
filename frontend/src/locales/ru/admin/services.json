@@ -1,4 +1,5 @@
 {
+  "0_no_limit": "0 — без лимита",
   "actions": "Действия",
   "active": "Активна",
   "active_label": "Активна (клиенты могут использовать)",
@@ -7,8 +8,8 @@
   "all_clients": "Все клиенты",
   "all_packages": "Все пакеты",
   "available_for_clients": "Доступно для клиентов",
-  "basic_info": "Основная информация",
   "base_price": "Базовая цена",
+  "basic_info": "Основная информация",
   "benefits": "Преимущества",
   "bot_automatically_recognizes_the_context_of_the_advertising_campaign": "Бот автоматически распознает контекст рекламной кампании",
   "can_change_price_hint": "Мастер может менять цену",
@@ -30,10 +31,10 @@
   "employees_providing_service": "Мастера, предоставляющие услугу",
   "error_saving": "Ошибка сохранения",
   "how_special_packages_work": "Как работают специальные пакеты",
-  "includes_manicure_pedicure_at_special_price": "Включает маникюр и педикюр по спеццене",
   "inactive": "Неактивна",
   "inactive_clients": "Неактивные клиенты",
   "included_services": "Услуги в пакете",
+  "includes_manicure_pedicure_at_special_price": "Включает маникюр и педикюр по спеццене",
   "keywords": "Ключевые слова",
   "load_inactive_clients": "Загрузить неактивных клиентов",
   "loading": "Загрузка...",
@@ -95,6 +96,5 @@
   "valid_from": "Действует с",
   "valid_until": "Действует до",
   "when_client_mentions_keywords_or_promo_code_bot_will_offer_special_price": "Когда клиент упоминает ключевые слова или промокод, бот предложит специальную цену",
-  "when_client_mentions_these_words_bot_will_offer_this_package": "Когда клиент упоминает эти слова, бот предложит этот пакет",
-  "0_no_limit": "0 — без лимита"
+  "when_client_mentions_these_words_bot_will_offer_this_package": "Когда клиент упоминает эти слова, бот предложит этот пакет"
 }

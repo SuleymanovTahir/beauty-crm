@@ -61,6 +61,12 @@
   },
   "cancel": "يلغي",
   "characters_count": "الشخصيات",
+  "characters_count_zero": "",
+  "characters_count_one": "",
+  "characters_count_two": "",
+  "characters_count_few": "",
+  "characters_count_many": "",
+  "characters_count_other": "",
   "chat": {
     "attach_file": "إرفاق الملف",
     "attach_image": "إرفاق صورة",

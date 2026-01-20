@@ -7,7 +7,9 @@
   "booking_created": "Запись создана",
   "booking_deleted": "Запись удалена",
   "booking_updated": "Запись обновлена",
+  "can_change_price_hint": "Мастер может менять цену",
   "cancel": "Отмена",
+  "chat": "Чат",
   "client": "Клиент",
   "completed": "Завершено",
   "confirm_delete": "Вы уверены, что хотите удалить эту запись?",
@@ -29,6 +31,7 @@
   "pending": "В ожидании",
   "period": "Период",
   "phone": "Телефон",
+  "phone_placeholder": "+971 ...",
   "price": "Цена",
   "records_count": "Записей",
   "records_count_one": "{{count}} запись",
@@ -65,8 +68,5 @@
   "time": "Время",
   "title": "Записи",
   "total": "Всего",
-  "view": "Просмотр",
-  "chat": "Чат",
-  "phone_placeholder": "+971 ...",
-  "can_change_price_hint": "Мастер может менять цену"
+  "view": "Просмотр"
 }

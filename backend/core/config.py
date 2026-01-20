@@ -105,8 +105,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 CSS_VERSION = datetime.now().strftime('%Y%m%d%H%M%S')
 
 # ===== ТОКЕНЫ И КЛЮЧИ (из .env) =====
-SALON_LAT = 25.07447
-SALON_LON = 55.13178
+SALON_LAT = 25.07398834046777
+SALON_LON = 55.13161571633984
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "taha")
 PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
