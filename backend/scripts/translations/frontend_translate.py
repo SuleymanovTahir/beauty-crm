@@ -57,6 +57,15 @@ def needs_translation(path: str, source_value: str, target_value: str, lang: str
     if lang in translator.key_glossary and key_path in translator.key_glossary[lang]:
         if target_value != translator.key_glossary[lang][key_path]:
             return True
+
+    # Priority 1.5: Salon Terminology Source Check (Override existing if glossary changed)
+    if lang in translator.SALON_TERMINOLOGY:
+        source_lower = source_value.lower().strip()
+        if source_lower in translator.SALON_TERMINOLOGY[lang]:
+            expected = translator.SALON_TERMINOLOGY[lang][source_lower]
+            # Exact match check (considering base casing)
+            if target_value != expected:
+                return True
             
     # Priority 2: Source Value Changed
     saved_source = file_source_map.get(path)
@@ -193,6 +202,7 @@ def process_language(lang, ru_files, ru_dir, translator, source_map, force):
     for i, task in enumerate(all_lang_tasks):
         v = task['value']
         translated = translated_texts[i]
+        old_translated = translated
         
         # Case matching
         if v and v[0].isupper() and translated and not translated[0].isupper():
@@ -200,6 +210,9 @@ def process_language(lang, ru_files, ru_dir, translator, source_map, force):
         elif v and v[0].islower() and translated and translated[0].isupper():
             translated = translated[0].lower() + translated[1:]
             
+        if lang == 'en' and ('иванов' in v.lower() or 'ivanov' in v.lower()):
+            print(f"      DEBUG: {v} -> {old_translated} -> {translated}")
+
         task['parent'][task['key']] = translated
         # Update source map
         task_file_rel_path = task['file_rel_path']

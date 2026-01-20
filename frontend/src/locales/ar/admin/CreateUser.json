@@ -8,7 +8,7 @@
   "error": "خطأ",
   "error_creating": "حدث خطأ أثناء إنشاء المستخدم",
   "full_name_label": "الاسم الكامل *",
-  "full_name_placeholder": "إيفانوف إيفان إيفانوفيتش",
+  "full_name_placeholder": "محمد أحمد",
   "full_name_required": "الاسم مطلوب",
   "no_position_found": "لم يتم العثور على الموقف",
   "password_hint": "",

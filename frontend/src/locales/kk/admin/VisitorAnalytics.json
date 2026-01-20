@@ -45,8 +45,8 @@
   "visitor_trend": "Трендке кіру",
   "visitors": "Келушілер",
   "visitors_count": "",
+  "visitors_count_one": "{{count}} келуші",
   "visitors_count_few": "{{count}} келуші",
   "visitors_count_many": "{{count}} келушілер",
-  "visitors_count_one": "{{count}} келуші",
   "visitors_count_other": "{{count}} келушілер"
 }

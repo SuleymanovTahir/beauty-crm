@@ -10,7 +10,7 @@
   "createFirst": "Ajouter le premier produit au système",
   "delete": "Supprimer",
   "detail": {
-    "costPriceLabel": "Coût : {{price}} {{currency}}",
+    "costPriceLabel": "Coût\u00a0: {{price}} {{currency}}",
     "inStock_one": "En stock {{count}} pcs.",
     "inStock_few": "En stock {{count}} pcs.",
     "inStock_many": "En stock {{count}} pcs.",
@@ -27,13 +27,13 @@
   "form": {
     "cancel": "Annuler",
     "category": "Catégorie",
-    "costPrice": "Prix ​​de revient",
+    "costPrice": "Prix \u200b\u200bde revient",
     "isActive": "Actif",
     "minStockLevel": "Solde minimum",
     "name": "Nom",
     "notes": "Remarques",
     "photos": "Photo du produit",
-    "price": "Prix ​​de vente",
+    "price": "Prix \u200b\u200bde vente",
     "save": "Sauvegarder",
     "sku": "Article",
     "stockQuantity": "Stock restant",
@@ -41,7 +41,7 @@
     "uploadError": "Erreur lors du chargement de la photo"
   },
   "messages": {
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément\u00a0?",
     "noResults": "Rien trouvé correspondant à votre demande"
   },
   "movement": {

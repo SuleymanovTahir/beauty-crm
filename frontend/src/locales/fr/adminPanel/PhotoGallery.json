@@ -16,7 +16,7 @@
   },
   "dialogs": {
     "delete": {
-      "confirm": "Êtes-vous sûr de vouloir supprimer cette photo ?"
+      "confirm": "Êtes-vous sûr de vouloir supprimer cette photo\u00a0?"
     },
     "upload": {
       "description": "Ajouter une nouvelle photo à la galerie",
