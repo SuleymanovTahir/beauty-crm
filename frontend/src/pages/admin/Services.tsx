@@ -878,7 +878,9 @@ export default function Services() {
                 <SelectContent>
                   <SelectItem value="all">{t('services:all_categories')}</SelectItem>
                   {categories.map(cat => (
-                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    <SelectItem key={cat} value={cat}>
+                      {t(`services:category_${cat.toLowerCase().replace(/\s+/g, '_')}`, cat)}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
