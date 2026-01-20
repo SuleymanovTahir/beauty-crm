@@ -50,10 +50,10 @@
     "failed_create": "Die Herausforderung konnte nicht erstellt werden",
     "failed_delete": "Die Herausforderung konnte nicht gelöscht werden",
     "failed_load": "Die Herausforderungen konnten nicht geladen werden",
-    "progress_checked_one": "",
-    "progress_checked_few": "",
-    "progress_checked_many": "",
-    "progress_checked_other": ""
+    "progress_checked_one": "Der Fortschritt wird alleine überprüft",
+    "progress_checked_few": "Der Fortschritt hat mehrere überprüft",
+    "progress_checked_many": "Der Fortschritt wurde datum bis vielen getestet",
+    "progress_checked_other": "datum bis anderen bestätigte Fortschritte"
   },
   "types": {
     "referrals": "Empfehlungen",

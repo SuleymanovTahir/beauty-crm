@@ -1,6 +1,6 @@
 {
-  "manage_your_tasks": "",
-  "my_tasks": "",
-  "no_tasks": "",
-  "no_tasks_description": ""
+  "manage_your_tasks": "إدارة المهام الخاصة بك",
+  "my_tasks": "مهامي",
+  "no_tasks": "لا توجد مهام",
+  "no_tasks_description": "لا يوجد وصف للمهمة"
 }

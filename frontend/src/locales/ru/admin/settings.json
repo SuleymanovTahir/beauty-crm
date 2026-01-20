@@ -27,7 +27,7 @@
   "error_deleting_currency": "Ошибка удаления валюты",
   "error_enter_current_password": "Введите текущий пароль",
   "error_invalid_email": "Неверный формат электронной почты",
-  "error_loading_currencies": "",
+  "error_loading_currencies": "Ошибка загрузки валют.",
   "error_loading_profile": "Ошибка загрузки профиля.",
   "error_name_too_short": "Имя должно быть длиной не менее 2 символов.",
   "error_password_too_short": "Пароль должен быть длиной не менее 6 символов",

@@ -322,21 +322,17 @@ class Translator:
             # Use unverified context to bypass local SSL certificate issues (common on macOS)
             context = ssl._create_unverified_context() if hasattr(ssl, '_create_unverified_context') else None
             
-            try:
-                with urllib.request.urlopen(req, timeout=10, context=context) as response:
-                    data = response.read().decode('utf-8')
-                    parsed = json.loads(data)
-                    
-                    # Google Translate returns array of translations
-                    if parsed and parsed[0] and parsed[0][0] and parsed[0][0][0]:
-                        translated = parsed[0][0][0]
-                        # ... cleanup context prefix logic remains ...
+            with urllib.request.urlopen(req, timeout=10, context=context) as response:
+                data = response.read().decode('utf-8')
+                parsed = json.loads(data)
+                
+                # Google Translate returns array of translations
+                if parsed and parsed[0] and parsed[0][0] and parsed[0][0][0]:
+                    translated = parsed[0][0][0]
                     
                     # Remove context prefix from translation if it was added
                     if context_prefix:
-                        # Try to remove the translated context prefix
-                        # This is a bit tricky as the prefix itself gets translated
-                        # So we'll just clean up common patterns
+                        # ... cleanup ...
                         translated = translated.replace("[Beauty salon service]", "").strip()
                         translated = translated.replace("[Услуга салона красоты]", "").strip()
                         translated = translated.replace("[خدمة صالون التجميل]", "").strip()
@@ -346,7 +342,6 @@ class Translator:
                         translated = translated.replace("[सौंदर्य सैलून सेवा]", "").strip()
                         translated = translated.replace("[Сұлулық салоны қызметі]", "").strip()
                         translated = translated.replace("[Serviço de salão de beleza]", "").strip()
-                        # Remove any remaining brackets
                         translated = translated.replace("[", "").replace("]", "").strip()
                     
                     return translated

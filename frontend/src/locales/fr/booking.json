@@ -22,12 +22,12 @@
     "welcome": "Accueillir"
   },
   "booking_info": "Informations d'réservation",
-  "bookingDesc": "Выберите удобное время для визита",
-  "bookingError": "Ошибка при создании записи. Попробуйте позже.",
-  "bookingSuccess": "Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.",
-  "bookingTag": "Онлайн запись",
-  "bookingTitlePart1": "Запишитесь",
-  "bookingTitlePart2": "на прием",
+  "bookingDesc": "Choisissez un moment opportun pour votre visite",
+  "bookingError": "Erreur lors de la création de l'réservation. Veuillez réessayer plus tard.",
+  "bookingSuccess": "Candidature envoyée avec succès ! Nous vous contacterons pour confirmer.",
+  "bookingTag": "Inscription en ligne",
+  "bookingTitlePart1": "S'inscrire",
+  "bookingTitlePart2": "pour un rendez-vous",
   "common": {
     "cancel": "Later",
     "change": "Change",
@@ -63,13 +63,13 @@
     "time": "Pick Time",
     "title": "Date & Time"
   },
-  "formDate": "Дата",
-  "formName": "Имя",
-  "formNamePlaceholder": "Ваше имя",
-  "formPhone": "Телефон",
-  "formService": "Услуги",
-  "formServicePlaceholder": "Выберите услуги",
-  "formTime": "Время",
+  "formDate": "Date",
+  "formName": "Nom",
+  "formNamePlaceholder": "ton nom",
+  "formPhone": "Téléphone",
+  "formService": "Services",
+  "formServicePlaceholder": "Sélectionnez les prestations",
+  "formTime": "Temps",
   "invalid_phone": "Please enter a valid phone number",
   "loading": "Initializing Studio",
   "menu": {
@@ -84,10 +84,10 @@
   },
   "min": "min",
   "newBooking": "Reservation",
-  "noServicesFound": "Услуги не найдены.",
-  "phone_too_short": "Номер телефона должен содержать минимум 11 цифр с учетом кода страны",
-  "privacyAgreementStart": "Нажимая кнопку, вы соглашаетесь с",
-  "privacyPolicy": "политикой конфиденциальности",
+  "noServicesFound": "Aucun service trouvé.",
+  "phone_too_short": "Le numéro de téléphone doit contenir au moins 11 chiffres, y compris l'indicatif du pays",
+  "privacyAgreementStart": "En cliquant sur le bouton, vous acceptez",
+  "privacyPolicy": "politique de confidentialité",
   "professional": {
     "anyAvailable": "Flexible Match",
     "anyDesc": "We'll match you with the best available professional",
@@ -96,8 +96,8 @@
     "notAvailableToday": "Not Available Today",
     "title": "Choose Master"
   },
-  "searchCountry": "Поиск страны...",
-  "searchService": "Найти услугу...",
+  "searchCountry": "Rechercher un pays...",
+  "searchService": "Trouver un service...",
   "select_to_continue": "Sélectionnez un service ou un technicien pour continuer",
   "services": {
     "allCategories": "All",
@@ -109,6 +109,6 @@
     "service_many": "services",
     "total": "Total"
   },
-  "submitBooking": "Отправить заявку",
+  "submitBooking": "Envoyer une demande",
   "totalDuration": "Duration"
 }

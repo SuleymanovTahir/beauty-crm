@@ -1,6 +1,6 @@
 {
-  "manage_your_tasks": "",
-  "my_tasks": "",
-  "no_tasks": "",
-  "no_tasks_description": ""
+  "manage_your_tasks": "Verwalten Sie Ihre Aufgaben",
+  "my_tasks": "Meine Aufgaben",
+  "no_tasks": "Keine Aufgaben",
+  "no_tasks_description": "Keine Aufgabenbeschreibungen"
 }

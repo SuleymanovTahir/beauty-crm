@@ -50,10 +50,10 @@
     "failed_create": "Сынақ жасау мүмкін болмады",
     "failed_delete": "Сынақ жойылмады",
     "failed_load": "Тапсырмалар жүктелмеді",
-    "progress_checked_one": "",
-    "progress_checked_few": "",
-    "progress_checked_many": "",
-    "progress_checked_other": ""
+    "progress_checked_one": "Прогресс жалғыз тексерілді",
+    "progress_checked_few": "Барысы бірнеше тексерілді",
+    "progress_checked_many": "Прогрессті көптеген адамдар сынады",
+    "progress_checked_other": "Прогресті басқалар растады"
   },
   "types": {
     "referrals": "Референциялар",

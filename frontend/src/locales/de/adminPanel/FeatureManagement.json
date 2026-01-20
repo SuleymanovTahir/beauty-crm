@@ -23,7 +23,7 @@
     "saved": "Configuration saved successfully"
   },
   "whitelist": {
-    "hint": "Идентификаторы пользователей, разделенные запятыми. ",
+    "hint": "Durch Kommas getrennte Benutzer-IDs.",
     "label": "Whitelist (Optional)",
     "placeholder": "e.g. 1, 5, 12"
   }

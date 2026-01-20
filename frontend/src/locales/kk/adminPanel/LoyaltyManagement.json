@@ -1,11 +1,11 @@
 {
-  "adjust_points": "",
+  "adjust_points": "Нүктелерді реттеу",
   "buttons": {
     "add_rule": "Ереже қосыңыз",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "Нүктелерді реттеу",
+    "cancel": "Болдырмау",
     "save": "Сақтау",
-    "save_changes": ""
+    "save_changes": "Өзгерістерді сақтау"
   },
   "categories": {
     "category": "Санат",
@@ -23,24 +23,24 @@
     "points_per_unit": "1 бірлік үшін ұпай. валюталар",
     "title": "Параметрлер"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "Ережені жоюды растаңыз",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "Клиенттің электрондық поштасы",
+      "client_email_placeholder": "Тұтынушы электрондық поштасының толтырғышы",
+      "description": "Сипаттама",
+      "points": "Көзілдірік",
+      "points_placeholder": "Нүкте толтырғыш",
+      "reason": "Себеп",
+      "reason_placeholder": "Себеп толтырғышы",
+      "title": "Айдар"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
-      "tier_name": "",
-      "title": ""
+      "description": "Сипаттама",
+      "discount_percent": "Жеңілдік пайызы",
+      "min_points": "Ең төменгі ұпайлар",
+      "tier_name": "Деңгей атауы",
+      "title": "Айдар"
     },
     "rule": {
       "description": "Қызмет санаты үшін нүкте көбейткішін орнатыңыз",
@@ -48,42 +48,42 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "Белсенді мүшелер",
+    "points_redeemed": "Ұпайлар белсендірілді",
+    "total_points_issued": "Берілген жалпы ұпайлар"
   },
-  "subtitle": "",
+  "subtitle": "Субтитрлер",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "Сипаттама",
+    "discount": "Жеңілдік",
+    "from_points": "Ұпайлардан",
+    "starting_level": "Кіру деңгейі",
+    "title": "Айдар"
   },
-  "title": "",
+  "title": "Айдар",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "Конфигурация жаңартылды",
+    "failed_adjust": "Конфигурацияланбады",
+    "failed_delete": "Жою мүмкін болмады",
+    "failed_load": "Жүктелмеді",
+    "failed_save": "Сақталмады",
+    "failed_update": "Жаңарту мүмкін болмады",
+    "points_adjusted_add": "Ұпайлар түзетілді, қосылды",
+    "points_adjusted_deduct": "Түзетілген ұпай шегерімі",
+    "rule_deleted": "Ереже жойылды.",
+    "rule_saved": "Ереже сақталды.",
+    "tier_updated": "Деңгей жаңартылды"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "Сипаттама",
+    "search_placeholder": "Толтырғышты іздеу",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "Клиент",
+      "date": "Күн",
+      "points": "Көзілдірік",
+      "reason": "Себеп",
+      "type": "Түр"
     },
-    "title": ""
+    "title": "Айдар"
   }
 }

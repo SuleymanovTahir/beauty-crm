@@ -57,7 +57,7 @@
   "title": "Empfehlungsprogramm",
   "toasts": {
     "failed_load": "Empfehlungen konnten nicht geladen werden",
-    "failed_save": "",
+    "failed_save": "Speichern fehlgeschlagen",
     "settings_saved": "Einstellungen erfolgreich gespeichert"
   }
 }

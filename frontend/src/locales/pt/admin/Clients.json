@@ -58,7 +58,7 @@
   "import_created": "Criado",
   "import_csv": "CSV (.csv)",
   "import_duplicates": "Duplicatas são ignoradas – verificação até data telefone",
-  "import_empty_fields": "Campos vazios são aceitáveis ​​- serão ignorados sem erros",
+  "import_empty_fields": "Campos vazios são aceitáveis \u200b\u200b- serão ignorados sem erros",
   "import_error_list": "Erros de importação",
   "import_errors_count_one": "",
   "import_errors_count_few": "",

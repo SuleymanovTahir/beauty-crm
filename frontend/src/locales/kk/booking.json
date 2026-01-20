@@ -22,12 +22,12 @@
     "welcome": "Қош келдіңіз"
   },
   "booking_info": "Ақпаратты жазу",
-  "bookingDesc": "Выберите удобное время для визита",
-  "bookingError": "Ошибка при создании записи. Попробуйте позже.",
-  "bookingSuccess": "Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.",
-  "bookingTag": "Онлайн запись",
-  "bookingTitlePart1": "Запишитесь",
-  "bookingTitlePart2": "на прием",
+  "bookingDesc": "Сапарыңыз үшін қолайлы уақытты таңдаңыз",
+  "bookingError": "Жазба жасау қатесі. Тағы жасауды сәл кейінірек көріңізді өтінеміз.",
+  "bookingSuccess": "Өтінім сәтті жіберілді! Растау үшін сізбен хабарласамыз.",
+  "bookingTag": "Онлайн тіркеу",
+  "bookingTitlePart1": "Тіркелу",
+  "bookingTitlePart2": "кездесуге",
   "common": {
     "cancel": "Later",
     "change": "Change",
@@ -63,13 +63,13 @@
     "time": "Pick Time",
     "title": "Date & Time"
   },
-  "formDate": "Дата",
-  "formName": "Имя",
-  "formNamePlaceholder": "Ваше имя",
+  "formDate": "Күн",
+  "formName": "Аты",
+  "formNamePlaceholder": "сіздің атыңыз",
   "formPhone": "Телефон",
-  "formService": "Услуги",
-  "formServicePlaceholder": "Выберите услуги",
-  "formTime": "Время",
+  "formService": "Қызметтер",
+  "formServicePlaceholder": "Қызметтерді таңдаңыз",
+  "formTime": "Уақыт",
   "invalid_phone": "Please enter a valid phone number",
   "loading": "Initializing Studio",
   "menu": {
@@ -84,10 +84,10 @@
   },
   "min": "min",
   "newBooking": "Reservation",
-  "noServicesFound": "Услуги не найдены.",
-  "phone_too_short": "Номер телефона должен содержать минимум 11 цифр с учетом кода страны",
-  "privacyAgreementStart": "Нажимая кнопку, вы соглашаетесь с",
-  "privacyPolicy": "политикой конфиденциальности",
+  "noServicesFound": "Ешқандай қызметтер табылмады.",
+  "phone_too_short": "Телефон нөмірі ел кодын қоса алғанда кемінде 11 саннан тұруы керек",
+  "privacyAgreementStart": "Түймені басу арқылы сіз келісесіз",
+  "privacyPolicy": "құпиялылық саясаты",
   "professional": {
     "anyAvailable": "Flexible Match",
     "anyDesc": "We'll match you with the best available professional",
@@ -96,8 +96,8 @@
     "notAvailableToday": "Not Available Today",
     "title": "Choose Master"
   },
-  "searchCountry": "Поиск страны...",
-  "searchService": "Найти услугу...",
+  "searchCountry": "Елді іздеу...",
+  "searchService": "Қызметті табыңыз...",
   "select_to_continue": "Жалғастыру үшін қызметті немесе техникті таңдаңыз",
   "services": {
     "allCategories": "All",
@@ -109,6 +109,6 @@
     "service_many": "services",
     "total": "Total"
   },
-  "submitBooking": "Отправить заявку",
+  "submitBooking": "Сұраныс жіберу",
   "totalDuration": "Duration"
 }

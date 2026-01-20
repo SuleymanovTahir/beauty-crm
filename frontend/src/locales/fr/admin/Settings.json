@@ -27,7 +27,7 @@
   "error_deleting_currency": "Erreur lors de la suppression de la devise",
   "error_enter_current_password": "Entrez votre mot de passe actuel",
   "error_invalid_email": "Format d'e-mail invalide",
-  "error_loading_currencies": "",
+  "error_loading_currencies": "Erreur lors du chargement des devises.",
   "error_loading_profile": "Erreur de chargement du profil",
   "error_name_too_short": "Le nom doit contenir au moins 2 caractères",
   "error_password_too_short": "Le mot de passe doit contenir au moins 6 caractères",

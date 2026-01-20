@@ -1,11 +1,11 @@
 {
-  "adjust_points": "",
+  "adjust_points": "Ajustando pontos",
   "buttons": {
     "add_rule": "Adicionar uma regra",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "Ajustando pontos",
+    "cancel": "Cancelar",
     "save": "Salvar",
-    "save_changes": ""
+    "save_changes": "Salvar alterações"
   },
   "categories": {
     "category": "Categoria",
@@ -23,24 +23,24 @@
     "points_per_unit": "pontos até data 1 unidade. moedas",
     "title": "Configurações"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "Confirmar exclusão da regra",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "E-mail do cliente",
+      "client_email_placeholder": "Espaço reservado para e-mail do cliente",
+      "description": "Descrição",
+      "points": "Copos",
+      "points_placeholder": "Preenchimento de pontos",
+      "reason": "Causa",
+      "reason_placeholder": "Espaço reservado para motivo",
+      "title": "Cabeçalho"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
-      "tier_name": "",
-      "title": ""
+      "description": "Descrição",
+      "discount_percent": "Porcentagem de desconto",
+      "min_points": "Pontuações mínimas",
+      "tier_name": "Nome do nível",
+      "title": "Cabeçalho"
     },
     "rule": {
       "description": "Defina o multiplicador de pontos para a categoria de serviço",
@@ -48,42 +48,42 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "Membros ativos",
+    "points_redeemed": "Pontos resgatados",
+    "total_points_issued": "Total de pontos atribuídos"
   },
-  "subtitle": "",
+  "subtitle": "Legendas",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "Descrição",
+    "discount": "Desconto",
+    "from_points": "De pontos",
+    "starting_level": "Nível de reserva",
+    "title": "Cabeçalho"
   },
-  "title": "",
+  "title": "Cabeçalho",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "Configuração atualizada",
+    "failed_adjust": "Falha ao configurar",
+    "failed_delete": "Falha ao excluir",
+    "failed_load": "Falha ao carregar",
+    "failed_save": "Falha ao salvar",
+    "failed_update": "Falha ao atualizar",
+    "points_adjusted_add": "Pontos ajustados, adicionados",
+    "points_adjusted_deduct": "Dedução de pontos ajustada",
+    "rule_deleted": "A regra foi excluída.",
+    "rule_saved": "A regra foi salva.",
+    "tier_updated": "Nível atualizado"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "Descrição",
+    "search_placeholder": "Espaço reservado de pesquisa",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "Cliente",
+      "date": "Data",
+      "points": "Copos",
+      "reason": "Causa",
+      "type": "Tipo"
     },
-    "title": ""
+    "title": "Cabeçalho"
   }
 }

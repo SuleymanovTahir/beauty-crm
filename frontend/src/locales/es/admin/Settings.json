@@ -27,7 +27,7 @@
   "error_deleting_currency": "Error al eliminar moneda",
   "error_enter_current_password": "Ingrese su contraseña actual",
   "error_invalid_email": "Formato de correo electrónico no válido",
-  "error_loading_currencies": "",
+  "error_loading_currencies": "Error al cargar monedas.",
   "error_loading_profile": "Error al cargar el perfil",
   "error_name_too_short": "El nombre debe contener al menos 2 caracteres.",
   "error_password_too_short": "La contraseña debe contener al menos 6 caracteres",

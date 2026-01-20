@@ -11,7 +11,9 @@
   "delete": "يمسح",
   "detail": {
     "costPriceLabel": "التكلفة: {{price}}_ {{currency}}",
+    "inStock_zero": "",
     "inStock_one": "",
+    "inStock_two": "",
     "inStock_few": "",
     "inStock_many": "",
     "inStock_other": "",

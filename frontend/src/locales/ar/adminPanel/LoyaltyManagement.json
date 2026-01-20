@@ -1,11 +1,11 @@
 {
-  "adjust_points": "",
+  "adjust_points": "ضبط النقاط",
   "buttons": {
     "add_rule": "أضف قاعدة",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "ضبط النقاط",
+    "cancel": "يلغي",
     "save": "يحفظ",
-    "save_changes": ""
+    "save_changes": "حفظ التغييرات"
   },
   "categories": {
     "category": "فئة",
@@ -23,24 +23,24 @@
     "points_per_unit": "نقاط ل 1 وحدة. العملات",
     "title": "إعدادات"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "تأكيد حذف القاعدة",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "البريد الإلكتروني للعميل",
+      "client_email_placeholder": "العنصر النائب للبريد الإلكتروني للعميل",
+      "description": "وصف",
+      "points": "نظارات",
+      "points_placeholder": "حشو النقطة",
+      "reason": "سبب",
+      "reason_placeholder": "السبب النائب",
+      "title": "عنوان"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
-      "tier_name": "",
-      "title": ""
+      "description": "وصف",
+      "discount_percent": "نسبة الخصم",
+      "min_points": "الحد الأدنى من الدرجات",
+      "tier_name": "اسم المستوى",
+      "title": "عنوان"
     },
     "rule": {
       "description": "ضبط مضاعف النقاط لفئة الخدمة",
@@ -48,42 +48,42 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "الأعضاء النشطين",
+    "points_redeemed": "تم استبدال النقاط",
+    "total_points_issued": "مجموع النقاط الممنوحة"
   },
-  "subtitle": "",
+  "subtitle": "ترجمات",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "وصف",
+    "discount": "تخفيض",
+    "from_points": "من النقاط",
+    "starting_level": "مستوى الدخول",
+    "title": "عنوان"
   },
-  "title": "",
+  "title": "عنوان",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "تم تحديث التكوين",
+    "failed_adjust": "فشل التكوين",
+    "failed_delete": "فشل الحذف",
+    "failed_load": "فشل التحميل",
+    "failed_save": "فشل الحفظ",
+    "failed_update": "فشل التحديث",
+    "points_adjusted_add": "تم تعديل النقاط وإضافتها",
+    "points_adjusted_deduct": "خصم نقطة المعدل",
+    "rule_deleted": "تم حذف القاعدة.",
+    "rule_saved": "تم حفظ القاعدة.",
+    "tier_updated": "تم تحديث المستوى"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "وصف",
+    "search_placeholder": "بحث في العنصر النائب",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "عميل",
+      "date": "تاريخ",
+      "points": "نظارات",
+      "reason": "سبب",
+      "type": "يكتب"
     },
-    "title": ""
+    "title": "عنوان"
   }
 }

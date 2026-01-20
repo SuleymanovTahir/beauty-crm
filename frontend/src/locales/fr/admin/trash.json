@@ -1,5 +1,5 @@
 {
-  "confirm_empty_trash": "Êtes-vous sûr de vouloir supprimer définitivement tous les éléments de la corbeille ?",
+  "confirm_empty_trash": "Êtes-vous sûr de vouloir supprimer définitivement tous les éléments de la corbeille\u00a0?",
   "delete_selected": "Supprimer la sélection",
   "empty_desc": "Les objets supprimés seront affichés ici",
   "empty_title": "Le panier est vide",
@@ -14,7 +14,7 @@
   "objects_count_many": "",
   "objects_count_other": "",
   "permanent_delete": "Supprimer définitivement",
-  "permanent_delete_confirm": "Es-tu sûr? Cette action est irréversible !",
+  "permanent_delete_confirm": "Es-tu sûr? Cette action est irréversible\u00a0!",
   "restore": "Restaurer",
   "restore_selected": "Restaurer la sélection",
   "search_placeholder": "Recherche à identifiant, motif ou auteur...",

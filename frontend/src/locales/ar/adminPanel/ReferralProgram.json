@@ -57,7 +57,7 @@
   "title": "برنامج الإحالة",
   "toasts": {
     "failed_load": "فشل تحميل الإحالات",
-    "failed_save": "",
+    "failed_save": "فشل الحفظ",
     "settings_saved": "تم حفظ الإعدادات بنجاح"
   }
 }

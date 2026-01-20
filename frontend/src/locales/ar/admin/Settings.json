@@ -27,7 +27,7 @@
   "error_deleting_currency": "حدث خطأ أثناء حذف العملة",
   "error_enter_current_password": "أدخل كلمة المرور الحالية الخاصة بك",
   "error_invalid_email": "تنسيق البريد الإلكتروني غير صالح",
-  "error_loading_currencies": "",
+  "error_loading_currencies": "حدث خطأ أثناء تحميل العملات.",
   "error_loading_profile": "حدث خطأ أثناء تحميل الملف الشخصي",
   "error_name_too_short": "يجب أن يحتوي الاسم على حرفين على الأقل",
   "error_password_too_short": "يجب أن تحتوي كلمة المرور على 6 أحرف على الأقل",

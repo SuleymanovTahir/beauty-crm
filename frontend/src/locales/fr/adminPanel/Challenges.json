@@ -50,10 +50,10 @@
     "failed_create": "Échec de la création du défi",
     "failed_delete": "Échec de la suppression du défi",
     "failed_load": "Échec du chargement des défis",
-    "progress_checked_one": "",
-    "progress_checked_few": "",
-    "progress_checked_many": "",
-    "progress_checked_other": ""
+    "progress_checked_one": "Progression vérifiée seule",
+    "progress_checked_few": "Les progrès ont été vérifiés plusieurs fois",
+    "progress_checked_many": "Les progrès ont été testés à la date de nombreux",
+    "progress_checked_other": "Progrès vérifiés à la date d’autres"
   },
   "types": {
     "referrals": "Références",

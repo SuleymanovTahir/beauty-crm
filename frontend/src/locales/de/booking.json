@@ -22,12 +22,12 @@
     "welcome": "Willkommen"
   },
   "booking_info": "Informationen aufzeichnen",
-  "bookingDesc": "Выберите удобное время для визита",
-  "bookingError": "Ошибка при создании записи. Попробуйте позже.",
-  "bookingSuccess": "Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.",
-  "bookingTag": "Онлайн запись",
-  "bookingTitlePart1": "Запишитесь",
-  "bookingTitlePart2": "на прием",
+  "bookingDesc": "Wählen Sie einen passenden Zeitpunkt für Ihren Besuch",
+  "bookingError": "Fehler beim Erstellen des Datensatzes. Bitte versuchen Sie es später noch einmal.",
+  "bookingSuccess": "Bewerbung erfolgreich verschickt! Wir werden Sie zur Bestätigung kontaktieren.",
+  "bookingTag": "Online-Registrierung",
+  "bookingTitlePart1": "Melden Sie sich an",
+  "bookingTitlePart2": "für einen Termin",
   "common": {
     "cancel": "Later",
     "change": "Change",
@@ -63,13 +63,13 @@
     "time": "Pick Time",
     "title": "Date & Time"
   },
-  "formDate": "Дата",
-  "formName": "Имя",
-  "formNamePlaceholder": "Ваше имя",
-  "formPhone": "Телефон",
-  "formService": "Услуги",
-  "formServicePlaceholder": "Выберите услуги",
-  "formTime": "Время",
+  "formDate": "Datum",
+  "formName": "Name",
+  "formNamePlaceholder": "Ihr Name",
+  "formPhone": "Telefon",
+  "formService": "Dienstleistungen",
+  "formServicePlaceholder": "Wählen Sie Dienste aus",
+  "formTime": "Zeit",
   "invalid_phone": "Please enter a valid phone number",
   "loading": "Initializing Studio",
   "menu": {
@@ -84,10 +84,10 @@
   },
   "min": "min",
   "newBooking": "Reservation",
-  "noServicesFound": "Услуги не найдены.",
-  "phone_too_short": "Номер телефона должен содержать минимум 11 цифр с учетом кода страны",
-  "privacyAgreementStart": "Нажимая кнопку, вы соглашаетесь с",
-  "privacyPolicy": "политикой конфиденциальности",
+  "noServicesFound": "Keine Dienste gefunden.",
+  "phone_too_short": "Die Telefonnummer muss einschließlich der Landesvorwahl mindestens 11 Ziffern enthalten",
+  "privacyAgreementStart": "Durch Anklicken des Buttons erklären Sie sich damit einverstanden",
+  "privacyPolicy": "Datenschutzrichtlinie",
   "professional": {
     "anyAvailable": "Flexible Match",
     "anyDesc": "We'll match you with the best available professional",
@@ -96,8 +96,8 @@
     "notAvailableToday": "Not Available Today",
     "title": "Choose Master"
   },
-  "searchCountry": "Поиск страны...",
-  "searchService": "Найти услугу...",
+  "searchCountry": "Nach einem Land suchen...",
+  "searchService": "Finden Sie einen Dienst...",
   "select_to_continue": "Wählen Sie einen Service oder Techniker aus, um fortzufahren",
   "services": {
     "allCategories": "All",
@@ -109,6 +109,6 @@
     "service_many": "services",
     "total": "Total"
   },
-  "submitBooking": "Отправить заявку",
+  "submitBooking": "Senden Sie eine Anfrage",
   "totalDuration": "Duration"
 }

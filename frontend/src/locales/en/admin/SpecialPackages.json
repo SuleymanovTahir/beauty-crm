@@ -1,10 +1,10 @@
 {
   "bonus_to_referee": "Bonus for invitee",
   "bonus_to_referrer": "Bonus for the inviter",
-  "campaign_activated": "",
+  "campaign_activated": "Campaign activated",
   "campaign_active": "Active",
   "campaign_created": "Campaign created",
-  "campaign_deactivated": "",
+  "campaign_deactivated": "Campaign deactivated",
   "campaign_deleted": "Campaign deleted",
   "campaign_inactive": "Inactive",
   "campaign_updated": "Campaign updated",

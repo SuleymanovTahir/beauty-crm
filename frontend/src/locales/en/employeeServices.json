@@ -1,7 +1,7 @@
 {
-  "browse_available_services": "",
-  "min": "",
-  "no_services": "",
-  "no_services_description": "",
-  "our_services": ""
+  "browse_available_services": "View available services",
+  "min": "Min",
+  "no_services": "No services",
+  "no_services_description": "No description of services",
+  "our_services": "Our services"
 }

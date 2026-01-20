@@ -57,7 +57,7 @@
   "title": "Referral program",
   "toasts": {
     "failed_load": "Failed to load referrals",
-    "failed_save": "",
+    "failed_save": "Failed to save",
     "settings_saved": "Settings saved successfully"
   }
 }

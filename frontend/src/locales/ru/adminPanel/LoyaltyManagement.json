@@ -1,11 +1,11 @@
 {
-  "adjust_points": "",
+  "adjust_points": "Корректировка точек",
   "buttons": {
     "add_rule": "Добавить правило",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "Корректировка точек",
+    "cancel": "Отмена",
     "save": "Сохранить",
-    "save_changes": ""
+    "save_changes": "Сохранить изменения"
   },
   "categories": {
     "category": "Категория",
@@ -23,24 +23,24 @@
     "points_per_unit": "баллов за 1 ед. валюты",
     "title": "Настройки"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "Подтвердить удаление правила",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "Электронная почта клиента",
+      "client_email_placeholder": "Заполнитель электронной почты клиента",
+      "description": "Описание",
+      "points": "Очки",
+      "points_placeholder": "Заполнитель очков",
+      "reason": "Причина",
+      "reason_placeholder": "Заполнитель причины",
+      "title": "Заголовок"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
-      "tier_name": "",
-      "title": ""
+      "description": "Описание",
+      "discount_percent": "Процент скидки",
+      "min_points": "Минимальные баллы",
+      "tier_name": "Название уровня",
+      "title": "Заголовок"
     },
     "rule": {
       "description": "Установите множитель баллов для категории услуг",
@@ -48,42 +48,42 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "Активные участники",
+    "points_redeemed": "Баллы погашены",
+    "total_points_issued": "Всего начислено баллов"
   },
-  "subtitle": "",
+  "subtitle": "Субтитры",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "Описание",
+    "discount": "Скидка",
+    "from_points": "Из баллов",
+    "starting_level": "Начальный уровень",
+    "title": "Заголовок"
   },
-  "title": "",
+  "title": "Заголовок",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "Конфигурация обновлена",
+    "failed_adjust": "Не удалось настроить",
+    "failed_delete": "Не удалось удалить",
+    "failed_load": "Не удалось загрузить",
+    "failed_save": "Не удалось сохранить",
+    "failed_update": "Не удалось обновить",
+    "points_adjusted_add": "Баллы скорректированы, добавлено",
+    "points_adjusted_deduct": "Скорректированное вычет баллов",
+    "rule_deleted": "Правило удалено.",
+    "rule_saved": "Правило сохранено.",
+    "tier_updated": "Уровень обновлен"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "Описание",
+    "search_placeholder": "Заполнитель поиска",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "Клиент",
+      "date": "Дата",
+      "points": "Очки",
+      "reason": "Причина",
+      "type": "Тип"
     },
-    "title": ""
+    "title": "Заголовок"
   }
 }
