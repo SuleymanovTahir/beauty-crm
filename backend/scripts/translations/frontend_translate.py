@@ -99,7 +99,8 @@ def translate_json_file(source_file: Path, target_file: Path, source_lang: str, 
                 existing = t_dict.get(k, "")
                 if needs_translation(cp, v, existing):
                     if v.strip():
-                        translated = translator.translate(v, source_lang, target_lang)
+                        key_path = f"{file_rel_path}:{cp}"
+                        translated = translator.translate(v, source_lang, target_lang, key_path=key_path)
                         # Case matching
                         if v and v[0].isupper() and translated and not translated[0].isupper():
                             translated = translated[0].upper() + translated[1:]

@@ -14,6 +14,8 @@ import sys
 import os
 import ssl
 import re
+import threading
+import random
 
 # Bypass SSL verification for local requests if needed
 if not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
@@ -317,6 +319,26 @@ class Translator:
         self.cache_data = {}
         
         # Load existing cache
+        self.lock = threading.Lock()
+        
+        # Load key-based glossary
+        self.glossary_file = self.cache_dir.parent / "key_glossary.json"
+        self.key_glossary = {}
+        if self.glossary_file.exists():
+            try:
+                with open(self.glossary_file, 'r', encoding='utf-8') as f:
+                    self.key_glossary = json.load(f)
+            except Exception as e:
+                print(f"⚠️  Could not load key glossary: {e}")
+
+        # Proxy support
+        self.proxies = []
+        try:
+            from config import PROXIES
+            self.proxies = PROXIES
+        except ImportError:
+            pass
+            
         if self.use_cache and self.cache_file.exists():
             try:
                 with open(self.cache_file, 'r', encoding='utf-8') as f:
@@ -340,7 +362,8 @@ class Translator:
             return None
         
         cache_key = self._get_cache_key(text, source, target)
-        return self.cache_data.get(cache_key)
+        with self.lock:
+            return self.cache_data.get(cache_key)
     
     def _save_to_cache(self, text: str, source: str, target: str, translation: str):
         """Save translation to cache"""
@@ -348,7 +371,8 @@ class Translator:
             return
         
         cache_key = self._get_cache_key(text, source, target)
-        self.cache_data[cache_key] = translation
+        with self.lock:
+            self.cache_data[cache_key] = translation
     
     def save_cache_to_disk(self):
         """Save all cached translations to disk"""
@@ -356,9 +380,11 @@ class Translator:
             return
         
         try:
+            with self.lock:
+                data_to_save = self.cache_data.copy()
             with open(self.cache_file, 'w', encoding='utf-8') as f:
-                json.dump(self.cache_data, f, ensure_ascii=False, indent=2)
-            print(f"💾 Saved {len(self.cache_data)} translations to cache")
+                json.dump(data_to_save, f, ensure_ascii=False, indent=2)
+            print(f"💾 Saved {len(data_to_save)} translations to cache")
         except Exception as e:
             print(f"⚠️  Could not save cache: {e}")
     
@@ -405,6 +431,12 @@ class Translator:
             req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
             req.add_header('Accept', '*/*')
             
+            # Proxy support
+            if self.proxies:
+                proxy = random.choice(self.proxies)
+                req.set_proxy(proxy, 'http')
+                req.set_proxy(proxy, 'https')
+            
             # Use unverified context to bypass local SSL certificate issues (common on macOS)
             context = ssl._create_unverified_context() if hasattr(ssl, '_create_unverified_context') else None
             
@@ -418,23 +450,26 @@ class Translator:
                     
                     # Remove context prefix from translation if it was added
                     if context_prefix:
-                        # ... cleanup ...
-                        translated = translated.replace("[Beauty salon service]", "").strip()
-                        translated = translated.replace("[Услуга салона красоты]", "").strip()
-                        translated = translated.replace("[خدمة صالون التجميل]", "").strip()
-                        translated = translated.replace("[Servicio de salón de belleza]", "").strip()
-                        translated = translated.replace("[Service de salon de beauté]", "").strip()
-                        translated = translated.replace("[Schönheitssalon-Service]", "").strip()
-                        translated = translated.replace("[सौंदर्य सैलून सेवा]", "").strip()
-                        translated = translated.replace("[Сұлулық салоны қызметі]", "").strip()
-                        translated = translated.replace("[Serviço de salão de beleza]", "").strip()
+                        # cleanup context in multiple languages
+                        prefixes_to_remove = [
+                            "[Beauty salon service]", "[Услуга салона красоты]",
+                            "[خدمة صالون التجميل]", "[Servicio de salón de belleza]",
+                            "[Service de salon de beauté]", "[Schönheitssalon-Service]",
+                            "[सौंदर्य सैलून सेवा]", "[Сұлулық салоны қызметі]",
+                            "[Serviço de salão de beleza]"
+                        ]
+                        for prefix in prefixes_to_remove:
+                            translated = translated.replace(prefix, "").strip()
                         translated = translated.replace("[", "").replace("]", "").strip()
                     
                     return translated
                 else:
                     return text  # Fallback
         except Exception as e:
-            print(f"  ⚠️  Translation HTTP error: {e}")
+            # Check if this is a proxy error
+            e_str = str(e).lower()
+            if any(term in e_str for term in ["timeout", "connection", "rate", "429"]):
+                print(f"  ⚠️  Translation HTTP error ({'proxy' if self.proxies else 'direct'}): {e}")
             return text  # Fallback
     
     def detect_language(self, text: str) -> str:
@@ -473,7 +508,7 @@ class Translator:
             print(f"  ⚠️  Language detection error: {e}")
             return 'ru'  # Default fallback
     
-    def translate(self, text: str, source: str, target: str, use_context: bool = False) -> str:
+    def translate(self, text: str, source: str, target: str, use_context: bool = False, key_path: str = None) -> str:
         """
         Translate text from source language to target language
         Uses LibreTranslate for short phrases (≤10 chars) to avoid Google's context issues
@@ -484,6 +519,7 @@ class Translator:
             source: Source language code (e.g., 'ru')
             target: Target language code (e.g., 'en')
             use_context: Whether to inject context (only for Google Translate)
+            key_path: Path of the key in JSON (e.g., 'admin/users.json:username')
 
         Returns:
             Translated text, or original text if translation fails
@@ -495,6 +531,11 @@ class Translator:
         # Return empty if input is empty
         if not text or not text.strip():
             return text
+            
+        # 0. Check key-based glossary first (SSOT)
+        if key_path and target in self.key_glossary:
+            if key_path in self.key_glossary[target]:
+                return self.key_glossary[target][key_path]
 
         # 0. Handle months and abbreviations first
         month_res = self._handle_months(text, source, target)

@@ -6,7 +6,7 @@
   "completed": "Посетили",
   "completed_procedures": "Завершенных процедур",
   "conversion_rate": "Конверсия",
-  "engaged": "Вовлечённые",
+  "engaged": "Вовлеченные",
   "errors": {
     "loading": "Ошибка загрузки данных",
     "loading_title": "Ошибка загрузки"
@@ -20,7 +20,7 @@
   "messages": "Сообщения",
   "normal": "Нормально",
   "open_chat": "Открыть чат",
-  "pending": "ожидает",
+  "pending": "В ожидании",
   "quick_actions": "Быстрые действия",
   "retry": "Попробовать снова",
   "sales_funnel": "Воронка продаж",
