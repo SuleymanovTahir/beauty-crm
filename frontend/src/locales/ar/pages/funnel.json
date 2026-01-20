@@ -30,6 +30,7 @@
   "no_data": "لا توجد بيانات",
   "pipeline_value": "المبلغ في القمع",
   "quick_add": "إضافة سريعة",
+  "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
   "recommendations_title": "التوصيات",
   "search_clients": "البحث عن العملاء...",
   "stage": "منصة",
@@ -40,10 +41,15 @@
   "subtitle": "إدارة المرحلة والتحويل",
   "table": {
     "booked": "تم التسجيل",
+    "booked_desc": "Оставили бронь",
     "completed": "تمت زيارتها",
+    "completed_desc": "Визит завершен",
     "engaged": "متضمن",
+    "engaged_desc": "Написали сообщение",
     "started_booking": "بدأ التسجيل",
-    "visitors": "الزوار"
+    "started_booking_desc": "Открыли календарь",
+    "visitors": "الزوار",
+    "visitors_desc": "Зашли в бот/чат"
   },
   "temperature": "درجة حرارة",
   "total": "المجموع",

@@ -9,7 +9,7 @@ interface PeriodFilterSelectProps {
 }
 
 export function PeriodFilterSelect({ value, onChange }: PeriodFilterSelectProps) {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation(['common', 'admin/clients']);
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -27,7 +27,7 @@ export function PeriodFilterSelect({ value, onChange }: PeriodFilterSelectProps)
     const getPeriodLabel = (period: string) => {
         switch (period) {
             case 'all':
-                return 'Период';
+                return t('admin/clients:period', 'Период');
             case 'today':
                 return t('today', 'Сегодня');
             case '7':

@@ -7,7 +7,9 @@
   "booking_created": "تم إنشاء السجل",
   "booking_deleted": "تم حذف السجل",
   "booking_updated": "تم تحديث السجل",
+  "can_change_price_hint": "يمكن للسيد تغيير السعر",
   "cancel": "إلغاء",
+  "chat": "الدردشة",
   "client": "انقر ent",
   "completed": "مكتمل",
   "confirm_delete": "هل أنت متأكد من أنك تريد حذف هذا الإدخال؟",
@@ -29,6 +31,7 @@
   "pending": "في انتظار",
   "period": "الفترة",
   "phone": "الهاتف",
+  "phone_placeholder": "+971...",
   "price": "السعر",
   "records_count": "السجلات",
   "records_count_one": "{{count}} سجل",
@@ -40,6 +43,7 @@
   "save": "حفظ",
   "search": "بحث...",
   "search_client": "البحث عن العميل...",
+  "search_service": "البحث عن الخدمة",
   "select_master": "حدد رئيسي",
   "select_service": "حدد الخدمة",
   "service": "الخدمة",
@@ -63,5 +67,6 @@
   "status_skipped": "تم تخطيها",
   "time": "الوقت",
   "title": "السجلات",
-  "total": "الإجمالي"
+  "total": "الإجمالي",
+  "view": "عرض"
 }

@@ -30,6 +30,7 @@
   "no_data": "Нет данных",
   "pipeline_value": "Сумма в воронке",
   "quick_add": "Быстрое добавление",
+  "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
   "recommendations_title": "Рекомендации",
   "search_clients": "Поиск клиентов...",
   "stage": "Стадия",
@@ -40,10 +41,15 @@
   "subtitle": "Управление этапами и конверсией",
   "table": {
     "booked": "Записались",
+    "booked_desc": "Оставили бронь",
     "completed": "Посетили",
+    "completed_desc": "Визит завершен",
     "engaged": "Вовлечённые",
+    "engaged_desc": "Написали сообщение",
     "started_booking": "Начали запись",
-    "visitors": "Посетители"
+    "started_booking_desc": "Открыли календарь",
+    "visitors": "Посетители",
+    "visitors_desc": "Зашли в бот/чат"
   },
   "temperature": "Температура",
   "total": "Итого",

@@ -9,7 +9,7 @@ interface TemperatureFilterProps {
 }
 
 export function TemperatureFilter({ value, onChange }: TemperatureFilterProps) {
-    const { t } = useTranslation('clients');
+    const { t } = useTranslation(['admin/clients', 'common']);
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -46,7 +46,7 @@ export function TemperatureFilter({ value, onChange }: TemperatureFilterProps) {
                 };
             default:
                 return {
-                    label: 'Темп.',
+                    label: t('temperature'),
                     icon: null,
                     color: 'text-gray-600'
                 };

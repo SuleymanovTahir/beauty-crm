@@ -7,7 +7,9 @@
   "booking_created": "Жазба жасалды",
   "booking_deleted": "Жазба жойылды",
   "booking_updated": "Жазба жаңартылды",
+  "can_change_price_hint": "Шебер бағаны өзгерте алады",
   "cancel": "Болдырмау",
+  "chat": "Чат",
   "client": "Клиент",
   "completed": "Аяқталды",
   "confirm_delete": "Бұл жазбаны шынымен жойғыңыз келе ме?",
@@ -29,6 +31,7 @@
   "pending": "күту",
   "period": "Кезең",
   "phone": "Телефон",
+  "phone_placeholder": "+971 ...",
   "price": "Баға",
   "records_count": "Жазбалар",
   "records_count_one": "{{count}} жазба",
@@ -40,6 +43,7 @@
   "save": "Сақтау",
   "search": "Іздеу...",
   "search_client": "Клиентті іздеу...",
+  "search_service": "Қызметті іздеу",
   "select_master": "Выберите мастера",
   "select_service": "қызмет",
   "service": "Қызмет",
@@ -63,5 +67,6 @@
   "status_skipped": "Өткізіп жіберу",
   "time": "Уақыт",
   "title": "Жазбалар",
-  "total": "Жалпы"
+  "total": "Жалпы",
+  "view": "Көру"
 }

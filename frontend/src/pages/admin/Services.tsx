@@ -832,7 +832,7 @@ export default function Services() {
                 }`}
             >
               <Users className="w-5 h-5 inline-block mr-2" />
-              {t('services:referral_programs', 'Реферальные программы')}
+              {t('services:referral_programs')}
             </button>
             <button
               onClick={() => handleTabChange('challenges')}
@@ -842,7 +842,7 @@ export default function Services() {
                 }`}
             >
               <Target className="w-5 h-5 inline-block mr-2" />
-              {t('services:challenges', 'Челленджи')}
+              {t('services:challenges')}
             </button>
           </div>
         </div>
@@ -1915,7 +1915,7 @@ export default function Services() {
         <DialogContent className="max-w-2xl p-0 flex flex-col max-h-[90vh]">
           <DialogHeader className="px-6 pt-6 pb-4 border-b">
             <DialogTitle>
-              {editingCampaign ? t('services:edit_campaign', 'Редактировать кампанию') : t('services:create_referral_campaign', 'Создать реферальную кампанию')}
+              {editingCampaign ? t('services:edit_campaign') : t('services:create_referral_campaign')}
             </DialogTitle>
           </DialogHeader>
 

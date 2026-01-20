@@ -41,6 +41,11 @@
     "completions": "عمليات الإعدام",
     "total_participants": "مشاركون"
   },
+  "statuses": {
+    "active": "نشط",
+    "completed": "مكتمل",
+    "upcoming": "قادم"
+  },
   "subtitle": "إدارة آليات اللعبة وأهدافها لزيادة ولاء العملاء",
   "title": "الأهداف والإنجازات",
   "toasts": {

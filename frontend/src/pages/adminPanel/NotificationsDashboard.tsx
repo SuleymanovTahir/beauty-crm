@@ -1,4 +1,4 @@
-// /frontend/src/pages/adminPanel/NotificationsDashboard.tsx
+// /frontend/src/pages/adminpanel/notificationsdashboard.tsx
 import { useState, useEffect } from 'react';
 import { Plus, Send, Mail, Smartphone, MessageSquare, Filter, Calendar, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -48,7 +48,7 @@ interface NotificationTemplate {
 }
 
 export default function NotificationsDashboard() {
-  const { t } = useTranslation(['adminPanel/NotificationsDashboard', 'common']);
+  const { t } = useTranslation(['adminpanel/notificationsdashboard', 'common']);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [templates, setTemplates] = useState<NotificationTemplate[]>([]);
   const [loading, setLoading] = useState(false);

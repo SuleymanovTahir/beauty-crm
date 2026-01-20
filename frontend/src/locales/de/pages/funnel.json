@@ -30,6 +30,7 @@
   "no_data": "Keine Daten",
   "pipeline_value": "Menge im Trichter",
   "quick_add": "Schnell hinzufügen",
+  "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
   "recommendations_title": "Empfehlungen",
   "search_clients": "Auf der Suche nach Kunden...",
   "stage": "Bühne",
@@ -40,10 +41,15 @@
   "subtitle": "Bühnen- und Konvertierungsmanagement",
   "table": {
     "booked": "Angemeldet",
+    "booked_desc": "Оставили бронь",
     "completed": "Besucht",
+    "completed_desc": "Визит завершен",
     "engaged": "Beteiligt",
+    "engaged_desc": "Написали сообщение",
     "started_booking": "Aufnahme gestartet",
-    "visitors": "Besucher"
+    "started_booking_desc": "Открыли календарь",
+    "visitors": "Besucher",
+    "visitors_desc": "Зашли в бот/чат"
   },
   "temperature": "Temperatur",
   "total": "Gesamt",

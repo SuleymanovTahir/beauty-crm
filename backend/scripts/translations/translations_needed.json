@@ -91,66 +91,25 @@
         "position": {
           "ru": "Director",
           "key": "users.7.position.7c5ba892",
-          "en": "Stylist / Director",
-          "ar": "المصمم / المخرج",
-          "es": "Estilista / Directora",
-          "de": "Stylist/Regisseur",
-          "fr": "Styliste / Réalisateur",
-          "hi": "स्टाइलिस्ट/निर्देशक",
-          "kk": "Стилист/директор",
-          "pt": "Estilista / Diretor"
+          "en": "Director",
+          "ar": "مخرج",
+          "es": "Director",
+          "de": "Direktor",
+          "fr": "Directeur",
+          "hi": "निदेशक",
+          "kk": "Директор",
+          "pt": "Diretor"
         }
       }
     }
   ],
   "public_reviews": [
     {
-      "id": 17,
-      "fields": {
-        "text_ru": {
-          "ru": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
-          "key": "public_reviews.17.text_ru.ae85e84b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "author_name": {
-          "ru": "Fatima Al-Sayed",
-          "key": "public_reviews.17.author_name.f26d4aa2",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "employee_position": {
-          "ru": "Microblading",
-          "key": "public_reviews.17.employee_position.65d6c03d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 15,
+      "id": 18,
       "fields": {
         "text_ru": {
           "ru": "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!",
-          "key": "public_reviews.15.text_ru.6f00ad70",
+          "key": "public_reviews.18.text_ru.6f00ad70",
           "en": null,
           "ar": null,
           "es": null,
@@ -162,7 +121,7 @@
         },
         "author_name": {
           "ru": "Sarah Jenkins",
-          "key": "public_reviews.15.author_name.ff715865",
+          "key": "public_reviews.18.author_name.ff715865",
           "en": null,
           "ar": null,
           "es": null,
@@ -174,7 +133,7 @@
         },
         "employee_position": {
           "ru": "Eyelashes",
-          "key": "public_reviews.15.employee_position.5b1b1d5e",
+          "key": "public_reviews.18.employee_position.5b1b1d5e",
           "en": null,
           "ar": null,
           "es": null,
@@ -187,11 +146,11 @@
       }
     },
     {
-      "id": 16,
+      "id": 19,
       "fields": {
         "text_ru": {
           "ru": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
-          "key": "public_reviews.16.text_ru.f38138da",
+          "key": "public_reviews.19.text_ru.f38138da",
           "en": null,
           "ar": null,
           "es": null,
@@ -203,7 +162,7 @@
         },
         "author_name": {
           "ru": "Maria Gonzalez",
-          "key": "public_reviews.16.author_name.653816a6",
+          "key": "public_reviews.19.author_name.653816a6",
           "en": null,
           "ar": null,
           "es": null,
@@ -215,7 +174,7 @@
         },
         "employee_position": {
           "ru": "Facial Treatment",
-          "key": "public_reviews.16.employee_position.9a3a91ca",
+          "key": "public_reviews.19.employee_position.9a3a91ca",
           "en": null,
           "ar": null,
           "es": null,
@@ -228,31 +187,72 @@
       }
     },
     {
-      "id": 12,
+      "id": 20,
       "fields": {
+        "text_ru": {
+          "ru": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
+          "key": "public_reviews.20.text_ru.ae85e84b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
         "author_name": {
-          "ru": "Sarah Jenkins",
-          "key": "public_reviews.12.author_name.ff715865",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins"
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.20.author_name.f26d4aa2",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
         },
         "employee_position": {
-          "ru": "Eyelashes",
-          "key": "public_reviews.12.employee_position.5b1b1d5e",
-          "en": "Lashes",
-          "ar": "lashes",
-          "es": "Lashes",
-          "de": "Lashes",
-          "fr": "Lashes",
-          "hi": "lashes",
-          "kk": "Кірпіктер",
-          "pt": "Lashes"
+          "ru": "Microblading",
+          "key": "public_reviews.20.employee_position.65d6c03d",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 17,
+      "fields": {
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.17.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al-Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима Әл-Сайед",
+          "pt": "Fátima Al-Sayed"
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.17.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading"
         }
       }
     },
@@ -274,6 +274,93 @@
       }
     },
     {
+      "id": 15,
+      "fields": {
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.15.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sarah Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.15.employee_position.5b1b1d5e",
+          "en": "Eyelashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas"
+        }
+      }
+    },
+    {
+      "id": 16,
+      "fields": {
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.16.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria Gonzalez",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria Gonzalez"
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.16.employee_position.9a3a91ca",
+          "en": "Facial Treatment",
+          "ar": "علاج الوجه",
+          "es": "Tratamiento Facial",
+          "de": "Gesichtsbehandlung",
+          "fr": "Traitement du visage",
+          "hi": "चेहरे का उपचार",
+          "kk": "Бет күтімі",
+          "pt": "Tratamento facial"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "fields": {
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.12.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sarah Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.12.employee_position.5b1b1d5e",
+          "en": "Lashes",
+          "ar": "lashes",
+          "es": "Lashes",
+          "de": "Lashes",
+          "fr": "Lashes",
+          "hi": "lashes",
+          "kk": "Кірпіктер",
+          "pt": "Lashes"
+        }
+      }
+    },
+    {
       "id": 13,
       "fields": {
         "author_name": {
@@ -283,10 +370,10 @@
           "ar": "ماريا جونزاليس",
           "es": "María González",
           "de": "Maria Gonzalez",
-          "fr": "Maria González",
+          "fr": "Maria Gonzalez",
           "hi": "मारिया गोंजालेज",
           "kk": "Мария Гонсалес",
-          "pt": "Maria González"
+          "pt": "Maria Gonzalez"
         },
         "employee_position": {
           "ru": "Facial Treatment",
@@ -310,11 +397,11 @@
           "key": "public_reviews.14.author_name.f26d4aa2",
           "en": "Fatima Al-Sayed",
           "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
+          "es": "Fátima Al-Sayed",
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
-          "kk": "Фатима әл-Сайед",
+          "kk": "Фатима Әл-Сайед",
           "pt": "Fátima Al-Sayed"
         },
         "employee_position": {
@@ -339,7 +426,7 @@
           "key": "public_reviews.9.author_name.ff715865",
           "en": "Sarah Jenkins",
           "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
+          "es": "Sarah Jenkins",
           "de": "Sarah Jenkins",
           "fr": "Sarah Jenkins",
           "hi": "सारा जेनकिंस",
@@ -370,10 +457,10 @@
           "ar": "ماريا جونزاليس",
           "es": "María González",
           "de": "Maria Gonzalez",
-          "fr": "Maria González",
+          "fr": "Maria Gonzalez",
           "hi": "मारिया गोंजालेज",
           "kk": "Мария Гонсалес",
-          "pt": "Maria González"
+          "pt": "Maria Gonzalez"
         },
         "employee_position": {
           "ru": "Facial Treatment",
@@ -397,7 +484,7 @@
           "key": "public_reviews.11.author_name.f26d4aa2",
           "en": "Fatima Al-Sayed",
           "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
+          "es": "Fátima Al-Sayed",
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
@@ -426,7 +513,7 @@
           "key": "public_reviews.2.author_name.ff715865",
           "en": "Sarah Jenkins",
           "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
+          "es": "Sarah Jenkins",
           "de": "Sarah Jenkins",
           "fr": "Sarah Jenkins",
           "hi": "सारा जेनकिंस",
@@ -455,7 +542,7 @@
           "key": "public_reviews.6.author_name.ff715865",
           "en": "Sarah Jenkins",
           "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
+          "es": "Sarah Jenkins",
           "de": "Sarah Jenkins",
           "fr": "Sarah Jenkins",
           "hi": "सारा जेनकिंस",
@@ -486,10 +573,10 @@
           "ar": "ماريا جونزاليس",
           "es": "María González",
           "de": "Maria Gonzalez",
-          "fr": "Maria González",
+          "fr": "Maria Gonzalez",
           "hi": "मारिया गोंजालेज",
           "kk": "Мария Гонсалес",
-          "pt": "Maria González"
+          "pt": "Maria Gonzalez"
         },
         "employee_position": {
           "ru": "Facial Treatment",
@@ -513,11 +600,11 @@
           "key": "public_reviews.8.author_name.f26d4aa2",
           "en": "Fatima Al-Sayed",
           "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
+          "es": "Fátima Al-Sayed",
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
-          "kk": "Фатима әл-Сайед",
+          "kk": "Фатима Әл-Сайед",
           "pt": "Fátima Al-Sayed"
         },
         "employee_position": {
@@ -561,10 +648,10 @@
           "ar": "ماريا جونزاليس",
           "es": "María González",
           "de": "Maria Gonzalez",
-          "fr": "Maria González",
+          "fr": "Maria Gonzalez",
           "hi": "मारिया गोंजालेज",
           "kk": "Мария Гонсалес",
-          "pt": "Maria González"
+          "pt": "Maria Gonzalez"
         },
         "employee_position": {
           "ru": "Facial Treatment",
@@ -588,7 +675,7 @@
           "key": "public_reviews.5.author_name.f26d4aa2",
           "en": "Fatima Al-Sayed",
           "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
+          "es": "Fátima Al-Sayed",
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",

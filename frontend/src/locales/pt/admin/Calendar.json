@@ -64,7 +64,7 @@
   "one_booking_today": "Para hoje {{count}} reserva",
   "pending": "Esperando",
   "phone": "Telefone",
-  "phone_placeholder": "{{points}}",
+  "phone_placeholder": "+971 ...",
   "reset": "Reiniciar",
   "revenue": "Receita",
   "revenue_placeholder": "0",

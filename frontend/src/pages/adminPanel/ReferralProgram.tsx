@@ -1,4 +1,4 @@
-// /frontend/src/pages/adminPanel/ReferralProgram.tsx
+// /frontend/src/pages/adminpanel/referralprogram.tsx
 import { useState, useEffect } from 'react';
 import { Users, Gift, TrendingUp, Search, ExternalLink, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +37,7 @@ interface Referral {
 }
 
 export default function ReferralProgram() {
-  const { t } = useTranslation(['adminPanel/ReferralProgram', 'common']);
+  const { t } = useTranslation(['adminpanel/referralprogram', 'common']);
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');

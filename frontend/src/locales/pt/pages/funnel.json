@@ -30,6 +30,7 @@
   "no_data": "Sem dados",
   "pipeline_value": "Quantidade no funil",
   "quick_add": "Adição rápida",
+  "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
   "recommendations_title": "Recomendações",
   "search_clients": "Procurando clientes...",
   "stage": "Estágio",
@@ -40,10 +41,15 @@
   "subtitle": "Gerenciamento de estágio e conversão",
   "table": {
     "booked": "Inscrito",
+    "booked_desc": "Оставили бронь",
     "completed": "Visitado",
+    "completed_desc": "Визит завершен",
     "engaged": "Envolvido",
+    "engaged_desc": "Написали сообщение",
     "started_booking": "Começou a gravar",
-    "visitors": "Visitantes"
+    "started_booking_desc": "Открыли календарь",
+    "visitors": "Visitantes",
+    "visitors_desc": "Зашли в бот/чат"
   },
   "temperature": "Temperatura",
   "total": "Total",
