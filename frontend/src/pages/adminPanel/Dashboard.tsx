@@ -1,4 +1,4 @@
-// /frontend/src/pages/adminPanel/Dashboard.tsx
+// /frontend/src/pages/adminpanel/dashboard.tsx
 import { useEffect, useState } from 'react';
 import { Users, Gift, Award, Target, Bell, Image, TrendingUp, ArrowRight, Download } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -8,7 +8,7 @@ import { Button } from '../../components/ui/button';
 
 
 export default function AdminDashboard() {
-  const { t } = useTranslation(['adminPanel/Dashboard', 'common']);
+  const { t } = useTranslation(['adminpanel/dashboard', 'common']);
   const [stats, setStats] = useState({
     total_users: 0,
     active_challenges: 0,

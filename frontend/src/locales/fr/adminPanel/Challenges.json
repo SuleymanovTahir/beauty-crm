@@ -41,6 +41,11 @@
     "completions": "Exécutions",
     "total_participants": "Participants"
   },
+  "statuses": {
+    "active": "Actif",
+    "completed": "Terminé",
+    "upcoming": "À venir"
+  },
   "subtitle": "Gérer les mécanismes de jeu et les objectifs pour accroître la fidélité des clients",
   "title": "Objectifs et réalisations",
   "toasts": {

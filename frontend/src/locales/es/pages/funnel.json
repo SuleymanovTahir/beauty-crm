@@ -30,6 +30,7 @@
   "no_data": "Sin datos",
   "pipeline_value": "Cantidad en el embudo",
   "quick_add": "Agregar rápido",
+  "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
   "recommendations_title": "Recomendaciones",
   "search_clients": "Buscando clientes...",
   "stage": "Escenario",
@@ -40,10 +41,15 @@
   "subtitle": "Gestión de etapas y conversión.",
   "table": {
     "booked": "Registrado",
+    "booked_desc": "Оставили бронь",
     "completed": "Visitado",
+    "completed_desc": "Визит завершен",
     "engaged": "Involucrado",
+    "engaged_desc": "Написали сообщение",
     "started_booking": "Comenzó a grabar",
-    "visitors": "Visitantes"
+    "started_booking_desc": "Открыли календарь",
+    "visitors": "Visitantes",
+    "visitors_desc": "Зашли в бот/чат"
   },
   "temperature": "Temperatura",
   "total": "Total",

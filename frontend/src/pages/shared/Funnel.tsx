@@ -684,11 +684,11 @@ export default function UniversalFunnel() {
 
                                     <div className="space-y-6">
                                         {[
-                                            { name: t('table.visitors'), val: funnelAnalytics.visitors, desc: 'Зашли в бот/чат' },
-                                            { name: t('table.engaged'), val: funnelAnalytics.engaged, desc: 'Написали сообщение' },
-                                            { name: t('table.started_booking'), val: funnelAnalytics.started_booking, desc: 'Открыли календарь' },
-                                            { name: t('table.booked'), val: funnelAnalytics.booked, desc: 'Оставили бронь' },
-                                            { name: t('table.completed'), val: funnelAnalytics.completed, desc: 'Визит завершен' }
+                                            { name: t('table.visitors'), val: funnelAnalytics.visitors, desc: t('table.visitors_desc', 'Зашли в бот/чат') },
+                                            { name: t('table.engaged'), val: funnelAnalytics.engaged, desc: t('table.engaged_desc', 'Написали сообщение') },
+                                            { name: t('table.started_booking'), val: funnelAnalytics.started_booking, desc: t('table.started_booking_desc', 'Открыли календарь') },
+                                            { name: t('table.booked'), val: funnelAnalytics.booked, desc: t('table.booked_desc', 'Оставили бронь') },
+                                            { name: t('table.completed'), val: funnelAnalytics.completed, desc: t('table.completed_desc', 'Визит завершен') }
                                         ].map((stage, idx) => {
                                             const maxVal = Math.max(funnelAnalytics.visitors, 1);
                                             const widthPerc = (stage.val / maxVal) * 100;
@@ -752,7 +752,7 @@ export default function UniversalFunnel() {
                                                 <AlertCircle className="w-6 h-6 text-blue-600 mt-1" />
                                                 <div>
                                                     <h3 className="text-sm font-semibold text-gray-900 mb-1">{t('all_good')}</h3>
-                                                    <p className="text-xs text-gray-600">Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.</p>
+                                                    <p className="text-xs text-gray-600">{t('recommendations_feedback', 'Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.')}</p>
                                                 </div>
                                             </div>
                                         </div>

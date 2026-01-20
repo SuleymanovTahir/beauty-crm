@@ -39,7 +39,7 @@ interface FunnelData {
 
 export default function ManagerDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['manager/dashboard', 'common']);
   const { formatCurrency } = useCurrency();
   const [funnel, setFunnel] = useState<FunnelData | null>(null);
   const [loading, setLoading] = useState(true);

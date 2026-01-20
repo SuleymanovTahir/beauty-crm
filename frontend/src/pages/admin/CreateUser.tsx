@@ -15,7 +15,7 @@ import { Badge } from '../../components/ui/badge';
 
 export default function CreateUser() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['admin/CreateUser', 'common']);
+  const { t } = useTranslation(['admin/createuser', 'common']);
   const [formData, setFormData] = useState({
     full_name: '',
     username: '',

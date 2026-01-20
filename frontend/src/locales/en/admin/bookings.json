@@ -7,7 +7,9 @@
   "booking_created": "Record created",
   "booking_deleted": "Record deleted",
   "booking_updated": "Record updated",
+  "can_change_price_hint": "The master can change the price",
   "cancel": "Cancel",
+  "chat": "Chat",
   "client": "Click ent",
   "completed": "Completed",
   "confirm_delete": "Are you sure you want to delete this entry?",
@@ -29,8 +31,9 @@
   "pending": "In waiting",
   "period": "Period",
   "phone": "Phone",
+  "phone_placeholder": "+971 ...",
   "price": "Price",
-  "records_count": "Records",
+  "records_count": "Bookings",
   "records_count_one": "{{count}} record",
   "records_count_few": "{{count}} records",
   "records_count_many": "{{count}} records",
@@ -40,6 +43,7 @@
   "save": "Save",
   "search": "Search...",
   "search_client": "Search client...",
+  "search_service": "Service search",
   "select_master": "Select a master",
   "select_service": "Select a service",
   "service": "Service",
@@ -62,6 +66,7 @@
   "status_pending": "Pending",
   "status_skipped": "Skipped",
   "time": "Time",
-  "title": "Records",
-  "total": "Total"
+  "title": "Bookings",
+  "total": "Total",
+  "view": "View"
 }

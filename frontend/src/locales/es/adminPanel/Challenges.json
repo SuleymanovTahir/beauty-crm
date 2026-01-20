@@ -41,6 +41,11 @@
     "completions": "Ejecuciones",
     "total_participants": "Participantes"
   },
+  "statuses": {
+    "active": "Activo",
+    "completed": "Completado",
+    "upcoming": "Próximo"
+  },
   "subtitle": "Gestionar la mecánica del juego y los objetivos para aumentar la fidelidad de los clientes.",
   "title": "Metas y logros",
   "toasts": {

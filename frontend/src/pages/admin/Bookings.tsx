@@ -163,7 +163,7 @@ export default function Bookings() {
   const { currency } = useCurrency();
   const [bookings, setBookings] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
-  const { t, i18n } = useTranslation(['admin/bookings', 'admin/services', 'common']);
+  const { t, i18n } = useTranslation(['admin/bookings', 'admin/services', 'common', 'public_landing']);
   const [services, setServices] = useState<any[]>([]);
   const [filteredBookings, setFilteredBookings] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');

@@ -37,7 +37,7 @@ function TrophyIcon({ className }: { className?: string }) {
 }
 
 export default function FeatureManagement() {
-    const { t } = useTranslation(['adminPanel/FeatureManagement', 'common']);
+    const { t } = useTranslation(['adminpanel/featuremanagement', 'common']);
     const [config, setConfig] = useState<AllFeaturesConfig>({});
     const [loading, setLoading] = useState(true);
 

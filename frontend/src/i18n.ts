@@ -23,12 +23,12 @@ const namespaces = [
   'admin/permissionmanagement',
   'admin/permissionstab',
   'admin/plans',
-  'admin/PublicContent',
+  'admin/publiccontent',
   'admin/services',
   'admin/settings',
   'admin/specialpackages',
   'admin/users',
-  'admin/VisitorAnalytics',
+  'admin/visitoranalytics',
   'admin/funnel',
   'admin/tasks',
   'admin/telephony',
@@ -63,12 +63,12 @@ const namespaces = [
   'auth/login',
   'auth/register',
   'auth/forgotpassword',
-  'layouts/AdminLayout',
+  'layouts/adminlayout',
   'layouts/mainlayout',
-  'layouts/AdminPanelLayout',
-  'layouts/EmployeeLayout',
-  'layouts/ManagerLayout',
-  'layouts/PublicLayout',
+  'layouts/adminpanellayout',
+  'layouts/employeelayout',
+  'layouts/managerlayout',
+  'layouts/publiclayout',
   'components/languageswitcher',
   'components/employeelayout',
   'components/publiclanguageswitcher',
@@ -78,12 +78,13 @@ const namespaces = [
   'public_landing/banners',
   'booking',
   'dynamic',
-  'adminPanel/Dashboard',
-  'adminPanel/LoyaltyManagement',
-  'adminPanel/ReferralProgram',
-  'adminPanel/Challenges',
-  'adminPanel/NotificationsDashboard',
-  'adminPanel/PhotoGallery',
+  'adminpanel/dashboard',
+  'adminpanel/loyaltymanagement',
+  'adminpanel/referralprogram',
+  'adminpanel/challenges',
+  'adminpanel/notificationsdashboard',
+  'adminpanel/photogallery',
+  'adminpanel/featuremanagement',
   'pages/funnel'
 ];
 // Используем import.meta as any для обхода ошибки типов с Vite
@@ -136,8 +137,10 @@ for (const lang of languages) {
   resources[lang]['clientDetail'] = resources[lang]['admin/clientdetail'];
   resources[lang]['clients'] = resources[lang]['admin/clients'];
   resources[lang]['createUser'] = resources[lang]['admin/createuser'];
+  resources[lang]['createuser'] = resources[lang]['admin/createuser'];
   resources[lang]['dashboard'] = resources[lang]['admin/dashboard'];
   resources[lang]['editUser'] = resources[lang]['admin/edituser'];
+  resources[lang]['edituser'] = resources[lang]['admin/edituser'];
   resources[lang]['services'] = resources[lang]['admin/services'];
   resources[lang]['settings'] = resources[lang]['admin/settings'];
   resources[lang]['specialPackages'] = resources[lang]['admin/specialpackages'];
@@ -188,16 +191,20 @@ for (const lang of languages) {
   resources[lang]['cta'] = resources[lang]['public/about']; // CTA is in About page
 
   // Layouts
-  resources[lang]['adminLayout'] = resources[lang]['layouts/AdminLayout'];
-  resources[lang]['layouts/adminlayout'] = resources[lang]['layouts/AdminLayout']; // backward compatibility
-  resources[lang]['adminPanelLayout'] = resources[lang]['layouts/AdminPanelLayout'];
-  resources[lang]['layouts/adminpanellayout'] = resources[lang]['layouts/AdminPanelLayout']; // backward compatibility
-  resources[lang]['employeeLayout'] = resources[lang]['layouts/EmployeeLayout'];
-  resources[lang]['layouts/employeelayout'] = resources[lang]['layouts/EmployeeLayout']; // backward compatibility
-  resources[lang]['managerLayout'] = resources[lang]['layouts/ManagerLayout'];
-  resources[lang]['layouts/managerlayout'] = resources[lang]['layouts/ManagerLayout']; // backward compatibility
-  resources[lang]['publicLayout'] = resources[lang]['layouts/PublicLayout'];
-  resources[lang]['layouts/publiclayout'] = resources[lang]['layouts/PublicLayout']; // backward compatibility
+  resources[lang]['adminLayout'] = resources[lang]['layouts/adminlayout'];
+  resources[lang]['adminPanelLayout'] = resources[lang]['layouts/adminpanellayout'];
+  resources[lang]['employeeLayout'] = resources[lang]['layouts/employeelayout'];
+  resources[lang]['managerLayout'] = resources[lang]['layouts/managerlayout'];
+  resources[lang]['publicLayout'] = resources[lang]['layouts/publiclayout'];
+
+  // adminPanel aliases
+  resources[lang]['adminPanel/dashboard'] = resources[lang]['adminpanel/dashboard'];
+  resources[lang]['adminPanel/loyaltyManagement'] = resources[lang]['adminpanel/loyaltymanagement'];
+  resources[lang]['adminPanel/referralProgram'] = resources[lang]['adminpanel/referralprogram'];
+  resources[lang]['adminPanel/challenges'] = resources[lang]['adminpanel/challenges'];
+  resources[lang]['adminPanel/notificationsDashboard'] = resources[lang]['adminpanel/notificationsdashboard'];
+  resources[lang]['adminPanel/photoGallery'] = resources[lang]['adminpanel/photogallery'];
+  resources[lang]['adminPanel/featureManagement'] = resources[lang]['adminpanel/featuremanagement'];
 
   // Components
   resources[lang]['languageSwitcher'] = resources[lang]['components/languageswitcher'];

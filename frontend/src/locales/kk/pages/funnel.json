@@ -30,6 +30,7 @@
   "no_data": "Деректер жоқ",
   "pipeline_value": "Шұңқырдағы сома",
   "quick_add": "Жылдам қосу",
+  "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
   "recommendations_title": "Ұсыныстар",
   "search_clients": "Клиенттер ізделуде...",
   "stage": "Сахна",
@@ -40,10 +41,15 @@
   "subtitle": "Кезеңді және түрлендіруді басқару",
   "table": {
     "booked": "Тіркелді",
+    "booked_desc": "Оставили бронь",
     "completed": "Барған",
+    "completed_desc": "Визит завершен",
     "engaged": "Қатысқан",
+    "engaged_desc": "Написали сообщение",
     "started_booking": "Жазуды бастады",
-    "visitors": "Келушілер"
+    "started_booking_desc": "Открыли календарь",
+    "visitors": "Келушілер",
+    "visitors_desc": "Зашли в бот/чат"
   },
   "temperature": "Температура",
   "total": "Барлығы",

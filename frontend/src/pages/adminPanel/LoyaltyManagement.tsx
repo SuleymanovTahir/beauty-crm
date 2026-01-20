@@ -54,7 +54,7 @@ interface CategoryRule {
 }
 
 export default function LoyaltyManagement() {
-  const { t } = useTranslation(['adminPanel/LoyaltyManagement', 'common']);
+  const { t } = useTranslation(['adminpanel/loyaltymanagement', 'common']);
   const [tiers, setTiers] = useState<LoyaltyTier[]>([]);
   const [transactions, setTransactions] = useState<LoyaltyTransaction[]>([]);
   const [config, setConfig] = useState<LoyaltyConfig>({
