@@ -5,14 +5,14 @@ import { api } from '../../services/api';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { ScrollArea } from '../../components/ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+
 import {
     Plus,
     Clock,
     CheckCircle2,
     AlertCircle,
     CalendarDays,
-    User,
+
     Trash2,
     Layout,
     LayoutDashboard,
@@ -23,7 +23,7 @@ import { ru } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { CreateTaskDialog } from '../../components/tasks/CreateTaskDialog';
 import { TasksDashboard } from '../../components/tasks/TasksDashboard';
-import { useAuth } from '../../contexts/AuthContext';
+
 
 interface Task {
     id: number;
@@ -54,7 +54,7 @@ interface TaskAnalytics {
 
 export default function EmployeeTasks() {
     const { t } = useTranslation(['admin/tasks', 'common']);
-    const { user: currentUser } = useAuth();
+    // const { user: currentUser } = useAuth();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [stages, setStages] = useState<Stage[]>([]);
     const [analytics, setAnalytics] = useState<TaskAnalytics>({ total_active: 0, completed: 0, overdue: 0, today: 0 });
@@ -122,7 +122,7 @@ export default function EmployeeTasks() {
     };
 
     const handleDeleteTask = async (taskId: number) => {
-        if (!confirm(t('confirm_delete', 'Вы уверены, что хотите удалить эту задачу?'))) return;
+        if (!confirm(t('confirm_delete'))) return;
 
         try {
             await api.delete(`/api/tasks/${taskId}`);
@@ -160,8 +160,8 @@ export default function EmployeeTasks() {
             <div className="px-8 py-6 bg-white border-b">
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">{t('tasks', 'Мои задачи')}</h1>
-                        <p className="text-sm text-gray-500 mt-1">{t('task_management_subtitle', 'Управление моими задачами')}</p>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('tasks')}</h1>
+                        <p className="text-sm text-gray-500 mt-1">{t('task_management_subtitle')}</p>
                     </div>
                     <div className="flex gap-2">
                         <div className="bg-gray-100 p-1 rounded-lg flex items-center mr-2 border border-gray-200">
@@ -173,7 +173,7 @@ export default function EmployeeTasks() {
                                     }`}
                             >
                                 <Layout className="w-4 h-4 mr-2 inline-block" />
-                                {t('board', 'Доска')}
+                                {t('board')}
                             </button>
                             <button
                                 onClick={() => setViewMode('dashboard')}
@@ -183,7 +183,7 @@ export default function EmployeeTasks() {
                                     }`}
                             >
                                 <LayoutDashboard className="w-4 h-4 mr-2 inline-block" />
-                                {t('dashboard', 'Дашборд')}
+                                {t('dashboard')}
                             </button>
                         </div>
 
@@ -192,7 +192,7 @@ export default function EmployeeTasks() {
                             onClick={() => setCreateDialogOpen(true)}
                         >
                             <Plus className="w-4 h-4 mr-2" />
-                            {t('create_task', 'Новая задача')}
+                            {t('create_task')}
                         </Button>
                     </div>
                 </div>
@@ -215,7 +215,7 @@ export default function EmployeeTasks() {
                             </div>
                             <div>
                                 <div className="text-2xl font-bold text-blue-900">{analytics.today}</div>
-                                <div className="text-xs text-blue-600 font-medium">{t('analytics.today', 'На сегодня')}</div>
+                                <div className="text-xs text-blue-600 font-medium">{t('analytics.today')}</div>
                             </div>
                         </div>
                         <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center gap-4">
@@ -224,7 +224,7 @@ export default function EmployeeTasks() {
                             </div>
                             <div>
                                 <div className="text-2xl font-bold text-red-900">{analytics.overdue}</div>
-                                <div className="text-xs text-red-600 font-medium">{t('analytics.overdue', 'Просрочено')}</div>
+                                <div className="text-xs text-red-600 font-medium">{t('analytics.overdue')}</div>
                             </div>
                         </div>
                         <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
@@ -233,7 +233,7 @@ export default function EmployeeTasks() {
                             </div>
                             <div>
                                 <div className="text-2xl font-bold text-blue-900">{analytics.completed}</div>
-                                <div className="text-xs text-blue-600 font-medium">{t('analytics.completed', 'Завершено')}</div>
+                                <div className="text-xs text-blue-600 font-medium">{t('analytics.completed')}</div>
                             </div>
                         </div>
                         <div className="bg-green-50 border border-green-100 p-4 rounded-xl flex items-center gap-4">
@@ -242,7 +242,7 @@ export default function EmployeeTasks() {
                             </div>
                             <div>
                                 <div className="text-2xl font-bold text-green-900">{analytics.total_active}</div>
-                                <div className="text-xs text-green-600 font-medium">{t('analytics.active', 'Активных')}</div>
+                                <div className="text-xs text-green-600 font-medium">{t('analytics.active')}</div>
                             </div>
                         </div>
                     </div>
@@ -251,7 +251,7 @@ export default function EmployeeTasks() {
 
             {/* Content */}
             {viewMode === 'dashboard' ? (
-                <TasksDashboard tasks={tasks} stages={stages} onEditTask={handleEditTask} onDeleteTask={handleDeleteTask} />
+                <TasksDashboard tasks={tasks} stages={stages} />
             ) : (
                 <div className="flex-1 overflow-x-auto">
                     <div className="flex gap-4 p-8 h-full" style={{ minWidth: 'max-content' }}>
@@ -296,14 +296,14 @@ export default function EmployeeTasks() {
                                                                 <button
                                                                     onClick={() => handleEditTask(task)}
                                                                     className="text-gray-400 hover:text-blue-600 transition-colors"
-                                                                    title={t('edit', 'Редактировать')}
+                                                                    title={t('edit')}
                                                                 >
                                                                     <Eye className="w-4 h-4" />
                                                                 </button>
                                                                 <button
                                                                     onClick={() => handleDeleteTask(task.id)}
                                                                     className="text-gray-400 hover:text-red-600 transition-colors"
-                                                                    title={t('delete', 'Удалить')}
+                                                                    title={t('delete')}
                                                                 >
                                                                     <Trash2 className="w-4 h-4" />
                                                                 </button>
@@ -316,7 +316,7 @@ export default function EmployeeTasks() {
 
                                                         <div className="flex items-center justify-between gap-2">
                                                             <Badge className={`text-xs px-2 py-0.5 ${getPriorityColor(task.priority)}`}>
-                                                                {t(`priority.${task.priority}`, task.priority)}
+                                                                {t(`priority.${task.priority}`)}
                                                             </Badge>
 
                                                             {task.due_date && (

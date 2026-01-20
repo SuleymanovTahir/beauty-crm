@@ -9,6 +9,11 @@
   "custom_range": "Ihr Sortiment...",
   "distance": "Distanz",
   "distance_distribution": "Verteilung nach Entfernung",
+  "distance_range_between": "{{min}}-{{max}}km",
+  "distance_range_under_one": "",
+  "distance_range_under_other": "",
+  "distance_up_to_one": "",
+  "distance_up_to_other": "",
   "error_loading": "Fehler beim Laden der Besucherdaten",
   "export_csv": "CSV-Export",
   "export_failed": "Exportfehler",
@@ -45,8 +50,8 @@
   "visitor_trend": "Besuchen Sie trend",
   "visitors": "Besucher",
   "visitors_count": "Anzahl der Besucher",
-  "visitors_count_one": "{{count}} Besucher",
   "visitors_count_few": "{{count}} Besucher",
   "visitors_count_many": "{{count}} Besucher",
+  "visitors_count_one": "{{count}} Besucher",
   "visitors_count_other": "{{count}} Besucher"
 }

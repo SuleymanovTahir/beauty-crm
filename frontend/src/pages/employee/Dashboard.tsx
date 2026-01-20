@@ -171,7 +171,7 @@ export default function EmployeeDashboard() {
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <Calendar className="w-8 h-8 text-pink-600" />
-          {t('dashboard:my_profile', 'Мой дашборд')}
+          {t('dashboard:my_profile')}
         </h1>
         <p className="text-gray-600">{t('dashboard:today')}, {new Date().toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
       </div>
@@ -182,7 +182,7 @@ export default function EmployeeDashboard() {
           <div className="flex items-center justify-between mb-2">
             <Clock className="w-8 h-8 opacity-80" />
           </div>
-          <p className="text-pink-100 text-sm mb-1">{t('dashboard:today_bookings', 'Сегодня')}</p>
+          <p className="text-pink-100 text-sm mb-1">{t('dashboard:today_bookings')}</p>
           <h3 className="text-3xl font-bold">{stats?.today_bookings || 0}</h3>
         </div>
 
@@ -190,7 +190,7 @@ export default function EmployeeDashboard() {
           <div className="flex items-center justify-between mb-2">
             <TrendingUp className="w-8 h-8 opacity-80" />
           </div>
-          <p className="text-blue-100 text-sm mb-1">{t('dashboard:week_bookings', 'За неделю')}</p>
+          <p className="text-blue-100 text-sm mb-1">{t('dashboard:week_bookings')}</p>
           <h3 className="text-3xl font-bold">{stats?.week_bookings || 0}</h3>
         </div>
 
@@ -198,7 +198,7 @@ export default function EmployeeDashboard() {
           <div className="flex items-center justify-between mb-2">
             <Calendar className="w-8 h-8 opacity-80" />
           </div>
-          <p className="text-blue-100 text-sm mb-1">{t('dashboard:month_bookings', 'За месяц')}</p>
+          <p className="text-blue-100 text-sm mb-1">{t('dashboard:month_bookings')}</p>
           <h3 className="text-3xl font-bold">{stats?.month_bookings || 0}</h3>
         </div>
 
@@ -206,7 +206,7 @@ export default function EmployeeDashboard() {
           <div className="flex items-center justify-between mb-2">
             <Users className="w-8 h-8 opacity-80" />
           </div>
-          <p className="text-green-100 text-sm mb-1">{t('dashboard:new_clients', 'Клиентов')}</p>
+          <p className="text-green-100 text-sm mb-1">{t('dashboard:new_clients')}</p>
           <h3 className="text-3xl font-bold">{stats?.total_clients || 0}</h3>
         </div>
 
@@ -214,7 +214,7 @@ export default function EmployeeDashboard() {
           <div className="flex items-center justify-between mb-2">
             <Star className="w-8 h-8 opacity-80" />
           </div>
-          <p className="text-yellow-100 text-sm mb-1">{t('dashboard:my_conversion', 'Рейтинг')}</p>
+          <p className="text-yellow-100 text-sm mb-1">{t('dashboard:my_conversion')}</p>
           <h3 className="text-3xl font-bold">{stats?.avg_rating || 0}</h3>
         </div>
 
@@ -222,7 +222,7 @@ export default function EmployeeDashboard() {
           <div className="flex items-center justify-between mb-2">
             <DollarSign className="w-8 h-8 opacity-80" />
           </div>
-          <p className="text-indigo-100 text-sm mb-1">{t('dashboard:your_revenue', 'Доход (мес)')}</p>
+          <p className="text-indigo-100 text-sm mb-1">{t('dashboard:your_revenue')}</p>
           <h3 className="text-3xl font-bold">{stats?.total_revenue || 0}</h3>
         </div>
       </div>
@@ -234,8 +234,8 @@ export default function EmployeeDashboard() {
           className="bg-white p-6 rounded-xl shadow-sm border-2 border-gray-200 hover:border-pink-500 transition-all group"
         >
           <Calendar className="w-8 h-8 text-pink-600 mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('dashboard:view_and_manage_bookings', 'Все записи')}</h3>
-          <p className="text-gray-600 text-sm">{t('dashboard:view_bookings_desc', 'Просмотр всех записей с фильтрами')}</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('dashboard:view_and_manage_bookings')}</h3>
+          <p className="text-gray-600 text-sm">{t('dashboard:view_bookings_desc')}</p>
         </button>
 
         <button
@@ -243,8 +243,8 @@ export default function EmployeeDashboard() {
           className="bg-white p-6 rounded-xl shadow-sm border-2 border-gray-200 hover:border-blue-500 transition-all group"
         >
           <CheckCircle className="w-8 h-8 text-blue-600 mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('dashboard:our_services', 'Услуги')}</h3>
-          <p className="text-gray-600 text-sm">{t('dashboard:browse_available_services', 'Мои услуги и прайс-лист')}</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('dashboard:our_services')}</h3>
+          <p className="text-gray-600 text-sm">{t('dashboard:browse_available_services')}</p>
         </button>
 
         <button
@@ -252,8 +252,8 @@ export default function EmployeeDashboard() {
           className="bg-white p-6 rounded-xl shadow-sm border-2 border-gray-200 hover:border-blue-500 transition-all group"
         >
           <Users className="w-8 h-8 text-blue-600 mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('dashboard:my_profile', 'Профиль')}</h3>
-          <p className="text-gray-600 text-sm">{t('dashboard:manage_personal_data_and_security_settings', 'Редактировать мой профиль')}</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('dashboard:my_profile')}</h3>
+          <p className="text-gray-600 text-sm">{t('dashboard:manage_personal_data_and_security_settings')}</p>
         </button>
       </div>
 
@@ -265,7 +265,7 @@ export default function EmployeeDashboard() {
             {t('dashboard:schedule_for_today')}
           </h2>
           <span className="text-sm text-gray-500">
-            {confirmedCount} {t('dashboard:confirmed', 'подтверждено')}, {pendingCount} {t('dashboard:pending', 'ожидает')}
+            {confirmedCount} {t('dashboard:confirmed')}, {pendingCount} {t('dashboard:pending')}
           </span>
         </div>
 
@@ -300,7 +300,7 @@ export default function EmployeeDashboard() {
                             {bookingTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </div>
                           {isNow && (
-                            <span className="text-xs text-pink-600 font-semibold animate-pulse">{t('dashboard:now', 'СЕЙЧАС')}</span>
+                            <span className="text-xs text-pink-600 font-semibold animate-pulse">{t('dashboard:now')}</span>
                           )}
                         </div>
 

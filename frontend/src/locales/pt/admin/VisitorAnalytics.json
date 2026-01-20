@@ -9,6 +9,13 @@
   "custom_range": "Seu alcance...",
   "distance": "Distância",
   "distance_distribution": "Distribuição até data distância",
+  "distance_range_between": "{{min}}-{{max}}km",
+  "distance_range_under_many": "",
+  "distance_range_under_one": "",
+  "distance_range_under_other": "",
+  "distance_up_to_many": "",
+  "distance_up_to_one": "",
+  "distance_up_to_other": "",
   "error_loading": "Erro ao carregar dados do visitante",
   "export_csv": "Exportação CSV",
   "export_failed": "Erro de exportação",
@@ -45,8 +52,8 @@
   "visitor_trend": "Tendência de visitas",
   "visitors": "Visitantes",
   "visitors_count": "Número de visitantes",
-  "visitors_count_one": "{{count}} visitante",
   "visitors_count_few": "{{count}} visitante",
   "visitors_count_many": "{{count}} visitantes",
+  "visitors_count_one": "{{count}} visitante",
   "visitors_count_other": "{{count}} visitantes"
 }

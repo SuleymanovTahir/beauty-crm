@@ -19,6 +19,19 @@
 | **В ожидании** | Pending | قيد الانتظار | Күтуде | Ausstehend | En espera | En attente | Pendente | लंबित |
 | **Мастер** | Stylist/Master | خبير | Маман/Шебер | Spezialist | Especialista | Spécialiste | Especialista | विशेषज्ञ |
 
+## [2026-01-21] Settings & Localization Refinement
+- 🗺️ **Map & Location Precision:**
+  - **Corrected Coordinates:** Updated default salon coordinates to `25.0738739, 55.1315886` (M Le Diamant exact location) in `settings.py` and `public.py`, resolving map displacement issues.
+  - **Dynamic Embedding:** Ensured Google Maps embed URL uses real coordinates from settings with correct fallbacks.
+- 🌍 **Localization & Translation Expansion:**
+  - **Missing Keys:** Populated `settings.json` (RU) with missing translations for subscription categories (Schedule, Staff News, Training) and Holidays management.
+  - **i18n Variable Fixes:** Correctly passed `{{count}}` and `{{max}}` variables to translation calls in `Settings.tsx` (username/password length, file size limits).
+  - **Key Sanitization:** Removed trailing spaces from translation keys (e.g., `t('name ')` → `t('name')`) to ensure proper lookup.
+- 🔧 **Settings & User Management Fixes:**
+  - **Object Handling Bug:** Fixed `users.filter is not a function` error in `Settings.tsx` by correctly parsing the new API response format (`{ "users": [...] }`).
+  - **Safety Checks:** Added `Array.isArray` verification for users list before rendering master exceptions.
+  - **Cleanup:** Removed redundant inline styles and unified button gradients in settings.
+
 ## [2026-01-20] Localization & API Hardening
 - 🌍 **Deep Internationalization (Services & Calendar):**
   - **Zero Hardcode (Admin Panel):** Eliminated all hardcoded Russian strings in `Services.tsx`, `Calendar.tsx`, `Bookings.tsx`, `Telephony.tsx`, and `Settings.tsx`.
