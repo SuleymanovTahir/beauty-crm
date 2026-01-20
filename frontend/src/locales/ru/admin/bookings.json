@@ -40,6 +40,7 @@
   "save": "Сохранить",
   "search": "Поиск...",
   "search_client": "Поиск клиента...",
+  "search_service": "Поиск услуги",
   "select_master": "Выберите мастера",
   "select_service": "Выберите услугу",
   "service": "Услуга",
@@ -63,5 +64,9 @@
   "status_skipped": "Пропущена",
   "time": "Время",
   "title": "Записи",
-  "total": "Всего"
+  "total": "Всего",
+  "view": "Просмотр",
+  "chat": "Чат",
+  "phone_placeholder": "+971 ...",
+  "can_change_price_hint": "Мастер может менять цену"
 }
