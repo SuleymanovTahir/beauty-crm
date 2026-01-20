@@ -689,20 +689,106 @@ class Translator:
             text = re.sub(pattern, correct_term, text, flags=re.IGNORECASE)
         
         return text
-    
-    def translate_batch(self, texts: List[str], source: str, target: str) -> List[str]:
+
+    def translate_batch(self, texts: List[str], source: str, target: str, use_context: bool = False, key_paths: List[Optional[str]] = None) -> List[str]:
         """
-        Translate multiple texts
-        
-        Args:
-            texts: List of texts to translate
-            source: Source language code
-            target: Target language code
+        Translate a batch of texts in a single HTTP request for 100x speedup.
+        Uses a special separator to keep translations distinct.
+        """
+        if not texts:
+            return []
+        if source == target:
+            return texts
+
+        results = [None] * len(texts)
+        to_translate_indices = []
+        to_translate_texts = []
+        to_translate_key_paths = []
+
+        # 1. Check glossary and cache first
+        for i, text in enumerate(texts):
+            if not text or not text.strip():
+                results[i] = text
+                continue
             
-        Returns:
-            List of translated texts
-        """
-        return [self.translate(text, source, target) for text in texts]
+            kp = key_paths[i] if key_paths else None
+            
+            # Glossary check
+            if kp and target in self.key_glossary:
+                if kp in self.key_glossary[target]:
+                    results[i] = self.key_glossary[target][kp]
+                    continue
+            
+            # Cache check
+            cache_key_suffix = "|ctx" if use_context else ""
+            cached = self._get_cached_translation(text + cache_key_suffix, source, target)
+            if cached:
+                results[i] = self._apply_terminology_corrections(cached, target)
+                continue
+            
+            # To be translated
+            to_translate_indices.append(i)
+            to_translate_texts.append(text)
+            to_translate_key_paths.append(kp)
+
+        if not to_translate_texts:
+            return results
+
+        # 2. Translate in batches of 50 to avoid URL length limits and Google limits
+        batch_size = 50
+        for i in range(0, len(to_translate_texts), batch_size):
+            batch = to_translate_texts[i:i+batch_size]
+            batch_indices = to_translate_indices[i:i+batch_size]
+            
+            # Join with a safe separator
+            # Using a numbered tag to ensure we can split correctly even if Google merges lines
+            # Format: <z0>Text 1</z0> <z1>Text 2</z1>
+            batch_with_tags = ""
+            for j, t in enumerate(batch):
+                batch_with_tags += f"<z{j}>{t}</z{j}> "
+            
+            try:
+                translated_batch_raw = self._translate_via_http(batch_with_tags, source, target, use_context=use_context)
+                
+                # Split by tags
+                for j in range(len(batch)):
+                    tag_start = f"<z{j}>"
+                    tag_end = f"</z{j}>"
+                    
+                    # Search for start/end tags in case Google messed up the spacing or casing
+                    start_idx = translated_batch_raw.find(tag_start)
+                    if start_idx == -1:
+                        # Try case-insensitive search if needed
+                        start_idx = translated_batch_raw.lower().find(tag_start.lower())
+                        
+                    if start_idx != -1:
+                        end_idx = translated_batch_raw.find(tag_end, start_idx)
+                        if end_idx == -1:
+                            end_idx = translated_batch_raw.lower().find(tag_end.lower(), start_idx)
+                        
+                        if end_idx != -1:
+                            translated_text = translated_batch_raw[start_idx + len(tag_start):end_idx].strip()
+                            
+                            # Clean up potential artifacts
+                            translated_text = self._apply_terminology_corrections(translated_text, target)
+                            results[batch_indices[j]] = translated_text
+                            
+                            # Save to cache
+                            cache_key_suffix = "|ctx" if use_context else ""
+                            self._save_to_cache(batch[j] + cache_key_suffix, source, target, translated_text)
+                        else:
+                            # Fallback to individual translation if batch splitting fails for this item
+                            results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, to_translate_key_paths[i+j])
+                    else:
+                        # Fallback
+                        results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, to_translate_key_paths[i+j])
+            
+            except Exception as e:
+                print(f"⚠️ Batch translation error: {e}, falling back to individual")
+                for j in range(len(batch)):
+                    results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, to_translate_key_paths[i+j])
+
+        return results
     
     def translate_dict(self, data: Dict[str, str], source: str, target: str) -> Dict[str, str]:
         """
