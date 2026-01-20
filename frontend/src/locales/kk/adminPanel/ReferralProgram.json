@@ -6,8 +6,8 @@
   "current_settings": {
     "edit": "Өңдеу",
     "min_purchase": "Ең төменгі сатып алу құны: <strong>{{amount}} {{currency}}</strong>",
-    "referred_bonus": "",
-    "referrer_bonus": "",
+    "referred_bonus": "Досына бонус: <strong>{{points}} ұпай</strong>",
+    "referrer_bonus": "Шақырушы бонусы: <strong>{{points}} ұпай</strong>",
     "title": "Ағымдағы бонус конфигурациясы"
   },
   "dialogs": {

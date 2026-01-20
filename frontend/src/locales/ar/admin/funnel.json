@@ -16,7 +16,7 @@
   "client_details_description": "معلومات مفصلة وإدارة سجلات العملاء",
   "client_list": "قائمة العملاء",
   "client_updated": "تم تحديث تفاصيل العميل",
-  "clients": "",
+  "clients": "عملاء",
   "close": "يغلق",
   "confirm_delete_client": "هل أنت متأكد أنك تريد حذف هذا العميل؟",
   "confirm_delete_stage": "هل أنت متأكد أنك تريد حذف هذه المرحلة؟",

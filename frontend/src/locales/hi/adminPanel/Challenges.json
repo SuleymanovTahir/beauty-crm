@@ -50,9 +50,9 @@
     "failed_create": "गतिविधि बनाने में त्रुटि",
     "failed_delete": "हटाने के दौरान त्रुटि",
     "failed_load": "डेटा लोड करने में विफल",
+    "progress_checked_one": "{{count}} सदस्य के लिए प्रगति अद्यतन की गई",
     "progress_checked_few": "{{count}} प्रतिभागियों के लिए प्रगति अद्यतन की गई",
     "progress_checked_many": "{{count}} प्रतिभागियों के लिए प्रगति अद्यतन की गई",
-    "progress_checked_one": "{{count}} सदस्य के लिए प्रगति अद्यतन की गई",
     "progress_checked_other": "{{count}} प्रतिभागियों के लिए प्रगति अद्यतन की गई"
   },
   "types": {

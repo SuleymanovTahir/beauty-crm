@@ -2,13 +2,13 @@
 
 :root {
   --font-size: 16px;
-  
+
   /* Mobile optimizations */
   --mobile-padding: 1rem;
   --mobile-header-height: 3.5rem;
   --mobile-sidebar-width: 280px;
   --mobile-bottom-nav-height: 60px;
-  
+
   --background: #ffffff;
   --foreground: oklch(0.145 0 0);
   --card: #ffffff;
@@ -27,7 +27,7 @@
   --destructive-foreground: #ffffff;
   --border: rgba(0, 0, 0, 0.1);
   --input: transparent;
-  --input-background: #F5EDE5;
+  --input-background: #f5ede5;
   --switch-background: #cbced4;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
@@ -53,6 +53,18 @@
   --telephony-missed: #ef4444;
   --telephony-rejected: #94a3b8;
   --telephony-avg-duration: #db2777;
+
+  /* Temperature Colors */
+  --temp-hot: #ef4444;
+  --temp-warm: #f97316;
+  --temp-cold: #06b6d4;
+
+  /* UI Palette */
+  --grey-500: #6b7280;
+  --red-800: #800000;
+  --red-900: #991b1b;
+  --amber-900: #78350f;
+  --alert-red: #cc0000;
 }
 
 .dark {
@@ -303,7 +315,7 @@ html {
   .chat-clients-list {
     display: block;
   }
-  
+
   .chat-clients-list.hidden-mobile {
     display: none !important;
   }
@@ -411,7 +423,11 @@ html {
 
 /* Mobile touch improvements */
 @media (max-width: 768px) {
-  button, a, input, textarea, select {
+  button,
+  a,
+  input,
+  textarea,
+  select {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
   }
 
@@ -422,7 +438,9 @@ html {
   }
 
   /* Prevent font size zoom on iOS */
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     font-size: 16px !important;
   }
 }
@@ -464,37 +482,37 @@ html {
 }
 
 .trash-icon-booking {
-    @apply text-blue-400;
+  @apply text-blue-400;
 }
 
 .trash-icon-client {
-    @apply text-pink-400;
+  @apply text-pink-400;
 }
 
 .trash-icon-user {
-    @apply text-blue-400;
+  @apply text-blue-400;
 }
 
 .trash-icon-default {
-    @apply text-muted-foreground;
+  @apply text-muted-foreground;
 }
 
 .trash-info-warning {
-    @apply bg-amber-50/50 border-amber-200;
+  @apply bg-amber-50/50 border-amber-200;
 }
 
 .trash-info-warning-icon {
-    @apply text-amber-500;
+  @apply text-amber-500;
 }
 
 .trash-info-warning-title {
-    @apply text-amber-600;
+  @apply text-amber-600;
 }
 
 .trash-restore-button {
-    @apply text-green-600 border-green-200 hover:bg-green-50;
+  @apply text-green-600 border-green-200 hover:bg-green-50;
 }
 
 .trash-empty-button {
-    @apply text-red-500 border-red-200 hover:bg-red-50;
+  @apply text-red-500 border-red-200 hover:bg-red-50;
 }

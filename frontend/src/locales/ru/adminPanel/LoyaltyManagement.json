@@ -68,8 +68,8 @@
     "failed_load": "Не удалось загрузить данные",
     "failed_save": "Ошибка при сохранении",
     "failed_update": "Ошибка при обновлении",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
+    "points_adjusted_add": "Начислено {{count}} баллов",
+    "points_adjusted_deduct": "Списано {{count}} баллов",
     "rule_deleted": "Правило успешно удалено",
     "rule_saved": "Правило сохранено",
     "tier_updated": "Данные уровня обновлены"

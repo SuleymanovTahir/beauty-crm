@@ -42,16 +42,16 @@ export function Services({ initialServices }: ServicesProps) {
         if (cat) {
           // Try to get translation from booking.json services section
           const translationKey = `services.category_${cat}`;
-          let label = t(translationKey, { 
+          let label = t(translationKey, {
             ns: 'booking',
-            defaultValue: undefined 
+            defaultValue: undefined
           });
-          
+
           // If translation not found, use capitalized category name
           if (!label || label === translationKey) {
             label = cat.charAt(0).toUpperCase() + cat.slice(1);
           }
-          
+
           if (!cats.find(c => c.id === cat)) {
             cats.push({ id: cat, label: label });
           }
@@ -221,12 +221,9 @@ export function Services({ initialServices }: ServicesProps) {
                     size="sm"
                     className="rounded-full bg-transparent border border-primary/30 text-primary group-hover:bg-primary group-hover:text-primary-foreground h-7 text-xs px-4 transition-all duration-300"
                     onClick={() => {
-                      // Передаем категорию вместо ID услуги
-                      if (service.category) {
-                        const category = encodeURIComponent(service.category);
-                        window.location.hash = `booking?category=${category}`;
+                      const serviceId = service.id;
+                      window.location.hash = `booking?service=${serviceId}`;
                       document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
-                      }
                     }}
                   >
                     {t('book', { defaultValue: 'Записаться' })}

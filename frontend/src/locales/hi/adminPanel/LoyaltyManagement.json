@@ -68,8 +68,8 @@
     "failed_load": "डेटा लोड करने में विफल",
     "failed_save": "सहेजते समय त्रुटि",
     "failed_update": "अद्यतन के दौरान त्रुटि",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
+    "points_adjusted_add": "उपार्जित {{count}} अंक",
+    "points_adjusted_deduct": "[[V0]]] अंक लिखें",
     "rule_deleted": "नियम सफलतापूर्वक हटा दिया गया",
     "rule_saved": "नियम सहेजा गया",
     "tier_updated": "लेवल डेटा अपडेट किया गया"

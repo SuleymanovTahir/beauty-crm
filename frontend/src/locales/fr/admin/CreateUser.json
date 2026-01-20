@@ -11,9 +11,9 @@
   "full_name_placeholder": "Jean Dupont",
   "full_name_required": "Nom requis",
   "no_position_found": "Poste introuvable",
-  "password_hint": "",
+  "password_hint": "Au moins {{count}} caractères",
   "password_label": "Mot de passe *",
-  "password_min_length": "",
+  "password_min_length": "Caractères {{count}} minimum",
   "password_placeholder": "••••••",
   "password_required": "Mot de passe requis",
   "position_hint": "Sélectionnez un ou plusieurs postes",
@@ -33,9 +33,9 @@
   "search_position": "Rechercher un poste...",
   "title": "Créer un utilisateur",
   "user_created": "Utilisateur créé avec succès",
-  "username_hint": "",
+  "username_hint": "Au moins {{count}} caractères",
   "username_label": "Se connecter *",
-  "username_min_length": "",
+  "username_min_length": "Caractères {{count}} minimum",
   "username_placeholder": "jean_dupont",
   "username_required": "La connexion est requise"
 }

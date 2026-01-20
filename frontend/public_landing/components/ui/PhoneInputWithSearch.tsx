@@ -9,6 +9,7 @@ interface PhoneInputWithSearchProps {
     defaultCountry?: string;
     placeholder?: string;
     searchPlaceholder?: string;
+    error?: boolean;
 }
 
 export function PhoneInputWithSearch({
@@ -16,7 +17,8 @@ export function PhoneInputWithSearch({
     onChange,
     defaultCountry = 'ae',
     placeholder = '',
-    searchPlaceholder = 'Поиск страны...'
+    searchPlaceholder = 'Поиск страны...',
+    error = false
 }: PhoneInputWithSearchProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
@@ -28,6 +30,8 @@ export function PhoneInputWithSearch({
         value,
         countries: defaultCountries,
         disableDialCodePrefill: true,
+        disableCountryGuess: true, // Prevent country change while typing
+        disableDialCodeAndPrefix: true, // Remove + and dial code from input since it's in the button
         onChange: (data) => {
             onChange(data.phone);
         },
@@ -61,12 +65,25 @@ export function PhoneInputWithSearch({
     const filteredCountries = parsedCountries.filter(c => {
         if (!search) return true;
         const searchLower = search.toLowerCase();
+        // Allow searching by dial code even if user includes '+'
+        const searchClean = search.startsWith('+') ? search.slice(1) : search;
+
         return (
             c.name.toLowerCase().includes(searchLower) ||
             c.iso2.toLowerCase().includes(searchLower) ||
-            c.dialCode.includes(search)
+            c.dialCode.startsWith(searchClean)
         );
     });
+
+    // Custom formatting for display (e.g., 888-33-33 or 999-123-45-67)
+    const formatValue = (v: string) => {
+        const d = v.replace(/\D/g, '');
+        if (d.length <= 3) return d;
+        if (d.length <= 7) {
+            return `${d.slice(0, 3)}-${d.slice(3, 5)}${d.length > 5 ? '-' : ''}${d.slice(5)}`;
+        }
+        return `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6, 8)}${d.length > 8 ? '-' : ''}${d.slice(8)}`;
+    };
 
     const selectedCountry = parsedCountries.find(c => c.iso2 === countryIso2);
 
@@ -77,7 +94,8 @@ export function PhoneInputWithSearch({
                 <button
                     type="button"
                     onClick={() => setIsOpen(!isOpen)}
-                    className="flex items-center gap-2 h-10 sm:h-11 px-3 rounded-md border border-primary/20 bg-slate-50 hover:bg-slate-100 transition-colors"
+                    className={`flex items-center gap-2 h-10 sm:h-11 px-3 rounded-md border transition-colors ${error ? 'border-destructive bg-destructive/5' : 'border-primary/20 bg-slate-50 hover:bg-slate-100'
+                        }`}
                 >
                     {selectedCountry && (
                         <FlagImage iso2={selectedCountry.iso2} size={20} />
@@ -138,10 +156,13 @@ export function PhoneInputWithSearch({
             <input
                 ref={inputRef}
                 type="tel"
-                value={inputValue}
+                value={formatValue(inputValue)}
                 onChange={handlePhoneValueChange}
                 placeholder={placeholder}
-                className="flex-1 h-10 sm:h-11 px-3 rounded-md border border-primary/20 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-base md:text-sm"
+                className={`flex-1 h-10 sm:h-11 px-3 rounded-md border transition-all ${error
+                    ? 'border-destructive bg-destructive/5 ring-destructive/20'
+                    : 'border-primary/20 bg-slate-50 focus:ring-primary/20 focus:border-primary'
+                    } focus:outline-none focus:ring-2 text-base md:text-sm`}
             />
         </div>
     );

@@ -11,9 +11,9 @@
   "full_name_placeholder": "Ахметов Алихан",
   "full_name_required": "Аты қажет",
   "no_position_found": "Позиция табылмады",
-  "password_hint": "",
+  "password_hint": "Кемінде {{count}} таңба",
   "password_label": "Құпия сөз *",
-  "password_min_length": "",
+  "password_min_length": "Ең аз {{count}} таңба",
   "password_placeholder": "••••••",
   "password_required": "Құпия сөз қажет",
   "position_hint": "Бір немесе бірнеше позицияны таңдаңыз",
@@ -33,9 +33,9 @@
   "search_position": "Орынды іздеу...",
   "title": "Пайдаланушы жасаңыз",
   "user_created": "Пайдаланушы сәтті жасалды",
-  "username_hint": "",
+  "username_hint": "Кемінде {{count}} таңба",
   "username_label": "Жүйеге кіру *",
-  "username_min_length": "",
+  "username_min_length": "Ең аз {{count}} таңба",
   "username_placeholder": "alikhan_akhmetov",
   "username_required": "Жүйеге кіру қажет"
 }

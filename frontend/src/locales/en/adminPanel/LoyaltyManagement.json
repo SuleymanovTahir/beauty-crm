@@ -68,8 +68,8 @@
     "failed_load": "Failed to load data",
     "failed_save": "Error while saving",
     "failed_update": "Error during update",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
+    "points_adjusted_add": "{{count}} points awarded",
+    "points_adjusted_deduct": "{{count}} points written off",
     "rule_deleted": "Rule deleted successfully",
     "rule_saved": "Rule saved",
     "tier_updated": "Level data updated"

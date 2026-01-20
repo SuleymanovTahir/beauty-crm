@@ -24,6 +24,6 @@
   "target_audience": "Target Audience",
   "target_by_master": "By master",
   "target_by_service": "By service",
-  "target_inactive_days": "",
+  "target_inactive_days": "Inactive for more than {{count}} days",
   "target_specific_users": "Selected clients"
 }

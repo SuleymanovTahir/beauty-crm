@@ -16,7 +16,7 @@
   "client_details_description": "Informações detalhadas e gerenciamento de reservas de clientes",
   "client_list": "Lista de clientes",
   "client_updated": "Detalhes do cliente atualizados",
-  "clients": "",
+  "clients": "clientes",
   "close": "Fechar",
   "confirm_delete_client": "Tem certeza de que deseja excluir este cliente?",
   "confirm_delete_stage": "Tem certeza de que deseja excluir esta etapa?",
