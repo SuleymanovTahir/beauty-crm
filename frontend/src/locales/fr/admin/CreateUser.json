@@ -8,7 +8,7 @@
   "error": "Erreur",
   "error_creating": "Erreur lors de la création de l'utilisateur",
   "full_name_label": "Nom et prénom *",
-  "full_name_placeholder": "Ivanov Ivan Ivanovitch",
+  "full_name_placeholder": "Jean Dupont",
   "full_name_required": "Nom requis",
   "no_position_found": "Poste introuvable",
   "password_hint": "",

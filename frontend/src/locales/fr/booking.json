@@ -18,7 +18,7 @@
     "other": "Un autre",
     "select": "Choisir",
     "subtitle": "Connectez-vous pour enregistrer l'historique de vos réservations et recevoir des bonus",
-    "success_mock": "Profil reçu avec succès !",
+    "success_mock": "Profil reçu avec succès\u00a0!",
     "welcome": "Accueillir"
   },
   "booking_info": "Informations d'réservation",

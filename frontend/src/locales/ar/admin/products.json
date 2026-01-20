@@ -11,7 +11,9 @@
   "delete": "يمسح",
   "detail": {
     "costPriceLabel": "التكلفة: {{price}} {{currency}}",
+    "inStock_zero": "",
     "inStock_one": "متوفر في المخزون {{count}} قطعة.",
+    "inStock_two": "",
     "inStock_few": "متوفر في المخزون {{count}} قطعة.",
     "inStock_many": "متوفر في المخزون {{count}} قطعة.",
     "inStock_other": "متوفر في المخزون {{count}} قطعة.",

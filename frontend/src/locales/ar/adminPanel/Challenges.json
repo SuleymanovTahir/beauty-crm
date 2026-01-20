@@ -50,7 +50,9 @@
     "failed_create": "حدث خطأ أثناء إنشاء النشاط",
     "failed_delete": "حدث خطأ أثناء الحذف",
     "failed_load": "فشل تحميل البيانات",
+    "progress_checked_zero": "",
     "progress_checked_one": "تم تحديث التقدم لعضو {{count}}",
+    "progress_checked_two": "",
     "progress_checked_few": "تم تحديث التقدم للمشاركين {{count}}",
     "progress_checked_many": "تم تحديث التقدم للمشاركين {{count}}",
     "progress_checked_other": "تم تحديث التقدم للمشاركين {{count}}"
