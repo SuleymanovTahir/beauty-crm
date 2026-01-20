@@ -21,13 +21,13 @@
     "success_mock": "Profil erfolgreich erhalten!",
     "welcome": "Willkommen"
   },
-  "booking_info": "Informationen aufzeichnen",
   "bookingDesc": "Wählen Sie einen passenden Zeitpunkt für Ihren Besuch",
   "bookingError": "Fehler beim Erstellen des Datensatzes. Bitte versuchen Sie es später noch einmal.",
   "bookingSuccess": "Bewerbung erfolgreich verschickt! Wir werden Sie zur Bestätigung kontaktieren.",
   "bookingTag": "Online-Registrierung",
   "bookingTitlePart1": "Melden Sie sich an",
   "bookingTitlePart2": "für einen Termin",
+  "booking_info": "Informationen aufzeichnen",
   "common": {
     "cancel": "Später",
     "change": "Ändern",
@@ -56,6 +56,7 @@
   "continue_datetime": "Fahren Sie mit der Auswahl datum bis Datum und Uhrzeit fort",
   "continue_professional": "Fahren Sie mit der Auswahl des spezialisten fort",
   "continue_services": "Fahren Sie mit der Auswahl der Dienstleistungen fort",
+  "date_format_hint": "Format: TT.MM.JJJJ",
   "datetime": {
     "date": "Datum auswählen",
     "noSlots": "Keine Fenster vorhanden",
@@ -86,10 +87,10 @@
   "newBooking": "Buchung",
   "noServicesFound": "Keine Dienste gefunden.",
   "phone_too_short": "Die Telefonnummer muss mindestens {{count}} Ziffern enthalten, einschließlich der Landesvorwahl",
-  "phone_too_short_one": "",
-  "phone_too_short_few": "",
-  "phone_too_short_many": "",
-  "phone_too_short_other": "",
+  "phone_too_short_few": "Mindestens {{count}} Ziffern",
+  "phone_too_short_many": "Mindestens {{count}} Ziffern",
+  "phone_too_short_one": "Mindestens {{count}} Ziffern",
+  "phone_too_short_other": "Mindestens {{count}} Ziffern",
   "privacyAgreementStart": "Durch Anklicken des Buttons erklären Sie sich damit einverstanden",
   "privacyPolicy": "datenschutzrichtlinie",
   "professional": {
@@ -108,9 +109,9 @@
     "notFound": "Dienste nicht gefunden",
     "search": "Nach Dienstleistungen suchen...",
     "selected": "ausgewählt",
-    "service_one": "service",
     "service_few": "dienstleistungen",
     "service_many": "dienstleistungen",
+    "service_one": "service",
     "total": "Gesamt"
   },
   "submitBooking": "Senden Sie eine Anfrage",

@@ -1,40 +1,6 @@
 {
   "users": [
     {
-      "id": 4,
-      "fields": {
-        "position": {
-          "ru": "Nail Master",
-          "key": "users.4.position.1c34eb1b",
-          "en": "Nail service master",
-          "ar": "سيد خدمة الأظافر",
-          "es": "Maestro del servicio de uñas",
-          "de": "Nagelservice-Meister",
-          "fr": "Maître du service des ongles",
-          "hi": "नेल सर्विस मास्टर",
-          "kk": "Тырнақ күтімінің шебері",
-          "pt": "Mestre de serviço de unhas"
-        }
-      }
-    },
-    {
-      "id": 3,
-      "fields": {
-        "position": {
-          "ru": "Hair Stylist",
-          "key": "users.3.position.18612649",
-          "en": "Hair stylist",
-          "ar": "مصفف شعر",
-          "es": "Estilista",
-          "de": "Friseur",
-          "fr": "Coiffeur",
-          "hi": "बालों की स्टाइल बनाने वाला",
-          "kk": "Шаш стилисті",
-          "pt": "Cabeleireiro"
-        }
-      }
-    },
-    {
       "id": 5,
       "fields": {
         "position": {
@@ -101,15 +67,49 @@
           "pt": "Diretor"
         }
       }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "position": {
+          "ru": "Hair Stylist",
+          "key": "users.3.position.18612649",
+          "en": "Hair stylist",
+          "ar": "مصفف شعر",
+          "es": "Estilista",
+          "de": "Friseur",
+          "fr": "Coiffeur",
+          "hi": "बालों की स्टाइल बनाने वाला",
+          "kk": "Шаш стилисті",
+          "pt": "Cabeleireiro"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "fields": {
+        "position": {
+          "ru": "Nail Master",
+          "key": "users.4.position.1c34eb1b",
+          "en": "Nail service master",
+          "ar": "سيد خدمة الأظافر",
+          "es": "Maestro del servicio de uñas",
+          "de": "Nagelservice-Meister",
+          "fr": "Maître du service des ongles",
+          "hi": "नेल सर्विस मास्टर",
+          "kk": "Тырнақ күтімінің шебері",
+          "pt": "Mestre de serviço de unhas"
+        }
+      }
     }
   ],
   "public_reviews": [
     {
-      "id": 18,
+      "id": 24,
       "fields": {
         "text_ru": {
           "ru": "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!",
-          "key": "public_reviews.18.text_ru.6f00ad70",
+          "key": "public_reviews.24.text_ru.6f00ad70",
           "en": null,
           "ar": null,
           "es": null,
@@ -121,7 +121,7 @@
         },
         "author_name": {
           "ru": "Sarah Jenkins",
-          "key": "public_reviews.18.author_name.ff715865",
+          "key": "public_reviews.24.author_name.ff715865",
           "en": null,
           "ar": null,
           "es": null,
@@ -133,7 +133,7 @@
         },
         "employee_position": {
           "ru": "Eyelashes",
-          "key": "public_reviews.18.employee_position.5b1b1d5e",
+          "key": "public_reviews.24.employee_position.5b1b1d5e",
           "en": null,
           "ar": null,
           "es": null,
@@ -146,11 +146,11 @@
       }
     },
     {
-      "id": 19,
+      "id": 25,
       "fields": {
         "text_ru": {
           "ru": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
-          "key": "public_reviews.19.text_ru.f38138da",
+          "key": "public_reviews.25.text_ru.f38138da",
           "en": null,
           "ar": null,
           "es": null,
@@ -162,7 +162,7 @@
         },
         "author_name": {
           "ru": "Maria Gonzalez",
-          "key": "public_reviews.19.author_name.653816a6",
+          "key": "public_reviews.25.author_name.653816a6",
           "en": null,
           "ar": null,
           "es": null,
@@ -174,7 +174,7 @@
         },
         "employee_position": {
           "ru": "Facial Treatment",
-          "key": "public_reviews.19.employee_position.9a3a91ca",
+          "key": "public_reviews.25.employee_position.9a3a91ca",
           "en": null,
           "ar": null,
           "es": null,
@@ -187,11 +187,11 @@
       }
     },
     {
-      "id": 20,
+      "id": 26,
       "fields": {
         "text_ru": {
           "ru": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
-          "key": "public_reviews.20.text_ru.ae85e84b",
+          "key": "public_reviews.26.text_ru.ae85e84b",
           "en": null,
           "ar": null,
           "es": null,
@@ -203,7 +203,7 @@
         },
         "author_name": {
           "ru": "Fatima Al-Sayed",
-          "key": "public_reviews.20.author_name.f26d4aa2",
+          "key": "public_reviews.26.author_name.f26d4aa2",
           "en": null,
           "ar": null,
           "es": null,
@@ -215,7 +215,7 @@
         },
         "employee_position": {
           "ru": "Microblading",
-          "key": "public_reviews.20.employee_position.65d6c03d",
+          "key": "public_reviews.26.employee_position.65d6c03d",
           "en": null,
           "ar": null,
           "es": null,
@@ -224,6 +224,226 @@
           "hi": null,
           "kk": null,
           "pt": null
+        }
+      }
+    },
+    {
+      "id": 21,
+      "fields": {
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.21.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sarah Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.21.employee_position.5b1b1d5e",
+          "en": "Eyelashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "fields": {
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.22.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria Gonzalez",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria Gonzalez"
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.22.employee_position.9a3a91ca",
+          "en": "Facial Treatment",
+          "ar": "علاج الوجه",
+          "es": "Tratamiento Facial",
+          "de": "Gesichtsbehandlung",
+          "fr": "Traitement du visage",
+          "hi": "चेहरे का उपचार",
+          "kk": "Бет күтімі",
+          "pt": "Tratamento facial"
+        }
+      }
+    },
+    {
+      "id": 23,
+      "fields": {
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.23.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al-Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима Әл-Сайед",
+          "pt": "Fátima Al-Sayed"
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.23.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "employee_position": {
+          "ru": "Manicure & Pedicure",
+          "key": "public_reviews.3.employee_position.8e5cfdfa",
+          "en": "Manicure and pedicure",
+          "ar": "مانيكير وباديكير",
+          "es": "Manicura y pedicura",
+          "de": "Maniküre und Pediküre",
+          "fr": "Manucure et pédicure",
+          "hi": "नख प्रसाधन व पाद चिकित्सा",
+          "kk": "Маникюр және педикюр",
+          "pt": "Manicura e pedicura"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "fields": {
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.7.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria Gonzalez",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria Gonzalez"
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.7.employee_position.9a3a91ca",
+          "en": "Facial care",
+          "ar": "العناية بالوجه",
+          "es": "Cuidado facial",
+          "de": "Gesichtspflege",
+          "fr": "Soins du visage",
+          "hi": "चेहरे की देखभाल",
+          "kk": "Бет күтімі",
+          "pt": "Cuidados faciais"
+        }
+      }
+    },
+    {
+      "id": 18,
+      "fields": {
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.18.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sarah Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.18.employee_position.5b1b1d5e",
+          "en": "Eyelashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas"
+        }
+      }
+    },
+    {
+      "id": 19,
+      "fields": {
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.19.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria Gonzalez",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria Gonzalez"
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.19.employee_position.9a3a91ca",
+          "en": "Facial Treatment",
+          "ar": "علاج الوجه",
+          "es": "Tratamiento Facial",
+          "de": "Gesichtsbehandlung",
+          "fr": "Traitement du visage",
+          "hi": "चेहरे का उपचार",
+          "kk": "Бет күтімі",
+          "pt": "Tratamento facial"
+        }
+      }
+    },
+    {
+      "id": 20,
+      "fields": {
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.20.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al-Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима Әл-Сайед",
+          "pt": "Fátima Al-Sayed"
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.20.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading"
         }
       }
     },
@@ -253,23 +473,6 @@
           "hi": "माइक्रोब्लैडिंग",
           "kk": "Микроблейдинг",
           "pt": "Microblading"
-        }
-      }
-    },
-    {
-      "id": 3,
-      "fields": {
-        "employee_position": {
-          "ru": "Manicure & Pedicure",
-          "key": "public_reviews.3.employee_position.8e5cfdfa",
-          "en": "Manicure and pedicure",
-          "ar": "مانيكير وباديكير",
-          "es": "Manicura y pedicura",
-          "de": "Maniküre und Pediküre",
-          "fr": "Manucure et pédicure",
-          "hi": "नख प्रसाधन व पाद चिकित्सा",
-          "kk": "Маникюр және педикюр",
-          "pt": "Manicura e pedicura"
         }
       }
     },
@@ -564,35 +767,6 @@
       }
     },
     {
-      "id": 7,
-      "fields": {
-        "author_name": {
-          "ru": "Maria Gonzalez",
-          "key": "public_reviews.7.author_name.653816a6",
-          "en": "Maria Gonzalez",
-          "ar": "ماريا جونزاليس",
-          "es": "María González",
-          "de": "Maria Gonzalez",
-          "fr": "Maria Gonzalez",
-          "hi": "मारिया गोंजालेज",
-          "kk": "Мария Гонсалес",
-          "pt": "Maria Gonzalez"
-        },
-        "employee_position": {
-          "ru": "Facial Treatment",
-          "key": "public_reviews.7.employee_position.9a3a91ca",
-          "en": "Facial care",
-          "ar": "العناية بالوجه",
-          "es": "Cuidado facial",
-          "de": "Gesichtspflege",
-          "fr": "Soins du visage",
-          "hi": "चेहरे की देखभाल",
-          "kk": "Бет күтімі",
-          "pt": "Cuidados faciais"
-        }
-      }
-    },
-    {
       "id": 8,
       "fields": {
         "author_name": {
@@ -733,12 +907,12 @@
       }
     },
     {
-      "id": 34,
+      "id": 23,
       "fields": {
         "description_ru": {
-          "ru": "Мега объем ресниц",
-          "key": "services.34.description_ru.0a54c5b1",
-          "en": "Mega volume eyelashes",
+          "ru": "Осветление корней с укладкой",
+          "key": "services.23.description_ru.785f83b1",
+          "en": "Root lightening with styling",
           "ar": null,
           "es": null,
           "de": null,
@@ -750,12 +924,12 @@
       }
     },
     {
-      "id": 23,
+      "id": 34,
       "fields": {
         "description_ru": {
-          "ru": "Осветление корней с укладкой",
-          "key": "services.23.description_ru.785f83b1",
-          "en": "Root lightening with styling",
+          "ru": "Мега объем ресниц",
+          "key": "services.34.description_ru.0a54c5b1",
+          "en": "Mega volume eyelashes",
           "ar": null,
           "es": null,
           "de": null,

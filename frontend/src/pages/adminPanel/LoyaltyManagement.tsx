@@ -520,7 +520,7 @@ export default function LoyaltyManagement() {
                     </Badge>
                   </TableCell>
                   <TableCell>{transaction.reason}</TableCell>
-                  <TableCell>{new Date(transaction.created_at).toLocaleDateString()}</TableCell>
+                  <TableCell>{new Date(transaction.created_at).toLocaleDateString('ru-RU')}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -346,7 +346,7 @@ const Invoices = () => {
                                             <div className="flex items-center justify-between pt-3 border-t border-gray-50">
                                                 <div className="text-[10px] text-gray-400 flex items-center gap-1">
                                                     <Clock size={10} />
-                                                    {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : '-'}
+                                                    {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString('ru-RU') : '-'}
                                                 </div>
                                                 <div className="flex gap-1">
                                                     <button
@@ -447,7 +447,7 @@ const Invoices = () => {
                                                 </span>
                                             </td>
                                             <td className="text-gray-600 text-sm">
-                                                {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : '-'}
+                                                {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString('ru-RU') : '-'}
                                             </td>
                                             <td>
                                                 <div className="flex gap-1">

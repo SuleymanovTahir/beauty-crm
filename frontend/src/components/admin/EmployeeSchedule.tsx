@@ -626,7 +626,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                             <div key={timeOff.id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
                                 <div>
                                     <div className="font-medium">
-                                        {new Date(timeOff.start_datetime).toLocaleDateString()} - {new Date(timeOff.end_datetime).toLocaleDateString()}
+                                        {new Date(timeOff.start_datetime).toLocaleDateString('ru-RU')} - {new Date(timeOff.end_datetime).toLocaleDateString('ru-RU')}
                                     </div>
                                     <div className="text-sm text-gray-600">
                                         {timeOff.type} {timeOff.reason && `- ${timeOff.reason}`}

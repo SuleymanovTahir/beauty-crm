@@ -52,9 +52,11 @@ BEAUTY_SALON_TERMS = {
     'highlights': 'мелирование',
     'ombre': 'омбре',
     'hair botox': 'ботокс для волос',
-    'blow dry': 'укладка феном',
     'trim ends': 'подравнивание кончиков',
     'trim': 'подравнивание',
+    'laying': 'укладка',
+    'trim without washing': 'подравнивание без мытья',
+    'hair extensions (removal)': 'снятие наращенных волос',
     
     # Эпиляция/депиляция (en->ru)
     'waxing': 'восковая эпиляция',
@@ -138,6 +140,7 @@ BEAUTY_SALON_TERMS = {
     'стрижка': 'haircut',
     'окрашивание': 'coloring',
     'подравнивание': 'trim',
+    'обрезка': 'trim', # Исправление грубого перевода
     'снятие': 'removal',
     'любой мастер': 'any professional',
     'отменено': 'cancelled',

@@ -31,7 +31,7 @@
   "anti_patterns": "Antipatterns (what not to do)",
   "beta": "Beta",
   "booking_availability_instructions": "Guide to Exhibiting Masters",
-  "booking_availability_instructions_description": "Instructions for the bot: what to do if the service is not detected, how to display wizards, when to collect data",
+  "booking_availability_instructions_description": "Instructions for the bot: what to do if the service is not detected, how to display masters, when to collect data",
   "booking_data_collection": "Collecting data for booking",
   "booking_data_collection_description": "Algorithm for collecting name and WhatsApp before booking",
   "booking_message": "Booking",

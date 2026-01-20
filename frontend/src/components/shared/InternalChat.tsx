@@ -68,7 +68,7 @@ interface VoiceRecorder {
 }
 
 export default function InternalChat() {
-  const { t } = useTranslation(['common', 'layouts/mainlayout']);
+  const { t, i18n } = useTranslation(['common', 'layouts/mainlayout']);
   const { user: _currentUser } = useAuth();
   // useAuth(); // Removed redundant call if not needed or keeps it if side-effect relevant
 
@@ -1168,7 +1168,7 @@ export default function InternalChat() {
                     ) : (
                       <span className="truncate max-w-[180px]">
                         {user.last_seen
-                          ? `${t('status.last_seen', 'Был(а)')} ${new Date(user.last_seen).toLocaleDateString()} ${new Date(user.last_seen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                          ? `${t('status.last_seen', 'Был(а)')} ${new Date(user.last_seen).toLocaleDateString('ru-RU')} ${new Date(user.last_seen).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`
                           : ''}
                       </span>
                     )}
@@ -1225,7 +1225,7 @@ export default function InternalChat() {
                     ) : (
                       <span>
                         {selectedUser.last_seen
-                          ? `${t('status.last_seen', 'Был(а)')} ${new Date(selectedUser.last_seen).toLocaleDateString()} ${new Date(selectedUser.last_seen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                          ? `${t('status.last_seen', 'Был(а)')} ${new Date(selectedUser.last_seen).toLocaleDateString('ru-RU')} ${new Date(selectedUser.last_seen).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`
                           : ''}
                       </span>
                     )}

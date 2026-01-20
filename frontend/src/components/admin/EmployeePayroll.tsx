@@ -437,7 +437,7 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
                                             </select>
                                         </TableCell>
                                         <TableCell className="text-gray-500">
-                                            {new Date(item.created_at).toLocaleDateString()}
+                                            {new Date(item.created_at).toLocaleDateString('ru-RU')}
                                         </TableCell>
                                     </TableRow>
                                 ))

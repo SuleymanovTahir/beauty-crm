@@ -514,7 +514,7 @@ export default function PhotoGallery() {
               </div>
               <p className="text-sm text-gray-500 mb-3">{photo.description}</p>
               <div className="flex items-center justify-between text-xs text-gray-400">
-                <span>{new Date(photo.created_at).toLocaleDateString()}</span>
+                <span>{new Date(photo.created_at).toLocaleDateString('ru-RU')}</span>
                 <div className="flex items-center gap-1">
                   <Eye className="w-3 h-3" />
                   <span>{photo.views}</span>
@@ -730,7 +730,7 @@ export default function PhotoGallery() {
                 </Badge>
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <span>{t('card.uploaded_by', { name: selectedPhoto.uploaded_by })}</span>
-                  <span>{new Date(selectedPhoto.created_at).toLocaleDateString()}</span>
+                  <span>{new Date(selectedPhoto.created_at).toLocaleDateString('ru-RU')}</span>
                   <div className="flex items-center gap-1">
                     <Eye className="w-4 h-4" />
                     <span>{selectedPhoto.views} {t('card.views')}</span>

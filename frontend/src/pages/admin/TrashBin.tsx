@@ -402,7 +402,7 @@ const TrashBin: React.FC = () => {
                                 <div className="mt-3 pt-3 border-t flex items-center justify-between">
                                     <span className="text-[10px] text-muted-foreground flex items-center gap-1">
                                         <Calendar className="w-2.5 h-2.5" />
-                                        {new Date(item.deleted_at).toLocaleDateString()}
+                                        {new Date(item.deleted_at).toLocaleDateString('ru-RU')}
                                     </span>
 
                                     {!item.can_restore && (
