@@ -29,19 +29,19 @@ export function TemperatureFilter({ value, onChange }: TemperatureFilterProps) {
             case 'hot':
                 return {
                     label: t('hot'),
-                    icon: <Flame className="w-4 h-4" style={{ color: '#ef4444', fill: '#ef4444' }} />,
+                    icon: <Flame className="w-4 h-4" style={{ color: 'var(--temp-hot)', fill: 'var(--temp-hot)' }} />,
                     color: 'text-gray-900'
                 };
             case 'warm':
                 return {
                     label: t('warm'),
-                    icon: <Sun className="w-4 h-4" style={{ color: '#f97316' }} />,
+                    icon: <Sun className="w-4 h-4" style={{ color: 'var(--temp-warm)' }} />,
                     color: 'text-gray-900'
                 };
             case 'cold':
                 return {
                     label: t('cold'),
-                    icon: <Snowflake className="w-4 h-4" style={{ color: '#06b6d4', fill: '#06b6d4' }} />,
+                    icon: <Snowflake className="w-4 h-4" style={{ color: 'var(--temp-cold)', fill: 'var(--temp-cold)' }} />,
                     color: 'text-gray-900'
                 };
             default:
@@ -85,21 +85,21 @@ export function TemperatureFilter({ value, onChange }: TemperatureFilterProps) {
                         onClick={() => handleSelect('hot')}
                         className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900"
                     >
-                        <Flame className="w-4 h-4" style={{ color: '#ef4444', fill: '#ef4444' }} />
+                        <Flame className="w-4 h-4" style={{ color: 'var(--temp-hot)', fill: 'var(--temp-hot)' }} />
                         <span>{t('hot')}</span>
                     </div>
                     <div
                         onClick={() => handleSelect('warm')}
                         className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900"
                     >
-                        <Sun className="w-4 h-4" style={{ color: '#f97316' }} />
+                        <Sun className="w-4 h-4" style={{ color: 'var(--temp-warm)' }} />
                         <span className="text-gray-900">{t('warm')}</span>
                     </div>
                     <div
                         onClick={() => handleSelect('cold')}
                         className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900"
                     >
-                        <Snowflake className="w-4 h-4" style={{ color: '#06b6d4', fill: '#06b6d4' }} />
+                        <Snowflake className="w-4 h-4" style={{ color: 'var(--temp-cold)', fill: 'var(--temp-cold)' }} />
                         <span>{t('cold')}</span>
                     </div>
                 </div>

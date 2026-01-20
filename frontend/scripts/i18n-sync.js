@@ -73,6 +73,11 @@ function getAllKeys(obj, prefix = '') {
 
 // Получить значение по ключу
 function getValueByKey(obj, key) {
+    // Сначала проверяем, нет ли такого ключа напрямую (актуально для dynamic.json)
+    if (obj && typeof obj === 'object' && key in obj) {
+        return obj[key];
+    }
+
     const parts = key.split('.');
     let current = obj;
 

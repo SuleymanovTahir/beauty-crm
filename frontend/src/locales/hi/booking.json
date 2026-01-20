@@ -21,13 +21,13 @@
     "success_mock": "प्रोफ़ाइल सफलतापूर्वक प्राप्त हुई!",
     "welcome": "स्वागत"
   },
+  "booking_info": "रिकॉर्डिंग जानकारी",
   "bookingDesc": "अपनी यात्रा के लिए सुविधाजनक समय चुनें",
   "bookingError": "रिकॉर्ड बनाने में त्रुटि. कृपया बाद में पुन: प्रयास करें।",
   "bookingSuccess": "आवेदन सफलतापूर्वक भेजा गया! पुष्टि करने के लिए हम आपसे संपर्क करेंगे.",
   "bookingTag": "ऑनलाइन पंजीकरण",
   "bookingTitlePart1": "साइन अप करें",
   "bookingTitlePart2": "एक नियुक्ति के लिए",
-  "booking_info": "रिकॉर्डिंग जानकारी",
   "common": {
     "cancel": "बाद में",
     "change": "परिवर्तन",
@@ -86,6 +86,8 @@
   "newBooking": "बुकिंग",
   "noServicesFound": "कोई दिनांक सेवा नहीं मिली.",
   "phone_too_short": "फ़ोन नंबर में देश कोड सहित कम से कम {{count}} अंक होने चाहिए",
+  "phone_too_short_one": "",
+  "phone_too_short_other": "",
   "privacyAgreementStart": "बटन पर क्लिक करके, आप सहमत हैं",
   "privacyPolicy": "गोपनीयता नीति",
   "professional": {
@@ -104,9 +106,9 @@
     "notFound": "दिनांक सेवाएँ नहीं मिलीं",
     "search": "दिनांक सेवाएँ खोजें...",
     "selected": "चयनित",
+    "service_one": "सेवा",
     "service_few": "दिनांक सेवा",
     "service_many": "दिनांक सेवा",
-    "service_one": "सेवा",
     "total": "कुल"
   },
   "submitBooking": "एक अनुरोध भेजें",

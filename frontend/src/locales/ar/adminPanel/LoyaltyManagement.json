@@ -68,8 +68,8 @@
     "failed_load": "فشل تحميل البيانات",
     "failed_save": "حدث خطأ أثناء الحفظ",
     "failed_update": "حدث خطأ أثناء التحديث",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
+    "points_adjusted_add": "{{count}} النقاط المتراكمة",
+    "points_adjusted_deduct": "شطب {{count}} النقاط",
     "rule_deleted": "تم حذف القاعدة بنجاح",
     "rule_saved": "تم حفظ القاعدة",
     "tier_updated": "تم تحديث بيانات المستوى"

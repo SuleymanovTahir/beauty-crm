@@ -11,9 +11,9 @@
   "full_name_placeholder": "محمد أحمد",
   "full_name_required": "الاسم مطلوب",
   "no_position_found": "لم يتم العثور على الموقف",
-  "password_hint": "",
+  "password_hint": "{{count}} حرف على الأقل",
   "password_label": "كلمة المرور *",
-  "password_min_length": "",
+  "password_min_length": "الحد الأدنى {{count}} الأحرف",
   "password_placeholder": "••••••",
   "password_required": "كلمة المرور مطلوبة",
   "position_hint": "حدد موضعًا واحدًا أو أكثر",
@@ -33,9 +33,9 @@
   "search_position": "البحث عن منصب...",
   "title": "إنشاء مستخدم",
   "user_created": "تم إنشاء المستخدم بنجاح",
-  "username_hint": "",
+  "username_hint": "{{count}} من الأحرف على الأقل",
   "username_label": "تسجيل الدخول *",
-  "username_min_length": "",
+  "username_min_length": "الحد الأدنى {{count}} الأحرف",
   "username_placeholder": "mohamed_ahmed",
   "username_required": "مطلوب تسجيل الدخول"
 }

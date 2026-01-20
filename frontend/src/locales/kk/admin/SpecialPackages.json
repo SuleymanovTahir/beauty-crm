@@ -24,6 +24,6 @@
   "target_audience": "Мақсатты аудитория",
   "target_by_master": "Мастер бойынша",
   "target_by_service": "Қызметі бойынша",
-  "target_inactive_days": "",
+  "target_inactive_days": "{{count}} күннен артық белсенді емес",
   "target_specific_users": "Таңдалған клиенттер"
 }

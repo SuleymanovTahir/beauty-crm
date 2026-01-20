@@ -86,6 +86,8 @@
   "newBooking": "Брондау",
   "noServicesFound": "Ешқандай қызметтер табылмады.",
   "phone_too_short": "Телефон нөмірі ел кодын қоса алғанда, кемінде {{count}} сандардан тұруы керек",
+  "phone_too_short_one": "",
+  "phone_too_short_other": "",
   "privacyAgreementStart": "Түймені басу арқылы сіз келісесіз",
   "privacyPolicy": "құпиялылық саясаты",
   "professional": {

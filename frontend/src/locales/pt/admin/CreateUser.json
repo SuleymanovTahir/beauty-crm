@@ -11,9 +11,9 @@
   "full_name_placeholder": "João Silva",
   "full_name_required": "Nome obrigatório",
   "no_position_found": "Posição não encontrada",
-  "password_hint": "",
+  "password_hint": "Pelo menos {{count}} caracteres",
   "password_label": "Senha *",
-  "password_min_length": "",
+  "password_min_length": "Mínimo {{count}} caracteres",
   "password_placeholder": "••••••",
   "password_required": "Senha obrigatória",
   "position_hint": "Selecione uma ou mais posições",
@@ -33,9 +33,9 @@
   "search_position": "Procure uma posição...",
   "title": "Crie um usuário",
   "user_created": "Usuário criado com sucesso",
-  "username_hint": "",
+  "username_hint": "Pelo menos {{count}} caracteres",
   "username_label": "Conecte-se *",
-  "username_min_length": "",
+  "username_min_length": "Mínimo {{count}} caracteres",
   "username_placeholder": "joao_silva",
   "username_required": "O login é obrigatório"
 }

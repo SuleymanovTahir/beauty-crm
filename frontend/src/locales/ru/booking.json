@@ -86,6 +86,10 @@
   "newBooking": "Бронирование",
   "noServicesFound": "Услуги не найдены.",
   "phone_too_short": "Номер телефона должен содержать минимум {{count}} цифр с учетом кода страны",
+  "phone_too_short_one": "",
+  "phone_too_short_few": "",
+  "phone_too_short_many": "",
+  "phone_too_short_other": "",
   "privacyAgreementStart": "Нажимая кнопку, вы соглашаетесь с",
   "privacyPolicy": "политикой конфиденциальности",
   "professional": {

@@ -41,6 +41,7 @@ export const BookingSection = () => {
   const [services, setServices] = useState<any[]>([]); // Список всех услуг
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
 
   // Detect country from geolocation or use saved preference
   useEffect(() => {
@@ -84,14 +85,15 @@ export const BookingSection = () => {
     }
   }, [user]);
 
-  // Listen for category selection from URL hash
+  // Listen for category or service selection from URL hash
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      const match = hash.match(/booking\?category=([^&]+)/);
-      if (match && match[1] && services.length > 0) {
-        const category = decodeURIComponent(match[1]);
-        // Find services in this category and select them
+
+      // Handle category selection
+      const categoryMatch = hash.match(/booking\?category=([^&]+)/);
+      if (categoryMatch && categoryMatch[1] && services.length > 0) {
+        const category = decodeURIComponent(categoryMatch[1]);
         const categoryServices = services.filter((s: any) => s.category === category);
         if (categoryServices.length > 0) {
           const serviceIds = categoryServices.map((s: any) => s.id);
@@ -100,7 +102,21 @@ export const BookingSection = () => {
             selectedServices: [...new Set([...prev.selectedServices, ...serviceIds])]
           }));
         }
-        // Clean the hash
+        window.history.replaceState(null, '', '#booking');
+      }
+
+      // Handle specific service selection
+      const serviceMatch = hash.match(/booking\?service=([^&]+)/);
+      if (serviceMatch && serviceMatch[1] && services.length > 0) {
+        const serviceId = parseInt(serviceMatch[1]);
+        if (!isNaN(serviceId)) {
+          setFormData(prev => ({
+            ...prev,
+            selectedServices: prev.selectedServices.includes(serviceId)
+              ? prev.selectedServices
+              : [...prev.selectedServices, serviceId]
+          }));
+        }
         window.history.replaceState(null, '', '#booking');
       }
     };
@@ -140,12 +156,14 @@ export const BookingSection = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Телефонный номер должен содержать минимум 11 цифр с учетом кода страны
     const digitsOnly = formData.phone.replace(/\D/g, '');
-    if (digitsOnly.length < 11) {
-      toast.error(t('phone_too_short', { defaultValue: 'Номер телефона должен содержать минимум 11 цифр с учетом кода страны' }));
+    const minDigits = 11;
+    if (digitsOnly.length < minDigits) {
+      setPhoneError(true);
+      toast.error(t('phone_too_short', { count: minDigits, defaultValue: `Номер телефона должен содержать минимум ${minDigits} цифр с учетом кода страны` }));
       return;
     }
+    setPhoneError(false);
 
     if (formData.selectedServices.length === 0) {
       toast.error(t('formServicePlaceholder', { defaultValue: 'Выберите хотя бы одну услугу' }));
@@ -247,8 +265,14 @@ export const BookingSection = () => {
               defaultCountry={defaultCountry}
               value={formData.phone}
               onChange={handlePhoneChange}
+              error={phoneError}
               searchPlaceholder={t('searchCountry', { defaultValue: 'Поиск страны...' })}
             />
+            {phoneError && (
+              <p className="text-xs text-destructive mt-1">
+                {t('phone_too_short', { count: 11 })}
+              </p>
+            )}
           </div>
 
           <div>
@@ -266,11 +290,13 @@ export const BookingSection = () => {
                     {formData.selectedServices.length > 0 ? (
                       formData.selectedServices.map(id => {
                         const s = services.find(srv => srv.id === id);
-                        return s ? (
+                        if (!s) return null;
+                        const serviceName = s[`name_${i18n.language}`] || s.name;
+                        return (
                           <span key={id} className="bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded-full border border-primary/20">
-                            {s.name}
+                            {serviceName}
                           </span>
-                        ) : null;
+                        );
                       })
                     ) : (
                       <span className="text-muted-foreground">{t('formServicePlaceholder', { defaultValue: 'Выберите услуги' })}</span>
@@ -288,37 +314,40 @@ export const BookingSection = () => {
                       <CommandGroup key={category} heading={getCategoryDisplayName(category)}>
                         {services
                           .filter((s: any) => s.category === category)
-                          .map((service: any) => (
-                            <CommandItem
-                              key={service.id}
-                              value={service.name}
-                              onSelect={() => {
-                                setFormData(prev => ({
-                                  ...prev,
-                                  selectedServices: prev.selectedServices.includes(service.id)
-                                    ? prev.selectedServices.filter(id => id !== service.id)
-                                    : [...prev.selectedServices, service.id]
-                                }));
-                              }}
-                            >
-                              <div className={cn(
-                                "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                                formData.selectedServices.includes(service.id)
-                                  ? "bg-primary text-primary-foreground"
-                                  : "opacity-50 [&_svg]:invisible"
-                              )}>
-                                <Check className={cn("h-3 w-3")} />
-                              </div>
-                              <div className="flex flex-col">
-                                <span>{service.name}</span>
-                                {service.price && (
-                                  <span className="text-[10px] text-muted-foreground">
-                                    {service.price} {service.currency}
-                                  </span>
-                                )}
-                              </div>
-                            </CommandItem>
-                          ))}
+                          .map((service: any) => {
+                            const serviceName = service[`name_${i18n.language}`] || service.name;
+                            return (
+                              <CommandItem
+                                key={service.id}
+                                value={`${serviceName} ${service.name}`}
+                                onSelect={() => {
+                                  setFormData(prev => ({
+                                    ...prev,
+                                    selectedServices: prev.selectedServices.includes(service.id)
+                                      ? prev.selectedServices.filter(id => id !== service.id)
+                                      : [...prev.selectedServices, service.id]
+                                  }));
+                                }}
+                              >
+                                <div className={cn(
+                                  "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                                  formData.selectedServices.includes(service.id)
+                                    ? "bg-primary text-primary-foreground"
+                                    : "opacity-50 [&_svg]:invisible"
+                                )}>
+                                  <Check className={cn("h-3 w-3")} />
+                                </div>
+                                <div className="flex flex-col">
+                                  <span>{serviceName}</span>
+                                  {service.price && (
+                                    <span className="text-[10px] text-muted-foreground">
+                                      {service.price} {service.currency}
+                                    </span>
+                                  )}
+                                </div>
+                              </CommandItem>
+                            );
+                          })}
                       </CommandGroup>
                     ))}
                   </CommandList>

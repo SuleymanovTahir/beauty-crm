@@ -6,8 +6,8 @@
   "current_settings": {
     "edit": "संपादन करना",
     "min_purchase": "न्यूनतम खरीद मूल्य: <strong>{{amount}} {{currency}}</strong>",
-    "referred_bonus": "",
-    "referrer_bonus": "",
+    "referred_bonus": "मित्र बोनस: <strong>[[V0]]] अंक</strong>",
+    "referrer_bonus": "आमंत्रित बोनस: <strong>{{points}} अंक</strong>",
     "title": "वर्तमान बोनस कॉन्फ़िगरेशन"
   },
   "dialogs": {

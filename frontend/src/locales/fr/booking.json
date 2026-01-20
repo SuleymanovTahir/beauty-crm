@@ -86,6 +86,9 @@
   "newBooking": "Réservation",
   "noServicesFound": "Aucun service trouvé.",
   "phone_too_short": "Le numéro de téléphone doit contenir au moins {{count}} chiffres, y compris l'indicatif du pays.",
+  "phone_too_short_one": "",
+  "phone_too_short_many": "",
+  "phone_too_short_other": "",
   "privacyAgreementStart": "En cliquant sur le bouton, vous acceptez",
   "privacyPolicy": "politique de confidentialité",
   "professional": {

@@ -189,7 +189,7 @@ def get_client_bookings(session_token: Optional[str] = Cookie(None)):
         "count": len(formatted_bookings)
     }
 
-@router.get("/api/bookings")
+@router.get("/bookings")
 def list_bookings(
     session_token: Optional[str] = Cookie(None),
     page: int = 1,

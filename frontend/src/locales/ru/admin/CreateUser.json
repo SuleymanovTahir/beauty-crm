@@ -11,9 +11,9 @@
   "full_name_placeholder": "Иванов Иван Иванович",
   "full_name_required": "Требуется имя",
   "no_position_found": "Должность не найдена",
-  "password_hint": "",
+  "password_hint": "Не менее {{count}} символов",
   "password_label": "Пароль *",
-  "password_min_length": "",
+  "password_min_length": "Минимум {{count}} символов",
   "password_placeholder": "••••••",
   "password_required": "Требуется пароль",
   "position_hint": "Выберите одну или несколько должностей",
@@ -33,9 +33,9 @@
   "search_position": "Поиск должности...",
   "title": "Создать пользователя",
   "user_created": "Пользователь успешно создан",
-  "username_hint": "",
+  "username_hint": "Не менее {{count}} символов",
   "username_label": "Логин *",
-  "username_min_length": "",
+  "username_min_length": "Минимум {{count}} символов",
   "username_placeholder": "иван_иванов",
   "username_required": "Логин обязателен"
 }

@@ -11,9 +11,9 @@
   "full_name_placeholder": "John Doe",
   "full_name_required": "Name required",
   "no_position_found": "Position not found",
-  "password_hint": "",
+  "password_hint": "At least {{count}} characters",
   "password_label": "Password *",
-  "password_min_length": "",
+  "password_min_length": "Minimum {{count}} characters",
   "password_placeholder": "••••••",
   "password_required": "Password required",
   "position_hint": "Select one or more positions",
@@ -33,9 +33,9 @@
   "search_position": "Search for a position...",
   "title": "Create a user",
   "user_created": "User successfully created",
-  "username_hint": "",
+  "username_hint": "At least {{count}} characters",
   "username_label": "Login *",
-  "username_min_length": "",
+  "username_min_length": "Minimum {{count}} characters",
   "username_placeholder": "john_doe",
   "username_required": "Login is required"
 }

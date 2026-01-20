@@ -6,8 +6,8 @@
   "current_settings": {
     "edit": "Editar",
     "min_purchase": "Preço mínimo de compra: <strong>{{amount}} {{currency}}</strong>",
-    "referred_bonus": "",
-    "referrer_bonus": "",
+    "referred_bonus": "Bônus de amigo: <strong>{{points}} pontos</strong>",
+    "referrer_bonus": "Bônus do convidado: <strong>{{points}} pontos</strong>",
     "title": "Configuração de bônus atual"
   },
   "dialogs": {

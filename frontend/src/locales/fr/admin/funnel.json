@@ -16,7 +16,7 @@
   "client_details_description": "Informations détaillées et gestion des dossiers clients",
   "client_list": "Liste des clients",
   "client_updated": "Détails du client mis à jour",
-  "clients": "",
+  "clients": "clients",
   "close": "Fermer",
   "confirm_delete_client": "Êtes-vous sûr de vouloir supprimer ce client\u00a0?",
   "confirm_delete_stage": "Êtes-vous sûr de vouloir supprimer cette étape\u00a0?",

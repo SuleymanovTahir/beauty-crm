@@ -11,9 +11,9 @@
   "full_name_placeholder": "Juan García",
   "full_name_required": "Nombre requerido",
   "no_position_found": "Posición no encontrada",
-  "password_hint": "",
+  "password_hint": "Al menos {{count}} caracteres",
   "password_label": "Contraseña *",
-  "password_min_length": "",
+  "password_min_length": "Caracteres mínimo {{count}}",
   "password_placeholder": "••••••",
   "password_required": "Se requiere contraseña",
   "position_hint": "Seleccione una o más posiciones",
@@ -33,9 +33,9 @@
   "search_position": "Busca un puesto...",
   "title": "Crear un usuario",
   "user_created": "Usuario creado exitosamente",
-  "username_hint": "",
+  "username_hint": "Al menos {{count}} caracteres",
   "username_label": "Acceso *",
-  "username_min_length": "",
+  "username_min_length": "Caracteres mínimo {{count}}",
   "username_placeholder": "juan_garcia",
   "username_required": "Es necesario iniciar sesión"
 }

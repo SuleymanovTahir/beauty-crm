@@ -68,8 +68,8 @@
     "failed_load": "Деректерді жүктеу сәтсіз аяқталды",
     "failed_save": "Сақтау кезінде қате",
     "failed_update": "Жаңарту кезінде қате",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
+    "points_adjusted_add": "Жинақталған {{count}} ұпай",
+    "points_adjusted_deduct": "{{count}} ұпайларды өшіріп тастаңыз",
     "rule_deleted": "Ереже сәтті жойылды",
     "rule_saved": "Ереже сақталды",
     "tier_updated": "Деңгей деректері жаңартылды"

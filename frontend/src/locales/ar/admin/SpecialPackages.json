@@ -24,6 +24,6 @@
   "target_audience": "الجمهور المستهدف",
   "target_by_master": "إلى تاريخ سيد",
   "target_by_service": "بالخدمة",
-  "target_inactive_days": "",
+  "target_inactive_days": "غير نشط لأكثر من {{count}} أيام",
   "target_specific_users": "العملاء المختارون"
 }

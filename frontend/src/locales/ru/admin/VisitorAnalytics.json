@@ -44,7 +44,7 @@
   "visit_time": "Время посещения",
   "visitor_trend": "Тренд посещений",
   "visitors": "Посетители",
-  "visitors_count": "",
+  "visitors_count": "Количество посетителей",
   "visitors_count_one": "{{count}} посетитель",
   "visitors_count_few": "{{count}} посетителя",
   "visitors_count_many": "{{count}} посетителей",

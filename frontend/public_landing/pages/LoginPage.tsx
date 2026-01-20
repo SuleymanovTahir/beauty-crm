@@ -1,5 +1,5 @@
 //new/pages/LoginPage.tsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { User, Lock, Mail, AlertCircle } from 'lucide-react';
@@ -136,7 +136,6 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
         <div className="text-center mb-8">
           <img
             src={salonSettings?.logo_url || logo}
-            alt={salonSettings?.name || DEFAULT_VALUES.DEFAULT_SALON_NAME_ALT}
             alt={salonSettings?.name || DEFAULT_VALUES.DEFAULT_SALON_NAME_ALT}
             className="h-16 w-auto mx-auto mb-4 object-contain"
           />
