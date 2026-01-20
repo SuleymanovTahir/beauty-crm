@@ -7,7 +7,7 @@
   "client_added": "Client ajouté",
   "client_deleted": "Client supprimé",
   "client_updated": "Détails du client mis à jour",
-  "confirm_delete_client": "Êtes-vous sûr de vouloir supprimer ce client\u00a0?",
+  "confirm_delete_client": "Êtes-vous sûr de vouloir supprimer ce client ?",
   "conversion": {
     "booked_to_completed": "Inscrit -> Terminé",
     "booking_to_booked": "réservation commencé -> Inscrit",
@@ -27,7 +27,7 @@
   "new_this_month": "Nouveau ce mois-ci",
   "no_clients": "Aucun client",
   "no_clients_found": "Aucun client trouvé",
-  "no_data": "",
+  "no_data": "Aucune donnée",
   "pipeline_value": "Montant dans l'entonnoir",
   "quick_add": "Ajout rapide",
   "recommendations_title": "Recommandations",

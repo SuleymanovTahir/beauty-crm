@@ -1,10 +1,10 @@
 {
   "clear_all": "सभी साफ करें",
   "clear_confirm": "क्या आप वाकई ऑडिट लॉग को पूरी तरह साफ़ करना चाहते हैं? यह क्रिया अपरिवर्तनीय है.",
-  "delete_batch_confirm_one": "",
-  "delete_batch_confirm_few": "",
-  "delete_batch_confirm_many": "",
-  "delete_batch_confirm_other": "",
+  "delete_batch_confirm_one": "पैकेज निकालें, एक की पुष्टि करें",
+  "delete_batch_confirm_few": "पैकेज निकालें, एकाधिक की पुष्टि करें",
+  "delete_batch_confirm_many": "पैकेज निकालें, बहुत कुछ पुष्टि करें",
+  "delete_batch_confirm_other": "पैकेज निकालें, अन्य की पुष्टि करें",
   "delete_confirm": "क्या मुझे यह प्रविष्टि स्थायी रूप से हटा देनी चाहिए?",
   "delete_selected": "चयनित हटाएं",
   "details": {

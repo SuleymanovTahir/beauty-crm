@@ -7,7 +7,7 @@
       "namePlaceholder": "Анна Иванова",
       "phone": "Телефон*",
       "phonePlaceholder": "+971 50 123 4567",
-      "service": "Қызмет *",
+      "service": "қызмет *",
       "servicePlaceholder": "Қызметті таңдаңыз",
       "submit": "Тіркеу",
       "time": "уақыт*"

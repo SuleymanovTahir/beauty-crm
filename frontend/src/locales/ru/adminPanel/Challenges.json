@@ -1,64 +1,64 @@
 {
   "buttons": {
     "cancel": "Отмена",
-    "create_challenge": "Создать челлендж",
-    "update_challenge": "Обновить челлендж"
+    "create_challenge": "Создать цель",
+    "update_challenge": "Сохранить изменения"
   },
   "card": {
     "check_progress": "Проверить прогресс",
     "completed": "завершено",
     "progress": "Прогресс",
-    "pts": "балл",
+    "pts": "баллов",
     "reward": "Награда",
     "target": "Цель"
   },
-  "create_challenge": "Создать челлендж",
+  "create_challenge": "Создать новую цель",
   "dialogs": {
     "create": {
-      "description": "Определите параметры челленджа и награды",
+      "description": "Настройте параметры активности и бонус за выполнение",
       "form": {
-        "challenge_type": "Тип челленджа",
-        "description": "Описание",
-        "description_placeholder": "Посетите салон 3 раза в этом месяце",
+        "challenge_type": "Тип активности",
+        "description": "Описание задачи",
+        "description_placeholder": "Напр: Посетите салон 3 раза в этом месяце",
         "end_date": "Дата окончания",
         "reward_placeholder": "1000",
-        "reward_points": "Награда баллами",
+        "reward_points": "Начислить баллов",
         "start_date": "Дата начала",
         "target_placeholder": "3",
-        "target_value": "Целевое значение",
-        "title": "Название",
-        "title_placeholder": "Летний челлендж красоты"
+        "target_value": "Целевое количество",
+        "title": "Название цели",
+        "title_placeholder": "Напр: Летнее преображение"
       },
-      "title": "Создать новый челлендж",
-      "title_edit": "Редактировать челлендж"
+      "title": "Создание цели",
+      "title_edit": "Редактирование цели"
     },
     "delete": {
-      "confirm": "Вы уверены, что хотите удалить этот челлендж?"
+      "confirm": "Вы уверены, что хотите удалить эту активность? Весь прогресс участников будет потерян."
     }
   },
   "stats": {
-    "active_challenges": "Активных челленджей",
-    "completions": "Завершений",
-    "total_participants": "Всего участников"
+    "active_challenges": "Активных целей",
+    "completions": "Выполнений",
+    "total_participants": "Участников"
   },
-  "subtitle": "Создание и управление челленджами вовлечения",
-  "title": "Челленджи",
+  "subtitle": "Управление игровыми механиками и целями для повышения лояльности клиентов",
+  "title": "Цели и Челленджи",
   "toasts": {
-    "created": "Челлендж успешно создан",
-    "deleted": "Челлендж успешно удален",
-    "failed_check_progress": "Не удалось проверить прогресс",
-    "failed_create": "Не удалось создать челлендж",
-    "failed_delete": "Не удалось удалить челлендж",
-    "failed_load": "Не удалось загрузить челленджи",
-    "progress_checked_few": "Прогресс проверил несколько",
-    "progress_checked_many": "Прогресс проверен многими",
-    "progress_checked_one": "Прогресс проверен один",
-    "progress_checked_other": "Прогресс проверен другим"
+    "created": "Активность успешно создана",
+    "deleted": "Активность удалена",
+    "failed_check_progress": "Не удалось обновить прогресс",
+    "failed_create": "Ошибка при создании активности",
+    "failed_delete": "Ошибка при удалении",
+    "failed_load": "Не удалось загрузить данные",
+    "progress_checked_few": "Прогресс обновлен для {{count}} участников",
+    "progress_checked_many": "Прогресс обновлен для {{count}} участников",
+    "progress_checked_one": "Прогресс обновлен для {{count}} участника",
+    "progress_checked_other": "Прогресс обновлен для {{count}} участников"
   },
   "types": {
     "referrals": "Рефералы",
     "services": "Услуги",
-    "spending": "Расходы",
+    "spending": "Траты",
     "visits": "Визиты"
   }
 }
