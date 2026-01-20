@@ -7,6 +7,8 @@ import { toast } from 'sonner';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 import { useTranslation } from 'react-i18next';
+import { Globe } from 'lucide-react';
+import './VisitorAnalytics.css';
 
 interface Visitor {
     ip_hash: string;
@@ -19,7 +21,16 @@ interface Visitor {
     ip_address?: string;
 }
 
-const COLORS = ['#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#14b8a6'];
+const COLORS = [
+    'var(--chart-pink)',
+    'var(--chart-purple)',
+    'var(--chart-cyan)',
+    'var(--chart-green)',
+    'var(--chart-amber)',
+    'var(--chart-red)',
+    '#3b82f6', // blue
+    '#14b8a6'  // teal
+];
 
 // Country code to flag emoji mapping
 const getCountryFlag = (countryName: string): string => {
@@ -145,7 +156,7 @@ const getCountryFlag = (countryName: string): string => {
     };
 
     const code = countryToCode[countryName];
-    if (!code) return '🌍';
+    if (!code) return '';
 
     // Convert country code to flag emoji
     const codePoints = code
@@ -156,7 +167,7 @@ const getCountryFlag = (countryName: string): string => {
 };
 
 export default function VisitorAnalytics() {
-    const { t } = useTranslation('admin/visitoranalytics');
+    const { t, i18n } = useTranslation('admin/visitoranalytics');
     const [visitors, setVisitors] = useState<Visitor[]>([]);
     const [locationBreakdown, setLocationBreakdown] = useState<any>(null);
     const [countryBreakdown, setCountryBreakdown] = useState<any[]>([]);
@@ -281,10 +292,10 @@ export default function VisitorAnalytics() {
 
     if (loading) {
         return (
-            <div className="p-4 md:p-8 flex items-center justify-center h-screen">
+            <div className="visitor-analytics-loader-container p-4 md:p-8 flex items-center justify-center h-screen">
                 <div className="flex flex-col items-center gap-4">
-                    <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-                    <p className="text-base text-gray-600">{t('loading')}</p>
+                    <Loader className="visitor-analytics-loader-icon w-8 h-8 text-pink-600 animate-spin" />
+                    <p className="visitor-analytics-loader-text text-base text-gray-600">{t('loading')}</p>
                 </div>
             </div>
         );
@@ -336,7 +347,7 @@ export default function VisitorAnalytics() {
     }));
 
     const trendChartData = visitorTrend.map(item => ({
-        date: new Date(item.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
+        date: new Date(item.date).toLocaleDateString(i18n.language, { day: 'numeric', month: 'short' }),
         visitors: item.count
     }));
 
@@ -362,21 +373,21 @@ export default function VisitorAnalytics() {
     const currentVisitors = visitors.slice(startIndex, endIndex);
 
     return (
-        <div className="p-4 md:p-8 pb-20 md:pb-8">
+        <div className="visitor-analytics-container p-4 md:p-8 pb-20 md:pb-8">
             {/* Header */}
-            <div className="mb-6 md:mb-8">
-                <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-3">
-                    <MapPin className="w-8 h-8 text-pink-600" />
+            <div className="visitor-analytics-header mb-6 md:mb-8">
+                <h1 className="visitor-analytics-title text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-3">
+                    <MapPin className="visitor-analytics-title-icon w-8 h-8" />
                     <span>{t('title')}</span>
                 </h1>
-                <p className="text-sm md:text-base text-gray-600">
+                <p className="visitor-analytics-subtitle text-sm md:text-base text-gray-600">
                     {t('subtitle')}
                 </p>
             </div>
 
             {/* Filters */}
-            <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:flex-wrap sm:items-end">
+            <div className="visitor-analytics-filter-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
+                <div className="visitor-analytics-filter-row flex flex-col sm:flex-row gap-3 sm:gap-4 sm:flex-wrap sm:items-end">
                     <PeriodFilter
                         period={period}
                         dateFrom={dateFrom}
@@ -388,19 +399,19 @@ export default function VisitorAnalytics() {
                     />
 
                     {period === 'custom' && (
-                        <Button onClick={handleApplyCustomDates} className="bg-pink-600 hover:bg-pink-700 w-full sm:w-auto">
+                        <Button onClick={handleApplyCustomDates} className="visitor-analytics-apply-button bg-pink-600 hover:bg-pink-700 w-full sm:w-auto">
                             {t('apply')}
                         </Button>
                     )}
 
-                    <Button variant="outline" onClick={loadData} className="md:ml-auto">
+                    <Button variant="outline" onClick={loadData} className="visitor-analytics-refresh-button md:ml-auto">
                         <RefreshCw className="w-4 h-4 mr-2" />
                         {t('refresh')}
                     </Button>
                     <Button
                         onClick={handleExportCSV}
                         disabled={exporting}
-                        className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 gap-2"
+                        className="visitor-analytics-export-button bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 gap-2"
                     >
                         <Download className="w-4 h-4" />
                         {exporting ? t('exporting') : t('export_csv')}
@@ -410,7 +421,7 @@ export default function VisitorAnalytics() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
-                <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
+                <div className="visitor-analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
                     <h3 className="text-2xl md:text-3xl text-gray-900 mb-2">
                         {locationBreakdown?.total || 0}
                     </h3>
@@ -420,32 +431,32 @@ export default function VisitorAnalytics() {
                     </div>
                 </div>
 
-                <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
+                <div className="visitor-analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
                     <h3 className="text-2xl md:text-3xl text-gray-900 mb-2">
                         {conversionRate}%
                     </h3>
                     <p className="text-xs md:text-sm text-gray-600 mb-2">{t('local_visitors')}</p>
-                    <div className="text-xs md:text-sm text-green-600">
+                    <div className="visitor-analytics-local-visitors text-xs md:text-sm text-green-600">
                         {locationBreakdown?.local || 0} {t('visitors_count')}
                     </div>
                 </div>
 
-                <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
+                <div className="visitor-analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
                     <h3 className="text-2xl md:text-3xl text-gray-900 mb-2">
                         {countryBreakdown.length}
                     </h3>
                     <p className="text-xs md:text-sm text-gray-600 mb-2">{t('countries')}</p>
-                    <div className="text-xs md:text-sm text-blue-600">
+                    <div className="visitor-analytics-geographic-reach text-xs md:text-sm text-blue-600">
                         {t('geographic_reach')}
                     </div>
                 </div>
 
-                <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
+                <div className="visitor-analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
                     <h3 className="text-2xl md:text-3xl text-gray-900 mb-2">
                         {cityBreakdown.length}
                     </h3>
                     <p className="text-xs md:text-sm text-gray-600 mb-2">{t('cities')}</p>
-                    <div className="text-xs md:text-sm text-blue-600">
+                    <div className="visitor-analytics-unique-locations text-xs md:text-sm text-blue-600">
                         {t('unique_locations')}
                     </div>
                 </div>
@@ -468,7 +479,7 @@ export default function VisitorAnalytics() {
                                         setDistanceTo(e.target.value);
                                     }
                                 }}
-                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                className="visitor-analytics-distance-select px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
                             >
                                 <option value="1">{t('distance_up_to', { count: 1 })}</option>
                                 <option value="2">{t('distance_up_to', { count: 2 })}</option>
@@ -524,7 +535,7 @@ export default function VisitorAnalytics() {
                     </div>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={distanceChartData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--visitor-chart-grid)" />
                             <XAxis
                                 dataKey="name"
                                 tick={{ fontSize: 11 }}
@@ -549,7 +560,7 @@ export default function VisitorAnalytics() {
                     <p className="text-sm text-gray-600 mb-4">{t('trend_subtitle')}</p>
                     <ResponsiveContainer width="100%" height={300}>
                         <LineChart data={trendChartData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--visitor-chart-grid)" />
                             <XAxis dataKey="date" tick={{ fontSize: 11 }} />
                             <YAxis tick={{ fontSize: 12 }} />
                             <Tooltip />
@@ -571,7 +582,7 @@ export default function VisitorAnalytics() {
                     <h2 className="text-xl text-gray-900 mb-6">{t('top_cities')}</h2>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={cityChartData} layout="vertical">
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--visitor-chart-grid)" />
                             <XAxis type="number" tick={{ fontSize: 12 }} />
                             <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={100} />
                             <Tooltip />
@@ -613,7 +624,7 @@ export default function VisitorAnalytics() {
                     <p className="text-sm text-gray-600 mb-4">{t('sections_subtitle')}</p>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={sectionsChartData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--visitor-chart-grid)" />
                             <XAxis
                                 dataKey="name"
                                 tick={{ fontSize: 11 }}
@@ -638,7 +649,7 @@ export default function VisitorAnalytics() {
                     <p className="text-sm text-gray-600 mb-4">{t('peak_hours_subtitle')}</p>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={hoursChartData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--visitor-chart-grid)" />
                             <XAxis
                                 dataKey="hour"
                                 tick={{ fontSize: 10 }}
@@ -679,18 +690,24 @@ export default function VisitorAnalytics() {
                                     <td className="px-6 py-4 text-sm text-gray-500 font-mono">{visitor.ip_address || '-'}</td>
                                     <td className="px-6 py-4 text-sm text-gray-900">{visitor.city || '-'}</td>
                                     <td className="px-6 py-4 text-sm text-gray-900">
-                                        {visitor.country ? `${getCountryFlag(visitor.country)} ${visitor.country}` : '-'}
+                                        {visitor.country ? (
+                                            <div className="flex items-center gap-2">
+                                                <span>{getCountryFlag(visitor.country)}</span>
+                                                {!getCountryFlag(visitor.country) && <Globe className="w-4 h-4 text-gray-400" />}
+                                                <span>{visitor.country}</span>
+                                            </div>
+                                        ) : '-'}
                                     </td>
                                     <td className="px-6 py-4 text-sm">
                                         {visitor.distance_km ? (
-                                            <span className={visitor.is_local ? 'text-green-600 font-medium' : 'text-blue-600'}>
-                                                {visitor.distance_km} км
+                                            <span className={visitor.is_local ? 'visitor-analytics-local-indicator' : 'visitor-analytics-remote-indicator'}>
+                                                {visitor.distance_km} {t('km')}
                                                 {visitor.is_local && ' 🏠'}
                                             </span>
                                         ) : '-'}
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-600">
-                                        {visitor.visited_at ? new Date(visitor.visited_at).toLocaleString('ru-RU') : '-'}
+                                        {visitor.visited_at ? new Date(visitor.visited_at).toLocaleString(i18n.language) : '-'}
                                     </td>
                                 </tr>
                             ))}

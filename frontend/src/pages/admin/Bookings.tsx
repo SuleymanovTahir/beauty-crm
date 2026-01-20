@@ -425,7 +425,7 @@ export default function Bookings() {
     } catch (err: any) {
       console.error('❌ [Bookings] Критическая ошибка:', err);
       setError(err.message);
-      toast.error(`Ошибка загрузки данных: ${err.message}`);
+      toast.error(`${t('common:error_loading_data')}: ${err.message}`);
     } finally {
       setLoading(false);
     }

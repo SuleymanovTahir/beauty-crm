@@ -1,0 +1,79 @@
+/* /frontend/src/pages/admin/Analytics.css */
+
+.analytics-container {
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .analytics-container {
+    padding: 2rem;
+  }
+}
+
+.analytics-title {
+  color: #111827;
+}
+
+.analytics-title-icon {
+  color: #ec4899;
+}
+
+.analytics-stat-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.analytics-chart-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.analytics-chart-title {
+  color: #111827;
+}
+
+/* Chart Colors */
+:root {
+  --chart-pink: #ec4899;
+  --chart-purple: #8b5cf6;
+  --chart-cyan: #06b6d4;
+  --chart-green: #10b981;
+  --chart-amber: #f59e0b;
+  --chart-red: #ef4444;
+  --chart-grid: #f0f0f0;
+}
+
+.chart-pink {
+  color: var(--chart-pink);
+}
+.chart-purple {
+  color: var(--chart-purple);
+}
+.chart-cyan {
+  color: var(--chart-cyan);
+}
+.chart-green {
+  color: var(--chart-green);
+}
+.chart-amber {
+  color: var(--chart-amber);
+}
+.chart-red {
+  color: var(--chart-red);
+}
+
+.funnel-stage-visitors {
+  background-color: #3b82f6;
+}
+.funnel-stage-engaged {
+  background-color: #06b6d4;
+}
+.funnel-stage-started {
+  background-color: #10b981;
+}
+.funnel-stage-booked {
+  background-color: #f59e0b;
+}
+.funnel-stage-completed {
+  background-color: #ec4899;
+}
