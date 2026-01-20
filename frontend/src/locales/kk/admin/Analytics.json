@@ -4,27 +4,27 @@
   "avg_check": "Орташа тексеру",
   "avg_time": "Орташа уақыт",
   "booked": "Тіркелді",
-  "booking_statuses": "Жарияланым күйлері",
-  "bookings": "bookings",
+  "booking_statuses": "Жазба күйлері",
+  "bookings": "Bookings",
   "bookings_trend": "Жазбалардың динамикасы",
-  "clarify_services": "Қызмет көрсету",
+  "clarify_services": "Қызметтерді түсіндіру",
   "completed": "Барған",
-  "conversation_stage": "Әңгімелесу кезеңі",
+  "conversation_stage": "Диалог кезеңі",
   "conversion": "Түрлендіру",
   "detailed_analysis": "Салонның жұмысын егжей-тегжейлі талдау",
   "drop_off_analysis": "Сабақтан шығуды талдау",
-  "drop_offs": "Шығарылды",
+  "drop_offs": "Сәтсіздіктер",
   "engaged": "Қатысқан",
   "errors": {
     "export_failed": "Файлды экспорттау қатесі",
-    "invalid_date_range": "Басталу күні аяқталу күнінен бұрын болуы керек.",
-    "invalid_period": "Қате кезең",
+    "invalid_date_range": "Басталу күні аяқталу күнінен бұрын болуы керек",
+    "invalid_period": "Дұрыс емес кезең",
     "loading_error": "Жүктеу қатесі",
     "select_both_dates": "Екі күнді де таңдаңыз"
   },
   "export": "Экспорттау",
   "exporting": "Экспорттау...",
-  "focus_on_highest_drop_off": "Ең тозған көрініске назар аударыңыз",
+  "focus_on_highest_drop_off": "Ең үлкен тастап кеткен сахнаға назар аударыңыз",
   "for_period": "Кезең үшін",
   "from_visitors": "Келушілерден клиенттерге дейін",
   "funnel": {
@@ -36,12 +36,16 @@
     },
     "desc": {
       "booked": "Тіркеу аяқталды",
-      "completed": "қызмет көрсетілген",
+      "completed": "Қызмет көрсетілген",
       "engaged": "Қызығушылық танытты",
       "started_booking": "Тіркеу формасын ашты",
       "visitors": "Веб-сайт/әлеуметтік медиа келушілері"
     },
     "losses": "Шығындар: {{count}}",
+    "losses_few": "Шығындар: {{count}}",
+    "losses_many": "Шығындар: {{count}}",
+    "losses_one": "Жоғалту: {{count}}",
+    "losses_other": "Шығындар: {{count}}",
     "stages": {
       "booked": "Тіркелді",
       "completed": "Барған",
@@ -50,22 +54,22 @@
       "visitors": "Келушілер"
     }
   },
-  "funnel_chart": "Шұңқырдың визуализациясы",
+  "funnel_chart": "Шұңқыр диаграммасы",
   "funnel_overview": "Сату шұңқыры",
   "improve_greeting": "Сәлемдесуіңізді жақсартыңыз",
-  "income": "Жазба",
+  "income": "Кіріс",
   "min": "мин",
   "name": "Аты",
   "need_more_masters": "Көбірек шеберлер керек",
   "optimization_tip": "Оңтайландыру кеңесі",
-  "peak_hours": "Ең көп уақыт",
+  "peak_hours": "Ең жоғары сағаттар",
   "per_booking": "Әрбір жазба үшін",
   "percentage": "Пайыз",
-  "quantity": "Сан",
+  "quantity": "Саны",
   "recommendation": "Ұсыныс",
   "refresh": "Жаңарту",
   "response_time": "Жауап беру уақыты",
-  "revenue": "Жазба",
+  "revenue": "Кіріс",
   "services_distribution": "Қызметті тарату",
   "simplify_contact_collection": "Контактілер жинағын жеңілдетіңіз",
   "stages": {
@@ -76,19 +80,19 @@
     "whatsapp_request": "WhatsApp арқылы сұрау"
   },
   "status": {
-    "cancelled": "Жойылды",
+    "cancelled": "Бас тартылды",
     "completed": "Аяқталды",
     "confirmed": "Расталды",
-    "no_show": "Ол келмеді",
+    "no_show": "Келген жоқ",
     "pending": "Күтуде"
   },
   "success": {
-    "file_downloaded": "Файл жүктелді"
+    "file_downloaded": "Файл жүктеп алынды"
   },
   "title": "Аналитика",
-  "top_services": "Ең жақсы қызметтер",
+  "top_services": "Танымал қызметтер",
   "try_again": "Қайтадан байқап көріңіз",
   "visitors": "Келушілер",
   "where_clients_leave": "Клиенттер қайда барады?",
-  "work_on_objections": "Қарсылықтарды өңдеу"
+  "work_on_objections": "Қарсылықтармен жұмыс жасау"
 }

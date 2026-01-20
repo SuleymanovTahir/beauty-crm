@@ -1,10 +1,10 @@
 {
   "clear_all": "Alles löschen",
   "clear_confirm": "Sind Sie sicher, dass Sie das Audit-Protokoll vollständig löschen möchten? Diese Aktion ist irreversibel.",
-  "delete_batch_confirm_one": "Paket entfernen, eins bestätigen",
-  "delete_batch_confirm_few": "Paket entfernen, mehrfach bestätigen",
-  "delete_batch_confirm_many": "Paket entfernen, Menge bestätigen",
-  "delete_batch_confirm_other": "Paket entfernen, Sonstiges bestätigen",
+  "delete_batch_confirm_few": "{{count}} ausgewählte buchungen löschen?",
+  "delete_batch_confirm_many": "{{count}} ausgewählte buchungen löschen?",
+  "delete_batch_confirm_one": "{{count}} ausgewählten buchung löschen?",
+  "delete_batch_confirm_other": "{{count}} buchungen löschen?",
   "delete_confirm": "Soll ich diesen buchung dauerhaft löschen?",
   "delete_selected": "Ausgewählte entfernen",
   "details": {
@@ -19,14 +19,14 @@
   "filter_create": "Schaffung",
   "filter_delete": "Entfernung",
   "filter_delete_all": "Löschen des Protokolls",
-  "filter_login": "Anmelden",
+  "filter_login": "Booking",
   "filter_restore": "Erholung",
   "filter_update": "Ändern",
   "search_placeholder": "Suche nach Benutzer, Entität oder Aktion ...",
   "stat_active_users": "Aktive Benutzer",
   "stat_created": "Erstellt",
-  "stat_errors": "Fehler (24h)",
-  "stat_total": "Gesamt (24h)",
+  "stat_errors": "Fehler ({{count}}h)",
+  "stat_total": "Gesamt ({{count}}h)",
   "subtitle": "Historie aller Aktionen und Änderungen im System",
   "table": {
     "action": "Aktion",
@@ -39,12 +39,12 @@
     "time": "Zeit",
     "user": "Benutzer"
   },
-  "title": "Audit-Journal",
+  "title": "Audit-Protokoll",
   "toast": {
     "clear_error": "Fehler beim Löschen des Protokolls",
     "clear_success": "Audit-Protokoll erfolgreich gelöscht",
     "delete_error": "Fehler beim Löschen",
-    "delete_success": "buchung(e) gelöscht",
+    "delete_success": "Buchung(e) gelöscht",
     "load_error": "Fehler beim Laden des Audit-Protokolls"
   }
 }

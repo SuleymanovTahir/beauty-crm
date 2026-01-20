@@ -1,8 +1,8 @@
 {
   "quick_actions": {
     "challenges": {
-      "description": "خلق وإدارة التحديات",
-      "title": "التحديات"
+      "description": "إنشاء وإدارة الأهداف",
+      "title": "الأهداف"
     },
     "loyalty_management": {
       "description": "إدارة نقاط الولاء والمستويات",
@@ -27,36 +27,36 @@
     }
   },
   "recent_activity": {
-    "challenge_completed_zero": "",
-    "challenge_completed_one": "تم إكمال التحدي \"{{name}}\" إلى تاريخ {{count}} إلى تاريخ المستخدم",
+    "challenge_completed_few": "تم إكمال الهدف \"{{name}}\" إلى تاريخ {{count}} من المستخدمين",
+    "challenge_completed_many": "تم إكمال الهدف \"{{name}}\" إلى تاريخ {{count}} من المستخدمين",
+    "challenge_completed_one": "تم إكمال الهدف \"{{name}}\" إلى تاريخ {{count}} إلى تاريخ المستخدم",
+    "challenge_completed_other": "تم إكمال الهدف \"{{name}}\" إلى تاريخ {{count}} من المستخدمين",
     "challenge_completed_two": "",
-    "challenge_completed_few": "تم إكمال التحدي \"{{name}}\" إلى تاريخ مستخدمي {{count}}",
-    "challenge_completed_many": "تم إكمال التحدي \"{{name}}\" إلى تاريخ مستخدمي {{count}}",
-    "challenge_completed_other": "تم إكمال التحدي \"{{name}}\" إلى تاريخ مستخدمي {{count}}",
-    "day_ago_zero": "",
-    "day_ago_one": "{{count}} قبل يوم",
-    "day_ago_two": "",
+    "challenge_completed_zero": "",
     "day_ago_few": "{{count}} منذ أيام",
     "day_ago_many": "{{count}} منذ أيام",
+    "day_ago_one": "{{count}} قبل يوم",
     "day_ago_other": "{{count}} منذ أيام",
-    "hours_ago_zero": "",
-    "hours_ago_one": "{{count}} قبل ساعة",
-    "hours_ago_two": "",
+    "day_ago_two": "",
+    "day_ago_zero": "",
     "hours_ago_few": "{{count}} قبل ساعات",
     "hours_ago_many": "{{count}} قبل ساعات",
+    "hours_ago_one": "{{count}} قبل ساعة",
     "hours_ago_other": "{{count}} قبل ساعات",
+    "hours_ago_two": "",
+    "hours_ago_zero": "",
     "new_tier_activated": "تم تفعيل مستوى الولاء الجديد",
     "subtitle": "الإجراءات الأخيرة في لوحة الإدارة",
     "title": "النشاط الأخير",
-    "users_registered_zero": "",
-    "users_registered_one": "{{count}} تم تسجيل مستخدم جديد",
-    "users_registered_two": "",
     "users_registered_few": "{{count}} تم تسجيل مستخدم جديد",
     "users_registered_many": "{{count}} تم تسجيل مستخدمين جدد",
-    "users_registered_other": "{{count}} تم تسجيل مستخدمين جدد"
+    "users_registered_one": "{{count}} تم تسجيل مستخدم جديد",
+    "users_registered_other": "{{count}} تم تسجيل مستخدمين جدد",
+    "users_registered_two": "",
+    "users_registered_zero": ""
   },
   "stats": {
-    "active_challenges": "التحديات النشطة",
+    "active_challenges": "الأهداف النشطة",
     "from_last_month": "من الشهر الماضي",
     "loyalty_points_issued": "نقاط الولاء الصادرة",
     "total_referrals": "إجمالي الإحالات",

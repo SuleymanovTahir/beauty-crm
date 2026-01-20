@@ -1,9 +1,9 @@
 {
   "source": {
-    "account": "الحساب الشخصي",
-    "custom": "مصدر مخصص",
+    "account": "نعم",
+    "custom": "المصدر الخاص بك",
     "custom_placeholder": "خيارك...",
-    "guest_link": "رابط الضيف",
+    "guest_link": "وصلة",
     "instagram": "انستغرام",
     "manual": "يدويا",
     "telegram": "برقية",

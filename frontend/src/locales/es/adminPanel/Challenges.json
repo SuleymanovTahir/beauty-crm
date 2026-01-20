@@ -1,64 +1,64 @@
 {
   "buttons": {
     "cancel": "Cancelar",
-    "create_challenge": "Crea un desafío",
-    "update_challenge": "Desafío de actualización"
+    "create_challenge": "Crea una meta",
+    "update_challenge": "Guardar cambios"
   },
   "card": {
-    "check_progress": "Check Progress",
+    "check_progress": "Comprobar el progreso",
     "completed": "terminado",
     "progress": "Progreso",
-    "pts": "punto",
+    "pts": "puntos",
     "reward": "Premio",
     "target": "Objetivo"
   },
-  "create_challenge": "Crea un desafío",
+  "create_challenge": "Crea una nueva meta",
   "dialogs": {
     "create": {
-      "description": "Definir parámetros de desafío y recompensas.",
+      "description": "Configurar parámetros de actividad y bonificación hasta fecha finalización",
       "form": {
-        "challenge_type": "Tipo de desafío",
-        "description": "Descripción",
-        "description_placeholder": "Visita el salón 3 veces este mes.",
+        "challenge_type": "Tipo de actividad",
+        "description": "Descripción de la tarea",
+        "description_placeholder": "Ej: Visita el salón {{count}} veces este mes",
         "end_date": "Fecha de finalización",
-        "reward_placeholder": "1000",
-        "reward_points": "Recompensa con puntos",
-        "start_date": "fecha de inicio",
-        "target_placeholder": "3",
-        "target_value": "Valor objetivo",
-        "title": "Nombre",
-        "title_placeholder": "Reto de belleza de verano"
+        "reward_placeholder": "{{points}}",
+        "reward_points": "Sumar puntos",
+        "start_date": "Fecha de inicio",
+        "target_placeholder": "{{points}}",
+        "target_value": "Cantidad objetivo",
+        "title": "Nombre del objetivo",
+        "title_placeholder": "Hasta fecha ejemplo: cambio de imagen de verano"
       },
-      "title": "Crea un nuevo desafío",
-      "title_edit": "Editar desafío"
+      "title": "Creando una meta",
+      "title_edit": "Editar un objetivo"
     },
     "delete": {
-      "confirm": "¿Estás seguro de que quieres eliminar este desafío?"
+      "confirm": "¿Estás seguro de que deseas eliminar esta actividad? Se perderá todo el progreso de los participantes."
     }
   },
   "stats": {
-    "active_challenges": "Retos activos",
-    "completions": "Terminación",
-    "total_participants": "Total de participantes"
+    "active_challenges": "Objetivos activos",
+    "completions": "Ejecuciones",
+    "total_participants": "Participantes"
   },
-  "subtitle": "Crear y gestionar desafíos de participación",
-  "title": "Desafíos",
+  "subtitle": "Gestionar la mecánica del juego y los objetivos para aumentar la fidelidad de los clientes.",
+  "title": "Metas y logros",
   "toasts": {
-    "created": "Reto creado exitosamente",
-    "deleted": "Desafío eliminado exitosamente",
-    "failed_check_progress": "Failed to check progress",
-    "failed_create": "No se pudo crear el desafío",
-    "failed_delete": "No se pudo eliminar el desafío",
-    "failed_load": "No se pudieron cargar los desafíos",
-    "progress_checked_one": "Progreso comprobado solo",
-    "progress_checked_few": "El progreso comprobó varios",
-    "progress_checked_many": "El progreso ha sido puesto a prueba hasta fecha muchos",
-    "progress_checked_other": "Progreso verificado hasta fecha otros"
+    "created": "Actividad creada exitosamente",
+    "deleted": "Actividad eliminada",
+    "failed_check_progress": "No se pudo actualizar el progreso",
+    "failed_create": "Error al crear actividad",
+    "failed_delete": "Error durante la eliminación",
+    "failed_load": "No se pudieron cargar los datos",
+    "progress_checked_few": "Progreso actualizado para {{count}} participantes",
+    "progress_checked_many": "Progreso actualizado para {{count}} participantes",
+    "progress_checked_one": "Progreso actualizado para el miembro {{count}}",
+    "progress_checked_other": "Progreso actualizado para {{count}} participantes"
   },
   "types": {
     "referrals": "Referencias",
     "services": "Servicios",
-    "spending": "Gastos",
+    "spending": "Gasto",
     "visits": "Visitas"
   }
 }

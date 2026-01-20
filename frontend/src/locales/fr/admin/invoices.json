@@ -9,11 +9,11 @@
   "delete": "Supprimer",
   "dueDate": "Date d'échéance",
   "errors": {
-    "createError": "Error creating invoice",
-    "deleteError": "Error deleting invoice",
-    "paymentError": "Error adding payment",
-    "sendError": "Error sending invoice",
-    "updateError": "Failed to update status"
+    "createError": "Erreur lors de la création du compte.",
+    "deleteError": "Erreur lors de la suppression du compte.",
+    "paymentError": "Erreur lors de l'ajout du paiement",
+    "sendError": "Erreur lors de l'envoi de la facture",
+    "updateError": "Échec de la mise à jour du statut"
   },
   "form": {
     "addItem": "Ajouter un poste",

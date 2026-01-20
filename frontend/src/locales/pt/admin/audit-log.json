@@ -1,10 +1,10 @@
 {
   "clear_all": "Limpar tudo",
   "clear_confirm": "Tem certeza de que deseja limpar completamente o log de auditoria? Esta ação é irreversível.",
-  "delete_batch_confirm_one": "Remova o pacote, confirme um",
-  "delete_batch_confirm_few": "Remova o pacote, confirme vários",
-  "delete_batch_confirm_many": "Remova o pacote, confirme muito",
-  "delete_batch_confirm_other": "Remova o pacote, confirme outro",
+  "delete_batch_confirm_few": "Excluir {{count}} reservas selecionadas?",
+  "delete_batch_confirm_many": "Excluir {{count}} reservas selecionadas?",
+  "delete_batch_confirm_one": "Excluir {{count}} reserva selecionada?",
+  "delete_batch_confirm_other": "Excluir reservas {{count}}?",
   "delete_confirm": "Devo excluir permanentemente esta reserva?",
   "delete_selected": "Remover selecionado",
   "details": {
@@ -19,14 +19,14 @@
   "filter_create": "Criação",
   "filter_delete": "Remoção",
   "filter_delete_all": "Limpando o reserva",
-  "filter_login": "Login",
+  "filter_login": "Booking",
   "filter_restore": "Recuperação",
   "filter_update": "Mudar",
   "search_placeholder": "Pesquise até usuário, entidade ou ação...",
   "stat_active_users": "Usuários ativos",
   "stat_created": "Criado",
-  "stat_errors": "Erros (24h)",
-  "stat_total": "Total (24h)",
+  "stat_errors": "Erros ({{count}}h)",
+  "stat_total": "Total ({{count}}h)",
   "subtitle": "Histórico de todas as ações e alterações no sistema",
   "table": {
     "action": "Ação",
@@ -39,12 +39,12 @@
     "time": "Tempo",
     "user": "Usuário"
   },
-  "title": "Diário de Auditoria",
+  "title": "Reserva de auditoria",
   "toast": {
     "clear_error": "Erro ao limpar o reserva",
     "clear_success": "Log de auditoria limpo com sucesso",
     "delete_error": "Erro durante a exclusão",
-    "delete_success": "reservas excluídas",
+    "delete_success": "Reservas excluídas",
     "load_error": "Erro ao carregar o log de auditoria"
   }
 }

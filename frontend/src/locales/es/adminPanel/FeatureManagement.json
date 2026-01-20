@@ -1,30 +1,30 @@
 {
   "buttons": {
-    "save": "Save Changes"
+    "save": "Guardar cambios"
   },
   "scheduling": {
-    "end_date": "End Date",
-    "hint": "Leave empty for indefinite availability.",
-    "label": "Scheduling (Optional)",
-    "start_date": "Start Date"
+    "end_date": "Fecha de finalización",
+    "hint": "Déjelo en blanco para disponibilidad no especificada.",
+    "label": "Planificación (opcional)",
+    "start_date": "Fecha de inicio"
   },
   "status": {
-    "active": "Active",
-    "disabled": "Disabled",
-    "disabled_switch": "Disabled",
-    "enabled": "Enabled",
-    "globally_disabled": "Feature is currently disabled globally."
+    "active": "Activo",
+    "disabled": "Defectuoso",
+    "disabled_switch": "Defectuoso",
+    "enabled": "Incluido",
+    "globally_disabled": "Actualmente, la función está deshabilitada en todo el mundo."
   },
-  "subtitle": "Manage availability of key platform features",
-  "title": "Feature Management",
+  "subtitle": "Controle la disponibilidad de funciones clave de la plataforma",
+  "title": "Gestión de funciones",
   "toasts": {
-    "failed_load": "Failed to load feature configuration",
-    "failed_save": "Failed to save configuration",
-    "saved": "Configuration saved successfully"
+    "failed_load": "No se pudo cargar la configuración de funciones.",
+    "failed_save": "No se pudo guardar la configuración.",
+    "saved": "Configuración guardada exitosamente"
   },
   "whitelist": {
     "hint": "ID de usuario separados hasta fecha comas.",
-    "label": "Whitelist (Optional)",
-    "placeholder": "e.g. 1, 5, 12"
+    "label": "Lista blanca (opcional)",
+    "placeholder": "p.ej. 1, 5, 12"
   }
 }

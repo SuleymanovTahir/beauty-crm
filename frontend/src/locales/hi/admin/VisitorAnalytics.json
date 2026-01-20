@@ -1,6 +1,6 @@
 {
   "apply": "आवेदन करना",
-  "check_range": "सीमा जांचें (0-1000 किमी, \"से\" > \"से\")",
+  "check_range": "सीमा की जाँच करें ({{min}}-{{max}}किमी, \"से\" > \"से\")",
   "cities": "शहर",
   "city": "शहर",
   "countries": "देशों",
@@ -23,7 +23,7 @@
   "landing_sections": "लैंडिंग अनुभाग",
   "latest_visitors": "नवीनतम आगंतुक",
   "loading": "विज़िटर विश्लेषण लोड हो रहा है...",
-  "local_visitors": "स्थानीय (≤50 किमी)",
+  "local_visitors": "स्थानीय (≤{{max}}किमी)",
   "next": "आगे",
   "of": "दिनांक से",
   "page": "पेज",
@@ -44,5 +44,9 @@
   "visit_time": "भ्रमण का समय",
   "visitor_trend": "विज़िट प्रवृत्ति",
   "visitors": "आगंतुकों",
-  "visitors_count": "आगंतुकों"
+  "visitors_count": "आगंतुकों",
+  "visitors_count_few": "{{count}} आगंतुक",
+  "visitors_count_many": "{{count}} आगंतुक",
+  "visitors_count_one": "{{count}} आगंतुक",
+  "visitors_count_other": "{{count}} आगंतुक"
 }

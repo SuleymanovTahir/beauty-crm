@@ -12,7 +12,7 @@
   "friday": "جمعة",
   "from": "من تاريخ",
   "full_access_director": "الوصول الكامل (المدير)",
-  "granted_revoked": "تمت الإضافة/السحب",
+  "granted_revoked": "تمت إضافتها أو سحبها",
   "hierarchy_level": "مستوى التسلسل الهرمي",
   "individual_permissions": "الحقوق الفردية",
   "individual_permissions_description": "الحقوق المخصصة للمستخدم شخصيًا، بالإضافة إلى دوره الأساسي.",

@@ -1,89 +1,89 @@
 {
-  "adjust_points": "Puntos de ajuste",
+  "adjust_points": "Cambiar saldo de puntos",
   "buttons": {
     "add_rule": "Agregar una regla",
-    "adjust_points": "Puntos de ajuste",
+    "adjust_points": "Cambiar saldo",
     "cancel": "Cancelar",
     "save": "Ahorrar",
     "save_changes": "Guardar cambios"
   },
   "categories": {
     "category": "Categoría",
-    "category_placeholder": "P.ej. Clavos",
-    "description": "Configurar multiplicadores de puntos para categorías de servicios",
+    "category_placeholder": "P.ej. Manicura",
+    "description": "Configurar multiplicadores de puntos para categorías de servicios individuales",
     "multiplier": "Factor",
     "title": "Multiplicadores de categoría"
   },
   "config": {
-    "cashback_hint": "Ejemplo: 10% de reembolso (10 puntos hasta fecha cada 100 gastados)",
+    "cashback_hint": "Ejemplo: {{percent}}% cashback ({{points}} puntos hasta fecha cada {{unit}} gastado)",
     "cashback_rate": "Reembolso (%)",
-    "description": "Administrar la configuración de fidelización global",
+    "description": "Configuraciones básicas del programa de fidelización.",
     "expiration_days": "Período de validez de los puntos (días)",
-    "expiration_hint": "Los puntos acumulados caducarán después del número de días especificado.",
-    "points_per_unit": "puntos hasta fecha 1 unidad. monedas",
-    "title": "Ajustes"
+    "expiration_hint": "Los puntos se cancelarán automáticamente después del tiempo especificado.",
+    "points_per_unit": "puntos hasta fecha {{count}} unidades. monedas",
+    "title": "Configuración global"
   },
-  "confirm_delete_rule": "Confirmar la eliminación de la regla",
+  "confirm_delete_rule": "¿Estás seguro de que deseas eliminar esta regla?",
   "dialogs": {
     "adjust_points": {
       "client_email": "Correo electrónico del cliente",
-      "client_email_placeholder": "Marcador de posición de correo electrónico del cliente",
-      "description": "Descripción",
-      "points": "Anteojos",
-      "points_placeholder": "relleno de puntos",
+      "client_email_placeholder": "Ingrese su correo electrónico para vincular",
+      "description": "Ajuste manual del saldo de puntos.",
+      "points": "Número de puntos",
+      "points_placeholder": "P.ej. 100 o -100",
       "reason": "Causa",
-      "reason_placeholder": "Marcador de posición de motivo",
-      "title": "Título"
+      "reason_placeholder": "Hasta fecha favor indique el motivo del cambio.",
+      "title": "Cambio de saldo"
     },
     "edit_tier": {
-      "description": "Descripción",
+      "description": "Establecer las condiciones para obtener un nivel de privilegio",
       "discount_percent": "Porcentaje de descuento",
-      "min_points": "Puntajes mínimos",
+      "min_points": "Umbral de puntuación mínima",
       "tier_name": "Nombre del nivel",
-      "title": "Título"
+      "title": "Editar un nivel"
     },
     "rule": {
-      "description": "Establecer el multiplicador de puntos para la categoría de servicio.",
-      "title": "Editar regla de categoría"
+      "description": "Coeficiente de acumulación personal para la categoría.",
+      "title": "Regla de categoría"
     }
   },
   "stats": {
-    "active_members": "Miembros activos",
-    "points_redeemed": "Puntos canjeados",
-    "total_points_issued": "Puntos totales otorgados"
+    "active_members": "Participantes del programa",
+    "points_redeemed": "Puntos debitados",
+    "total_points_issued": "Total acumulado"
   },
-  "subtitle": "Subtítulos",
+  "subtitle": "Administrar descuentos, niveles de beneficios y reglas de puntos.",
   "tiers": {
-    "description": "Descripción",
-    "discount": "Descuento",
-    "from_points": "De puntos",
-    "starting_level": "Nivel de reserva",
-    "title": "Título"
+    "description": "Niveles de fidelización para la segmentación de clientes",
+    "discount": "descuento {{percent}}%",
+    "from_points": "desde {{points}} puntos",
+    "starting_level": "Nivel inicial",
+    "title": "Niveles de privilegio"
   },
-  "title": "Título",
+  "title": "Programa de fidelización",
   "toasts": {
-    "config_updated": "Configuración actualizada",
-    "failed_adjust": "No se pudo configurar",
-    "failed_delete": "No se pudo eliminar",
-    "failed_load": "No se pudo cargar",
-    "failed_save": "No se pudo guardar",
-    "failed_update": "No se pudo actualizar",
-    "points_adjusted_add": "Puntos ajustados, agregados",
-    "points_adjusted_deduct": "Deducción de puntos ajustada",
-    "rule_deleted": "La regla ha sido eliminada.",
-    "rule_saved": "La regla se ha salvado.",
-    "tier_updated": "Nivel actualizado"
+    "config_updated": "Configuración guardada",
+    "failed_adjust": "No se pudo cambiar el saldo",
+    "failed_delete": "Error durante la eliminación",
+    "failed_load": "No se pudieron cargar los datos",
+    "failed_save": "Error al guardar",
+    "failed_update": "Error durante la actualización",
+    "points_adjusted_add": "{{points}} puntos otorgados al usuario {{email}}",
+    "points_adjusted_deduct": "{{points}} puntos han sido deducidos del usuario {{email}}",
+    "rule_deleted": "Regla eliminada exitosamente",
+    "rule_saved": "Regla guardada",
+    "tier_updated": "Datos de nivel actualizados"
   },
   "transactions": {
-    "description": "Descripción",
-    "search_placeholder": "Marcador de posición de búsqueda",
+    "description": "Historial de transacciones de puntos de fidelidad",
+    "search_placeholder": "Buscar hasta fecha cliente...",
     "table": {
       "client": "Cliente",
       "date": "Fecha",
-      "points": "Anteojos",
+      "points": "Puntos",
       "reason": "Causa",
       "type": "Tipo"
     },
-    "title": "Título"
+    "title": "Últimas transacciones"
   }
 }

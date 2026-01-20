@@ -17,7 +17,7 @@
     "title": "Los desafíos no están configurados"
   },
   "fields": {
-    "dates": "límite de tiempo",
+    "dates": "Límite de tiempo",
     "description": "Descripción pública",
     "reward": "Premio",
     "target_value": "Plan (meta)",
@@ -26,7 +26,7 @@
   },
   "placeholders": {
     "description": "¿Cómo verá el cliente esta tarea?",
-    "title": "hasta ejemplo: estado oro"
+    "title": "Hasta ejemplo: estado oro"
   },
   "stats": {
     "active_challenges": "TAREAS ACTIVAS",
@@ -37,14 +37,14 @@
     "active": "ACTIVO",
     "inactive": "PAUSA"
   },
-  "subtitle": "Aumente la lealtad de los clientes con mecánicas de juego y recompensas automáticas.",
+  "subtitle": "Aumente la fidelidad de los clientes con mecánicas de juego y recompensas automáticas.",
   "title": "Desafíos",
   "toasts": {
     "created": "Tarea creada",
     "updated": "Misión actualizada"
   },
   "types": {
-    "service": "Categoría de servicio",
+    "service": "categoría de servicio",
     "spend": "Gasto total",
     "visits": "Número de visitas"
   }

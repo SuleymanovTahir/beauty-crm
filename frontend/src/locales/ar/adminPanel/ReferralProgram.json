@@ -5,16 +5,16 @@
   },
   "current_settings": {
     "edit": "يحرر",
-    "min_purchase": "الحد الأدنى لمبلغ الشراء: <strong>{{amount}} درهم إماراتي</strong>",
-    "referred_bonus": "يتلقى الصديق المدعو <strong>{{points}} نقطة</strong> عند التسجيل",
-    "referrer_bonus": "يتلقى المُحيل <strong>{{points}} نقطة</strong>عندما يقوم أحد الأصدقاء بإجراء أول عملية شراء له",
+    "min_purchase": "الحد الأدنى لسعر الشراء: <strong>{{amount}} {{currency}}</strong>",
+    "referred_bonus": "يتلقى الصديق المدعو <strong>{{points}} نقاط</strong> عند التسجيل",
+    "referrer_bonus": "يتلقى المُحيل <strong>{{points}} نقاط</strong>عندما يقوم أحد الأصدقاء بإجراء أول عملية شراء له",
     "title": "تكوين المكافأة الحالية"
   },
   "dialogs": {
     "settings": {
       "description": "قم بإعداد نقاط المكافأة والمتطلبات",
-      "min_purchase_amount": "الحد الأدنى لمبلغ الشراء (درهم)",
-      "min_purchase_help": "الحد الأدنى للمبلغ الذي يجب على الصديق إنفاقه لتفعيل مكافأة الإحالة (0 = لا يوجد حد أدنى)",
+      "min_purchase_amount": "الحد الأدنى لسعر الشراء ({{currency}})",
+      "min_purchase_help": "الحد الأدنى للمبلغ الذي يجب على الصديق إنفاقه لتفعيل مكافأة الإحالة ({{min}} = لا يوجد حد أدنى)",
       "referred_bonus": "نقاط مكافأة الصديق المُحالة",
       "referred_bonus_help": "النقاط الممنوحة لصديق عند التسجيل",
       "referrer_bonus": "نقاط المكافأة المرجعية",
@@ -43,9 +43,9 @@
     },
     "search_placeholder": "البحث عن الإحالات...",
     "sort": {
-      "date": "الترتيب حسب التاريخ",
-      "points": "الترتيب حسب النقاط",
-      "status": "فرز حسب الحالة"
+      "date": "حسب التاريخ",
+      "points": "بالنقاط",
+      "status": "حسب الحالة"
     },
     "statuses": {
       "cancelled": "تم الإلغاء",

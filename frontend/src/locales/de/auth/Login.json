@@ -1,11 +1,11 @@
 {
-  "authorization_error": "Authorization failed",
-  "enter_login": "Enter username",
-  "fill_both_fields": "Please fill in both fields",
+  "authorization_error": "Die Autorisierung ist fehlgeschlagen",
+  "enter_login": "Geben Sie Ihr Login ein",
+  "fill_both_fields": "Bitte füllen Sie beide Felder aus",
   "login": "Login",
-  "login_error": "Login error",
-  "login_title": "Login to your account",
-  "password": "Password",
-  "username": "Username",
-  "welcome": "Welcome"
+  "login_error": "Anmeldefehler",
+  "login_title": "Melden Sie sich bei Ihrem Konto an",
+  "password": "Passwort",
+  "username": "Login",
+  "welcome": "Willkommen"
 }

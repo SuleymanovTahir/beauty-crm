@@ -52,7 +52,7 @@
   "notifications": "Notifications",
   "roles": {
     "director": "Director",
-    "marketer": "Marketing",
+    "marketer": "Marketer",
     "sales": "Sales"
   },
   "user": "User",

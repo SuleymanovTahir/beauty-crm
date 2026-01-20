@@ -11,7 +11,7 @@
   "active_challenges": "Active Goals",
   "all_achievements": "All achievements",
   "challenge_hair_care": "Perfect hair",
-  "challenge_hair_care_desc": "Do 3 hair treatments",
+  "challenge_hair_care_desc": "Do {{count}} hair treatments",
   "challenge_spring_update": "Spring update",
   "challenge_spring_update_desc": "Update your look for the new season",
   "completed_percent": "{{percent}}% completed",

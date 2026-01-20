@@ -16,11 +16,11 @@
   "full_name": "Толық аты-жөні",
   "full_name_placeholder": "Иван Иванов",
   "important": "Маңызды",
-  "name_must_be_at_least_2_characters": "Атау кемінде 2 таңбадан тұруы керек",
+  "name_must_be_at_least_2_characters": "Атауда кемінде {{count}} таңба болуы керек",
   "new_password": "Жаңа құпия сөз",
   "password": "Құпия сөз",
   "password_changed": "Құпия сөз өзгертілді",
-  "password_must_be_at_least_6_characters": "Құпия сөз кемінде 6 таңбадан тұруы керек",
+  "password_must_be_at_least_6_characters": "Құпия сөзде кемінде {{count}} таңба болуы керек",
   "passwords_do_not_match": "Құпия сөздер сәйкес келмейді",
   "permissions_label": "Қол жеткізу құқықтары",
   "profile": "Профиль",
@@ -28,5 +28,5 @@
   "save_changes": "Өзгерістерді сақтау",
   "saving": "Сақтау",
   "username": "Жүйеге кіру",
-  "username_must_be_at_least_3_characters": "Жүйеге кіруде кемінде 3 таңба болуы керек"
+  "username_must_be_at_least_3_characters": "Жүйеге кіруде кемінде {{count}} таңба болуы керек"
 }

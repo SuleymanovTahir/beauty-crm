@@ -1,6 +1,6 @@
 {
   "apply": "Appliquer",
-  "check_range": "Vérifier la portée (0-1000km, \"À\" > \"De\")",
+  "check_range": "Vérifiez l'autonomie ({{min}}-{{max}}km, \"To\" > \"From\")",
   "cities": "Villes",
   "city": "Ville",
   "countries": "Pays",
@@ -23,7 +23,7 @@
   "landing_sections": "Sections d'atterrissage",
   "latest_visitors": "Derniers visiteurs",
   "loading": "Chargement des analyses des visiteurs...",
-  "local_visitors": "Local (≤50km)",
+  "local_visitors": "Local (≤{{max}}km)",
   "next": "Avant",
   "of": "depuis",
   "page": "Page",
@@ -44,5 +44,9 @@
   "visit_time": "Heure de visite",
   "visitor_trend": "Tendance des visites",
   "visitors": "Visiteurs",
-  "visitors_count": "visiteurs"
+  "visitors_count": "visiteurs",
+  "visitors_count_few": "{{count}} visiteur",
+  "visitors_count_many": "{{count}} visiteurs",
+  "visitors_count_one": "{{count}} visiteur",
+  "visitors_count_other": "{{count}} visiteurs"
 }

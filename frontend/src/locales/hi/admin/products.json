@@ -3,7 +3,7 @@
   "allCategories": "सभी श्रेणियां",
   "analytics": {
     "avgPrice": "बुध. कीमत",
-    "last30Days": "30 दिनों में",
+    "last30Days": "{{count}} दिनों के लिए",
     "revenue": "आय",
     "totalSold": "कुल बेचा गया"
   },
@@ -11,10 +11,10 @@
   "delete": "मिटाना",
   "detail": {
     "costPriceLabel": "लागत: {{price}} {{currency}}",
-    "inStock_one": "एक उपलब्ध है",
-    "inStock_few": "अनेक उपलब्ध",
-    "inStock_many": "बहुत सारा स्टॉक है",
-    "inStock_other": "अन्य स्टॉक में हैं",
+    "inStock_few": "स्टॉक में {{count}} पीसी।",
+    "inStock_many": "स्टॉक में {{count}} पीसी।",
+    "inStock_one": "स्टॉक में {{count}} पीसी।",
+    "inStock_other": "स्टॉक में {{count}} पीसी।",
     "loadingData": "डेटा लोड हो रहा है...",
     "movementAdjustment": "समायोजन",
     "movementHistory": "आंदोलनों का इतिहास",

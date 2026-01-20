@@ -1,10 +1,10 @@
 {
   "clear_all": "Очистить всё",
   "clear_confirm": "Вы уверены, что хотите полностью очистить журнал аудита? Это действие необратимо.",
-  "delete_batch_confirm_few": "Удалить пакет, подтвердить несколько",
-  "delete_batch_confirm_many": "Удалить пакет, подтвердить много",
-  "delete_batch_confirm_one": "Удалить пакет, подтвердить один",
-  "delete_batch_confirm_other": "Удалить пакет, подтвердить другое",
+  "delete_batch_confirm_few": "Удалить {{count}} выбранные записи?",
+  "delete_batch_confirm_many": "Удалить {{count}} выбранных записей?",
+  "delete_batch_confirm_one": "Удалить {{count}} выбранную запись?",
+  "delete_batch_confirm_other": "Удалить {{count}} записей?",
   "delete_confirm": "Удалить эту запись без возможности восстановления?",
   "delete_selected": "Удалить выбранные",
   "details": {
@@ -25,8 +25,8 @@
   "search_placeholder": "Поиск по пользователю, сущности или действию...",
   "stat_active_users": "Активные пользователи",
   "stat_created": "Создано",
-  "stat_errors": "Ошибки (24ч)",
-  "stat_total": "Всего (24ч)",
+  "stat_errors": "Ошибки ({{count}}ч)",
+  "stat_total": "Всего ({{count}}ч)",
   "subtitle": "История всех действий и изменений в системе",
   "table": {
     "action": "Действие",
@@ -39,7 +39,7 @@
     "time": "Время",
     "user": "Пользователь"
   },
-  "title": "Журнал Аудита",
+  "title": "Журнал аудита",
   "toast": {
     "clear_error": "Ошибка при очистке журнала",
     "clear_success": "Журнал аудита успешно очищен",

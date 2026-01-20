@@ -11,7 +11,7 @@
   "active_challenges": "Активные цели",
   "all_achievements": "Все достижения",
   "challenge_hair_care": "Идеальные волосы",
-  "challenge_hair_care_desc": "Сделайте 3 процедуры по уходу за волосами",
+  "challenge_hair_care_desc": "Сделайте {{count}} процедуры по уходу за волосами",
   "challenge_spring_update": "Весеннее обновление",
   "challenge_spring_update_desc": "Обновите свой образ к новому сезону",
   "completed_percent": "{{percent}}% завершено",

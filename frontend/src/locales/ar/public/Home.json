@@ -6,7 +6,7 @@
       "name": "اسمك *",
       "namePlaceholder": "آنا إيفانوفا",
       "phone": "الهاتف *",
-      "phonePlaceholder": "+971 50 123 4567",
+      "phonePlaceholder": "{{points}}",
       "service": "خدمة *",
       "servicePlaceholder": "اختر خدمة",
       "submit": "اشتراك",
@@ -27,7 +27,7 @@
         "title": "مواد متميزة"
       },
       "schedule": {
-        "description": "نحن نعمل 7 أيام في الأسبوع من تاريخ فترات زمنية مناسبة للتسجيل",
+        "description": "نحن مفتوحون {{count}} أيام الأسبوع في الأوقات المناسبة لك.",
         "title": "جدول زمني مناسب"
       }
     },
@@ -70,8 +70,8 @@
   },
   "testimonials": {
     "items": [],
+    "master": "أخصائي",
     "subtitle": "ماذا يقولون عنا",
-    "title": "آراء من عملائنا",
-    "master": "أخصائي"
+    "title": "آراء من عملائنا"
   }
 }

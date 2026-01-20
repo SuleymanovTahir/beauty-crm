@@ -15,14 +15,14 @@
   },
   "cta": {
     "bookButton": "Regístrate para el trámite",
-    "ready": "¿Listo para transformarte?"
+    "ready": "¿Listo para registrarte?"
   },
-  "error": "Error al cargar servicios",
+  "error": "Error al cargar servicios.",
   "loading": "Cargando servicios...",
   "noResults": "No se encontraron servicios que coincidan con su búsqueda",
   "noServices": "Servicios no encontrados",
-  "search": "Servicios de búsqueda...",
-  "services": "servicios",
+  "search": "Buscar servicios...",
+  "services": "Servicios",
   "subtitle": "Servicios de belleza premium a precios asequibles.",
   "title": "Nuestros servicios y precios"
 }

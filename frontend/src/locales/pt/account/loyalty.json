@@ -9,7 +9,7 @@
   "days_in_row": "contrato de dias",
   "discount": "Desconto",
   "invitations": "Convites",
-  "last_6_months": "Nos últimos 6 meses",
+  "last_6_months": "Nos últimos {{count}} meses",
   "loyalty_card": "Cartão fidelidade",
   "month_apr": "abril",
   "month_feb": "fevereiro",

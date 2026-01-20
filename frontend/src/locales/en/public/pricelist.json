@@ -15,14 +15,14 @@
   },
   "cta": {
     "bookButton": "Sign up for the procedure",
-    "ready": "Ready to convert?"
+    "ready": "Ready to sign up?"
   },
-  "error": "Error loading services",
+  "error": "Error loading services.",
   "loading": "Loading Services...",
   "noResults": "No services were found matching your search",
   "noServices": "No services found",
-  "search": "Search services...",
-  "services": "services",
+  "search": "Search for services...",
+  "services": "Services",
   "subtitle": "Premium beauty services at affordable prices",
   "title": "Our services and prices"
 }

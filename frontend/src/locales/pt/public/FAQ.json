@@ -1,9 +1,9 @@
 {
   "answer_1": "Você pode se inscrever através do nosso site, ligando ou escrevendo para WhatsApp/Instagram.",
   "answer_2": "Aceitamos pagamento em dinheiro e cartões bancários.",
-  "answer_3": "Sim, você pode cancelar ou remarcar sua consulta até 24 horas antes do horário agendado.",
+  "answer_3": "Sim, você pode cancelar ou remarcar seu agendamento até {{hours}} horas antes do horário agendado.",
   "answer_4": "Sim, alguns procedimentos têm contraindicações médicas. Consulte nosso especialista antes de gravar.",
-  "answer_5": "O tempo do procedimento depende do serviço escolhido. Geralmente de 30 minutos a 3 horas.",
+  "answer_5": "O tempo do procedimento depende do serviço escolhido. Normalmente de {{min}} minutos a {{max}} horas.",
   "answer_6": "Alguns procedimentos requerem preparação especial. O especialista irá informá-lo sobre isso no momento do reserva.",
   "cta": {
     "bookButton": "Inscreva-se para o procedimento",
@@ -24,7 +24,7 @@
       "question": "Como se inscrever no procedimento?"
     },
     "cancellation": {
-      "answer": "Sim, você pode cancelar ou remarcar sua consulta até 24 horas antes do horário agendado. Se cancelado com menos de 24 horas de antecedência poderá ser cobrada uma multa de 50% do custo do serviço.",
+      "answer": "Sim, você pode cancelar ou remarcar seu agendamento até {{hours}} horas antes do horário agendado. Se cancelado em menos de {{hours}} horas, poderá ser cobrada uma multa de {{percent}}% do custo do serviço.",
       "question": "Posso cancelar ou remarcar meu agendamento?"
     },
     "certificates": {
@@ -40,7 +40,7 @@
       "question": "Posso dar um certificado de serviços?"
     },
     "guarantee": {
-      "answer": "Sim, garantimos a qualidade de todos os nossos serviços. Se não ficar satisfeito com o resultado, contacte-nos no prazo de 7 dias e encontraremos uma solução.",
+      "answer": "Sim, garantimos a qualidade de todos os nossos serviços. Se você não estiver satisfeito com o resultado, entre em contato conosco dentro de {{count}} dias e encontraremos uma solução.",
       "question": "Vocês oferecem garantia de serviços?"
     },
     "location": {
@@ -48,7 +48,7 @@
       "question": "Onde fica o seu salão?"
     },
     "loyalty": {
-      "answer": "Sim, temos um programa de fidelidade cumulativo. Após cada visita você recebe bônus que podem ser usados ​​para pagar visitas futuras.",
+      "answer": "Sim, temos um programa de fidelidade abrangente. Após cada visita, você receberá bônus que poderão ser utilizados em visitas futuras.",
       "question": "Você tem um programa de fidelidade?"
     },
     "materials": {
@@ -60,11 +60,11 @@
       "question": "Quais métodos de pagamento você aceita?"
     },
     "preparation": {
-      "answer": "Sim, alguns procedimentos requerem preparação. Fornecemos recomendações detalhadas no momento do reserva.",
+      "answer": "Sim, alguns procedimentos requerem preparação. Forneceremos recomendações detalhadas no momento do reserva.",
       "question": "É necessária preparação antes do procedimento?"
     },
     "weekends": {
-      "answer": "Sim, trabalhamos 7 dias até data semana. {{weekdays, weekdays}}Nos dias de semana {{weekdays}}{{/weekdays}}{{weekends, weekdays}}, nos finais de semana {{weekends}}{{/weekends}}.",
+      "answer": "Sim, estamos abertos {{count}} dias até data semana. {{будние дни, будние дни}}Dias de semana {{weekdays}}{{/weekdays}}{{выходные, выходные}}, fins de semana {{weekends}}{{/weekends}}.",
       "question": "Você trabalha nos finais de semana?"
     }
   },

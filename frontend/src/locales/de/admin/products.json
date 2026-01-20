@@ -3,7 +3,7 @@
   "allCategories": "Alle Kategorien",
   "analytics": {
     "avgPrice": "Heiraten. Preis",
-    "last30Days": "In 30 Tagen",
+    "last30Days": "Für {{count}} Tage",
     "revenue": "Einnahmen",
     "totalSold": "Insgesamt verkauft"
   },
@@ -11,10 +11,10 @@
   "delete": "Löschen",
   "detail": {
     "costPriceLabel": "Kosten: {{price}} {{currency}}",
-    "inStock_one": "Eines verfügbar",
-    "inStock_few": "Mehrere verfügbar",
-    "inStock_many": "Vieles auf Lager",
-    "inStock_other": "Andere auf Lager",
+    "inStock_few": "Auf Lager {{count}} Stk.",
+    "inStock_many": "Auf Lager {{count}} Stk.",
+    "inStock_one": "Auf Lager {{count}} Stk.",
+    "inStock_other": "Auf Lager {{count}} Stk.",
     "loadingData": "Daten werden geladen...",
     "movementAdjustment": "Einstellung",
     "movementHistory": "Geschichte der Bewegungen",

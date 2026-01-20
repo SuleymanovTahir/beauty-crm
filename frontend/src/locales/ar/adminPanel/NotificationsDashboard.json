@@ -6,7 +6,7 @@
   },
   "dialogs": {
     "send": {
-      "description": "إنشاء وإرسال إشعار لعملائك",
+      "description": "أنشئ إشعارًا مستهدفًا لعملائك",
       "form": {
         "appointment_date": "تاريخ التسجيل",
         "appointment_filter": "تصفية حسب الإدخالات",
@@ -18,108 +18,108 @@
         "end_date": "تاريخ الانتهاء",
         "loyalty_tier": "مستوى الولاء",
         "message": "رسالة",
-        "message_placeholder": "نص الإخطار",
-        "notification_type": "نوع الإخطار",
-        "repeat_end_date": "إنهاء الإعادة",
+        "message_placeholder": "أدخل نص الإشعار...",
+        "notification_type": "نوع القناة",
+        "repeat_end_date": "إعادة تاريخ الانتهاء",
         "repeat_interval": "كرر الفاصل الزمني",
         "repeat_intervals": {
           "daily": "يوميًا",
           "monthly": "شهريا",
           "weekly": "أسبوعي"
         },
-        "repeat_notification": "كرر الإخطار",
+        "repeat_notification": "الإخطار المتكرر",
         "schedule_date": "تاريخ الإرسال",
-        "schedule_notification": "جدولة الإخطار",
+        "schedule_notification": "جدولة الشحن",
         "schedule_time": "وقت الإرسال",
         "segments": {
           "active": "العملاء النشطين",
           "all": "جميع العملاء",
           "appointment_based": "وفقا للسجلات",
-          "inactive": "العملاء غير النشطين",
+          "inactive": "مفقود (غير نشط)",
           "service_based": "عن طريق الخدمات",
-          "tier": "حسب مستوى الولاء"
+          "tier": "حسب مستويات الولاء"
         },
         "select_filter": "حدد عامل التصفية",
         "select_tier": "اختر المستوى",
         "service_filter": "الخدمة/الإجراء",
-        "service_hint": "سيتلقى العملاء المسجلون في هذه الخدمة إشعارًا",
-        "service_placeholder": "أدخل اسم الخدمة أو معرفها",
+        "service_hint": "سيتلقى العملاء المسجلون في الخدمة المحددة إشعارًا",
+        "service_placeholder": "أدخل اسم الخدمة",
         "start_date": "تاريخ البدء",
-        "target_segment": "الشريحة المستهدفة",
+        "target_segment": "الجمهور المستهدف (القطاع)",
         "tiers": {
           "bronze": "برونزية",
           "gold": "ذهب",
           "platinum": "البلاتين",
           "silver": "فضي"
         },
-        "title": "عنوان",
-        "title_placeholder": "عنوان الإخطار"
+        "title": "العنوان",
+        "title_placeholder": "أدخل العنوان الرئيسي"
       },
-      "title": "إرسال إشعار جديد"
+      "title": "إشعار جديد"
     },
     "template": {
-      "description": "قم بإنشاء قالب إعلام قابل لإعادة الاستخدام",
+      "description": "قم بإنشاء قالب للمراسلات السريعة في المستقبل",
       "form": {
         "message": "رسالة",
-        "message_placeholder": "استخدم {variable} للمحتوى الديناميكي",
+        "message_placeholder": "استخدم {name} لاستبدال اسم العميل",
         "template_name": "اسم القالب",
-        "template_name_placeholder": "على سبيل المثال، رسالة ترحيب",
-        "title": "عنوان",
+        "template_name_placeholder": "على سبيل المثال: تحية عميل جديد",
+        "title": "العنوان",
         "title_placeholder": "عنوان الإخطار",
-        "type": "يكتب",
+        "type": "نوع القناة",
         "types": {
-          "email": "بريد إلكتروني",
+          "email": "البريد الإلكتروني",
           "push": "دفع الإخطار",
           "sms": "SMS"
         }
       },
-      "title": "حفظ كقالب"
+      "title": "إنشاء قالب"
     }
   },
   "history": {
-    "description": "جميع الإخطارات المرسلة والمقررة",
+    "description": "قائمة المراسلات البريدية التي تم إنشاؤها مسبقًا والحالية",
     "filters": {
-      "all": "الجميع",
-      "email": "بريد إلكتروني",
-      "push": "يدفع",
+      "all": "جميع القنوات",
+      "email": "البريد الإلكتروني",
+      "push": "إشعار دفع",
       "sms": "SMS"
     },
     "scheduled": "المخطط لها",
     "table": {
       "date": "تاريخ",
       "recipients": "المستلمون",
-      "sent_failed": "تم الإرسال/فشل",
+      "sent_failed": "إرسال / أخطاء",
       "status": "حالة",
-      "title": "عنوان",
+      "title": "العنوان/الموضوع",
       "type": "يكتب"
     },
-    "title": "تاريخ الإخطار"
+    "title": "التاريخ البريدي"
   },
   "save_template": "حفظ القالب",
-  "send_notification": "إرسال الإخطار",
+  "send_notification": "يرسل",
   "stats": {
-    "email_sent": "تم إرسال البريد الإلكتروني",
-    "push_sent": "تم إرسال الدفع",
-    "sms_sent": "تم إرسال الرسائل القصيرة",
+    "email_sent": "البريد الإلكتروني",
+    "push_sent": "إشعار دفع",
+    "sms_sent": "SMS",
     "total_sent": "إجمالي المرسلة"
   },
-  "subtitle": "إدارة وإرسال الإخطارات للعملاء",
+  "subtitle": "مركز التحكم بالمراسلات والإشعارات التلقائية",
   "templates": {
-    "description": "قوالب سريعة للإخطارات المشتركة",
-    "title": "قوالب الإخطار",
-    "use_template": "استخدم القالب"
+    "description": "قوالب جاهزة لتوفير الوقت",
+    "title": "القوالب الخاصة بي",
+    "use_template": "يستخدم"
   },
-  "title": "لوحة الإخطار",
+  "title": "إشعارات",
   "toasts": {
-    "failed_load": "فشل في تحميل الإخطارات",
+    "failed_load": "حدث خطأ أثناء تحميل الإشعارات",
     "failed_save_template": "فشل حفظ القالب",
-    "failed_send": "فشل في إرسال الإخطار",
+    "failed_send": "حدث خطأ أثناء إرسال الإشعار",
     "sent": "تم إرسال الإشعار بنجاح",
-    "template_saved": "تم حفظ القالب بنجاح"
+    "template_saved": "تم حفظ القالب"
   },
   "types": {
-    "email": "بريد إلكتروني",
-    "push": "يدفع",
+    "email": "البريد الإلكتروني",
+    "push": "دفع الإخطار",
     "sms": "SMS"
   }
 }

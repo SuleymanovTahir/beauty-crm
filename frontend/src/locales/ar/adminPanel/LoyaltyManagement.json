@@ -1,89 +1,89 @@
 {
-  "adjust_points": "ضبط النقاط",
+  "adjust_points": "تغيير رصيد النقاط",
   "buttons": {
     "add_rule": "أضف قاعدة",
-    "adjust_points": "ضبط النقاط",
+    "adjust_points": "تغيير الرصيد",
     "cancel": "يلغي",
     "save": "يحفظ",
     "save_changes": "حفظ التغييرات"
   },
   "categories": {
     "category": "فئة",
-    "category_placeholder": "على سبيل المثال. الأظافر",
-    "description": "إعداد مضاعفات النقاط لفئات الخدمة",
+    "category_placeholder": "على سبيل المثال. مانيكير",
+    "description": "إعداد مضاعفات النقاط لفئات الخدمة الفردية",
     "multiplier": "عامل",
     "title": "مضاعفات الفئة"
   },
   "config": {
-    "cashback_hint": "مثال: استرداد نقدي بنسبة 10% (10 نقاط لكل 100 إنفاق)",
+    "cashback_hint": "مثال: {{percent}}% استرداد نقدي ({{points}} نقطة مقابل كل {{unit}} يتم إنفاقه)",
     "cashback_rate": "الاسترداد النقدي (%)",
-    "description": "إدارة إعدادات الولاء العالمية",
+    "description": "الإعدادات الأساسية لبرنامج الولاء",
     "expiration_days": "مدة صلاحية النقاط (أيام)",
-    "expiration_hint": "ستنتهي صلاحية النقاط المتراكمة بعد عدد الأيام المحدد.",
-    "points_per_unit": "نقاط ل 1 وحدة. العملات",
-    "title": "إعدادات"
+    "expiration_hint": "سيتم إلغاء النقاط تلقائيًا بعد الوقت المحدد.",
+    "points_per_unit": "نقاط لوحدات {{count}}. العملات",
+    "title": "الإعدادات العالمية"
   },
-  "confirm_delete_rule": "تأكيد حذف القاعدة",
+  "confirm_delete_rule": "هل أنت متأكد أنك تريد حذف هذه القاعدة؟",
   "dialogs": {
     "adjust_points": {
       "client_email": "البريد الإلكتروني للعميل",
-      "client_email_placeholder": "العنصر النائب للبريد الإلكتروني للعميل",
-      "description": "وصف",
-      "points": "نظارات",
-      "points_placeholder": "حشو النقطة",
+      "client_email_placeholder": "أدخل بريدك الإلكتروني للربط",
+      "description": "التعديل اليدوي لرصيد النقاط",
+      "points": "عدد النقاط",
+      "points_placeholder": "على سبيل المثال. 100 أو -100",
       "reason": "سبب",
-      "reason_placeholder": "السبب النائب",
-      "title": "عنوان"
+      "reason_placeholder": "يرجى الإشارة إلى سبب التغيير",
+      "title": "تغيير الرصيد"
     },
     "edit_tier": {
-      "description": "وصف",
+      "description": "تحديد شروط الحصول على مستوى الامتياز",
       "discount_percent": "نسبة الخصم",
-      "min_points": "الحد الأدنى من الدرجات",
+      "min_points": "الحد الأدنى لدرجة النتيجة",
       "tier_name": "اسم المستوى",
-      "title": "عنوان"
+      "title": "تحرير المستوى"
     },
     "rule": {
-      "description": "ضبط مضاعف النقاط لفئة الخدمة",
-      "title": "تحرير قاعدة الفئة"
+      "description": "معامل الاستحقاق الشخصي للفئة",
+      "title": "قاعدة الفئة"
     }
   },
   "stats": {
-    "active_members": "الأعضاء النشطين",
-    "points_redeemed": "تم استبدال النقاط",
-    "total_points_issued": "مجموع النقاط الممنوحة"
+    "active_members": "المشاركون في البرنامج",
+    "points_redeemed": "تم خصم النقاط",
+    "total_points_issued": "المجموع المتراكم"
   },
-  "subtitle": "ترجمات",
+  "subtitle": "إدارة الخصومات ومستويات الفوائد وقواعد النقاط",
   "tiers": {
-    "description": "وصف",
-    "discount": "تخفيض",
-    "from_points": "من النقاط",
-    "starting_level": "مستوى الدخول",
-    "title": "عنوان"
+    "description": "مستويات الولاء لتجزئة العملاء",
+    "discount": "الخصم {{percent}}%",
+    "from_points": "من {{points}} نقطة",
+    "starting_level": "مستوى البداية",
+    "title": "مستويات الامتياز"
   },
-  "title": "عنوان",
+  "title": "برنامج الولاء",
   "toasts": {
-    "config_updated": "تم تحديث التكوين",
-    "failed_adjust": "فشل التكوين",
-    "failed_delete": "فشل الحذف",
-    "failed_load": "فشل التحميل",
-    "failed_save": "فشل الحفظ",
-    "failed_update": "فشل التحديث",
-    "points_adjusted_add": "تم تعديل النقاط وإضافتها",
-    "points_adjusted_deduct": "خصم نقطة المعدل",
-    "rule_deleted": "تم حذف القاعدة.",
-    "rule_saved": "تم حفظ القاعدة.",
-    "tier_updated": "تم تحديث المستوى"
+    "config_updated": "تم حفظ الإعدادات",
+    "failed_adjust": "فشل في تغيير الرصيد",
+    "failed_delete": "حدث خطأ أثناء الحذف",
+    "failed_load": "فشل تحميل البيانات",
+    "failed_save": "حدث خطأ أثناء الحفظ",
+    "failed_update": "حدث خطأ أثناء التحديث",
+    "points_adjusted_add": "{{points}} النقاط الممنوحة للمستخدم {{email}}",
+    "points_adjusted_deduct": "تم خصم نقاط {{points}} من المستخدم {{email}}",
+    "rule_deleted": "تم حذف القاعدة بنجاح",
+    "rule_saved": "تم حفظ القاعدة",
+    "tier_updated": "تم تحديث بيانات المستوى"
   },
   "transactions": {
-    "description": "وصف",
-    "search_placeholder": "بحث في العنصر النائب",
+    "description": "تاريخ معاملات نقاط الولاء",
+    "search_placeholder": "البحث حسب العميل...",
     "table": {
       "client": "عميل",
       "date": "تاريخ",
-      "points": "نظارات",
+      "points": "نقاط",
       "reason": "سبب",
       "type": "يكتب"
     },
-    "title": "عنوان"
+    "title": "أحدث المعاملات"
   }
 }

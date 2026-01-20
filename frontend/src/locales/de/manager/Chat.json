@@ -1,4 +1,8 @@
 {
+  "additional_context": "Zusätzlicher Kontext (optional)",
+  "ai_thinking": "KI denkt...",
+  "ask_ai_consultant": "Fragen Sie einen KI-Berater",
+  "ask_bot_placeholder": "Zum Beispiel: Der Kunde sagt, dass es teuer ist. Wie soll ich antworten?",
   "chats": "Chats",
   "clear": "Klar",
   "error": "Fehler",
@@ -7,10 +11,10 @@
   "file_removed": "Datei gelöscht",
   "files": "Dateien",
   "files_added": "Hinzugefügte Dateien: {{count}}",
-  "files_added_few": "Mehrere Dateien wurden hinzugefügt",
-  "files_added_many": "Viele Dateien hinzugefügt",
-  "files_added_one": "Dateien hinzugefügt eins",
-  "files_added_other": "Weitere Dateien hinzugefügt",
+  "files_added_few": "{{count}}-Datei hinzugefügt",
+  "files_added_many": "{{count}}-Dateien hinzugefügt",
+  "files_added_one": "{{count}}-Datei hinzugefügt",
+  "files_added_other": "Hinzugefügte Dateien ({{count}})",
   "files_cleared": "Dateien gelöscht",
   "image": "Bild",
   "image_not_available": "Bild nicht verfügbar",
@@ -27,12 +31,8 @@
   "search": "Suchen",
   "select_chat": "Wählen Sie Chat aus",
   "select_dialog_from_list": "Wählen Sie eine Konversation aus der Liste links aus",
+  "send_to_ai": "Senden Sie KI",
   "templates": "Vorlagen",
   "try_again": "Versuchen Sie es erneut",
-  "ask_ai_consultant": "Fragen Sie einen KI-Berater",
-  "your_question": "Deine Frage",
-  "additional_context": "Zusätzlicher Kontext (optional)",
-  "ask_bot_placeholder": "Zum Beispiel: Der Kunde sagt, dass es teuer ist. Wie soll ich antworten?",
-  "send_to_ai": "Senden Sie KI",
-  "ai_thinking": "KI denkt..."
+  "your_question": "Deine Frage"
 }

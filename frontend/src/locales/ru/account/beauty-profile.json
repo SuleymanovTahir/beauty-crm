@@ -15,7 +15,7 @@
   "in_days": "дн.",
   "keep_going": "Так держать!",
   "next_procedures_desc": "Рекомендуемый план процедур",
-  "out_of_100": "из 100",
+  "out_of_100": "из {{max}}",
   "overall_assessment": "Общая оценка",
   "procedures_calendar": "Календарь ухода",
   "rec_1_desc": "Стимулирует обновление кожи и придает здоровый блеск",

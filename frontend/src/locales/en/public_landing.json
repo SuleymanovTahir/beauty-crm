@@ -13,32 +13,32 @@
   "aboutTitlePart2": "in every detail",
   "accept": "Accept",
   "address": "Address",
-  "allergies": "Allergic reactions",
   "allRightsReserved": "All rights reserved.",
   "allServices": "All services",
+  "allergies": "Allergic reactions",
   "book": "Sign up",
+  "bookNow": "Sign up",
   "booking": "Booking",
   "bookingTag": "Online registration",
-  "bookNow": "Sign up",
   "callUs": "Call",
   "cancellation": "Cancellation by customer",
   "cookieConsentText": "We use cookies to improve your website experience. ",
   "dataDeletion": {
-    "contact": "Contact Us",
-    "description": "If you want to delete your data from our system, please follow these steps:",
+    "contact": "Contact us",
+    "description": "If you would like to remove your data from our system, please follow these steps:",
     "step1": {
-      "text": " Send an email to our support team with the subject \"Data Deletion Request\".",
-      "title": "Send a request"
+      "text": "Send an email to our support team with the subject \"Data Deletion Request\".",
+      "title": "Send request"
     },
     "step2": {
-      "text": " Our team will verify your identity to ensure the security of your data.",
-      "title": "Verification"
+      "text": "Our team will verify your identity to ensure the security of your data.",
+      "title": "Examination"
     },
     "step3": {
-      "text": " Once verified, we will permanently delete your account and all associated data within 30 days.",
-      "title": "Deletion"
+      "text": "Once verified, we will permanently delete your account and all associated data within {{count}} days.",
+      "title": "Removal"
     },
-    "title": "Instruction for Data Deletion"
+    "title": "Instructions for deleting data"
   },
   "days": "days",
   "decline": "Reject",
@@ -151,11 +151,11 @@
   "termsSection3Text1": "You can book services through our website, over the phone or in person at the salon. ",
   "termsSection3Text2": "Some services may require a deposit at time of booking.",
   "termsSection3Text3": "Payment is made after services are provided. ",
-  "termsSection3Text4": "All prices are in UAE Dirhams (AED).",
+  "termsSection3Text4": "All prices are indicated in {{currency}}.",
   "termsSection3Title": "Booking and payment",
-  "termsSection4Text1": "You can cancel or change your reservation up to 24 hours before your scheduled time without penalty.",
-  "termsSection4Text2": "If canceled less than 24 hours in advance or no-show, the deposit (if paid) will not be refunded.",
-  "termsSection4Text3": "If you are more than 15 minutes late, we reserve the right to cancel the reservation or reduce the procedure time.",
+  "termsSection4Text1": "You can cancel or change your reservation at least {{hours}} hours before the scheduled time without penalty.",
+  "termsSection4Text2": "If you cancel less than {{hours}} hours in advance or do not show up for your visit, the deposit (if paid) will not be refunded.",
+  "termsSection4Text3": "If you are more than {{min}} minutes late, we reserve the right to cancel the reservation or reduce the procedure time.",
   "termsSection4Title": "Cancellation and modification of booking",
   "termsSection5List1": "Follow the rules of the salon and communicate politely with staff",
   "termsSection5List2": "Provide accurate health and allergy information",
@@ -169,7 +169,7 @@
   "termsSection6Text3": "The results of the procedures may vary depending on individual characteristics. ",
   "termsSection6Text4": "We are not responsible for loss or damage to customer personal items.",
   "termsSection6Title": "Disclaimer",
-  "termsSection7Text1": "Gift certificates are valid for 12 months from the date of purchase.",
+  "termsSection7Text1": "Gift Certificates are valid for {{months}} months from the date of purchase.",
   "termsSection7Text2": "Gift certificates cannot be returned or exchanged for cash.",
   "termsSection7Text3": "Gift certificates can be transferred to another person.",
   "termsSection7Title": "Gift certificates",

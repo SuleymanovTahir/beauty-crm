@@ -46,8 +46,8 @@
     "guest_link": "Enlace",
     "manual": "A mano"
   },
-  "source_account": "Personal Cabinet",
-  "source_guest_link": "Link",
+  "source_account": "Cuenta personal",
+  "source_guest_link": "Conexión",
   "source_title": "Fuente",
   "status": "Estado",
   "template_created": "Plantilla creada",

@@ -15,13 +15,13 @@
   },
   "cta": {
     "bookButton": "Melden Sie sich für das Verfahren an",
-    "ready": "Bereit zur Transformation?"
+    "ready": "Bereit, sich anzumelden?"
   },
-  "error": "Fehler beim Laden der Dienste",
+  "error": "Fehler beim Laden der Dienste.",
   "loading": "Dienste werden geladen...",
   "noResults": "Es wurden keine Dienste gefunden, die Ihrer Suche entsprechen",
   "noServices": "Dienste nicht gefunden",
-  "search": "Suchdienste...",
+  "search": "Nach Dienstleistungen suchen...",
   "services": "Dienstleistungen",
   "subtitle": "Premium-Beauty-Dienstleistungen zu erschwinglichen Preisen",
   "title": "Unsere Leistungen und Preise"

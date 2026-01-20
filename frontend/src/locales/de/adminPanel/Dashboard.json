@@ -1,8 +1,8 @@
 {
   "quick_actions": {
     "challenges": {
-      "description": "Erstellung und Management datum bis Herausforderungen",
-      "title": "Herausforderungen"
+      "description": "Ziele schaffen und verwalten",
+      "title": "Ziele"
     },
     "loyalty_management": {
       "description": "Verwalten Sie Treuepunkte und -stufen",
@@ -27,28 +27,28 @@
     }
   },
   "recent_activity": {
-    "challenge_completed_one": "Herausforderung „{{name}}“ abgeschlossen datum bis {{count}} vom Benutzer",
-    "challenge_completed_few": "Herausforderung „{{name}}“ datum bis {{count}} Benutzern abgeschlossen",
-    "challenge_completed_many": "Herausforderung „{{name}}“ datum bis {{count}} Benutzern abgeschlossen",
-    "challenge_completed_other": "Herausforderung „{{name}}“ datum bis {{count}} Benutzern abgeschlossen",
-    "day_ago_one": "Vor {{count}} Tag",
-    "day_ago_few": "Vor {{count}} Tagen",
-    "day_ago_many": "Vor {{count}} Tagen",
-    "day_ago_other": "Vor {{count}} Tagen",
-    "hours_ago_one": "Vor {{count}} Stunde",
-    "hours_ago_few": "Vor {{count}} Stunden",
-    "hours_ago_many": "Vor {{count}} Stunden",
-    "hours_ago_other": "Vor {{count}} Stunden",
+    "challenge_completed_few": "Ziel „{{name}}“, abgeschlossen datum bis {{count}} Benutzern",
+    "challenge_completed_many": "Ziel „{{name}}“, abgeschlossen datum bis {{count}} Benutzern",
+    "challenge_completed_one": "Ziel „{{name}}“ abgeschlossen datum bis {{count}} vom Benutzer",
+    "challenge_completed_other": "Ziel „{{name}}“, abgeschlossen datum bis {{count}} Benutzern",
+    "day_ago_few": "{{count}} Tage her",
+    "day_ago_many": "{{count}} Tage her",
+    "day_ago_one": "{{count}} Tag vor",
+    "day_ago_other": "{{count}} Tage her",
+    "hours_ago_few": "{{count}} vor Stunden",
+    "hours_ago_many": "{{count}} vor Stunden",
+    "hours_ago_one": "{{count}} vor einer Stunde",
+    "hours_ago_other": "{{count}} vor Stunden",
     "new_tier_activated": "Neue Treuestufe aktiviert",
     "subtitle": "Letzte Aktionen im Admin-Panel",
     "title": "Letzte Aktivität",
-    "users_registered_one": "{{count}} neuer Benutzer registriert",
     "users_registered_few": "{{count}} neuer Benutzer registriert",
     "users_registered_many": "{{count}} neue Benutzer registriert",
+    "users_registered_one": "{{count}} neuer Benutzer registriert",
     "users_registered_other": "{{count}} neue Benutzer registriert"
   },
   "stats": {
-    "active_challenges": "Aktive Herausforderungen",
+    "active_challenges": "Aktive Ziele",
     "from_last_month": "vom letzten Monat",
     "loyalty_points_issued": "Vergeben datum bis Treuepunkten",
     "total_referrals": "Gesamtzahl der Empfehlungen",

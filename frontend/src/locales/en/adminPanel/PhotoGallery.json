@@ -11,7 +11,7 @@
   "card": {
     "featured": "Favorites",
     "toggle_featured": "Toggle Favorites",
-    "uploaded_by": "Uploaded by {{name}}",
+    "uploaded_by": "Loaded by {{name}}",
     "views": "views"
   },
   "dialogs": {
@@ -61,9 +61,9 @@
     "failed_featured": "Failed to update favorite status",
     "failed_load": "Failed to upload photos",
     "failed_upload": "Failed to upload photo",
-    "failed_visibility": "Failed to update visibility",
+    "failed_visibility": "Failed to update visibility.",
     "featured_updated": "Favorite status updated",
-    "select_both_photos": "Please select both before and after photos",
+    "select_both_photos": "Please select a before and after photo",
     "uploaded": "Photo uploaded successfully",
     "visibility_updated": "Visibility updated"
   },

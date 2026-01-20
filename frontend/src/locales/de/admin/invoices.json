@@ -9,11 +9,11 @@
   "delete": "Löschen",
   "dueDate": "Fälligkeitsdatum",
   "errors": {
-    "createError": "Error creating invoice",
-    "deleteError": "Error deleting invoice",
-    "paymentError": "Error adding payment",
-    "sendError": "Error sending invoice",
-    "updateError": "Failed to update status"
+    "createError": "Fehler beim Erstellen des Kontos.",
+    "deleteError": "Fehler beim Löschen des Kontos.",
+    "paymentError": "Fehler beim Hinzufügen der Zahlung",
+    "sendError": "Fehler beim Senden der Rechnung",
+    "updateError": "Status konnte nicht aktualisiert werden"
   },
   "form": {
     "addItem": "Fügen Sie eine Position hinzu",

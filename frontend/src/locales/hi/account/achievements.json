@@ -11,7 +11,7 @@
   "active_challenges": "सक्रिय लक्ष्य",
   "all_achievements": "सारी उपलब्धियाँ",
   "challenge_hair_care": "उत्तम बाल",
-  "challenge_hair_care_desc": "3 बाल उपचार करें",
+  "challenge_hair_care_desc": "{{count}} बाल उपचार करें",
   "challenge_spring_update": "वसंत अद्यतन",
   "challenge_spring_update_desc": "नए सीज़न के लिए अपना लुक अपडेट करें",
   "completed_percent": "{{percent}}% पूर्ण",

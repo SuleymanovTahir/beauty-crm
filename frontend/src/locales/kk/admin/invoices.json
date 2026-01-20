@@ -9,11 +9,11 @@
   "delete": "Жою",
   "dueDate": "Мерзімі",
   "errors": {
-    "createError": "Error creating invoice",
-    "deleteError": "Error deleting invoice",
-    "paymentError": "Error adding payment",
-    "sendError": "Error sending invoice",
-    "updateError": "Failed to update status"
+    "createError": "Есептік жазбаны жасау қатесі.",
+    "deleteError": "Есептік жазбаны жою қатесі.",
+    "paymentError": "Төлемді қосу қатесі",
+    "sendError": "Шот-фактураны жіберу қатесі",
+    "updateError": "Күйді жаңарту мүмкін болмады"
   },
   "form": {
     "addItem": "Позицияны қосыңыз",
@@ -61,7 +61,7 @@
     "sendButton": "Жіберу",
     "telegram": "Telegram",
     "title": "Шот-фактураны жіберу",
-    "whatsapp": "whatsapp"
+    "whatsapp": "Whatsapp"
   },
   "status": "Күй",
   "subtitle": "Есептік жазбаны және төлемді басқару",

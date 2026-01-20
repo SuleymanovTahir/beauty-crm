@@ -9,7 +9,7 @@
   "days_in_row": "दिनों का अनुबंध",
   "discount": "छूट",
   "invitations": "आमंत्रण",
-  "last_6_months": "पिछले 6 महीनों में",
+  "last_6_months": "पिछले {{count}} महीनों में",
   "loyalty_card": "वफादारी के पत्रक",
   "month_apr": "अप्रैल",
   "month_feb": "फ़रवरी",

@@ -16,11 +16,11 @@
   "full_name": "Полное имя",
   "full_name_placeholder": "Иван Иванов",
   "important": "Важно",
-  "name_must_be_at_least_2_characters": "Имя должно содержать минимум 2 символа",
+  "name_must_be_at_least_2_characters": "Имя должно содержать минимум {{count}} символа",
   "new_password": "Новый пароль",
   "password": "Пароль",
   "password_changed": "Пароль изменен",
-  "password_must_be_at_least_6_characters": "Пароль должен содержать минимум 6 символов",
+  "password_must_be_at_least_6_characters": "Пароль должен содержать минимум {{count}} символов",
   "passwords_do_not_match": "Пароли не совпадают",
   "permissions_label": "Права доступа",
   "profile": "Профиль",
@@ -28,5 +28,5 @@
   "save_changes": "Сохранить изменения",
   "saving": "Сохранение",
   "username": "Логин",
-  "username_must_be_at_least_3_characters": "Логин должен содержать минимум 3 символа"
+  "username_must_be_at_least_3_characters": "Логин должен содержать минимум {{count}} символа"
 }

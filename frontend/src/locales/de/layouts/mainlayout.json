@@ -33,7 +33,7 @@
     "management": "Kontrolle",
     "marketplace_integrations": "Marktplätze",
     "messengers": "Boten",
-    "my_bookings": "Meine Buchungen",
+    "my_bookings": "Meine buchungen",
     "notifications": "Benachrichtigungen",
     "payment_integrations": "Zahlungssysteme",
     "products": "Waren",
@@ -52,7 +52,7 @@
   "notifications": "Benachrichtigungen",
   "roles": {
     "director": "Direktor",
-    "marketer": "Marketing",
+    "marketer": "Vermarkter",
     "sales": "Verkäufe"
   },
   "user": "Benutzer",

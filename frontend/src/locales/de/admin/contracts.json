@@ -23,8 +23,8 @@
     "selectClient": "Wählen Sie den Kunden aus"
   },
   "internalContracts": "Inländisch",
-  "manage_stages": "Spalten",
   "manageTypes": "Arten bis Verträgen",
+  "manage_stages": "Spalten",
   "messages": {
     "confirmDelete": "Sind Sie sicher, dass Sie diese Vereinbarung löschen möchten?",
     "contractCreated": "Der Vertrag wurde erstellt",

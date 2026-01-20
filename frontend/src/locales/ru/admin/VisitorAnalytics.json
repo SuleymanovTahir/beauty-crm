@@ -1,6 +1,6 @@
 {
   "apply": "Применить",
-  "check_range": "Проверьте диапазон (0-1000км, \"До\" > \"От\")",
+  "check_range": "Проверьте диапазон ({{min}}-{{max}}км, \"До\" > \"От\")",
   "cities": "Городов",
   "city": "Город",
   "countries": "Стран",
@@ -23,7 +23,7 @@
   "landing_sections": "Секции лендинга",
   "latest_visitors": "Последние посетители",
   "loading": "Загрузка аналитики посетителей...",
-  "local_visitors": "Местные (≤50км)",
+  "local_visitors": "Местные (≤{{max}}км)",
   "next": "Вперед",
   "of": "из",
   "page": "Страница",
@@ -44,5 +44,8 @@
   "visit_time": "Время посещения",
   "visitor_trend": "Тренд посещений",
   "visitors": "Посетители",
-  "visitors_count": "посетителей"
+  "visitors_count_one": "{{count}} посетитель",
+  "visitors_count_few": "{{count}} посетителя",
+  "visitors_count_many": "{{count}} посетителей",
+  "visitors_count_other": "{{count}} посетителей"
 }

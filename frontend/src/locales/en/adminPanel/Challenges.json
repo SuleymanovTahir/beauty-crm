@@ -1,64 +1,64 @@
 {
   "buttons": {
     "cancel": "Cancel",
-    "create_challenge": "Create a challenge",
-    "update_challenge": "Update challenge"
+    "create_challenge": "Create a goal",
+    "update_challenge": "Save changes"
   },
   "card": {
-    "check_progress": "Check Progress",
+    "check_progress": "Check progress",
     "completed": "completed",
     "progress": "Progress",
-    "pts": "point",
+    "pts": "points",
     "reward": "Reward",
     "target": "Target"
   },
-  "create_challenge": "Create a challenge",
+  "create_challenge": "Create a new goal",
   "dialogs": {
     "create": {
-      "description": "Define challenge parameters and rewards",
+      "description": "Set up activity parameters and completion bonus",
       "form": {
-        "challenge_type": "Challenge type",
-        "description": "Description",
-        "description_placeholder": "Visit the salon 3 times this month",
+        "challenge_type": "Activity type",
+        "description": "Description of the task",
+        "description_placeholder": "Ex: Visit the salon {{count}} times this month",
         "end_date": "End date",
-        "reward_placeholder": "1000",
-        "reward_points": "Reward with points",
-        "start_date": "start date",
-        "target_placeholder": "3",
-        "target_value": "Target value",
-        "title": "Name",
-        "title_placeholder": "Summer beauty challenge"
+        "reward_placeholder": "{{points}}",
+        "reward_points": "Add points",
+        "start_date": "Start date",
+        "target_placeholder": "{{points}}",
+        "target_value": "Target quantity",
+        "title": "Goal name",
+        "title_placeholder": "For example: Summer makeover"
       },
-      "title": "Create a new challenge",
-      "title_edit": "Edit challenge"
+      "title": "Creating a Goal",
+      "title_edit": "Editing a target"
     },
     "delete": {
-      "confirm": "Are you sure you want to delete this challenge?"
+      "confirm": "Are you sure you want to delete this activity? "
     }
   },
   "stats": {
-    "active_challenges": "Active challenges",
-    "completions": "Completion",
-    "total_participants": "Total participants"
+    "active_challenges": "Active targets",
+    "completions": "Executions",
+    "total_participants": "Participants"
   },
-  "subtitle": "Creating and managing engagement challenges",
-  "title": "Challenges",
+  "subtitle": "Manage game mechanics and goals to increase customer loyalty",
+  "title": "Goals and achievements",
   "toasts": {
-    "created": "Challenge successfully created",
-    "deleted": "Challenge successfully deleted",
-    "failed_check_progress": "Failed to check progress",
-    "failed_create": "Failed to create challenge",
-    "failed_delete": "Failed to delete challenge",
-    "failed_load": "Failed to load challenges",
-    "progress_checked_one": "Progress checked alone",
-    "progress_checked_few": "Progress checked several",
-    "progress_checked_many": "Progress has been tested by many",
-    "progress_checked_other": "Progress verified by others"
+    "created": "Activity created successfully",
+    "deleted": "Activity deleted",
+    "failed_check_progress": "Failed to update progress",
+    "failed_create": "Error creating activity",
+    "failed_delete": "Error during deletion",
+    "failed_load": "Failed to load data",
+    "progress_checked_few": "Progress updated for {{count}} participants",
+    "progress_checked_many": "Progress updated for {{count}} participants",
+    "progress_checked_one": "Progress updated for {{count}} member",
+    "progress_checked_other": "Progress updated for {{count}} participants"
   },
   "types": {
     "referrals": "Referrals",
     "services": "Services",
-    "spending": "Expenses",
+    "spending": "Spending",
     "visits": "Visits"
   }
 }

@@ -9,11 +9,11 @@
   "delete": "Excluir",
   "dueDate": "Data de vencimento",
   "errors": {
-    "createError": "Error creating invoice",
-    "deleteError": "Error deleting invoice",
-    "paymentError": "Error adding payment",
-    "sendError": "Error sending invoice",
-    "updateError": "Failed to update status"
+    "createError": "Erro ao criar conta.",
+    "deleteError": "Erro ao excluir conta.",
+    "paymentError": "Erro ao adicionar pagamento",
+    "sendError": "Erro ao enviar fatura",
+    "updateError": "Falha ao atualizar o status"
   },
   "form": {
     "addItem": "Adicionar uma posição",
@@ -61,7 +61,7 @@
     "sendButton": "Enviar",
     "telegram": "Telegrama",
     "title": "Enviar fatura",
-    "whatsapp": "whatsapp"
+    "whatsapp": "Whatsapp"
   },
   "status": "Status",
   "subtitle": "Gerenciamento de contas e pagamentos",

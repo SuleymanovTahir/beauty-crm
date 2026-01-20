@@ -1,12 +1,12 @@
 {
   "source": {
-    "account": "Account",
-    "custom": "Custom source",
-    "custom_placeholder": "Custom booking...",
-    "guest_link": "Guest Link",
+    "account": "OK",
+    "custom": "Your source",
+    "custom_placeholder": "Your option...",
+    "guest_link": "Link",
     "instagram": "Instagram",
     "manual": "Manually",
     "telegram": "Telegram",
-    "whatsapp": "WhatsApp"
+    "whatsapp": "Whatsapp"
   }
 }

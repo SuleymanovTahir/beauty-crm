@@ -1,64 +1,64 @@
 {
   "buttons": {
     "cancel": "Stornieren",
-    "create_challenge": "Erstellen Sie eine Herausforderung",
-    "update_challenge": "Update-Herausforderung"
+    "create_challenge": "Erstellen Sie ein Ziel",
+    "update_challenge": "Änderungen speichern"
   },
   "card": {
-    "check_progress": "Check Progress",
+    "check_progress": "Überprüfen Sie den Fortschritt",
     "completed": "vollendet",
     "progress": "Fortschritt",
-    "pts": "Punkt",
+    "pts": "punkte",
     "reward": "Belohnen",
     "target": "Ziel"
   },
-  "create_challenge": "Erstellen Sie eine Herausforderung",
+  "create_challenge": "Erstellen Sie ein neues Ziel",
   "dialogs": {
     "create": {
-      "description": "Definieren Sie Herausforderungsparameter und Belohnungen",
+      "description": "Richten Sie Aktivitätsparameter und Abschlussbonus ein",
       "form": {
-        "challenge_type": "Herausforderungstyp",
-        "description": "Beschreibung",
-        "description_placeholder": "Besuchen Sie den Salon diesen Monat dreimal",
+        "challenge_type": "Aktivitätstyp",
+        "description": "Beschreibung der Aufgabe",
+        "description_placeholder": "Beispiel: Besuchen Sie den Salon diesen Monat {{count}} Mal",
         "end_date": "Enddatum",
-        "reward_placeholder": "1000",
-        "reward_points": "Belohnen Sie mit Punkten",
+        "reward_placeholder": "{{points}}",
+        "reward_points": "Punkte hinzufügen",
         "start_date": "Startdatum",
-        "target_placeholder": "3",
-        "target_value": "Zielwert",
-        "title": "Name",
-        "title_placeholder": "Sommer-Beauty-Challenge"
+        "target_placeholder": "{{points}}",
+        "target_value": "Zielmenge",
+        "title": "Zielname",
+        "title_placeholder": "Zum Beispiel: Sommer-Makeover"
       },
-      "title": "Erstellen Sie eine neue Herausforderung",
-      "title_edit": "Herausforderung bearbeiten"
+      "title": "Ein Ziel schaffen",
+      "title_edit": "Bearbeiten eines Ziels"
     },
     "delete": {
-      "confirm": "Sind Sie sicher, dass Sie diese Herausforderung löschen möchten?"
+      "confirm": "Sind Sie sicher, dass Sie diese Aktivität löschen möchten? Sämtliche Fortschritte der Teilnehmer gehen verloren."
     }
   },
   "stats": {
-    "active_challenges": "Aktive Herausforderungen",
-    "completions": "Fertigstellung",
-    "total_participants": "Gesamtzahl der Teilnehmer"
+    "active_challenges": "Aktive Ziele",
+    "completions": "Hinrichtungen",
+    "total_participants": "Teilnehmer"
   },
-  "subtitle": "Herausforderungen beim Engagement schaffen und bewältigen",
-  "title": "Herausforderungen",
+  "subtitle": "Verwalten Sie Spielmechanismen und Ziele, um die Kundenbindung zu erhöhen",
+  "title": "Ziele und Erfolge",
   "toasts": {
-    "created": "Herausforderung erfolgreich erstellt",
-    "deleted": "Herausforderung erfolgreich gelöscht",
-    "failed_check_progress": "Failed to check progress",
-    "failed_create": "Die Herausforderung konnte nicht erstellt werden",
-    "failed_delete": "Die Herausforderung konnte nicht gelöscht werden",
-    "failed_load": "Die Herausforderungen konnten nicht geladen werden",
-    "progress_checked_one": "Der Fortschritt wird alleine überprüft",
-    "progress_checked_few": "Der Fortschritt hat mehrere überprüft",
-    "progress_checked_many": "Der Fortschritt wurde datum bis vielen getestet",
-    "progress_checked_other": "datum bis anderen bestätigte Fortschritte"
+    "created": "Aktivität erfolgreich erstellt",
+    "deleted": "Aktivität gelöscht",
+    "failed_check_progress": "Der Fortschritt konnte nicht aktualisiert werden",
+    "failed_create": "Fehler beim Erstellen der Aktivität",
+    "failed_delete": "Fehler beim Löschen",
+    "failed_load": "Daten konnten nicht geladen werden",
+    "progress_checked_few": "Fortschritt für {{count}}-Teilnehmer aktualisiert",
+    "progress_checked_many": "Fortschritt für {{count}}-Teilnehmer aktualisiert",
+    "progress_checked_one": "Fortschritt für {{count}}-Mitglied aktualisiert",
+    "progress_checked_other": "Fortschritt für {{count}}-Teilnehmer aktualisiert"
   },
   "types": {
     "referrals": "Empfehlungen",
     "services": "Dienstleistungen",
-    "spending": "Kosten",
+    "spending": "Ausgaben",
     "visits": "Besuche"
   }
 }

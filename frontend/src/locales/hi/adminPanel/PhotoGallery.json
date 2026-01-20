@@ -11,7 +11,7 @@
   "card": {
     "featured": "पसंदीदा",
     "toggle_featured": "पसंदीदा टॉगल करें",
-    "uploaded_by": "{{नाम}} द्वारा अपलोड किया गया",
+    "uploaded_by": "{{name}} द्वारा लोड किया गया",
     "views": "दृश्य"
   },
   "dialogs": {
@@ -61,9 +61,9 @@
     "failed_featured": "पसंदीदा स्थिति अपडेट करने में विफल",
     "failed_load": "फ़ोटो अपलोड करने में विफल",
     "failed_upload": "फ़ोटो अपलोड करने में विफल",
-    "failed_visibility": "दृश्यता अद्यतन करने में विफल",
+    "failed_visibility": "दृश्यता अद्यतन करने में विफल.",
     "featured_updated": "पसंदीदा स्थिति अपडेट की गई",
-    "select_both_photos": "कृपया पहले और बाद की दोनों तस्वीरें चुनें",
+    "select_both_photos": "कृपया पहले और बाद की फ़ोटो चुनें",
     "uploaded": "फोटो सफलतापूर्वक अपलोड हो गया",
     "visibility_updated": "दृश्यता अद्यतन की गई"
   },

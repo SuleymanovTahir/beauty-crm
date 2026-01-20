@@ -1,8 +1,8 @@
 {
   "quick_actions": {
     "challenges": {
-      "description": "Қиындықтарды құру және басқару",
-      "title": "Қиындықтар"
+      "description": "Мақсаттарды құру және басқару",
+      "title": "Мақсаттар"
     },
     "loyalty_management": {
       "description": "Адалдық ұпайлары мен деңгейлерін басқарыңыз",
@@ -27,10 +27,10 @@
     }
   },
   "recent_activity": {
-    "challenge_completed_few": "{{count}} пайдаланушылары орындаған \"{{name}}\" сайысын",
-    "challenge_completed_many": "{{count}} пайдаланушылары орындаған \"{{name}}\" сайысын",
-    "challenge_completed_one": "Пайдаланушы {{count}} орындаған \"{{name}}\" сайысын",
-    "challenge_completed_other": "{{count}} пайдаланушылары орындаған \"{{name}}\" сайысын",
+    "challenge_completed_few": "{{count}} пайдаланушылары толтырған \"{{name}} мақсаты",
+    "challenge_completed_many": "{{count}} пайдаланушылары толтырған \"{{name}} мақсаты",
+    "challenge_completed_one": "Пайдаланушы {{count}} орындаған \"{{name}}\" мақсаты",
+    "challenge_completed_other": "{{count}} пайдаланушылары толтырған \"{{name}} мақсаты",
     "day_ago_few": "[[VAR0]]] күн бұрын",
     "day_ago_many": "[[VAR0]]] күн бұрын",
     "day_ago_one": "{{count}} күн бұрын",
@@ -48,7 +48,7 @@
     "users_registered_other": "[[VAR0]]] жаңа пайдаланушылар тіркелді"
   },
   "stats": {
-    "active_challenges": "Белсенді сынақтар",
+    "active_challenges": "Белсенді мақсаттар",
     "from_last_month": "өткен айдан бастап",
     "loyalty_points_issued": "Берілген адалдық ұпайлары",
     "total_referrals": "Жалпы сілтемелер",

@@ -5,7 +5,7 @@
   },
   "current_settings": {
     "edit": "Edit",
-    "min_purchase": "Minimum purchase price: <strong>{{amount}} AED</strong>",
+    "min_purchase": "Minimum purchase price: <strong>{{amount}} {{currency}}</strong>",
     "referred_bonus": "The invited friend receives <strong>{{points}} points</strong> upon registration",
     "referrer_bonus": "The referrer receives <strong>{{points}} points</strong>when a friend makes their first purchase",
     "title": "Current bonus configuration"
@@ -13,8 +13,8 @@
   "dialogs": {
     "settings": {
       "description": "Set up bonus points and requirements",
-      "min_purchase_amount": "Minimum purchase price (AED)",
-      "min_purchase_help": "Minimum amount a friend must spend to activate the referral bonus (0 = no minimum)",
+      "min_purchase_amount": "Minimum purchase price ({{currency}})",
+      "min_purchase_help": "Minimum amount a friend must spend to activate the referral bonus ({{min}} = no minimum)",
       "referred_bonus": "Referred Friend Bonus Points",
       "referred_bonus_help": "Points awarded to a friend upon registration",
       "referrer_bonus": "Referrer bonus points",
@@ -39,13 +39,13 @@
     },
     "description": "Tracking the status of referrals and distribution of points",
     "filters": {
-      "all_statuses": "All Statuses"
+      "all_statuses": "All statuses"
     },
     "search_placeholder": "Search for referrals...",
     "sort": {
-      "date": "Sort by Date",
-      "points": "Sort by Points",
-      "status": "Sort by Status"
+      "date": "By date",
+      "points": "By points",
+      "status": "By status"
     },
     "statuses": {
       "cancelled": "Canceled",

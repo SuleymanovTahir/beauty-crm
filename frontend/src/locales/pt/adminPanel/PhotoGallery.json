@@ -1,7 +1,7 @@
 {
   "actions": {
-    "hide": "Hide",
-    "show": "Show"
+    "hide": "Esconder",
+    "show": "Mostrar"
   },
   "buttons": {
     "cancel": "Cancelar",
@@ -11,7 +11,7 @@
   "card": {
     "featured": "Favoritos",
     "toggle_featured": "Alternar favoritos",
-    "uploaded_by": "Enviado até data {{nome}}",
+    "uploaded_by": "Carregado até data {{name}}",
     "views": "visualizações"
   },
   "dialogs": {
@@ -61,11 +61,11 @@
     "failed_featured": "Falha ao atualizar o status de favorito",
     "failed_load": "Falha ao enviar fotos",
     "failed_upload": "Falha ao enviar foto",
-    "failed_visibility": "Failed to update visibility",
+    "failed_visibility": "Falha ao atualizar a visibilidade.",
     "featured_updated": "Status de favorito atualizado",
-    "select_both_photos": "Please select both before and after photos",
+    "select_both_photos": "Selecione uma foto antes e depois",
     "uploaded": "Foto enviada com sucesso",
-    "visibility_updated": "Visibility updated"
+    "visibility_updated": "Visibilidade atualizada"
   },
   "upload_photo": "Carregar foto"
 }

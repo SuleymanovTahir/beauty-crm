@@ -6,7 +6,7 @@
       "name": "Ihr Name *",
       "namePlaceholder": "Anna Iwanowa",
       "phone": "Telefon *",
-      "phonePlaceholder": "+971 50 123 4567",
+      "phonePlaceholder": "{{points}}",
       "service": "Service *",
       "servicePlaceholder": "Wählen Sie einen Dienst aus",
       "submit": "Melden Sie sich an",
@@ -27,7 +27,7 @@
         "title": "Hochwertige Materialien"
       },
       "schedule": {
-        "description": "Wir arbeiten 7 Tage die Woche mit passenden Zeitfenstern für die Aufnahme",
+        "description": "Wir haben {{count}} Tage die Woche zu für Sie passenden Zeiten geöffnet.",
         "title": "Bequemer Zeitplan"
       }
     },

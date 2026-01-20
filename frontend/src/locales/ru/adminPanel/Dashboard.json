@@ -1,8 +1,8 @@
 {
   "quick_actions": {
     "challenges": {
-      "description": "Создание и управление челленджами",
-      "title": "Челленджи"
+      "description": "Создание и управление целями",
+      "title": "Цели"
     },
     "loyalty_management": {
       "description": "Управление баллами лояльности и уровнями",
@@ -27,10 +27,10 @@
     }
   },
   "recent_activity": {
-    "challenge_completed_one": "Челлендж \"{{name}}\" завершен {{count}} пользователем",
-    "challenge_completed_few": "Челлендж \"{{name}}\" завершен {{count}} пользователями",
-    "challenge_completed_many": "Челлендж \"{{name}}\" завершен {{count}} пользователями",
-    "challenge_completed_other": "Челлендж \"{{name}}\" завершен {{count}} пользователями",
+    "challenge_completed_one": "Цель \"{{name}}\" завершена {{count}} пользователем",
+    "challenge_completed_few": "Цель \"{{name}}\" завершена {{count}} пользователями",
+    "challenge_completed_many": "Цель \"{{name}}\" завершена {{count}} пользователями",
+    "challenge_completed_other": "Цель \"{{name}}\" завершена {{count}} пользователями",
     "day_ago_one": "{{count}} день назад",
     "day_ago_few": "{{count}} дня назад",
     "day_ago_many": "{{count}} дней назад",
@@ -48,7 +48,7 @@
     "users_registered_other": "{{count}} новых пользователей зарегистрировано"
   },
   "stats": {
-    "active_challenges": "Активных челленджей",
+    "active_challenges": "Активных целей",
     "from_last_month": "от прошлого месяца",
     "loyalty_points_issued": "Выдано баллов лояльности",
     "total_referrals": "Всего рефералов",

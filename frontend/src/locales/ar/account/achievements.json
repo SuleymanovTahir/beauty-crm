@@ -11,7 +11,7 @@
   "active_challenges": "الأهداف النشطة",
   "all_achievements": "كل الإنجازات",
   "challenge_hair_care": "شعر مثالي",
-  "challenge_hair_care_desc": "قومي بعمل 3 علاجات للشعر",
+  "challenge_hair_care_desc": "قم بإجراء {{count}} علاجات للشعر",
   "challenge_spring_update": "تحديث الربيع",
   "challenge_spring_update_desc": "قم بتحديث مظهرك للموسم الجديد",
   "completed_percent": "{{percent}}% اكتمل",
