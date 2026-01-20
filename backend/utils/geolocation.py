@@ -7,9 +7,24 @@ import math
 from typing import Optional, Dict, Tuple
 from utils.logger import log_info, log_error
 
-# Salon location (M Le Diamant, JBR, Dubai)
+# Salon location (will be updated from DB in production)
 SALON_LAT = 25.2048
 SALON_LON = 55.2708
+
+def get_salon_coordinates() -> Tuple[float, float]:
+    """Get salon coordinates from database"""
+    try:
+        from db.connection import get_db_connection
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("SELECT latitude, longitude FROM salon_settings WHERE id = 1")
+        row = c.fetchone()
+        conn.close()
+        if row and row[0] and row[1]:
+            return float(row[0]), float(row[1])
+    except Exception as e:
+        log_error(f"Error getting salon coordinates from DB: {e}", "geolocation")
+    return SALON_LAT, SALON_LON
 
 def get_ip_hash(ip: str) -> str:
     """Generate SHA256 hash of IP for privacy"""
@@ -96,11 +111,12 @@ def get_visitor_location_data(ip: str) -> Optional[Dict]:
         return None
     
     # Calculate distance from salon
+    salon_lat, salon_lon = get_salon_coordinates()
     distance = calculate_distance(
         location['latitude'],
         location['longitude'],
-        SALON_LAT,
-        SALON_LON
+        salon_lat,
+        salon_lon
     )
     
     return {
