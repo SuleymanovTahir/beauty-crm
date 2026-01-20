@@ -1,9 +1,9 @@
 {
   "clear_all": "Alles löschen",
   "clear_confirm": "Sind Sie sicher, dass Sie das Audit-Protokoll vollständig löschen möchten? Diese Aktion ist irreversibel.",
-  "delete_batch_confirm_one": "{{count}} ausgewählten buchung löschen?",
   "delete_batch_confirm_few": "{{count}} ausgewählte buchungen löschen?",
   "delete_batch_confirm_many": "{{count}} ausgewählte buchungen löschen?",
+  "delete_batch_confirm_one": "{{count}} ausgewählten buchung löschen?",
   "delete_batch_confirm_other": "{{count}} buchungen löschen?",
   "delete_confirm": "Soll ich diesen buchung dauerhaft löschen?",
   "delete_selected": "Ausgewählte entfernen",

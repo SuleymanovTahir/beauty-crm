@@ -8,7 +8,7 @@
     "check_progress": "Check progress",
     "completed": "completed",
     "progress": "Progress",
-    "pts": "",
+    "pts": "points",
     "reward": "Reward",
     "target": "Target"
   },
@@ -22,7 +22,7 @@
         "description_placeholder": "Ex: Visit the salon {{count}} times this month",
         "end_date": "End date",
         "reward_placeholder": "{{points}}",
-        "reward_points": "",
+        "reward_points": "bonus points",
         "start_date": "Start date",
         "target_placeholder": "{{points}}",
         "target_value": "Target quantity",

@@ -8,7 +8,7 @@
     "check_progress": "Проверить прогресс",
     "completed": "завершено",
     "progress": "Прогресс",
-    "pts": "",
+    "pts": "баллов",
     "reward": "Награда",
     "target": "Цель"
   },
@@ -22,7 +22,7 @@
         "description_placeholder": "Напр: Посетите салон {{count}} раза в этом месяце",
         "end_date": "Дата окончания",
         "reward_placeholder": "{{points}}",
-        "reward_points": "",
+        "reward_points": "бонусных баллов",
         "start_date": "Дата начала",
         "target_placeholder": "{{count}}",
         "target_value": "Целевое количество",
