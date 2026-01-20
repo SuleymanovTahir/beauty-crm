@@ -22,12 +22,12 @@
     "welcome": "Bem-vindo"
   },
   "booking_info": "Gravando informações",
-  "bookingDesc": "Выберите удобное время для визита",
-  "bookingError": "Ошибка при создании записи. Попробуйте позже.",
-  "bookingSuccess": "Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.",
-  "bookingTag": "Онлайн запись",
-  "bookingTitlePart1": "Запишитесь",
-  "bookingTitlePart2": "на прием",
+  "bookingDesc": "Escolha um horário conveniente para sua visita",
+  "bookingError": "Erro ao criar reserva. até data favor, tente novamente mais tarde.",
+  "bookingSuccess": "Candidatura enviada com sucesso! Entraremos em contato para confirmar.",
+  "bookingTag": "reserva on-line",
+  "bookingTitlePart1": "Inscrever-se",
+  "bookingTitlePart2": "para um compromisso",
   "common": {
     "cancel": "Later",
     "change": "Change",
@@ -63,13 +63,13 @@
     "time": "Pick Time",
     "title": "Date & Time"
   },
-  "formDate": "Дата",
-  "formName": "Имя",
-  "formNamePlaceholder": "Ваше имя",
-  "formPhone": "Телефон",
-  "formService": "Услуги",
-  "formServicePlaceholder": "Выберите услуги",
-  "formTime": "Время",
+  "formDate": "Data",
+  "formName": "Nome",
+  "formNamePlaceholder": "seu nome",
+  "formPhone": "Telefone",
+  "formService": "Serviços",
+  "formServicePlaceholder": "Selecione serviços",
+  "formTime": "Tempo",
   "invalid_phone": "Please enter a valid phone number",
   "loading": "Initializing Studio",
   "menu": {
@@ -84,10 +84,10 @@
   },
   "min": "min",
   "newBooking": "Reservation",
-  "noServicesFound": "Услуги не найдены.",
-  "phone_too_short": "Номер телефона должен содержать минимум 11 цифр с учетом кода страны",
-  "privacyAgreementStart": "Нажимая кнопку, вы соглашаетесь с",
-  "privacyPolicy": "политикой конфиденциальности",
+  "noServicesFound": "Nenhum serviço encontrado.",
+  "phone_too_short": "O número de telefone deve conter pelo menos 11 dígitos, incluindo o código do país",
+  "privacyAgreementStart": "Ao clicar no botão você concorda",
+  "privacyPolicy": "política de Privacidade",
   "professional": {
     "anyAvailable": "Flexible Match",
     "anyDesc": "We'll match you with the best available professional",
@@ -96,8 +96,8 @@
     "notAvailableToday": "Not Available Today",
     "title": "Choose Master"
   },
-  "searchCountry": "Поиск страны...",
-  "searchService": "Найти услугу...",
+  "searchCountry": "Procure um país...",
+  "searchService": "Encontre um serviço...",
   "select_to_continue": "Selecione um serviço ou técnico para continuar",
   "services": {
     "allCategories": "All",
@@ -109,6 +109,6 @@
     "service_many": "services",
     "total": "Total"
   },
-  "submitBooking": "Отправить заявку",
+  "submitBooking": "Envie uma solicitação",
   "totalDuration": "Duration"
 }

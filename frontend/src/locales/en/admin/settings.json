@@ -27,7 +27,7 @@
   "error_deleting_currency": "Error deleting currency",
   "error_enter_current_password": "Enter your current password",
   "error_invalid_email": "Invalid email format",
-  "error_loading_currencies": "",
+  "error_loading_currencies": "Error loading currencies.",
   "error_loading_profile": "Error loading profile",
   "error_name_too_short": "The name must contain at least 2 characters",
   "error_password_too_short": "Password must contain at least 6 characters",

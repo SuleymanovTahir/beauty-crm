@@ -1,11 +1,11 @@
 {
-  "adjust_points": "",
+  "adjust_points": "समायोजन बिंदु",
   "buttons": {
     "add_rule": "एक नियम जोड़ें",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "समायोजन बिंदु",
+    "cancel": "रद्द करना",
     "save": "बचाना",
-    "save_changes": ""
+    "save_changes": "परिवर्तनों को सुरक्षित करें"
   },
   "categories": {
     "category": "वर्ग",
@@ -23,24 +23,24 @@
     "points_per_unit": "1 इकाई के लिए अंक. मुद्राओं",
     "title": "दिनांक सेटिंग्स"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "नियम हटाने की पुष्टि करें",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "ग्राहक ईमेल",
+      "client_email_placeholder": "ग्राहक ईमेल प्लेसहोल्डर",
+      "description": "विवरण",
+      "points": "चश्मा",
+      "points_placeholder": "बिंदु भराव",
+      "reason": "कारण",
+      "reason_placeholder": "कारण प्लेसहोल्डर",
+      "title": "शीर्षक"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
-      "tier_name": "",
-      "title": ""
+      "description": "विवरण",
+      "discount_percent": "छूट प्रतिशत",
+      "min_points": "न्यूनतम अंक",
+      "tier_name": "स्तर का नाम",
+      "title": "शीर्षक"
     },
     "rule": {
       "description": "दिनांक सेवा श्रेणी के लिए बिंदु गुणक दिनांक सेट करें",
@@ -48,42 +48,42 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "सक्रिय सदस्य",
+    "points_redeemed": "अंक भुनाए गए",
+    "total_points_issued": "दिए गए कुल अंक"
   },
-  "subtitle": "",
+  "subtitle": "उपशीर्षक",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "विवरण",
+    "discount": "छूट",
+    "from_points": "बिंदुओं से",
+    "starting_level": "प्रवेश के स्तर पर",
+    "title": "शीर्षक"
   },
-  "title": "",
+  "title": "शीर्षक",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "कॉन्फ़िगरेशन अद्यतन किया गया",
+    "failed_adjust": "कॉन्फ़िगर करने में विफल",
+    "failed_delete": "हटाने में विफल",
+    "failed_load": "लोड करने में विफल",
+    "failed_save": "सहेजने में विफल",
+    "failed_update": "अद्यतन करने में विफल",
+    "points_adjusted_add": "अंक समायोजित, जोड़े गए",
+    "points_adjusted_deduct": "समायोजित बिंदु कटौती",
+    "rule_deleted": "नियम हटा दिया गया है.",
+    "rule_saved": "नियम सहेजा गया है.",
+    "tier_updated": "लेवल अपडेट किया गया"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "विवरण",
+    "search_placeholder": "प्लेसहोल्डर खोजें",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "ग्राहक",
+      "date": "तारीख",
+      "points": "चश्मा",
+      "reason": "कारण",
+      "type": "प्रकार"
     },
-    "title": ""
+    "title": "शीर्षक"
   }
 }

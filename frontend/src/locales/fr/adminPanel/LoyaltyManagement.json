@@ -1,11 +1,11 @@
 {
-  "adjust_points": "",
+  "adjust_points": "Points de réglage",
   "buttons": {
     "add_rule": "Ajouter une règle",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "Points de réglage",
+    "cancel": "Annuler",
     "save": "Sauvegarder",
-    "save_changes": ""
+    "save_changes": "Enregistrer les modifications"
   },
   "categories": {
     "category": "Catégorie",
@@ -23,24 +23,24 @@
     "points_per_unit": "points pour 1 unité. devises",
     "title": "Paramètres"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "Confirmer la suppression de la règle",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "E-mail du client",
+      "client_email_placeholder": "Espace réservé pour l'e-mail du client",
+      "description": "Description",
+      "points": "Lunettes",
+      "points_placeholder": "Remplisseur de points",
+      "reason": "Cause",
+      "reason_placeholder": "Espace réservé pour la raison",
+      "title": "Titre"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
-      "tier_name": "",
-      "title": ""
+      "description": "Description",
+      "discount_percent": "Pourcentage de remise",
+      "min_points": "Notes minimales",
+      "tier_name": "Nom du niveau",
+      "title": "Titre"
     },
     "rule": {
       "description": "Définir le multiplicateur de points pour la catégorie de service",
@@ -48,42 +48,42 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "Membres actifs",
+    "points_redeemed": "Points échangés",
+    "total_points_issued": "Total des points attribués"
   },
-  "subtitle": "",
+  "subtitle": "Sous-titres",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "Description",
+    "discount": "Rabais",
+    "from_points": "À partir de points",
+    "starting_level": "Niveau d'réservation",
+    "title": "Titre"
   },
-  "title": "",
+  "title": "Titre",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "Configuration mise à jour",
+    "failed_adjust": "Échec de la configuration",
+    "failed_delete": "Échec de la suppression",
+    "failed_load": "Échec du chargement",
+    "failed_save": "Échec de l'réservation",
+    "failed_update": "Échec de la mise à jour",
+    "points_adjusted_add": "Points ajustés, ajoutés",
+    "points_adjusted_deduct": "Déduction de points ajustée",
+    "rule_deleted": "La règle a été supprimée.",
+    "rule_saved": "La règle a été enregistrée.",
+    "tier_updated": "Niveau mis à jour"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "Description",
+    "search_placeholder": "Espace réservé de recherche",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "Client",
+      "date": "Date",
+      "points": "Lunettes",
+      "reason": "Cause",
+      "type": "Taper"
     },
-    "title": ""
+    "title": "Titre"
   }
 }

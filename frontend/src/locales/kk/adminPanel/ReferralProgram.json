@@ -6,8 +6,8 @@
   "current_settings": {
     "edit": "Өңдеу",
     "min_purchase": "Ең төменгі сатып алу бағасы: <strong>{{amount}} AED</strong>",
-    "referred_bonus": "Шақырылған дос тіркелгеннен кейін <strong>{{points}} ұпай</strong> алады",
-    "referrer_bonus": "Досыңыз бірінші сатып алған кезде сілтеме беруші <strong>{{points}} ұпай</strong> алады",
+    "referred_bonus": "Шақырылған дос тіркелгеннен кейін <strong>[[VAR0]]] ұпай алады</strong>",
+    "referrer_bonus": "Досы бірінші рет сатып алған кезде сілтеме беруші <strong>{{points}} ұпай алады</strong>",
     "title": "Ағымдағы бонус конфигурациясы"
   },
   "dialogs": {
@@ -57,7 +57,7 @@
   "title": "Реферат бағдарламасы",
   "toasts": {
     "failed_load": "Сілтемелер жүктелмеді",
-    "failed_save": "",
+    "failed_save": "Сақталмады",
     "settings_saved": "Параметрлер сәтті сақталды"
   }
 }

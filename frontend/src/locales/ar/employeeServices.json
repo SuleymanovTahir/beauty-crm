@@ -1,7 +1,7 @@
 {
-  "browse_available_services": "",
-  "min": "",
-  "no_services": "",
-  "no_services_description": "",
-  "our_services": ""
+  "browse_available_services": "عرض الخدمات المتاحة",
+  "min": "دقيقة",
+  "no_services": "لا توجد خدمات",
+  "no_services_description": "لا يوجد وصف للخدمات",
+  "our_services": "خدماتنا"
 }

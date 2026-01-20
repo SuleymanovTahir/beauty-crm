@@ -1,10 +1,10 @@
 {
   "bonus_to_referee": "आमंत्रित व्यक्ति के लिए बोनस",
   "bonus_to_referrer": "आमंत्रितकर्ता के लिए बोनस",
-  "campaign_activated": "",
+  "campaign_activated": "अभियान सक्रिय",
   "campaign_active": "सक्रिय",
   "campaign_created": "अभियान बनाया गया",
-  "campaign_deactivated": "",
+  "campaign_deactivated": "अभियान निष्क्रिय कर दिया गया",
   "campaign_deleted": "अभियान हटा दिया गया",
   "campaign_inactive": "निष्क्रिय",
   "campaign_updated": "अभियान अद्यतन किया गया",

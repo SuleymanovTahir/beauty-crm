@@ -50,10 +50,10 @@
     "failed_create": "Failed to create challenge",
     "failed_delete": "Failed to delete challenge",
     "failed_load": "Failed to load challenges",
-    "progress_checked_one": "",
-    "progress_checked_few": "",
-    "progress_checked_many": "",
-    "progress_checked_other": ""
+    "progress_checked_one": "Progress checked alone",
+    "progress_checked_few": "Progress checked several",
+    "progress_checked_many": "Progress has been tested by many",
+    "progress_checked_other": "Progress verified by others"
   },
   "types": {
     "referrals": "Referrals",

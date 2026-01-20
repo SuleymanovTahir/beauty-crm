@@ -50,10 +50,10 @@
     "failed_create": "Falha ao criar desafio",
     "failed_delete": "Falha ao excluir o desafio",
     "failed_load": "Falha ao carregar desafios",
-    "progress_checked_one": "",
-    "progress_checked_few": "",
-    "progress_checked_many": "",
-    "progress_checked_other": ""
+    "progress_checked_one": "Progresso verificado sozinho",
+    "progress_checked_few": "Progresso verificado vários",
+    "progress_checked_many": "O progresso foi testado até data muitos",
+    "progress_checked_other": "Progresso verificado até data outros"
   },
   "types": {
     "referrals": "Referências",

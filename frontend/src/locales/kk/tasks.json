@@ -1,6 +1,6 @@
 {
-  "manage_your_tasks": "",
-  "my_tasks": "",
-  "no_tasks": "",
-  "no_tasks_description": ""
+  "manage_your_tasks": "Тапсырмаларыңызды басқарыңыз",
+  "my_tasks": "Менің тапсырмаларым",
+  "no_tasks": "Тапсырмалар жоқ",
+  "no_tasks_description": "Тапсырма сипаттамасы жоқ"
 }

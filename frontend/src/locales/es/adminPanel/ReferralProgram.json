@@ -57,7 +57,7 @@
   "title": "Programa de referencia",
   "toasts": {
     "failed_load": "No se pudieron cargar las referencias",
-    "failed_save": "",
+    "failed_save": "No se pudo guardar",
     "settings_saved": "Configuración guardada exitosamente"
   }
 }

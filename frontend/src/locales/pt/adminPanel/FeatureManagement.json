@@ -23,7 +23,7 @@
     "saved": "Configuration saved successfully"
   },
   "whitelist": {
-    "hint": "Идентификаторы пользователей, разделенные запятыми. ",
+    "hint": "IDs de usuário separados até data vírgula.",
     "label": "Whitelist (Optional)",
     "placeholder": "e.g. 1, 5, 12"
   }

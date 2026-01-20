@@ -50,10 +50,10 @@
     "failed_create": "Не удалось создать челлендж",
     "failed_delete": "Не удалось удалить челлендж",
     "failed_load": "Не удалось загрузить челленджи",
-    "progress_checked_one": "",
-    "progress_checked_few": "",
-    "progress_checked_many": "",
-    "progress_checked_other": ""
+    "progress_checked_few": "Прогресс проверил несколько",
+    "progress_checked_many": "Прогресс проверен многими",
+    "progress_checked_one": "Прогресс проверен один",
+    "progress_checked_other": "Прогресс проверен другим"
   },
   "types": {
     "referrals": "Рефералы",

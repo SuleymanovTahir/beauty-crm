@@ -1,13 +1,13 @@
 {
-  "all": "",
-  "booking": "",
-  "my_bookings": "",
-  "no_bookings": "",
-  "no_bookings_description": "",
-  "no_name": "",
-  "no_phone": "",
-  "notes": "",
-  "past": "",
-  "upcoming": "",
-  "view_and_manage_bookings": ""
+  "all": "الجميع",
+  "booking": "حجز",
+  "my_bookings": "حجوزاتي",
+  "no_bookings": "لا تحفظات",
+  "no_bookings_description": "لا يوجد وصف للحجز",
+  "no_name": "لا اسم",
+  "no_phone": "لا يوجد هاتف",
+  "notes": "ملحوظات",
+  "past": "ماضي",
+  "upcoming": "القادمة",
+  "view_and_manage_bookings": "عرض وإدارة الحجوزات الخاصة بك"
 }

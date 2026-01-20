@@ -1,7 +1,7 @@
 {
-  "browse_available_services": "",
-  "min": "",
-  "no_services": "",
-  "no_services_description": "",
-  "our_services": ""
+  "browse_available_services": "उपलब्ध दिनांक सेवाएँ देखें",
+  "min": "मिन",
+  "no_services": "कोई दिनांक सेवा नहीं",
+  "no_services_description": "दिनांक सेवाओं का कोई विवरण नहीं",
+  "our_services": "हमारी दिनांक सेवाएँ"
 }

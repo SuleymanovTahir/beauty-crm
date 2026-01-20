@@ -1,13 +1,13 @@
 {
-  "all": "",
-  "booking": "",
-  "my_bookings": "",
-  "no_bookings": "",
-  "no_bookings_description": "",
-  "no_name": "",
-  "no_phone": "",
-  "notes": "",
-  "past": "",
-  "upcoming": "",
-  "view_and_manage_bookings": ""
+  "all": "सभी",
+  "booking": "बुकिंग",
+  "my_bookings": "मेरी बुकिंग",
+  "no_bookings": "कोई आरक्षण नहीं",
+  "no_bookings_description": "कोई बुकिंग विवरण नहीं",
+  "no_name": "कोई नाम नहीं",
+  "no_phone": "फोन नहीं",
+  "notes": "टिप्पणियाँ",
+  "past": "अतीत",
+  "upcoming": "आगामी",
+  "view_and_manage_bookings": "अपनी बुकिंग देखें और प्रबंधित करें"
 }

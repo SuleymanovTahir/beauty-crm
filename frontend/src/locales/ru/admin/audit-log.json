@@ -1,10 +1,10 @@
 {
   "clear_all": "Очистить всё",
   "clear_confirm": "Вы уверены, что хотите полностью очистить журнал аудита? Это действие необратимо.",
-  "delete_batch_confirm_one": "",
-  "delete_batch_confirm_few": "",
-  "delete_batch_confirm_many": "",
-  "delete_batch_confirm_other": "",
+  "delete_batch_confirm_few": "Удалить пакет, подтвердить несколько",
+  "delete_batch_confirm_many": "Удалить пакет, подтвердить много",
+  "delete_batch_confirm_one": "Удалить пакет, подтвердить один",
+  "delete_batch_confirm_other": "Удалить пакет, подтвердить другое",
   "delete_confirm": "Удалить эту запись без возможности восстановления?",
   "delete_selected": "Удалить выбранные",
   "details": {

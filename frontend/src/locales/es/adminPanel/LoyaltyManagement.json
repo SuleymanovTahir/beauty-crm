@@ -1,11 +1,11 @@
 {
-  "adjust_points": "",
+  "adjust_points": "Puntos de ajuste",
   "buttons": {
     "add_rule": "Agregar una regla",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "Puntos de ajuste",
+    "cancel": "Cancelar",
     "save": "Ahorrar",
-    "save_changes": ""
+    "save_changes": "Guardar cambios"
   },
   "categories": {
     "category": "Categoría",
@@ -23,24 +23,24 @@
     "points_per_unit": "puntos hasta fecha 1 unidad. monedas",
     "title": "Ajustes"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "Confirmar la eliminación de la regla",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "Correo electrónico del cliente",
+      "client_email_placeholder": "Marcador de posición de correo electrónico del cliente",
+      "description": "Descripción",
+      "points": "Anteojos",
+      "points_placeholder": "relleno de puntos",
+      "reason": "Causa",
+      "reason_placeholder": "Marcador de posición de motivo",
+      "title": "Título"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
-      "tier_name": "",
-      "title": ""
+      "description": "Descripción",
+      "discount_percent": "Porcentaje de descuento",
+      "min_points": "Puntajes mínimos",
+      "tier_name": "Nombre del nivel",
+      "title": "Título"
     },
     "rule": {
       "description": "Establecer el multiplicador de puntos para la categoría de servicio.",
@@ -48,42 +48,42 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "Miembros activos",
+    "points_redeemed": "Puntos canjeados",
+    "total_points_issued": "Puntos totales otorgados"
   },
-  "subtitle": "",
+  "subtitle": "Subtítulos",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "Descripción",
+    "discount": "Descuento",
+    "from_points": "De puntos",
+    "starting_level": "Nivel de reserva",
+    "title": "Título"
   },
-  "title": "",
+  "title": "Título",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "Configuración actualizada",
+    "failed_adjust": "No se pudo configurar",
+    "failed_delete": "No se pudo eliminar",
+    "failed_load": "No se pudo cargar",
+    "failed_save": "No se pudo guardar",
+    "failed_update": "No se pudo actualizar",
+    "points_adjusted_add": "Puntos ajustados, agregados",
+    "points_adjusted_deduct": "Deducción de puntos ajustada",
+    "rule_deleted": "La regla ha sido eliminada.",
+    "rule_saved": "La regla se ha salvado.",
+    "tier_updated": "Nivel actualizado"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "Descripción",
+    "search_placeholder": "Marcador de posición de búsqueda",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "Cliente",
+      "date": "Fecha",
+      "points": "Anteojos",
+      "reason": "Causa",
+      "type": "Tipo"
     },
-    "title": ""
+    "title": "Título"
   }
 }

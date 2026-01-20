@@ -1,6 +1,6 @@
 {
-  "manage_your_tasks": "",
-  "my_tasks": "",
-  "no_tasks": "",
-  "no_tasks_description": ""
+  "manage_your_tasks": "Manage your tasks",
+  "my_tasks": "My tasks",
+  "no_tasks": "No tasks",
+  "no_tasks_description": "No task descriptions"
 }

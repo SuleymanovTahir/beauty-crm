@@ -26,7 +26,7 @@
   "manage_stages": "Colonnes",
   "manageTypes": "Types de contrats",
   "messages": {
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet accord ?",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet accord\u00a0?",
     "contractCreated": "Le contrat a été créé",
     "contractDeleted": "Contrat supprimé",
     "contractSent": "Le contrat a été envoyé",

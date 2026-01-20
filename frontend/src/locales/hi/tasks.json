@@ -1,6 +1,6 @@
 {
-  "manage_your_tasks": "",
-  "my_tasks": "",
-  "no_tasks": "",
-  "no_tasks_description": ""
+  "manage_your_tasks": "अपने कार्य प्रबंधित करें",
+  "my_tasks": "मेरे कार्य",
+  "no_tasks": "कोई कार्य नहीं",
+  "no_tasks_description": "कोई कार्य विवरण नहीं"
 }
