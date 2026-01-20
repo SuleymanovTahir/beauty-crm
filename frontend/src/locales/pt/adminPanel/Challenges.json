@@ -8,7 +8,7 @@
     "check_progress": "Verifique o progresso",
     "completed": "concluído",
     "progress": "Progresso",
-    "pts": "",
+    "pts": "pontos",
     "reward": "Recompensa",
     "target": "Alvo"
   },
@@ -22,7 +22,7 @@
         "description_placeholder": "Ex: Visite o salão {{count}} vezes este mês",
         "end_date": "Data de término",
         "reward_placeholder": "{{points}}",
-        "reward_points": "",
+        "reward_points": "pontos de bônus",
         "start_date": "Data de início",
         "target_placeholder": "{{points}}",
         "target_value": "Quantidade desejada",
@@ -50,9 +50,9 @@
     "failed_create": "Erro ao criar atividade",
     "failed_delete": "Erro durante a exclusão",
     "failed_load": "Falha ao carregar dados",
-    "progress_checked_one": "Progresso atualizado para membro {{count}}",
     "progress_checked_few": "Progresso atualizado para {{count}} participantes",
     "progress_checked_many": "Progresso atualizado para {{count}} participantes",
+    "progress_checked_one": "Progresso atualizado para membro {{count}}",
     "progress_checked_other": "Progresso atualizado para {{count}} participantes"
   },
   "types": {

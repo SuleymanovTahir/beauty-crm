@@ -6,7 +6,7 @@
       "name": "आपका नाम *",
       "namePlaceholder": "अन्ना इवानोवा",
       "phone": "टेलीफ़ोन *",
-      "phonePlaceholder": "{{points}}",
+      "phonePlaceholder": "{{phone_placeholder}}",
       "service": "दिनांक सेवा *",
       "servicePlaceholder": "एक दिनांक सेवा चुनें",
       "submit": "साइन अप करें",

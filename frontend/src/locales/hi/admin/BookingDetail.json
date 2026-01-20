@@ -6,7 +6,7 @@
   "client": "ग्राहक",
   "client_profile": "ग्राहक प्रोफ़ाइल",
   "created_at": "निर्माण तिथि",
-  "currency": "{{points}}",
+  "currency": "{{currency}}",
   "current_status": "वर्तमान स्थिति",
   "custom_range": "आपकी अवधि",
   "date_time": "तिथि और समय",

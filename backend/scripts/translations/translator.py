@@ -398,6 +398,25 @@ class Translator:
         except Exception as e:
             print(f"⚠️  Could not save cache: {e}")
 
+    def detect_language(self, text: str) -> str:
+        try:
+            encoded_text = urllib.parse.quote(text[:200])
+            url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q={encoded_text}"
+            req = urllib.request.Request(url)
+            req.add_header('User-Agent', 'Mozilla/5.0')
+            with urllib.request.urlopen(req, timeout=10) as response:
+                parsed = json.loads(response.read().decode('utf-8'))
+                if parsed and len(parsed) > 2 and parsed[2]: return parsed[2]
+                return 'ru'
+        except: return 'ru'
+
+    def transliterate(self, text: str, source: str, target: str) -> str:
+        if not text: return text
+        if source == 'ru' and target in ['en', 'es', 'fr', 'pt', 'de']:
+            mapping = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya', 'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'Yo', 'Ж': 'Zh', 'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U', 'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts', 'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Shch', 'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu', 'Я': 'Ya'}
+            return "".join(mapping.get(c, c) for c in text)
+        return self.translate(text, source, target)
+
     def _translate_via_http(self, text: str, source: str, target: str, use_context: bool = False) -> str:
         try:
             context_prefix = ""

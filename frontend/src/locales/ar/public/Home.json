@@ -6,7 +6,7 @@
       "name": "اسمك *",
       "namePlaceholder": "آنا إيفانوفا",
       "phone": "الهاتف *",
-      "phonePlaceholder": "{{points}}",
+      "phonePlaceholder": "{{phone_placeholder}}",
       "service": "خدمة *",
       "servicePlaceholder": "اختر خدمة",
       "submit": "اشتراك",
