@@ -44,6 +44,7 @@ import { useClientStatuses } from '../../hooks/useStatuses';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { Pagination } from '../../components/shared/Pagination';
 import { useCurrency } from '../../hooks/useSalonSettings';
+import './Clients.css';
 
 interface Client {
   id: string;
@@ -571,10 +572,10 @@ export default function Clients() {
 
   if (loading) {
     return (
-      <div className="p-8 flex items-center justify-center h-screen">
+      <div className="clients-loader-container p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
-          <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">{t('loading_clients')}</p>
+          <Loader className="clients-loader-icon w-8 h-8 text-pink-600 animate-spin" />
+          <p className="clients-loader-text text-gray-600">{t('loading_clients')}</p>
         </div>
       </div>
     );
@@ -582,14 +583,14 @@ export default function Clients() {
 
   if (error) {
     return (
-      <div className="p-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div className="clients-error-container p-8">
+        <div className="clients-error-box bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="clients-error-icon w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-red-800 font-medium">{t('error_loading_clients')}</p>
-              <p className="text-red-700 text-sm mt-1">{error}</p>
-              <Button onClick={loadClients} className="mt-4 bg-red-600 hover:bg-red-700">
+              <p className="clients-error-title text-red-800 font-medium">{t('error_loading_clients')}</p>
+              <p className="clients-error-message text-red-700 text-sm mt-1">{error}</p>
+              <Button onClick={loadClients} className="clients-try-again-button mt-4 bg-red-600 hover:bg-red-700">
                 {t('try_again')}
               </Button>
             </div>
@@ -600,112 +601,112 @@ export default function Clients() {
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-8 flex items-center justify-between">
+    <div className="clients-container p-8">
+      <div className="clients-header mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
-            <Users className="w-8 h-8 text-pink-600" />
+          <h1 className="clients-title text-3xl text-gray-900 mb-2 flex items-center gap-3">
+            <Users className="clients-title-icon w-8 h-8" />
             {t('title')}
           </h1>
-          <p className="text-gray-600">{filteredClients.length} {t('total_clients')}</p>
+          <p className="clients-count-text text-gray-600">{filteredClients.length} {t('total_clients')}</p>
         </div>
-        <Button onClick={handleRefresh} disabled={refreshing} variant="outline">
+        <Button onClick={handleRefresh} disabled={refreshing} variant="outline" className="clients-refresh-button">
           <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
           {t('refresh')}
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-6 md:mb-8">
-        <div className="bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+      <div className="clients-stats-grid grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-6 md:mb-8">
+        <div className="clients-stat-card bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('total_clients')}</p>
-              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.total}</h3>
-              <p className="text-[10px] md:text-xs text-gray-500">
+              <p className="clients-stat-label text-xs text-gray-600 mb-1 md:mb-2">{t('total_clients')}</p>
+              <h3 className="clients-stat-value text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.total}</h3>
+              <p className="clients-stat-period text-[10px] md:text-xs text-gray-500">
                 {period === 'all' ? t('common:all_time') :
                   period === 'today' ? t('common:for_today') :
                     period === 'custom' ? `${dateFrom} - ${dateTo}` :
                       t('common:for_period', { days: period })}
               </p>
             </div>
-            <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
-              <Users className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-blue-600" />
+            <div className="clients-stat-icon-wrapper bg-stat-blue w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center flex-shrink-0">
+              <Users className="text-stat-blue w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
             </div>
           </div>
         </div>
-        <div className="bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+        <div className="clients-stat-card bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('vip_clients')}</p>
-              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.vip}</h3>
-              <p className="text-[10px] md:text-xs text-gray-500">
+              <p className="clients-stat-label text-xs text-gray-600 mb-1 md:mb-2">{t('vip_clients')}</p>
+              <h3 className="clients-stat-value text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.vip}</h3>
+              <p className="clients-stat-period text-[10px] md:text-xs text-gray-500">
                 {period === 'all' ? t('common:all_time') :
                   period === 'today' ? t('common:for_today') :
                     period === 'custom' ? `${dateFrom} - ${dateTo}` :
                       t('common:for_period', { days: period })}
               </p>
             </div>
-            <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-yellow-50 rounded-full flex items-center justify-center flex-shrink-0">
-              <Crown className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-yellow-600" />
+            <div className="clients-stat-icon-wrapper bg-stat-yellow w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center flex-shrink-0">
+              <Crown className="text-stat-yellow w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
             </div>
           </div>
         </div>
-        <div className="bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+        <div className="clients-stat-card bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('new_clients')}</p>
-              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.new}</h3>
-              <p className="text-[10px] md:text-xs text-gray-500">
+              <p className="clients-stat-label text-xs text-gray-600 mb-1 md:mb-2">{t('new_clients')}</p>
+              <h3 className="clients-stat-value text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.new}</h3>
+              <p className="clients-stat-period text-[10px] md:text-xs text-gray-500">
                 {period === 'all' ? t('common:all_time') :
                   period === 'today' ? t('common:for_today') :
                     period === 'custom' ? `${dateFrom} - ${dateTo}` :
                       t('common:for_period', { days: period })}
               </p>
             </div>
-            <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-green-50 rounded-full flex items-center justify-center flex-shrink-0">
-              <UserPlus className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-green-600" />
+            <div className="clients-stat-icon-wrapper bg-stat-green w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center flex-shrink-0">
+              <UserPlus className="text-stat-green w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
             </div>
           </div>
         </div>
-        <div className="bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+        <div className="clients-stat-card bg-white p-3 md:p-4 lg:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-xs text-gray-600 mb-1 md:mb-2">{t('active_clients')}</p>
-              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.active}</h3>
-              <p className="text-[10px] md:text-xs text-gray-500">
+              <p className="clients-stat-label text-xs text-gray-600 mb-1 md:mb-2">{t('active_clients')}</p>
+              <h3 className="clients-stat-value text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.active}</h3>
+              <p className="clients-stat-period text-[10px] md:text-xs text-gray-500">
                 {period === 'all' ? t('common:all_time') :
                   period === 'today' ? t('common:for_today') :
                     period === 'custom' ? `${dateFrom} - ${dateTo}` :
                       t('common:for_period', { days: period })}
               </p>
             </div>
-            <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0">
-              <UserCheck className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-blue-600" />
+            <div className="clients-stat-icon-wrapper bg-stat-blue w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center flex-shrink-0">
+              <UserCheck className="text-stat-blue w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Filters & Actions */}
-      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 backdrop-blur-xl bg-white/80">
+      <div className="clients-filter-bar bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 backdrop-blur-xl bg-white/80">
         <div className="flex flex-col gap-4">
           {/* Row 1: Search */}
-          <div className="relative group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-pink-500 transition-colors" />
+          <div className="clients-search-wrapper relative group">
+            <Search className="clients-search-icon absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-pink-500 transition-colors" />
             <input
               type="text"
               placeholder={t('search_placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full h-[42px] pl-10 pr-4 bg-gray-50/50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all placeholder:text-gray-400 font-bold"
+              className="clients-search-input w-full h-[42px] pl-10 pr-4 bg-gray-50/50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none transition-all placeholder:text-gray-400 font-bold"
             />
           </div>
 
           {/* Row 2: Control Bar */}
-          <div className="flex items-center gap-2">
+          <div className="clients-controls flex items-center gap-2">
             <button
               onClick={() => setShowCreateDialog(true)}
-              className="flex-[2] min-w-[100px] h-[42px] px-3 bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md shadow-gray-200"
+              className="clients-add-button flex-[2] min-w-[100px] h-[42px] px-3 text-white rounded-xl text-xs sm:text-sm font-bold active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md"
             >
               <Plus className="w-4 h-4" />
               <span>{t('add')}</span>
@@ -716,8 +717,8 @@ export default function Clients() {
                 setShowFilters(!showFilters);
                 if (!showFilters) setShowActions(false);
               }}
-              className={`flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showFilters
-                ? 'bg-pink-50 border-pink-200 text-pink-600'
+              className={`clients-filter-button flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showFilters
+                ? 'clients-filter-button-active'
                 : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
                 }`}
             >
@@ -732,8 +733,8 @@ export default function Clients() {
                   setShowActions(!showActions);
                   if (!showActions) setShowFilters(false);
                 }}
-                className={`flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showActions
-                  ? 'bg-blue-50 border-blue-200 text-blue-600'
+                className={`clients-options-button flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showActions
+                  ? 'clients-options-button-active'
                   : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
                   }`}
               >
@@ -816,19 +817,19 @@ export default function Clients() {
         <div className="flex flex-col gap-4 mt-4 lg:mt-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex-1">
             {period === 'custom' && (
-              <div className="flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="clients-date-range flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
                 <input
                   type="date"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
-                  className="w-1/2 sm:w-40 px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all font-medium"
+                  className="clients-date-input w-1/2 sm:w-40 px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none transition-all font-medium"
                 />
                 <span className="text-gray-400 font-medium">→</span>
                 <input
                   type="date"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
-                  className="w-1/2 sm:w-40 px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all font-medium"
+                  className="clients-date-input w-1/2 sm:w-40 px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:outline-none transition-all font-medium"
                 />
               </div>
             )}
@@ -847,7 +848,7 @@ export default function Clients() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="clients-table-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {filteredClients.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -904,7 +905,7 @@ export default function Clients() {
                     {t('last_contact')} {sortField === 'last_contact' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
-                    className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
+                    className="clients-th px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('status')}
                   >
                     {t('status')} {sortField === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
@@ -916,7 +917,7 @@ export default function Clients() {
                 {paginatedClients.map((client) => (
                   <tr
                     key={client.id}
-                    className={`hover:bg-gray-50 transition-colors cursor-pointer ${selectedClients.has(client.id) ? 'bg-pink-50' : ''}`}
+                    className={`clients-tr hover:bg-gray-50 transition-colors cursor-pointer ${selectedClients.has(client.id) ? 'clients-tr-selected' : ''}`}
                     onClick={() => navigate(`/crm/clients/${encodeURIComponent(client.username || client.instagram_id)}`)}
                   >
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
@@ -928,7 +929,7 @@ export default function Clients() {
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center justify-center gap-3">
                         {client.is_pinned === 1 && (
-                          <Pin className="w-4 h-4 text-pink-600 fill-pink-600" />
+                          <Pin className="clients-pin-icon w-4 h-4 text-pink-600 fill-pink-600" />
                         )}
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
@@ -977,7 +978,7 @@ export default function Clients() {
                         return rawPhone ? (
                           <a
                             href={`tel:${rawPhone}`}
-                            className="text-sm text-blue-600 hover:underline hover:text-blue-800"
+                            className="clients-link-blue text-sm"
                             onClick={(e) => e.stopPropagation()}
                           >
                             {displayPhone}
@@ -990,7 +991,7 @@ export default function Clients() {
                     <td className="px-6 py-4 text-sm text-gray-900 text-center">{client.total_messages}</td>
                     <td className="px-6 py-4 text-sm text-gray-900 text-center">{client.total_bookings || 0}</td>
 
-                    <td className="px-6 py-4 text-sm text-green-600 font-medium text-center">
+                    <td className="clients-text-green px-6 py-4 text-sm font-medium text-center">
                       {formatCurrency(client.total_spend || client.lifetime_value || 0)}
                     </td>
                     <td className="px-6 py-4 text-center" onClick={(e) => e.stopPropagation()}>
@@ -1037,7 +1038,7 @@ export default function Clients() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="text-green-600 hover:bg-green-50"
+                          className="clients-text-green"
                           onClick={(e) => {
                             e.stopPropagation();
                             navigate(`/crm/chat?client_id=${client.id}`);
@@ -1055,13 +1056,13 @@ export default function Clients() {
                           }}
                           title={t('pin_client')}
                         >
-                          <Pin className={`w-4 h-4 ${client.is_pinned ? 'fill-pink-600 text-pink-600' : ''}`} />
+                          <Pin className={`w-4 h-4 ${client.is_pinned ? 'clients-pin-icon' : ''}`} />
                         </Button>
                         {JSON.parse(localStorage.getItem('user') || '{}').role === 'director' && (
                           <Button
                             size="sm"
                             variant="outline"
-                            className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                            className="clients-text-red"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleDeleteClient(client.id, client.display_name);
@@ -1080,8 +1081,8 @@ export default function Clients() {
             </table>
           </div>
         ) : (
-          <div className="py-20 text-center text-gray-500">
-            <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <div className="clients-empty-state py-20 text-center text-gray-500">
+            <Users className="clients-empty-icon w-16 h-16 text-gray-300 mx-auto mb-4" />
             <p>{t('no_clients_found')}</p>
           </div>
         )}
