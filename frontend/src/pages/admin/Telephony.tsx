@@ -476,7 +476,7 @@ export default function Telephony() {
                         className="w-full md:w-auto px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95"
                     >
                         <RefreshCw className={`w-4 h-4 ${processing ? 'animate-spin' : ''} text-pink-600`} />
-                        Обновить
+                        {t('common:refresh', 'Обновить')}
                     </button>
                 </div>
 
@@ -504,7 +504,7 @@ export default function Telephony() {
                                 </div>
                                 <div>
                                     <div className="text-2xl font-bold text-blue-900">{stats.total_calls}</div>
-                                    <div className="text-xs text-blue-600 font-medium">Всего звонков</div>
+                                    <div className="text-xs text-blue-600 font-medium">{t('telephony:total_calls', 'Всего звонков')}</div>
                                 </div>
                             </div>
                             <div className="bg-green-50 border border-green-100 p-4 rounded-xl flex items-center gap-4">
@@ -513,7 +513,7 @@ export default function Telephony() {
                                 </div>
                                 <div>
                                     <div className="text-2xl font-bold text-green-900">{stats.inbound}</div>
-                                    <div className="text-xs text-green-600 font-medium">Входящие</div>
+                                    <div className="text-xs text-green-600 font-medium">{t('telephony:inbound', 'Входящие')}</div>
                                 </div>
                             </div>
                             <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
@@ -522,7 +522,7 @@ export default function Telephony() {
                                 </div>
                                 <div>
                                     <div className="text-2xl font-bold text-blue-900">{stats.outbound}</div>
-                                    <div className="text-xs text-blue-600 font-medium">Исходящие</div>
+                                    <div className="text-xs text-blue-600 font-medium">{t('telephony:outbound', 'Исходящие')}</div>
                                 </div>
                             </div>
                             <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center gap-4">
@@ -531,7 +531,7 @@ export default function Telephony() {
                                 </div>
                                 <div>
                                     <div className="text-2xl font-bold text-red-900">{stats.missed}</div>
-                                    <div className="text-xs text-red-600 font-medium">Пропущенные</div>
+                                    <div className="text-xs text-red-600 font-medium">{t('telephony:missed', 'Пропущенные')}</div>
                                 </div>
                             </div>
                         </div>
@@ -542,7 +542,7 @@ export default function Telephony() {
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                     <Input
-                                        placeholder="Поиск по номеру или имени..."
+                                        placeholder={t('telephony:search_placeholder', 'Поиск по номеру или имени...')}
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
                                         className="pl-9 h-[42px] bg-gray-50/50 border-gray-200 rounded-xl font-bold shadow-none focus-visible:ring-1 focus-visible:ring-pink-500"
@@ -556,7 +556,7 @@ export default function Telephony() {
                                         className="flex-[2] min-w-[100px] h-[42px] px-3 bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md shadow-gray-200"
                                     >
                                         <Plus className="w-4 h-4" />
-                                        <span>Добавить</span>
+                                        <span>{t('common:add', 'Добавить')}</span>
                                     </button>
 
                                     <button
@@ -567,7 +567,7 @@ export default function Telephony() {
                                             }`}
                                     >
                                         <Users className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
-                                        <span className="truncate">Фильтры</span>
+                                        <span className="truncate">{t('common:filters', 'Фильтры')}</span>
                                         <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
                                     </button>
 
@@ -577,7 +577,7 @@ export default function Telephony() {
                                             className="flex-1 h-[42px] px-2 bg-red-50 text-red-600 border border-red-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-red-100 active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-sm"
                                         >
                                             <Trash2 className="w-4 h-4" />
-                                            <span className="truncate">Удалить ({selectedIds.length})</span>
+                                            <span className="truncate">{t('common:delete', 'Удалить')} ({selectedIds.length})</span>
                                         </button>
                                     )}
 
@@ -602,8 +602,8 @@ export default function Telephony() {
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="all">{t('common:all', 'Все')}</SelectItem>
-                                                        <SelectItem value="completed">{t('common:status_completed', 'Завершенные')}</SelectItem>
+                                                        <SelectItem value="all">{t('telephony:all', 'Все')}</SelectItem>
+                                                        <SelectItem value="completed">{t('telephony:status_completed', 'Завершенные')}</SelectItem>
                                                         <SelectItem value="missed">{t('telephony:missed', 'Пропущенные')}</SelectItem>
                                                         <SelectItem value="rejected">{t('common:rejected', 'Отклоненные')}</SelectItem>
                                                     </SelectContent>
@@ -618,7 +618,7 @@ export default function Telephony() {
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="all">{t('common:all', 'Все')}</SelectItem>
+                                                        <SelectItem value="all">{t('telephony:all', 'Все')}</SelectItem>
                                                         <SelectItem value="inbound">{t('telephony:inbound', 'Входящие')}</SelectItem>
                                                         <SelectItem value="outbound">{t('telephony:outbound', 'Исходящие')}</SelectItem>
                                                     </SelectContent>
@@ -684,7 +684,7 @@ export default function Telephony() {
                                         {period === 'custom' && (
                                             <div className="grid grid-cols-2 gap-3 pt-3 mt-2 border-t border-gray-50">
                                                 <div className="flex flex-col gap-1.5">
-                                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">От</span>
+                                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">{t('telephony:from', 'От')}</span>
                                                     <input
                                                         type="date"
                                                         value={dateFrom}
@@ -693,7 +693,7 @@ export default function Telephony() {
                                                     />
                                                 </div>
                                                 <div className="flex flex-col gap-1.5">
-                                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">До</span>
+                                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">{t('telephony:to', 'До')}</span>
                                                     <input
                                                         type="date"
                                                         value={dateTo}
@@ -759,13 +759,13 @@ export default function Telephony() {
                                                 <div className="flex justify-center mb-2">
                                                     <Loader2 className="animate-spin w-8 h-8 text-pink-500" />
                                                 </div>
-                                                Загрузка звонков...
+                                                {t('telephony:loading', 'Загрузка звонков...')}
                                             </td>
                                         </tr>
                                     ) : calls.length === 0 ? (
                                         <tr>
                                             <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
-                                                Звонков не найдено
+                                                {t('telephony:no_calls_found', 'Звонков не найдено')}
                                             </td>
                                         </tr>
                                     ) : (
@@ -787,7 +787,7 @@ export default function Telephony() {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <div className="font-medium text-gray-900">{call.client_name || 'Неизвестный'}</div>
+                                                    <div className="font-medium text-gray-900">{call.client_name || t('common:unknown', 'Неизвестный')}</div>
                                                     <div className="text-xs text-gray-500">{call.phone}</div>
                                                 </td>
                                                 <td className="px-6 py-4">

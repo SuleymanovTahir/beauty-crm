@@ -377,8 +377,8 @@ export default function AdminSettings() {
     try {
       setUploadingPhoto(true);
       const uploadResponse = await api.uploadFile(file);
-      if (uploadResponse.url) {
-        const response = await api.updateMyProfile({ photo_url: uploadResponse.url });
+      if (uploadResponse.full_url) {
+        const response = await api.updateMyProfile({ photo_url: uploadResponse.full_url });
         if (response.success) {
           toast.success(t('photo_updated'));
         }
@@ -1040,7 +1040,7 @@ export default function AdminSettings() {
           className="bg-white"
         >
           <Menu className="w-4 h-4 mr-2" />
-          Настроить меню
+          {t('settings:customize_menu', 'Настроить меню')}
         </Button>
       </div>
 

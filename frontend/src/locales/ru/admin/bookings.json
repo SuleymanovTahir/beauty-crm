@@ -59,5 +59,6 @@
     "manual": "Вручную",
     "telegram": "Телеграмма",
     "whatsapp": "WhatsApp"
-  }
+  },
+  "status": "Статус"
 }

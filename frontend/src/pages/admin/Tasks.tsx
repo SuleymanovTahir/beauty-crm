@@ -5,7 +5,7 @@ import { api } from '../../services/api';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { ScrollArea } from '../../components/ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import { Avatar, AvatarFallback } from "../../components/ui/avatar";
 import {
     Plus,
     Clock,
@@ -123,7 +123,7 @@ export default function Tasks() {
     };
 
     const handleDeleteTask = async (taskId: number) => {
-        if (!confirm(t('confirm_delete', 'Вы уверены, что хотите удалить эту задачу?'))) return;
+        if (!confirm(t('confirm_delete'))) return;
 
         try {
             await api.delete(`/api/tasks/${taskId}`);
@@ -161,8 +161,8 @@ export default function Tasks() {
             <div className="px-8 py-6 bg-white border-b">
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">{t('tasks', 'Задачи')}</h1>
-                        <p className="text-sm text-gray-500 mt-1">{t('task_management_subtitle', 'Управление задачами команды')}</p>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('tasks')}</h1>
+                        <p className="text-sm text-gray-500 mt-1">{t('task_management_subtitle')}</p>
                     </div>
                     <div className="flex gap-2">
                         <div className="bg-gray-100 p-1 rounded-lg flex items-center mr-2 border border-gray-200">
@@ -174,7 +174,7 @@ export default function Tasks() {
                                     }`}
                             >
                                 <Layout className="w-4 h-4 mr-2 inline-block" />
-                                {t('board', 'Доска')}
+                                {t('board')}
                             </button>
                             <button
                                 onClick={() => setViewMode('dashboard')}
@@ -184,7 +184,7 @@ export default function Tasks() {
                                     }`}
                             >
                                 <LayoutDashboard className="w-4 h-4 mr-2 inline-block" />
-                                {t('dashboard', 'Дашборд')}
+                                {t('dashboard')}
                             </button>
                         </div>
 
@@ -194,14 +194,14 @@ export default function Tasks() {
                             onClick={() => setManageStagesOpen(true)}
                         >
                             <Settings className="w-4 h-4 mr-2" />
-                            {t('manage_stages', 'Управление стадиями')}
+                            {t('manage_stages')}
                         </Button>
                         <Button
                             className="bg-gradient-to-r from-pink-500 to-blue-600 text-white shadow-lg shadow-blue-500/20"
                             onClick={() => setCreateDialogOpen(true)}
                         >
                             <Plus className="w-4 h-4 mr-2" />
-                            {t('create_task', 'Новая задача')}
+                            {t('create_task')}
                         </Button>
                     </div>
                 </div>
@@ -229,7 +229,7 @@ export default function Tasks() {
                             </div>
                             <div>
                                 <div className="text-2xl font-bold text-blue-900">{analytics.today}</div>
-                                <div className="text-xs text-blue-600 font-medium">{t('analytics.today', 'На сегодня')}</div>
+                                <div className="text-xs text-blue-600 font-medium">{t('analytics.today')}</div>
                             </div>
                         </div>
                         <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center gap-4">
@@ -238,7 +238,7 @@ export default function Tasks() {
                             </div>
                             <div>
                                 <div className="text-2xl font-bold text-red-900">{analytics.overdue}</div>
-                                <div className="text-xs text-red-600 font-medium">{t('analytics.overdue', 'Просрочено')}</div>
+                                <div className="text-xs text-red-600 font-medium">{t('analytics.overdue')}</div>
                             </div>
                         </div>
                         <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
@@ -247,7 +247,7 @@ export default function Tasks() {
                             </div>
                             <div>
                                 <div className="text-2xl font-bold text-blue-900">{analytics.completed}</div>
-                                <div className="text-xs text-blue-600 font-medium">{t('analytics.completed', 'Выполнено')}</div>
+                                <div className="text-xs text-blue-600 font-medium">{t('analytics.completed')}</div>
                             </div>
                         </div>
                         <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl flex items-center gap-4">
@@ -256,7 +256,7 @@ export default function Tasks() {
                             </div>
                             <div>
                                 <div className="text-2xl font-bold text-gray-900">{analytics.total_active}</div>
-                                <div className="text-xs text-gray-600 font-medium">{t('analytics.active', 'В работе')}</div>
+                                <div className="text-xs text-gray-600 font-medium">{t('analytics.active')}</div>
                             </div>
                         </div>
                     </div>
@@ -313,7 +313,7 @@ export default function Tasks() {
                                                             e.stopPropagation();
                                                             handleEditTask(task);
                                                         }}
-                                                        title={t('edit', 'Edit')}
+                                                        title={t('edit')}
                                                     >
                                                         <Eye className="w-4 h-4" />
                                                     </Button>
@@ -325,7 +325,7 @@ export default function Tasks() {
                                                             e.stopPropagation();
                                                             handleDeleteTask(task.id);
                                                         }}
-                                                        title={t('delete', 'Delete')}
+                                                        title={t('delete')}
                                                     >
                                                         <Trash2 className="w-4 h-4" />
                                                     </Button>
@@ -334,7 +334,7 @@ export default function Tasks() {
                                                 {/* Task Card Content */}
                                                 <div className="flex justify-between items-start mb-2">
                                                     <Badge className={`px-2 py-0.5 text-[10px] bg-transparent border ${getPriorityColor(task.priority)} shadow-none hover:bg-transparent`}>
-                                                        {t(`priority.${task.priority}`, task.priority)}
+                                                        {t(`priority.${task.priority}`)}
                                                     </Badge>
                                                 </div>
 

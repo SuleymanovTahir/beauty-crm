@@ -156,7 +156,7 @@ const getCountryFlag = (countryName: string): string => {
 };
 
 export default function VisitorAnalytics() {
-    const { t } = useTranslation('admin/VisitorAnalytics');
+    const { t } = useTranslation('admin/visitoranalytics');
     const [visitors, setVisitors] = useState<Visitor[]>([]);
     const [locationBreakdown, setLocationBreakdown] = useState<any>(null);
     const [countryBreakdown, setCountryBreakdown] = useState<any[]>([]);
@@ -295,28 +295,28 @@ export default function VisitorAnalytics() {
         const maxDist = Number(distanceTo);
         if (maxDist <= 5) {
             return [
-                { name: '≤1км', value: distanceBreakdown?.within_1km || 0, fill: COLORS[0] },
-                { name: '1-2км', value: distanceBreakdown?.within_2km || 0, fill: COLORS[1] },
-                { name: '2-5км', value: distanceBreakdown?.within_5km || 0, fill: COLORS[2] },
+                { name: t('distance_range_under', { count: 1 }), value: distanceBreakdown?.within_1km || 0, fill: COLORS[0] },
+                { name: t('distance_range_between', { min: 1, max: 2 }), value: distanceBreakdown?.within_2km || 0, fill: COLORS[1] },
+                { name: t('distance_range_between', { min: 2, max: 5 }), value: distanceBreakdown?.within_5km || 0, fill: COLORS[2] },
             ];
         } else if (maxDist <= 20) {
             return [
-                { name: '≤1км', value: distanceBreakdown?.within_1km || 0, fill: COLORS[0] },
-                { name: '1-2км', value: distanceBreakdown?.within_2km || 0, fill: COLORS[1] },
-                { name: '2-5км', value: distanceBreakdown?.within_5km || 0, fill: COLORS[2] },
-                { name: '5-10км', value: distanceBreakdown?.within_10km || 0, fill: COLORS[3] },
-                { name: '10-15км', value: distanceBreakdown?.within_15km || 0, fill: COLORS[4] },
-                { name: '15-20км', value: distanceBreakdown?.within_20km || 0, fill: COLORS[5] },
+                { name: t('distance_range_under', { count: 1 }), value: distanceBreakdown?.within_1km || 0, fill: COLORS[0] },
+                { name: t('distance_range_between', { min: 1, max: 2 }), value: distanceBreakdown?.within_2km || 0, fill: COLORS[1] },
+                { name: t('distance_range_between', { min: 2, max: 5 }), value: distanceBreakdown?.within_5km || 0, fill: COLORS[2] },
+                { name: t('distance_range_between', { min: 5, max: 10 }), value: distanceBreakdown?.within_10km || 0, fill: COLORS[3] },
+                { name: t('distance_range_between', { min: 10, max: 15 }), value: distanceBreakdown?.within_15km || 0, fill: COLORS[4] },
+                { name: t('distance_range_between', { min: 15, max: 20 }), value: distanceBreakdown?.within_20km || 0, fill: COLORS[5] },
             ];
         } else {
             return [
-                { name: '≤1км', value: distanceBreakdown?.within_1km || 0, fill: COLORS[0] },
-                { name: '1-2км', value: distanceBreakdown?.within_2km || 0, fill: COLORS[1] },
-                { name: '2-5км', value: distanceBreakdown?.within_5km || 0, fill: COLORS[2] },
-                { name: '5-10км', value: distanceBreakdown?.within_10km || 0, fill: COLORS[3] },
-                { name: '10-15км', value: distanceBreakdown?.within_15km || 0, fill: COLORS[4] },
-                { name: '15-20км', value: distanceBreakdown?.within_20km || 0, fill: COLORS[5] },
-                { name: `20-${maxDist}км`, value: distanceBreakdown?.[`within_${maxDist}km`] || 0, fill: COLORS[6] },
+                { name: t('distance_range_under', { count: 1 }), value: distanceBreakdown?.within_1km || 0, fill: COLORS[0] },
+                { name: t('distance_range_between', { min: 1, max: 2 }), value: distanceBreakdown?.within_2km || 0, fill: COLORS[1] },
+                { name: t('distance_range_between', { min: 2, max: 5 }), value: distanceBreakdown?.within_5km || 0, fill: COLORS[2] },
+                { name: t('distance_range_between', { min: 5, max: 10 }), value: distanceBreakdown?.within_10km || 0, fill: COLORS[3] },
+                { name: t('distance_range_between', { min: 10, max: 15 }), value: distanceBreakdown?.within_15km || 0, fill: COLORS[4] },
+                { name: t('distance_range_between', { min: 15, max: 20 }), value: distanceBreakdown?.within_20km || 0, fill: COLORS[5] },
+                { name: t('distance_range_between', { min: 20, max: maxDist }), value: distanceBreakdown?.[`within_${maxDist}km`] || 0, fill: COLORS[6] },
             ];
         }
     };
@@ -470,14 +470,14 @@ export default function VisitorAnalytics() {
                                 }}
                                 className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
                             >
-                                <option value="1">До 1 км</option>
-                                <option value="2">До 2 км</option>
-                                <option value="5">До 5 км</option>
-                                <option value="10">До 10 км</option>
-                                <option value="15">До 15 км</option>
-                                <option value="20">До 20 км</option>
-                                <option value="50">До 50 км</option>
-                                <option value="100">До 100 км</option>
+                                <option value="1">{t('distance_up_to', { count: 1 })}</option>
+                                <option value="2">{t('distance_up_to', { count: 2 })}</option>
+                                <option value="5">{t('distance_up_to', { count: 5 })}</option>
+                                <option value="10">{t('distance_up_to', { count: 10 })}</option>
+                                <option value="15">{t('distance_up_to', { count: 15 })}</option>
+                                <option value="20">{t('distance_up_to', { count: 20 })}</option>
+                                <option value="50">{t('distance_up_to', { count: 50 })}</option>
+                                <option value="100">{t('distance_up_to', { count: 100 })}</option>
                                 <option value="custom">{t('custom_range')}</option>
                             </select>
                             {showCustomDistance && (

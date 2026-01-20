@@ -21,7 +21,7 @@ interface FAQ {
 }
 
 export default function FAQTab() {
-    const { t, i18n } = useTranslation(['admin/PublicContent', 'common']);
+    const { t, i18n } = useTranslation(['admin/publiccontent', 'common']);
     const currentLang = i18n.language?.split('-')[0] || 'en';
 
     // Helper to get localized text with fallback to Russian
@@ -100,8 +100,8 @@ export default function FAQTab() {
         <div>
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h2 className="text-xl font-semibold">{t('faq_title', 'Частые вопросы')}</h2>
-                    <p className="text-gray-600">{t('faq_subtitle', 'Управление разделом FAQ')}</p>
+                    <h2 className="text-xl font-semibold">{t('faq_title')}</h2>
+                    <p className="text-gray-600">{t('faq_subtitle')}</p>
                 </div>
                 <Button onClick={() => {
                     setEditingFAQ(null);
