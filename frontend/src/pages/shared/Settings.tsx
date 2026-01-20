@@ -220,7 +220,7 @@ export default function AdminSettings() {
   const loadUsers = async () => {
     try {
       const data = await api.getUsers();
-      setUsers(data);
+      setUsers(data?.users || data || []);
     } catch (error) {
       console.error('Failed to load users:', error);
     }
@@ -282,7 +282,7 @@ export default function AdminSettings() {
 
   const loadProfile = async () => {
     try {
-      console.log('🔍 [Profile] Загрузка профиля...');
+      console.log('🔍 [Profile] ' + t('settings:loading'));
       const response = await api.getMyProfile();
       console.log('✅ [Profile] Ответ получен:', response);
 
@@ -320,7 +320,7 @@ export default function AdminSettings() {
         console.warn('⚠️ [Profile] Пользователь не привязан к сотруднику (employee_id отсутствует)');
         toast.error(t('profile_not_available_not_linked'));
       } else {
-        toast.error(`${t('error_loading_profile')}: ${err.message || t('unknown_error')} `);
+        toast.error(`${t('settings:error_loading_profile')}: ${err.message || t('common:unknown_error')} `);
       }
     }
   };
@@ -350,7 +350,7 @@ export default function AdminSettings() {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error(t('file_too_large'));
+      toast.error(t('file_too_large', { max: 5 }));
       return;
     }
 
@@ -378,12 +378,12 @@ export default function AdminSettings() {
 
   const handleSaveProfile = async () => {
     if (profileForm.username.length < 3) {
-      toast.error(t('error_username_too_short'));
+      toast.error(t('error_username_too_short', { count: 3 }));
       return;
     }
 
     if (profileForm.full_name.length < 2) {
-      toast.error(t('error_name_too_short'));
+      toast.error(t('error_name_too_short', { count: 2 }));
       return;
     }
 
@@ -399,7 +399,7 @@ export default function AdminSettings() {
       }
 
       if (profileForm.new_password.length < 6) {
-        toast.error(t('error_password_too_short'));
+        toast.error(t('error_password_too_short', { count: 6 }));
         return;
       }
 
@@ -453,10 +453,10 @@ export default function AdminSettings() {
           localStorage.setItem('user', JSON.stringify(user));
         }
       } else {
-        toast.error(response.error || t('error_update_profile'));
+        toast.error(response.error || t('settings:error_update_profile'));
       }
     } catch (err: any) {
-      toast.error(err.message || t('error_update_profile'));
+      toast.error(err.message || t('settings:error_update_profile'));
     } finally {
       setSavingProfile(false);
     }
@@ -905,34 +905,34 @@ export default function AdminSettings() {
 
   const handleCreateHoliday = async () => {
     if (!holidayForm.date || !holidayForm.name) {
-      toast.error(t('settings:enter_holiday_details', 'Please enter holiday date and name'));
+      toast.error(t('settings:enter_holiday_details'));
       return;
     }
 
     try {
       await api.createHoliday(holidayForm);
-      toast.success(t('settings:holiday_created', 'Holiday created successfully'));
+      toast.success(t('settings:holiday_created'));
       setShowCreateHolidayDialog(false);
       setHolidayForm({ date: '', name: '', is_closed: true, master_exceptions: [] });
       loadHolidays();
     } catch (err) {
       console.error('Error creating holiday:', err);
-      toast.error(t('settings:error_creating_holiday', 'Error creating holiday'));
+      toast.error(t('settings:error_creating_holiday'));
     }
   };
 
   const handleDeleteHoliday = async (date: string) => {
-    if (!confirm(t('settings:delete_holiday_confirm', 'Are you sure you want to delete this holiday?'))) {
+    if (!confirm(t('settings:delete_holiday_confirm'))) {
       return;
     }
 
     try {
       await api.deleteHoliday(date);
-      toast.success(t('settings:holiday_deleted', 'Holiday deleted successfully'));
+      toast.success(t('settings:holiday_deleted'));
       loadHolidays();
     } catch (err) {
       console.error('Error deleting holiday:', err);
-      toast.error(t('settings:error_deleting_holiday', 'Error deleting holiday'));
+      toast.error(t('settings:error_deleting_holiday'));
     }
   };
 
@@ -972,14 +972,14 @@ export default function AdminSettings() {
 
   // Список всех вкладок с условиями отображения
   const allTabs = useMemo(() => [
-    { id: 'profile', icon: User, label: t('settings:profile', 'Profile'), show: true },
+    { id: 'profile', icon: User, label: t('settings:profile'), show: true },
     { id: 'general', icon: Globe, label: t('settings:general'), show: userPermissions.canEditSettings || userPermissions.roleLevel >= 70 },
     { id: 'notifications', icon: Bell, label: t('settings:notifications'), show: true },
     { id: 'security', icon: Shield, label: t('settings:security'), show: true },
     { id: 'diagnostics', icon: AlertCircle, label: t('settings:diagnostics'), show: userPermissions.roleLevel >= 90 },
     { id: 'subscriptions', icon: Mail, label: t('subscriptions'), show: true },
     { id: 'broadcasts', icon: Send, label: t('settings:broadcasts'), show: userPermissions.canSendBroadcasts },
-    { id: 'holidays', icon: Calendar, label: t('settings:holidays', 'Holidays'), show: userPermissions.canEditSettings },
+    { id: 'holidays', icon: Calendar, label: t('settings:holidays'), show: userPermissions.canEditSettings },
     { id: 'danger', icon: Trash2, label: t('danger_zone'), show: userPermissions.roleLevel >= 90 },
   ], [userPermissions, t]);
 
@@ -1003,7 +1003,7 @@ export default function AdminSettings() {
             className="bg-white"
           >
             <Menu className="w-4 h-4 mr-2" />
-            Настроить меню
+            {t('settings:customize_menu')}
           </Button>
         </div>
       )}
@@ -1040,7 +1040,7 @@ export default function AdminSettings() {
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl text-[var(--heading)] flex items-center gap-3">
                 <User className="w-6 h-6 settings-text-primary" />
-                {t('settings:personal_information', 'Личная информация')}
+                {t('settings:personal_information')}
               </h2>
               <Button
                 onClick={() => handleSaveProfile()}
@@ -1050,12 +1050,12 @@ export default function AdminSettings() {
                 {savingProfile ? (
                   <>
                     <Loader className="w-4 h-4 mr-2 animate-spin" />
-                    {t('common:saving', 'Сохранение...')}
+                    {t('common:saving')}
                   </>
                 ) : (
                   <>
                     <Save className="w-4 h-4 mr-2" />
-                    {t('common:save', 'Сохранить')}
+                    {t('common:save')}
                   </>
                 )}
               </Button>
@@ -1090,11 +1090,11 @@ export default function AdminSettings() {
                   </label>
                 </div>
                 <h4 className="text-sm font-medium text-gray-900 mb-1">{profileForm.full_name || 'User'}</h4>
-                <p className="text-xs text-muted-foreground mb-4 uppercase tracking-wider">{profileForm.position || t('settings:no_position', 'Сотрудник')}</p>
+                <p className="text-xs text-muted-foreground mb-4 uppercase tracking-wider">{profileForm.position || t('settings:no_position')}</p>
                 {uploadingPhoto && (
                   <div className="flex items-center gap-2 text-xs settings-text-primary animate-pulse">
                     <Loader className="w-3 h-3 animate-spin" />
-                    {t('common:uploading', 'Загрузка...')}
+                    {t('common:uploading')}
                   </div>
                 )}
               </div>
@@ -1105,13 +1105,13 @@ export default function AdminSettings() {
                   <div className="space-y-2">
                     <Label htmlFor="full_name" className="flex items-center gap-2">
                       <User className="w-3.5 h-3.5 text-muted-foreground" />
-                      {t('settings:full_name', 'Полное имя')} *
+                      {t('settings:full_name')} *
                     </Label>
                     <Input
                       id="full_name"
                       value={profileForm.full_name}
                       onChange={(e) => setProfileForm({ ...profileForm, full_name: e.target.value })}
-                      placeholder={t('settings:placeholder_full_name', 'Имя Фамилия')}
+                      placeholder={t('settings:placeholder_full_name')}
                       required
                     />
                   </div>
@@ -1119,7 +1119,7 @@ export default function AdminSettings() {
                   <div className="space-y-2">
                     <Label htmlFor="username" className="flex items-center gap-2">
                       <Briefcase className="w-3.5 h-3.5 text-muted-foreground" />
-                      {t('settings:username', 'Логин')} *
+                      {t('settings:username')} *
                     </Label>
                     <Input
                       id="username"
@@ -1148,7 +1148,7 @@ export default function AdminSettings() {
                   <div className="space-y-2">
                     <Label htmlFor="phone_number" className="flex items-center gap-2">
                       <Smartphone className="w-3.5 h-3.5 text-muted-foreground" />
-                      {t('settings:phone_number', 'Номер телефона')}
+                      {t('settings:phone_number')}
                     </Label>
                     <Input
                       id="phone_number"
@@ -1162,27 +1162,27 @@ export default function AdminSettings() {
                 <div className="border-t border-border/50 pt-6">
                   <h3 className="text-lg font-medium text-[var(--heading)] mb-4 flex items-center gap-2">
                     <Briefcase className="w-5 h-5 settings-text-primary" />
-                    {t('settings:professional_profile', 'Профессиональный профиль')}
+                    {t('settings:professional_profile')}
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div className="space-y-2">
                       <Label htmlFor="position" className="flex items-center gap-2">
                         <Award className="w-3.5 h-3.5 text-muted-foreground" />
-                        {t('settings:position', 'Должность')}
+                        {t('settings:position')}
                       </Label>
                       <Input
                         id="position"
                         value={profileForm.position}
                         onChange={(e) => setProfileForm({ ...profileForm, position: e.target.value })}
-                        placeholder={t('settings:placeholder_position', 'Например: Топ-стилист')}
+                        placeholder={t('settings:placeholder_position')}
                       />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="years_of_experience" className="flex items-center gap-2">
                         <Star className="w-3.5 h-3.5 text-muted-foreground" />
-                        {t('settings:years_of_experience', 'Стаж (лет)')}
+                        {t('settings:years_of_experience')}
                       </Label>
                       <Input
                         id="years_of_experience"
@@ -1197,27 +1197,27 @@ export default function AdminSettings() {
                     <div className="space-y-2 md:col-span-2">
                       <Label htmlFor="specialization" className="flex items-center gap-2">
                         <BookOpen className="w-3.5 h-3.5 text-muted-foreground" />
-                        {t('settings:specialization', 'Специализация')}
+                        {t('settings:specialization')}
                       </Label>
                       <Input
                         id="specialization"
                         value={profileForm.specialization}
                         onChange={(e) => setProfileForm({ ...profileForm, specialization: e.target.value })}
-                        placeholder={t('settings:placeholder_specialization', 'Перечислите основные направления через запятую')}
+                        placeholder={t('settings:placeholder_specialization')}
                       />
                     </div>
 
                     <div className="space-y-2 md:col-span-2">
                       <Label htmlFor="about_me" className="flex items-center gap-2">
                         <FileText className="w-3.5 h-3.5 text-muted-foreground" />
-                        {t('settings:about_me', 'О себе')}
+                        {t('settings:about_me')}
                       </Label>
                       <Textarea
                         id="about_me"
                         rows={4}
                         value={profileForm.about_me}
                         onChange={(e) => setProfileForm({ ...profileForm, about_me: e.target.value })}
-                        placeholder={t('settings:placeholder_about_me', 'Расскажите о своем опыте и подходе к работе...')}
+                        placeholder={t('settings:placeholder_about_me')}
                       />
                     </div>
                   </div>
@@ -1226,7 +1226,7 @@ export default function AdminSettings() {
                 <div className="border-t border-border/50 pt-6">
                   <h3 className="text-lg font-medium text-[var(--heading)] mb-4 flex items-center gap-2">
                     <Globe className="w-5 h-5 settings-text-primary" />
-                    {t('settings:social_links', 'Социальные сети')}
+                    {t('settings:social_links')}
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1397,7 +1397,7 @@ export default function AdminSettings() {
                   </div>
 
                   <div>
-                    <Label htmlFor="telegram_chat_id">{t('settings:telegram_manager_chat_id', 'Telegram Manager Chat ID')}</Label>
+                    <Label htmlFor="telegram_chat_id">{t('settings:telegram_manager_chat_id')}</Label>
                     <Input
                       id="telegram_chat_id"
                       value={generalSettings.telegram_manager_chat_id}
@@ -1406,7 +1406,7 @@ export default function AdminSettings() {
                       className="px-3"
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      {t('settings:telegram_chat_id_hint', 'ID чата для получения уведомлений о негативных отзывах')}
+                      {t('settings:telegram_chat_id_hint')}
                     </p>
                   </div>
                 </div>
@@ -1443,7 +1443,7 @@ export default function AdminSettings() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                   <div>
-                    <Label htmlFor="lunch_start">{t('settings:lunch_start', 'Начало обеда')}</Label>
+                    <Label htmlFor="lunch_start">{t('settings:lunch_start')}</Label>
                     <Input
                       id="lunch_start"
                       type="time"
@@ -1456,7 +1456,7 @@ export default function AdminSettings() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="lunch_end">{t('settings:lunch_end', 'Конец обеда')}</Label>
+                    <Label htmlFor="lunch_end">{t('settings:lunch_end')}</Label>
                     <Input
                       id="lunch_end"
                       type="time"
@@ -1473,12 +1473,12 @@ export default function AdminSettings() {
                 {/* Universal Settings Section */}
                 <div className="space-y-4 border-t pt-6 mt-6">
                   <h3 className="text-lg font-semibold text-gray-900">
-                    {t('settings:universal_settings', 'Универсальные настройки')}
+                    {t('settings:universal_settings')}
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <Label htmlFor="city">{t('settings:city', 'Город')}</Label>
+                      <Label htmlFor="city">{t('settings:city')}</Label>
                       <Input
                         id="city"
                         value={generalSettings.city}
@@ -1488,7 +1488,7 @@ export default function AdminSettings() {
                     </div>
 
                     <div>
-                      <Label htmlFor="currency">{t('settings:currency', 'Валюта')}</Label>
+                      <Label htmlFor="currency">{t('settings:currency')}</Label>
                       <div className="flex gap-2">
                         <Select
                           value={generalSettings.currency}
@@ -1518,13 +1518,13 @@ export default function AdminSettings() {
                     </div>
 
                     <div>
-                      <Label htmlFor="timezone_offset">{t('settings:timezone_offset', 'Часовой пояс')}</Label>
+                      <Label htmlFor="timezone_offset">{t('settings:timezone_offset')}</Label>
                       <Select
                         value={generalSettings.timezone_offset}
                         onValueChange={(value) => setGeneralSettings({ ...generalSettings, timezone_offset: value })}
                       >
                         <SelectTrigger id="timezone_offset">
-                          <SelectValue placeholder={t('settings:select_timezone', 'Выберите часовой пояс')} />
+                          <SelectValue placeholder={t('settings:select_timezone')} />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="UTC+0">UTC+0 (London)</SelectItem>
@@ -1542,7 +1542,7 @@ export default function AdminSettings() {
                     </div>
 
                     <div>
-                      <Label htmlFor="birthday_discount">{t('settings:birthday_discount', 'Скидка на день рождения')}</Label>
+                      <Label htmlFor="birthday_discount">{t('settings:birthday_discount')}</Label>
                       <Input
                         id="birthday_discount"
                         value={generalSettings.birthday_discount}
@@ -1550,7 +1550,7 @@ export default function AdminSettings() {
                         placeholder="15%"
                       />
                       <p className="text-xs text-gray-500 mt-1">
-                        {t('settings:birthday_discount_hint', 'Например: 15%, 20%, 500 {{currency}}', { currency: generalSettings.currency })}
+                        {t('settings:birthday_discount_hint', { currency: generalSettings.currency })}
                       </p>
                     </div>
                   </div>
@@ -1905,9 +1905,9 @@ export default function AdminSettings() {
             <h2 className="text-2xl text-gray-900 mb-6">{t('settings:security_and_access')}</h2>
 
             <div className="space-y-6">
-              <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="settings-alert-box">
                 <div className="flex items-start gap-3">
-                  <Shield className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-1" />
+                  <Shield className="w-6 h-6 settings-text-yellow flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="text-sm text-gray-900 mb-2 font-semibold">{t('settings:security_recommendations')}</h3>
                     <ul className="text-sm text-gray-700 space-y-2">
@@ -1971,9 +1971,9 @@ export default function AdminSettings() {
             </h2>
 
             <div className="space-y-6">
-              <div className="p-6 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-blue-800 font-medium mb-2">{t('settings:what_is_checked')}:</p>
-                <ul className="text-blue-700 text-sm space-y-1 list-disc list-inside">
+              <div className="settings-info-box">
+                <p className="settings-text-blue-dark font-medium mb-2">{t('settings:what_is_checked')}:</p>
+                <ul className="settings-text-blue text-sm space-y-1 list-disc list-inside">
                   <li>{t('settings:check_database')}</li>
                   <li>{t('settings:check_bot_settings')}</li>
                   <li>{t('settings:check_masters_services')}</li>
@@ -2053,8 +2053,8 @@ export default function AdminSettings() {
                       {/* Main Subscription Toggle */}
                       <div className="flex items-start justify-between p-4 bg-gray-50">
                         <div className="flex-1">
-                          <h3 className="font-medium text-gray-900">{t(`settings:${info.name} `)}</h3>
-                          <p className="text-sm text-gray-600 mt-1">{t(`settings:${info.description} `)}</p>
+                          <h3 className="font-medium text-gray-900">{t(`settings:${info.name}`)}</h3>
+                          <p className="text-sm text-gray-600 mt-1">{t(`settings:${info.description}`)}</p>
                         </div>
                         <Switch
                           checked={sub.is_subscribed}
@@ -2069,7 +2069,7 @@ export default function AdminSettings() {
 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <Mail className="w-4 h-4 text-blue-600" />
+                              <Mail className="w-4 h-4 settings-icon-email" />
                               <span className="text-sm text-gray-700">Email</span>
                             </div>
                             <Switch
@@ -2080,7 +2080,7 @@ export default function AdminSettings() {
 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <Smartphone className="w-4 h-4 text-green-600" />
+                              <Smartphone className="w-4 h-4 settings-icon-telegram" />
                               <span className="text-sm text-gray-700">Telegram</span>
                             </div>
                             <Switch
@@ -2091,7 +2091,7 @@ export default function AdminSettings() {
 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <Camera className="w-4 h-4 text-blue-600" />
+                              <Camera className="w-4 h-4 settings-icon-instagram" />
                               <span className="text-sm text-gray-700">Instagram</span>
                             </div>
                             <Switch
@@ -2262,7 +2262,7 @@ export default function AdminSettings() {
                                 <span className="text-sm text-gray-700">
                                   {(broadcastForm.user_ids || []).length === 0
                                     ? t('settings:all_subscribed_users')
-                                    : `${t('settings:selected')}: ${(broadcastForm.user_ids || []).length} из ${filteredUsers.length} `}
+                                    : `${t('settings:selected')}: ${(broadcastForm.user_ids || []).length} ${t('settings:of')} ${filteredUsers.length} `}
                                 </span>
                               );
                             })()}
@@ -2593,8 +2593,8 @@ export default function AdminSettings() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h2 className="text-2xl text-gray-900 mb-2">{t('settings:holidays', 'Salon Holidays')}</h2>
-                <p className="text-gray-600">{t('settings:manage_holidays_desc', 'Manage salon holidays and closures')}</p>
+                <h2 className="text-2xl text-gray-900 mb-2">{t('settings:holidays')}</h2>
+                <p className="text-gray-600">{t('settings:manage_holidays_desc')}</p>
               </div>
               <Button
                 onClick={() => setShowCreateHolidayDialog(true)}
@@ -2602,7 +2602,7 @@ export default function AdminSettings() {
                 disabled={!userPermissions.canEditSettings}
               >
                 <Plus className="w-4 h-4 mr-2" />
-                {t('settings:add_holiday', 'Add Holiday')}
+                {t('add_holiday')}
               </Button>
             </div>
 
@@ -2613,7 +2613,7 @@ export default function AdminSettings() {
             ) : holidays.length === 0 ? (
               <div className="text-center py-12">
                 <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500">{t('settings:no_holidays', 'No holidays configured')}</p>
+                <p className="text-gray-500">{t('settings:no_holidays')}</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -2629,7 +2629,7 @@ export default function AdminSettings() {
                           <p className="font-medium text-gray-900">{holiday.name}</p>
                           {holiday.is_closed && (
                             <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full">
-                              {t('settings:closed', 'Closed')}
+                              {t('settings:closed')}
                             </span>
                           )}
                         </div>
@@ -2637,7 +2637,7 @@ export default function AdminSettings() {
                         {holiday.is_closed && holiday.master_exceptions && holiday.master_exceptions.length > 0 && (
                           <div className="mt-2">
                             <p className="text-xs text-gray-500 mb-1">
-                              {t('settings:working_masters', 'Working masters')}:
+                              {t('settings:working_masters')}:
                             </p>
                             <div className="flex flex-wrap gap-1">
                               {holiday.master_exceptions.map((masterId: number) => {
@@ -2675,10 +2675,10 @@ export default function AdminSettings() {
           {showCreateHolidayDialog && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-                <h3 className="text-xl font-bold mb-4">{t('settings:add_holiday', 'Add Holiday')}</h3>
+                <h3 className="text-xl font-bold mb-4">{t('add_holiday')}</h3>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="holidayDate">{t('settings:date', 'Date')} *</Label>
+                    <Label htmlFor="holidayDate">{t('settings:date')} *</Label>
                     <Input
                       id="holidayDate"
                       type="date"
@@ -2687,18 +2687,18 @@ export default function AdminSettings() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="holidayName">{t('settings:holiday_name', 'Holiday Name')} *</Label>
+                    <Label htmlFor="holidayName">{t('settings:holiday_name')} *</Label>
                     <Input
                       id="holidayName"
                       value={holidayForm.name}
                       onChange={(e) => setHolidayForm({ ...holidayForm, name: e.target.value })}
-                      placeholder={t('settings:holiday_name_placeholder', 'e.g., New Year')}
+                      placeholder={t('settings:holiday_name_placeholder')}
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <Label>{t('settings:salon_closed', 'Salon Closed')}</Label>
-                      <p className="text-xs text-gray-500">{t('settings:block_all_bookings', 'Block all bookings on this day')}</p>
+                      <Label>{t('settings:salon_closed')}</Label>
+                      <p className="text-xs text-gray-500">{t('settings:block_all_bookings')}</p>
                     </div>
                     <Switch
                       checked={holidayForm.is_closed}
@@ -2710,13 +2710,13 @@ export default function AdminSettings() {
                   {holidayForm.is_closed && (
                     <div className="border-t pt-4">
                       <Label className="mb-2 block">
-                        {t('settings:master_exceptions', 'Masters who will work')}
+                        {t('settings:master_exceptions')}
                       </Label>
                       <p className="text-xs text-gray-500 mb-3">
-                        {t('settings:master_exceptions_hint', 'Select masters who will be available despite the salon being closed')}
+                        {t('settings:master_exceptions_hint')}
                       </p>
                       <div className="max-h-48 overflow-y-auto border rounded-lg p-2 space-y-2">
-                        {users
+                        {Array.isArray(users) && users
                           .filter(u => u.is_service_provider || u.role === 'employee')
                           .map((user) => (
                             <label
@@ -2750,7 +2750,7 @@ export default function AdminSettings() {
                       </div>
                       {holidayForm.master_exceptions.length > 0 && (
                         <p className="text-xs text-green-600 mt-2">
-                          ✓ {holidayForm.master_exceptions.length} {t('settings:masters_selected', 'master(s) selected')}
+                          ✓ {holidayForm.master_exceptions.length} {t('settings:masters_selected')}
                         </p>
                       )}
                     </div>
@@ -2765,13 +2765,13 @@ export default function AdminSettings() {
                     }}
                     className="flex-1"
                   >
-                    {t('common:cancel', 'Cancel')}
+                    {t('common:cancel')}
                   </Button>
                   <Button
                     onClick={handleCreateHoliday}
                     className="flex-1 settings-button-gradient"
                   >
-                    {t('common:create', 'Create')}
+                    {t('common:create')}
                   </Button>
                 </div>
               </div>

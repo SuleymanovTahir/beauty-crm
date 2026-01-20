@@ -271,7 +271,7 @@ export default function Telephony() {
             setAllServices(servicesData.services || []);
         } catch (error) {
             console.error('Failed to load telephony data:', error);
-            toast.error('Ошибка загрузки данных');
+            toast.error(t('common:error_loading_data', 'Ошибка загрузки данных'));
         } finally {
             setLoading(false);
         }
@@ -294,16 +294,16 @@ export default function Telephony() {
     };
 
     const handleBulkDelete = async () => {
-        if (!confirm(`Удалить выбранные звонки (${selectedIds.length})?`)) return;
+        if (!confirm(t('telephony:confirm_delete_selected', { count: selectedIds.length }))) return;
 
         setProcessing(true);
         try {
             await Promise.all(selectedIds.map(id => api.deleteCall(id)));
-            toast.success(`Удалено ${selectedIds.length} звонков`);
+            toast.success(t('telephony:deleted_calls_count', { count: selectedIds.length }));
             setSelectedIds([]);
             loadData();
         } catch (e) {
-            toast.error("Ошибка при удалении");
+            toast.error(t('common:delete_error', 'Ошибка при удалении'));
         } finally {
             setProcessing(false);
         }
@@ -313,10 +313,10 @@ export default function Telephony() {
         try {
             setUploadingFile(callId);
             await api.uploadRecording(callId, file);
-            toast.success('Запись загружена');
+            toast.success(t('telephony:recording_uploaded'));
             loadData();
         } catch (error) {
-            toast.error('Ошибка загрузки файла');
+            toast.error(t('common:upload_error', 'Ошибка загрузки файла'));
         } finally {
             setUploadingFile(null);
         }
@@ -324,7 +324,7 @@ export default function Telephony() {
 
     const handleCreateCall = async () => {
         if (!formData.phone) {
-            toast.error('Введите номер телефона');
+            toast.error(t('telephony:enter_phone'));
             return;
         }
         try {
@@ -334,13 +334,13 @@ export default function Telephony() {
             if (response.success && response.id && selectedFile) {
                 try {
                     await api.uploadRecording(response.id, selectedFile);
-                    toast.success('Звонок создан и запись загружена');
+                    toast.success(t('telephony:call_created_recording_uploaded'));
                 } catch (uploadError) {
                     console.error('Error uploading file:', uploadError);
-                    toast.error('Звонок создан, но ошибка загрузки файла');
+                    toast.error(t('telephony:call_created_upload_error'));
                 }
             } else {
-                toast.success('Звонок добавлен');
+                toast.success(t('telephony:call_added'));
             }
 
             await loadData();
@@ -361,7 +361,7 @@ export default function Telephony() {
             setSelectedFile(null);
             loadData();
         } catch (error) {
-            toast.error('Ошибка создания звонка');
+            toast.error(t('telephony:create_error'));
         } finally {
             setProcessing(false);
         }
@@ -374,13 +374,13 @@ export default function Telephony() {
             const result = await api.testTelephonyIntegration(integrationSettings);
             setTestResult(result);
             if (result.success) {
-                toast.success(result.message || 'Соединение успешно');
+                toast.success(result.message || t('telephony:connection_success'));
             } else {
-                toast.error(result.error || 'Ошибка соединения');
+                toast.error(result.error || t('telephony:connection_error'));
             }
         } catch (error: any) {
-            setTestResult({ success: false, message: error.message || 'Ошибка проверки' });
-            toast.error('Ошибка при тестировании');
+            setTestResult({ success: false, message: error.message || t('telephony:test_error') });
+            toast.error(t('telephony:testing_error'));
         } finally {
             setTestingConnection(false);
         }
@@ -390,9 +390,9 @@ export default function Telephony() {
         setProcessing(true);
         try {
             await api.saveTelephonySettings(integrationSettings);
-            toast.success('Настройки сохранены');
+            toast.success(t('common:settings_saved', 'Настройки сохранены'));
         } catch (error) {
-            toast.error('Ошибка сохранения настроек');
+            toast.error(t('common:settings_save_error', 'Ошибка сохранения настроек'));
         } finally {
             setProcessing(false);
         }
@@ -403,25 +403,25 @@ export default function Telephony() {
         try {
             setProcessing(true);
             await api.updateCall(editingCall.id, formData);
-            toast.success('Звонок обновлен');
+            toast.success(t('telephony:call_updated'));
             setShowEditDialog(false);
             setEditingCall(null);
             loadData();
         } catch (error) {
-            toast.error('Ошибка обновления');
+            toast.error(t('common:update_error', 'Ошибка обновления'));
         } finally {
             setProcessing(false);
         }
     };
 
     const handleDeleteCall = async (id: number) => {
-        if (!confirm('Вы уверены, что хотите удалить эту запись?')) return;
+        if (!confirm(t('common:confirm_delete', 'Вы уверены, что хотите удалить эту запись?'))) return;
         try {
             await api.deleteCall(id);
-            toast.success('Звонок удален');
+            toast.success(t('telephony:call_deleted'));
             setCalls(calls.filter(c => c.id !== id));
         } catch (error) {
-            toast.error('Ошибка удаления');
+            toast.error(t('common:delete_error', 'Ошибка удаления'));
         }
     };
 
@@ -468,7 +468,7 @@ export default function Telephony() {
                         </h1>
                         <p className="text-gray-500 font-medium flex items-center gap-2">
                             <span className="inline-block w-2 h-2 bg-pink-400 rounded-full animate-pulse" />
-                            {calls.length} записей
+                            {t('telephony:records_count', { count: calls.length })}
                         </p>
                     </div>
                     <button
@@ -876,7 +876,7 @@ export default function Telephony() {
                                                                         ) : (
                                                                             <Upload className="w-4 h-4 mr-2" />
                                                                         )}
-                                                                        Загрузить запись
+                                                                        {t('telephony:upload_recording')}
                                                                     </span>
                                                                 </Button>
                                                             </label>
@@ -892,10 +892,10 @@ export default function Telephony() {
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end">
                                                             <DropdownMenuItem onClick={() => openEditDialog(call)}>
-                                                                <Edit2 className="w-4 h-4 mr-2" /> Редактировать
+                                                                <Edit2 className="w-4 h-4 mr-2" /> {t('common:edit')}
                                                             </DropdownMenuItem>
                                                             <DropdownMenuItem onClick={() => handleDeleteCall(call.id)} className="text-red-600">
-                                                                <Trash2 className="w-4 h-4 mr-2" /> Удалить
+                                                                <Trash2 className="w-4 h-4 mr-2" /> {t('common:delete')}
                                                             </DropdownMenuItem>
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
@@ -948,7 +948,7 @@ export default function Telephony() {
                                 </div>
 
                                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:average_duration', 'Средняя длительность (сек)')}</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:average_duration_stats')}</h3>
                                     <div className="h-[300px] w-full">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <LineChart data={analytics}>
@@ -988,9 +988,9 @@ export default function Telephony() {
                                                         dataKey="value"
                                                     >
                                                         {[
-                                                            { name: 'Входящие', value: stats.inbound, color: 'var(--telephony-inbound)' },
-                                                            { name: 'Исходящие', value: stats.outbound, color: 'var(--telephony-outbound)' },
-                                                            { name: 'Пропущенные', value: stats.missed, color: 'var(--telephony-missed)' }
+                                                            { name: t('telephony:inbound'), value: stats.inbound, color: 'var(--telephony-inbound)' },
+                                                            { name: t('telephony:outbound'), value: stats.outbound, color: 'var(--telephony-outbound)' },
+                                                            { name: t('telephony:missed'), value: stats.missed, color: 'var(--telephony-missed)' }
                                                         ].filter(item => item.value > 0).map((entry, index) => (
                                                             <Cell key={`cell-${index}`} fill={entry.color} />
                                                         ))}
@@ -1038,12 +1038,12 @@ export default function Telephony() {
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                             <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                                 <Plus className="w-5 h-5 text-pink-600" />
-                                {t('telephony:add_integration', 'Подключить телефонию')}
+                                {t('telephony:add_integration')}
                             </h3>
 
                             <div className="space-y-6">
                                 <div className="space-y-2">
-                                    <Label className="text-gray-700 font-semibold">{t('telephony:provider', 'Провайдер')}</Label>
+                                    <Label className="text-gray-700 font-semibold">{t('telephony:provider')}</Label>
                                     <Select
                                         value={integrationSettings.provider}
                                         onValueChange={(val) => setIntegrationSettings({ ...integrationSettings, provider: val })}
@@ -1052,10 +1052,10 @@ export default function Telephony() {
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="binotel">{t('telephony:provider_binotel', 'Binotel')}</SelectItem>
-                                            <SelectItem value="onlinepbx">{t('telephony:provider_onlinepbx', 'OnlinePBX')}</SelectItem>
-                                            <SelectItem value="twilio">{t('telephony:provider_twilio', 'Twilio')}</SelectItem>
-                                            <SelectItem value="generic">{t('telephony:provider_generic', 'Generic (Webhook)')}</SelectItem>
+                                            <SelectItem value="binotel">{t('telephony:provider_binotel')}</SelectItem>
+                                            <SelectItem value="onlinepbx">{t('telephony:provider_onlinepbx')}</SelectItem>
+                                            <SelectItem value="twilio">{t('telephony:provider_twilio')}</SelectItem>
+                                            <SelectItem value="generic">{t('telephony:provider_generic')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -1068,7 +1068,7 @@ export default function Telephony() {
                                                 type="password"
                                                 value={integrationSettings.api_key}
                                                 onChange={(e) => setIntegrationSettings({ ...integrationSettings, api_key: e.target.value })}
-                                                placeholder={integrationSettings.provider === 'twilio' ? 'Введите Account SID' : 'Введите API Key'}
+                                                placeholder={integrationSettings.provider === 'twilio' ? t('telephony:placeholder_account_sid') : t('telephony:placeholder_api_key')}
                                                 className="h-[45px] rounded-xl border-gray-200"
                                             />
                                         </div>
@@ -1080,7 +1080,7 @@ export default function Telephony() {
                                                     type="password"
                                                     value={integrationSettings.api_secret}
                                                     onChange={(e) => setIntegrationSettings({ ...integrationSettings, api_secret: e.target.value })}
-                                                    placeholder={integrationSettings.provider === 'twilio' ? 'Введите Auth Token' : 'Введите API Secret'}
+                                                    placeholder={integrationSettings.provider === 'twilio' ? t('telephony:placeholder_auth_token') : t('telephony:placeholder_api_secret')}
                                                     className="h-[45px] rounded-xl border-gray-200"
                                                 />
                                             </div>
@@ -1098,10 +1098,10 @@ export default function Telephony() {
                                         {testingConnection ? (
                                             <>
                                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                {t('telephony:testing', 'Проверка...')}
+                                                {t('telephony:testing')}
                                             </>
                                         ) : (
-                                            t('telephony:test_connection', 'Проверить соединение')
+                                            t('telephony:test_connection')
                                         )}
                                     </Button>
                                     <Button
@@ -1109,7 +1109,7 @@ export default function Telephony() {
                                         disabled={processing}
                                         className="h-[45px] rounded-xl font-bold flex-1 bg-pink-600 hover:bg-pink-700 shadow-md shadow-pink-100"
                                     >
-                                        {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : t('telephony:save_settings', 'Сохранить настройки')}
+                                        {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : t('telephony:save_settings')}
                                     </Button>
                                 </div>
 
@@ -1122,7 +1122,7 @@ export default function Telephony() {
                                         )}
                                         <div>
                                             <p className={`text-sm font-bold ${testResult.success ? 'text-green-800' : 'text-red-800'}`}>
-                                                {testResult.success ? t('telephony:success', 'Успешно') : t('telephony:error', 'Ошибка')}
+                                                {testResult.success ? t('telephony:success') : t('telephony:error')}
                                             </p>
                                             <p className={`text-xs ${testResult.success ? 'text-green-600' : 'text-red-600'}`}>
                                                 {testResult.message}
@@ -1139,12 +1139,12 @@ export default function Telephony() {
                                     <Phone className="w-6 h-6 text-pink-400" />
                                 </div>
                                 <div className="flex-1">
-                                    <p className="font-bold mb-2 text-white text-lg">{t('telephony:integration_status', 'Инструкции для Webhook')}</p>
+                                    <p className="font-bold mb-2 text-white text-lg">{t('telephony:integration_status')}</p>
                                     <p className="text-xs mb-4 text-gray-400 leading-relaxed">
-                                        {t('telephony:webhook_instruction_short', 'Для автоматического получения звонков укажите следующий URL в настройках вашего провайдера телефонии.')}
+                                        {t('telephony:webhook_instruction_short')}
                                     </p>
                                     <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700 shadow-inner">
-                                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">{t('telephony:webhook_url_label', 'Ваш уникальный Webhook URL')}</p>
+                                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">{t('telephony:webhook_url_label')}</p>
                                         <div className="flex items-center gap-3">
                                             <code className="text-xs bg-gray-900 px-3 py-2 rounded-lg text-green-400 select-all block break-all flex-1 border border-gray-700">
                                                 {import.meta.env.VITE_API_URL || window.location.origin}/api/telephony/webhook/{integrationSettings.provider === 'generic' ? 'generic' : integrationSettings.provider}
@@ -1156,15 +1156,15 @@ export default function Telephony() {
                                                 onClick={() => {
                                                     const url = `${import.meta.env.VITE_API_URL || window.location.origin}/api/telephony/webhook/${integrationSettings.provider === 'generic' ? 'generic' : integrationSettings.provider}`;
                                                     navigator.clipboard.writeText(url);
-                                                    toast.success(t('telephony:copied', 'Скопировано'));
+                                                    toast.success(t('telephony:copied'));
                                                 }}
                                             >
-                                                {t('telephony:copy', 'Копировать')}
+                                                {t('telephony:copy')}
                                             </Button>
                                         </div>
                                         <p className="text-[10px] text-gray-500 mt-3 flex items-center gap-1.5">
                                             <AlertCircle className="w-3 h-3" />
-                                            {t('telephony:webhook_security_note', 'Для безопасности не передавайте этот URL посторонним лицам.')}
+                                            {t('telephony:webhook_security_note')}
                                         </p>
                                     </div>
                                 </div>
@@ -1177,7 +1177,7 @@ export default function Telephony() {
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
                 <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                        <DialogTitle>Добавить звонок</DialogTitle>
+                        <DialogTitle>{t('telephony:add_call')}</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
@@ -1450,7 +1450,7 @@ export default function Telephony() {
             <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
                 <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                        <DialogTitle>{t('edit_call')}</DialogTitle>
+                        <DialogTitle>{t('telephony:edit_call')}</DialogTitle>
                     </DialogHeader>
                     {/* Reusing same fields for Edit Dialog */}
                     <div className="space-y-4">

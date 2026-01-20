@@ -55,23 +55,23 @@ interface ExtendedMessage extends ClientMessage {
 }
 
 const categories = [
-  { value: "all", label: "Все сообщения" },
-  { value: "new", label: "Новые" },
-  { value: "active", label: "Активные" },
-  { value: "archived", label: "Архив" },
+  { value: "all", label: "all_messages" },
+  { value: "new", label: "new" },
+  { value: "active", label: "active" },
+  { value: "archived", label: "archived" },
 ];
 
 const statuses = [
-  { value: "all", label: "Все" },
-  { value: "new", label: "Новые клиенты" },
-  { value: "interested", label: "Заинтересованные" },
-  { value: "customer", label: "Клиенты" },
+  { value: "all", label: "all" },
+  { value: "new", label: "new_clients" },
+  { value: "interested", label: "interested" },
+  { value: "customer", label: "customer" },
   { value: "vip", label: "VIP" },
 ];
 
 export default function Messages() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['manager/Messages', 'common']);
+  const { t } = useTranslation(['manager/messages', 'common']);
   const { user: currentUser } = useAuth();
   const userPermissions = usePermissions(currentUser?.role || 'employee');
   const [messages, setMessages] = useState<ExtendedMessage[]>([]);
@@ -160,16 +160,16 @@ export default function Messages() {
       setMessages(extendedMessages);
 
       if (isInitial && extendedMessages.length === 0) {
-        toast.info("Сообщений не найдено");
+        toast.info(t('manager/messages:no_messages_found'));
       }
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Ошибка загрузки сообщений";
+        err instanceof Error ? err.message : t('manager/messages:error_loading_messages');
       setError(message);
 
       // Показываем тост только при первой загрузке
       if (isInitial) {
-        toast.error(`Ошибка: ${message}`);
+        toast.error(`${t('common:error', 'Ошибка')}: ${message}`);
       }
       console.error("Error loading messages:", err);
     } finally {
@@ -210,7 +210,7 @@ export default function Messages() {
       )
     );
     setSelectedMessages([]);
-    toast.success("Сообщения помечены как прочитанные");
+    toast.success(t('manager/messages:messages_marked_as_read'));
   };
 
   const handleArchive = () => {
@@ -224,7 +224,7 @@ export default function Messages() {
       })
     );
     setSelectedMessages([]);
-    toast.success("Сообщения перемещены в архив");
+    toast.success(t('manager/messages:messages_moved_to_archive'));
   };
 
   const handleRestoreFromArchive = (id: string) => {
@@ -234,7 +234,7 @@ export default function Messages() {
         msg.id === id ? { ...msg, archived: false } : msg
       )
     );
-    toast.success("Восстановлено из архива");
+    toast.success(t('manager/messages:restored_from_archive'));
   };
 
   const handleOpenDeleteDialog = (id: string, name: string) => {
@@ -247,7 +247,7 @@ export default function Messages() {
 
     setMessages(messages.filter((msg) => msg.id !== messageToDelete.id));
     localStorage.removeItem(`archived_${messageToDelete.id}`);
-    toast.success("Удалено безвозвратно");
+    toast.success(t('manager/messages:deleted_permanently'));
     setShowDeleteDialog(false);
     setMessageToDelete(null);
   };
@@ -277,9 +277,9 @@ export default function Messages() {
       <div className="p-8 flex items-center justify-center min-h-screen">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 max-w-md text-center">
           <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Доступ запрещен</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('manager/messages:access_denied')}</h2>
           <p className="text-gray-600">
-            У вас нет прав для просмотра клиентских сообщений. Обратитесь к администратору.
+            {t('manager/messages:access_denied_desc')}
           </p>
         </div>
       </div>
@@ -292,7 +292,7 @@ export default function Messages() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">Загрузка сообщений...</p>
+          <p className="text-gray-600">{t('manager/messages:loading_messages')}</p>
         </div>
       </div>
     );
@@ -305,13 +305,13 @@ export default function Messages() {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-red-800 font-medium">Ошибка загрузки</p>
+              <p className="text-red-800 font-medium">{t('manager/messages:loading_error')}</p>
               <p className="text-red-700 text-sm mt-1">{error}</p>
               <Button
                 onClick={() => loadMessages(true)}
                 className="mt-4 bg-red-600 hover:bg-red-700"
               >
-                Попробовать еще раз
+                {t('manager/messages:try_again')}
               </Button>
             </div>
           </div>
@@ -328,7 +328,7 @@ export default function Messages() {
           <div className="flex items-center gap-3">
             <h1 className="text-3xl text-gray-900 flex items-center gap-3">
               <MessageSquare className="w-8 h-8 text-pink-600" />
-              Сообщения
+              {t('manager/messages:messages')}
               {unreadCount > 0 && (
                 <Badge className="bg-pink-600 text-white">{unreadCount}</Badge>
               )}
@@ -337,7 +337,7 @@ export default function Messages() {
             {isRefreshing && (
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Loader className="w-4 h-4 animate-spin" />
-                <span>Обновление...</span>
+                <span>{t('manager/messages:updating')}</span>
               </div>
             )}
           </div>
@@ -351,10 +351,10 @@ export default function Messages() {
             className="gap-2"
           >
             <Clock className="w-4 h-4" />
-            Обновить
+            {t('manager/messages:refresh')}
           </Button>
         </div>
-        <p className="text-gray-600 mt-2">История общения с клиентами</p>
+        <p className="text-gray-600 mt-2">{t('manager/messages:history_desc')}</p>
       </div>
 
       {/* Stats */}
@@ -362,7 +362,7 @@ export default function Messages() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm mb-1">Всего клиентов</p>
+              <p className="text-gray-500 text-sm mb-1">{t('manager/messages:total_clients')}</p>
               <h3 className="text-3xl text-gray-900">{messages.length}</h3>
             </div>
             <MessageSquare className="w-8 h-8 text-gray-400" />
@@ -372,7 +372,7 @@ export default function Messages() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm mb-1">Активные</p>
+              <p className="text-gray-500 text-sm mb-1">{t('manager/messages:active_clients')}</p>
               <h3 className="text-3xl text-blue-600">
                 {messages.filter((m) => m.total_messages > 0 && !m.archived).length}
               </h3>
@@ -384,7 +384,7 @@ export default function Messages() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm mb-1">Закреплённые</p>
+              <p className="text-gray-500 text-sm mb-1">{t('manager/messages:pinned')}</p>
               <h3 className="text-3xl text-yellow-600">{starredCount}</h3>
             </div>
             <Star className="w-8 h-8 text-yellow-400" />
@@ -394,7 +394,7 @@ export default function Messages() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm mb-1">В архиве</p>
+              <p className="text-gray-500 text-sm mb-1">{t('manager/messages:in_archive')}</p>
               <h3 className="text-3xl text-orange-600">{archivedCount}</h3>
             </div>
             <Archive className="w-8 h-8 text-orange-400" />
@@ -404,7 +404,7 @@ export default function Messages() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm mb-1">Всего сообщений</p>
+              <p className="text-gray-500 text-sm mb-1">{t('manager/messages:total_messages_count')}</p>
               <h3 className="text-3xl text-green-600">
                 {messages.reduce((sum, m) => sum + m.total_messages, 0)}
               </h3>
@@ -421,7 +421,7 @@ export default function Messages() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Поиск по имени или телефону..."
+              placeholder={t('manager/messages:search_placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -444,7 +444,7 @@ export default function Messages() {
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full md:w-[200px]">
-              <SelectValue placeholder="Статус" />
+              <SelectValue placeholder={t('manager/messages:status')} />
             </SelectTrigger>
             <SelectContent>
               {statuses.map((status) => (
@@ -462,16 +462,16 @@ export default function Messages() {
         <div className="bg-pink-50 border border-pink-200 p-4 rounded-xl mb-6">
           <div className="flex items-center justify-between">
             <p className="text-sm text-gray-700">
-              Выбрано: {selectedMessages.length}
+              {t('manager/messages:selected_count', { count: selectedMessages.length })}
             </p>
             <div className="flex gap-2">
               <Button size="sm" variant="outline" onClick={handleMarkAsRead}>
                 <Check className="w-4 h-4 mr-2" />
-                Прочитано
+                {t('manager/messages:mark_as_read')}
               </Button>
               <Button size="sm" variant="outline" onClick={handleArchive}>
                 <Archive className="w-4 h-4 mr-2" />
-                Архив
+                {t('manager/messages:archive')}
               </Button>
             </div>
           </div>
@@ -489,7 +489,7 @@ export default function Messages() {
             }
             onCheckedChange={handleSelectAll}
           />
-          <span className="text-sm text-gray-600">Выбрать все</span>
+          <span className="text-sm text-gray-600">{t('manager/messages:select_all')}</span>
         </div>
 
         {/* Messages */}
@@ -577,7 +577,7 @@ export default function Messages() {
                         {getStatusIcon(message.status)}
                         {message.archived && (
                           <Badge className="bg-orange-100 text-orange-800 text-xs">
-                            В архиве
+                            {t('manager/messages:in_archive')}
                           </Badge>
                         )}
                       </div>
@@ -594,7 +594,7 @@ export default function Messages() {
                       {message.phone}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      {message.total_messages} сообщений
+                      {t('manager/messages:messages_count', { count: message.total_messages })}
                     </p>
                   </div>
 
@@ -605,7 +605,7 @@ export default function Messages() {
                         variant="outline"
                         onClick={() => handleRestoreFromArchive(message.id)}
                         className="text-blue-600 hover:bg-blue-50"
-                        title="Восстановить из архива"
+                        title={t('manager/messages:restore_from_archive')}
                       >
                         <ArchiveRestore className="w-4 h-4" />
                       </Button>
@@ -614,7 +614,7 @@ export default function Messages() {
                         variant="outline"
                         onClick={() => handleOpenDeleteDialog(message.id, message.display_name)}
                         className="text-red-600 hover:bg-red-50"
-                        title="Удалить безвозвратно"
+                        title={t('manager/messages:delete_permanently')}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -626,7 +626,7 @@ export default function Messages() {
           ) : (
             <div className="py-20 text-center">
               <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Сообщения не найдены</p>
+              <p className="text-gray-500">{t('manager/messages:no_messages_found')}</p>
             </div>
           )}
         </div>
@@ -642,7 +642,7 @@ export default function Messages() {
                   <Trash2 className="w-5 h-5 text-red-600" />
                 </div>
                 <h3 className="text-lg font-bold text-red-900">
-                  Удалить сообщение?
+                  {t('manager/messages:confirm_delete_title', 'Удалить сообщение?')}
                 </h3>
               </div>
             </div>
@@ -654,20 +654,20 @@ export default function Messages() {
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
                 <p className="text-sm text-yellow-800 font-semibold mb-2 flex items-center gap-1.5">
                   <AlertCircle className="w-4 h-4 text-yellow-600" />
-                  {t('caution', 'Внимание:')}
+                  {t('caution')}
                 </p>
                 <ul className="text-sm text-yellow-800 space-y-2 ml-1">
                   <li className="flex items-center gap-2">
                     <XCircle className="w-4 h-4 text-red-500" />
-                    <span>{t('action_irreversible', 'Это действие необратимо')}</span>
+                    <span>{t('action_irreversible')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <XCircle className="w-4 h-4 text-red-500" />
-                    <span>{t('history_deleted', 'Будет удалена вся история сообщений')}</span>
+                    <span>{t('history_deleted')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <XCircle className="w-4 h-4 text-red-500" />
-                    <span>{t('data_not_restorable', 'Данные не смогут быть восстановлены')}</span>
+                    <span>{t('data_not_restorable')}</span>
                   </li>
                 </ul>
               </div>
@@ -681,13 +681,13 @@ export default function Messages() {
                 }}
                 className="px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-200 transition"
               >
-                Отмена
+                {t('common:cancel', 'Отмена')}
               </button>
               <button
                 onClick={handleConfirmDelete}
                 className="px-4 py-2 rounded-lg font-medium bg-red-600 hover:bg-red-700 text-white transition"
               >
-                Удалить
+                {t('common:delete', 'Удалить')}
               </button>
             </div>
           </div>

@@ -1,5 +1,5 @@
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend
@@ -44,11 +44,7 @@ interface TasksDashboardProps {
 }
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
-const PRIORITY_COLORS = {
-    high: '#ef4444',
-    medium: '#eab308',
-    low: '#3b82f6'
-};
+
 
 export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
     const { t } = useTranslation(['admin/tasks', 'common']);
@@ -96,7 +92,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                             <div className="p-1.5 bg-blue-50 rounded-md">
                                 <Calendar className="w-4 h-4 text-blue-600" />
                             </div>
-                            {t('tasks_for_today', 'Дела на сегодня')}
+                            {t('tasks_for_today')}
                             <Badge variant="secondary" className="ml-auto bg-gray-100 text-gray-700 hover:bg-gray-200">{stats.today.length}</Badge>
                         </CardTitle>
                     </CardHeader>
@@ -116,7 +112,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                             ) : (
                                 <div className="text-center text-gray-400 py-20 text-sm flex flex-col items-center gap-2">
                                     <Calendar className="w-8 h-8 opacity-20" />
-                                    {t('no_tasks_today', 'На сегодня задач нет')}
+                                    {t('no_tasks_today')}
                                 </div>
                             )}
                         </ScrollArea>
@@ -129,7 +125,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                             <div className="p-1.5 bg-yellow-50 rounded-md">
                                 <Zap className="w-4 h-4 text-yellow-600" />
                             </div>
-                            {t('tasks_execution', 'Задачи к выполнению')}
+                            {t('tasks_execution')}
                             <Badge variant="secondary" className="ml-auto bg-gray-100 text-gray-700 hover:bg-gray-200">{stats.execution.length}</Badge>
                         </CardTitle>
                     </CardHeader>
@@ -159,7 +155,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                             ) : (
                                 <div className="text-center text-gray-400 py-20 text-sm flex flex-col items-center gap-2">
                                     <Zap className="w-8 h-8 opacity-20" />
-                                    {t('no_tasks_execution', 'Нет задач в работе')}
+                                    {t('no_tasks_execution')}
                                 </div>
                             )}
                         </ScrollArea>
@@ -175,7 +171,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                             <div className="p-1.5 bg-blue-50 rounded-md">
                                 <Pin className="w-4 h-4 text-blue-600" />
                             </div>
-                            {t('tasks_control', 'Задачи для контроля')}
+                            {t('tasks_control')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="flex-1 min-h-0 bg-white rounded-b-lg">
@@ -192,7 +188,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                                         paddingAngle={5}
                                         dataKey="value"
                                     >
-                                        {stats.controlChartData.map((entry, index) => (
+                                        {stats.controlChartData.map((_, index) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                         ))}
                                     </Pie>
@@ -206,7 +202,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                         ) : (
                             <div className="h-full flex items-center justify-center text-gray-400 text-sm flex-col gap-2">
                                 <Pin className="w-8 h-8 opacity-20" />
-                                {t('no_data', 'Нет данных')}
+                                {t('no_data')}
                             </div>
                         )}
                     </CardContent>
@@ -218,7 +214,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                             <div className="p-1.5 bg-red-50 rounded-md">
                                 <Flame className="w-4 h-4 text-red-600" />
                             </div>
-                            {t('overdue_tasks', 'Просроченные задачи')}
+                            {t('overdue_tasks')}
                             <Badge variant="destructive" className="ml-auto">{stats.overdue.length}</Badge>
                         </CardTitle>
                     </CardHeader>
@@ -236,7 +232,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                                         paddingAngle={5}
                                         dataKey="value"
                                     >
-                                        {stats.overdueChartData.map((entry, index) => (
+                                        {stats.overdueChartData.map((_, index) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                         ))}
                                     </Pie>
@@ -252,7 +248,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                                 <div className="p-3 bg-green-50 rounded-full mb-1">
                                     <span className="text-2xl">🎉</span>
                                 </div>
-                                {t('no_overdue', 'Нет просроченных!')}
+                                {t('no_overdue')}
                             </div>
                         )}
                     </CardContent>
@@ -267,13 +263,13 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                             <div className="p-1.5 bg-indigo-100 rounded-md">
                                 <Filter className="w-4 h-4 text-indigo-600" />
                             </div>
-                            {t('pipeline_overview', 'Воронка задач')}
+                            {t('pipeline_overview')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="flex-1 min-h-0 relative">
                         {stages.length > 0 ? (
                             <div className="flex flex-col gap-3 h-full justify-center px-2">
-                                {stages.map((stage, idx) => {
+                                {stages.map((stage) => {
                                     const count = tasks.filter(t => t.stage_id === stage.id).length;
                                     const max = tasks.length || 1;
                                     const width = Math.max(10, (count / max) * 100);
@@ -297,7 +293,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                         ) : (
                             <div className="h-full flex items-center justify-center text-gray-400 text-sm flex-col gap-2">
                                 <Filter className="w-8 h-8 opacity-20" />
-                                {t('no_stages', 'Нет стадий')}
+                                {t('no_stages')}
                             </div>
                         )}
                     </CardContent>
@@ -310,7 +306,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                             <div className="p-1.5 bg-emerald-50 rounded-md">
                                 <Banknote className="w-4 h-4 text-emerald-600" />
                             </div>
-                            {t('bills', 'Счета')}
+                            {t('bills')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="flex items-center justify-center text-center h-full bg-white rounded-b-lg">
@@ -320,7 +316,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                             </div>
                             <div>
                                 <p className="text-3xl font-bold text-gray-900 tracking-tight">0.00 AED</p>
-                                <p className="text-xs text-gray-400 mt-1">{t('finance_module_coming_soon', 'Модуль финансов в разработке')}</p>
+                                <p className="text-xs text-gray-400 mt-1">{t('finance_module_coming_soon')}</p>
                             </div>
                         </div>
                     </CardContent>

@@ -33,9 +33,9 @@ export function DateFilterDropdown({ value, onChange }: DateFilterDropdownProps)
             case 'yesterday':
                 return t('filter_yesterday', 'Вчера');
             case 'last7days':
-                return t('filter_last7days', 'Последние 7 дней');
+                return t('filter_last7days', { count: 7, defaultValue: 'Последние 7 дней' });
             case 'last30days':
-                return t('filter_last30days', 'Последние 30 дней');
+                return t('filter_last30days', { count: 30, defaultValue: 'Последние 30 дней' });
             case 'thisMonth':
                 return t('filter_this_month', 'Этот месяц');
             case 'lastMonth':
@@ -73,9 +73,8 @@ export function DateFilterDropdown({ value, onChange }: DateFilterDropdownProps)
                         <div
                             key={period}
                             onClick={() => handleSelect(period)}
-                            className={`flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm ${
-                                value === period ? 'bg-pink-50 text-pink-600 font-medium' : 'text-gray-900'
-                            }`}
+                            className={`flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm ${value === period ? 'bg-pink-50 text-pink-600 font-medium' : 'text-gray-900'
+                                }`}
                         >
                             <span>{getPeriodLabel(period)}</span>
                         </div>

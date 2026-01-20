@@ -24,3 +24,45 @@
     padding: 2rem;
   }
 }
+
+.settings-alert-box {
+  background-color: #fefce8;
+  border: 1px solid #fef08a;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.settings-info-box {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.settings-text-yellow {
+  color: #ca8a04;
+}
+
+.settings-text-blue {
+  color: #1d4ed8;
+}
+
+.settings-text-blue-dark {
+  color: #1e40af;
+}
+
+.settings-text-green {
+  color: #16a34a;
+}
+
+.settings-icon-email {
+  color: #2563eb;
+}
+
+.settings-icon-telegram {
+  color: #16a34a;
+}
+
+.settings-icon-instagram {
+  color: #2563eb;
+}

@@ -572,10 +572,10 @@ export default function UniversalFunnel() {
                                         <tr>
                                             <th className="px-6 py-3 font-medium">{t('client.name')}</th>
                                             <th className="px-6 py-3 font-medium">{t('stage')}</th>
-                                            <th className="px-6 py-3 font-medium">{t('temperature', 'Температура')}</th>
-                                            <th className="px-6 py-3 font-medium">{t('last_contact', 'Последний контакт')}</th>
-                                            <th className="px-6 py-3 font-medium text-right">{t('total_spend', 'Всего трат')}</th>
-                                            <th className="px-6 py-3 font-medium text-right">{t('actions', 'Действия')}</th>
+                                            <th className="px-6 py-3 font-medium">{t('temperature')}</th>
+                                            <th className="px-6 py-3 font-medium">{t('last_contact')}</th>
+                                            <th className="px-6 py-3 font-medium text-right">{t('total_spend')}</th>
+                                            <th className="px-6 py-3 font-medium text-right">{t('actions')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
@@ -637,7 +637,7 @@ export default function UniversalFunnel() {
                                         ) : (
                                             <tr>
                                                 <td colSpan={6} className="text-center py-12 text-gray-400 text-sm">
-                                                    {t('no_clients_found', 'Клиенты не найдены')}
+                                                    {t('no_clients_found')}
                                                 </td>
                                             </tr>
                                         )}
@@ -684,11 +684,11 @@ export default function UniversalFunnel() {
 
                                     <div className="space-y-6">
                                         {[
-                                            { name: t('table.visitors', 'Посетители'), val: funnelAnalytics.visitors, desc: 'Зашли в бот/чат' },
-                                            { name: t('table.engaged', 'Вовлечённые'), val: funnelAnalytics.engaged, desc: 'Написали сообщение' },
-                                            { name: t('table.started_booking', 'Начали запись'), val: funnelAnalytics.started_booking, desc: 'Открыли календарь' },
-                                            { name: t('table.booked', 'Записались'), val: funnelAnalytics.booked, desc: 'Оставили бронь' },
-                                            { name: t('table.completed', 'Посетили'), val: funnelAnalytics.completed, desc: 'Визит завершен' }
+                                            { name: t('table.visitors'), val: funnelAnalytics.visitors, desc: 'Зашли в бот/чат' },
+                                            { name: t('table.engaged'), val: funnelAnalytics.engaged, desc: 'Написали сообщение' },
+                                            { name: t('table.started_booking'), val: funnelAnalytics.started_booking, desc: 'Открыли календарь' },
+                                            { name: t('table.booked'), val: funnelAnalytics.booked, desc: 'Оставили бронь' },
+                                            { name: t('table.completed'), val: funnelAnalytics.completed, desc: 'Визит завершен' }
                                         ].map((stage, idx) => {
                                             const maxVal = Math.max(funnelAnalytics.visitors, 1);
                                             const widthPerc = (stage.val / maxVal) * 100;

@@ -527,7 +527,7 @@ export class ApiClient {
     })
   }
   // ===== КЛИЕНТЫ =====
-  async getClients(messenger: string = 'instagram') {
+  async getClients(messenger: string = 'all') {
     return this.request<any>(`/api/clients?messenger=${messenger}`)
   }
 
