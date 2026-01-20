@@ -216,7 +216,7 @@
       "bronze_req": "Негізгі деңгей",
       "gold": "Алтын",
       "platinum": "Платина",
-      "points_req": "{{points}} ұпайдан",
+      "points_req": "[[VAR0]]] нүктелерінен",
       "silver": "Күміс"
     },
     "to_next_level": "Кімге",
@@ -320,7 +320,7 @@
     "promotions": "Акциялар мен ұсыныстар",
     "public_profile": "Жалпы профиль",
     "push_description": "Қолданба ішіндегі хабарландыруларды алыңыз",
-    "push_notifications": "Push хабарландырулары",
+    "push_notifications": "Push хабарлама хабарландырулары",
     "save_changes": "Өзгерістерді сақтау",
     "security": "Қауіпсіздік",
     "share_history": "Шеберлермен сапар тарихын бөлісіңіз",

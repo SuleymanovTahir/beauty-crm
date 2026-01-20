@@ -43,7 +43,7 @@
         "select_tier": "Select level",
         "service_filter": "Service/Procedure",
         "service_hint": "Customers registered for this service will receive a notification",
-        "service_placeholder": "Введите название или идентификатор услуги",
+        "service_placeholder": "Enter service name or ID",
         "start_date": "start date",
         "target_segment": "Target segment",
         "tiers": {
@@ -100,7 +100,7 @@
   "stats": {
     "email_sent": "Email sent",
     "push_sent": "Push sent",
-    "sms_sent": "СМС отправлено",
+    "sms_sent": "SMS sent",
     "total_sent": "Total sent"
   },
   "subtitle": "Managing and sending notifications to clients",

@@ -43,7 +43,7 @@
         "select_tier": "Selecione o nível",
         "service_filter": "Serviço/Procedimento",
         "service_hint": "Os clientes cadastrados neste serviço receberão uma notificação",
-        "service_placeholder": "Введите название или идентификатор услуги",
+        "service_placeholder": "Insira o nome ou ID do serviço",
         "start_date": "data de início",
         "target_segment": "Segmento alvo",
         "tiers": {
@@ -100,7 +100,7 @@
   "stats": {
     "email_sent": "E-mail enviado",
     "push_sent": "Push enviado",
-    "sms_sent": "СМС отправлено",
+    "sms_sent": "SMS enviado",
     "total_sent": "Total enviado"
   },
   "subtitle": "Gerenciar e enviar notificações aos clientes",

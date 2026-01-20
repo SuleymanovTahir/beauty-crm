@@ -22,12 +22,12 @@
     "welcome": "Welcome"
   },
   "booking_info": "Booking Details",
-  "bookingDesc": "Выберите удобное время для визита",
-  "bookingError": "Ошибка при создании записи. Попробуйте позже.",
-  "bookingSuccess": "Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.",
-  "bookingTag": "Онлайн запись",
-  "bookingTitlePart1": "Запишитесь",
-  "bookingTitlePart2": "на прием",
+  "bookingDesc": "Choose a convenient time for your visit",
+  "bookingError": "Error creating booking. ",
+  "bookingSuccess": "Application sent successfully! ",
+  "bookingTag": "Online registration",
+  "bookingTitlePart1": "Sign up",
+  "bookingTitlePart2": "for an appointment",
   "common": {
     "cancel": "Later",
     "change": "Change",
@@ -63,13 +63,13 @@
     "time": "Pick Time",
     "title": "Date & Time"
   },
-  "formDate": "Дата",
-  "formName": "Имя",
-  "formNamePlaceholder": "Ваше имя",
-  "formPhone": "Телефон",
-  "formService": "Услуги",
-  "formServicePlaceholder": "Выберите услуги",
-  "formTime": "Время",
+  "formDate": "Date",
+  "formName": "Name",
+  "formNamePlaceholder": "your name",
+  "formPhone": "Telephone",
+  "formService": "Services",
+  "formServicePlaceholder": "Select services",
+  "formTime": "Time",
   "invalid_phone": "Please enter a valid phone number (min 11 digits)",
   "loading": "Initializing Studio",
   "menu": {
@@ -84,10 +84,10 @@
   },
   "min": "min",
   "newBooking": "Reservation",
-  "noServicesFound": "Услуги не найдены.",
+  "noServicesFound": "No services found.",
   "phone_too_short": "Phone number must contain at least 11 digits including country code",
-  "privacyAgreementStart": "Нажимая кнопку, вы соглашаетесь с",
-  "privacyPolicy": "политикой конфиденциальности",
+  "privacyAgreementStart": "By clicking the button, you agree to",
+  "privacyPolicy": "privacy policy",
   "professional": {
     "anyAvailable": "Any available Master",
     "anyDesc": "We'll match you with the best available professional",
@@ -96,8 +96,8 @@
     "notAvailableToday": "Not Available Today",
     "title": "Choose Master"
   },
-  "searchCountry": "Поиск страны...",
-  "searchService": "Найти услугу...",
+  "searchCountry": "Search for a country...",
+  "searchService": "Find a service...",
   "select_to_continue": "Select a service or technician to continue",
   "services": {
     "allCategories": "All",
@@ -109,6 +109,6 @@
     "service_many": "services",
     "total": "Total"
   },
-  "submitBooking": "Отправить заявку",
+  "submitBooking": "Send a request",
   "totalDuration": "Duration"
 }

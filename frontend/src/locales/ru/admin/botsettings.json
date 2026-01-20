@@ -87,7 +87,7 @@
   "premium_price_explanation": "Объясните премиальную цену",
   "price_response_template": "Модель ценового отклика",
   "real_dialogues_for_training": "Реальные диалоги для обучения",
-  "response_style": "",
+  "response_style": "Стиль ответа",
   "retention_hint": "Если клиент не приходил в салон Х дней.",
   "retention_placeholder": "Привет! Давно не виделись...",
   "safety_and_ethics": "Безопасность и этика",

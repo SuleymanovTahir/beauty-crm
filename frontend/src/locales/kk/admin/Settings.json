@@ -27,7 +27,7 @@
   "error_deleting_currency": "Валютаны жою қатесі",
   "error_enter_current_password": "Ағымдағы құпия сөзді енгізіңіз",
   "error_invalid_email": "Жарамсыз электрондық пошта пішімі",
-  "error_loading_currencies": "",
+  "error_loading_currencies": "Валюталарды жүктеу қатесі.",
   "error_loading_profile": "Профильді жүктеу қатесі.",
   "error_name_too_short": "Аты кемінде 2 таңбадан тұруы керек.",
   "error_password_too_short": "Құпия сөз кемінде 6 таңбадан тұруы керек",

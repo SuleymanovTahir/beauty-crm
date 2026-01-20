@@ -50,10 +50,10 @@
     "failed_create": "No se pudo crear el desafío",
     "failed_delete": "No se pudo eliminar el desafío",
     "failed_load": "No se pudieron cargar los desafíos",
-    "progress_checked_one": "",
-    "progress_checked_few": "",
-    "progress_checked_many": "",
-    "progress_checked_other": ""
+    "progress_checked_one": "Progreso comprobado solo",
+    "progress_checked_few": "El progreso comprobó varios",
+    "progress_checked_many": "El progreso ha sido puesto a prueba hasta fecha muchos",
+    "progress_checked_other": "Progreso verificado hasta fecha otros"
   },
   "types": {
     "referrals": "Referencias",

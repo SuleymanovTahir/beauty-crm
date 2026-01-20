@@ -50,10 +50,10 @@
     "failed_create": "चुनौती पैदा करने में विफल",
     "failed_delete": "चुनौती हटाने में विफल",
     "failed_load": "चुनौतियाँ लोड करने में विफल",
-    "progress_checked_one": "",
-    "progress_checked_few": "",
-    "progress_checked_many": "",
-    "progress_checked_other": ""
+    "progress_checked_one": "प्रगति की जाँच अकेले की गई",
+    "progress_checked_few": "प्रगति की जाँच कई",
+    "progress_checked_many": "प्रगति का परीक्षण कई लोगों द्वारा किया गया है",
+    "progress_checked_other": "दूसरों द्वारा सत्यापित प्रगति"
   },
   "types": {
     "referrals": "रेफरल",

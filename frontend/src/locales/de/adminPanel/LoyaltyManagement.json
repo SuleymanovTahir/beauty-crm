@@ -1,11 +1,11 @@
 {
-  "adjust_points": "",
+  "adjust_points": "Punkte anpassen",
   "buttons": {
     "add_rule": "Fügen Sie eine Regel hinzu",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "Punkte anpassen",
+    "cancel": "Stornieren",
     "save": "Speichern",
-    "save_changes": ""
+    "save_changes": "Änderungen speichern"
   },
   "categories": {
     "category": "Kategorie",
@@ -23,24 +23,24 @@
     "points_per_unit": "Punkte für 1 Einheit. Währungen",
     "title": "Einstellungen"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "Bestätigen Sie das Löschen der Regel",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "Kunden-E-Mail",
+      "client_email_placeholder": "Platzhalter für die E-Mail-Adresse des Kunden",
+      "description": "Beschreibung",
+      "points": "Gläser",
+      "points_placeholder": "Punktfüller",
+      "reason": "Ursache",
+      "reason_placeholder": "Platzhalter für den Grund",
+      "title": "Überschrift"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
-      "tier_name": "",
-      "title": ""
+      "description": "Beschreibung",
+      "discount_percent": "Rabattprozentsatz",
+      "min_points": "Mindestpunktzahl",
+      "tier_name": "Levelname",
+      "title": "Überschrift"
     },
     "rule": {
       "description": "Legen Sie den Punktemultiplikator für die Servicekategorie fest",
@@ -48,42 +48,42 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "Aktive Mitglieder",
+    "points_redeemed": "Punkte eingelöst",
+    "total_points_issued": "Gesamtpunktzahl vergeben"
   },
-  "subtitle": "",
+  "subtitle": "Untertitel",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "Beschreibung",
+    "discount": "Rabatt",
+    "from_points": "Aus Punkten",
+    "starting_level": "Einstiegsniveau",
+    "title": "Überschrift"
   },
-  "title": "",
+  "title": "Überschrift",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "Konfiguration aktualisiert",
+    "failed_adjust": "Konfiguration fehlgeschlagen",
+    "failed_delete": "Fehler beim Löschen",
+    "failed_load": "Laden fehlgeschlagen",
+    "failed_save": "Speichern fehlgeschlagen",
+    "failed_update": "Aktualisierung fehlgeschlagen",
+    "points_adjusted_add": "Punkte angepasst, hinzugefügt",
+    "points_adjusted_deduct": "Punktabzug angepasst",
+    "rule_deleted": "Die Regel wurde gelöscht.",
+    "rule_saved": "Die Regel wurde gespeichert.",
+    "tier_updated": "Level aktualisiert"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "Beschreibung",
+    "search_placeholder": "Platzhalter suchen",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "Kunde",
+      "date": "Datum",
+      "points": "Gläser",
+      "reason": "Ursache",
+      "type": "Typ"
     },
-    "title": ""
+    "title": "Überschrift"
   }
 }

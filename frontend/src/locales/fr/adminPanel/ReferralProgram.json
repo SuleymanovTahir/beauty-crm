@@ -57,7 +57,7 @@
   "title": "Programme de parrainage",
   "toasts": {
     "failed_load": "Échec du chargement des références",
-    "failed_save": "",
+    "failed_save": "Échec de l'réservation",
     "settings_saved": "Paramètres enregistrés avec succès"
   }
 }

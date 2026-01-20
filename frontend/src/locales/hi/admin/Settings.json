@@ -27,7 +27,7 @@
   "error_deleting_currency": "मुद्रा हटाने में त्रुटि",
   "error_enter_current_password": "अपने वर्तमान पासवर्ड को दर्ज करें",
   "error_invalid_email": "अमान्य ईमेल प्रारूप",
-  "error_loading_currencies": "",
+  "error_loading_currencies": "मुद्राएँ लोड करने में त्रुटि.",
   "error_loading_profile": "प्रोफ़ाइल लोड करने में त्रुटि",
   "error_name_too_short": "नाम में कम से कम 2 अक्षर होने चाहिए",
   "error_password_too_short": "पासवर्ड में कम से कम 6 अक्षर होने चाहिए",

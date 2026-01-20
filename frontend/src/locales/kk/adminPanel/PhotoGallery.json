@@ -11,7 +11,7 @@
   "card": {
     "featured": "Таңдаулылар",
     "toggle_featured": "Таңдаулыларды ауыстырып қосу",
-    "uploaded_by": "{{name}} жүктеп салған",
+    "uploaded_by": "{{name}} жүктеген",
     "views": "көріністер"
   },
   "dialogs": {
