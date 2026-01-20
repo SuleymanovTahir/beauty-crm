@@ -523,7 +523,7 @@ class Translator:
             if cached: results[i] = self._apply_terminology_corrections(cached, target); continue
             to_translate_indices.append(i); to_translate_texts.append(text)
         if not to_translate_texts: return results
-        batch_size = 100
+        batch_size = 150
         variable_pattern = r'\{\{([^}]+)\}\}'
         for i in range(0, len(to_translate_texts), batch_size):
             batch = to_translate_texts[i:i+batch_size]; batch_indices = to_translate_indices[i:i+batch_size]

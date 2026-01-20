@@ -11,7 +11,7 @@ module.exports = {
   keySeparator: '.',
   namespaceSeparator: ':',
   createOldCatalogs: false,
-  keepRemoved: false,  // 🔥 Удаляем неиспользуемые ключи автоматически
+  keepRemoved: true,  // ✅ НЕ удаляем ключи автоматически (предотвращаем потерю динамических ключей)
   resetDefaultValueLocale: null,
   sort: true,
   verbose: false,  // Отключаем verbose чтобы не засорять консоль
