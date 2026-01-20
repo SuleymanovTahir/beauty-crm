@@ -11,10 +11,10 @@
   "createdAt": "Erstellungsdatum",
   "editContract": "Vertrag bearbeiten",
   "errors": {
-    "deleteError": "Error deleting contract",
-    "saveError": "Error saving contract",
-    "sendError": "Error sending contract",
-    "updateError": "Failed to update status"
+    "deleteError": "Fehler beim Löschen des Vertrags.",
+    "saveError": "Fehler beim Speichern des Vertrags.",
+    "sendError": "Fehler beim Senden des Vertrags",
+    "updateError": "Status konnte nicht aktualisiert werden"
   },
   "form": {
     "cancel": "Stornieren",
@@ -23,7 +23,7 @@
     "selectClient": "Wählen Sie den Kunden aus"
   },
   "internalContracts": "Inländisch",
-  "manageTypes": "Arten bis Verträgen",
+  "manageTypes": "Arten datum bis Verträgen",
   "manage_stages": "Spalten",
   "messages": {
     "confirmDelete": "Sind Sie sicher, dass Sie diese Vereinbarung löschen möchten?",
@@ -68,7 +68,7 @@
     },
     "name": "Name",
     "system": "System",
-    "systemProtected": "System protected",
-    "title": "Arten bis Verträgen"
+    "systemProtected": "Das System ist geschützt",
+    "title": "Arten datum bis Verträgen"
   }
 }

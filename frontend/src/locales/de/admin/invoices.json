@@ -59,12 +59,12 @@
     "method": "Versandart",
     "recipient": "Empfänger",
     "sendButton": "Schicken",
-    "telegram": "Telegramm",
+    "telegram": "Telegram",
     "title": "Rechnung senden",
     "whatsapp": "WhatsApp"
   },
   "status": "Status",
   "subtitle": "Konto- und Zahlungsverwaltung",
-  "title": "Konten",
+  "title": "Rechnungen",
   "totalAmount": "Summe"
 }

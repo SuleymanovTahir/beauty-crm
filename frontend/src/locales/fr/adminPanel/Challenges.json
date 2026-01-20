@@ -8,7 +8,7 @@
     "check_progress": "Vérifier la progression",
     "completed": "complété",
     "progress": "Progrès",
-    "pts": "points",
+    "pts": "",
     "reward": "Récompense",
     "target": "Cible"
   },
@@ -22,7 +22,7 @@
         "description_placeholder": "Ex : Visitez le salon {{count}} fois ce mois-ci",
         "end_date": "Date de fin",
         "reward_placeholder": "{{points}}",
-        "reward_points": "Ajouter des points",
+        "reward_points": "",
         "start_date": "Date de début",
         "target_placeholder": "{{points}}",
         "target_value": "Quantité cible",
@@ -50,9 +50,9 @@
     "failed_create": "Erreur lors de la création de l'activité",
     "failed_delete": "Erreur lors de la suppression",
     "failed_load": "Échec du chargement des données",
+    "progress_checked_one": "Progression mise à jour pour le membre {{count}}",
     "progress_checked_few": "Progrès mis à jour pour les participants {{count}}",
     "progress_checked_many": "Progrès mis à jour pour les participants {{count}}",
-    "progress_checked_one": "Progression mise à jour pour le membre {{count}}",
     "progress_checked_other": "Progrès mis à jour pour les participants {{count}}"
   },
   "types": {

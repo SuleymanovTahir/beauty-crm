@@ -20,7 +20,7 @@
     "description": "الإعدادات الأساسية لبرنامج الولاء",
     "expiration_days": "مدة صلاحية النقاط (أيام)",
     "expiration_hint": "سيتم إلغاء النقاط تلقائيًا بعد الوقت المحدد.",
-    "points_per_unit": "نقاط لوحدات {{count}}. العملات",
+    "points_per_unit": "نقاط ل 1 وحدة. العملات",
     "title": "الإعدادات العالمية"
   },
   "confirm_delete_rule": "هل أنت متأكد أنك تريد حذف هذه القاعدة؟",
@@ -68,8 +68,8 @@
     "failed_load": "فشل تحميل البيانات",
     "failed_save": "حدث خطأ أثناء الحفظ",
     "failed_update": "حدث خطأ أثناء التحديث",
-    "points_adjusted_add": "{{points}} النقاط الممنوحة للمستخدم {{email}}",
-    "points_adjusted_deduct": "تم خصم نقاط {{points}} من المستخدم {{email}}",
+    "points_adjusted_add": "",
+    "points_adjusted_deduct": "",
     "rule_deleted": "تم حذف القاعدة بنجاح",
     "rule_saved": "تم حفظ القاعدة",
     "tier_updated": "تم تحديث بيانات المستوى"

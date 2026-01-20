@@ -16,7 +16,7 @@
   "menu": {
     "analytics": "Analytik",
     "audit_log": "Audit-Protokolle",
-    "bookings": "bookings",
+    "bookings": "Buchungen",
     "bot_settings": "Bot-Einstellungen",
     "broadcasts": "Newsletter",
     "calendar": "Kalender",
@@ -33,7 +33,7 @@
     "management": "Kontrolle",
     "marketplace_integrations": "Marktplätze",
     "messengers": "Boten",
-    "my_bookings": "Meine buchungen",
+    "my_bookings": "Meine Buchungen",
     "notifications": "Benachrichtigungen",
     "payment_integrations": "Zahlungssysteme",
     "products": "Waren",

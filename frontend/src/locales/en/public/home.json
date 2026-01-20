@@ -27,7 +27,10 @@
         "title": "Premium materials"
       },
       "schedule": {
-        "description": "We are open {{count}} days a week at times convenient for you.",
+        "description_few": "We are open {{count}} days a week at a time that is convenient for you.",
+        "description_many": "We are open {{count}} days a week at a time that is convenient for you.",
+        "description_one": "We are open {{count}} days a week at a time that is convenient for you.",
+        "description_other": "We are open {{count}} days a week at a time that is convenient for you.",
         "title": "Convenient schedule"
       }
     },
@@ -52,14 +55,14 @@
   },
   "services": {
     "items": [
-      "Перманентный макияж бровей",
-      "Маникюр",
-      "Педикюр",
-      "Массаж лица",
-      "Наращивание ресниц",
-      "Стрижка и укладка",
-      "Окрашивание волос",
-      "Чистка лица"
+      "Permanent eyebrow makeup",
+      "Manicure",
+      "Pedicure",
+      "Facial massage",
+      "Eyelash extensions",
+      "Cutting and styling",
+      "Hair coloring",
+      "Facial cleansing"
     ]
   },
   "team": {

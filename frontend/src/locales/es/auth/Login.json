@@ -2,10 +2,10 @@
   "authorization_error": "Autorización fallida",
   "enter_login": "Ingrese su inicio de sesión",
   "fill_both_fields": "Hasta fecha favor complete ambos campos",
-  "login": "Acceso",
+  "login": "Entrar",
   "login_error": "Error de inicio de sesión",
   "login_title": "Inicie sesión en su cuenta",
   "password": "Contraseña",
-  "username": "Acceso",
+  "username": "Nombre de usuario",
   "welcome": "Bienvenido"
 }

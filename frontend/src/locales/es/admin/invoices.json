@@ -59,12 +59,12 @@
     "method": "Método de envío",
     "recipient": "Beneficiario",
     "sendButton": "Enviar",
-    "telegram": "Telegrama",
+    "telegram": "Telegram",
     "title": "Enviar factura",
     "whatsapp": "WhatsApp"
   },
   "status": "Estado",
   "subtitle": "Gestión de cuentas y pagos.",
-  "title": "Cuentas",
+  "title": "Facturas",
   "totalAmount": "Suma"
 }

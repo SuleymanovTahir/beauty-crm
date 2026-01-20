@@ -44,9 +44,9 @@
   "visit_time": "भ्रमण का समय",
   "visitor_trend": "विज़िट प्रवृत्ति",
   "visitors": "आगंतुकों",
-  "visitors_count": "आगंतुकों",
+  "visitors_count": "",
+  "visitors_count_one": "{{count}} आगंतुक",
   "visitors_count_few": "{{count}} आगंतुक",
   "visitors_count_many": "{{count}} आगंतुक",
-  "visitors_count_one": "{{count}} आगंतुक",
   "visitors_count_other": "{{count}} आगंतुक"
 }

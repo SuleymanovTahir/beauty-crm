@@ -11,10 +11,6 @@
   "custom_range": "Сіздің кезеңіңіз",
   "date_time": "Күні мен уақыты",
   "days": "күндер",
-  "days_few": "[[VAR0]]] күн",
-  "days_many": "[[VAR0]]] күн",
-  "days_one": "[[VAR0]]] күн",
-  "days_other": "[[VAR0]]] күн",
   "detailed_info": "Егжей-тегжейлі ақпарат",
   "internal_notes": "Ескертпелер",
   "internal_notes_placeholder": "Жазбаларды осы жерге енгізіңіз...",
@@ -36,9 +32,5 @@
   "update": "Жаңарту",
   "update_status": "Күйді жаңарту",
   "visits": "сапарлар",
-  "visits_few": "[[VAR0]]] бару",
-  "visits_many": "[[VAR0]]] бару",
-  "visits_one": "[[VAR0]]] бару",
-  "visits_other": "[[VAR0]]] бару",
   "write_to_client": "Клиентке жазыңыз"
 }

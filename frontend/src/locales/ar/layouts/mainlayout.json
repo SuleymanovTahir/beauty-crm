@@ -16,7 +16,7 @@
   "menu": {
     "analytics": "التحليلات",
     "audit_log": "سجلات التدقيق",
-    "bookings": "bookings",
+    "bookings": "الحجوزات",
     "bot_settings": "إعدادات البوت",
     "broadcasts": "النشرات الإخبارية",
     "calendar": "تقويم",
@@ -33,7 +33,7 @@
     "management": "يتحكم",
     "marketplace_integrations": "الأسواق",
     "messengers": "الرسل",
-    "my_bookings": "مداخلاتي",
+    "my_bookings": "حجوزاتي",
     "notifications": "إشعارات",
     "payment_integrations": "أنظمة الدفع",
     "products": "بضائع",

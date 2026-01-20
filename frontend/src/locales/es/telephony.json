@@ -70,7 +70,7 @@
   "unarchive_recording": "Abrir la cremallera",
   "upload_recording": "Subir reserva",
   "webhook_instruction_short": "Para recibir llamadas, proporcione la siguiente URL en la provisión de teléfono de su proveedor.",
-  "webhook_security_note": "Hasta fecha razones de seguridad, no comparta esta URL con nadie más.",
+  "webhook_security_note": "hasta fecha razones de seguridad, no comparta esta URL con nadie más.",
   "webhook_url_label": "Su URL de webhook única",
   "week": "Semana"
 }

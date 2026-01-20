@@ -11,10 +11,6 @@
   "custom_range": "आपकी अवधि",
   "date_time": "तिथि और समय",
   "days": "दिन",
-  "days_few": "{{count}} दिन",
-  "days_many": "{{count}} दिन",
-  "days_one": "{{count}} दिन",
-  "days_other": "{{count}} दिन",
   "detailed_info": "विस्तार में जानकारी",
   "internal_notes": "टिप्पणियाँ",
   "internal_notes_placeholder": "यहां नोट्स दर्ज करें...",
@@ -36,9 +32,5 @@
   "update": "अद्यतन",
   "update_status": "अद्यतन स्थिति",
   "visits": "दौरा",
-  "visits_few": "{{count}} पर जाएँ",
-  "visits_many": "{{count}} विज़िट",
-  "visits_one": "{{count}} पर जाएँ",
-  "visits_other": "{{count}} विज़िट",
   "write_to_client": "ग्राहक को लिखें"
 }

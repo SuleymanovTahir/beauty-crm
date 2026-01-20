@@ -20,7 +20,7 @@
     "description": "Basic settings of the loyalty program",
     "expiration_days": "Points validity period (days)",
     "expiration_hint": "Points will be automatically canceled after the specified time.",
-    "points_per_unit": "points for {{count}} units. ",
+    "points_per_unit": "points for 1 unit. ",
     "title": "Global Settings"
   },
   "confirm_delete_rule": "Are you sure you want to delete this rule?",
@@ -68,8 +68,8 @@
     "failed_load": "Failed to load data",
     "failed_save": "Error while saving",
     "failed_update": "Error during update",
-    "points_adjusted_add": "{{points}} points awarded to user {{email}}",
-    "points_adjusted_deduct": "{{points}} points have been deducted from user {{email}}",
+    "points_adjusted_add": "",
+    "points_adjusted_deduct": "",
     "rule_deleted": "Rule deleted successfully",
     "rule_saved": "Rule saved",
     "tier_updated": "Level data updated"

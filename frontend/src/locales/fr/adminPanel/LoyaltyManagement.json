@@ -20,7 +20,7 @@
     "description": "Paramètres de base du programme de fidélité",
     "expiration_days": "Durée de validité des points (jours)",
     "expiration_hint": "Les points seront automatiquement annulés après l'heure spécifiée.",
-    "points_per_unit": "points pour les unités {{count}}. monnaies",
+    "points_per_unit": "points pour 1 unité. devises",
     "title": "Paramètres globaux"
   },
   "confirm_delete_rule": "Êtes-vous sûr de vouloir supprimer cette règle ?",
@@ -68,8 +68,8 @@
     "failed_load": "Échec du chargement des données",
     "failed_save": "Erreur lors de l'réservation",
     "failed_update": "Erreur lors de la mise à jour",
-    "points_adjusted_add": "{{points}} points attribués à l'utilisateur {{email}}",
-    "points_adjusted_deduct": "{{points}} points ont été déduits de l'utilisateur {{email}}",
+    "points_adjusted_add": "",
+    "points_adjusted_deduct": "",
     "rule_deleted": "Règle supprimée avec succès",
     "rule_saved": "Règle enregistrée",
     "tier_updated": "Données de niveau mises à jour"

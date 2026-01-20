@@ -81,7 +81,7 @@
     "filters": {
       "all": "Барлық арналар",
       "email": "Электрондық пошта",
-      "push": "Push хабарлама",
+      "push": "Push хабарлама хабарландыруы",
       "sms": "SMS"
     },
     "scheduled": "Жоспарланған",
@@ -99,7 +99,7 @@
   "send_notification": "Жіберу",
   "stats": {
     "email_sent": "Электрондық пошта",
-    "push_sent": "Push хабарлама",
+    "push_sent": "Push хабарлама хабарландыруы",
     "sms_sent": "SMS",
     "total_sent": "Барлығы жіберілді"
   },

@@ -3,8 +3,8 @@
   "clear_confirm": "Тексеру журналын толығымен өшіргіңіз келетініне сенімдісіз бе? Бұл әрекет қайтымсыз.",
   "delete_batch_confirm_few": "Таңдалған {{count}} жазбаларды жою керек пе?",
   "delete_batch_confirm_many": "Таңдалған {{count}} жазбаларды жою керек пе?",
-  "delete_batch_confirm_one": "Таңдалған {{count}} жазбаны жою керек пе?",
-  "delete_batch_confirm_other": "[[VAR0]]] жазбаларды жою керек пе?",
+  "delete_batch_confirm_one": "Таңдалған {{count}} жазбаны жою қажет пе?",
+  "delete_batch_confirm_other": "{{count}} жазбаларды жою?",
   "delete_confirm": "Бұл жазбаны біржола жоюым керек пе?",
   "delete_selected": "Таңдалған жою",
   "details": {
@@ -25,8 +25,8 @@
   "search_placeholder": "Пайдаланушы, нысан немесе әрекет бойынша іздеу...",
   "stat_active_users": "Белсенді пайдаланушылар",
   "stat_created": "Құрылды",
-  "stat_errors": "Қателер ({{count}}сағ)",
-  "stat_total": "Барлығы ({{count}}сағ)",
+  "stat_errors": "Қателер ({{count}}h)",
+  "stat_total": "Жалпы ({{count}}сағ)",
   "subtitle": "Жүйедегі барлық әрекеттер мен өзгерістердің тарихы",
   "table": {
     "action": "Әрекет",

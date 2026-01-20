@@ -18,7 +18,7 @@
   "from": "De",
   "geographic_reach": "Cobertura geográfica",
   "invalid_date_range": "Intervalo de fechas no válido",
-  "ip_address": "Dirección IP",
+  "ip_address": "dirección IP",
   "km": "kilómetros",
   "landing_sections": "Secciones de aterrizaje",
   "latest_visitors": "Últimos visitantes",
@@ -44,9 +44,9 @@
   "visit_time": "Tiempo de visita",
   "visitor_trend": "Visita tendencia",
   "visitors": "Visitantes",
-  "visitors_count": "visitantes",
+  "visitors_count": "",
+  "visitors_count_one": "{{count}} visitante",
   "visitors_count_few": "{{count}} visitante",
   "visitors_count_many": "{{count}} visitantes",
-  "visitors_count_one": "{{count}} visitante",
   "visitors_count_other": "{{count}} visitantes"
 }

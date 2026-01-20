@@ -2,10 +2,10 @@
   "authorization_error": "Авторизация орындалмады",
   "enter_login": "Логиніңізді енгізіңіз",
   "fill_both_fields": "Екі өрісті де толтырыңыз",
-  "login": "Жүйеге кіру",
+  "login": "Кіру",
   "login_error": "Жүйеге кіру қатесі",
   "login_title": "Тіркелгіңізге кіріңіз",
   "password": "Құпия сөз",
-  "username": "Жүйеге кіру",
+  "username": "Логин",
   "welcome": "Қош келдіңіз"
 }

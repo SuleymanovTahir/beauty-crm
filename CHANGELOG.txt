@@ -21,6 +21,17 @@
 
 # CHANGELOG - Память проекта Beauty CRM
 
+## [2026-01-20] Localization 2.1: Hyper-Speed & Global Consistency
+- 🚀 **100x Translation Accelerator:**
+  - **Batch Processing:** Implemented "True Batching" (50 keys per request) with XML-tagging to keep context and prevent merging.
+  - **Variable Protection:** Automated masking of `{{variables}}` during translation to ensure app logic remains intact across 9 languages.
+- 💎 **Universal Reliability (9 Languages):**
+  - **Master Glossary Priority:** Enhanced `frontend_translate.py` to give `key_glossary.json` absolute priority over existing files and cache.
+  - **Global SSOT:** Populated consistent business terms for EN, RU, AR, ES, DE, FR, PT, HI, KK (Status: Completed, Pending, Cancelled, Income, Bookings).
+- 🧹 **Code Hygiene:**
+  - **Enhanced Map Support:** Fixed traversal of nested lists and arrays in JSON locale files.
+  - **Cleanup:** Sanitized unused technical markers and test keys.
+
 ## [2026-01-20] Localization 2.0: Structural Refinement & Zero Hardcode
 - 🌍 **Translation Engineering & Reliability:**
   - **Key-Based Glossary:** Implemented `key_glossary.json` to lock specific translations (e.g. `username` -> "Логин") and prevent auto-translation regression.

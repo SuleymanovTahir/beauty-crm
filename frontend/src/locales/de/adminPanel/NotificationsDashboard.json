@@ -68,7 +68,7 @@
         "title_placeholder": "Titel der Benachrichtigung",
         "type": "Kanaltyp",
         "types": {
-          "email": "Schönheitssalonservice E-Mail",
+          "email": "E-Mail",
           "push": "Push-Benachrichtigung-Benachrichtigung",
           "sms": "SMS"
         }
@@ -80,8 +80,8 @@
     "description": "Liste bisher erstellter und aktueller Mailings",
     "filters": {
       "all": "Alle Kanäle",
-      "email": "Schönheitssalonservice E-Mail",
-      "push": "Push-Benachrichtigung",
+      "email": "E-Mail",
+      "push": "Push-Benachrichtigung-Benachrichtigung",
       "sms": "SMS"
     },
     "scheduled": "Geplant",
@@ -98,8 +98,8 @@
   "save_template": "Vorlage speichern",
   "send_notification": "Schicken",
   "stats": {
-    "email_sent": "Schönheitssalonservice E-Mail",
-    "push_sent": "Push-Benachrichtigung",
+    "email_sent": "E-Mail",
+    "push_sent": "Push-Benachrichtigung-Benachrichtigung",
     "sms_sent": "SMS",
     "total_sent": "Insgesamt gesendet"
   },
@@ -118,7 +118,7 @@
     "template_saved": "Vorlage gespeichert"
   },
   "types": {
-    "email": "Schönheitssalonservice E-Mail",
+    "email": "E-Mail",
     "push": "Push-Benachrichtigung-Benachrichtigung",
     "sms": "SMS"
   }

@@ -81,7 +81,7 @@
     "filters": {
       "all": "Todos os canais",
       "email": "E-mail",
-      "push": "Notificação push",
+      "push": "Notificação notificação push",
       "sms": "SMS"
     },
     "scheduled": "Planejado",
@@ -99,7 +99,7 @@
   "send_notification": "Enviar",
   "stats": {
     "email_sent": "E-mail",
-    "push_sent": "Notificação push",
+    "push_sent": "Notificação notificação push",
     "sms_sent": "SMS",
     "total_sent": "Total enviado"
   },

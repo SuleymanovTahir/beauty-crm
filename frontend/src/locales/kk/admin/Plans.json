@@ -16,7 +16,7 @@
   "individual": "Жеке",
   "individual_plan": "Жеке жоспар",
   "individual_plans": "Жеке жоспарлар",
-  "manage_goals_and_targets": "Мақсат пен KPI басқару",
+  "manage_goals_and_targets": "Билікті басқару және KPI",
   "manage_metrics": "Метрикаларды басқару",
   "metric_name": "Аты",
   "metric_name_en": "Атауы (EN)",
@@ -29,7 +29,7 @@
     "custom": "Сіздің кезеңіңіз",
     "month": "Ай",
     "quarter": "Тоқсан",
-    "two_weeks": "[[VAR0]]] апта",
+    "two_weeks": "{{count}} апта",
     "week": "Апта",
     "year": "Жыл"
   },

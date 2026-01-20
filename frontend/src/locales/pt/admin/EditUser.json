@@ -1,7 +1,7 @@
 {
   "admin_can_change_password_without_knowing_current": "Um administrador pode alterar a senha de um usuário sem saber a senha atual.",
   "after_changing_user_must_login_with_new_password": "Após a alteração, o usuário deverá efetuar login com a nova senha.",
-  "back_to_users": "Voltar para os usuários",
+  "back_to_users": "Voltar aos usuários",
   "basic_information": "Informações básicas",
   "change_password": "Alterar a senha",
   "changing": "Mudar",
@@ -16,11 +16,17 @@
   "full_name": "Nome completo",
   "full_name_placeholder": "Ivan Ivanov",
   "important": "Importante",
-  "name_must_be_at_least_2_characters": "O nome deve conter pelo menos {{count}} caractere",
+  "name_must_be_at_least_2_characters_few": "O nome deve conter pelo menos {{count}} caracteres",
+  "name_must_be_at_least_2_characters_many": "O nome deve conter pelo menos {{count}} caracteres",
+  "name_must_be_at_least_2_characters_one": "O nome deve conter pelo menos {{count}} caracteres",
+  "name_must_be_at_least_2_characters_other": "O nome deve conter pelo menos {{count}} caracteres",
   "new_password": "Nova Senha",
   "password": "Senha",
   "password_changed": "Senha alterada",
-  "password_must_be_at_least_6_characters": "A senha deve conter pelo menos {{count}} caracteres",
+  "password_must_be_at_least_6_characters_few": "A senha deve conter pelo menos {{count}} caracteres",
+  "password_must_be_at_least_6_characters_many": "Senha deve conter pelo menos {{count}} caracteres",
+  "password_must_be_at_least_6_characters_one": "A senha deve conter pelo menos {{count}} caracteres",
+  "password_must_be_at_least_6_characters_other": "A senha deve conter pelo menos {{count}} caracteres",
   "passwords_do_not_match": "As senhas não coincidem",
   "permissions_label": "Direitos de acesso",
   "profile": "Perfil",
@@ -28,5 +34,8 @@
   "save_changes": "Salvar alterações",
   "saving": "Salvando",
   "username": "Conecte-se",
-  "username_must_be_at_least_3_characters": "O login deve conter pelo menos {{count}} caractere"
+  "username_must_be_at_least_3_characters_few": "O login deve conter pelo menos {{count}} caracteres",
+  "username_must_be_at_least_3_characters_many": "O login deve conter pelo menos {{count}} caracteres",
+  "username_must_be_at_least_3_characters_one": "O login deve conter no mínimo {{count}} caracteres",
+  "username_must_be_at_least_3_characters_other": "O login deve conter no mínimo {{count}} caracteres"
 }

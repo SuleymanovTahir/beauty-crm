@@ -20,7 +20,7 @@
     "description": "Базовые настройки программы лояльности",
     "expiration_days": "Срок действия баллов (дней)",
     "expiration_hint": "Баллы будут автоматически аннулированы через указанное время.",
-    "points_per_unit": "баллов за {{count}} ед. валюты",
+    "points_per_unit": "баллов за 1 ед. валюты",
     "title": "Глобальные настройки"
   },
   "confirm_delete_rule": "Вы уверены, что хотите удалить это правило?",
@@ -68,8 +68,8 @@
     "failed_load": "Не удалось загрузить данные",
     "failed_save": "Ошибка при сохранении",
     "failed_update": "Ошибка при обновлении",
-    "points_adjusted_add": "Начислено {{points}} баллов пользователю {{email}}",
-    "points_adjusted_deduct": "Списано {{points}} баллов у пользователя {{email}}",
+    "points_adjusted_add": "",
+    "points_adjusted_deduct": "",
     "rule_deleted": "Правило успешно удалено",
     "rule_saved": "Правило сохранено",
     "tier_updated": "Данные уровня обновлены"
