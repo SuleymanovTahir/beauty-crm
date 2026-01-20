@@ -1,6 +1,6 @@
 {
   "active_care": "Активный уход",
-  "beauty_score": "Индекс красоты",
+  "beauty_score": "Ваш индекс здоровья",
   "book_button": "Записаться",
   "category_body": "Тело",
   "category_face": "Лицо",
@@ -28,6 +28,6 @@
   "recommended_soon": "Рекомендуется",
   "regular_visits": "Регулярные визиты",
   "subtitle": "Персональный анализ вашего ухода",
-  "title": "Beauty Профиль",
+  "title": "Мой Профиль",
   "view_all_recommendations": "Все рекомендации"
 }

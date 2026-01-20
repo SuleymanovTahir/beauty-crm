@@ -40,8 +40,8 @@
   "noInvoices": "Әлі тіркелгі жоқ",
   "paidAmount": "Ақылы",
   "payment": {
-    "add": "қосу",
-    "amount": "сомасы",
+    "add": "Қосу",
+    "amount": "Сомасы",
     "method": "Төлем әдісі",
     "methods": {
       "card": "Карта",
@@ -66,5 +66,5 @@
   "status": "Күй",
   "subtitle": "Есептік жазбаны және төлемді басқару",
   "title": "Есептік жазбалар",
-  "totalAmount": "сомасы"
+  "totalAmount": "Сомасы"
 }

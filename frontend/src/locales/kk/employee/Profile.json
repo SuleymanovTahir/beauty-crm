@@ -1,14 +1,16 @@
 {
+  "account": "Есептік жазба",
   "admin": "Әкімші",
   "change_password": "Құпия сөзді өзгерту",
   "changing_password": "Құпия сөзіңізді өзгерту",
   "combine_letters_numbers_and_special_characters_for_maximum_security": "Максималды қауіпсіздік үшін әріптерді, сандарды және арнайы таңбаларды біріктіріңіз.",
   "confirm_new_password": "Жаңа құпия сөзіңізді растаңыз",
-  "current_password": "ағымдағы құпия сөз",
+  "current_password": "Ағымдағы құпия сөз",
   "edit_profile": "Профильді өңдеу",
   "email": "Электрондық пошта",
   "email_placeholder": "user@example.com",
   "employee": "Қызметкер",
+  "employee_profile": "Қызметкер профилі",
   "enter_current_password": "Ағымдағы құпия сөзді енгізіңіз",
   "enter_current_password_for_confirmation": "Растау үшін ағымдағы құпия сөзді енгізіңіз",
   "error_changing_password": "Құпия сөзді өзгерту қатесі",
@@ -18,7 +20,7 @@
   "full_name": "Толық аты-жөні",
   "full_name_must_be_at_least_2_characters": "Толық атау кемінде 2 таңбадан тұруы керек",
   "full_name_placeholder": "Иван Иванов",
-  "in_system_since": "бар жүйеде",
+  "in_system_since": "Бар жүйеде",
   "loading_profile": "Профиль жүктелуде",
   "manage_personal_data_and_security_settings": "Жеке деректер мен қауіпсіздік параметрлерін басқарыңыз",
   "manager": "Менеджер",
@@ -35,7 +37,5 @@
   "try_reloading_page": "Бетті қайта жүктеп көріңіз",
   "use_complex_password_at_least_6_characters": "Күрделі құпия сөзді пайдаланыңыз (кемінде 6 таңба).",
   "username": "Жүйеге кіру",
-  "username_must_be_at_least_3_characters": "Жүйеге кіруде кемінде 3 таңба болуы керек",
-  "employee_profile": "Қызметкер профилі",
-  "account": "Есептік жазба"
+  "username_must_be_at_least_3_characters": "Жүйеге кіруде кемінде 3 таңба болуы керек"
 }

@@ -1,6 +1,6 @@
 {
   "active_care": "Белсенді күтім",
-  "beauty_score": "Сұлулық индексі",
+  "beauty_score": "Сіздің денсаулық көрсеткішіңіз",
   "book_button": "Тіркелу",
   "category_body": "Дене",
   "category_face": "Бет",
@@ -28,6 +28,6 @@
   "recommended_soon": "Ұсынылады",
   "regular_visits": "Тұрақты сапарлар",
   "subtitle": "Сіздің қамқорлығыңызды жеке талдау",
-  "title": "Сұлулық профилі",
+  "title": "Менің профилім",
   "view_all_recommendations": "Барлық ұсыныстар"
 }
