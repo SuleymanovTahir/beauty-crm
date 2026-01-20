@@ -90,6 +90,8 @@
   "target_role": "Zielrolle (optional)",
   "telegram_id_hint": "Das erfahren Sie bei @userinfobot",
   "telegram_limit_hint": "Empfohlen bis zu {{count}} Zeichen (Telegramm)",
+  "telegram_limit_hint_one": "",
+  "telegram_limit_hint_other": "",
   "title": "Massenmailings",
   "total_recipients": "Gesamtzahl der Empfänger",
   "type_created": "Abonnementtyp erstellt",

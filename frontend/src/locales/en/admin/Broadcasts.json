@@ -90,6 +90,8 @@
   "target_role": "Target role (optional)",
   "telegram_id_hint": "You can find out from @userinfobot",
   "telegram_limit_hint": "Recommended up to {{count}} characters (Telegram)",
+  "telegram_limit_hint_one": "",
+  "telegram_limit_hint_other": "",
   "title": "Mass mailings",
   "total_recipients": "Total recipients",
   "type_created": "Subscription type created",

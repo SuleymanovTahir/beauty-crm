@@ -61,6 +61,8 @@
   },
   "cancel": "Болдырмау",
   "characters_count": "кейіпкерлер",
+  "characters_count_one": "",
+  "characters_count_other": "",
   "chat": {
     "attach_file": "Файлды тіркеңіз",
     "attach_image": "Суретті тіркеңіз",

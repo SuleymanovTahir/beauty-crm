@@ -38,6 +38,7 @@ const namespaces = [
   'admin/products',
   'admin/contracts',
   'admin/integrations',
+  'admin/menucustomization',
   'manager/chat',
   'manager/dashboard',
   'manager/funnel',
@@ -144,6 +145,8 @@ for (const lang of languages) {
   resources[lang]['funnel'] = resources[lang]['pages/funnel'] || resources[lang]['admin/funnel'];
   resources[lang]['tasks'] = resources[lang]['admin/tasks'];
   resources[lang]['telephony'] = resources[lang]['admin/telephony'];
+  resources[lang]['broadcasts'] = resources[lang]['admin/broadcasts'];
+  resources[lang]['menucustomization'] = resources[lang]['admin/menucustomization'];
 
   // Manager pages
   resources[lang]['chat'] = resources[lang]['manager/chat'];
