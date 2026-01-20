@@ -20,14 +20,32 @@ def humanize_key(key: str) -> str:
     parts = key.split('.')
     last_part = parts[-1]
     
-    # Remove common prefixes/suffixes
-    last_part = re.sub(r'^(toasts?|buttons?|dialogs?|stats?|placeholders?|labels?|hints?|titles?|subtitles?|forms?|tables?)\.', '', last_part)
+    # IGNORE pluralization keys
+    if last_part in ['one', 'few', 'many', 'other']:
+        return None
+    
+    # Remove common technical prefixes from the name itself
+    # e.g. buttons.save -> save
+    name = re.sub(r'^(toasts?|buttons?|dialogs?|stats?|placeholders?|labels?|hints?|titles?|subtitles?|forms?|tables?|menu|tabs?)\.', '', last_part)
     
     # Replace underscores and hyphens with spaces
-    human = last_part.replace('_', ' ').replace('-', ' ')
+    human = name.replace('_', ' ').replace('-', ' ')
+    
+    # Special cases for beauty salon context
+    replacements = {
+        'master': 'Specialist',
+        'streak': 'Visit sequence',
+        'score': 'Beauty index',
+        'adjust points': 'Change balance',
+        'points': 'Loyalty points'
+    }
+    
+    for k, v in replacements.items():
+        if k in human.lower():
+            human = human.lower().replace(k, v)
     
     # Capitalize
-    return human.capitalize()
+    return human.strip().capitalize()
 
 def rescue_ru_file(file_path: Path, translator: Translator):
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -47,16 +65,20 @@ def rescue_ru_file(file_path: Path, translator: Translator):
             elif isinstance(v, str) and not v.strip():
                 # Empty string found!
                 suggested_en = humanize_key(current_path)
+                
+                if not suggested_en:
+                    continue # Skip pluralization keys
+                    
                 # Translate from simplified EN to RU
                 russian_text = translator.translate(suggested_en, source='en', target='ru')
                 if russian_text and russian_text != suggested_en:
+                    # Clean up common garbage
+                    russian_text = russian_text.replace('Подзаголовок', 'Описание')
+                    russian_text = russian_text.replace('Титул', 'Заголовок')
+                    
                     d[k] = russian_text
                     rescued_count += 1
                     print(f"  ✨ Rescued '{current_path}': '{suggested_en}' → '{russian_text}'")
-                else:
-                    # If translation failed or returned EN, just use capitalized EN as last resort
-                    # d[k] = suggested_en
-                    pass
     
     process_dict(data)
     
@@ -67,7 +89,7 @@ def rescue_ru_file(file_path: Path, translator: Translator):
     return rescued_count
 
 def main():
-    print("🚀 Rescuing empty Russian translations...")
+    print("🚀 Rescuing empty Russian translations (Improved)...")
     translator = Translator(use_cache=True)
     
     ru_files = list(RU_DIR.rglob("*.json"))
