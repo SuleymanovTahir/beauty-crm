@@ -1,89 +1,89 @@
 {
-  "adjust_points": "Корректировка точек",
+  "adjust_points": "Изменить баланс баллов",
   "buttons": {
     "add_rule": "Добавить правило",
-    "adjust_points": "Корректировка точек",
+    "adjust_points": "Изменить баланс",
     "cancel": "Отмена",
     "save": "Сохранить",
     "save_changes": "Сохранить изменения"
   },
   "categories": {
     "category": "Категория",
-    "category_placeholder": "Напр. Ногти",
-    "description": "Настройте множители баллов для категорий услуг",
+    "category_placeholder": "Напр. Маникюр",
+    "description": "Настройте множители баллов для отдельных категорий услуг",
     "multiplier": "Множитель",
     "title": "Множители категорий"
   },
   "config": {
-    "cashback_hint": "Пример: 10% кэшбэк (10 баллов за 100 потраченных)",
+    "cashback_hint": "Пример: 10% кэшбэк (10 баллов за каждые 100 потраченных)",
     "cashback_rate": "Кэшбэк (%)",
-    "description": "Управление глобальными настройками лояльности",
+    "description": "Базовые настройки программы лояльности",
     "expiration_days": "Срок действия баллов (дней)",
-    "expiration_hint": "Начисленные баллы сгорят через указанное количество дней.",
+    "expiration_hint": "Баллы будут автоматически аннулированы через указанное время.",
     "points_per_unit": "баллов за 1 ед. валюты",
-    "title": "Настройки"
+    "title": "Глобальные настройки"
   },
-  "confirm_delete_rule": "Подтвердить удаление правила",
+  "confirm_delete_rule": "Вы уверены, что хотите удалить это правило?",
   "dialogs": {
     "adjust_points": {
-      "client_email": "Электронная почта клиента",
-      "client_email_placeholder": "Заполнитель электронной почты клиента",
-      "description": "Описание",
-      "points": "Очки",
-      "points_placeholder": "Заполнитель очков",
+      "client_email": "Email клиента",
+      "client_email_placeholder": "Введите email для привязки",
+      "description": "Ручная корректировка баланса баллов",
+      "points": "Количество баллов",
+      "points_placeholder": "Напр. 100 или -100",
       "reason": "Причина",
-      "reason_placeholder": "Заполнитель причины",
-      "title": "Заголовок"
+      "reason_placeholder": "Укажите причину изменения",
+      "title": "Изменение баланса"
     },
     "edit_tier": {
-      "description": "Описание",
+      "description": "Настройка условий для получения уровня привилегий",
       "discount_percent": "Процент скидки",
-      "min_points": "Минимальные баллы",
+      "min_points": "Минимальный порог баллов",
       "tier_name": "Название уровня",
-      "title": "Заголовок"
+      "title": "Редактирование уровня"
     },
     "rule": {
-      "description": "Установите множитель баллов для категории услуг",
-      "title": "Редактировать правило категории"
+      "description": "Персональный коэффициент начисления для категории",
+      "title": "Правило категории"
     }
   },
   "stats": {
-    "active_members": "Активные участники",
-    "points_redeemed": "Баллы погашены",
-    "total_points_issued": "Всего начислено баллов"
+    "active_members": "Участников программы",
+    "points_redeemed": "Баллов списано",
+    "total_points_issued": "Всего начислено"
   },
-  "subtitle": "Субтитры",
+  "subtitle": "Управляйте скидками, уровнями привилегий и правилами начисления баллов",
   "tiers": {
-    "description": "Описание",
-    "discount": "Скидка",
-    "from_points": "Из баллов",
-    "starting_level": "Начальный уровень",
-    "title": "Заголовок"
+    "description": "Уровни лояльности для сегментации клиентов",
+    "discount": "скидка {{percent}}%",
+    "from_points": "от {{points}} баллов",
+    "starting_level": "Стартовый уровень",
+    "title": "Уровни привилегий"
   },
-  "title": "Заголовок",
+  "title": "Программа лояльности",
   "toasts": {
-    "config_updated": "Конфигурация обновлена",
-    "failed_adjust": "Не удалось настроить",
-    "failed_delete": "Не удалось удалить",
-    "failed_load": "Не удалось загрузить",
-    "failed_save": "Не удалось сохранить",
-    "failed_update": "Не удалось обновить",
-    "points_adjusted_add": "Баллы скорректированы, добавлено",
-    "points_adjusted_deduct": "Скорректированное вычет баллов",
-    "rule_deleted": "Правило удалено.",
-    "rule_saved": "Правило сохранено.",
-    "tier_updated": "Уровень обновлен"
+    "config_updated": "Настройки сохранены",
+    "failed_adjust": "Не удалось изменить баланс",
+    "failed_delete": "Ошибка при удалении",
+    "failed_load": "Не удалось загрузить данные",
+    "failed_save": "Ошибка при сохранении",
+    "failed_update": "Ошибка при обновлении",
+    "points_adjusted_add": "Начислено {{points}} баллов пользователю {{email}}",
+    "points_adjusted_deduct": "Списано {{points}} баллов у пользователя {{email}}",
+    "rule_deleted": "Правило успешно удалено",
+    "rule_saved": "Правило сохранено",
+    "tier_updated": "Данные уровня обновлены"
   },
   "transactions": {
-    "description": "Описание",
-    "search_placeholder": "Заполнитель поиска",
+    "description": "История транзакций по баллам лояльности",
+    "search_placeholder": "Поиск по клиенту...",
     "table": {
       "client": "Клиент",
       "date": "Дата",
-      "points": "Очки",
+      "points": "Баллы",
       "reason": "Причина",
       "type": "Тип"
     },
-    "title": "Заголовок"
+    "title": "Последние операции"
   }
 }

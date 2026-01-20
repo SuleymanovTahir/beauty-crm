@@ -36,6 +36,7 @@ except ImportError:
 # This helps correct common mistranslations
 SALON_TERMINOLOGY = {
     # Corrections for Russian (when RU is the target language)
+    'ru': {
         'пост': 'запись',        # 'post' -> 'запись' (booking)
         'записи': 'записи',      # Plural consistency
         'вход': 'запись',        # 'entry' -> 'запись'

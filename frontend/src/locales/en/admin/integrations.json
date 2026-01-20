@@ -1,16 +1,16 @@
 {
   "errors": {
-    "createLinkFailed": "Ошибка создания ссылки",
+    "createLinkFailed": "Error creating link",
     "loadFailed": "Error loading data",
-    "loadServicesFailed": "Ошибка загрузки услуг",
+    "loadServicesFailed": "Error loading services",
     "saveFailed": "Save error",
     "syncFailed": "Synchronization error"
   },
   "marketplace": {
     "active": "Active",
     "activeSources": "Active sources",
-    "apiKey": "API-ключ",
-    "apiSecret": "Секрет API",
+    "apiKey": "API key",
+    "apiSecret": "API Secret",
     "bookings": "bookings",
     "configSuccess": "Settings saved",
     "configure": "Tune",
@@ -27,7 +27,7 @@
     "inactive": "Not configured",
     "justNow": "Just now",
     "lastSync": "Last sync",
-    "mappingHint": "Укажите ID услуги из маркетплейса для синхронизации.",
+    "mappingHint": "Specify the service ID from the marketplace for synchronization.",
     "minutesAgo_one": "{{count}} min ago",
     "minutesAgo_few": "{{count}} min ago",
     "minutesAgo_many": "{{count}} min ago",
@@ -44,14 +44,14 @@
     "title": "Booking platforms",
     "totalBookings": "Total bookings",
     "urlCopied": "URL copied",
-    "viewBookings": "Перейти к записям",
-    "webhookHint": "Укажите этот URL для предоставления вебхуков на платформе",
+    "viewBookings": "Go to bookings",
+    "webhookHint": "Specify this URL to provide webhooks on the platform",
     "webhookUrl": "Webhook URL"
   },
   "payment": {
     "active": "Active",
     "amount": "Amount",
-    "apiKey": "API-ключ",
+    "apiKey": "API key",
     "configSuccess": "Settings saved",
     "configure": "Tune",
     "configureProvider": "Settings",

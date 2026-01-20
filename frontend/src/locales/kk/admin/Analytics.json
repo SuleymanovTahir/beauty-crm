@@ -25,7 +25,7 @@
   "for_period": "Кезең үшін",
   "from_visitors": "Келушілерден клиенттерге дейін",
   "improve_greeting": "Сәлемдесуіңізді жақсартыңыз",
-  "income": "Кіру",
+  "income": "жазба",
   "min": "мин",
   "name": "Аты",
   "need_more_masters": "Көбірек шеберлер керек",
@@ -37,7 +37,7 @@
   "recommendation": "Ұсыныс",
   "refresh": "Жаңарту",
   "response_time": "Жауап беру уақыты",
-  "revenue": "Кіру",
+  "revenue": "жазба",
   "services_distribution": "Қызметті тарату",
   "simplify_contact_collection": "Контактілер жинағын жеңілдетіңіз",
   "stages": {
@@ -87,7 +87,7 @@
       "engaged": "Қызығушылық танытты",
       "started_booking": "Тіркеу формасын ашты",
       "booked": "Тіркеу аяқталды",
-      "completed": "Қызмет көрсетілген"
+      "completed": "қызмет көрсетілген"
     },
     "losses": "Шығындар: {{count}}"
   }

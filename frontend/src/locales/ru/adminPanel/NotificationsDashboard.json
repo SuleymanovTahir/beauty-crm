@@ -6,7 +6,7 @@
   },
   "dialogs": {
     "send": {
-      "description": "Создать и отправить уведомление вашим клиентам",
+      "description": "Создайте адресное уведомление для ваших клиентов",
       "form": {
         "appointment_date": "Дата записи",
         "appointment_filter": "Фильтр по записям",
@@ -18,34 +18,34 @@
         "end_date": "Дата окончания",
         "loyalty_tier": "Уровень лояльности",
         "message": "Сообщение",
-        "message_placeholder": "Текст уведомления",
-        "notification_type": "Тип уведомления",
-        "repeat_end_date": "Завершить повтор",
-        "repeat_interval": "Интервал повтора",
+        "message_placeholder": "Введите текст уведомления...",
+        "notification_type": "Тип канала",
+        "repeat_end_date": "Дата окончания повторов",
+        "repeat_interval": "Интервал повторения",
         "repeat_intervals": {
           "daily": "Ежедневно",
           "monthly": "Ежемесячно",
           "weekly": "Еженедельно"
         },
-        "repeat_notification": "Повторять уведомление",
+        "repeat_notification": "Повторяющееся уведомление",
         "schedule_date": "Дата отправки",
-        "schedule_notification": "Запланировать уведомление",
+        "schedule_notification": "Запланировать отправку",
         "schedule_time": "Время отправки",
         "segments": {
           "active": "Активные клиенты",
           "all": "Все клиенты",
           "appointment_based": "По записям",
-          "inactive": "Неактивные клиенты",
+          "inactive": "Потерянные (неактивные)",
           "service_based": "По услугам",
-          "tier": "По уровню лояльности"
+          "tier": "По уровням лояльности"
         },
         "select_filter": "Выберите фильтр",
         "select_tier": "Выберите уровень",
-        "service_filter": "услуга/Процедура",
-        "service_hint": "Уведомление получат клиенты, записанные на эту услугу",
-        "service_placeholder": "Введите название или идентификатор услуги",
+        "service_filter": "Услуга / Процедура",
+        "service_hint": "Уведомление получат клиенты, записанные на выбранную услугу",
+        "service_placeholder": "Введите название услуги",
         "start_date": "Дата начала",
-        "target_segment": "Целевой сегмент",
+        "target_segment": "Целевая аудитория (сегмент)",
         "tiers": {
           "bronze": "Бронза",
           "gold": "Золото",
@@ -53,73 +53,73 @@
           "silver": "Серебро"
         },
         "title": "Заголовок",
-        "title_placeholder": "Заголовок уведомления"
+        "title_placeholder": "Введите основной заголовок"
       },
-      "title": "Отправить новое уведомление"
+      "title": "Новое уведомление"
     },
     "template": {
-      "description": "Создать многоразовый шаблон уведомления",
+      "description": "Создайте шаблон для быстрой рассылки в будущем",
       "form": {
         "message": "Сообщение",
-        "message_placeholder": "Используйте {переменная} для динамического контента",
+        "message_placeholder": "Используйте {name} для подстановки имени клиента",
         "template_name": "Название шаблона",
-        "template_name_placeholder": "например, Приветственное сообщение",
+        "template_name_placeholder": "например: Приветствие нового клиента",
         "title": "Заголовок",
         "title_placeholder": "Заголовок уведомления",
-        "type": "Тип",
+        "type": "Тип канала",
         "types": {
-          "email": "Электронная почта",
+          "email": "Email",
           "push": "Push-уведомление",
           "sms": "SMS"
         }
       },
-      "title": "Сохранить как шаблон"
+      "title": "Создание шаблона"
     }
   },
   "history": {
-    "description": "Все отправленные и запланированные уведомления",
+    "description": "Список ранее созданных и текущих рассылок",
     "filters": {
-      "all": "Все",
-      "email": "Электронная почта",
-      "push": "Толкать",
+      "all": "Все каналы",
+      "email": "Email",
+      "push": "Push",
       "sms": "SMS"
     },
     "scheduled": "Запланировано",
     "table": {
       "date": "Дата",
       "recipients": "Получатели",
-      "sent_failed": "Отправлено/Не удалось",
+      "sent_failed": "Отправлено / Ошибки",
       "status": "Статус",
-      "title": "Заголовок",
+      "title": "Заголовок / Тема",
       "type": "Тип"
     },
-    "title": "История уведомлений"
+    "title": "История рассылок"
   },
   "save_template": "Сохранить шаблон",
-  "send_notification": "Отправить уведомление",
+  "send_notification": "Отправить",
   "stats": {
-    "email_sent": "Email отправлено",
-    "push_sent": "Push отправлено",
-    "sms_sent": "СМС отправлено",
+    "email_sent": "Email",
+    "push_sent": "Push",
+    "sms_sent": "SMS",
     "total_sent": "Всего отправлено"
   },
-  "subtitle": "Управление и отправка уведомлений клиентам",
+  "subtitle": "Центр управления рассылками и автоматическими уведомлениями",
   "templates": {
-    "description": "Быстрые шаблоны для распространенных уведомлений",
-    "title": "Шаблоны уведомлений",
-    "use_template": "Использовать шаблон"
+    "description": "Готовые шаблоны для экономии времени",
+    "title": "Мои шаблоны",
+    "use_template": "Использовать"
   },
-  "title": "Панель уведомлений",
+  "title": "Уведомления",
   "toasts": {
-    "failed_load": "Не удалось загрузить уведомления",
+    "failed_load": "Ошибка при загрузке уведомлений",
     "failed_save_template": "Не удалось сохранить шаблон",
-    "failed_send": "Не удалось отправить уведомление",
+    "failed_send": "Ошибка при отправке уведомления",
     "sent": "Уведомление успешно отправлено",
-    "template_saved": "Шаблон успешно сохранен"
+    "template_saved": "Шаблон сохранен"
   },
   "types": {
-    "email": "Электронная почта",
-    "push": "Толкать",
+    "email": "Email",
+    "push": "Push-уведомление",
     "sms": "SMS"
   }
 }

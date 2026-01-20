@@ -1,59 +1,59 @@
 {
   "buttons": {
     "cancel": "Болдырмау",
-    "create_challenge": "Қиындық жасаңыз",
-    "update_challenge": "Тапсырманы жаңарту"
+    "create_challenge": "Мақсат қойыңыз",
+    "update_challenge": "Өзгерістерді сақтау"
   },
   "card": {
     "check_progress": "Check Progress",
     "completed": "аяқталды",
     "progress": "Прогресс",
-    "pts": "нүкте",
+    "pts": "ұпай",
     "reward": "Сыйақы",
     "target": "Мақсат"
   },
-  "create_challenge": "Қиындық жасаңыз",
+  "create_challenge": "Жаңа мақсат жасаңыз",
   "dialogs": {
     "create": {
-      "description": "Сынақ параметрлері мен марапаттарын анықтаңыз",
+      "description": "Әрекет параметрлерін және аяқтау бонусын орнатыңыз",
       "form": {
-        "challenge_type": "Сынақ түрі",
-        "description": "Сипаттама",
-        "description_placeholder": "Осы айда 3 рет салонға барыңыз",
+        "challenge_type": "Әрекет түрі",
+        "description": "Тапсырманың сипаттамасы",
+        "description_placeholder": "Мысалы: Осы айда 3 рет салонға барыңыз",
         "end_date": "Аяқталу күні",
         "reward_placeholder": "1000",
-        "reward_points": "Ұпайлармен марапаттау",
+        "reward_points": "Ұпайларды қосыңыз",
         "start_date": "басталу күні",
         "target_placeholder": "3",
-        "target_value": "Мақсатты мән",
-        "title": "Аты",
-        "title_placeholder": "Жазғы сұлулық сайысы"
+        "target_value": "Мақсатты мөлшер",
+        "title": "Мақсат атауы",
+        "title_placeholder": "Мысалы: Жазғы макияж"
       },
-      "title": "Жаңа сынақ жасаңыз",
-      "title_edit": "Тапсырманы өңдеу"
+      "title": "Мақсат құру",
+      "title_edit": "Мақсатты өңдеу"
     },
     "delete": {
-      "confirm": "Бұл сынақты шынымен жойғыңыз келе ме?"
+      "confirm": "Бұл әрекетті шынымен жойғыңыз келе ме? Қатысушылардың барлық үлгерімі жоғалады."
     }
   },
   "stats": {
-    "active_challenges": "Белсенді сынақтар",
-    "completions": "Аяқтау",
-    "total_participants": "Жалпы қатысушылар"
+    "active_challenges": "Белсенді мақсаттар",
+    "completions": "Өлім жазалары",
+    "total_participants": "Қатысушылар"
   },
-  "subtitle": "Қатысу қиындықтарын жасау және басқару",
-  "title": "Қиындықтар",
+  "subtitle": "Клиенттердің адалдығын арттыру үшін ойын механикасы мен мақсаттарын басқарыңыз",
+  "title": "Мақсаттар мен міндеттер",
   "toasts": {
-    "created": "Сынақ сәтті жасалды",
-    "deleted": "Сынақ сәтті жойылды",
+    "created": "Әрекет сәтті жасалды",
+    "deleted": "Әрекет жойылды",
     "failed_check_progress": "Failed to check progress",
-    "failed_create": "Сынақ жасау мүмкін болмады",
-    "failed_delete": "Сынақ жойылмады",
-    "failed_load": "Тапсырмалар жүктелмеді",
-    "progress_checked_one": "Прогресс жалғыз тексерілді",
-    "progress_checked_few": "Барысы бірнеше тексерілді",
-    "progress_checked_many": "Прогрессті көптеген адамдар сынады",
-    "progress_checked_other": "Прогресті басқалар растады"
+    "failed_create": "Әрекетті жасау қатесі",
+    "failed_delete": "Жою кезінде қате",
+    "failed_load": "Деректерді жүктеу сәтсіз аяқталды",
+    "progress_checked_one": "{{count}} мүшесі үшін орындалу барысы жаңартылды",
+    "progress_checked_few": "{{count}} қатысушылары үшін орындалу барысы жаңартылды",
+    "progress_checked_many": "{{count}} қатысушылары үшін орындалу барысы жаңартылды",
+    "progress_checked_other": "{{count}} қатысушылары үшін орындалу барысы жаңартылды"
   },
   "types": {
     "referrals": "Референциялар",

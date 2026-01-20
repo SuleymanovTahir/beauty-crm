@@ -1,89 +1,89 @@
 {
-  "adjust_points": "Нүктелерді реттеу",
+  "adjust_points": "Ұпайлар балансын өзгерту",
   "buttons": {
     "add_rule": "Ереже қосыңыз",
-    "adjust_points": "Нүктелерді реттеу",
+    "adjust_points": "Балансты өзгерту",
     "cancel": "Болдырмау",
     "save": "Сақтау",
     "save_changes": "Өзгерістерді сақтау"
   },
   "categories": {
     "category": "Санат",
-    "category_placeholder": "Мысалы. Тырнақтар",
-    "description": "Қызмет санаттары үшін нүкте көбейткіштерін орнатыңыз",
+    "category_placeholder": "Мысалы. Маникюр",
+    "description": "Жеке қызмет санаттары үшін нүкте көбейткіштерін орнатыңыз",
     "multiplier": "Фактор",
     "title": "Категориялық көбейткіштер"
   },
   "config": {
-    "cashback_hint": "Мысалы: 10% кэшбэк (100 жұмсалған 10 ұпай)",
+    "cashback_hint": "Мысалы: 10% кэшбэк (әрбір жұмсалған 100 үшін 10 ұпай)",
     "cashback_rate": "Кэшбэк (%)",
-    "description": "Жаһандық адалдық параметрлерін басқару",
+    "description": "Адалдық бағдарламасының негізгі параметрлері",
     "expiration_days": "Ұпайлардың жарамдылық мерзімі (күндер)",
-    "expiration_hint": "Есептелген ұпайлар көрсетілген күндер санынан кейін аяқталады.",
+    "expiration_hint": "Белгіленген уақыттан кейін ұпайлар автоматты түрде жойылады.",
     "points_per_unit": "1 бірлік үшін ұпай. валюталар",
-    "title": "Параметрлер"
+    "title": "Ғаламдық параметрлер"
   },
-  "confirm_delete_rule": "Ережені жоюды растаңыз",
+  "confirm_delete_rule": "Бұл ережені шынымен жойғыңыз келе ме?",
   "dialogs": {
     "adjust_points": {
       "client_email": "Клиенттің электрондық поштасы",
-      "client_email_placeholder": "Тұтынушы электрондық поштасының толтырғышы",
-      "description": "Сипаттама",
-      "points": "Көзілдірік",
-      "points_placeholder": "Нүкте толтырғыш",
+      "client_email_placeholder": "Сілтеме үшін электрондық поштаңызды енгізіңіз",
+      "description": "Ұпайлар балансын қолмен реттеу",
+      "points": "Ұпай саны",
+      "points_placeholder": "Мысалы. 100 немесе -100",
       "reason": "Себеп",
-      "reason_placeholder": "Себеп толтырғышы",
-      "title": "Айдар"
+      "reason_placeholder": "Өзгеріс себебін көрсетіңіз",
+      "title": "Баланстың өзгеруі"
     },
     "edit_tier": {
-      "description": "Сипаттама",
+      "description": "Артықшылық деңгейін алу шарттарын орнату",
       "discount_percent": "Жеңілдік пайызы",
-      "min_points": "Ең төменгі ұпайлар",
+      "min_points": "Ең төменгі ұпай шегі",
       "tier_name": "Деңгей атауы",
-      "title": "Айдар"
+      "title": "Деңгейді өңдеу"
     },
     "rule": {
-      "description": "Қызмет санаты үшін нүкте көбейткішін орнатыңыз",
-      "title": "Санат ережесін өңдеу"
+      "description": "Санат бойынша жеке есептеу коэффициенті",
+      "title": "Санат ережесі"
     }
   },
   "stats": {
-    "active_members": "Белсенді мүшелер",
-    "points_redeemed": "Ұпайлар белсендірілді",
-    "total_points_issued": "Берілген жалпы ұпайлар"
+    "active_members": "Бағдарлама қатысушылары",
+    "points_redeemed": "Ұпайлар есептен шығарылды",
+    "total_points_issued": "Барлығы есептелген"
   },
-  "subtitle": "Субтитрлер",
+  "subtitle": "Жеңілдіктерді, жеңілдік деңгейлерін және ұпай ережелерін басқарыңыз",
   "tiers": {
-    "description": "Сипаттама",
-    "discount": "Жеңілдік",
-    "from_points": "Ұпайлардан",
-    "starting_level": "Кіру деңгейі",
-    "title": "Айдар"
+    "description": "Тұтынушыларды сегменттеу үшін адалдық деңгейлері",
+    "discount": "жеңілдік {{percent}}%",
+    "from_points": "[[VAR0]]] нүктелерінен",
+    "starting_level": "Бастапқы деңгей",
+    "title": "Артықшылық деңгейлері"
   },
-  "title": "Айдар",
+  "title": "Адалдық бағдарламасы",
   "toasts": {
-    "config_updated": "Конфигурация жаңартылды",
-    "failed_adjust": "Конфигурацияланбады",
-    "failed_delete": "Жою мүмкін болмады",
-    "failed_load": "Жүктелмеді",
-    "failed_save": "Сақталмады",
-    "failed_update": "Жаңарту мүмкін болмады",
-    "points_adjusted_add": "Ұпайлар түзетілді, қосылды",
-    "points_adjusted_deduct": "Түзетілген ұпай шегерімі",
-    "rule_deleted": "Ереже жойылды.",
-    "rule_saved": "Ереже сақталды.",
-    "tier_updated": "Деңгей жаңартылды"
+    "config_updated": "Параметрлер сақталды",
+    "failed_adjust": "Баланс өзгертілмеді",
+    "failed_delete": "Жою кезінде қате",
+    "failed_load": "Деректерді жүктеу сәтсіз аяқталды",
+    "failed_save": "Сақтау кезінде қате",
+    "failed_update": "Жаңарту кезінде қате",
+    "points_adjusted_add": "{{points}} ұпайлары {{email}} пайдаланушыға берілді",
+    "points_adjusted_deduct": "{{points}} ұпайлары {{email}} пайдаланушысынан шегерілді.",
+    "rule_deleted": "Ереже сәтті жойылды",
+    "rule_saved": "Ереже сақталды",
+    "tier_updated": "Деңгей деректері жаңартылды"
   },
   "transactions": {
-    "description": "Сипаттама",
-    "search_placeholder": "Толтырғышты іздеу",
+    "description": "Адалдық ұпайларының транзакция тарихы",
+    "search_placeholder": "Клиент бойынша іздеу...",
     "table": {
       "client": "Клиент",
       "date": "Күн",
-      "points": "Көзілдірік",
+      "points": "Ұпайлар",
       "reason": "Себеп",
       "type": "Түр"
     },
-    "title": "Айдар"
+    "title": "Соңғы транзакциялар"
   }
 }
