@@ -107,7 +107,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState<Date>(new Date(today));
   const [viewMode, setViewMode] = useState<'day' | 'week'>('week');
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const { t } = useTranslation(['admin/Calendar', 'common']);
+  const { t, i18n } = useTranslation(['admin/Calendar', 'common']);
   const { currency, formatCurrency } = useCurrency();
 
   const statusLabels: Record<string, string> = {
@@ -1134,7 +1134,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 </label>
                 <input
                   type="text"
-                  value={new Date(selectedBooking.datetime).toLocaleString('ru-RU', {
+                  value={new Date(selectedBooking.datetime).toLocaleString(i18n.language, {
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric',
