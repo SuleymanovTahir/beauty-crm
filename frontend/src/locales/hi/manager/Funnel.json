@@ -1,32 +1,4 @@
 {
-  "all_good": "और सब ठीक है न! आपका फ़नल अच्छे परिणाम दिखा रहा है.",
-  "conversion": {
-    "booked_to_completed": "साइन अप -> पूर्ण",
-    "booking_to_booked": "रिकॉर्डिंग प्रारंभ की गई -> साइन अप किया गया",
-    "engaged_to_booking": "व्यस्त -> रिकॉर्डिंग प्रारंभ की गई",
-    "visitor_to_engaged": "आगंतुक -> व्यस्त"
-  },
-  "funnel": "फ़नल",
-  "funnel_chart": "फ़नल चार्ट",
-  "key_metrics": "प्रमुख मेट्रिक्स",
-  "move_failed": "त्रुटि ले जाएँ",
-  "moved_successfully": "ग्राहक सफलतापूर्वक स्थानांतरित हो गया",
-  "no_clients": "कोई ग्राहक नहीं",
-  "quick_add": "शीघ्र जोड़ें",
-  "recommendations_title": "सिफारिशों",
-  "search_clients": "ग्राहकों की तलाश की जा रही है...",
-  "stage_details": "विवरण चरण",
-  "subtitle": "स्टेज और रूपांतरण प्रबंधन",
-  "successful_visits": "सफल दौरे",
-  "table": {
-    "count": "मात्रा",
-    "losses": "हानि",
-    "percentage": "प्रतिशत",
-    "stage": "अवस्था"
-  },
-  "title": "बिक्री फ़नल",
-  "total_conversion": "कुल रूपांतरण",
-  "total_losses": "कुल घाटा",
   "Your funnel shows good results": {
     " Keep it up!": ""
   }

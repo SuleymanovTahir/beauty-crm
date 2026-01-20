@@ -3,10 +3,7 @@
   "go_to_crm": "Aller au CRM",
   "logout": "Se déconnecter",
   "menu": {
-    "bookings": "bookings",
-    "calendar": "Calendrier",
     "challenges": "Défis",
-    "clients": "Clientèle",
     "dashboard": "Panneau de contrôle",
     "feature_management": "Feature Management",
     "loyalty_management": "Gestion de la fidélité",
@@ -15,6 +12,7 @@
     "public_content": "Contenu public",
     "referral_program": "Programme de parrainage",
     "services": "Services",
+    "settings": "",
     "user_management": "Gestion des utilisateurs"
   }
 }

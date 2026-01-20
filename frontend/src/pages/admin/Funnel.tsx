@@ -120,7 +120,7 @@ export default function Funnel() {
                 response: (error as any)?.response?.data,
                 status: (error as any)?.response?.status
             });
-            toast.error('Failed to load funnel data');
+            toast.error(t('common:loading_error'));
         }
     };
 
@@ -201,7 +201,7 @@ export default function Funnel() {
     };
 
     const handleDeleteClient = async (client: Client) => {
-        if (!confirm(t('confirm_delete_client', 'Delete this client?'))) return;
+        if (!confirm(t('confirm_delete_client'))) return;
 
         try {
             await api.post(`/api/clients/${client.id}/delete`);
@@ -216,10 +216,10 @@ export default function Funnel() {
                 });
                 return newMap;
             });
-            toast.success(t('client_deleted', 'Client deleted'));
+            toast.success(t('client_deleted'));
         } catch (error) {
             console.error('Delete failed:', error);
-            toast.error(t('delete_failed', 'Failed to delete client'));
+            toast.error(t('delete_failed'));
         }
     };
 
@@ -250,7 +250,7 @@ export default function Funnel() {
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">{t('funnel')}</h1>
-                        <p className="text-sm text-gray-500 mt-1">{t('subtitle', 'Управление этапами и конверсией')}</p>
+                        <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
                     </div>
                     <div className="flex gap-2">
                         <div className="bg-gray-100 p-1 rounded-lg flex items-center mr-2 border border-gray-200">
@@ -281,7 +281,7 @@ export default function Funnel() {
                             size="icon"
                             className="text-gray-500 hover:text-gray-900"
                             onClick={() => setManageStagesOpen(true)}
-                            title={t('manage_stages', 'Управление стадиями')}
+                            title={t('manage_stages')}
                         >
                             <Settings className="w-4 h-4" />
                         </Button>
@@ -348,7 +348,7 @@ export default function Funnel() {
                         </div>
                         <div>
                             <div className="text-2xl font-bold text-blue-900">{funnelAnalytics.total_clients}</div>
-                            <div className="text-xs text-blue-600 font-medium">{t('total_clients', 'Всего клиентов')}</div>
+                            <div className="text-xs text-blue-600 font-medium">{t('total_clients')}</div>
                         </div>
                     </div>
                     <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center gap-4">
@@ -357,7 +357,7 @@ export default function Funnel() {
                         </div>
                         <div>
                             <div className="text-2xl font-bold text-red-900">{funnelAnalytics.hot_leads}</div>
-                            <div className="text-xs text-red-600 font-medium">{t('hot_leads', 'Горячие лиды')}</div>
+                            <div className="text-xs text-red-600 font-medium">{t('hot_leads')}</div>
                         </div>
                     </div>
                     <div className="bg-green-50 border border-green-100 p-4 rounded-xl flex items-center gap-4">
@@ -366,7 +366,7 @@ export default function Funnel() {
                         </div>
                         <div>
                             <div className="text-2xl font-bold text-green-900">{funnelAnalytics.total_revenue}</div>
-                            <div className="text-xs text-green-600 font-medium">{t('pipeline_value', 'Сумма в воронке')}</div>
+                            <div className="text-xs text-green-600 font-medium">{t('pipeline_value')}</div>
                         </div>
                     </div>
                     <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
@@ -375,7 +375,7 @@ export default function Funnel() {
                         </div>
                         <div>
                             <div className="text-2xl font-bold text-blue-900">{funnelAnalytics.new_this_month}</div>
-                            <div className="text-xs text-blue-600 font-medium">{t('new_this_month', 'Новые за месяц')}</div>
+                            <div className="text-xs text-blue-600 font-medium">{t('new_this_month')}</div>
                         </div>
                     </div>
                 </div>
@@ -444,7 +444,7 @@ export default function Funnel() {
                                                                 e.stopPropagation();
                                                                 handleClientClick(client);
                                                             }}
-                                                            title={t('view_details', 'View Details')}
+                                                            title={t('view_details')}
                                                         >
                                                             <Eye className="w-4 h-4" />
                                                         </Button>
@@ -456,7 +456,7 @@ export default function Funnel() {
                                                                 e.stopPropagation();
                                                                 handleDeleteClient(client);
                                                             }}
-                                                            title={t('delete_client', 'Delete Client')}
+                                                            title={t('delete_client')}
                                                         >
                                                             <Trash2 className="w-4 h-4" />
                                                         </Button>
@@ -632,7 +632,7 @@ export default function Funnel() {
                                         ) : (
                                             <tr>
                                                 <td colSpan={6} className="text-center py-12 text-gray-400 text-sm">
-                                                    {t('no_clients_found', 'Клиенты не найдены')}
+                                                    {t('no_clients_found')}
                                                 </td>
                                             </tr>
                                         )}

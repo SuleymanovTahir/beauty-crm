@@ -94,7 +94,7 @@ export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutPro
       path: '/admin/public-content',
     },
     {
-      label: t('menu.feature_management', 'Feature Management'),
+      label: t('menu.feature_management') || t('menu.settings'),
       icon: Settings,
       path: '/admin/features',
     },

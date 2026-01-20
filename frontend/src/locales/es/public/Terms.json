@@ -16,18 +16,18 @@
   "medical_contraindications": "Contraindicaciones médicas",
   "payment_details": "El pago se realiza en efectivo o con tarjeta una vez prestado el servicio. Los precios de los servicios están indicados en la lista de precios y están sujetos a cambios sin previo aviso.",
   "payment_for_services": "Pago de servicios",
-  "privacy_commitment": "Respetamos su privacidad y nos comprometemos a proteger su información personal de acuerdo con nuestra Política de Privacidad.",
+  "privacy_commitment": "Respetamos su privacidad y nos comprometemos a proteger su información personal cuenta con nuestra Política de Privacidad.",
   "quality_guarantee": "Garantizamos la calidad de los materiales utilizados y la profesionalidad de nuestros artesanos. Los resultados de los procedimientos pueden variar dependiendo de las características individuales del cliente.",
   "salon_liability": "El salón no se hace responsable de las consecuencias de los procedimientos si el cliente oculta información sobre contraindicaciones médicas.",
   "sections": {
     "booking": {
       "booking_requirements": "Para registrarse para los trámites, debe proporcionar información de contacto correcta. Nos reservamos el derecho de confirmar o rechazar una reserva.",
       "cancellationText": "El cliente podrá cancelar la cita a más tardar 24 horas antes de la hora prevista. Si cancela con menos de 24 horas de antelación se podrá cobrar una penalización del 50% del coste del servicio.",
-      "cancellationTitle": "Cancelar una entrada:",
+      "cancellationTitle": "Cancelar una reserva:",
       "title": "2. Reserva y cancelación"
     },
     "changes": {
-      "content": "Nos reservamos el derecho de cambiar estos Términos de uso en cualquier momento. Los cambios entran en vigor desde el momento de su publicación en el sitio web.",
+      "content": "Nos reservamos el derecho de cambiar estos Términos de uso en cualquier momento. Los cambios entran en vigor desde el momento de su reserva en el sitio web.",
       "title": "7. Cambios en términos y condiciones"
     },
     "contact": {
@@ -52,7 +52,7 @@
       "title": "3. Pago de servicios"
     },
     "privacy": {
-      "content": "Respetamos su privacidad y nos comprometemos a proteger su información personal de acuerdo con nuestra <link>Política de Privacidad</link>.",
+      "content": "Respetamos su privacidad y nos comprometemos a proteger su información personal cuenta con nuestra <link>Política de Privacidad</link>.",
       "title": "6. Privacidad"
     },
     "warranty": {
@@ -62,7 +62,7 @@
     }
   },
   "terms_changes": "Cambios en los términos de uso",
-  "terms_changes_text": "Nos reservamos el derecho de cambiar estos Términos de uso en cualquier momento. Los cambios entran en vigor desde el momento de su publicación en el sitio web.",
+  "terms_changes_text": "Nos reservamos el derecho de cambiar estos Términos de uso en cualquier momento. Los cambios entran en vigor desde el momento de su reserva en el sitio web.",
   "terms_of_use": "Condiciones de uso",
   "title": "Condiciones de uso",
   "warranties_and_liability": "Garantías y responsabilidad"

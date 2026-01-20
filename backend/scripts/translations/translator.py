@@ -12,6 +12,11 @@ from typing import List, Dict, Optional
 from pathlib import Path
 import sys
 import os
+import ssl
+
+# Bypass SSL verification for local requests if needed
+if not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
+    ssl._create_default_https_context = ssl._create_unverified_context
 
 # Add scripts/translations to path for local config
 script_dir = Path(__file__).parent
@@ -37,6 +42,23 @@ SALON_TERMINOLOGY = {
         'записи': 'записи',      # Plural consistency
         'вход': 'запись',        # 'entry' -> 'запись'
         'рекорд': 'запись',      # 'record' -> 'запись'
+        'букинг': 'запись',
+        'booking': 'запись',
+        'изготовление': 'создание',
+        'персонажа': 'символа',
+        'персонажей': 'символов',
+        'требуется запись': 'логин обязателен',
+        'неправильный': 'ошибка',
+        'создать пользователя и назначить услуги': 'создать пользователя и назначить услуги',
+        'поиск позиции': 'поиск должности',
+        'позиция не найдена': 'должность не найдена',
+        'выберите одну или несколько позиций': 'выберите одну или несколько должностей',
+        'доступ запрещен': 'доступ запрещен',
+        'назад к пользователям': 'вернуться к списку пользователей',
+        'толкать': 'Push-уведомление',
+        'push': 'Push-уведомление',
+        'email': 'Электронная почта',
+        'sms': 'SMS',
         'вощение': 'ваксинг',    # 'waxing' -> 'ваксинг'
         'массажи': 'массаж',     # 'massages' -> 'массаж'
         'бровист': 'мастер по бровям',
@@ -54,6 +76,9 @@ SALON_TERMINOLOGY = {
         'recording': 'booking',
         'entry': 'booking',
         'entries': 'bookings',
+        'create user & assign services': 'create user & assign services',
+        'no position found': 'no position found',
+        'search position': 'search position',
         'vaksing': 'waxing',
         'voring': 'waxing',
         'voxing': 'waxing',
@@ -75,11 +100,16 @@ SALON_TERMINOLOGY = {
         'asistente': 'especialista',
         'cerca': 'cerrar',
         'sobresalir': 'Excel',
-        'a mí': 'desde',
-        'por': 'hasta',
+        'a mí': 'desde fecha',
+        'por': 'hasta fecha',
         'charlar': 'chat',
         'comportamiento': 'acciones',
         'de acuerdo': 'cuenta',
+        'cualquier máster': 'cualquier profesional',
+        'rechazado': 'cancelado',
+        'él se lo perdió': 'omitido',
+        'pendiente': 'en espera',
+        'push': 'notificación push',
     },
     # Corrections for Portuguese
     'pt': {
@@ -91,11 +121,15 @@ SALON_TERMINOLOGY = {
         'registros': 'reservas',
         'assistentes': 'especialistas',
         'assistente': 'especialista',
-        'para mim': 'de',
-        'por': 'até',
+        'para mim': 'de data',
+        'por': 'até data',
         'bater papo': 'chat',
         'renda': 'receita',
         'ok': 'conta',
+        'qualquer mestre': 'qualquer profissional',
+        'recusado': 'cancelado',
+        'ele perdeu': 'pulado',
+        'push': 'notificação push',
     },
     # Corrections for French
     'fr': {
@@ -106,10 +140,14 @@ SALON_TERMINOLOGY = {
         'enregistrements': 'réservations',
         'assistants': 'spécialistes',
         'assistant': 'spécialiste',
-        'pour moi': 'de',
-        'par': 'à',
+        'pour moi': 'de la date',
+        'par': 'à la date',
         'exceller': 'Excel',
         'd\'accord': 'compte',
+        'n\'importe quel maître': 'n\'importe quel professionnel',
+        'refusé': 'annulé',
+        'il a raté': 'ignoré',
+        'push': 'notification push',
     },
     # Corrections for German
     'de': {
@@ -121,16 +159,63 @@ SALON_TERMINOLOGY = {
         'datensatz': 'buchung',
         'assistenten': 'spezialisten',
         'assistent': 'spezialist',
-        'mir': 'von',
-        'von': 'bis',
+        'mir': 'datum von',
+        'von': 'datum bis',
+        'push': 'Push-Benachrichtigung',
         'chatten': 'chat',
         'einkommen': 'umsatz',
         'ok': 'konto',
+        'beliebiger meister': 'beliebiger mitarbeiter',
+        'abgelehnt': 'storniert',
+        'er hat es verpasst': 'übersprungen',
     },
     # Corrections for Arabic
     'ar': {
-        'منشورات': 'حجوزات',     # 'posts' -> 'bookings'
-        'سجل': 'حجز',            # 'record' -> 'booking'
+        'منشورات': 'حجوزات',
+        'سجل': 'حجز',
+        'مع': 'من تاريخ',
+        'بواسطة': 'إلى تاريخ',
+        'لي': 'من تاريخ',
+        'المؤلف': 'إلى تاريخ',
+        'أي سيد': 'أي خبير',
+        'رفض': 'تم الإلغاء',
+        'غاب عنه': 'تم التجاوز',
+        'دعامات': 'إدارة السجلات',
+        'المعالج': 'الخبير',
+        'booking': 'حجز',
+        'bookings': 'حجوزات',
+        'record': 'حجز',
+        'recording': 'تسجيل',
+        'push': 'إشعار دفع',
+        'push notifications': 'إشعارات دفع',
+    },
+    # Corrections for Hindi
+    'hi': {
+        'मेरे लिए': 'दिनांक से',
+        'लेखक': 'दिनांक तक',
+        'से': 'दिनांक से',
+        'तक': 'दिनांक तक',
+        'कोई भी गुरु': 'कोई भी मास्टर',
+        'मना कर दिया': 'रद्द किया गया',
+        'वह चूक गया': 'छोड़ा गया',
+        'booking': 'बुकिंग',
+        'bookings': 'बुकिंग',
+        'record': 'रिकॉर्ड',
+        'recording': 'रिकॉर्डिंग',
+        'push': 'पुश नोटिफिकेशन',
+    },
+    # Corrections for Kazakh
+    'kk': {
+        'маған': 'күннен бастап',
+        'автор': 'күнге дейін',
+        'бас тартты': 'жойылды',
+        'ол оны сағынды': 'өткізілді',
+        'кез келген шебер': 'кез келген маман',
+        'пост': 'жазба',
+        'сәт': 'уақыт',
+        'booking': 'жазба',
+        'record': 'жазба',
+        'push': 'Push хабарлама',
     }
 }
 
@@ -231,15 +316,21 @@ class Translator:
             url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl={source}&tl={target}&dt=t&q={encoded_text}"
             
             req = urllib.request.Request(url)
-            req.add_header('User-Agent', 'Mozilla/5.0')
+            req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
+            req.add_header('Accept', '*/*')
             
-            with urllib.request.urlopen(req, timeout=10) as response:
-                data = response.read().decode('utf-8')
-                parsed = json.loads(data)
-                
-                # Google Translate returns array of translations
-                if parsed and parsed[0] and parsed[0][0] and parsed[0][0][0]:
-                    translated = parsed[0][0][0]
+            # Use unverified context to bypass local SSL certificate issues (common on macOS)
+            context = ssl._create_unverified_context() if hasattr(ssl, '_create_unverified_context') else None
+            
+            try:
+                with urllib.request.urlopen(req, timeout=10, context=context) as response:
+                    data = response.read().decode('utf-8')
+                    parsed = json.loads(data)
+                    
+                    # Google Translate returns array of translations
+                    if parsed and parsed[0] and parsed[0][0] and parsed[0][0][0]:
+                        translated = parsed[0][0][0]
+                        # ... cleanup context prefix logic remains ...
                     
                     # Remove context prefix from translation if it was added
                     if context_prefix:
@@ -333,7 +424,7 @@ class Translator:
         text_to_translate = text
         variable_placeholders = {}
         for i, var in enumerate(variables):
-            placeholder = f"___VAR{i}___"
+            placeholder = f"[[[VAR{i}]]]"
             variable_placeholders[placeholder] = f"{{{{{var}}}}}"
             text_to_translate = text_to_translate.replace(f"{{{{{var}}}}}", placeholder)
 
@@ -362,7 +453,14 @@ class Translator:
                 # This is a known term, add context hint
                 use_context = True
         
-        # Check cache first
+        # 1. Exact balance from SALON_TERMINOLOGY first
+        # This prevents unnecessary API calls and avoids translating brand names
+        if target in SALON_TERMINOLOGY:
+            lower_text = text.strip().lower()
+            if lower_text in SALON_TERMINOLOGY[target]:
+                return SALON_TERMINOLOGY[target][lower_text]
+        
+        # Check cache second
         # We append context flag to key to differentiate
         cache_key_suffix = "|ctx" if use_context else ""
         cached = self._get_cached_translation(text + cache_key_suffix, source, target)
@@ -391,14 +489,21 @@ class Translator:
                     return translated
                 # If LibreTranslate fails, fall through to Google Translate
             except Exception as e:
-                print(f"  ⚠️  LibreTranslate error, falling back to Google: {e}")
+                # Silently fall back
+                pass
         
         # Use Google Translate for longer text or if LibreTranslate failed
         max_retries = 3
         retry_delay = 0.5
         
         for attempt in range(max_retries):
-            translated = self._translate_via_http(text, source, target, use_context=use_context)
+            try:
+                translated = self._translate_via_http(text, source, target, use_context=use_context)
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    time.sleep(retry_delay * (2 ** attempt))
+                    continue
+                return text # Final fallback
             
             # Check if translation failed due to rate limiting
             if translated == text and attempt < max_retries - 1:

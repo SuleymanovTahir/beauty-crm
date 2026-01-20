@@ -41,11 +41,6 @@
     "completions": "Conclusão",
     "total_participants": "Total de participantes"
   },
-  "statuses": {
-    "active": "Ativo",
-    "completed": "Concluído",
-    "upcoming": "Por vir"
-  },
   "subtitle": "Criando e gerenciando desafios de engajamento",
   "title": "Desafios",
   "toasts": {

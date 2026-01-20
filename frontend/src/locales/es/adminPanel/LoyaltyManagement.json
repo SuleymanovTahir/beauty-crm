@@ -15,12 +15,12 @@
     "title": "Multiplicadores de categoría"
   },
   "config": {
-    "cashback_hint": "Ejemplo: 10% de reembolso (10 puntos por cada 100 gastados)",
+    "cashback_hint": "Ejemplo: 10% de reembolso (10 puntos hasta fecha cada 100 gastados)",
     "cashback_rate": "Reembolso (%)",
     "description": "Administrar la configuración de fidelización global",
     "expiration_days": "Período de validez de los puntos (días)",
     "expiration_hint": "Los puntos acumulados caducarán después del número de días especificado.",
-    "points_per_unit": "puntos por 1 unidad. monedas",
+    "points_per_unit": "puntos hasta fecha 1 unidad. monedas",
     "title": "Ajustes"
   },
   "confirm_delete_rule": "",

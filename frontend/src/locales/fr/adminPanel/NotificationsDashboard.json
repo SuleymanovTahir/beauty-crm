@@ -8,8 +8,8 @@
     "send": {
       "description": "Créez et envoyez des notifications à vos clients",
       "form": {
-        "appointment_date": "Date d'enregistrement",
-        "appointment_filter": "Filtrer par entrées",
+        "appointment_date": "Date d'réservation",
+        "appointment_filter": "Filtrer à la date réservations",
         "appointment_filters": {
           "date_range": "Plage de dates",
           "specific_date": "Date précise",
@@ -36,14 +36,14 @@
           "all": "Tous les clients",
           "appointment_based": "D'après les dossiers",
           "inactive": "Clients inactifs",
-          "service_based": "Par prestations",
-          "tier": "Par niveau de fidélité"
+          "service_based": "à la date prestations",
+          "tier": "à la date niveau de fidélité"
         },
         "select_filter": "Sélectionnez le filtre",
         "select_tier": "Sélectionnez le niveau",
         "service_filter": "Service/Procédure",
         "service_hint": "Les clients inscrits à ce service recevront une notification",
-        "service_placeholder": "Entrez le nom ou l'ID du service",
+        "service_placeholder": "Введите название или идентификатор услуги",
         "start_date": "date de début",
         "target_segment": "Segment cible",
         "tiers": {
@@ -63,7 +63,7 @@
         "message": "Message",
         "message_placeholder": "Utilisez {variable} pour le contenu dynamique",
         "template_name": "Nom du modèle",
-        "template_name_placeholder": "par exemple, message de bienvenue",
+        "template_name_placeholder": "à la date exemple, message de bienvenue",
         "title": "Titre",
         "title_placeholder": "Titre de la notification",
         "type": "Taper",
@@ -85,11 +85,6 @@
       "sms": "SMS"
     },
     "scheduled": "Prévu",
-    "statuses": {
-      "failed": "Échoué",
-      "pending": "En attendant",
-      "sent": "Envoyé"
-    },
     "table": {
       "date": "Date",
       "recipients": "Destinataires",
@@ -105,7 +100,7 @@
   "stats": {
     "email_sent": "E-mail envoyé",
     "push_sent": "Push envoyé",
-    "sms_sent": "SMS envoyé",
+    "sms_sent": "СМС отправлено",
     "total_sent": "Total envoyé"
   },
   "subtitle": "Gestion et envoi des notifications aux clients",
@@ -117,7 +112,7 @@
   "title": "Panneau de notifications",
   "toasts": {
     "failed_load": "Échec du chargement des notifications",
-    "failed_save_template": "Échec de l'enregistrement du modèle",
+    "failed_save_template": "Échec de l'réservation du modèle",
     "failed_send": "Échec de l'envoi de la notification",
     "sent": "Notification envoyée avec succès",
     "template_saved": "Modèle enregistré avec succès"

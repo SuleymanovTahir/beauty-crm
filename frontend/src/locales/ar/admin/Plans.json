@@ -22,15 +22,6 @@
   "metric_name_en": "العنوان (بالإنكليزية)",
   "metric_name_ru": "الاسم (رو)",
   "metric_type": "نوع متري",
-  "metrics": {
-    "active_clients": "العملاء النشطين",
-    "average_check": "متوسط ​​الفاتورة",
-    "bookings": "الحجز",
-    "new_clients": "عملاء جدد",
-    "revenue": "دخل",
-    "sales": "مبيعات",
-    "vip_clients": "عملاء VIP"
-  },
   "my_plans": "خططي",
   "no_plans_found": "لم يتم العثور على خطط",
   "period_type": "نوع الفترة",
@@ -44,7 +35,6 @@
   },
   "plan_created": "تم إنشاء الخطة",
   "plan_deleted": "تم حذف الخطة.",
-  "plan_name": "اسم الخطة",
   "plans_management": "إدارة الخطة",
   "refresh": "تحديث",
   "role": "دور",

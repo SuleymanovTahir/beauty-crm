@@ -3,10 +3,7 @@
   "go_to_crm": "Vá para o CRM",
   "logout": "Sair",
   "menu": {
-    "bookings": "bookings",
-    "calendar": "Calendário",
     "challenges": "Desafios",
-    "clients": "Clientes",
     "dashboard": "Painel de controle",
     "feature_management": "Feature Management",
     "loyalty_management": "Gestão de fidelidade",
@@ -15,6 +12,7 @@
     "public_content": "Conteúdo Público",
     "referral_program": "Programa de referência",
     "services": "Serviços",
+    "settings": "",
     "user_management": "Gerenciamento de usuários"
   }
 }

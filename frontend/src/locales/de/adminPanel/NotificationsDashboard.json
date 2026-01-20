@@ -43,7 +43,7 @@
         "select_tier": "Ebene auswählen",
         "service_filter": "Service/Verfahren",
         "service_hint": "Kunden, die sich für diesen Service registriert haben, erhalten eine Benachrichtigung",
-        "service_placeholder": "Geben Sie den Dienstnamen oder die ID ein",
+        "service_placeholder": "Введите название или идентификатор услуги",
         "start_date": "Startdatum",
         "target_segment": "Zielsegment",
         "tiers": {
@@ -85,11 +85,6 @@
       "sms": "SMS"
     },
     "scheduled": "Geplant",
-    "statuses": {
-      "failed": "Fehlgeschlagen",
-      "pending": "Warten",
-      "sent": "Gesendet"
-    },
     "table": {
       "date": "Datum",
       "recipients": "Empfänger",
@@ -105,10 +100,10 @@
   "stats": {
     "email_sent": "E-Mail gesendet",
     "push_sent": "Push gesendet",
-    "sms_sent": "SMS gesendet",
+    "sms_sent": "СМС отправлено",
     "total_sent": "Insgesamt gesendet"
   },
-  "subtitle": "Verwalten und Versenden von Benachrichtigungen an Kunden",
+  "subtitle": "Verwalten und Versenden datum bis Benachrichtigungen an Kunden",
   "templates": {
     "description": "Schnelle Vorlagen für allgemeine Benachrichtigungen",
     "title": "Benachrichtigungsvorlagen",

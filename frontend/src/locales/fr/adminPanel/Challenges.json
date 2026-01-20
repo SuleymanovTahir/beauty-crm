@@ -41,11 +41,6 @@
     "completions": "Achèvement",
     "total_participants": "Nombre total de participants"
   },
-  "statuses": {
-    "active": "Actif",
-    "completed": "Complété",
-    "upcoming": "Prochain"
-  },
   "subtitle": "Créer et gérer des défis d’engagement",
   "title": "Défis",
   "toasts": {

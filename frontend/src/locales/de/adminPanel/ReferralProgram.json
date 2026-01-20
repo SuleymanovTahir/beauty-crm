@@ -5,7 +5,7 @@
   },
   "current_settings": {
     "edit": "Bearbeiten",
-    "min_purchase": "Mindestkaufbetrag: <strong>{{amount}} AED</strong>",
+    "min_purchase": "Mindestkaufpreis: <strong>{{amount}} AED</strong>",
     "referred_bonus": "Der eingeladene Freund erhält bei der Registrierung <strong>{{points}} Punkte</strong>",
     "referrer_bonus": "Der Empfehlungsgeber erhält <strong>{{points}} Punkte</strong>, wenn ein Freund seinen ersten Einkauf tätigt",
     "title": "Aktuelle Bonuskonfiguration"
@@ -13,7 +13,7 @@
   "dialogs": {
     "settings": {
       "description": "Richten Sie Bonuspunkte und Anforderungen ein",
-      "min_purchase_amount": "Mindestkaufbetrag (AED)",
+      "min_purchase_amount": "Mindesteinkaufspreis (AED)",
       "min_purchase_help": "Mindestbetrag, den ein Freund ausgeben muss, um den Empfehlungsbonus zu aktivieren (0 = kein Mindestbetrag)",
       "referred_bonus": "Bonuspunkte für empfohlene Freunde",
       "referred_bonus_help": "Bei der Registrierung werden einem Freund Punkte gutgeschrieben",
@@ -25,11 +25,10 @@
   "settings": "Einstellungen",
   "stats": {
     "completed_referrals": "Abgeschlossene Empfehlungen",
-    "from_last_month": "vom letzten Monat",
     "points_distributed": "Punkte verteilt",
     "total_referrals": "Gesamtzahl der Empfehlungen"
   },
-  "subtitle": "Verwalten von Empfehlungen und Verfolgen der Programmwirksamkeit",
+  "subtitle": "Verwalten datum bis Empfehlungen und Verfolgen der Programmwirksamkeit",
   "table": {
     "columns": {
       "date": "Datum",

@@ -8,15 +8,7 @@
   "client": "Client",
   "clientContracts": "Client",
   "contractNumber": "Contract No.",
-  "contractTypes": {
-    "employment": "Employment Contract",
-    "rental": "Rental Agreement",
-    "service": "Service Contract"
-  },
   "createdAt": "Creation date",
-  "createFirst": "Create your first contract with a client",
-  "delete": "Delete",
-  "editButton": "Edit",
   "editContract": "Edit Contract",
   "errors": {
     "deleteError": "Error deleting contract",
@@ -26,15 +18,11 @@
   },
   "form": {
     "cancel": "Cancel",
-    "contractDate": "Contract date",
     "contractType": "Contract type",
-    "notes": "Notes",
     "save": "Save",
-    "selectClient": "Select client",
-    "terms": "Terms of the agreement"
+    "selectClient": "Select client"
   },
   "internalContracts": "Domestic",
-  "loading": "Loading...",
   "manage_stages": "Columns",
   "manageTypes": "Contract Types",
   "messages": {
@@ -46,7 +34,6 @@
   },
   "noContracts": "No contracts yet",
   "search_placeholder": "Search by number or client...",
-  "sendButton": "Send",
   "sendDialog": {
     "email": "Email",
     "instagram": "Instagram",
@@ -58,12 +45,6 @@
     "whatsapp": "whatsapp"
   },
   "status": "Status",
-  "statuses": {
-    "cancelled": "Canceled",
-    "draft": "Draft",
-    "sent": "Sent",
-    "signed": "Signed"
-  },
   "subtitle": "Client contract management",
   "title": "Treaties",
   "type": "Type",
@@ -89,10 +70,5 @@
     "system": "System",
     "systemProtected": "System protected",
     "title": "Contract Types"
-  },
-  "types": {
-    "product": "Product",
-    "service": "Service",
-    "subscription": "Subscription"
   }
 }

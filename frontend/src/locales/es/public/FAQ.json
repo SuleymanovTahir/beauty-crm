@@ -2,7 +2,7 @@
   "answer_1": "Puedes darte de alta a través de nuestra web, llamando o escribiendo a WhatsApp/Instagram.",
   "answer_2": "Aceptamos pago en efectivo y tarjetas bancarias.",
   "answer_3": "Sí, puedes cancelar o reprogramar tu cita hasta 24 horas antes de la hora programada.",
-  "answer_4": "Sí, algunos procedimientos tienen contraindicaciones médicas. Por favor consulte con nuestro especialista antes de grabar.",
+  "answer_4": "Sí, algunos procedimientos tienen contraindicaciones médicas. hasta fecha favor consulte con nuestro especialista antes de grabar.",
   "answer_5": "El tiempo del trámite depende del servicio elegido. Generalmente de 30 minutos a 3 horas.",
   "answer_6": "Algunos procedimientos requieren una preparación especial. El especialista le informará sobre esto al registrarse.",
   "cta": {
@@ -20,7 +20,7 @@
   "question_6": "¿Es necesaria una preparación previa para el procedimiento?",
   "questions": {
     "booking": {
-      "answer": "Puedes apuntarte al trámite a través del formulario de nuestra web{{phone, phone}}, llamando a {{phone}}{{/phone}}{{instagram, instagram}}, o escribiéndonos por Instagram {{instagram}}{{/instagram}}. Nos pondremos en contacto contigo para confirmar tu cita.",
+      "answer": "Puedes apuntarte al trámite a través del formulario de nuestra web{{phone, phone}}, llamando a {{phone}}{{/phone}}{{instagram, instagram}}, o escribiéndonos hasta fecha Instagram {{instagram}}{{/instagram}}. Nos pondremos en contacto contigo para confirmar tu cita.",
       "question": "¿Cómo inscribirse en el trámite?"
     },
     "cancellation": {
@@ -36,12 +36,12 @@
       "question": "¿Existe alguna contraindicación para los procedimientos?"
     },
     "gift": {
-      "answer": "Sí, ofrecemos certificados de regalo por cualquier monto o para servicios específicos. Contáctenos para obtener un certificado.",
+      "answer": "Sí, ofrecemos certificados de regalo hasta fecha cualquier monto o para servicios específicos. Contáctenos para obtener un certificado.",
       "question": "¿Puedo dar un certificado de servicios?"
     },
     "guarantee": {
       "answer": "Sí, garantizamos la calidad de todos nuestros servicios. Si no está satisfecho con el resultado, contáctenos dentro de los 7 días y encontraremos una solución.",
-      "question": "¿Ofrecen garantía por los servicios?"
+      "question": "¿Ofrecen garantía hasta fecha los servicios?"
     },
     "location": {
       "answer": "Estamos ubicados en: {{dirección}}. Puede encontrar información detallada sobre cómo llegar en la página de Contactos.",

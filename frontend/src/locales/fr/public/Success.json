@@ -2,7 +2,7 @@
   "backToHome": "Retour à la maison",
   "contactMessage": "Nous vous contacterons sous peu pour confirmer les détails de votre rendez-vous.",
   "dateTime": "{{date}} à {{time}}",
-  "serviceBooked": "Votre entrée pour <highlight>{{service}}</highlight> a été créée avec succès.",
+  "serviceBooked": "Votre réservation pour <highlight>{{service}}</highlight> a été créée avec succès.",
   "thankYou": "Merci, {{name}} !",
   "title": "Inscription confirmée !",
   "viewServices": "Voir les prestations"

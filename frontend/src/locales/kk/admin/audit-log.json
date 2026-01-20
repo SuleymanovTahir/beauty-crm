@@ -1,12 +1,14 @@
 {
   "clear_all": "Барлығын өшіру",
   "clear_confirm": "Тексеру журналын толығымен өшіргіңіз келетініне сенімдісіз бе? Бұл әрекет қайтымсыз.",
-  "delete_batch_confirm": "Таңдалған жазбаларды ({{count}}) біржола жою қажет пе?",
+  "delete_batch_confirm_one": "",
+  "delete_batch_confirm_few": "",
+  "delete_batch_confirm_many": "",
+  "delete_batch_confirm_other": "",
   "delete_confirm": "Бұл жазбаны біржола жоюым керек пе?",
   "delete_selected": "Таңдалған жою",
   "details": {
-    "error_msg": "Қате туралы хабар",
-    "ip": "IP",
+    "ip": "ИП",
     "new_data": "Жаңа деректер",
     "no_data": "Дерек жоқ",
     "old_data": "Ескі деректер",

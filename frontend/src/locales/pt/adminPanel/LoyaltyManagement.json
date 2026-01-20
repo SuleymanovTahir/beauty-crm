@@ -9,18 +9,18 @@
   },
   "categories": {
     "category": "Categoria",
-    "category_placeholder": "Por exemplo. Unhas",
+    "category_placeholder": "até data exemplo. Unhas",
     "description": "Configure multiplicadores de pontos para categorias de serviço",
     "multiplier": "Fator",
     "title": "Multiplicadores de categoria"
   },
   "config": {
-    "cashback_hint": "Exemplo: 10% de cashback (10 pontos por 100 gastos)",
+    "cashback_hint": "Exemplo: 10% de cashback (10 pontos até data 100 gastos)",
     "cashback_rate": "Reembolso (%)",
     "description": "Gerenciando configurações de fidelidade globais",
     "expiration_days": "Período de validade dos pontos (dias)",
     "expiration_hint": "Os pontos acumulados expirarão após o número especificado de dias.",
-    "points_per_unit": "pontos por 1 unidade. moedas",
+    "points_per_unit": "pontos até data 1 unidade. moedas",
     "title": "Configurações"
   },
   "confirm_delete_rule": "",

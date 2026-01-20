@@ -25,19 +25,19 @@
   "for_period": "За период",
   "from_visitors": "От посетителей к клиентам",
   "improve_greeting": "Улучшите свое приветствие",
-  "income": "Вход",
+  "income": "Запись",
   "min": "мин",
   "name": "Имя",
   "need_more_masters": "Нужно больше мастеров",
   "optimization_tip": "Совет по оптимизации",
   "peak_hours": "Часы пик",
-  "per_booking": "За каждый пост",
+  "per_booking": "За каждый запись",
   "percentage": "Процент",
   "quantity": "Число",
   "recommendation": "Предложение",
   "refresh": "Обновлять",
   "response_time": "Время ответа",
-  "revenue": "Вход",
+  "revenue": "Запись",
   "services_distribution": "Распространение услуги",
   "simplify_contact_collection": "Упростите сбор контактов",
   "stages": {
@@ -87,7 +87,7 @@
       "engaged": "Проявили интерес",
       "started_booking": "Открыли форму записи",
       "booked": "Завершили оформление",
-      "completed": "Услуга оказана"
+      "completed": "услуга оказана"
     },
     "losses": "Потери: {{count}}"
   }

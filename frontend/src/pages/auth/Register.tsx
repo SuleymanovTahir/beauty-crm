@@ -14,7 +14,7 @@ import GoogleLoginButton from "../../components/GoogleLoginButton";
 
 export default function Register() {
   const navigate = useNavigate();
-  const { t } = useTranslation('auth/register');
+  const { t } = useTranslation(['auth/register', 'common']);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -120,14 +120,26 @@ export default function Register() {
           toast.success(t('code_sent_to_email'));
         }
       } else {
-        setError(response.error || t('error_registration'));
-        toast.error(response.error || t('error_registration'));
+        const messageKey = response.error;
+        const translatedError = t(`common:auth_errors.${messageKey}`);
+        const finalMessage = translatedError && translatedError !== `common:auth_errors.${messageKey}`
+          ? translatedError
+          : (typeof response.error === 'string' ? response.error : t('error_registration'));
+
+        setError(finalMessage);
+        toast.error(finalMessage);
       }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : t('error_registration');
-      setError(message);
-      toast.error(message);
+    } catch (err: any) {
       console.error("Registration error:", err);
+      const messageKey = err.error || (err instanceof Error ? err.message : 'error_registration');
+
+      const translatedError = t(`common:auth_errors.${messageKey}`);
+      const finalMessage = translatedError && translatedError !== `common:auth_errors.${messageKey}`
+        ? translatedError
+        : (typeof err.error === 'string' ? err.error : messageKey);
+
+      setError(finalMessage);
+      toast.error(finalMessage);
     } finally {
       setLoading(false);
     }
@@ -151,14 +163,26 @@ export default function Register() {
         setStep("success");
         toast.success(t('email_verified'));
       } else {
-        setError(response.error || t('error_verification'));
-        toast.error(response.error || t('error_verification'));
+        const messageKey = response.error;
+        const translatedError = t(`common:auth_errors.${messageKey}`);
+        const finalMessage = translatedError && translatedError !== `common:auth_errors.${messageKey}`
+          ? translatedError
+          : (typeof response.error === 'string' ? response.error : t('error_verification'));
+
+        setError(finalMessage);
+        toast.error(finalMessage);
       }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : t('error_verification');
-      setError(message);
-      toast.error(message);
+    } catch (err: any) {
       console.error("Verification error:", err);
+      const messageKey = err.error || (err instanceof Error ? err.message : 'error_verification');
+
+      const translatedError = t(`common:auth_errors.${messageKey}`);
+      const finalMessage = translatedError && translatedError !== `common:auth_errors.${messageKey}`
+        ? translatedError
+        : (typeof err.error === 'string' ? err.error : messageKey);
+
+      setError(finalMessage);
+      toast.error(finalMessage);
     } finally {
       setLoading(false);
     }

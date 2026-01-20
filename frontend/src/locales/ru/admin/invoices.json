@@ -6,15 +6,14 @@
   "allStatuses": "Все статусы",
   "board": "Доска",
   "client": "Клиент",
-  "createFirst": "Создайте первый счет для клиента",
   "delete": "Удалить",
   "dueDate": "Срок оплаты",
   "errors": {
-    "createError": "Error creating invoice",
-    "deleteError": "Error deleting invoice",
-    "paymentError": "Error adding payment",
-    "sendError": "Error sending invoice",
-    "updateError": "Failed to update status"
+    "createError": "Ошибка создания счета.",
+    "deleteError": "Ошибка удаления счета.",
+    "paymentError": "Ошибка добавления платежа",
+    "sendError": "Ошибка отправки счета",
+    "updateError": "Не удалось обновить статус"
   },
   "form": {
     "addItem": "Добавить позицию",
@@ -29,7 +28,6 @@
     "selectClient": "Выберите клиента"
   },
   "invoiceNumber": "№ Счета",
-  "loading": "Загрузка...",
   "manage_stages": "Колонки",
   "messages": {
     "confirmDelete": "Вы уверены, что хотите удалить этот счет?",
@@ -57,23 +55,15 @@
   "search_placeholder": "Поиск по номеру или клиенту...",
   "sendButton": "Отправить",
   "sendDialog": {
-    "email": "Email",
+    "email": "Электронная почта",
     "method": "Способ отправки",
     "recipient": "Получатель",
     "sendButton": "Отправить",
-    "telegram": "Telegram",
+    "telegram": "Телеграмма",
     "title": "Отправить счет",
     "whatsapp": "WhatsApp"
   },
   "status": "Статус",
-  "statuses": {
-    "cancelled": "Отменен",
-    "draft": "Черновик",
-    "overdue": "Просрочен",
-    "paid": "Оплачен",
-    "partial": "Частично оплачен",
-    "sent": "Отправлен"
-  },
   "subtitle": "Управление счетами и платежами",
   "title": "Счета",
   "totalAmount": "Сумма"

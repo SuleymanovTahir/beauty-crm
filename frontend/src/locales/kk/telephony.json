@@ -46,7 +46,7 @@
   "provider": "Провайдер",
   "provider_binotel": "Binotel",
   "provider_generic": "Generic (Webhook)",
-  "provider_onlinepbx": "OnlinePBX",
+  "provider_onlinepbx": "Онлайн АТС",
   "provider_twilio": "Twilio",
   "recording": "booking",
   "recordings_tab": "bookings",
@@ -69,8 +69,8 @@
   "type": "Түр",
   "unarchive_recording": "ZIP файлын ашыңыз",
   "upload_recording": "Жазбаны жүктеп салу",
-  "webhook_instruction_short": "Қоңырауларды автоматты түрде қабылдау үшін телефония провайдерінің параметрлеріне келесі URL мекенжайын енгізіңіз.",
-  "webhook_security_note": "Қауіпсіздік мақсатында бұл URL мекенжайын үшінші тараптармен бөліспеңіз.",
-  "webhook_url_label": "Сіздің бірегей Webhook URL мекенжайы",
+  "webhook_instruction_short": "Қоңырауларды қабылдау үшін провайдеріңіздің телефон шартында келесі URL мекенжайын көрсетіңіз.",
+  "webhook_security_note": "Қауіпсіздік мақсатында бұл URL мекенжайын ешкіммен бөліспеңіз.",
+  "webhook_url_label": "Сіздің бірегей вебхук URL",
   "week": "Апта"
 }

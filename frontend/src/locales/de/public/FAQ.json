@@ -3,7 +3,7 @@
   "answer_2": "Wir akzeptieren Zahlungen in bar und mit Bankkarten.",
   "answer_3": "Ja, Sie können Ihren Termin bis zu 24 Stunden vor Ihrem geplanten Termin absagen oder verschieben.",
   "answer_4": "Ja, einige Eingriffe haben medizinische Kontraindikationen. Bitte konsultieren Sie vor der Aufnahme unseren Spezialisten.",
-  "answer_5": "Die Dauer des Eingriffs hängt von der gewählten Dienstleistung ab. Normalerweise zwischen 30 Minuten und 3 Stunden.",
+  "answer_5": "Die Dauer des Eingriffs hängt datum bis der gewählten Dienstleistung ab. Normalerweise zwischen 30 Minuten und 3 Stunden.",
   "answer_6": "Einige Verfahren erfordern eine besondere Vorbereitung. Darüber informiert Sie der Facharzt bei der Anmeldung.",
   "cta": {
     "bookButton": "Melden Sie sich für das Verfahren an",
@@ -24,7 +24,7 @@
       "question": "Wie melde ich mich für das Verfahren an?"
     },
     "cancellation": {
-      "answer": "Ja, Sie können Ihren Termin bis zu 24 Stunden vor Ihrem geplanten Termin absagen oder verschieben. Bei einer Stornierung weniger als 24 Stunden im Voraus kann eine Vertragsstrafe in Höhe von 50 % der Kosten der Dienstleistung erhoben werden.",
+      "answer": "Ja, Sie können Ihren Termin bis zu 24 Stunden vor Ihrem geplanten Termin absagen oder verschieben. Bei einer Stornierung weniger als 24 Stunden im Voraus kann eine Vertragsstrafe in Höhe datum bis 50 % der Kosten der Dienstleistung erhoben werden.",
       "question": "Kann ich meinen Termin absagen oder verschieben?"
     },
     "certificates": {
@@ -40,7 +40,7 @@
       "question": "Kann ich für Dienstleistungen ein Zertifikat ausstellen?"
     },
     "guarantee": {
-      "answer": "Ja, wir garantieren die Qualität aller unserer Dienstleistungen. Sollten Sie mit dem Ergebnis nicht zufrieden sein, kontaktieren Sie uns innerhalb von 7 Tagen und wir finden eine Lösung.",
+      "answer": "Ja, wir garantieren die Qualität aller unserer Dienstleistungen. Sollten Sie mit dem Ergebnis nicht zufrieden sein, kontaktieren Sie uns innerhalb datum bis 7 Tagen und wir finden eine Lösung.",
       "question": "Geben Sie eine Garantie für Dienstleistungen?"
     },
     "location": {

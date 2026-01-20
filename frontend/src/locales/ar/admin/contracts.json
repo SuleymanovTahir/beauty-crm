@@ -8,15 +8,7 @@
   "client": "عميل",
   "clientContracts": "عميل",
   "contractNumber": "رقم العقد",
-  "contractTypes": {
-    "employment": "عقد العمل",
-    "rental": "استئجار مكان",
-    "service": "تقديم الخدمات"
-  },
   "createdAt": "تاريخ الإنشاء",
-  "createFirst": "أنشئ عقدك الأول مع العميل",
-  "delete": "يمسح",
-  "editButton": "يحرر",
   "editContract": "تحرير العقد",
   "errors": {
     "deleteError": "حدث خطأ أثناء حذف العقد",
@@ -26,15 +18,11 @@
   },
   "form": {
     "cancel": "يلغي",
-    "contractDate": "تاريخ العقد",
     "contractType": "نوع العقد",
-    "notes": "ملحوظات",
     "save": "يحفظ",
-    "selectClient": "حدد العميل",
-    "terms": "شروط الاتفاقية"
+    "selectClient": "حدد العميل"
   },
   "internalContracts": "محلي",
-  "loading": "تحميل...",
   "manage_stages": "أعمدة",
   "manageTypes": "أنواع العقود",
   "messages": {
@@ -46,7 +34,6 @@
   },
   "noContracts": "لا توجد عقود بعد",
   "search_placeholder": "البحث بالرقم أو العميل...",
-  "sendButton": "يرسل",
   "sendDialog": {
     "email": "بريد إلكتروني",
     "instagram": "انستغرام",
@@ -58,12 +45,6 @@
     "whatsapp": "واتس اب"
   },
   "status": "حالة",
-  "statuses": {
-    "cancelled": "تم الإلغاء",
-    "draft": "مسودة",
-    "sent": "مرسل",
-    "signed": "وقعت"
-  },
   "subtitle": "إدارة عقود العملاء",
   "title": "المعاهدات",
   "type": "يكتب",
@@ -89,10 +70,5 @@
     "system": "نظام",
     "systemProtected": "النظام محمي",
     "title": "أنواع العقود"
-  },
-  "types": {
-    "product": "منتج",
-    "service": "الخدمة",
-    "subscription": "الاشتراك"
   }
 }

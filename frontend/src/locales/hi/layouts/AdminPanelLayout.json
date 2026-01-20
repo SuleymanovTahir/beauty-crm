@@ -3,10 +3,7 @@
   "go_to_crm": "सीआरएम पर जाएं",
   "logout": "लॉग आउट",
   "menu": {
-    "bookings": "bookings",
-    "calendar": "कैलेंडर",
     "challenges": "चुनौतियां",
-    "clients": "ग्राहकों",
     "dashboard": "कंट्रोल पैनल",
     "feature_management": "फ़ीचर प्रबंधन",
     "loyalty_management": "वफादारी प्रबंधन",
@@ -14,7 +11,8 @@
     "photo_gallery": "फोटो गैलरी",
     "public_content": "सार्वजनिक सामग्री",
     "referral_program": "नाम लेने का कार्यक्रम",
-    "services": "सेवाएं",
+    "services": "दिनांक सेवाएं",
+    "settings": "",
     "user_management": "प्रयोक्ता प्रबंधन"
   }
 }

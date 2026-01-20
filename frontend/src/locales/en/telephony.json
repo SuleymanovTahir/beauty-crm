@@ -46,7 +46,7 @@
   "provider": "Provider",
   "provider_binotel": "Binotel",
   "provider_generic": "Generic (Webhook)",
-  "provider_onlinepbx": "OnlinePBX",
+  "provider_onlinepbx": "Online PBX",
   "provider_twilio": "Twilio",
   "recording": "booking",
   "recordings_tab": "bookings",
@@ -69,8 +69,8 @@
   "type": "Type",
   "unarchive_recording": "Unzip",
   "upload_recording": "Upload booking",
-  "webhook_instruction_short": "To automatically receive calls, enter the following URL in your telephony provider's settings.",
-  "webhook_security_note": "For security reasons, do not share this URL with third parties.",
-  "webhook_url_label": "Your unique Webhook URL",
+  "webhook_instruction_short": "To receive calls, please provide the following URL in your provider's phone provision.",
+  "webhook_security_note": "For security reasons, do not share this URL with anyone else.",
+  "webhook_url_label": "Your unique webhook URL",
   "week": "Week"
 }

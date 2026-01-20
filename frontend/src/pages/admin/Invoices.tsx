@@ -122,7 +122,7 @@ const Invoices = () => {
             toast.success(t('messages.invoiceUpdated'));
             loadInvoices();
         } catch (error) {
-            toast.error(t('errors.updateError', 'Failed to update status'));
+            toast.error(t('errors.updateError'));
         }
     };
 
@@ -151,7 +151,7 @@ const Invoices = () => {
             loadInvoices();
         } catch (error) {
             console.error('Error deleting invoice:', error);
-            toast.error(t('errors.deleteError', 'Error deleting invoice'));
+            toast.error(t('errors.deleteError'));
         }
     };
 
@@ -191,7 +191,7 @@ const Invoices = () => {
                                     }`}
                             >
                                 <Layout className="w-4 h-4 mr-2" />
-                                {t('board', 'Доска')}
+                                {t('board')}
                             </button>
                             <button
                                 onClick={() => setViewMode('list')}
@@ -201,17 +201,17 @@ const Invoices = () => {
                                     }`}
                             >
                                 <LayoutDashboard className="w-4 h-4 mr-2" />
-                                {t('allInvoices', 'Все счета')}
+                                {t('allInvoices')}
                             </button>
                         </div>
 
                         <button
                             onClick={() => setShowStagesDialog(true)}
                             className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
-                            title={t('manage_stages', 'Управление стадиями')}
+                            title={t('manage_stages')}
                         >
                             <LayoutDashboard size={16} />
-                            <span className="hidden sm:inline">{t('manage_stages', 'Колонки')}</span>
+                            <span className="hidden sm:inline">{t('manage_stages')}</span>
                         </button>
                         <button className="crm-btn-primary h-10" onClick={() => setShowAddDialog(true)}>
                             <Plus size={18} />
@@ -267,7 +267,7 @@ const Invoices = () => {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
                             type="text"
-                            placeholder={t('search_placeholder', 'Поиск по номеру или клиенту...')}
+                            placeholder={t('search_placeholder')}
                             className="pl-9 pr-4 h-9 w-full md:w-64 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -610,7 +610,7 @@ const InvoiceDialog = ({ onClose, onSuccess }: any) => {
             onSuccess();
         } catch (error) {
             console.error('Error creating invoice:', error);
-            toast.error(t('errors.createError', 'Error creating invoice'));
+            toast.error(t('errors.createError'));
         }
     };
 
@@ -756,7 +756,7 @@ const PaymentDialog = ({ invoice, onClose, onSuccess }: any) => {
             onSuccess();
         } catch (error) {
             console.error('Error adding payment:', error);
-            toast.error(t('errors.paymentError', 'Error adding payment'));
+            toast.error(t('errors.paymentError'));
         }
     };
 
@@ -844,7 +844,7 @@ const SendInvoiceDialog = ({ invoice, onClose, onSuccess }: any) => {
             onSuccess();
         } catch (error) {
             console.error('Error sending invoice:', error);
-            toast.error(t('errors.sendError', 'Error sending invoice'));
+            toast.error(t('errors.sendError'));
         }
     };
 

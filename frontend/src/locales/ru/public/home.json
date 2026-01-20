@@ -7,7 +7,7 @@
       "namePlaceholder": "Анна Иванова",
       "phone": "Телефон*",
       "phonePlaceholder": "+971 50 123 4567",
-      "service": "Услуга *",
+      "service": "услуга *",
       "servicePlaceholder": "Выберите услугу",
       "submit": "Регистрация",
       "time": "время*"

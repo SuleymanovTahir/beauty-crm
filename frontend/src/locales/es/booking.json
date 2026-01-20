@@ -2,7 +2,7 @@
   "auth": {
     "birthday": "Fecha de nacimiento",
     "complete_profile": "Completa tu perfil",
-    "continue_email": "Iniciar sesión por correo electrónico",
+    "continue_email": "Iniciar sesión hasta fecha correo electrónico",
     "continue_google": "Continuar a través de Google",
     "create_account": "Crea una cuenta",
     "email_placeholder": "Introduce tu correo electrónico",
@@ -17,19 +17,22 @@
     "or": "O",
     "other": "Otro",
     "select": "Elegir",
-    "subtitle": "Inicie sesión para guardar su historial de publicaciones y recibir bonificaciones",
+    "subtitle": "Inicie sesión para guardar su historial de reservas y recibir bonificaciones",
     "success_mock": "¡Perfil recibido exitosamente!",
     "welcome": "Bienvenido"
   },
   "booking_info": "Información de grabación",
-  "change_booking": "Editar entrada",
+  "bookingDesc": "Выберите удобное время для визита",
+  "bookingError": "Ошибка при создании записи. Попробуйте позже.",
+  "bookingSuccess": "Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.",
+  "bookingTag": "Онлайн запись",
+  "bookingTitlePart1": "Запишитесь",
+  "bookingTitlePart2": "на прием",
   "common": {
-    "any_master": "cualquier maestro",
     "cancel": "Later",
     "change": "Change",
     "edit": "Edit",
     "reschedule": "Reschedule",
-    "reset": "Reset All",
     "resetAll": "Reset all",
     "save": "Verify",
     "select": "Select"
@@ -51,7 +54,7 @@
     "total": "Total Amount"
   },
   "continue_datetime": "Continuar con la selección de fecha y hora.",
-  "continue_professional": "Continuar con la selección del asistente",
+  "continue_professional": "Continuar con la selección del especialista",
   "continue_services": "Continuar con la selección de servicios",
   "datetime": {
     "date": "Select Date",
@@ -60,6 +63,13 @@
     "time": "Pick Time",
     "title": "Date & Time"
   },
+  "formDate": "Дата",
+  "formName": "Имя",
+  "formNamePlaceholder": "Ваше имя",
+  "formPhone": "Телефон",
+  "formService": "Услуги",
+  "formServicePlaceholder": "Выберите услуги",
+  "formTime": "Время",
   "invalid_phone": "Please enter a valid phone number",
   "loading": "Initializing Studio",
   "menu": {
@@ -74,20 +84,20 @@
   },
   "min": "min",
   "newBooking": "Reservation",
+  "noServicesFound": "Услуги не найдены.",
+  "phone_too_short": "Номер телефона должен содержать минимум 11 цифр с учетом кода страны",
+  "privacyAgreementStart": "Нажимая кнопку, вы соглашаетесь с",
+  "privacyPolicy": "политикой конфиденциальности",
   "professional": {
     "anyAvailable": "Flexible Match",
     "anyDesc": "We'll match you with the best available professional",
     "availableOn": "Available",
     "availableToday": "Available Today",
     "notAvailableToday": "Not Available Today",
-    "ready": "Ready",
-    "reviews": "Reviews",
     "title": "Choose Master"
   },
-  "salon": {
-    "address": "Studio Location",
-    "name": "Sede de belleza"
-  },
+  "searchCountry": "Поиск страны...",
+  "searchService": "Найти услугу...",
   "select_to_continue": "Seleccione un servicio o técnico para continuar",
   "services": {
     "allCategories": "All",
@@ -97,8 +107,8 @@
     "service_one": "service",
     "service_few": "services",
     "service_many": "services",
-    "title": "Select Services",
     "total": "Total"
   },
+  "submitBooking": "Отправить заявку",
   "totalDuration": "Duration"
 }

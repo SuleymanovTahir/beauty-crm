@@ -5,7 +5,7 @@
   },
   "current_settings": {
     "edit": "Редактировать",
-    "min_purchase": "Минимальная сумма покупки: <strong>{{amount}} AED</strong>",
+    "min_purchase": "Минимальная стоимость покупки: <strong>{{amount}} AED</strong>",
     "referred_bonus": "Приглашенный друг получает <strong>{{points}} баллов</strong> при регистрации",
     "referrer_bonus": "Реферер получает <strong>{{points}} баллов</strong>, когда друг совершает первую покупку",
     "title": "Текущая конфигурация бонусов"
@@ -13,7 +13,7 @@
   "dialogs": {
     "settings": {
       "description": "Настройка бонусных баллов и требований",
-      "min_purchase_amount": "Минимальная сумма покупки (AED)",
+      "min_purchase_amount": "Минимальная стоимость покупки (AED)",
       "min_purchase_help": "Минимальная сумма, которую должен потратить друг для активации реферального бонуса (0 = нет минимума)",
       "referred_bonus": "Бонусные баллы приглашенного друга",
       "referred_bonus_help": "Баллы, начисляемые другу при регистрации",
@@ -25,7 +25,6 @@
   "settings": "Настройки",
   "stats": {
     "completed_referrals": "Завершенных рефералов",
-    "from_last_month": "от прошлого месяца",
     "points_distributed": "Распределено баллов",
     "total_referrals": "Всего рефералов"
   },

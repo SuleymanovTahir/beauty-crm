@@ -98,11 +98,11 @@ export default function EmployeeManagement() {
                 sort_order: index
             }));
             await api.post('/users/reorder', { orders });
-            toast.success(t('order_saved', 'Employee order saved'));
+            toast.success(t('order_saved'));
             setIsOrderChanged(false);
         } catch (error) {
             console.error('Error saving order:', error);
-            toast.error(t('error_saving_order', 'Failed to save order'));
+            toast.error(t('error_saving_order'));
         } finally {
             setLoading(false);
         }
@@ -163,10 +163,10 @@ export default function EmployeeManagement() {
                         <div className="space-y-1 p-2">
                             {isOrderChanged && (
                                 <div className="p-2 mb-2 bg-blue-50 border border-blue-100 rounded-lg flex flex-col gap-2">
-                                    <p className="text-xs text-blue-800 font-medium">{t('order_changed_msg', 'Order changed! Save it?')}</p>
+                                    <p className="text-xs text-blue-800 font-medium">{t('order_changed_msg')}</p>
                                     <div className="flex gap-2">
                                         <Button size="sm" onClick={handleSaveOrder} className="flex-1 h-8 text-[10px] gap-1">
-                                            <Save className="w-3 h-3" /> {t('save', 'Save')}
+                                            <Save className="w-3 h-3" /> {t('common:save')}
                                         </Button>
                                         <Button size="sm" variant="ghost" onClick={handleCancelOrder} className="h-8 text-[10px] gap-1 px-2">
                                             <X className="w-3 h-3" />
@@ -207,7 +207,7 @@ export default function EmployeeManagement() {
                                         </div>
                                         {/* Visibility indicator */}
                                         {employee.is_public_visible === false && (
-                                            <div title={t('hidden_from_public', 'Hidden from site')} className="text-gray-400">
+                                            <div title={t('hidden_from_public')} className="text-gray-400">
                                                 <EyeOff className="w-4 h-4" />
                                             </div>
                                         )}

@@ -2,7 +2,7 @@
 Публичные API endpoints (без авторизации)
 """
 from fastapi import APIRouter, HTTPException, BackgroundTasks
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from typing import Optional, List
 from datetime import datetime, timedelta
 
@@ -21,7 +21,7 @@ router = APIRouter(tags=["Public"])
 # ============================================================================
 
 class BookingCreate(BaseModel):
-    service_id: int
+    service_ids: List[int]  # Список ID услуг
     employee_id: Optional[int] = None
     date: str  # YYYY-MM-DD
     time: str  # HH:MM
@@ -29,6 +29,15 @@ class BookingCreate(BaseModel):
     phone: str
     email: Optional[str] = None
     notes: Optional[str] = None
+    source: Optional[str] = 'website'  # Источник: 'public_landing', 'client_cabinet' и т.д.
+    
+    @validator('phone')
+    def validate_phone(cls, v):
+        # Удаляем все нецифровые символы для проверки
+        digits_only = ''.join(filter(str.isdigit, v))
+        if len(digits_only) < 11:
+            raise ValueError('phone_too_short')  # Передаем ключ для фронтенда
+        return v
 
 class ContactForm(BaseModel):
     name: str
@@ -36,7 +45,7 @@ class ContactForm(BaseModel):
     message: str
 
 @router.get("/salon-settings")
-async def get_public_salon_settings():
+def get_public_salon_settings():
     """Получить публичную информацию о салоне (контакты, адрес)"""
     from utils.logger import log_error
     
@@ -70,7 +79,7 @@ async def get_public_salon_settings():
         return {"error": str(e)}
 
 @router.post("/send-message")
-async def send_contact_message(form: ContactForm, background_tasks: BackgroundTasks):
+def send_contact_message(form: ContactForm, background_tasks: BackgroundTasks):
 
     """Отправка сообщения с контактной формы"""
     from utils.logger import log_info, log_error
@@ -85,7 +94,7 @@ async def send_contact_message(form: ContactForm, background_tasks: BackgroundTa
     return {"success": True, "message": "Message sent successfully"}
 
 @router.post("/bookings")
-async def create_public_booking(data: BookingCreate, background_tasks: BackgroundTasks):
+def create_public_booking(data: BookingCreate, background_tasks: BackgroundTasks):
     """
     Создать заявку на запись (публично).
     Статус автоматически устанавливается в 'pending_confirmation'.
@@ -106,30 +115,44 @@ async def create_public_booking(data: BookingCreate, background_tasks: Backgroun
             master_name = emp['full_name']
 
     try:
+        # Получаем названия услуг по их ID
+        from db.services import get_service_by_id
+        service_names = []
+        for service_id in data.service_ids:
+            service = get_service_by_id(service_id)
+            if service:
+                service_names.append(service.get('name', f'Service #{service_id}'))
+        
+        # Формируем строку с услугами
+        services_str = ', '.join(service_names) if service_names else 'Не указано'
+        
         booking_id = save_booking(
-            instagram_id=data.phone, # Используем телефон как ID для публичных
-            service=str(data.service_id), # Пока передаем ID, возможно нужно имя
+            instagram_id=data.phone,
+            service=services_str,
             datetime_str=datetime_str,
             phone=data.phone,
             name=data.name,
             master=master_name,
             status='pending_confirmation',
-            source='website'
+            source=data.source or 'website'
         )
         
         # 2. Логирование
-        log_info(f"📅 New public booking: {data.name} ({data.phone})", "public_api")
+        log_info(f"📅 New public booking: {data.name} ({data.phone}) - Services: {services_str}", "public_api")
         
         # 3. Уведомление администратора
-        background_tasks.add_task(notify_admin_new_booking, data, booking_id)
+        background_tasks.add_task(notify_admin_new_booking, data, booking_id, services_str)
         
         return {"success": True, "booking_id": booking_id, "message": "Booking request received"}
         
+    except ValueError as ve:
+        log_error(f"Validation error in public booking: {ve}", "public_api")
+        raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
         log_error(f"Error creating public booking: {e}", "public_api")
-        return JSONResponse({"error": "Failed to create booking", "detail": str(e)}, status_code=500)
+        raise HTTPException(status_code=500, detail="Failed to create booking")
 
-def notify_admin_new_booking(data: BookingCreate, booking_id: int):
+def notify_admin_new_booking(data: BookingCreate, booking_id: int, services_str: str):
     """Уведомить админа о новой заявке"""
     from utils.email import send_email_sync
     from integrations.telegram_bot import send_telegram_alert
@@ -138,12 +161,20 @@ def notify_admin_new_booking(data: BookingCreate, booking_id: int):
     
     admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USERNAME')
     
+    # Красивое имя источника
+    source_display = "🌐 Веб-сайт"
+    if data.source == 'public_landing':
+        source_display = "🏠 Лендинг (Главная)"
+    elif data.source == 'client_cabinet':
+        source_display = "👤 Личный кабинет"
+    
     subject = f"📅 Новая заявка на запись: {data.name}"
     message = (
         f"Имя: {data.name}\n"
         f"Телефон: {data.phone}\n"
+        f"Услуги: {services_str}\n"
         f"Дата: {data.date} {data.time}\n"
-        f"Источник: Сайт\n"
+        f"Источник: {source_display}\n"
         f"Статус: Ожидает подтверждения"
     )
     
@@ -152,23 +183,40 @@ def notify_admin_new_booking(data: BookingCreate, booking_id: int):
         try:
              send_email_sync([admin_email], subject, message)
         except Exception as e:
-             print(f"Error sending email: {e}")
+             print(f"🔧 Error sending email: {e}")
              
     # Telegram
     try:
+        # Форматируем список услуг более красиво для Telegram
+        formatted_services = "\n".join([f"  • {s.strip()}" for s in services_str.split(',')])
+        
+        # Красивое имя источника для TG
+        source_emoji = "🌐"
+        source_text = "Веб-сайт"
+        if data.source == 'public_landing':
+            source_emoji = "🏠"
+            source_text = "Лендинг (Главная)"
+        elif data.source == 'client_cabinet':
+            source_emoji = "👤"
+            source_text = "Личный кабинет"
+
         tg_msg = (
-            f"📅 <b>Новая заявка на запись!</b>\n\n"
+            f"📅 <b>Новая заявка на запись!</b>\n"
+            f"━━━━━━━━━━━━━━━━━━\n"
             f"👤 <b>Имя:</b> {data.name}\n"
-            f"📞 <b>Телефон:</b> {data.phone}\n"
-            f"🕒 <b>Время:</b> {data.date} {data.time}\n"
-            f"⚠️ <b>Статус:</b> Ожидает подтверждения"
+            f"📞 <b>Телефон:</b> <code>{data.phone}</code>\n"
+            f"🕒 <b>Время:</b> {data.date} в {data.time}\n"
+            f"💅 <b>Услуги:</b>\n{formatted_services}\n"
+            f"━━━━━━━━━━━━━━━━━━\n"
+            f"⚠️ <b>Статус:</b> ⏳ Ожидает подтверждения\n"
+            f"{source_emoji} <b>Источник:</b> {source_text}"
         )
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         loop.run_until_complete(send_telegram_alert(tg_msg))
         loop.close()
     except Exception as e:
-        print(f"Error sending telegram: {e}")
+        print(f"🔧 Error sending telegram: {e}")
 
 def process_contact_notifications(form: ContactForm):
     """Обработка уведомлений в фоновом режиме"""
@@ -230,7 +278,7 @@ def process_contact_notifications(form: ContactForm):
         log_error(f"Error sending Telegram notification: {e}", "public_api")
 
 @router.get("/services")
-async def get_public_services():
+def get_public_services():
     """Публичный список активных услуг"""
     services = get_all_services(active_only=True)
     from utils.utils import sanitize_url
@@ -275,7 +323,7 @@ async def get_public_services():
     ]
 
 @router.get("/available-slots")
-async def get_available_slots(
+def get_available_slots(
     date: str,
     employee_id: Optional[int] = None,
     service_id: Optional[int] = None
@@ -423,7 +471,7 @@ def check_slot_availability(date: str, time: str, employee_id: Optional[int] = N
 # ... (existing code)
 
 @router.get("/available-slots/batch")
-async def get_batch_available_slots(date: str):
+def get_batch_available_slots(date: str):
     """
     Get available slots for ALL active masters on a specific date.
     Uses MasterScheduleService for accurate calculations.
@@ -464,7 +512,7 @@ async def get_batch_available_slots(date: str):
 
 
 @router.get("/reviews")
-async def get_public_reviews(limit: int = 20, language: str = "ru"):
+def get_public_reviews(limit: int = 20, language: str = "ru"):
     """Получить активные отзывы"""
     from db.public_content import get_active_reviews
     
@@ -472,7 +520,7 @@ async def get_public_reviews(limit: int = 20, language: str = "ru"):
     return {"reviews": reviews}
 
 @router.get("/news")
-async def get_salon_news(limit: int = 10, language: str = "ru"):
+def get_salon_news(limit: int = 10, language: str = "ru"):
     """Получить новости салона"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -513,7 +561,7 @@ async def get_salon_news(limit: int = 10, language: str = "ru"):
     return {"news": news}
 
 @router.get("/banners")
-async def get_public_banners():
+def get_public_banners():
     """Получить активные баннеры для главной страницы"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -545,7 +593,7 @@ async def get_public_banners():
         conn.close()
 
 @router.get("/gallery")
-async def get_public_gallery(category: Optional[str] = None):
+def get_public_gallery(category: Optional[str] = None):
     """
     Получить изображения галереи (публичный доступ)
     category: 'portfolio' или 'salon' (опционально, если не указан - возвращает все)
@@ -588,7 +636,7 @@ async def get_public_gallery(category: Optional[str] = None):
         return {"success": False, "images": [], "error": str(e)}
 
 @router.get("/faq")
-async def get_public_faq(language: str = "ru"):
+def get_public_faq(language: str = "ru"):
     """Получить список FAQ"""
     try:
         conn = get_db_connection()
@@ -634,7 +682,7 @@ async def get_public_faq(language: str = "ru"):
             conn.close()
 
 @router.get("/initial-load")
-async def get_initial_load_data(language: str = "ru"):
+def get_initial_load_data(language: str = "ru"):
     """
     Unified endpoint for initial page load to reduce round-trips.
     Combines salon info, banners, seo-metadata and services.
@@ -665,7 +713,7 @@ async def get_initial_load_data(language: str = "ru"):
         
     # 3. Get SEO Metadata
     try:
-        seo = await get_seo_metadata()
+        seo = get_seo_metadata()
     except Exception:
         seo = {}
 
@@ -725,7 +773,7 @@ class BookingHoldRequest(BaseModel):
     client_id: str
 
 @router.post("/bookings/hold")
-async def create_booking_hold(data: BookingHoldRequest):
+def create_booking_hold(data: BookingHoldRequest):
     """
     Create a temporary hold on a slot.
     Returns success: True if hold created, False if slot taken.

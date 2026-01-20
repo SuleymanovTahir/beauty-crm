@@ -1,7 +1,7 @@
 {
   "quick_actions": {
     "challenges": {
-      "description": "Erstellung und Management von Herausforderungen",
+      "description": "Erstellung und Management datum bis Herausforderungen",
       "title": "Herausforderungen"
     },
     "loyalty_management": {
@@ -27,17 +27,14 @@
     }
   },
   "recent_activity": {
-    "challenge_completed": "Herausforderung „{{name}}“ von {{count}} Benutzern abgeschlossen",
-    "challenge_completed_one": "Herausforderung „{{name}}“ abgeschlossen von {{count}} vom Benutzer",
-    "challenge_completed_few": "Herausforderung „{{name}}“ von {{count}} Benutzern abgeschlossen",
-    "challenge_completed_many": "Herausforderung „{{name}}“ von {{count}} Benutzern abgeschlossen",
-    "challenge_completed_other": "Herausforderung „{{name}}“ von {{count}} Benutzern abgeschlossen",
-    "day_ago": "Vor {{count}} Tag",
+    "challenge_completed_one": "Herausforderung „{{name}}“ abgeschlossen datum bis {{count}} vom Benutzer",
+    "challenge_completed_few": "Herausforderung „{{name}}“ datum bis {{count}} Benutzern abgeschlossen",
+    "challenge_completed_many": "Herausforderung „{{name}}“ datum bis {{count}} Benutzern abgeschlossen",
+    "challenge_completed_other": "Herausforderung „{{name}}“ datum bis {{count}} Benutzern abgeschlossen",
     "day_ago_one": "Vor {{count}} Tag",
     "day_ago_few": "Vor {{count}} Tagen",
     "day_ago_many": "Vor {{count}} Tagen",
     "day_ago_other": "Vor {{count}} Tagen",
-    "hours_ago": "Vor {{count}} Stunden",
     "hours_ago_one": "Vor {{count}} Stunde",
     "hours_ago_few": "Vor {{count}} Stunden",
     "hours_ago_many": "Vor {{count}} Stunden",
@@ -45,7 +42,6 @@
     "new_tier_activated": "Neue Treuestufe aktiviert",
     "subtitle": "Letzte Aktionen im Admin-Panel",
     "title": "Letzte Aktivität",
-    "users_registered": "{{count}} neue Benutzer registriert",
     "users_registered_one": "{{count}} neuer Benutzer registriert",
     "users_registered_few": "{{count}} neuer Benutzer registriert",
     "users_registered_many": "{{count}} neue Benutzer registriert",
@@ -54,7 +50,7 @@
   "stats": {
     "active_challenges": "Aktive Herausforderungen",
     "from_last_month": "vom letzten Monat",
-    "loyalty_points_issued": "Vergeben von Treuepunkten",
+    "loyalty_points_issued": "Vergeben datum bis Treuepunkten",
     "total_referrals": "Gesamtzahl der Empfehlungen",
     "total_users": "Gesamtzahl der Benutzer"
   },

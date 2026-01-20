@@ -22,15 +22,6 @@
   "metric_name_en": "Titre (EN)",
   "metric_name_ru": "Nom (RU)",
   "metric_type": "Type métrique",
-  "metrics": {
-    "active_clients": "Clients actifs",
-    "average_check": "Facture moyenne",
-    "bookings": "Réservation",
-    "new_clients": "Nouveaux clients",
-    "revenue": "Revenu",
-    "sales": "Ventes",
-    "vip_clients": "Clients VIP"
-  },
   "my_plans": "Mes projets",
   "no_plans_found": "Aucun plan trouvé",
   "period_type": "Type de période",
@@ -44,7 +35,6 @@
   },
   "plan_created": "Plan créé",
   "plan_deleted": "Le plan a été supprimé.",
-  "plan_name": "Nom du forfait",
   "plans_management": "Gestion des régimes",
   "refresh": "Mise à jour",
   "role": "Rôle",

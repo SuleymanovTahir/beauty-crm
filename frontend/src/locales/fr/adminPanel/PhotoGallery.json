@@ -9,30 +9,14 @@
     "upload": "Télécharger"
   },
   "card": {
-    "delete": "Supprimer",
     "featured": "Favoris",
     "toggle_featured": "Basculer les favoris",
-    "uploaded_by": "Téléchargé par {{name}}",
+    "uploaded_by": "Téléchargé à la date {{name}}",
     "views": "vues"
-  },
-  "categories": {
-    "coloring": "Coloration",
-    "haircut": "Coupes de cheveux",
-    "makeup": "Se maquiller",
-    "manicure": "Manucure",
-    "other": "Autre",
-    "styling": "Pose"
   },
   "dialogs": {
     "delete": {
       "confirm": "Êtes-vous sûr de vouloir supprimer cette photo ?"
-    },
-    "preview": {
-      "category": "Catégorie : {{catégorie}}",
-      "created_at": "{{date}}",
-      "title": "Aperçu des photos",
-      "uploaded_by": "Téléchargé par {{name}}",
-      "views": "{{count}} vues"
     },
     "upload": {
       "description": "Ajouter une nouvelle photo à la galerie",
@@ -41,13 +25,11 @@
         "before_after": "Avant/Après",
         "before_photo": "Photo \"Avant\"",
         "category": "Catégorie",
-        "choose_file": "Sélectionner un fichier",
         "client": "Client",
         "client_hint": "La photo sera disponible dans la galerie du client",
         "description": "Description",
         "description_placeholder": "Description des photos",
         "photo": "Photo",
-        "select_category": "Sélectionnez la catégorie",
         "select_client": "Sélectionner un client",
         "single_photo": "Une photo",
         "title": "Nom",

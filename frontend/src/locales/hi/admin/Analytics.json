@@ -6,7 +6,7 @@
   "booking_statuses": "पोस्ट स्थितियाँ",
   "bookings": "पदों",
   "bookings_trend": "अभिलेखों की गतिशीलता",
-  "clarify_services": "सेवाएँ निर्दिष्ट करें",
+  "clarify_services": "दिनांक सेवाएँ निर्दिष्ट करें",
   "conversation_stage": "बातचीत का मंच",
   "conversion": "परिवर्तन",
   "detailed_analysis": "सैलून के कार्य का विस्तृत विश्लेषण",
@@ -23,7 +23,7 @@
   "exporting": "निर्यात करना...",
   "focus_on_highest_drop_off": "उच्चतम क्षीणन वाले मंच पर ध्यान केंद्रित करें",
   "for_period": "अवधि के लिए",
-  "from_visitors": "आगंतुकों से लेकर ग्राहकों तक",
+  "from_visitors": "आगंतुकों से लेकर ग्राहकों दिनांक तक",
   "improve_greeting": "अपने अभिवादन में सुधार करें",
   "income": "आय",
   "min": "मिन",
@@ -38,13 +38,13 @@
   "refresh": "अद्यतन",
   "response_time": "प्रतिक्रिया समय",
   "revenue": "आय",
-  "services_distribution": "सेवा वितरण",
+  "services_distribution": "दिनांक सेवा वितरण",
   "simplify_contact_collection": "संपर्क संग्रह को सरल बनाएं",
   "stages": {
     "after_greeting": "अभिनंदन के बाद",
     "after_price": "कीमत के बाद",
     "no_slots": "कोई निःशुल्क स्लॉट नहीं",
-    "service_selection": "एक सेवा चुनें",
+    "service_selection": "एक दिनांक सेवा चुनें",
     "whatsapp_request": "व्हाट्सएप अनुरोध"
   },
   "status": {
@@ -58,7 +58,7 @@
     "file_downloaded": "फ़ाइल सफलतापूर्वक डाउनलोड हो गई"
   },
   "title": "एनालिटिक्स",
-  "top_services": "शीर्ष सेवाएँ",
+  "top_services": "शीर्ष दिनांक सेवाएँ",
   "try_again": "पुनः प्रयास करें",
   "where_clients_leave": "ग्राहक कहां जाएं?",
   "work_on_objections": "आपत्तियों से निपटें",
@@ -87,7 +87,7 @@
       "engaged": "दिलचस्पी दिखाई",
       "started_booking": "रजिस्ट्रेशन फॉर्म खोला",
       "booked": "पूरा पंजीकरण",
-      "completed": "सेवा प्रदान की गई"
+      "completed": "दिनांक सेवा प्रदान की गई"
     },
     "losses": "हानियाँ: {{count}}"
   }

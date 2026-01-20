@@ -69,8 +69,8 @@
   "type": "Taper",
   "unarchive_recording": "Décompresser",
   "upload_recording": "Télécharger l'réservation",
-  "webhook_instruction_short": "Pour recevoir automatiquement des appels, saisissez l'URL suivante dans les paramètres de votre fournisseur de téléphonie.",
-  "webhook_security_note": "Pour des raisons de sécurité, ne partagez pas cette URL avec des tiers.",
-  "webhook_url_label": "Votre URL Webhook unique",
+  "webhook_instruction_short": "Pour recevoir des appels, veuillez fournir l'URL suivante dans la fourniture téléphonique de votre fournisseur.",
+  "webhook_security_note": "Pour des raisons de sécurité, ne partagez cette URL avec personne d'autre.",
+  "webhook_url_label": "Votre URL de webhook unique",
   "week": "Semaine"
 }

@@ -41,11 +41,6 @@
     "completions": "Fertigstellung",
     "total_participants": "Gesamtzahl der Teilnehmer"
   },
-  "statuses": {
-    "active": "Aktiv",
-    "completed": "Vollendet",
-    "upcoming": "Demnächst"
-  },
   "subtitle": "Herausforderungen beim Engagement schaffen und bewältigen",
   "title": "Herausforderungen",
   "toasts": {

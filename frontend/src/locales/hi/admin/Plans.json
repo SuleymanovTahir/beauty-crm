@@ -22,15 +22,6 @@
   "metric_name_en": "शीर्षक (EN)",
   "metric_name_ru": "नाम (आरयू)",
   "metric_type": "मीट्रिक प्रकार",
-  "metrics": {
-    "active_clients": "सक्रिय ग्राहक",
-    "average_check": "औसत बिल",
-    "bookings": "बुकिंग",
-    "new_clients": "नए ग्राहक",
-    "revenue": "आय",
-    "sales": "बिक्री",
-    "vip_clients": "वीआईपी ग्राहक"
-  },
   "my_plans": "मेरी योजना",
   "no_plans_found": "कोई योजना नहीं मिली",
   "period_type": "अवधि प्रकार",
@@ -44,7 +35,6 @@
   },
   "plan_created": "योजना बनाई गई",
   "plan_deleted": "योजना हटा दी गई है.",
-  "plan_name": "योजना का नाम",
   "plans_management": "योजना प्रबंधन",
   "refresh": "अद्यतन",
   "role": "भूमिका",

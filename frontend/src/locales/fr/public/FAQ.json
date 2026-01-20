@@ -1,6 +1,6 @@
 {
   "answer_1": "Vous pouvez vous inscrire via notre site Web, en appelant ou en écrivant à WhatsApp/Instagram.",
-  "answer_2": "Nous acceptons les paiements en espèces et par cartes bancaires.",
+  "answer_2": "Nous acceptons les paiements en espèces et à la date cartes bancaires.",
   "answer_3": "Oui, vous pouvez annuler ou reprogrammer votre rendez-vous jusqu'à 24 heures avant l'heure prévue.",
   "answer_4": "Oui, certaines procédures ont des contre-indications médicales. Veuillez consulter notre spécialiste avant d’enregistrer.",
   "answer_5": "Le temps de procédure dépend du service choisi. Généralement de 30 minutes à 3 heures.",
@@ -56,7 +56,7 @@
       "question": "Quels matériaux utilisez-vous ?"
     },
     "payment": {
-      "answer": "Nous acceptons les paiements en espèces et par cartes (Visa, MasterCard, American Express). Le paiement est effectué après la prestation du service.",
+      "answer": "Nous acceptons les paiements en espèces et à la date cartes (Visa, MasterCard, American Express). Le paiement est effectué après la prestation du service.",
       "question": "Quels modes de paiement acceptez-vous ?"
     },
     "preparation": {

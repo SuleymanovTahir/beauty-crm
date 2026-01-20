@@ -102,15 +102,16 @@ export default function Login() {
         return;
       }
 
-      const message = err instanceof Error ? err.message : t('login:login_error');
+      const messageKey = err.error || (err instanceof Error ? err.message : 'login_error');
 
-      if (message.includes(t('login:unauthorized')) || message.includes(t('login:401'))) {
-        setError(t('login:invalid_username_or_password'));
-      } else {
-        setError(message);
-      }
+      // Try to translate using auth_errors from common
+      const translatedError = t(`common:auth_errors.${messageKey}`);
+      const finalMessage = translatedError && translatedError !== `common:auth_errors.${messageKey}`
+        ? translatedError
+        : (typeof err.error === 'string' ? err.error : messageKey);
 
-      toast.error(message);
+      setError(finalMessage);
+      toast.error(finalMessage);
       console.error(t('login:login_error'), err);
     } finally {
       setLoading(false);

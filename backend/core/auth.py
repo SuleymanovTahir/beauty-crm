@@ -48,7 +48,7 @@ async def api_login(request: Request, username: str = Form(...), password: str =
         if not user:
             log_warning(f"Invalid credentials for {username}", "auth")
             return JSONResponse(
-                {"error": "Неверное имя пользователя или пароль"}, 
+                {"error": "invalid_credentials"}, 
                 status_code=401
             )
         
@@ -73,7 +73,7 @@ async def api_login(request: Request, username: str = Form(...), password: str =
 
             if not result:
                 return JSONResponse(
-                    {"error": "Пользователь не найден"},
+                    {"error": "user_not_found"},
                     status_code=404
                 )
 
@@ -82,14 +82,10 @@ async def api_login(request: Request, username: str = Form(...), password: str =
             # Проверяем активацию администратором
             if not is_active:
                 log_warning(f"User {username} not activated yet", "auth")
-                return JSONResponse(
-                    {
-                        "error": "Ваш аккаунт еще не активирован администратором",
-                        "error_type": "not_approved",
-                        "message": "Ваша регистрация ожидает одобрения администратора"
-                    },
-                    status_code=403
-                )
+                return JSONResponse({
+                    "error": "account_not_activated",
+                    "message": "registration_pending"
+                }, status_code=403)
         
         session_token = create_session(user["id"])
         log_info(f"Session created for {username}", "auth")
@@ -145,23 +141,29 @@ async def google_login(data: dict):
     if not token:
         return JSONResponse({"error": "Token is required"}, status_code=400)
 
+    current_stage = "Проверка Google токена"
+    user_info = {'email': 'Unknown', 'full_name': 'Google User'}
     try:
         # 1. Проверяем токен через Google API
         async with httpx.AsyncClient() as client:
             resp = await client.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={token}")
             if resp.status_code != 200:
                 log_warning(f"Invalid Google token: {resp.text}", "auth")
-                return JSONResponse({"error": "Invalid Google token"}, status_code=400)
+                raise ValueError(f"Невалидный Google токен: {resp.text[:100]}")
             google_data = resp.json()
 
         email = google_data.get("email")
         if not email:
-             return JSONResponse({"error": "Email not found in Google token"}, status_code=400)
+             raise ValueError("Email не найден в Google токене")
         
-        email_verified_google = google_data.get("email_verified")
-        if not email_verified_google: # Google emails are usually verified, but good to check
-             return JSONResponse({"error": "Google email not verified"}, status_code=400)
+        user_info['email'] = email
+        user_info['full_name'] = google_data.get("name", "Google User")
 
+        email_verified_google = google_data.get("email_verified")
+        if not email_verified_google:
+             raise ValueError("Google email не подтвержден")
+
+        current_stage = "Поиск пользователя в БД"
         # 2. Ищем пользователя в БД
         conn = get_db_connection()
         c = conn.cursor()
@@ -196,6 +198,7 @@ async def google_login(data: dict):
             conn.commit()
             
         else:
+            current_stage = "Регистрация нового пользователя (Google)"
             # Пользователь не существует - регистрируем
             username = email.split('@')[0]
             # Уникальность username
@@ -204,6 +207,7 @@ async def google_login(data: dict):
                 import random
                 username = f"{username}{random.randint(100, 999)}"
             
+            user_info['username'] = username
             full_name = google_data.get("name") or username
             password_hash = "google_auth_no_password" # Невозможно войти по паролю
             role = "employee" # Дефолтная роль
@@ -220,27 +224,16 @@ async def google_login(data: dict):
             
             user_id = c.fetchone()[0]
             conn.commit()
-            
-            # Уведомляем админов
-            # (Код уведомления можно вынести в функцию, но пока оставим как есть или упростим)
-            try:
-                c.execute("SELECT email FROM users WHERE role = 'director' AND is_active = TRUE AND email IS NOT NULL")
-                admin_emails = [row[0] for row in c.fetchall()]
-                from utils.email_service import send_admin_notification_email
-                
-                user_data = {
-                    'username': username,
-                    'email': email,
-                    'full_name': full_name,
-                    'role': role,
-                    'position': 'Google Auth'
-                }
-                for admin_email in admin_emails:
-                    send_admin_notification_email(admin_email, user_data)
-            except Exception as e:
-                log_error(f"Failed to notify admins about Google reg: {e}", "auth")
-
             conn.close()
+            
+            current_stage = "Уведомление админа (Google Успех)"
+            # Уведомляем админов
+            user_info.update({
+                'role': role,
+                'position': 'Google Auth'
+            })
+            import asyncio
+            asyncio.create_task(notify_admin_registration(user_info, success=True))
             
             return JSONResponse(
                 {
@@ -251,15 +244,25 @@ async def google_login(data: dict):
                 status_code=403
             )
 
+        # 3. Генерируем сессию (для существующих пользователей)
+        import secrets
+        from datetime import timedelta
+        session_token = secrets.token_urlsafe(32)
+        expiry = (datetime.now() + timedelta(days=7)).isoformat()
+        
+        # Re-establish connection if it was closed in the 'if user' block or if it's a new user path
+        # If user existed, conn was closed after update. If new user, conn was closed after insert.
+        # So, we need a new connection for session creation.
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("""INSERT INTO sessions (user_id, session_token, expires_at)
+                     VALUES (%s, %s, %s)""", (user_id, session_token, expiry))
+        conn.commit()
         conn.close()
-
-        # Создаем сессию
-        session_token = create_session(user_id)
-        log_info(f"Google Login successful for {username}", "auth")
-
-        response_data = {
-            "success": True,
-            "token": session_token,
+        
+        response = JSONResponse({
+            "success": True, 
+            "message": "Вход через Google успешен",
             "user": {
                 "id": user_id,
                 "username": username,
@@ -268,22 +271,24 @@ async def google_login(data: dict):
                 "role": role,
                 "phone": phone
             }
-        }
-        
-        response = JSONResponse(response_data)
-        response.set_cookie(
-            key="session_token",
-            value=session_token,
-            httponly=True,
-            max_age=7*24*60*60,
-            samesite="lax",
-            secure=os.getenv("ENVIRONMENT") == "production"
-        )
+        })
+        response.set_cookie(key="session_token", value=session_token, httponly=True, max_age=7*24*60*60)
         return response
 
+    except ValueError as ve:
+        error_msg = str(ve)
+        log_warning(f"Google Auth validation error: {error_msg} (Stage: {current_stage})", "auth")
+        if user_info.get('email'):
+             import asyncio
+             asyncio.create_task(notify_admin_registration(user_info, success=False, error_msg=error_msg, stage=current_stage))
+        return JSONResponse({"error": error_msg}, status_code=400)
     except Exception as e:
-        log_error(f"Error in google_login: {e}", "auth")
-        return JSONResponse({"error": str(e)}, status_code=500)
+        error_msg = str(e)
+        log_error(f"Error in google_login: {error_msg} (Stage: {current_stage})", "auth")
+        if user_info.get('email'):
+             import asyncio
+             asyncio.create_task(notify_admin_registration(user_info, success=False, error_msg=error_msg, stage=current_stage))
+        return JSONResponse({"error": "Внутренняя ошибка сервера Google Auth"}, status_code=500)
 
 # ===== РЕГИСТРАЦИЯ =====
 
@@ -336,7 +341,6 @@ async def register_employee_api(
                  {"error": "Регистрация роли Директор через общую форму запрещена."},
                  status_code=403
              )
-
     return await api_register(
         username=username,
         password=password,
@@ -347,6 +351,55 @@ async def register_employee_api(
         phone=phone,
         privacy_accepted=privacy_accepted
     )
+
+
+async def notify_admin_registration(user_data: dict, success: bool = True, error_msg: str = None, stage: str = None):
+    """
+    Уведомить администратора о новой регистрации или ошибке при регистрации
+    """
+    from integrations.telegram_bot import send_telegram_alert
+    from utils.email_service import send_admin_notification_email
+    from db.settings import get_salon_settings
+    import os
+
+    salon_settings = get_salon_settings()
+    salon_name = salon_settings.get('name', 'Beauty CRM')
+    
+    status_emoji = "✅" if success else "❌"
+    title = "Новая регистрация" if success else "Ошибка при регистрации"
+    
+    # Формируем сообщение для Telegram
+    tg_msg = (
+        f"{status_emoji} <b>{title}</b>\n"
+        f"━━━━━━━━━━━━━━━━━━\n"
+        f"👤 <b>Name:</b> {user_data.get('full_name', 'Not specified')}\n"
+        f"📧 <b>Email:</b> {user_data.get('email', 'Not specified')}\n"
+        f"👤 <b>Username:</b> {user_data.get('username', 'Not specified')}\n"
+        f"👔 <b>Role:</b> {user_data.get('role', 'employee')}\n"
+        f"📱 <b>Tel:</b> <code>{user_data.get('phone', 'Not specified')}</code>\n"
+    )
+    
+    if not success:
+        tg_msg += (
+            f"━━━━━━━━━━━━━━━━━━\n"
+            f"⚠️ <b>Stage:</b> {stage}\n"
+            f"🚫 <b>Error:</b> {error_msg}\n"
+        )
+    else:
+        tg_msg += (
+            f"━━━━━━━━━━━━━━━━━━\n"
+            f"✨ User is awaiting approval.\n"
+        )
+
+    # 1. Отправляем в Telegram
+    await send_telegram_alert(tg_msg)
+    
+    # 2. Отправляем на Email (только при успехе или критической ошибке)
+    if success:
+        admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USER')
+        if admin_email:
+            send_admin_notification_email(admin_email, user_data)
+
 
 @router.post("/register")
 async def api_register(
@@ -361,20 +414,31 @@ async def api_register(
     newsletter_subscribed: bool = Form(True)
 ):
     """API: Регистрация нового пользователя (базовый метод)"""
+    user_info = {
+        'username': username,
+        'email': email,
+        'full_name': full_name,
+        'role': role,
+        'position': position,
+        'phone': phone
+    }
+    
+    current_stage = "Validation"
     try:
         # Валидация
         if len(username) < 3:
-            return JSONResponse({"error": "Логин должен быть минимум 3 символа"}, status_code=400)
+            raise ValueError("error_login_too_short")
 
         if len(password) < 6:
-            return JSONResponse({"error": "Пароль должен быть минимум 6 символов"}, status_code=400)
+            raise ValueError("error_password_too_short")
 
         if not full_name or len(full_name) < 2:
-            return JSONResponse({"error": "Имя должно быть минимум 2 символа"}, status_code=400)
+            raise ValueError("error_name_too_short")
 
         if not email or '@' not in email:
-            return JSONResponse({"error": "Введите корректный email"}, status_code=400)
+            raise ValueError("error_invalid_email")
 
+        current_stage = "DB Existence Check"
         # Проверяем что логин и email не заняты
         conn = get_db_connection()
         c = conn.cursor()
@@ -382,13 +446,14 @@ async def api_register(
         c.execute("SELECT id FROM users WHERE LOWER(username) = LOWER(%s)", (username,))
         if c.fetchone():
             conn.close()
-            return JSONResponse({"error": f"Пользователь с логином '{username}' уже существует"}, status_code=400)
+            raise ValueError(f"Пользователь с логином '{username}' уже существует")
 
         c.execute("SELECT id FROM users WHERE LOWER(email) = LOWER(%s)", (email,))
         if c.fetchone():
             conn.close()
-            return JSONResponse({"error": f"Пользователь с email '{email}' уже зарегистрирован"}, status_code=400)
+            raise ValueError(f"Пользователь с email '{email}' уже зарегистрирован")
 
+        current_stage = "Подготовка данных"
         # Генерируем токены
         import secrets
         verification_token = secrets.token_urlsafe(32)
@@ -409,6 +474,7 @@ async def api_register(
         
         auto_verify = is_first_admin
 
+        current_stage = "Сохранение пользователя"
         c.execute("""INSERT INTO users
                      (username, password_hash, full_name, email, phone, role, position, created_at,
                       is_active, email_verified, verification_code, verification_code_expires,
@@ -425,6 +491,7 @@ async def api_register(
 
         # Если это сотрудник - создаем запись в employees
         if role in ['employee', 'manager', 'director', 'admin', 'sales', 'marketer']:
+            current_stage = "Создание записи сотрудника"
             c.execute("""INSERT INTO employees
                          (full_name, position, email, phone, is_active, created_at, updated_at)
                          VALUES (%s, %s, %s, %s, TRUE, %s, %s) RETURNING id""",
@@ -435,45 +502,20 @@ async def api_register(
         conn.commit()
         conn.close()
 
+        current_stage = "Уведомление (Успех)"
+        # Уведомляем админа об успешной регистрации
+        import asyncio
+        asyncio.create_task(notify_admin_registration(user_info, success=True))
+
         if auto_verify:
             return {"success": True, "message": "Первый администратор создан", "user_id": user_id}
 
-        # Отправляем уведомления
+        # Отправляем письмо пользователю
         try:
-            from utils.email_service import send_verification_code_email, send_admin_notification_email
+            from utils.email_service import send_verification_code_email
             send_verification_code_email(email, verification_code, full_name, 'user')
-            
-            # Уведомляем руководство о новой регистрации
-            if not auto_verify:
-                conn = get_db_connection()
-                cur = conn.cursor()
-                
-                # 📢 Кого уведомляем? 
-                # Если регистрируется Админ - уведомляем только Директора.
-                # Если кто-то другой - уведомляем и Админа, и Директора.
-                if role == 'admin':
-                    cur.execute("SELECT email FROM users WHERE role = 'director' AND is_active = TRUE AND email IS NOT NULL")
-                else:
-                    cur.execute("SELECT email FROM users WHERE role IN ('director', 'admin') AND is_active = TRUE AND email IS NOT NULL")
-                
-                approvers = [r[0] for r in cur.fetchall() if r[0]]
-                conn.close()
-                
-                user_info = {
-                    'username': username, 
-                    'email': email, 
-                    'full_name': full_name, 
-                    'role': role, 
-                    'position': position
-                }
-                
-                for a_email in approvers:
-                    send_admin_notification_email(a_email, user_info)
-                    
-                log_info(f"Notification sent to {len(approvers)} approvers for role {role}", "auth")
         except Exception as e:
-            log_error(f"Notification error: {e}", "auth")
-
+            log_error(f"User email verification send error: {e}", "auth")
 
         return {
             "success": True,
@@ -481,16 +523,20 @@ async def api_register(
             "user_id": user_id
         }
 
-
-    except psycopg2.IntegrityError:
-        log_error(f"Registration failed: username {username} already exists", "auth")
-        return JSONResponse(
-            {"error": "Пользователь с таким логином уже существует"},
-            status_code=400
-        )
+    except ValueError as ve:
+        error_msg = str(ve)
+        log_warning(f"Registration validation error: {error_msg} (Stage: {current_stage})", "auth")
+        # Уведомляем об ошибке в фоне
+        import asyncio
+        asyncio.create_task(notify_admin_registration(user_info, success=False, error_msg=error_msg, stage=current_stage))
+        return JSONResponse({"error": error_msg}, status_code=400)
     except Exception as e:
-        log_error(f"Error in api_register: {e}", "auth")
-        return JSONResponse({"error": str(e)}, status_code=500)
+        error_msg = str(e)
+        log_error(f"Error in api_register: {error_msg} (Stage: {current_stage})", "auth")
+        # Уведомляем о критической ошибке в фоне
+        import asyncio
+        asyncio.create_task(notify_admin_registration(user_info, success=False, error_msg=error_msg, stage=current_stage))
+        return JSONResponse({"error": error_msg}, status_code=500)
 
 @router.post("/verify-email")
 async def verify_email(

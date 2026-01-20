@@ -6,10 +6,10 @@
   "logout_success": "Has cerrado sesión correctamente",
   "menu": {
     "analytics": "Analítica",
-    "bookings": "Publicaciones",
+    "bookings": "Reservas",
     "bot_settings": "Configuración de robots",
     "calendar": "Calendario",
-    "chat": "Charlar",
+    "chat": "Chat",
     "clients": "Clientela",
     "dashboard": "Panel",
     "feedback": "Feedback",
