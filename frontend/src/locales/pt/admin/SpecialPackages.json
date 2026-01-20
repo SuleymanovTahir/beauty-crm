@@ -25,5 +25,9 @@
   "target_by_master": "Até data mestre",
   "target_by_service": "Até data serviço",
   "target_inactive_days": "{{days}} dias inativos",
+  "target_inactive_days_few": "{{count}} dias inativos",
+  "target_inactive_days_many": "{{count}} dias inativos",
+  "target_inactive_days_one": "Inativo {{count}} dia",
+  "target_inactive_days_other": "{{count}} dias inativos",
   "target_specific_users": "Clientes selecionados"
 }

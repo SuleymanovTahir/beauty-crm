@@ -25,5 +25,9 @@
   "target_by_master": "إلى تاريخ سيد",
   "target_by_service": "بالخدمة",
   "target_inactive_days": "غير نشط {{days}} من الأيام",
+  "target_inactive_days_few": "غير نشط {{count}} من الأيام",
+  "target_inactive_days_many": "غير نشط {{count}} من الأيام",
+  "target_inactive_days_one": "يوم غير نشط {{count}} يوم",
+  "target_inactive_days_other": "غير نشط {{count}} من الأيام",
   "target_specific_users": "العملاء المختارون"
 }

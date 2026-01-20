@@ -24,6 +24,9 @@
   "target_audience": "Целевая аудитория",
   "target_by_master": "По мастеру",
   "target_by_service": "По услуге",
-  "target_inactive_days": "Неактивные {{days}} дней",
+  "target_inactive_days_one": "Неактивные {{count}} день",
+  "target_inactive_days_few": "Неактивные {{count}} дня",
+  "target_inactive_days_many": "Неактивные {{count}} дней",
+  "target_inactive_days_other": "Неактивные {{count}} дней",
   "target_specific_users": "Выбранные клиенты"
 }

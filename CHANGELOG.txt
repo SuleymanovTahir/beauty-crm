@@ -21,6 +21,25 @@
 
 # CHANGELOG - Память проекта Beauty CRM
 
+## [2026-01-20] Localization 2.0: Structural Refinement & Zero Hardcode
+- 🌍 **Translation Engineering & Reliability:**
+  - **Key-Based Glossary:** Implemented `key_glossary.json` to lock specific translations (e.g. `username` -> "Логин") and prevent auto-translation regression.
+  - **Context-Aware Translation:** Updated `translator.py` to support domain context and proxy rotation for mass translation without rate limits.
+  - **Thread-Safety:** Secured cache access for parallel translation processing (16+ threads).
+- 🧹 **Zero Hardcode Policy (Numbers & Pluralization):**
+  - **Comprehensive Pluralization:** Replaced all hardcoded numerical values (e.g., "6 символов", "30 дней", "3 мастера") with dynamic `{{count}}` variables across all Russian locale files.
+  - **Grammar Support:** Added full support for Russian numerical declension (один/два/много) for:
+    - Days, hours, minutes, months.
+    - Password and username lengths.
+    - Payout items, rewards, and achievements.
+    - Loyalty points and streaks.
+- 🎨 **Terminology Unification:**
+  - **Main Menu:** Standardized "Bookings" -> "Записи", "Marketer" -> "Маркетолог".
+  - **Terminology alignment:** Unified professional terms (Consultation, Engagement, Funnel stages) across Admin, Manager and Client dashboards.
+  - **Public Landing:** Refined legal terms (Cancellation policy, GDPR delete instructions) with dynamic timeframe variables.
+- 🚀 **Automation:**
+  - Propagated 4800+ refined keys across all 9 supported languages via `frontend_translate.py`.
+  
 ## [2026-01-20] Standardization & Optimization
 - 🌍 **Translation Standardization (SSOT):**
   - **"Any Master":** Unified across all components (`UserBookingWizard`, `ProfessionalStep`, `BookingMenu`, `CreateBookingDialog`).
