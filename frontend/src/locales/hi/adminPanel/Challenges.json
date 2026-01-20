@@ -41,11 +41,6 @@
     "completions": "समापन",
     "total_participants": "कुल प्रतिभागी"
   },
-  "statuses": {
-    "active": "सक्रिय",
-    "completed": "पुरा होना।",
-    "upcoming": "आगामी"
-  },
   "subtitle": "सहभागिता चुनौतियाँ बनाना और प्रबंधित करना",
   "title": "चुनौतियां",
   "toasts": {
@@ -62,7 +57,7 @@
   },
   "types": {
     "referrals": "रेफरल",
-    "services": "सेवाएं",
+    "services": "दिनांक सेवाएं",
     "spending": "खर्च",
     "visits": "दौरा"
   }

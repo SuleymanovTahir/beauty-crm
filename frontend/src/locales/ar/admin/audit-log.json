@@ -1,11 +1,13 @@
 {
   "clear_all": "مسح الكل",
   "clear_confirm": "هل أنت متأكد أنك تريد مسح حجز التدقيق بالكامل؟ هذا الإجراء لا رجعة فيه.",
-  "delete_batch_confirm": "هل تريد حذف السجلات المحددة ({{count}}_) نهائيًا؟",
+  "delete_batch_confirm_one": "",
+  "delete_batch_confirm_few": "",
+  "delete_batch_confirm_many": "",
+  "delete_batch_confirm_other": "",
   "delete_confirm": "هل يجب علي حذف هذا الإدخال نهائيًا؟",
   "delete_selected": "إزالة المحدد",
   "details": {
-    "error_msg": "رسالة خطأ",
     "ip": "الملكية الفكرية",
     "new_data": "بيانات جديدة",
     "no_data": "لا توجد بيانات متاحة",

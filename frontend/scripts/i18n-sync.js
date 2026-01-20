@@ -2,6 +2,15 @@
 
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
+
+// 📚 ГЛОССАРИЙ - Принудительные переводы для всех языков
+let glossary = {};
+try {
+    glossary = JSON.parse(fs.readFileSync(path.join(__dirname, 'glossary.json'), 'utf8'));
+} catch (e) {
+    console.log('⚠️ Glossary not found, proceeding with pure auto-translate');
+}
 
 const LOCALES_DIR = path.join(__dirname, '../src/locales');
 const LANGUAGES = ['ru', 'en', 'ar', 'de', 'es', 'fr', 'hi', 'kk', 'pt'];
@@ -113,6 +122,25 @@ async function translateText(text, targetLang) {
     // Если текст пустой или это не строка, возвращаем как есть
     if (!text || typeof text !== 'string') {
         return text;
+    }
+
+    // 🔍 ПРОВЕРКА ПО ГЛОССАРИЮ (точное или частичное совпадение)
+    const textLower = text.toLowerCase().trim();
+    for (const key in glossary) {
+        const entry = glossary[key];
+        // Если текст совпадает с любым вариантом перевода в глоссарии, 
+        // мы можем найти ключ и вернуть перевод для нужного языка
+        for (const lang in entry) {
+            if (entry[lang].toLowerCase() === textLower) {
+                if (entry[targetLang]) {
+                    // Сохраняем регистр оригинала (примерно)
+                    const result = entry[targetLang];
+                    return text[0] === text[0].toUpperCase()
+                        ? result.charAt(0).toUpperCase() + result.slice(1)
+                        : result;
+                }
+            }
+        }
     }
 
     // Кодируем текст для URL

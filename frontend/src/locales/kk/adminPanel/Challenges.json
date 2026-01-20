@@ -41,11 +41,6 @@
     "completions": "Аяқтау",
     "total_participants": "Жалпы қатысушылар"
   },
-  "statuses": {
-    "active": "Белсенді",
-    "completed": "Аяқталды",
-    "upcoming": "Алдағы"
-  },
   "subtitle": "Қатысу қиындықтарын жасау және басқару",
   "title": "Қиындықтар",
   "toasts": {

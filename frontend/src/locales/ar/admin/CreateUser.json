@@ -1,7 +1,6 @@
 {
   "back_to_users": "العودة إلى المستخدمين",
   "create_and_assign_services": "إنشاء خدمات المستخدم وتعيينها",
-  "create_user": "إنشاء مستخدم",
   "creating": "الخلق...",
   "email_hint": "خياري. لاستعادة كلمة المرور الخاصة بك",
   "email_label": "بريد إلكتروني",
@@ -19,7 +18,6 @@
   "password_required": "كلمة المرور مطلوبة",
   "position_hint": "موضع العرض (اختياري)",
   "position_label": "مسمى وظيفي",
-  "position_none": "غير محدد",
   "position_placeholder": "حدد موقفا",
   "role_admin": "المسؤول",
   "role_admin_desc": "إدارة المستخدمين والإعدادات",

@@ -8,7 +8,7 @@
     "email_placeholder": "Enter your email",
     "female": "Female",
     "full_name": "your name",
-    "gender": "Floor",
+    "gender": "Gender",
     "guest_continue": "Continue as a guest",
     "info_note": "We use this data for personalized offers and birthday gifts.",
     "login_to_see_more": "Login to manage your bookings",
@@ -21,15 +21,18 @@
     "success_mock": "Profile successfully received!",
     "welcome": "Welcome"
   },
-  "booking_info": "Recording information",
-  "change_booking": "Edit booking",
+  "booking_info": "Booking Details",
+  "bookingDesc": "Выберите удобное время для визита",
+  "bookingError": "Ошибка при создании записи. Попробуйте позже.",
+  "bookingSuccess": "Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.",
+  "bookingTag": "Онлайн запись",
+  "bookingTitlePart1": "Запишитесь",
+  "bookingTitlePart2": "на прием",
   "common": {
-    "any_master": "Any master",
     "cancel": "Later",
     "change": "Change",
     "edit": "Edit",
     "reschedule": "Reschedule",
-    "reset": "Reset All",
     "resetAll": "Reset all",
     "save": "Verify",
     "select": "Select"
@@ -51,7 +54,7 @@
     "total": "Total Amount"
   },
   "continue_datetime": "Continue with date and time selection",
-  "continue_professional": "Continue with wizard selection",
+  "continue_professional": "Continue with stylist selection",
   "continue_services": "Continue with selection of services",
   "datetime": {
     "date": "Select Date",
@@ -60,7 +63,14 @@
     "time": "Pick Time",
     "title": "Date & Time"
   },
-  "invalid_phone": "Please enter a valid phone number",
+  "formDate": "Дата",
+  "formName": "Имя",
+  "formNamePlaceholder": "Ваше имя",
+  "formPhone": "Телефон",
+  "formService": "Услуги",
+  "formServicePlaceholder": "Выберите услуги",
+  "formTime": "Время",
+  "invalid_phone": "Please enter a valid phone number (min 11 digits)",
   "loading": "Initializing Studio",
   "menu": {
     "completed": "Complete",
@@ -74,38 +84,31 @@
   },
   "min": "min",
   "newBooking": "Reservation",
+  "noServicesFound": "Услуги не найдены.",
+  "phone_too_short": "Phone number must contain at least 11 digits including country code",
+  "privacyAgreementStart": "Нажимая кнопку, вы соглашаетесь с",
+  "privacyPolicy": "политикой конфиденциальности",
   "professional": {
-    "anyAvailable": "Flexible Match",
+    "anyAvailable": "Any available Master",
     "anyDesc": "We'll match you with the best available professional",
     "availableOn": "Available",
     "availableToday": "Available Today",
     "notAvailableToday": "Not Available Today",
-    "ready": "Ready",
-    "reviews": "Reviews",
     "title": "Choose Master"
   },
-  "salon": {
-    "address": "Studio Location",
-    "name": "Beauty HQ"
-  },
+  "searchCountry": "Поиск страны...",
+  "searchService": "Найти услугу...",
   "select_to_continue": "Select a service or technician to continue",
   "services": {
     "allCategories": "All",
-    "category_Brows": "Brows",
-    "category_Facial": "Facial",
-    "category_Hair": "Hair",
-    "category_Lashes": "Lashes",
-    "category_Nails": "Nails",
-    "category_Permanent Makeup": "Permanent Makeup",
-    "category_Waxing": "Waxing",
     "notFound": "No services found",
     "search": "Search services...",
     "selected": "selected",
     "service_one": "service",
     "service_few": "services",
     "service_many": "services",
-    "title": "Select Services",
     "total": "Total"
   },
+  "submitBooking": "Отправить заявку",
   "totalDuration": "Duration"
 }

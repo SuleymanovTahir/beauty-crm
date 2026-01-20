@@ -14,7 +14,7 @@
   "last_update_date": "Date de la dernière mise à jour",
   "late_arrival": "Si le client est en retard de plus de 15 minutes, le salon se réserve le droit d'annuler le rendez-vous ou de raccourcir la durée de l'intervention.",
   "medical_contraindications": "Contre-indications médicales",
-  "payment_details": "Le paiement s'effectue en espèces ou par carte après la prestation de la prestation. Les prix des prestations sont indiqués dans la grille tarifaire et sont sujets à changement sans préavis.",
+  "payment_details": "Le paiement s'effectue en espèces ou à la date carte après la prestation de la prestation. Les prix des prestations sont indiqués dans la grille tarifaire et sont sujets à changement sans préavis.",
   "payment_for_services": "Paiement des services",
   "privacy_commitment": "Nous respectons votre vie privée et nous engageons à protéger vos informations personnelles conformément à notre politique de confidentialité.",
   "quality_guarantee": "Nous garantissons la qualité des matériaux utilisés et le professionnalisme de nos artisans. Les résultats des procédures peuvent varier en fonction des caractéristiques individuelles du client.",
@@ -23,7 +23,7 @@
     "booking": {
       "booking_requirements": "Pour vous inscrire aux procédures, vous devez fournir des informations de contact correctes. Nous nous réservons le droit de confirmer ou de refuser une réservation.",
       "cancellationText": "Le client peut annuler le rendez-vous au plus tard 24 heures avant l'heure prévue. En cas d'annulation moins de 24 heures à l'avance, une pénalité de 50 % du coût de la prestation pourra être facturée.",
-      "cancellationTitle": "Annuler une entrée :",
+      "cancellationTitle": "Annuler une réservation :",
       "title": "2. Réservation et annulation"
     },
     "changes": {
@@ -47,7 +47,7 @@
       "title": "4. Contre-indications médicales"
     },
     "payment": {
-      "paragraph1": "Le paiement s'effectue en espèces ou par carte après la prestation de la prestation. Les prix des prestations sont indiqués dans la grille tarifaire et sont sujets à changement sans préavis.",
+      "paragraph1": "Le paiement s'effectue en espèces ou à la date carte après la prestation de la prestation. Les prix des prestations sont indiqués dans la grille tarifaire et sont sujets à changement sans préavis.",
       "paragraph2": "Si le client est en retard de plus de 15 minutes, le salon se réserve le droit d'annuler le rendez-vous ou de raccourcir la durée de l'intervention.",
       "title": "3. Paiement des services"
     },

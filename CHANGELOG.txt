@@ -1,4 +1,38 @@
+- ❌ **ЗАПРЕЩЕНО:** Использовать "МНЕ" (RU) / "TO ME" (EN) для выбора дат (правильно: "С даты" / "Date from").
+- ❌ **ЗАПРЕЩЕНО:** Использовать "Автор" (RU) / "The author" (EN) для выбора дат (правильно: "По дату" / "Date to").
+- ❌ **ЗАПРЕЩЕНО:** Использовать "Отказался" (RU) / "Refused" (EN) для статуса отмены (правильно: "Отменено" / "Cancelled").
+- ❌ **ЗАПРЕЩЕНО:** Использовать "Он пропустил это" (RU) / "He missed it" (EN) для прогулов (правильно: "Пропущено" / "Skipped").
+- ❌ **ЗАПРЕЩЕНО:** Использовать "Flexible Match" (правильно: "Any Professional" или "Any Master").
+- ✅ **ОБЯЗАТЕЛЬНО:** Использовать `backend/scripts/translations/beauty_translator.py` как основной словарь терминов.
+- ✅ **ОБЯЗАТЕЛЬНО:** Использовать "Lashes" для ресниц и "Brows" для бровей.
+- ✅ **ОБЯЗАТЕЛЬНО:** Цифры (duration, price) берутся из БД, а не из системы переводов (удалять из JSON).
+- ✅ **ОБЯЗАТЕЛЬНО:** Опция любого мастера должна переводиться как `professional.anyAvailable` или `common.any_master`.
+
+### 🌍 ГЛОБАЛЬНЫЙ ГЛОССАРИЙ (9 ЯЗЫКОВ)
+| Термин (RU) | EN | AR | KK | DE | ES | FR | PT | HI |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Любой мастер** | Any Professional | أي خبير | Кез келген маман | Beliebiger Mitarbeiter | Cualquier profesional | Tout professionnel | Qualquer profissional | कोई भी मास्टर |
+| **Отменено** | Cancelled | تم الإلغاء | Жойылды | Storniert | Cancelado | Annulé | Cancelado | रद्द किया गया |
+| **Пропущено** | Skipped | تم التجاوز | Өткізілді | Übersprungen | Omitido | Ignoré | Pulado | छोड़ा गया |
+| **С даты** | Date from | من تاريخ | Күннен бастап | Datum von | Desde fecha | De la date | De data | दिनांक से |
+| **По дату** | Date to | إلى تاريخ | Күнге дейін | Datum bis | Hasta fecha | À la date | Até data | दिनांक तक |
+| **В ожидании** | Pending | قيد الانتظار | Күтуде | Ausstehend | En espera | En attente | Pendente | लंबित |
+| **Мастер** | Stylist/Master | خبير | Маман/Шебер | Spezialist | Especialista | Spécialiste | Especialista | विशेषज्ञ |
+
 # CHANGELOG - Память проекта Beauty CRM
+
+## [2026-01-20] Standardization & Optimization
+- 🌍 **Translation Standardization (SSOT):**
+  - **"Any Master":** Unified across all components (`UserBookingWizard`, `ProfessionalStep`, `BookingMenu`, `CreateBookingDialog`).
+  - **Fixed AI Hallucinations:** Corrected weird translations like "МНЕ" (for Date from), "Автор" (for Date to), "Отказался" (for Cancelled).
+  - **Dictionary Update:** Integrated these critical terms into `beauty_translator.py` to prevent future regression.
+- ⚡ **Backend Performance & Safety:**
+  - **Sync-over-Async Optimization:** Converted heavy blocking DB operations in `bookings.py` from `async def` to `def` (FastAPI ThreadPool strategy).
+  - **Validation:** Introduced Pydantic models for `POST/PUT` requests in booking API.
+- 🧹 **Code Cleanup & Refactoring:**
+  - **Zero Hardcode Policy:** Removed all default fallback strings from `t()` calls in standard pages.
+  - **Dead Code:** Removed unused variables and fixed missing imports in `ProfessionalStep.tsx`.
+  - **Lints:** Fixed console warnings for unused `loading` states.
 
 ## [2026-01-14] Integrations: Payments & Marketplace Mappings
 - 🚀 **Finalizing Core Functionality:**

@@ -5,7 +5,7 @@
   },
   "current_settings": {
     "edit": "Editar",
-    "min_purchase": "Importe mínimo de compra: <strong>{{amount}} AED</strong>",
+    "min_purchase": "Precio mínimo de compra: <strong>{{amount}} AED</strong>",
     "referred_bonus": "El amigo invitado recibe <strong>{{points}} puntos</strong> al registrarse",
     "referrer_bonus": "El referente recibe <strong>{{points}} puntos</strong> cuando un amigo realiza su primera compra.",
     "title": "Configuración de bonificación actual"
@@ -13,11 +13,11 @@
   "dialogs": {
     "settings": {
       "description": "Configurar puntos de bonificación y requisitos",
-      "min_purchase_amount": "Importe mínimo de compra (AED)",
-      "min_purchase_help": "Monto mínimo que debe gastar un amigo para activar el bono por recomendación (0 = sin mínimo)",
+      "min_purchase_amount": "Precio mínimo de compra (AED)",
+      "min_purchase_help": "Monto mínimo que debe gastar un amigo para activar el bono hasta fecha recomendación (0 = sin mínimo)",
       "referred_bonus": "Puntos de bonificación de amigos recomendados",
       "referred_bonus_help": "Puntos otorgados a un amigo al registrarse",
-      "referrer_bonus": "Puntos de bonificación por referente",
+      "referrer_bonus": "Puntos de bonificación hasta fecha referente",
       "referrer_bonus_help": "Puntos otorgados al referente cuando un amigo realiza su primera compra",
       "title": "Configuración del programa de referencias"
     }
@@ -25,7 +25,6 @@
   "settings": "Ajustes",
   "stats": {
     "completed_referrals": "Referencias completadas",
-    "from_last_month": "del mes pasado",
     "points_distributed": "Puntos distribuidos",
     "total_referrals": "Referencias totales"
   },

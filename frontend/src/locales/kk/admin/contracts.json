@@ -8,15 +8,7 @@
   "client": "Клиент",
   "clientContracts": "Клиент",
   "contractNumber": "Келісім-шарт №",
-  "contractTypes": {
-    "employment": "Еңбек шарты",
-    "rental": "Орынды жалға алу",
-    "service": "Қызмет көрсету"
-  },
   "createdAt": "Жасалу күні",
-  "createFirst": "Клиентпен алғашқы келісім-шартыңызды жасаңыз",
-  "delete": "Жою",
-  "editButton": "Өңдеу",
   "editContract": "Келісімшартты өңдеу",
   "errors": {
     "deleteError": "Error deleting contract",
@@ -26,15 +18,11 @@
   },
   "form": {
     "cancel": "Болдырмау",
-    "contractDate": "Келісімшарт күні",
     "contractType": "Шарт түрі",
-    "notes": "Ескертпелер",
     "save": "Сақтау",
-    "selectClient": "Клиентті таңдаңыз",
-    "terms": "Келісім шарттары"
+    "selectClient": "Клиентті таңдаңыз"
   },
   "internalContracts": "Отандық",
-  "loading": "Жүктелуде...",
   "manage_stages": "Бағандар",
   "manageTypes": "Келісімшарттардың түрлері",
   "messages": {
@@ -46,7 +34,6 @@
   },
   "noContracts": "Әзірге келісімшарттар жоқ",
   "search_placeholder": "Нөмір немесе клиент бойынша іздеу...",
-  "sendButton": "Жіберу",
   "sendDialog": {
     "email": "Электрондық пошта",
     "instagram": "Instagram",
@@ -58,12 +45,6 @@
     "whatsapp": "whatsapp"
   },
   "status": "Күй",
-  "statuses": {
-    "cancelled": "Бас тартылды",
-    "draft": "Жоба",
-    "sent": "Жіберілді",
-    "signed": "Қол қойылған"
-  },
   "subtitle": "Клиенттік келісім-шартты басқару",
   "title": "Шарттар",
   "type": "Түр",
@@ -89,10 +70,5 @@
     "system": "System",
     "systemProtected": "System protected",
     "title": "Келісімшарттардың түрлері"
-  },
-  "types": {
-    "product": "Өнім",
-    "service": "Қызмет",
-    "subscription": "Жазылым"
   }
 }

@@ -26,7 +26,7 @@ TRANSLATION_CONFIG = {
     },
     "services": {
         "id_field": "id",
-        "fields": ["name_ru", "description_ru", "duration"],
+        "fields": ["name_ru", "description_ru"],
         "where": "is_active = TRUE"
     },
     "salon_settings": {

@@ -69,8 +69,8 @@
   "type": "Tipo",
   "unarchive_recording": "Descompacte",
   "upload_recording": "Carregar reserva",
-  "webhook_instruction_short": "Para receber chamadas automaticamente, insira o seguinte URL nas configurações da sua operadora de telefonia.",
-  "webhook_security_note": "até motivos de segurança, não compartilhe esta URL com terceiros.",
+  "webhook_instruction_short": "Para receber chamadas, forneça o seguinte URL no fornecimento de telefone da sua operadora.",
+  "webhook_security_note": "até data motivos de segurança, não compartilhe esta URL com mais ninguém.",
   "webhook_url_label": "Seu URL de webhook exclusivo",
   "week": "Semana"
 }

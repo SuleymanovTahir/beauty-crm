@@ -8,15 +8,7 @@
   "client": "Kunde",
   "clientContracts": "Kunde",
   "contractNumber": "Vertragsnr.",
-  "contractTypes": {
-    "employment": "Arbeitsvertrag",
-    "rental": "Einen Platz mieten",
-    "service": "Erbringung bis Dienstleistungen"
-  },
   "createdAt": "Erstellungsdatum",
-  "createFirst": "Erstellen Sie Ihren ersten Vertrag mit einem Kunden",
-  "delete": "Löschen",
-  "editButton": "Bearbeiten",
   "editContract": "Vertrag bearbeiten",
   "errors": {
     "deleteError": "Error deleting contract",
@@ -26,15 +18,11 @@
   },
   "form": {
     "cancel": "Stornieren",
-    "contractDate": "Vertragsdatum",
     "contractType": "Vertragstyp",
-    "notes": "Notizen",
     "save": "Speichern",
-    "selectClient": "Wählen Sie den Kunden aus",
-    "terms": "Bedingungen der Vereinbarung"
+    "selectClient": "Wählen Sie den Kunden aus"
   },
   "internalContracts": "Inländisch",
-  "loading": "Laden...",
   "manage_stages": "Spalten",
   "manageTypes": "Arten bis Verträgen",
   "messages": {
@@ -46,7 +34,6 @@
   },
   "noContracts": "Noch keine Verträge",
   "search_placeholder": "Suche nach Nummer oder Kunde...",
-  "sendButton": "Schicken",
   "sendDialog": {
     "email": "E-Mail",
     "instagram": "Instagram",
@@ -58,12 +45,6 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Status",
-  "statuses": {
-    "cancelled": "Abgesagt",
-    "draft": "Entwurf",
-    "sent": "Gesendet",
-    "signed": "Unterzeichnet"
-  },
   "subtitle": "Verwaltung bis Kundenverträgen",
   "title": "Verträge",
   "type": "Typ",
@@ -89,10 +70,5 @@
     "system": "System",
     "systemProtected": "System protected",
     "title": "Arten bis Verträgen"
-  },
-  "types": {
-    "product": "Produkt",
-    "service": "Service",
-    "subscription": "Abonnement"
   }
 }

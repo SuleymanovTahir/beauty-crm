@@ -10,54 +10,39 @@
   "createFirst": "सिस्टम में पहला उत्पाद जोड़ें",
   "delete": "मिटाना",
   "detail": {
-    "avgPrice": "बुध. कीमत",
     "costPriceLabel": "लागत: {{price}} {{currency}}",
-    "inStock": "स्टॉक में: {{count}}",
     "inStock_one": "",
+    "inStock_few": "",
+    "inStock_many": "",
     "inStock_other": "",
-    "last30Days": "30 दिनों में",
     "loadingData": "डेटा लोड हो रहा है...",
     "movementAdjustment": "समायोजन",
     "movementHistory": "आंदोलनों का इतिहास",
     "movementIn": "प्रवेश",
     "movementOut": "ख़ारिज करना",
     "noCategory": "अवर्गीकृत",
-    "noMovements": "कोई गतिविधि डेटा नहीं",
-    "totalRevenue": "आय",
-    "totalSold": "कुल बेचा गया",
-    "inStock_few": "",
-    "inStock_many": ""
+    "noMovements": "कोई गतिविधि डेटा नहीं"
   },
   "edit": "संपादन करना",
   "form": {
-    "barcode": "बारकोड",
     "cancel": "रद्द करना",
     "category": "वर्ग",
     "costPrice": "लागत मूल्य",
     "isActive": "सक्रिय",
     "minStockLevel": "न्यूनतम शेष",
     "name": "नाम",
-    "nameAr": "शीर्षक (एआर)",
-    "nameEn": "शीर्षक (EN)",
-    "nameRu": "नाम (आरयू)",
     "notes": "टिप्पणियाँ",
     "photos": "उत्पाद फोटो",
     "price": "विक्रय मूल्य",
     "save": "बचाना",
     "sku": "लेख",
     "stockQuantity": "शेष स्टॉक",
-    "supplier": "देने वाला",
     "upload": "डाउनलोड करना",
     "uploadError": "फ़ोटो लोड करने में त्रुटि"
   },
-  "loading": "लोड हो रहा है...",
   "messages": {
     "confirmDelete": "क्या आप वाकई इस आइटम को हटाना चाहते हैं?",
-    "movementAdded": "आंदोलन जोड़ा गया",
-    "noResults": "आपके अनुरोध से मेल खाता कुछ भी नहीं मिला",
-    "productCreated": "उत्पाद बनाया गया",
-    "productDeleted": "उत्पाद हटा दिया गया",
-    "productUpdated": "उत्पाद अद्यतन किया गया"
+    "noResults": "आपके अनुरोध से मेल खाता कुछ भी नहीं मिला"
   },
   "movement": {
     "quantity": "मात्रा",
@@ -70,7 +55,7 @@
       "out": "उपभोग"
     }
   },
-  "noProducts": "अभी तक कोई उत्पाद नहीं",
+  "noProducts": "अभी दिनांक तक कोई उत्पाद नहीं",
   "search_placeholder": "शीर्षक या श्रेणी के आधार पर खोजें...",
   "stock_status": {
     "in_stock": "स्टॉक में",

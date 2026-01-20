@@ -22,14 +22,17 @@
     "welcome": "स्वागत"
   },
   "booking_info": "रिकॉर्डिंग जानकारी",
-  "change_booking": "प्रविष्टि संपादित करें",
+  "bookingDesc": "Выберите удобное время для визита",
+  "bookingError": "Ошибка при создании записи. Попробуйте позже.",
+  "bookingSuccess": "Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.",
+  "bookingTag": "Онлайн запись",
+  "bookingTitlePart1": "Запишитесь",
+  "bookingTitlePart2": "на прием",
   "common": {
-    "any_master": "कोई गुरु",
     "cancel": "बाद में",
     "change": "परिवर्तन",
     "edit": "संपादन करना",
     "reschedule": "स्थगित करना",
-    "reset": "सब कुछ रीसेट करें",
     "resetAll": "सभी को पुनः तैयार करना",
     "save": "जाँच करना",
     "select": "चुनना"
@@ -52,7 +55,7 @@
   },
   "continue_datetime": "दिनांक और समय का चयन जारी रखें",
   "continue_professional": "विज़ार्ड चयन जारी रखें",
-  "continue_services": "सेवाओं का चयन जारी रखें",
+  "continue_services": "दिनांक सेवाओं का चयन जारी रखें",
   "datetime": {
     "date": "तारीख़ चुनें",
     "noSlots": "कोई विंडोज़ उपलब्ध नहीं",
@@ -60,6 +63,13 @@
     "time": "समय चुनें",
     "title": "तिथि और समय"
   },
+  "formDate": "Дата",
+  "formName": "Имя",
+  "formNamePlaceholder": "Ваше имя",
+  "formPhone": "Телефон",
+  "formService": "Услуги",
+  "formServicePlaceholder": "Выберите услуги",
+  "formTime": "Время",
   "invalid_phone": "एक मान्य दूरभाष क्रमांक दर्ज करे",
   "loading": "स्टूडियो आरंभीकरण",
   "menu": {
@@ -69,36 +79,36 @@
     "professional": "मालिक",
     "selectDateTime": "समय चुनें",
     "selectProfessional": "एक मास्टर का चयन करें",
-    "selectServices": "सेवाएँ चुनें",
-    "services": "सेवाएं"
+    "selectServices": "दिनांक सेवाएँ चुनें",
+    "services": "दिनांक सेवाएं"
   },
   "min": "min",
   "newBooking": "बुकिंग",
+  "noServicesFound": "Услуги не найдены.",
+  "phone_too_short": "Номер телефона должен содержать минимум 11 цифр с учетом кода страны",
+  "privacyAgreementStart": "Нажимая кнопку, вы соглашаетесь с",
+  "privacyPolicy": "политикой конфиденциальности",
   "professional": {
     "anyAvailable": "कोई भी स्वतंत्र गुरु",
     "anyDesc": "हम आपके लिए सर्वोत्तम उपलब्ध विशेषज्ञ का चयन करेंगे",
     "availableOn": "उपलब्ध",
     "availableToday": "आज उपलब्ध है",
     "notAvailableToday": "आज के लिए कोई उपलब्धता नहीं",
-    "ready": "तैयार",
-    "reviews": "समीक्षा",
     "title": "एक विज़ार्ड चुनें"
   },
-  "salon": {
-    "address": "स्टूडियो का पता",
-    "name": "सौंदर्य मुख्यालय"
-  },
-  "select_to_continue": "जारी रखने के लिए एक सेवा या तकनीशियन का चयन करें",
+  "searchCountry": "Поиск страны...",
+  "searchService": "Найти услугу...",
+  "select_to_continue": "जारी रखने के लिए एक दिनांक सेवा या तकनीशियन का चयन करें",
   "services": {
     "allCategories": "सभी श्रेणियां",
-    "notFound": "कोई सेवा नहीं मिली",
-    "search": "सेवाएँ खोजें...",
+    "notFound": "कोई दिनांक सेवा नहीं मिली",
+    "search": "दिनांक सेवाएँ खोजें...",
     "selected": "चयनित",
-    "service_one": "सेवा",
-    "service_few": "सेवा",
-    "service_many": "सेवा",
-    "title": "सेवाएँ चुनें",
+    "service_one": "दिनांक सेवा",
+    "service_few": "दिनांक सेवा",
+    "service_many": "दिनांक सेवा",
     "total": "कुल"
   },
+  "submitBooking": "Отправить заявку",
   "totalDuration": "अवधि"
 }

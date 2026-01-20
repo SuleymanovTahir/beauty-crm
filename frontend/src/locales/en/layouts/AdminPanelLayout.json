@@ -3,10 +3,7 @@
   "go_to_crm": "Go to CRM",
   "logout": "Log out",
   "menu": {
-    "bookings": "Bookings",
-    "calendar": "Calendar",
     "challenges": "Challenges",
-    "clients": "Clients",
     "dashboard": "Control Panel",
     "feature_management": "Feature Management",
     "loyalty_management": "Loyalty management",
@@ -15,6 +12,7 @@
     "public_content": "Public Content",
     "referral_program": "Referral program",
     "services": "Services",
+    "settings": "",
     "user_management": "User management"
   }
 }

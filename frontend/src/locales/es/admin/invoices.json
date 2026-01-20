@@ -6,7 +6,6 @@
   "allStatuses": "Todos los estados",
   "board": "Junta",
   "client": "Cliente",
-  "createFirst": "Crea tu primera factura para un cliente",
   "delete": "Borrar",
   "dueDate": "Fecha de vencimiento",
   "errors": {
@@ -29,7 +28,6 @@
     "selectClient": "Seleccionar cliente"
   },
   "invoiceNumber": "Número de cuenta",
-  "loading": "Cargando...",
   "manage_stages": "columnas",
   "messages": {
     "confirmDelete": "¿Estás seguro de que deseas eliminar esta cuenta?",
@@ -66,14 +64,6 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Estado",
-  "statuses": {
-    "cancelled": "Cancelado",
-    "draft": "Borrador",
-    "overdue": "Venció",
-    "paid": "Pagado",
-    "partial": "Parcialmente pagado",
-    "sent": "Enviado"
-  },
   "subtitle": "Gestión de cuentas y pagos.",
   "title": "Cuentas",
   "totalAmount": "Suma"

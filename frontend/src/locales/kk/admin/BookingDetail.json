@@ -23,7 +23,7 @@
   "service": "Қызмет",
   "service_stats": "Қызметтің танымалдылығы",
   "status": "Күй",
-  "status_cancelled": "Бас тартты",
+  "status_cancelled": "Жойылды",
   "status_completed": "Аяқталды",
   "status_confirmed": "Расталды",
   "status_new": "Жаңа",

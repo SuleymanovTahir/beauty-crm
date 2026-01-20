@@ -6,7 +6,6 @@
   "allStatuses": "Todos os status",
   "board": "Quadro",
   "client": "Cliente",
-  "createFirst": "Crie sua primeira fatura para um cliente",
   "delete": "Excluir",
   "dueDate": "Data de vencimento",
   "errors": {
@@ -29,7 +28,6 @@
     "selectClient": "Selecione o cliente"
   },
   "invoiceNumber": "Nº da conta",
-  "loading": "Carregando...",
   "manage_stages": "Colunas",
   "messages": {
     "confirmDelete": "Tem certeza de que deseja excluir esta conta?",
@@ -66,14 +64,6 @@
     "whatsapp": "whatsapp"
   },
   "status": "Status",
-  "statuses": {
-    "cancelled": "Cancelado",
-    "draft": "Rascunho",
-    "overdue": "Expirado",
-    "paid": "Pago",
-    "partial": "Parcialmente pago",
-    "sent": "Enviado"
-  },
   "subtitle": "Gerenciamento de contas e pagamentos",
   "title": "Contas",
   "totalAmount": "Soma"

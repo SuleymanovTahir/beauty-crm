@@ -23,7 +23,7 @@
     "saved": "Configuration saved successfully"
   },
   "whitelist": {
-    "hint": "ID utilisateur séparés à des virgules. Si cette option est définie, seuls ces utilisateurs peuvent accéder à cette fonctionnalité. Laissez vide pour autoriser tous les utilisateurs éligibles.",
+    "hint": "Идентификаторы пользователей, разделенные запятыми. ",
     "label": "Whitelist (Optional)",
     "placeholder": "e.g. 1, 5, 12"
   }

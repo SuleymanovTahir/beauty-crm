@@ -495,7 +495,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                           ? getLocalizedName(bookingState.services[0], i18n.language)
                           : `${bookingState.services.length} ${getPluralForm(bookingState.services.length, t('services.service_one', 'service'), t('services.service_few', 'services'), t('services.service_many', 'services'))}`
                       ) : bookingState.professionalSelected ? (
-                        bookingState.professional?.full_name || t('professional.anyAvailable', 'Flexible Match')
+                        bookingState.professional?.full_name || t('professional.anyAvailable')
                       ) : (
                         t('booking:booking_info', 'Booking info')
                       )}
@@ -584,7 +584,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             id: bookingState.id,
             service_name: bookingState.services.map((s: Service) => getLocalizedName(s, i18n.language)).join(', '),
             service_id: bookingState.services[0]?.id,
-            master_name: bookingState.professional ? getLocalizedName(bookingState.professional, i18n.language) : t('common.any_master', 'Любой мастер'),
+            master_name: bookingState.professional ? getLocalizedName(bookingState.professional, i18n.language) : t('professional.anyAvailable'),
             master_id: bookingState.professional?.id,
             date: bookingState.date ? format(bookingState.date, 'yyyy-MM-dd') : '',
             time: bookingState.time || ''

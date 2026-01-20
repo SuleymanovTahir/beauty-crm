@@ -22,14 +22,17 @@
     "welcome": "Қош келдіңіз"
   },
   "booking_info": "Ақпаратты жазу",
-  "change_booking": "Жазбаны өңдеу",
+  "bookingDesc": "Выберите удобное время для визита",
+  "bookingError": "Ошибка при создании записи. Попробуйте позже.",
+  "bookingSuccess": "Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.",
+  "bookingTag": "Онлайн запись",
+  "bookingTitlePart1": "Запишитесь",
+  "bookingTitlePart2": "на прием",
   "common": {
-    "any_master": "Кез келген шебер",
     "cancel": "Later",
     "change": "Change",
     "edit": "Edit",
     "reschedule": "Reschedule",
-    "reset": "Reset All",
     "resetAll": "Reset all",
     "save": "Verify",
     "select": "Select"
@@ -60,6 +63,13 @@
     "time": "Pick Time",
     "title": "Date & Time"
   },
+  "formDate": "Дата",
+  "formName": "Имя",
+  "formNamePlaceholder": "Ваше имя",
+  "formPhone": "Телефон",
+  "formService": "Услуги",
+  "formServicePlaceholder": "Выберите услуги",
+  "formTime": "Время",
   "invalid_phone": "Please enter a valid phone number",
   "loading": "Initializing Studio",
   "menu": {
@@ -74,20 +84,20 @@
   },
   "min": "min",
   "newBooking": "Reservation",
+  "noServicesFound": "Услуги не найдены.",
+  "phone_too_short": "Номер телефона должен содержать минимум 11 цифр с учетом кода страны",
+  "privacyAgreementStart": "Нажимая кнопку, вы соглашаетесь с",
+  "privacyPolicy": "политикой конфиденциальности",
   "professional": {
     "anyAvailable": "Flexible Match",
     "anyDesc": "We'll match you with the best available professional",
     "availableOn": "Available",
     "availableToday": "Available Today",
     "notAvailableToday": "Not Available Today",
-    "ready": "Ready",
-    "reviews": "Reviews",
     "title": "Choose Master"
   },
-  "salon": {
-    "address": "Studio Location",
-    "name": "Сұлулық штабы"
-  },
+  "searchCountry": "Поиск страны...",
+  "searchService": "Найти услугу...",
   "select_to_continue": "Жалғастыру үшін қызметті немесе техникті таңдаңыз",
   "services": {
     "allCategories": "All",
@@ -97,8 +107,8 @@
     "service_one": "service",
     "service_few": "services",
     "service_many": "services",
-    "title": "Select Services",
     "total": "Total"
   },
+  "submitBooking": "Отправить заявку",
   "totalDuration": "Duration"
 }

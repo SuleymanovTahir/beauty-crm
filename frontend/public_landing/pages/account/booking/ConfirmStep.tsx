@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Dialog, DialogContent } from './ui/dialog';
-import { CheckCircle2, Calendar, Clock, User, Phone, Loader2 } from 'lucide-react';
+import { CheckCircle2, Calendar, Clock, Phone, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -31,7 +30,6 @@ export function ConfirmStep({
     onPhoneChange,
     onGuestInfoChange,
     onSuccess,
-    salonSettings,
     setStep,
     onOpenRescheduleDialog
 }: ConfirmStepProps) {
@@ -116,7 +114,8 @@ export function ConfirmStep({
                         date: dateStr,
                         time: bookingState.time || '',
                         phone,
-                        name: user?.full_name || user?.username || bookingState.name || 'Guest'
+                        name: user?.full_name || user?.username || bookingState.name || 'Guest',
+                        source: 'client_cabinet'
                     });
                 } else {
                     await api.createBooking({
@@ -126,7 +125,8 @@ export function ConfirmStep({
                         date: dateStr,
                         time: bookingState.time || '',
                         phone,
-                        name: user?.full_name || user?.username || bookingState.name || 'Guest'
+                        name: user?.full_name || user?.username || bookingState.name || 'Guest',
+                        source: 'client_cabinet'
                     });
                 }
 

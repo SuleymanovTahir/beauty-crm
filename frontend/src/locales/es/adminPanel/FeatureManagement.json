@@ -23,7 +23,7 @@
     "saved": "Configuration saved successfully"
   },
   "whitelist": {
-    "hint": "ID de usuario separados hasta comas. Si se configura, solo estos usuarios pueden acceder a esta función. Déjelo vacío para permitir a todos los usuarios elegibles.",
+    "hint": "Идентификаторы пользователей, разделенные запятыми. ",
     "label": "Whitelist (Optional)",
     "placeholder": "e.g. 1, 5, 12"
   }

@@ -8,15 +8,7 @@
   "client": "Cliente",
   "clientContracts": "Cliente",
   "contractNumber": "Contrato nº.",
-  "contractTypes": {
-    "employment": "Contrato de trabalho",
-    "rental": "Alugando um lugar",
-    "service": "Prestação de serviços"
-  },
   "createdAt": "Data de criação",
-  "createFirst": "Crie seu primeiro contrato com um cliente",
-  "delete": "Excluir",
-  "editButton": "Editar",
   "editContract": "Editar contrato",
   "errors": {
     "deleteError": "Error deleting contract",
@@ -26,15 +18,11 @@
   },
   "form": {
     "cancel": "Cancelar",
-    "contractDate": "Data do contrato",
     "contractType": "Tipo de contrato",
-    "notes": "Notas",
     "save": "Salvar",
-    "selectClient": "Selecione o cliente",
-    "terms": "Termos do acordo"
+    "selectClient": "Selecione o cliente"
   },
   "internalContracts": "Doméstico",
-  "loading": "Carregando...",
   "manage_stages": "Colunas",
   "manageTypes": "Tipos de contratos",
   "messages": {
@@ -46,7 +34,6 @@
   },
   "noContracts": "Ainda não há contratos",
   "search_placeholder": "Pesquise até número ou cliente...",
-  "sendButton": "Enviar",
   "sendDialog": {
     "email": "E-mail",
     "instagram": "Instagram",
@@ -58,12 +45,6 @@
     "whatsapp": "whatsapp"
   },
   "status": "Status",
-  "statuses": {
-    "cancelled": "Cancelado",
-    "draft": "Rascunho",
-    "sent": "Enviado",
-    "signed": "Assinado"
-  },
   "subtitle": "Gestão de contratos de clientes",
   "title": "Tratados",
   "type": "Tipo",
@@ -89,10 +70,5 @@
     "system": "System",
     "systemProtected": "System protected",
     "title": "Tipos de contratos"
-  },
-  "types": {
-    "product": "Produto",
-    "service": "Serviço",
-    "subscription": "Subscrição"
   }
 }

@@ -9,30 +9,14 @@
     "upload": "تحميل"
   },
   "card": {
-    "delete": "يمسح",
     "featured": "المفضلة",
     "toggle_featured": "تبديل المفضلة",
-    "uploaded_by": "تم الرفع بواسطة __VAR0____",
+    "uploaded_by": "تم التحميل إلى تاريخ {{name}}",
     "views": "وجهات النظر"
-  },
-  "categories": {
-    "coloring": "تلوين",
-    "haircut": "حلاقة الشعر",
-    "makeup": "ماكياج",
-    "manicure": "مانيكير",
-    "other": "آخر",
-    "styling": "وضع"
   },
   "dialogs": {
     "delete": {
       "confirm": "هل أنت متأكد أنك تريد حذف هذه الصورة؟"
-    },
-    "preview": {
-      "category": "الفئة: {{category}}_",
-      "created_at": "__VAR0____",
-      "title": "معاينة الصورة",
-      "uploaded_by": "تم الرفع بواسطة __VAR0____",
-      "views": "__VAR0____ عدد المشاهدات"
     },
     "upload": {
       "description": "إضافة صورة جديدة إلى المعرض",
@@ -41,13 +25,11 @@
         "before_after": "قبل/بعد",
         "before_photo": "الصورة \"قبل\"",
         "category": "فئة",
-        "choose_file": "حدد الملف",
         "client": "عميل",
         "client_hint": "ستكون الصورة متاحة في معرض العميل",
         "description": "وصف",
         "description_placeholder": "وصف الصورة",
         "photo": "صورة",
-        "select_category": "اختر فئة",
         "select_client": "حدد العميل",
         "single_photo": "صورة واحدة",
         "title": "اسم",

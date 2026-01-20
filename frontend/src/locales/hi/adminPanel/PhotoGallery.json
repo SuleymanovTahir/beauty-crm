@@ -9,30 +9,14 @@
     "upload": "डाउनलोड करना"
   },
   "card": {
-    "delete": "मिटाना",
     "featured": "पसंदीदा",
     "toggle_featured": "पसंदीदा टॉगल करें",
     "uploaded_by": "{{नाम}} द्वारा अपलोड किया गया",
     "views": "दृश्य"
   },
-  "categories": {
-    "coloring": "रंग",
-    "haircut": "बाल कटाने",
-    "makeup": "पूरा करना",
-    "manicure": "मैनीक्योर",
-    "other": "अन्य",
-    "styling": "बिछाना"
-  },
   "dialogs": {
     "delete": {
       "confirm": "क्या आप निश्चित हैं कि आप इस फ़ोटो को हटाना चाहते हैं?"
-    },
-    "preview": {
-      "category": "श्रेणी: {{श्रेणी}}",
-      "created_at": "__VAR0___",
-      "title": "फ़ोटो पूर्वावलोकन",
-      "uploaded_by": "{{नाम}} द्वारा अपलोड किया गया",
-      "views": "{{गिनती}} दृश्य"
     },
     "upload": {
       "description": "गैलरी में एक नई फ़ोटो जोड़ें",
@@ -41,13 +25,11 @@
         "before_after": "के बाद से पहले",
         "before_photo": "फोटो \"पहले\"",
         "category": "वर्ग",
-        "choose_file": "फ़ाइल चुनें",
         "client": "ग्राहक",
         "client_hint": "फ़ोटो ग्राहक की गैलरी में उपलब्ध होगी",
         "description": "विवरण",
         "description_placeholder": "फोटो विवरण",
         "photo": "तस्वीर",
-        "select_category": "श्रेणी चुनना",
         "select_client": "ग्राहक का चयन करें",
         "single_photo": "एक फोटो",
         "title": "नाम",
@@ -59,7 +41,7 @@
   },
   "empty": {
     "description": "गैलरी में अपनी पहली तस्वीरें अपलोड करें",
-    "title": "अभी तक कोई फ़ोटो नहीं"
+    "title": "अभी दिनांक तक कोई फ़ोटो नहीं"
   },
   "filters": {
     "all_categories": "सभी श्रेणियां",

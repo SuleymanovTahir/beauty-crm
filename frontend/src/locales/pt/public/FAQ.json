@@ -4,7 +4,7 @@
   "answer_3": "Sim, você pode cancelar ou remarcar sua consulta até 24 horas antes do horário agendado.",
   "answer_4": "Sim, alguns procedimentos têm contraindicações médicas. Consulte nosso especialista antes de gravar.",
   "answer_5": "O tempo do procedimento depende do serviço escolhido. Geralmente de 30 minutos a 3 horas.",
-  "answer_6": "Alguns procedimentos requerem preparação especial. O especialista irá informá-lo sobre isso no momento do registro.",
+  "answer_6": "Alguns procedimentos requerem preparação especial. O especialista irá informá-lo sobre isso no momento do reserva.",
   "cta": {
     "bookButton": "Inscreva-se para o procedimento",
     "contactButton": "Contate-nos",
@@ -60,11 +60,11 @@
       "question": "Quais métodos de pagamento você aceita?"
     },
     "preparation": {
-      "answer": "Sim, alguns procedimentos requerem preparação. Fornecemos recomendações detalhadas no momento do registro.",
+      "answer": "Sim, alguns procedimentos requerem preparação. Fornecemos recomendações detalhadas no momento do reserva.",
       "question": "É necessária preparação antes do procedimento?"
     },
     "weekends": {
-      "answer": "Sim, trabalhamos 7 dias por semana. {{weekdays, weekdays}}Nos dias de semana {{weekdays}}{{/weekdays}}{{weekends, weekdays}}, nos finais de semana {{weekends}}{{/weekends}}.",
+      "answer": "Sim, trabalhamos 7 dias até data semana. {{weekdays, weekdays}}Nos dias de semana {{weekdays}}{{/weekdays}}{{weekends, weekdays}}, nos finais de semana {{weekends}}{{/weekends}}.",
       "question": "Você trabalha nos finais de semana?"
     }
   },

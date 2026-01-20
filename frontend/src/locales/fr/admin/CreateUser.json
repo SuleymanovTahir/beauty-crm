@@ -1,7 +1,6 @@
 {
   "back_to_users": "Retour aux utilisateurs",
   "create_and_assign_services": "Create User & Assign Services",
-  "create_user": "Créer un utilisateur",
   "creating": "Création...",
   "email_hint": "Facultatif. Pour récupérer votre mot de passe",
   "email_label": "E-mail",
@@ -19,7 +18,6 @@
   "password_required": "Mot de passe requis",
   "position_hint": "Position à afficher (facultatif)",
   "position_label": "Titre d'emploi",
-  "position_none": "Non spécifié",
   "position_placeholder": "Sélectionnez un poste",
   "role_admin": "Administrateur",
   "role_admin_desc": "Gestion des utilisateurs et des paramètres",

@@ -9,7 +9,7 @@
   },
   "categories": {
     "category": "Catégorie",
-    "category_placeholder": "Par exemple. Clous",
+    "category_placeholder": "à la date exemple. Clous",
     "description": "Configurer des multiplicateurs de points pour les catégories de services",
     "multiplier": "Facteur",
     "title": "Multiplicateurs de catégorie"

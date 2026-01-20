@@ -1,11 +1,10 @@
 """
 API Endpoints для работы с записями
 """
-from fastapi import APIRouter, Request, Cookie, File, UploadFile
+from fastapi import APIRouter, Request, Cookie, File, UploadFile, BackgroundTasks
 from fastapi.responses import JSONResponse
-from typing import Optional
-
-from datetime import datetime
+from typing import Optional, List
+from pydantic import BaseModel
 
 from db import (
     get_all_bookings, save_booking,
@@ -29,6 +28,33 @@ from services.smart_assistant import SmartAssistant
 from notifications.master_notifications import notify_master_about_booking, get_master_info, save_notification_log
 
 router = APIRouter(tags=["Bookings"])
+
+class CreateBookingRequest(BaseModel):
+    instagram_id: str
+    service: str
+    date: str
+    time: str
+    phone: Optional[str] = ''
+    name: Optional[str] = None
+    master: Optional[str] = ''
+    revenue: Optional[float] = 0
+    source: Optional[str] = 'manual'
+
+class UpdateStatusRequest(BaseModel):
+    status: str
+
+class UpdateBookingRequest(BaseModel):
+    instagram_id: Optional[str] = None
+    service: Optional[str] = None
+    date: Optional[str] = None
+    time: Optional[str] = None
+    phone: Optional[str] = None
+    name: Optional[str] = None
+    master: Optional[str] = None
+    revenue: Optional[float] = None
+    source: Optional[str] = None
+    status: Optional[str] = None
+    notes: Optional[str] = None
 
 def get_client_messengers_for_bookings(client_id: str):
     """Получить список мессенджеров клиента для bookings (DEPRECATED - use get_all_client_messengers)"""
@@ -96,7 +122,7 @@ def get_all_client_messengers(client_ids: list):
     return client_messengers
 
 @router.get("/client/bookings")
-async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
+def get_client_bookings(session_token: Optional[str] = Cookie(None)):
     """Получить записи текущего клиента (API)"""
     user = require_auth(session_token)
     if not user:
@@ -163,8 +189,8 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
         "count": len(formatted_bookings)
     }
 
-@router.get("/bookings")
-async def list_bookings(
+@router.get("/api/bookings")
+def list_bookings(
     session_token: Optional[str] = Cookie(None),
     page: int = 1,
     limit: int = 50,
@@ -289,8 +315,8 @@ async def list_bookings(
         "stats": stats
     }
 
-@router.get("/bookings/{booking_id}")
-async def get_booking_detail(
+@router.get("/api/bookings/{booking_id}")
+def get_booking_detail(
     booking_id: int,
     session_token: Optional[str] = Cookie(None)
 ):
@@ -422,8 +448,8 @@ async def process_booking_background_tasks(
         log_error(f"❌ Background task error: {e}", "background_tasks")
 
 @router.post("/bookings")
-async def create_booking_api(
-    request: Request,
+def create_booking_api(
+    data: CreateBookingRequest,
     background_tasks: BackgroundTasks,
     session_token: Optional[str] = Cookie(None)
 ):
@@ -432,42 +458,35 @@ async def create_booking_api(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    data = await request.json()
-
     try:
-        instagram_id = data.get('instagram_id')
-        service = data.get('service')
-        datetime_str = f"{data.get('date')} {data.get('time')}"
-        phone = data.get('phone', '')
-        name = data.get('name')
-        master = data.get('master', '')
-        revenue = data.get('revenue', 0)
-        source = data.get('source', 'manual')
+        instagram_id = data.instagram_id
+        service = data.service
+        datetime_str = f"{data.date} {data.time}"
+        phone = data.phone or ''
+        name = data.name
+        master = data.master or ''
+        revenue = data.revenue or 0
+        source = data.source or 'manual'
         user_id = user["id"]
 
-        # Synchronous DB Save (Required for ID)
+        # Synchronous DB Save
         get_or_create_client(instagram_id, username=name, phone=phone)
         save_booking(instagram_id, service, datetime_str, phone, name, master=master, user_id=user_id, revenue=revenue, source=source)
 
-        # ✅ SYNC: Update phone and name in both tables if they are new or different
+        # Update phone and name
         if phone or name:
-            # 1. Update in clients table
             update_client_info(instagram_id, phone=phone, name=name)
-            
-            # 2. Update in users table if user is authenticated
             from db.users import update_user_info as db_update_user
             user_updates = {}
             if phone: user_updates['phone'] = phone
             if name: user_updates['full_name'] = name
-            
             if user_updates and user_id:
                 db_update_user(user_id, user_updates)
 
-        # ✅ SYNC: Move client to 'Booked' stage in Funnel
+        # Sync client stage
         conn = get_db_connection()
         c = conn.cursor()
         try:
-            # Find stage with 'book' or 'запис' in name
             c.execute("SELECT id FROM pipeline_stages WHERE LOWER(name) LIKE '%book%' OR LOWER(name) LIKE '%запис%' LIMIT 1")
             stage_row = c.fetchone()
             if stage_row:
@@ -491,9 +510,9 @@ async def create_booking_api(
 
         # Offload slow tasks
         if booking_id:
-            background_tasks.add_task(process_booking_background_tasks, booking_id, data, user_id)
+            background_tasks.add_task(process_booking_background_tasks, booking_id, data.dict(), user_id)
 
-        # Invalidate analytics cache
+        # Invalidate cache
         cache.clear_by_pattern("dashboard_*")
         cache.clear_by_pattern("funnel_*")
 
@@ -538,11 +557,11 @@ async def notify_admin_booking_status_change(booking_id: int, old_status: str, n
         }
 
         status_text = {
-            'pending': 'Ожидает подтверждения',
-            'confirmed': 'Подтверждена',
-            'cancelled': 'Отменена',
-            'completed': 'Завершена',
-            'no_show': 'Не пришел'
+            'pending': 'status_pending',
+            'confirmed': 'status_confirmed',
+            'cancelled': 'status_cancelled',
+            'completed': 'status_completed',
+            'no_show': 'status_no_show'
         }
 
         admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USERNAME')
@@ -568,13 +587,13 @@ async def notify_admin_booking_status_change(booking_id: int, old_status: str, n
         # Telegram
         try:
             tg_msg = (
-                f"{status_emoji.get(new_status, '📝')} <b>Изменение статуса записи</b>\n\n"
-                f"👤 <b>Клиент:</b> {client_display}\n"
-                f"📞 <b>Телефон:</b> {phone or 'Не указан'}\n"
-                f"💅 <b>Услуга:</b> {service}\n"
-                f"👨‍💼 <b>Мастер:</b> {master or 'Любой'}\n"
-                f"🕒 <b>Время:</b> {datetime_str}\n"
-                f"📊 <b>Статус:</b> {status_text.get(old_status, old_status)} → {status_text.get(new_status, new_status)}"
+                f"{status_emoji.get(new_status, '📝')} <b>Booking Status Updated</b>\n\n"
+                f"👤 <b>Client:</b> {client_display}\n"
+                f"📞 <b>Phone:</b> <code>{phone or 'Not specified'}</code>\n"
+                f"💅 <b>Service:</b> {service}\n"
+                f"👨‍💼 <b>Professional:</b> {master or 'Any'}\n"
+                f"🕒 <b>Time:</b> {datetime_str}\n"
+                f"📊 <b>Status:</b> {status_text.get(old_status, old_status)} → {status_text.get(new_status, new_status)}"
             )
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
@@ -596,7 +615,27 @@ async def notify_admin_about_booking(data: dict):
     phone = data.get('phone')
     service = data.get('service')
     datetime_str = f"{data.get('date')} {data.get('time')}"
-    master = data.get('master', 'Любой специалист')
+    master = data.get('master', 'any_master')
+    source = data.get('source', 'manual')
+    
+    # Beautiful source names
+    source_display = "🔧 Manual Entry"
+    source_emoji = "🔧"
+    if source == 'public_landing':
+        source_display = "🏠 Public Landing"
+        source_emoji = "🏠"
+    elif source == 'client_cabinet':
+        source_display = "👤 Client Cabinet"
+        source_emoji = "👤"
+    elif source == 'instagram':
+        source_display = "📸 Instagram"
+        source_emoji = "📸"
+    elif source == 'whatsapp':
+        source_display = "💬 WhatsApp"
+        source_emoji = "💬"
+    elif source == 'website':
+        source_display = "🌐 Website"
+        source_emoji = "🌐"
     
     # 1. Email Admin (with timeout)
     admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USERNAME')
@@ -607,7 +646,8 @@ async def notify_admin_about_booking(data: dict):
             f"Телефон: {phone}\n"
             f"Услуга: {service}\n"
             f"Мастер: {master}\n"
-            f"Время: {datetime_str}"
+            f"Время: {datetime_str}\n"
+            f"Источник: {source_display}"
         )
         try:
             loop = asyncio.get_event_loop()
@@ -623,12 +663,14 @@ async def notify_admin_about_booking(data: dict):
     # 2. Telegram Admin (with timeout)
     try:
         telegram_message = (
-            f"📅 <b>Новая запись!</b>\n\n"
-            f"👤 <b>Имя:</b> {name}\n"
-            f"📞 <b>Телефон:</b> {phone}\n"
-            f"💇‍♀️ <b>Услуга:</b> {service}\n"
-            f"👤 <b>Мастер:</b> {master}\n"
-            f"🕒 <b>Время:</b> {datetime_str}"
+            f"📅 <b>New Booking!</b>\n\n"
+            f"👤 <b>Name:</b> {name}\n"
+            f"📞 <b>Phone:</b> <code>{phone}</code>\n"
+            f"💇‍♀️ <b>Service:</b> {service}\n"
+            f"👤 <b>Professional:</b> {master}\n"
+            f"🕒 <b>Time:</b> {datetime_str}\n"
+            f"━━━━━━━━━━━━━━━━━━\n"
+            f"{source_emoji} <b>Source:</b> {source_display}"
         )
         await asyncio.wait_for(send_telegram_alert(telegram_message), timeout=3.0)
     except asyncio.TimeoutError:
@@ -637,9 +679,9 @@ async def notify_admin_about_booking(data: dict):
         log_error(f"❌ Error sending admin telegram: {e}", "notifications")
 
 @router.post("/bookings/{booking_id}/status")
-async def update_booking_status_api(
+def update_booking_status_api(
     booking_id: int,
-    request: Request,
+    data: UpdateStatusRequest,
     session_token: Optional[str] = Cookie(None)
 ):
     """Изменить статус записи"""
@@ -647,8 +689,7 @@ async def update_booking_status_api(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    data = await request.json()
-    status = data.get('status')
+    status = data.status
 
     # RBAC: Clients can only cancel their own bookings
     if user["role"] == "client":
@@ -665,7 +706,6 @@ async def update_booking_status_api(
         if not row:
              return JSONResponse({"error": "Booking not found"}, status_code=404)
         
-        # Check ownership (username=instagram_id)
         is_owner = (user.get("username") and str(user.get("username")) == str(row[0]))
         if not is_owner and user.get("phone") and row[1]:
              is_owner = (str(user.get("phone")) == str(row[1]))
@@ -673,11 +713,10 @@ async def update_booking_status_api(
         if not is_owner:
             return JSONResponse({"error": "Forbidden"}, status_code=403)
 
-
     if not status:
         return JSONResponse({"error": "Status required"}, status_code=400)
 
-    # Get old status before updating
+    # Get old status
     conn = get_db_connection()
     c = conn.cursor()
     c.execute("SELECT status FROM bookings WHERE id = %s", (booking_id,))
@@ -691,25 +730,19 @@ async def update_booking_status_api(
         log_activity(user["id"], "update_booking_status", "booking",
                     str(booking_id), f"Status: {status}")
 
-        # Notify admin about status change
         if old_status and old_status != status:
             import asyncio
             try:
-                asyncio.create_task(notify_admin_booking_status_change(booking_id, old_status, status))
+                # Still use async for notification logic as it might non-blocking
+                asyncio.run(notify_admin_booking_status_change(booking_id, old_status, status))
             except:
-                # If event loop is not running, run in new loop
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                loop.run_until_complete(notify_admin_booking_status_change(booking_id, old_status, status))
-                loop.close()
+                pass
         
-        # ✅ Автоматическое начисление баллов (только при переходе в completed)
+        # loyalty
         if status == 'completed':
             try:
-                # Получаем данные записи для начисления
                 conn = get_db_connection()
                 c = conn.cursor()
-                # Join with services to get category
                 c.execute("""
                     SELECT b.instagram_id, b.revenue, b.service_name, s.category 
                     FROM bookings b
@@ -722,25 +755,15 @@ async def update_booking_status_api(
                 if b_row:
                     client_id, revenue, service_name, category = b_row
                     revenue = revenue or 0
-                    
                     from services.loyalty import LoyaltyService
                     loyalty = LoyaltyService()
-                    
-                    # Проверяем, не начислены ли уже баллы
                     if not loyalty.has_earned_for_booking(booking_id):
-                        # Pass category to calculation
                         points = loyalty.points_for_booking(revenue, service_category=category)
                         if points > 0:
-                            loyalty.earn_points(
-                                client_id=client_id,
-                                points=points,
-                                reason=f"Посещение: {service_name}",
-                                booking_id=booking_id
-                            )
+                            loyalty.earn_points(client_id=client_id, points=points, reason=f"Посещение: {service_name}", booking_id=booking_id)
             except Exception as e:
                 log_error(f"Error earning loyalty points: {e}", "api")
 
-        # Invalidate analytics cache
         cache.clear_by_pattern("dashboard_*")
         cache.clear_by_pattern("funnel_*")
 
@@ -748,12 +771,10 @@ async def update_booking_status_api(
     
     return JSONResponse({"error": "Update failed"}, status_code=400)
 
-    return JSONResponse({"error": "Update failed"}, status_code=400)
-
 @router.put("/bookings/{booking_id}")
-async def update_booking_api(
+def update_booking_api(
     booking_id: int,
-    request: Request,
+    data: UpdateBookingRequest,
     session_token: Optional[str] = Cookie(None)
 ):
     """Обновить детали записи"""
@@ -761,22 +782,16 @@ async def update_booking_api(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    # Only admin/manager can edit details for now
     if user["role"] not in ["admin", "manager", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
         
-    data = await request.json()
     from db.bookings import update_booking_details
     
-    success = update_booking_details(booking_id, data)
+    success = update_booking_details(booking_id, data.dict(exclude_unset=True))
     
     if success:
-        log_activity(user["id"], "update_booking_details", "booking", str(booking_id), f"Updated details: {data.keys()}")
-        
-        # Invalidate analytics cache
+        log_activity(user["id"], "update_booking_details", "booking", str(booking_id), f"Updated details")
         cache.clear_by_pattern("dashboard_*")
-        cache.clear_by_pattern("funnel_*")
-        
         return {"success": True, "message": "Booking updated"}
     
     return JSONResponse({"error": "Update failed"}, status_code=400)
@@ -958,11 +973,8 @@ async def add_to_booking_waitlist(
         log_error(f"Waitlist error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-@router.get("/bookings/pattern/{client_id}")
-async def get_client_booking_pattern(
-    client_id: str,
-    session_token: Optional[str] = Cookie(None)
-):
+@router.get("/api/bookings/patterns/{client_id}")
+def get_client_booking_pattern(client_id: str, session_token: Optional[str] = Cookie(None)):
     """Получить обычный паттерн записи клиента (#7)"""
     user = require_auth(session_token)
     if not user:

@@ -5,7 +5,7 @@
     "update_challenge": "Обновить челлендж"
   },
   "card": {
-    "check_progress": "Check Progress",
+    "check_progress": "Проверить прогресс",
     "completed": "завершено",
     "progress": "Прогресс",
     "pts": "балл",
@@ -41,17 +41,12 @@
     "completions": "Завершений",
     "total_participants": "Всего участников"
   },
-  "statuses": {
-    "active": "Активный",
-    "completed": "Завершен",
-    "upcoming": "Предстоящий"
-  },
   "subtitle": "Создание и управление челленджами вовлечения",
   "title": "Челленджи",
   "toasts": {
     "created": "Челлендж успешно создан",
     "deleted": "Челлендж успешно удален",
-    "failed_check_progress": "Failed to check progress",
+    "failed_check_progress": "Не удалось проверить прогресс",
     "failed_create": "Не удалось создать челлендж",
     "failed_delete": "Не удалось удалить челлендж",
     "failed_load": "Не удалось загрузить челленджи",

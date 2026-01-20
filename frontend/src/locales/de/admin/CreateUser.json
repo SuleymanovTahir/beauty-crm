@@ -1,7 +1,6 @@
 {
   "back_to_users": "Zurück zu den Benutzern",
   "create_and_assign_services": "Create User & Assign Services",
-  "create_user": "Erstellen Sie einen Benutzer",
   "creating": "Schaffung...",
   "email_hint": "Optional. Um Ihr Passwort wiederherzustellen",
   "email_label": "E-Mail",
@@ -19,7 +18,6 @@
   "password_required": "Passwort erforderlich",
   "position_hint": "Position zur Anzeige (optional)",
   "position_label": "Berufsbezeichnung",
-  "position_none": "Nicht angegeben",
   "position_placeholder": "Wählen Sie eine Position aus",
   "role_admin": "Administrator",
   "role_admin_desc": "Benutzer und Einstellungen verwalten",

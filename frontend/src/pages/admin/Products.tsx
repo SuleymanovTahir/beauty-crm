@@ -164,7 +164,7 @@ const Products = () => {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
                             type="text"
-                            placeholder={t('search_placeholder', 'Поиск по названию или категории...')}
+                            placeholder={t('search_placeholder')}
                             className="pl-9 pr-4 h-10 w-72 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -284,7 +284,7 @@ const Products = () => {
                             <Package size={48} className="text-gray-300" />
                         </div>
                         <h3 className="text-lg font-bold text-gray-900">{t('noProducts')}</h3>
-                        <p className="text-gray-500">{searchQuery ? t('messages.noResults', 'Ничего не найдено по вашему запросу') : t('createFirst')}</p>
+                        <p className="text-gray-500">{searchQuery ? t('messages.noResults') : t('createFirst')}</p>
                     </div>
                 )}
             </div>
@@ -410,7 +410,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                             </div>
 
                             <div className="crm-form-group">
-                                <label className="crm-label">{t('form.category', 'Категория')}</label>
+                                <label className="crm-label">{t('form.category')}</label>
                                 <input className="crm-input"
                                     type="text"
                                     value={formData.category}
@@ -468,7 +468,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                         </div>
 
                         <div className="crm-form-group">
-                            <label className="crm-label">{t('form.photos', 'Фото товара')}</label>
+                            <label className="crm-label">{t('form.photos')}</label>
                             <div className="crm-photo-upload mt-2">
                                 <label className="crm-photo-grid flex flex-wrap gap-2">
                                     {formData.photos.map((photo: string, index: number) => (
@@ -485,7 +485,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                                     ))}
                                     <div className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:border-pink-500 hover:text-pink-500 transition-colors cursor-pointer relative">
                                         <ImageIcon size={24} />
-                                        <span className="text-[10px] mt-1">{t('form.upload', 'Загрузить')}</span>
+                                        <span className="text-[10px] mt-1">{t('form.upload')}</span>
                                         <input
                                             type="file"
                                             className="absolute inset-0 opacity-0 cursor-pointer"
@@ -503,7 +503,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                                                     setFormData({ ...formData, photos: [...formData.photos, ...newPhotoUrls] });
                                                 } catch (error) {
                                                     console.error('Error uploading product photos:', error);
-                                                    toast.error(t('form.uploadError', 'Ошибка загрузки фото'));
+                                                    toast.error(t('form.uploadError'));
                                                 }
                                             }}
                                         />
@@ -725,19 +725,19 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                         {stats && (
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.totalSold', 'Продано всего')}</p>
-                                    <p className="text-xl font-black text-gray-900">{stats.total_quantity_sold} {t('unit_pcs', 'шт.')}</p>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.totalSold')}</p>
+                                    <p className="text-xl font-black text-gray-900">{stats.total_quantity_sold} {t('unit_pcs')}</p>
                                 </div>
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.revenue', 'Выручка')}</p>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.revenue')}</p>
                                     <p className="text-xl font-black text-pink-600">{stats.total_revenue} {currency}</p>
                                 </div>
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.last30Days', 'За 30 дней')}</p>
-                                    <p className="text-xl font-black text-gray-900">{stats.last_30_days.quantity} {t('unit_pcs', 'шт.')}</p>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.last30Days')}</p>
+                                    <p className="text-xl font-black text-gray-900">{stats.last_30_days.quantity} {t('unit_pcs')}</p>
                                 </div>
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.avgPrice', 'Ср. цена')}</p>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.avgPrice')}</p>
                                     <p className="text-xl font-black text-gray-900">{(stats.average_price || 0).toFixed(1)} {currency}</p>
                                 </div>
                             </div>
@@ -774,7 +774,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <p className="font-bold text-gray-900">{m.quantity} {t('unit_pcs', 'шт.')}</p>
+                                                <p className="font-bold text-gray-900">{m.quantity} {t('unit_pcs')}</p>
                                                 {m.reason && <p className="text-[10px] text-gray-400 max-w-[120px] truncate" title={m.reason}>{m.reason}</p>}
                                             </div>
                                         </div>

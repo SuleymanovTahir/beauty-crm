@@ -1,32 +1,4 @@
 {
-  "all_good": "Бәрі жақсы! Шұңқырыңыз жақсы нәтиже көрсетуде.",
-  "conversion": {
-    "booked_to_completed": "Тіркелді -> Аяқталды",
-    "booking_to_booked": "Жазуды бастады -> Тіркелді",
-    "engaged_to_booking": "Engaged -> Жазуды бастады",
-    "visitor_to_engaged": "Келуші -> Қатысқан"
-  },
-  "funnel": "Шұңқыр",
-  "funnel_chart": "Шұңқыр диаграммасы",
-  "key_metrics": "Негізгі көрсеткіштер",
-  "move_failed": "Жылжыту қатесі",
-  "moved_successfully": "Клиент сәтті жылжытылды",
-  "no_clients": "Клиенттер жоқ",
-  "quick_add": "Жылдам қосу",
-  "recommendations_title": "Ұсыныстар",
-  "search_clients": "Клиенттер ізделуде...",
-  "stage_details": "Детальдау кезеңдері",
-  "subtitle": "Кезеңді және түрлендіруді басқару",
-  "successful_visits": "Сәтті сапарлар",
-  "table": {
-    "count": "Саны",
-    "losses": "Шығындар",
-    "percentage": "Пайыз",
-    "stage": "Сахна"
-  },
-  "title": "Сату шұңқыры",
-  "total_conversion": "Жалпы конверсия",
-  "total_losses": "Жалпы шығындар",
   "Your funnel shows good results": {
     " Keep it up!": ""
   }

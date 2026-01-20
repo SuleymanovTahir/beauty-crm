@@ -1,5 +1,4 @@
 {
-  "absences": "الغيابات",
   "access_rights": "حقوق الوصول",
   "by_role": "حسب الدور",
   "can_manage_roles": "يمكن إدارة الأدوار",
@@ -11,7 +10,7 @@
   "error_saving_schedule": "حدث خطأ أثناء حفظ الجدول الزمني",
   "failed_to_load_schedule": "فشل تحميل الجدول الزمني",
   "friday": "جمعة",
-  "from": "مع",
+  "from": "من تاريخ",
   "full_access_director": "الوصول الكامل (المدير)",
   "granted_revoked": "تمت الإضافة/السحب",
   "hierarchy_level": "مستوى التسلسل الهرمي",
@@ -27,7 +26,7 @@
   "save": "يحفظ",
   "save_changes": "حفظ التغييرات",
   "saving": "توفير...",
-  "schedule_management": "التحكم في الجدول الزمني: __VAR0____",
+  "schedule_management": "التحكم في الرسم البياني: {{name}}",
   "schedule_saved": "تم حفظ الجدول الزمني",
   "schedule_settings": "إعدادات ساعات العمل والإجازات",
   "sunday": "الأحد",

@@ -6,10 +6,10 @@
   "logout_success": "Você saiu com sucesso",
   "menu": {
     "analytics": "Análise",
-    "bookings": "Postagens",
+    "bookings": "Reservas",
     "bot_settings": "Configurações do bot",
     "calendar": "Calendário",
-    "chat": "Bater papo",
+    "chat": "Chat",
     "clients": "Clientes",
     "dashboard": "Painel",
     "feedback": "Feedback",

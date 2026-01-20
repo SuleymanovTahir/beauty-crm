@@ -17,19 +17,22 @@
     "or": "أو",
     "other": "آخر",
     "select": "يختار",
-    "subtitle": "قم بتسجيل الدخول لحفظ سجل النشر الخاص بك والحصول على المكافآت",
+    "subtitle": "قم بتسجيل الدخول لحفظ حجز النشر الخاص بك والحصول على المكافآت",
     "success_mock": "تم استلام الملف الشخصي بنجاح!",
     "welcome": "مرحباً"
   },
   "booking_info": "تسجيل المعلومات",
-  "change_booking": "تحرير الإدخال",
+  "bookingDesc": "Выберите удобное время для визита",
+  "bookingError": "Ошибка при создании записи. Попробуйте позже.",
+  "bookingSuccess": "Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.",
+  "bookingTag": "Онлайн запись",
+  "bookingTitlePart1": "Запишитесь",
+  "bookingTitlePart2": "на прием",
   "common": {
-    "any_master": "أي سيد",
     "cancel": "لاحقاً",
     "change": "يتغير",
     "edit": "يحرر",
     "reschedule": "يؤجل",
-    "reset": "إعادة ضبط كل شيء",
     "resetAll": "إعادة ضبط الكل",
     "save": "يفحص",
     "select": "يختار"
@@ -50,9 +53,9 @@
     "title": "يتأكد",
     "total": "المبلغ الإجمالي"
   },
-  "continue_datetime": "تواصل مع اختيار التاريخ والوقت",
-  "continue_professional": "متابعة اختيار المعالج",
-  "continue_services": "تواصل مع اختيار الخدمات",
+  "continue_datetime": "تواصل من تاريخ اختيار التاريخ والوقت",
+  "continue_professional": "متابعة اختيار الخبير",
+  "continue_services": "تواصل من تاريخ اختيار الخدمات",
   "datetime": {
     "date": "اختر التاريخ",
     "noSlots": "لا توجد نوافذ متاحة",
@@ -60,6 +63,13 @@
     "time": "حدد الوقت",
     "title": "التاريخ والوقت"
   },
+  "formDate": "Дата",
+  "formName": "Имя",
+  "formNamePlaceholder": "Ваше имя",
+  "formPhone": "Телефон",
+  "formService": "Услуги",
+  "formServicePlaceholder": "Выберите услуги",
+  "formTime": "Время",
   "invalid_phone": "الرجاء إدخال رقم هاتف صالح",
   "loading": "تهيئة الاستوديو",
   "menu": {
@@ -74,20 +84,20 @@
   },
   "min": "min",
   "newBooking": "الحجز",
+  "noServicesFound": "Услуги не найдены.",
+  "phone_too_short": "Номер телефона должен содержать минимум 11 цифр с учетом кода страны",
+  "privacyAgreementStart": "Нажимая кнопку, вы соглашаетесь с",
+  "privacyPolicy": "политикой конфиденциальности",
   "professional": {
-    "anyAvailable": "أي سيد حر",
+    "anyAvailable": "أي خبير حر",
     "anyDesc": "سوف نقوم باختيار أفضل متخصص متاح لك",
     "availableOn": "متاح",
     "availableToday": "متوفر اليوم",
     "notAvailableToday": "لا يوجد توفر لهذا اليوم",
-    "ready": "مستعد",
-    "reviews": "التعليقات",
-    "title": "حدد المعالج"
+    "title": "حدد الخبير"
   },
-  "salon": {
-    "address": "عنوان الاستوديو",
-    "name": "مقر التجميل"
-  },
+  "searchCountry": "Поиск страны...",
+  "searchService": "Найти услугу...",
   "select_to_continue": "حدد خدمة أو فنيًا للمتابعة",
   "services": {
     "allCategories": "جميع الفئات",
@@ -97,8 +107,8 @@
     "service_one": "خدمة",
     "service_few": "خدمات",
     "service_many": "خدمات",
-    "title": "اختر الخدمات",
     "total": "المجموع"
   },
+  "submitBooking": "Отправить заявку",
   "totalDuration": "مدة"
 }

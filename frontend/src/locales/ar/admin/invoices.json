@@ -6,7 +6,6 @@
   "allStatuses": "جميع الحالات",
   "board": "سبورة",
   "client": "عميل",
-  "createFirst": "قم بإنشاء فاتورتك الأولى للعميل",
   "delete": "يمسح",
   "dueDate": "تاريخ الاستحقاق",
   "errors": {
@@ -29,7 +28,6 @@
     "selectClient": "حدد العميل"
   },
   "invoiceNumber": "رقم الحساب",
-  "loading": "تحميل...",
   "manage_stages": "أعمدة",
   "messages": {
     "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا الحساب؟",
@@ -66,14 +64,6 @@
     "whatsapp": "واتس اب"
   },
   "status": "حالة",
-  "statuses": {
-    "cancelled": "تم الإلغاء",
-    "draft": "مسودة",
-    "overdue": "منتهي الصلاحية",
-    "paid": "مدفوع",
-    "partial": "مدفوعة جزئيا",
-    "sent": "مرسل"
-  },
   "subtitle": "إدارة الحساب والدفع",
   "title": "الحسابات",
   "totalAmount": "مجموع"

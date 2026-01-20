@@ -233,7 +233,7 @@ export default function EditUser() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="phone_number">{t('users:phone_number', 'Телефон')}</Label>
+                    <Label htmlFor="phone_number">{t('users:phone_number')}</Label>
                     <Input
                       id="phone_number"
                       disabled={saving}
@@ -244,7 +244,7 @@ export default function EditUser() {
                   </div>
 
                   <div>
-                    <Label htmlFor="birth_date">{t('users:birth_date', 'Дата рождения')}</Label>
+                    <Label htmlFor="birth_date">{t('users:birth_date')}</Label>
                     <Input
                       id="birth_date"
                       type="date"
@@ -257,7 +257,7 @@ export default function EditUser() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="position">{t('users:position', 'Должность')}</Label>
+                    <Label htmlFor="position">{t('users:position')}</Label>
                     <Input
                       id="position"
                       disabled={saving}
@@ -268,7 +268,7 @@ export default function EditUser() {
                   </div>
 
                   <div>
-                    <Label htmlFor="years_of_experience">{t('users:years_of_experience', 'Опыт (лет)')}</Label>
+                    <Label htmlFor="years_of_experience">{t('users:years_of_experience')}</Label>
                     <Input
                       id="years_of_experience"
                       type="number"
@@ -282,7 +282,7 @@ export default function EditUser() {
                 </div>
 
                 <div>
-                  <Label htmlFor="specialization">{t('users:specialization', 'Специализация')}</Label>
+                  <Label htmlFor="specialization">{t('users:specialization')}</Label>
                   <Input
                     id="specialization"
                     disabled={saving}
@@ -293,7 +293,7 @@ export default function EditUser() {
                 </div>
 
                 <div>
-                  <Label htmlFor="about_me">{t('users:about_me', 'О себе')}</Label>
+                  <Label htmlFor="about_me">{t('users:about_me')}</Label>
                   <textarea
                     id="about_me"
                     rows={4}

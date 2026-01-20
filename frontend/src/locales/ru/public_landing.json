@@ -12,7 +12,6 @@
   "aboutTitlePart1": "Искусство красоты",
   "aboutTitlePart2": "в каждой детали",
   "accept": "Принять",
-  "account": "Кабинет",
   "address": "Адрес",
   "allergies": "Аллергические реакции",
   "allRightsReserved": "Все права защищены.",
@@ -24,23 +23,22 @@
   "callUs": "Позвонить",
   "cancellation": "Отмена клиентом",
   "cookieConsentText": "Мы используем файлы cookie для улучшения работы сайта. Продолжая использовать сайт, вы соглашаетесь с нашей",
-  "currency": "AED",
   "dataDeletion": {
-    "contact": "Contact Us",
-    "description": "If you want to delete your data from our system, please follow these steps:",
+    "contact": "Связаться с нами",
+    "description": "Если вы хотите удалить свои данные из нашей системы, выполните следующие действия:",
     "step1": {
-      "text": " Send an email to our support team with the subject \"Data Deletion Request\".",
-      "title": "Send a request"
+      "text": "Отправьте электронное письмо в нашу службу поддержки с темой «Запрос на удаление данных».",
+      "title": "Отправить запрос"
     },
     "step2": {
-      "text": " Our team will verify your identity to ensure the security of your data.",
-      "title": "Verification"
+      "text": "Наша команда проверит вашу личность, чтобы обеспечить безопасность ваших данных.",
+      "title": "Проверка"
     },
     "step3": {
-      "text": " Once verified, we will permanently delete your account and all associated data within 30 days.",
-      "title": "Deletion"
+      "text": "После проверки мы окончательно удалим вашу учетную запись и все связанные с ней данные в течение 30 дней.",
+      "title": "Удаление"
     },
-    "title": "Instruction for Data Deletion"
+    "title": "Инструкция по удалению данных"
   },
   "days": "дней",
   "decline": "Отклонить",
@@ -49,7 +47,7 @@
   "faqContactPrompt": "Не нашли ответ на свой вопрос?",
   "faqDesc": "Ответы на популярные вопросы",
   "faqItems": "Вопросы и ответы",
-  "faqTag": "FAQ",
+  "faqTag": "Часто задаваемые вопросы",
   "faqTitlePart1": "Часто задаваемые",
   "faqTitlePart2": "вопросы",
   "galleryDesc": "Современный интерьер создает атмосферу спокойствия",
@@ -77,11 +75,7 @@
   "payment": "Оплата",
   "phone": "Телефон",
   "portfolioAll": "Все работы",
-  "portfolioBody": "Тело",
   "portfolioDesc": "Вдохновитесь результатами наших мастеров",
-  "portfolioFace": "Лицо",
-  "portfolioHair": "Волосы",
-  "portfolioNails": "Ногти",
   "portfolioTag": "Наши работы",
   "portfolioTitlePart1": "Примеры",
   "portfolioTitlePart2": "преображения",
@@ -93,7 +87,7 @@
   "privacySection2List1": "Личная информация: имя, адрес электронной почты, номер телефона",
   "privacySection2List2": "Информация о бронировании: дата и время визита, выбранные услуги",
   "privacySection2List3": "Данные об использовании: информация о том, как вы взаимодействуете с нашим сайтом",
-  "privacySection2List4": "Технические данные: IP-адрес, тип браузера, операционная система",
+  "privacySection2List4": "Технические данные: IP-адрес, тип браузера, операционная система.",
   "privacySection2List5": "Медицинская информация: аллергии, противопоказания (только с вашего согласия)",
   "privacySection2Text": "Мы можем собирать следующие типы информации:",
   "privacySection2Title": "Информация, которую мы собираем",
@@ -122,7 +116,7 @@
   "privacySection6Text": "Вы имеете следующие права в отношении ваших персональных данных:",
   "privacySection6Title": "Ваши права",
   "privacySection7Text": "Наш веб-сайт использует cookies для улучшения вашего опыта использования. Вы можете управлять настройками cookies через ваш браузер.",
-  "privacySection7Title": "Cookies",
+  "privacySection7Title": "Файлы cookie",
   "privacySection8Text": "Мы можем периодически обновлять эту политику конфиденциальности. Обновленная версия будет размещена на этой странице с указанием даты последнего обновления.",
   "privacySection8Title": "Изменения в политике",
   "privacyTitle": "ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ",
@@ -157,7 +151,7 @@
   "termsSection3Text1": "Вы можете забронировать услуги через наш веб-сайт, по телефону или лично в салоне. Все бронирования подлежат подтверждению.",
   "termsSection3Text2": "Для некоторых услуг может потребоваться внесение депозита при бронировании.",
   "termsSection3Text3": "Оплата производится после оказания услуг. Мы принимаем наличные и кредитные карты.",
-  "termsSection3Text4": "Все цены указаны в дирхамах ОАЭ (AED). Мы оставляем за собой право изменять цены без предварительного уведомления.",
+  "termsSection3Text4": "Все цены указаны в дирхамах ОАЭ (AED). ",
   "termsSection3Title": "Бронирование и оплата",
   "termsSection4Text1": "Вы можете отменить или изменить бронирование не менее чем за 24 часа до назначенного времени без штрафных санкций.",
   "termsSection4Text2": "При отмене менее чем за 24 часа или неявке на визит, депозит (если был внесен) не возвращается.",

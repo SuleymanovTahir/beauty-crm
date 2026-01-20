@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../../../src/api/client';
 import { toast } from 'sonner';
 import { formatGoogleCalendarUrl, formatWhatsAppUrl } from '../../../utils/urlUtils';
-import { TIME_INTERVALS, EXTERNAL_SERVICES, DEFAULT_VALUES } from '../../../utils/constants';
+import { TIME_INTERVALS, EXTERNAL_SERVICES } from '../../../utils/constants';
 import { formatDateForGoogle } from '../../../utils/dateUtils';
 import { useSalonSettings } from '../../../hooks/useSalonSettings';
 
@@ -339,8 +339,8 @@ export function Dashboard() {
             </div>
             <div className="text-xs text-purple-600 font-medium">
               {achievements_summary.unlocked === 0
-                ? t('dashboard.achievements_hint', 'Вас ждут первые награды! Запишитесь на процедуру сегодня ✨')
-                : t('dashboard.achievements_progress', 'Вы на верном пути! Откройте новые награды при следующем визите 🎁')}
+                ? t('dashboard.achievements_hint', 'Вас ждут первые награды! Запишитесь на процедуру сегодня')
+                : t('dashboard.achievements_progress', 'Вы на верном пути! Откройте новые награды при следующем визите')}
             </div>
           </CardContent>
         </Card>

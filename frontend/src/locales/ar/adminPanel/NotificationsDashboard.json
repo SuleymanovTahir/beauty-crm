@@ -85,11 +85,6 @@
       "sms": "SMS"
     },
     "scheduled": "المخطط لها",
-    "statuses": {
-      "failed": "فشل",
-      "pending": "منتظر",
-      "sent": "مرسل"
-    },
     "table": {
       "date": "تاريخ",
       "recipients": "المستلمون",

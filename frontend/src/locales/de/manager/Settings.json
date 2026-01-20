@@ -1,5 +1,5 @@
 {
-  "booking_notifications_desc": "Benachrichtigungen über neue Beiträge",
+  "booking_notifications_desc": "Benachrichtigungen über neue buchungen",
   "change_password": "Kennwort ändern",
   "change_password_btn": "Kennwort ändern",
   "chat_messages": "Chat-Nachrichten",
@@ -7,7 +7,7 @@
   "daily_stats": "Zusammenfassung der Statistiken für den Tag",
   "email_notifications": "E-Mail-Benachrichtigungen",
   "events": "Veranstaltungen",
-  "new_bookings": "Neue Einträge",
+  "new_bookings": "Neue buchungen",
   "new_messages_desc": "Benachrichtigungen über neue Nachrichten",
   "notification_channels": "Benachrichtigungskanäle",
   "notifications": "Benachrichtigungen",

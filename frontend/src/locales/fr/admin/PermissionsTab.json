@@ -4,7 +4,7 @@
   "change_role_to": "Changer de rôle pour",
   "current_role": "Rôle actuel",
   "error_loading_permissions": "Échec du chargement des informations sur les droits",
-  "error_saving_permissions": "Erreur lors de l'enregistrement des droits",
+  "error_saving_permissions": "Erreur lors de l'réservation des droits",
   "full_access_message": "Accès complet à toutes les fonctions du système (rôle de directeur)",
   "hierarchy_level": "Niveau hiérarchique :",
   "individual_permissions_info": "Droits individuels : Vous pouvez modifier les droits des utilisateurs quel que soit leur rôle. Une coche signifie que le droit est accordé. Une case non cochée signifie que le droit a été révoqué.",

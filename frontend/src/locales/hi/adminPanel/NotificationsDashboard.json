@@ -36,14 +36,14 @@
           "all": "सभी ग्राहक",
           "appointment_based": "अभिलेखों के अनुसार",
           "inactive": "निष्क्रिय ग्राहक",
-          "service_based": "सेवाओं द्वारा",
+          "service_based": "दिनांक सेवाओं द्वारा",
           "tier": "वफादारी के स्तर से"
         },
         "select_filter": "फ़िल्टर चुनें",
         "select_tier": "स्तर चुनें",
-        "service_filter": "सेवा/प्रक्रिया",
-        "service_hint": "इस सेवा के लिए पंजीकृत ग्राहकों को एक अधिसूचना प्राप्त होगी",
-        "service_placeholder": "सेवा का नाम या आईडी दर्ज करें",
+        "service_filter": "दिनांक सेवा/प्रक्रिया",
+        "service_hint": "इस दिनांक सेवा के लिए पंजीकृत ग्राहकों को एक अधिसूचना प्राप्त होगी",
+        "service_placeholder": "दिनांक सेवा का नाम या आईडी दर्ज करें",
         "start_date": "आरंभ करने की तिथि",
         "target_segment": "लक्ष्य खंड",
         "tiers": {
@@ -85,11 +85,6 @@
       "sms": "SMS"
     },
     "scheduled": "की योजना बनाई",
-    "statuses": {
-      "failed": "असफल",
-      "pending": "इंतज़ार में",
-      "sent": "भेजा"
-    },
     "table": {
       "date": "तारीख",
       "recipients": "प्राप्तकर्ता",

@@ -42,7 +42,6 @@
   "no_tasks_today": "Il n'y a aucune tâche pour aujourd'hui",
   "no_user_found": "Utilisateur introuvable",
   "order_save_failed": "Erreur lors de l'réservation de la commande",
-  "order_saved": "Commande préservée",
   "overdue_tasks": "Tâches en retard",
   "pipeline_overview": "Entonnoir de tâches",
   "priority": {

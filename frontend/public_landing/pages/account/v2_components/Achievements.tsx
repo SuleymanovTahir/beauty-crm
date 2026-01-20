@@ -95,7 +95,7 @@ export function Achievements() {
   };
 
   const shareAchievement = async (achievement: any) => {
-    const shareText = `🏆 ${t('achievements.share_text', 'Я разблокировал достижение')}: "${achievement.title}"!\n\n${achievement.description}\n\n#BeautySalon #Achievement`;
+    const shareText = `${t('achievements.share_text', 'Я разблокировал достижение')}: "${achievement.title}"!\n\n${achievement.description}\n\n#BeautySalon #Achievement`;
 
     if (navigator.share) {
       try {
@@ -188,8 +188,8 @@ export function Achievements() {
                 <Card
                   key={achievement.id}
                   className={`${achievement.unlocked
-                      ? 'border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50'
-                      : 'opacity-60 border-gray-200'
+                    ? 'border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50'
+                    : 'opacity-60 border-gray-200'
                     } ${isNewlyUnlocked ? 'animate-pulse border-4 border-yellow-400' : ''
                     }`}
                 >
@@ -197,8 +197,8 @@ export function Achievements() {
                     <div className="flex items-start gap-4">
                       <div
                         className={`p-3 rounded-full ${achievement.unlocked
-                            ? 'bg-yellow-500 text-white'
-                            : 'bg-gray-200 text-gray-400'
+                          ? 'bg-yellow-500 text-white'
+                          : 'bg-gray-200 text-gray-400'
                           } ${isNewlyUnlocked ? 'animate-bounce' : ''}`}
                       >
                         {achievement.unlocked ? (

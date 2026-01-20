@@ -22,15 +22,6 @@
   "metric_name_en": "Titel (EN)",
   "metric_name_ru": "Name (RU)",
   "metric_type": "Metriktyp",
-  "metrics": {
-    "active_clients": "Aktive Kunden",
-    "average_check": "Durchschnittliche Rechnung",
-    "bookings": "Buchung",
-    "new_clients": "Neue Kunden",
-    "revenue": "Einkommen",
-    "sales": "Verkäufe",
-    "vip_clients": "VIP-Kunden"
-  },
   "my_plans": "Meine Pläne",
   "no_plans_found": "Keine Pläne gefunden",
   "period_type": "Periodentyp",
@@ -44,7 +35,6 @@
   },
   "plan_created": "Plan erstellt",
   "plan_deleted": "Der Plan wurde gelöscht.",
-  "plan_name": "Planname",
   "plans_management": "Planverwaltung",
   "refresh": "Aktualisieren",
   "role": "Rolle",

@@ -14,7 +14,7 @@
     },
     "loading": "Carregando serviços...",
     "title": "Inscreva-se para o procedimento",
-    "validation": "Por favor preencha todos os campos"
+    "validation": "até data favor preencha todos os campos"
   },
   "features": {
     "items": {
@@ -27,12 +27,12 @@
         "title": "Materiais premium"
       },
       "schedule": {
-        "description": "Trabalhamos 7 dias por semana com horários convenientes para gravação",
+        "description": "Trabalhamos 7 dias até data semana com horários convenientes para gravação",
         "title": "Horário conveniente"
       }
     },
     "subtitle": "Oferecemos o melhor serviço na indústria da beleza",
-    "title": "Por que nos escolher"
+    "title": "até data que nos escolher"
   },
   "gallery": {
     "items": {

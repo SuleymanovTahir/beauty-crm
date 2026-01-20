@@ -470,28 +470,28 @@ export default function Analytics() {
           {/* Conversion Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <p className="text-gray-600 text-sm mb-2">{t('analytics:funnel.conversion.visitor_to_engaged', 'Visitor -> Engaged')}</p>
+              <p className="text-gray-600 text-sm mb-2">{t('analytics:funnel.conversion.visitor_to_engaged')}</p>
               <div className="flex items-center justify-between">
                 <h3 className="text-3xl text-gray-900">{funnel.conversion_rates.visitor_to_engaged}%</h3>
                 {funnel.conversion_rates.visitor_to_engaged >= 60 ? <TrendingUp className="w-6 h-6 text-green-600" /> : <TrendingDown className="w-6 h-6 text-yellow-600" />}
               </div>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <p className="text-gray-600 text-sm mb-2">{t('analytics:funnel.conversion.engaged_to_booking', 'Engaged -> Started Booking')}</p>
+              <p className="text-gray-600 text-sm mb-2">{t('analytics:funnel.conversion.engaged_to_booking')}</p>
               <div className="flex items-center justify-between">
                 <h3 className="text-3xl text-gray-900">{funnel.conversion_rates.engaged_to_booking}%</h3>
                 {funnel.conversion_rates.engaged_to_booking >= 50 ? <TrendingUp className="w-6 h-6 text-green-600" /> : <TrendingDown className="w-6 h-6 text-yellow-600" />}
               </div>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <p className="text-gray-600 text-sm mb-2">{t('analytics:funnel.conversion.booking_to_booked', 'Started -> Booked')}</p>
+              <p className="text-gray-600 text-sm mb-2">{t('analytics:funnel.conversion.booking_to_booked')}</p>
               <div className="flex items-center justify-between">
                 <h3 className="text-3xl text-gray-900">{funnel.conversion_rates.booking_to_booked}%</h3>
                 {funnel.conversion_rates.booking_to_booked >= 50 ? <TrendingUp className="w-6 h-6 text-green-600" /> : <TrendingDown className="w-6 h-6 text-yellow-600" />}
               </div>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <p className="text-gray-600 text-sm mb-2">{t('analytics:funnel.conversion.booked_to_completed', 'Booked -> Completed')}</p>
+              <p className="text-gray-600 text-sm mb-2">{t('analytics:funnel.conversion.booked_to_completed')}</p>
               <div className="flex items-center justify-between">
                 <h3 className="text-3xl text-gray-900">{funnel.conversion_rates.booked_to_completed}%</h3>
                 {funnel.conversion_rates.booked_to_completed >= 90 ? <TrendingUp className="w-6 h-6 text-green-600" /> : <TrendingDown className="w-6 h-6 text-yellow-600" />}
@@ -502,16 +502,16 @@ export default function Analytics() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
             <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-2">
               <Filter className="w-6 h-6 text-pink-600" />
-              {t('analytics:funnel_chart', 'Funnel Visualization')}
+              {t('analytics:funnel_chart')}
             </h2>
 
             <div className="space-y-4">
               {[
-                { name: t('analytics:funnel.stages.visitors', 'Visitors'), value: funnel.visitors, color: 'bg-blue-500', desc: t('analytics:funnel.desc.visitors', 'Site/Social Visitors') },
-                { name: t('analytics:funnel.stages.engaged', 'Engaged'), value: funnel.engaged, color: 'bg-cyan-500', desc: t('analytics:funnel.desc.engaged', 'Showed Interest') },
-                { name: t('analytics:funnel.stages.started_booking', 'Started Booking'), value: funnel.started_booking, color: 'bg-green-500', desc: t('analytics:funnel.desc.started_booking', 'Opened Booking Form') },
-                { name: t('analytics:funnel.stages.booked', 'Booked'), value: funnel.booked, color: 'bg-amber-500', desc: t('analytics:funnel.desc.booked', 'Completed Booking') },
-                { name: t('analytics:funnel.stages.completed', 'Completed'), value: funnel.completed, color: 'bg-pink-500', desc: t('analytics:funnel.desc.completed', 'Service Completed') }
+                { name: t('analytics:funnel.stages.visitors'), value: funnel.visitors, color: 'bg-blue-500', desc: t('analytics:funnel.desc.visitors') },
+                { name: t('analytics:funnel.stages.engaged'), value: funnel.engaged, color: 'bg-cyan-500', desc: t('analytics:funnel.desc.engaged') },
+                { name: t('analytics:funnel.stages.started_booking'), value: funnel.started_booking, color: 'bg-green-500', desc: t('analytics:funnel.desc.started_booking') },
+                { name: t('analytics:funnel.stages.booked'), value: funnel.booked, color: 'bg-amber-500', desc: t('analytics:funnel.desc.booked') },
+                { name: t('analytics:funnel.stages.completed'), value: funnel.completed, color: 'bg-pink-500', desc: t('analytics:funnel.desc.completed') }
               ].map((stage, index, arr) => {
                 const maxValue = Math.max(...arr.map(s => s.value));
                 const percentage = (stage.value / (maxValue || 1)) * 100;

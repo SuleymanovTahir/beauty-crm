@@ -1,14 +1,13 @@
 {
-  "currency": "AED",
-  "haircutsStyling": "Haircuts & Styling",
-  "manicurePedicure": "Manicure & Pedicure",
+  "haircutsStyling": "Стрижки и укладки",
+  "manicurePedicure": "Маникюр и педикюр",
   "master": "Мастер",
   "mastersDescription": "Наши профессиональные мастера с многолетним опытом работы готовы предоставить вам услуги высочайшего качества",
   "minutes": "мин",
   "ourMasters": "Наши мастера",
   "portfolioTitle": "Портфолио",
-  "service1Desc": "Professional nail care services.",
-  "service2Desc": "Expert hair styling and treatments.",
-  "service3Desc": "Professional makeup and brow styling.",
-  "service3Title": "Makeup & Brows"
+  "service1Desc": "Профессиональные услуги по уходу за ногтями.",
+  "service2Desc": "Профессиональная укладка и уход за волосами.",
+  "service3Desc": "Профессиональный макияж и оформление бровей.",
+  "service3Title": "Макияж и брови"
 }

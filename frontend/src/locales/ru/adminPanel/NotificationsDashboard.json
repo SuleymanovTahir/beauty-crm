@@ -41,9 +41,9 @@
         },
         "select_filter": "Выберите фильтр",
         "select_tier": "Выберите уровень",
-        "service_filter": "Услуга/Процедура",
+        "service_filter": "услуга/Процедура",
         "service_hint": "Уведомление получат клиенты, записанные на эту услугу",
-        "service_placeholder": "Введите название или ID услуги",
+        "service_placeholder": "Введите название или идентификатор услуги",
         "start_date": "Дата начала",
         "target_segment": "Целевой сегмент",
         "tiers": {
@@ -68,7 +68,7 @@
         "title_placeholder": "Заголовок уведомления",
         "type": "Тип",
         "types": {
-          "email": "Email",
+          "email": "Электронная почта",
           "push": "Push-уведомление",
           "sms": "SMS"
         }
@@ -80,16 +80,11 @@
     "description": "Все отправленные и запланированные уведомления",
     "filters": {
       "all": "Все",
-      "email": "Email",
-      "push": "Push",
+      "email": "Электронная почта",
+      "push": "Толкать",
       "sms": "SMS"
     },
     "scheduled": "Запланировано",
-    "statuses": {
-      "failed": "Не удалось",
-      "pending": "В ожидании",
-      "sent": "Отправлено"
-    },
     "table": {
       "date": "Дата",
       "recipients": "Получатели",
@@ -105,7 +100,7 @@
   "stats": {
     "email_sent": "Email отправлено",
     "push_sent": "Push отправлено",
-    "sms_sent": "SMS отправлено",
+    "sms_sent": "СМС отправлено",
     "total_sent": "Всего отправлено"
   },
   "subtitle": "Управление и отправка уведомлений клиентам",
@@ -123,8 +118,8 @@
     "template_saved": "Шаблон успешно сохранен"
   },
   "types": {
-    "email": "Email",
-    "push": "Push",
+    "email": "Электронная почта",
+    "push": "Толкать",
     "sms": "SMS"
   }
 }

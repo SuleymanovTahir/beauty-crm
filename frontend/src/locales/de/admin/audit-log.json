@@ -1,12 +1,14 @@
 {
   "clear_all": "Alles löschen",
   "clear_confirm": "Sind Sie sicher, dass Sie das Audit-Protokoll vollständig löschen möchten? Diese Aktion ist irreversibel.",
-  "delete_batch_confirm": "Ausgewählte buchungen ({{count}}) dauerhaft löschen?",
+  "delete_batch_confirm_one": "",
+  "delete_batch_confirm_few": "",
+  "delete_batch_confirm_many": "",
+  "delete_batch_confirm_other": "",
   "delete_confirm": "Soll ich diesen buchung dauerhaft löschen?",
   "delete_selected": "Ausgewählte entfernen",
   "details": {
-    "error_msg": "Fehlermeldung",
-    "ip": "IP",
+    "ip": "ИП",
     "new_data": "Neue Daten",
     "no_data": "Keine Daten verfügbar",
     "old_data": "Alte Daten",

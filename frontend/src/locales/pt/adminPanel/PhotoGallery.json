@@ -9,30 +9,14 @@
     "upload": "Download"
   },
   "card": {
-    "delete": "Excluir",
     "featured": "Favoritos",
     "toggle_featured": "Alternar favoritos",
-    "uploaded_by": "Enviado por {{nome}}",
+    "uploaded_by": "Enviado até data {{nome}}",
     "views": "visualizações"
-  },
-  "categories": {
-    "coloring": "Coloração",
-    "haircut": "Cortes de cabelo",
-    "makeup": "Inventar",
-    "manicure": "Manicure",
-    "other": "Outro",
-    "styling": "Deitado"
   },
   "dialogs": {
     "delete": {
       "confirm": "Tem certeza de que deseja excluir esta foto?"
-    },
-    "preview": {
-      "category": "Categoria: {{categoria}}",
-      "created_at": "{{date}}",
-      "title": "Visualização da foto",
-      "uploaded_by": "Enviado por {{nome}}",
-      "views": "{{contar}} visualizações"
     },
     "upload": {
       "description": "Adicione uma nova foto à galeria",
@@ -41,13 +25,11 @@
         "before_after": "Antes/Depois",
         "before_photo": "Foto \"Antes\"",
         "category": "Categoria",
-        "choose_file": "Selecione o arquivo",
         "client": "Cliente",
         "client_hint": "A foto ficará disponível na galeria do cliente",
         "description": "Descrição",
         "description_placeholder": "Descrição da foto",
         "photo": "Foto",
-        "select_category": "Selecione a categoria",
         "select_client": "Selecione o cliente",
         "single_photo": "Uma foto",
         "title": "Nome",

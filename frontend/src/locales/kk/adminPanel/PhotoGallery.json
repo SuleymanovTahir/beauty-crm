@@ -9,30 +9,14 @@
     "upload": "Жүктеп алу"
   },
   "card": {
-    "delete": "Жою",
     "featured": "Таңдаулылар",
     "toggle_featured": "Таңдаулыларды ауыстырып қосу",
     "uploaded_by": "{{name}} жүктеп салған",
     "views": "көріністер"
   },
-  "categories": {
-    "coloring": "Бояу",
-    "haircut": "Шаш қию",
-    "makeup": "Татуласу",
-    "manicure": "Маникюр",
-    "other": "Басқа",
-    "styling": "Төсеу"
-  },
   "dialogs": {
     "delete": {
       "confirm": "Бұл фотосуретті шынымен жойғыңыз келе ме?"
-    },
-    "preview": {
-      "category": "Санат: {{category}}",
-      "created_at": "{{date}}",
-      "title": "Фотосуретті алдын ала қарау",
-      "uploaded_by": "{{name}} жүктеп салған",
-      "views": "{{count}} көріністер"
     },
     "upload": {
       "description": "Галереяға жаңа фотосурет қосыңыз",
@@ -41,13 +25,11 @@
         "before_after": "Бұрын/Кейін",
         "before_photo": "«Бұрын» фотосы",
         "category": "Санат",
-        "choose_file": "Файлды таңдаңыз",
         "client": "Клиент",
         "client_hint": "Фотосурет клиенттің галереясында қолжетімді болады",
         "description": "Сипаттама",
         "description_placeholder": "Фотосурет сипаттамасы",
         "photo": "Фото",
-        "select_category": "Санатты таңдаңыз",
         "select_client": "Клиентті таңдаңыз",
         "single_photo": "Бір фото",
         "title": "Аты",

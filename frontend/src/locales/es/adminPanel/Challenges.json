@@ -41,11 +41,6 @@
     "completions": "Terminación",
     "total_participants": "Total de participantes"
   },
-  "statuses": {
-    "active": "Activo",
-    "completed": "Terminado",
-    "upcoming": "Próximo"
-  },
   "subtitle": "Crear y gestionar desafíos de participación",
   "title": "Desafíos",
   "toasts": {

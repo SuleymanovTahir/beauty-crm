@@ -17,22 +17,23 @@ def track_visitor(ip: str, user_agent: str, page_url: str) -> bool:
         conn = get_db_connection()
         c = conn.cursor()
         
-        # Check if this IP was already tracked in the last 10 seconds
+        # Check if this IP was already tracked on THIS SAME URL in the last 10 seconds
         # This prevents duplicate records from simultaneous API calls
         # but allows tracking section transitions (hero -> services -> gallery)
+        # when the URL changes (including anchors)
         c.execute("""
             SELECT id FROM visitor_tracking 
             WHERE ip_address = %s 
+            AND page_url = %s
             AND visited_at > NOW() - INTERVAL '10 seconds'
             LIMIT 1
-        """, (ip,))
+        """, (ip, page_url))
         
         recent_visit = c.fetchone()
         
         if recent_visit:
-            # Already tracked recently, skip
+            # Already tracked recently on the same page/section, skip
             conn.close()
-            log_info(f"Skipping duplicate visit from {ip} (tracked within last 10 sec)", "visitor_tracking")
             return False
         
         # Get location data

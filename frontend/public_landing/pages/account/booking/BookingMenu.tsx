@@ -1,11 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useCurrency } from '../../../../src/hooks/useSalonSettings';
-import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Scissors, User, Calendar, Check, ChevronRight, X, Edit } from 'lucide-react';
 import { motion } from 'motion/react';
 import { getLocalizedName } from '../../../../src/utils/i18nUtils';
-import { DEFAULT_VALUES } from '../../utils/constants';
 
 interface BookingMenuProps {
     bookingState: any;
@@ -62,7 +60,7 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
             icon: User,
             title: t('menu.professional', 'Professional'),
             description: isProfessionalComplete
-                ? (bookingState.professional?.full_name || bookingState.professional?.username || t('professional.anyAvailable', 'Flexible Match'))
+                ? (bookingState.professional?.full_name || bookingState.professional?.username || t('professional.anyAvailable'))
                 : t('menu.selectProfessional', 'Select master'),
             isComplete: isProfessionalComplete,
             step: 'professional',
@@ -90,8 +88,8 @@ export function BookingMenu({ bookingState, onNavigate, onReset, totalDuration, 
                         <Scissors size={24} />
                     </div>
                     <div>
-                        <h2 className="font-bold text-sm text-gray-900">{salonSettings?.name || DEFAULT_VALUES.DEFAULT_SALON_NAME}</h2>
-                        <p className="text-xs text-gray-500 mt-0.5">{salonSettings?.address || DEFAULT_VALUES.DEFAULT_ADDRESS}</p>
+                        <h2 className="font-bold text-sm text-gray-900">{salonSettings?.name || ''}</h2>
+                        <p className="text-xs text-gray-500 mt-0.5">{salonSettings?.address || ''}</p>
                     </div>
                 </div>
                 {(isServicesComplete || isProfessionalComplete || isDateTimeComplete) && (

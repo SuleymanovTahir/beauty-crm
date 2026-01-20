@@ -8,33 +8,21 @@
   "client": "Клиент",
   "clientContracts": "Клиентские",
   "contractNumber": "№ Договора",
-  "contractTypes": {
-    "employment": "Трудовой договор",
-    "rental": "Аренда места",
-    "service": "Оказание услуг"
-  },
   "createdAt": "Дата создания",
-  "createFirst": "Создайте первый договор с клиентом",
-  "delete": "Удалить",
-  "editButton": "Редактировать",
   "editContract": "Редактировать договор",
   "errors": {
-    "deleteError": "Error deleting contract",
-    "saveError": "Error saving contract",
-    "sendError": "Error sending contract",
-    "updateError": "Failed to update status"
+    "deleteError": "Ошибка удаления контракта.",
+    "saveError": "Ошибка сохранения контракта.",
+    "sendError": "Ошибка отправки контракта",
+    "updateError": "Не удалось обновить статус"
   },
   "form": {
     "cancel": "Отмена",
-    "contractDate": "Дата договора",
     "contractType": "Тип договора",
-    "notes": "Примечания",
     "save": "Сохранить",
-    "selectClient": "Выберите клиента",
-    "terms": "Условия договора"
+    "selectClient": "Выберите клиента"
   },
   "internalContracts": "Внутренние",
-  "loading": "Загрузка...",
   "manage_stages": "Колонки",
   "manageTypes": "Типы договоров",
   "messages": {
@@ -46,24 +34,17 @@
   },
   "noContracts": "Договоров пока нет",
   "search_placeholder": "Поиск по номеру или клиенту...",
-  "sendButton": "Отправить",
   "sendDialog": {
-    "email": "Email",
-    "instagram": "Instagram",
+    "email": "Электронная почта",
+    "instagram": "Инстаграм",
     "method": "Способ отправки",
     "recipient": "Получатель",
     "sendButton": "Отправить",
-    "telegram": "Telegram",
+    "telegram": "Телеграмма",
     "title": "Отправить договор",
     "whatsapp": "WhatsApp"
   },
   "status": "Статус",
-  "statuses": {
-    "cancelled": "Отменен",
-    "draft": "Черновик",
-    "sent": "Отправлен",
-    "signed": "Подписан"
-  },
   "subtitle": "Управление договорами с клиентами",
   "title": "Договоры",
   "type": "Тип",
@@ -86,13 +67,8 @@
       "updated": "Тип обновлен"
     },
     "name": "Название",
-    "system": "System",
-    "systemProtected": "System protected",
+    "system": "Система",
+    "systemProtected": "Система защищена",
     "title": "Типы договоров"
-  },
-  "types": {
-    "product": "Продукт",
-    "service": "Услуга",
-    "subscription": "Подписка"
   }
 }

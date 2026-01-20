@@ -19,7 +19,7 @@
     "cashback_rate": "Cashback (%)",
     "description": "Verwalten globaler Treueeinstellungen",
     "expiration_days": "Gültigkeitsdauer der Punkte (Tage)",
-    "expiration_hint": "Die gesammelten Punkte verfallen nach der angegebenen Anzahl von Tagen.",
+    "expiration_hint": "Die gesammelten Punkte verfallen nach der angegebenen Anzahl datum bis Tagen.",
     "points_per_unit": "Punkte für 1 Einheit. Währungen",
     "title": "Einstellungen"
   },
