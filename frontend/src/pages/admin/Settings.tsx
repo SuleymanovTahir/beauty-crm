@@ -2992,7 +2992,7 @@ export default function AdminSettings() {
                       </div>
                       {holidayForm.master_exceptions.length > 0 && (
                         <p className="text-xs text-green-600 mt-2">
-                          ✓ {holidayForm.master_exceptions.length} {t('settings:masters_selected', 'master(s) selected')}
+                          ✓ {t('settings:masters_selected', { count: holidayForm.master_exceptions.length })}
                         </p>
                       )}
                     </div>

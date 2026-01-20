@@ -43,10 +43,26 @@
   "next": "Вперед",
   "of": "из",
   "page": "Страница",
+  "pagination": {
+    "page_x_of_y": "Страница {{current}} из {{total}}",
+    "showing_x_to_y_of_z": "Показано {{from}}-{{to}} из {{total}}"
+  },
   "peak_hours": "Пиковые часы",
   "peak_hours_subtitle": "Активность по времени суток",
   "prev": "Назад",
   "refresh": "Обновить",
+  "section": {
+    "about": "О нас",
+    "booking": "Запись",
+    "faq": "FAQ",
+    "gallery": "Галерея",
+    "hero": "Hero",
+    "map-section": "Карта",
+    "portfolio": "Портфолио",
+    "services": "Услуги",
+    "team": "Команда",
+    "testimonials": "Отзывы"
+  },
   "sections_subtitle": "Популярные разделы страницы",
   "select_both_dates": "Выберите обе даты",
   "showing": "Показано",
@@ -64,21 +80,5 @@
   "visitors_count_one": "{{count}} посетитель",
   "visitors_count_few": "{{count}} посетителя",
   "visitors_count_many": "{{count}} посетителей",
-  "visitors_count_other": "{{count}} посетителей",
-  "section": {
-    "hero": "Hero",
-    "about": "О нас",
-    "services": "Услуги",
-    "portfolio": "Портфолио",
-    "team": "Команда",
-    "testimonials": "Отзывы",
-    "gallery": "Галерея",
-    "faq": "FAQ",
-    "map-section": "Карта",
-    "booking": "Запись"
-  },
-  "pagination": {
-    "page_x_of_y": "Страница {{current}} из {{total}}",
-    "showing_x_to_y_of_z": "Показано {{from}}-{{to}} из {{total}}"
-  }
+  "visitors_count_other": "{{count}} посетителей"
 }

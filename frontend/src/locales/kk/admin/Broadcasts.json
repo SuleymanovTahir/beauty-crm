@@ -90,6 +90,8 @@
   "target_role": "Мақсатты рөл (міндетті емес)",
   "telegram_id_hint": "@userinfobot сайтынан біле аласыз",
   "telegram_limit_hint": "Ұсынылатын {{count}} таңбаға дейін (Telegram)",
+  "telegram_limit_hint_one": "",
+  "telegram_limit_hint_other": "",
   "title": "Жаппай жіберулер",
   "total_recipients": "Жалпы алушылар",
   "type_created": "Жазылым түрі жасалды",

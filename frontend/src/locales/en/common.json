@@ -61,6 +61,8 @@
   },
   "cancel": "Cancel",
   "characters_count": "characters",
+  "characters_count_one": "",
+  "characters_count_other": "",
   "chat": {
     "attach_file": "Attach file",
     "attach_image": "Attach an image",

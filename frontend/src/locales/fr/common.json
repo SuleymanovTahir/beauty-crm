@@ -61,6 +61,9 @@
   },
   "cancel": "Annuler",
   "characters_count": "personnages",
+  "characters_count_one": "",
+  "characters_count_many": "",
+  "characters_count_other": "",
   "chat": {
     "attach_file": "Joindre un fichier",
     "attach_image": "Joindre une image",

@@ -61,6 +61,8 @@
   },
   "cancel": "रद्द करना",
   "characters_count": "अक्षर",
+  "characters_count_one": "",
+  "characters_count_other": "",
   "chat": {
     "attach_file": "फ़ाइल जोड़ें",
     "attach_image": "एक छवि संलग्न करें",
