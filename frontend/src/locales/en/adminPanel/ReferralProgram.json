@@ -6,8 +6,8 @@
   "current_settings": {
     "edit": "Edit",
     "min_purchase": "Minimum purchase price: <strong>{{amount}} {{currency}}</strong>",
-    "referred_bonus": "",
-    "referrer_bonus": "",
+    "referred_bonus": "Friend bonus: <strong>{{points}} points</strong>",
+    "referrer_bonus": "Invitee bonus: <strong>{{points}} points</strong>",
     "title": "Current bonus configuration"
   },
   "dialogs": {

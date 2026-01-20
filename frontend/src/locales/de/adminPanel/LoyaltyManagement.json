@@ -68,8 +68,8 @@
     "failed_load": "Daten konnten nicht geladen werden",
     "failed_save": "Fehler beim Speichern",
     "failed_update": "Fehler beim Update",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
+    "points_adjusted_add": "{{count}} Punkte vergeben",
+    "points_adjusted_deduct": "{{count}} Punkte abgeschrieben",
     "rule_deleted": "Regel erfolgreich gelöscht",
     "rule_saved": "Regel gespeichert",
     "tier_updated": "Leveldaten aktualisiert"

@@ -431,6 +431,10 @@ export default function Clients() {
     setShowDeleteDialog(true);
   };
 
+  const notifyImportSuccess = (count: number) => {
+    toast.success(`✅ ${t('imported_count', { count })}`);
+  };
+
   const handleConfirmDelete = async () => {
     if (!clientToDelete) return;
 
@@ -531,7 +535,7 @@ export default function Clients() {
       setImportResults(response.results);
 
       if (response.results.success > 0) {
-        toast.success(`✅ Импортировано ${response.results.success} клиентов`);
+        notifyImportSuccess(response.results.success);
         await loadClients(); // Обновляем список
       }
 
@@ -704,7 +708,7 @@ export default function Clients() {
               className="flex-[2] min-w-[100px] h-[42px] px-3 bg-[#1e293b] text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-[#334155] active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md shadow-gray-200"
             >
               <Plus className="w-4 h-4" />
-              <span>Добавить</span>
+              <span>{t('add')}</span>
             </button>
 
             <button
@@ -718,7 +722,7 @@ export default function Clients() {
                 }`}
             >
               <Users className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
-              <span className="truncate">Фильтры</span>
+              <span className="truncate">{t('filters')}</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
             </button>
 
@@ -734,7 +738,7 @@ export default function Clients() {
                   }`}
               >
                 <Upload className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showActions ? 'text-blue-500' : 'text-gray-400'}`} />
-                <span className="truncate">Опции</span>
+                <span className="truncate">{t('options')}</span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showActions ? 'rotate-180' : ''}`} />
               </button>
             )}
@@ -743,7 +747,7 @@ export default function Clients() {
               onClick={handleRefresh}
               disabled={loading}
               className="w-[42px] h-[42px] bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center transition-all shadow-sm shrink-0"
-              title="Обновить"
+              title={t('refresh')}
             >
               <RefreshCw className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -759,7 +763,7 @@ export default function Clients() {
                   className="h-[42px] w-full bg-white text-gray-700 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold hover:bg-gray-50 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm"
                 >
                   <Upload className="w-4 h-4 text-gray-400" />
-                  <span>Импорт</span>
+                  <span>{t('import')}</span>
                 </button>
 
                 <div className="w-full">
@@ -778,7 +782,7 @@ export default function Clients() {
             <div className="pt-4 border-t border-gray-50 animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Статус</span>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">{t('status')}</span>
                   <StatusSelect
                     value={statusFilter}
                     onChange={setStatusFilter}
@@ -790,7 +794,7 @@ export default function Clients() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Температура</span>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">{t('temperature')}</span>
                   <TemperatureFilter
                     value={temperatureFilter}
                     onChange={setTemperatureFilter}
@@ -798,7 +802,7 @@ export default function Clients() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Период</span>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">{t('period')}</span>
                   <PeriodFilterSelect
                     value={period}
                     onChange={setPeriod}
@@ -1429,9 +1433,9 @@ export default function Clients() {
                     💡 {t('import_example_structure')}:
                   </p>
                   <div className="bg-white p-2 rounded border border-gray-300 font-mono text-xs">
-                    <div className="text-gray-600">Имя, Телефон, Email</div>
-                    <div className="text-gray-800">Анна, +971501234567, anna@example.com</div>
-                    <div className="text-gray-800">Елена, +971507654321,</div>
+                    <div className="text-gray-600">{t('import_example_columns')}</div>
+                    <div className="text-gray-800">{t('import_example_row_1')}</div>
+                    <div className="text-gray-800">{t('import_example_row_2')}</div>
                   </div>
                 </div>
 
@@ -1509,7 +1513,7 @@ export default function Clients() {
                     ) : (
                       <>
                         <Upload className="w-4 h-4 mr-2" />
-                        Загрузить
+                        {t('upload')}
                       </>
                     )}
                   </Button>

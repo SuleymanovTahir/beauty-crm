@@ -1,9 +1,9 @@
 {
   "clear_all": "Limpar tudo",
   "clear_confirm": "Tem certeza de que deseja limpar completamente o log de auditoria? Esta ação é irreversível.",
+  "delete_batch_confirm_one": "Excluir {{count}} reserva selecionada?",
   "delete_batch_confirm_few": "Excluir {{count}} reservas selecionadas?",
   "delete_batch_confirm_many": "Excluir {{count}} reservas selecionadas?",
-  "delete_batch_confirm_one": "Excluir {{count}} reserva selecionada?",
   "delete_batch_confirm_other": "Excluir reservas {{count}}?",
   "delete_confirm": "Devo excluir permanentemente esta reserva?",
   "delete_selected": "Remover selecionado",

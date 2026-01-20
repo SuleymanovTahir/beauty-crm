@@ -19,6 +19,51 @@
 | **В ожидании** | Pending | قيد الانتظار | Күтуде | Ausstehend | En espera | En attente | Pendente | लंबित |
 | **Мастер** | Stylist/Master | خبير | Маман/Шебер | Spezialist | Especialista | Spécialiste | Especialista | विशेषज्ञ |
 
+## [2026-01-22] Public Landing & Booking Improvements
+- 🌍 **Localization & i18n Fixes:**
+  - **Refined Navigation:** Shortened navigation labels for better display ("Наши работы" → "Работы", "Наша команда" → "Команда", "Часто задаваемые вопросы" → "FAQ").
+  - **Booking Form Localization:** Added missing translations for service categories (Brows, Facial, etc.) and enabled localized service names in the dropdown.
+  - **Translator Dictionary:** Added "Традиционная марокканская баня" (Traditional Moroccan Bath) to `beauty_translator.py` to prevent future mistranslations ("Сервиз").
+- 📱 **Phone Input & Validation:**
+  - **Stability:** Fixed `PhoneInputWithSearch` so it doesn't unexpectedly switch countries when typing digits.
+  - **Validation Feedback:** Added visual error highlighting to the phone input and fixed `{{count}}` variable interpolation in error toasts.
+  - **UX Improvement:** Disabled automatic '+' and dial code prefilling in the input field since the dial code is already visible in the country selector.
+  - **Formatting:** Implemented automatic dash insertions (e.g., 888-33-33 or 999-123-45-67) for better readability during input.
+  - **Search:** Enhanced country search to strictly match the *beginning* of the dialing code (e.g., searching "7" now correctly shows only Russia and Kazakhstan, excluding countries like Andorra +376).
+- ⚡ **Booking Flow Optimization:**
+  - **Precise Selection:** Changed landing page service buttons to select the *specific service* instead of the entire category, resolving user confusion.
+  - **Hash Handling:** Updated `BookingSection` to handle both `category` and `service` parameters from the URL.
+- 🧹 **Backend & Build Fixes:**
+  - **Vite Build Error:** Resolved duplicate `alt` attribute on logo image in `LoginPage.tsx`.
+  - **Import Fix:** Corrected backend import in `public.py` (`get_service_by_id` → `get_service`) to resolve 500 Internal Server Error during booking creation.
+  - **Code Cleanup:** Removed unused `useEffect` and other dead code components.
+
+## [2026-01-20] Bookings Component Deep Refactoring & Styling Standardization
+- 🎨 **Zero-Color TSX Policy (Bookings):**
+  - **Comprehensive Style Migration:** Removed 100% of inline styles from `Bookings.tsx`. All layout, positioning, and visual logic is now centralized in `Bookings.css`.
+  - **Hex Color Elimination:** Erased all hardcoded hex and named colors from the component. Colors are now managed via CSS classes and project variables (e.g., `.stat-yellow`, `.icon-emerald`, `.text-error`).
+  - **Dynamic Status Styling:** Implemented a robust CSS variable system for booking statuses (`--badge-bg`, `--badge-color`), allowing data-driven colors while maintaining clean TSX.
+- 🏗️ **Structural Improvements:**
+  - **Standardized Modals:** Refactored Import/Export and Add Booking dialogs to use a shared modal system with sticky headers/footers and independent scroll areas.
+  - **UI Consistency:** Created a set of reusable CSS utilities for stats icons, action buttons, avatars, and search dropdowns within the `Bookings` context.
+  - **Fixed Visual Bugs:** Corrected table row alignment, avatar fallback display, and empty state presentation.
+- 🧹 **Code Hygiene & Reliability:**
+  - **JSX Syntax Fixes:** Resolved multiple critical JSX parsing errors (missing closing tags, unexpected tokens) introduced during previous edits.
+  - **Unused Code Removal:** Sanitized imports and variables, ensuring a lean and maintainable component structure.
+  - **Responsive Layout:** Ensured that the new CSS structure maintains a polished look across different screen sizes.
+
+## [2026-01-20] Localization 2.2: Zero-Color Policy & Dynamic Key Precision
+- 🎨 **Zero-Color TSX Policy:**
+  - **CSS Variables SSOT:** Migrated all hardcoded hex/named colors from `TemperatureFilter`, `TemperatureSelect`, and `Bookings` components to centralized CSS variables in `globals.css`.
+  - **Component Refactoring:** Performed a massive refactor of `BotSettings.tsx`, moving 1500+ lines of inline styles into a dedicated `BotSettings.css` file.
+  - **Consistency:** Ensured all UI status indicators (hot/warm/cold, system alerts) follow the project's design system tokens.
+- 🌍 **Translation Logic Fixes:**
+  - **Dynamic Key Support:** Re-engineered `getValueByKey` in `i18n-sync.js` and `check-translations.js` to correctly handle keys containing dots (essential for `dynamic.json`).
+  - **Verification:** Ran a full translation integrity check across all 9 languages, confirming 0 missing or empty values.
+- 🧹 **Data Integrity:**
+  - **Missing RU Terms:** Added missing "звёзд" translation to `publiccontent.json` to ensure reviews display correctly across all languages.
+  - **Code Hygiene:** Removed unused variables and imports across modified components.
+
 # CHANGELOG - Память проекта Beauty CRM
 
 ## [2026-01-20] Localization 2.1: Hyper-Speed & Global Consistency

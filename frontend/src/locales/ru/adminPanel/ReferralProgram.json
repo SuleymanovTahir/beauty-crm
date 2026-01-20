@@ -6,8 +6,8 @@
   "current_settings": {
     "edit": "Редактировать",
     "min_purchase": "Минимальная стоимость покупки: <strong>{{amount}} {{currency}}</strong>",
-    "referred_bonus": "",
-    "referrer_bonus": "",
+    "referred_bonus": "Бонус друга: <strong>{{points}} баллов</strong>",
+    "referrer_bonus": "Бонус пригласившего: <strong>{{points}} баллов</strong>",
     "title": "Текущая конфигурация бонусов"
   },
   "dialogs": {

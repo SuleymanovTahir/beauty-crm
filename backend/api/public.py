@@ -116,10 +116,10 @@ def create_public_booking(data: BookingCreate, background_tasks: BackgroundTasks
 
     try:
         # Получаем названия услуг по их ID
-        from db.services import get_service_by_id
+        from db.services import get_service
         service_names = []
         for service_id in data.service_ids:
-            service = get_service_by_id(service_id)
+            service = get_service(service_id)
             if service:
                 service_names.append(service.get('name', f'Service #{service_id}'))
         

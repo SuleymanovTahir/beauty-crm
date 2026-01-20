@@ -15,7 +15,7 @@
     "title": "Multiplicateurs de catégorie"
   },
   "config": {
-    "cashback_hint": "Exemple : {{percent}}% de cashback ({{points}} points pour chaque {{unit}} dépensé)",
+    "cashback_hint": "Exemple\u00a0: {{percent}}% de cashback ({{points}} points pour chaque {{unit}} dépensé)",
     "cashback_rate": "Remise en argent (%)",
     "description": "Paramètres de base du programme de fidélité",
     "expiration_days": "Durée de validité des points (jours)",
@@ -23,7 +23,7 @@
     "points_per_unit": "points pour 1 unité. devises",
     "title": "Paramètres globaux"
   },
-  "confirm_delete_rule": "Êtes-vous sûr de vouloir supprimer cette règle ?",
+  "confirm_delete_rule": "Êtes-vous sûr de vouloir supprimer cette règle\u00a0?",
   "dialogs": {
     "adjust_points": {
       "client_email": "E-mail du client",
@@ -68,8 +68,8 @@
     "failed_load": "Échec du chargement des données",
     "failed_save": "Erreur lors de l'réservation",
     "failed_update": "Erreur lors de la mise à jour",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
+    "points_adjusted_add": "{{count}} points attribués",
+    "points_adjusted_deduct": "{{count}} points annulés",
     "rule_deleted": "Règle supprimée avec succès",
     "rule_saved": "Règle enregistrée",
     "tier_updated": "Données de niveau mises à jour"

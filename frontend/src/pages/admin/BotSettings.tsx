@@ -14,6 +14,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { useNavigate, useParams } from 'react-router-dom';
+import './BotSettings.css';
 
 import BotAnalyticsWidget from '../../components/admin/BotAnalyticsWidget';
 
@@ -271,9 +272,9 @@ export default function BotSettings() {
 
   if (loading) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
+      <div className="loading-container">
         <div className="inline-block animate-spin w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full"></div>
-        <p style={{ marginTop: '1rem', color: '#6b7280' }}>{t('loading')}</p>
+        <p className="loading-text">{t('loading')}</p>
       </div>
     );
   }
@@ -281,11 +282,11 @@ export default function BotSettings() {
   // Проверка доступа к настройкам бота (только директор)
   if (!userPermissions.canEditSettings) {
     return (
-      <div style={{ padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-        <div style={{ backgroundColor: 'white', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb', padding: '3rem', maxWidth: '28rem', textAlign: 'center' }}>
+      <div className="access-denied-container">
+        <div className="access-denied-card">
           <Shield style={{ width: '4rem', height: '4rem', color: '#d1d5db', margin: '0 auto 1rem' }} />
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>{t('access_denied')}</h2>
-          <p style={{ color: '#6b7280' }}>
+          <h2 className="access-denied-title">{t('access_denied')}</h2>
+          <p className="access-denied-message">
             {t('access_denied_message')}
           </p>
         </div>
@@ -294,46 +295,23 @@ export default function BotSettings() {
   }
 
   return (
-    <div style={{ padding: '1.5rem', backgroundColor: '#f9fafb', minHeight: '100vh' }}>
+    <div className="bot-settings-container">
       {/* Header */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <div className="bot-settings-header">
+        <h1 className="bot-settings-title">
           <Bot size={32} className="text-pink-600" /> {t('title')}
         </h1>
-        <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+        <p className="bot-settings-subtitle">
           {t('full_configuration_of_ai_assistant')}
         </p>
       </div>
 
-      {/* Tabs */}
-      <div style={{
-        backgroundColor: '#fff',
-        borderRadius: '0.75rem',
-        border: '1px solid #e5e7eb',
-        marginBottom: '1.5rem',
-        padding: '0.5rem',
-        display: 'flex',
-        gap: '0.5rem',
-        overflowX: 'auto'
-      }}>
+      <div className="bot-settings-tabs">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => handleTabChange(tab.id)}
-            style={{
-              padding: '0.625rem 1rem',
-              backgroundColor: activeTab === tab.id ? '#ede9fe' : 'transparent',
-              border: activeTab === tab.id ? '2px solid #a78bfa' : '2px solid transparent',
-              borderRadius: '0.5rem',
-              color: activeTab === tab.id ? '#6b21a8' : '#6b7280',
-              fontWeight: activeTab === tab.id ? '600' : '500',
-              fontSize: '0.875rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              whiteSpace: 'nowrap'
-            }}
+            className={`bot-settings-tab-button ${activeTab === tab.id ? 'bot-settings-tab-button-active' : ''}`}
           >
             {tab.icon}
             {tab.label}
@@ -341,62 +319,41 @@ export default function BotSettings() {
         ))}
       </div>
 
-      {/* Content */}
-      <div style={{
-        backgroundColor: '#fff',
-        borderRadius: '0.75rem',
-        border: '1px solid #e5e7eb',
-        padding: '2rem'
-      }}>
+      <div className="bot-settings-content">
         {/* GENERAL TAB */}
         {activeTab === 'general' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="flex flex-col gap-[1.5rem]">
+            <h2 className="bot-settings-section-title">
               <Layout size={20} className="text-blue-600" /> {t('main_information')}
             </h2>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+              <label className="bot-settings-label">
                 {t('bot_name')}
               </label>
               <input
                 type="text"
                 value={settings.bot_name}
                 onChange={(e) => setSettings({ ...settings, bot_name: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box'
-                }}
+                className="bot-settings-input"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.75rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Flag size={18} className="text-pink-500" /> {t('response_style') || 'Стиль ответов бота'}
               </label>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+              <div className="grid grid-cols-3 gap-[1rem]">
                 {/* Concise / Деловой */}
                 <div
                   onClick={() => setSettings({ ...settings, response_style: 'concise' })}
-                  style={{
-                    padding: '1.25rem',
-                    border: settings.response_style === 'concise' ? '2px solid #8b5cf6' : '2px solid #e5e7eb',
-                    borderRadius: '0.75rem',
-                    cursor: 'pointer',
-                    backgroundColor: settings.response_style === 'concise' ? '#f5f3ff' : '#fff',
-                    textAlign: 'center',
-                    transition: 'all 0.2s',
-                  }}
+                  className={`bot-settings-style-card ${settings.response_style === 'concise' ? 'bot-settings-style-card-active' : ''}`}
                 >
-                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⚡</div>
-                  <div style={{ fontWeight: '600', color: '#111827', marginBottom: '0.25rem' }}>
+                  <div className="text-[2rem] mb-[0.5rem]">⚡</div>
+                  <div className="font-[600] text-[#111827] mb-[0.25rem]">
                     {t('style_concise')}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                  <div className="text-[0.75rem] text-[#6b7280]">
                     {t('style_concise_desc')}
                   </div>
                 </div>
@@ -404,21 +361,13 @@ export default function BotSettings() {
                 {/* Adaptive / Умный */}
                 <div
                   onClick={() => setSettings({ ...settings, response_style: 'adaptive' })}
-                  style={{
-                    padding: '1.25rem',
-                    border: settings.response_style === 'adaptive' ? '2px solid #8b5cf6' : '2px solid #e5e7eb',
-                    borderRadius: '0.75rem',
-                    cursor: 'pointer',
-                    backgroundColor: settings.response_style === 'adaptive' ? '#f5f3ff' : '#fff',
-                    textAlign: 'center',
-                    transition: 'all 0.2s',
-                  }}
+                  className={`bot-settings-style-card ${settings.response_style === 'adaptive' ? 'bot-settings-style-card-active' : ''}`}
                 >
-                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🧠</div>
-                  <div style={{ fontWeight: '600', color: '#111827', marginBottom: '0.25rem' }}>
+                  <div className="text-[2rem] mb-[0.5rem]">🧠</div>
+                  <div className="font-[600] text-[#111827] mb-[0.25rem]">
                     {t('style_adaptive')}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                  <div className="text-[0.75rem] text-[#6b7280]">
                     {t('style_adaptive_desc')}
                   </div>
                 </div>
@@ -426,26 +375,18 @@ export default function BotSettings() {
                 {/* Detailed / Дружелюбный */}
                 <div
                   onClick={() => setSettings({ ...settings, response_style: 'detailed' })}
-                  style={{
-                    padding: '1.25rem',
-                    border: settings.response_style === 'detailed' ? '2px solid #8b5cf6' : '2px solid #e5e7eb',
-                    borderRadius: '0.75rem',
-                    cursor: 'pointer',
-                    backgroundColor: settings.response_style === 'detailed' ? '#f5f3ff' : '#fff',
-                    textAlign: 'center',
-                    transition: 'all 0.2s',
-                  }}
+                  className={`bot-settings-style-card ${settings.response_style === 'detailed' ? 'bot-settings-style-card-active' : ''}`}
                 >
-                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💬</div>
-                  <div style={{ fontWeight: '600', color: '#111827', marginBottom: '0.25rem' }}>
+                  <div className="text-[2rem] mb-[0.5rem]">💬</div>
+                  <div className="font-[600] text-[#111827] mb-[0.25rem]">
                     {t('style_detailed')}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                  <div className="text-[0.75rem] text-[#6b7280]">
                     {t('style_detailed_desc')}
                   </div>
                 </div>
               </div>
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.75rem', whiteSpace: 'pre-line' }}>
+              <p className="bot-settings-helper-text">
                 {t('style_descriptions')}
               </p>
             </div>
@@ -465,106 +406,67 @@ export default function BotSettings() {
         {/* PERSONALITY TAB */}
         {activeTab === 'personality' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 className="bot-settings-section-title">
               <Sparkles size={20} className="text-yellow-500" /> {t('personality_of_the_bot')}
             </h2>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+              <label className="bot-settings-label">
                 {t('character_traits')}
               </label>
               <textarea
                 value={settings.personality_traits}
                 onChange={(e) => setSettings({ ...settings, personality_traits: e.target.value })}
                 rows={5}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <MessageSquare size={18} className="text-blue-400" /> {t('greeting')}
               </label>
               <textarea
                 value={settings.greeting_message}
                 onChange={(e) => setSettings({ ...settings, greeting_message: e.target.value })}
                 rows={3}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <MessageSquare size={18} className="text-gray-400" /> {t('farewell')}
               </label>
               <textarea
                 value={settings.farewell_message}
                 onChange={(e) => setSettings({ ...settings, farewell_message: e.target.value })}
                 rows={2}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Activity size={18} className="text-purple-500" /> {t('communication_style')}
               </label>
               <textarea
                 value={settings.communication_style}
                 onChange={(e) => setSettings({ ...settings, communication_style: e.target.value })}
                 rows={4}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Smile size={18} className="text-yellow-500" /> {t('emoji')}
               </label>
               <input
                 type="text"
                 value={settings.emoji_usage}
                 onChange={(e) => setSettings({ ...settings, emoji_usage: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box'
-                }}
+                className="bot-settings-input"
               />
             </div>
           </div>
@@ -573,32 +475,24 @@ export default function BotSettings() {
         {/* PRICING TAB */}
         {activeTab === 'pricing' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 className="bot-settings-section-title">
               <DollarSign size={20} className="text-green-600" /> {t('working_with_prices')}
             </h2>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+              <label className="bot-settings-label">
                 {t('premium_price_explanation')}
               </label>
               <textarea
                 value={settings.price_explanation}
                 onChange={(e) => setSettings({ ...settings, price_explanation: e.target.value })}
                 rows={3}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <BookOpen size={18} className="text-blue-500" /> {t('price_response_template')}
               </label>
               <textarea
@@ -619,87 +513,55 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Shield size={18} className="text-pink-600" /> {t('high_price_justification')}
               </label>
               <textarea
                 value={settings.premium_justification}
                 onChange={(e) => setSettings({ ...settings, premium_justification: e.target.value })}
                 rows={5}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Zap size={18} className="text-yellow-500" /> {t('fomo_messages')} ({t('separate_with_pipe')})
               </label>
               <textarea
                 value={settings.fomo_messages}
                 onChange={(e) => setSettings({ ...settings, fomo_messages: e.target.value })}
                 rows={4}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Sparkles size={18} className="text-purple-500" /> {t('upsell_techniques')} ({t('separate_with_pipe')})
               </label>
               <textarea
                 value={settings.upsell_techniques}
                 onChange={(e) => setSettings({ ...settings, upsell_techniques: e.target.value })}
                 rows={4}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <MessageSquare size={18} className="text-blue-500" /> {t('booking_message')}
               </label>
               <textarea
                 value={settings.booking_redirect_message}
                 onChange={(e) => setSettings({ ...settings, booking_redirect_message: e.target.value })}
                 rows={6}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+              <label className="bot-settings-label">
                 {t('booking_time_logic')}
               </label>
               <textarea
@@ -717,13 +579,13 @@ export default function BotSettings() {
                   fontFamily: 'monospace'
                 }}
               />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+              <p className="bot-settings-helper-text">
                 {t('booking_time_logic_description')}
               </p>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+              <label className="bot-settings-label">
                 {t('booking_data_collection')}
               </label>
               <textarea
@@ -741,12 +603,12 @@ export default function BotSettings() {
                   fontFamily: 'monospace'
                 }}
               />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+              <p className="bot-settings-helper-text">
                 {t('booking_data_collection_description')}
               </p>
             </div>
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+              <label className="bot-settings-label">
                 {t('booking_availability_instructions')}
               </label>
               <textarea
@@ -764,7 +626,7 @@ export default function BotSettings() {
                   fontFamily: 'monospace'
                 }}
               />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+              <p className="bot-settings-helper-text">
                 {t('booking_availability_instructions_description')}
               </p>
             </div>
@@ -774,207 +636,127 @@ export default function BotSettings() {
         {/* OBJECTIONS TAB */}
         {activeTab === 'objections' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 className="bot-settings-section-title">
               <Shield size={20} className="text-red-500" /> {t('working_with_objections')}
             </h2>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <DollarSign size={18} className="text-red-500" /> {t('expensive')}
               </label>
               <textarea
                 value={settings.objection_expensive}
                 onChange={(e) => setSettings({ ...settings, objection_expensive: e.target.value })}
                 rows={6}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <HelpCircle size={18} className="text-blue-500" /> {t('think_about_it')}
               </label>
               <textarea
                 value={settings.objection_think_about_it}
                 onChange={(e) => setSettings({ ...settings, objection_think_about_it: e.target.value })}
                 rows={5}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Bell size={18} className="text-orange-500" /> {t('no_time')}
               </label>
               <textarea
                 value={settings.objection_no_time}
                 onChange={(e) => setSettings({ ...settings, objection_no_time: e.target.value })}
                 rows={6}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <AlertCircle size={18} className="text-red-400" /> {t('afraid_of_pain')}
               </label>
               <textarea
                 value={settings.objection_pain}
                 onChange={(e) => setSettings({ ...settings, objection_pain: e.target.value })}
                 rows={5}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <HelpCircle size={18} className="text-blue-400" /> {t('not_sure_about_the_result')}
               </label>
               <textarea
                 value={settings.objection_result_doubt}
                 onChange={(e) => setSettings({ ...settings, objection_result_doubt: e.target.value })}
                 rows={6}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Layout size={18} className="text-orange-500" /> {t('cheaper_elsewhere')}
               </label>
               <textarea
                 value={settings.objection_cheaper_elsewhere}
                 onChange={(e) => setSettings({ ...settings, objection_cheaper_elsewhere: e.target.value })}
                 rows={7}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <MapPin size={18} className="text-red-500" /> {t('too_far')}
               </label>
               <textarea
                 value={settings.objection_too_far}
                 onChange={(e) => setSettings({ ...settings, objection_too_far: e.target.value })}
                 rows={6}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Users size={18} className="text-pink-500" /> {t('consult_with_husband')}
               </label>
               <textarea
                 value={settings.objection_consult_husband}
                 onChange={(e) => setSettings({ ...settings, objection_consult_husband: e.target.value })}
                 rows={6}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <User size={18} className="text-green-500" /> {t('first_time')}
               </label>
               <textarea
                 value={settings.objection_first_time}
                 onChange={(e) => setSettings({ ...settings, objection_first_time: e.target.value })}
                 rows={7}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <AlertCircle size={18} className="text-gray-400" /> {t('if_not_liked')}
               </label>
               <textarea
                 value={settings.objection_not_happy}
                 onChange={(e) => setSettings({ ...settings, objection_not_happy: e.target.value })}
                 rows={7}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
           </div>
@@ -983,149 +765,93 @@ export default function BotSettings() {
         {/* COMMUNICATION TAB */}
         {activeTab === 'communication' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 className="bot-settings-section-title">
               <MessageCircle size={20} className="text-blue-500" /> {t('communication_and_emotions')}
             </h2>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Heart size={18} className="text-pink-500" /> {t('emotional_triggers')}
               </label>
               <textarea
                 value={settings.emotional_triggers}
                 onChange={(e) => setSettings({ ...settings, emotional_triggers: e.target.value })}
                 rows={6}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Sparkles size={18} className="text-yellow-500" /> {t('social_proof')}
               </label>
               <textarea
                 value={settings.social_proof_phrases}
                 onChange={(e) => setSettings({ ...settings, social_proof_phrases: e.target.value })}
                 rows={6}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <User size={18} className="text-blue-500" /> {t('personalization_rules')}
               </label>
               <textarea
                 value={settings.personalization_rules}
                 onChange={(e) => setSettings({ ...settings, personalization_rules: e.target.value })}
                 rows={5}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Smile size={18} className="text-green-500" /> {t('emotional_responses')}
               </label>
               <textarea
                 value={settings.emotional_responses}
                 onChange={(e) => setSettings({ ...settings, emotional_responses: e.target.value })}
                 rows={5}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Mic size={18} className="text-blue-500" /> {t('voice_message_response')}
               </label>
               <textarea
                 value={settings.voice_message_response}
                 onChange={(e) => setSettings({ ...settings, voice_message_response: e.target.value })}
                 rows={3}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <XCircle size={18} className="text-red-500" /> {t('anti_patterns')} ({t('what_not_to_do')})
               </label>
               <textarea
                 value={settings.anti_patterns}
                 onChange={(e) => setSettings({ ...settings, anti_patterns: e.target.value })}
                 rows={6}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <BookOpen size={18} className="text-blue-500" /> {t('pre_booking_data_collection')}
               </label>
               <textarea
                 value={settings.pre_booking_data_collection}
                 onChange={(e) => setSettings({ ...settings, pre_booking_data_collection: e.target.value })}
                 rows={4}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+              <p className="bot-settings-helper-text">
                 {t('pre_booking_data_collection_explanation')}
               </p>
             </div>
@@ -1133,7 +859,7 @@ export default function BotSettings() {
             {/* ← ad_campaign_detection идет после этого */}
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Users size={18} className="text-pink-500" /> {t('manager_consultation_prompt')}
               </label>
               <textarea
@@ -1151,30 +877,22 @@ export default function BotSettings() {
                   fontFamily: 'monospace'
                 }}
               />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+              <p className="bot-settings-helper-text">
                 {t('manager_consultation_prompt_description')}
               </p>
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Target size={18} className="text-purple-500" /> {t('ad_campaign_detection')}
               </label>
               <textarea
                 value={settings.ad_campaign_detection}
                 onChange={(e) => setSettings({ ...settings, ad_campaign_detection: e.target.value })}
                 rows={6}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+              <p className="bot-settings-helper-text">
                 {t('ad_campaign_detection_explanation')}
               </p>
             </div>
@@ -1184,107 +902,67 @@ export default function BotSettings() {
         {/* ADVANCED TAB */}
         {activeTab === 'advanced' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 className="bot-settings-section-title">
               <Zap size={20} className="text-yellow-500" /> {t('advanced_settings')}
             </h2>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <CheckCircle size={18} className="text-green-500" /> {t('algorithm_actions')}
               </label>
               <textarea
                 value={settings.algorithm_actions}
                 onChange={(e) => setSettings({ ...settings, algorithm_actions: e.target.value })}
                 rows={8}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <MapPin size={18} className="text-red-500" /> {t('location_features')}
               </label>
               <textarea
                 value={settings.location_features}
                 onChange={(e) => setSettings({ ...settings, location_features: e.target.value })}
                 rows={5}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Activity size={18} className="text-blue-500" /> {t('seasonality')}
               </label>
               <textarea
                 value={settings.seasonality}
                 onChange={(e) => setSettings({ ...settings, seasonality: e.target.value })}
                 rows={5}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Info size={18} className="text-indigo-500" /> {t('contextual_rules')}
               </label>
               <textarea
                 value={settings.contextual_rules}
                 onChange={(e) => setSettings({ ...settings, contextual_rules: e.target.value })}
                 rows={5}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <BarChart3 size={18} className="text-green-600" /> {t('success_metrics')}
               </label>
               <textarea
                 value={settings.success_metrics}
                 onChange={(e) => setSettings({ ...settings, success_metrics: e.target.value })}
                 rows={5}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
           </div>
@@ -1293,7 +971,7 @@ export default function BotSettings() {
         {/* SAFETY TAB */}
         {activeTab === 'safety' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 className="bot-settings-section-title">
               <Shield size={24} />
               {t('safety_and_ethics')}
             </h2>
@@ -1318,42 +996,26 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <ShieldCheck size={18} className="text-blue-600" /> {t('safety_rules')}
               </label>
               <textarea
                 value={settings.safety_guidelines}
                 onChange={(e) => setSettings({ ...settings, safety_guidelines: e.target.value })}
                 rows={10}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <AlertCircle size={18} className="text-red-600" /> {t('emergency_situations')}
               </label>
               <textarea
                 value={settings.emergency_situations}
                 onChange={(e) => setSettings({ ...settings, emergency_situations: e.target.value })}
                 rows={6}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
           </div>
@@ -1362,50 +1024,33 @@ export default function BotSettings() {
         {/* EXAMPLES TAB */}
         {activeTab === 'examples' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 className="bot-settings-section-title">
               <Layout size={20} className="text-yellow-600" /> {t('examples_and_dialogues')}
             </h2>
 
             <div>
-              <label style={{ display: 'flex', fontWeight: '600', color: '#374151', marginBottom: '0.5rem', alignItems: 'center', gap: '0.5rem' }}>
+              <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <CheckCircle size={18} className="text-green-500" /> {t('good_responses')}
               </label>
               <textarea
                 value={settings.example_good_responses}
                 onChange={(e) => setSettings({ ...settings, example_good_responses: e.target.value })}
                 rows={8}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="bot-settings-textarea"
               />
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+              <label className="bot-settings-label">
                 💬 {t('dialogues')}
               </label>
               <textarea
                 value={settings.example_dialogues}
                 onChange={(e) => setSettings({ ...settings, example_dialogues: e.target.value })}
                 rows={15}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical',
-                  fontFamily: 'monospace'
-                }}
+                className="bot-settings-textarea-mono"
               />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+              <p className="bot-settings-helper-text">
                 {t('real_dialogues_for_training')}
               </p>
             </div>
@@ -1415,14 +1060,14 @@ export default function BotSettings() {
         {/* NOTIFICATIONS TAB */}
         {activeTab === 'notifications' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 className="bot-settings-section-title">
               <Bell size={20} className="text-pink-600" /> {t('notifications_and_reminders_settings')}
             </h2>
 
             {/* 1. Abandoned Cart */}
-            <div style={{ padding: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.75rem', backgroundColor: '#f9fafb' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div className="bot-settings-card">
+              <div className="bot-settings-card-header">
+                <h3 className="bot-settings-card-title">
                   <Activity size={18} className="text-yellow-500" /> {t('abandoned_cart')}
                 </h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -1436,34 +1081,34 @@ export default function BotSettings() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
+              <div className="bot-settings-card-grid">
                 <div>
-                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>{t('delay_minutes')}</label>
+                  <label className="bot-settings-small-label">{t('delay_minutes')}</label>
                   <input
                     type="number"
                     value={settings.abandoned_cart_delay}
                     onChange={(e) => setSettings({ ...settings, abandoned_cart_delay: parseInt(e.target.value) || 30 })}
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
+                    className="bot-settings-small-input"
                   />
-                  <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>{t('abandoned_cart_hint')}</p>
+                  <p className="bot-settings-helper-text">{t('abandoned_cart_hint')}</p>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>{t('message_template')}</label>
+                  <label className="bot-settings-small-label">{t('message_template')}</label>
                   <textarea
                     value={settings.abandoned_cart_message}
                     onChange={(e) => setSettings({ ...settings, abandoned_cart_message: e.target.value })}
                     placeholder={t('default_template_hint')}
                     rows={3}
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
+                    className="bot-settings-small-input"
                   />
                 </div>
               </div>
             </div>
 
             {/* 2. Feedback Request */}
-            <div style={{ padding: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.75rem', backgroundColor: '#f9fafb' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div className="bot-settings-card">
+              <div className="bot-settings-card-header">
+                <h3 className="bot-settings-card-title">
                   <Star size={18} className="text-yellow-400" /> {t('feedback_request')}
                 </h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -1477,35 +1122,35 @@ export default function BotSettings() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
+              <div className="bot-settings-card-grid">
                 <div>
-                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>{t('delay_hours')}</label>
+                  <label className="bot-settings-small-label">{t('delay_hours')}</label>
                   <input
                     type="number"
                     value={settings.post_visit_delay}
                     onChange={(e) => setSettings({ ...settings, post_visit_delay: parseInt(e.target.value) || 24 })}
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
+                    className="bot-settings-small-input"
                   />
-                  <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>{t('feedback_hint')}</p>
+                  <p className="bot-settings-helper-text">{t('feedback_hint')}</p>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>{t('message_template')}</label>
+                  <label className="bot-settings-small-label">{t('message_template')}</label>
                   <textarea
                     value={settings.post_visit_feedback_message}
                     onChange={(e) => setSettings({ ...settings, post_visit_feedback_message: e.target.value })}
                     placeholder={t('default_template_hint')}
                     rows={3}
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
+                    className="bot-settings-small-input"
                   />
                 </div>
               </div>
             </div>
 
             {/* 3. Retention */}
-            <div style={{ padding: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.75rem', backgroundColor: '#f9fafb', opacity: 0.7 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Activity size={18} className="text-blue-500" /> {t('client_retention')} <span style={{ fontSize: '0.7rem', backgroundColor: '#e5e7eb', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>{t('beta')}</span>
+            <div className="bot-settings-card" style={{ opacity: 0.7 }}>
+              <div className="bot-settings-card-header">
+                <h3 className="bot-settings-card-title">
+                  <Activity size={18} className="text-blue-500" /> {t('client_retention')} <span className="bot-settings-beta-tag">{t('beta')}</span>
                 </h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <input
@@ -1518,25 +1163,25 @@ export default function BotSettings() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
+              <div className="bot-settings-card-grid">
                 <div>
-                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>{t('delay_days')}</label>
+                  <label className="bot-settings-small-label">{t('delay_days')}</label>
                   <input
                     type="number"
                     value={settings.return_client_delay}
                     onChange={(e) => setSettings({ ...settings, return_client_delay: parseInt(e.target.value) || 45 })}
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
+                    className="bot-settings-small-input"
                   />
-                  <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>{t('retention_hint')}</p>
+                  <p className="bot-settings-helper-text">{t('retention_hint')}</p>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>{t('message_template')}</label>
+                  <label className="bot-settings-small-label">{t('message_template')}</label>
                   <textarea
                     value={settings.return_client_message}
                     onChange={(e) => setSettings({ ...settings, return_client_message: e.target.value })}
                     placeholder={t('retention_placeholder')}
                     rows={3}
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
+                    className="bot-settings-small-input"
                   />
                 </div>
               </div>
@@ -1546,30 +1191,11 @@ export default function BotSettings() {
         )}
       </div>
 
-      {/* Floating Save Button */}
-      <div style={{
-        position: 'fixed',
-        bottom: '2rem',
-        right: '2rem',
-        zIndex: 50
-      }}>
+      <div className="bot-settings-save-bar">
         <button
           onClick={handleSave}
           disabled={saving}
-          style={{
-            padding: '1rem 2rem',
-            backgroundColor: saving ? '#9ca3af' : '#2563eb',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '9999px',
-            fontWeight: '600',
-            cursor: saving ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-            fontSize: '1rem'
-          }}
+          className="bot-settings-save-button"
         >
           <Save size={20} />
           {saving ? t('saving') : t('save_all')}

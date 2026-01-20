@@ -16,7 +16,7 @@
   "client_details_description": "Detaillierte Informationen und Verwaltung bis Kundendatensätzen",
   "client_list": "Kundenliste",
   "client_updated": "Kundendaten aktualisiert",
-  "clients": "",
+  "clients": "kunden",
   "close": "Schließen",
   "confirm_delete_client": "Sind Sie sicher, dass Sie diesen Kunden löschen möchten?",
   "confirm_delete_stage": "Sind Sie sicher, dass Sie diese Phase löschen möchten?",

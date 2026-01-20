@@ -24,19 +24,19 @@ export function TemperatureSelect({ value, onChange }: TemperatureSelectProps) {
             case 'hot':
                 return {
                     label: t('hot'),
-                    icon: <Flame className="w-4 h-4" style={{ color: '#ef4444', fill: '#ef4444' }} />,
+                    icon: <Flame className="w-4 h-4" style={{ color: 'var(--temp-hot)', fill: 'var(--temp-hot)' }} />,
                     color: 'text-gray-900'
                 };
             case 'warm':
                 return {
                     label: t('warm'),
-                    icon: <Sun className="w-4 h-4" style={{ color: '#f97316' }} />,
+                    icon: <Sun className="w-4 h-4" style={{ color: 'var(--temp-warm)' }} />,
                     color: 'text-gray-900'
                 };
             case 'cold':
                 return {
                     label: t('cold'),
-                    icon: <Snowflake className="w-4 h-4" style={{ color: '#06b6d4', fill: '#06b6d4' }} />,
+                    icon: <Snowflake className="w-4 h-4" style={{ color: 'var(--temp-cold)', fill: 'var(--temp-cold)' }} />,
                     color: 'text-gray-900'
                 };
             default:
@@ -64,15 +64,15 @@ export function TemperatureSelect({ value, onChange }: TemperatureSelectProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-32 z-[100]">
                 <DropdownMenuItem onClick={() => onChange('hot')} className="gap-2 cursor-pointer">
-                    <Flame className="w-4 h-4" style={{ color: '#ef4444', fill: '#ef4444' }} />
+                    <Flame className="w-4 h-4" style={{ color: 'var(--temp-hot)', fill: 'var(--temp-hot)' }} />
                     <span>{t('hot')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onChange('warm')} className="gap-2 cursor-pointer">
-                    <Sun className="w-4 h-4" style={{ color: '#f97316' }} />
+                    <Sun className="w-4 h-4" style={{ color: 'var(--temp-warm)' }} />
                     <span>{t('warm')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onChange('cold')} className="gap-2 cursor-pointer">
-                    <Snowflake className="w-4 h-4" style={{ color: '#06b6d4', fill: '#06b6d4' }} />
+                    <Snowflake className="w-4 h-4" style={{ color: 'var(--temp-cold)', fill: 'var(--temp-cold)' }} />
                     <span>{t('cold')}</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>

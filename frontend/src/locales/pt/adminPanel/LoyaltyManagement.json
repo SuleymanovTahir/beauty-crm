@@ -68,8 +68,8 @@
     "failed_load": "Falha ao carregar dados",
     "failed_save": "Erro ao salvar",
     "failed_update": "Erro durante atualização",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
+    "points_adjusted_add": "{{count}} pontos concedidos",
+    "points_adjusted_deduct": "{{count}} pontos anulados",
     "rule_deleted": "Regra excluída com sucesso",
     "rule_saved": "Regra salva",
     "tier_updated": "Dados de nível atualizados"

@@ -21,13 +21,13 @@
     "success_mock": "Profil erfolgreich erhalten!",
     "welcome": "Willkommen"
   },
+  "booking_info": "Informationen aufzeichnen",
   "bookingDesc": "Wählen Sie einen passenden Zeitpunkt für Ihren Besuch",
   "bookingError": "Fehler beim Erstellen des Datensatzes. Bitte versuchen Sie es später noch einmal.",
   "bookingSuccess": "Bewerbung erfolgreich verschickt! Wir werden Sie zur Bestätigung kontaktieren.",
   "bookingTag": "Online-Registrierung",
   "bookingTitlePart1": "Melden Sie sich an",
   "bookingTitlePart2": "für einen Termin",
-  "booking_info": "Informationen aufzeichnen",
   "common": {
     "cancel": "Später",
     "change": "Ändern",
@@ -86,6 +86,8 @@
   "newBooking": "Buchung",
   "noServicesFound": "Keine Dienste gefunden.",
   "phone_too_short": "Die Telefonnummer muss mindestens {{count}} Ziffern enthalten, einschließlich der Landesvorwahl",
+  "phone_too_short_one": "",
+  "phone_too_short_other": "",
   "privacyAgreementStart": "Durch Anklicken des Buttons erklären Sie sich damit einverstanden",
   "privacyPolicy": "datenschutzrichtlinie",
   "professional": {
@@ -104,9 +106,9 @@
     "notFound": "Dienste nicht gefunden",
     "search": "Nach Dienstleistungen suchen...",
     "selected": "ausgewählt",
+    "service_one": "service",
     "service_few": "dienstleistungen",
     "service_many": "dienstleistungen",
-    "service_one": "service",
     "total": "Gesamt"
   },
   "submitBooking": "Senden Sie eine Anfrage",

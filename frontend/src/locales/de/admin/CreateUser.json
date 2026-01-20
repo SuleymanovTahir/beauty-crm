@@ -11,9 +11,9 @@
   "full_name_placeholder": "Hans Müller",
   "full_name_required": "Name erforderlich",
   "no_position_found": "Position nicht gefunden",
-  "password_hint": "",
+  "password_hint": "Mindestens {{count}} Zeichen",
   "password_label": "Passwort *",
-  "password_min_length": "",
+  "password_min_length": "Mindest {{count}} Zeichen",
   "password_placeholder": "••••••",
   "password_required": "Passwort erforderlich",
   "position_hint": "Wählen Sie eine oder mehrere Positionen aus",
@@ -33,9 +33,9 @@
   "search_position": "Suche nach einer Stelle...",
   "title": "Erstellen Sie einen Benutzer",
   "user_created": "Benutzer erfolgreich erstellt",
-  "username_hint": "",
+  "username_hint": "Mindestens {{count}} Zeichen",
   "username_label": "Anmelden *",
-  "username_min_length": "",
+  "username_min_length": "Mindest {{count}} Zeichen",
   "username_placeholder": "hans_mueller",
   "username_required": "Eine Anmeldung ist erforderlich"
 }

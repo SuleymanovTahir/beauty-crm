@@ -120,6 +120,9 @@ BEAUTY_SALON_TERMS = {
     'the author': 'по дату', # Избегаем кривого перевода Google
     'pending': 'в ожидании',
     'waiting': 'в ожидании',
+    'moroccan bath': 'традиционная марокканская баня',
+    'moroccan bath service': 'традиционная марокканская баня',
+    'traditional moroccan bath': 'традиционная марокканская баня',
     
     # Русские-Английские пары для принудительного выбора (SSOT)
     'запись': 'booking',
@@ -142,6 +145,7 @@ BEAUTY_SALON_TERMS = {
     'с даты': 'date from',
     'по дату': 'date to',
     'в ожидании': 'pending',
+    'традиционная марокканская баня': 'traditional moroccan bath',
 }
 
 class BeautySalonTranslator:

@@ -25,8 +25,8 @@
     "type": "Méthodologie des objectifs"
   },
   "placeholders": {
-    "description": "Comment le client verra-t-il cette tâche ?",
-    "title": "À exemple : statut Gold"
+    "description": "Comment le client verra-t-il cette tâche\u00a0?",
+    "title": "À exemple\u00a0: statut Gold"
   },
   "stats": {
     "active_challenges": "TÂCHES ACTIVES",

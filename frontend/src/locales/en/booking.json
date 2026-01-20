@@ -86,6 +86,8 @@
   "newBooking": "Booking",
   "noServicesFound": "No services found.",
   "phone_too_short": "The phone number must contain at least {{count}} digits, including the country code",
+  "phone_too_short_one": "",
+  "phone_too_short_other": "",
   "privacyAgreementStart": "By clicking the button, you agree to",
   "privacyPolicy": "privacy policy",
   "professional": {

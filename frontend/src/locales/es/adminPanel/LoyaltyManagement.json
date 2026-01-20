@@ -68,8 +68,8 @@
     "failed_load": "No se pudieron cargar los datos",
     "failed_save": "Error al guardar",
     "failed_update": "Error durante la actualización",
-    "points_adjusted_add": "",
-    "points_adjusted_deduct": "",
+    "points_adjusted_add": "{{count}} puntos otorgados",
+    "points_adjusted_deduct": "{{count}} puntos cancelados",
     "rule_deleted": "Regla eliminada exitosamente",
     "rule_saved": "Regla guardada",
     "tier_updated": "Datos de nivel actualizados"
