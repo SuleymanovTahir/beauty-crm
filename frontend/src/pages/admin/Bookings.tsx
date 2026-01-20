@@ -916,8 +916,8 @@ export default function Bookings() {
                                 period === '7' ? t('common:last_7_days') :
                                   period === '14' ? t('common:last_14_days') :
                                     period === '30' ? t('common:last_month') :
-                                      period === '90' ? t('common:last_3_months', 'За 3 месяца') :
-                                        period === 'custom' ? (dateFrom && dateTo ? `${dateFrom} - ${dateTo}` : 'Свой период') :
+                                      period === '90' ? t('common:last_3_months') :
+                                        period === 'custom' ? (dateFrom && dateTo ? `${dateFrom} - ${dateTo}` : t('common:custom_period')) :
                                           `За ${period} дней`}
                           </span>
                         </div>
@@ -928,12 +928,12 @@ export default function Bookings() {
                       <div className="space-y-3">
                         <div className="grid grid-cols-1 gap-1.5">
                           {[
-                            { id: 'all', label: 'За все время' },
+                            { id: 'all', label: t('common:all_time') },
                             { id: 'today', label: t('common:today') },
                             { id: '7', label: t('common:last_7_days') },
                             { id: '14', label: t('common:last_14_days') },
                             { id: '30', label: t('common:last_month') },
-                            { id: '90', label: t('common:last_3_months', 'За 3 месяца') }
+                            { id: '90', label: t('common:last_3_months') }
                           ].map(opt => (
                             <button
                               key={opt.id}

@@ -498,7 +498,7 @@ export default function Chat() {
         setBotSuggestion(response.suggestion);
         setMessage(response.suggestion);
 
-        toast.info(t('chat:bot_suggestion_title', 'Bot suggests a response ({{count}} messages)', { count: response.unread_count }), {
+        toast.info(t('chat:bot_suggestion_title', { count: response.unread_count }), {
           description: response.suggestion.substring(0, 100) + '...',
           duration: 5000
         });
@@ -555,8 +555,8 @@ export default function Chat() {
         .trim();
 
       if (!fullText) {
-        toast.error(t('chat:error_empty_question', 'Напишите вопрос после команды'), {
-          description: t('chat:example_question', 'Пример: #помоги клиент жалуется на цену'),
+        toast.error(t('chat:error_empty_question'), {
+          description: t('chat:example_question'),
           duration: 5000
         });
         return;
@@ -567,18 +567,18 @@ export default function Chat() {
       const context = lines.slice(1).join('\n').trim();
 
       try {
-        const loadingId = toast.loading(t('chat:analyzing', 'Bot is analyzing the situation...'));
+        const loadingId = toast.loading(t('chat:analyzing'));
         const response = await api.askBotAdvice(question, context);
         toast.dismiss(loadingId);
 
-        toast.success(t('chat:ai_advice_title', 'Совет от AI-бота'), {
+        toast.success(t('chat:ai_advice_title'), {
           description: response.advice,
           duration: 30000,
           action: {
-            label: t('common:copy', 'Копировать'),
+            label: t('common:copy'),
             onClick: () => {
               navigator.clipboard.writeText(response.advice);
-              toast.success(t('common:copied', 'Скопировано!'));
+              toast.success(t('common:copied'));
             }
           }
         });
@@ -587,7 +587,7 @@ export default function Chat() {
         return;
       } catch (err) {
         console.error('Ошибка:', err);
-        toast.error(t('chat:error_advice', 'Error getting advice'), {
+        toast.error(t('chat:error_advice'), {
           description: err instanceof Error ? err.message : t('common:error_occurred')
         });
         return;
@@ -630,7 +630,7 @@ export default function Chat() {
             toast.success(file.name);
           } catch (err) {
             console.error(err);
-            toast.error(`${t('common:error', 'Ошибка')}: ${file.name}`);
+            toast.error(`${t('common:error')}: ${file.name}`);
           }
         }
 
@@ -645,7 +645,7 @@ export default function Chat() {
           const quotedText = replyToMessage.message.length > 50
             ? replyToMessage.message.substring(0, 50) + '...'
             : replyToMessage.message;
-          finalMessage = `${t('chat:reply_to', 'Reply to')}: "${quotedText}"\n\n${message}`;
+          finalMessage = `${t('chat:reply_to')}: "${quotedText}"\n\n${message}`;
         }
 
         await api.sendMessage(selectedClient.id, finalMessage);
@@ -660,19 +660,19 @@ export default function Chat() {
 
         setMessage('');
         setReplyToMessage(null);  // ДОБАВЛЕНО
-        toast.success(t('chat:sent', 'Отправлено'));
+        toast.success(t('chat:sent'));
       }
 
       setTimeout(() => queryClient.invalidateQueries({ queryKey: ['messages', selectedClient.id] }), 1000);
     } catch (err) {
       console.error(err);
-      toast.error(t('chat:error_sending', 'Ошибка отправки'));
+      toast.error(t('chat:error_sending'));
     }
   };
 
   const handleAskBot = async () => {
     if (!botQuestion.trim()) {
-      toast.error(t('chat:enter_question', 'Введите вопрос'));
+      toast.error(t('chat:enter_question'));
       return;
     }
 
@@ -682,7 +682,7 @@ export default function Chat() {
       const recentMessages = selectedMessageIds.size > 0
         ? messages.filter(m => selectedMessageIds.has(m.id!))
           .map(msg => {
-            const sender = msg.sender === 'client' ? t('chat:client', 'Client') : t('chat:manager', 'Manager');
+            const sender = msg.sender === 'client' ? t('chat:client') : t('chat:manager');
             return `${sender}: ${msg.message}`;
           })
           .join('\n')
@@ -692,19 +692,19 @@ export default function Chat() {
         }).join('\n');
 
       const fullContext = botContext.trim()
-        ? `${recentMessages}\n\n${t('chat:additional_context', 'Additional context')}:\n${botContext}`
+        ? `${recentMessages}\n\n${t('chat:additional_context')}:\n${botContext}`
         : recentMessages;
 
       const response = await api.askBotAdvice(botQuestion, fullContext);
 
-      toast.success(t('chat:ai_advice_title', 'Advice from AI-bot'), {
+      toast.success(t('chat:ai_advice_title'), {
         description: response.advice,
         duration: 60000,
         action: {
           label: 'Копировать',
           onClick: () => {
             navigator.clipboard.writeText(response.advice);
-            toast.success(t('common:copied', 'Copied!'));
+            toast.success(t('common:copied'));
           }
         }
       });
@@ -716,8 +716,8 @@ export default function Chat() {
 
     } catch (err) {
       console.error('Error asking bot:', err);
-      toast.error(t('chat:error_getting_advice', 'Error getting advice'), {
-        description: err instanceof Error ? err.message : t('common:unknown_error', 'Unknown error')
+      toast.error(t('chat:error_getting_advice'), {
+        description: err instanceof Error ? err.message : t('common:unknown_error')
       });
     } finally {
       setIsAskingBot(false);
@@ -776,18 +776,18 @@ export default function Chat() {
           </div>
 
           <h2 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">
-            {t('common:access_denied', 'Access Denied')}
+            {t('common:access_denied')}
           </h2>
 
           <p className="text-gray-600 leading-relaxed mb-8">
-            {t('chat:no_permission_msg', 'You do not have permission to view customer chats. Please contact your administrator.')}
+            {t('chat:no_permission_msg')}
           </p>
 
           <button
             onClick={() => window.history.back()}
             className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold text-sm hover:bg-black transition-all shadow-lg hover:shadow-black/20"
           >
-            {t('common:go_back', 'Go Back')}
+            {t('common:go_back')}
           </button>
         </div>
       </div>
@@ -805,8 +805,8 @@ export default function Chat() {
             </div>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <p className="text-gray-900 font-black text-lg tracking-tight">{t('chat:loading_chats', 'Loading Chats...')}</p>
-            <p className="text-gray-400 text-sm font-medium">{t('chat:please_wait', 'Please wait a moment')}</p>
+            <p className="text-gray-900 font-black text-lg tracking-tight">{t('chat:loading_chats')}</p>
+            <p className="text-gray-400 text-sm font-medium">{t('chat:please_wait')}</p>
           </div>
         </div>
       </div>
@@ -859,7 +859,7 @@ export default function Chat() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder={t('common:search', 'Search...')}
+                placeholder={t('common:search')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-11 pr-4 py-2.5 bg-[#F1F5F9] border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500 transition-all"
@@ -1022,10 +1022,10 @@ export default function Chat() {
                 <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-3 mx-4 mb-3">
                   <p className="text-sm font-medium text-blue-900 mb-1 flex items-center gap-1.5">
                     <Smartphone className="w-4 h-4 text-blue-500" />
-                    {t('chat:selection_mode_title', 'Selection mode')}
+                    {t('chat:selection_mode_title')}
                   </p>
                   <p className="text-xs text-blue-700">
-                    {t('chat:selection_mode_desc', 'Click circles next to messages to select them. The bot will only analyze selected messages.')}
+                    {t('chat:selection_mode_desc')}
                   </p>
                 </div>
               )}
@@ -1084,16 +1084,16 @@ export default function Chat() {
                             }`}
                         >
                           {/* Reply Preview */}
-                          {msg.message.includes(t('chat:reply_to', 'Reply to')) && (
+                          {msg.message.includes(t('chat:reply_to')) && (
                             <div className="border-l-2 border-current/20 bg-current/5 px-2.5 py-1.5 mb-2 rounded">
                               <div className="flex items-center gap-1.5 mb-0.5">
                                 <Reply className="w-3 h-3 flex-shrink-0 opacity-70" />
                                 <p className="text-xs font-bold opacity-90">
-                                  {t('chat:reply_to_client', 'Reply to {{name}}', { name: selectedClient?.display_name })}
+                                  {t('chat:reply_to_client', { name: selectedClient?.display_name })}
                                 </p>
                               </div>
                               <p className="text-xs opacity-80 line-clamp-2">
-                                {msg.message.split('\n\n')[0].replace(`${t('chat:reply_to', 'Reply to')}: "`, '').replace('"', '')}
+                                {msg.message.split('\n\n')[0].replace(`${t('chat:reply_to')}: "`, '').replace('"', '')}
                               </p>
                             </div>
                           )}
@@ -1175,7 +1175,7 @@ export default function Chat() {
                                 className="flex items-center gap-2 hover:underline text-inherit"
                               >
                                 <FileText className="w-5 h-5" />
-                                <span className="text-sm font-medium">{t('chat:open_file', 'Open file')}</span>
+                                <span className="text-sm font-medium">{t('chat:open_file')}</span>
                               </a>
                               <div className="mt-2 opacity-70">
                                 <p className="text-xs">
@@ -1188,7 +1188,7 @@ export default function Chat() {
                             </div>
                           ) : (
                             <div className="px-4 py-2">
-                              {msg.message.includes(t('chat:reply_to', 'Reply to')) ? (
+                              {msg.message.includes(t('chat:reply_to')) ? (
                                 <p className="text-sm whitespace-pre-wrap break-words leading-relaxed text-inherit">
                                   {msg.message.split('\n\n')[1] || msg.message}
                                 </p>
@@ -1237,11 +1237,11 @@ export default function Chat() {
                               <button
                                 onClick={() => {
                                   setReplyToMessage(msg);
-                                  toast.info(t('chat:type_reply', '💬 Type your reply'));
+                                  toast.info(t('chat:type_reply'));
                                   setActiveActionMenuId(null);
                                 }}
                                 className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-full transition-all"
-                                title={t('common:reply', 'Reply')}
+                                title={t('common:reply')}
                               >
                                 <Reply className="w-4 h-4" />
                               </button>
@@ -1249,11 +1249,11 @@ export default function Chat() {
                               <button
                                 onClick={() => {
                                   navigator.clipboard.writeText(msg.message);
-                                  toast.success(t('common:copied', 'Copied!'));
+                                  toast.success(t('common:copied'));
                                   setActiveActionMenuId(null);
                                 }}
                                 className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-full transition-all"
-                                title={t('common:copy', 'Copy')}
+                                title={t('common:copy')}
                               >
                                 <Copy className="w-4 h-4" />
                               </button>
@@ -1265,7 +1265,7 @@ export default function Chat() {
                                   setActiveActionMenuId(null);
                                 }}
                                 className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-full transition-all"
-                                title={t('common:forward', 'Forward')}
+                                title={t('common:forward')}
                               >
                                 <Forward className="w-4 h-4" />
                               </button>
@@ -1273,7 +1273,7 @@ export default function Chat() {
                               <button
                                 onClick={() => setActiveActionMenuId(null)}
                                 className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-gray-500 hover:text-red-500 dark:hover:text-red-400 rounded-full transition-all"
-                                title={t('common:like', 'Like')}
+                                title={t('common:like')}
                               >
                                 <Heart className="w-4 h-4" />
                               </button>
@@ -1380,7 +1380,7 @@ export default function Chat() {
                         className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-pink-500 text-white rounded-xl font-bold text-xs hover:from-blue-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-md"
                       >
                         {isLoadingSuggestion ? <Loader className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                        <span>{t('chat:auto_hint', 'AUTO-HINT')}</span>
+                        <span>{t('chat:auto_hint')}</span>
                       </button>
                     )}
                     <button
@@ -1388,7 +1388,7 @@ export default function Chat() {
                       className="flex-1 px-4 py-2.5 bg-gray-900 text-white rounded-xl font-bold text-xs hover:bg-black transition-all flex items-center justify-center gap-2 shadow-md"
                     >
                       <MessageCircle className="w-4 h-4" />
-                      <span>{t('chat:ask_ai', 'ASK AI')}</span>
+                      <span>{t('chat:ask_ai')}</span>
                     </button>
                     <button
                       onClick={() => setShowAIButtons(false)}
@@ -1414,7 +1414,7 @@ export default function Chat() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                           </svg>
                           <span className="text-xs font-bold text-gray-700">
-                            {t('chat:reply_to', 'Reply to')} {replyToMessage.sender === 'client' ? selectedClient?.display_name : t('chat:your_message', 'your message')}
+                            {t('chat:reply_to')} {replyToMessage.sender === 'client' ? selectedClient?.display_name : t('chat:your_message')}
                           </span>
                         </div>
                         <p className="text-xs text-gray-500 truncate italic">
@@ -1436,7 +1436,7 @@ export default function Chat() {
                   <button
                     onClick={() => imageInputRef.current?.click()}
                     className="p-3 bg-white text-gray-500 hover:text-blue-600 rounded-2xl transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-md border border-gray-100"
-                    title={t('chat:attach_image', 'Attach image')}
+                    title={t('chat:attach_image')}
                   >
                     <ImageIcon className="w-6 h-6" strokeWidth={2.2} />
                   </button>
@@ -1474,7 +1474,7 @@ export default function Chat() {
                       type="text"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      placeholder={t('chat:message_placeholder', 'Message...')}
+                      placeholder={t('chat:message_placeholder')}
                       className="w-full bg-transparent border-none py-3 px-2 text-sm text-gray-900 placeholder:text-gray-400 focus:ring-0"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
@@ -1545,7 +1545,7 @@ export default function Chat() {
                     <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 pr-12 shadow-sm">
                       <p className="text-sm text-blue-900 font-medium flex items-center gap-1.5">
                         <Sparkles className="w-4 h-4 text-blue-500" />
-                        {t('chat:bot_advice_title', 'AI bot advice:')}
+                        {t('chat:bot_advice_title')}
                       </p>
                       <p className="text-sm text-blue-700 mt-1">{botSuggestion}</p>
                       <button
@@ -1688,22 +1688,22 @@ export default function Chat() {
                   <textarea
                     value={botContext}
                     onChange={(e) => setBotContext(e.target.value)}
-                    placeholder={t('chat:context_example', 'Example: Client has been with us before but is unhappy with the result')}
+                    placeholder={t('chat:context_example')}
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
                     rows={2}
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    {t('chat:context_hint', 'The last 5 messages will be added automatically')}
+                    {t('chat:context_hint')}
                   </p>
                 </div>
 
                 {/* Подсказки */}
                 <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
-                  <p className="text-xs font-semibold text-blue-900 mb-2">{t('chat:question_examples', 'Question examples:')}</p>
+                  <p className="text-xs font-semibold text-blue-900 mb-2">{t('chat:question_examples')}</p>
                   <ul className="text-xs text-blue-700 space-y-1">
-                    <li>• {t('chat:example_1', 'Client complains about price, what to answer?')}</li>
-                    <li>• {t('chat:example_2', 'How to convince to book right now?')}</li>
-                    <li>• {t('chat:example_3', 'Client is silent for an hour after my answer, what to do?')}</li>
+                    <li>• {t('chat:example_1')}</li>
+                    <li>• {t('chat:example_2')}</li>
+                    <li>• {t('chat:example_3')}</li>
                   </ul>
                 </div>
               </div>
@@ -1718,7 +1718,7 @@ export default function Chat() {
                   }}
                   className="flex-1 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-medium text-sm hover:bg-gray-50 transition-colors"
                 >
-                  {t('common:cancel', 'Cancel')}
+                  {t('common:cancel')}
                 </button>
                 <button
                   onClick={handleAskBot}
@@ -1728,12 +1728,12 @@ export default function Chat() {
                   {isAskingBot ? (
                     <>
                       <Loader className="w-4 h-4 animate-spin" />
-                      <span>{t('chat:thinking', 'Thinking...')}</span>
+                      <span>{t('chat:thinking')}</span>
                     </>
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4" />
-                      <span>{t('chat:get_advice', 'Get advice')}</span>
+                      <span>{t('chat:get_advice')}</span>
                     </>
                   )}
                 </button>
@@ -1783,7 +1783,7 @@ export default function Chat() {
               {/* Clients List */}
               <div className="flex-1 overflow-y-auto">
                 <div className="p-2">
-                  <p className="text-xs font-semibold text-gray-500 uppercase px-3 mb-2">{t('chat:recommended', 'Recommended')}</p>
+                  <p className="text-xs font-semibold text-gray-500 uppercase px-3 mb-2">{t('chat:recommended')}</p>
                   {clients
                     .filter(c =>
                       c.id !== selectedClient?.id &&
@@ -1796,13 +1796,13 @@ export default function Chat() {
                         key={client.id}
                         onClick={async () => {
                           try {
-                            await api.sendMessage(client.id, `${t('chat:forwarded', 'Forwarded')}:\n\n${forwardMessage.message}`);
-                            toast.success(`${t('chat:sent_to', 'Sent to')} ${client.display_name}`);
+                            await api.sendMessage(client.id, `${t('chat:forwarded')}:\n\n${forwardMessage.message}`);
+                            toast.success(`${t('chat:sent_to')} ${client.display_name}`);
                             setShowForwardModal(false);
                             setForwardMessage(null);
                             setForwardSearchTerm('');
                           } catch (err) {
-                            toast.error(t('chat:error_forward', 'Forwarding error'));
+                            toast.error(t('chat:error_forward'));
                           }
                         }}
                         className="w-full p-3 flex items-center gap-3 hover:bg-gray-50 rounded-xl transition-colors"
@@ -1835,7 +1835,7 @@ export default function Chat() {
                   disabled
                   className="w-full px-4 py-2.5 bg-gray-300 text-gray-500 rounded-xl font-medium text-sm cursor-not-allowed"
                 >
-                  {t('common:send', 'Send')}
+                  {t('common:send')}
                 </button>
               </div>
             </div>

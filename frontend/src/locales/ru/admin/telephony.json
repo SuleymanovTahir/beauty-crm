@@ -1,4 +1,5 @@
 {
+  "all": "Все",
   "client_name": "Имя клиента",
   "duration": "Длительность",
   "duration_label": "Длительность",
@@ -30,5 +31,24 @@
   "status_ongoing": "В процессе",
   "telephony": "Телефония",
   "telephony_recordings": "записи телефонии",
-  "type": "Тип"
+  "type": "Тип",
+  "search_placeholder": "Поиск по номеру или имени...",
+  "total_calls": "Всего звонков",
+  "employee": "Сотрудник",
+  "client": "Клиент",
+  "date": "Дата",
+  "recording": "Запись",
+  "loading": "Загрузка звонков...",
+  "no_calls_found": "Звонков не найдено",
+  "period": "Период",
+  "all_time": "Все время",
+  "today": "Сегодня",
+  "week": "Неделя",
+  "month": "Месяц",
+  "from": "От",
+  "to": "До",
+  "call_list_tab": "Список звонков",
+  "recordings_tab": "Записи",
+  "analytics_tab": "Аналитика",
+  "integrations_tab": "Интеграции"
 }

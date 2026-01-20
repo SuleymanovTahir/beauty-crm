@@ -42,6 +42,7 @@ const VisualPositionPicker = ({
     onChange: (x: number, y: number) => void,
     previewAspectRatio: string
 }) => {
+    const { t } = useTranslation('admin/publiccontent');
     const containerRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
 
@@ -93,13 +94,13 @@ const VisualPositionPicker = ({
             <div className="flex justify-between items-center">
                 <Label className="text-sm font-medium">{label}</Label>
                 <span className="text-xs font-mono text-muted-foreground">
-                    Pos: {x}% {y}%
+                    {t('banners.position')}: {x}% {y}%
                 </span>
             </div>
 
             <div className="space-y-1">
                 <div className="text-xs text-muted-foreground mb-1">
-                    Click or drag to select center:
+                    {t('banners.click_to_select_center')}
                 </div>
 
                 <div
@@ -131,7 +132,7 @@ const VisualPositionPicker = ({
                         </>
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
-                            No photo
+                            {t('banners.no_photo')}
                         </div>
                     )}
 
@@ -144,7 +145,7 @@ const VisualPositionPicker = ({
 };
 
 export default function BannersTab() {
-    const { t } = useTranslation(['admin/PublicContent', 'common']);
+    const { t } = useTranslation(['admin/publiccontent', 'common']);
     const [banners, setBanners] = useState<Banner[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -502,7 +503,7 @@ export default function BannersTab() {
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <VisualPositionPicker
-                                                label="Desktop (Большие экраны)"
+                                                label={t('banners.desktop_position')}
                                                 imageUrl={formData.image_url ? `${formData.image_url}?t=${Date.now()}` : ''}
                                                 x={formData.bg_pos_desktop_x}
                                                 y={formData.bg_pos_desktop_y}
@@ -511,7 +512,7 @@ export default function BannersTab() {
                                             />
 
                                             <VisualPositionPicker
-                                                label="Mobile (Телефоны)"
+                                                label={t('banners.mobile_position')}
                                                 imageUrl={formData.image_url ? `${formData.image_url}?t=${Date.now()}` : ''}
                                                 x={formData.bg_pos_mobile_x}
                                                 y={formData.bg_pos_mobile_y}

@@ -1,5 +1,6 @@
 // /frontend/src/pages/admin/PendingUsers.tsx
 import React, { useState, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import { CheckCircle, XCircle, Mail, User, Calendar, Loader, Shield } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { toast } from "sonner";
@@ -16,6 +17,7 @@ interface PendingUser {
 }
 
 export default function PendingUsers() {
+  const { t, i18n } = useTranslation('admin/pending_registrations');
   const [users, setUsers] = useState<PendingUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
@@ -27,7 +29,7 @@ export default function PendingUsers() {
       setUsers(response.users || []);
     } catch (error) {
       console.error("Error loading pending users:", error);
-      toast.error("Ошибка загрузки пользователей");
+      toast.error(t('error_loading_users'));
     } finally {
       setLoading(false);
     }
@@ -40,42 +42,42 @@ export default function PendingUsers() {
   const handleApprove = async (userId: number, fullName: string) => {
     try {
       setActionLoading(userId);
-      const response = await api.approveUser(userId);
+      const response: any = await api.approveUser(userId);
 
       if (response.success) {
-        toast.success(`Пользователь ${fullName} одобрен`);
+        toast.success(t('user_approved', { name: fullName }));
         // Удаляем из списка
         setUsers(users.filter((u) => u.id !== userId));
       } else {
-        toast.error(response.error || "Ошибка одобрения");
+        toast.error(response.error || t('error_approving'));
       }
     } catch (error: any) {
       console.error("Error approving user:", error);
-      toast.error(error.message || "Ошибка одобрения");
+      toast.error(error.message || t('error_approving'));
     } finally {
       setActionLoading(null);
     }
   };
 
   const handleReject = async (userId: number, fullName: string) => {
-    if (!confirm(`Вы уверены, что хотите отклонить пользователя ${fullName}?`)) {
+    if (!confirm(t('confirm_reject_user', { name: fullName }))) {
       return;
     }
 
     try {
       setActionLoading(userId);
-      const response = await api.rejectUser(userId);
+      const response: any = await api.rejectUser(userId);
 
       if (response.success) {
-        toast.success(`Пользователь ${fullName} отклонен`);
+        toast.success(t('user_rejected', { name: fullName }));
         // Удаляем из списка
         setUsers(users.filter((u) => u.id !== userId));
       } else {
-        toast.error(response.error || "Ошибка отклонения");
+        toast.error(response.error || t('error_rejecting'));
       }
     } catch (error: any) {
       console.error("Error rejecting user:", error);
-      toast.error(error.message || "Ошибка отклонения");
+      toast.error(error.message || t('error_rejecting'));
     } finally {
       setActionLoading(null);
     }
@@ -93,10 +95,10 @@ export default function PendingUsers() {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Ожидающие одобрения
+          {t('pending_approval_title')}
         </h1>
         <p className="text-gray-600">
-          Проверьте новые регистрации и одобрите пользователей
+          {t('pending_approval_desc')}
         </p>
       </div>
 
@@ -104,10 +106,10 @@ export default function PendingUsers() {
         <div className="bg-white rounded-xl shadow-sm p-12 text-center">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            Нет ожидающих пользователей
+            {t('no_pending_users')}
           </h3>
           <p className="text-gray-600">
-            Все регистрации обработаны
+            {t('all_processed')}
           </p>
         </div>
       ) : (
@@ -143,19 +145,19 @@ export default function PendingUsers() {
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Calendar className="w-4 h-4" />
                       <span>
-                        {new Date(user.created_at).toLocaleDateString("ru-RU")}
+                        {new Date(user.created_at).toLocaleDateString(i18n.language)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       {user.email_verified ? (
                         <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
                           <CheckCircle className="w-3 h-3" />
-                          Email подтвержден
+                          {t('status_verified')}
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">
                           <XCircle className="w-3 h-3" />
-                          Email не подтвержден
+                          {t('email_not_verified')}
                         </span>
                       )}
                     </div>
@@ -170,8 +172,8 @@ export default function PendingUsers() {
                     size="sm"
                     title={
                       !user.email_verified
-                        ? "Email не подтвержден"
-                        : "Одобрить"
+                        ? t('email_not_verified')
+                        : t('approve')
                     }
                   >
                     {actionLoading === user.id ? (
@@ -179,7 +181,7 @@ export default function PendingUsers() {
                     ) : (
                       <>
                         <CheckCircle className="w-4 h-4 mr-1" />
-                        Одобрить
+                        {t('approve')}
                       </>
                     )}
                   </Button>
@@ -194,7 +196,7 @@ export default function PendingUsers() {
                     ) : (
                       <>
                         <XCircle className="w-4 h-4 mr-1" />
-                        Отклонить
+                        {t('reject')}
                       </>
                     )}
                   </Button>

@@ -11,7 +11,7 @@ import GalleryTab from '../../components/admin/publicContent/GalleryTab';
 import BannersTab from '../../components/admin/publicContent/BannersTab';
 
 export default function PublicContent() {
-    const { t } = useTranslation('admin/PublicContent');
+    const { t } = useTranslation('admin/publiccontent');
     const { tab } = useParams<{ tab: string }>();
     const navigate = useNavigate();
 
@@ -28,10 +28,10 @@ export default function PublicContent() {
             <div className="mb-6">
                 <h1 className="text-2xl font-bold flex items-center gap-2">
                     <Layout className="w-6 h-6" />
-                    {t('title', 'Публичный контент')}
+                    {t('title')}
                 </h1>
                 <p className="text-gray-600 mt-1">
-                    {t('description', 'Управление отзывами, FAQ, галереей и баннерами')}
+                    {t('description')}
                 </p>
             </div>
 
@@ -40,19 +40,19 @@ export default function PublicContent() {
                 <TabsList className="mb-6">
                     <TabsTrigger value="reviews" className="flex items-center gap-2">
                         <Star className="w-4 h-4" />
-                        {t('tabs.reviews', 'Отзывы')}
+                        {t('tabs.reviews')}
                     </TabsTrigger>
                     <TabsTrigger value="faq" className="flex items-center gap-2">
                         <HelpCircle className="w-4 h-4" />
-                        {t('tabs.faq', 'FAQ')}
+                        {t('tabs.faq')}
                     </TabsTrigger>
                     <TabsTrigger value="gallery" className="flex items-center gap-2">
                         <ImageIcon className="w-4 h-4" />
-                        {t('tabs.gallery', 'Галерея')}
+                        {t('tabs.gallery')}
                     </TabsTrigger>
                     <TabsTrigger value="banners" className="flex items-center gap-2">
                         <Megaphone className="w-4 h-4" />
-                        {t('tabs.banners', 'Баннеры')}
+                        {t('tabs.banners')}
                     </TabsTrigger>
                 </TabsList>
 

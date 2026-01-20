@@ -244,7 +244,7 @@ export default function Users() {
       setUsers(users.map(u => u.id === user.id ? { ...u, is_public_visible: newValue } : u));
 
       await api.updateUserProfile(user.id, { is_public_visible: newValue });
-      toast.success(t('visibility_updated', 'Видимость обновлена'));
+      toast.success(t('visibility_updated'));
     } catch (err) {
       // Revert on error
       setUsers(users.map(u => u.id === user.id ? { ...u, is_public_visible: !newValue } : u));
@@ -361,7 +361,7 @@ export default function Users() {
           >
             <div className="flex items-center justify-center gap-2">
               <Shield className="w-4 h-4" />
-              <span>{t('tab_employees', 'Сотрудники')}</span>
+              <span>{t('tab_employees')}</span>
               {activeTab === 'employees' && (
                 <Badge className="bg-white/20 text-white border-0">{users.length}</Badge>
               )}
@@ -376,7 +376,7 @@ export default function Users() {
           >
             <div className="flex items-center justify-center gap-2">
               <UsersIcon className="w-4 h-4" />
-              <span>{t('tab_clients', 'Клиенты')}</span>
+              <span>{t('tab_clients')}</span>
               {activeTab === 'clients' && (
                 <Badge className="bg-white/20 text-white border-0">{users.length}</Badge>
               )}
@@ -391,7 +391,7 @@ export default function Users() {
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="flex items-center gap-2 text-gray-700">
               <Filter className="w-5 h-5 text-gray-400" />
-              <span className="font-medium text-sm">{t('period_filter', 'Период для новых клиентов:')}</span>
+              <span className="font-medium text-sm">{t('period_filter')}</span>
             </div>
             <div className="w-full md:w-64">
               <select
@@ -405,10 +405,10 @@ export default function Users() {
                   backgroundSize: '16px'
                 }}
               >
-                <option value="last7days">{t('filter_last7days', 'Последние 7 дней')}</option>
-                <option value="last30days">{t('filter_last30days', 'Последние 30 дней')}</option>
-                <option value="last90days">{t('filter_last90days', 'Последние 90 дней')}</option>
-                <option value="allTime">{t('filter_all_time', 'Все время')}</option>
+                <option value="last7days">{t('filter_last7days')}</option>
+                <option value="last30days">{t('filter_last30days')}</option>
+                <option value="last90days">{t('filter_last90days')}</option>
+                <option value="allTime">{t('filter_all_time')}</option>
               </select>
             </div>
           </div>
@@ -418,7 +418,7 @@ export default function Users() {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <p className="text-gray-600 text-sm mb-2">
-            {activeTab === 'employees' ? t('stats_total_employees', 'Всего сотрудников') : t('stats_total')}
+            {activeTab === 'employees' ? t('stats_total_employees') : t('stats_total')}
           </p>
           <h3 className="text-3xl text-gray-900">{stats.total}</h3>
         </div>
@@ -426,22 +426,22 @@ export default function Users() {
         {activeTab === 'employees' ? (
           <>
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <p className="text-gray-600 text-sm mb-2">{t('stats_active_employees', 'Активных')}</p>
+              <p className="text-gray-600 text-sm mb-2">{t('stats_active_employees')}</p>
               <h3 className="text-3xl text-green-600">{(stats as any).active}</h3>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <p className="text-gray-600 text-sm mb-2">{t('stats_service_providers', 'Мастеров')}</p>
+              <p className="text-gray-600 text-sm mb-2">{t('stats_service_providers')}</p>
               <h3 className="text-3xl text-pink-600">{(stats as any).serviceProviders}</h3>
             </div>
           </>
         ) : (
           <>
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <p className="text-gray-600 text-sm mb-2">{t('stats_new_clients', 'New Clients')}</p>
+              <p className="text-gray-600 text-sm mb-2">{t('stats_new_clients')}</p>
               <h3 className="text-3xl text-green-600">{(stats as any).new}</h3>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <p className="text-gray-600 text-sm mb-2">{t('stats_total_spend', 'Total Spend')}</p>
+              <p className="text-gray-600 text-sm mb-2">{t('stats_total_spend')}</p>
               <h3 className="text-3xl text-pink-600">{formatCurrency((stats as any).totalSpend)}</h3>
             </div>
           </>
@@ -469,7 +469,7 @@ export default function Users() {
                 onClick={() => navigate('/crm/employees')}
               >
                 <UsersIcon className="w-4 h-4 mr-2" />
-                {t('manage_public_order', 'Порядок на сайте')}
+                {t('manage_public_order')}
               </Button>
               <Button
                 className="bg-pink-600 hover:bg-pink-700"
@@ -490,27 +490,27 @@ export default function Users() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                    {activeTab === 'employees' ? t('table_employee', 'Сотрудник') : t('table_client', 'Client')}
+                    {activeTab === 'employees' ? t('table_employee') : t('table_client')}
                   </th>
                   {activeTab === 'clients' && (
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_phone', 'Phone')}</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_phone')}</th>
                   )}
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_email', 'Email')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_email')}</th>
                   {activeTab === 'employees' ? (
                     <>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_role', 'Роль')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_position', 'Должность')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_public', 'Сайт')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_is_active', 'Активен')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_role')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_position')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_public')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_is_active')}</th>
                     </>
                   ) : (
                     <>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_status', 'Status')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_spent', 'Spent')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_created', 'Created')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_status')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_spent')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_created')}</th>
                     </>
                   )}
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_actions', 'Действия')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -529,7 +529,7 @@ export default function Users() {
                         />
                         <div>
                           <p className="text-sm text-gray-900 font-medium">
-                            {activeTab === 'employees' ? ((user as any).full_name || t('no_name', 'Без имени')) : (user.name || user.username || t('no_name', 'Без имени'))}
+                            {activeTab === 'employees' ? ((user as any).full_name || t('no_name')) : (user.name || user.username || t('no_name'))}
                           </p>
                           <p className="text-xs text-gray-400">
                             {activeTab === 'employees' ? ((user as any).username || '-') : `@${user.username || 'user'}`}
@@ -558,7 +558,7 @@ export default function Users() {
                         </td>
                         <td className="px-6 py-4">
                           <Badge className={(user as any).is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-                            {(user as any).is_active ? t('active', 'Активен') : t('inactive', 'Неактивен')}
+                            {(user as any).is_active ? t('active') : t('inactive')}
                           </Badge>
                         </td>
                       </>
@@ -571,7 +571,7 @@ export default function Users() {
                                 user.status === 'lead' ? 'bg-blue-100 text-blue-800' :
                                   'bg-gray-100 text-gray-800'
                           }>
-                            {user.status || t('status_new', 'new')}
+                            {t(`common:status_${user.status}`)}
                           </Badge>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
@@ -592,7 +592,7 @@ export default function Users() {
                                 size="icon"
                                 onClick={() => navigate(`/crm/users/${(user as any).id}`)}
                                 className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                title={t('action_edit_title', 'Edit profile')}
+                                title={t('action_edit_title')}
                               >
                                 <Edit className="w-4 h-4" />
                               </Button>
@@ -605,7 +605,7 @@ export default function Users() {
                                   setShowScheduleDialog(true);
                                 }}
                                 className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
-                                title={t('action_manage_schedule_title', 'Manage schedule')}
+                                title={t('action_manage_schedule_title')}
                               >
                                 <Calendar className="w-4 h-4" />
                               </Button>
@@ -618,7 +618,7 @@ export default function Users() {
                                   setShowPermissionsDialog(true);
                                 }}
                                 className="h-8 w-8 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                                title={t('action_manage_permissions_title', 'Manage permissions')}
+                                title={t('action_manage_permissions_title')}
                               >
                                 <Key className="w-4 h-4" />
                               </Button>
@@ -631,7 +631,7 @@ export default function Users() {
                                   setShowRoleDialog(true);
                                 }}
                                 className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                title={t('action_change_role_title', 'Change role')}
+                                title={t('action_change_role_title')}
                               >
                                 <Shield className="w-4 h-4" />
                               </Button>
@@ -644,7 +644,7 @@ export default function Users() {
                               size="icon"
                               onClick={() => handleDeleteUser((user as any).id)}
                               className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                              title={t('action_delete_title', 'Delete user')}
+                              title={t('action_delete_title')}
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -658,7 +658,7 @@ export default function Users() {
                               size="icon"
                               onClick={() => navigate(`/crm/clients/${user.instagram_id}`)}
                               className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                              title={t('view_details', 'View details')}
+                              title={t('view_details')}
                             >
                               <Edit className="w-4 h-4" />
                             </Button>
