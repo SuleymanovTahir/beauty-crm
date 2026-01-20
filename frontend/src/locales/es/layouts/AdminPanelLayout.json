@@ -3,10 +3,7 @@
   "go_to_crm": "Ir a CRM",
   "logout": "Finalizar la sesión",
   "menu": {
-    "bookings": "bookings",
-    "calendar": "Calendario",
     "challenges": "Desafíos",
-    "clients": "Clientela",
     "dashboard": "Panel de control",
     "feature_management": "Feature Management",
     "loyalty_management": "Gestión de fidelización",
@@ -15,6 +12,7 @@
     "public_content": "Contenido público",
     "referral_program": "Programa de referencia",
     "services": "Servicios",
+    "settings": "",
     "user_management": "Gestión de usuarios"
   }
 }

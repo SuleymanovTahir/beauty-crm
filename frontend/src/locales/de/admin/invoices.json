@@ -6,7 +6,6 @@
   "allStatuses": "Alle Status",
   "board": "Planke",
   "client": "Kunde",
-  "createFirst": "Erstellen Sie Ihre erste Rechnung für einen Kunden",
   "delete": "Löschen",
   "dueDate": "Fälligkeitsdatum",
   "errors": {
@@ -29,7 +28,6 @@
     "selectClient": "Wählen Sie den Kunden aus"
   },
   "invoiceNumber": "Konto-Nr.",
-  "loading": "Laden...",
   "manage_stages": "Spalten",
   "messages": {
     "confirmDelete": "Sind Sie sicher, dass Sie dieses Konto löschen möchten?",
@@ -66,14 +64,6 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Status",
-  "statuses": {
-    "cancelled": "Abgesagt",
-    "draft": "Entwurf",
-    "overdue": "Abgelaufen",
-    "paid": "Bezahlt",
-    "partial": "Teilweise bezahlt",
-    "sent": "Gesendet"
-  },
   "subtitle": "Konto- und Zahlungsverwaltung",
   "title": "Konten",
   "totalAmount": "Summe"

@@ -15,7 +15,7 @@ from core.config import (
 router = APIRouter()
 
 @router.get("/api/public/seo-metadata")
-async def get_seo_metadata():
+def get_seo_metadata():
     """
     Get SEO metadata from database
     Returns structured data for meta tags, Schema.org, etc.

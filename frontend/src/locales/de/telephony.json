@@ -46,7 +46,7 @@
   "provider": "Anbieter",
   "provider_binotel": "Binotel",
   "provider_generic": "Generic (Webhook)",
-  "provider_onlinepbx": "OnlinePBX",
+  "provider_onlinepbx": "Online-Telefonanlage",
   "provider_twilio": "Twilio",
   "recording": "booking",
   "recordings_tab": "bookings",
@@ -69,7 +69,7 @@
   "type": "Typ",
   "unarchive_recording": "Entpacken",
   "upload_recording": "buchung hochladen",
-  "webhook_instruction_short": "Um Anrufe automatisch zu empfangen, geben Sie in den Einstellungen Ihres Telefonanbieters die folgende URL ein.",
+  "webhook_instruction_short": "Um Anrufe zu empfangen, geben Sie bitte die folgende URL in der Telefonbereitstellung Ihres Anbieters an.",
   "webhook_security_note": "Geben Sie diese URL aus Sicherheitsgründen nicht an Dritte weiter.",
   "webhook_url_label": "Ihre eindeutige Webhook-URL",
   "week": "Woche"

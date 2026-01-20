@@ -9,7 +9,7 @@
       "description": "Crie e envie notificações para seus clientes",
       "form": {
         "appointment_date": "Data de gravação",
-        "appointment_filter": "Filtrar por entradas",
+        "appointment_filter": "Filtrar até data reservas",
         "appointment_filters": {
           "date_range": "Período",
           "specific_date": "Data específica",
@@ -34,16 +34,16 @@
         "segments": {
           "active": "Clientes ativos",
           "all": "Todos os clientes",
-          "appointment_based": "De acordo com registros",
+          "appointment_based": "De acordo com reservas",
           "inactive": "Clientes inativos",
-          "service_based": "Por serviços",
-          "tier": "Por nível de fidelidade"
+          "service_based": "até data serviços",
+          "tier": "até data nível de fidelidade"
         },
         "select_filter": "Selecione o filtro",
         "select_tier": "Selecione o nível",
         "service_filter": "Serviço/Procedimento",
         "service_hint": "Os clientes cadastrados neste serviço receberão uma notificação",
-        "service_placeholder": "Insira o nome ou ID do serviço",
+        "service_placeholder": "Введите название или идентификатор услуги",
         "start_date": "data de início",
         "target_segment": "Segmento alvo",
         "tiers": {
@@ -63,7 +63,7 @@
         "message": "Mensagem",
         "message_placeholder": "Use {variable} para conteúdo dinâmico",
         "template_name": "Nome do modelo",
-        "template_name_placeholder": "por exemplo, mensagem de boas-vindas",
+        "template_name_placeholder": "até data exemplo, mensagem de boas-vindas",
         "title": "Cabeçalho",
         "title_placeholder": "Título da notificação",
         "type": "Tipo",
@@ -85,11 +85,6 @@
       "sms": "SMS"
     },
     "scheduled": "Planejado",
-    "statuses": {
-      "failed": "Fracassado",
-      "pending": "Esperando",
-      "sent": "Enviado"
-    },
     "table": {
       "date": "Data",
       "recipients": "Destinatários",
@@ -105,7 +100,7 @@
   "stats": {
     "email_sent": "E-mail enviado",
     "push_sent": "Push enviado",
-    "sms_sent": "SMS enviado",
+    "sms_sent": "СМС отправлено",
     "total_sent": "Total enviado"
   },
   "subtitle": "Gerenciar e enviar notificações aos clientes",

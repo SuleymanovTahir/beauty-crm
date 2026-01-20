@@ -1,7 +1,6 @@
 {
   "back_to_users": "Пайдаланушыларға оралу",
   "create_and_assign_services": "Create User & Assign Services",
-  "create_user": "Пайдаланушы жасаңыз",
   "creating": "Өндіріс...",
   "email_hint": "Сонымен қатар. Құпия сөзді қалпына келтіру үшін",
   "email_label": "Электрондық поштаның адресі",
@@ -19,7 +18,6 @@
   "password_required": "Құпия сөз қажет",
   "position_hint": "Бір немесе бірнеше позицияны таңдаңыз",
   "position_label": "Қызмет атауы",
-  "position_none": "Белгіленген жоқ",
   "position_placeholder": "Позицияны таңдаңыз",
   "role_admin": "Әкімші",
   "role_admin_desc": "Пайдаланушылар мен параметрлерді басқару",

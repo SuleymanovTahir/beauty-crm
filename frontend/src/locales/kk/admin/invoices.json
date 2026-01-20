@@ -6,7 +6,6 @@
   "allStatuses": "Барлық күйлер",
   "board": "Басқарма",
   "client": "Клиент",
-  "createFirst": "Клиент үшін бірінші шот-фактураңызды жасаңыз",
   "delete": "Жою",
   "dueDate": "Мерзімі",
   "errors": {
@@ -29,7 +28,6 @@
     "selectClient": "Клиентті таңдаңыз"
   },
   "invoiceNumber": "Есептік жазба №",
-  "loading": "Жүктелуде...",
   "manage_stages": "Бағандар",
   "messages": {
     "confirmDelete": "Бұл есептік жазбаны шынымен жойғыңыз келе ме?",
@@ -66,14 +64,6 @@
     "whatsapp": "whatsapp"
   },
   "status": "Күй",
-  "statuses": {
-    "cancelled": "Бас тартылды",
-    "draft": "Жоба",
-    "overdue": "Мерзімі бітті",
-    "paid": "Ақылы",
-    "partial": "Ішінара төленген",
-    "sent": "Жіберілді"
-  },
   "subtitle": "Есептік жазбаны және төлемді басқару",
   "title": "Есептік жазбалар",
   "totalAmount": "сомасы"

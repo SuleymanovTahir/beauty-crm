@@ -8,15 +8,7 @@
   "client": "ग्राहक",
   "clientContracts": "ग्राहक",
   "contractNumber": "सम्पर्क का नम्बर।",
-  "contractTypes": {
-    "employment": "रोजगार अनुबंध",
-    "rental": "एक जगह किराए पर लेना",
-    "service": "सेवाओं के प्रावधान"
-  },
   "createdAt": "निर्माण तिथि",
-  "createFirst": "किसी ग्राहक के साथ अपना पहला अनुबंध बनाएं",
-  "delete": "मिटाना",
-  "editButton": "संपादन करना",
   "editContract": "अनुबंध संपादित करें",
   "errors": {
     "deleteError": "अनुबंध हटाने में त्रुटि",
@@ -26,15 +18,11 @@
   },
   "form": {
     "cancel": "रद्द करना",
-    "contractDate": "अनुबंध की तारीख",
     "contractType": "करार का प्रकार",
-    "notes": "टिप्पणियाँ",
     "save": "बचाना",
-    "selectClient": "ग्राहक का चयन करें",
-    "terms": "समझौते की शर्तें"
+    "selectClient": "ग्राहक का चयन करें"
   },
   "internalContracts": "घरेलू",
-  "loading": "लोड हो रहा है...",
   "manage_stages": "कॉलम",
   "manageTypes": "अनुबंधों के प्रकार",
   "messages": {
@@ -44,9 +32,8 @@
     "contractSent": "अनुबंध भेज दिया गया है",
     "contractUpdated": "अनुबंध अद्यतन कर दिया गया है"
   },
-  "noContracts": "अभी तक कोई अनुबंध नहीं",
+  "noContracts": "अभी दिनांक तक कोई अनुबंध नहीं",
   "search_placeholder": "नंबर या क्लाइंट के आधार पर खोजें...",
-  "sendButton": "भेजना",
   "sendDialog": {
     "email": "ईमेल",
     "instagram": "Instagram",
@@ -58,12 +45,6 @@
     "whatsapp": "WHATSAPP"
   },
   "status": "स्थिति",
-  "statuses": {
-    "cancelled": "रद्द कर दिया गया",
-    "draft": "मसौदा",
-    "sent": "भेजा",
-    "signed": "पर हस्ताक्षर किए"
-  },
   "subtitle": "ग्राहक अनुबंध प्रबंधन",
   "title": "संधियों",
   "type": "प्रकार",
@@ -89,10 +70,5 @@
     "system": "प्रणाली",
     "systemProtected": "सिस्टम संरक्षित",
     "title": "अनुबंधों के प्रकार"
-  },
-  "types": {
-    "product": "उत्पाद",
-    "service": "ब्यूटी सैलून सेवा सेवा",
-    "subscription": "सदस्यता"
   }
 }

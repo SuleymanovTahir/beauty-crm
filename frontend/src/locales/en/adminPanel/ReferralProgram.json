@@ -5,7 +5,7 @@
   },
   "current_settings": {
     "edit": "Edit",
-    "min_purchase": "Minimum purchase amount: <strong>{{amount}} AED</strong>",
+    "min_purchase": "Minimum purchase price: <strong>{{amount}} AED</strong>",
     "referred_bonus": "The invited friend receives <strong>{{points}} points</strong> upon registration",
     "referrer_bonus": "The referrer receives <strong>{{points}} points</strong>when a friend makes their first purchase",
     "title": "Current bonus configuration"
@@ -13,7 +13,7 @@
   "dialogs": {
     "settings": {
       "description": "Set up bonus points and requirements",
-      "min_purchase_amount": "Minimum purchase amount (AED)",
+      "min_purchase_amount": "Minimum purchase price (AED)",
       "min_purchase_help": "Minimum amount a friend must spend to activate the referral bonus (0 = no minimum)",
       "referred_bonus": "Referred Friend Bonus Points",
       "referred_bonus_help": "Points awarded to a friend upon registration",
@@ -25,7 +25,6 @@
   "settings": "Settings",
   "stats": {
     "completed_referrals": "Completed referrals",
-    "from_last_month": "from last month",
     "points_distributed": "Points distributed",
     "total_referrals": "Total referrals"
   },

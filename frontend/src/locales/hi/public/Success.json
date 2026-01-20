@@ -5,5 +5,5 @@
   "serviceBooked": "<highlight>{{service}}</highlight> के लिए आपकी प्रविष्टि सफलतापूर्वक बना दी गई है।",
   "thankYou": "धन्यवाद, {{नाम}}!",
   "title": "पंजीकरण की पुष्टि!",
-  "viewServices": "सेवाएँ देखें"
+  "viewServices": "दिनांक सेवाएँ देखें"
 }

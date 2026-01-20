@@ -271,25 +271,25 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             await api.deleteNotification(id);
             setNotifications(notifications.filter(n => n.id !== id));
             setNotifCount(prev => Math.max(0, prev - 1));
-            toast.success(t('notification_deleted', 'Уведомление удалено'));
+            toast.success(t('notification_deleted'));
         } catch (error) {
             console.error('Error deleting notification:', error);
-            toast.error(t('error_deleting_notification', 'Ошибка при удалении уведомления'));
+            toast.error(t('error_deleting_notification'));
         }
     };
 
     const handleClearAll = async () => {
-        if (!window.confirm(t('confirm_clear_all', 'Вы уверены что хотите удалить все уведомления?'))) {
+        if (!window.confirm(t('confirm_clear_all'))) {
             return;
         }
         try {
             await api.clearAllNotifications();
             setNotifications([]);
             setNotifCount(0);
-            toast.success(t('all_notifications_cleared', 'Все уведомления удалены'));
+            toast.success(t('all_notifications_cleared'));
         } catch (error) {
             console.error('Error clearing notifications:', error);
-            toast.error(t('error_clearing', 'Ошибка при удалении уведомлений'));
+            toast.error(t('error_clearing'));
         }
     };
 
@@ -359,7 +359,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             {
                 id: 'management',
                 icon: Briefcase,
-                label: t('menu.management', 'Управление'),
+                label: t('menu.management'),
                 requirePermission: () => true,
                 items: [
                     { id: 'services', icon: Scissors, label: t('menu.services'), path: `${rolePrefix}/services`, requirePermission: () => permissions.canViewServices },
@@ -392,7 +392,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             {
                 id: 'tools',
                 icon: Package,
-                label: t('menu.tools', 'Инструменты'),
+                label: t('menu.tools'),
                 requirePermission: () => true,
                 items: [
                     { id: 'tasks', icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, requirePermission: () => permissions.canViewTasks || permissions.roleLevel >= 70 || user?.role === 'sales' },
@@ -404,10 +404,10 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             {
                 id: 'integrations',
                 icon: Link,
-                label: t('menu.integrations', 'Интеграции'),
+                label: t('menu.integrations'),
                 requirePermission: () => (permissions.roleLevel >= 70 || user?.role === 'sales'),
                 items: [
-                    { id: 'messengers', icon: MessageSquare, label: t('menu.messengers', 'Мессенджеры'), path: `${rolePrefix}/messengers`, requirePermission: () => (permissions.canViewSettings || user?.role === 'sales') },
+                    { id: 'messengers', icon: MessageSquare, label: t('menu.messengers'), path: `${rolePrefix}/messengers`, requirePermission: () => (permissions.canViewSettings || user?.role === 'sales') },
                     { id: 'payment', icon: CreditCard, label: t('menu.payment_integrations'), path: `${rolePrefix}/payment-integrations`, requirePermission: () => (permissions.roleLevel >= 70 || user?.role === 'sales') },
                     { id: 'marketplace', icon: Store, label: t('menu.marketplace_integrations'), path: `${rolePrefix}/marketplace-integrations`, requirePermission: () => (permissions.roleLevel >= 70 || user?.role === 'sales') },
                 ]
@@ -416,7 +416,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             {
                 id: 'settings',
                 icon: Settings,
-                label: t('menu.settings', 'Настройки'),
+                label: t('menu.settings'),
                 requirePermission: () => true,
                 items: [
                     { id: 'app-settings', icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, requirePermission: () => (permissions.canViewSettings || user?.role === 'manager' || user?.role === 'sales') && user?.role !== 'employee' },
@@ -458,11 +458,11 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const getRoleLabel = () => {
         switch (user?.role) {
             case 'director': return t('roles.director');
-            case 'admin': return t('admin', 'Админ');
-            case 'manager': return t('manager', 'Менеджер');
+            case 'admin': return t('admin');
+            case 'manager': return t('manager');
             case 'sales': return t('roles.sales');
             case 'marketer': return t('roles.marketer');
-            case 'employee': return t('employee', 'Мастер');
+            case 'employee': return t('employee');
             default: return user?.role;
         }
     };
@@ -501,7 +501,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                             </div>
                             <div className="min-w-0">
                                 <span className="text-sm text-gray-900 block font-semibold truncate leading-tight">
-                                    {salonSettings?.name || 'CRM Панель'}
+                                    {salonSettings?.name || t('crm')}
                                 </span>
                                 <span className="text-xs text-gray-500">{getRoleLabel()}</span>
                             </div>
@@ -626,7 +626,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                             {showNotifDropdown && (
                                 <div className="absolute bottom-full left-0 w-72 mb-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
                                     <div className="p-3 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-pink-50 flex justify-between items-center">
-                                        <span className="font-semibold text-sm text-gray-900">{t('notifications', 'Уведомления')}</span>
+                                        <span className="font-semibold text-sm text-gray-900">{t('notifications')}</span>
                                         <button
                                             onClick={() => setShowNotifDropdown(false)}
                                             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -663,7 +663,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                                 <button
                                                                     onClick={(e) => { e.stopPropagation(); markNotificationRead(n.id); }}
                                                                     className="text-gray-400 hover:text-blue-500 p-1"
-                                                                    title={t('mark_as_read', 'Прочитать')}
+                                                                    title={t('mark_as_read')}
                                                                 >
                                                                     <Check size={14} />
                                                                 </button>
@@ -671,7 +671,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                             <button
                                                                 onClick={(e) => handleDeleteNotification(n.id, e)}
                                                                 className="text-gray-400 hover:text-red-500 p-1"
-                                                                title={t('delete', 'Удалить')}
+                                                                title={t('common:delete')}
                                                             >
                                                                 <Trash2 size={14} />
                                                             </button>
@@ -682,7 +682,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                         ) : (
                                             <div className="p-8 text-center text-xs text-gray-400">
                                                 <Bell size={32} className="mx-auto mb-2 text-gray-300" />
-                                                {t('no_new_notifications', 'Нет новых уведомлений')}
+                                                {t('no_new_notifications')}
                                             </div>
                                         )}
                                     </div>
@@ -695,13 +695,13 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                 }}
                                                 className="flex-1 px-3 py-2 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                             >
-                                                {t('view_all', 'Посмотреть все')}
+                                                {t('view_all')}
                                             </button>
                                             <button
                                                 onClick={handleClearAll}
                                                 className="flex-1 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                             >
-                                                {t('clear_all', 'Очистить все')}
+                                                {t('clear_all')}
                                             </button>
                                         </div>
                                     )}
@@ -726,7 +726,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                             ) : (
                                 <img
                                     src={getDynamicAvatar(
-                                        userProfile?.full_name || user?.full_name || t('user', 'Пользователь'),
+                                        userProfile?.full_name || user?.full_name || t('user'),
                                         'warm',
                                         user?.role === 'employee' || userProfile?.gender === 'female' ? 'female' : 'male'
                                     )}
@@ -736,7 +736,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                             )}
                             <div className="flex-1 overflow-hidden">
                                 <span className="text-sm font-semibold text-gray-900 block truncate">
-                                    {userProfile?.full_name || user?.full_name || t('user', 'Пользователь')}
+                                    {userProfile?.full_name || user?.full_name || t('user')}
                                 </span>
                                 <span className="text-[10px] text-gray-500 capitalize leading-tight">@{user?.username || 'user'}</span>
                             </div>

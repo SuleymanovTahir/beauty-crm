@@ -1,5 +1,4 @@
 {
-  "absences": "अनुपस्थिति",
   "access_rights": "प्रवेश अधिकार",
   "by_role": "भूमिका के अनुसार",
   "can_manage_roles": "भूमिकाएँ प्रबंधित कर सकते हैं",
@@ -29,7 +28,7 @@
   "saving": "सहेजा जा रहा है...",
   "schedule_management": "शेड्यूल नियंत्रण: {{name}}",
   "schedule_saved": "शेड्यूल सहेजा गया",
-  "schedule_settings": "काम के घंटे और छुट्टियों की सेटिंग",
+  "schedule_settings": "काम के घंटे और छुट्टियों की दिनांक सेटिंग",
   "sunday": "रविवार",
   "thursday": "गुरुवार",
   "to": "को",

@@ -31,7 +31,7 @@
   "need_more_masters": "Көбірек шеберлер керек",
   "optimization_tip": "Оңтайландыру кеңесі",
   "peak_hours": "Қарқынды сағаттар",
-  "per_booking": "Әрбір пост үшін",
+  "per_booking": "Әрбір жазба үшін",
   "percentage": "Пайыз",
   "quantity": "Сан",
   "recommendation": "Ұсыныс",
@@ -48,7 +48,7 @@
     "whatsapp_request": "WhatsApp арқылы сұрау"
   },
   "status": {
-    "cancelled": "Бас тартты",
+    "cancelled": "Жойылды",
     "completed": "Аяқталды",
     "confirmed": "Расталды",
     "no_show": "Ол келмеді",

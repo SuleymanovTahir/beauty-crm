@@ -349,7 +349,10 @@ export function AccountPage() {
           {showNotifDropdown && (
             <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 max-h-96 overflow-y-auto">
               <div className="p-3 border-b border-gray-100 flex justify-between items-center">
-                <span className="font-semibold text-gray-900">🔔 {t('account:notifications.title', 'Уведомления')}</span>
+                <span className="font-semibold text-gray-900 flex items-center gap-2">
+                  <Bell size={18} className="text-pink-500" />
+                  {t('account:notifications.title', 'Уведомления')}
+                </span>
                 <button onClick={() => setShowNotifDropdown(false)} className="text-gray-400 hover:text-gray-600">
                   <X size={16} />
                 </button>

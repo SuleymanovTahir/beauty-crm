@@ -5,7 +5,7 @@
   },
   "current_settings": {
     "edit": "Өңдеу",
-    "min_purchase": "Сатып алудың ең аз сомасы: <strong>{{amount}} AED</strong>",
+    "min_purchase": "Ең төменгі сатып алу бағасы: <strong>{{amount}} AED</strong>",
     "referred_bonus": "Шақырылған дос тіркелгеннен кейін <strong>{{points}} ұпай</strong> алады",
     "referrer_bonus": "Досыңыз бірінші сатып алған кезде сілтеме беруші <strong>{{points}} ұпай</strong> алады",
     "title": "Ағымдағы бонус конфигурациясы"
@@ -13,7 +13,7 @@
   "dialogs": {
     "settings": {
       "description": "Бонустық ұпайлар мен талаптарды орнатыңыз",
-      "min_purchase_amount": "Ең аз сатып алу сомасы (AED)",
+      "min_purchase_amount": "Ең төменгі сатып алу бағасы (AED)",
       "min_purchase_help": "Реферал бонусын белсендіру үшін дос жұмсауы керек ең аз сома (0 = ең аз емес)",
       "referred_bonus": "Досқа ұсынылған бонустық ұпайлар",
       "referred_bonus_help": "Тіркелген кезде досыңызға ұпай беріледі",
@@ -25,7 +25,6 @@
   "settings": "Параметрлер",
   "stats": {
     "completed_referrals": "Аяқталған сілтемелер",
-    "from_last_month": "өткен айдан бастап",
     "points_distributed": "Ұпайлар таратылды",
     "total_referrals": "Жалпы сілтемелер"
   },

@@ -85,13 +85,15 @@ export const visitorApi = {
 
     /**
      * Консолидированный endpoint для получения всех данных аналитики одним запросом.
-     * Оптимизация производительности: 8 запросов -> 1 запрос
+     * Поддерживает стандартные периоды и произвольные даты.
      */
-    async getDashboard(period: string = 'week', maxDistance: number = 50) {
-        const response = await fetch(
-            `${API_URL}/api/analytics/visitors/dashboard?period=${period}&max_distance=${maxDistance}`,
-            { credentials: 'include' }
-        );
+    async getDashboard(period: string = 'week', maxDistance: number = 50, dateFrom?: string, dateTo?: string) {
+        let url = `${API_URL}/api/analytics/visitors/dashboard?period=${period}&max_distance=${maxDistance}`;
+        if (dateFrom && dateTo) {
+            url += `&date_from=${dateFrom}&date_to=${dateTo}`;
+        }
+
+        const response = await fetch(url, { credentials: 'include' });
         if (!response.ok) throw new Error('Failed to load visitor dashboard');
         return response.json();
     }

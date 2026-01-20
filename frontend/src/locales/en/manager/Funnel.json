@@ -1,32 +1,4 @@
 {
-  "all_good": "Everything is fine! ",
-  "conversion": {
-    "booked_to_completed": "Signed up -> Completed",
-    "booking_to_booked": "Started booking -> Signed up",
-    "engaged_to_booking": "Engaged -> Started booking",
-    "visitor_to_engaged": "Visitor -> Engaged"
-  },
-  "funnel": "Funnel",
-  "funnel_chart": "Funnel chart",
-  "key_metrics": "Key metrics",
-  "move_failed": "Move Error",
-  "moved_successfully": "Client successfully moved",
-  "no_clients": "No clients",
-  "quick_add": "Quick Add",
-  "recommendations_title": "Recommendations",
-  "search_clients": "Searching for clients...",
-  "stage_details": "Detailing stages",
-  "subtitle": "Stage and conversion management",
-  "successful_visits": "Successful visits",
-  "table": {
-    "count": "Quantity",
-    "losses": "Losses",
-    "percentage": "Percent",
-    "stage": "Stage"
-  },
-  "title": "Sales funnel",
-  "total_conversion": "Total Conversion",
-  "total_losses": "Total losses",
   "Your funnel shows good results": {
     " Keep it up!": ""
   }

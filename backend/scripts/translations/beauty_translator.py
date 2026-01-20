@@ -39,6 +39,8 @@ BEAUTY_SALON_TERMS = {
     'spa pedicure': 'SPA-педикюр',
     'nail correction': 'коррекция ногтя',
     'nail repair': 'коррекция ногтя',
+    'acrylic overlay': 'покрытие акрилом',
+    'gel application': 'покрытие гелем',
     
     # Услуги для волос (en->ru)
     'haircut': 'стрижка',
@@ -50,6 +52,9 @@ BEAUTY_SALON_TERMS = {
     'highlights': 'мелирование',
     'ombre': 'омбре',
     'hair botox': 'ботокс для волос',
+    'blow dry': 'укладка феном',
+    'trim ends': 'подравнивание кончиков',
+    'trim': 'подравнивание',
     
     # Эпиляция/депиляция (en->ru)
     'waxing': 'восковая эпиляция',
@@ -71,6 +76,8 @@ BEAUTY_SALON_TERMS = {
     'eyelash extensions': 'наращивание ресниц',
     'eyelash lift': 'ламинирование ресниц',
     'brow lamination': 'ламинирование бровей',
+    'lashes': 'ресницы',
+    'brows': 'брови',
     
     # Макияж (en->ru)
     'makeup': 'макияж',
@@ -91,24 +98,50 @@ BEAUTY_SALON_TERMS = {
     'appointment': 'запись',
     'post': 'запись',  # Исправление частой ошибки
     'record': 'запись',  # Исправление частой ошибки
+    'recording': 'запись', # Исправление частой ошибки (не аудио-запись!)
     'consultation': 'консультация',
     'master': 'мастер',
     'specialist': 'специалист',
+    'stylist': 'стилист',
+    'wizard': 'мастер', # Исправление частой ошибки перевода слова "мастер"
     'reminder': 'напоминание',
     'reminders': 'напоминания',
+    'any master': 'любой мастер',
+    'any professional': 'любой мастер',
+    'any available': 'любой мастер',
+    'flexible match': 'любой мастер',
+    'refused': 'отменено',
+    'cancelled': 'отменено',
+    'he missed it': 'пропущено',
+    'skipped': 'пропущено',
+    'date from': 'с даты',
+    'date to': 'по дату',
+    'to me': 'с даты', # Избегаем кривого перевода Google
+    'the author': 'по дату', # Избегаем кривого перевода Google
+    'pending': 'в ожидании',
+    'waiting': 'в ожидании',
     
-    # Русские термины (ru->en) - для обратного перевода
+    # Русские-Английские пары для принудительного выбора (SSOT)
     'запись': 'booking',
-    'записи': 'bookings',
-    'записей': 'bookings',
-    'напоминание': 'reminder',
-    'напоминания': 'reminders',
-    'напоминаний': 'reminders',
-    'коррекция': 'correction',
-    'коррекция ногтя': 'nail correction',
-    'восстановление': 'restoration',
-    'восстановление ногтя': 'nail restoration',
-    # НЕ используем "починка" и "ремонт" для ногтей!
+    'записаться': 'book online',
+    'мастер': 'stylist', # Для премиального салона лучше stylist или specialist
+    'специалист': 'specialist',
+    'услуга': 'service',
+    'услуги': 'services',
+    'ресницы': 'lashes',
+    'брови': 'brows',
+    'ногти': 'nails',
+    'укладка': 'styling',
+    'стрижка': 'haircut',
+    'окрашивание': 'coloring',
+    'подравнивание': 'trim',
+    'снятие': 'removal',
+    'любой мастер': 'any professional',
+    'отменено': 'cancelled',
+    'пропущено': 'skipped',
+    'с даты': 'date from',
+    'по дату': 'date to',
+    'в ожидании': 'pending',
 }
 
 class BeautySalonTranslator:

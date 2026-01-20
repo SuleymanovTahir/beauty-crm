@@ -1,12 +1,14 @@
 {
   "clear_all": "Limpar tudo",
   "clear_confirm": "Tem certeza de que deseja limpar completamente o log de auditoria? Esta ação é irreversível.",
-  "delete_batch_confirm": "Excluir reservas selecionados ({{count}}) permanentemente?",
+  "delete_batch_confirm_one": "",
+  "delete_batch_confirm_few": "",
+  "delete_batch_confirm_many": "",
+  "delete_batch_confirm_other": "",
   "delete_confirm": "Devo excluir permanentemente esta reserva?",
   "delete_selected": "Remover selecionado",
   "details": {
-    "error_msg": "Mensagem de erro",
-    "ip": "PI",
+    "ip": "ИП",
     "new_data": "Novos dados",
     "no_data": "Não há dados disponíveis",
     "old_data": "Dados antigos",

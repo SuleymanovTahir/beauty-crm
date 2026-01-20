@@ -44,6 +44,29 @@ async def cookie_consent(request: Request, data: dict):
         log_error(f"Error logging cookie consent: {e}", "analytics")
         return JSONResponse({"error": str(e)}, status_code=500)
 
+@router.post("/analytics/visitors/track")
+async def track_visitor_api(request: Request, data: dict):
+    """
+    Явный трекинг посетителя (с поддержкой якорей URL)
+    Этого метода не хватает для SPA, где смена секций не перезагружает страницу
+    """
+    try:
+        from db.visitor_tracking import track_visitor
+        import asyncio
+        
+        ip = request.client.host
+        user_agent = request.headers.get('user-agent', '')
+        # Фронтенд должен прислать полный URL через тело запроса
+        page_url = data.get('url', str(request.url))
+        
+        # Трекаем в фоне
+        asyncio.create_task(asyncio.to_thread(track_visitor, ip, user_agent, page_url))
+        
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error tracking visitor via API: {e}", "analytics")
+        return {"success": False}
+
 
 @router.get("/analytics/visitors")
 async def get_visitors(
@@ -374,22 +397,14 @@ async def get_hours(
 @router.get("/analytics/visitors/dashboard")
 async def get_visitor_dashboard(
     period: str = "week",
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
     max_distance: float = 50,
     session_token: Optional[str] = Cookie(None)
 ):
     """
     Консолидированный endpoint для получения всех данных аналитики посетителей одним запросом.
-    Оптимизация производительности: 8 запросов -> 1 запрос
-
-    Возвращает все данные для страницы Visitor Analytics:
-    - visitors: статистика посетителей
-    - location_breakdown: распределение local/non-local
-    - countries: распределение по странам
-    - cities: распределение по городам
-    - distance_breakdown: распределение по дистанции
-    - trend: тренд посещений
-    - sections: популярные секции
-    - hours: пиковые часы активности
+    Поддерживает стандартные периоды и произвольные даты.
     """
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
@@ -397,13 +412,22 @@ async def get_visitor_dashboard(
 
     start_time = time.time()
     try:
-        # Calculate date range based on period
+        # Calculate date range
         end_date = datetime.now()
-        if period == "day":
+        if date_from and date_to:
+            try:
+                start_date = datetime.fromisoformat(date_from)
+                # Устанавливаем конец дня для date_to
+                end_date = datetime.fromisoformat(date_to).replace(hour=23, minute=59, second=59)
+            except ValueError:
+                return JSONResponse({"error": "Invalid date format. Use ISO format."}, status_code=400)
+        elif period == "day" or period == "1":
             start_date = end_date - timedelta(days=1)
-        elif period == "week":
+        elif period == "3":
+            start_date = end_date - timedelta(days=3)
+        elif period == "week" or period == "7":
             start_date = end_date - timedelta(weeks=1)
-        elif period == "month":
+        elif period == "month" or period == "30":
             start_date = end_date - timedelta(days=30)
         else:
             start_date = end_date - timedelta(weeks=1)

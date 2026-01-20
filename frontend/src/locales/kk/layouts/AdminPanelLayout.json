@@ -3,10 +3,7 @@
   "go_to_crm": "CRM жүйесіне өтіңіз",
   "logout": "Шығу",
   "menu": {
-    "bookings": "bookings",
-    "calendar": "Күнтізбе",
     "challenges": "Қиындықтар",
-    "clients": "Клиенттер",
     "dashboard": "Басқару тақтасы",
     "feature_management": "Feature Management",
     "loyalty_management": "Адалдықты басқару",
@@ -15,6 +12,7 @@
     "public_content": "Қоғамдық мазмұн",
     "referral_program": "Реферат бағдарламасы",
     "services": "Қызметтер",
+    "settings": "",
     "user_management": "Пайдаланушыны басқару"
   }
 }

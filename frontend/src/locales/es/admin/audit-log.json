@@ -1,12 +1,14 @@
 {
   "clear_all": "Borrar todo",
   "clear_confirm": "¿Está seguro de que desea borrar completamente el reserva de auditoría? Esta acción es irreversible.",
-  "delete_batch_confirm": "¿Eliminar reservas seleccionados ({{count}}) de forma permanente?",
+  "delete_batch_confirm_one": "",
+  "delete_batch_confirm_few": "",
+  "delete_batch_confirm_many": "",
+  "delete_batch_confirm_other": "",
   "delete_confirm": "¿Debo eliminar permanentemente esta reserva?",
   "delete_selected": "Eliminar seleccionado",
   "details": {
-    "error_msg": "Mensaje de error",
-    "ip": "IP",
+    "ip": "ИП",
     "new_data": "Nuevos datos",
     "no_data": "No hay datos disponibles",
     "old_data": "datos antiguos",

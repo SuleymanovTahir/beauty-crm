@@ -21,7 +21,7 @@
   "motivation_new_day": "¡Cada día es una nueva oportunidad!",
   "motivation_shine": "¡Es hora de brillar!",
   "next_level_message": "Todavía quedan {{points}} puntos para pasar al siguiente nivel.",
-  "no_appointments": "No hay entradas activas",
+  "no_appointments": "No hay reservas activas",
   "no_appointments_desc": "Elija un horario conveniente y programe una cita con un especialista.",
   "quick_actions": "Acciones rápidas",
   "repeat_service": "Repetir servicio",
@@ -29,7 +29,7 @@
   "tier_level": "{{tier}} nivel",
   "to_calendar": "Al calendario",
   "total_visits": "Visitas totales",
-  "upcoming_appointment": "Entrada más cercana",
+  "upcoming_appointment": "reserva más cercana",
   "with_us": "Estas con nosotros",
   "your_discount": "Tu descuento",
   "your_status": "Tu estado"

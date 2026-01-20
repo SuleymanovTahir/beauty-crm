@@ -6,7 +6,6 @@
   "allStatuses": "सभी स्थितियाँ",
   "board": "तख़्ता",
   "client": "ग्राहक",
-  "createFirst": "किसी ग्राहक के लिए अपना पहला इनवॉइस बनाएं",
   "delete": "मिटाना",
   "dueDate": "नियत तारीख",
   "errors": {
@@ -29,7 +28,6 @@
     "selectClient": "ग्राहक का चयन करें"
   },
   "invoiceNumber": "खाता नंबर।",
-  "loading": "लोड हो रहा है...",
   "manage_stages": "कॉलम",
   "messages": {
     "confirmDelete": "क्या आप वाकई यह खाता हटाना चाहते हैं?",
@@ -39,7 +37,7 @@
     "invoiceUpdated": "खाता अद्यतन किया गया",
     "paymentAdded": "भुगतान जोड़ा गया"
   },
-  "noInvoices": "अभी तक कोई खाता नहीं",
+  "noInvoices": "अभी दिनांक तक कोई खाता नहीं",
   "paidAmount": "चुकाया गया",
   "payment": {
     "add": "जोड़ना",
@@ -66,14 +64,6 @@
     "whatsapp": "WHATSAPP"
   },
   "status": "स्थिति",
-  "statuses": {
-    "cancelled": "रद्द कर दिया गया",
-    "draft": "मसौदा",
-    "overdue": "खत्म हो चुका",
-    "paid": "चुकाया गया",
-    "partial": "आंशिक रूप से भुगतान किया",
-    "sent": "भेजा"
-  },
   "subtitle": "खाता और भुगतान प्रबंधन",
   "title": "हिसाब किताब",
   "totalAmount": "जोड़"

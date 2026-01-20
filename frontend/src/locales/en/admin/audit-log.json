@@ -1,12 +1,14 @@
 {
   "clear_all": "Clear All",
   "clear_confirm": "Are you sure you want to completely clear the audit log? This action is irreversible.",
-  "delete_batch_confirm": "Permanently delete selected entries ({{count}})?",
-  "delete_confirm": "Permanently delete this entry?",
+  "delete_batch_confirm_one": "",
+  "delete_batch_confirm_few": "",
+  "delete_batch_confirm_many": "",
+  "delete_batch_confirm_other": "",
+  "delete_confirm": "Permanently delete this booking?",
   "delete_selected": "Delete Selected",
   "details": {
-    "error_msg": "Error Message",
-    "ip": "IP",
+    "ip": "ИП",
     "new_data": "New Data",
     "no_data": "No data",
     "old_data": "Old Data",
@@ -41,8 +43,8 @@
   "toast": {
     "clear_error": "Error clearing audit log",
     "clear_success": "Audit log successfully cleared",
-    "delete_error": "Error deleting entry",
-    "delete_success": "Entry(ies) deleted",
+    "delete_error": "Error deleting booking",
+    "delete_success": "booking(ies) deleted",
     "load_error": "Error loading audit log"
   }
 }

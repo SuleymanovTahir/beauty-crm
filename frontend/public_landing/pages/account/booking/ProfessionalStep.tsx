@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent } from './ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
-import { Star, Clock } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Star, Sparkles } from 'lucide-react';
 import { api } from '../../../../src/services/api';
 import { format } from 'date-fns';
+import { getTodayDate } from '../../../utils/dateUtils';
 
 interface ProfessionalStepProps {
     selectedProfessionalId: number | null;
@@ -22,7 +21,6 @@ export function ProfessionalStep({
     selectedProfessionalId,
     professionalSelected,
     onProfessionalChange,
-    salonSettings,
     preloadedProfessionals,
     preloadedAvailability,
     selectedServices = [],
@@ -33,7 +31,6 @@ export function ProfessionalStep({
     // No loading spinner if data is preloaded
     const [loading, setLoading] = useState(false);
     const [dateAvailability, setDateAvailability] = useState<Record<number, string[]>>({});
-    const [loadingAvailability, setLoadingAvailability] = useState(false);
     // Initialize nextSlots synchronously to avoid "pop-in" effect
     const [nextSlots, setNextSlots] = useState<Record<number, string>>(() => {
         if (preloadedAvailability && Object.keys(preloadedAvailability).length > 0 && preloadedProfessionals) {
@@ -210,7 +207,6 @@ export function ProfessionalStep({
     useEffect(() => {
         if (selectedDate) {
             const loadDateAvailability = async () => {
-                setLoadingAvailability(true);
                 try {
                     const dateStr = format(selectedDate, 'yyyy-MM-dd');
                     const response = await api.getPublicBatchAvailability(dateStr);
@@ -218,7 +214,7 @@ export function ProfessionalStep({
                 } catch (error) {
                     console.error('Failed to load availability:', error);
                 } finally {
-                    setLoadingAvailability(false);
+                    // done
                 }
             };
             loadDateAvailability();
@@ -231,7 +227,7 @@ export function ProfessionalStep({
         return (
             <div className="flex flex-col items-center justify-center h-64 gap-4">
                 <div className="w-12 h-12 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
-                <p className="text-gray-400 text-sm font-medium uppercase tracking-widest">{t('loading', 'Loading professionals...')}</p>
+                <p className="text-gray-400 text-sm font-medium uppercase tracking-widest">{t('loading')}</p>
             </div>
         );
     }
@@ -262,7 +258,7 @@ export function ProfessionalStep({
     return (
         <div className="space-y-6">
             {/* Header */}
-            <h2 className="text-2xl font-bold">{t('professional.title', 'Choose Master')}</h2>
+            <h2 className="text-2xl font-bold">{t('professional.title')}</h2>
 
             {/* Any Professional Option */}
             <div
@@ -274,14 +270,14 @@ export function ProfessionalStep({
             >
                 <div className="flex items-center gap-4">
                     <div className="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center flex-shrink-0 text-white shadow-sm">
-                        <span className="text-2xl">✨</span>
+                        <Sparkles size={24} />
                     </div>
                     <div className="flex-1">
                         <h3 className="font-bold text-gray-900 text-sm mb-0.5">
-                            {t('professional.anyAvailable', 'Flexible Match')}
+                            {t('professional.anyAvailable')}
                         </h3>
                         <p className="text-xs text-gray-500 line-clamp-2">
-                            {t('professional.anyDesc', 'We\'ll match you with the best available professional')}
+                            {t('professional.anyDesc')}
                         </p>
                     </div>
                 </div>
@@ -324,7 +320,7 @@ export function ProfessionalStep({
                                     <div className="flex items-center gap-1.5 mb-2">
                                         <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                                         <span className="text-[10px] text-green-600 font-bold uppercase tracking-widest">
-                                            {t('professional.availableToday', 'Today')}
+                                            {t('professional.availableToday')}
                                         </span>
                                     </div>
 
@@ -345,8 +341,8 @@ export function ProfessionalStep({
                                     <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
                                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                                         {nextAvailableDate[professional.id]
-                                            ? `${t('professional.availableOn', 'Available')} ${nextAvailableDate[professional.id]}`
-                                            : t('professional.notAvailableToday', 'Not Available Today')
+                                            ? `${t('professional.availableOn')} ${nextAvailableDate[professional.id]}`
+                                            : t('professional.notAvailableToday')
                                         }
                                     </span>
                                 </div>

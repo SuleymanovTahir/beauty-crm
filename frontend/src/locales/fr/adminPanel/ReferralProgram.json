@@ -5,7 +5,7 @@
   },
   "current_settings": {
     "edit": "Modifier",
-    "min_purchase": "Montant minimum d'achat : <strong>{{amount}} AED</strong>",
+    "min_purchase": "Prix ​​d'achat minimum : <strong>{{amount}} AED</strong>",
     "referred_bonus": "L'ami invité reçoit <strong>{{points}} points</strong> lors de son inscription",
     "referrer_bonus": "Le parrain reçoit <strong>{{points}} points</strong>lorsqu'un ami effectue son premier achat",
     "title": "Configuration actuelle des bonus"
@@ -13,7 +13,7 @@
   "dialogs": {
     "settings": {
       "description": "Configurer les points bonus et les exigences",
-      "min_purchase_amount": "Montant minimum d'achat (AED)",
+      "min_purchase_amount": "Prix ​​d'achat minimum (AED)",
       "min_purchase_help": "Montant minimum qu'un ami doit dépenser pour activer le bonus de parrainage (0 = pas de minimum)",
       "referred_bonus": "Points bonus d'ami parrainé",
       "referred_bonus_help": "Points attribués à un ami lors de son inscription",
@@ -25,7 +25,6 @@
   "settings": "Paramètres",
   "stats": {
     "completed_referrals": "Références terminées",
-    "from_last_month": "du mois dernier",
     "points_distributed": "Points distribués",
     "total_referrals": "Total des références"
   },

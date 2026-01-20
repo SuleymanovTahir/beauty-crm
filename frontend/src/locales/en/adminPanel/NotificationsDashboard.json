@@ -8,8 +8,8 @@
     "send": {
       "description": "Create and send notification to your customers",
       "form": {
-        "appointment_date": "Recording date",
-        "appointment_filter": "Filter by entries",
+        "appointment_date": "booking date",
+        "appointment_filter": "Filter by bookings",
         "appointment_filters": {
           "date_range": "Date range",
           "specific_date": "Specific date",
@@ -34,7 +34,7 @@
         "segments": {
           "active": "Active clients",
           "all": "All clients",
-          "appointment_based": "According to records",
+          "appointment_based": "According to bookings",
           "inactive": "Inactive clients",
           "service_based": "By services",
           "tier": "By loyalty level"
@@ -43,7 +43,7 @@
         "select_tier": "Select level",
         "service_filter": "Service/Procedure",
         "service_hint": "Customers registered for this service will receive a notification",
-        "service_placeholder": "Enter service name or ID",
+        "service_placeholder": "Введите название или идентификатор услуги",
         "start_date": "start date",
         "target_segment": "Target segment",
         "tiers": {
@@ -85,11 +85,6 @@
       "sms": "SMS"
     },
     "scheduled": "Planned",
-    "statuses": {
-      "failed": "Failed",
-      "pending": "Waiting",
-      "sent": "Sent"
-    },
     "table": {
       "date": "Date",
       "recipients": "Recipients",
@@ -105,7 +100,7 @@
   "stats": {
     "email_sent": "Email sent",
     "push_sent": "Push sent",
-    "sms_sent": "SMS sent",
+    "sms_sent": "СМС отправлено",
     "total_sent": "Total sent"
   },
   "subtitle": "Managing and sending notifications to clients",

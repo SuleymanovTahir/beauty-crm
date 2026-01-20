@@ -150,7 +150,7 @@ const Contracts = () => {
             toast.success(t('messages.contractUpdated'));
             loadData();
         } catch (error) {
-            toast.error(t('errors.updateError', 'Failed to update status'));
+            toast.error(t('errors.updateError'));
         }
     };
 
@@ -179,7 +179,7 @@ const Contracts = () => {
             loadData();
         } catch (error) {
             console.error('Error deleting contract:', error);
-            toast.error(t('errors.deleteError', 'Error deleting contract'));
+            toast.error(t('errors.deleteError'));
         }
     };
 
@@ -218,7 +218,7 @@ const Contracts = () => {
                                     }`}
                             >
                                 <Layout className="w-4 h-4 mr-2" />
-                                {t('board', 'Доска')}
+                                {t('board')}
                             </button>
                             <button
                                 onClick={() => setViewMode('list')}
@@ -228,14 +228,14 @@ const Contracts = () => {
                                     }`}
                             >
                                 <LayoutDashboard className="w-4 h-4 mr-2" />
-                                {t('allContracts', 'Все договоры')}
+                                {t('allContracts')}
                             </button>
                         </div>
 
                         {canManageTypes && (
                             <button className="crm-btn-secondary h-10" onClick={() => setShowStagesDialog(true)}>
                                 <LayoutDashboard size={18} />
-                                <span className="hidden lg:inline ml-2">{t('manage_stages', 'Колонки')}</span>
+                                <span className="hidden lg:inline ml-2">{t('manage_stages')}</span>
                             </button>
                         )}
                         {canManageTypes && (
@@ -249,7 +249,7 @@ const Contracts = () => {
                             setShowContractDialog(true);
                         }}>
                             <Plus size={18} />
-                            <span className="ml-2">{t('addContract', 'Создать')}</span>
+                            <span className="ml-2">{t('addContract')}</span>
                         </button>
                     </div>
                 </div>
@@ -265,7 +265,7 @@ const Contracts = () => {
                                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                                         }`}
                                 >
-                                    {t('all', 'Все')}
+                                    {t('all')}
                                 </button>
                                 <button
                                     onClick={() => setSubTab('client')}
@@ -274,7 +274,7 @@ const Contracts = () => {
                                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                                         }`}
                                 >
-                                    {t('clientContracts', 'Клиентские')}
+                                    {t('clientContracts')}
                                 </button>
                                 <button
                                     onClick={() => setSubTab('internal')}
@@ -283,7 +283,7 @@ const Contracts = () => {
                                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                                         }`}
                                 >
-                                    {t('internalContracts', 'Внутренние')}
+                                    {t('internalContracts')}
                                 </button>
                                 <div className="h-4 w-[1px] bg-gray-200 mx-2" />
                             </>
@@ -307,7 +307,7 @@ const Contracts = () => {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
                             type="text"
-                            placeholder={t('search_placeholder', 'Поиск по номеру или клиенту...')}
+                            placeholder={t('search_placeholder')}
                             className="pl-9 pr-4 h-9 w-full md:w-64 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -607,7 +607,7 @@ const ContractDialog = ({ contract, contractTypes, onClose, onSuccess }: Contrac
             onSuccess();
         } catch (error) {
             console.error('Error saving contract:', error);
-            toast.error(t('errors.saveError', 'Error saving contract'));
+            toast.error(t('errors.saveError'));
         }
     };
 
@@ -687,7 +687,7 @@ const SendContractDialog = ({ contract, onClose, onSuccess }: any) => {
             onSuccess();
         } catch (error) {
             console.error('Error sending contract:', error);
-            toast.error(t('errors.sendError', 'Error sending contract'));
+            toast.error(t('errors.sendError'));
         }
     };
 
@@ -915,9 +915,9 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
                                             {type.is_system ? (
                                                 <div className="flex items-center gap-2 pr-2">
                                                     <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-400 border border-gray-200">
-                                                        {t('typeManagement.system', 'System')}
+                                                        {t('typeManagement.system')}
                                                     </span>
-                                                    <div className="p-2 text-gray-300" title={t('typeManagement.systemProtected', 'System protected')}>
+                                                    <div className="p-2 text-gray-300" title={t('typeManagement.systemProtected')}>
                                                         <Lock size={16} className="opacity-40" />
                                                     </div>
                                                 </div>

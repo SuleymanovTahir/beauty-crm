@@ -6,7 +6,6 @@
   "allStatuses": "Tous les statuts",
   "board": "Conseil",
   "client": "Client",
-  "createFirst": "Créez votre première facture pour un client",
   "delete": "Supprimer",
   "dueDate": "Date d'échéance",
   "errors": {
@@ -29,7 +28,6 @@
     "selectClient": "Sélectionner un client"
   },
   "invoiceNumber": "Numéro de compte",
-  "loading": "Chargement...",
   "manage_stages": "Colonnes",
   "messages": {
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce compte ?",
@@ -66,14 +64,6 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Statut",
-  "statuses": {
-    "cancelled": "Annulé",
-    "draft": "Brouillon",
-    "overdue": "Expiré",
-    "paid": "Payé",
-    "partial": "Partiellement payé",
-    "sent": "Envoyé"
-  },
   "subtitle": "Gestion des comptes et des paiements",
   "title": "Comptes",
   "totalAmount": "Somme"

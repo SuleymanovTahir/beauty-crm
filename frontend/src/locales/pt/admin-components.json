@@ -1,7 +1,6 @@
 {
-  "absences": "Ausências",
   "access_rights": "Direitos de acesso",
-  "by_role": "Por função",
+  "by_role": "até data função",
   "can_manage_roles": "Pode gerenciar funções",
   "change_role": "Mudar função",
   "change_role_to": "Alterar função para",

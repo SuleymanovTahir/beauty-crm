@@ -9,30 +9,14 @@
     "upload": "Herunterladen"
   },
   "card": {
-    "delete": "Löschen",
     "featured": "Favoriten",
     "toggle_featured": "Favoriten umschalten",
-    "uploaded_by": "Hochgeladen von {{name}}",
+    "uploaded_by": "Hochgeladen datum bis {{name}}",
     "views": "Ansichten"
-  },
-  "categories": {
-    "coloring": "Färbung",
-    "haircut": "Haarschnitte",
-    "makeup": "Bilden",
-    "manicure": "Maniküre",
-    "other": "Andere",
-    "styling": "Verlegung"
   },
   "dialogs": {
     "delete": {
       "confirm": "Möchten Sie dieses Foto wirklich löschen?"
-    },
-    "preview": {
-      "category": "Kategorie: {{category}}",
-      "created_at": "{{date}}",
-      "title": "Fotovorschau",
-      "uploaded_by": "Hochgeladen von {{name}}",
-      "views": "{{count}} Aufrufe"
     },
     "upload": {
       "description": "Fügen Sie der Galerie ein neues Foto hinzu",
@@ -41,13 +25,11 @@
         "before_after": "Vorher/Nachher",
         "before_photo": "Foto „Vorher“",
         "category": "Kategorie",
-        "choose_file": "Datei auswählen",
         "client": "Kunde",
         "client_hint": "Das Foto wird in der Galerie des Kunden verfügbar sein",
         "description": "Beschreibung",
         "description_placeholder": "Fotobeschreibung",
         "photo": "Foto",
-        "select_category": "Kategorie auswählen",
         "select_client": "Wählen Sie den Kunden aus",
         "single_photo": "Ein Foto",
         "title": "Name",

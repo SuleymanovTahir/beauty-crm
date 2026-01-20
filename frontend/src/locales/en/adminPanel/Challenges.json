@@ -41,11 +41,6 @@
     "completions": "Completion",
     "total_participants": "Total participants"
   },
-  "statuses": {
-    "active": "Active",
-    "completed": "Completed",
-    "upcoming": "Upcoming"
-  },
   "subtitle": "Creating and managing engagement challenges",
   "title": "Challenges",
   "toasts": {

@@ -20,8 +20,8 @@ from translator import Translator
 FRONTEND_DIR = backend_dir.parent / "frontend"
 LOCALES_DIR = FRONTEND_DIR / "src" / "locales"
 
-# Languages to fix
-LANGUAGES = ['en', 'ar', 'es', 'de', 'fr', 'pt', 'hi', 'kk']
+# Languages to fix (all supported languages)
+LANGUAGES = ["ru", "en", "ar", "es", "de", "fr", "hi", "kk", "pt"]
 SOURCE_LANG = 'ru'
 
 def is_bad_translation(value: str, target_lang: str) -> bool:
@@ -81,6 +81,17 @@ def is_bad_translation(value: str, target_lang: str) -> bool:
                 has_hindi = bool(re.search(r'[\u0900-\u097F]', value))
                 if not has_hindi: return True # Pure Latin in Hindi
     
+    # NEW: Check for English in Russian files - if no Cyrillic but has Latin words
+    if target_lang == 'ru':
+        has_cyrillic = bool(re.search(r'[а-яА-ЯёЁ]', value))
+        has_latin_words = bool(re.search(r'[a-zA-Z]{3,}', value))
+        # If it's English in a Russian file, it's bad
+        if has_latin_words and not has_cyrillic:
+            # Skip technical terms and placeholders
+            if value.startswith('http') or '{{' in value:
+                return False
+            return True
+            
     return False
 
 def fix_dict_recursive(source_dict: dict, target_dict: dict, source_lang: str, target_lang: str, translator: Translator, path: str = "") -> int:
@@ -112,7 +123,13 @@ def fix_dict_recursive(source_dict: dict, target_dict: dict, source_lang: str, t
         # Check if translation is missing or bad
         if not target_value or is_bad_translation(target_value, target_lang):
             # Re-translate
-            translated = translator.translate(source_value, source_lang, target_lang)
+            if target_lang == 'ru':
+                # If RU, translate FROM EN to RU
+                translated = translator.translate(source_value, 'en', 'ru')
+            else:
+                # If other, translate FROM RU to target
+                translated = translator.translate(source_value, source_lang, target_lang)
+                
             target_dict[key] = translated
             fixed_count += 1
             
@@ -121,6 +138,17 @@ def fix_dict_recursive(source_dict: dict, target_dict: dict, source_lang: str, t
             else:
                 print(f"    ➕ {current_path}: '{source_value}' → '{translated}'")
     
+    # 🗑️ NEW: Cleanup keys not present in source (Russian)
+    keys_to_remove = []
+    for key in target_dict.keys():
+        if key not in source_dict:
+            keys_to_remove.append(key)
+    
+    for key in keys_to_remove:
+        print(f"    🗑️ Removing unused key: {path}.{key}" if path else f"    🗑️ Removing unused key: {key}")
+        del target_dict[key]
+        fixed_count += 1
+            
     return fixed_count
 
 def fix_json_file(source_file: Path, target_file: Path, source_lang: str, target_lang: str, translator: Translator):

@@ -5,34 +5,18 @@
   },
   "buttons": {
     "cancel": "Cancelar",
-    "close": "Cerca",
+    "close": "Cerrar",
     "upload": "Descargar"
   },
   "card": {
-    "delete": "Borrar",
     "featured": "Favoritos",
     "toggle_featured": "Alternar favoritos",
-    "uploaded_by": "Subido por {{nombre}}",
+    "uploaded_by": "Subido hasta fecha {{nombre}}",
     "views": "vistas"
-  },
-  "categories": {
-    "coloring": "Colorante",
-    "haircut": "Cortes de pelo",
-    "makeup": "Constituir",
-    "manicure": "Manicura",
-    "other": "Otro",
-    "styling": "tendido"
   },
   "dialogs": {
     "delete": {
       "confirm": "¿Estás seguro de que quieres eliminar esta foto?"
-    },
-    "preview": {
-      "category": "Categoría: {{categoría}}",
-      "created_at": "{{date}}",
-      "title": "Vista previa de la foto",
-      "uploaded_by": "Subido por {{nombre}}",
-      "views": "{{count}} vistas"
     },
     "upload": {
       "description": "Añade una nueva foto a la galería.",
@@ -41,13 +25,11 @@
         "before_after": "Antes/Después",
         "before_photo": "Foto \"Antes\"",
         "category": "Categoría",
-        "choose_file": "Seleccionar archivo",
         "client": "Cliente",
         "client_hint": "La foto estará disponible en la galería del cliente.",
         "description": "Descripción",
         "description_placeholder": "Descripción de la foto",
         "photo": "Foto",
-        "select_category": "Seleccionar categoría",
         "select_client": "Seleccionar cliente",
         "single_photo": "una foto",
         "title": "Nombre",

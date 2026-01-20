@@ -193,8 +193,8 @@ export default function Bookings() {
   const isSales = currentUser?.role === 'sales';
   const isAdmin = currentUser?.role === 'admin';
   const isDirector = currentUser?.role === 'director';
-  const canEdit = isDirector || isAdmin || isSales; // Все кроме employee
-  const canDelete = isDirector; // Только директор
+  const canEdit = isDirector || isAdmin || isSales;
+  const canDelete = isDirector;
 
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -953,7 +953,7 @@ export default function Bookings() {
                         </div>
 
                         <div className="border-t border-gray-100 pt-3">
-                          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Свой период</p>
+                          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">{t('common:custom_period')}</p>
                           <div className="grid grid-cols-1 gap-2">
                             <input
                               type="date"
@@ -1021,13 +1021,13 @@ export default function Bookings() {
                     onClick={() => handleSort('source')}
                     className="px-6 py-4 text-center text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
                   >
-                    {t('bookings:source.title', 'Соц.сеть')} {sortField === 'source' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('bookings:source.title')} {sortField === 'source' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     onClick={() => handleSort('revenue')}
                     className="px-6 py-4 text-center text-sm font-semibold text-gray-600 cursor-pointer select-none whitespace-nowrap"
                   >
-                    {t('bookings:amount', 'Сумма')} {sortField === 'revenue' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    {t('bookings:amount')} {sortField === 'revenue' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
 
                   <th className="px-6 py-4 text-center text-sm font-semibold text-gray-600 whitespace-nowrap">{t('bookings:phone')}</th>
@@ -1903,7 +1903,7 @@ export default function Bookings() {
                 {/* Source */}
                 <div>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                    {t('bookings:source.title', 'Источник')}
+                    {t('bookings:source.title')}
                   </label>
                   <select
                     value={addForm.source}
@@ -1915,12 +1915,12 @@ export default function Bookings() {
                       backgroundColor: 'white'
                     }}
                   >
-                    <option value="manual">{t('bookings:source.manual', 'Вручную (CRM)')}</option>
-                    <option value="account">{t('bookings:source.account', 'Личный кабинет')}</option>
-                    <option value="guest_link">{t('bookings:source.guest_link', 'Гостевая ссылка')}</option>
-                    <option value="instagram">Instagram</option>
-                    <option value="telegram">Telegram</option>
-                    <option value="whatsapp">WhatsApp</option>
+                    <option value="manual">{t('bookings:source.manual')}</option>
+                    <option value="account">{t('bookings:source.account')}</option>
+                    <option value="guest_link">{t('bookings:source.guest_link')}</option>
+                    <option value="instagram">{t('bookings:source.instagram')}</option>
+                    <option value="telegram">{t('bookings:source.telegram')}</option>
+                    <option value="whatsapp">{t('bookings:source.whatsapp')}</option>
                   </select>
                 </div>
               </div>

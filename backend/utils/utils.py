@@ -410,8 +410,8 @@ def is_valid_phone(phone: str) -> bool:
         return False
     # Убираем всё кроме цифр
     digits = re.sub(r'\D', '', phone)
-    # Проверяем длину (от 10 до 15 цифр)
-    return 10 <= len(digits) <= 15
+    # Проверяем длину (от 11 до 15 цифр) - теперь минимум 11 для учета кода страны
+    return 11 <= len(digits) <= 15
 
 def is_valid_instagram_username(username: str) -> bool:
     """

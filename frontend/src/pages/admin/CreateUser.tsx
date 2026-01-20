@@ -253,9 +253,9 @@ export default function CreateUser() {
                 </PopoverTrigger>
                 <PopoverContent className="w-[400px] p-0">
                   <Command>
-                    <CommandInput placeholder={t('search_position', 'Search position...')} />
+                    <CommandInput placeholder={t('search_position')} />
                     <CommandList>
-                      <CommandEmpty>{t('no_position_found', 'No position found.')}</CommandEmpty>
+                      <CommandEmpty>{t('no_position_found')}</CommandEmpty>
                       <CommandGroup>
                         {positions.map((position) => (
                           <CommandItem
@@ -294,7 +294,7 @@ export default function CreateUser() {
                 ))}
               </div>
               <p className="text-sm text-gray-500 mt-1">
-                {t('position_hint', 'Select one or more positions')}
+                {t('position_hint')}
               </p>
             </div>
 
@@ -311,7 +311,7 @@ export default function CreateUser() {
               ) : (
                 <>
                   <UserPlus className="w-4 h-4 mr-2" />
-                  {t('create_and_assign_services', 'Create User & Assign Services')}
+                  {t('create_and_assign_services')}
                 </>
               )}
             </Button>

@@ -104,27 +104,27 @@ const AuditLog: React.FC = () => {
     };
 
     const handleDeleteEntry = async (id: number) => {
-        if (!window.confirm(t('delete_confirm') || 'Удалить эту запись?')) return;
+        if (!window.confirm(t('delete_confirm'))) return;
         try {
             await api.deleteAuditLog(id);
-            toast.success(t('toast.delete_success') || 'Запись удалена');
+            toast.success(t('toast.delete_success'));
             setHistory(history.filter(h => h.id !== id));
             setSelectedIds(selectedIds.filter(sid => sid !== id));
         } catch (error) {
-            toast.error(t('toast.delete_error') || 'Ошибка при удалении');
+            toast.error(t('toast.delete_error'));
         }
     };
 
     const handleDeleteBatch = async () => {
-        if (!window.confirm(t('delete_batch_confirm') || `Удалить ${selectedIds.length} записей?`)) return;
+        if (!window.confirm(t('delete_batch_confirm', { count: selectedIds.length }))) return;
         try {
             setIsDeleting(true);
             await api.deleteAuditLogsBatch(selectedIds);
-            toast.success(t('toast.delete_success') || 'Записи удалены');
+            toast.success(t('toast.delete_success'));
             setHistory(history.filter(h => !selectedIds.includes(h.id)));
             setSelectedIds([]);
         } catch (error) {
-            toast.error(t('toast.delete_error') || 'Ошибка при удалении');
+            toast.error(t('toast.delete_error'));
         } finally {
             setIsDeleting(false);
         }
@@ -188,7 +188,7 @@ const AuditLog: React.FC = () => {
                             variant="destructive"
                         >
                             <Trash2 size={18} className="mr-2" />
-                            <span>{t('delete_selected') || 'Удалить выбранные'} ({selectedIds.length})</span>
+                            <span>{t('delete_selected')} ({selectedIds.length})</span>
                         </Button>
                     )}
                     {isDirector && (
@@ -264,7 +264,7 @@ const AuditLog: React.FC = () => {
                         <option value="delete">{t('filter_delete')}</option>
                         <option value="restore">{t('filter_restore')}</option>
                         <option value="login">{t('filter_login')}</option>
-                        <option value="delete_all">{t('filter_delete_all') || 'Очистка'}</option>
+                        <option value="delete_all">{t('filter_delete_all')}</option>
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                 </div>

@@ -4,6 +4,8 @@ import { Footer } from "../components/Footer";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "../../src/hooks/useSalonSettings";
+import { getApiUrl } from "../utils/apiUtils";
+import { safeFetch } from "../utils/errorHandler";
 import '../styles/css/index.css';
 
 export function TermsOfUse() {

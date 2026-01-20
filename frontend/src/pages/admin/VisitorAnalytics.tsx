@@ -192,11 +192,28 @@ export default function VisitorAnalytics() {
     const loadData = async () => {
         try {
             setLoading(true);
-            const periodValue = period === 'today' ? 'day' : period === '7' ? 'week' : period === '30' ? 'month' : 'week';
+
+            // Map period identifiers
+            const periodMap: Record<string, string> = {
+                'today': 'day',
+                '3': '3',
+                '7': 'week',
+                '14': '14',
+                '30': 'month',
+                '90': '90'
+            };
+
+            const periodValue = periodMap[period] || 'week';
             const maxDist = Number(distanceTo);
 
             // Используем консолидированный endpoint для оптимизации (1 запрос вместо 8)
-            const dashboardData = await visitorApi.getDashboard(periodValue, maxDist);
+            // Передаем dateFrom и dateTo только если выбран 'custom'
+            const dashboardData = await visitorApi.getDashboard(
+                periodValue,
+                maxDist,
+                period === 'custom' ? dateFrom : undefined,
+                period === 'custom' ? dateTo : undefined
+            );
 
             if (dashboardData.success && dashboardData.data) {
                 const data = dashboardData.data;
@@ -581,7 +598,7 @@ export default function VisitorAnalytics() {
                                 outerRadius={100}
                                 label
                             >
-                                {countryPieData.map((entry, index) => (
+                                {countryPieData.map((_, index) => (
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                             </Pie>

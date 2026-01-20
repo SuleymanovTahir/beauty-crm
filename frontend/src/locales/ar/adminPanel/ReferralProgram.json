@@ -25,7 +25,6 @@
   "settings": "إعدادات",
   "stats": {
     "completed_referrals": "الإحالات المكتملة",
-    "from_last_month": "من الشهر الماضي",
     "points_distributed": "النقاط الموزعة",
     "total_referrals": "إجمالي الإحالات"
   },

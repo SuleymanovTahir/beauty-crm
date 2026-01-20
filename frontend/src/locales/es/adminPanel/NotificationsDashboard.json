@@ -9,7 +9,7 @@
       "description": "Crea y envía notificaciones a tus clientes.",
       "form": {
         "appointment_date": "fecha de grabación",
-        "appointment_filter": "Filtrar por entradas",
+        "appointment_filter": "Filtrar hasta fecha reservas",
         "appointment_filters": {
           "date_range": "Rango de fechas",
           "specific_date": "fecha especifica",
@@ -34,16 +34,16 @@
         "segments": {
           "active": "Clientes activos",
           "all": "Todos los clientes",
-          "appointment_based": "Según registros",
+          "appointment_based": "Según reservas",
           "inactive": "Clientes inactivos",
-          "service_based": "Por servicios",
-          "tier": "Por nivel de fidelidad"
+          "service_based": "hasta fecha servicios",
+          "tier": "hasta fecha nivel de fidelidad"
         },
         "select_filter": "Seleccionar filtro",
         "select_tier": "Seleccionar nivel",
         "service_filter": "Servicio/Procedimiento",
         "service_hint": "Los clientes registrados en este servicio recibirán una notificación.",
-        "service_placeholder": "Ingrese el nombre o ID del servicio",
+        "service_placeholder": "Введите название или идентификатор услуги",
         "start_date": "fecha de inicio",
         "target_segment": "Segmento objetivo",
         "tiers": {
@@ -63,7 +63,7 @@
         "message": "Mensaje",
         "message_placeholder": "Utilice {variable} para contenido dinámico",
         "template_name": "Nombre de la plantilla",
-        "template_name_placeholder": "por ejemplo, mensaje de bienvenida",
+        "template_name_placeholder": "hasta fecha ejemplo, mensaje de bienvenida",
         "title": "Título",
         "title_placeholder": "Título de la notificación",
         "type": "Tipo",
@@ -85,11 +85,6 @@
       "sms": "SMS"
     },
     "scheduled": "Planificado",
-    "statuses": {
-      "failed": "Fallido",
-      "pending": "Espera",
-      "sent": "Enviado"
-    },
     "table": {
       "date": "Fecha",
       "recipients": "Destinatarios",
@@ -105,7 +100,7 @@
   "stats": {
     "email_sent": "Correo electrónico enviado",
     "push_sent": "Empuje enviado",
-    "sms_sent": "SMS enviado",
+    "sms_sent": "СМС отправлено",
     "total_sent": "Total enviado"
   },
   "subtitle": "Gestión y envío de notificaciones a clientes.",

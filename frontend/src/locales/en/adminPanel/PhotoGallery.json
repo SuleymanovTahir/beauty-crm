@@ -9,30 +9,14 @@
     "upload": "Download"
   },
   "card": {
-    "delete": "Delete",
     "featured": "Favorites",
     "toggle_featured": "Toggle Favorites",
     "uploaded_by": "Uploaded by {{name}}",
     "views": "views"
   },
-  "categories": {
-    "coloring": "Coloring",
-    "haircut": "Haircuts",
-    "makeup": "Makeup",
-    "manicure": "Manicure",
-    "other": "Other",
-    "styling": "Laying"
-  },
   "dialogs": {
     "delete": {
       "confirm": "Are you sure you want to delete this photo?"
-    },
-    "preview": {
-      "category": "Category: {{category}}",
-      "created_at": "{{date}}",
-      "title": "Photo preview",
-      "uploaded_by": "Uploaded by {{name}}",
-      "views": "{{count}} views"
     },
     "upload": {
       "description": "Add a new photo to the gallery",
@@ -41,13 +25,11 @@
         "before_after": "Before/After",
         "before_photo": "Photo \"Before\"",
         "category": "Category",
-        "choose_file": "Select file",
         "client": "Client",
         "client_hint": "The photo will be available in the client's gallery",
         "description": "Description",
         "description_placeholder": "Photo description",
         "photo": "Photo",
-        "select_category": "Select category",
         "select_client": "Select client",
         "single_photo": "One photo",
         "title": "Name",

@@ -4,7 +4,7 @@
   "avg_check": "متوسط ​​الفاتورة",
   "avg_time": "متوسط ​​الوقت",
   "booking_statuses": "حالات النشر",
-  "bookings": "دعامات",
+  "bookings": "إدارة السجلات",
   "bookings_trend": "ديناميات السجلات",
   "clarify_services": "تحديد الخدمات",
   "conversation_stage": "مرحلة المحادثة",
@@ -21,7 +21,7 @@
   },
   "export": "يصدّر",
   "exporting": "يصدّر...",
-  "focus_on_highest_drop_off": "التركيز على المسرح مع أعلى الاستنزاف",
+  "focus_on_highest_drop_off": "التركيز على المسرح من تاريخ أعلى الاستنزاف",
   "for_period": "لهذه الفترة",
   "from_visitors": "من الزوار إلى العملاء",
   "improve_greeting": "تحسين تحيتك",
@@ -61,7 +61,7 @@
   "top_services": "أعلى الخدمات",
   "try_again": "حاول ثانية",
   "where_clients_leave": "أين يذهب العملاء؟",
-  "work_on_objections": "التعامل مع الاعتراضات",
+  "work_on_objections": "التعامل من تاريخ الاعتراضات",
   "funnel_overview": "قمع المبيعات",
   "visitors": "الزوار",
   "engaged": "متضمن",
@@ -89,6 +89,6 @@
       "booked": "اكتمل التسجيل",
       "completed": "الخدمة المقدمة"
     },
-    "losses": "الخسائر: __VAR0____"
+    "losses": "الخسائر: {{count}}"
   }
 }

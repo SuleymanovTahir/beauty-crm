@@ -15,7 +15,7 @@
   "late_arrival": "Caso o cliente se atrase mais de 15 minutos, o salão reserva-se o direito de cancelar a marcação ou encurtar o tempo do procedimento.",
   "medical_contraindications": "Contra-indicações médicas",
   "payment_details": "O pagamento é feito em dinheiro ou cartão após a prestação do serviço. Os preços dos serviços estão indicados na tabela de preços e estão sujeitos a alterações sem aviso prévio.",
-  "payment_for_services": "Pagamento por serviços",
+  "payment_for_services": "Pagamento até data serviços",
   "privacy_commitment": "Respeitamos a sua privacidade e estamos empenhados em proteger as suas informações pessoais de acordo com a nossa Política de Privacidade.",
   "quality_guarantee": "Garantimos a qualidade dos materiais utilizados e o profissionalismo dos nossos artesãos. Os resultados dos procedimentos podem variar dependendo das características individuais do cliente.",
   "salon_liability": "O salão não se responsabiliza pelas consequências dos procedimentos caso o cliente oculte informações sobre contraindicações médicas.",
@@ -23,7 +23,7 @@
     "booking": {
       "booking_requirements": "Para se registrar nos procedimentos, você deve fornecer informações de contato corretas. Reservamo-nos o direito de confirmar ou recusar uma reserva.",
       "cancellationText": "O cliente poderá cancelar a consulta até 24 horas antes do horário agendado. Se cancelado com menos de 24 horas de antecedência poderá ser cobrada uma multa de 50% do custo do serviço.",
-      "cancellationTitle": "Cancelar uma entrada:",
+      "cancellationTitle": "Cancelar uma reserva:",
       "title": "2. Reserva e cancelamento"
     },
     "changes": {
@@ -49,7 +49,7 @@
     "payment": {
       "paragraph1": "O pagamento é feito em dinheiro ou cartão após a prestação do serviço. Os preços dos serviços estão indicados na tabela de preços e estão sujeitos a alterações sem aviso prévio.",
       "paragraph2": "Caso o cliente se atrase mais de 15 minutos, o salão reserva-se o direito de cancelar a marcação ou encurtar o tempo do procedimento.",
-      "title": "3. Pagamento por serviços"
+      "title": "3. Pagamento até data serviços"
     },
     "privacy": {
       "content": "Respeitamos sua privacidade e estamos comprometidos em proteger suas informações pessoais de acordo com nossa <link>Política de Privacidade</link>.",

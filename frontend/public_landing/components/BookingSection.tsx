@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Calendar, Clock, Loader2, Check, ChevronsUpDown } from 'lucide-react';
+import { Calendar, Clock, Loader2, Check, ChevronsUpDown, User, Sparkles } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 import { useAuth } from '../../src/contexts/AuthContext';
 import { api } from '../../src/services/api';
@@ -22,7 +22,8 @@ import {
 } from "./ui/popover";
 import { PhoneInputWithSearch } from './ui/PhoneInputWithSearch';
 import { DEFAULT_VALUES, EXTERNAL_SERVICES } from '../utils/constants';
-import { safeFetch } from '../utils/errorHandler';
+import { safeFetch, safeExternalApiCall } from '../utils/errorHandler';
+import { getTodayDate } from '../utils/dateUtils';
 
 export const BookingSection = () => {
   const { t, i18n } = useTranslation(['booking', 'public_landing', 'common']);
@@ -33,10 +34,11 @@ export const BookingSection = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    service: '', // Теперь хранит категорию
+    selectedServices: [] as number[], // Массив ID выбранных услуг
     date: '',
     time: ''
   });
+  const [services, setServices] = useState<any[]>([]); // Список всех услуг
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -55,14 +57,14 @@ export const BookingSection = () => {
         'IP API',
         { country_code: DEFAULT_VALUES.COUNTRY_CODE.toUpperCase() }
       ).then(data => {
-          if (data.country_code) {
-            const countryCode = data.country_code.toLowerCase();
-            setDefaultCountry(countryCode);
-            localStorage.setItem('preferred_phone_country', countryCode);
+        if (data.country_code) {
+          const countryCode = data.country_code.toLowerCase();
+          setDefaultCountry(countryCode);
+          localStorage.setItem('preferred_phone_country', countryCode);
         } else {
           setDefaultCountry(DEFAULT_VALUES.COUNTRY_CODE);
-          }
-        });
+        }
+      });
     }
   }, []);
 
@@ -87,9 +89,17 @@ export const BookingSection = () => {
     const handleHashChange = () => {
       const hash = window.location.hash;
       const match = hash.match(/booking\?category=([^&]+)/);
-      if (match && match[1]) {
+      if (match && match[1] && services.length > 0) {
         const category = decodeURIComponent(match[1]);
-        setFormData(prev => ({ ...prev, service: category }));
+        // Find services in this category and select them
+        const categoryServices = services.filter((s: any) => s.category === category);
+        if (categoryServices.length > 0) {
+          const serviceIds = categoryServices.map((s: any) => s.id);
+          setFormData(prev => ({
+            ...prev,
+            selectedServices: [...new Set([...prev.selectedServices, ...serviceIds])]
+          }));
+        }
         // Clean the hash
         window.history.replaceState(null, '', '#booking');
       }
@@ -97,84 +107,85 @@ export const BookingSection = () => {
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [services]);
 
   useEffect(() => {
     // Fetch services and extract unique categories
-    const fetchCategories = async () => {
+    const fetchServices = async () => {
       try {
-        const API_URL = getApiUrl();
-        const res = await safeFetch(`${API_URL}/api/public/services?language=${i18n.language}`);
-        const data = await res.json();
+        const res = await api.getPublicServices();
+        const data = res; // api.getPublicServices() usually returns data directly
 
-        let services: any[] = [];
+        let servicesList: any[] = [];
         if (Array.isArray(data)) {
-          services = data;
-        } else if (data.categories) {
-          // Flatten categories to get all services (fallback)
-          data.categories.forEach((cat: any) => {
-            if (cat.items) {
-              services.push(...cat.items);
-            }
-          });
+          servicesList = data;
         }
 
+        setServices(servicesList);
+
         // Extract unique categories, filter out empty/null values
-        const categories = services
+        const categories = servicesList
           .map((s: any) => s.category)
           .filter((cat: any) => cat && typeof cat === 'string' && cat.trim() !== '');
 
         const uniqueCategories = Array.from(new Set(categories)).sort();
-        
         setAvailableCategories(uniqueCategories);
       } catch (err) {
-        console.error('Error fetching categories for booking:', err);
+        console.error('Error fetching services for booking:', err);
       }
     };
-    fetchCategories();
+    fetchServices();
   }, [i18n.language]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.service) {
-      toast.error(t('formServicePlaceholder', { defaultValue: 'Выберите категорию услуги' }));
+    // Телефонный номер должен содержать минимум 11 цифр с учетом кода страны
+    const digitsOnly = formData.phone.replace(/\D/g, '');
+    if (digitsOnly.length < 11) {
+      toast.error(t('phone_too_short', { defaultValue: 'Номер телефона должен содержать минимум 11 цифр с учетом кода страны' }));
+      return;
+    }
+
+    if (formData.selectedServices.length === 0) {
+      toast.error(t('formServicePlaceholder', { defaultValue: 'Выберите хотя бы одну услугу' }));
       return;
     }
 
     try {
       setLoading(true);
 
-      // Generate client ID (instagram_id)
-      const instagramId = user?.username || `web_${formData.phone.replace(/\D/g, '')}`;
-
-      const bookingData = {
-        instagram_id: instagramId,
-        service: formData.service, // Отправляем категорию
+      const payload = {
         name: formData.name,
         phone: formData.phone,
-        service_id: null, // Нет конкретного ID услуги, только категория
+        service_ids: formData.selectedServices,
         date: formData.date,
         time: formData.time,
-        source: 'website',
-        status: 'pending_confirmation'
+        source: 'public_landing'
       };
 
-      await api.createPublicBooking(bookingData);
+      await api.createPublicBooking(payload);
 
       // Reset form
       setFormData({
         name: '',
         phone: '',
-        service: '',
+        selectedServices: [],
         date: '',
         time: ''
       });
 
       toast.success(t('bookingSuccess', { defaultValue: 'Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.' }));
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error creating booking:', err);
-      toast.error(t('bookingError', { defaultValue: 'Ошибка при создании записи. Попробуйте позже.' }));
+      let errorMsg = err?.message || err?.detail || t('bookingError', { defaultValue: 'Ошибка при создании записи. Попробуйте позже.' });
+
+      // Если сервер вернул ключ ошибки, переводим его
+      if (errorMsg === 'phone_too_short') {
+        errorMsg = t('phone_too_short', { defaultValue: 'Номер телефона должен содержать минимум 11 цифр с учетом кода страны' });
+      }
+
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -183,18 +194,18 @@ export const BookingSection = () => {
   // Helper function to get category display name
   const getCategoryDisplayName = (category: string) => {
     if (!category) return category;
-    
+
     // Try translation from booking.json services section
     // Format: services.category_Brows, services.category_Facial, etc.
     // Note: "Permanent Makeup" has a space, so we keep it as is
     const translationKey = `services.category_${category}`;
-    
+
     // Use t with booking namespace, same format as ServicesStep.tsx
-    const translated = t(translationKey, { 
+    const translated = t(translationKey, {
       ns: 'booking',
-      defaultValue: category 
+      defaultValue: category
     });
-    
+
     // Return translated value (if translation not found, defaultValue will be used)
     return translated;
   };
@@ -217,14 +228,17 @@ export const BookingSection = () => {
         <form onSubmit={handleSubmit} className="glass-panel lg:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xl border border-primary/20 space-y-4 sm:space-y-6">
           <div>
             <label className="form-label-custom">{t('formName', { defaultValue: 'Имя' })}</label>
-            <Input
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder={t('formNamePlaceholder', { defaultValue: 'Ваше имя' })}
-              className="h-10 sm:h-11 form-input-custom"
-            />
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder={t('formNamePlaceholder', { defaultValue: 'Ваше имя' })}
+                className="h-10 sm:h-11 pl-10 form-input-custom"
+              />
+            </div>
           </div>
 
           <div>
@@ -238,49 +252,75 @@ export const BookingSection = () => {
           </div>
 
           <div>
-            <label className="form-label-custom">{t('formService', { defaultValue: 'Категория услуги' })}</label>
+            <label className="form-label-custom">{t('formService', { defaultValue: 'Услуги' })}</label>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   role="combobox"
                   aria-expanded={open}
-                  className="w-full justify-between h-10 sm:h-11 px-3 bg-muted/20 hover:bg-muted/30 text-left font-normal border-primary/20"
+                  className="w-full justify-between h-auto min-h-[40px] sm:min-h-[44px] px-3 py-2 bg-muted/20 hover:bg-muted/30 text-left font-normal border-primary/20 flex-wrap gap-1 pr-10 relative"
                 >
-                  {formData.service
-                    ? getCategoryDisplayName(formData.service)
-                    : t('formServicePlaceholder', { defaultValue: 'Выберите категорию услуги' })}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  <Sparkles className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                  <div className="pl-7 flex flex-wrap gap-1">
+                    {formData.selectedServices.length > 0 ? (
+                      formData.selectedServices.map(id => {
+                        const s = services.find(srv => srv.id === id);
+                        return s ? (
+                          <span key={id} className="bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded-full border border-primary/20">
+                            {s.name}
+                          </span>
+                        ) : null;
+                      })
+                    ) : (
+                      <span className="text-muted-foreground">{t('formServicePlaceholder', { defaultValue: 'Выберите услуги' })}</span>
+                    )}
+                  </div>
+                  <ChevronsUpDown className="absolute right-3 top-3 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-[300px] p-0" align="start">
                 <Command>
-                  <CommandInput placeholder={t('searchCategory', { defaultValue: 'Найти категорию...' })} />
+                  <CommandInput placeholder={t('searchService', { defaultValue: 'Найти услугу...' })} />
                   <CommandList>
-                    <CommandEmpty>{t('noCategoriesFound', { defaultValue: 'Категории не найдены.' })}</CommandEmpty>
-                    <CommandGroup>
-                      {availableCategories.map((category: string) => {
-                        const displayName = getCategoryDisplayName(category);
-                        return (
-                        <CommandItem
-                            key={category}
-                            value={displayName}
-                          onSelect={() => {
-                              setFormData({ ...formData, service: category });
-                            setOpen(false);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                                formData.service === category ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                            {displayName}
-                        </CommandItem>
-                        );
-                      })}
-                    </CommandGroup>
+                    <CommandEmpty>{t('noServicesFound', { defaultValue: 'Услуги не найдены.' })}</CommandEmpty>
+                    {availableCategories.map((category: string) => (
+                      <CommandGroup key={category} heading={getCategoryDisplayName(category)}>
+                        {services
+                          .filter((s: any) => s.category === category)
+                          .map((service: any) => (
+                            <CommandItem
+                              key={service.id}
+                              value={service.name}
+                              onSelect={() => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  selectedServices: prev.selectedServices.includes(service.id)
+                                    ? prev.selectedServices.filter(id => id !== service.id)
+                                    : [...prev.selectedServices, service.id]
+                                }));
+                              }}
+                            >
+                              <div className={cn(
+                                "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                                formData.selectedServices.includes(service.id)
+                                  ? "bg-primary text-primary-foreground"
+                                  : "opacity-50 [&_svg]:invisible"
+                              )}>
+                                <Check className={cn("h-3 w-3")} />
+                              </div>
+                              <div className="flex flex-col">
+                                <span>{service.name}</span>
+                                {service.price && (
+                                  <span className="text-[10px] text-muted-foreground">
+                                    {service.price} {service.currency}
+                                  </span>
+                                )}
+                              </div>
+                            </CommandItem>
+                          ))}
+                      </CommandGroup>
+                    ))}
                   </CommandList>
                 </Command>
               </PopoverContent>

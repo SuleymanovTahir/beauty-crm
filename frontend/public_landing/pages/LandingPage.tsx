@@ -3,6 +3,7 @@ import { Header } from '../components/Header';
 import { Hero } from '../components/Hero';
 import { CookieConsent } from '../components/CookieConsent';
 import { Footer } from '../components/Footer';
+import { trackSection } from '../utils/analytics';
 import '../styles/css/index.css';
 
 // Lazy load components for better performance
@@ -48,6 +49,28 @@ export function LandingPage() {
     };
 
     fetchInitialData();
+
+    // 3. Setup section tracking
+
+    // Track initial load (hero)
+    trackSection('hero');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          if (id) {
+            trackSection(id);
+          }
+        }
+      });
+    }, { threshold: 0.3 }); // Track when 30% of section is visible
+
+    // Observe all sections with IDs
+    const sections = document.querySelectorAll('main > div[id]');
+    sections.forEach(section => observer.observe(section));
+
+    return () => observer.disconnect();
   }, []);
 
   return (

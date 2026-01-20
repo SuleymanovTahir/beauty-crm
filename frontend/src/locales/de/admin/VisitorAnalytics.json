@@ -1,6 +1,6 @@
 {
   "apply": "Anwenden",
-  "check_range": "Reichweite prüfen (0-1000 km, „Bis“ > „Von“)",
+  "check_range": "Reichweite prüfen (0-1000 km, „Bis“ > „datum bis“)",
   "cities": "Städte",
   "city": "Stadt",
   "countries": "Länder",
@@ -41,7 +41,6 @@
   "total_visitors": "Gesamtbesucherzahl",
   "trend_subtitle": "Dynamik der Besuche pro Tag",
   "unique_locations": "Einzigartige Orte",
-  "up_to": "Zu",
   "visit_time": "Besuchszeit",
   "visitor_trend": "Besuchen Sie Trend",
   "visitors": "Besucher",

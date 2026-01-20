@@ -1,7 +1,7 @@
 {
   "actions": {
-    "hide": "Hide",
-    "show": "Show"
+    "hide": "Скрывать",
+    "show": "Показывать"
   },
   "buttons": {
     "cancel": "Отмена",
@@ -9,30 +9,14 @@
     "upload": "Загрузить"
   },
   "card": {
-    "delete": "Удалить",
     "featured": "Избранное",
     "toggle_featured": "Переключить избранное",
     "uploaded_by": "Загружено {{name}}",
     "views": "просмотров"
   },
-  "categories": {
-    "coloring": "Окрашивание",
-    "haircut": "Стрижки",
-    "makeup": "Макияж",
-    "manicure": "Маникюр",
-    "other": "Другое",
-    "styling": "Укладка"
-  },
   "dialogs": {
     "delete": {
       "confirm": "Вы уверены, что хотите удалить это фото?"
-    },
-    "preview": {
-      "category": "Категория: {{category}}",
-      "created_at": "{{date}}",
-      "title": "Предварительный просмотр фото",
-      "uploaded_by": "Загружено {{name}}",
-      "views": "{{count}} просмотров"
     },
     "upload": {
       "description": "Добавить новое фото в галерею",
@@ -41,13 +25,11 @@
         "before_after": "До/После",
         "before_photo": "Фото \"До\"",
         "category": "Категория",
-        "choose_file": "Выберите файл",
         "client": "Клиент",
         "client_hint": "Фото будет доступно в галерее клиента",
         "description": "Описание",
         "description_placeholder": "Описание фото",
         "photo": "Фото",
-        "select_category": "Выберите категорию",
         "select_client": "Выберите клиента",
         "single_photo": "Одно фото",
         "title": "Название",
@@ -79,11 +61,11 @@
     "failed_featured": "Не удалось обновить статус избранного",
     "failed_load": "Не удалось загрузить фотографии",
     "failed_upload": "Не удалось загрузить фото",
-    "failed_visibility": "Failed to update visibility",
+    "failed_visibility": "Не удалось обновить видимость.",
     "featured_updated": "Статус избранного обновлен",
-    "select_both_photos": "Please select both before and after photos",
+    "select_both_photos": "Пожалуйста, выберите фото «до» и «после»",
     "uploaded": "Фото успешно загружено",
-    "visibility_updated": "Visibility updated"
+    "visibility_updated": "Видимость обновлена"
   },
   "upload_photo": "Загрузить фото"
 }

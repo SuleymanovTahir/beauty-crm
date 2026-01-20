@@ -20,7 +20,7 @@
   "security_tip2": "Não use a mesma senha para serviços diferentes",
   "security_tip3": "Altere sua senha regularmente (a cada 3 meses)",
   "security_tips": "Recomendações de segurança",
-  "sms_notifications": "Notificações até SMS",
+  "sms_notifications": "Notificações até data SMS",
   "subtitle": "Gerenciar notificações e segurança",
   "title": "Configurações"
 }
