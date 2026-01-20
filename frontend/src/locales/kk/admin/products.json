@@ -11,9 +11,9 @@
   "delete": "Жою",
   "detail": {
     "costPriceLabel": "Құны: {{price}} {{currency}}",
-    "inStock_one": "Біреуі қолжетімді",
     "inStock_few": "Бірнеше қолжетімді",
     "inStock_many": "Қоймада көп",
+    "inStock_one": "Біреуі қолжетімді",
     "inStock_other": "Басқалары қоймада",
     "loadingData": "Деректер жүктелуде...",
     "movementAdjustment": "Реттеу",

@@ -6,6 +6,7 @@
   "logout_success": "Сіз жүйеден сәтті шықтыңыз",
   "menu": {
     "analytics": "Аналитика",
+    "audit_log": "Аудит журналдары",
     "bookings": "bookings",
     "bot_settings": "Бот параметрлері",
     "calendar": "Күнтізбе",
@@ -13,16 +14,15 @@
     "clients": "Клиенттер",
     "dashboard": "Бақылау тақтасы",
     "feedback": "Feedback",
+    "funnel": "Шұңқыр",
     "plans": "Жоспарлар",
     "public_content": "Қоғамдық мазмұн",
     "services": "Қызметтер",
     "settings": "Параметрлер",
-    "users": "Пайдаланушылар",
-    "visitors": "Келушілер",
-    "funnel": "Шұңқыр",
     "tasks": "Тапсырмалар",
     "telephony": "Телефония",
     "trash": "Себет",
-    "audit_log": "Аудит журналдары"
+    "users": "Пайдаланушылар",
+    "visitors": "Келушілер"
   }
 }

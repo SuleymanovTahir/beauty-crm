@@ -23,7 +23,7 @@
         "end_date": "Аяқталу күні",
         "reward_placeholder": "1000",
         "reward_points": "Ұпайларды қосыңыз",
-        "start_date": "басталу күні",
+        "start_date": "Басталу күні",
         "target_placeholder": "3",
         "target_value": "Мақсатты мөлшер",
         "title": "Мақсат атауы",
@@ -50,9 +50,9 @@
     "failed_create": "Әрекетті жасау қатесі",
     "failed_delete": "Жою кезінде қате",
     "failed_load": "Деректерді жүктеу сәтсіз аяқталды",
-    "progress_checked_one": "{{count}} мүшесі үшін орындалу барысы жаңартылды",
     "progress_checked_few": "{{count}} қатысушылары үшін орындалу барысы жаңартылды",
     "progress_checked_many": "{{count}} қатысушылары үшін орындалу барысы жаңартылды",
+    "progress_checked_one": "{{count}} мүшесі үшін орындалу барысы жаңартылды",
     "progress_checked_other": "{{count}} қатысушылары үшін орындалу барысы жаңартылды"
   },
   "types": {

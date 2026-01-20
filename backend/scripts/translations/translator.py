@@ -82,6 +82,16 @@ SALON_TERMINOLOGY = {
         'ногти': 'Ногти',
         'мастер': 'Мастер',
         'любой мастер': 'Любой мастер',
+        'часы пик': 'Пиковые часы',
+        'за каждый запись': 'За каждую запись',
+        'удалить пакет, подтвердить несколько': 'Подтвердите удаление нескольких элементов',
+        'удалить пакет, подтвердить много': 'Подтвердите удаление многих элементов',
+        'удалить пакет, подтвердить один': 'Подтвердите удаление элемента',
+        'удалить пакет, подтвердить другое': 'Подтвердите удаление',
+        'задержка (дни)': 'Задержка (дн.)',
+        'задержка (часы)': 'Задержка (ч.)',
+        'задержка (минуты)': 'Задержка (мин.)',
+        'nfc apple/google wallet': 'NFC Apple/Google Wallet',
     },
     # Corrections for English (when EN is the target language)
     'en': {
@@ -234,6 +244,16 @@ SALON_TERMINOLOGY = {
         'push': 'Push хабарлама',
     }
 }
+
+MONTHS_FULL = {
+    'jan': 'January', 'feb': 'February', 'mar': 'March', 'apr': 'April',
+    'may': 'May', 'jun': 'June', 'jul': 'July', 'aug': 'August',
+    'sep': 'September', 'oct': 'October', 'nov': 'November', 'dec': 'December',
+    'янв': 'Январь', 'фев': 'Февраль', 'мар': 'Март', 'апр': 'Апрель',
+    'май': 'Май', 'июн': 'Июнь', 'июл': 'Июль', 'авг': 'Август',
+    'сен': 'Сентябрь', 'окт': 'Октябрь', 'ноя': 'Ноябрь', 'дек': 'Декабрь'
+}
+
 
 
 class Translator:
@@ -426,6 +446,11 @@ class Translator:
         if not text or not text.strip():
             return text
 
+        # 0. Handle months first
+        month_res = self._handle_months(text, source, target)
+        if month_res:
+            return month_res
+
         # Protect interpolation variables {{variable}} from translation
         import re
         variable_pattern = r'\{\{([^}]+)\}\}'
@@ -588,19 +613,25 @@ class Translator:
     def translate_dict(self, data: Dict[str, str], source: str, target: str) -> Dict[str, str]:
         """
         Translate all values in a dictionary
-        
-        Args:
-            data: Dictionary with string values
-            source: Source language code
-            target: Target language code
-            
-        Returns:
-            Dictionary with translated values
         """
         return {
             key: self.translate(value, source, target) if isinstance(value, str) else value
             for key, value in data.items()
         }
+
+    def _handle_months(self, text: str, source: str, target: str) -> Optional[str]:
+        """Special handling for months to avoid abbreviations issues"""
+        low = text.lower().strip().replace('.', '')
+        if low in MONTHS_FULL:
+            full_name = MONTHS_FULL[low]
+            # Translate full name
+            translated_full = self._translate_via_http(full_name, 'en' if low in MONTHS_FULL and low.isalpha() and not any(c in 'яфемаисаокнд' for c in low) else 'ru', target)
+            # Shorten if the original was short
+            if len(text) <= 4:
+                return translated_full[:3].capitalize() if target != 'ar' else translated_full
+            return translated_full
+        return None
+
 
     def transliterate(self, text: str, source: str, target: str) -> str:
         """
