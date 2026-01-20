@@ -45,8 +45,8 @@
   "personal_info_title": "Personal information",
   "photo_requirements": "JPG, PNG.",
   "privacy_masters": "Master access",
-  "privacy_masters_desc": "Share your visit history with masters",
-  "privacy_photos": "Photo resolution",
+  "privacy_masters_desc": "Share your visit history with the masters",
+  "privacy_photos": "Allow photo",
   "privacy_photos_desc": "Allow technicians to take before/after photos",
   "privacy_public": "Public profile",
   "privacy_public_desc": "Show your achievements to other clients",
@@ -62,8 +62,8 @@
   "title": "Settings",
   "type_achievements": "Achievements",
   "type_achievements_desc": "New rewards and challenges",
-  "type_appointments": "bookings",
-  "type_appointments_desc": "Reminders for upcoming visits",
+  "type_appointments": "Bookings",
+  "type_appointments_desc": "Alerts about upcoming visits",
   "type_promotions": "Promotions and offers",
   "type_promotions_desc": "Special offers and discounts"
 }

@@ -1,8 +1,8 @@
 {
-  "adjust_points": "Adjusting points",
+  "adjust_points": "Change points balance",
   "buttons": {
     "add_rule": "Add a rule",
-    "adjust_points": "Adjusting points",
+    "adjust_points": "Change balance",
     "cancel": "Cancel",
     "save": "Save",
     "save_changes": "Save changes"
@@ -10,80 +10,80 @@
   "categories": {
     "category": "Category",
     "category_placeholder": "Eg. ",
-    "description": "Set up point multipliers for service categories",
+    "description": "Set up point multipliers for individual service categories",
     "multiplier": "Factor",
     "title": "Category multipliers"
   },
   "config": {
-    "cashback_hint": "Example: 10% cashback (10 points per 100 spent)",
+    "cashback_hint": "Example: {{percent}}% cashback ({{points}} points for every {{unit}} spent)",
     "cashback_rate": "Cashback (%)",
-    "description": "Managing global loyalty settings",
+    "description": "Basic settings of the loyalty program",
     "expiration_days": "Points validity period (days)",
-    "expiration_hint": "The accrued points will expire after the specified number of days.",
-    "points_per_unit": "points for 1 unit. ",
-    "title": "Settings"
+    "expiration_hint": "Points will be automatically canceled after the specified time.",
+    "points_per_unit": "points for {{count}} units. ",
+    "title": "Global Settings"
   },
-  "confirm_delete_rule": "Confirm rule deletion",
+  "confirm_delete_rule": "Are you sure you want to delete this rule?",
   "dialogs": {
     "adjust_points": {
       "client_email": "Client email",
-      "client_email_placeholder": "Customer email placeholder",
-      "description": "Description",
-      "points": "Glasses",
-      "points_placeholder": "Point filler",
+      "client_email_placeholder": "Enter your email to link",
+      "description": "Manual adjustment of points balance",
+      "points": "Number of points",
+      "points_placeholder": "Eg. ",
       "reason": "Cause",
-      "reason_placeholder": "Reason placeholder",
-      "title": "Heading"
+      "reason_placeholder": "Please indicate the reason for the change",
+      "title": "Balance change"
     },
     "edit_tier": {
-      "description": "Description",
+      "description": "Setting the conditions for obtaining a privilege level",
       "discount_percent": "Discount percentage",
-      "min_points": "Minimum scores",
+      "min_points": "Minimum score threshold",
       "tier_name": "Level name",
-      "title": "Heading"
+      "title": "Editing a Level"
     },
     "rule": {
-      "description": "Set the point multiplier for the service category",
-      "title": "Edit category rule"
+      "description": "Personal accrual coefficient for the category",
+      "title": "Category Rule"
     }
   },
   "stats": {
-    "active_members": "Active members",
-    "points_redeemed": "Points redeemed",
-    "total_points_issued": "Total points awarded"
+    "active_members": "Program participants",
+    "points_redeemed": "Points debited",
+    "total_points_issued": "Total accrued"
   },
-  "subtitle": "Subtitles",
+  "subtitle": "Manage discounts, benefit levels, and points rules",
   "tiers": {
-    "description": "Description",
-    "discount": "Discount",
-    "from_points": "From points",
-    "starting_level": "booking level",
-    "title": "Heading"
+    "description": "Loyalty levels for customer segmentation",
+    "discount": "discount {{percent}}%",
+    "from_points": "from {{points}} points",
+    "starting_level": "Starting level",
+    "title": "Privilege levels"
   },
-  "title": "Heading",
+  "title": "Loyalty program",
   "toasts": {
-    "config_updated": "Configuration updated",
-    "failed_adjust": "Failed to configure",
-    "failed_delete": "Failed to delete",
-    "failed_load": "Failed to load",
-    "failed_save": "Failed to save",
-    "failed_update": "Failed to update",
-    "points_adjusted_add": "Points adjusted, added",
-    "points_adjusted_deduct": "Adjusted point deduction",
-    "rule_deleted": "The rule has been deleted.",
-    "rule_saved": "The rule has been saved.",
-    "tier_updated": "Level updated"
+    "config_updated": "Settings saved",
+    "failed_adjust": "Failed to change balance",
+    "failed_delete": "Error during deletion",
+    "failed_load": "Failed to load data",
+    "failed_save": "Error while saving",
+    "failed_update": "Error during update",
+    "points_adjusted_add": "{{points}} points awarded to user {{email}}",
+    "points_adjusted_deduct": "{{points}} points have been deducted from user {{email}}",
+    "rule_deleted": "Rule deleted successfully",
+    "rule_saved": "Rule saved",
+    "tier_updated": "Level data updated"
   },
   "transactions": {
-    "description": "Description",
-    "search_placeholder": "Search placeholder",
+    "description": "Loyalty points transaction history",
+    "search_placeholder": "Search by client...",
     "table": {
       "client": "Client",
       "date": "Date",
-      "points": "Glasses",
+      "points": "Points",
       "reason": "Cause",
       "type": "Type"
     },
-    "title": "Heading"
+    "title": "Latest transactions"
   }
 }

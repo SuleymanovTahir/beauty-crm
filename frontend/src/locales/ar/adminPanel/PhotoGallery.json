@@ -61,9 +61,9 @@
     "failed_featured": "فشل في تحديث الحالة المفضلة",
     "failed_load": "فشل تحميل الصور",
     "failed_upload": "فشل تحميل الصورة",
-    "failed_visibility": "فشل تحديث الرؤية",
+    "failed_visibility": "فشل تحديث الرؤية.",
     "featured_updated": "تم تحديث الحالة المفضلة",
-    "select_both_photos": "يرجى تحديد الصور قبل وبعد",
+    "select_both_photos": "الرجاء اختيار الصورة قبل وبعد",
     "uploaded": "تم تحميل الصورة بنجاح",
     "visibility_updated": "تم تحديث الرؤية"
   },

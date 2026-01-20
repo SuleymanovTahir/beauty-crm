@@ -2,8 +2,8 @@
   "active_clients": "Белсенді клиенттер",
   "date_filter": "Мерзімі:",
   "filter_custom": "Сіздің кезеңіңіз",
-  "filter_last30days": "Соңғы 30 күн",
-  "filter_last7days": "Соңғы 7 күн",
+  "filter_last30days": "Соңғы {{count}} күн",
+  "filter_last7days": "Соңғы {{count}} күн",
   "filter_last_month": "Өткен айда",
   "filter_this_month": "Осы айда",
   "filter_today": "Бүгін",
@@ -11,7 +11,7 @@
   "new_clients": "Жаңа клиенттер",
   "new_clients_section": "Жаңа клиенттер",
   "new_clients_today": "таңдалған кезеңдегі жаңа клиенттер",
-  "status_cancelled": "Жойылды",
+  "status_cancelled": "Бас тартылды",
   "status_completed": "Аяқталды",
   "status_confirmed": "Расталды",
   "status_pending": "Күтуде",
@@ -19,5 +19,5 @@
   "total_clients": "Жалпы клиенттер",
   "vip_clients": "VIP клиенттер",
   "vip_clients_section": "VIP клиенттер",
-  "welcome": "Өтінемін"
+  "welcome": "Қош келдіңіз"
 }

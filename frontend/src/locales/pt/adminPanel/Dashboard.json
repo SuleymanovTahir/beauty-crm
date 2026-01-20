@@ -1,8 +1,8 @@
 {
   "quick_actions": {
     "challenges": {
-      "description": "Criação e gestão de desafios",
-      "title": "Desafios"
+      "description": "Criação e gerenciamento de metas",
+      "title": "Metas"
     },
     "loyalty_management": {
       "description": "Gerenciar pontos e níveis de fidelidade",
@@ -27,28 +27,28 @@
     }
   },
   "recent_activity": {
-    "challenge_completed_one": "Desafio \"{{name}}\" concluído até data {{count}} pelo usuário",
-    "challenge_completed_few": "Desafio \"{{name}}\" concluído até data usuários {{count}}",
-    "challenge_completed_many": "Desafio \"{{name}}\" concluído até data usuários {{count}}",
-    "challenge_completed_other": "Desafio \"{{name}}\" concluído até data usuários {{count}}",
-    "day_ago_one": "{{count}} dia atrás",
+    "challenge_completed_few": "Meta \"{{name}}\" concluída até data usuários {{count}}",
+    "challenge_completed_many": "Meta \"{{name}}\" concluída até data usuários {{count}}",
+    "challenge_completed_one": "Alvo \"{{name}}\" concluído até data {{count}} pelo usuário",
+    "challenge_completed_other": "Meta \"{{name}}\" concluída até data usuários {{count}}",
     "day_ago_few": "{{count}} dias atrás",
     "day_ago_many": "{{count}} dias atrás",
+    "day_ago_one": "{{count}} dia atrás",
     "day_ago_other": "{{count}} dias atrás",
-    "hours_ago_one": "{{count}} hora atrás",
     "hours_ago_few": "{{count}} horas atrás",
     "hours_ago_many": "{{count}} horas atrás",
+    "hours_ago_one": "{{count}} há uma hora",
     "hours_ago_other": "{{count}} horas atrás",
     "new_tier_activated": "Novo nível de fidelidade ativado",
     "subtitle": "Ações recentes no painel de administração",
     "title": "Atividade recente",
-    "users_registered_one": "{{count}} novo usuário registrado",
     "users_registered_few": "{{count}} novo usuário registrado",
     "users_registered_many": "{{count}} novos usuários cadastrados",
+    "users_registered_one": "{{count}} novo usuário registrado",
     "users_registered_other": "{{count}} novos usuários cadastrados"
   },
   "stats": {
-    "active_challenges": "Desafios ativos",
+    "active_challenges": "Alvos ativos",
     "from_last_month": "do mês passado",
     "loyalty_points_issued": "Pontos de fidelidade emitidos",
     "total_referrals": "Total de referências",

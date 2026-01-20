@@ -1,17 +1,17 @@
 {
   "clear_all": "Borrar todo",
   "clear_confirm": "¿Está seguro de que desea borrar completamente el reserva de auditoría? Esta acción es irreversible.",
-  "delete_batch_confirm_one": "Quitar paquete, confirmar uno",
-  "delete_batch_confirm_few": "Eliminar paquete, confirmar varios",
-  "delete_batch_confirm_many": "Quitar paquete, confirmar mucho",
-  "delete_batch_confirm_other": "Quitar paquete, confirmar otro",
+  "delete_batch_confirm_few": "¿Eliminar {{count}} reservas seleccionadas?",
+  "delete_batch_confirm_many": "¿Eliminar {{count}} reservas seleccionadas?",
+  "delete_batch_confirm_one": "¿Eliminar {{count}} reserva seleccionada?",
+  "delete_batch_confirm_other": "¿Eliminar reservas {{count}}?",
   "delete_confirm": "¿Debo eliminar permanentemente esta reserva?",
   "delete_selected": "Eliminar seleccionado",
   "details": {
     "ip": "IP",
     "new_data": "Nuevos datos",
     "no_data": "No hay datos disponibles",
-    "old_data": "datos antiguos",
+    "old_data": "Datos antiguos",
     "op_id": "ID de operación",
     "title": "Cambiar detalles"
   },
@@ -19,18 +19,18 @@
   "filter_create": "Creación",
   "filter_delete": "Eliminación",
   "filter_delete_all": "Borrar el reserva",
-  "filter_login": "Iniciar sesión",
+  "filter_login": "Booking",
   "filter_restore": "Recuperación",
   "filter_update": "Cambiar",
   "search_placeholder": "Buscar hasta usuario, entidad o acción...",
   "stat_active_users": "Usuarios activos",
   "stat_created": "Creado",
-  "stat_errors": "Errores (24h)",
-  "stat_total": "Total (24h)",
+  "stat_errors": "Errores ({{count}}h)",
+  "stat_total": "Total ({{count}}h)",
   "subtitle": "Historial de todas las acciones y cambios en el sistema.",
   "table": {
     "action": "Acción",
-    "empty": "la historia esta vacia",
+    "empty": "La historia esta vacia",
     "entity": "Esencia",
     "error": "ERROR",
     "loading": "Cargando...",
@@ -39,12 +39,12 @@
     "time": "Tiempo",
     "user": "Usuario"
   },
-  "title": "Diario de auditoría",
+  "title": "Reserva de auditoría",
   "toast": {
     "clear_error": "Error al borrar el reserva",
-    "clear_success": "reserva de auditoría borrado exitosamente",
+    "clear_success": "Reserva de auditoría borrado exitosamente",
     "delete_error": "Error durante la eliminación",
-    "delete_success": "reservas eliminadas",
+    "delete_success": "Reservas eliminadas",
     "load_error": "Error al cargar el reserva de auditoría"
   }
 }

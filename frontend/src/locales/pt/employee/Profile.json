@@ -1,4 +1,5 @@
 {
+  "account": "Conta",
   "admin": "Administrador",
   "change_password": "Alterar a senha",
   "changing_password": "Alterando sua senha",
@@ -9,6 +10,7 @@
   "email": "E-mail",
   "email_placeholder": "usuário@exemplo.com",
   "employee": "Funcionário",
+  "employee_profile": "Perfil do funcionário",
   "enter_current_password": "Digite sua senha atual",
   "enter_current_password_for_confirmation": "Digite sua senha atual para confirmar",
   "error_changing_password": "Erro ao alterar senha",
@@ -16,7 +18,7 @@
   "error_updating_profile": "Erro de atualização de perfil",
   "for_password_recovery": "Para recuperar sua senha",
   "full_name": "Nome completo",
-  "full_name_must_be_at_least_2_characters": "O nome completo deve conter pelo menos 2 caracteres",
+  "full_name_must_be_at_least_2_characters": "O nome completo deve conter pelo menos {{count}} caractere",
   "full_name_placeholder": "Ivan Ivanov",
   "in_system_since": "Em um sistema com",
   "loading_profile": "Carregando perfil",
@@ -24,7 +26,7 @@
   "manager": "Gerente",
   "my_profile": "Meu perfil",
   "new_password": "Nova Senha",
-  "new_password_must_be_at_least_6_characters": "A nova senha deve conter pelo menos 6 caracteres",
+  "new_password_must_be_at_least_6_characters": "A nova senha deve conter pelo menos {{count}} caracteres",
   "password_successfully_changed": "Senha alterada com sucesso",
   "passwords_do_not_match": "As senhas não coincidem",
   "personal_information": "Informações pessoais",
@@ -33,9 +35,7 @@
   "saving_changes": "Salvando alterações",
   "tip": "Conselho",
   "try_reloading_page": "Tente recarregar a página",
-  "use_complex_password_at_least_6_characters": "Use uma senha complexa (mínimo 6 caracteres).",
+  "use_complex_password_at_least_6_characters": "Use uma senha complexa (mínimo {{count}} caracteres).",
   "username": "Conecte-se",
-  "username_must_be_at_least_3_characters": "O login deve conter pelo menos 3 caracteres",
-  "employee_profile": "Perfil do funcionário",
-  "account": "Conta"
+  "username_must_be_at_least_3_characters": "O login deve conter pelo menos {{count}} caractere"
 }

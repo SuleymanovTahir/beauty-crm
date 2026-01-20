@@ -13,6 +13,7 @@ from pathlib import Path
 import sys
 import os
 import ssl
+import re
 
 # Bypass SSL verification for local requests if needed
 if not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
@@ -92,6 +93,12 @@ SALON_TERMINOLOGY = {
         'задержка (часы)': 'Задержка (ч.)',
         'задержка (минуты)': 'Задержка (мин.)',
         'nfc apple/google wallet': 'NFC Apple/Google Wallet',
+        'ламинирование ресниц': 'ламинирование ресниц',
+        'ламинирование бровей': 'ламинирование бровей',
+        'наращивание ногтей': 'наращивание ногтей',
+        'коррекция ногтей': 'коррекция ногтей',
+        'укрепление ногтей': 'укрепление ногтей',
+        'гель-лак': 'гель-лак',
     },
     # Corrections for English (when EN is the target language)
     'en': {
@@ -111,6 +118,11 @@ SALON_TERMINOLOGY = {
         'master of eyebrows': 'brow master',
         'repair of nails': 'nail repair',
         'nail fixing': 'nail repair',
+        'lash lift': 'lash lift',
+        'lash lamination': 'lash lift',
+        'brow lift': 'brow lamination',
+        'nail infill': 'nail refill',
+        'nail overlay': 'nail overlay',
         'vaxing': 'waxing',
         'fix': 'repair',
     },
@@ -136,6 +148,11 @@ SALON_TERMINOLOGY = {
         'él se lo perdió': 'omitido',
         'pendiente': 'en espera',
         'push': 'notificación push',
+        'puntos': 'puntos',
+        'lealtad': 'fidelidad',
+        'wallet': 'Wallet',
+        'nfc apple/google wallet': 'NFC Apple/Google Wallet',
+        'agujas': 'puntos',
     },
     # Corrections for Portuguese
     'pt': {
@@ -156,6 +173,10 @@ SALON_TERMINOLOGY = {
         'recusado': 'cancelado',
         'ele perdeu': 'pulado',
         'push': 'notificação push',
+        'pontos': 'pontos',
+        'lealdade': 'fidelidade',
+        'wallet': 'Wallet',
+        'nfc apple/google wallet': 'NFC Apple/Google Wallet',
     },
     # Corrections for French
     'fr': {
@@ -174,6 +195,10 @@ SALON_TERMINOLOGY = {
         'refusé': 'annulé',
         'il a raté': 'ignoré',
         'push': 'notification push',
+        'points': 'points',
+        'loyauté': 'fidélité',
+        'wallet': 'Wallet',
+        'nfc apple/google wallet': 'NFC Apple/Google Wallet',
     },
     # Corrections for German
     'de': {
@@ -214,6 +239,11 @@ SALON_TERMINOLOGY = {
         'recording': 'تسجيل',
         'push': 'إشعار دفع',
         'push notifications': 'إشعارات دفع',
+        'lash lift': 'رفع الرموش',
+        'lash lamination': 'رفع الرموش',
+        'manicure': 'مانيكير',
+        'pedicure': 'باديكير',
+        'waxing': 'واكس',
     },
     # Corrections for Hindi
     'hi': {
@@ -253,6 +283,26 @@ MONTHS_FULL = {
     'май': 'Май', 'июн': 'Июнь', 'июл': 'Июль', 'авг': 'Август',
     'сен': 'Сентябрь', 'окт': 'Октябрь', 'ноя': 'Ноябрь', 'дек': 'Декабрь'
 }
+
+ABBREVIATIONS_MAP = {
+    'дн': 'days',
+    'ч': 'hours',
+    'мин': 'minutes',
+    'сек': 'seconds',
+    'мес': 'months',
+    'лет': 'years',
+    'г': 'years'
+}
+
+TARGET_ABBREVIATIONS = {
+    'en': {'days': 'd.', 'hours': 'h.', 'minutes': 'min.', 'seconds': 'sec.', 'months': 'mo.', 'years': 'y.'},
+    'ru': {'days': 'дн.', 'hours': 'ч.', 'minutes': 'мин.', 'seconds': 'сек.', 'months': 'мес.', 'years': 'г.'},
+    'es': {'days': 'días', 'hours': 'h', 'minutes': 'min', 'seconds': 'seg', 'months': 'meses', 'years': 'años'},
+    'fr': {'days': 'j.', 'hours': 'h', 'minutes': 'min', 'seconds': 'sec', 'months': 'mois', 'years': 'ans'},
+    'ar': {'days': 'يوم', 'hours': 'ساعة', 'minutes': 'دقيقة', 'seconds': 'ثانية', 'months': 'شهر', 'years': 'سنة'},
+    'kk': {'days': 'күн', 'hours': 'сағ', 'minutes': 'мин', 'seconds': 'сек', 'months': 'ай', 'years': 'ж.'}
+}
+
 
 
 
@@ -446,10 +496,14 @@ class Translator:
         if not text or not text.strip():
             return text
 
-        # 0. Handle months first
+        # 0. Handle months and abbreviations first
         month_res = self._handle_months(text, source, target)
         if month_res:
             return month_res
+            
+        abbr_res = self._handle_abbreviations(text, source, target)
+        if abbr_res:
+            return abbr_res
 
         # Protect interpolation variables {{variable}} from translation
         import re
@@ -590,7 +644,6 @@ class Translator:
         # Check for word replacements within text
         for wrong_term, correct_term in corrections.items():
             # Replace whole words only
-            import re
             pattern = r'\b' + re.escape(wrong_term) + r'\b'
             text = re.sub(pattern, correct_term, text, flags=re.IGNORECASE)
         
@@ -625,11 +678,30 @@ class Translator:
         if low in MONTHS_FULL:
             full_name = MONTHS_FULL[low]
             # Translate full name
-            translated_full = self._translate_via_http(full_name, 'en' if low in MONTHS_FULL and low.isalpha() and not any(c in 'яфемаисаокнд' for c in low) else 'ru', target)
+            translated_full = self._translate_via_http(full_name, 'en' if low in MONTHS_FULL and (ord(low[0]) < 128) else 'ru', target)
             # Shorten if the original was short
             if len(text) <= 4:
+                # Basic shortening - for more complex needs target-specific logic could be added
                 return translated_full[:3].capitalize() if target != 'ar' else translated_full
             return translated_full
+        return None
+
+    def _handle_abbreviations(self, text: str, source: str, target: str) -> Optional[str]:
+        """Special handling for time units and common abbreviations"""
+        # Clean text from dots and lowercase it
+        clean_text = text.lower().strip().replace('.', '')
+        
+        if clean_text in ABBREVIATIONS_MAP:
+            full_word_en = ABBREVIATIONS_MAP[clean_text]
+            
+            # If we have a predefined target abbreviation, use it
+            if target in TARGET_ABBREVIATIONS and full_word_en in TARGET_ABBREVIATIONS[target]:
+                return TARGET_ABBREVIATIONS[target][full_word_en]
+            
+            # Fallback: translate full word and hope for the best, or keep as is
+            translated_full = self._translate_via_http(full_word_en, 'en', target)
+            return translated_full
+            
         return None
 
 

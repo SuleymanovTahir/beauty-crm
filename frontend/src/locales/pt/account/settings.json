@@ -46,7 +46,7 @@
   "photo_requirements": "JPG, PNG.",
   "privacy_masters": "Acesso mestre",
   "privacy_masters_desc": "Compartilhe seu histórico de visitas com os mestres",
-  "privacy_photos": "Resolução da foto",
+  "privacy_photos": "Permitir foto",
   "privacy_photos_desc": "Permitir que os técnicos tirem fotos antes/depois",
   "privacy_public": "Perfil público",
   "privacy_public_desc": "Mostre suas conquistas para outros clientes",
@@ -62,8 +62,8 @@
   "title": "Configurações",
   "type_achievements": "Conquistas",
   "type_achievements_desc": "Novas recompensas e desafios",
-  "type_appointments": "bookings",
-  "type_appointments_desc": "Lembretes para próximas visitas",
+  "type_appointments": "Bookings",
+  "type_appointments_desc": "Alertas sobre próximas visitas",
   "type_promotions": "Promoções e ofertas",
   "type_promotions_desc": "Ofertas especiais e descontos"
 }

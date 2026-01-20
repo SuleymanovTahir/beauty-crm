@@ -5,7 +5,7 @@
   },
   "current_settings": {
     "edit": "Editar",
-    "min_purchase": "Precio mínimo de compra: <strong>{{amount}} AED</strong>",
+    "min_purchase": "Precio mínimo de compra: <strong>{{amount}} {{currency}}</strong>",
     "referred_bonus": "El amigo invitado recibe <strong>{{points}} puntos</strong> al registrarse",
     "referrer_bonus": "El referente recibe <strong>{{points}} puntos</strong> cuando un amigo realiza su primera compra.",
     "title": "Configuración de bonificación actual"
@@ -13,8 +13,8 @@
   "dialogs": {
     "settings": {
       "description": "Configurar puntos de bonificación y requisitos",
-      "min_purchase_amount": "Precio mínimo de compra (AED)",
-      "min_purchase_help": "Monto mínimo que debe gastar un amigo para activar el bono hasta fecha recomendación (0 = sin mínimo)",
+      "min_purchase_amount": "Precio mínimo de compra ({{currency}})",
+      "min_purchase_help": "Monto mínimo que debe gastar un amigo para activar el bono hasta fecha recomendación ({{min}} = sin mínimo)",
       "referred_bonus": "Puntos de bonificación de amigos recomendados",
       "referred_bonus_help": "Puntos otorgados a un amigo al registrarse",
       "referrer_bonus": "Puntos de bonificación hasta fecha referente",
@@ -33,19 +33,19 @@
     "columns": {
       "date": "Fecha",
       "points_awarded": "Puntos otorgados",
-      "referred_friend": "amigo invitado",
-      "referrer": "referente",
+      "referred_friend": "Amigo invitado",
+      "referrer": "Referente",
       "status": "Estado"
     },
     "description": "Seguimiento del estado de referidos y distribución de puntos.",
     "filters": {
-      "all_statuses": "All Statuses"
+      "all_statuses": "Todos los estados"
     },
     "search_placeholder": "Buscar referencias...",
     "sort": {
-      "date": "Sort by Date",
-      "points": "Sort by Points",
-      "status": "Sort by Status"
+      "date": "Hasta fecha",
+      "points": "Hasta fecha puntos",
+      "status": "Hasta fecha estado"
     },
     "statuses": {
       "cancelled": "Cancelado",

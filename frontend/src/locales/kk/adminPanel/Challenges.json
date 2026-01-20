@@ -5,7 +5,7 @@
     "update_challenge": "Өзгерістерді сақтау"
   },
   "card": {
-    "check_progress": "Check Progress",
+    "check_progress": "Орындалу барысын тексеріңіз",
     "completed": "аяқталды",
     "progress": "Прогресс",
     "pts": "ұпай",
@@ -19,12 +19,12 @@
       "form": {
         "challenge_type": "Әрекет түрі",
         "description": "Тапсырманың сипаттамасы",
-        "description_placeholder": "Мысалы: Осы айда 3 рет салонға барыңыз",
+        "description_placeholder": "Мысалы: осы айда салонға {{count}} рет барыңыз",
         "end_date": "Аяқталу күні",
-        "reward_placeholder": "1000",
+        "reward_placeholder": "{{points}}",
         "reward_points": "Ұпайларды қосыңыз",
         "start_date": "Басталу күні",
-        "target_placeholder": "3",
+        "target_placeholder": "{{points}}",
         "target_value": "Мақсатты мөлшер",
         "title": "Мақсат атауы",
         "title_placeholder": "Мысалы: Жазғы макияж"
@@ -42,11 +42,11 @@
     "total_participants": "Қатысушылар"
   },
   "subtitle": "Клиенттердің адалдығын арттыру үшін ойын механикасы мен мақсаттарын басқарыңыз",
-  "title": "Мақсаттар мен міндеттер",
+  "title": "Мақсаттар мен жетістіктер",
   "toasts": {
     "created": "Әрекет сәтті жасалды",
     "deleted": "Әрекет жойылды",
-    "failed_check_progress": "Failed to check progress",
+    "failed_check_progress": "Орындалу барысын жаңарту мүмкін болмады",
     "failed_create": "Әрекетті жасау қатесі",
     "failed_delete": "Жою кезінде қате",
     "failed_load": "Деректерді жүктеу сәтсіз аяқталды",

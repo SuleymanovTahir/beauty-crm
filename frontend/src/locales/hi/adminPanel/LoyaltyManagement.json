@@ -1,89 +1,89 @@
 {
-  "adjust_points": "समायोजन बिंदु",
+  "adjust_points": "अंक संतुलन बदलें",
   "buttons": {
     "add_rule": "एक नियम जोड़ें",
-    "adjust_points": "समायोजन बिंदु",
+    "adjust_points": "संतुलन बदलें",
     "cancel": "रद्द करना",
     "save": "बचाना",
     "save_changes": "परिवर्तनों को सुरक्षित करें"
   },
   "categories": {
     "category": "वर्ग",
-    "category_placeholder": "जैसे. नाखून",
-    "description": "दिनांक सेवा श्रेणियों के लिए पॉइंट मल्टीप्लायर दिनांक सेट करें",
+    "category_placeholder": "जैसे. मैनीक्योर",
+    "description": "व्यक्तिगत दिनांक सेवा श्रेणियों के लिए पॉइंट मल्टीप्लायर दिनांक सेट करें",
     "multiplier": "कारक",
     "title": "श्रेणी गुणक"
   },
   "config": {
-    "cashback_hint": "उदाहरण: 10% कैशबैक (प्रति 100 खर्च पर 10 अंक)",
+    "cashback_hint": "उदाहरण: {{percent}}% कैशबैक ({{points}} प्रत्येक {{unit}} खर्च के लिए अंक)",
     "cashback_rate": "कैशबैक (%)",
-    "description": "वैश्विक वफादारी दिनांक सेटिंग प्रबंधित करना",
+    "description": "लॉयल्टी कार्यक्रम की बुनियादी दिनांक सेटिंग्स",
     "expiration_days": "अंक वैधता अवधि (दिन)",
-    "expiration_hint": "अर्जित अंक निर्दिष्ट दिनों के बाद समाप्त हो जाएंगे।",
-    "points_per_unit": "1 इकाई के लिए अंक. मुद्राओं",
-    "title": "दिनांक सेटिंग्स"
+    "expiration_hint": "निर्धारित समय के बाद प्वाइंट स्वत: रद्द हो जायेंगे.",
+    "points_per_unit": "{{count}} इकाइयों के लिए अंक। मुद्राओं",
+    "title": "वैश्विक दिनांक सेटिंग्स"
   },
-  "confirm_delete_rule": "नियम हटाने की पुष्टि करें",
+  "confirm_delete_rule": "क्या आप वाकई इस नियम को हटाना चाहते हैं?",
   "dialogs": {
     "adjust_points": {
       "client_email": "ग्राहक ईमेल",
-      "client_email_placeholder": "ग्राहक ईमेल प्लेसहोल्डर",
-      "description": "विवरण",
-      "points": "चश्मा",
-      "points_placeholder": "बिंदु भराव",
+      "client_email_placeholder": "लिंक करने के लिए अपना ईमेल दर्ज करें",
+      "description": "अंक संतुलन का मैन्युअल समायोजन",
+      "points": "बिंदुओं की संख्या",
+      "points_placeholder": "जैसे. 100 या -100",
       "reason": "कारण",
-      "reason_placeholder": "कारण प्लेसहोल्डर",
-      "title": "शीर्षक"
+      "reason_placeholder": "कृपया परिवर्तन का कारण बताएं",
+      "title": "संतुलन परिवर्तन"
     },
     "edit_tier": {
-      "description": "विवरण",
+      "description": "विशेषाधिकार स्तर प्राप्त करने के लिए शर्तें निर्धारित करना",
       "discount_percent": "छूट प्रतिशत",
-      "min_points": "न्यूनतम अंक",
+      "min_points": "न्यूनतम स्कोर सीमा",
       "tier_name": "स्तर का नाम",
-      "title": "शीर्षक"
+      "title": "एक स्तर का संपादन"
     },
     "rule": {
-      "description": "दिनांक सेवा श्रेणी के लिए बिंदु गुणक दिनांक सेट करें",
-      "title": "श्रेणी नियम संपादित करें"
+      "description": "श्रेणी के लिए व्यक्तिगत उपार्जन गुणांक",
+      "title": "श्रेणी नियम"
     }
   },
   "stats": {
-    "active_members": "सक्रिय सदस्य",
-    "points_redeemed": "अंक भुनाए गए",
-    "total_points_issued": "दिए गए कुल अंक"
+    "active_members": "कार्यक्रम के प्रतिभागी",
+    "points_redeemed": "अंक डेबिट किये गये",
+    "total_points_issued": "कुल अर्जित"
   },
-  "subtitle": "उपशीर्षक",
+  "subtitle": "छूट, लाभ स्तर और अंक नियम प्रबंधित करें",
   "tiers": {
-    "description": "विवरण",
-    "discount": "छूट",
-    "from_points": "बिंदुओं से",
-    "starting_level": "प्रवेश के स्तर पर",
-    "title": "शीर्षक"
+    "description": "ग्राहक विभाजन के लिए वफादारी का स्तर",
+    "discount": "छूट {{percent}}%",
+    "from_points": "{{points}} अंक से",
+    "starting_level": "आरंभिक स्तर",
+    "title": "विशेषाधिकार स्तर"
   },
-  "title": "शीर्षक",
+  "title": "वफादारी कार्यक्रम",
   "toasts": {
-    "config_updated": "कॉन्फ़िगरेशन अद्यतन किया गया",
-    "failed_adjust": "कॉन्फ़िगर करने में विफल",
-    "failed_delete": "हटाने में विफल",
-    "failed_load": "लोड करने में विफल",
-    "failed_save": "सहेजने में विफल",
-    "failed_update": "अद्यतन करने में विफल",
-    "points_adjusted_add": "अंक समायोजित, जोड़े गए",
-    "points_adjusted_deduct": "समायोजित बिंदु कटौती",
-    "rule_deleted": "नियम हटा दिया गया है.",
-    "rule_saved": "नियम सहेजा गया है.",
-    "tier_updated": "लेवल अपडेट किया गया"
+    "config_updated": "दिनांक सेटिंग्स को सहेजा गया",
+    "failed_adjust": "संतुलन बदलने में विफल",
+    "failed_delete": "हटाने के दौरान त्रुटि",
+    "failed_load": "डेटा लोड करने में विफल",
+    "failed_save": "सहेजते समय त्रुटि",
+    "failed_update": "अद्यतन के दौरान त्रुटि",
+    "points_adjusted_add": "{{points}} उपयोगकर्ता को दिए गए अंक {{email}}",
+    "points_adjusted_deduct": "{{points}} उपयोगकर्ता से अंक काटे गए हैं {{email}}",
+    "rule_deleted": "नियम सफलतापूर्वक हटा दिया गया",
+    "rule_saved": "नियम सहेजा गया",
+    "tier_updated": "लेवल डेटा अपडेट किया गया"
   },
   "transactions": {
-    "description": "विवरण",
-    "search_placeholder": "प्लेसहोल्डर खोजें",
+    "description": "वफादारी अंक लेनदेन इतिहास",
+    "search_placeholder": "ग्राहक द्वारा खोजें...",
     "table": {
       "client": "ग्राहक",
       "date": "तारीख",
-      "points": "चश्मा",
+      "points": "अंक",
       "reason": "कारण",
       "type": "प्रकार"
     },
-    "title": "शीर्षक"
+    "title": "नवीनतम लेनदेन"
   }
 }

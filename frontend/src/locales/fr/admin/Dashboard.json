@@ -2,9 +2,9 @@
   "active_clients": "Clients actifs",
   "date_filter": "Terme:",
   "filter_custom": "Vos règles",
+  "filter_last30days": "{{count}} derniers jours",
+  "filter_last7days": "{{count}} derniers jours",
   "filter_last_month": "Mois dernier",
-  "filter_last30days": "30 derniers jours",
-  "filter_last7days": "7 derniers jours",
   "filter_this_month": "Ce mois-ci",
   "filter_today": "Aujourd'hui",
   "filter_yesterday": "Hier",
@@ -12,12 +12,12 @@
   "new_clients_section": "Nouveaux clients",
   "new_clients_today": "nouveaux clients pour la période sélectionnée",
   "status_cancelled": "Annulé",
-  "status_completed": "Fini",
+  "status_completed": "Complété",
   "status_confirmed": "Confirmé",
   "status_pending": "En attendant",
   "title": "Panneau de contrôle",
-  "total_clients": "Clients communs",
+  "total_clients": "Nombre total de clients",
   "vip_clients": "Clients VIP",
   "vip_clients_section": "Clients VIP",
-  "welcome": "S'il te plaît"
+  "welcome": "Accueillir"
 }

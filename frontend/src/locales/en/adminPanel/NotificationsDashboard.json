@@ -6,9 +6,9 @@
   },
   "dialogs": {
     "send": {
-      "description": "Create and send notification to your customers",
+      "description": "Create a targeted notification for your customers",
       "form": {
-        "appointment_date": "booking date",
+        "appointment_date": "Booking date",
         "appointment_filter": "Filter by bookings",
         "appointment_filters": {
           "date_range": "Date range",
@@ -18,34 +18,34 @@
         "end_date": "End date",
         "loyalty_tier": "Loyalty level",
         "message": "Message",
-        "message_placeholder": "Notification text",
-        "notification_type": "Notification type",
-        "repeat_end_date": "End replay",
+        "message_placeholder": "Enter notification text...",
+        "notification_type": "Channel type",
+        "repeat_end_date": "Replay end date",
         "repeat_interval": "Repeat interval",
         "repeat_intervals": {
           "daily": "Daily",
           "monthly": "Monthly",
           "weekly": "Weekly"
         },
-        "repeat_notification": "Repeat notification",
+        "repeat_notification": "Recurring notification",
         "schedule_date": "Sent date",
-        "schedule_notification": "Schedule a notification",
+        "schedule_notification": "Schedule shipment",
         "schedule_time": "Dispatch time",
         "segments": {
           "active": "Active clients",
           "all": "All clients",
           "appointment_based": "According to bookings",
-          "inactive": "Inactive clients",
+          "inactive": "Lost (inactive)",
           "service_based": "By services",
-          "tier": "By loyalty level"
+          "tier": "By loyalty levels"
         },
         "select_filter": "Select filter",
         "select_tier": "Select level",
         "service_filter": "Service/Procedure",
-        "service_hint": "Customers registered for this service will receive a notification",
-        "service_placeholder": "Enter service name or ID",
-        "start_date": "start date",
-        "target_segment": "Target segment",
+        "service_hint": "Clients registered for the selected service will receive a notification",
+        "service_placeholder": "Enter service name",
+        "start_date": "Start date",
+        "target_segment": "Target audience (segment)",
         "tiers": {
           "bronze": "Bronze",
           "gold": "Gold",
@@ -53,33 +53,33 @@
           "silver": "Silver"
         },
         "title": "Heading",
-        "title_placeholder": "Notification title"
+        "title_placeholder": "Enter main title"
       },
-      "title": "Send new notification"
+      "title": "New notification"
     },
     "template": {
-      "description": "Create a reusable notification template",
+      "description": "Create a template for quick mailings in the future",
       "form": {
         "message": "Message",
-        "message_placeholder": "Use {variable} for dynamic content",
+        "message_placeholder": "Use {name} to substitute the client name",
         "template_name": "Template name",
-        "template_name_placeholder": "for example, Welcome message",
+        "template_name_placeholder": "for example: Greeting a new client",
         "title": "Heading",
         "title_placeholder": "Notification title",
-        "type": "Type",
+        "type": "Channel type",
         "types": {
           "email": "Email",
           "push": "Push notification",
           "sms": "SMS"
         }
       },
-      "title": "Save as template"
+      "title": "Create a template"
     }
   },
   "history": {
-    "description": "All sent and scheduled notifications",
+    "description": "List of previously created and current mailings",
     "filters": {
-      "all": "All",
+      "all": "All channels",
       "email": "Email",
       "push": "Push",
       "sms": "SMS"
@@ -88,38 +88,38 @@
     "table": {
       "date": "Date",
       "recipients": "Recipients",
-      "sent_failed": "Sent/Failed",
+      "sent_failed": "Sent / Errors",
       "status": "Status",
-      "title": "Heading",
+      "title": "Title/Subject",
       "type": "Type"
     },
-    "title": "Notification history"
+    "title": "Mailing history"
   },
   "save_template": "Save template",
-  "send_notification": "Send notification",
+  "send_notification": "Send",
   "stats": {
-    "email_sent": "Email sent",
-    "push_sent": "Push sent",
-    "sms_sent": "SMS sent",
+    "email_sent": "Email",
+    "push_sent": "Push",
+    "sms_sent": "SMS",
     "total_sent": "Total sent"
   },
-  "subtitle": "Managing and sending notifications to clients",
+  "subtitle": "Mailings and automatic notifications control center",
   "templates": {
-    "description": "Quick templates for common notifications",
-    "title": "Notification templates",
-    "use_template": "Use template"
+    "description": "Ready-made templates to save time",
+    "title": "My templates",
+    "use_template": "Use"
   },
-  "title": "Notification panel",
+  "title": "Notifications",
   "toasts": {
-    "failed_load": "Failed to load notifications",
+    "failed_load": "Error loading notifications",
     "failed_save_template": "Failed to save template",
-    "failed_send": "Failed to send notification",
+    "failed_send": "Error sending notification",
     "sent": "Notification sent successfully",
-    "template_saved": "Template saved successfully"
+    "template_saved": "Template saved"
   },
   "types": {
     "email": "Email",
-    "push": "Push",
+    "push": "Push notification",
     "sms": "SMS"
   }
 }

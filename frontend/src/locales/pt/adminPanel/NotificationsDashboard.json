@@ -6,7 +6,7 @@
   },
   "dialogs": {
     "send": {
-      "description": "Crie e envie notificações para seus clientes",
+      "description": "Crie uma notificação direcionada para seus clientes",
       "form": {
         "appointment_date": "Data de gravação",
         "appointment_filter": "Filtrar até data reservas",
@@ -18,108 +18,108 @@
         "end_date": "Data de término",
         "loyalty_tier": "Nível de fidelidade",
         "message": "Mensagem",
-        "message_placeholder": "Texto de notificação",
-        "notification_type": "Tipo de notificação",
-        "repeat_end_date": "Terminar repetição",
+        "message_placeholder": "Insira o texto da notificação...",
+        "notification_type": "Tipo de canal",
+        "repeat_end_date": "Data de término da repetição",
         "repeat_interval": "Intervalo de repetição",
         "repeat_intervals": {
           "daily": "Diário",
           "monthly": "Mensal",
           "weekly": "Semanalmente"
         },
-        "repeat_notification": "Repetir notificação",
+        "repeat_notification": "Notificação recorrente",
         "schedule_date": "Data de envio",
-        "schedule_notification": "Agende uma notificação",
+        "schedule_notification": "Agendar envio",
         "schedule_time": "Hora de envio",
         "segments": {
           "active": "Clientes ativos",
           "all": "Todos os clientes",
           "appointment_based": "De acordo com reservas",
-          "inactive": "Clientes inativos",
-          "service_based": "até data serviços",
-          "tier": "até data nível de fidelidade"
+          "inactive": "Perdido (inativo)",
+          "service_based": "Até data serviços",
+          "tier": "Até data níveis de fidelidade"
         },
         "select_filter": "Selecione o filtro",
         "select_tier": "Selecione o nível",
         "service_filter": "Serviço/Procedimento",
-        "service_hint": "Os clientes cadastrados neste serviço receberão uma notificação",
-        "service_placeholder": "Insira o nome ou ID do serviço",
-        "start_date": "data de início",
-        "target_segment": "Segmento alvo",
+        "service_hint": "Os clientes cadastrados no serviço selecionado receberão uma notificação",
+        "service_placeholder": "Digite o nome do serviço",
+        "start_date": "Data de início",
+        "target_segment": "Público-alvo (segmento)",
         "tiers": {
           "bronze": "Bronze",
           "gold": "Ouro",
           "platinum": "Platina",
           "silver": "Prata"
         },
-        "title": "Cabeçalho",
-        "title_placeholder": "Título da notificação"
+        "title": "Título",
+        "title_placeholder": "Digite o título principal"
       },
-      "title": "Enviar nova notificação"
+      "title": "Nova notificação"
     },
     "template": {
-      "description": "Crie um modelo de notificação reutilizável",
+      "description": "Crie um modelo para correspondências rápidas no futuro",
       "form": {
         "message": "Mensagem",
-        "message_placeholder": "Use {variable} para conteúdo dinâmico",
+        "message_placeholder": "Use {name} para substituir o nome do cliente",
         "template_name": "Nome do modelo",
-        "template_name_placeholder": "até data exemplo, mensagem de boas-vindas",
-        "title": "Cabeçalho",
+        "template_name_placeholder": "até data exemplo: cumprimentando um novo cliente",
+        "title": "Título",
         "title_placeholder": "Título da notificação",
-        "type": "Tipo",
+        "type": "Tipo de canal",
         "types": {
-          "email": "Email",
-          "push": "Notificação push",
+          "email": "E-mail",
+          "push": "Notificação notificação push",
           "sms": "SMS"
         }
       },
-      "title": "Salvar como modelo"
+      "title": "Crie um modelo"
     }
   },
   "history": {
-    "description": "Todas as notificações enviadas e programadas",
+    "description": "Lista de correspondências criadas anteriormente e atuais",
     "filters": {
-      "all": "Todos",
-      "email": "Email",
-      "push": "Push",
+      "all": "Todos os canais",
+      "email": "E-mail",
+      "push": "Notificação push",
       "sms": "SMS"
     },
     "scheduled": "Planejado",
     "table": {
       "date": "Data",
       "recipients": "Destinatários",
-      "sent_failed": "Enviado/Falha",
+      "sent_failed": "Enviados/Erros",
       "status": "Status",
-      "title": "Cabeçalho",
+      "title": "Título/Assunto",
       "type": "Tipo"
     },
-    "title": "Histórico de notificações"
+    "title": "Histórico de correspondência"
   },
   "save_template": "Salvar modelo",
-  "send_notification": "Enviar notificação",
+  "send_notification": "Enviar",
   "stats": {
-    "email_sent": "E-mail enviado",
-    "push_sent": "Push enviado",
-    "sms_sent": "SMS enviado",
+    "email_sent": "E-mail",
+    "push_sent": "Notificação push",
+    "sms_sent": "SMS",
     "total_sent": "Total enviado"
   },
-  "subtitle": "Gerenciar e enviar notificações aos clientes",
+  "subtitle": "Central de controle de mailings e notificações automáticas",
   "templates": {
-    "description": "Modelos rápidos para notificações comuns",
-    "title": "Modelos de notificação",
-    "use_template": "Usar modelo"
+    "description": "Modelos prontos para economizar tempo",
+    "title": "Meus modelos",
+    "use_template": "Usar"
   },
-  "title": "Painel de notificação",
+  "title": "Notificações",
   "toasts": {
-    "failed_load": "Falha ao carregar notificações",
+    "failed_load": "Erro ao carregar notificações",
     "failed_save_template": "Falha ao salvar o modelo",
-    "failed_send": "Falha ao enviar notificação",
+    "failed_send": "Erro ao enviar notificação",
     "sent": "Notificação enviada com sucesso",
-    "template_saved": "Modelo salvo com sucesso"
+    "template_saved": "Modelo salvo"
   },
   "types": {
-    "email": "Email",
-    "push": "Push",
+    "email": "E-mail",
+    "push": "Notificação notificação push",
     "sms": "SMS"
   }
 }

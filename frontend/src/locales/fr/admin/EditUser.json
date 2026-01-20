@@ -16,11 +16,11 @@
   "full_name": "Nom et prénom",
   "full_name_placeholder": "Ivan Ivanov",
   "important": "Important",
-  "name_must_be_at_least_2_characters": "Le nom doit contenir au moins 2 caractères",
+  "name_must_be_at_least_2_characters": "Le nom doit contenir au moins le caractère {{count}}",
   "new_password": "Nouveau mot de passe",
   "password": "Mot de passe",
   "password_changed": "Mot de passe modifié",
-  "password_must_be_at_least_6_characters": "Le mot de passe doit contenir au moins 6 caractères",
+  "password_must_be_at_least_6_characters": "Le mot de passe doit contenir au moins {{count}} caractères",
   "passwords_do_not_match": "Les mots de passe ne correspondent pas",
   "permissions_label": "Droits d'accès",
   "profile": "Profil",
@@ -28,5 +28,5 @@
   "save_changes": "Enregistrer les modifications",
   "saving": "Économie",
   "username": "Se connecter",
-  "username_must_be_at_least_3_characters": "La connexion doit contenir au moins 3 caractères"
+  "username_must_be_at_least_3_characters": "Le login doit contenir au moins le caractère {{count}}"
 }

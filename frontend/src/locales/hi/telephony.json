@@ -45,8 +45,8 @@
   "play_recording": "खेल",
   "provider": "प्रदाता",
   "provider_binotel": "बिनोटेल",
-  "provider_generic": "जेनेरिक (वेबहुक)",
-  "provider_onlinepbx": "ऑनलाइनपीबीएक्स",
+  "provider_generic": "सामान्य (वेबहुक)",
+  "provider_onlinepbx": "ऑनलाइन पीबीएक्स",
   "provider_twilio": "ट्विलियो",
   "recording": "बुकिंग",
   "recordings_tab": "बुकिंग",
@@ -70,7 +70,7 @@
   "unarchive_recording": "खोलना",
   "upload_recording": "प्रविष्टि अपलोड करें",
   "webhook_instruction_short": "कॉल प्राप्त करने के लिए, कृपया अपने प्रदाता के फ़ोन प्रावधान में निम्नलिखित URL प्रदान करें।",
-  "webhook_security_note": "सुरक्षा कारणों से, इस यूआरएल को तीसरे पक्ष के साथ साझा न करें।",
+  "webhook_security_note": "सुरक्षा कारणों से, इस यूआरएल को किसी और के साथ साझा न करें।",
   "webhook_url_label": "आपका अद्वितीय वेबहुक यूआरएल",
   "week": "सप्ताह"
 }

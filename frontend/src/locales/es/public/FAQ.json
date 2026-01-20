@@ -1,9 +1,9 @@
 {
   "answer_1": "Puedes darte de alta a través de nuestra web, llamando o escribiendo a WhatsApp/Instagram.",
   "answer_2": "Aceptamos pago en efectivo y tarjetas bancarias.",
-  "answer_3": "Sí, puedes cancelar o reprogramar tu cita hasta 24 horas antes de la hora programada.",
+  "answer_3": "Sí, puedes cancelar o reprogramar tu cita hasta {{hours}} horas antes de la hora programada.",
   "answer_4": "Sí, algunos procedimientos tienen contraindicaciones médicas. hasta fecha favor consulte con nuestro especialista antes de grabar.",
-  "answer_5": "El tiempo del trámite depende del servicio elegido. Generalmente de 30 minutos a 3 horas.",
+  "answer_5": "El tiempo del trámite depende del servicio elegido. Normalmente, desde {{min}} minutos hasta {{max}} horas.",
   "answer_6": "Algunos procedimientos requieren una preparación especial. El especialista le informará sobre esto al registrarse.",
   "cta": {
     "bookButton": "Regístrate para el trámite",
@@ -24,7 +24,7 @@
       "question": "¿Cómo inscribirse en el trámite?"
     },
     "cancellation": {
-      "answer": "Sí, puedes cancelar o reprogramar tu cita hasta 24 horas antes de la hora programada. Si cancela con menos de 24 horas de antelación se podrá cobrar una penalización del 50% del coste del servicio.",
+      "answer": "Sí, puedes cancelar o reprogramar tu cita hasta {{hours}} horas antes de la hora programada. Si se cancela en menos de {{hours}} horas, se podrá cobrar una penalización del {{percent}}% del coste del servicio.",
       "question": "¿Puedo cancelar o reprogramar mi cita?"
     },
     "certificates": {
@@ -40,7 +40,7 @@
       "question": "¿Puedo dar un certificado de servicios?"
     },
     "guarantee": {
-      "answer": "Sí, garantizamos la calidad de todos nuestros servicios. Si no está satisfecho con el resultado, contáctenos dentro de los 7 días y encontraremos una solución.",
+      "answer": "Sí, garantizamos la calidad de todos nuestros servicios. Si no está satisfecho con el resultado, contáctenos dentro de los {{count}} días y encontraremos una solución.",
       "question": "¿Ofrecen garantía hasta fecha los servicios?"
     },
     "location": {
@@ -48,7 +48,7 @@
       "question": "¿Dónde está ubicado tu salón?"
     },
     "loyalty": {
-      "answer": "Sí, tenemos un programa de fidelización acumulativo. Después de cada visita, recibe bonificaciones que puede utilizar para pagar visitas futuras.",
+      "answer": "Sí, tenemos un programa de fidelización integral. Después de cada visita, recibirá bonificaciones que podrá utilizar en futuras visitas.",
       "question": "¿Tienes un programa de fidelización?"
     },
     "materials": {
@@ -60,11 +60,11 @@
       "question": "¿Qué métodos de pago aceptan?"
     },
     "preparation": {
-      "answer": "Sí, algunos procedimientos requieren preparación. Proporcionamos recomendaciones detalladas al registrarse.",
+      "answer": "Sí, algunos procedimientos requieren preparación. Le proporcionaremos recomendaciones detalladas al registrarse.",
       "question": "¿Es necesaria preparación antes del procedimiento?"
     },
     "weekends": {
-      "answer": "Sí, trabajamos los 7 días de la semana. {{weekdays,weekdays}}De lunes a viernes {{weekdays}}{{/weekdays}}{{weekends, Weekends}}, los fines de semana {{weekends}}{{/weekends}}.",
+      "answer": "Sí, estamos abiertos {{count}} días a la semana. {{будние дни, будние дни}}Días laborables {{weekdays}}{{/weekdays}}{{выходные, выходные}}, fines de semana {{weekends}}{{/weekends}}.",
       "question": "¿Trabajas los fines de semana?"
     }
   },

@@ -1,4 +1,8 @@
 {
+  "additional_context": "अतिरिक्त संदर्भ (वैकल्पिक)",
+  "ai_thinking": "एआई सोचता है...",
+  "ask_ai_consultant": "किसी एआई सलाहकार से पूछें",
+  "ask_bot_placeholder": "उदाहरण के लिए: ग्राहक कहता है कि यह महंगा है, कैसे उत्तर दें?",
   "chats": "चैट",
   "clear": "स्पष्ट",
   "error": "गलती",
@@ -7,10 +11,10 @@
   "file_removed": "फ़ाइल हटा दी गई",
   "files": "फ़ाइलें",
   "files_added": "फ़ाइलें जोड़ी गईं: {{गिनती}}",
-  "files_added_few": "कई फ़ाइलें जोड़ी गई हैं",
-  "files_added_many": "बहुत सारी फ़ाइलें जोड़ी गईं",
-  "files_added_one": "फ़ाइलें एक जोड़ी गईं",
-  "files_added_other": "अन्य फ़ाइलें जोड़ी गईं",
+  "files_added_few": "{{count}} फ़ाइल जोड़ी गई",
+  "files_added_many": "{{count}} फ़ाइलें जोड़ी गईं",
+  "files_added_one": "{{count}} फ़ाइल जोड़ी गई",
+  "files_added_other": "जोड़ी गई फ़ाइलें ({{count}})",
   "files_cleared": "फ़ाइलें साफ़ हो गईं",
   "image": "छवि",
   "image_not_available": "छवि उपलब्ध नहीं है",
@@ -27,12 +31,8 @@
   "search": "खोज",
   "select_chat": "चैट चुनें",
   "select_dialog_from_list": "बाईं ओर की सूची से एक वार्तालाप चुनें",
+  "send_to_ai": "एआई भेजें",
   "templates": "टेम्पलेट्स",
   "try_again": "पुनः प्रयास करें",
-  "ask_ai_consultant": "किसी एआई सलाहकार से पूछें",
-  "your_question": "आपका प्रश्न",
-  "additional_context": "अतिरिक्त संदर्भ (वैकल्पिक)",
-  "ask_bot_placeholder": "उदाहरण के लिए: ग्राहक कहता है कि यह महंगा है, कैसे उत्तर दें?",
-  "send_to_ai": "एआई भेजें",
-  "ai_thinking": "एआई सोचता है..."
+  "your_question": "आपका प्रश्न"
 }

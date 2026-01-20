@@ -1,7 +1,7 @@
 {
   "actions": {
-    "hide": "Hide",
-    "show": "Show"
+    "hide": "Esconder",
+    "show": "Espectáculo"
   },
   "buttons": {
     "cancel": "Cancelar",
@@ -11,7 +11,7 @@
   "card": {
     "featured": "Favoritos",
     "toggle_featured": "Alternar favoritos",
-    "uploaded_by": "Subido hasta fecha {{nombre}}",
+    "uploaded_by": "Cargado hasta fecha {{name}}",
     "views": "vistas"
   },
   "dialogs": {
@@ -31,7 +31,7 @@
         "description_placeholder": "Descripción de la foto",
         "photo": "Foto",
         "select_client": "Seleccionar cliente",
-        "single_photo": "una foto",
+        "single_photo": "Una foto",
         "title": "Nombre",
         "title_placeholder": "Título de la foto",
         "upload_type": "Tipo de carga"
@@ -50,7 +50,7 @@
   "stats": {
     "featured_photos": "Fotos destacadas",
     "recent_uploads": "Descargas recientes",
-    "total_photos": "fotos totales",
+    "total_photos": "Fotos totales",
     "total_views": "Vistas totales"
   },
   "subtitle": "Gestión de fotografías y carteras de clientes.",
@@ -61,11 +61,11 @@
     "failed_featured": "No se pudo actualizar el estado favorito",
     "failed_load": "No se pudieron subir fotos",
     "failed_upload": "No se pudo subir la foto",
-    "failed_visibility": "Failed to update visibility",
+    "failed_visibility": "No se pudo actualizar la visibilidad.",
     "featured_updated": "Estado favorito actualizado",
-    "select_both_photos": "Please select both before and after photos",
+    "select_both_photos": "Hasta fecha favor seleccione una foto de antes y después",
     "uploaded": "Foto cargada exitosamente",
-    "visibility_updated": "Visibility updated"
+    "visibility_updated": "Visibilidad actualizada"
   },
   "upload_photo": "Subir foto"
 }

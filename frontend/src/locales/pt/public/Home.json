@@ -6,7 +6,7 @@
       "name": "Seu nome *",
       "namePlaceholder": "Anna Ivanova",
       "phone": "Telefone *",
-      "phonePlaceholder": "+971 50 123 4567",
+      "phonePlaceholder": "{{points}}",
       "service": "Serviço *",
       "servicePlaceholder": "Selecione um serviço",
       "submit": "Inscrever-se",
@@ -27,7 +27,7 @@
         "title": "Materiais premium"
       },
       "schedule": {
-        "description": "Trabalhamos 7 dias até data semana com horários convenientes para gravação",
+        "description": "Estamos abertos {{count}} dias até data semana em horários convenientes para você.",
         "title": "Horário conveniente"
       }
     },

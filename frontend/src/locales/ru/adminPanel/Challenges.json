@@ -19,12 +19,12 @@
       "form": {
         "challenge_type": "Тип активности",
         "description": "Описание задачи",
-        "description_placeholder": "Напр: Посетите салон 3 раза в этом месяце",
+        "description_placeholder": "Напр: Посетите салон {{count}} раза в этом месяце",
         "end_date": "Дата окончания",
-        "reward_placeholder": "1000",
+        "reward_placeholder": "{{points}}",
         "reward_points": "Начислить баллов",
         "start_date": "Дата начала",
-        "target_placeholder": "3",
+        "target_placeholder": "{{count}}",
         "target_value": "Целевое количество",
         "title": "Название цели",
         "title_placeholder": "Напр: Летнее преображение"
@@ -42,7 +42,7 @@
     "total_participants": "Участников"
   },
   "subtitle": "Управление игровыми механиками и целями для повышения лояльности клиентов",
-  "title": "Цели и Челленджи",
+  "title": "Цели и достижения",
   "toasts": {
     "created": "Активность успешно создана",
     "deleted": "Активность удалена",

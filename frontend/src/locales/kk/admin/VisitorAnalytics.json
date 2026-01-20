@@ -1,6 +1,6 @@
 {
   "apply": "Қолдану",
-  "check_range": "Тексеру ауқымы (0-1000км, «Кімге» > «Кімнен»)",
+  "check_range": "Ауқымды тексеріңіз ({{min}}-{{max}}км, \"Кімге\" > \"Кімнен\")",
   "cities": "Қалалар",
   "city": "Қала",
   "countries": "Елдер",
@@ -23,7 +23,7 @@
   "landing_sections": "Қону бөлімдері",
   "latest_visitors": "Соңғы келушілер",
   "loading": "Келушілердің аналитикасы жүктелуде...",
-  "local_visitors": "Жергілікті (≤50км)",
+  "local_visitors": "Жергілікті (≤{{max}}км)",
   "next": "Алға",
   "of": "бастап",
   "page": "Бет",
@@ -44,5 +44,9 @@
   "visit_time": "Келу уақыты",
   "visitor_trend": "Трендке кіру",
   "visitors": "Келушілер",
-  "visitors_count": "келушілер"
+  "visitors_count": "келушілер",
+  "visitors_count_few": "[[VAR0]]] келуші",
+  "visitors_count_many": "[[VAR0]]] келушілер",
+  "visitors_count_one": "[[VAR0]]] келуші",
+  "visitors_count_other": "[[VAR0]]] келушілер"
 }

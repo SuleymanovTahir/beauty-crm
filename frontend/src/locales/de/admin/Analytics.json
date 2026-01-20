@@ -1,19 +1,22 @@
 {
   "analyze_further": "Analysieren Sie weiter",
   "apply": "Anwenden",
-  "avg_check": "Durchschnittliche Rechnung",
+  "avg_check": "Durchschnittlicher Scheck",
   "avg_time": "Durchschnittliche Zeit",
+  "booked": "Angemeldet",
   "booking_statuses": "Beitragsstatus",
-  "bookings": "Buchungen",
+  "bookings": "Bookings",
   "bookings_trend": "Dynamik datum bis Aufzeichnungen",
-  "clarify_services": "Geben Sie Dienste an",
-  "conversation_stage": "Gesprächsphase",
+  "clarify_services": "Klärung der Leistungen",
+  "completed": "Besucht",
+  "conversation_stage": "Dialogphase",
   "conversion": "Konvertierung",
   "detailed_analysis": "Detaillierte Analyse der Arbeit des Salons",
   "drop_off_analysis": "Dropout-Analyse",
-  "drop_offs": "Ausgestiegen",
+  "drop_offs": "Misserfolge",
+  "engaged": "Beteiligt",
   "errors": {
-    "export_failed": "Fehler beim Exportieren der Datei",
+    "export_failed": "Fehler beim Dateiexport",
     "invalid_date_range": "Das Startdatum muss vor dem Enddatum liegen",
     "invalid_period": "Falscher Zeitraum",
     "loading_error": "Fehler beim Laden",
@@ -21,9 +24,38 @@
   },
   "export": "Export",
   "exporting": "Export...",
-  "focus_on_highest_drop_off": "Konzentrieren Sie sich auf die Phase mit der höchsten Fluktuation",
+  "focus_on_highest_drop_off": "Achten Sie auf die Stufe mit dem größten Dropout",
   "for_period": "Für den Zeitraum",
   "from_visitors": "Vom Besucher zum Kunden",
+  "funnel": {
+    "conversion": {
+      "booked_to_completed": "Angemeldet -> Besichtigt",
+      "booking_to_booked": "Gestartet -> Angemeldet",
+      "engaged_to_booking": "Verlobt -> Aufnahme gestartet",
+      "visitor_to_engaged": "Besucher -> Verlobt"
+    },
+    "desc": {
+      "booked": "Registrierung abgeschlossen",
+      "completed": "Service bereitgestellt",
+      "engaged": "Interesse gezeigt",
+      "started_booking": "Anmeldeformular geöffnet",
+      "visitors": "Website-/Social-Media-Besucher"
+    },
+    "losses": "Verluste: {{count}}",
+    "losses_few": "Verluste: {{count}}",
+    "losses_many": "Verluste: {{count}}",
+    "losses_one": "Verlust: {{count}}",
+    "losses_other": "Verluste: {{count}}",
+    "stages": {
+      "booked": "Angemeldet",
+      "completed": "Besucht",
+      "engaged": "Beteiligt",
+      "started_booking": "Aufnahme gestartet",
+      "visitors": "Besucher"
+    }
+  },
+  "funnel_chart": "Trichterdiagramm",
+  "funnel_overview": "Verkaufstrichter",
   "improve_greeting": "Verbessern Sie Ihre Begrüßung",
   "income": "Umsatz",
   "min": "min",
@@ -31,21 +63,21 @@
   "need_more_masters": "Brauche mehr Meister",
   "optimization_tip": "Optimierungstipp",
   "peak_hours": "Spitzenzeiten",
-  "per_booking": "Zur Aufnahme",
+  "per_booking": "Für jeden buchung",
   "percentage": "Prozent",
   "quantity": "Menge",
   "recommendation": "Empfehlung",
   "refresh": "Aktualisieren",
   "response_time": "Ansprechzeit",
-  "revenue": "Umsatz",
+  "revenue": "Einnahmen",
   "services_distribution": "Serviceverteilung",
-  "simplify_contact_collection": "Vereinfachen Sie die Kontakterfassung",
+  "simplify_contact_collection": "Vereinfachen Sie Ihre Kontakterfassung",
   "stages": {
     "after_greeting": "Nach der Begrüßung",
     "after_price": "Nach dem Preis",
     "no_slots": "Keine freien Slots",
     "service_selection": "Wählen Sie einen Dienst aus",
-    "whatsapp_request": "WhatsApp-Anfrage"
+    "whatsapp_request": "Anfrage per WhatsApp"
   },
   "status": {
     "cancelled": "Abgesagt",
@@ -58,37 +90,9 @@
     "file_downloaded": "Datei erfolgreich heruntergeladen"
   },
   "title": "Analytik",
-  "top_services": "Top-Leistungen",
+  "top_services": "Beliebte Dienste",
   "try_again": "Versuchen Sie es erneut",
-  "where_clients_leave": "Wohin gehen Kunden?",
-  "work_on_objections": "Gehen Sie mit Einwänden um",
-  "funnel_overview": "Verkaufstrichter",
   "visitors": "Besucher",
-  "engaged": "Beteiligt",
-  "booked": "Angemeldet",
-  "completed": "Besucht",
-  "funnel_chart": "Trichtervisualisierung",
-  "funnel": {
-    "conversion": {
-      "visitor_to_engaged": "Besucher -> Verlobt",
-      "engaged_to_booking": "Verlobt -> Aufnahme gestartet",
-      "booking_to_booked": "Gestartet -> Angemeldet",
-      "booked_to_completed": "Angemeldet -> Besichtigt"
-    },
-    "stages": {
-      "visitors": "Besucher",
-      "engaged": "Beteiligt",
-      "started_booking": "Aufnahme gestartet",
-      "booked": "Angemeldet",
-      "completed": "Besucht"
-    },
-    "desc": {
-      "visitors": "Website-/Social-Media-Besucher",
-      "engaged": "Interesse gezeigt",
-      "started_booking": "Anmeldeformular geöffnet",
-      "booked": "Registrierung abgeschlossen",
-      "completed": "Service bereitgestellt"
-    },
-    "losses": "Verluste: {{count}}"
-  }
+  "where_clients_leave": "Wohin gehen Kunden?",
+  "work_on_objections": "Umgang mit Einwänden"
 }

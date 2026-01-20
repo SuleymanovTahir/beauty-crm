@@ -9,7 +9,7 @@
   "days_in_row": "days ",
   "discount": "Discount",
   "invitations": "Invitations",
-  "last_6_months": "Over the past 6 months",
+  "last_6_months": "Over the past {{count}} months",
   "loyalty_card": "Loyalty card",
   "month_apr": "Apr",
   "month_feb": "Feb",

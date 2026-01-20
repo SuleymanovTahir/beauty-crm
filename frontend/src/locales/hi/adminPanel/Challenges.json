@@ -1,59 +1,59 @@
 {
   "buttons": {
     "cancel": "रद्द करना",
-    "create_challenge": "एक चुनौती बनाएँ",
-    "update_challenge": "अद्यतन चुनौती"
+    "create_challenge": "एक लक्ष्य बनाएं",
+    "update_challenge": "परिवर्तनों को सुरक्षित करें"
   },
   "card": {
     "check_progress": "प्रगति की जाँच करें",
     "completed": "पुरा होना",
     "progress": "प्रगति",
-    "pts": "बिंदु",
+    "pts": "अंक",
     "reward": "इनाम",
     "target": "लक्ष्य"
   },
-  "create_challenge": "एक चुनौती बनाएँ",
+  "create_challenge": "एक नया लक्ष्य बनाएं",
   "dialogs": {
     "create": {
-      "description": "चुनौती मापदंडों और पुरस्कारों को परिभाषित करें",
+      "description": "गतिविधि पैरामीटर और पूर्णता बोनस दिनांक सेट करें",
       "form": {
-        "challenge_type": "चुनौती प्रकार",
-        "description": "विवरण",
-        "description_placeholder": "इस महीने 3 बार सैलून जाएं",
+        "challenge_type": "गतिविधि प्रकार",
+        "description": "कार्य का विवरण",
+        "description_placeholder": "उदाहरण: इस महीने सैलून में {{count}} बार जाएँ",
         "end_date": "अंतिम तिथि",
-        "reward_placeholder": "1000",
-        "reward_points": "अंकों के साथ पुरस्कृत करें",
+        "reward_placeholder": "{{points}}",
+        "reward_points": "अंक जोड़ें",
         "start_date": "आरंभ करने की तिथि",
-        "target_placeholder": "3",
-        "target_value": "लक्ष्य मान",
-        "title": "नाम",
-        "title_placeholder": "ग्रीष्मकालीन सौंदर्य चुनौती"
+        "target_placeholder": "{{points}}",
+        "target_value": "लक्ष्य मात्रा",
+        "title": "लक्ष्य का नाम",
+        "title_placeholder": "उदाहरण के लिए: ग्रीष्मकालीन बदलाव"
       },
-      "title": "एक नई चुनौती बनाएँ",
-      "title_edit": "चुनौती संपादित करें"
+      "title": "एक लक्ष्य बनाना",
+      "title_edit": "किसी लक्ष्य का संपादन"
     },
     "delete": {
-      "confirm": "क्या आप वाकई इस चुनौती को हटाना चाहते हैं?"
+      "confirm": "क्या आप वाकई इस गतिविधि को हटाना चाहते हैं? प्रतिभागियों की सारी प्रगति नष्ट हो जाएगी."
     }
   },
   "stats": {
-    "active_challenges": "सक्रिय चुनौतियाँ",
-    "completions": "समापन",
-    "total_participants": "कुल प्रतिभागी"
+    "active_challenges": "सक्रिय लक्ष्य",
+    "completions": "फांसी",
+    "total_participants": "प्रतिभागियों"
   },
-  "subtitle": "सहभागिता चुनौतियाँ बनाना और प्रबंधित करना",
-  "title": "चुनौतियां",
+  "subtitle": "ग्राहक निष्ठा बढ़ाने के लिए गेम मैकेनिक्स और लक्ष्य प्रबंधित करें",
+  "title": "लक्ष्य और उपलब्धियाँ",
   "toasts": {
-    "created": "चुनौती सफलतापूर्वक बनाई गई",
-    "deleted": "चुनौती सफलतापूर्वक हटा दी गई",
-    "failed_check_progress": "प्रगति की जाँच करने में विफल",
-    "failed_create": "चुनौती पैदा करने में विफल",
-    "failed_delete": "चुनौती हटाने में विफल",
-    "failed_load": "चुनौतियाँ लोड करने में विफल",
-    "progress_checked_one": "प्रगति की जाँच अकेले की गई",
-    "progress_checked_few": "प्रगति की जाँच कई",
-    "progress_checked_many": "प्रगति का परीक्षण कई लोगों द्वारा किया गया है",
-    "progress_checked_other": "दूसरों द्वारा सत्यापित प्रगति"
+    "created": "गतिविधि सफलतापूर्वक बनाई गई",
+    "deleted": "गतिविधि हटा दी गई",
+    "failed_check_progress": "प्रगति अद्यतन करने में विफल",
+    "failed_create": "गतिविधि बनाने में त्रुटि",
+    "failed_delete": "हटाने के दौरान त्रुटि",
+    "failed_load": "डेटा लोड करने में विफल",
+    "progress_checked_few": "{{count}} प्रतिभागियों के लिए प्रगति अद्यतन की गई",
+    "progress_checked_many": "{{count}} प्रतिभागियों के लिए प्रगति अद्यतन की गई",
+    "progress_checked_one": "{{count}} सदस्य के लिए प्रगति अद्यतन की गई",
+    "progress_checked_other": "{{count}} प्रतिभागियों के लिए प्रगति अद्यतन की गई"
   },
   "types": {
     "referrals": "रेफरल",

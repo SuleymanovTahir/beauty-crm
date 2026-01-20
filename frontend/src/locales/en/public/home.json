@@ -5,12 +5,12 @@
       "date": "Date *",
       "name": "Your name *",
       "namePlaceholder": "Anna Ivanova",
-      "phone": "Phone*",
-      "phonePlaceholder": "+971 50 123 4567",
+      "phone": "Telephone *",
+      "phonePlaceholder": "{{points}}",
       "service": "Service *",
       "servicePlaceholder": "Select a service",
-      "submit": "Registration",
-      "time": "time*"
+      "submit": "Sign up",
+      "time": "Time *"
     },
     "loading": "Loading Services...",
     "title": "Sign up for the procedure",
@@ -27,7 +27,7 @@
         "title": "Premium materials"
       },
       "schedule": {
-        "description": "We are open 7 days a week for convenient writing times",
+        "description": "We are open {{count}} days a week at times convenient for you.",
         "title": "Convenient schedule"
       }
     },
@@ -45,7 +45,7 @@
   },
   "hero": {
     "badge": "Premium beauty services",
-    "bookButton": "Register now",
+    "bookButton": "Enroll now",
     "description": "Professional craftsmen, individual approach and high quality materials. ",
     "servicesButton": "Our services",
     "title": "Discover a new level of beauty"

@@ -1,9 +1,9 @@
 {
   "answer_1": "You can subscribe through our website, by calling or writing on WhatsApp/Instagram.",
   "answer_2": "We accept payment in cash and bank cards.",
-  "answer_3": "Yes, you can cancel or reschedule an appointment up to 24 hours before the scheduled time.",
+  "answer_3": "Yes, you can cancel or reschedule your appointment up to {{hours}} hours before your scheduled time.",
   "answer_4": "Yes, some procedures have medical contraindications. ",
-  "answer_5": "The time of the procedure depends on the selected service. ",
+  "answer_5": "The procedure time depends on the service chosen. ",
   "answer_6": "Some procedures require special training. ",
   "cta": {
     "bookButton": "Sign up for the procedure",
@@ -24,7 +24,7 @@
       "question": "How to sign up for the procedure?"
     },
     "cancellation": {
-      "answer": "Yes, you can cancel or reschedule an appointment up to 24 hours before the scheduled time. ",
+      "answer": "Yes, you can cancel or reschedule your appointment up to {{hours}} hours before your scheduled time. ",
       "question": "Can I cancel or reschedule an appointment?"
     },
     "certificates": {
@@ -48,7 +48,7 @@
       "question": "Where is your salon located?"
     },
     "loyalty": {
-      "answer": "Yes, we have a bundled loyalty program. ",
+      "answer": "Yes, we have a comprehensive loyalty program. ",
       "question": "Do you have a loyalty program?"
     },
     "materials": {
@@ -60,11 +60,11 @@
       "question": "What payment methods do you accept?"
     },
     "preparation": {
-      "answer": "Yes, some procedures require training. ",
+      "answer": "Yes, some procedures require preparation. ",
       "question": "Is it necessary to prepare before the procedure?"
     },
     "weekends": {
-      "answer": "Yes, we are open 7 days a week. ",
+      "answer": "Yes, we are open {{count}} days a week. ",
       "question": "Do you work on weekends?"
     }
   },

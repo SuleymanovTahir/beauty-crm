@@ -5,16 +5,16 @@
   },
   "current_settings": {
     "edit": "Editar",
-    "min_purchase": "Preço mínimo de compra: <strong>{{amount}} AED</strong>",
-    "referred_bonus": "O amigo convidado recebe <strong>{{points}} pontos</strong> no momento da inscrição",
+    "min_purchase": "Preço mínimo de compra: <strong>{{amount}} {{currency}}</strong>",
+    "referred_bonus": "O amigo convidado recebe <strong>{{points}} pontos</strong> no ato da inscrição",
     "referrer_bonus": "O indicador recebe <strong>{{points}} pontos</strong>quando um amigo faz sua primeira compra",
     "title": "Configuração de bônus atual"
   },
   "dialogs": {
     "settings": {
       "description": "Configure pontos de bônus e requisitos",
-      "min_purchase_amount": "Preço mínimo de compra (AED)",
-      "min_purchase_help": "Valor mínimo que um amigo deve gastar para ativar o bônus de indicação (0 = sem mínimo)",
+      "min_purchase_amount": "Preço mínimo de compra ({{currency}})",
+      "min_purchase_help": "Valor mínimo que um amigo deve gastar para ativar o bônus de indicação ({{min}} = sem mínimo)",
       "referred_bonus": "Pontos de bônus de amigos indicados",
       "referred_bonus_help": "Pontos atribuídos a um amigo no ato da inscrição",
       "referrer_bonus": "Pontos de bônus de referência",
@@ -39,13 +39,13 @@
     },
     "description": "Acompanhamento do status das referências e distribuição de pontos",
     "filters": {
-      "all_statuses": "All Statuses"
+      "all_statuses": "Todos os status"
     },
     "search_placeholder": "Procure referências...",
     "sort": {
-      "date": "Sort by Date",
-      "points": "Sort by Points",
-      "status": "Sort by Status"
+      "date": "Até data",
+      "points": "Até data pontos",
+      "status": "Até data status"
     },
     "statuses": {
       "cancelled": "Cancelado",

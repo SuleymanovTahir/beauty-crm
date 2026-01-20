@@ -1,17 +1,20 @@
 {
   "analyze_further": "Analise mais detalhadamente",
   "apply": "Aplicar",
-  "avg_check": "Fatura média",
+  "avg_check": "Verificação média",
   "avg_time": "Tempo médio",
+  "booked": "Inscrito",
   "booking_statuses": "Postar status",
-  "bookings": "Reservas",
+  "bookings": "Bookings",
   "bookings_trend": "Dinâmica de reservas",
-  "clarify_services": "Especifique serviços",
-  "conversation_stage": "Estágio de conversa",
+  "clarify_services": "Esclarecimento de serviços",
+  "completed": "Visitado",
+  "conversation_stage": "Estágio de diálogo",
   "conversion": "Conversão",
   "detailed_analysis": "Análise detalhada do trabalho do salão",
   "drop_off_analysis": "Análise de abandono",
-  "drop_offs": "Desistiu",
+  "drop_offs": "Falhas",
+  "engaged": "Envolvido",
   "errors": {
     "export_failed": "Erro ao exportar arquivo",
     "invalid_date_range": "A data de início deve ser anterior à data de término",
@@ -21,9 +24,38 @@
   },
   "export": "Exportar",
   "exporting": "Exportar...",
-  "focus_on_highest_drop_off": "Concentre-se no palco com maior desgaste",
+  "focus_on_highest_drop_off": "Preste atenção na etapa com maior desistência",
   "for_period": "Para o período",
   "from_visitors": "De visitantes a clientes",
+  "funnel": {
+    "conversion": {
+      "booked_to_completed": "Inscrito -> Visitado",
+      "booking_to_booked": "Iniciado -> Inscrito",
+      "engaged_to_booking": "Noivo -> Gravação iniciada",
+      "visitor_to_engaged": "Visitante -> Envolvido"
+    },
+    "desc": {
+      "booked": "Cadastro concluído",
+      "completed": "Serviço prestado",
+      "engaged": "Demonstrou interesse",
+      "started_booking": "Abriu o formulário de inscrição",
+      "visitors": "Visitantes do site/mídia social"
+    },
+    "losses": "Perdas: {{count}}",
+    "losses_few": "Perdas: {{count}}",
+    "losses_many": "Perdas: {{count}}",
+    "losses_one": "Perda: {{count}}",
+    "losses_other": "Perdas: {{count}}",
+    "stages": {
+      "booked": "Inscrito",
+      "completed": "Visitado",
+      "engaged": "Envolvido",
+      "started_booking": "Começou a gravar",
+      "visitors": "Visitantes"
+    }
+  },
+  "funnel_chart": "Gráfico de funil",
+  "funnel_overview": "Funil de vendas",
   "improve_greeting": "Melhore sua saudação",
   "income": "Receita",
   "min": "min",
@@ -31,21 +63,21 @@
   "need_more_masters": "Precisa de mais mestres",
   "optimization_tip": "Dica de otimização",
   "peak_hours": "Horário de pico",
-  "per_booking": "Para gravação",
-  "percentage": "até data cento",
+  "per_booking": "Para cada reserva",
+  "percentage": "Até cento",
   "quantity": "Quantidade",
   "recommendation": "Recomendação",
   "refresh": "Atualizar",
   "response_time": "Tempo de resposta",
   "revenue": "Receita",
   "services_distribution": "Distribuição de serviços",
-  "simplify_contact_collection": "Simplifique a coleta de contatos",
+  "simplify_contact_collection": "Simplifique sua coleta de contatos",
   "stages": {
     "after_greeting": "Depois da saudação",
     "after_price": "Depois do preço",
     "no_slots": "Sem slots grátis",
     "service_selection": "Selecione um serviço",
-    "whatsapp_request": "Solicitação pelo WhatsApp"
+    "whatsapp_request": "Solicite pelo WhatsApp"
   },
   "status": {
     "cancelled": "Cancelado",
@@ -58,37 +90,9 @@
     "file_downloaded": "Arquivo baixado com sucesso"
   },
   "title": "Análise",
-  "top_services": "Principais serviços",
+  "top_services": "Serviços populares",
   "try_again": "Tente novamente",
-  "where_clients_leave": "Para onde vão os clientes?",
-  "work_on_objections": "Lidar com objeções",
-  "funnel_overview": "Funil de vendas",
   "visitors": "Visitantes",
-  "engaged": "Envolvido",
-  "booked": "Inscrito",
-  "completed": "Visitado",
-  "funnel_chart": "Visualização de funil",
-  "funnel": {
-    "conversion": {
-      "visitor_to_engaged": "Visitante -> Envolvido",
-      "engaged_to_booking": "Noivo -> Gravação iniciada",
-      "booking_to_booked": "Iniciado -> Inscrito",
-      "booked_to_completed": "Inscrito -> Visitado"
-    },
-    "stages": {
-      "visitors": "Visitantes",
-      "engaged": "Envolvido",
-      "started_booking": "Começou a gravar",
-      "booked": "Inscrito",
-      "completed": "Visitado"
-    },
-    "desc": {
-      "visitors": "Visitantes do site/mídia social",
-      "engaged": "Demonstrou interesse",
-      "started_booking": "Abriu o formulário de inscrição",
-      "booked": "Cadastro concluído",
-      "completed": "Serviço prestado"
-    },
-    "losses": "Perdas: {{count}}"
-  }
+  "where_clients_leave": "Para onde vão os clientes?",
+  "work_on_objections": "Lidando com objeções"
 }

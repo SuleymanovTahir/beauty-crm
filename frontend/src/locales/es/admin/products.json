@@ -3,7 +3,7 @@
   "allCategories": "Todas las categorias",
   "analytics": {
     "avgPrice": "Casarse. precio",
-    "last30Days": "en 30 dias",
+    "last30Days": "Durante {{count}} días",
     "revenue": "Ganancia",
     "totalSold": "Total vendido"
   },
@@ -11,10 +11,10 @@
   "delete": "Borrar",
   "detail": {
     "costPriceLabel": "Costo: {{price}} {{currency}}",
-    "inStock_one": "Uno disponible",
-    "inStock_few": "Varios disponibles",
-    "inStock_many": "Lotes en stock",
-    "inStock_other": "Otros en stock",
+    "inStock_few": "En stock {{count}} uds.",
+    "inStock_many": "En stock {{count}} uds.",
+    "inStock_one": "En stock {{count}} uds.",
+    "inStock_other": "En stock {{count}} uds.",
     "loadingData": "Cargando datos...",
     "movementAdjustment": "Ajuste",
     "movementHistory": "Historia de los movimientos",

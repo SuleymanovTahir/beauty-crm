@@ -1,4 +1,5 @@
 {
+  "account": "खाता",
   "admin": "प्रशासक",
   "change_password": "पासवर्ड बदलें",
   "changing_password": "अपना पासवर्ड बदल रहा हूँ",
@@ -9,6 +10,7 @@
   "email": "ईमेल",
   "email_placeholder": "user@example.com",
   "employee": "कर्मचारी",
+  "employee_profile": "कर्मचारी प्रोफ़ाइल",
   "enter_current_password": "अपने वर्तमान पासवर्ड को दर्ज करें",
   "enter_current_password_for_confirmation": "पुष्टि करने के लिए अपना वर्तमान पासवर्ड दर्ज करें",
   "error_changing_password": "पासवर्ड बदलने में त्रुटि",
@@ -16,7 +18,7 @@
   "error_updating_profile": "प्रोफ़ाइल अद्यतन त्रुटि",
   "for_password_recovery": "अपना पासवर्ड पुनर्प्राप्त करने के लिए",
   "full_name": "पूरा नाम",
-  "full_name_must_be_at_least_2_characters": "पूरे नाम में कम से कम 2 अक्षर होने चाहिए",
+  "full_name_must_be_at_least_2_characters": "पूरे नाम में कम से कम {{count}} अक्षर होना चाहिए",
   "full_name_placeholder": "इवान इवानोव",
   "in_system_since": "के साथ एक सिस्टम में",
   "loading_profile": "प्रोफ़ाइल लोड हो रही है",
@@ -24,7 +26,7 @@
   "manager": "प्रबंधक",
   "my_profile": "मेरी प्रोफाइल",
   "new_password": "नया पासवर्ड",
-  "new_password_must_be_at_least_6_characters": "नए पासवर्ड में कम से कम 6 अक्षर होने चाहिए",
+  "new_password_must_be_at_least_6_characters": "नए पासवर्ड में कम से कम {{count}} अक्षर होने चाहिए",
   "password_successfully_changed": "पासवर्ड सफलतापूर्वक बदला गया",
   "passwords_do_not_match": "पासवर्ड मेल नहीं खाते",
   "personal_information": "व्यक्तिगत जानकारी",
@@ -33,9 +35,7 @@
   "saving_changes": "परिवर्तन सहेजे जा रहे हैं",
   "tip": "सलाह",
   "try_reloading_page": "पृष्ठ को पुनः लोड करने का प्रयास करें",
-  "use_complex_password_at_least_6_characters": "एक जटिल पासवर्ड (न्यूनतम 6 अक्षर) का उपयोग करें।",
+  "use_complex_password_at_least_6_characters": "एक जटिल पासवर्ड (न्यूनतम {{count}} अक्षर) का उपयोग करें।",
   "username": "लॉग इन करें",
-  "username_must_be_at_least_3_characters": "लॉगिन में कम से कम 3 अक्षर होने चाहिए",
-  "employee_profile": "कर्मचारी प्रोफ़ाइल",
-  "account": "खाता"
+  "username_must_be_at_least_3_characters": "लॉगिन में कम से कम {{count}} अक्षर होना चाहिए"
 }

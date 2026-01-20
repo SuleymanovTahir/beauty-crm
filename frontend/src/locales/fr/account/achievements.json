@@ -11,7 +11,7 @@
   "active_challenges": "Objectifs actifs",
   "all_achievements": "Toutes les réalisations",
   "challenge_hair_care": "Des cheveux parfaits",
-  "challenge_hair_care_desc": "Faites 3 traitements capillaires",
+  "challenge_hair_care_desc": "Faire des traitements capillaires {{count}}",
   "challenge_spring_update": "Mise à jour du printemps",
   "challenge_spring_update_desc": "Mettez à jour votre look pour la nouvelle saison",
   "completed_percent": "{{percent}}% terminé",

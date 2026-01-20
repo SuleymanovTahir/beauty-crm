@@ -33,7 +33,7 @@
     "management": "Бақылау",
     "marketplace_integrations": "Базарлар",
     "messengers": "Хабаршылар",
-    "my_bookings": "Менің тапсырыстарым",
+    "my_bookings": "Менің жазбаларым",
     "notifications": "Хабарландырулар",
     "payment_integrations": "Төлем жүйелері",
     "products": "Тауарлар",
@@ -52,7 +52,7 @@
   "notifications": "Хабарландырулар",
   "roles": {
     "director": "Директор",
-    "marketer": "Маркетинг",
+    "marketer": "Маркетолог",
     "sales": "Сатылымдар"
   },
   "user": "Пайдаланушы",

@@ -1,4 +1,8 @@
 {
+  "additional_context": "سياق إضافي (اختياري)",
+  "ai_thinking": "الذكاء الاصطناعي يعتقد...",
+  "ask_ai_consultant": "اسأل أحد مستشاري الذكاء الاصطناعي",
+  "ask_bot_placeholder": "على سبيل المثال: يقول العميل أن السعر باهظ الثمن، فكيف يجيب؟",
   "chats": "الدردشات",
   "clear": "واضح",
   "error": "خطأ",
@@ -7,10 +11,10 @@
   "file_removed": "تم حذف الملف",
   "files": "ملفات",
   "files_added": "الملفات المضافة: {{count}}",
-  "files_added_few": "تمت إضافة العديد من الملفات",
-  "files_added_many": "تمت إضافة الكثير من الملفات",
-  "files_added_one": "وأضاف الملفات واحدة",
-  "files_added_other": "تمت إضافة ملفات أخرى",
+  "files_added_few": "تمت إضافة ملف {{count}}",
+  "files_added_many": "تمت إضافة ملفات {{count}}",
+  "files_added_one": "تمت إضافة ملف {{count}}",
+  "files_added_other": "الملفات المضافة ({{count}})",
   "files_cleared": "تم مسح الملفات",
   "image": "صورة",
   "image_not_available": "الصورة غير متوفرة",
@@ -27,12 +31,8 @@
   "search": "يبحث",
   "select_chat": "حدد الدردشة",
   "select_dialog_from_list": "حدد محادثة من القائمة الموجودة على اليسار",
+  "send_to_ai": "أرسل الذكاء الاصطناعي",
   "templates": "قوالب",
   "try_again": "حاول ثانية",
-  "ask_ai_consultant": "اسأل أحد مستشاري الذكاء الاصطناعي",
-  "your_question": "سؤالك",
-  "additional_context": "سياق إضافي (اختياري)",
-  "ask_bot_placeholder": "على سبيل المثال: يقول العميل أن السعر باهظ الثمن، فكيف يجيب؟",
-  "send_to_ai": "أرسل الذكاء الاصطناعي",
-  "ai_thinking": "الذكاء الاصطناعي يعتقد..."
+  "your_question": "سؤالك"
 }

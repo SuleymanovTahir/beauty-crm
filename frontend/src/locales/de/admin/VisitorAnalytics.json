@@ -1,6 +1,6 @@
 {
   "apply": "Anwenden",
-  "check_range": "Reichweite prüfen (0-1000 km, „Bis“ > „datum bis“)",
+  "check_range": "Überprüfen Sie die Reichweite ({{min}}-{{max}}km, „Bis“ > „datum bis“).",
   "cities": "Städte",
   "city": "Stadt",
   "countries": "Länder",
@@ -23,7 +23,7 @@
   "landing_sections": "Landeabschnitte",
   "latest_visitors": "Neueste Besucher",
   "loading": "Besucheranalyse wird geladen...",
-  "local_visitors": "Lokal (≤50 km)",
+  "local_visitors": "Lokal (≤{{max}}km)",
   "next": "Nach vorne",
   "of": "aus",
   "page": "Seite",
@@ -42,7 +42,11 @@
   "trend_subtitle": "Dynamik der Besuche pro Tag",
   "unique_locations": "Einzigartige Orte",
   "visit_time": "Besuchszeit",
-  "visitor_trend": "Besuchen Sie Trend",
+  "visitor_trend": "Besuchen Sie trend",
   "visitors": "Besucher",
-  "visitors_count": "Besucher"
+  "visitors_count": "besucher",
+  "visitors_count_few": "{{count}} Besucher",
+  "visitors_count_many": "{{count}} Besucher",
+  "visitors_count_one": "{{count}} Besucher",
+  "visitors_count_other": "{{count}} Besucher"
 }

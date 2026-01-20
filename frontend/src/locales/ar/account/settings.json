@@ -45,8 +45,8 @@
   "personal_info_title": "معلومات شخصية",
   "photo_requirements": "جبغ، بابوا نيو غينيا. الأعلى. 5 ميجابايت",
   "privacy_masters": "الوصول الرئيسي",
-  "privacy_masters_desc": "شارك تاريخ زيارتك من تاريخ الأساتذة",
-  "privacy_photos": "دقة الصورة",
+  "privacy_masters_desc": "شارك تاريخ زيارتك من تاريخ السادة",
+  "privacy_photos": "السماح بالصورة",
   "privacy_photos_desc": "السماح للفنيين بالتقاط الصور قبل/بعد",
   "privacy_public": "الملف الشخصي العام",
   "privacy_public_desc": "أظهر إنجازاتك للعملاء الآخرين",
@@ -62,8 +62,8 @@
   "title": "إعدادات",
   "type_achievements": "الإنجازات",
   "type_achievements_desc": "مكافآت وتحديات جديدة",
-  "type_appointments": "طلبات",
-  "type_appointments_desc": "تذكير بالزيارات القادمة",
+  "type_appointments": "حجوزات",
+  "type_appointments_desc": "تنبيهات حول الزيارات القادمة",
   "type_promotions": "الترقيات والعروض",
   "type_promotions_desc": "العروض والخصومات الخاصة"
 }

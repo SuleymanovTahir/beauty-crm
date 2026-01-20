@@ -58,11 +58,11 @@
   "special_discount": "Жеке жеңілдік (%)",
   "statistics": "Статистика",
   "status": "Күй",
-  "top_3_masters": "Үздік 3 шебер",
-  "top_3_procedures": "Үздік 3 процедура",
+  "top_3_masters": "Жоғарғы {{count}} негізгі",
+  "top_3_procedures": "Жоғарғы {{count}} процедуралары",
   "total_messages": "Жалпы хабарлар",
   "total_visits": "Жалпы барулар",
   "upload_error": "Жүктеу қатесі",
   "visits_dynamics": "Келу динамикасы",
-  "years": "жылдар"
+  "years": "ж."
 }

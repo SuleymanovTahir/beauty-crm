@@ -1,4 +1,5 @@
 {
+  "account": "Account",
   "admin": "Administrator",
   "change_password": "Change password",
   "changing_password": "Changing your password",
@@ -9,6 +10,7 @@
   "email": "Email",
   "email_placeholder": "user@example.com",
   "employee": "Employee",
+  "employee_profile": "Employee profile",
   "enter_current_password": "Enter your current password",
   "enter_current_password_for_confirmation": "Enter your current password to confirm",
   "error_changing_password": "Password change error",
@@ -16,7 +18,7 @@
   "error_updating_profile": "Profile update error",
   "for_password_recovery": "To recover your password",
   "full_name": "Full name",
-  "full_name_must_be_at_least_2_characters": "Full name must contain at least 2 characters",
+  "full_name_must_be_at_least_2_characters": "Full name must contain at least {{count}} character",
   "full_name_placeholder": "Ivan Ivanov",
   "in_system_since": "In a system with",
   "loading_profile": "Loading profile",
@@ -24,7 +26,7 @@
   "manager": "Manager",
   "my_profile": "My profile",
   "new_password": "New Password",
-  "new_password_must_be_at_least_6_characters": "The new password must contain at least 6 characters",
+  "new_password_must_be_at_least_6_characters": "The new password must contain at least {{count}} characters",
   "password_successfully_changed": "Password changed successfully",
   "passwords_do_not_match": "Passwords don't match",
   "personal_information": "Personal information",
@@ -33,9 +35,7 @@
   "saving_changes": "Saving changes",
   "tip": "Advice",
   "try_reloading_page": "Try reloading the page",
-  "use_complex_password_at_least_6_characters": "Use a complex password (minimum 6 characters).",
+  "use_complex_password_at_least_6_characters": "Use a complex password (minimum {{count}} characters).",
   "username": "Login",
-  "username_must_be_at_least_3_characters": "Login must contain at least 3 characters",
-  "employee_profile": "Employee profile",
-  "account": "Account"
+  "username_must_be_at_least_3_characters": "The login must contain at least {{count}} character"
 }

@@ -36,11 +36,11 @@
   "search_placeholder": "Поиск по номеру или клиенту...",
   "sendDialog": {
     "email": "Электронная почта",
-    "instagram": "Инстаграм",
+    "instagram": "Instagram",
     "method": "Способ отправки",
     "recipient": "Получатель",
     "sendButton": "Отправить",
-    "telegram": "Телеграмма",
+    "telegram": "Telegram",
     "title": "Отправить договор",
     "whatsapp": "WhatsApp"
   },

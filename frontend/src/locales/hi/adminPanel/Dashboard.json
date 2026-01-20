@@ -1,8 +1,8 @@
 {
   "quick_actions": {
     "challenges": {
-      "description": "चुनौतियों का निर्माण और प्रबंधन",
-      "title": "चुनौतियां"
+      "description": "लक्ष्य बनाना और प्रबंधित करना",
+      "title": "लक्ष्य"
     },
     "loyalty_management": {
       "description": "वफादारी अंक और स्तर प्रबंधित करें",
@@ -27,28 +27,28 @@
     }
   },
   "recent_activity": {
-    "challenge_completed_one": "चुनौती \"{{name}}\" उपयोगकर्ता द्वारा {{count}} द्वारा पूरी की गई",
-    "challenge_completed_few": "चुनौती \"{{name}}\" {{count}} उपयोगकर्ताओं द्वारा पूरी की गई",
-    "challenge_completed_many": "चुनौती \"{{name}}\" {{count}} उपयोगकर्ताओं द्वारा पूरी की गई",
-    "challenge_completed_other": "चुनौती \"{{name}}\" {{count}} उपयोगकर्ताओं द्वारा पूरी की गई",
-    "day_ago_one": "{{count}} दिन पहले",
+    "challenge_completed_few": "लक्ष्य \"{{name}}\" {{count}} उपयोगकर्ताओं द्वारा पूरा किया गया",
+    "challenge_completed_many": "लक्ष्य \"{{name}}\" {{count}} उपयोगकर्ताओं द्वारा पूरा किया गया",
+    "challenge_completed_one": "लक्ष्य \"{{name}}\" उपयोगकर्ता द्वारा {{count}} द्वारा पूरा किया गया",
+    "challenge_completed_other": "लक्ष्य \"{{name}}\" {{count}} उपयोगकर्ताओं द्वारा पूरा किया गया",
     "day_ago_few": "{{count}} दिन पहले",
     "day_ago_many": "{{count}} दिन पहले",
+    "day_ago_one": "{{count}} दिन पहले",
     "day_ago_other": "{{count}} दिन पहले",
-    "hours_ago_one": "{{count}} घंटा पहले",
     "hours_ago_few": "{{count}} घंटे पहले",
     "hours_ago_many": "{{count}} घंटे पहले",
+    "hours_ago_one": "{{count}} एक घंटा पहले",
     "hours_ago_other": "{{count}} घंटे पहले",
     "new_tier_activated": "नया लॉयल्टी स्तर सक्रिय किया गया",
     "subtitle": "व्यवस्थापक पैनल में हाल की कार्रवाइयां",
     "title": "हाल की गतिविधि",
-    "users_registered_one": "{{count}} नया उपयोगकर्ता पंजीकृत",
     "users_registered_few": "{{count}} नया उपयोगकर्ता पंजीकृत",
-    "users_registered_many": "{{count}} नये उपयोगकर्ता पंजीकृत",
-    "users_registered_other": "{{count}} नये उपयोगकर्ता पंजीकृत"
+    "users_registered_many": "{{count}} नए उपयोगकर्ता पंजीकृत",
+    "users_registered_one": "{{count}} नया उपयोगकर्ता पंजीकृत",
+    "users_registered_other": "{{count}} नए उपयोगकर्ता पंजीकृत"
   },
   "stats": {
-    "active_challenges": "सक्रिय चुनौतियाँ",
+    "active_challenges": "सक्रिय लक्ष्य",
     "from_last_month": "पिछले महीने से",
     "loyalty_points_issued": "वफादारी अंक जारी किए गए",
     "total_referrals": "कुल रेफरल",

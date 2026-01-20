@@ -33,7 +33,7 @@
     "management": "Управление",
     "marketplace_integrations": "Маркетплейсы",
     "messengers": "Мессенджеры",
-    "my_bookings": "Мои бронирования",
+    "my_bookings": "Мои записи",
     "notifications": "Уведомления",
     "payment_integrations": "Платежные системы",
     "products": "Товары",
@@ -52,7 +52,7 @@
   "notifications": "Уведомления",
   "roles": {
     "director": "Директор",
-    "marketer": "Маркетинг",
+    "marketer": "Маркетолог",
     "sales": "Продажи"
   },
   "user": "Пользователь",
