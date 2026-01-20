@@ -52,7 +52,7 @@ interface MainLayoutProps {
 export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const navigate = useNavigate();
     const location = useLocation();
-    const { t } = useTranslation(['layouts/mainlayout', 'common']);
+    const { t, i18n } = useTranslation(['layouts/mainlayout', 'common']);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
     const [expandedMenu, setExpandedMenu] = useState<string | null>(() => {

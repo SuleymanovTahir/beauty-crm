@@ -258,7 +258,7 @@ export default function Challenges() {
                             <div className="flex items-center justify-between pt-4 border-t border-gray-50 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
                                 <div className="flex items-center gap-2">
                                     <Calendar className="w-3.5 h-3.5" />
-                                    {new Date(challenge.start_date).toLocaleDateString()} — {new Date(challenge.end_date).toLocaleDateString()}
+                                    {new Date(challenge.start_date).toLocaleDateString('ru-RU')} — {new Date(challenge.end_date).toLocaleDateString('ru-RU')}
                                 </div>
                                 <div className="flex items-center gap-1.5 text-gray-900">
                                     {t('card.details', 'Подробнее')}

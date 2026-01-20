@@ -16,7 +16,7 @@ import { formatDateForGoogle } from '../../../utils/dateUtils';
 import { useSalonSettings } from '../../../hooks/useSalonSettings';
 
 export function Dashboard() {
-  const { t } = useTranslation(['account', 'common']);
+  const { t, i18n } = useTranslation(['account', 'common']);
   const navigate = useNavigate();
   const { currency: globalCurrency, formatCurrency } = useCurrency();
   const { salonName, phone: salonPhone } = useSalonSettings();
@@ -224,7 +224,7 @@ export function Dashboard() {
                 <div className="text-sm text-muted-foreground">{next_booking.service}</div>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge variant="outline">
-                    {new Date(next_booking.date).toLocaleDateString(undefined, {
+                    {new Date(next_booking.date).toLocaleDateString(i18n.language, {
                       day: 'numeric',
                       month: 'long'
                     })}
@@ -287,7 +287,7 @@ export function Dashboard() {
           <CardHeader>
             <CardTitle>{t('dashboard.last_visit', 'Последний визит')}</CardTitle>
             <CardDescription>
-              {new Date(last_visit.date).toLocaleDateString(undefined, {
+              {new Date(last_visit.date).toLocaleDateString(i18n.language, {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
@@ -369,7 +369,7 @@ export function Dashboard() {
                 <div className="text-right">
                   <div className="font-bold text-sm">{visit.price} {currency}</div>
                   <div className="text-[10px] text-muted-foreground">
-                    {new Date(visit.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
+                    {new Date(visit.date).toLocaleDateString(i18n.language, { day: 'numeric', month: 'short' })}
                   </div>
                 </div>
               </button>

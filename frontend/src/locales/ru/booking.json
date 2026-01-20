@@ -56,6 +56,7 @@
   "continue_datetime": "Продолжить с выбора даты и времени",
   "continue_professional": "Продолжить с выбора мастера",
   "continue_services": "Продолжить с выбора услуг",
+  "date_format_hint": "Формат: ДД.ММ.ГГГГ",
   "datetime": {
     "date": "Выберите дату",
     "noSlots": "Нет доступных окошек",
@@ -86,10 +87,10 @@
   "newBooking": "Бронирование",
   "noServicesFound": "Услуги не найдены.",
   "phone_too_short": "Номер телефона должен содержать минимум {{count}} цифр с учетом кода страны",
-  "phone_too_short_one": "",
-  "phone_too_short_few": "",
-  "phone_too_short_many": "",
-  "phone_too_short_other": "",
+  "phone_too_short_one": "Минимум {{count}} цифра",
+  "phone_too_short_few": "Минимум {{count}} цифры",
+  "phone_too_short_many": "Минимум {{count}} цифр",
+  "phone_too_short_other": "Минимум {{count}} цифр",
   "privacyAgreementStart": "Нажимая кнопку, вы соглашаетесь с",
   "privacyPolicy": "политикой конфиденциальности",
   "professional": {

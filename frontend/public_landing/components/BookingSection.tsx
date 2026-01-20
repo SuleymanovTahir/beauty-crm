@@ -366,10 +366,11 @@ export const BookingSection = () => {
                   required
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="h-10 sm:h-11 pl-10 form-input-custom"
+                  className="h-10 sm:h-11 pl-10 form-input-custom [color-scheme:light]"
                   min={getTodayDate()}
                 />
               </div>
+              <p className="text-[10px] text-muted-foreground mt-1 ml-1">{t('date_format_hint', { defaultValue: 'Формат: ДД.ММ.ГГГГ' })}</p>
             </div>
             <div>
               <label className="form-label-custom">{t('formTime', { defaultValue: 'Время' })}</label>
@@ -398,7 +399,7 @@ export const BookingSection = () => {
             </a>
           </p>
         </form>
-      </div>
-    </section>
+      </div >
+    </section >
   );
 }

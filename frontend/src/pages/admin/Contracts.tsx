@@ -385,7 +385,7 @@ const Contracts = () => {
                                             <div className="flex items-center justify-between pt-3 border-t border-gray-50">
                                                 <div className="text-[10px] text-gray-400 flex items-center gap-1">
                                                     <Clock size={10} />
-                                                    {new Date(contract.created_at).toLocaleDateString()}
+                                                    {new Date(contract.created_at).toLocaleDateString('ru-RU')}
                                                 </div>
                                                 <div className="flex gap-2">
                                                     <button
@@ -460,7 +460,7 @@ const Contracts = () => {
                                                 </span>
                                             </td>
                                             <td className="text-gray-600 text-sm">
-                                                {new Date(contract.created_at).toLocaleDateString()}
+                                                {new Date(contract.created_at).toLocaleDateString('ru-RU')}
                                             </td>
                                             <td>
                                                 <div className="flex gap-1">

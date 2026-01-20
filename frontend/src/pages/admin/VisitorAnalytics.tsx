@@ -217,7 +217,7 @@ export default function VisitorAnalytics() {
     }));
 
     const trendChartData = visitorTrend.map(item => ({
-        date: new Date(item.date).toLocaleDateString(i18n.language, { day: 'numeric', month: 'short' }),
+        date: new Date(item.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
         visitors: item.count
     }));
 
@@ -576,7 +576,7 @@ export default function VisitorAnalytics() {
                                         ) : '-'}
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-600">
-                                        {visitor.visited_at ? new Date(visitor.visited_at).toLocaleString(i18n.language) : '-'}
+                                        {visitor.visited_at ? new Date(visitor.visited_at).toLocaleString('ru-RU') : '-'}
                                     </td>
                                 </tr>
                             ))}

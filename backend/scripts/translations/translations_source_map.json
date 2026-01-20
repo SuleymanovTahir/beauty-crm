@@ -455,7 +455,9 @@
       "settings_save_error": "Ошибка сохранения настроек",
       "settings_saved": "Настройки сохранены",
       "update_error": "Ошибка обновления",
-      "upload_error": "Ошибка загрузки файла"
+      "upload_error": "Ошибка загрузки файла",
+      "client": "Клиент",
+      "service": "Служба"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -800,13 +802,13 @@
       "users.61.bio.e6c24481": "Профессионализм и творческий подход: Федорова Наталья специализируется на Brows, Permanent Makeup, Promo. Мастер, для которого нет невыполнимых задач.",
       "users.59.bio.1e462bd1": "Мастер преображения ваших волос. Смирнова Екатерина использует авторские техники окрашивания и ухода, которые подчеркнут вашу индивидуальность.",
       "public_reviews.21.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
-      "public_reviews.21.author_name.ff715865": "Сарах Дженкинс",
+      "public_reviews.21.author_name.ff715865": "Сара Дженкинс",
       "public_reviews.21.employee_position.5b1b1d5e": "Ресницы",
       "public_reviews.22.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.22.author_name.653816a6": "Мариа Гонзалез",
+      "public_reviews.22.author_name.653816a6": "Мария Гонсалес",
       "public_reviews.22.employee_position.9a3a91ca": "Уход за лицом",
       "public_reviews.23.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
-      "public_reviews.23.author_name.f26d4aa2": "Фатима Ал-Саыед",
+      "public_reviews.23.author_name.f26d4aa2": "Фатима Аль-Сайед",
       "public_reviews.23.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.18.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.19.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
@@ -841,7 +843,16 @@
       "users.125.bio.a746195b": "Профессионализм и творческий подход: Анна специализируется на Stylist. Мастер, для которого нет невыполнимых задач.",
       "users.123.full_name.270f4d19": "Тест Мастер",
       "users.123.position.3ff3eb90": "Стилист",
-      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках."
+      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках.",
+      "public_reviews.24.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.24.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.24.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.25.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.25.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.25.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.26.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.26.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.26.employee_position.65d6c03d": "Микроблейдинг"
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -1346,7 +1357,8 @@
       "phone_too_short_one": "",
       "phone_too_short_few": "",
       "phone_too_short_many": "",
-      "phone_too_short_other": ""
+      "phone_too_short_other": "",
+      "date_format_hint": "Формат: ДД.ММ.ГГГГ"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -1543,7 +1555,8 @@
       "termsSection7Text1_one": "Подарочные сертификаты действительны в течение {{count}} месяца с даты покупки.",
       "termsSection7Text1_few": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
       "termsSection7Text1_many": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
-      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки."
+      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
+      "age_years": "лет"
     },
     "tasks.json": {
       "manage_your_tasks": "Управляйте своими задачами",
@@ -1602,7 +1615,10 @@
       "types.referrals": "Рефералы",
       "types.services": "Услуги",
       "types.spending": "Траты",
-      "types.visits": "Визиты"
+      "types.visits": "Визиты",
+      "statuses.active": "Активный",
+      "statuses.completed": "Завершенный",
+      "statuses.upcoming": "Предстоящий"
     },
     "adminPanel/notificationsdashboard.json": {
       "buttons.cancel": "Отмена",
@@ -2225,8 +2241,8 @@
       "special_price_must_be_less_than_original": "Специальная цена должна быть меньше обычной",
       "start_date": "Начало",
       "status": "Статус",
-      "summer_special_package": "Summer Special Package",
-      "summer_special_package_promo_code": "SUMMER2026",
+      "summer_special_package": "Летний специальный пакет",
+      "summer_special_package_promo_code": "ЛЕТО2026",
       "summer_special_package_ru": "Летний спецпакет",
       "tab_packages": "Спецпакеты",
       "tab_referrals": "Реферальные кампании",
@@ -2364,7 +2380,7 @@
       "download_backup": "Скачать резервную копию",
       "download_backup_for_security": "Регулярно скачивайте резервную копию базы данных для обеспечения безопасности ваших данных.",
       "edit": "Редактировать",
-      "email": "Email",
+      "email": "Электронная почта",
       "email_notifications": "Email уведомления",
       "employees": "Сотрудники",
       "enter_holiday_details": "Введите дату и название праздника",
@@ -2420,7 +2436,7 @@
       "needs_configuration": "Требует настройки",
       "new_bookings_changes_cancellations": "Новые записи, изменения и отмены",
       "new_reminder": "Новое напоминание",
-      "no_broadcasts_yet": "Рассылок пока нет",
+      "no_broadcasts_yet": "Рассылок еще не было",
       "no_holidays": "Праздничные дни не добавлены",
       "no_position": "Сотрудник",
       "no_reminders_configured": "Напоминания не настроены",
@@ -2512,7 +2528,35 @@
       "what_is_checked": "Что проверяется?",
       "whatsapp_desc": "Рассылки через WhatsApp Business API, напоминания о записи.",
       "working_masters": "Работающие мастера",
-      "years_of_experience": "Лет опыта"
+      "years_of_experience": "Лет опыта",
+      "broadcast_history": "История рассылок",
+      "by_channels": "По каналам",
+      "channel_email": "Электронная почта",
+      "channel_instagram": "Инстаграм",
+      "channel_telegram": "Телеграмма",
+      "chars_one": "{{count}} символ",
+      "chars_few": "{{count}} символа",
+      "chars_many": "{{count}} символов",
+      "chars_other": "{{count}} символов",
+      "click_preview_to_see_recipients": "Нажмите \"Предпросмотр\", чтобы увидеть список получателей",
+      "force_send_description": "Отправить даже тем, кто не подписан (только для важных уведомлений)",
+      "history": "История",
+      "important_message": "Важное сообщение",
+      "message": "Сообщение",
+      "no_recipients_found": "Получатели не найдены",
+      "placeholder_all_users": "Все пользователи",
+      "placeholder_enter_message": "Введите текст вашего сообщения...",
+      "placeholder_special_offer": "Специальное предложение для вас!",
+      "preview": "Предпросмотр",
+      "recipients": "Получатели",
+      "recipients_hint": "Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам",
+      "sample_recipients": "Примеры получателей",
+      "select_recipients": "Выбрать получателей",
+      "send": "Отправить",
+      "sending": "Отправка",
+      "sent": "Отправлено",
+      "subscription_type": "Тип подписки",
+      "total_recipients": "Всего получателей"
     },
     "admin/services.json": {
       "unit_hour": "ч",
@@ -2606,7 +2650,7 @@
       "special_price": "Специальная цена",
       "staff_settings": "Настройки персонала",
       "summer_special_package": "Летний спецпакет",
-      "summer2026": "summer2026",
+      "summer2026": "лето2026",
       "target_audience": "Целевая аудитория",
       "usage_count": "Использовано",
       "valid_from": "Действует с",
@@ -2805,7 +2849,7 @@
       "source.guest_link": "Ссылка",
       "source.instagram": "Инстаграм",
       "source.manual": "Вручную",
-      "source.telegram": "Telegram",
+      "source.telegram": "Телеграмма",
       "source.whatsapp": "WhatsApp",
       "actions": "Действия",
       "add": "Добавить",
@@ -2885,7 +2929,7 @@
       "cannot_edit_notification": "Внутренние уведомления не требуют настройки контактов",
       "channel_email": "Электронная почта",
       "channel_instagram": "Инстаграм",
-      "channel_telegram": "Telegram",
+      "channel_telegram": "Телеграмма",
       "channels": "Каналы отправки *",
       "channels_notification": "Внутренние уведомления",
       "check_recipients": "Проверьте получателей",
@@ -3248,7 +3292,7 @@
       "section.about": "О нас",
       "section.faq": "FAQ",
       "section.gallery": "Галерея",
-      "section.hero": "Hero",
+      "section.hero": "Герой",
       "section.map-section": "Карта",
       "section.portfolio": "Портфолио",
       "section.services": "Услуги",
@@ -4028,7 +4072,11 @@
       "imported_count_other": "Успешно импортировано {{count}} клиентов",
       "options": "Опции",
       "period": "Период",
-      "upload": "Загрузить"
+      "upload": "Загрузить",
+      "all_temperatures": "Все типы",
+      "cold": "Холодный",
+      "hot": "Горячий",
+      "warm": "Теплый"
     },
     "admin/edituser.json": {
       "admin_can_change_password_without_knowing_current": "Администратор может изменить пароль пользователя без знания текущего пароля. ",
@@ -4590,7 +4638,9 @@
       "additional_context": "Дополнительный контекст (необязательно)",
       "ask_bot_placeholder": "Например: Клиент говорит что дорого, как ответить?",
       "send_to_ai": "Отправить ИИ",
-      "ai_thinking": "ИИ думает..."
+      "ai_thinking": "ИИ думает...",
+      "attach_file": "Прикрепить файл",
+      "attach_image": "Прикрепить изображение"
     },
     "manager/settings.json": {
       "booking_notifications_desc": "Уведомления о новых записях",
@@ -5793,7 +5843,13 @@
       "total_clients": "Всего клиентов",
       "total_conversion": "Общая конверсия",
       "total_losses": "Общие потери",
-      "total_spend": "Всего трат"
+      "total_spend": "Всего трат",
+      "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
+      "table.booked_desc": "Оставили бронь",
+      "table.completed_desc": "Визит завершен",
+      "table.engaged_desc": "Написали сообщение",
+      "table.started_booking_desc": "Открыли календарь",
+      "table.visitors_desc": "Зашли в бот/чат"
     },
     "public_landing/services.json": {
       "haircutsStyling": "Стрижки и укладки",
@@ -6339,7 +6395,9 @@
       "settings_save_error": "Ошибка сохранения настроек",
       "settings_saved": "Настройки сохранены",
       "update_error": "Ошибка обновления",
-      "upload_error": "Ошибка загрузки файла"
+      "upload_error": "Ошибка загрузки файла",
+      "client": "Клиент",
+      "service": "Служба"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -6684,13 +6742,13 @@
       "users.61.bio.e6c24481": "Профессионализм и творческий подход: Федорова Наталья специализируется на Brows, Permanent Makeup, Promo. Мастер, для которого нет невыполнимых задач.",
       "users.59.bio.1e462bd1": "Мастер преображения ваших волос. Смирнова Екатерина использует авторские техники окрашивания и ухода, которые подчеркнут вашу индивидуальность.",
       "public_reviews.21.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
-      "public_reviews.21.author_name.ff715865": "Сарах Дженкинс",
+      "public_reviews.21.author_name.ff715865": "Сара Дженкинс",
       "public_reviews.21.employee_position.5b1b1d5e": "Ресницы",
       "public_reviews.22.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.22.author_name.653816a6": "Мариа Гонзалез",
+      "public_reviews.22.author_name.653816a6": "Мария Гонсалес",
       "public_reviews.22.employee_position.9a3a91ca": "Уход за лицом",
       "public_reviews.23.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
-      "public_reviews.23.author_name.f26d4aa2": "Фатима Ал-Саыед",
+      "public_reviews.23.author_name.f26d4aa2": "Фатима Аль-Сайед",
       "public_reviews.23.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.18.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.19.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
@@ -6725,7 +6783,16 @@
       "users.125.bio.a746195b": "Профессионализм и творческий подход: Анна специализируется на Stylist. Мастер, для которого нет невыполнимых задач.",
       "users.123.full_name.270f4d19": "Тест Мастер",
       "users.123.position.3ff3eb90": "Стилист",
-      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках."
+      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках.",
+      "public_reviews.24.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.24.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.24.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.25.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.25.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.25.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.26.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.26.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.26.employee_position.65d6c03d": "Микроблейдинг"
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -7230,7 +7297,8 @@
       "phone_too_short_one": "",
       "phone_too_short_few": "",
       "phone_too_short_many": "",
-      "phone_too_short_other": ""
+      "phone_too_short_other": "",
+      "date_format_hint": "Формат: ДД.ММ.ГГГГ"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -7427,7 +7495,8 @@
       "termsSection7Text1_one": "Подарочные сертификаты действительны в течение {{count}} месяца с даты покупки.",
       "termsSection7Text1_few": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
       "termsSection7Text1_many": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
-      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки."
+      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
+      "age_years": "лет"
     },
     "tasks.json": {
       "manage_your_tasks": "Управляйте своими задачами",
@@ -7486,7 +7555,10 @@
       "types.referrals": "Рефералы",
       "types.services": "Услуги",
       "types.spending": "Траты",
-      "types.visits": "Визиты"
+      "types.visits": "Визиты",
+      "statuses.active": "Активный",
+      "statuses.completed": "Завершенный",
+      "statuses.upcoming": "Предстоящий"
     },
     "adminPanel/notificationsdashboard.json": {
       "buttons.cancel": "Отмена",
@@ -8109,8 +8181,8 @@
       "special_price_must_be_less_than_original": "Специальная цена должна быть меньше обычной",
       "start_date": "Начало",
       "status": "Статус",
-      "summer_special_package": "Summer Special Package",
-      "summer_special_package_promo_code": "SUMMER2026",
+      "summer_special_package": "Летний специальный пакет",
+      "summer_special_package_promo_code": "ЛЕТО2026",
       "summer_special_package_ru": "Летний спецпакет",
       "tab_packages": "Спецпакеты",
       "tab_referrals": "Реферальные кампании",
@@ -8248,7 +8320,7 @@
       "download_backup": "Скачать резервную копию",
       "download_backup_for_security": "Регулярно скачивайте резервную копию базы данных для обеспечения безопасности ваших данных.",
       "edit": "Редактировать",
-      "email": "Email",
+      "email": "Электронная почта",
       "email_notifications": "Email уведомления",
       "employees": "Сотрудники",
       "enter_holiday_details": "Введите дату и название праздника",
@@ -8304,7 +8376,7 @@
       "needs_configuration": "Требует настройки",
       "new_bookings_changes_cancellations": "Новые записи, изменения и отмены",
       "new_reminder": "Новое напоминание",
-      "no_broadcasts_yet": "Рассылок пока нет",
+      "no_broadcasts_yet": "Рассылок еще не было",
       "no_holidays": "Праздничные дни не добавлены",
       "no_position": "Сотрудник",
       "no_reminders_configured": "Напоминания не настроены",
@@ -8396,7 +8468,35 @@
       "what_is_checked": "Что проверяется?",
       "whatsapp_desc": "Рассылки через WhatsApp Business API, напоминания о записи.",
       "working_masters": "Работающие мастера",
-      "years_of_experience": "Лет опыта"
+      "years_of_experience": "Лет опыта",
+      "broadcast_history": "История рассылок",
+      "by_channels": "По каналам",
+      "channel_email": "Электронная почта",
+      "channel_instagram": "Инстаграм",
+      "channel_telegram": "Телеграмма",
+      "chars_one": "{{count}} символ",
+      "chars_few": "{{count}} символа",
+      "chars_many": "{{count}} символов",
+      "chars_other": "{{count}} символов",
+      "click_preview_to_see_recipients": "Нажмите \"Предпросмотр\", чтобы увидеть список получателей",
+      "force_send_description": "Отправить даже тем, кто не подписан (только для важных уведомлений)",
+      "history": "История",
+      "important_message": "Важное сообщение",
+      "message": "Сообщение",
+      "no_recipients_found": "Получатели не найдены",
+      "placeholder_all_users": "Все пользователи",
+      "placeholder_enter_message": "Введите текст вашего сообщения...",
+      "placeholder_special_offer": "Специальное предложение для вас!",
+      "preview": "Предпросмотр",
+      "recipients": "Получатели",
+      "recipients_hint": "Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам",
+      "sample_recipients": "Примеры получателей",
+      "select_recipients": "Выбрать получателей",
+      "send": "Отправить",
+      "sending": "Отправка",
+      "sent": "Отправлено",
+      "subscription_type": "Тип подписки",
+      "total_recipients": "Всего получателей"
     },
     "admin/services.json": {
       "unit_hour": "ч",
@@ -8490,7 +8590,7 @@
       "special_price": "Специальная цена",
       "staff_settings": "Настройки персонала",
       "summer_special_package": "Летний спецпакет",
-      "summer2026": "summer2026",
+      "summer2026": "лето2026",
       "target_audience": "Целевая аудитория",
       "usage_count": "Использовано",
       "valid_from": "Действует с",
@@ -8689,7 +8789,7 @@
       "source.guest_link": "Ссылка",
       "source.instagram": "Инстаграм",
       "source.manual": "Вручную",
-      "source.telegram": "Telegram",
+      "source.telegram": "Телеграмма",
       "source.whatsapp": "WhatsApp",
       "actions": "Действия",
       "add": "Добавить",
@@ -8769,7 +8869,7 @@
       "cannot_edit_notification": "Внутренние уведомления не требуют настройки контактов",
       "channel_email": "Электронная почта",
       "channel_instagram": "Инстаграм",
-      "channel_telegram": "Telegram",
+      "channel_telegram": "Телеграмма",
       "channels": "Каналы отправки *",
       "channels_notification": "Внутренние уведомления",
       "check_recipients": "Проверьте получателей",
@@ -9133,7 +9233,7 @@
       "section.booking": "Запись",
       "section.faq": "FAQ",
       "section.gallery": "Галерея",
-      "section.hero": "Hero",
+      "section.hero": "Герой",
       "section.map-section": "Карта",
       "section.portfolio": "Портфолио",
       "section.services": "Услуги",
@@ -9912,7 +10012,11 @@
       "imported_count_other": "Успешно импортировано {{count}} клиентов",
       "options": "Опции",
       "period": "Период",
-      "upload": "Загрузить"
+      "upload": "Загрузить",
+      "all_temperatures": "Все типы",
+      "cold": "Холодный",
+      "hot": "Горячий",
+      "warm": "Теплый"
     },
     "admin/edituser.json": {
       "admin_can_change_password_without_knowing_current": "Администратор может изменить пароль пользователя без знания текущего пароля. ",
@@ -10474,7 +10578,9 @@
       "additional_context": "Дополнительный контекст (необязательно)",
       "ask_bot_placeholder": "Например: Клиент говорит что дорого, как ответить?",
       "send_to_ai": "Отправить ИИ",
-      "ai_thinking": "ИИ думает..."
+      "ai_thinking": "ИИ думает...",
+      "attach_file": "Прикрепить файл",
+      "attach_image": "Прикрепить изображение"
     },
     "manager/settings.json": {
       "booking_notifications_desc": "Уведомления о новых записях",
@@ -11677,7 +11783,13 @@
       "total_clients": "Всего клиентов",
       "total_conversion": "Общая конверсия",
       "total_losses": "Общие потери",
-      "total_spend": "Всего трат"
+      "total_spend": "Всего трат",
+      "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
+      "table.booked_desc": "Оставили бронь",
+      "table.completed_desc": "Визит завершен",
+      "table.engaged_desc": "Написали сообщение",
+      "table.started_booking_desc": "Открыли календарь",
+      "table.visitors_desc": "Зашли в бот/чат"
     },
     "public_landing/services.json": {
       "haircutsStyling": "Стрижки и укладки",
@@ -12223,7 +12335,9 @@
       "settings_save_error": "Ошибка сохранения настроек",
       "settings_saved": "Настройки сохранены",
       "update_error": "Ошибка обновления",
-      "upload_error": "Ошибка загрузки файла"
+      "upload_error": "Ошибка загрузки файла",
+      "client": "Клиент",
+      "service": "Служба"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -12568,13 +12682,13 @@
       "users.61.bio.e6c24481": "Профессионализм и творческий подход: Федорова Наталья специализируется на Brows, Permanent Makeup, Promo. Мастер, для которого нет невыполнимых задач.",
       "users.59.bio.1e462bd1": "Мастер преображения ваших волос. Смирнова Екатерина использует авторские техники окрашивания и ухода, которые подчеркнут вашу индивидуальность.",
       "public_reviews.21.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
-      "public_reviews.21.author_name.ff715865": "Сарах Дженкинс",
+      "public_reviews.21.author_name.ff715865": "Сара Дженкинс",
       "public_reviews.21.employee_position.5b1b1d5e": "Ресницы",
       "public_reviews.22.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.22.author_name.653816a6": "Мариа Гонзалез",
+      "public_reviews.22.author_name.653816a6": "Мария Гонсалес",
       "public_reviews.22.employee_position.9a3a91ca": "Уход за лицом",
       "public_reviews.23.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
-      "public_reviews.23.author_name.f26d4aa2": "Фатима Ал-Саыед",
+      "public_reviews.23.author_name.f26d4aa2": "Фатима Аль-Сайед",
       "public_reviews.23.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.18.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.19.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
@@ -12609,7 +12723,16 @@
       "users.125.bio.a746195b": "Профессионализм и творческий подход: Анна специализируется на Stylist. Мастер, для которого нет невыполнимых задач.",
       "users.123.full_name.270f4d19": "Тест Мастер",
       "users.123.position.3ff3eb90": "Стилист",
-      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках."
+      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках.",
+      "public_reviews.24.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.24.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.24.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.25.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.25.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.25.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.26.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.26.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.26.employee_position.65d6c03d": "Микроблейдинг"
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -13114,7 +13237,8 @@
       "phone_too_short_one": "",
       "phone_too_short_few": "",
       "phone_too_short_many": "",
-      "phone_too_short_other": ""
+      "phone_too_short_other": "",
+      "date_format_hint": "Формат: ДД.ММ.ГГГГ"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -13311,7 +13435,8 @@
       "termsSection7Text1_one": "Подарочные сертификаты действительны в течение {{count}} месяца с даты покупки.",
       "termsSection7Text1_few": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
       "termsSection7Text1_many": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
-      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки."
+      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
+      "age_years": "лет"
     },
     "tasks.json": {
       "manage_your_tasks": "Управляйте своими задачами",
@@ -13370,7 +13495,10 @@
       "types.referrals": "Рефералы",
       "types.services": "Услуги",
       "types.spending": "Траты",
-      "types.visits": "Визиты"
+      "types.visits": "Визиты",
+      "statuses.active": "Активный",
+      "statuses.completed": "Завершенный",
+      "statuses.upcoming": "Предстоящий"
     },
     "adminPanel/notificationsdashboard.json": {
       "buttons.cancel": "Отмена",
@@ -13993,8 +14121,8 @@
       "special_price_must_be_less_than_original": "Специальная цена должна быть меньше обычной",
       "start_date": "Начало",
       "status": "Статус",
-      "summer_special_package": "Summer Special Package",
-      "summer_special_package_promo_code": "SUMMER2026",
+      "summer_special_package": "Летний специальный пакет",
+      "summer_special_package_promo_code": "ЛЕТО2026",
       "summer_special_package_ru": "Летний спецпакет",
       "tab_packages": "Спецпакеты",
       "tab_referrals": "Реферальные кампании",
@@ -14132,7 +14260,7 @@
       "download_backup": "Скачать резервную копию",
       "download_backup_for_security": "Регулярно скачивайте резервную копию базы данных для обеспечения безопасности ваших данных.",
       "edit": "Редактировать",
-      "email": "Email",
+      "email": "Электронная почта",
       "email_notifications": "Email уведомления",
       "employees": "Сотрудники",
       "enter_holiday_details": "Введите дату и название праздника",
@@ -14188,7 +14316,7 @@
       "needs_configuration": "Требует настройки",
       "new_bookings_changes_cancellations": "Новые записи, изменения и отмены",
       "new_reminder": "Новое напоминание",
-      "no_broadcasts_yet": "Рассылок пока нет",
+      "no_broadcasts_yet": "Рассылок еще не было",
       "no_holidays": "Праздничные дни не добавлены",
       "no_position": "Сотрудник",
       "no_reminders_configured": "Напоминания не настроены",
@@ -14280,7 +14408,35 @@
       "what_is_checked": "Что проверяется?",
       "whatsapp_desc": "Рассылки через WhatsApp Business API, напоминания о записи.",
       "working_masters": "Работающие мастера",
-      "years_of_experience": "Лет опыта"
+      "years_of_experience": "Лет опыта",
+      "broadcast_history": "История рассылок",
+      "by_channels": "По каналам",
+      "channel_email": "Электронная почта",
+      "channel_instagram": "Инстаграм",
+      "channel_telegram": "Телеграмма",
+      "chars_one": "{{count}} символ",
+      "chars_few": "{{count}} символа",
+      "chars_many": "{{count}} символов",
+      "chars_other": "{{count}} символов",
+      "click_preview_to_see_recipients": "Нажмите \"Предпросмотр\", чтобы увидеть список получателей",
+      "force_send_description": "Отправить даже тем, кто не подписан (только для важных уведомлений)",
+      "history": "История",
+      "important_message": "Важное сообщение",
+      "message": "Сообщение",
+      "no_recipients_found": "Получатели не найдены",
+      "placeholder_all_users": "Все пользователи",
+      "placeholder_enter_message": "Введите текст вашего сообщения...",
+      "placeholder_special_offer": "Специальное предложение для вас!",
+      "preview": "Предпросмотр",
+      "recipients": "Получатели",
+      "recipients_hint": "Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам",
+      "sample_recipients": "Примеры получателей",
+      "select_recipients": "Выбрать получателей",
+      "send": "Отправить",
+      "sending": "Отправка",
+      "sent": "Отправлено",
+      "subscription_type": "Тип подписки",
+      "total_recipients": "Всего получателей"
     },
     "admin/services.json": {
       "unit_hour": "ч",
@@ -14374,7 +14530,7 @@
       "special_price": "Специальная цена",
       "staff_settings": "Настройки персонала",
       "summer_special_package": "Летний спецпакет",
-      "summer2026": "summer2026",
+      "summer2026": "лето2026",
       "target_audience": "Целевая аудитория",
       "usage_count": "Использовано",
       "valid_from": "Действует с",
@@ -14573,7 +14729,7 @@
       "source.guest_link": "Ссылка",
       "source.instagram": "Инстаграм",
       "source.manual": "Вручную",
-      "source.telegram": "Telegram",
+      "source.telegram": "Телеграмма",
       "source.whatsapp": "WhatsApp",
       "actions": "Действия",
       "add": "Добавить",
@@ -14653,7 +14809,7 @@
       "cannot_edit_notification": "Внутренние уведомления не требуют настройки контактов",
       "channel_email": "Электронная почта",
       "channel_instagram": "Инстаграм",
-      "channel_telegram": "Telegram",
+      "channel_telegram": "Телеграмма",
       "channels": "Каналы отправки *",
       "channels_notification": "Внутренние уведомления",
       "check_recipients": "Проверьте получателей",
@@ -15016,7 +15172,7 @@
       "section.about": "О нас",
       "section.faq": "FAQ",
       "section.gallery": "Галерея",
-      "section.hero": "Hero",
+      "section.hero": "Герой",
       "section.map-section": "Карта",
       "section.portfolio": "Портфолио",
       "section.services": "Услуги",
@@ -15796,7 +15952,11 @@
       "imported_count_other": "Успешно импортировано {{count}} клиентов",
       "options": "Опции",
       "period": "Период",
-      "upload": "Загрузить"
+      "upload": "Загрузить",
+      "all_temperatures": "Все типы",
+      "cold": "Холодный",
+      "hot": "Горячий",
+      "warm": "Теплый"
     },
     "admin/edituser.json": {
       "admin_can_change_password_without_knowing_current": "Администратор может изменить пароль пользователя без знания текущего пароля. ",
@@ -16358,7 +16518,9 @@
       "additional_context": "Дополнительный контекст (необязательно)",
       "ask_bot_placeholder": "Например: Клиент говорит что дорого, как ответить?",
       "send_to_ai": "Отправить ИИ",
-      "ai_thinking": "ИИ думает..."
+      "ai_thinking": "ИИ думает...",
+      "attach_file": "Прикрепить файл",
+      "attach_image": "Прикрепить изображение"
     },
     "manager/settings.json": {
       "booking_notifications_desc": "Уведомления о новых записях",
@@ -17561,7 +17723,13 @@
       "total_clients": "Всего клиентов",
       "total_conversion": "Общая конверсия",
       "total_losses": "Общие потери",
-      "total_spend": "Всего трат"
+      "total_spend": "Всего трат",
+      "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
+      "table.booked_desc": "Оставили бронь",
+      "table.completed_desc": "Визит завершен",
+      "table.engaged_desc": "Написали сообщение",
+      "table.started_booking_desc": "Открыли календарь",
+      "table.visitors_desc": "Зашли в бот/чат"
     },
     "public_landing/services.json": {
       "haircutsStyling": "Стрижки и укладки",
@@ -18107,7 +18275,9 @@
       "settings_save_error": "Ошибка сохранения настроек",
       "settings_saved": "Настройки сохранены",
       "update_error": "Ошибка обновления",
-      "upload_error": "Ошибка загрузки файла"
+      "upload_error": "Ошибка загрузки файла",
+      "client": "Клиент",
+      "service": "Служба"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -18452,13 +18622,13 @@
       "users.61.bio.e6c24481": "Профессионализм и творческий подход: Федорова Наталья специализируется на Brows, Permanent Makeup, Promo. Мастер, для которого нет невыполнимых задач.",
       "users.59.bio.1e462bd1": "Мастер преображения ваших волос. Смирнова Екатерина использует авторские техники окрашивания и ухода, которые подчеркнут вашу индивидуальность.",
       "public_reviews.21.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
-      "public_reviews.21.author_name.ff715865": "Сарах Дженкинс",
+      "public_reviews.21.author_name.ff715865": "Сара Дженкинс",
       "public_reviews.21.employee_position.5b1b1d5e": "Ресницы",
       "public_reviews.22.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.22.author_name.653816a6": "Мариа Гонзалез",
+      "public_reviews.22.author_name.653816a6": "Мария Гонсалес",
       "public_reviews.22.employee_position.9a3a91ca": "Уход за лицом",
       "public_reviews.23.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
-      "public_reviews.23.author_name.f26d4aa2": "Фатима Ал-Саыед",
+      "public_reviews.23.author_name.f26d4aa2": "Фатима Аль-Сайед",
       "public_reviews.23.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.18.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.19.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
@@ -18493,7 +18663,16 @@
       "users.125.bio.a746195b": "Профессионализм и творческий подход: Анна специализируется на Stylist. Мастер, для которого нет невыполнимых задач.",
       "users.123.full_name.270f4d19": "Тест Мастер",
       "users.123.position.3ff3eb90": "Стилист",
-      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках."
+      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках.",
+      "public_reviews.24.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.24.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.24.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.25.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.25.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.25.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.26.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.26.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.26.employee_position.65d6c03d": "Микроблейдинг"
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -18998,7 +19177,8 @@
       "phone_too_short_one": "",
       "phone_too_short_few": "",
       "phone_too_short_many": "",
-      "phone_too_short_other": ""
+      "phone_too_short_other": "",
+      "date_format_hint": "Формат: ДД.ММ.ГГГГ"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -19195,7 +19375,8 @@
       "termsSection7Text1_one": "Подарочные сертификаты действительны в течение {{count}} месяца с даты покупки.",
       "termsSection7Text1_few": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
       "termsSection7Text1_many": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
-      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки."
+      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
+      "age_years": "лет"
     },
     "tasks.json": {
       "manage_your_tasks": "Управляйте своими задачами",
@@ -19254,7 +19435,10 @@
       "types.referrals": "Рефералы",
       "types.services": "Услуги",
       "types.spending": "Траты",
-      "types.visits": "Визиты"
+      "types.visits": "Визиты",
+      "statuses.active": "Активный",
+      "statuses.completed": "Завершенный",
+      "statuses.upcoming": "Предстоящий"
     },
     "adminPanel/notificationsdashboard.json": {
       "buttons.cancel": "Отмена",
@@ -19877,8 +20061,8 @@
       "special_price_must_be_less_than_original": "Специальная цена должна быть меньше обычной",
       "start_date": "Начало",
       "status": "Статус",
-      "summer_special_package": "Summer Special Package",
-      "summer_special_package_promo_code": "SUMMER2026",
+      "summer_special_package": "Летний специальный пакет",
+      "summer_special_package_promo_code": "ЛЕТО2026",
       "summer_special_package_ru": "Летний спецпакет",
       "tab_packages": "Спецпакеты",
       "tab_referrals": "Реферальные кампании",
@@ -20016,7 +20200,7 @@
       "download_backup": "Скачать резервную копию",
       "download_backup_for_security": "Регулярно скачивайте резервную копию базы данных для обеспечения безопасности ваших данных.",
       "edit": "Редактировать",
-      "email": "Email",
+      "email": "Электронная почта",
       "email_notifications": "Email уведомления",
       "employees": "Сотрудники",
       "enter_holiday_details": "Введите дату и название праздника",
@@ -20072,7 +20256,7 @@
       "needs_configuration": "Требует настройки",
       "new_bookings_changes_cancellations": "Новые записи, изменения и отмены",
       "new_reminder": "Новое напоминание",
-      "no_broadcasts_yet": "Рассылок пока нет",
+      "no_broadcasts_yet": "Рассылок еще не было",
       "no_holidays": "Праздничные дни не добавлены",
       "no_position": "Сотрудник",
       "no_reminders_configured": "Напоминания не настроены",
@@ -20164,7 +20348,35 @@
       "what_is_checked": "Что проверяется?",
       "whatsapp_desc": "Рассылки через WhatsApp Business API, напоминания о записи.",
       "working_masters": "Работающие мастера",
-      "years_of_experience": "Лет опыта"
+      "years_of_experience": "Лет опыта",
+      "broadcast_history": "История рассылок",
+      "by_channels": "По каналам",
+      "channel_email": "Электронная почта",
+      "channel_instagram": "Инстаграм",
+      "channel_telegram": "Телеграмма",
+      "chars_one": "{{count}} символ",
+      "chars_few": "{{count}} символа",
+      "chars_many": "{{count}} символов",
+      "chars_other": "{{count}} символов",
+      "click_preview_to_see_recipients": "Нажмите \"Предпросмотр\", чтобы увидеть список получателей",
+      "force_send_description": "Отправить даже тем, кто не подписан (только для важных уведомлений)",
+      "history": "История",
+      "important_message": "Важное сообщение",
+      "message": "Сообщение",
+      "no_recipients_found": "Получатели не найдены",
+      "placeholder_all_users": "Все пользователи",
+      "placeholder_enter_message": "Введите текст вашего сообщения...",
+      "placeholder_special_offer": "Специальное предложение для вас!",
+      "preview": "Предпросмотр",
+      "recipients": "Получатели",
+      "recipients_hint": "Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам",
+      "sample_recipients": "Примеры получателей",
+      "select_recipients": "Выбрать получателей",
+      "send": "Отправить",
+      "sending": "Отправка",
+      "sent": "Отправлено",
+      "subscription_type": "Тип подписки",
+      "total_recipients": "Всего получателей"
     },
     "admin/services.json": {
       "unit_hour": "ч",
@@ -20258,7 +20470,7 @@
       "special_price": "Специальная цена",
       "staff_settings": "Настройки персонала",
       "summer_special_package": "Летний спецпакет",
-      "summer2026": "summer2026",
+      "summer2026": "лето2026",
       "target_audience": "Целевая аудитория",
       "usage_count": "Использовано",
       "valid_from": "Действует с",
@@ -20457,7 +20669,7 @@
       "source.guest_link": "Ссылка",
       "source.instagram": "Инстаграм",
       "source.manual": "Вручную",
-      "source.telegram": "Telegram",
+      "source.telegram": "Телеграмма",
       "source.whatsapp": "WhatsApp",
       "actions": "Действия",
       "add": "Добавить",
@@ -20537,7 +20749,7 @@
       "cannot_edit_notification": "Внутренние уведомления не требуют настройки контактов",
       "channel_email": "Электронная почта",
       "channel_instagram": "Инстаграм",
-      "channel_telegram": "Telegram",
+      "channel_telegram": "Телеграмма",
       "channels": "Каналы отправки *",
       "channels_notification": "Внутренние уведомления",
       "check_recipients": "Проверьте получателей",
@@ -20901,7 +21113,7 @@
       "section.booking": "Запись",
       "section.faq": "FAQ",
       "section.gallery": "Галерея",
-      "section.hero": "Hero",
+      "section.hero": "Герой",
       "section.map-section": "Карта",
       "section.portfolio": "Портфолио",
       "section.services": "Услуги",
@@ -21680,7 +21892,11 @@
       "imported_count_other": "Успешно импортировано {{count}} клиентов",
       "options": "Опции",
       "period": "Период",
-      "upload": "Загрузить"
+      "upload": "Загрузить",
+      "all_temperatures": "Все типы",
+      "cold": "Холодный",
+      "hot": "Горячий",
+      "warm": "Теплый"
     },
     "admin/edituser.json": {
       "admin_can_change_password_without_knowing_current": "Администратор может изменить пароль пользователя без знания текущего пароля. ",
@@ -22242,7 +22458,9 @@
       "additional_context": "Дополнительный контекст (необязательно)",
       "ask_bot_placeholder": "Например: Клиент говорит что дорого, как ответить?",
       "send_to_ai": "Отправить ИИ",
-      "ai_thinking": "ИИ думает..."
+      "ai_thinking": "ИИ думает...",
+      "attach_file": "Прикрепить файл",
+      "attach_image": "Прикрепить изображение"
     },
     "manager/settings.json": {
       "booking_notifications_desc": "Уведомления о новых записях",
@@ -23445,7 +23663,13 @@
       "total_clients": "Всего клиентов",
       "total_conversion": "Общая конверсия",
       "total_losses": "Общие потери",
-      "total_spend": "Всего трат"
+      "total_spend": "Всего трат",
+      "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
+      "table.booked_desc": "Оставили бронь",
+      "table.completed_desc": "Визит завершен",
+      "table.engaged_desc": "Написали сообщение",
+      "table.started_booking_desc": "Открыли календарь",
+      "table.visitors_desc": "Зашли в бот/чат"
     },
     "public_landing/services.json": {
       "haircutsStyling": "Стрижки и укладки",
@@ -23991,7 +24215,9 @@
       "settings_save_error": "Ошибка сохранения настроек",
       "settings_saved": "Настройки сохранены",
       "update_error": "Ошибка обновления",
-      "upload_error": "Ошибка загрузки файла"
+      "upload_error": "Ошибка загрузки файла",
+      "client": "Клиент",
+      "service": "Служба"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -24336,13 +24562,13 @@
       "users.61.bio.e6c24481": "Профессионализм и творческий подход: Федорова Наталья специализируется на Brows, Permanent Makeup, Promo. Мастер, для которого нет невыполнимых задач.",
       "users.59.bio.1e462bd1": "Мастер преображения ваших волос. Смирнова Екатерина использует авторские техники окрашивания и ухода, которые подчеркнут вашу индивидуальность.",
       "public_reviews.21.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
-      "public_reviews.21.author_name.ff715865": "Сарах Дженкинс",
+      "public_reviews.21.author_name.ff715865": "Сара Дженкинс",
       "public_reviews.21.employee_position.5b1b1d5e": "Ресницы",
       "public_reviews.22.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.22.author_name.653816a6": "Мариа Гонзалез",
+      "public_reviews.22.author_name.653816a6": "Мария Гонсалес",
       "public_reviews.22.employee_position.9a3a91ca": "Уход за лицом",
       "public_reviews.23.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
-      "public_reviews.23.author_name.f26d4aa2": "Фатима Ал-Саыед",
+      "public_reviews.23.author_name.f26d4aa2": "Фатима Аль-Сайед",
       "public_reviews.23.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.18.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.19.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
@@ -24377,7 +24603,16 @@
       "users.125.bio.a746195b": "Профессионализм и творческий подход: Анна специализируется на Stylist. Мастер, для которого нет невыполнимых задач.",
       "users.123.full_name.270f4d19": "Тест Мастер",
       "users.123.position.3ff3eb90": "Стилист",
-      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках."
+      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках.",
+      "public_reviews.24.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.24.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.24.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.25.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.25.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.25.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.26.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.26.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.26.employee_position.65d6c03d": "Микроблейдинг"
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -24882,7 +25117,8 @@
       "phone_too_short_one": "",
       "phone_too_short_few": "",
       "phone_too_short_many": "",
-      "phone_too_short_other": ""
+      "phone_too_short_other": "",
+      "date_format_hint": "Формат: ДД.ММ.ГГГГ"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -25079,7 +25315,8 @@
       "termsSection7Text1_one": "Подарочные сертификаты действительны в течение {{count}} месяца с даты покупки.",
       "termsSection7Text1_few": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
       "termsSection7Text1_many": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
-      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки."
+      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
+      "age_years": "лет"
     },
     "tasks.json": {
       "manage_your_tasks": "Управляйте своими задачами",
@@ -25138,7 +25375,10 @@
       "types.referrals": "Рефералы",
       "types.services": "Услуги",
       "types.spending": "Траты",
-      "types.visits": "Визиты"
+      "types.visits": "Визиты",
+      "statuses.active": "Активный",
+      "statuses.completed": "Завершенный",
+      "statuses.upcoming": "Предстоящий"
     },
     "adminPanel/notificationsdashboard.json": {
       "buttons.cancel": "Отмена",
@@ -25761,8 +26001,8 @@
       "special_price_must_be_less_than_original": "Специальная цена должна быть меньше обычной",
       "start_date": "Начало",
       "status": "Статус",
-      "summer_special_package": "Summer Special Package",
-      "summer_special_package_promo_code": "SUMMER2026",
+      "summer_special_package": "Летний специальный пакет",
+      "summer_special_package_promo_code": "ЛЕТО2026",
       "summer_special_package_ru": "Летний спецпакет",
       "tab_packages": "Спецпакеты",
       "tab_referrals": "Реферальные кампании",
@@ -25900,7 +26140,7 @@
       "download_backup": "Скачать резервную копию",
       "download_backup_for_security": "Регулярно скачивайте резервную копию базы данных для обеспечения безопасности ваших данных.",
       "edit": "Редактировать",
-      "email": "Email",
+      "email": "Электронная почта",
       "email_notifications": "Email уведомления",
       "employees": "Сотрудники",
       "enter_holiday_details": "Введите дату и название праздника",
@@ -25956,7 +26196,7 @@
       "needs_configuration": "Требует настройки",
       "new_bookings_changes_cancellations": "Новые записи, изменения и отмены",
       "new_reminder": "Новое напоминание",
-      "no_broadcasts_yet": "Рассылок пока нет",
+      "no_broadcasts_yet": "Рассылок еще не было",
       "no_holidays": "Праздничные дни не добавлены",
       "no_position": "Сотрудник",
       "no_reminders_configured": "Напоминания не настроены",
@@ -26048,7 +26288,35 @@
       "what_is_checked": "Что проверяется?",
       "whatsapp_desc": "Рассылки через WhatsApp Business API, напоминания о записи.",
       "working_masters": "Работающие мастера",
-      "years_of_experience": "Лет опыта"
+      "years_of_experience": "Лет опыта",
+      "broadcast_history": "История рассылок",
+      "by_channels": "По каналам",
+      "channel_email": "Электронная почта",
+      "channel_instagram": "Инстаграм",
+      "channel_telegram": "Телеграмма",
+      "chars_one": "{{count}} символ",
+      "chars_few": "{{count}} символа",
+      "chars_many": "{{count}} символов",
+      "chars_other": "{{count}} символов",
+      "click_preview_to_see_recipients": "Нажмите \"Предпросмотр\", чтобы увидеть список получателей",
+      "force_send_description": "Отправить даже тем, кто не подписан (только для важных уведомлений)",
+      "history": "История",
+      "important_message": "Важное сообщение",
+      "message": "Сообщение",
+      "no_recipients_found": "Получатели не найдены",
+      "placeholder_all_users": "Все пользователи",
+      "placeholder_enter_message": "Введите текст вашего сообщения...",
+      "placeholder_special_offer": "Специальное предложение для вас!",
+      "preview": "Предпросмотр",
+      "recipients": "Получатели",
+      "recipients_hint": "Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам",
+      "sample_recipients": "Примеры получателей",
+      "select_recipients": "Выбрать получателей",
+      "send": "Отправить",
+      "sending": "Отправка",
+      "sent": "Отправлено",
+      "subscription_type": "Тип подписки",
+      "total_recipients": "Всего получателей"
     },
     "admin/services.json": {
       "unit_hour": "ч",
@@ -26142,7 +26410,7 @@
       "special_price": "Специальная цена",
       "staff_settings": "Настройки персонала",
       "summer_special_package": "Летний спецпакет",
-      "summer2026": "summer2026",
+      "summer2026": "лето2026",
       "target_audience": "Целевая аудитория",
       "usage_count": "Использовано",
       "valid_from": "Действует с",
@@ -26341,7 +26609,7 @@
       "source.guest_link": "Ссылка",
       "source.instagram": "Инстаграм",
       "source.manual": "Вручную",
-      "source.telegram": "Telegram",
+      "source.telegram": "Телеграмма",
       "source.whatsapp": "WhatsApp",
       "actions": "Действия",
       "add": "Добавить",
@@ -26421,7 +26689,7 @@
       "cannot_edit_notification": "Внутренние уведомления не требуют настройки контактов",
       "channel_email": "Электронная почта",
       "channel_instagram": "Инстаграм",
-      "channel_telegram": "Telegram",
+      "channel_telegram": "Телеграмма",
       "channels": "Каналы отправки *",
       "channels_notification": "Внутренние уведомления",
       "check_recipients": "Проверьте получателей",
@@ -26784,7 +27052,7 @@
       "section.about": "О нас",
       "section.faq": "FAQ",
       "section.gallery": "Галерея",
-      "section.hero": "Hero",
+      "section.hero": "Герой",
       "section.map-section": "Карта",
       "section.portfolio": "Портфолио",
       "section.services": "Услуги",
@@ -27564,7 +27832,11 @@
       "imported_count_other": "Успешно импортировано {{count}} клиентов",
       "options": "Опции",
       "period": "Период",
-      "upload": "Загрузить"
+      "upload": "Загрузить",
+      "all_temperatures": "Все типы",
+      "cold": "Холодный",
+      "hot": "Горячий",
+      "warm": "Теплый"
     },
     "admin/edituser.json": {
       "admin_can_change_password_without_knowing_current": "Администратор может изменить пароль пользователя без знания текущего пароля. ",
@@ -28126,7 +28398,9 @@
       "additional_context": "Дополнительный контекст (необязательно)",
       "ask_bot_placeholder": "Например: Клиент говорит что дорого, как ответить?",
       "send_to_ai": "Отправить ИИ",
-      "ai_thinking": "ИИ думает..."
+      "ai_thinking": "ИИ думает...",
+      "attach_file": "Прикрепить файл",
+      "attach_image": "Прикрепить изображение"
     },
     "manager/settings.json": {
       "booking_notifications_desc": "Уведомления о новых записях",
@@ -29329,7 +29603,13 @@
       "total_clients": "Всего клиентов",
       "total_conversion": "Общая конверсия",
       "total_losses": "Общие потери",
-      "total_spend": "Всего трат"
+      "total_spend": "Всего трат",
+      "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
+      "table.booked_desc": "Оставили бронь",
+      "table.completed_desc": "Визит завершен",
+      "table.engaged_desc": "Написали сообщение",
+      "table.started_booking_desc": "Открыли календарь",
+      "table.visitors_desc": "Зашли в бот/чат"
     },
     "public_landing/services.json": {
       "haircutsStyling": "Стрижки и укладки",
@@ -29875,7 +30155,9 @@
       "settings_save_error": "Ошибка сохранения настроек",
       "settings_saved": "Настройки сохранены",
       "update_error": "Ошибка обновления",
-      "upload_error": "Ошибка загрузки файла"
+      "upload_error": "Ошибка загрузки файла",
+      "client": "Клиент",
+      "service": "Служба"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -30220,13 +30502,13 @@
       "users.61.bio.e6c24481": "Профессионализм и творческий подход: Федорова Наталья специализируется на Brows, Permanent Makeup, Promo. Мастер, для которого нет невыполнимых задач.",
       "users.59.bio.1e462bd1": "Мастер преображения ваших волос. Смирнова Екатерина использует авторские техники окрашивания и ухода, которые подчеркнут вашу индивидуальность.",
       "public_reviews.21.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
-      "public_reviews.21.author_name.ff715865": "Сарах Дженкинс",
+      "public_reviews.21.author_name.ff715865": "Сара Дженкинс",
       "public_reviews.21.employee_position.5b1b1d5e": "Ресницы",
       "public_reviews.22.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.22.author_name.653816a6": "Мариа Гонзалез",
+      "public_reviews.22.author_name.653816a6": "Мария Гонсалес",
       "public_reviews.22.employee_position.9a3a91ca": "Уход за лицом",
       "public_reviews.23.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
-      "public_reviews.23.author_name.f26d4aa2": "Фатима Ал-Саыед",
+      "public_reviews.23.author_name.f26d4aa2": "Фатима Аль-Сайед",
       "public_reviews.23.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.18.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.19.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
@@ -30261,7 +30543,16 @@
       "users.125.bio.a746195b": "Профессионализм и творческий подход: Анна специализируется на Stylist. Мастер, для которого нет невыполнимых задач.",
       "users.123.full_name.270f4d19": "Тест Мастер",
       "users.123.position.3ff3eb90": "Стилист",
-      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках."
+      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках.",
+      "public_reviews.24.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.24.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.24.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.25.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.25.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.25.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.26.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.26.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.26.employee_position.65d6c03d": "Микроблейдинг"
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -30766,7 +31057,8 @@
       "phone_too_short_one": "",
       "phone_too_short_few": "",
       "phone_too_short_many": "",
-      "phone_too_short_other": ""
+      "phone_too_short_other": "",
+      "date_format_hint": "Формат: ДД.ММ.ГГГГ"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -30963,7 +31255,8 @@
       "termsSection7Text1_one": "Подарочные сертификаты действительны в течение {{count}} месяца с даты покупки.",
       "termsSection7Text1_few": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
       "termsSection7Text1_many": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
-      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки."
+      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
+      "age_years": "лет"
     },
     "tasks.json": {
       "manage_your_tasks": "Управляйте своими задачами",
@@ -31022,7 +31315,10 @@
       "types.referrals": "Рефералы",
       "types.services": "Услуги",
       "types.spending": "Траты",
-      "types.visits": "Визиты"
+      "types.visits": "Визиты",
+      "statuses.active": "Активный",
+      "statuses.completed": "Завершенный",
+      "statuses.upcoming": "Предстоящий"
     },
     "adminPanel/notificationsdashboard.json": {
       "buttons.cancel": "Отмена",
@@ -31645,8 +31941,8 @@
       "special_price_must_be_less_than_original": "Специальная цена должна быть меньше обычной",
       "start_date": "Начало",
       "status": "Статус",
-      "summer_special_package": "Summer Special Package",
-      "summer_special_package_promo_code": "SUMMER2026",
+      "summer_special_package": "Летний специальный пакет",
+      "summer_special_package_promo_code": "ЛЕТО2026",
       "summer_special_package_ru": "Летний спецпакет",
       "tab_packages": "Спецпакеты",
       "tab_referrals": "Реферальные кампании",
@@ -31784,7 +32080,7 @@
       "download_backup": "Скачать резервную копию",
       "download_backup_for_security": "Регулярно скачивайте резервную копию базы данных для обеспечения безопасности ваших данных.",
       "edit": "Редактировать",
-      "email": "Email",
+      "email": "Электронная почта",
       "email_notifications": "Email уведомления",
       "employees": "Сотрудники",
       "enter_holiday_details": "Введите дату и название праздника",
@@ -31840,7 +32136,7 @@
       "needs_configuration": "Требует настройки",
       "new_bookings_changes_cancellations": "Новые записи, изменения и отмены",
       "new_reminder": "Новое напоминание",
-      "no_broadcasts_yet": "Рассылок пока нет",
+      "no_broadcasts_yet": "Рассылок еще не было",
       "no_holidays": "Праздничные дни не добавлены",
       "no_position": "Сотрудник",
       "no_reminders_configured": "Напоминания не настроены",
@@ -31932,7 +32228,35 @@
       "what_is_checked": "Что проверяется?",
       "whatsapp_desc": "Рассылки через WhatsApp Business API, напоминания о записи.",
       "working_masters": "Работающие мастера",
-      "years_of_experience": "Лет опыта"
+      "years_of_experience": "Лет опыта",
+      "broadcast_history": "История рассылок",
+      "by_channels": "По каналам",
+      "channel_email": "Электронная почта",
+      "channel_instagram": "Инстаграм",
+      "channel_telegram": "Телеграмма",
+      "chars_one": "{{count}} символ",
+      "chars_few": "{{count}} символа",
+      "chars_many": "{{count}} символов",
+      "chars_other": "{{count}} символов",
+      "click_preview_to_see_recipients": "Нажмите \"Предпросмотр\", чтобы увидеть список получателей",
+      "force_send_description": "Отправить даже тем, кто не подписан (только для важных уведомлений)",
+      "history": "История",
+      "important_message": "Важное сообщение",
+      "message": "Сообщение",
+      "no_recipients_found": "Получатели не найдены",
+      "placeholder_all_users": "Все пользователи",
+      "placeholder_enter_message": "Введите текст вашего сообщения...",
+      "placeholder_special_offer": "Специальное предложение для вас!",
+      "preview": "Предпросмотр",
+      "recipients": "Получатели",
+      "recipients_hint": "Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам",
+      "sample_recipients": "Примеры получателей",
+      "select_recipients": "Выбрать получателей",
+      "send": "Отправить",
+      "sending": "Отправка",
+      "sent": "Отправлено",
+      "subscription_type": "Тип подписки",
+      "total_recipients": "Всего получателей"
     },
     "admin/services.json": {
       "unit_hour": "ч",
@@ -32026,7 +32350,7 @@
       "special_price": "Специальная цена",
       "staff_settings": "Настройки персонала",
       "summer_special_package": "Летний спецпакет",
-      "summer2026": "summer2026",
+      "summer2026": "лето2026",
       "target_audience": "Целевая аудитория",
       "usage_count": "Использовано",
       "valid_from": "Действует с",
@@ -32225,7 +32549,7 @@
       "source.guest_link": "Ссылка",
       "source.instagram": "Инстаграм",
       "source.manual": "Вручную",
-      "source.telegram": "Telegram",
+      "source.telegram": "Телеграмма",
       "source.whatsapp": "WhatsApp",
       "actions": "Действия",
       "add": "Добавить",
@@ -32305,7 +32629,7 @@
       "cannot_edit_notification": "Внутренние уведомления не требуют настройки контактов",
       "channel_email": "Электронная почта",
       "channel_instagram": "Инстаграм",
-      "channel_telegram": "Telegram",
+      "channel_telegram": "Телеграмма",
       "channels": "Каналы отправки *",
       "channels_notification": "Внутренние уведомления",
       "check_recipients": "Проверьте получателей",
@@ -32668,7 +32992,7 @@
       "section.about": "О нас",
       "section.faq": "FAQ",
       "section.gallery": "Галерея",
-      "section.hero": "Hero",
+      "section.hero": "Герой",
       "section.map-section": "Карта",
       "section.portfolio": "Портфолио",
       "section.services": "Услуги",
@@ -33448,7 +33772,11 @@
       "imported_count_other": "Успешно импортировано {{count}} клиентов",
       "options": "Опции",
       "period": "Период",
-      "upload": "Загрузить"
+      "upload": "Загрузить",
+      "all_temperatures": "Все типы",
+      "cold": "Холодный",
+      "hot": "Горячий",
+      "warm": "Теплый"
     },
     "admin/edituser.json": {
       "admin_can_change_password_without_knowing_current": "Администратор может изменить пароль пользователя без знания текущего пароля. ",
@@ -34010,7 +34338,9 @@
       "additional_context": "Дополнительный контекст (необязательно)",
       "ask_bot_placeholder": "Например: Клиент говорит что дорого, как ответить?",
       "send_to_ai": "Отправить ИИ",
-      "ai_thinking": "ИИ думает..."
+      "ai_thinking": "ИИ думает...",
+      "attach_file": "Прикрепить файл",
+      "attach_image": "Прикрепить изображение"
     },
     "manager/settings.json": {
       "booking_notifications_desc": "Уведомления о новых записях",
@@ -35213,7 +35543,13 @@
       "total_clients": "Всего клиентов",
       "total_conversion": "Общая конверсия",
       "total_losses": "Общие потери",
-      "total_spend": "Всего трат"
+      "total_spend": "Всего трат",
+      "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
+      "table.booked_desc": "Оставили бронь",
+      "table.completed_desc": "Визит завершен",
+      "table.engaged_desc": "Написали сообщение",
+      "table.started_booking_desc": "Открыли календарь",
+      "table.visitors_desc": "Зашли в бот/чат"
     },
     "public_landing/services.json": {
       "haircutsStyling": "Стрижки и укладки",
@@ -35759,7 +36095,9 @@
       "settings_save_error": "Ошибка сохранения настроек",
       "settings_saved": "Настройки сохранены",
       "update_error": "Ошибка обновления",
-      "upload_error": "Ошибка загрузки файла"
+      "upload_error": "Ошибка загрузки файла",
+      "client": "Клиент",
+      "service": "Служба"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -36104,13 +36442,13 @@
       "users.61.bio.e6c24481": "Профессионализм и творческий подход: Федорова Наталья специализируется на Brows, Permanent Makeup, Promo. Мастер, для которого нет невыполнимых задач.",
       "users.59.bio.1e462bd1": "Мастер преображения ваших волос. Смирнова Екатерина использует авторские техники окрашивания и ухода, которые подчеркнут вашу индивидуальность.",
       "public_reviews.21.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
-      "public_reviews.21.author_name.ff715865": "Сарах Дженкинс",
+      "public_reviews.21.author_name.ff715865": "Сара Дженкинс",
       "public_reviews.21.employee_position.5b1b1d5e": "Ресницы",
       "public_reviews.22.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.22.author_name.653816a6": "Мариа Гонзалез",
+      "public_reviews.22.author_name.653816a6": "Мария Гонсалес",
       "public_reviews.22.employee_position.9a3a91ca": "Уход за лицом",
       "public_reviews.23.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
-      "public_reviews.23.author_name.f26d4aa2": "Фатима Ал-Саыед",
+      "public_reviews.23.author_name.f26d4aa2": "Фатима Аль-Сайед",
       "public_reviews.23.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.18.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.19.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
@@ -36145,7 +36483,16 @@
       "users.125.bio.a746195b": "Профессионализм и творческий подход: Анна специализируется на Stylist. Мастер, для которого нет невыполнимых задач.",
       "users.123.full_name.270f4d19": "Тест Мастер",
       "users.123.position.3ff3eb90": "Стилист",
-      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках."
+      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках.",
+      "public_reviews.24.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.24.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.24.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.25.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.25.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.25.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.26.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.26.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.26.employee_position.65d6c03d": "Микроблейдинг"
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -36650,7 +36997,8 @@
       "phone_too_short_one": "",
       "phone_too_short_few": "",
       "phone_too_short_many": "",
-      "phone_too_short_other": ""
+      "phone_too_short_other": "",
+      "date_format_hint": "Формат: ДД.ММ.ГГГГ"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -36847,7 +37195,8 @@
       "termsSection7Text1_one": "Подарочные сертификаты действительны в течение {{count}} месяца с даты покупки.",
       "termsSection7Text1_few": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
       "termsSection7Text1_many": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
-      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки."
+      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
+      "age_years": "лет"
     },
     "tasks.json": {
       "manage_your_tasks": "Управляйте своими задачами",
@@ -36906,7 +37255,10 @@
       "types.referrals": "Рефералы",
       "types.services": "Услуги",
       "types.spending": "Траты",
-      "types.visits": "Визиты"
+      "types.visits": "Визиты",
+      "statuses.active": "Активный",
+      "statuses.completed": "Завершенный",
+      "statuses.upcoming": "Предстоящий"
     },
     "adminPanel/notificationsdashboard.json": {
       "buttons.cancel": "Отмена",
@@ -37529,8 +37881,8 @@
       "special_price_must_be_less_than_original": "Специальная цена должна быть меньше обычной",
       "start_date": "Начало",
       "status": "Статус",
-      "summer_special_package": "Summer Special Package",
-      "summer_special_package_promo_code": "SUMMER2026",
+      "summer_special_package": "Летний специальный пакет",
+      "summer_special_package_promo_code": "ЛЕТО2026",
       "summer_special_package_ru": "Летний спецпакет",
       "tab_packages": "Спецпакеты",
       "tab_referrals": "Реферальные кампании",
@@ -37668,7 +38020,7 @@
       "download_backup": "Скачать резервную копию",
       "download_backup_for_security": "Регулярно скачивайте резервную копию базы данных для обеспечения безопасности ваших данных.",
       "edit": "Редактировать",
-      "email": "Email",
+      "email": "Электронная почта",
       "email_notifications": "Email уведомления",
       "employees": "Сотрудники",
       "enter_holiday_details": "Введите дату и название праздника",
@@ -37724,7 +38076,7 @@
       "needs_configuration": "Требует настройки",
       "new_bookings_changes_cancellations": "Новые записи, изменения и отмены",
       "new_reminder": "Новое напоминание",
-      "no_broadcasts_yet": "Рассылок пока нет",
+      "no_broadcasts_yet": "Рассылок еще не было",
       "no_holidays": "Праздничные дни не добавлены",
       "no_position": "Сотрудник",
       "no_reminders_configured": "Напоминания не настроены",
@@ -37816,7 +38168,35 @@
       "what_is_checked": "Что проверяется?",
       "whatsapp_desc": "Рассылки через WhatsApp Business API, напоминания о записи.",
       "working_masters": "Работающие мастера",
-      "years_of_experience": "Лет опыта"
+      "years_of_experience": "Лет опыта",
+      "broadcast_history": "История рассылок",
+      "by_channels": "По каналам",
+      "channel_email": "Электронная почта",
+      "channel_instagram": "Инстаграм",
+      "channel_telegram": "Телеграмма",
+      "chars_one": "{{count}} символ",
+      "chars_few": "{{count}} символа",
+      "chars_many": "{{count}} символов",
+      "chars_other": "{{count}} символов",
+      "click_preview_to_see_recipients": "Нажмите \"Предпросмотр\", чтобы увидеть список получателей",
+      "force_send_description": "Отправить даже тем, кто не подписан (только для важных уведомлений)",
+      "history": "История",
+      "important_message": "Важное сообщение",
+      "message": "Сообщение",
+      "no_recipients_found": "Получатели не найдены",
+      "placeholder_all_users": "Все пользователи",
+      "placeholder_enter_message": "Введите текст вашего сообщения...",
+      "placeholder_special_offer": "Специальное предложение для вас!",
+      "preview": "Предпросмотр",
+      "recipients": "Получатели",
+      "recipients_hint": "Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам",
+      "sample_recipients": "Примеры получателей",
+      "select_recipients": "Выбрать получателей",
+      "send": "Отправить",
+      "sending": "Отправка",
+      "sent": "Отправлено",
+      "subscription_type": "Тип подписки",
+      "total_recipients": "Всего получателей"
     },
     "admin/services.json": {
       "unit_hour": "ч",
@@ -37910,7 +38290,7 @@
       "special_price": "Специальная цена",
       "staff_settings": "Настройки персонала",
       "summer_special_package": "Летний спецпакет",
-      "summer2026": "summer2026",
+      "summer2026": "лето2026",
       "target_audience": "Целевая аудитория",
       "usage_count": "Использовано",
       "valid_from": "Действует с",
@@ -38109,7 +38489,7 @@
       "source.guest_link": "Ссылка",
       "source.instagram": "Инстаграм",
       "source.manual": "Вручную",
-      "source.telegram": "Telegram",
+      "source.telegram": "Телеграмма",
       "source.whatsapp": "WhatsApp",
       "actions": "Действия",
       "add": "Добавить",
@@ -38189,7 +38569,7 @@
       "cannot_edit_notification": "Внутренние уведомления не требуют настройки контактов",
       "channel_email": "Электронная почта",
       "channel_instagram": "Инстаграм",
-      "channel_telegram": "Telegram",
+      "channel_telegram": "Телеграмма",
       "channels": "Каналы отправки *",
       "channels_notification": "Внутренние уведомления",
       "check_recipients": "Проверьте получателей",
@@ -38553,7 +38933,7 @@
       "section.booking": "Запись",
       "section.faq": "FAQ",
       "section.gallery": "Галерея",
-      "section.hero": "Hero",
+      "section.hero": "Герой",
       "section.map-section": "Карта",
       "section.portfolio": "Портфолио",
       "section.services": "Услуги",
@@ -39332,7 +39712,11 @@
       "imported_count_other": "Успешно импортировано {{count}} клиентов",
       "options": "Опции",
       "period": "Период",
-      "upload": "Загрузить"
+      "upload": "Загрузить",
+      "all_temperatures": "Все типы",
+      "cold": "Холодный",
+      "hot": "Горячий",
+      "warm": "Теплый"
     },
     "admin/edituser.json": {
       "admin_can_change_password_without_knowing_current": "Администратор может изменить пароль пользователя без знания текущего пароля. ",
@@ -39894,7 +40278,9 @@
       "additional_context": "Дополнительный контекст (необязательно)",
       "ask_bot_placeholder": "Например: Клиент говорит что дорого, как ответить?",
       "send_to_ai": "Отправить ИИ",
-      "ai_thinking": "ИИ думает..."
+      "ai_thinking": "ИИ думает...",
+      "attach_file": "Прикрепить файл",
+      "attach_image": "Прикрепить изображение"
     },
     "manager/settings.json": {
       "booking_notifications_desc": "Уведомления о новых записях",
@@ -41097,7 +41483,13 @@
       "total_clients": "Всего клиентов",
       "total_conversion": "Общая конверсия",
       "total_losses": "Общие потери",
-      "total_spend": "Всего трат"
+      "total_spend": "Всего трат",
+      "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
+      "table.booked_desc": "Оставили бронь",
+      "table.completed_desc": "Визит завершен",
+      "table.engaged_desc": "Написали сообщение",
+      "table.started_booking_desc": "Открыли календарь",
+      "table.visitors_desc": "Зашли в бот/чат"
     },
     "public_landing/services.json": {
       "haircutsStyling": "Стрижки и укладки",
@@ -41643,7 +42035,9 @@
       "settings_save_error": "Ошибка сохранения настроек",
       "settings_saved": "Настройки сохранены",
       "update_error": "Ошибка обновления",
-      "upload_error": "Ошибка загрузки файла"
+      "upload_error": "Ошибка загрузки файла",
+      "client": "Клиент",
+      "service": "Служба"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -41988,13 +42382,13 @@
       "users.61.bio.e6c24481": "Профессионализм и творческий подход: Федорова Наталья специализируется на Brows, Permanent Makeup, Promo. Мастер, для которого нет невыполнимых задач.",
       "users.59.bio.1e462bd1": "Мастер преображения ваших волос. Смирнова Екатерина использует авторские техники окрашивания и ухода, которые подчеркнут вашу индивидуальность.",
       "public_reviews.21.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
-      "public_reviews.21.author_name.ff715865": "Сарах Дженкинс",
+      "public_reviews.21.author_name.ff715865": "Сара Дженкинс",
       "public_reviews.21.employee_position.5b1b1d5e": "Ресницы",
       "public_reviews.22.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.22.author_name.653816a6": "Мариа Гонзалез",
+      "public_reviews.22.author_name.653816a6": "Мария Гонсалес",
       "public_reviews.22.employee_position.9a3a91ca": "Уход за лицом",
       "public_reviews.23.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
-      "public_reviews.23.author_name.f26d4aa2": "Фатима Ал-Саыед",
+      "public_reviews.23.author_name.f26d4aa2": "Фатима Аль-Сайед",
       "public_reviews.23.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.18.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.19.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
@@ -42029,7 +42423,16 @@
       "users.125.bio.a746195b": "Профессионализм и творческий подход: Анна специализируется на Stylist. Мастер, для которого нет невыполнимых задач.",
       "users.123.full_name.270f4d19": "Тест Мастер",
       "users.123.position.3ff3eb90": "Стилист",
-      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках."
+      "users.123.bio.1e189873": "Ищете идеальный результат? Тест Мастер сочетает в себе талант и глубокие знания в Stylist. Ваш комфорт и красота в надежных руках.",
+      "public_reviews.24.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.24.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.24.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.25.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.25.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.25.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.26.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.26.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.26.employee_position.65d6c03d": "Микроблейдинг"
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -42534,7 +42937,8 @@
       "phone_too_short_one": "",
       "phone_too_short_few": "",
       "phone_too_short_many": "",
-      "phone_too_short_other": ""
+      "phone_too_short_other": "",
+      "date_format_hint": "Формат: ДД.ММ.ГГГГ"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -42731,7 +43135,8 @@
       "termsSection7Text1_one": "Подарочные сертификаты действительны в течение {{count}} месяца с даты покупки.",
       "termsSection7Text1_few": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
       "termsSection7Text1_many": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
-      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки."
+      "termsSection7Text1_other": "Подарочные сертификаты действительны в течение {{count}} месяцев с даты покупки.",
+      "age_years": "лет"
     },
     "tasks.json": {
       "manage_your_tasks": "Управляйте своими задачами",
@@ -42790,7 +43195,10 @@
       "types.referrals": "Рефералы",
       "types.services": "Услуги",
       "types.spending": "Траты",
-      "types.visits": "Визиты"
+      "types.visits": "Визиты",
+      "statuses.active": "Активный",
+      "statuses.completed": "Завершенный",
+      "statuses.upcoming": "Предстоящий"
     },
     "adminPanel/notificationsdashboard.json": {
       "buttons.cancel": "Отмена",
@@ -43413,7 +43821,7 @@
       "special_price_must_be_less_than_original": "Специальная цена должна быть меньше обычной",
       "start_date": "Начало",
       "status": "Статус",
-      "summer_special_package_promo_code": "SUMMER2026",
+      "summer_special_package_promo_code": "ЛЕТО2026",
       "summer_special_package_ru": "Летний спецпакет",
       "tab_packages": "Спецпакеты",
       "tab_referrals": "Реферальные кампании",
@@ -43425,7 +43833,7 @@
       "valid_until": "Действует до",
       "when_client_mentions_keywords_bot_will_offer_package": "Когда клиент упоминает эти слова, бот предложит этот пакет",
       "when_client_mentions_keywords_or_promo_code": "Когда клиент упоминает ключевые слова или промокод, бот предложит специальную цену",
-      "summer_special_package": "Summer Special Package"
+      "summer_special_package": "Летний специальный пакет"
     },
     "admin/settings.json": {
       "account_deleted_successfully": "Аккаунт успешно удален",
@@ -43607,7 +44015,7 @@
       "needs_configuration": "Требует настройки",
       "new_bookings_changes_cancellations": "Новые записи, изменения и отмены",
       "new_reminder": "Новое напоминание",
-      "no_broadcasts_yet": "Рассылок пока нет",
+      "no_broadcasts_yet": "Рассылок еще не было",
       "no_holidays": "Праздничные дни не добавлены",
       "no_position": "Сотрудник",
       "no_reminders_configured": "Напоминания не настроены",
@@ -43700,7 +44108,35 @@
       "whatsapp_desc": "Рассылки через WhatsApp Business API, напоминания о записи.",
       "working_masters": "Работающие мастера",
       "years_of_experience": "Лет опыта",
-      "email": "Email"
+      "email": "Электронная почта",
+      "broadcast_history": "История рассылок",
+      "by_channels": "По каналам",
+      "channel_email": "Электронная почта",
+      "channel_instagram": "Инстаграм",
+      "channel_telegram": "Телеграмма",
+      "chars_one": "{{count}} символ",
+      "chars_few": "{{count}} символа",
+      "chars_many": "{{count}} символов",
+      "chars_other": "{{count}} символов",
+      "click_preview_to_see_recipients": "Нажмите \"Предпросмотр\", чтобы увидеть список получателей",
+      "force_send_description": "Отправить даже тем, кто не подписан (только для важных уведомлений)",
+      "history": "История",
+      "important_message": "Важное сообщение",
+      "message": "Сообщение",
+      "no_recipients_found": "Получатели не найдены",
+      "placeholder_all_users": "Все пользователи",
+      "placeholder_enter_message": "Введите текст вашего сообщения...",
+      "placeholder_special_offer": "Специальное предложение для вас!",
+      "preview": "Предпросмотр",
+      "recipients": "Получатели",
+      "recipients_hint": "Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам",
+      "sample_recipients": "Примеры получателей",
+      "select_recipients": "Выбрать получателей",
+      "send": "Отправить",
+      "sending": "Отправка",
+      "sent": "Отправлено",
+      "subscription_type": "Тип подписки",
+      "total_recipients": "Всего получателей"
     },
     "admin/services.json": {
       "unit_hour": "ч",
@@ -43794,7 +44230,7 @@
       "special_price": "Специальная цена",
       "staff_settings": "Настройки персонала",
       "summer_special_package": "Летний спецпакет",
-      "summer2026": "summer2026",
+      "summer2026": "лето2026",
       "target_audience": "Целевая аудитория",
       "usage_count": "Использовано",
       "valid_from": "Действует с",
@@ -43993,7 +44429,7 @@
       "source.guest_link": "Ссылка",
       "source.instagram": "Инстаграм",
       "source.manual": "Вручную",
-      "source.telegram": "Telegram",
+      "source.telegram": "Телеграмма",
       "source.whatsapp": "WhatsApp",
       "actions": "Действия",
       "add": "Добавить",
@@ -44073,7 +44509,7 @@
       "cannot_edit_notification": "Внутренние уведомления не требуют настройки контактов",
       "channel_email": "Электронная почта",
       "channel_instagram": "Инстаграм",
-      "channel_telegram": "Telegram",
+      "channel_telegram": "Телеграмма",
       "channels": "Каналы отправки *",
       "channels_notification": "Внутренние уведомления",
       "check_recipients": "Проверьте получателей",
@@ -44442,7 +44878,7 @@
       "section.testimonials": "Отзывы",
       "distance_range_between": "{{min}}-{{max}}км",
       "section.faq": "FAQ",
-      "section.hero": "Hero"
+      "section.hero": "Герой"
     },
     "admin/users.json": {
       "about_me": "Обо мне",
@@ -45216,7 +45652,11 @@
       "imported_count_other": "Успешно импортировано {{count}} клиентов",
       "options": "Опции",
       "period": "Период",
-      "upload": "Загрузить"
+      "upload": "Загрузить",
+      "all_temperatures": "Все типы",
+      "cold": "Холодный",
+      "hot": "Горячий",
+      "warm": "Теплый"
     },
     "admin/edituser.json": {
       "admin_can_change_password_without_knowing_current": "Администратор может изменить пароль пользователя без знания текущего пароля. ",
@@ -45778,7 +46218,9 @@
       "additional_context": "Дополнительный контекст (необязательно)",
       "ask_bot_placeholder": "Например: Клиент говорит что дорого, как ответить?",
       "send_to_ai": "Отправить ИИ",
-      "ai_thinking": "ИИ думает..."
+      "ai_thinking": "ИИ думает...",
+      "attach_file": "Прикрепить файл",
+      "attach_image": "Прикрепить изображение"
     },
     "manager/settings.json": {
       "booking_notifications_desc": "Уведомления о новых записях",
@@ -46981,7 +47423,13 @@
       "total_clients": "Всего клиентов",
       "total_conversion": "Общая конверсия",
       "total_losses": "Общие потери",
-      "total_spend": "Всего трат"
+      "total_spend": "Всего трат",
+      "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
+      "table.booked_desc": "Оставили бронь",
+      "table.completed_desc": "Визит завершен",
+      "table.engaged_desc": "Написали сообщение",
+      "table.started_booking_desc": "Открыли календарь",
+      "table.visitors_desc": "Зашли в бот/чат"
     },
     "public_landing/services.json": {
       "haircutsStyling": "Стрижки и укладки",

@@ -145,7 +145,7 @@ export default function PendingUsers() {
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Calendar className="w-4 h-4" />
                       <span>
-                        {new Date(user.created_at).toLocaleDateString(i18n.language)}
+                        {new Date(user.created_at).toLocaleDateString('ru-RU')}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">

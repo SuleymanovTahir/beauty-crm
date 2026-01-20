@@ -467,7 +467,7 @@ export default function ClientDetail() {
                   <div>
                     <p className="text-sm text-gray-600">{t('first_contact')}</p>
                     <p className="text-lg text-gray-900">
-                      {new Date(client.first_contact).toLocaleDateString(i18n.language)}
+                      {new Date(client.first_contact).toLocaleDateString('ru-RU')}
                     </p>
                   </div>
                 </div>
@@ -573,7 +573,7 @@ export default function ClientDetail() {
               <div>
                 <p className="text-sm text-gray-600 mb-1">{t('last_contact')}</p>
                 <p className="text-gray-900">
-                  {client.last_contact ? new Date(client.last_contact).toLocaleDateString(i18n.language) : '-'}
+                  {client.last_contact ? new Date(client.last_contact).toLocaleDateString('ru-RU') : '-'}
                 </p>
               </div>
 
@@ -740,7 +740,7 @@ export default function ClientDetail() {
                       {booking.service}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {new Date(booking.datetime).toLocaleString(i18n.language, {
+                      {new Date(booking.datetime).toLocaleString('ru-RU', {
                         day: '2-digit',
                         month: '2-digit',
                         year: 'numeric',
@@ -791,7 +791,7 @@ export default function ClientDetail() {
                 >
                   <p className="text-sm">{msg.message}</p>
                   <p className="text-xs text-gray-600 mt-1">
-                    {new Date(msg.timestamp).toLocaleTimeString(i18n.language)}
+                    {new Date(msg.timestamp).toLocaleTimeString('ru-RU')}
                   </p>
                 </div>
               </div>
@@ -841,7 +841,7 @@ export default function ClientDetail() {
                 </div>
                 <div className="p-4">
                   <p className="text-xs text-gray-400 mb-1">
-                    {new Date(entry.created_at).toLocaleDateString()}
+                    {new Date(entry.created_at).toLocaleDateString('ru-RU')}
                   </p>
                   <p className="text-sm font-medium mb-1">{entry.category || t('procedure')}</p>
                   <p className="text-xs text-gray-600 italic line-clamp-2">{entry.notes || t('no_notes')}</p>

@@ -52,7 +52,7 @@ import { ManageCurrenciesDialog } from '../../components/admin/ManageCurrenciesD
 import './Settings.css';
 
 export default function AdminSettings() {
-  const { t } = useTranslation(['admin/settings', 'common']);
+  const { t, i18n } = useTranslation(['admin/settings', 'common']);
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав

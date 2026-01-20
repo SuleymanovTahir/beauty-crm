@@ -17,13 +17,14 @@ import { formatDateForGoogle } from '../../../utils/dateUtils';
 import { useSalonSettings } from '../../../hooks/useSalonSettings';
 
 export function Appointments() {
-  const { t } = useTranslation(['account', 'common']);
+  const { t, i18n } = useTranslation(['account', 'common']);
   const navigate = useNavigate();
   const { formatCurrency, currency: globalCurrency } = useCurrency();
   const [loading, setLoading] = useState(true);
   const [bookings, setBookings] = useState<any[]>([]);
   const [currency, setCurrency] = useState(globalCurrency);
   const [filter, setFilter] = useState<'upcoming' | 'history' | 'recurring'>('upcoming');
+  const { salonName } = useSalonSettings();
 
   // Add to Google Calendar function
   const addToGoogleCalendar = (appointment: any) => {
@@ -118,7 +119,7 @@ export function Appointments() {
   const renderAppointment = (appointment: any) => {
     // Extract time from datetime string (format: "2026-01-05T14:00")
     const dateTime = new Date(appointment.date);
-    const timeString = dateTime.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    const timeString = dateTime.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
 
     return (
       <Card key={appointment.id} className="border-gray-200">
@@ -143,7 +144,7 @@ export function Appointments() {
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  {dateTime.toLocaleDateString(undefined, {
+                  {dateTime.toLocaleDateString(i18n.language, {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric'

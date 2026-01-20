@@ -65,7 +65,7 @@ interface Message {
   type?: string;
 }
 
-const ClientItem = React.memo(({ client, isSelected, onClick, t, selectionBg, avatarGradient }: { client: Client, isSelected: boolean, onClick: () => void, t: any, selectionBg?: string, avatarGradient?: string }) => (
+const ClientItem = React.memo(({ client, isSelected, onClick, t, language, selectionBg, avatarGradient }: { client: Client, isSelected: boolean, onClick: () => void, t: any, language: string, selectionBg?: string, avatarGradient?: string }) => (
   <button
     onClick={onClick}
     className={`
@@ -113,7 +113,7 @@ const ClientItem = React.memo(({ client, isSelected, onClick, t, selectionBg, av
       <div className="flex items-center justify-between mb-1">
         <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{client.display_name}</span>
         <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
-          {new Date(client.last_contact).toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' })}
+          {new Date(client.last_contact).toLocaleDateString(language, { day: '2-digit', month: 'short' })}
         </span>
       </div>
       <span className="text-xs text-gray-500 dark:text-gray-400 truncate mb-1 block">{client.phone || t('chat:no_phone')}</span>
@@ -126,7 +126,7 @@ const ClientItem = React.memo(({ client, isSelected, onClick, t, selectionBg, av
 
 export default function Chat() {
   const location = useLocation();
-  const { t } = useTranslation(['manager/chat', 'common']);
+  const { t, i18n } = useTranslation(['manager/chat', 'common']);
   const { user: currentUser } = useAuth();
   const userPermissions = usePermissions(currentUser?.role || 'employee');
 
@@ -877,6 +877,7 @@ export default function Chat() {
                     isSelected={selectedClient?.id === client.id}
                     onClick={() => handleSelectClient(client)}
                     t={t}
+                    language={i18n.language}
                     selectionBg={messengerStyles[currentMessenger]?.selectionBg || messengerStyles.instagram.selectionBg}
                     avatarGradient={messengerStyles[currentMessenger]?.avatarGradient || messengerStyles.instagram.avatarGradient}
                   />

@@ -4,7 +4,6 @@ API endpoints для публичных данных сотрудников
 from fastapi import APIRouter, Query
 from typing import Optional, List, Dict
 
-from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info
 from utils.utils import sanitize_url
@@ -29,6 +28,9 @@ async def get_public_employees(
     
     try:
         # Sanitize language
+        if language:
+            language = language.lower()[:2]
+            
         valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
         if language not in valid_languages:
             language = 'en'
@@ -51,7 +53,7 @@ async def get_public_employees(
                 u.birthday,
                 NULL as instagram,
                 u.sort_order,
-                u.updated_at as updated_timestamp
+                u.created_at as updated_timestamp
             FROM users u
             WHERE u.is_service_provider = TRUE
             AND u.is_active = TRUE
@@ -143,8 +145,21 @@ async def get_public_employees(
             final_photo = sanitized_photo or "/static/avatars/default_female.webp"
             updated_timestamp = row_dict.get("updated_timestamp")
             if updated_timestamp:
-                # Convert datetime to timestamp if needed
-                ts = int(updated_timestamp.timestamp()) if hasattr(updated_timestamp, 'timestamp') else str(updated_timestamp)
+                try:
+                    if hasattr(updated_timestamp, 'timestamp'):
+                        ts = int(updated_timestamp.timestamp())
+                    elif isinstance(updated_timestamp, str):
+                        # Try to parse if it's a string for some reason
+                        from datetime import datetime
+                        try:
+                            ts = int(datetime.fromisoformat(updated_timestamp.replace('Z', '+00:00')).timestamp())
+                        except:
+                            ts = int(time.time())
+                    else:
+                        ts = int(time.time())
+                except:
+                    ts = int(time.time())
+                
                 if final_photo and '?' not in final_photo:
                     final_photo_with_cache = f"{final_photo}?v={ts}"
                 else:

@@ -22,17 +22,25 @@ export const getTodayDate = (): string => {
 /**
  * Форматирует дату для отображения
  * @param dateString - строка даты
+ * @param language - код языка (ru, en, etc.)
  * @param options - опции форматирования
  * @returns Отформатированная дата
  */
-export const formatDate = (dateString: string, options?: Intl.DateTimeFormatOptions) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat('ru-RU', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    ...options,
-  }).format(date);
+export const formatDate = (dateString: string, language: string = 'ru', options?: Intl.DateTimeFormatOptions) => {
+  if (!dateString) return '';
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+
+    return new Intl.DateTimeFormat(language === 'ru' ? 'ru-RU' : language, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      ...options,
+    }).format(date);
+  } catch (e) {
+    return dateString;
+  }
 };
 
 /**

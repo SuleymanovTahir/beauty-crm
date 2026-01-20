@@ -1093,7 +1093,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 </label>
                 <input
                   type="text"
-                  value={new Date(selectedBooking.datetime).toLocaleString(i18n.language, {
+                  value={new Date(selectedBooking.datetime).toLocaleString('ru-RU', {
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric',

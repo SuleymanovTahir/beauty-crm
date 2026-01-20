@@ -425,7 +425,7 @@ export default function PlansManagement() {
 
                                 <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
                                     <Calendar className="w-4 h-4" />
-                                    {new Date(plan.start_date).toLocaleDateString()} - {new Date(plan.end_date).toLocaleDateString()}
+                                    {new Date(plan.start_date).toLocaleDateString('ru-RU')} - {new Date(plan.end_date).toLocaleDateString('ru-RU')}
                                 </div>
 
                                 {plan.comment && (

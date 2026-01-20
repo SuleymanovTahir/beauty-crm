@@ -333,7 +333,7 @@ export default function ReferralProgram() {
                       {referral.points_awarded > 0 ? `+${referral.points_awarded}` : '-'}
                     </span>
                   </TableCell>
-                  <TableCell>{new Date(referral.created_at).toLocaleDateString()}</TableCell>
+                  <TableCell>{new Date(referral.created_at).toLocaleDateString('ru-RU')}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
