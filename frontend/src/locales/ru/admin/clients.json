@@ -8,6 +8,7 @@
   "all_messages_with_client_links": "Все сообщения, связанные с клиентом",
   "all_records_will_be_deleted": "Все записи будут удалены",
   "all_records_with_client_links": "Все записи, связанные с клиентом",
+  "all_temperatures": "",
   "bookings": "Всего визитов",
   "bulk_delete_success": "Выбранные клиенты удалены",
   "cancel": "Отмена",
@@ -17,6 +18,7 @@
   "client_created": "Клиент создан",
   "client_deleted": "Клиент удален",
   "client_updated": "Клиент обновлен",
+  "cold": "",
   "confirm_bulk_delete_one": "Подтвердите удаление выбранного клиента",
   "confirm_bulk_delete_few": "Подтвердите удаление выбранных клиентов",
   "confirm_bulk_delete_many": "Подтвердите удаление выбранных клиентов",
@@ -46,6 +48,7 @@
   "full_export": "Полный экспорт",
   "full_export_data": "Экспорт всех данных о клиентах",
   "history_will_not_be_restored": "Эту операцию нельзя отменить",
+  "hot": "",
   "import": "Импорт",
   "import_clients": "Импорт клиентов",
   "import_close": "Закрыть",
@@ -122,6 +125,7 @@
   "upload": "Загрузить",
   "view_client_info": "Карточка клиента",
   "vip_clients": "VIP-клиенты",
+  "warm": "",
   "write_message": "Написать сообщение",
   "you_are_deleting_client": "Вы удаляете клиента"
 }

@@ -2155,7 +2155,7 @@ export default function AdminSettings() {
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <Smartphone className="w-4 h-4 text-green-600" />
-                              <span className="text-sm text-gray-700">Telegram</span>
+                              <span className="text-sm text-gray-700">{t('settings:channel_telegram')}</span>
                             </div>
                             <Switch
                               checked={sub.channels.telegram}
@@ -2166,7 +2166,7 @@ export default function AdminSettings() {
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <Camera className="w-4 h-4 text-blue-600" />
-                              <span className="text-sm text-gray-700">Instagram</span>
+                              <span className="text-sm text-gray-700">{t('settings:channel_instagram')}</span>
                             </div>
                             <Switch
                               checked={sub.channels.instagram}
@@ -2245,25 +2245,25 @@ export default function AdminSettings() {
                           <button
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('email')}
-                            className={`flex items - center gap - 2 px - 4 py - 2 rounded - lg border - 2 transition - all ${broadcastForm.channels.includes('email')
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('email')
                               ? 'border-blue-500 bg-blue-50 text-blue-700'
                               : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                              } `}
+                              }`}
                           >
                             <Mail className="w-5 h-5" />
-                            Email
+                            {t('settings:channel_email')}
                           </button>
 
                           <button
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('telegram')}
-                            className={`flex items - center gap - 2 px - 4 py - 2 rounded - lg border - 2 transition - all ${broadcastForm.channels.includes('telegram')
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('telegram')
                               ? 'border-green-500 bg-green-50 text-green-700'
                               : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                              } `}
+                              }`}
                           >
                             <MessageCircle className="w-5 h-5" />
-                            Telegram
+                            {t('settings:channel_telegram')}
                           </button>
 
                           <button
@@ -2275,7 +2275,7 @@ export default function AdminSettings() {
                               }`}
                           >
                             <Instagram className="w-5 h-5" />
-                            Instagram
+                            {t('settings:channel_instagram')}
                           </button>
                         </div>
                       </div>
@@ -2336,7 +2336,7 @@ export default function AdminSettings() {
                                 <span className="text-sm text-gray-700">
                                   {(broadcastForm.user_ids || []).length === 0
                                     ? t('settings:all_subscribed_users')
-                                    : `${t('settings:selected')}: ${(broadcastForm.user_ids || []).length} из ${filteredUsers.length} `}
+                                    : `${t('settings:selected')}: ${(broadcastForm.user_ids || []).length} ${t('common:of')} ${filteredUsers.length}`}
                                 </span>
                               );
                             })()}
@@ -2411,12 +2411,12 @@ export default function AdminSettings() {
                                               <div className="flex gap-2 mt-1">
                                                 {broadcastForm.channels.includes('email') && (
                                                   <span className={`text-[10px] ${user.email ? 'text-blue-600' : 'text-gray-400'}`}>
-                                                    {user.email ? '✓ Email' : '✗ Email'}
+                                                    {user.email ? `✓ ${t('settings:channel_email')}` : `✗ ${t('settings:channel_email')}`}
                                                   </span>
                                                 )}
                                                 {broadcastForm.channels.includes('telegram') && (
                                                   <span className={`text-[10px] ${user.telegram_id ? 'text-green-600' : 'text-gray-400'}`}>
-                                                    {user.telegram_id ? '✓ TG' : '✗ TG'}
+                                                    {user.telegram_id ? `✓ ${t('settings:channel_telegram')}` : `✗ ${t('settings:channel_telegram')}`}
                                                   </span>
                                                 )}
                                               </div>
@@ -2468,7 +2468,7 @@ export default function AdminSettings() {
                           placeholder={t('settings:placeholder_enter_message')}
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                          {broadcastForm.message.length} {t('settings:chars')}
+                          {t('settings:chars', { count: broadcastForm.message.length })}
                         </p>
                       </div>
 
@@ -2643,9 +2643,9 @@ export default function AdminSettings() {
                               {item.channels.map((channel: string) => (
                                 <span
                                   key={channel}
-                                  className="px-2 py-1 rounded text-xs bg-gray-100 text-gray-700"
+                                  className="px-2 py-1 rounded text-xs bg-gray-100 text-gray-700 font-medium"
                                 >
-                                  {channel}
+                                  {t(`settings:channel_${channel}`)}
                                 </span>
                               ))}
                             </div>

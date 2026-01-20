@@ -30,6 +30,7 @@
   "no_data": "कोई डेटा नहीं",
   "pipeline_value": "फ़नल में राशि",
   "quick_add": "शीघ्र जोड़ें",
+  "recommendations_feedback": "Ваша воронка работает стабильно. Рекомендуем обратить внимание на вовлечение новых пользователей через Instagram.",
   "recommendations_title": "सिफारिशों",
   "search_clients": "ग्राहकों की तलाश की जा रही है...",
   "stage": "अवस्था",
@@ -40,10 +41,15 @@
   "subtitle": "स्टेज और रूपांतरण प्रबंधन",
   "table": {
     "booked": "साइनअप किया",
+    "booked_desc": "Оставили бронь",
     "completed": "दौरा किया",
+    "completed_desc": "Визит завершен",
     "engaged": "शामिल",
+    "engaged_desc": "Написали сообщение",
     "started_booking": "रिकॉर्डिंग शुरू कर दी",
-    "visitors": "आगंतुकों"
+    "started_booking_desc": "Открыли календарь",
+    "visitors": "आगंतुकों",
+    "visitors_desc": "Зашли в бот/чат"
   },
   "temperature": "तापमान",
   "total": "कुल",

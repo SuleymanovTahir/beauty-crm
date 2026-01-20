@@ -7,7 +7,9 @@
   "booking_created": "रिकॉर्ड बनाया गया",
   "booking_deleted": "रिकॉर्ड हटाया गया",
   "booking_updated": "रिकॉर्ड अपडेट किया गया",
+  "can_change_price_hint": "मास्टर कीमत बदल सकता है",
   "cancel": "रद्द करें",
+  "chat": "चैट",
   "client": "क्लिक करें ent",
   "completed": "पूर्ण",
   "confirm_delete": "क्या आप वाकई इस प्रविष्टि को हटाना चाहते हैं?",
@@ -29,6 +31,7 @@
   "pending": "इन प्रतीक्षा",
   "period": "अवधि",
   "phone": "फ़ोन",
+  "phone_placeholder": "+971 ...",
   "price": "मूल्य",
   "records_count": "रिकॉर्ड",
   "records_count_one": "{{गिनती}} रिकॉर्ड",
@@ -40,6 +43,7 @@
   "save": "सहेजें",
   "search": "खोजें...",
   "search_client": "ग्राहक खोजें...",
+  "search_service": "सेवा खोज",
   "select_master": "एक मास्टर चुनें",
   "select_service": "एक चुनें सेवा",
   "service": "सेवा",
@@ -63,5 +67,6 @@
   "status_skipped": "छोड़ा गया",
   "time": "समय",
   "title": "रिकॉर्ड",
-  "total": "कुल"
+  "total": "कुल",
+  "view": "देखें"
 }

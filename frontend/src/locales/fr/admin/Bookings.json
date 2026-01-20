@@ -7,7 +7,9 @@
   "booking_created": "Enregistrement créé",
   "booking_deleted": "Enregistrement supprimé",
   "booking_updated": "Enregistrement mis à jour",
+  "can_change_price_hint": "Le maître peut modifier le prix",
   "cancel": "Annuler",
+  "chat": "Chat",
   "client": "Cliquez ent",
   "completed": "Terminé",
   "confirm_delete": "Êtes-vous sûr de vouloir supprimer cette entrée\u00a0?",
@@ -29,8 +31,9 @@
   "pending": "Dans attente",
   "period": "Période",
   "phone": "Téléphone",
+  "phone_placeholder": "+971 ...",
   "price": "Prix",
-  "records_count": "Enregistrements",
+  "records_count": "Bookings",
   "records_count_one": "{{count}} enregistrement",
   "records_count_few": "{{count}} enregistrements",
   "records_count_many": "{{count}} enregistrements",
@@ -40,6 +43,7 @@
   "save": "Enregistrer",
   "search": "Recherche...",
   "search_client": "Recherche client...",
+  "search_service": "Recherche de services",
   "select_master": "Sélectionner un maître",
   "select_service": "Sélectionner un service",
   "service": "Service",
@@ -62,6 +66,7 @@
   "status_pending": "En attente",
   "status_skipped": "Ignoré",
   "time": "Heure",
-  "title": "Enregistrements",
-  "total": "Total"
+  "title": "Réservations",
+  "total": "Total",
+  "view": "Afficher"
 }

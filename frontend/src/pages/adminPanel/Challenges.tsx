@@ -34,9 +34,8 @@ interface Challenge {
 }
 
 export default function Challenges() {
-  const { t } = useTranslation(['adminPanel/Challenges', 'common']);
+  const { t } = useTranslation(['adminpanel/challenges', 'common']);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
-  const [loading, setLoading] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [editingChallenge, setEditingChallenge] = useState<Challenge | null>(null);
 
@@ -56,7 +55,6 @@ export default function Challenges() {
 
   const loadChallenges = async () => {
     try {
-      setLoading(true);
       const response = await fetch('/api/admin/challenges', {
         credentials: 'include',
       });
@@ -73,7 +71,7 @@ export default function Challenges() {
       console.error('Error loading challenges:', error);
       toast.error(t('toasts.failed_load'));
     } finally {
-      setLoading(false);
+      // Done
     }
   };
 

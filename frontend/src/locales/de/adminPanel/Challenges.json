@@ -41,6 +41,11 @@
     "completions": "Hinrichtungen",
     "total_participants": "Teilnehmer"
   },
+  "statuses": {
+    "active": "Aktiv",
+    "completed": "Abgeschlossen",
+    "upcoming": "In Vorbereitung"
+  },
   "subtitle": "Verwalten Sie Spielmechanismen und Ziele, um die Kundenbindung zu erhöhen",
   "title": "Ziele und Erfolge",
   "toasts": {

@@ -1,4 +1,4 @@
-// /frontend/src/pages/adminPanel/PhotoGallery.tsx
+// /frontend/src/pages/adminpanel/photogallery.tsx
 import { useState, useEffect } from 'react';
 import { Plus, Upload, Trash2, Eye, EyeOff, Image as ImageIcon, Search, Filter, Maximize2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -46,7 +46,7 @@ interface Category {
 }
 
 export default function PhotoGallery() {
-  const { t } = useTranslation(['adminPanel/PhotoGallery', 'common']);
+  const { t } = useTranslation(['adminpanel/photogallery', 'common']);
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [stats, setStats] = useState<UploadStats>({

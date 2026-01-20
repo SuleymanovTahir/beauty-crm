@@ -96,14 +96,14 @@
         "position": {
           "ru": "Директор",
           "key": "users.7.position.7c5ba892",
-          "en": "Stylist / Director",
-          "ar": "المصمم / المخرج",
-          "es": "Estilista / Directora",
-          "de": "Stylist/Regisseur",
-          "fr": "Styliste / Réalisateur",
-          "hi": "स्टाइलिस्ट/निर्देशक",
-          "kk": "Стилист/директор",
-          "pt": "Estilista / Diretor",
+          "en": "Director",
+          "ar": "مخرج",
+          "es": "Director",
+          "de": "Direktor",
+          "fr": "Directeur",
+          "hi": "निदेशक",
+          "kk": "Директор",
+          "pt": "Diretor",
           "detected_language": "en"
         }
       }
@@ -111,11 +111,99 @@
   ],
   "public_reviews": [
     {
-      "id": 17,
+      "id": 18,
+      "fields": {
+        "text_ru": {
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.18.text_ru.6f00ad70",
+          "en": "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!",
+          "ar": "أفضل صالون تجميل في دبي! ",
+          "es": "¡El mejor salón de belleza en Dubai! ",
+          "de": "Bester Schönheitssalon in Dubai! ",
+          "fr": "Meilleur salon de beauté à Dubaï ! ",
+          "hi": "दुबई में सर्वश्रेष्ठ ब्यूटी सैलून! ",
+          "kk": "Дубайдағы ең жақсы сұлулық салоны! ",
+          "pt": "Melhor salão de beleza em Dubai! ",
+          "detected_language": "en"
+        },
+        "author_name": {
+          "ru": "Сара Дженкинс",
+          "key": "public_reviews.18.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins",
+          "detected_language": "en"
+        },
+        "employee_position": {
+          "ru": "Ресницы",
+          "key": "public_reviews.18.employee_position.5b1b1d5e",
+          "en": "Eyelashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 19,
+      "fields": {
+        "text_ru": {
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.19.text_ru.f38138da",
+          "en": "Incredible service. ",
+          "ar": "خدمة لا تصدق. كان لدي وجه وبشرتي تتوهج. سأعود بالتأكيد!",
+          "es": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
+          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
+          "fr": "Service incroyable. J'ai eu un soin du visage et ma peau est éclatante. Je reviendrai c'est sûr !",
+          "hi": "अविश्वसनीय सेवा. मैंने फेशियल कराया और मेरी त्वचा चमक उठी। मै अवश्य ही लौट कर आउंगा!",
+          "kk": "Керемет қызмет. Менде бет күтімі болды, терім жылтырап кетті. Мен міндетті түрде ораламын!",
+          "pt": "Serviço incrível. Fiz um tratamento facial e minha pele brilha. Voltarei com certeza!",
+          "detected_language": "es"
+        },
+        "author_name": {
+          "ru": "Мария Гонсалес",
+          "key": "public_reviews.19.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González",
+          "detected_language": "en"
+        },
+        "employee_position": {
+          "ru": "Уход за лицом",
+          "key": "public_reviews.19.employee_position.9a3a91ca",
+          "en": "Facial Treatment",
+          "ar": "علاج الوجه",
+          "es": "Tratamiento Facial",
+          "de": "Gesichtsbehandlung",
+          "fr": "Traitement du visage",
+          "hi": "चेहरे का उपचार",
+          "kk": "Бет күтімі",
+          "pt": "Tratamento facial",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 20,
       "fields": {
         "text_ru": {
           "ru": "Отличный сервис и профессиональный персонал. ",
-          "key": "public_reviews.17.text_ru.ae85e84b",
+          "key": "public_reviews.20.text_ru.ae85e84b",
           "en": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
           "ar": "خدمة ممتازة وفريق عمل محترف. ",
           "es": "Excelente servicio y personal profesional. ",
@@ -128,10 +216,41 @@
         },
         "author_name": {
           "ru": "Фатима Аль-Сайед",
-          "key": "public_reviews.17.author_name.f26d4aa2",
+          "key": "public_reviews.20.author_name.f26d4aa2",
           "en": "Fatima Al-Sayed",
           "ar": "فاطمة السيد",
           "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима Әл-Сайед",
+          "pt": "Fátima Al-Sayed",
+          "detected_language": "en"
+        },
+        "employee_position": {
+          "ru": "Микроблейдинг",
+          "key": "public_reviews.20.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 17,
+      "fields": {
+        "author_name": {
+          "ru": "Фатима Аль-Сайед",
+          "key": "public_reviews.17.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al-Sayed",
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
@@ -155,27 +274,32 @@
       }
     },
     {
+      "id": 3,
+      "fields": {
+        "employee_position": {
+          "ru": "Маникюр и педикюр",
+          "key": "public_reviews.3.employee_position.8e5cfdfa",
+          "en": "Manicure and pedicure",
+          "ar": "مانيكير وباديكير",
+          "es": "Manicura y pedicura",
+          "de": "Maniküre und Pediküre",
+          "fr": "Manucure et pédicure",
+          "hi": "नख प्रसाधन व पाद चिकित्सा",
+          "kk": "Маникюр және педикюр",
+          "pt": "Manicura e pedicura",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
       "id": 15,
       "fields": {
-        "text_ru": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "key": "public_reviews.15.text_ru.6f00ad70",
-          "en": "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!",
-          "ar": "أفضل صالون تجميل في دبي! ",
-          "es": "¡El mejor salón de belleza en Dubai! ",
-          "de": "Bester Schönheitssalon in Dubai! ",
-          "fr": "Meilleur salon de beauté à Dubaï ! ",
-          "hi": "दुबई में सर्वश्रेष्ठ ब्यूटी सैलून! ",
-          "kk": "Дубайдағы ең жақсы сұлулық салоны! ",
-          "pt": "Melhor salão de beleza em Dubai! ",
-          "detected_language": "en"
-        },
         "author_name": {
           "ru": "Сара Дженкинс",
           "key": "public_reviews.15.author_name.ff715865",
           "en": "Sarah Jenkins",
           "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
+          "es": "Sarah Jenkins",
           "de": "Sarah Jenkins",
           "fr": "Sarah Jenkins",
           "hi": "सारा जेनकिंस",
@@ -201,19 +325,6 @@
     {
       "id": 16,
       "fields": {
-        "text_ru": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "key": "public_reviews.16.text_ru.f38138da",
-          "en": "Incredible service. ",
-          "ar": "خدمة لا تصدق. كان لدي وجه وبشرتي تتوهج. سأعود بالتأكيد!",
-          "es": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
-          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Service incroyable. J'ai eu un soin du visage et ma peau est éclatante. Je reviendrai c'est sûr !",
-          "hi": "अविश्वसनीय सेवा. मैंने फेशियल कराया और मेरी त्वचा चमक उठी। मै अवश्य ही लौट कर आउंगा!",
-          "kk": "Керемет қызмет. Менде бет күтімі болды, терім жылтырап кетті. Мен міндетті түрде ораламын!",
-          "pt": "Serviço incrível. Fiz um tratamento facial e minha pele brilha. Voltarei com certeza!",
-          "detected_language": "es"
-        },
         "author_name": {
           "ru": "Мария Гонсалес",
           "key": "public_reviews.16.author_name.653816a6",
@@ -221,10 +332,10 @@
           "ar": "ماريا جونزاليس",
           "es": "María González",
           "de": "Maria Gonzalez",
-          "fr": "Maria González",
+          "fr": "Maria Gonzalez",
           "hi": "मारिया गोंजालेज",
           "kk": "Мария Гонсалес",
-          "pt": "Maria González",
+          "pt": "Maria Gonzalez",
           "detected_language": "en"
         },
         "employee_position": {
@@ -250,7 +361,7 @@
           "key": "public_reviews.12.author_name.ff715865",
           "en": "Sarah Jenkins",
           "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
+          "es": "Sarah Jenkins",
           "de": "Sarah Jenkins",
           "fr": "Sarah Jenkins",
           "hi": "सारा जेनकिंस",
@@ -274,24 +385,6 @@
       }
     },
     {
-      "id": 3,
-      "fields": {
-        "employee_position": {
-          "ru": "Маникюр и педикюр",
-          "key": "public_reviews.3.employee_position.8e5cfdfa",
-          "en": "Manicure and pedicure",
-          "ar": "مانيكير وباديكير",
-          "es": "Manicura y pedicura",
-          "de": "Maniküre und Pediküre",
-          "fr": "Manucure et pédicure",
-          "hi": "नख प्रसाधन व पाद चिकित्सा",
-          "kk": "Маникюр және педикюр",
-          "pt": "Manicura e pedicura",
-          "detected_language": "en"
-        }
-      }
-    },
-    {
       "id": 13,
       "fields": {
         "author_name": {
@@ -301,10 +394,10 @@
           "ar": "ماريا جونزاليس",
           "es": "María González",
           "de": "Maria Gonzalez",
-          "fr": "Maria González",
+          "fr": "Maria Gonzalez",
           "hi": "मारिया गोंजालेज",
           "kk": "Мария Гонсалес",
-          "pt": "Maria González",
+          "pt": "Maria Gonzalez",
           "detected_language": "en"
         },
         "employee_position": {
@@ -330,11 +423,11 @@
           "key": "public_reviews.14.author_name.f26d4aa2",
           "en": "Fatima Al-Sayed",
           "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
+          "es": "Fátima Al-Sayed",
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
-          "kk": "Фатима әл-Сайед",
+          "kk": "Фатима Әл-Сайед",
           "pt": "Fátima Al-Sayed",
           "detected_language": "en"
         },
@@ -361,7 +454,7 @@
           "key": "public_reviews.9.author_name.ff715865",
           "en": "Sarah Jenkins",
           "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
+          "es": "Sarah Jenkins",
           "de": "Sarah Jenkins",
           "fr": "Sarah Jenkins",
           "hi": "सारा जेनकिंस",
@@ -394,10 +487,10 @@
           "ar": "ماريا جونزاليس",
           "es": "María González",
           "de": "Maria Gonzalez",
-          "fr": "Maria González",
+          "fr": "Maria Gonzalez",
           "hi": "मारिया गोंजालेज",
           "kk": "Мария Гонсалес",
-          "pt": "Maria González",
+          "pt": "Maria Gonzalez",
           "detected_language": "en"
         },
         "employee_position": {
@@ -423,7 +516,7 @@
           "key": "public_reviews.11.author_name.f26d4aa2",
           "en": "Fatima Al-Sayed",
           "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
+          "es": "Fátima Al-Sayed",
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
@@ -454,7 +547,7 @@
           "key": "public_reviews.2.author_name.ff715865",
           "en": "Sarah Jenkins",
           "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
+          "es": "Sarah Jenkins",
           "de": "Sarah Jenkins",
           "fr": "Sarah Jenkins",
           "hi": "सारा जेनकिंस",
@@ -485,7 +578,7 @@
           "key": "public_reviews.6.author_name.ff715865",
           "en": "Sarah Jenkins",
           "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
+          "es": "Sarah Jenkins",
           "de": "Sarah Jenkins",
           "fr": "Sarah Jenkins",
           "hi": "सारा जेनकिंस",
@@ -518,10 +611,10 @@
           "ar": "ماريا جونزاليس",
           "es": "María González",
           "de": "Maria Gonzalez",
-          "fr": "Maria González",
+          "fr": "Maria Gonzalez",
           "hi": "मारिया गोंजालेज",
           "kk": "Мария Гонсалес",
-          "pt": "Maria González",
+          "pt": "Maria Gonzalez",
           "detected_language": "en"
         },
         "employee_position": {
@@ -547,11 +640,11 @@
           "key": "public_reviews.8.author_name.f26d4aa2",
           "en": "Fatima Al-Sayed",
           "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
+          "es": "Fátima Al-Sayed",
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
-          "kk": "Фатима әл-Сайед",
+          "kk": "Фатима Әл-Сайед",
           "pt": "Fátima Al-Sayed",
           "detected_language": "en"
         },
@@ -598,10 +691,10 @@
           "ar": "ماريا جونزاليس",
           "es": "María González",
           "de": "Maria Gonzalez",
-          "fr": "Maria González",
+          "fr": "Maria Gonzalez",
           "hi": "मारिया गोंजालेज",
           "kk": "Мария Гонсалес",
-          "pt": "Maria González",
+          "pt": "Maria Gonzalez",
           "detected_language": "en"
         },
         "employee_position": {
@@ -627,7 +720,7 @@
           "key": "public_reviews.5.author_name.f26d4aa2",
           "en": "Fatima Al-Sayed",
           "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
+          "es": "Fátima Al-Sayed",
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",

@@ -60,6 +60,7 @@
     "video_call": "Видеозвонок"
   },
   "cancel": "Отмена",
+  "characters_count": "персонажи",
   "characters_count_one": "{{count}} символ",
   "characters_count_few": "{{count}} символа",
   "characters_count_many": "{{count}} символов",

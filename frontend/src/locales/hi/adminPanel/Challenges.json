@@ -41,6 +41,11 @@
     "completions": "फांसी",
     "total_participants": "प्रतिभागियों"
   },
+  "statuses": {
+    "active": "सक्रिय",
+    "completed": "पूर्ण",
+    "upcoming": "आगामी"
+  },
   "subtitle": "ग्राहक निष्ठा बढ़ाने के लिए गेम मैकेनिक्स और लक्ष्य प्रबंधित करें",
   "title": "लक्ष्य और उपलब्धियाँ",
   "toasts": {

@@ -126,7 +126,7 @@ const ClientItem = React.memo(({ client, isSelected, onClick, t, selectionBg, av
 
 export default function Chat() {
   const location = useLocation();
-  const { t } = useTranslation(['manager/Chat', 'common']);
+  const { t } = useTranslation(['manager/chat', 'common']);
   const { user: currentUser } = useAuth();
   const userPermissions = usePermissions(currentUser?.role || 'employee');
 
@@ -1455,7 +1455,7 @@ export default function Chat() {
                   <button
                     onClick={() => handleProhibitedAction('прикреплять файлы')}
                     className="p-3 text-gray-500 hover:bg-white hover:text-blue-600 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-md"
-                    title="Прикрепить файл"
+                     title={t('chat:attach_file', 'Прикрепить файл')}
                   >
                     <Paperclip className="w-6 h-6" />
                   </button>

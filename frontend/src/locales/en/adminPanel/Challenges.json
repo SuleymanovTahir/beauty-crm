@@ -41,6 +41,11 @@
     "completions": "Executions",
     "total_participants": "Participants"
   },
+  "statuses": {
+    "active": "Active",
+    "completed": "Completed",
+    "upcoming": "Upcoming"
+  },
   "subtitle": "Manage game mechanics and goals to increase customer loyalty",
   "title": "Goals and achievements",
   "toasts": {

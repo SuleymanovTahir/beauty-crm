@@ -24,11 +24,11 @@ interface FunnelData {
 }
 
 const stageNames = [
-  'Посетители',
-  'Вовлечённые',
-  'Начали запись',
-  'Записались',
-  'Посетили'
+  'visitors',
+  'engaged',
+  'started_booking',
+  'booked',
+  'completed'
 ];
 
 const stageColors = [
@@ -40,11 +40,11 @@ const stageColors = [
 ];
 
 const stageDescriptions = [
-  'Первичные посетители сайта/соцсетей',
-  'Проявили интерес (лайк, комментарий, просмотр)',
-  'Открыли форму записи',
-  'Завершили бронирование',
-  'Пришли на процедуру'
+  'visitors_desc',
+  'engaged_desc',
+  'started_booking_desc',
+  'booked_desc',
+  'completed_desc'
 ];
 
 export default function Funnel() {
@@ -82,9 +82,9 @@ export default function Funnel() {
       <div className="p-8 flex items-center justify-center min-h-screen">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 max-w-md text-center">
           <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Доступ запрещен</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('common:access_denied')}</h2>
           <p className="text-gray-600">
-            У вас нет прав для просмотра аналитики. Обратитесь к администратору.
+            {t('funnel:no_permission_msg', 'У вас нет прав для просмотра аналитики. Обратитесь к администратору.')}
           </p>
         </div>
       </div>
@@ -265,8 +265,8 @@ export default function Funnel() {
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <h3 className="text-lg mb-1">{stage}</h3>
-                          <p className="text-sm opacity-90">{stageDescriptions[index]}</p>
+                          <h3 className="text-lg mb-1">{t(`funnel:stages.${stage}`)}</h3>
+                          <p className="text-sm opacity-90">{t(`funnel:stages_desc.${stageDescriptions[index]}`)}</p>
                         </div>
                         <div className="text-right">
                           <p className="text-2xl">{value}</p>
@@ -343,8 +343,8 @@ export default function Funnel() {
                 <div
                   key={index}
                   className={`p-4 rounded-lg border-l-4 ${rec.priority === 'high'
-                      ? 'border-red-500 bg-red-50'
-                      : 'border-yellow-500 bg-yellow-50'
+                    ? 'border-red-500 bg-red-50'
+                    : 'border-yellow-500 bg-yellow-50'
                     }`}
                 >
                   <div className="flex items-start gap-3">
@@ -365,7 +365,7 @@ export default function Funnel() {
                   <div>
                     <h3 className="text-sm text-green-900 font-medium">{t('funnel:all_good')}</h3>
                     <p className="text-xs text-green-700 mt-1">
-                      {t('Your funnel shows good results. Keep it up!')}
+                      {t('funnel:good_results_desc', 'Your funnel shows good results. Keep it up!')}
                     </p>
                   </div>
                 </div>
@@ -393,7 +393,7 @@ export default function Funnel() {
             <tbody className="divide-y divide-gray-200">
               {stageNames.map((stage, index) => (
                 <tr key={index} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-900">{stage}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{t(`funnel:stages.${stage}`)}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">{stageValues[index]}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">
                     {((stageValues[index] / funnel.visitors) * 100).toFixed(1)}%
