@@ -813,12 +813,12 @@ export default function SpecialPackages() {
           {campaigns.length === 0 && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 text-center">
               <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Реферальные кампании не найдены</p>
+              <p className="text-gray-500">{t('no_campaigns_found')}</p>
               <Button
                 onClick={() => setIsReferralModalOpen(true)}
                 className="mt-4 bg-blue-600 hover:bg-blue-700"
               >
-                Создать первую кампанию
+                {t('create_first_campaign')}
               </Button>
             </div>
           )}
@@ -834,29 +834,29 @@ export default function SpecialPackages() {
 
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="campaignName">Название кампании *</Label>
+                  <Label htmlFor="campaignName">{t('campaign_name')} *</Label>
                   <Input
                     id="campaignName"
                     value={referralFormData.name}
                     onChange={(e) => setReferralFormData({ ...referralFormData, name: e.target.value })}
-                    placeholder="Приведи друга - получи бонус"
+                    placeholder={t('campaign_name_placeholder')}
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="campaignDesc">Описание</Label>
+                  <Label htmlFor="campaignDesc">{t('description')}</Label>
                   <Textarea
                     id="campaignDesc"
                     value={referralFormData.description}
                     onChange={(e) => setReferralFormData({ ...referralFormData, description: e.target.value })}
-                    placeholder="Описание для администраторов"
+                    placeholder={t('campaign_description_placeholder')}
                     rows={2}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="bonusPoints">Бонус приглашенному</Label>
+                    <Label htmlFor="bonusPoints">{t('bonus_to_referee')}</Label>
                     <Input
                       id="bonusPoints"
                       type="number"
@@ -865,7 +865,7 @@ export default function SpecialPackages() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="referrerBonus">Бонус приглашающему</Label>
+                    <Label htmlFor="referrerBonus">{t('bonus_to_referrer')}</Label>
                     <Input
                       id="referrerBonus"
                       type="number"
@@ -876,26 +876,26 @@ export default function SpecialPackages() {
                 </div>
 
                 <div>
-                  <Label htmlFor="targetType">Целевая аудитория</Label>
+                  <Label htmlFor="targetType">{t('target_audience')}</Label>
                   <Select
                     value={referralFormData.target_type}
                     onValueChange={(value: any) => setReferralFormData({ ...referralFormData, target_type: value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Выберите аудиторию" />
+                      <SelectValue placeholder={t('select_audience', 'Выберите аудиторию')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Все клиенты</SelectItem>
-                      <SelectItem value="by_inactivity">Неактивные клиенты</SelectItem>
-                      <SelectItem value="by_master">Клиенты мастера</SelectItem>
-                      <SelectItem value="by_service">Клиенты услуги</SelectItem>
+                      <SelectItem value="all">{t('target_all_clients')}</SelectItem>
+                      <SelectItem value="by_inactivity">{t('target_by_inactivity', 'Неактивные клиенты')}</SelectItem>
+                      <SelectItem value="by_master">{t('target_by_master')}</SelectItem>
+                      <SelectItem value="by_service">{t('target_by_service')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {referralFormData.target_type === 'by_inactivity' && (
                   <div>
-                    <Label htmlFor="daysInactive">Дней без посещения</Label>
+                    <Label htmlFor="daysInactive">{t('days_without_visiting')}</Label>
                     <Input
                       id="daysInactive"
                       type="number"
@@ -908,7 +908,7 @@ export default function SpecialPackages() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="startDate">Начало (опционально)</Label>
+                    <Label htmlFor="startDate">{t('start_date')} ({t('optional')})</Label>
                     <Input
                       id="startDate"
                       type="date"
@@ -917,7 +917,7 @@ export default function SpecialPackages() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="endDate">Окончание (опционально)</Label>
+                    <Label htmlFor="endDate">{t('end_date')} ({t('optional')})</Label>
                     <Input
                       id="endDate"
                       type="date"
@@ -936,14 +936,14 @@ export default function SpecialPackages() {
                     className="w-4 h-4 text-blue-600 rounded"
                   />
                   <Label htmlFor="campaignActive" className="cursor-pointer">
-                    Активна (клиенты могут использовать)
+                    {t('active_clients_can_use')}
                   </Label>
                 </div>
               </div>
 
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsReferralModalOpen(false)}>
-                  Отмена
+                  {t('cancel')}
                 </Button>
                 <Button
                   onClick={async () => {

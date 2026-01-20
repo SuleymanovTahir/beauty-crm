@@ -1,13 +1,12 @@
 // /frontend/src/pages/admin/VisitorAnalytics.tsx
 import { useState, useEffect } from 'react';
-import { MapPin, RefreshCw, Download, Loader, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MapPin, RefreshCw, Download, Loader, ChevronLeft, ChevronRight, Home, Globe } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { visitorApi } from '../../services/visitorApi';
 import { toast } from 'sonner';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 import { useTranslation } from 'react-i18next';
-import { Globe } from 'lucide-react';
 import './VisitorAnalytics.css';
 
 interface Visitor {
@@ -33,137 +32,8 @@ const COLORS = [
 ];
 
 // Country code to flag emoji mapping
-const getCountryFlag = (countryName: string): string => {
-    const countryToCode: Record<string, string> = {
-        'United Arab Emirates': 'AE',
-        'UAE': 'AE',
-        'Russia': 'RU',
-        'United States': 'US',
-        'USA': 'US',
-        'United Kingdom': 'GB',
-        'UK': 'GB',
-        'India': 'IN',
-        'Pakistan': 'PK',
-        'China': 'CN',
-        'Saudi Arabia': 'SA',
-        'Egypt': 'EG',
-        'Turkey': 'TR',
-        'Germany': 'DE',
-        'France': 'FR',
-        'Italy': 'IT',
-        'Spain': 'ES',
-        'Canada': 'CA',
-        'Australia': 'AU',
-        'Brazil': 'BR',
-        'Japan': 'JP',
-        'South Korea': 'KR',
-        'Mexico': 'MX',
-        'Indonesia': 'ID',
-        'Philippines': 'PH',
-        'Vietnam': 'VN',
-        'Thailand': 'TH',
-        'Malaysia': 'MY',
-        'Singapore': 'SG',
-        'Kazakhstan': 'KZ',
-        'Uzbekistan': 'UZ',
-        'Ukraine': 'UA',
-        'Poland': 'PL',
-        'Netherlands': 'NL',
-        'Belgium': 'BE',
-        'Sweden': 'SE',
-        'Norway': 'NO',
-        'Denmark': 'DK',
-        'Finland': 'FI',
-        'Switzerland': 'CH',
-        'Austria': 'AT',
-        'Portugal': 'PT',
-        'Greece': 'GR',
-        'Czech Republic': 'CZ',
-        'Romania': 'RO',
-        'Hungary': 'HU',
-        'Bulgaria': 'BG',
-        'Serbia': 'RS',
-        'Croatia': 'HR',
-        'Slovakia': 'SK',
-        'Slovenia': 'SI',
-        'Lithuania': 'LT',
-        'Latvia': 'LV',
-        'Estonia': 'EE',
-        'Ireland': 'IE',
-        'New Zealand': 'NZ',
-        'South Africa': 'ZA',
-        'Nigeria': 'NG',
-        'Kenya': 'KE',
-        'Morocco': 'MA',
-        'Algeria': 'DZ',
-        'Tunisia': 'TN',
-        'Lebanon': 'LB',
-        'Jordan': 'JO',
-        'Iraq': 'IQ',
-        'Iran': 'IR',
-        'Israel': 'IL',
-        'Kuwait': 'KW',
-        'Bahrain': 'BH',
-        'Qatar': 'QA',
-        'Oman': 'OM',
-        'Yemen': 'YE',
-        'Syria': 'SY',
-        'Afghanistan': 'AF',
-        'Bangladesh': 'BD',
-        'Sri Lanka': 'LK',
-        'Nepal': 'NP',
-        'Myanmar': 'MM',
-        'Cambodia': 'KH',
-        'Laos': 'LA',
-        'Mongolia': 'MN',
-        'Taiwan': 'TW',
-        'Hong Kong': 'HK',
-        'Macau': 'MO',
-        'Argentina': 'AR',
-        'Chile': 'CL',
-        'Colombia': 'CO',
-        'Peru': 'PE',
-        'Venezuela': 'VE',
-        'Ecuador': 'EC',
-        'Bolivia': 'BO',
-        'Paraguay': 'PY',
-        'Uruguay': 'UY',
-        'Costa Rica': 'CR',
-        'Panama': 'PA',
-        'Cuba': 'CU',
-        'Dominican Republic': 'DO',
-        'Jamaica': 'JM',
-        'Trinidad and Tobago': 'TT',
-        'Bahamas': 'BS',
-        'Barbados': 'BB',
-        'Iceland': 'IS',
-        'Luxembourg': 'LU',
-        'Malta': 'MT',
-        'Cyprus': 'CY',
-        'Georgia': 'GE',
-        'Armenia': 'AM',
-        'Azerbaijan': 'AZ',
-        'Turkmenistan': 'TM',
-        'Kyrgyzstan': 'KG',
-        'Tajikistan': 'TJ',
-        'Belarus': 'BY',
-        'Moldova': 'MD',
-        'Albania': 'AL',
-        'North Macedonia': 'MK',
-        'Bosnia and Herzegovina': 'BA',
-        'Montenegro': 'ME',
-        'Kosovo': 'XK'
-    };
-
-    const code = countryToCode[countryName];
-    if (!code) return '';
-
-    // Convert country code to flag emoji
-    const codePoints = code
-        .toUpperCase()
-        .split('')
-        .map(char => 127397 + char.charCodeAt(0));
-    return String.fromCodePoint(...codePoints);
+const getCountryFlag = (_countryName: string): string => {
+    return '';
 };
 
 export default function VisitorAnalytics() {
@@ -352,7 +222,7 @@ export default function VisitorAnalytics() {
     }));
 
     const sectionsChartData = landingSections.slice(0, 8).map((section, index) => ({
-        name: section.section,
+        name: t(`section.${section.section}`) || section.section,
         visitors: section.count,
         fill: COLORS[index % COLORS.length]
     }));
@@ -692,17 +562,16 @@ export default function VisitorAnalytics() {
                                     <td className="px-6 py-4 text-sm text-gray-900">
                                         {visitor.country ? (
                                             <div className="flex items-center gap-2">
-                                                <span>{getCountryFlag(visitor.country)}</span>
-                                                {!getCountryFlag(visitor.country) && <Globe className="w-4 h-4 text-gray-400" />}
+                                                <Globe className="w-4 h-4 text-gray-400" />
                                                 <span>{visitor.country}</span>
                                             </div>
                                         ) : '-'}
                                     </td>
                                     <td className="px-6 py-4 text-sm">
                                         {visitor.distance_km ? (
-                                            <span className={visitor.is_local ? 'visitor-analytics-local-indicator' : 'visitor-analytics-remote-indicator'}>
+                                            <span className={`visitor-analytics-local-indicator flex items-center gap-1 ${!visitor.is_local && 'visitor-analytics-remote-indicator'}`}>
                                                 {visitor.distance_km} {t('km')}
-                                                {visitor.is_local && ' 🏠'}
+                                                {visitor.is_local && <Home className="w-3 h-3" />}
                                             </span>
                                         ) : '-'}
                                     </td>

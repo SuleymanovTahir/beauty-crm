@@ -32,6 +32,11 @@
   "ip_address": "IP-адрес",
   "km": "км",
   "landing_sections": "Секции лендинга",
+  "last_n_days": "Последние {{count}} дней",
+  "last_n_days_one": "Последний {{count}} день",
+  "last_n_days_few": "Последние {{count}} дня",
+  "last_n_days_many": "Последние {{count}} дней",
+  "last_n_days_other": "Последние {{count}} дней",
   "latest_visitors": "Последние посетители",
   "loading": "Загрузка аналитики посетителей...",
   "local_visitors": "Местные (≤{{max}}км)",
@@ -59,5 +64,21 @@
   "visitors_count_one": "{{count}} посетитель",
   "visitors_count_few": "{{count}} посетителя",
   "visitors_count_many": "{{count}} посетителей",
-  "visitors_count_other": "{{count}} посетителей"
+  "visitors_count_other": "{{count}} посетителей",
+  "section": {
+    "hero": "Hero",
+    "about": "О нас",
+    "services": "Услуги",
+    "portfolio": "Портфолио",
+    "team": "Команда",
+    "testimonials": "Отзывы",
+    "gallery": "Галерея",
+    "faq": "FAQ",
+    "map-section": "Карта",
+    "booking": "Запись"
+  },
+  "pagination": {
+    "page_x_of_y": "Страница {{current}} из {{total}}",
+    "showing_x_to_y_of_z": "Показано {{from}}-{{to}} из {{total}}"
+  }
 }

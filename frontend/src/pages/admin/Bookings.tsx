@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send, Trash2, Clock, CheckCircle2, CalendarDays, DollarSign, ChevronDown, Users, AlertTriangle } from 'lucide-react';
+import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send, Trash2, Clock, CheckCircle2, CalendarDays, DollarSign, ChevronDown, Users, AlertTriangle, X, FileText, BarChart3 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ExportDropdown } from '../../components/shared/ExportDropdown';
 import { StatusSelect } from '../../components/shared/StatusSelect';
@@ -1234,7 +1234,9 @@ export default function Bookings() {
           <div className="modal-content">
             <div className="modal-header">
               <h3 className="modal-title">{t('bookings:import_title')}</h3>
-              <button className="modal-close" onClick={() => { setShowImportDialog(false); setImportFile(null); setImportResult(null); }}>×</button>
+              <button className="modal-close" onClick={() => { setShowImportDialog(false); setImportFile(null); setImportResult(null); }}>
+                <X size={20} />
+              </button>
             </div>
 
             <div className="modal-body">
@@ -1257,11 +1259,11 @@ export default function Bookings() {
               <div className="mb-6">
                 <p className="input-label">{t('bookings:download_template')}:</p>
                 <div className="flex gap-2">
-                  <button onClick={() => handleDownloadTemplate('csv')} className="btn-secondary text-sm">
-                    📄 {t('bookings:csv_template')}
+                  <button onClick={() => handleDownloadTemplate('csv')} className="btn-secondary text-sm flex items-center gap-2">
+                    <FileText size={16} /> {t('bookings:csv_template')}
                   </button>
-                  <button onClick={() => handleDownloadTemplate('excel')} className="btn-secondary text-sm">
-                    📊 {t('bookings:excel_template')}
+                  <button onClick={() => handleDownloadTemplate('excel')} className="btn-secondary text-sm flex items-center gap-2">
+                    <BarChart3 size={16} /> {t('bookings:excel_template')}
                   </button>
                 </div>
               </div>
@@ -1285,7 +1287,9 @@ export default function Bookings() {
                 <div className={`info-box ${importResult.imported > 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
                   <p className="font-bold mb-2">{t('bookings:import_results')}:</p>
                   <ul className="text-sm ml-4 space-y-1">
-                    <li>✅ {t('bookings:imported')}: {importResult.imported}</li>
+                    <li className="flex items-center gap-1">
+                      <CheckCircle2 className="w-4 h-4 text-green-600" /> {t('bookings:imported')}: {importResult.imported}
+                    </li>
                     <li className="flex items-center gap-1">
                       <AlertTriangle className="w-4 h-4 text-yellow-500" />
                       {t('bookings:skipped')}: {importResult.skipped}

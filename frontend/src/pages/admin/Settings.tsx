@@ -31,6 +31,7 @@ import {
   ShieldAlert,
   X,
   User,
+  Download,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -1515,7 +1516,7 @@ export default function AdminSettings() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                   <div>
-                    <Label htmlFor="lunch_start">{t('settings:lunch_start', 'Начало обеда')}</Label>
+                    <Label htmlFor="lunch_start">{t('settings:lunch_start')}</Label>
                     <Input
                       id="lunch_start"
                       type="time"
@@ -1528,7 +1529,7 @@ export default function AdminSettings() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="lunch_end">{t('settings:lunch_end', 'Конец обеда')}</Label>
+                    <Label htmlFor="lunch_end">{t('settings:lunch_end')}</Label>
                     <Input
                       id="lunch_end"
                       type="time"
@@ -1545,12 +1546,12 @@ export default function AdminSettings() {
                 {/* Universal Settings Section */}
                 <div className="space-y-4 border-t pt-6 mt-6">
                   <h3 className="text-lg font-semibold text-gray-900">
-                    {t('settings:universal_settings', 'Универсальные настройки')}
+                    {t('settings:universal_settings')}
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <Label htmlFor="city">{t('settings:city', 'Город')}</Label>
+                      <Label htmlFor="city">{t('settings:city')}</Label>
                       <Input
                         id="city"
                         value={generalSettings.city}
@@ -1590,13 +1591,13 @@ export default function AdminSettings() {
                     </div>
 
                     <div>
-                      <Label htmlFor="timezone_offset">{t('settings:timezone_offset', 'Часовой пояс')}</Label>
+                      <Label htmlFor="timezone_offset">{t('settings:timezone_offset')}</Label>
                       <Select
                         value={generalSettings.timezone_offset}
                         onValueChange={(value) => setGeneralSettings({ ...generalSettings, timezone_offset: value })}
                       >
                         <SelectTrigger id="timezone_offset">
-                          <SelectValue placeholder={t('settings:select_timezone', 'Выберите часовой пояс')} />
+                          <SelectValue placeholder={t('settings:select_timezone')} />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="UTC+0">UTC+0 (London)</SelectItem>
@@ -1614,7 +1615,7 @@ export default function AdminSettings() {
                     </div>
 
                     <div>
-                      <Label htmlFor="birthday_discount">{t('settings:birthday_discount', 'Скидка на день рождения')}</Label>
+                      <Label htmlFor="birthday_discount">{t('settings:birthday_discount')}</Label>
                       <Input
                         id="birthday_discount"
                         value={generalSettings.birthday_discount}
@@ -2028,7 +2029,8 @@ export default function AdminSettings() {
                     }
                   }}
                 >
-                  📥 {t('settings:download_backup')}
+                  <Download className="w-4 h-4 mr-2" />
+                  {t('settings:download_backup')}
                 </Button>
               </div>
             </div>

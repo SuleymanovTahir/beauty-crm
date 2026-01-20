@@ -13,8 +13,10 @@ import {
   Plus,
   Trash2,
   Edit,
-  Check
+  Check,
+  ChevronDown
 } from 'lucide-react';
+import './Calendar.css';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import {
@@ -86,15 +88,6 @@ const generateTimeSlots = (startHour: number, endHour: number) => {
   return slots;
 };
 
-const statusColors: Record<string, { bg: string; text: string; border: string }> = {
-  pending: { bg: '#fef3c7', text: '#92400e', border: '#fcd34d' },
-  confirmed: { bg: '#dcfce7', text: '#166534', border: '#86efac' },
-  completed: { bg: '#dbeafe', text: '#1e40af', border: '#93c5fd' },
-  cancelled: { bg: '#fee2e2', text: '#991b1b', border: '#fca5a5' },
-};
-
-
-
 interface CalendarProps {
   employeeFilter?: boolean;
 }
@@ -107,7 +100,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState<Date>(new Date(today));
   const [viewMode, setViewMode] = useState<'day' | 'week'>('week');
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const { t, i18n } = useTranslation(['admin/Calendar', 'common']);
+  const { t, i18n } = useTranslation(['admin/calendar', 'common']);
   const { currency, formatCurrency } = useCurrency();
 
   const statusLabels: Record<string, string> = {
@@ -764,34 +757,17 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
       {/* Create/Edit Modal */}
       {showCreateModal && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: '1rem'
-        }}>
-          <div style={{
-            backgroundColor: '#fff',
-            borderRadius: '1rem',
-            width: '100%',
-            maxWidth: '500px',
-            maxHeight: '90vh',
-            overflow: 'auto',
-            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
-          }}>
-            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
+        <div className="calendar-modal-overlay">
+          <div className="calendar-modal-content">
+            <div className="calendar-modal-header">
               <h3 className="text-xl font-bold text-gray-900">
                 {isEditing ? t('calendar:edit_booking') : t('calendar:add_booking')}
               </h3>
               <button
                 onClick={() => { setShowCreateModal(false); resetForm(); }}
-                className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                className="text-gray-400 hover:text-gray-600"
               >
-                ×
+                <X size={24} />
               </button>
             </div>
 
@@ -1046,34 +1022,17 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
       {/* Event Detail Modal */}
       {selectedBooking && !showCreateModal && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: '1rem'
-        }}>
-          <div style={{
-            backgroundColor: '#fff',
-            borderRadius: '1rem',
-            width: '100%',
-            maxWidth: '450px',
-            boxShadow: '0 20px 25px rgba(0,0,0,0.1)',
-            maxHeight: '90vh',
-            overflow: 'auto'
-          }}>
-            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
+        <div className="calendar-modal-overlay">
+          <div className="calendar-modal-content">
+            <div className="calendar-modal-header">
               <h3 className="text-lg font-bold text-gray-900">
                 {t('calendar:booking')} #{selectedBooking.id}
               </h3>
               <button
                 onClick={() => setSelectedBooking(null)}
-                className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                className="text-gray-400 hover:text-gray-600"
               >
-                ×
+                <X size={24} />
               </button>
             </div>
 
@@ -1149,15 +1108,10 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
               <div className="relative">
                 <button
                   onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-                  className="w-full px-4 py-3 rounded-lg font-semibold text-sm flex items-center justify-between shadow-sm transition-all"
-                  style={{
-                    backgroundColor: statusColors[selectedBooking.status]?.bg,
-                    color: statusColors[selectedBooking.status]?.text,
-                    border: `2px solid ${statusColors[selectedBooking.status]?.border}`,
-                  }}
+                  className={`w-full px-4 py-3 rounded-lg font-semibold text-sm flex items-center justify-between shadow-sm transition-all calendar-status-${selectedBooking.status}`}
                 >
                   <span>{statusLabels[selectedBooking.status]}</span>
-                  <span>▼</span>
+                  <ChevronDown className="w-4 h-4" />
                 </button>
 
                 {showStatusDropdown && (
@@ -1166,14 +1120,10 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                       <button
                         key={status}
                         onClick={() => handleChangeStatus(status)}
-                        className="w-full px-4 py-3 text-left text-sm font-medium border-b border-gray-100 last:border-b-0 transition-colors"
-                        style={{
-                          backgroundColor: selectedBooking.status === status ? statusColors[status]?.bg : '#fff',
-                          color: statusColors[status]?.text,
-                        }}
+                        className={`w-full px-4 py-3 text-left text-sm font-medium border-b border-gray-100 last:border-b-0 transition-colors ${selectedBooking.status === status ? `calendar-status-${status}` : 'hover:bg-gray-50'}`}
                       >
                         {statusLabels[status]}
-                        {selectedBooking.status === status && ' ✓'}
+                        {selectedBooking.status === status && <Check className="w-4 h-4 inline ml-2" />}
                       </button>
                     ))}
                   </div>
