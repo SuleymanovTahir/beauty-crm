@@ -18,7 +18,7 @@
   "error_updating_profile": "Профильді жаңарту қатесі",
   "for_password_recovery": "Құпия сөзді қалпына келтіру үшін",
   "full_name": "Толық аты-жөні",
-  "full_name_must_be_at_least_2_characters": "Толық атау кемінде 2 таңбадан тұруы керек",
+  "full_name_must_be_at_least_2_characters": "Толық атауда кемінде {{count}} таңба болуы керек",
   "full_name_placeholder": "Иван Иванов",
   "in_system_since": "Бар жүйеде",
   "loading_profile": "Профиль жүктелуде",
@@ -26,7 +26,7 @@
   "manager": "Менеджер",
   "my_profile": "Менің профилім",
   "new_password": "Жаңа құпия сөз",
-  "new_password_must_be_at_least_6_characters": "Жаңа құпия сөз кемінде 6 таңбадан тұруы керек",
+  "new_password_must_be_at_least_6_characters": "Жаңа құпия сөзде кемінде {{count}} таңба болуы керек",
   "password_successfully_changed": "Құпия сөз сәтті өзгертілді",
   "passwords_do_not_match": "Құпия сөздер сәйкес келмейді",
   "personal_information": "Жеке ақпарат",
@@ -35,7 +35,7 @@
   "saving_changes": "Өзгерістерді сақтау",
   "tip": "Кеңес",
   "try_reloading_page": "Бетті қайта жүктеп көріңіз",
-  "use_complex_password_at_least_6_characters": "Күрделі құпия сөзді пайдаланыңыз (кемінде 6 таңба).",
+  "use_complex_password_at_least_6_characters": "Күрделі құпия сөзді пайдаланыңыз (ең аз {{count}} таңба).",
   "username": "Жүйеге кіру",
-  "username_must_be_at_least_3_characters": "Жүйеге кіруде кемінде 3 таңба болуы керек"
+  "username_must_be_at_least_3_characters": "Жүйеге кіруде кемінде {{count}} таңба болуы керек"
 }

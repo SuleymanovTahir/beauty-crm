@@ -6,7 +6,7 @@
   },
   "dialogs": {
     "send": {
-      "description": "अपने ग्राहकों को अधिसूचना बनाएं और भेजें",
+      "description": "अपने ग्राहकों के लिए एक लक्षित अधिसूचना बनाएं",
       "form": {
         "appointment_date": "रिकॉर्डिंग दिनांक",
         "appointment_filter": "प्रविष्टियों द्वारा फ़िल्टर करें",
@@ -18,108 +18,108 @@
         "end_date": "अंतिम तिथि",
         "loyalty_tier": "वफादारी का स्तर",
         "message": "संदेश",
-        "message_placeholder": "अधिसूचना पाठ",
-        "notification_type": "जानकारी प्रकार",
-        "repeat_end_date": "पुनरावर्तन समाप्त करें",
+        "message_placeholder": "अधिसूचना पाठ दर्ज करें...",
+        "notification_type": "चैनल प्रकार",
+        "repeat_end_date": "पुनः चलाने की समाप्ति तिथि",
         "repeat_interval": "दोहराएँ अंतराल",
         "repeat_intervals": {
           "daily": "दैनिक",
           "monthly": "महीने के",
           "weekly": "साप्ताहिक"
         },
-        "repeat_notification": "अधिसूचना दोहराएँ",
+        "repeat_notification": "आवर्ती अधिसूचना",
         "schedule_date": "भेजने का दिनांक",
-        "schedule_notification": "एक अधिसूचना शेड्यूल करें",
+        "schedule_notification": "शिपमेंट शेड्यूल करें",
         "schedule_time": "डिस्पैच का समय",
         "segments": {
           "active": "सक्रिय ग्राहक",
           "all": "सभी ग्राहक",
           "appointment_based": "अभिलेखों के अनुसार",
-          "inactive": "निष्क्रिय ग्राहक",
+          "inactive": "खोया हुआ (निष्क्रिय)",
           "service_based": "दिनांक सेवाओं द्वारा",
           "tier": "वफादारी के स्तर से"
         },
         "select_filter": "फ़िल्टर चुनें",
         "select_tier": "स्तर चुनें",
         "service_filter": "दिनांक सेवा/प्रक्रिया",
-        "service_hint": "इस दिनांक सेवा के लिए पंजीकृत ग्राहकों को एक अधिसूचना प्राप्त होगी",
-        "service_placeholder": "दिनांक सेवा का नाम या आईडी दर्ज करें",
+        "service_hint": "चयनित दिनांक सेवा के लिए पंजीकृत ग्राहकों को एक अधिसूचना प्राप्त होगी",
+        "service_placeholder": "दिनांक सेवा का नाम दर्ज करें",
         "start_date": "आरंभ करने की तिथि",
-        "target_segment": "लक्ष्य खंड",
+        "target_segment": "लक्षित दर्शक (खंड)",
         "tiers": {
           "bronze": "पीतल",
           "gold": "सोना",
           "platinum": "प्लैटिनम",
           "silver": "चाँदी"
         },
-        "title": "शीर्षक",
-        "title_placeholder": "अधिसूचना शीर्षक"
+        "title": "ब्यूटी सैलून दिनांक सेवा शीर्षक",
+        "title_placeholder": "मुख्य शीर्षक दर्ज करें"
       },
-      "title": "नई अधिसूचना भेजें"
+      "title": "नई अधिसूचना"
     },
     "template": {
-      "description": "एक पुन: प्रयोज्य अधिसूचना टेम्पलेट बनाएं",
+      "description": "भविष्य में त्वरित मेलिंग के लिए एक टेम्पलेट बनाएं",
       "form": {
         "message": "संदेश",
-        "message_placeholder": "गतिशील सामग्री के लिए {variable} का उपयोग करें",
+        "message_placeholder": "क्लाइंट नाम को प्रतिस्थापित करने के लिए {name} का उपयोग करें",
         "template_name": "टेम्पलेट का नाम",
-        "template_name_placeholder": "उदाहरण के लिए, स्वागत संदेश",
-        "title": "शीर्षक",
+        "template_name_placeholder": "उदाहरण के लिए: नए ग्राहक का अभिवादन करना",
+        "title": "ब्यूटी सैलून दिनांक दिनांक सेवा शीर्षक",
         "title_placeholder": "अधिसूचना शीर्षक",
-        "type": "प्रकार",
+        "type": "चैनल प्रकार",
         "types": {
-          "email": "ईमेल",
+          "email": "ब्यूटी सैलून दिनांक सेवा ईमेल",
           "push": "सर्वर पुश नोटीफिकेशन",
           "sms": "SMS"
         }
       },
-      "title": "टेम्पलेट के रूप में सहेजें"
+      "title": "एक टेम्प्लेट बनाएं"
     }
   },
   "history": {
-    "description": "सभी भेजी गई और शेड्यूल की गई सूचनाएं",
+    "description": "पहले बनाई गई और वर्तमान मेलिंग की सूची",
     "filters": {
-      "all": "सभी",
-      "email": "ईमेल",
-      "push": "धकेलना",
+      "all": "सभी चैनल",
+      "email": "ब्यूटी सैलून दिनांक दिनांक सेवा ईमेल",
+      "push": "पुश नोटिफिकेशन",
       "sms": "SMS"
     },
     "scheduled": "की योजना बनाई",
     "table": {
       "date": "तारीख",
       "recipients": "प्राप्तकर्ता",
-      "sent_failed": "भेजा/असफल",
+      "sent_failed": "भेजा गया/त्रुटियाँ",
       "status": "स्थिति",
-      "title": "शीर्षक",
+      "title": "शीर्षक/विषय",
       "type": "प्रकार"
     },
-    "title": "अधिसूचना इतिहास"
+    "title": "मेलिंग इतिहास"
   },
   "save_template": "टेम्प्लेट सहेजें",
-  "send_notification": "अधिसूचना भेजें",
+  "send_notification": "भेजना",
   "stats": {
-    "email_sent": "ईमेल भेजा गया",
-    "push_sent": "पुश भेजा गया",
-    "sms_sent": "एसएमएस भेजा गया",
+    "email_sent": "ब्यूटी सैलून दिनांक दिनांक सेवा ईमेल",
+    "push_sent": "पुश नोटिफिकेशन",
+    "sms_sent": "SMS",
     "total_sent": "कुल भेजा गया"
   },
-  "subtitle": "ग्राहकों को सूचनाएं प्रबंधित करना और भेजना",
+  "subtitle": "मेलिंग और स्वचालित अधिसूचना नियंत्रण केंद्र",
   "templates": {
-    "description": "सामान्य सूचनाओं के लिए त्वरित टेम्पलेट",
-    "title": "अधिसूचना टेम्पलेट्स",
-    "use_template": "टेम्पलेट का इस्तेमाल करें"
+    "description": "समय बचाने के लिए तैयार टेम्पलेट",
+    "title": "मेरे टेम्पलेट्स",
+    "use_template": "उपयोग"
   },
-  "title": "अधिसूचना पैनल",
+  "title": "सूचनाएं",
   "toasts": {
-    "failed_load": "सूचनाएं लोड करने में विफल",
+    "failed_load": "सूचनाएं लोड करने में त्रुटि",
     "failed_save_template": "टेम्प्लेट सहेजने में विफल",
-    "failed_send": "सूचना भेजने में विफल",
+    "failed_send": "सूचना भेजने में त्रुटि",
     "sent": "अधिसूचना सफलतापूर्वक भेजी गई",
-    "template_saved": "टेम्प्लेट सफलतापूर्वक सहेजा गया"
+    "template_saved": "टेम्प्लेट सहेजा गया"
   },
   "types": {
-    "email": "ईमेल",
-    "push": "धकेलना",
+    "email": "ब्यूटी सैलून दिनांक दिनांक सेवा ईमेल",
+    "push": "सर्वर पुश नोटीफिकेशन",
     "sms": "SMS"
   }
 }

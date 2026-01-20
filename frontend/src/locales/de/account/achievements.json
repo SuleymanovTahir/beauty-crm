@@ -11,7 +11,7 @@
   "active_challenges": "Aktive Ziele",
   "all_achievements": "Alle Erfolge",
   "challenge_hair_care": "Perfektes Haar",
-  "challenge_hair_care_desc": "Machen Sie 3 Haarbehandlungen",
+  "challenge_hair_care_desc": "Führen Sie {{count}} Haarbehandlungen durch",
   "challenge_spring_update": "Frühlingsupdate",
   "challenge_spring_update_desc": "Aktualisieren Sie Ihren Look für die neue Saison",
   "completed_percent": "{{percent}}% abgeschlossen",

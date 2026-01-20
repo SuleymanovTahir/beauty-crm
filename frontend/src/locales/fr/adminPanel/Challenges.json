@@ -1,59 +1,59 @@
 {
   "buttons": {
     "cancel": "Annuler",
-    "create_challenge": "Créer un défi",
-    "update_challenge": "Défi de mise à jour"
+    "create_challenge": "Créer un objectif",
+    "update_challenge": "Enregistrer les modifications"
   },
   "card": {
-    "check_progress": "Check Progress",
+    "check_progress": "Vérifier la progression",
     "completed": "complété",
     "progress": "Progrès",
-    "pts": "indiquer",
+    "pts": "points",
     "reward": "Récompense",
     "target": "Cible"
   },
-  "create_challenge": "Créer un défi",
+  "create_challenge": "Créer un nouvel objectif",
   "dialogs": {
     "create": {
-      "description": "Définir les paramètres du défi et les récompenses",
+      "description": "Configurer les paramètres d'activité et le bonus d'achèvement",
       "form": {
-        "challenge_type": "Type de défi",
-        "description": "Description",
-        "description_placeholder": "Visitez le salon 3 fois ce mois",
+        "challenge_type": "Type d'activité",
+        "description": "Description de la tâche",
+        "description_placeholder": "Ex : Visitez le salon {{count}} fois ce mois-ci",
         "end_date": "Date de fin",
-        "reward_placeholder": "1000",
-        "reward_points": "Récompenser avec des points",
-        "start_date": "date de début",
-        "target_placeholder": "3",
-        "target_value": "Valeur cible",
-        "title": "Nom",
-        "title_placeholder": "Défi beauté de l'été"
+        "reward_placeholder": "{{points}}",
+        "reward_points": "Ajouter des points",
+        "start_date": "Date de début",
+        "target_placeholder": "{{points}}",
+        "target_value": "Quantité cible",
+        "title": "Nom de l'objectif",
+        "title_placeholder": "À la date exemple : Relooking d'été"
       },
-      "title": "Créez un nouveau défi",
-      "title_edit": "Modifier le défi"
+      "title": "Créer un objectif",
+      "title_edit": "Modification d'une cible"
     },
     "delete": {
-      "confirm": "Etes-vous sûr de vouloir supprimer ce défi ?"
+      "confirm": "Êtes-vous sûr de vouloir supprimer cette activité ? Toute progression des participants sera perdue."
     }
   },
   "stats": {
-    "active_challenges": "Défis actifs",
-    "completions": "Achèvement",
-    "total_participants": "Nombre total de participants"
+    "active_challenges": "Cibles actives",
+    "completions": "Exécutions",
+    "total_participants": "Participants"
   },
-  "subtitle": "Créer et gérer des défis d’engagement",
-  "title": "Défis",
+  "subtitle": "Gérer les mécanismes de jeu et les objectifs pour accroître la fidélité des clients",
+  "title": "Objectifs et réalisations",
   "toasts": {
-    "created": "Défi créé avec succès",
-    "deleted": "Défi supprimé avec succès",
-    "failed_check_progress": "Failed to check progress",
-    "failed_create": "Échec de la création du défi",
-    "failed_delete": "Échec de la suppression du défi",
-    "failed_load": "Échec du chargement des défis",
-    "progress_checked_one": "Progression vérifiée seule",
-    "progress_checked_few": "Les progrès ont été vérifiés plusieurs fois",
-    "progress_checked_many": "Les progrès ont été testés à la date de nombreux",
-    "progress_checked_other": "Progrès vérifiés à la date d’autres"
+    "created": "Activité créée avec succès",
+    "deleted": "Activité supprimée",
+    "failed_check_progress": "Échec de la mise à jour de la progression",
+    "failed_create": "Erreur lors de la création de l'activité",
+    "failed_delete": "Erreur lors de la suppression",
+    "failed_load": "Échec du chargement des données",
+    "progress_checked_few": "Progrès mis à jour pour les participants {{count}}",
+    "progress_checked_many": "Progrès mis à jour pour les participants {{count}}",
+    "progress_checked_one": "Progression mise à jour pour le membre {{count}}",
+    "progress_checked_other": "Progrès mis à jour pour les participants {{count}}"
   },
   "types": {
     "referrals": "Références",

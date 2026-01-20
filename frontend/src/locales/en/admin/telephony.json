@@ -15,8 +15,8 @@
   "notes_placeholder": "Enter notes...",
   "outbound": "Outgoing",
   "phone": "Telephone",
-  "recording_file": "booking file",
-  "recording_url": "booking Link (URL)",
+  "recording_file": "Booking file",
+  "recording_url": "Booking Link (URL)",
   "search_client": "Searching for a client...",
   "search_manager": "Search for a master...",
   "search_service": "Search for a service...",
@@ -29,6 +29,6 @@
   "status_missed": "Skipped",
   "status_ongoing": "In progress",
   "telephony": "Telephony",
-  "telephony_recordings": "Telephony bookings",
+  "telephony_recordings": "telephony bookings",
   "type": "Type"
 }

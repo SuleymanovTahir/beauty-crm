@@ -9,7 +9,7 @@
   "days_in_row": "Tagesvertrag",
   "discount": "Rabatt",
   "invitations": "Einladungen",
-  "last_6_months": "In den letzten 6 Monaten",
+  "last_6_months": "In den letzten {{count}} Monaten",
   "loyalty_card": "Treuekarte",
   "month_apr": "Apr",
   "month_feb": "Febr",

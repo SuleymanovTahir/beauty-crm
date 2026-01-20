@@ -9,8 +9,8 @@
   "delete": "मिटाना",
   "dueDate": "नियत तारीख",
   "errors": {
-    "createError": "चालान बनाने में त्रुटि",
-    "deleteError": "चालान हटाने में त्रुटि",
+    "createError": "खाता बनाने में त्रुटि.",
+    "deleteError": "खाता हटाने में त्रुटि.",
     "paymentError": "भुगतान जोड़ने में त्रुटि",
     "sendError": "चालान भेजने में त्रुटि",
     "updateError": "स्थिति अपडेट करने में विफल"
@@ -55,7 +55,7 @@
   "search_placeholder": "नंबर या क्लाइंट के आधार पर खोजें...",
   "sendButton": "भेजना",
   "sendDialog": {
-    "email": "ईमेल",
+    "email": "ई-मेल",
     "method": "शिपिंग का तरीका",
     "recipient": "प्राप्तकर्ता",
     "sendButton": "भेजना",

@@ -45,8 +45,8 @@
   "personal_info_title": "Informations personnelles",
   "photo_requirements": "JPG, PNG.",
   "privacy_masters": "Accès maître",
-  "privacy_masters_desc": "Partagez votre historique de visites avec les maîtres",
-  "privacy_photos": "Résolution des photos",
+  "privacy_masters_desc": "Partagez votre historique de visite avec les maîtres",
+  "privacy_photos": "Autoriser la photo",
   "privacy_photos_desc": "Permettre aux techniciens de prendre des photos avant/après",
   "privacy_public": "Profil public",
   "privacy_public_desc": "Montrez vos réalisations à d'autres clients",
@@ -62,8 +62,8 @@
   "title": "Paramètres",
   "type_achievements": "Réalisations",
   "type_achievements_desc": "De nouvelles récompenses et de nouveaux défis",
-  "type_appointments": "bookings",
-  "type_appointments_desc": "Rappels pour les prochaines visites",
+  "type_appointments": "Bookings",
+  "type_appointments_desc": "Alertes sur les visites à venir",
   "type_promotions": "Promotions et offres",
   "type_promotions_desc": "Offres spéciales et réductions"
 }

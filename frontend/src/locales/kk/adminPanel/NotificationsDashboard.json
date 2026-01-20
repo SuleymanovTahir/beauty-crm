@@ -68,7 +68,7 @@
         "title_placeholder": "Хабарландыру тақырыбы",
         "type": "Арна түрі",
         "types": {
-          "email": "Email",
+          "email": "Электрондық пошта",
           "push": "Push хабарлама хабарландыруы",
           "sms": "SMS"
         }
@@ -80,8 +80,8 @@
     "description": "Бұрын жасалған және ағымдағы жіберулердің тізімі",
     "filters": {
       "all": "Барлық арналар",
-      "email": "Email",
-      "push": "Push",
+      "email": "Электрондық пошта",
+      "push": "Push хабарлама",
       "sms": "SMS"
     },
     "scheduled": "Жоспарланған",
@@ -118,8 +118,8 @@
     "template_saved": "Үлгі сақталды"
   },
   "types": {
-    "email": "Email",
-    "push": "Push",
+    "email": "Электрондық пошта",
+    "push": "Push хабарлама хабарландыруы",
     "sms": "SMS"
   }
 }

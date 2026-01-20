@@ -1,7 +1,7 @@
 {
   "actions": {
-    "hide": "Hide",
-    "show": "Show"
+    "hide": "Verstecken",
+    "show": "Zeigen"
   },
   "buttons": {
     "cancel": "Stornieren",
@@ -11,8 +11,8 @@
   "card": {
     "featured": "Favoriten",
     "toggle_featured": "Favoriten umschalten",
-    "uploaded_by": "Hochgeladen datum bis {{name}}",
-    "views": "Ansichten"
+    "uploaded_by": "Geladen datum bis {{name}}",
+    "views": "ansichten"
   },
   "dialogs": {
     "delete": {
@@ -61,11 +61,11 @@
     "failed_featured": "Der Favoritenstatus konnte nicht aktualisiert werden",
     "failed_load": "Fotos konnten nicht hochgeladen werden",
     "failed_upload": "Foto konnte nicht hochgeladen werden",
-    "failed_visibility": "Failed to update visibility",
+    "failed_visibility": "Die Sichtbarkeit konnte nicht aktualisiert werden.",
     "featured_updated": "Favoritenstatus aktualisiert",
-    "select_both_photos": "Please select both before and after photos",
+    "select_both_photos": "Bitte wählen Sie ein Vorher-Nachher-Foto aus",
     "uploaded": "Foto erfolgreich hochgeladen",
-    "visibility_updated": "Visibility updated"
+    "visibility_updated": "Sichtbarkeit aktualisiert"
   },
   "upload_photo": "Foto hochladen"
 }

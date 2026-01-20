@@ -33,7 +33,7 @@
     "management": "नियंत्रण",
     "marketplace_integrations": "बाजारों",
     "messengers": "दूत",
-    "my_bookings": "मेरी बुकिंग",
+    "my_bookings": "मेरी प्रविष्टियाँ",
     "notifications": "सूचनाएं",
     "payment_integrations": "भुगतान प्रणाली",
     "products": "चीज़ें",
@@ -52,7 +52,7 @@
   "notifications": "सूचनाएं",
   "roles": {
     "director": "निदेशक",
-    "marketer": "मार्केटिंग",
+    "marketer": "बाजार",
     "sales": "बिक्री"
   },
   "user": "उपयोगकर्ता",

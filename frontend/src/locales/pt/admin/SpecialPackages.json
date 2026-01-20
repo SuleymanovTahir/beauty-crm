@@ -22,8 +22,8 @@
   "save_campaign": "Salvar",
   "target_all_clients": "Todos os clientes",
   "target_audience": "Público-alvo",
-  "target_by_master": "até mestre",
-  "target_by_service": "até serviço",
-  "target_inactive_days": "Inativo {{days}} dias",
+  "target_by_master": "Até data mestre",
+  "target_by_service": "Até data serviço",
+  "target_inactive_days": "{{days}} dias inativos",
   "target_specific_users": "Clientes selecionados"
 }

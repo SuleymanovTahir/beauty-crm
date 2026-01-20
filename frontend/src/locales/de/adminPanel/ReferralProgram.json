@@ -5,16 +5,16 @@
   },
   "current_settings": {
     "edit": "Bearbeiten",
-    "min_purchase": "Mindestkaufpreis: <strong>{{amount}} AED</strong>",
+    "min_purchase": "Mindestkaufpreis: <strong>{{amount}} {{currency}}</strong>",
     "referred_bonus": "Der eingeladene Freund erhält bei der Registrierung <strong>{{points}} Punkte</strong>",
-    "referrer_bonus": "Der Empfehlungsgeber erhält <strong>{{points}} Punkte</strong>, wenn ein Freund seinen ersten Einkauf tätigt",
+    "referrer_bonus": "Der Empfehlungsgeber erhält <strong>{{points}} Punkte</strong>, wenn ein Freund zum ersten Mal einkauft",
     "title": "Aktuelle Bonuskonfiguration"
   },
   "dialogs": {
     "settings": {
       "description": "Richten Sie Bonuspunkte und Anforderungen ein",
-      "min_purchase_amount": "Mindesteinkaufspreis (AED)",
-      "min_purchase_help": "Mindestbetrag, den ein Freund ausgeben muss, um den Empfehlungsbonus zu aktivieren (0 = kein Mindestbetrag)",
+      "min_purchase_amount": "Mindesteinkaufspreis ({{currency}})",
+      "min_purchase_help": "Mindestbetrag, den ein Freund ausgeben muss, um den Empfehlungsbonus zu aktivieren ({{min}} = kein Mindestbetrag)",
       "referred_bonus": "Bonuspunkte für empfohlene Freunde",
       "referred_bonus_help": "Bei der Registrierung werden einem Freund Punkte gutgeschrieben",
       "referrer_bonus": "Empfehlungsbonuspunkte",
@@ -39,13 +39,13 @@
     },
     "description": "Verfolgung des Empfehlungsstatus und der Punkteverteilung",
     "filters": {
-      "all_statuses": "All Statuses"
+      "all_statuses": "Alle Status"
     },
     "search_placeholder": "Nach Empfehlungen suchen...",
     "sort": {
-      "date": "Sort by Date",
-      "points": "Sort by Points",
-      "status": "Sort by Status"
+      "date": "Nach Datum",
+      "points": "Nach Punkten",
+      "status": "Nach Status"
     },
     "statuses": {
       "cancelled": "Abgesagt",

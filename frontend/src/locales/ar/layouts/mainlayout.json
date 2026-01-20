@@ -33,7 +33,7 @@
     "management": "يتحكم",
     "marketplace_integrations": "الأسواق",
     "messengers": "الرسل",
-    "my_bookings": "حجوزاتي",
+    "my_bookings": "مداخلاتي",
     "notifications": "إشعارات",
     "payment_integrations": "أنظمة الدفع",
     "products": "بضائع",
@@ -52,7 +52,7 @@
   "notifications": "إشعارات",
   "roles": {
     "director": "مخرج",
-    "marketer": "تسويق",
+    "marketer": "مسوق",
     "sales": "مبيعات"
   },
   "user": "مستخدم",

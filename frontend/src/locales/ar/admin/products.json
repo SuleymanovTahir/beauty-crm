@@ -3,7 +3,7 @@
   "allCategories": "جميع الفئات",
   "analytics": {
     "avgPrice": "تزوج. سعر",
-    "last30Days": "في 30 يوما",
+    "last30Days": "لمدة {{count}} من الأيام",
     "revenue": "ربح",
     "totalSold": "إجمالي المبيعات"
   },
@@ -11,12 +11,12 @@
   "delete": "يمسح",
   "detail": {
     "costPriceLabel": "التكلفة: {{price}}_ {{currency}}",
-    "inStock_zero": "",
-    "inStock_one": "واحد متاح",
+    "inStock_few": "متوفر في المخزون {{count}} قطعة.",
+    "inStock_many": "متوفر في المخزون {{count}} قطعة.",
+    "inStock_one": "متوفر في المخزون {{count}} قطعة.",
+    "inStock_other": "متوفر في المخزون {{count}} قطعة.",
     "inStock_two": "",
-    "inStock_few": "عدة متاحة",
-    "inStock_many": "الكثير في المخزون",
-    "inStock_other": "أخرى في المخزون",
+    "inStock_zero": "",
     "loadingData": "جارٍ تحميل البيانات...",
     "movementAdjustment": "تعديل",
     "movementHistory": "تاريخ الحركات",

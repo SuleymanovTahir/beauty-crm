@@ -16,7 +16,7 @@
   "individual": "व्यक्ति",
   "individual_plan": "व्यक्तिगत योजना",
   "individual_plans": "व्यक्तिगत योजनाएँ",
-  "manage_goals_and_targets": "लक्ष्य और उद्देश्य प्रबंधित करें",
+  "manage_goals_and_targets": "लक्ष्य और KPI प्रबंधन",
   "manage_metrics": "मेट्रिक्स प्रबंधन",
   "metric_name": "नाम",
   "metric_name_en": "शीर्षक (EN)",
@@ -29,7 +29,7 @@
     "custom": "आपकी अवधि",
     "month": "महीना",
     "quarter": "तिमाही",
-    "two_weeks": "2 सप्ताह",
+    "two_weeks": "{{count}} सप्ताह",
     "week": "सप्ताह",
     "year": "वर्ष"
   },

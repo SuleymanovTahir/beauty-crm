@@ -9,11 +9,11 @@
   "delete": "Borrar",
   "dueDate": "Fecha de vencimiento",
   "errors": {
-    "createError": "Error creating invoice",
-    "deleteError": "Error deleting invoice",
-    "paymentError": "Error adding payment",
-    "sendError": "Error sending invoice",
-    "updateError": "Failed to update status"
+    "createError": "Error al crear la cuenta.",
+    "deleteError": "Error al eliminar la cuenta.",
+    "paymentError": "Error al agregar el pago",
+    "sendError": "Error al enviar la factura",
+    "updateError": "No se pudo actualizar el estado"
   },
   "form": {
     "addItem": "Añadir una posición",
@@ -28,12 +28,12 @@
     "selectClient": "Seleccionar cliente"
   },
   "invoiceNumber": "Número de cuenta",
-  "manage_stages": "columnas",
+  "manage_stages": "Columnas",
   "messages": {
     "confirmDelete": "¿Estás seguro de que deseas eliminar esta cuenta?",
     "invoiceCreated": "Cuenta creada",
     "invoiceDeleted": "Cuenta eliminada",
-    "invoiceSent": "factura enviada",
+    "invoiceSent": "Factura enviada",
     "invoiceUpdated": "Cuenta actualizada",
     "paymentAdded": "Pago agregado"
   },

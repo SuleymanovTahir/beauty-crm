@@ -1,17 +1,20 @@
 {
   "analyze_further": "مزيد من التحليل",
   "apply": "يتقدم",
-  "avg_check": "متوسط ​​الفاتورة",
+  "avg_check": "فحص متوسط",
   "avg_time": "متوسط ​​الوقت",
+  "booked": "تم التسجيل",
   "booking_statuses": "حالات النشر",
-  "bookings": "إدارة السجلات",
+  "bookings": "حجوزات",
   "bookings_trend": "ديناميات السجلات",
-  "clarify_services": "تحديد الخدمات",
-  "conversation_stage": "مرحلة المحادثة",
+  "clarify_services": "توضيح الخدمات",
+  "completed": "تمت زيارتها",
+  "conversation_stage": "مرحلة الحوار",
   "conversion": "تحويل",
   "detailed_analysis": "تحليل مفصل لعمل الصالون",
   "drop_off_analysis": "تحليل التسرب",
-  "drop_offs": "انسحبت",
+  "drop_offs": "الفشل",
+  "engaged": "متضمن",
   "errors": {
     "export_failed": "خطأ في تصدير الملف",
     "invalid_date_range": "يجب أن يكون تاريخ البدء قبل تاريخ الانتهاء",
@@ -21,9 +24,38 @@
   },
   "export": "يصدّر",
   "exporting": "يصدّر...",
-  "focus_on_highest_drop_off": "التركيز على المسرح من تاريخ أعلى الاستنزاف",
+  "focus_on_highest_drop_off": "انتبه للمرحلة التي بها أكبر نسبة تسرب",
   "for_period": "لهذه الفترة",
   "from_visitors": "من الزوار إلى العملاء",
+  "funnel": {
+    "conversion": {
+      "booked_to_completed": "تم التسجيل -> تمت الزيارة",
+      "booking_to_booked": "بدأت -> اشتركت",
+      "engaged_to_booking": "مشغول -> بدأ التسجيل",
+      "visitor_to_engaged": "زائر -> مشارك"
+    },
+    "desc": {
+      "booked": "اكتمل التسجيل",
+      "completed": "الخدمة المقدمة",
+      "engaged": "أظهر الاهتمام",
+      "started_booking": "فتحت استمارة التسجيل",
+      "visitors": "زوار الموقع/وسائل التواصل الاجتماعي"
+    },
+    "losses": "الخسائر: {{count}}",
+    "losses_few": "الخسائر: {{count}}",
+    "losses_many": "الخسائر: {{count}}",
+    "losses_one": "الخسارة: {{count}}",
+    "losses_other": "الخسائر: {{count}}",
+    "stages": {
+      "booked": "تم التسجيل",
+      "completed": "تمت زيارتها",
+      "engaged": "متضمن",
+      "started_booking": "بدأ التسجيل",
+      "visitors": "الزوار"
+    }
+  },
+  "funnel_chart": "مخطط قمع",
+  "funnel_overview": "قمع المبيعات",
   "improve_greeting": "تحسين تحيتك",
   "income": "دخل",
   "min": "دقيقة",
@@ -31,21 +63,21 @@
   "need_more_masters": "بحاجة الى المزيد من الماجستير",
   "optimization_tip": "نصيحة التحسين",
   "peak_hours": "ساعات الذروة",
-  "per_booking": "للتسجيل",
+  "per_booking": "لكل دخول",
   "percentage": "نسبة مئوية",
-  "quantity": "الكمية",
+  "quantity": "كمية",
   "recommendation": "توصية",
   "refresh": "تحديث",
   "response_time": "وقت الاستجابة",
-  "revenue": "دخل",
+  "revenue": "ربح",
   "services_distribution": "توزيع الخدمة",
-  "simplify_contact_collection": "تبسيط جمع جهات الاتصال",
+  "simplify_contact_collection": "تبسيط مجموعة جهات الاتصال الخاصة بك",
   "stages": {
     "after_greeting": "بعد التحية",
     "after_price": "بعد السعر",
     "no_slots": "لا توجد فتحات مجانية",
     "service_selection": "اختر خدمة",
-    "whatsapp_request": "طلب واتس اب"
+    "whatsapp_request": "الطلب عبر الواتس اب"
   },
   "status": {
     "cancelled": "تم الإلغاء",
@@ -58,37 +90,9 @@
     "file_downloaded": "تم تنزيل الملف بنجاح"
   },
   "title": "التحليلات",
-  "top_services": "أعلى الخدمات",
+  "top_services": "خدمات شعبية",
   "try_again": "حاول ثانية",
-  "where_clients_leave": "أين يذهب العملاء؟",
-  "work_on_objections": "التعامل من تاريخ الاعتراضات",
-  "funnel_overview": "قمع المبيعات",
   "visitors": "الزوار",
-  "engaged": "متضمن",
-  "booked": "تم التسجيل",
-  "completed": "تمت زيارتها",
-  "funnel_chart": "تصور القمع",
-  "funnel": {
-    "conversion": {
-      "visitor_to_engaged": "زائر -> مشارك",
-      "engaged_to_booking": "مشغول -> بدأ التسجيل",
-      "booking_to_booked": "بدأت -> اشتركت",
-      "booked_to_completed": "تم التسجيل -> تمت الزيارة"
-    },
-    "stages": {
-      "visitors": "الزوار",
-      "engaged": "متضمن",
-      "started_booking": "بدأ التسجيل",
-      "booked": "تم التسجيل",
-      "completed": "تمت زيارتها"
-    },
-    "desc": {
-      "visitors": "زوار الموقع/وسائل التواصل الاجتماعي",
-      "engaged": "أظهر الاهتمام",
-      "started_booking": "فتحت استمارة التسجيل",
-      "booked": "اكتمل التسجيل",
-      "completed": "الخدمة المقدمة"
-    },
-    "losses": "الخسائر: {{count}}"
-  }
+  "where_clients_leave": "أين يذهب العملاء؟",
+  "work_on_objections": "التعامل من تاريخ الاعتراضات"
 }

@@ -1,19 +1,22 @@
 {
   "analyze_further": "आगे विश्लेषण करें",
   "apply": "आवेदन करना",
-  "avg_check": "औसत बिल",
+  "avg_check": "औसत जांच",
   "avg_time": "औसत समय",
+  "booked": "साइनअप किया",
   "booking_statuses": "पोस्ट स्थितियाँ",
-  "bookings": "पदों",
+  "bookings": "बुकिंग",
   "bookings_trend": "अभिलेखों की गतिशीलता",
-  "clarify_services": "दिनांक सेवाएँ निर्दिष्ट करें",
-  "conversation_stage": "बातचीत का मंच",
+  "clarify_services": "दिनांक सेवाओं का स्पष्टीकरण",
+  "completed": "दौरा किया",
+  "conversation_stage": "संवाद मंच",
   "conversion": "परिवर्तन",
   "detailed_analysis": "सैलून के कार्य का विस्तृत विश्लेषण",
   "drop_off_analysis": "ड्रॉपआउट विश्लेषण",
-  "drop_offs": "छोड़ दिया या हार मान लिया",
+  "drop_offs": "विफलताओं",
+  "engaged": "शामिल",
   "errors": {
-    "export_failed": "फ़ाइल निर्यात करने में त्रुटि",
+    "export_failed": "फ़ाइल निर्यात त्रुटि",
     "invalid_date_range": "आरंभ तिथि अंतिम तिथि से पहले की होनी चाहिए",
     "invalid_period": "गलत अवधि",
     "loading_error": "लोड करने में त्रुटि",
@@ -21,9 +24,38 @@
   },
   "export": "निर्यात",
   "exporting": "निर्यात करना...",
-  "focus_on_highest_drop_off": "उच्चतम क्षीणन वाले मंच पर ध्यान केंद्रित करें",
+  "focus_on_highest_drop_off": "सबसे बड़े ड्रॉपआउट वाले चरण पर ध्यान दें",
   "for_period": "अवधि के लिए",
   "from_visitors": "आगंतुकों से लेकर ग्राहकों दिनांक तक",
+  "funnel": {
+    "conversion": {
+      "booked_to_completed": "साइन अप किया गया -> दौरा किया गया",
+      "booking_to_booked": "प्रारंभ -> साइन अप किया गया",
+      "engaged_to_booking": "व्यस्त -> रिकॉर्डिंग प्रारंभ की गई",
+      "visitor_to_engaged": "आगंतुक -> व्यस्त"
+    },
+    "desc": {
+      "booked": "पूरा पंजीकरण",
+      "completed": "दिनांक सेवा प्रदान की गई",
+      "engaged": "दिलचस्पी दिखाई",
+      "started_booking": "रजिस्ट्रेशन फॉर्म खोला",
+      "visitors": "वेबसाइट/सोशल मीडिया विज़िटर"
+    },
+    "losses": "हानियाँ: {{count}}",
+    "losses_few": "हानियाँ: {{count}}",
+    "losses_many": "हानियाँ: {{count}}",
+    "losses_one": "हानि: {{count}}",
+    "losses_other": "हानियाँ: {{count}}",
+    "stages": {
+      "booked": "साइनअप किया",
+      "completed": "दौरा किया",
+      "engaged": "शामिल",
+      "started_booking": "रिकॉर्डिंग शुरू कर दी",
+      "visitors": "आगंतुकों"
+    }
+  },
+  "funnel_chart": "फ़नल चार्ट",
+  "funnel_overview": "बिक्री फ़नल",
   "improve_greeting": "अपने अभिवादन में सुधार करें",
   "income": "आय",
   "min": "मिन",
@@ -31,7 +63,7 @@
   "need_more_masters": "अधिक गुरुओं की आवश्यकता है",
   "optimization_tip": "अनुकूलन युक्ति",
   "peak_hours": "अधिकतम घंटे",
-  "per_booking": "रिकॉर्डिंग के लिए",
+  "per_booking": "प्रत्येक प्रविष्टि के लिए",
   "percentage": "प्रतिशत",
   "quantity": "मात्रा",
   "recommendation": "सिफारिश",
@@ -39,13 +71,13 @@
   "response_time": "प्रतिक्रिया समय",
   "revenue": "आय",
   "services_distribution": "दिनांक सेवा वितरण",
-  "simplify_contact_collection": "संपर्क संग्रह को सरल बनाएं",
+  "simplify_contact_collection": "अपने संपर्क संग्रह को सरल बनाएं",
   "stages": {
     "after_greeting": "अभिनंदन के बाद",
     "after_price": "कीमत के बाद",
     "no_slots": "कोई निःशुल्क स्लॉट नहीं",
     "service_selection": "एक दिनांक सेवा चुनें",
-    "whatsapp_request": "व्हाट्सएप अनुरोध"
+    "whatsapp_request": "व्हाट्सएप के माध्यम से अनुरोध करें"
   },
   "status": {
     "cancelled": "रद्द कर दिया गया",
@@ -58,37 +90,9 @@
     "file_downloaded": "फ़ाइल सफलतापूर्वक डाउनलोड हो गई"
   },
   "title": "एनालिटिक्स",
-  "top_services": "शीर्ष दिनांक सेवाएँ",
+  "top_services": "लोकप्रिय दिनांक सेवाएँ",
   "try_again": "पुनः प्रयास करें",
-  "where_clients_leave": "ग्राहक कहां जाएं?",
-  "work_on_objections": "आपत्तियों से निपटें",
-  "funnel_overview": "बिक्री फ़नल",
   "visitors": "आगंतुकों",
-  "engaged": "शामिल",
-  "booked": "साइनअप किया",
-  "completed": "दौरा किया",
-  "funnel_chart": "फ़नल विज़ुअलाइज़ेशन",
-  "funnel": {
-    "conversion": {
-      "visitor_to_engaged": "आगंतुक -> व्यस्त",
-      "engaged_to_booking": "व्यस्त -> रिकॉर्डिंग प्रारंभ की गई",
-      "booking_to_booked": "प्रारंभ -> साइन अप किया गया",
-      "booked_to_completed": "साइन अप किया गया -> दौरा किया गया"
-    },
-    "stages": {
-      "visitors": "आगंतुकों",
-      "engaged": "शामिल",
-      "started_booking": "रिकॉर्डिंग शुरू कर दी",
-      "booked": "साइनअप किया",
-      "completed": "दौरा किया"
-    },
-    "desc": {
-      "visitors": "वेबसाइट/सोशल मीडिया विज़िटर",
-      "engaged": "दिलचस्पी दिखाई",
-      "started_booking": "रजिस्ट्रेशन फॉर्म खोला",
-      "booked": "पूरा पंजीकरण",
-      "completed": "दिनांक सेवा प्रदान की गई"
-    },
-    "losses": "हानियाँ: {{count}}"
-  }
+  "where_clients_leave": "ग्राहक कहां जाएं?",
+  "work_on_objections": "आपत्तियों से निपटना"
 }

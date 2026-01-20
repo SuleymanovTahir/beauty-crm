@@ -9,7 +9,7 @@
   "days_in_row": "дн. подряд",
   "discount": "Скидка",
   "invitations": "Приглашения",
-  "last_6_months": "За последние 6 месяцев",
+  "last_6_months": "За последние {{count}} месяцев",
   "loyalty_card": "Карта лояльности",
   "month_apr": "Апр",
   "month_feb": "Фев",

@@ -6,7 +6,7 @@
       "name": "Votre nom *",
       "namePlaceholder": "Anna Ivanova",
       "phone": "Téléphone *",
-      "phonePlaceholder": "+971 50 123 4567",
+      "phonePlaceholder": "{{points}}",
       "service": "Service *",
       "servicePlaceholder": "Sélectionnez une prestation",
       "submit": "S'inscrire",
@@ -27,7 +27,7 @@
         "title": "Matériaux haut de gamme"
       },
       "schedule": {
-        "description": "Nous travaillons 7 jours sur 7 avec des plages horaires pratiques pour l'réservation",
+        "description": "Nous sommes ouverts {{count}} jours à la date semaine aux horaires qui vous conviennent.",
         "title": "Horaire pratique"
       }
     },

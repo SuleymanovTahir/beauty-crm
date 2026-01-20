@@ -3,7 +3,7 @@
   "allCategories": "Todas as categorias",
   "analytics": {
     "avgPrice": "Qua. preço",
-    "last30Days": "Em 30 dias",
+    "last30Days": "Até data {{count}} dias",
     "revenue": "Receita",
     "totalSold": "Total vendido"
   },
@@ -11,10 +11,10 @@
   "delete": "Excluir",
   "detail": {
     "costPriceLabel": "Custo: {{price}} {{currency}}",
-    "inStock_one": "Um disponível",
-    "inStock_few": "Vários disponíveis",
-    "inStock_many": "Muitos em estoque",
-    "inStock_other": "Outros em estoque",
+    "inStock_few": "Em estoque {{count}} unid.",
+    "inStock_many": "Em estoque {{count}} unid.",
+    "inStock_one": "Em estoque {{count}} unid.",
+    "inStock_other": "Em estoque {{count}} unid.",
     "loadingData": "Carregando dados...",
     "movementAdjustment": "Ajuste",
     "movementHistory": "História dos movimentos",

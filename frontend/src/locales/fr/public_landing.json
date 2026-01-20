@@ -13,32 +13,32 @@
   "aboutTitlePart2": "dans les moindres détails",
   "accept": "Accepter",
   "address": "Adresse",
-  "allergies": "Réactions allergiques",
   "allRightsReserved": "Tous droits réservés.",
   "allServices": "Toutes les prestations",
+  "allergies": "Réactions allergiques",
   "book": "S'inscrire",
+  "bookNow": "S'inscrire",
   "booking": "Réservation",
   "bookingTag": "Inscription en ligne",
-  "bookNow": "S'inscrire",
   "callUs": "Appel",
   "cancellation": "Annulation à la date le client",
   "cookieConsentText": "Nous utilisons des cookies pour améliorer votre expérience sur le site Web. En continuant à utiliser le site, vous acceptez notre",
   "dataDeletion": {
-    "contact": "Contact Us",
-    "description": "If you want to delete your data from our system, please follow these steps:",
+    "contact": "Contactez-nous",
+    "description": "Si vous souhaitez supprimer vos données de notre système, veuillez suivre ces étapes :",
     "step1": {
-      "text": " Send an email to our support team with the subject \"Data Deletion Request\".",
-      "title": "Send a request"
+      "text": "Envoyez un e-mail à notre équipe d'assistance avec pour objet \"Demande de suppression de données\".",
+      "title": "Envoyer la demande"
     },
     "step2": {
-      "text": " Our team will verify your identity to ensure the security of your data.",
-      "title": "Verification"
+      "text": "Notre équipe vérifiera votre identité pour assurer la sécurité de vos données.",
+      "title": "Examen"
     },
     "step3": {
-      "text": " Once verified, we will permanently delete your account and all associated data within 30 days.",
-      "title": "Deletion"
+      "text": "Une fois vérifié, nous supprimerons définitivement votre compte et toutes les données associées dans un délai de {{count}} jours.",
+      "title": "Suppression"
     },
-    "title": "Instruction for Data Deletion"
+    "title": "Instructions pour supprimer des données"
   },
   "days": "jours",
   "decline": "Rejeter",
@@ -80,7 +80,7 @@
   "portfolioTitlePart1": "Exemples",
   "portfolioTitlePart2": "transformation",
   "prices": "Tarifs",
-  "privacyPolicy": "politique de confidentialité",
+  "privacyPolicy": "Politique de confidentialité",
   "privacySection1Text1": "M Le Diamant (« Nous », « Notre », « Salon ») respecte votre vie privée et s'engage à protéger vos données personnelles. Cette politique de confidentialité explique comment nous collectons, utilisons et protégeons vos informations lorsque vous visitez notre site Web et utilisez nos services.",
   "privacySection1Text2": "En utilisant nos services, vous acceptez les termes de cette politique de confidentialité.",
   "privacySection1Title": "Dispositions générales",
@@ -151,11 +151,11 @@
   "termsSection3Text1": "Vous pouvez réserver des services via notre site Web, à la date téléphone ou en personne au salon. Toutes les réservations sont sujettes à confirmation.",
   "termsSection3Text2": "Certains services peuvent exiger un dépôt au moment de la réservation.",
   "termsSection3Text3": "Le paiement est effectué après la prestation des services. Nous acceptons les espèces et les cartes de crédit.",
-  "termsSection3Text4": "Tous les prix sont en dirhams des Émirats arabes unis (AED).",
+  "termsSection3Text4": "Tous les prix sont indiqués en {{currency}}.",
   "termsSection3Title": "Réservation et paiement",
-  "termsSection4Text1": "Vous pouvez annuler ou modifier votre réservation jusqu'à 24 heures avant l'heure prévue sans pénalité.",
-  "termsSection4Text2": "En cas d'annulation moins de 24 heures à l'avance ou de non-présentation, l'acompte (si payé) ne sera pas remboursé.",
-  "termsSection4Text3": "Si vous êtes en retard de plus de 15 minutes, nous nous réservons le droit d'annuler la réservation ou de réduire le temps de procédure.",
+  "termsSection4Text1": "Vous pouvez annuler ou modifier votre réservation au moins {{hours}} heures avant l'heure prévue sans pénalité.",
+  "termsSection4Text2": "Si vous annulez moins de {{hours}} heures à l'avance ou ne vous présentez pas à votre visite, l'acompte (si payé) ne sera pas remboursé.",
+  "termsSection4Text3": "Si vous êtes en retard de plus de {{min}} minutes, nous nous réservons le droit d'annuler la réservation ou de réduire le délai de procédure.",
   "termsSection4Title": "Annulation et modification de réservation",
   "termsSection5List1": "Suivre les règles du salon et communiquer poliment avec le personnel",
   "termsSection5List2": "Fournir des informations précises sur la santé et les allergies",
@@ -169,7 +169,7 @@
   "termsSection6Text3": "Les résultats des procédures peuvent varier en fonction des caractéristiques individuelles. Nous ne garantissons pas de résultats spécifiques.",
   "termsSection6Text4": "Nous ne sommes pas responsables de la perte ou des dommages causés aux objets personnels des clients.",
   "termsSection6Title": "Clause de non-responsabilité",
-  "termsSection7Text1": "Les chèques cadeaux sont valables 12 mois à compter de la date d'achat.",
+  "termsSection7Text1": "Les chèques-cadeaux sont valables {{months}} mois à compter de la date d'achat.",
   "termsSection7Text2": "Les chèques-cadeaux ne peuvent être ni retournés ni échangés contre de l'argent.",
   "termsSection7Text3": "Les chèques-cadeaux peuvent être transférés à une autre personne.",
   "termsSection7Title": "Chèques cadeaux",

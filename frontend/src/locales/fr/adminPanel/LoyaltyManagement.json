@@ -1,89 +1,89 @@
 {
-  "adjust_points": "Points de réglage",
+  "adjust_points": "Modifier le solde de points",
   "buttons": {
     "add_rule": "Ajouter une règle",
-    "adjust_points": "Points de réglage",
+    "adjust_points": "Modifier le solde",
     "cancel": "Annuler",
     "save": "Sauvegarder",
     "save_changes": "Enregistrer les modifications"
   },
   "categories": {
     "category": "Catégorie",
-    "category_placeholder": "à la date exemple. Clous",
-    "description": "Configurer des multiplicateurs de points pour les catégories de services",
+    "category_placeholder": "À la date exemple. Manucure",
+    "description": "Configurer des multiplicateurs de points pour les catégories de services individuelles",
     "multiplier": "Facteur",
     "title": "Multiplicateurs de catégorie"
   },
   "config": {
-    "cashback_hint": "Exemple : 10 % de cashback (10 points pour 100 dépensés)",
+    "cashback_hint": "Exemple : {{percent}}% de cashback ({{points}} points pour chaque {{unit}} dépensé)",
     "cashback_rate": "Remise en argent (%)",
-    "description": "Gestion des paramètres de fidélité globaux",
+    "description": "Paramètres de base du programme de fidélité",
     "expiration_days": "Durée de validité des points (jours)",
-    "expiration_hint": "Les points accumulés expireront après le nombre de jours spécifié.",
-    "points_per_unit": "points pour 1 unité. devises",
-    "title": "Paramètres"
+    "expiration_hint": "Les points seront automatiquement annulés après l'heure spécifiée.",
+    "points_per_unit": "points pour les unités {{count}}. monnaies",
+    "title": "Paramètres globaux"
   },
-  "confirm_delete_rule": "Confirmer la suppression de la règle",
+  "confirm_delete_rule": "Êtes-vous sûr de vouloir supprimer cette règle ?",
   "dialogs": {
     "adjust_points": {
       "client_email": "E-mail du client",
-      "client_email_placeholder": "Espace réservé pour l'e-mail du client",
-      "description": "Description",
-      "points": "Lunettes",
-      "points_placeholder": "Remplisseur de points",
+      "client_email_placeholder": "Entrez votre email pour créer un lien",
+      "description": "Ajustement manuel du solde des points",
+      "points": "Nombre de points",
+      "points_placeholder": "À la date exemple. 100 ou -100",
       "reason": "Cause",
-      "reason_placeholder": "Espace réservé pour la raison",
-      "title": "Titre"
+      "reason_placeholder": "Veuillez indiquer la raison du changement",
+      "title": "Changement de solde"
     },
     "edit_tier": {
-      "description": "Description",
+      "description": "Fixer les conditions d'obtention d'un niveau de privilège",
       "discount_percent": "Pourcentage de remise",
-      "min_points": "Notes minimales",
+      "min_points": "Seuil de score minimum",
       "tier_name": "Nom du niveau",
-      "title": "Titre"
+      "title": "Modifier un niveau"
     },
     "rule": {
-      "description": "Définir le multiplicateur de points pour la catégorie de service",
-      "title": "Modifier la règle de catégorie"
+      "description": "Coefficient d'accumulation personnel pour la catégorie",
+      "title": "Règle de catégorie"
     }
   },
   "stats": {
-    "active_members": "Membres actifs",
-    "points_redeemed": "Points échangés",
-    "total_points_issued": "Total des points attribués"
+    "active_members": "Participants au programme",
+    "points_redeemed": "Points débités",
+    "total_points_issued": "Total accumulé"
   },
-  "subtitle": "Sous-titres",
+  "subtitle": "Gérer les remises, les niveaux d'avantages et les règles de points",
   "tiers": {
-    "description": "Description",
-    "discount": "Rabais",
-    "from_points": "À partir de points",
-    "starting_level": "Niveau d'réservation",
-    "title": "Titre"
+    "description": "Niveaux de fidélité pour la segmentation de la clientèle",
+    "discount": "remise {{percent}}%",
+    "from_points": "à partir de {{points}} points",
+    "starting_level": "Niveau de départ",
+    "title": "Niveaux de privilège"
   },
-  "title": "Titre",
+  "title": "Programme de fidélité",
   "toasts": {
-    "config_updated": "Configuration mise à jour",
-    "failed_adjust": "Échec de la configuration",
-    "failed_delete": "Échec de la suppression",
-    "failed_load": "Échec du chargement",
-    "failed_save": "Échec de l'réservation",
-    "failed_update": "Échec de la mise à jour",
-    "points_adjusted_add": "Points ajustés, ajoutés",
-    "points_adjusted_deduct": "Déduction de points ajustée",
-    "rule_deleted": "La règle a été supprimée.",
-    "rule_saved": "La règle a été enregistrée.",
-    "tier_updated": "Niveau mis à jour"
+    "config_updated": "Paramètres enregistrés",
+    "failed_adjust": "Échec de la modification du solde",
+    "failed_delete": "Erreur lors de la suppression",
+    "failed_load": "Échec du chargement des données",
+    "failed_save": "Erreur lors de l'réservation",
+    "failed_update": "Erreur lors de la mise à jour",
+    "points_adjusted_add": "{{points}} points attribués à l'utilisateur {{email}}",
+    "points_adjusted_deduct": "{{points}} points ont été déduits de l'utilisateur {{email}}",
+    "rule_deleted": "Règle supprimée avec succès",
+    "rule_saved": "Règle enregistrée",
+    "tier_updated": "Données de niveau mises à jour"
   },
   "transactions": {
-    "description": "Description",
-    "search_placeholder": "Espace réservé de recherche",
+    "description": "Historique des transactions de points de fidélité",
+    "search_placeholder": "Recherche à la date client...",
     "table": {
       "client": "Client",
       "date": "Date",
-      "points": "Lunettes",
+      "points": "Points",
       "reason": "Cause",
       "type": "Taper"
     },
-    "title": "Titre"
+    "title": "Dernières transactions"
   }
 }

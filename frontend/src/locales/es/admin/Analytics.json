@@ -1,19 +1,22 @@
 {
   "analyze_further": "Analizar más",
   "apply": "Aplicar",
-  "avg_check": "Factura promedio",
-  "avg_time": "tiempo promedio",
+  "avg_check": "Cheque promedio",
+  "avg_time": "Tiempo promedio",
+  "booked": "Registrado",
   "booking_statuses": "Estados de reserva",
-  "bookings": "Reservas",
+  "bookings": "Bookings",
   "bookings_trend": "Dinámica de reservas",
-  "clarify_services": "Especificar servicios",
-  "conversation_stage": "Etapa de conversación",
+  "clarify_services": "Aclaración de servicios",
+  "completed": "Visitado",
+  "conversation_stage": "Etapa de diálogo",
   "conversion": "Conversión",
   "detailed_analysis": "Análisis detallado del trabajo del salón.",
   "drop_off_analysis": "Análisis de abandono",
-  "drop_offs": "abandonado",
+  "drop_offs": "Fallos",
+  "engaged": "Involucrado",
   "errors": {
-    "export_failed": "Error al exportar el archivo",
+    "export_failed": "Error de exportación de archivos",
     "invalid_date_range": "La fecha de inicio debe ser anterior a la fecha de finalización.",
     "invalid_period": "Periodo incorrecto",
     "loading_error": "Error de carga",
@@ -21,9 +24,38 @@
   },
   "export": "Exportar",
   "exporting": "Exportar...",
-  "focus_on_highest_drop_off": "Centrarse en el escenario con mayor desgaste",
+  "focus_on_highest_drop_off": "Atentos a la etapa con mayor abandono",
   "for_period": "Para el periodo",
   "from_visitors": "De visitantes a clientes",
+  "funnel": {
+    "conversion": {
+      "booked_to_completed": "Registrado -> Visitado",
+      "booking_to_booked": "Iniciado -> Registrado",
+      "engaged_to_booking": "Comprometido -> Comenzó a grabar",
+      "visitor_to_engaged": "Visitante -> Comprometido"
+    },
+    "desc": {
+      "booked": "Reserva completado",
+      "completed": "Servicio prestado",
+      "engaged": "Mostró interés",
+      "started_booking": "Abrió el formulario de reserva.",
+      "visitors": "Visitantes del sitio web/redes sociales"
+    },
+    "losses": "Pérdidas: {{count}}",
+    "losses_few": "Pérdidas: {{count}}",
+    "losses_many": "Pérdidas: {{count}}",
+    "losses_one": "Pérdida: {{count}}",
+    "losses_other": "Pérdidas: {{count}}",
+    "stages": {
+      "booked": "Registrado",
+      "completed": "Visitado",
+      "engaged": "Involucrado",
+      "started_booking": "Comenzó a grabar",
+      "visitors": "Visitantes"
+    }
+  },
+  "funnel_chart": "Gráfico de embudo",
+  "funnel_overview": "Embudo de ventas",
   "improve_greeting": "Mejora tu saludo",
   "income": "Ingreso",
   "min": "mín.",
@@ -31,64 +63,36 @@
   "need_more_masters": "Necesita más maestros",
   "optimization_tip": "Consejo de optimización",
   "peak_hours": "Horas pico",
-  "per_booking": "Para grabar",
-  "percentage": "hasta fecha ciento",
+  "per_booking": "Para cada reserva",
+  "percentage": "Hasta ciento",
   "quantity": "Cantidad",
   "recommendation": "Recomendación",
   "refresh": "Actualizar",
   "response_time": "Tiempo de respuesta",
-  "revenue": "Ingreso",
+  "revenue": "Ganancia",
   "services_distribution": "Distribución de servicios",
-  "simplify_contact_collection": "Simplifique la recopilación de contactos",
+  "simplify_contact_collection": "Simplifica tu colección de contactos",
   "stages": {
-    "after_greeting": "despues del saludo",
-    "after_price": "despues del precio",
+    "after_greeting": "Despues del saludo",
+    "after_price": "Despues del precio",
     "no_slots": "No hay espacios libres",
     "service_selection": "Seleccione un servicio",
-    "whatsapp_request": "Solicitud de whatsapp"
+    "whatsapp_request": "Solicitar vía WhatsApp"
   },
   "status": {
     "cancelled": "Cancelado",
     "completed": "Terminado",
     "confirmed": "Confirmado",
-    "no_show": "no vino",
+    "no_show": "No vino",
     "pending": "Espera"
   },
   "success": {
     "file_downloaded": "Archivo descargado exitosamente"
   },
   "title": "Analítica",
-  "top_services": "Servicios destacados",
+  "top_services": "Servicios populares",
   "try_again": "Intentar otra vez",
-  "where_clients_leave": "¿A dónde van los clientes?",
-  "work_on_objections": "Lidiar con las objeciones",
-  "funnel_overview": "embudo de ventas",
   "visitors": "Visitantes",
-  "engaged": "Involucrado",
-  "booked": "Registrado",
-  "completed": "Visitado",
-  "funnel_chart": "Visualización del embudo",
-  "funnel": {
-    "conversion": {
-      "visitor_to_engaged": "Visitante -> Comprometido",
-      "engaged_to_booking": "Comprometido -> Comenzó a grabar",
-      "booking_to_booked": "Iniciado -> Registrado",
-      "booked_to_completed": "Registrado -> Visitado"
-    },
-    "stages": {
-      "visitors": "Visitantes",
-      "engaged": "Involucrado",
-      "started_booking": "Comenzó a grabar",
-      "booked": "Registrado",
-      "completed": "Visitado"
-    },
-    "desc": {
-      "visitors": "Visitantes del sitio web/redes sociales",
-      "engaged": "Mostró interés",
-      "started_booking": "Abrió el formulario de reserva.",
-      "booked": "reserva completado",
-      "completed": "Servicio prestado"
-    },
-    "losses": "Pérdidas: {{count}}"
-  }
+  "where_clients_leave": "¿A dónde van los clientes?",
+  "work_on_objections": "Lidiar con las objeciones"
 }

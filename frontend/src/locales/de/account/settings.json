@@ -45,8 +45,8 @@
   "personal_info_title": "Persönliche Informationen",
   "photo_requirements": "JPG, PNG.",
   "privacy_masters": "Master-Zugang",
-  "privacy_masters_desc": "Teilen Sie Ihren Besuchsverlauf mit Meistern",
-  "privacy_photos": "Fotoauflösung",
+  "privacy_masters_desc": "Teilen Sie Ihren Besuchsverlauf mit den Meistern",
+  "privacy_photos": "Foto zulassen",
   "privacy_photos_desc": "Erlauben Sie Technikern, Vorher-/Nachher-Fotos zu machen",
   "privacy_public": "Öffentliches Profil",
   "privacy_public_desc": "Zeigen Sie Ihre Erfolge anderen Kunden",
@@ -62,8 +62,8 @@
   "title": "Einstellungen",
   "type_achievements": "Erfolge",
   "type_achievements_desc": "Neue Belohnungen und Herausforderungen",
-  "type_appointments": "bookings",
-  "type_appointments_desc": "Erinnerungen für bevorstehende Besuche",
+  "type_appointments": "Bookings",
+  "type_appointments_desc": "Benachrichtigungen über bevorstehende Besuche",
   "type_promotions": "Aktionen und Angebote",
   "type_promotions_desc": "Sonderangebote und Rabatte"
 }

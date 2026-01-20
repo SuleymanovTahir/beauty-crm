@@ -44,7 +44,7 @@
     "updated": "Quest aktualisiert"
   },
   "types": {
-    "service": "Servicekategorie",
+    "service": "servicekategorie",
     "spend": "Gesamtausgaben",
     "visits": "Anzahl der Besuche"
   }

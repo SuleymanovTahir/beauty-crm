@@ -15,14 +15,14 @@
   },
   "cta": {
     "bookButton": "Inscreva-se para o procedimento",
-    "ready": "Pronto para transformar?"
+    "ready": "Pronto para se inscrever?"
   },
-  "error": "Erro ao carregar serviços",
+  "error": "Erro ao carregar serviços.",
   "loading": "Carregando serviços...",
   "noResults": "Nenhum serviço encontrado que corresponda à sua pesquisa",
   "noServices": "Serviços não encontrados",
   "search": "Pesquisar serviços...",
-  "services": "serviços",
+  "services": "Serviços",
   "subtitle": "Serviços de beleza premium a preços acessíveis",
   "title": "Nossos serviços e preços"
 }

@@ -46,7 +46,7 @@
   "photo_requirements": "जेपीजी, पीएनजी। अधिकतम. 5एमबी",
   "privacy_masters": "मास्टर पहुंच",
   "privacy_masters_desc": "मास्टर्स के साथ अपनी यात्रा का इतिहास साझा करें",
-  "privacy_photos": "फोटो संकल्प",
+  "privacy_photos": "फ़ोटो की अनुमति दें",
   "privacy_photos_desc": "तकनीशियनों को पहले/बाद की तस्वीरें लेने की अनुमति दें",
   "privacy_public": "सार्वजनिक प्रालेख",
   "privacy_public_desc": "अन्य ग्राहकों को अपनी उपलब्धियाँ दिखाएँ",
@@ -62,8 +62,8 @@
   "title": "दिनांक सेटिंग्स",
   "type_achievements": "उपलब्धियों",
   "type_achievements_desc": "नए पुरस्कार और चुनौतियाँ",
-  "type_appointments": "आदेश",
-  "type_appointments_desc": "आगामी यात्राओं के लिए अनुस्मारक",
+  "type_appointments": "बुकिंग",
+  "type_appointments_desc": "आगामी दौरों के बारे में अलर्ट",
   "type_promotions": "प्रमोशन और ऑफर",
   "type_promotions_desc": "विशेष ऑफर और छूट"
 }

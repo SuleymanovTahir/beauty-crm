@@ -9,7 +9,7 @@
   "days_in_row": "أيام العقد",
   "discount": "تخفيض",
   "invitations": "الدعوات",
-  "last_6_months": "على مدى 6 أشهر الماضية",
+  "last_6_months": "على مدار {{count}} من الأشهر الماضية",
   "loyalty_card": "بطاقة الولاء",
   "month_apr": "أبريل",
   "month_feb": "فبراير",

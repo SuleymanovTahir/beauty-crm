@@ -16,7 +16,7 @@
   "individual": "Individual",
   "individual_plan": "plan individual",
   "individual_plans": "Planes individuales",
-  "manage_goals_and_targets": "Gestionar metas y objetivos.",
+  "manage_goals_and_targets": "Gestión de objetivos y KPI",
   "manage_metrics": "Gestión de métricas",
   "metric_name": "Nombre",
   "metric_name_en": "Título (ES)",
@@ -29,7 +29,7 @@
     "custom": "tu periodo",
     "month": "Mes",
     "quarter": "Cuarto",
-    "two_weeks": "2 semanas",
+    "two_weeks": "{{count}} semanas",
     "week": "Semana",
     "year": "Año"
   },

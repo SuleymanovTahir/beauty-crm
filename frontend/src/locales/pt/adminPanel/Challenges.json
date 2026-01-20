@@ -1,64 +1,64 @@
 {
   "buttons": {
     "cancel": "Cancelar",
-    "create_challenge": "Crie um desafio",
-    "update_challenge": "Desafio de atualização"
+    "create_challenge": "Crie uma meta",
+    "update_challenge": "Salvar alterações"
   },
   "card": {
-    "check_progress": "Check Progress",
+    "check_progress": "Verifique o progresso",
     "completed": "concluído",
     "progress": "Progresso",
-    "pts": "apontar",
+    "pts": "pontos",
     "reward": "Recompensa",
     "target": "Alvo"
   },
-  "create_challenge": "Crie um desafio",
+  "create_challenge": "Crie uma nova meta",
   "dialogs": {
     "create": {
-      "description": "Defina parâmetros de desafio e recompensas",
+      "description": "Configure parâmetros de atividade e bônus de conclusão",
       "form": {
-        "challenge_type": "Tipo de desafio",
-        "description": "Descrição",
-        "description_placeholder": "Visite o salão 3 vezes este mês",
+        "challenge_type": "Tipo de atividade",
+        "description": "Descrição da tarefa",
+        "description_placeholder": "Ex: Visite o salão {{count}} vezes este mês",
         "end_date": "Data de término",
-        "reward_placeholder": "1000",
-        "reward_points": "Recompensa com pontos",
-        "start_date": "data de início",
-        "target_placeholder": "3",
-        "target_value": "Valor alvo",
-        "title": "Nome",
-        "title_placeholder": "Desafio de beleza de verão"
+        "reward_placeholder": "{{points}}",
+        "reward_points": "Adicionar pontos",
+        "start_date": "Data de início",
+        "target_placeholder": "{{points}}",
+        "target_value": "Quantidade desejada",
+        "title": "Nome da meta",
+        "title_placeholder": "Até data exemplo: reforma de verão"
       },
-      "title": "Crie um novo desafio",
-      "title_edit": "Editar desafio"
+      "title": "Criando uma meta",
+      "title_edit": "Editando um destino"
     },
     "delete": {
-      "confirm": "Tem certeza de que deseja excluir este desafio?"
+      "confirm": "Tem certeza de que deseja excluir esta atividade? Todo o progresso dos participantes será perdido."
     }
   },
   "stats": {
-    "active_challenges": "Desafios ativos",
-    "completions": "Conclusão",
-    "total_participants": "Total de participantes"
+    "active_challenges": "Alvos ativos",
+    "completions": "Execuções",
+    "total_participants": "Participantes"
   },
-  "subtitle": "Criando e gerenciando desafios de engajamento",
-  "title": "Desafios",
+  "subtitle": "Gerencie a mecânica e as metas do jogo para aumentar a fidelidade do cliente",
+  "title": "Metas e conquistas",
   "toasts": {
-    "created": "Desafio criado com sucesso",
-    "deleted": "Desafio excluído com sucesso",
-    "failed_check_progress": "Failed to check progress",
-    "failed_create": "Falha ao criar desafio",
-    "failed_delete": "Falha ao excluir o desafio",
-    "failed_load": "Falha ao carregar desafios",
-    "progress_checked_one": "Progresso verificado sozinho",
-    "progress_checked_few": "Progresso verificado vários",
-    "progress_checked_many": "O progresso foi testado até data muitos",
-    "progress_checked_other": "Progresso verificado até data outros"
+    "created": "Atividade criada com sucesso",
+    "deleted": "Atividade excluída",
+    "failed_check_progress": "Falha ao atualizar o progresso",
+    "failed_create": "Erro ao criar atividade",
+    "failed_delete": "Erro durante a exclusão",
+    "failed_load": "Falha ao carregar dados",
+    "progress_checked_few": "Progresso atualizado para {{count}} participantes",
+    "progress_checked_many": "Progresso atualizado para {{count}} participantes",
+    "progress_checked_one": "Progresso atualizado para membro {{count}}",
+    "progress_checked_other": "Progresso atualizado para {{count}} participantes"
   },
   "types": {
     "referrals": "Referências",
     "services": "Serviços",
-    "spending": "Despesas",
+    "spending": "Gastos",
     "visits": "Visitas"
   }
 }

@@ -6,7 +6,7 @@
   },
   "dialogs": {
     "send": {
-      "description": "Erstellen Sie eine Benachrichtigung und senden Sie sie an Ihre Kunden",
+      "description": "Erstellen Sie eine gezielte Benachrichtigung für Ihre Kunden",
       "form": {
         "appointment_date": "Aufnahmedatum",
         "appointment_filter": "Nach Einträgen filtern",
@@ -18,34 +18,34 @@
         "end_date": "Enddatum",
         "loyalty_tier": "Treueniveau",
         "message": "Nachricht",
-        "message_placeholder": "Benachrichtigungstext",
-        "notification_type": "Benachrichtigungstyp",
-        "repeat_end_date": "Wiedergabe beenden",
+        "message_placeholder": "Benachrichtigungstext eingeben...",
+        "notification_type": "Kanaltyp",
+        "repeat_end_date": "Enddatum der Wiedergabe",
         "repeat_interval": "Intervall wiederholen",
         "repeat_intervals": {
           "daily": "Täglich",
           "monthly": "Monatlich",
           "weekly": "Wöchentlich"
         },
-        "repeat_notification": "Benachrichtigung wiederholen",
+        "repeat_notification": "Wiederkehrende Benachrichtigung",
         "schedule_date": "Sendedatum",
-        "schedule_notification": "Planen Sie eine Benachrichtigung",
+        "schedule_notification": "Versand planen",
         "schedule_time": "Versandzeit",
         "segments": {
           "active": "Aktive Kunden",
           "all": "Alle Kunden",
           "appointment_based": "Laut Aufzeichnungen",
-          "inactive": "Inaktive Kunden",
+          "inactive": "Verloren (inaktiv)",
           "service_based": "Durch Dienstleistungen",
-          "tier": "Nach Treuestufe"
+          "tier": "Nach Treuestufen"
         },
         "select_filter": "Filter auswählen",
         "select_tier": "Ebene auswählen",
         "service_filter": "Service/Verfahren",
-        "service_hint": "Kunden, die sich für diesen Service registriert haben, erhalten eine Benachrichtigung",
-        "service_placeholder": "Geben Sie den Dienstnamen oder die ID ein",
+        "service_hint": "Kunden, die sich für den ausgewählten Dienst registriert haben, erhalten eine Benachrichtigung",
+        "service_placeholder": "Geben Sie den Dienstnamen ein",
         "start_date": "Startdatum",
-        "target_segment": "Zielsegment",
+        "target_segment": "Zielgruppe (Segment)",
         "tiers": {
           "bronze": "Bronze",
           "gold": "Gold",
@@ -53,73 +53,73 @@
           "silver": "Silber"
         },
         "title": "Überschrift",
-        "title_placeholder": "Titel der Benachrichtigung"
+        "title_placeholder": "Geben Sie den Haupttitel ein"
       },
-      "title": "Neue Benachrichtigung senden"
+      "title": "Neue Benachrichtigung"
     },
     "template": {
-      "description": "Erstellen Sie eine wiederverwendbare Benachrichtigungsvorlage",
+      "description": "Erstellen Sie eine Vorlage für schnelle Mailings in der Zukunft",
       "form": {
         "message": "Nachricht",
-        "message_placeholder": "Verwenden Sie {variable} für dynamische Inhalte",
+        "message_placeholder": "Verwenden Sie {name}, um den Clientnamen zu ersetzen",
         "template_name": "Vorlagenname",
-        "template_name_placeholder": "zum Beispiel Willkommensnachricht",
+        "template_name_placeholder": "zum Beispiel: Begrüßung eines neuen Kunden",
         "title": "Überschrift",
         "title_placeholder": "Titel der Benachrichtigung",
-        "type": "Typ",
+        "type": "Kanaltyp",
         "types": {
-          "email": "Email",
-          "push": "Push-Benachrichtigung",
+          "email": "Schönheitssalonservice E-Mail",
+          "push": "Push-Benachrichtigung-Benachrichtigung",
           "sms": "SMS"
         }
       },
-      "title": "Als Vorlage speichern"
+      "title": "Erstellen Sie eine Vorlage"
     }
   },
   "history": {
-    "description": "Alle gesendeten und geplanten Benachrichtigungen",
+    "description": "Liste bisher erstellter und aktueller Mailings",
     "filters": {
-      "all": "Alle",
-      "email": "Email",
-      "push": "Push",
+      "all": "Alle Kanäle",
+      "email": "Schönheitssalonservice E-Mail",
+      "push": "Push-Benachrichtigung",
       "sms": "SMS"
     },
     "scheduled": "Geplant",
     "table": {
       "date": "Datum",
       "recipients": "Empfänger",
-      "sent_failed": "Gesendet/fehlgeschlagen",
+      "sent_failed": "Gesendet / Fehler",
       "status": "Status",
-      "title": "Überschrift",
+      "title": "Titel/Betreff",
       "type": "Typ"
     },
-    "title": "Benachrichtigungsverlauf"
+    "title": "Mailing-Historie"
   },
   "save_template": "Vorlage speichern",
-  "send_notification": "Benachrichtigung senden",
+  "send_notification": "Schicken",
   "stats": {
-    "email_sent": "E-Mail gesendet",
-    "push_sent": "Push gesendet",
-    "sms_sent": "SMS gesendet",
+    "email_sent": "Schönheitssalonservice E-Mail",
+    "push_sent": "Push-Benachrichtigung",
+    "sms_sent": "SMS",
     "total_sent": "Insgesamt gesendet"
   },
-  "subtitle": "Verwalten und Versenden datum bis Benachrichtigungen an Kunden",
+  "subtitle": "Kontrollzentrum für Mailings und automatische Benachrichtigungen",
   "templates": {
-    "description": "Schnelle Vorlagen für allgemeine Benachrichtigungen",
-    "title": "Benachrichtigungsvorlagen",
-    "use_template": "Vorlage verwenden"
+    "description": "Vorgefertigte Vorlagen, um Zeit zu sparen",
+    "title": "Meine Vorlagen",
+    "use_template": "Verwenden"
   },
-  "title": "Benachrichtigungsfeld",
+  "title": "Benachrichtigungen",
   "toasts": {
-    "failed_load": "Benachrichtigungen konnten nicht geladen werden",
+    "failed_load": "Fehler beim Laden der Benachrichtigungen",
     "failed_save_template": "Vorlage konnte nicht gespeichert werden",
-    "failed_send": "Benachrichtigung konnte nicht gesendet werden",
+    "failed_send": "Fehler beim Senden der Benachrichtigung",
     "sent": "Benachrichtigung erfolgreich gesendet",
-    "template_saved": "Vorlage erfolgreich gespeichert"
+    "template_saved": "Vorlage gespeichert"
   },
   "types": {
-    "email": "Email",
-    "push": "Push",
+    "email": "Schönheitssalonservice E-Mail",
+    "push": "Push-Benachrichtigung-Benachrichtigung",
     "sms": "SMS"
   }
 }
