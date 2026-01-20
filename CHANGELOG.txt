@@ -19,6 +19,24 @@
 | **В ожидании** | Pending | قيد الانتظار | Күтуде | Ausstehend | En espera | En attente | Pendente | लंबित |
 | **Мастер** | Stylist/Master | خبير | Маман/Шебер | Spezialist | Especialista | Spécialiste | Especialista | विशेषज्ञ |
 
+## [2026-01-20] Localization & API Hardening
+- 🌍 **Deep Internationalization (Services & Calendar):**
+  - **Zero Hardcode (Admin Panel):** Eliminated all hardcoded Russian strings in `Services.tsx`, `Calendar.tsx`, `Bookings.tsx`, `Telephony.tsx`, and `Settings.tsx`.
+  - **Dynamic Locale:** Updated `Calendar.tsx` to use `i18n.language` for date formatting instead of hardcoded 'ru-RU'.
+  - **Missing Keys:** Populated `services.json`, `bookings.json`, `telephony.json` and `settings.json` with dozens of missing translations (alerts, confirmations, buttons, categories, table headers, filter options).
+  - **Dropdown Translation:** Implemented dynamic translation for service category dropdowns (`category_...`) to ensure correct display in all languages.
+  - **Filter Localization:** Fixed date period filters (Last 7 days, Custom period, All time) to use shared `common` translations.
+  - **Telephony & Settings:**
+    - Fully localized `Telephony.tsx` (Table headers, filters, buttons, status badges).
+    - Fixed `Settings.tsx` hardcoded strings and lint errors (property `url` -> `full_url`).
+    - **Localization Expansion:**
+      - Created `pending_registrations.json` to fully localize `PendingRegistrations.tsx` (previously 100% hardcoded).
+      - Localized `PendingUsers.tsx` and fixed TypeScript errors.
+      - Updated `clients.json` (filled missing import count keys).
+      - Corrections in `broadcasts.json` ("Телеграмма" -> "Telegram").
+- 🔧 **API Stability:**
+  - **Route Fix Verification:** Confirmed that `/api/bookings` route is correctly exposed as GET/POST (without double prefixes), resolving the reported 405 Method Not Allowed error.
+
 ## [2026-01-22] Public Landing & Booking Improvements
 - 🌍 **Localization & i18n Fixes:**
   - **Refined Navigation:** Shortened navigation labels for better display ("Наши работы" → "Работы", "Наша команда" → "Команда", "Часто задаваемые вопросы" → "FAQ").

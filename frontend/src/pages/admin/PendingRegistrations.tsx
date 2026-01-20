@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Check, X, Trash2, RefreshCw, User, Mail, Briefcase, Calendar, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface PendingUser {
     id: number;
@@ -14,6 +15,7 @@ interface PendingUser {
 }
 
 const PendingRegistrations: React.FC = () => {
+    const { t, i18n } = useTranslation('admin/pending_registrations');
     const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -68,9 +70,9 @@ const PendingRegistrations: React.FC = () => {
             await fetchPendingUsers();
 
             // Show success message
-            alert('Регистрация одобрена! Пользователь получит email уведомление.');
+            alert(t('approved_success'));
         } catch (err) {
-            alert('Ошибка при одобрении: ' + (err instanceof Error ? err.message : 'Unknown error'));
+            alert(`${t('error_approving')}: ` + (err instanceof Error ? err.message : 'Unknown error'));
         } finally {
             setActionLoading(null);
         }
@@ -103,16 +105,16 @@ const PendingRegistrations: React.FC = () => {
                 return newState;
             });
 
-            alert('Регистрация отклонена. Пользователь получит email уведомление.');
+            alert(t('rejected_success'));
         } catch (err) {
-            alert('Ошибка при отклонении: ' + (err instanceof Error ? err.message : 'Unknown error'));
+            alert(`${t('error_rejecting')}: ` + (err instanceof Error ? err.message : 'Unknown error'));
         } finally {
             setActionLoading(null);
         }
     };
 
     const handleDelete = async (userId: number) => {
-        if (!confirm('Вы уверены что хотите удалить эту регистрацию? Это действие необратимо.')) {
+        if (!confirm(t('confirm_delete'))) {
             return;
         }
 
@@ -130,9 +132,9 @@ const PendingRegistrations: React.FC = () => {
             // Refresh the list
             await fetchPendingUsers();
 
-            alert('Регистрация удалена.');
+            alert(t('deleted_success'));
         } catch (err) {
-            alert('Ошибка при удалении: ' + (err instanceof Error ? err.message : 'Unknown error'));
+            alert(`${t('error_deleting')}: ` + (err instanceof Error ? err.message : 'Unknown error'));
         } finally {
             setActionLoading(null);
         }
@@ -141,7 +143,7 @@ const PendingRegistrations: React.FC = () => {
     const formatDate = (dateString: string) => {
         try {
             const date = new Date(dateString);
-            return date.toLocaleString('ru-RU', {
+            return date.toLocaleString(i18n.language, {
                 day: '2-digit',
                 month: '2-digit',
                 year: 'numeric',
@@ -168,7 +170,7 @@ const PendingRegistrations: React.FC = () => {
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
                     <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-indigo-600" />
-                    <p className="text-gray-600">Загрузка...</p>
+                    <p className="text-gray-600">{t('loading')}</p>
                 </div>
             </div>
         );
@@ -180,9 +182,9 @@ const PendingRegistrations: React.FC = () => {
             <div className="mb-8">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Ожидающие регистрации</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
                         <p className="text-gray-600 mt-2">
-                            Управление новыми регистрациями пользователей
+                            {t('subtitle')}
                         </p>
                     </div>
                     <button
@@ -190,7 +192,7 @@ const PendingRegistrations: React.FC = () => {
                         className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                     >
                         <RefreshCw className="w-4 h-4" />
-                        Обновить
+                        {t('refresh')}
                     </button>
                 </div>
 
@@ -199,7 +201,7 @@ const PendingRegistrations: React.FC = () => {
                         <div className="flex items-center gap-2">
                             <AlertCircle className="w-5 h-5 text-blue-600" />
                             <span className="text-blue-900 font-medium">
-                                {pendingUsers.length} регистраци{pendingUsers.length === 1 ? 'я' : pendingUsers.length < 5 ? 'и' : 'й'} ожидает вашего одобрения
+                                {t('pending_count', { count: pendingUsers.length })}
                             </span>
                         </div>
                     </div>
@@ -218,10 +220,10 @@ const PendingRegistrations: React.FC = () => {
                 <div className="text-center py-16">
                     <User className="w-16 h-16 mx-auto mb-4 text-gray-400" />
                     <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                        Нет ожидающих регистраций
+                        {t('no_pending')}
                     </h3>
                     <p className="text-gray-500">
-                        Все новые регистрации будут отображаться здесь
+                        {t('no_pending_desc')}
                     </p>
                 </div>
             )}
@@ -256,7 +258,7 @@ const PendingRegistrations: React.FC = () => {
                                             </div>
                                             <div className="flex items-center gap-2 text-gray-700">
                                                 <Briefcase className="w-4 h-4 text-gray-400" />
-                                                <span className="text-sm">{user.position || 'Не указано'}</span>
+                                                <span className="text-sm">{user.position || t('not_specified')}</span>
                                             </div>
                                             <div className="flex items-center gap-2 text-gray-700">
                                                 <Calendar className="w-4 h-4 text-gray-400" />
@@ -264,14 +266,14 @@ const PendingRegistrations: React.FC = () => {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}>
-                                                    {user.role === 'director' ? 'Директор' :
-                                                        user.role === 'manager' ? 'Менеджер' :
-                                                            user.role === 'employee' ? 'Сотрудник' :
-                                                                user.role === 'admin' ? 'Админ' : user.role}
+                                                    {user.role === 'director' ? t('role_director') :
+                                                        user.role === 'manager' ? t('role_manager') :
+                                                            user.role === 'employee' ? t('role_employee') :
+                                                                user.role === 'admin' ? t('role_admin') : user.role}
                                                 </span>
                                                 {user.email_verified && (
                                                     <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                        ✓ Email подтвержден
+                                                        ✓ {t('status_verified')}
                                                     </span>
                                                 )}
                                             </div>
@@ -291,7 +293,7 @@ const PendingRegistrations: React.FC = () => {
                                         ) : (
                                             <Check className="w-4 h-4" />
                                         )}
-                                        Одобрить
+                                        {t('approve')}
                                     </button>
 
                                     <button
@@ -300,7 +302,7 @@ const PendingRegistrations: React.FC = () => {
                                         className="flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                     >
                                         <X className="w-4 h-4" />
-                                        Отклонить
+                                        {t('reject')}
                                     </button>
 
                                     <button
@@ -309,7 +311,7 @@ const PendingRegistrations: React.FC = () => {
                                         className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                     >
                                         <Trash2 className="w-4 h-4" />
-                                        Удалить
+                                        {t('delete')}
                                     </button>
                                 </div>
                             </div>
@@ -322,9 +324,9 @@ const PendingRegistrations: React.FC = () => {
             {showRejectModal !== null && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-lg max-w-md w-full p-6">
-                        <h3 className="text-lg font-semibold mb-4">Отклонить регистрацию</h3>
+                        <h3 className="text-lg font-semibold mb-4">{t('reject_modal_title')}</h3>
                         <p className="text-gray-600 mb-4">
-                            Укажите причину отклонения (опционально). Пользователь получит это сообщение на email.
+                            {t('reject_modal_desc')}
                         </p>
                         <textarea
                             value={rejectReason[showRejectModal] || ''}
@@ -332,7 +334,7 @@ const PendingRegistrations: React.FC = () => {
                                 ...prev,
                                 [showRejectModal]: e.target.value
                             }))}
-                            placeholder="Например: Недостаточно информации..."
+                            placeholder={t('reject_reason_placeholder')}
                             className="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                             rows={4}
                         />
@@ -342,7 +344,7 @@ const PendingRegistrations: React.FC = () => {
                                 disabled={actionLoading === showRejectModal}
                                 className="flex-1 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 transition-colors"
                             >
-                                {actionLoading === showRejectModal ? 'Отклонение...' : 'Отклонить'}
+                                {actionLoading === showRejectModal ? t('rejecting') : t('reject')}
                             </button>
                             <button
                                 onClick={() => {
@@ -355,7 +357,7 @@ const PendingRegistrations: React.FC = () => {
                                 }}
                                 className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
                             >
-                                Отмена
+                                {t('cancel')}
                             </button>
                         </div>
                     </div>

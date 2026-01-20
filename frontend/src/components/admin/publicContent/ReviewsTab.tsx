@@ -37,7 +37,7 @@ const getLocalizedText = (item: any, field: string, lang: string): string => {
 };
 
 export default function ReviewsTab() {
-    const { t, i18n } = useTranslation(['admin/PublicContent', 'common']);
+    const { t, i18n } = useTranslation(['admin/publiccontent', 'common']);
     const currentLang = i18n.language?.split('-')[0] || 'en';
     const [reviews, setReviews] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
@@ -144,8 +144,8 @@ export default function ReviewsTab() {
         <div>
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h2 className="text-xl font-semibold">{t('reviews_title', 'Отзывы клиентов')}</h2>
-                    <p className="text-gray-600">{t('reviews_subtitle', 'Управление отзывами на главной странице')}</p>
+                    <h2 className="text-xl font-semibold">{t('reviews_title')}</h2>
+                    <p className="text-gray-600">{t('reviews_subtitle')}</p>
                 </div>
                 <Button onClick={() => {
                     setEditingReview(null);
@@ -265,7 +265,7 @@ export default function ReviewsTab() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1">{t('service', 'Услуга')}</label>
+                                <label className="block text-sm font-medium mb-1">{t('service')}</label>
                                 <Input
                                     value={formData.employee_position}
                                     onChange={(e) => setFormData({ ...formData, employee_position: e.target.value })}
@@ -275,7 +275,7 @@ export default function ReviewsTab() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1">{t('date', 'Дата')}</label>
+                                <label className="block text-sm font-medium mb-1">{t('date')}</label>
                                 <Input
                                     type="date"
                                     value={formData.created_at ? formData.created_at.split(/[T ]/)[0] : ''}
@@ -305,8 +305,8 @@ export default function ReviewsTab() {
                                 </Label>
                                 <Tabs value={uploadTab} onValueChange={setUploadTab} className="w-full">
                                     <TabsList className="grid w-full grid-cols-2">
-                                        <TabsTrigger value="url">{t('common:url_link', 'URL')}</TabsTrigger>
-                                        <TabsTrigger value="file">{t('common:upload_file', 'Upload File')}</TabsTrigger>
+                                        <TabsTrigger value="url">{t('common:url_link')}</TabsTrigger>
+                                        <TabsTrigger value="file">{t('common:upload_file')}</TabsTrigger>
                                     </TabsList>
                                     <TabsContent value="url" className="mt-2">
                                         <Input
@@ -324,7 +324,7 @@ export default function ReviewsTab() {
                                             onClick={() => document.getElementById('review-file-upload')?.click()}
                                             disabled={uploading}
                                         >
-                                            {uploading ? t('common:uploading', 'Uploading...') : t('common:choose_file', 'Choose File')}
+                                            {uploading ? t('common:uploading') : t('common:choose_file')}
                                         </Button>
                                         <input
                                             id="review-file-upload"

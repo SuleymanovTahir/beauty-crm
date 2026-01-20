@@ -28,7 +28,7 @@ interface GalleryImage {
 }
 
 export default function GalleryTab() {
-    const { t } = useTranslation(['admin/PublicContent', 'common']);
+    const { t } = useTranslation(['admin/publiccontent', 'common']);
     const [portfolioImages, setPortfolioImages] = useState<GalleryImage[]>([]);
     const [salonImages, setSalonImages] = useState<GalleryImage[]>([]);
     const [servicesImages, setServicesImages] = useState<GalleryImage[]>([]);
@@ -341,7 +341,7 @@ export default function GalleryTab() {
                                 <div className="relative w-40 h-40 rounded-lg overflow-hidden border bg-gray-100 group">
                                     <img
                                         src={`${import.meta.env.VITE_API_URL || window.location.origin}${editForm.image_path}`}
-                                        alt="Preview"
+                                        alt={t('gallery.preview')}
                                         className="w-full h-full object-cover"
                                     />
                                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -394,7 +394,7 @@ export default function GalleryTab() {
                                 {t('common:cancel')}
                             </Button>
                             <Button onClick={handleEditSave} disabled={isUploadingEdit}>
-                                Сохранить
+                                {t('common:save')}
                             </Button>
                         </DialogFooter>
                     </DialogContent>
@@ -474,7 +474,7 @@ export default function GalleryTab() {
                         <div className="flex items-end">
                             <Button onClick={saveSettings} className="w-full">
                                 <Save className="w-4 h-4 mr-2" />
-                                Сохранить
+                                {t('common:save')}
                             </Button>
                         </div>
                     </div>

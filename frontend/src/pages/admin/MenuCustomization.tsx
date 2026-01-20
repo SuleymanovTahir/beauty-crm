@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GripVertical, Eye, EyeOff, RotateCcw, Save, ArrowLeft } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 
@@ -12,6 +13,7 @@ interface MenuItem {
 }
 
 export default function MenuCustomization() {
+    const { t } = useTranslation('admin/menucustomization');
     const navigate = useNavigate();
     const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -19,21 +21,21 @@ export default function MenuCustomization() {
     const [draggedItem, setDraggedItem] = useState<number | null>(null);
 
     const defaultMenuItems = [
-        { id: 'dashboard', label: 'Дашборд' },
-        { id: 'bookings', label: 'Записи' },
-        { id: 'clients', label: 'Клиенты' },
-        { id: 'chat', label: 'Чат' },
-        { id: 'analytics', label: 'Аналитика' },
-        { id: 'funnel', label: 'Воронка' },
-        { id: 'tasks', label: 'Задачи' },
-        { id: 'services', label: 'Услуги' },
-        { id: 'calendar', label: 'Календарь' },
-        { id: 'users', label: 'Сотрудники' },
-        { id: 'public_content', label: 'Публичный контент' },
-        { id: 'visitors', label: 'Посетители' },
-        { id: 'settings', label: 'Настройки' },
-        { id: 'bot_settings', label: 'Настройки бота' },
-        { id: 'telephony', label: 'Телефония' },
+        { id: 'dashboard', label: t('items.dashboard') },
+        { id: 'bookings', label: t('items.bookings') },
+        { id: 'clients', label: t('items.clients') },
+        { id: 'chat', label: t('items.chat') },
+        { id: 'analytics', label: t('items.analytics') },
+        { id: 'funnel', label: t('items.funnel') },
+        { id: 'tasks', label: t('items.tasks') },
+        { id: 'services', label: t('items.services') },
+        { id: 'calendar', label: t('items.calendar') },
+        { id: 'users', label: t('items.users') },
+        { id: 'public_content', label: t('items.public_content') },
+        { id: 'visitors', label: t('items.visitors') },
+        { id: 'settings', label: t('items.settings') },
+        { id: 'bot_settings', label: t('items.bot_settings') },
+        { id: 'telephony', label: t('items.telephony') },
     ];
 
     useEffect(() => {
@@ -115,25 +117,25 @@ export default function MenuCustomization() {
 
             await api.saveMenuSettings({ menu_order, hidden_items });
 
-            toast.success('Настройки меню сохранены');
+            toast.success(t('settings_saved'));
             setTimeout(() => window.location.reload(), 500);
         } catch (error) {
-            toast.error('Ошибка сохранения настроек');
+            toast.error(t('save_error'));
         } finally {
             setSaving(false);
         }
     };
 
     const handleReset = async () => {
-        if (!confirm('Сбросить настройки меню к значениям по умолчанию?')) return;
+        if (!confirm(t('reset_confirm'))) return;
 
         try {
             setSaving(true);
             await api.resetMenuSettings();
-            toast.success('Настройки сброшены');
+            toast.success(t('reset_success'));
             setTimeout(() => window.location.reload(), 500);
         } catch (error) {
-            toast.error('Ошибка сброса настроек');
+            toast.error(t('reset_error'));
         } finally {
             setSaving(false);
         }
@@ -144,7 +146,7 @@ export default function MenuCustomization() {
             <div className="p-8 flex items-center justify-center">
                 <div className="text-center">
                     <div className="w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Загрузка...</p>
+                    <p className="mt-4 text-gray-600">{t('loading')}</p>
                 </div>
             </div>
         );
@@ -160,17 +162,17 @@ export default function MenuCustomization() {
                     <ArrowLeft className="w-6 h-6" />
                 </button>
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Настройка меню</h1>
-                    <p className="text-gray-600 mt-2">Измените порядок и видимость пунктов меню</p>
+                    <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+                    <p className="text-gray-600 mt-2">{t('subtitle')}</p>
                 </div>
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <h2 className="text-lg font-semibold text-gray-900">Пункты меню</h2>
+                        <h2 className="text-lg font-semibold text-gray-900">{t('section_title')}</h2>
                         <p className="text-sm text-gray-500 mt-1">
-                            Перетащите для изменения порядка, нажмите на глаз чтобы скрыть/показать
+                            {t('drag_hint')}
                         </p>
                     </div>
                     <div className="flex gap-2">
@@ -180,7 +182,7 @@ export default function MenuCustomization() {
                             disabled={saving}
                         >
                             <RotateCcw className="w-4 h-4 mr-2" />
-                            Сбросить
+                            {t('reset')}
                         </Button>
                         <Button
                             onClick={handleSave}
@@ -188,7 +190,7 @@ export default function MenuCustomization() {
                             className="bg-gradient-to-r from-pink-500 to-blue-600"
                         >
                             <Save className="w-4 h-4 mr-2" />
-                            {saving ? 'Сохранение...' : 'Сохранить'}
+                            {saving ? t('saving') : t('save')}
                         </Button>
                     </div>
                 </div>
@@ -202,10 +204,10 @@ export default function MenuCustomization() {
                             onDragOver={(e) => handleDragOver(e, index)}
                             onDragEnd={handleDragEnd}
                             className={`flex items-center gap-3 p-4 rounded-lg border-2 transition-all cursor-move ${draggedItem === index
-                                    ? 'border-pink-500 bg-pink-50 shadow-lg scale-105'
-                                    : item.visible
-                                        ? 'border-gray-200 bg-white hover:border-pink-200'
-                                        : 'border-gray-100 bg-gray-50 opacity-60'
+                                ? 'border-pink-500 bg-pink-50 shadow-lg scale-105'
+                                : item.visible
+                                    ? 'border-gray-200 bg-white hover:border-pink-200'
+                                    : 'border-gray-100 bg-gray-50 opacity-60'
                                 }`}
                         >
                             <GripVertical className="w-5 h-5 text-gray-400 flex-shrink-0" />
@@ -229,8 +231,7 @@ export default function MenuCustomization() {
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm text-blue-800">
-                    <strong>Совет:</strong> Скрытые пункты меню не будут отображаться в боковой панели,
-                    но доступ к ним через прямые ссылки останется.
+                    <strong>{t('hint_title')}</strong> {t('hint_text')}
                 </p>
             </div>
         </div>

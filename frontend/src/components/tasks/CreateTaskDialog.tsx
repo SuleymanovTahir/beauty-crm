@@ -141,9 +141,9 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{taskToEdit ? t('edit_task', 'Редактировать задачу') : t('create_new_task', 'Новая задача')}</DialogTitle>
+                    <DialogTitle>{taskToEdit ? t('edit_task') : t('create_new_task')}</DialogTitle>
                     <DialogDescription>
-                        {taskToEdit ? t('edit_task_description', 'Измените данные задачи') : t('create_task_description', 'Заполните данные для новой задачи')}
+                        {taskToEdit ? t('edit_task_description') : t('create_task_description')}
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -168,7 +168,7 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="stage">{t('stage', 'Стадия')}</Label>
+                            <Label htmlFor="stage">{t('stage')}</Label>
                             <Select
                                 value={formData.stage_id}
                                 onValueChange={(value) => setFormData({ ...formData, stage_id: value })}
@@ -187,7 +187,7 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="priority">{t('priority_title', 'Приоритет')}</Label>
+                            <Label htmlFor="priority">{t('priority_title')}</Label>
                             <Select
                                 value={formData.priority}
                                 onValueChange={(value) => setFormData({ ...formData, priority: value })}
@@ -229,15 +229,15 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
                                     >
                                         {formData.assignee_id
                                             ? users.find((user) => user.id.toString() === formData.assignee_id)?.full_name
-                                            : t('select_assignee', 'Выберите ответственного')}
+                                            : t('select_assignee')}
                                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                                     <Command>
-                                        <CommandInput placeholder={t('search_assignee', 'Поиск ответственного...')} />
+                                        <CommandInput placeholder={t('search_assignee')} />
                                         <CommandList>
-                                            <CommandEmpty>{t('no_user_found', 'Пользователь не найден')}</CommandEmpty>
+                                            <CommandEmpty>{t('no_user_found')}</CommandEmpty>
                                             <CommandGroup>
                                                 {users.map((user) => (
                                                     <CommandItem

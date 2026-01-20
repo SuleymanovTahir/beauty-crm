@@ -1360,7 +1360,7 @@ export default function Services() {
                         placeholder="60"
                       />
                       <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm bg-gray-50 px-2 py-1 rounded-md border border-gray-100">
-                        {t('services:unit_minute', 'м')}
+                        {t('services:unit_minute')}
                       </span>
                     </div>
                   </div>
@@ -1411,7 +1411,7 @@ export default function Services() {
                 </div>
                 <div className="p-6 bg-gray-50/10 rounded-2xl border border-gray-100/50 space-y-2">
                   <Label className="text-[11px] font-black uppercase tracking-widest text-gray-400 block mb-1">
-                    {t('services:benefits')} ({t('services:separate_through_pipe', '|')})
+                    {t('services:benefits')} ({t('services:separate_through_pipe')})
                   </Label>
                   <Textarea
                     className="min-h-[80px] bg-white border-gray-100 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-pink-500/10"
@@ -1478,7 +1478,7 @@ export default function Services() {
                           {t('services:employees_providing_service')}
                         </Label>
                         <p className="text-[10px] text-gray-400 font-medium leading-relaxed">
-                          {t('services:select_employees_desc', 'Выберите сотрудников, которые оказывают эту услугу')}
+                          {t('services:select_employees_desc')}
                         </p>
                       </div>
                     </div>
@@ -1516,14 +1516,14 @@ export default function Services() {
                             <Command className="flex flex-col w-full h-full max-h-[300px] sm:max-h-[380px]">
                               <div className="flex flex-col border-b">
                                 <CommandInput
-                                  placeholder={t('services:search_employee', 'Поиск сотрудника...')}
+                                  placeholder={t('services:search_employee')}
                                   className="h-full border-none focus:ring-0 text-sm w-full"
                                   value={employeeSearchTerm}
                                   onValueChange={setEmployeeSearchTerm}
                                 />
                                 <div className="px-4 py-2 bg-gray-50/50 flex items-center justify-between border-b">
                                   <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                    {t('services:actions', 'Действия')}
+                                    {t('services:actions')}
                                   </span>
                                   <Button
                                     variant="ghost"

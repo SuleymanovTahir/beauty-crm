@@ -289,7 +289,7 @@ export default function Clients() {
   const handleBulkDelete = async () => {
     if (selectedClients.size === 0) return;
 
-    if (!window.confirm(t('confirm_bulk_delete', { count: selectedClients.size, defaultValue: `Delete ${selectedClients.size} clients?` }))) {
+    if (!window.confirm(t('confirm_bulk_delete', { count: selectedClients.size }))) {
       return;
     }
 
@@ -297,7 +297,7 @@ export default function Clients() {
       setLoading(true);
       await api.bulkAction('delete', Array.from(selectedClients));
 
-      toast.success(t('bulk_delete_success', { defaultValue: 'Selected clients deleted' }));
+      toast.success(t('bulk_delete_success'));
       setSelectedClients(new Set());
       await loadClients();
     } catch (err) {
@@ -873,14 +873,14 @@ export default function Clients() {
                   </th>
                   <th
                     className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
-                    title={t('total_messages_desc', 'Total messages exchanged')}
+                    title={t('total_messages_desc')}
                     onClick={() => handleSort('total_messages')}
                   >
                     {t('messages')} {sortField === 'total_messages' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
                     className="px-6 py-4 text-center text-sm text-gray-600 cursor-pointer hover:bg-gray-100"
-                    title={t('total_bookings_desc', 'Total number of bookings')}
+                    title={t('total_bookings_desc')}
                     onClick={() => handleSort('total_bookings')}
                   >
                     {t('bookings')} {sortField === 'total_bookings' && (sortDirection === 'asc' ? '↑' : '↓')}

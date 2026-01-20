@@ -57,7 +57,7 @@ interface ReferralCampaign {
 
 export default function SpecialPackages() {
   const [packages, setPackages] = useState<SpecialPackage[]>([]);
-  const { t } = useTranslation(['admin/SpecialPackages', 'common']);
+  const { t } = useTranslation(['admin/specialpackages', 'common']);
   const { currency, formatCurrency } = useCurrency();
   const [filteredPackages, setFilteredPackages] = useState<SpecialPackage[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -315,7 +315,7 @@ export default function SpecialPackages() {
           className={activeSection === 'packages' ? 'bg-pink-600 hover:bg-pink-700' : ''}
         >
           <Gift className="w-4 h-4 mr-2" />
-          Спецпакеты
+          {t('tab_packages')}
         </Button>
         <Button
           variant={activeSection === 'referrals' ? 'default' : 'outline'}
@@ -323,7 +323,7 @@ export default function SpecialPackages() {
           className={activeSection === 'referrals' ? 'bg-blue-600 hover:bg-blue-700' : ''}
         >
           <Users className="w-4 h-4 mr-2" />
-          Реферальные кампании
+          {t('tab_referrals')}
         </Button>
       </div>
 
@@ -588,7 +588,7 @@ export default function SpecialPackages() {
                       type="number"
                       value={formData.max_usage}
                       onChange={(e) => setFormData({ ...formData, max_usage: Number(e.target.value) })}
-                      placeholder={t('specialpackages:0_unlimited')}
+                      placeholder={t('specialpackages:unlimited_0')}
                     />
                   </div>
                 </div>
@@ -682,11 +682,11 @@ export default function SpecialPackages() {
             <div className="flex items-start gap-3">
               <Target className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-blue-800 font-medium">Реферальные кампании</p>
+                <p className="text-blue-800 font-medium">{t('referral_campaigns')}</p>
                 <ul className="text-blue-700 text-sm mt-2 space-y-1 list-disc list-inside">
-                  <li>Создавайте кампании с разными бонусами для приглашающего и приглашенного</li>
-                  <li>Выбирайте целевую аудиторию: все клиенты, по мастеру, по услуге, неактивные</li>
-                  <li>Отслеживайте результаты и управляйте активностью кампаний</li>
+                  <li>{t('referral_info_1')}</li>
+                  <li>{t('referral_info_2')}</li>
+                  <li>{t('referral_info_3')}</li>
                 </ul>
               </div>
             </div>
@@ -713,7 +713,7 @@ export default function SpecialPackages() {
               }}
             >
               <Plus className="w-4 h-4 mr-2" />
-              Создать кампанию
+              {t('create_campaign_button')}
             </Button>
           </div>
 
