@@ -59,3 +59,6 @@ SKIP_TRANSLATION_FIELDS = {
 SKIP_TRANSLATION_PATTERNS = [
     r'^[A-Z]{2,3}$',  # Country codes like "UAE", "USA"
 ]
+# Proxy list for rotation (optional)
+# Format: ["http://user:pass@host:port", ...]
+PROXIES = []
