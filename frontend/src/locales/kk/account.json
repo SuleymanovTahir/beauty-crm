@@ -188,7 +188,7 @@
     "code_copied": "Промокод көшірілді",
     "code_copied_instagram": "Промокод көшірілді! Instagram Stories ішіне қойыңыз",
     "current": "Ағымдағы",
-    "discount": "Жеңілдік {{percent}}%",
+    "discount": "{{percent}}% жеңілдік",
     "discount_short": "жеңілдік",
     "invitations": "шақырулар",
     "level": "деңгейі",
@@ -216,7 +216,7 @@
       "bronze_req": "Негізгі деңгей",
       "gold": "Алтын",
       "platinum": "Платина",
-      "points_req": "[[VAR0]]] нүктелерінен",
+      "points_req": "{{ ұпай}} ұпайдан",
       "silver": "Күміс"
     },
     "to_next_level": "Кімге",

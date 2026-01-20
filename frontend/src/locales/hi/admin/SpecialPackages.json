@@ -24,10 +24,6 @@
   "target_audience": "लक्षित दर्शक",
   "target_by_master": "मास्टर द्वारा",
   "target_by_service": "दिनांक सेवा द्वारा",
-  "target_inactive_days": "निष्क्रिय {{days}} दिन",
-  "target_inactive_days_few": "निष्क्रिय {{count}} दिन",
-  "target_inactive_days_many": "निष्क्रिय {{count}} दिन",
-  "target_inactive_days_one": "निष्क्रिय {{count}} दिन",
-  "target_inactive_days_other": "निष्क्रिय {{count}} दिन",
+  "target_inactive_days": "",
   "target_specific_users": "चयनित ग्राहक"
 }

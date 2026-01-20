@@ -5,16 +5,16 @@
   },
   "current_settings": {
     "edit": "Өңдеу",
-    "min_purchase": "Ең аз сатып алу бағасы: <strong>{{amount}} [[VAR1]]]</strong>",
-    "referred_bonus": "Шақырылған дос тіркелгеннен кейін <strong>[[VAR0]]] ұпай алады</strong>",
-    "referrer_bonus": "Досы бірінші рет сатып алған кезде сілтеме беруші <strong>{{points}} ұпай алады</strong>",
+    "min_purchase": "Ең төменгі сатып алу құны: <strong>{{amount}} {{currency}}</strong>",
+    "referred_bonus": "",
+    "referrer_bonus": "",
     "title": "Ағымдағы бонус конфигурациясы"
   },
   "dialogs": {
     "settings": {
       "description": "Бонустық ұпайлар мен талаптарды орнатыңыз",
-      "min_purchase_amount": "Ең төменгі сатып алу бағасы ({{currency}})",
-      "min_purchase_help": "Реферал бонусын белсендіру үшін дос жұмсауы керек ең аз сома ({{min}} = ең аз емес)",
+      "min_purchase_amount": "Ең төменгі сатып алу құны ({{currency}})",
+      "min_purchase_help": "Жіберу бонусын белсендіру үшін дос жұмсауы керек ең аз сома ({{min}} = ең аз емес)",
       "referred_bonus": "Досқа ұсынылған бонустық ұпайлар",
       "referred_bonus_help": "Тіркелген кезде досыңызға ұпай беріледі",
       "referrer_bonus": "Реферер бонустық ұпайлары",

@@ -88,7 +88,7 @@
   "price_response_template": "Бағаға жауап беру моделі",
   "real_dialogues_for_training": "Оқуға арналған шынайы диалогтар",
   "response_style": "Жауап беру стилі",
-  "retention_hint": "Клиент {{count}} күн бойы салонға келмесе.",
+  "retention_hint": "Егер клиент салонға {{count}} күн келмесе.",
   "retention_placeholder": "Сәлем! Ұзақ уақытта көрмеу...",
   "safety_and_ethics": "Қауіпсіздік және этика",
   "safety_rules": "Қауіпсіздік ережелері",

@@ -20,7 +20,7 @@
     "description": "Configuraciones básicas del programa de fidelización.",
     "expiration_days": "Período de validez de los puntos (días)",
     "expiration_hint": "Los puntos se cancelarán automáticamente después del tiempo especificado.",
-    "points_per_unit": "puntos hasta fecha {{count}} unidades. monedas",
+    "points_per_unit": "puntos hasta fecha 1 unidad. monedas",
     "title": "Configuración global"
   },
   "confirm_delete_rule": "¿Estás seguro de que deseas eliminar esta regla?",
@@ -68,8 +68,8 @@
     "failed_load": "No se pudieron cargar los datos",
     "failed_save": "Error al guardar",
     "failed_update": "Error durante la actualización",
-    "points_adjusted_add": "{{points}} puntos otorgados al usuario {{email}}",
-    "points_adjusted_deduct": "{{points}} puntos han sido deducidos del usuario {{email}}",
+    "points_adjusted_add": "",
+    "points_adjusted_deduct": "",
     "rule_deleted": "Regla eliminada exitosamente",
     "rule_saved": "Regla guardada",
     "tier_updated": "Datos de nivel actualizados"

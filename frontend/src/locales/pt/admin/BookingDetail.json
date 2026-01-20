@@ -11,10 +11,6 @@
   "custom_range": "Seu período",
   "date_time": "Data e hora",
   "days": "dias",
-  "days_few": "{{count}} dia",
-  "days_many": "{{count}} dias",
-  "days_one": "{{count}} dia",
-  "days_other": "{{count}} dias",
   "detailed_info": "Informações detalhadas",
   "internal_notes": "Notas",
   "internal_notes_placeholder": "Insira notas aqui...",
@@ -36,9 +32,5 @@
   "update": "Atualizar",
   "update_status": "Atualizar status",
   "visits": "visitas",
-  "visits_few": "{{count}} visita",
-  "visits_many": "{{count}} visitas",
-  "visits_one": "{{count}} visita",
-  "visits_other": "{{count}} visitas",
   "write_to_client": "Escreva para o cliente"
 }

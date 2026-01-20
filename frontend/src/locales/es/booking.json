@@ -21,13 +21,13 @@
     "success_mock": "¡Perfil recibido exitosamente!",
     "welcome": "Bienvenido"
   },
+  "booking_info": "Información de grabación",
   "bookingDesc": "Elija un horario conveniente para su visita",
   "bookingError": "Error al crear el reserva. Inténtelo de nuevo más tarde.",
   "bookingSuccess": "¡Solicitud enviada exitosamente! Nos pondremos en contacto contigo para confirmar.",
   "bookingTag": "Reserva en línea",
   "bookingTitlePart1": "Inscribirse",
   "bookingTitlePart2": "para una cita",
-  "booking_info": "Información de grabación",
   "common": {
     "cancel": "Más tarde",
     "change": "Cambiar",
@@ -104,9 +104,9 @@
     "notFound": "Servicios no encontrados",
     "search": "Buscar servicios...",
     "selected": "seleccionado",
+    "service_one": "service",
     "service_few": "servicios",
     "service_many": "servicios",
-    "service_one": "service",
     "total": "Total"
   },
   "submitBooking": "Enviar una solicitud",

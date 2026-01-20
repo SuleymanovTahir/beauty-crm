@@ -1,10 +1,10 @@
 {
   "active_clients": "العملاء النشطين",
-  "date_filter": "فترة:",
+  "date_filter": "شرط:",
   "filter_custom": "دورتك الشهرية",
+  "filter_last_month": "الشهر الماضي",
   "filter_last30days": "آخر {{count}} من الأيام",
   "filter_last7days": "آخر {{count}} من الأيام",
-  "filter_last_month": "الشهر الماضي",
   "filter_this_month": "هذا الشهر",
   "filter_today": "اليوم",
   "filter_yesterday": "أمس",

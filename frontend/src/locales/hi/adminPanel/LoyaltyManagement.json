@@ -20,7 +20,7 @@
     "description": "लॉयल्टी कार्यक्रम की बुनियादी दिनांक सेटिंग्स",
     "expiration_days": "अंक वैधता अवधि (दिन)",
     "expiration_hint": "निर्धारित समय के बाद प्वाइंट स्वत: रद्द हो जायेंगे.",
-    "points_per_unit": "{{count}} इकाइयों के लिए अंक। मुद्राओं",
+    "points_per_unit": "1 इकाई के लिए अंक. मुद्राओं",
     "title": "वैश्विक दिनांक सेटिंग्स"
   },
   "confirm_delete_rule": "क्या आप वाकई इस नियम को हटाना चाहते हैं?",
@@ -68,8 +68,8 @@
     "failed_load": "डेटा लोड करने में विफल",
     "failed_save": "सहेजते समय त्रुटि",
     "failed_update": "अद्यतन के दौरान त्रुटि",
-    "points_adjusted_add": "{{points}} उपयोगकर्ता को दिए गए अंक {{email}}",
-    "points_adjusted_deduct": "{{points}} उपयोगकर्ता से अंक काटे गए हैं {{email}}",
+    "points_adjusted_add": "",
+    "points_adjusted_deduct": "",
     "rule_deleted": "नियम सफलतापूर्वक हटा दिया गया",
     "rule_saved": "नियम सहेजा गया",
     "tier_updated": "लेवल डेटा अपडेट किया गया"

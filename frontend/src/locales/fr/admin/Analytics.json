@@ -1,7 +1,7 @@
 {
   "analyze_further": "Analyser plus en détail",
   "apply": "Appliquer",
-  "avg_check": "Chèque moyen",
+  "avg_check": "Ticket moyen",
   "avg_time": "Temps moyen",
   "booked": "Inscrit",
   "booking_statuses": "Statuts de publication",
@@ -41,7 +41,6 @@
       "started_booking": "Ouverture du formulaire d'inscription",
       "visitors": "Visiteurs du site Web/des réseaux sociaux"
     },
-    "losses": "Pertes : {{count}}",
     "losses_few": "Pertes : {{count}}",
     "losses_many": "Pertes : {{count}}",
     "losses_one": "Perte : {{count}}",
@@ -64,7 +63,7 @@
   "optimization_tip": "Conseil d'optimisation",
   "peak_hours": "Heures de pointe",
   "per_booking": "Pour chaque réservation",
-  "percentage": "Pour cent",
+  "percentage": "Pourcentage",
   "quantity": "Quantité",
   "recommendation": "Recommandation",
   "refresh": "Mise à jour",

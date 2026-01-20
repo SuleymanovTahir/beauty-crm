@@ -1,7 +1,7 @@
 {
   "analyze_further": "आगे विश्लेषण करें",
   "apply": "आवेदन करना",
-  "avg_check": "औसत जांच",
+  "avg_check": "औसत चेक",
   "avg_time": "औसत समय",
   "booked": "साइनअप किया",
   "booking_statuses": "पोस्ट स्थितियाँ",
@@ -41,7 +41,6 @@
       "started_booking": "रजिस्ट्रेशन फॉर्म खोला",
       "visitors": "वेबसाइट/सोशल मीडिया विज़िटर"
     },
-    "losses": "हानियाँ: {{count}}",
     "losses_few": "हानियाँ: {{count}}",
     "losses_many": "हानियाँ: {{count}}",
     "losses_one": "हानि: {{count}}",
@@ -62,7 +61,7 @@
   "name": "नाम",
   "need_more_masters": "अधिक गुरुओं की आवश्यकता है",
   "optimization_tip": "अनुकूलन युक्ति",
-  "peak_hours": "अधिकतम घंटे",
+  "peak_hours": "पीक ऑवर्स",
   "per_booking": "प्रत्येक प्रविष्टि के लिए",
   "percentage": "प्रतिशत",
   "quantity": "मात्रा",

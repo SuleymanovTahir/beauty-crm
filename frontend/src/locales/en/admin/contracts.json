@@ -9,10 +9,10 @@
   "clientContracts": "Client",
   "contractNumber": "Contract No.",
   "createdAt": "Creation date",
-  "editContract": "Edit Contract",
+  "editContract": "Edit contract",
   "errors": {
-    "deleteError": "Error deleting contract",
-    "saveError": "Error saving contract",
+    "deleteError": "Error deleting contract.",
+    "saveError": "Error saving contract.",
     "sendError": "Error sending contract",
     "updateError": "Failed to update status"
   },
@@ -23,7 +23,7 @@
     "selectClient": "Select client"
   },
   "internalContracts": "Domestic",
-  "manageTypes": "Contract Types",
+  "manageTypes": "Types of contracts",
   "manage_stages": "Columns",
   "messages": {
     "confirmDelete": "Are you sure you want to delete this agreement?",
@@ -35,40 +35,40 @@
   "noContracts": "No contracts yet",
   "search_placeholder": "Search by number or client...",
   "sendDialog": {
-    "email": "Email",
+    "email": "E-mail",
     "instagram": "Instagram",
     "method": "Shipping method",
     "recipient": "Recipient",
     "sendButton": "Send",
     "telegram": "Telegram",
     "title": "Send contract",
-    "whatsapp": "whatsapp"
+    "whatsapp": "Whatsapp"
   },
   "status": "Status",
   "subtitle": "Client contract management",
-  "title": "Treaties",
+  "title": "Contracts",
   "type": "Type",
   "typeManagement": {
     "add": "Add",
-    "code": "Code (latin, unique)",
-    "confirmDelete": "Confirm Delete",
-    "createType": "Create Type",
-    "deletePrompt": "You are deleting this contract type. What should we do with existing contracts of this type?",
-    "deleteTitle": "Deleting type \"{{name}}\"",
+    "code": "Code (lat., unique)",
+    "confirmDelete": "Confirm deletion",
+    "createType": "Create type",
+    "deletePrompt": "You want to delete this contract type. ",
+    "deleteTitle": "Removing type \"{{name}}\"",
     "deleteWithDocs": "Delete all contracts",
-    "deleteWithDocsSub": "All documents of this type will be permanently deleted.",
+    "deleteWithDocsSub": "All documents of this type will be deleted permanently.",
     "description": "Description",
-    "editType": "Edit Type",
-    "keepDocs": "Keep contracts without type",
-    "keepDocsSub": "Contracts will remain, but the 'Type' field will be cleared.",
+    "editType": "Edit type",
+    "keepDocs": "Leave contracts without type",
+    "keepDocsSub": "The contracts will remain, but the \"Type\" field will be cleared.",
     "messages": {
       "created": "Type created",
-      "deleted": "Type deleted",
+      "deleted": "Type removed",
       "updated": "Type updated"
     },
     "name": "Name",
     "system": "System",
-    "systemProtected": "System protected",
-    "title": "Contract Types"
+    "systemProtected": "The system is protected",
+    "title": "Types of contracts"
   }
 }

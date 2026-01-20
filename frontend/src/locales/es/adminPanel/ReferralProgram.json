@@ -6,8 +6,8 @@
   "current_settings": {
     "edit": "Editar",
     "min_purchase": "Precio mínimo de compra: <strong>{{amount}} {{currency}}</strong>",
-    "referred_bonus": "El amigo invitado recibe <strong>{{points}} puntos</strong> al registrarse",
-    "referrer_bonus": "El referente recibe <strong>{{points}} puntos</strong> cuando un amigo realiza su primera compra.",
+    "referred_bonus": "",
+    "referrer_bonus": "",
     "title": "Configuración de bonificación actual"
   },
   "dialogs": {

@@ -11,8 +11,8 @@
   "createdAt": "निर्माण तिथि",
   "editContract": "अनुबंध संपादित करें",
   "errors": {
-    "deleteError": "अनुबंध हटाने में त्रुटि",
-    "saveError": "अनुबंध सहेजने में त्रुटि",
+    "deleteError": "अनुबंध हटाने में त्रुटि.",
+    "saveError": "अनुबंध सहेजने में त्रुटि.",
     "sendError": "अनुबंध भेजने में त्रुटि",
     "updateError": "स्थिति अपडेट करने में विफल"
   },
@@ -35,7 +35,7 @@
   "noContracts": "अभी दिनांक तक कोई अनुबंध नहीं",
   "search_placeholder": "नंबर या क्लाइंट के आधार पर खोजें...",
   "sendDialog": {
-    "email": "ईमेल",
+    "email": "ई-मेल",
     "instagram": "Instagram",
     "method": "शिपिंग का तरीका",
     "recipient": "प्राप्तकर्ता",
@@ -68,7 +68,7 @@
     },
     "name": "नाम",
     "system": "प्रणाली",
-    "systemProtected": "सिस्टम संरक्षित",
+    "systemProtected": "सिस्टम सुरक्षित है",
     "title": "अनुबंधों के प्रकार"
   }
 }

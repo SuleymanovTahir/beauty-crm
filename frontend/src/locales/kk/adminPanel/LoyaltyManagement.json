@@ -15,12 +15,12 @@
     "title": "Категориялық көбейткіштер"
   },
   "config": {
-    "cashback_hint": "Мысал: {{percent}}% кэшбэк (әр жұмсалған {{unit}} үшін {{points}} ұпай)",
+    "cashback_hint": "Мысалы: {{percent}}% кешбэк (әр жұмсалған {{unit}} үшін {{points}} ұпай)",
     "cashback_rate": "Кэшбэк (%)",
     "description": "Адалдық бағдарламасының негізгі параметрлері",
     "expiration_days": "Ұпайлардың жарамдылық мерзімі (күндер)",
     "expiration_hint": "Белгіленген уақыттан кейін ұпайлар автоматты түрде жойылады.",
-    "points_per_unit": "[[VAR0]]] бірліктері үшін ұпайлар. валюталар",
+    "points_per_unit": "1 бірлік үшін ұпай. валюталар",
     "title": "Ғаламдық параметрлер"
   },
   "confirm_delete_rule": "Бұл ережені шынымен жойғыңыз келе ме?",
@@ -56,7 +56,7 @@
   "tiers": {
     "description": "Тұтынушыларды сегменттеу үшін адалдық деңгейлері",
     "discount": "жеңілдік {{percent}}%",
-    "from_points": "[[VAR0]]] нүктелерінен",
+    "from_points": "{{points}} ұпайдан",
     "starting_level": "Бастапқы деңгей",
     "title": "Артықшылық деңгейлері"
   },
@@ -68,8 +68,8 @@
     "failed_load": "Деректерді жүктеу сәтсіз аяқталды",
     "failed_save": "Сақтау кезінде қате",
     "failed_update": "Жаңарту кезінде қате",
-    "points_adjusted_add": "{{points}} ұпайлары {{email}} пайдаланушыға берілді",
-    "points_adjusted_deduct": "{{points}} ұпайлары {{email}} пайдаланушысынан шегерілді.",
+    "points_adjusted_add": "",
+    "points_adjusted_deduct": "",
     "rule_deleted": "Ереже сәтті жойылды",
     "rule_saved": "Ереже сақталды",
     "tier_updated": "Деңгей деректері жаңартылды"

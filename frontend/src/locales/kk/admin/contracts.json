@@ -11,10 +11,10 @@
   "createdAt": "Жасалу күні",
   "editContract": "Келісімшартты өңдеу",
   "errors": {
-    "deleteError": "Error deleting contract",
-    "saveError": "Error saving contract",
-    "sendError": "Error sending contract",
-    "updateError": "Failed to update status"
+    "deleteError": "Келісімшартты жою қатесі.",
+    "saveError": "Келісімшартты сақтау қатесі.",
+    "sendError": "Келісімшартты жіберу қатесі",
+    "updateError": "Күйді жаңарту мүмкін болмады"
   },
   "form": {
     "cancel": "Болдырмау",
@@ -42,7 +42,7 @@
     "sendButton": "Жіберу",
     "telegram": "Telegram",
     "title": "Келісімшартты жіберу",
-    "whatsapp": "whatsapp"
+    "whatsapp": "Whatsapp"
   },
   "status": "Күй",
   "subtitle": "Клиенттік келісім-шартты басқару",
@@ -54,7 +54,7 @@
     "confirmDelete": "Жоюды растаңыз",
     "createType": "Түр жасау",
     "deletePrompt": "Бұл келісімшарт түрін жойғыңыз келеді. Осы түрдегі қолданыстағы келісімшарттармен не істеу керек?",
-    "deleteTitle": "\"{{name}} түрі жойылуда",
+    "deleteTitle": "\"{{name}}\" түрін жою",
     "deleteWithDocs": "Барлық келісімшарттарды жойыңыз",
     "deleteWithDocsSub": "Осы түрдегі барлық құжаттар біржола жойылады.",
     "description": "Сипаттама",
@@ -67,8 +67,8 @@
       "updated": "Түрі жаңартылды"
     },
     "name": "Аты",
-    "system": "System",
-    "systemProtected": "System protected",
+    "system": "Жүйе",
+    "systemProtected": "Жүйе қорғалған",
     "title": "Келісімшарттардың түрлері"
   }
 }

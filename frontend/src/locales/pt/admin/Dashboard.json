@@ -1,10 +1,10 @@
 {
   "active_clients": "Clientes ativos",
-  "date_filter": "Período:",
+  "date_filter": "Prazo:",
   "filter_custom": "Seu período",
+  "filter_last_month": "Mês passado",
   "filter_last30days": "Últimos {{count}} dias",
   "filter_last7days": "Últimos {{count}} dias",
-  "filter_last_month": "Mês passado",
   "filter_this_month": "Este mês",
   "filter_today": "Hoje",
   "filter_yesterday": "Ontem",

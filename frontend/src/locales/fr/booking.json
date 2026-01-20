@@ -21,13 +21,13 @@
     "success_mock": "Profil reçu avec succès !",
     "welcome": "Accueillir"
   },
+  "booking_info": "Informations d'réservation",
   "bookingDesc": "Choisissez un moment opportun pour votre visite",
   "bookingError": "Erreur lors de la création de l'réservation. Veuillez réessayer plus tard.",
   "bookingSuccess": "Candidature envoyée avec succès ! Nous vous contacterons pour confirmer.",
   "bookingTag": "Inscription en ligne",
   "bookingTitlePart1": "S'inscrire",
   "bookingTitlePart2": "pour un rendez-vous",
-  "booking_info": "Informations d'réservation",
   "common": {
     "cancel": "Plus tard",
     "change": "Changement",
@@ -104,9 +104,9 @@
     "notFound": "Services introuvables",
     "search": "Rechercher des prestations...",
     "selected": "choisi",
+    "service_one": "service",
     "service_few": "services",
     "service_many": "services",
-    "service_one": "service",
     "total": "Total"
   },
   "submitBooking": "Envoyer une demande",

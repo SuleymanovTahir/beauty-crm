@@ -11,9 +11,9 @@
   "delete": "Supprimer",
   "detail": {
     "costPriceLabel": "Coût : {{price}} {{currency}}",
+    "inStock_one": "En stock {{count}} pcs.",
     "inStock_few": "En stock {{count}} pcs.",
     "inStock_many": "En stock {{count}} pcs.",
-    "inStock_one": "En stock {{count}} pcs.",
     "inStock_other": "En stock {{count}} pcs.",
     "loadingData": "Chargement des données...",
     "movementAdjustment": "Ajustement",

@@ -8,7 +8,7 @@
     "check_progress": "التحقق من التقدم",
     "completed": "مكتمل",
     "progress": "تقدم",
-    "pts": "نقاط",
+    "pts": "",
     "reward": "جائزة",
     "target": "هدف"
   },
@@ -22,7 +22,7 @@
         "description_placeholder": "على سبيل المثال: قم بزيارة الصالون {{count}} مرات هذا الشهر",
         "end_date": "تاريخ الانتهاء",
         "reward_placeholder": "{{points}}",
-        "reward_points": "أضف النقاط",
+        "reward_points": "",
         "start_date": "تاريخ البدء",
         "target_placeholder": "{{points}}",
         "target_value": "الكمية المستهدفة",
@@ -50,12 +50,10 @@
     "failed_create": "حدث خطأ أثناء إنشاء النشاط",
     "failed_delete": "حدث خطأ أثناء الحذف",
     "failed_load": "فشل تحميل البيانات",
+    "progress_checked_one": "تم تحديث التقدم لعضو {{count}}",
     "progress_checked_few": "تم تحديث التقدم للمشاركين {{count}}",
     "progress_checked_many": "تم تحديث التقدم للمشاركين {{count}}",
-    "progress_checked_one": "تم تحديث التقدم لعضو {{count}}",
-    "progress_checked_other": "تم تحديث التقدم للمشاركين {{count}}",
-    "progress_checked_two": "",
-    "progress_checked_zero": ""
+    "progress_checked_other": "تم تحديث التقدم للمشاركين {{count}}"
   },
   "types": {
     "referrals": "الإحالات",

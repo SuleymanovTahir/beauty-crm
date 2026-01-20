@@ -11,9 +11,9 @@
   "delete": "Удалить",
   "detail": {
     "costPriceLabel": "Себестоимость: {{price}} {{currency}}",
+    "inStock_one": "В наличии {{count}} шт.",
     "inStock_few": "В наличии {{count}} шт.",
     "inStock_many": "В наличии {{count}} шт.",
-    "inStock_one": "В наличии {{count}} шт.",
     "inStock_other": "В наличии {{count}} шт.",
     "loadingData": "Загрузка данных...",
     "movementAdjustment": "Корректировка",

@@ -3,7 +3,7 @@
   "allCategories": "Барлық санаттар",
   "analytics": {
     "avgPrice": "Сәр. бағасы",
-    "last30Days": "[[VAR0]]] күн бойы",
+    "last30Days": "{{count}} күнде",
     "revenue": "Кіріс",
     "totalSold": "Барлығы сатылды"
   },

@@ -27,7 +27,10 @@
         "title": "Hochwertige Materialien"
       },
       "schedule": {
-        "description": "Wir haben {{count}} Tage die Woche zu für Sie passenden Zeiten geöffnet.",
+        "description_few": "Wir haben {{count}} Tage die Woche zu einer für Sie passenden Zeit geöffnet.",
+        "description_many": "Wir haben {{count}} Tage die Woche zu einer für Sie passenden Zeit geöffnet.",
+        "description_one": "Wir haben {{count}} Tage die Woche zu einer für Sie passenden Zeit geöffnet.",
+        "description_other": "Wir haben {{count}} Tage die Woche zu einer für Sie passenden Zeit geöffnet für dich.",
         "title": "Bequemer Zeitplan"
       }
     },
@@ -52,14 +55,14 @@
   },
   "services": {
     "items": [
-      "Перманентный макияж бровей",
-      "Маникюр",
-      "Педикюр",
-      "Массаж лица",
-      "Наращивание ресниц",
-      "Стрижка и укладка",
-      "Окрашивание волос",
-      "Чистка лица"
+      "Permanentes Augenbrauen-Make-up",
+      "Maniküre",
+      "Pediküre",
+      "Gesichtsmassage",
+      "Wimpernverlängerung",
+      "Schneiden und Stylen",
+      "Haarfärben",
+      "Gesichtsreinigung"
     ]
   },
   "team": {

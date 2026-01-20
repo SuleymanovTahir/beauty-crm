@@ -16,7 +16,7 @@
   "menu": {
     "analytics": "एनालिटिक्स",
     "audit_log": "ऑडिट लॉग",
-    "bookings": "bookings",
+    "bookings": "बुकिंग",
     "bot_settings": "बॉट दिनांक सेटिंग्स",
     "broadcasts": "समाचार",
     "calendar": "कैलेंडर",
@@ -33,7 +33,7 @@
     "management": "नियंत्रण",
     "marketplace_integrations": "बाजारों",
     "messengers": "दूत",
-    "my_bookings": "मेरी प्रविष्टियाँ",
+    "my_bookings": "मेरी बुकिंग",
     "notifications": "सूचनाएं",
     "payment_integrations": "भुगतान प्रणाली",
     "products": "चीज़ें",

@@ -24,10 +24,6 @@
   "target_audience": "Мақсатты аудитория",
   "target_by_master": "Мастер бойынша",
   "target_by_service": "Қызметі бойынша",
-  "target_inactive_days": "Белсенді емес {{days}} күн",
-  "target_inactive_days_few": "Белсенді емес {{count}} күн",
-  "target_inactive_days_many": "Белсенді емес {{days}} күн",
-  "target_inactive_days_one": "Белсенді емес {{count}} күн",
-  "target_inactive_days_other": "Белсенді емес {{days}} күн",
+  "target_inactive_days": "",
   "target_specific_users": "Таңдалған клиенттер"
 }

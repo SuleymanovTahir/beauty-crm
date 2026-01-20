@@ -10,10 +10,7 @@
   "current_status": "Текущий статус",
   "custom_range": "Свой период",
   "date_time": "Дата и время",
-  "days_one": "{{count}} день",
-  "days_few": "{{count}} дня",
-  "days_many": "{{count}} дней",
-  "days_other": "{{count}} дней",
+  "days": "дней",
   "detailed_info": "Подробная информация",
   "internal_notes": "Заметки",
   "internal_notes_placeholder": "Введите заметки здесь...",
@@ -34,9 +31,6 @@
   "total_spent": "Всего потрачено",
   "update": "Обновить",
   "update_status": "Обновление статуса",
-  "visits_one": "{{count}} визит",
-  "visits_few": "{{count}} визита",
-  "visits_many": "{{count}} визитов",
-  "visits_other": "{{count}} визитов",
+  "visits": "посещений",
   "write_to_client": "Напишите клиенту"
 }

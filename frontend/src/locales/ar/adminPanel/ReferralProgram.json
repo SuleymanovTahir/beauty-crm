@@ -6,8 +6,8 @@
   "current_settings": {
     "edit": "يحرر",
     "min_purchase": "الحد الأدنى لسعر الشراء: <strong>{{amount}} {{currency}}</strong>",
-    "referred_bonus": "يتلقى الصديق المدعو <strong>{{points}} نقاط</strong> عند التسجيل",
-    "referrer_bonus": "يتلقى المُحيل <strong>{{points}} نقاط</strong>عندما يقوم أحد الأصدقاء بإجراء أول عملية شراء له",
+    "referred_bonus": "",
+    "referrer_bonus": "",
     "title": "تكوين المكافأة الحالية"
   },
   "dialogs": {

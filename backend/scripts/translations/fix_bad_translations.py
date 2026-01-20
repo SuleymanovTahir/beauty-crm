@@ -64,7 +64,13 @@ def is_bad_translation(value: str, target_lang: str) -> bool:
         # Has multiple consecutive uppercase letters, likely untranslated
         return True
     
-    # NEW: Check for English residue in non-Latin locales (Arabic, Hindi, etc.)
+    # NEW: Check for Cyrillic in non-Cyrillic locales (en, es, de, fr, pt, hi, ar)
+    if target_lang not in ['ru', 'kk']:
+        has_cyrillic = bool(re.search(r'[а-яА-ЯёЁ]', value))
+        if has_cyrillic:
+            return True # Cyrillic in non-Cyrillic file is bad
+
+    # Check for English residue in non-Latin locales (Arabic, Hindi, etc.)
     if target_lang in ['ar', 'hi']:
         # Exclude common technical terms and currencies
         EXCLUSIONS = {'AED', 'USD', 'EUR', 'SMS', 'API', 'VIP', 'SPA', 'ID', 'URL', 'CSV', 'PDF', 'min', 'h', 'm'}
@@ -108,6 +114,24 @@ def fix_dict_recursive(source_dict: dict, target_dict: dict, source_lang: str, t
             fixed_count += fix_dict_recursive(source_value, target_dict[key], source_lang, target_lang, translator, current_path)
             continue
         
+        # Handle lists
+        if isinstance(source_value, list):
+            if key not in target_dict or not isinstance(target_dict[key], list):
+                target_dict[key] = []
+            
+            # Ensure target list has same length as source
+            while len(target_dict[key]) < len(source_value):
+                target_dict[key].append("")
+            
+            # Fix each item in the list
+            for i, (s_item, t_item) in enumerate(zip(source_value, target_dict[key])):
+                if isinstance(s_item, str) and (not t_item or is_bad_translation(t_item, target_lang)):
+                    translated = translator.translate(s_item, source_lang if target_lang != 'ru' else 'en', target_lang)
+                    target_dict[key][i] = translated
+                    fixed_count += 1
+                    print(f"    🔧 {current_path}[{i}]: '{t_item}' → '{translated}'")
+            continue
+
         # Skip non-string values
         if not isinstance(source_value, str):
             target_dict[key] = source_value

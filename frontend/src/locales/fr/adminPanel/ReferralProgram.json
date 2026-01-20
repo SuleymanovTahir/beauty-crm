@@ -6,8 +6,8 @@
   "current_settings": {
     "edit": "Modifier",
     "min_purchase": "Prix ​​d'achat minimum : <strong>{{amount}} {{currency}}</strong>",
-    "referred_bonus": "L'ami invité reçoit des <strong>{{points}} points</strong> lors de son inscription",
-    "referrer_bonus": "Le parrain reçoit des <strong>{{points}} points</strong>lorsqu'un ami effectue son premier achat",
+    "referred_bonus": "",
+    "referrer_bonus": "",
     "title": "Configuration actuelle des bonus"
   },
   "dialogs": {

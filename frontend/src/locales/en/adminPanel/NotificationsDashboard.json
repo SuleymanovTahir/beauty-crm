@@ -81,7 +81,7 @@
     "filters": {
       "all": "All channels",
       "email": "Email",
-      "push": "Push",
+      "push": "Push notification",
       "sms": "SMS"
     },
     "scheduled": "Planned",
@@ -99,7 +99,7 @@
   "send_notification": "Send",
   "stats": {
     "email_sent": "Email",
-    "push_sent": "Push",
+    "push_sent": "Push notification",
     "sms_sent": "SMS",
     "total_sent": "Total sent"
   },

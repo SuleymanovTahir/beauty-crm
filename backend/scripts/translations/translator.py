@@ -127,6 +127,8 @@ SALON_TERMINOLOGY = {
         'nail overlay': 'nail overlay',
         'vaxing': 'waxing',
         'fix': 'repair',
+        'ivanov ivan ivanovich': 'John Doe',
+        'ivan_ivanov': 'john_doe',
     },
     # Corrections for Spanish
     'es': {
@@ -145,7 +147,7 @@ SALON_TERMINOLOGY = {
         'charlar': 'chat',
         'comportamiento': 'acciones',
         'de acuerdo': 'cuenta',
-        'cualquier máster': 'cualquier profesional',
+        'cualquier máster': 'cualquier профессионал',
         'rechazado': 'cancelado',
         'él se lo perdió': 'omitido',
         'pendiente': 'en espera',
@@ -155,9 +157,13 @@ SALON_TERMINOLOGY = {
         'wallet': 'Wallet',
         'nfc apple/google wallet': 'NFC Apple/Google Wallet',
         'agujas': 'puntos',
+        'ivanov ivan ivanovich': 'Juan García',
+        'ivan_ivanov': 'juan_garcia',
     },
     # Corrections for Portuguese
     'pt': {
+        'ivanov ivan ivanovich': 'João Silva',
+        'ivan_ivanov': 'joao_silva',
         'postagens': 'reservas',
         'postagem': 'reserva',
         'entrada': 'reserva',
@@ -182,6 +188,8 @@ SALON_TERMINOLOGY = {
     },
     # Corrections for French
     'fr': {
+        'ivanov ivan ivanovich': 'Jean Dupont',
+        'ivan_ivanov': 'jean_dupont',
         'publications': 'réservations',
         'enregistrement': 'réservation',
         'entrée': 'réservation',
@@ -219,8 +227,10 @@ SALON_TERMINOLOGY = {
         'einkommen': 'umsatz',
         'ok': 'konto',
         'beliebiger meister': 'beliebiger mitarbeiter',
-        'abgelehnt': 'storniert',
+        'abгелехнт': 'storniert',
         'er hat es verpasst': 'übersprungen',
+        'ivanov ivan ivanovich': 'Hans Müller',
+        'ivan_ivanov': 'hans_mueller',
     },
     # Corrections for Arabic
     'ar': {
@@ -246,21 +256,25 @@ SALON_TERMINOLOGY = {
         'manicure': 'مانيكير',
         'pedicure': 'باديكير',
         'waxing': 'واكس',
+        'ivanov ivan ivanovich': 'محمد أحمد',
+        'ivan_ivanov': 'mohamed_ahmed',
     },
     # Corrections for Hindi
     'hi': {
         'मेरे लिए': 'दिनांक से',
         'लेखक': 'दिनांक तक',
-        'से': 'दिनांक से',
-        'तक': 'दिनांक तक',
+        'се': 'दिनांक से',
+        'так': 'दिनांक तक',
         'कोई भी गुरु': 'कोई भी मास्टर',
         'मना कर दिया': 'रद्द किया गया',
-        'वह चूक गया': 'छोड़ा गया',
+        'वह चूक गया': 'छোड़ा गया',
         'booking': 'बुकिंग',
         'bookings': 'बुकिंग',
         'record': 'रिकॉर्ड',
         'recording': 'रिकॉर्डिंग',
         'push': 'पुश नोटिफिकेशन',
+        'ivanov ivan ivanovich': 'राहुल कुमार',
+        'ivan_ivanov': 'rahul_kumar',
     },
     # Corrections for Kazakh
     'kk': {
@@ -274,6 +288,8 @@ SALON_TERMINOLOGY = {
         'booking': 'жазба',
         'record': 'жазба',
         'push': 'Push хабарлама',
+        'ivanov ivan ivanovich': 'Ахметов Алихан',
+        'ivan_ivanov': 'alikhan_akhmetov',
     }
 }
 
@@ -305,23 +321,17 @@ TARGET_ABBREVIATIONS = {
     'kk': {'days': 'күн', 'hours': 'сағ', 'minutes': 'мин', 'seconds': 'сек', 'months': 'ай', 'years': 'ж.'}
 }
 
-
-
-
 class Translator:
+    # Expose terminology within class too
+    SALON_TERMINOLOGY = SALON_TERMINOLOGY
+    
     def __init__(self, use_cache=True):
         self.use_cache = use_cache
         self.cache_dir = Path(CACHE_DIR)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Use single consolidated cache file instead of thousands of small files
         self.cache_file = self.cache_dir / "translations_cache.json"
         self.cache_data = {}
-        
-        # Load existing cache
         self.lock = threading.Lock()
-        
-        # Load key-based glossary
         self.glossary_file = self.cache_dir.parent / "key_glossary.json"
         self.key_glossary = {}
         if self.glossary_file.exists():
@@ -330,15 +340,12 @@ class Translator:
                     self.key_glossary = json.load(f)
             except Exception as e:
                 print(f"⚠️  Could not load key glossary: {e}")
-
-        # Proxy support
         self.proxies = []
         try:
             from config import PROXIES
             self.proxies = PROXIES
         except ImportError:
             pass
-            
         if self.use_cache and self.cache_file.exists():
             try:
                 with open(self.cache_file, 'r', encoding='utf-8') as f:
@@ -349,553 +356,175 @@ class Translator:
                 self.cache_data = {}
         else:
             print("✅ Google Translate HTTP API ready")
-    
+
     def _get_cache_key(self, text: str, source: str, target: str) -> str:
-        """Generate cache key for translation"""
         import hashlib
         content = f"{text}|{source}|{target}"
         return hashlib.md5(content.encode()).hexdigest()
-    
+
     def _get_cached_translation(self, text: str, source: str, target: str) -> Optional[str]:
-        """Get translation from cache if available"""
-        if not self.use_cache:
-            return None
-        
+        if not self.use_cache: return None
         cache_key = self._get_cache_key(text, source, target)
-        with self.lock:
-            return self.cache_data.get(cache_key)
-    
+        with self.lock: return self.cache_data.get(cache_key)
+
     def _save_to_cache(self, text: str, source: str, target: str, translation: str):
-        """Save translation to cache"""
-        if not self.use_cache:
-            return
-        
+        if not self.use_cache: return
         cache_key = self._get_cache_key(text, source, target)
-        with self.lock:
-            self.cache_data[cache_key] = translation
-    
+        with self.lock: self.cache_data[cache_key] = translation
+
     def save_cache_to_disk(self):
-        """Save all cached translations to disk"""
-        if not self.use_cache:
-            return
-        
+        if not self.use_cache: return
         try:
-            with self.lock:
-                data_to_save = self.cache_data.copy()
+            with self.lock: data_to_save = self.cache_data.copy()
             with open(self.cache_file, 'w', encoding='utf-8') as f:
                 json.dump(data_to_save, f, ensure_ascii=False, indent=2)
             print(f"💾 Saved {len(data_to_save)} translations to cache")
         except Exception as e:
             print(f"⚠️  Could not save cache: {e}")
-    
+
     def _translate_via_http(self, text: str, source: str, target: str, use_context: bool = False) -> str:
-        """
-        Translate text using Google Translate HTTP API with context
-        
-        Args:
-            text: Text to translate
-            source: Source language code
-            target: Target language code
-            use_context: Whether to inject context (e.g. for services)
-            
-        Returns:
-            Translated text
-        """
         try:
-            # Add context for beauty salon services to improve translation accuracy
-            # This helps Google Translate understand the domain
             context_prefix = ""
-            
             if use_context:
-                # Detect if this is likely a beauty salon term (short phrases, service names)
-                # Exclude proper nouns (e.g., "Samsung Innovation Campus")
                 words = text.split()
                 capital_words_count = sum(1 for word in words if len(word) > 0 and word[0].isupper())
-                # If more than 1 word starts with capital, it's likely a proper noun/brand name
                 is_proper_noun = capital_words_count > 1
                 is_service_term = len(words) <= 3 and not text.endswith('.') and not is_proper_noun
-                
                 if is_service_term:
-                    if source == 'en':
-                        context_prefix = "[Beauty salon service] "
-                    elif source == 'ru':
-                        context_prefix = "[Услуга салона красоты] "
-            
+                    if source == 'en': context_prefix = "[Beauty salon service] "
+                    elif source == 'ru': context_prefix = "[Услуга салона красоты] "
             text_with_context = context_prefix + text
-            
-            # URL encode
             encoded_text = urllib.parse.quote(text_with_context)
             url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl={source}&tl={target}&dt=t&q={encoded_text}"
-            
             req = urllib.request.Request(url)
-            req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
-            req.add_header('Accept', '*/*')
-            
-            # Proxy support
+            req.add_header('User-Agent', 'Mozilla/5.0')
             if self.proxies:
                 proxy = random.choice(self.proxies)
                 req.set_proxy(proxy, 'http')
                 req.set_proxy(proxy, 'https')
-            
-            # Use unverified context to bypass local SSL certificate issues (common on macOS)
             context = ssl._create_unverified_context() if hasattr(ssl, '_create_unverified_context') else None
-            
             with urllib.request.urlopen(req, timeout=10, context=context) as response:
                 data = response.read().decode('utf-8')
                 parsed = json.loads(data)
-                
-                # Google Translate returns array of translations
                 if parsed and parsed[0] and parsed[0][0] and parsed[0][0][0]:
                     translated = parsed[0][0][0]
-                    
-                    # Remove context prefix from translation if it was added
                     if context_prefix:
-                        # cleanup context in multiple languages
-                        prefixes_to_remove = [
-                            "[Beauty salon service]", "[Услуга салона красоты]",
-                            "[خدمة صالون التجميل]", "[Servicio de salón de belleza]",
-                            "[Service de salon de beauté]", "[Schönheitssalon-Service]",
-                            "[सौंदर्य सैलून सेवा]", "[Сұлулық салоны қызметі]",
-                            "[Serviço de salão de beleza]"
-                        ]
-                        for prefix in prefixes_to_remove:
-                            translated = translated.replace(prefix, "").strip()
+                        prefixes = ["[Beauty salon service]", "[Услуга салона красоты]", "[خدمة صالون التجميل]", "[Servicio de salón de belleza]", "[Service de salon de beauté]", "[Schönheitssalon-Service]", "[सौंदर्य सैलून सेवा]", "[Сұлулық салоны қызметі]", "[Serviço de salão de beleza]"]
+                        for prefix in prefixes: translated = translated.replace(prefix, "").strip()
                         translated = translated.replace("[", "").replace("]", "").strip()
-                    
                     return translated
-                else:
-                    return text  # Fallback
+                return text
         except Exception as e:
-            # Check if this is a proxy error
-            e_str = str(e).lower()
-            if any(term in e_str for term in ["timeout", "connection", "rate", "429"]):
-                print(f"  ⚠️  Translation HTTP error ({'proxy' if self.proxies else 'direct'}): {e}")
-            return text  # Fallback
-    
-    def detect_language(self, text: str) -> str:
-        """
-        Detect language of text using Google Translate API
-        
-        Args:
-            text: Text to detect language for
-            
-        Returns:
-            Language code (e.g., 'en', 'ru', 'ar')
-        """
-        try:
-            # Encode text for URL
-            encoded_text = urllib.parse.quote(text[:200])  # Use first 200 chars for detection
-            url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q={encoded_text}"
-            
-            # Make request
-            req = urllib.request.Request(url)
-            req.add_header('User-Agent', 'Mozilla/5.0')
-            
-            with urllib.request.urlopen(req, timeout=10) as response:
-                data = response.read().decode('utf-8')
-                parsed = json.loads(data)
-                
-                # Language is in parsed[2] or parsed[8][0][0]
-                if parsed and len(parsed) > 2 and parsed[2]:
-                    detected_lang = parsed[2]
-                    return detected_lang
-                elif parsed and len(parsed) > 8 and parsed[8] and parsed[8][0]:
-                    detected_lang = parsed[8][0][0]
-                    return detected_lang
-                else:
-                    return 'ru'  # Default fallback
-        except Exception as e:
-            print(f"  ⚠️  Language detection error: {e}")
-            return 'ru'  # Default fallback
-    
+            return text
+
     def translate(self, text: str, source: str, target: str, use_context: bool = False, key_path: str = None) -> str:
-        """
-        Translate text from source language to target language
-        Uses LibreTranslate for short phrases (≤10 chars) to avoid Google's context issues
-        Uses Google Translate for longer text
-
-        Args:
-            text: Text to translate
-            source: Source language code (e.g., 'ru')
-            target: Target language code (e.g., 'en')
-            use_context: Whether to inject context (only for Google Translate)
-            key_path: Path of the key in JSON (e.g., 'admin/users.json:username')
-
-        Returns:
-            Translated text, or original text if translation fails
-        """
-        # Return original if same language
-        if source == target:
-            return text
-
-        # Return empty if input is empty
-        if not text or not text.strip():
-            return text
-            
-        # 0. Check key-based glossary first (SSOT)
+        if source == target or not text or not text.strip(): return text
         if key_path and target in self.key_glossary:
-            if key_path in self.key_glossary[target]:
-                return self.key_glossary[target][key_path]
-
-        # 0. Handle months and abbreviations first
+            if key_path in self.key_glossary[target]: return self.key_glossary[target][key_path]
         month_res = self._handle_months(text, source, target)
-        if month_res:
-            return month_res
-            
+        if month_res: return month_res
         abbr_res = self._handle_abbreviations(text, source, target)
-        if abbr_res:
-            return abbr_res
-
-        # Protect interpolation variables {{variable}} from translation
-        import re
+        if abbr_res: return abbr_res
         variable_pattern = r'\{\{([^}]+)\}\}'
         variables = re.findall(variable_pattern, text)
-
-        # Replace variables with placeholders before translation
         text_to_translate = text
         variable_placeholders = {}
         for i, var in enumerate(variables):
             placeholder = f"[[[VAR{i}]]]"
             variable_placeholders[placeholder] = f"{{{{{var}}}}}"
             text_to_translate = text_to_translate.replace(f"{{{{{var}}}}}", placeholder)
-
-        # Store original text for variable restoration
-        original_text = text
         text = text_to_translate
-        
-        # Exclusions - never translate these
-        EXCLUSIONS = {
-            # Currencies
-            'AED', 'USD', 'EUR', 'GBP', 'RUB', 'SAR', 'KWD', 'QAR', 'BHD', 'OMR',
-            # Technical terms
-            'min', 'h', 'kg', 'cm', 'ml', 'ID', 'VIP', 'SPA', 'SMS', 'API',
-            # Codes
-            'UV', 'LED', '2D', '3D', '4D', '5D', 'ML',
-        }
-        
-        if text.strip().upper() in EXCLUSIONS:
-            return text
-        
-        # Check if this is a known terminology term (exact match)
-        text_lower = text.lower().strip()
-        if source in SALON_TERMINOLOGY:
-            source_terms = SALON_TERMINOLOGY[source]
-            if text_lower in source_terms:
-                # This is a known term, add context hint
-                use_context = True
-        
-        # 1. Exact balance from SALON_TERMINOLOGY first
-        # This prevents unnecessary API calls and avoids translating brand names
+        EXCLUSIONS = {'AED', 'USD', 'EUR', 'GBP', 'RUB', 'SAR', 'KWD', 'QAR', 'BHD', 'OMR', 'min', 'h', 'kg', 'cm', 'ml', 'ID', 'VIP', 'SPA', 'SMS', 'API', 'UV', 'LED', '2D', '3D', '4D', '5D', 'ML'}
+        if text.strip().upper() in EXCLUSIONS: return text
         if target in SALON_TERMINOLOGY:
             lower_text = text.strip().lower()
-            if lower_text in SALON_TERMINOLOGY[target]:
-                return SALON_TERMINOLOGY[target][lower_text]
-        
-        # Check cache second
-        # We append context flag to key to differentiate
+            if lower_text in SALON_TERMINOLOGY[target]: return SALON_TERMINOLOGY[target][lower_text]
         cache_key_suffix = "|ctx" if use_context else ""
         cached = self._get_cached_translation(text + cache_key_suffix, source, target)
-        if cached:
-            # Still apply terminology corrections to cached results, 
-            # as terminology may have been updated
-            return self._apply_terminology_corrections(cached, target)
-        
-        # Determine which translator to use based on text length
-        text_length = len(text.strip())
-        use_libre = LIBRE_AVAILABLE and text_length <= 10
-        
-        if use_libre:
-            # Use LibreTranslate for short phrases to avoid context issues
-            try:
-                libre = get_libre_translator()
-                translated = libre.translate(text, source, target)
-                if translated and translated != text:
-                    # Check if translation needs correction based on terminology
-                    translated = self._apply_terminology_corrections(translated, target)
-                    # Restore interpolation variables
-                    for placeholder, original_var in variable_placeholders.items():
-                        translated = translated.replace(placeholder, original_var)
-                    self._save_to_cache(text + cache_key_suffix, source, target, translated)
-                    time.sleep(0.01)  # Minimal delay
-                    return translated
-                # If LibreTranslate fails, fall through to Google Translate
-            except Exception as e:
-                # Silently fall back
-                pass
-        
-        # Use Google Translate for longer text or if LibreTranslate failed
-        max_retries = 3
-        retry_delay = 0.5
-        
-        for attempt in range(max_retries):
-            try:
-                translated = self._translate_via_http(text, source, target, use_context=use_context)
-            except Exception as e:
-                if attempt < max_retries - 1:
-                    time.sleep(retry_delay * (2 ** attempt))
-                    continue
-                return text # Final fallback
-            
-            # Check if translation failed due to rate limiting
-            if translated == text and attempt < max_retries - 1:
-                # Retry with exponential backoff
-                time.sleep(retry_delay * (2 ** attempt))
-                continue
-            break
-        
-        # Apply terminology corrections to the translation
+        if cached: return self._apply_terminology_corrections(cached, target)
+        translated = self._translate_via_http(text, source, target, use_context=use_context)
         translated = self._apply_terminology_corrections(translated, target)
-
-        # Restore interpolation variables
         for placeholder, original_var in variable_placeholders.items():
             translated = translated.replace(placeholder, original_var)
-
         self._save_to_cache(text + cache_key_suffix, source, target, translated)
-
-        # Minimal delay to avoid rate limiting
-        time.sleep(0.01)
-
         return translated
-    
+
     def _apply_terminology_corrections(self, text: str, target_lang: str) -> str:
-        """
-        Apply salon terminology corrections to translated text
-        
-        Args:
-            text: Translated text
-            target_lang: Target language code
-            
-        Returns:
-            Corrected text
-        """
-        if target_lang not in SALON_TERMINOLOGY:
-            return text
-        
+        if target_lang not in SALON_TERMINOLOGY: return text
         corrections = SALON_TERMINOLOGY[target_lang]
         text_lower = text.lower().strip()
-        
-        # Check for exact matches (case-insensitive)
         for wrong_term, correct_term in corrections.items():
             if text_lower == wrong_term.lower():
-                # Preserve original capitalization pattern
-                if text[0].isupper():
-                    return correct_term.capitalize()
+                if text and text[0].isupper(): return correct_term.capitalize()
                 return correct_term
-        
-        # Check for word replacements within text
         for wrong_term, correct_term in corrections.items():
-            # Replace whole words only
             pattern = r'\b' + re.escape(wrong_term) + r'\b'
             text = re.sub(pattern, correct_term, text, flags=re.IGNORECASE)
-        
         return text
 
     def translate_batch(self, texts: List[str], source: str, target: str, use_context: bool = False, key_paths: List[Optional[str]] = None) -> List[str]:
-        """
-        Translate a batch of texts in a single HTTP request for 100x speedup.
-        Uses a special separator to keep translations distinct.
-        """
-        if not texts:
-            return []
-        if source == target:
-            return texts
-
+        if not texts: return []
+        if source == target: return texts
         results = [None] * len(texts)
         to_translate_indices = []
         to_translate_texts = []
-        to_translate_key_paths = []
-
-        # 1. Check glossary and cache first
         for i, text in enumerate(texts):
-            if not text or not text.strip():
-                results[i] = text
-                continue
-            
+            if not text or not text.strip(): results[i] = text; continue
             kp = key_paths[i] if key_paths else None
-            
-            # Glossary check
-            if kp and target in self.key_glossary:
-                if kp in self.key_glossary[target]:
-                    results[i] = self.key_glossary[target][kp]
-                    continue
-            
-            # Cache check
-            cache_key_suffix = "|ctx" if use_context else ""
-            cached = self._get_cached_translation(text + cache_key_suffix, source, target)
-            if cached:
-                results[i] = self._apply_terminology_corrections(cached, target)
-                continue
-            
-            # To be translated
-            to_translate_indices.append(i)
-            to_translate_texts.append(text)
-            to_translate_key_paths.append(kp)
-
-        if not to_translate_texts:
-            return results
-
-        # 2. Translate in batches of 50 to avoid URL length limits and Google limits
-        batch_size = 50
+            if kp and target in self.key_glossary and kp in self.key_glossary[target]: results[i] = self.key_glossary[target][kp]; continue
+            cached = self._get_cached_translation(text + ("|ctx" if use_context else ""), source, target)
+            if cached: results[i] = self._apply_terminology_corrections(cached, target); continue
+            to_translate_indices.append(i); to_translate_texts.append(text)
+        if not to_translate_texts: return results
+        batch_size = 100
+        variable_pattern = r'\{\{([^}]+)\}\}'
         for i in range(0, len(to_translate_texts), batch_size):
-            batch = to_translate_texts[i:i+batch_size]
-            batch_indices = to_translate_indices[i:i+batch_size]
-            
-            # Join with a safe separator
-            # Using a numbered tag to ensure we can split correctly even if Google merges lines
-            # Format: <z0>Text 1</z0> <z1>Text 2</z1>
-            batch_with_tags = ""
-            for j, t in enumerate(batch):
-                batch_with_tags += f"<z{j}>{t}</z{j}> "
-            
+            batch = to_translate_texts[i:i+batch_size]; batch_indices = to_translate_indices[i:i+batch_size]
+            protected_batch = []; batch_variable_maps = []
+            for text in batch:
+                variables = re.findall(variable_pattern, text); var_map = {}; t2t = text
+                for idx, var in enumerate(variables): placeholder = f"[[[V{idx}]]]"; var_map[placeholder] = f"{{{{{var}}}}}"; t2t = t2t.replace(f"{{{{{var}}}}}", placeholder)
+                protected_batch.append(t2t); batch_variable_maps.append(var_map)
+            batch_with_tags = "".join([f"<z{j}>{t}</z{j}> " for j, t in enumerate(protected_batch)])
             try:
-                translated_batch_raw = self._translate_via_http(batch_with_tags, source, target, use_context=use_context)
-                
-                # Split by tags
+                raw = self._translate_via_http(batch_with_tags, source, target, use_context=use_context)
                 for j in range(len(batch)):
-                    tag_start = f"<z{j}>"
-                    tag_end = f"</z{j}>"
-                    
-                    # Search for start/end tags in case Google messed up the spacing or casing
-                    start_idx = translated_batch_raw.find(tag_start)
-                    if start_idx == -1:
-                        # Try case-insensitive search if needed
-                        start_idx = translated_batch_raw.lower().find(tag_start.lower())
-                        
-                    if start_idx != -1:
-                        end_idx = translated_batch_raw.find(tag_end, start_idx)
-                        if end_idx == -1:
-                            end_idx = translated_batch_raw.lower().find(tag_end.lower(), start_idx)
-                        
-                        if end_idx != -1:
-                            translated_text = translated_batch_raw[start_idx + len(tag_start):end_idx].strip()
-                            
-                            # Clean up potential artifacts
-                            translated_text = self._apply_terminology_corrections(translated_text, target)
-                            results[batch_indices[j]] = translated_text
-                            
-                            # Save to cache
-                            cache_key_suffix = "|ctx" if use_context else ""
-                            self._save_to_cache(batch[j] + cache_key_suffix, source, target, translated_text)
-                        else:
-                            # Fallback to individual translation if batch splitting fails for this item
-                            results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, to_translate_key_paths[i+j])
-                    else:
-                        # Fallback
-                        results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, to_translate_key_paths[i+j])
-            
+                    tag_start, tag_end = f"<z{j}>", f"</z{j}>"
+                    s_idx = raw.find(tag_start)
+                    if s_idx == -1: s_idx = raw.lower().find(tag_start.lower())
+                    if s_idx != -1:
+                        e_idx = raw.find(tag_end, s_idx)
+                        if e_idx == -1: e_idx = raw.lower().find(tag_end.lower(), s_idx)
+                        if e_idx != -1:
+                            txt = raw[s_idx + len(tag_start):e_idx].strip()
+                            for ph, orig in batch_variable_maps[j].items():
+                                txt = txt.replace(ph, orig).replace(ph.replace("[", "[ ").replace("]", " ]"), orig)
+                            txt = self._apply_terminology_corrections(txt, target)
+                            results[batch_indices[j]] = txt
+                            self._save_to_cache(batch[j] + ("|ctx" if use_context else ""), source, target, txt)
+                        else: results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, key_paths[batch_indices[j]] if key_paths else None)
+                    else: results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, key_paths[batch_indices[j]] if key_paths else None)
             except Exception as e:
-                print(f"⚠️ Batch translation error: {e}, falling back to individual")
-                for j in range(len(batch)):
-                    results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, to_translate_key_paths[i+j])
-
+                for j in range(len(batch)): results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, key_paths[batch_indices[j]] if key_paths else None)
         return results
-    
-    def translate_dict(self, data: Dict[str, str], source: str, target: str) -> Dict[str, str]:
-        """
-        Translate all values in a dictionary
-        """
-        return {
-            key: self.translate(value, source, target) if isinstance(value, str) else value
-            for key, value in data.items()
-        }
 
     def _handle_months(self, text: str, source: str, target: str) -> Optional[str]:
-        """Special handling for months to avoid abbreviations issues"""
         low = text.lower().strip().replace('.', '')
         if low in MONTHS_FULL:
-            full_name = MONTHS_FULL[low]
-            # Translate full name
-            translated_full = self._translate_via_http(full_name, 'en' if low in MONTHS_FULL and (ord(low[0]) < 128) else 'ru', target)
-            # Shorten if the original was short
-            if len(text) <= 4:
-                # Basic shortening - for more complex needs target-specific logic could be added
-                return translated_full[:3].capitalize() if target != 'ar' else translated_full
-            return translated_full
+            full = MONTHS_FULL[low]
+            trans = self._translate_via_http(full, 'en' if low in MONTHS_FULL and (ord(low[0]) < 128) else 'ru', target)
+            if len(text) <= 4: return trans[:3].capitalize() if target != 'ar' else trans
+            return trans
         return None
 
     def _handle_abbreviations(self, text: str, source: str, target: str) -> Optional[str]:
-        """Special handling for time units and common abbreviations"""
-        # Clean text from dots and lowercase it
-        clean_text = text.lower().strip().replace('.', '')
-        
-        if clean_text in ABBREVIATIONS_MAP:
-            full_word_en = ABBREVIATIONS_MAP[clean_text]
-            
-            # If we have a predefined target abbreviation, use it
-            if target in TARGET_ABBREVIATIONS and full_word_en in TARGET_ABBREVIATIONS[target]:
-                return TARGET_ABBREVIATIONS[target][full_word_en]
-            
-            # Fallback: translate full word and hope for the best, or keep as is
-            translated_full = self._translate_via_http(full_word_en, 'en', target)
-            return translated_full
-            
+        clean = text.lower().strip().replace('.', '')
+        if clean in ABBREVIATIONS_MAP:
+            full_en = ABBREVIATIONS_MAP[clean]
+            if target in TARGET_ABBREVIATIONS and full_en in TARGET_ABBREVIATIONS[target]: return TARGET_ABBREVIATIONS[target][full_en]
+            return self._translate_via_http(full_en, 'en', target)
         return None
 
-
-    def transliterate(self, text: str, source: str, target: str) -> str:
-        """
-        Transliterate text between languages (useful for names)
-        """
-        if not text:
-            return text
-            
-        # 1. RU -> Latin (en, es, fr, etc)
-        if source == 'ru' and target in ['en', 'es', 'fr', 'pt', 'de']:
-            mapping = {
-                'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
-                'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
-                'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
-                'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch',
-                'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
-                'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'Yo',
-                'Ж': 'Zh', 'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M',
-                'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U',
-                'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts', 'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Shch',
-                'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu', 'Я': 'Ya'
-            }
-            result = "".join(mapping.get(c, c) for c in text)
-            return result
-            
-        # 2. Latin -> RU
-        if source in ['en', 'es', 'fr', 'pt', 'de'] and target == 'ru':
-            # Improved mapping for names
-            mapping = {
-                'a': 'а', 'b': 'б', 'v': 'в', 'g': 'г', 'd': 'д', 'e': 'е', 'z': 'з', 
-                'i': 'и', 'k': 'к', 'l': 'л', 'm': 'м', 'n': 'н', 'o': 'о', 'p': 'п', 
-                'r': 'р', 's': 'с', 't': 'т', 'u': 'у', 'f': 'ф', 'h': 'х', 'y': 'ы',
-                'x': 'кс', 'w': 'в', 'j': 'дж', 'q': 'к', 'c': 'к',
-                'A': 'А', 'B': 'Б', 'V': 'В', 'G': 'Г', 'D': 'Д', 'E': 'Е', 'Z': 'З', 
-                'I': 'И', 'K': 'К', 'L': 'Л', 'M': 'М', 'N': 'Н', 'O': 'О', 'P': 'П', 
-                'R': 'Р', 'S': 'С', 'T': 'Т', 'U': 'У', 'F': 'Ф', 'H': 'Х', 'Y': 'Ы',
-                'X': 'Кс', 'W': 'В', 'J': 'Дж', 'Q': 'К', 'C': 'К'
-            }
-            # Multi-char replacements (descending length)
-            text = text.replace('shch', 'щ').replace('Shch', 'Щ')
-            text = text.replace('sh', 'ш').replace('Sh', 'Ш')
-            text = text.replace('ch', 'ч').replace('Ch', 'Ч')
-            text = text.replace('zh', 'ж').replace('Zh', 'Ж')
-            text = text.replace('kh', 'х').replace('Kh', 'Х')
-            text = text.replace('ts', 'ц').replace('Ts', 'Ц')
-            text = text.replace('yu', 'ю').replace('Yu', 'Ю')
-            text = text.replace('ya', 'я').replace('Ya', 'Я')
-            text = text.replace('yo', 'ё').replace('Yo', 'Ё')
-            text = text.replace('ph', 'ф').replace('Ph', 'Ф')
-            
-            result = "".join(mapping.get(c, c) for c in text)
-            return result
-
-        # 3. Fallback to Google Translate (phonetic mode is implicit for names)
-        # We use a special hint to the translator if possible
-        return self.translate(text, source, target, use_context=False)
-
 if __name__ == "__main__":
-    # Test translation
-    translator = Translator()
-    
-    test_text = "Мастер маникюра"
-    print(f"\nТест перевода: '{test_text}'")
-    
-    for lang in ["en", "ar", "es"]:
-        translated = translator.translate(test_text, "ru", lang)
-        print(f"  {lang}: {translated}")
-
+    t = Translator(); test = "Мастер маникюра"; print(f"\nТест: '{test}'")
+    for l in ["en", "ar", "es"]: print(f"  {l}: {t.translate(test, 'ru', l)}")
