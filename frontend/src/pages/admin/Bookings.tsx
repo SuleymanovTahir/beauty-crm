@@ -1126,7 +1126,7 @@ export default function Bookings() {
                             onChange={(newSource) => handleSourceChange(booking.id, newSource)}
                           />
                         ) : (
-                          <span className="text-gray-700">{booking.source || '-'}</span>
+                          <span className="text-gray-700">{t(`bookings:source.${booking.source}`) || booking.source || '-'}</span>
                         )}
                       </td>
                       <td className="bookings-td font-semibold whitespace-nowrap">

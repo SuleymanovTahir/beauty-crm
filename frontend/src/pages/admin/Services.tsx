@@ -132,7 +132,7 @@ export default function Services() {
 
   // Services state
   const [services, setServices] = useState<Service[]>([]);
-  const { t, i18n } = useTranslation(['admin/Services', 'common', 'admin/users']);
+  const { t, i18n } = useTranslation(['admin/services', 'common', 'admin/users']);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);

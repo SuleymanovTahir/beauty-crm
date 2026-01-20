@@ -21,7 +21,7 @@
   },
   "loading": "Chargement...",
   "reset": "Réinitialiser",
-  "reset_confirm": "Réinitialiser les paramètres du menu aux valeurs par défaut ?",
+  "reset_confirm": "Réinitialiser les paramètres du menu aux valeurs par défaut\u00a0?",
   "reset_error": "Erreur de réinitialisation",
   "reset_success": "Réinitialisation des paramètres",
   "save": "Sauvegarder",
