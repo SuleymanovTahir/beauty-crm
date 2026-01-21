@@ -1,5 +1,5 @@
 // /frontend/src/pages/admin/VisitorAnalytics.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { MapPin, RefreshCw, Download, Loader, ChevronLeft, ChevronRight, Home, Globe } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { visitorApi } from '../../services/visitorApi';
@@ -7,6 +7,8 @@ import { toast } from 'sonner';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 import { useTranslation } from 'react-i18next';
+import * as Flags from 'country-flag-icons/react/3x2';
+import { getCountryCode } from '../../utils/countryCodes';
 import './VisitorAnalytics.css';
 
 interface Visitor {
@@ -31,13 +33,22 @@ const COLORS = [
     '#14b8a6'  // teal
 ];
 
-// Country code to flag emoji mapping
-const getCountryFlag = (_countryName: string): string => {
-    return '';
+// Country code to flag component mapping
+const CountryFlag = ({ countryName, className }: { countryName: string, className?: string }) => {
+    const code = getCountryCode(countryName);
+    if (!code) return <Globe className={className || "w-4 h-4 text-gray-400"} />;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const FlagComponent = (Flags as any)[code];
+    return FlagComponent ? (
+        <FlagComponent className={className || "w-4 h-4 rounded-sm shadow-sm"} title={countryName} />
+    ) : (
+        <Globe className={className || "w-4 h-4 text-gray-400"} />
+    );
 };
 
 export default function VisitorAnalytics() {
-    const { t, i18n } = useTranslation('admin/visitoranalytics');
+    const { t } = useTranslation('admin/visitoranalytics');
     const [visitors, setVisitors] = useState<Visitor[]>([]);
     const [locationBreakdown, setLocationBreakdown] = useState<any>(null);
     const [countryBreakdown, setCountryBreakdown] = useState<any[]>([]);
@@ -87,6 +98,9 @@ export default function VisitorAnalytics() {
             const periodValue = periodMap[period] || 'week';
             const maxDist = Number(distanceTo);
 
+            console.log('⏱️ [VisitorAnalytics] Requesting dashboard data...');
+            const startTime = performance.now();
+
             // Используем консолидированный endpoint для оптимизации (1 запрос вместо 8)
             // Передаем dateFrom и dateTo только если выбран 'custom'
             const dashboardData = await visitorApi.getDashboard(
@@ -95,6 +109,9 @@ export default function VisitorAnalytics() {
                 period === 'custom' ? dateFrom : undefined,
                 period === 'custom' ? dateTo : undefined
             );
+
+            const endTime = performance.now();
+            console.log(`⏱️ [VisitorAnalytics] Request took ${(endTime - startTime).toFixed(2)}ms`);
 
             if (dashboardData.success && dashboardData.data) {
                 const data = dashboardData.data;
@@ -171,76 +188,81 @@ export default function VisitorAnalytics() {
         );
     };
 
-    // Prepare chart data
-    const getDistanceRanges = () => {
+    // Prepare chart data with memoization
+    const distanceChartData = useMemo(() => {
         const maxDist = Number(distanceTo);
-        if (maxDist <= 5) {
-            return [
-                { name: t('distance_range_under', { count: 1 }), value: distanceBreakdown?.within_1km || 0, fill: COLORS[0] },
-                { name: t('distance_range_between', { min: 1, max: 2 }), value: distanceBreakdown?.within_2km || 0, fill: COLORS[1] },
-                { name: t('distance_range_between', { min: 2, max: 5 }), value: distanceBreakdown?.within_5km || 0, fill: COLORS[2] },
-            ];
-        } else if (maxDist <= 20) {
-            return [
-                { name: t('distance_range_under', { count: 1 }), value: distanceBreakdown?.within_1km || 0, fill: COLORS[0] },
-                { name: t('distance_range_between', { min: 1, max: 2 }), value: distanceBreakdown?.within_2km || 0, fill: COLORS[1] },
-                { name: t('distance_range_between', { min: 2, max: 5 }), value: distanceBreakdown?.within_5km || 0, fill: COLORS[2] },
-                { name: t('distance_range_between', { min: 5, max: 10 }), value: distanceBreakdown?.within_10km || 0, fill: COLORS[3] },
-                { name: t('distance_range_between', { min: 10, max: 15 }), value: distanceBreakdown?.within_15km || 0, fill: COLORS[4] },
-                { name: t('distance_range_between', { min: 15, max: 20 }), value: distanceBreakdown?.within_20km || 0, fill: COLORS[5] },
-            ];
-        } else {
-            return [
-                { name: t('distance_range_under', { count: 1 }), value: distanceBreakdown?.within_1km || 0, fill: COLORS[0] },
-                { name: t('distance_range_between', { min: 1, max: 2 }), value: distanceBreakdown?.within_2km || 0, fill: COLORS[1] },
-                { name: t('distance_range_between', { min: 2, max: 5 }), value: distanceBreakdown?.within_5km || 0, fill: COLORS[2] },
-                { name: t('distance_range_between', { min: 5, max: 10 }), value: distanceBreakdown?.within_10km || 0, fill: COLORS[3] },
-                { name: t('distance_range_between', { min: 10, max: 15 }), value: distanceBreakdown?.within_15km || 0, fill: COLORS[4] },
-                { name: t('distance_range_between', { min: 15, max: 20 }), value: distanceBreakdown?.within_20km || 0, fill: COLORS[5] },
-                { name: t('distance_range_between', { min: 20, max: maxDist }), value: distanceBreakdown?.[`within_${maxDist}km`] || 0, fill: COLORS[6] },
-            ];
-        }
-    };
+        // Helper function for ranges
+        const getRanges = () => {
+            if (maxDist <= 5) {
+                return [
+                    { name: t('distance_range_under', { count: 1 }), value: distanceBreakdown?.within_1km || 0, fill: COLORS[0] },
+                    { name: t('distance_range_between', { min: 1, max: 2 }), value: distanceBreakdown?.within_2km || 0, fill: COLORS[1] },
+                    { name: t('distance_range_between', { min: 2, max: 5 }), value: distanceBreakdown?.within_5km || 0, fill: COLORS[2] },
+                ];
+            } else if (maxDist <= 20) {
+                return [
+                    { name: t('distance_range_under', { count: 1 }), value: distanceBreakdown?.within_1km || 0, fill: COLORS[0] },
+                    { name: t('distance_range_between', { min: 1, max: 2 }), value: distanceBreakdown?.within_2km || 0, fill: COLORS[1] },
+                    { name: t('distance_range_between', { min: 2, max: 5 }), value: distanceBreakdown?.within_5km || 0, fill: COLORS[2] },
+                    { name: t('distance_range_between', { min: 5, max: 10 }), value: distanceBreakdown?.within_10km || 0, fill: COLORS[3] },
+                    { name: t('distance_range_between', { min: 10, max: 15 }), value: distanceBreakdown?.within_15km || 0, fill: COLORS[4] },
+                    { name: t('distance_range_between', { min: 15, max: 20 }), value: distanceBreakdown?.within_20km || 0, fill: COLORS[5] },
+                ];
+            } else {
+                return [
+                    { name: t('distance_range_under', { count: 1 }), value: distanceBreakdown?.within_1km || 0, fill: COLORS[0] },
+                    { name: t('distance_range_between', { min: 1, max: 2 }), value: distanceBreakdown?.within_2km || 0, fill: COLORS[1] },
+                    { name: t('distance_range_between', { min: 2, max: 5 }), value: distanceBreakdown?.within_5km || 0, fill: COLORS[2] },
+                    { name: t('distance_range_between', { min: 5, max: 10 }), value: distanceBreakdown?.within_10km || 0, fill: COLORS[3] },
+                    { name: t('distance_range_between', { min: 10, max: 15 }), value: distanceBreakdown?.within_15km || 0, fill: COLORS[4] },
+                    { name: t('distance_range_between', { min: 15, max: 20 }), value: distanceBreakdown?.within_20km || 0, fill: COLORS[5] },
+                    { name: t('distance_range_between', { min: 20, max: maxDist }), value: distanceBreakdown?.[`within_${maxDist}km`] || 0, fill: COLORS[6] },
+                ];
+            }
+        };
+        return getRanges();
+    }, [distanceTo, distanceBreakdown, t]);
 
-    const distanceChartData = getDistanceRanges();
-
-    const cityChartData = cityBreakdown.slice(0, 10).map((city, index) => ({
+    const cityChartData = useMemo(() => cityBreakdown.slice(0, 10).map((city, index) => ({
         name: city.city,
         visitors: city.count,
         fill: COLORS[index % COLORS.length]
-    }));
+    })), [cityBreakdown]);
 
-    const countryPieData = countryBreakdown.slice(0, 6).map((country) => ({
-        name: `${getCountryFlag(country.country)} ${country.country}`,
+    const countryPieData = useMemo(() => countryBreakdown.slice(0, 6).map((country) => ({
+        name: country.country,
         value: country.count,
         percentage: country.percentage
-    }));
+    })), [countryBreakdown]);
 
-    const trendChartData = visitorTrend.map(item => ({
+    const trendChartData = useMemo(() => visitorTrend.map(item => ({
         date: new Date(item.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
         visitors: item.count
-    }));
+    })), [visitorTrend]);
 
-    const sectionsChartData = landingSections.slice(0, 8).map((section, index) => ({
+    const sectionsChartData = useMemo(() => landingSections.slice(0, 8).map((section, index) => ({
         name: t(`section.${section.section}`) || section.section,
         visitors: section.count,
         fill: COLORS[index % COLORS.length]
-    }));
+    })), [landingSections, t]);
 
-    const hoursChartData = peakHours.map(item => ({
+    const hoursChartData = useMemo(() => peakHours.map(item => ({
         hour: item.hour,
         visitors: item.count
-    }));
+    })), [peakHours]);
 
-    const conversionRate = locationBreakdown?.total > 0
+    const conversionRate = useMemo(() => locationBreakdown?.total > 0
         ? ((locationBreakdown?.local / locationBreakdown?.total) * 100).toFixed(1)
-        : 0;
+        : 0, [locationBreakdown]);
 
     // Pagination
-    const totalPages = Math.ceil(visitors.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentVisitors = visitors.slice(startIndex, endIndex);
+    const { totalPages, currentVisitors, startIndex, endIndex } = useMemo(() => {
+        const totalPages = Math.ceil(visitors.length / itemsPerPage);
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const currentVisitors = visitors.slice(startIndex, endIndex);
+        return { totalPages, currentVisitors, startIndex, endIndex };
+    }, [visitors, currentPage, itemsPerPage]);
 
     return (
         <div className="visitor-analytics-container p-4 md:p-8 pb-20 md:pb-8">
@@ -476,14 +498,27 @@ export default function VisitorAnalytics() {
                                 nameKey="name"
                                 cx="50%"
                                 cy="50%"
-                                outerRadius={100}
-                                label
+                                outerRadius={80}
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                label={({ name, percent }: any) => `${name} (${(percent * 100).toFixed(0)}%)`}
                             >
                                 {countryPieData.map((_, index) => (
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                             </Pie>
-                            <Tooltip />
+                            <Tooltip content={({ active, payload }) => {
+                                if (active && payload && payload.length) {
+                                    const data = payload[0].payload;
+                                    return (
+                                        <div className="bg-white p-2 border border-gray-200 shadow-md rounded-md flex items-center gap-2">
+                                            <CountryFlag countryName={data.name} className="w-5 h-5 shadow-sm rounded-sm" />
+                                            <span className="font-medium">{data.name}</span>
+                                            <span className="text-gray-600">: {data.value} ({data.percentage}%)</span>
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            }} />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
@@ -562,7 +597,7 @@ export default function VisitorAnalytics() {
                                     <td className="px-6 py-4 text-sm text-gray-900">
                                         {visitor.country ? (
                                             <div className="flex items-center gap-2">
-                                                <Globe className="w-4 h-4 text-gray-400" />
+                                                <CountryFlag countryName={visitor.country} className="w-5 h-5 shadow-sm rounded-sm" />
                                                 <span>{visitor.country}</span>
                                             </div>
                                         ) : '-'}
