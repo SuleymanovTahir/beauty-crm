@@ -1,10 +1,14 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import { filterPreloadsPlugin } from "./vite-plugin-filter-preloads";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    filterPreloadsPlugin(),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -84,19 +88,30 @@ export default defineConfig({
       },
       output: {
         // Разделить vendor код на отдельные чанки (оптимизация для производительности)
-        manualChunks: (id) => {
+        manualChunks: (id, { getModuleInfo }) => {
           // Переводы в отдельный чанк
           if (id.includes("/src/locales/")) {
             return "locales-data";
           }
 
-          // Страницы в отдельные чанки для ленивой загрузки
-          if (id.includes("/pages/admin/")) {
+          // Проверяем, используется ли модуль только в landing page
+          const isLandingOnly = id.includes("/public_landing/");
+          const isAdminPage = id.includes("/pages/admin/");
+          const isCrmPage = id.includes("/pages/crm/");
+          const isManagerPage = id.includes("/pages/manager/");
+
+          // Не создавать admin chunks для landing page модулей
+          if (isLandingOnly) {
+            return undefined; // Пусть Vite сам решает
+          }
+
+          // Страницы в отдельные чанки для ленивой загрузки (только для main entry point)
+          if (isAdminPage) {
             const match = id.match(/pages\/admin\/([^/.]+)/);
             if (match) return `admin-${match[1].toLowerCase()}`;
           }
-          if (id.includes("/pages/crm/")) return "crm-pages";
-          if (id.includes("/pages/manager/")) return "manager-pages";
+          if (isCrmPage) return "crm-pages";
+          if (isManagerPage) return "manager-pages";
           if (id.includes("/pages/public/")) return "public-pages";
         },
         chunkFileNames: "js/[name]-[hash].js",
