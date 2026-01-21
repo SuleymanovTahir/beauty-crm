@@ -267,13 +267,17 @@ def add_employee_service(employee_id: int, service_id: int,
             INSERT INTO user_services 
             (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled, price_min, price_max)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (user_id, service_id) DO NOTHING
         """, (employee_id, service_id, price, duration, 
               True if is_online_booking_enabled else False, 
               True if is_calendar_enabled else False,
               price_min, price_max))
     else:
-        c.execute("INSERT INTO user_services (user_id, service_id) VALUES (%s, %s)", 
-                 (employee_id, service_id))
+        c.execute("""
+            INSERT INTO user_services (user_id, service_id) 
+            VALUES (%s, %s)
+            ON CONFLICT (user_id, service_id) DO NOTHING
+        """, (employee_id, service_id))
         
     conn.commit()
     conn.close()

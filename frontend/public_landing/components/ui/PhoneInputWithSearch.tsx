@@ -24,20 +24,21 @@ export function PhoneInputWithSearch({
     const [search, setSearch] = useState('');
     const dropdownRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
+    const phoneInputRef = useRef<HTMLInputElement>(null);
 
     const { inputValue, handlePhoneValueChange, inputRef, country, setCountry } = usePhoneInput({
         defaultCountry,
         value,
         countries: defaultCountries,
         disableDialCodePrefill: true,
-        disableCountryGuess: true, // Prevent country change while typing
-        disableDialCodeAndPrefix: true, // Remove + and dial code from input since it's in the button
+        disableCountryGuess: true,
+        disableDialCodeAndPrefix: true,
         onChange: (data) => {
             onChange(data.phone);
         },
     });
 
-    // Get country iso2 code (country can be string or object)
+    // Get country iso2 code
     const countryIso2 = typeof country === 'string' ? country : (country as any)?.iso2 || '';
 
     // Close dropdown when clicking outside
@@ -65,7 +66,6 @@ export function PhoneInputWithSearch({
     const filteredCountries = parsedCountries.filter(c => {
         if (!search) return true;
         const searchLower = search.toLowerCase();
-        // Allow searching by dial code even if user includes '+'
         const searchClean = search.startsWith('+') ? search.slice(1) : search;
 
         return (
@@ -75,7 +75,7 @@ export function PhoneInputWithSearch({
         );
     });
 
-    // Custom formatting for display (e.g., 888-33-33 or 999-123-45-67)
+    // Custom formatting for display
     const formatValue = (v: string) => {
         const d = v.replace(/\D/g, '');
         if (d.length <= 3) return d;
@@ -83,6 +83,46 @@ export function PhoneInputWithSearch({
             return `${d.slice(0, 3)}-${d.slice(3, 5)}${d.length > 5 ? '-' : ''}${d.slice(5)}`;
         }
         return `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6, 8)}${d.length > 8 ? '-' : ''}${d.slice(8)}`;
+    };
+
+    // Handle input change with cursor position preservation
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const input = e.target;
+        const cursorPosition = input.selectionStart || 0;
+        const oldValue = input.value;
+        const oldDigitsOnly = oldValue.replace(/\D/g, '');
+
+        // Call the original handler
+        handlePhoneValueChange(e);
+
+        // Calculate new cursor position after formatting
+        setTimeout(() => {
+            if (phoneInputRef.current) {
+                const newValue = phoneInputRef.current.value;
+                const newDigitsOnly = newValue.replace(/\D/g, '');
+
+                // If digits increased, move cursor to end
+                if (newDigitsOnly.length > oldDigitsOnly.length) {
+                    phoneInputRef.current.setSelectionRange(newValue.length, newValue.length);
+                } else {
+                    // Otherwise try to maintain relative position
+                    const digitsBeforeCursor = oldValue.substring(0, cursorPosition).replace(/\D/g, '').length;
+                    let digitCount = 0;
+                    let newCursorPos = cursorPosition;
+
+                    for (let i = 0; i < newValue.length; i++) {
+                        if (newValue[i] !== '-') {
+                            digitCount++;
+                        }
+                        if (digitCount >= digitsBeforeCursor) {
+                            newCursorPos = i + 1;
+                            break;
+                        }
+                    }
+                    phoneInputRef.current.setSelectionRange(newCursorPos, newCursorPos);
+                }
+            }
+        }, 0);
     };
 
     const selectedCountry = parsedCountries.find(c => c.iso2 === countryIso2);
@@ -154,10 +194,21 @@ export function PhoneInputWithSearch({
 
             {/* Phone Input */}
             <input
-                ref={inputRef}
+                ref={(el) => {
+                    phoneInputRef.current = el;
+                    // Handle both function refs and object refs from usePhoneInput
+                    const ref = inputRef as any;
+                    if (ref) {
+                        if (typeof ref === 'function') {
+                            ref(el);
+                        } else if (ref && 'current' in ref) {
+                            ref.current = el;
+                        }
+                    }
+                }}
                 type="tel"
                 value={formatValue(inputValue)}
-                onChange={handlePhoneValueChange}
+                onChange={handleInputChange}
                 placeholder={placeholder}
                 className={`flex-1 h-10 sm:h-11 px-3 rounded-md border transition-all ${error
                     ? 'border-destructive bg-destructive/5 ring-destructive/20'

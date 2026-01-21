@@ -2059,7 +2059,7 @@ def init_database():
                 c.execute("""
                     INSERT INTO user_services (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled)
                     VALUES (%s, %s, %s, %s, TRUE, TRUE)
-                    ON CONFLICT DO NOTHING
+                    ON CONFLICT (user_id, service_id) DO NOTHING
                 """, (user_id, svc[0], svc[1], svc[2]))
         else:
             # Если сотрудник уже есть, тоже проверим и добавим услуги если их нет
@@ -2072,7 +2072,7 @@ def init_database():
                 c.execute("""
                     INSERT INTO user_services (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled)
                     VALUES (%s, %s, %s, %s, TRUE, TRUE)
-                    ON CONFLICT DO NOTHING
+                    ON CONFLICT (user_id, service_id) DO NOTHING
                 """, (user_id, svc[0], svc[1], svc[2]))
     
     conn.commit()
