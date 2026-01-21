@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { Header } from '../components/Header';
 import { Hero } from '../components/Hero';
+import { IntroSection } from '../components/IntroSection';
 import { CookieConsent } from '../components/CookieConsent';
 import { Footer } from '../components/Footer';
 import { trackSection } from '../utils/analytics';
@@ -78,6 +79,9 @@ export function LandingPage() {
       <Header salonInfo={initialData?.salon} />
       <main>
         <Hero initialBanner={initialData?.banners?.[0]} />
+
+        {/* SEO-оптимизированная секция с ключевыми словами из H1 */}
+        <IntroSection />
 
         <Suspense fallback={<LoadingSpinner />}>
           <About />
