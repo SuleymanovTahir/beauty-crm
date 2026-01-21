@@ -1,7 +1,7 @@
 """
 API Endpoints для работы с пользователями
 """
-from fastapi import APIRouter, Request, Cookie,Depends
+from fastapi import APIRouter, Request, Cookie,Depends,Query
 from fastapi.responses import JSONResponse
 from typing import Optional
 

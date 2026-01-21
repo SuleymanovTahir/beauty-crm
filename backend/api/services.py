@@ -19,9 +19,9 @@ from db.connection import get_db_connection
 router = APIRouter(tags=["Services"])
 
 @router.get("/services")
-@router.get("/services")
 async def list_services(
     active_only: bool = Query(True),
+    language: str = Query('ru'),
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить услуги"""
@@ -47,7 +47,15 @@ async def list_services(
             {
                 "id": s[0],
                 "key": s[1],
-                "name": s[2],
+                "name": s[20] if language == 'en' and len(s) > 20 and s[20] else \
+                        s[4] if language == 'ar' and len(s) > 4 and s[4] else \
+                        s[21] if language == 'de' and len(s) > 21 and s[21] else \
+                        s[22] if language == 'es' and len(s) > 22 and s[22] else \
+                        s[23] if language == 'fr' and len(s) > 23 and s[23] else \
+                        s[24] if language == 'hi' and len(s) > 24 and s[24] else \
+                        s[25] if language == 'kk' and len(s) > 25 and s[25] else \
+                        s[26] if language == 'pt' and len(s) > 26 and s[26] else \
+                        s[3] if language == 'ru' and len(s) > 3 and s[3] else s[2],
                 "name_ru": s[3] if len(s) > 3 else s[2],
                 "name_ar": s[4] if len(s) > 4 else None,
                 "price": s[5] if len(s) > 5 else 0,
@@ -55,7 +63,15 @@ async def list_services(
                 "max_price": s[7] if len(s) > 7 else None,
                 "currency": s[8] if len(s) > 8 else "AED",
                 "category": s[9] if len(s) > 9 else "other",
-                "description": s[10] if len(s) > 10 else "",
+                "description": s[27] if language == 'en' and len(s) > 27 and s[27] else \
+                                s[12] if language == 'ar' and len(s) > 12 and s[12] else \
+                                s[28] if language == 'de' and len(s) > 28 and s[28] else \
+                                s[29] if language == 'es' and len(s) > 29 and s[29] else \
+                                s[30] if language == 'fr' and len(s) > 30 and s[30] else \
+                                s[31] if language == 'hi' and len(s) > 31 and s[31] else \
+                                s[32] if language == 'kk' and len(s) > 32 and s[32] else \
+                                s[33] if language == 'pt' and len(s) > 33 and s[33] else \
+                                s[11] if language == 'ru' and len(s) > 11 and s[11] else s[10],
                 "description_ru": s[11] if len(s) > 11 else "",
                 "description_ar": s[12] if len(s) > 12 else "",
                 "benefits": s[13].split('|') if len(s) > 13 and s[13] else [],
@@ -70,13 +86,6 @@ async def list_services(
                 "name_hi": s[24] if len(s) > 24 else None,
                 "name_kk": s[25] if len(s) > 25 else None,
                 "name_pt": s[26] if len(s) > 26 else None,
-                "description_en": s[27] if len(s) > 27 else "",
-                "description_de": s[28] if len(s) > 28 else "",
-                "description_es": s[29] if len(s) > 29 else "",
-                "description_fr": s[30] if len(s) > 30 else "",
-                "description_hi": s[31] if len(s) > 31 else "",
-                "description_kk": s[32] if len(s) > 32 else "",
-                "description_pt": s[33] if len(s) > 33 else "",
             }
             for s in services
         ],
@@ -483,6 +492,7 @@ async def update_service_positions(
 @router.get("/services/{service_id}/employees")
 async def get_service_employees(
     service_id: int,
+    language: str = Query('ru'),
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить список сотрудников, назначенных на данную услугу"""
@@ -493,8 +503,18 @@ async def get_service_employees(
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute("""
-            SELECT u.id, u.full_name, u.full_name_ru, u.position, u.position_id
+        # Determine localized fields
+        lang = language.lower()[:2] if language else 'ru'
+        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+        if lang not in valid_languages:
+            lang = 'ru'
+        
+        name_field = f'full_name_{lang}'
+        position_field = f'position_{lang}'
+
+        c.execute(f"""
+            SELECT u.id, COALESCE(u.{name_field}, u.full_name) as full_name, u.full_name_ru, 
+                   COALESCE(u.{position_field}, u.position) as position, u.position_id
             FROM users u
             JOIN user_services us ON u.id = us.user_id
             WHERE us.service_id = %s
