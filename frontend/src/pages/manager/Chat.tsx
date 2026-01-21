@@ -1843,7 +1843,8 @@ export default function Chat() {
           </div>
         )
       }
-      {/* Messenger Sidebar (Desktop) */}
+      {/* Messenger Sidebar (Desktop) - COMMENTED OUT */}
+      {/* 
       <div className="hidden md:flex flex-col gap-4 p-4 border-r border-gray-100 bg-gray-50/50">
         {['instagram', 'telegram', 'whatsapp', 'tiktok'].map((m) => (
           <motion.button
@@ -1882,6 +1883,7 @@ export default function Chat() {
           </motion.button>
         ))}
       </div>
+      */}
     </div >
   );
 }
