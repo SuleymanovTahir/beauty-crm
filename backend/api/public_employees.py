@@ -39,14 +39,15 @@ async def get_public_employees(
         name_field = f'full_name_{language}'
         position_field = f'position_{language}'
         bio_field = f'bio_{language}'
+        specialization_field = f'specialization_{language}'
         
         query = f"""
             SELECT
                 u.id,
                 COALESCE(u.{name_field}, u.full_name) as full_name,
                 COALESCE(u.{position_field}, u.position) as position,
-                u.bio,
-                u.specialization,
+                COALESCE(u.{bio_field}, u.bio) as bio,
+                COALESCE(u.{specialization_field}, u.specialization) as specialization,
                 u.photo,
                 u.experience,
                 u.years_of_experience,
@@ -113,22 +114,32 @@ async def get_public_employees(
 
             log_info(f"👤 [Public] Processing employee ID {employee_id}: {employee_name}", "api")
 
-            # Handle experience fallback
-            exp_text = row_dict.get("experience")
+            # Handle experience localization
             years = row_dict.get("years_of_experience")
-
-            if (not exp_text or not str(exp_text).strip()) and years:
-                # Basic localization for experience
+            
+            if years:
                 if language == 'ru':
                     plural = get_russian_plural(years, "год", "года", "лет")
                     exp_text = f"{years} {plural} опыта"
                 elif language == 'ar':
                     exp_text = f"{years} سنوات خبرة"
+                elif language == 'es':
+                    exp_text = f"{years} años de experiencia"
+                elif language == 'de':
+                    exp_text = f"{years} Jahre Erfahrung"
+                elif language == 'fr':
+                    exp_text = f"{years} ans d'expérience"
+                elif language == 'pt':
+                    exp_text = f"{years} anos de experiência"
+                elif language == 'hi':
+                    exp_text = f"{years} साल का अनुभव"
+                elif language == 'kk':
+                    exp_text = f"{years} жыл тәжірибе"
                 else:
                     exp_text = f"{years} years experience"
-            elif exp_text and years and language == 'ru':
-                plural = get_russian_plural(years, "год", "года", "лет")
-                exp_text = f"{years} {plural} опыта"
+            else:
+                # Fallback to text column if years is missing
+                exp_text = row_dict.get("experience") or ""
 
             # Calculate age
             age = calculate_age(row_dict.get("birthday"))

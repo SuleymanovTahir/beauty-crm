@@ -65,6 +65,118 @@ def merge_clients(main_id: str, redundant_id: str):
     finally:
         conn.close()
 
+def localize_staff_data():
+    """Update staff details with localized names, positions, and specializations."""
+    print("🌍 Localizing staff details...")
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    staff_data = [
+        {
+            "username": "mestan", 
+            "full_name_ru": "Амандурдыева Местан",
+            "full_name_en": "Amandurdyyeva Mestan",
+            "full_name_ar": "أماندوردييفا ميستان",
+            "position_ru": "Стилист-парикмахер",
+            "position_en": "Hair Stylist",
+            "position_ar": "مصفف شعر",
+            "specialization_ru": "Брови, Уход за лицом, Волосы, Ресницы, Ногти, Перманентный макияж, Ваксинг",
+            "specialization_en": "Brows, Facial, Hair, Lashes, Nails, Permanent Makeup, Waxing",
+            "specialization_ar": "حواجب، وجه، شعر، رموش، أظافر، مكياج دائم، إزالة الشعر بالشمع"
+        },
+        {
+            "username": "lyazzat", 
+            "full_name_ru": "Кожабай Ляззат",
+            "full_name_en": "Kozhabay Lyazzat",
+            "full_name_ar": "كوزاباي ليازات",
+            "position_ru": "Мастер ногтевого сервиса",
+            "position_en": "Nail Master",
+            "position_ar": "أخصائية أظافر",
+            "specialization_ru": "Маникюр, Педикюр, Дизайн ногтей, Наращивание, Уход за руками",
+            "specialization_en": "Manicure, Pedicure, Nail Design, Extension, Hand Care",
+            "specialization_ar": "مانيكير، باديكير، تصميم الأظافر، تمديد، عناية باليدين"
+        },
+        {
+            "username": "simo", 
+            "full_name_ru": "Мохамед Сабри",
+            "full_name_en": "Mohamed Sabri",
+            "full_name_ar": "محمد صبري",
+            "position_ru": "Стилист-парикмахер",
+            "position_en": "Hair Stylist",
+            "position_ar": "مصفف شعر",
+            "specialization_ru": "Сложное окрашивание, Стрижки, Укладки, Уход за волосами, Балаяж",
+            "specialization_en": "Complex Coloring, Haircuts, Styling, Hair Care, Balayage",
+            "specialization_ar": "صبغ معقد، قص الشعر، تصفيف، عناية بالشعر، بالياج"
+        },
+        {
+            "username": "gulya", 
+            "full_name_ru": "Касымова Гульчере",
+            "full_name_en": "Kasymova Gulcehre",
+            "full_name_ar": "قاسيموفا غولشيري",
+            "position_ru": "Мастер ногтевого сервиса / Ваксинг",
+            "position_en": "Nail Master / Waxing",
+            "position_ar": "أخصائية أظافر / إزالة الشعر بالشمع",
+            "specialization_ru": "Маникюр, Педикюр, Ваксинг, Шугаринг, Уход за кожей",
+            "specialization_en": "Manicure, Pedicure, Waxing, Sugaring, Skin Care",
+            "specialization_ar": "مانيكير، باديكير، إزالة الشعر بالشمع، سكر، عناية بالبشرة"
+        },
+        {
+            "username": "jennifer", 
+            "full_name_ru": "Перадилья Дженнифер",
+            "full_name_en": "Peradilla Jennifer",
+            "full_name_ar": "بيراديليا جينيفر",
+            "position_ru": "Мастер ногтевого сервиса / Массаж",
+            "position_en": "Nail Master / Massage",
+            "position_ar": "أخصائية أظافر / مساج",
+            "specialization_ru": "Маникюр, Педикюр, Массаж лица, SPA-процедуры, Релакс",
+            "specialization_en": "Manicure, Pedicure, Facial Massage, SPA, Relax",
+            "specialization_ar": "مانيكير، باديكير، مساج للوجه، سبا، استرخاء"
+        },
+        {
+            "username": "tursunai",
+            "full_name_ru": "Турсунай",
+            "full_name_en": "Tursunai",
+            "full_name_ar": "تورسوناي",
+            "position_ru": "Директор",
+            "position_en": "Director",
+            "position_ar": "مدير",
+            "specialization_ru": "Управление салоном",
+            "specialization_en": "Salon Management",
+            "specialization_ar": "إدارة الصالون"
+        }
+    ]
+
+    try:
+        updated_count = 0
+        for staff in staff_data:
+            try:
+                c.execute("SAVEPOINT loc_staff")
+                c.execute("""
+                    UPDATE users
+                    SET 
+                        full_name_ru = %s, full_name_en = %s, full_name_ar = %s,
+                        position_ru = %s, position_en = %s, position_ar = %s,
+                        specialization_ru = %s, specialization_en = %s, specialization_ar = %s
+                    WHERE username = %s
+                """, (
+                    staff['full_name_ru'], staff['full_name_en'], staff['full_name_ar'],
+                    staff['position_ru'], staff['position_en'], staff['position_ar'],
+                    staff['specialization_ru'], staff['specialization_en'], staff['specialization_ar'],
+                    staff['username']
+                ))
+                updated_count += c.rowcount
+                c.execute("RELEASE SAVEPOINT loc_staff")
+            except Exception:
+                c.execute("ROLLBACK TO SAVEPOINT loc_staff")
+        
+        conn.commit()
+        print(f"  ✅ Localized {updated_count} staff members.")
+    except Exception as e:
+        conn.rollback()
+        print(f"  ❌ Error localizing staff: {e}")
+    finally:
+        conn.close()
+
 def run_all_fixes():
     print("🔧 Starting data fixes...")
     
@@ -74,6 +186,9 @@ def run_all_fixes():
     
     # 0. Merge known duplicates
     merge_clients('admin', '1') # Tahir duplication fix
+    
+    # 0.1 Localize staff
+    localize_staff_data()
     
     conn = get_db_connection()
     c = conn.cursor()
