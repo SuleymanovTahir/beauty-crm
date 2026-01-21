@@ -1,11 +1,11 @@
 {
-  "crm": "إدارة علاقات العملاء",
-  "employee": "موظف",
+  "crm": "CRM",
+  "employee": "الموظف",
   "logout": "تسجيل الخروج",
   "menu": {
-    "calendar": "تقويم",
+    "calendar": "التقويم",
     "my_bookings": "حجوزاتي",
-    "profile": "حساب تعريفي",
-    "settings": "إعدادات"
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات"
   }
 }

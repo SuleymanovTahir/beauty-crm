@@ -58,12 +58,11 @@ def needs_translation(path: str, source_value: str, target_value: str, lang: str
         if target_value != translator.key_glossary[lang][key_path]:
             return True
 
-    # Priority 1.5: Salon Terminology Source Check (Override existing if glossary changed)
+    # Priority 1.5: Salon Terminology Source Check
     if lang in translator.SALON_TERMINOLOGY:
         source_lower = source_value.lower().strip()
         if source_lower in translator.SALON_TERMINOLOGY[lang]:
             expected = translator.SALON_TERMINOLOGY[lang][source_lower]
-            # Exact match check (considering base casing)
             if target_value != expected:
                 return True
             
@@ -73,16 +72,19 @@ def needs_translation(path: str, source_value: str, target_value: str, lang: str
         return True
         
     # Priority 3: Missing Target or Cyrillic in Target
-    if not target_value:
+    # If the target is empty, it definitely needs translation
+    if not target_value or not str(target_value).strip():
         return True
 
-    if lang != 'ru' and is_russian_text(target_value) and not is_russian_text(source_value):
+    # If the language is not Russian and we see Russian text in the target, it needs translation
+    # Even if the source is also Russian (which is always true for our source locales)
+    if lang != 'ru' and is_russian_text(str(target_value)):
         return True
         
     # Priority 4: Terminology Correction Check
     if lang in translator.SALON_TERMINOLOGY:
         term_map = translator.SALON_TERMINOLOGY[lang]
-        lower_target = target_value.lower().strip()
+        lower_target = str(target_value).lower().strip()
         if lower_target in term_map:
             # If the current target is an "incorrect" term from our glossary, we must fix it
             return True

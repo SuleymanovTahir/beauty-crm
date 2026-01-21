@@ -1,13 +1,13 @@
 {
-  "all": "Todos",
-  "booking": "booking",
+  "all": "Todas",
+  "booking": "gravações",
   "my_bookings": "Minhas reservas",
-  "no_bookings": "Não há reservas",
-  "no_bookings_description": "Nenhuma descrição da reserva",
+  "no_bookings": "Não reservas",
+  "no_bookings_description": "Sem descrição da reserva",
   "no_name": "Sem nome",
-  "no_phone": "Sem telefone",
+  "no_phone": "Sem número de telefone",
   "notes": "Notas",
   "past": "Passado",
-  "upcoming": "Até data vir",
-  "view_and_manage_bookings": "Visualize e gerencie suas reservas"
+  "upcoming": "Próximos",
+  "view_and_manage_bookings": "Ver e gerenciar reservas"
 }

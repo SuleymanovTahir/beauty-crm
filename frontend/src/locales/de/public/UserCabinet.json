@@ -1,17 +1,17 @@
 {
-  "backToHome": "← Rückkehr nach Hause",
+  "backToHome": "← Zurück zur Startseite",
   "fillAllFields": "Bitte füllen Sie alle Felder aus",
-  "loggingIn": "Eingang...",
-  "loginButton": "anmelden",
-  "loginError": "Ungültige Anmeldeinformationen",
+  "loggingIn": "Aufzeichnen...",
+  "loginButton": "Anmelden",
+  "loginError": "Ungültige Anmeldedaten",
   "loginSuccess": "Sie haben sich erfolgreich angemeldet! 🎉",
   "password": "Passwort",
-  "passwordHint": "Eingetragen bei der Registrierung",
+  "passwordHint": "Bei der Registrierung eingegeben",
   "passwordPlaceholder": "••••••",
-  "subtitle": "Melden Sie sich beim Salonverwaltungssystem an",
+  "subtitle": "Beim Salonverwaltungssystem anmelden",
   "systemError": "Anmeldefehler",
   "title": "Persönliches Konto",
-  "username": "Benutzername oder E-Mail",
+  "username": "Benutzername oder E-Mail-Adresse",
   "usernameHint": "Geben Sie Ihren Benutzernamen ein",
-  "usernamePlaceholder": "Administrator"
+  "usernamePlaceholder": "администратор"
 }

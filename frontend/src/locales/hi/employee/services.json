@@ -1,12 +1,12 @@
 {
-  "our_services": "हमारी दिनांक सेवाएँ",
-  "browse_available_services": "उपलब्ध सैलून दिनांक सेवाएँ देखें",
-  "no_services": "दिनांक सेवाएँ नहीं मिलीं",
-  "no_services_description": "इस समय प्रदर्शित करने के लिए कोई दिनांक सेवाएँ उपलब्ध नहीं हैं।",
-  "service_name": "दिनांक सेवा का नाम",
+  "browse_available_services": "उपलब्ध सैलून सेवाएं देखें",
+  "category": "श्रेणी",
   "description": "विवरण",
-  "price": "कीमत",
   "duration": "अवधि",
-  "category": "वर्ग",
-  "min": "मिन"
+  "min": "मिनट",
+  "no_services": "कोई सेवा नहीं मिली",
+  "no_services_description": "इस समय प्रदर्शित करने के लिए कोई सेवाएं उपलब्ध नहीं हैं।",
+  "our_services": "हमारी सेवाएं",
+  "price": "मूल्य",
+  "service_name": "नाम सेवाएं"
 }

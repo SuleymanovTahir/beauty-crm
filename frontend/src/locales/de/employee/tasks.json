@@ -1,12 +1,12 @@
 {
-  "my_tasks": "Meine Aufgaben",
-  "manage_your_tasks": "Verwalten bis Aufgaben und Zuweisungen",
-  "no_tasks": "Noch keine Aufgaben",
-  "no_tasks_description": "Sie haben keine aktiven Aufgaben. Neue Aufgaben werden hier angezeigt, wenn sie zugewiesen werden.",
-  "task_title": "Aufgabenname",
-  "task_description": "Beschreibung",
+  "assigned_to": "Zugewiesen",
   "due_date": "Fälligkeitsdatum",
-  "status": "Status",
+  "manage_your_tasks": "Aufgaben und Aufgaben verwalten",
+  "my_tasks": "Meine Aufgaben",
+  "no_tasks": "Noch keine Aufgaben",
+  "no_tasks_description": "Sie haben keine aktive Aufgaben. Neue Aufgaben werden hier angezeigt, wenn sie zugewiesen werden.",
   "priority": "Priorität",
-  "assigned_to": "Zugewiesen"
+  "status": "Status",
+  "task_description": "Beschreibung",
+  "task_title": "Aufgabenname"
 }

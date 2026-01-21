@@ -1,70 +1,68 @@
 {
-  "addProduct": "أضف المنتج",
-  "allCategories": "جميع الفئات",
+  "addProduct": "إضافة منتج",
+  "allCategories": "الكل الفئات",
   "analytics": {
-    "avgPrice": "تزوج. سعر",
-    "last30Days": "لمدة {{count}} من الأيام",
-    "revenue": "ربح",
+    "avgPrice": "المتوسط. السعر",
+    "last30Days": "لمدة {{count}} أيام",
+    "revenue": "الإيرادات",
     "totalSold": "إجمالي المبيعات"
   },
   "createFirst": "إضافة المنتج الأول إلى النظام",
-  "delete": "يمسح",
+  "delete": "حذف",
   "detail": {
     "costPriceLabel": "التكلفة: {{price}} {{currency}}",
-    "inStock_zero": "",
-    "inStock_one": "متوفر في المخزون {{count}} قطعة.",
-    "inStock_two": "",
-    "inStock_few": "متوفر في المخزون {{count}} قطعة.",
-    "inStock_many": "متوفر في المخزون {{count}} قطعة.",
-    "inStock_other": "متوفر في المخزون {{count}} قطعة.",
-    "loadingData": "جارٍ تحميل البيانات...",
-    "movementAdjustment": "تعديل",
-    "movementHistory": "تاريخ الحركات",
-    "movementIn": "قبول",
-    "movementOut": "لا تصلح",
-    "noCategory": "غير مصنف",
-    "noMovements": "لا توجد بيانات الحركة"
+    "inStock_few": "في المخزون {{count}} من القطع.",
+    "inStock_many": "في المخزون {{count}} من القطع.",
+    "inStock_one": "متوفر في المخزون {{count}} جهاز كمبيوتر.",
+    "inStock_other": "في المخزون {{count}} من القطع.",
+    "loadingData": "تحميل البيانات...",
+    "movementAdjustment": "التعديل",
+    "movementHistory": "حجز الحركة",
+    "movementIn": "الاستلام",
+    "movementOut": "شطب",
+    "noCategory": "لا توجد فئة",
+    "noMovements": "لا توجد بيانات حركة"
   },
-  "edit": "يحرر",
+  "edit": "تحرير",
   "form": {
-    "cancel": "يلغي",
-    "category": "فئة",
-    "costPrice": "سعر التكلفة",
-    "isActive": "نشيط",
+    "cancel": "إلغاء",
+    "category": "الفئة",
+    "costPrice": "التكلفة",
+    "isActive": "نشطة",
     "minStockLevel": "الحد الأدنى للرصيد",
-    "name": "اسم",
-    "notes": "ملحوظات",
+    "name": "الاسم",
+    "notes": "ملاحظات",
     "photos": "صورة المنتج",
-    "price": "سعر البيع",
-    "save": "يحفظ",
-    "sku": "شرط",
-    "stockQuantity": "المخزون المتبقي",
+    "price": "السعر المبيعات",
+    "save": "حفظ",
+    "sku": "المقالة",
+    "stockQuantity": "رصيد المخزون",
     "upload": "تحميل",
     "uploadError": "حدث خطأ أثناء تحميل الصورة"
   },
   "messages": {
-    "confirmDelete": "هل أنت متأكد أنك تريد إزالة هذا العنصر؟",
-    "noResults": "لم يتم العثور على أي شيء مطابق لطلبك"
+    "confirmDelete": "هل أنت متأكد من رغبتك في حذف هذا المنتج؟",
+    "noResults": "لم يتم العثور على شيء لطلبك"
   },
   "movement": {
-    "quantity": "كمية",
-    "reason": "سبب",
-    "title": "حركة البضائع",
+    "quantity": "الكمية",
+    "reason": "السبب",
+    "title": "حركة المنتج",
     "type": "نوع الحركة",
     "types": {
-      "adjustment": "تعديل",
-      "in": "آت",
-      "out": "استهلاك"
+      "adjustment": "تسوية",
+      "in": "الواردة",
+      "out": "المصروفات"
     }
   },
-  "noProducts": "لا توجد منتجات حتى الآن",
-  "search_placeholder": "البحث حسب العنوان أو الفئة...",
+  "noProducts": "لا توجد منتجات بعد",
+  "search_placeholder": "البحث حسب الاسم أو الفئة...",
   "stock_status": {
-    "in_stock": "في الأوراق المالية",
-    "low_stock": "عدد قليل",
-    "out_of_stock": "غير متوفر"
+    "in_stock": "ب في المخزون",
+    "low_stock": "قليل",
+    "out_of_stock": "نفاد المخزون"
   },
-  "subtitle": "إدارة المنتجات والمخزون",
+  "subtitle": "إدارة المنتج والمخزون",
   "title": "المنتجات والمستودعات",
-  "unit_pcs": "جهاز كمبيوتر شخصى."
+  "unit_pcs": "أجهزة الكمبيوتر"
 }

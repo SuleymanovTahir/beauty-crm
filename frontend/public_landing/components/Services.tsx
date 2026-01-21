@@ -122,7 +122,7 @@ export function Services({ initialServices }: ServicesProps) {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
           <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-2 sm:mb-3">
-            {t('servicesTag', { defaultValue: 'УСЛУГИ' })}
+            {t('servicesTag', { defaultValue: 'Услуги' })}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
             {t('servicesTitlePart1', { defaultValue: 'Что мы' })} <span className="text-primary">{t('servicesTitlePart2', { defaultValue: 'предлагаем' })}</span>

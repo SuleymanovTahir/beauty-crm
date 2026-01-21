@@ -2,32 +2,32 @@
   "addProduct": "Produkt hinzufügen",
   "allCategories": "Alle Kategorien",
   "analytics": {
-    "avgPrice": "Heiraten. Preis",
+    "avgPrice": "Durchschn. Preis",
     "last30Days": "Für {{count}} Tage",
-    "revenue": "Einnahmen",
-    "totalSold": "Insgesamt verkauft"
+    "revenue": "Umsatz",
+    "totalSold": "Gesamtverkauft"
   },
-  "createFirst": "Fügen Sie das erste Produkt zum System hinzu",
+  "createFirst": "Das erste Produkt zum System hinzufügen",
   "delete": "Löschen",
   "detail": {
     "costPriceLabel": "Kosten: {{price}} {{currency}}",
-    "inStock_one": "Auf Lager {{count}} Stk.",
     "inStock_few": "Auf Lager {{count}} Stk.",
     "inStock_many": "Auf Lager {{count}} Stk.",
+    "inStock_one": "Auf Lager {{count}} Stk.",
     "inStock_other": "Auf Lager {{count}} Stk.",
     "loadingData": "Daten werden geladen...",
-    "movementAdjustment": "Einstellung",
-    "movementHistory": "Geschichte der Bewegungen",
-    "movementIn": "Zulassung",
+    "movementAdjustment": "Anpassung",
+    "movementHistory": "Bewegungshistorie",
+    "movementIn": "Eingang",
     "movementOut": "Abschreibung",
-    "noCategory": "Nicht kategorisiert",
-    "noMovements": "Keine Bewegungsdaten"
+    "noCategory": "Keine Kategorie",
+    "noMovements": "Keine Daten zu Bewegungen"
   },
   "edit": "Bearbeiten",
   "form": {
-    "cancel": "Stornieren",
+    "cancel": "Abbrechen",
     "category": "Kategorie",
-    "costPrice": "Selbstkostenpreis",
+    "costPrice": "Kosten",
     "isActive": "Aktiv",
     "minStockLevel": "Mindestguthaben",
     "name": "Name",
@@ -35,34 +35,34 @@
     "photos": "Produktfoto",
     "price": "Verkaufspreis",
     "save": "Speichern",
-    "sku": "Artikel",
-    "stockQuantity": "Restposten",
-    "upload": "Herunterladen",
+    "sku": "Artikelnummer",
+    "stockQuantity": "Lagerbestand",
+    "upload": "Hochladen",
     "uploadError": "Fehler beim Laden des Fotos"
   },
   "messages": {
-    "confirmDelete": "Möchten Sie dieses Element wirklich entfernen?",
-    "noResults": "Zu Ihrer Anfrage wurde nichts gefunden"
+    "confirmDelete": "Sind Sie sicher, dass Sie dieses Produkt löschen möchten?",
+    "noResults": "Für Ihre Anfrage wurde nichts gefunden"
   },
   "movement": {
     "quantity": "Menge",
-    "reason": "Ursache",
-    "title": "Warenverkehr",
-    "type": "Bewegungsart",
+    "reason": "Grund",
+    "title": "Produktbewegung",
+    "type": "Bewegungstyp",
     "types": {
-      "adjustment": "Einstellung",
-      "in": "Kommen",
-      "out": "Verbrauch"
+      "adjustment": "Anpassung",
+      "in": "Eingang",
+      "out": "Ausgang"
     }
   },
   "noProducts": "Noch keine Produkte",
-  "search_placeholder": "Suche nach Titel oder Kategorie...",
+  "search_placeholder": "Suche nach Name oder Kategorie...",
   "stock_status": {
     "in_stock": "Auf Lager",
-    "low_stock": "Wenige",
-    "out_of_stock": "Nicht verfügbar"
+    "low_stock": "Wenig",
+    "out_of_stock": "Ausverkauft"
   },
-  "subtitle": "Produkt- und Bestandsverwaltung",
+  "subtitle": "Produktmanagement und Waagen",
   "title": "Produkte und Lager",
   "unit_pcs": "Stk."
 }

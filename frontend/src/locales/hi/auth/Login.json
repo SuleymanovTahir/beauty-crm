@@ -1,11 +1,11 @@
 {
-  "authorization_error": "प्रमाणीकरण विफल",
+  "authorization_error": "प्राधिकरण विफल",
   "enter_login": "अपना लॉगिन दर्ज करें",
-  "fill_both_fields": "कृपया दोनों फील्ड में भरें",
+  "fill_both_fields": "कृपया दोनों फ़ील्ड भरें",
   "login": "लॉगिन",
   "login_error": "लॉगिन त्रुटि",
-  "login_title": "अपने अकाउंट में लॉग इन करें",
+  "login_title": "अपने खाते में लॉग इन करें",
   "password": "पासवर्ड",
   "username": "उपयोगकर्ता नाम",
-  "welcome": "स्वागत"
+  "welcome": "स्वागत है"
 }

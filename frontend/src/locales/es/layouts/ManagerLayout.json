@@ -1,13 +1,13 @@
 {
-  "crm": "Panel de CRM",
-  "logout": "Finalizar la sesión",
-  "manager": "Gerente",
+  "crm": "Panel CRM",
+  "logout": "Cerrar sesión",
+  "manager": "Administrador",
   "menu": {
-    "analytics": "Analítica",
+    "analytics": "Análisis",
     "chat": "Chat",
-    "clients": "Clientela",
+    "clients": "Clientes",
     "dashboard": "Panel",
     "funnel": "Embudo",
-    "settings": "Ajustes"
+    "settings": "Configuración"
   }
 }

@@ -1,62 +1,62 @@
 {
-  "actions": "Actes",
+  "actions": "Actions",
   "addInvoice": "Créer un compte",
   "addPayment": "Ajouter un paiement",
-  "allInvoices": "Tous les comptes",
+  "allInvoices": "Toutes les factures",
   "allStatuses": "Tous les statuts",
-  "board": "Conseil",
+  "board": "Tableau",
   "client": "Client",
   "delete": "Supprimer",
-  "dueDate": "Date d'échéance",
+  "dueDate": "Date d'échéance du paiement",
   "errors": {
-    "createError": "Erreur lors de la création du compte.",
-    "deleteError": "Erreur lors de la suppression du compte.",
+    "createError": "Erreur lors de la création de la facture.",
+    "deleteError": "Erreur de suppression du compte.",
     "paymentError": "Erreur lors de l'ajout du paiement",
-    "sendError": "Erreur lors de l'envoi de la facture",
+    "sendError": "Erreur d'envoi de la facture",
     "updateError": "Échec de la mise à jour du statut"
   },
   "form": {
-    "addItem": "Ajouter un poste",
+    "addItem": "Ajouter un article",
     "cancel": "Annuler",
-    "dueDate": "Date d'échéance",
+    "dueDate": "Conditions de paiement",
     "itemName": "Nom",
     "itemPrice": "Prix",
     "itemQuantity": "Quantité",
-    "items": "Positions de compte",
-    "notes": "Remarques",
-    "save": "Sauvegarder",
-    "selectClient": "Sélectionner un client"
+    "items": "Articles du compte",
+    "notes": "Notes",
+    "save": "Enregistrer",
+    "selectClient": "Sélectionner le client"
   },
   "invoiceNumber": "Numéro de compte",
   "manage_stages": "Colonnes",
   "messages": {
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce compte\u00a0?",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette facture ?",
     "invoiceCreated": "Compte créé",
-    "invoiceDeleted": "Compte supprimé",
+    "invoiceDeleted": "Facture supprimée",
     "invoiceSent": "Facture envoyée",
-    "invoiceUpdated": "Compte mis à jour",
+    "invoiceUpdated": "Facture mise à jour",
     "paymentAdded": "Paiement ajouté"
   },
-  "noInvoices": "Aucun compte pour l'instant",
+  "noInvoices": "Aucune facture pour l'instant",
   "paidAmount": "Payé",
   "payment": {
     "add": "Ajouter",
-    "amount": "Somme",
-    "method": "Mode de paiement",
+    "amount": "Montant",
+    "method": "Paiement méthode",
     "methods": {
       "card": "Carte",
       "cash": "Espèces",
       "online": "En ligne",
-      "transfer": "Traduction"
+      "transfer": "Transfert"
     },
-    "notes": "Remarques",
+    "notes": "Notes",
     "title": "Ajouter un paiement"
   },
-  "search_placeholder": "Recherche à numéro ou client...",
+  "search_placeholder": "Recherche à la date numéro ou client...",
   "sendButton": "Envoyer",
   "sendDialog": {
     "email": "E-mail",
-    "method": "Méthode d'expédition",
+    "method": "Mode d'envoi",
     "recipient": "Destinataire",
     "sendButton": "Envoyer",
     "telegram": "Télégramme",
@@ -64,7 +64,7 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Statut",
-  "subtitle": "Gestion des comptes et des paiements",
-  "title": "Factures",
-  "totalAmount": "Somme"
+  "subtitle": "Gérer les factures et les paiements",
+  "title": "Comptes",
+  "totalAmount": "Montant"
 }

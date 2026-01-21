@@ -1,7 +1,7 @@
 {
   "buttons": {
     "add_challenge": "Créer une tâche",
-    "create_challenge": "Démarrer un défi"
+    "create_challenge": "Lancer un défi"
   },
   "card": {
     "details": "Plus de détails",
@@ -10,42 +10,42 @@
   },
   "dialogs": {
     "add_title": "Nouveau défi",
-    "edit_title": "Modifier un défi"
+    "edit_title": "Modifier le défi"
   },
   "empty": {
-    "subtitle": "Créez votre premier défi de jeu pour encourager les clients à s'inscrire plus souvent.",
-    "title": "Les défis ne sont pas mis en place"
+    "subtitle": "Créez la première tâche de jeu pour encourager les clients à s'inscrire plus souvent.",
+    "title": "Les défis ne sont pas configurés"
   },
   "fields": {
     "dates": "Délai",
-    "description": "Description publique",
+    "description": "Public description",
     "reward": "Récompense",
     "target_value": "Plan (objectif)",
-    "title": "Titre d'emploi",
-    "type": "Méthodologie des objectifs"
+    "title": "Nom de la tâche",
+    "type": "Méthode de l'objectif"
   },
   "placeholders": {
     "description": "Comment le client verra-t-il cette tâche ?",
-    "title": "À exemple : statut Gold"
+    "title": "à la date exemple : Statut Or"
   },
   "stats": {
     "active_challenges": "TÂCHES ACTIVES",
-    "completed_today": "TERMINÉ AUJOURD'HUI",
+    "completed_today": "TERMINÉE AUJOURD'HUI",
     "total_participants": "TOTAL DES PARTICIPANTS"
   },
   "status": {
     "active": "ACTIF",
     "inactive": "PAUSE"
   },
-  "subtitle": "Augmentez la fidélité des clients grâce à des mécanismes de jeu et des récompenses automatiques.",
+  "subtitle": "Augmentez la fidélité des clients grâce aux mécanismes de jeu et aux récompenses automatiques.",
   "title": "Défis",
   "toasts": {
     "created": "Tâche créée",
-    "updated": "Quête mise à jour"
+    "updated": "Tâche mise à jour"
   },
   "types": {
-    "service": "catégorie de service",
-    "spend": "Dépense totale",
+    "service": "service de catégorie",
+    "spend": "Montant total dépensé",
     "visits": "Nombre de visites"
   }
 }

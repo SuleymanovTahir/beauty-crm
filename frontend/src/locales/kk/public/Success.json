@@ -1,9 +1,9 @@
 {
-  "backToHome": "Үйге қайт",
-  "contactMessage": "Кездесу мәліметтерін растау үшін сізбен жақын арада хабарласамыз.",
-  "dateTime": "{{date}}, {{time}}",
-  "serviceBooked": "Сіздің <highlight>{{service}}</highlight> жазбаңыз сәтті жасалды.",
-  "thankYou": "Рақмет, {{name}}!",
-  "title": "Тіркеу расталды!",
-  "viewServices": "Қызметтерді көру"
+  "backToHome": "Вернуться домой",
+  "contactMessage": "Мы свяжемся с вами в ближайшее время для подтверждения деталей встречи.",
+  "dateTime": "{{дата}}, {{время}}",
+  "serviceBooked": "Ваша запись <highlight>{{service}}</highlight> успешно создана.",
+  "thankYou": "Спасибо, {{name}}!",
+  "title": "Регистрация подтверждена!",
+  "viewServices": "Посмотреть услуги"
 }

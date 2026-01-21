@@ -7,12 +7,12 @@
     "dashboard": "لوحة التحكم",
     "feature_management": "إدارة الميزات",
     "loyalty_management": "إدارة الولاء",
-    "notifications": "إشعارات",
+    "notifications": "الإشعارات",
     "photo_gallery": "معرض الصور",
     "public_content": "المحتوى العام",
     "referral_program": "برنامج الإحالة",
-    "services": "خدمات",
-    "settings": "إعدادات",
-    "user_management": "إدارة المستخدم"
+    "services": "الخدمات",
+    "settings": "الإعدادات",
+    "user_management": "المستخدم الإدارة"
   }
 }

@@ -1,28 +1,28 @@
 {
   "bottomCta": {
-    "bookButton": "Inscríbete ahora",
-    "description": "Elija un horario conveniente y disfrute de nuestros servicios premium",
-    "title": "¿Listo para registrarte?"
+    "bookButton": "Regístrese ahora",
+    "description": "Elija un horario conveniente y utilice nuestros servicios premium",
+    "title": "¿Listo para registrarse?"
   },
   "categories": {
-    "facial-care": "cuidado facial",
-    "hair": "Servicios de cabello",
+    "facial-care": "Cuidado facial",
+    "hair": "Servicio de peluquería",
     "lashes": "Pestañas y cejas",
-    "massage": "Masaje y spa",
-    "nails": "servicio de uñas",
+    "massage": "Masajes y spa",
+    "nails": "Servicio de uñas",
     "other": "Otros servicios",
     "permanent-makeup": "Maquillaje permanente"
   },
   "cta": {
-    "bookButton": "Regístrate para el trámite",
-    "ready": "¿Listo para registrarte?"
+    "bookButton": "Regístrese para un procedimiento",
+    "ready": "¿Listo para registrarse?"
   },
   "error": "Error al cargar servicios.",
   "loading": "Cargando servicios...",
-  "noResults": "No se encontraron servicios que coincidan con su búsqueda",
-  "noServices": "Servicios no encontrados",
+  "noResults": "No se encontraron servicios para su solicitud",
+  "noServices": "No se encontraron servicios",
   "search": "Buscar servicios...",
   "services": "Servicios",
-  "subtitle": "Servicios de belleza premium a precios asequibles.",
+  "subtitle": "Servicios cosméticos premium a precios asequibles.",
   "title": "Nuestros servicios y precios"
 }

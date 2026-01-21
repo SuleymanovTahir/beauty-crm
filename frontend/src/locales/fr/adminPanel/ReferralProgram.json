@@ -5,58 +5,58 @@
   },
   "current_settings": {
     "edit": "Modifier",
-    "min_purchase": "Prix \u200b\u200bd'achat minimum\u00a0: <strong>{{amount}} {{currency}}</strong>",
-    "referred_bonus": "Bonus ami\u00a0: <strong>{{points}} points</strong>",
-    "referrer_bonus": "Bonus invité\u00a0: <strong>{{points}} points</strong>",
-    "title": "Configuration actuelle des bonus"
+    "min_purchase": "Prix d'achat minimum : <strong>{{amount}} {{currency}}</strong>",
+    "referred_bonus": "Bonus ami : <strong>{{points}} points</strong>",
+    "referrer_bonus": "Bonus invité : <strong>{{points}} points</strong>",
+    "title": "Configuration actuelle du bonus"
   },
   "dialogs": {
     "settings": {
-      "description": "Configurer les points bonus et les exigences",
-      "min_purchase_amount": "Prix \u200b\u200bd'achat minimum ({{currency}})",
-      "min_purchase_help": "Montant minimum qu'un ami doit dépenser pour activer le bonus de parrainage ({{min}} = pas de minimum)",
-      "referred_bonus": "Points bonus d'ami parrainé",
-      "referred_bonus_help": "Points attribués à un ami lors de son inscription",
-      "referrer_bonus": "Points bonus de parrainage",
-      "referrer_bonus_help": "Points attribués au parrain lors du premier achat d'un ami",
+      "description": "Configuration des points bonus et des conditions",
+      "min_purchase_amount": "Valeur d'achat minimale ({{currency}})",
+      "min_purchase_help": "Montant minimum qu'un l'ami doit dépenser pour activer le bonus de parrainage ({{min}} = pas de minimum)",
+      "referred_bonus": "points bonus pour un ami parrainé",
+      "referred_bonus_help": "points attribués à un ami lors de son inscription",
+      "referrer_bonus": "points bonus parrain",
+      "referrer_bonus_help": "points attribués au parrain lorsqu'un ami effectue son premier achat",
       "title": "Paramètres du programme de parrainage"
     }
   },
   "settings": "Paramètres",
   "stats": {
-    "completed_referrals": "Références terminées",
-    "points_distributed": "Points distribués",
-    "total_referrals": "Total des références"
+    "completed_referrals": "Parrainages terminés",
+    "points_distributed": "points distribués",
+    "total_referrals": "Total des parrainages"
   },
-  "subtitle": "Gérer les références et suivre l’efficacité du programme",
+  "subtitle": "Gérer les parrainages et suivre l'efficacité du programme",
   "table": {
     "columns": {
       "date": "Date",
-      "points_awarded": "Points attribués",
+      "points_awarded": "points attribués",
       "referred_friend": "Ami invité",
-      "referrer": "Référent",
+      "referrer": "Parrain",
       "status": "Statut"
     },
-    "description": "Suivi de l'état des filleuls et répartition des points",
+    "description": "Suivi de l'état des parrainages et distribution des points",
     "filters": {
-      "all_statuses": "Tous les statuts"
+      "all_statuses": "All Statuses"
     },
-    "search_placeholder": "Rechercher des références...",
+    "search_placeholder": "Recherche de parrainages...",
     "sort": {
-      "date": "À date",
-      "points": "À la date points",
-      "status": "À la date statut"
+      "date": "Sort by Date",
+      "points": "Sort by Points",
+      "status": "Sort by Status"
     },
     "statuses": {
       "cancelled": "Annulé",
-      "completed": "Complété",
-      "pending": "En attendant"
+      "completed": "Terminé",
+      "pending": "En attente"
     },
-    "title": "Toutes les références"
+    "title": "Tous les parrainages"
   },
   "title": "Programme de parrainage",
   "toasts": {
-    "failed_load": "Échec du chargement des références",
+    "failed_load": "Échec du chargement des parrainages",
     "failed_save": "Échec de l'réservation",
     "settings_saved": "Paramètres enregistrés avec succès"
   }

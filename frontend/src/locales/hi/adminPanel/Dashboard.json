@@ -1,7 +1,7 @@
 {
   "quick_actions": {
     "challenges": {
-      "description": "लक्ष्य बनाना और प्रबंधित करना",
+      "description": "लक्ष्य बनाएं और प्रबंधित करें",
       "title": "लक्ष्य"
     },
     "loyalty_management": {
@@ -9,42 +9,42 @@
       "title": "वफादारी प्रबंधन"
     },
     "notifications": {
-      "description": "सूचनाएं भेजना और प्रबंधित करना",
+      "description": "सूचनाएं भेजें और प्रबंधित करें",
       "title": "सूचनाएं"
     },
     "photo_gallery": {
-      "description": "ग्राहक फोटो और पोर्टफोलियो प्रबंधन",
+      "description": "ग्राहक फ़ोटो और पोर्टफोलियो प्रबंधित करें",
       "title": "फोटो गैलरी"
     },
     "referral_program": {
-      "description": "रेफरल देखें और प्रबंधित करें",
-      "title": "नाम लेने का कार्यक्रम"
+      "description": "रेफ़रल देखें और प्रबंधित करें",
+      "title": "रेफ़रल प्रोग्राम"
     },
     "title": "त्वरित कार्रवाई",
     "user_management": {
-      "description": "उपयोगकर्ता खाते और अनुमतियाँ प्रबंधित करें",
-      "title": "प्रयोक्ता प्रबंधन"
+      "description": "उपयोगकर्ता खाते और अनुमतियां प्रबंधित करें",
+      "title": "उपयोगकर्ता प्रबंधन"
     }
   },
   "recent_activity": {
-    "challenge_completed_one": "लक्ष्य \"{{name}}\" उपयोगकर्ता द्वारा {{count}} द्वारा पूरा किया गया",
-    "challenge_completed_few": "लक्ष्य \"{{name}}\" {{count}} उपयोगकर्ताओं द्वारा पूरा किया गया",
-    "challenge_completed_many": "लक्ष्य \"{{name}}\" {{count}} उपयोगकर्ताओं द्वारा पूरा किया गया",
-    "challenge_completed_other": "लक्ष्य \"{{name}}\" {{count}} उपयोगकर्ताओं द्वारा पूरा किया गया",
-    "day_ago_one": "{{count}} दिन पहले",
+    "challenge_completed_few": "लक्ष्य \"[[V0]]]\" पूरा किया गया {{count}} उपयोगकर्ता",
+    "challenge_completed_many": "लक्ष्य \"[[V0]]]\" {{count}} उपयोगकर्ताओं द्वारा पूरा किया गया",
+    "challenge_completed_one": "लक्ष्य \"{{name}}\" {{count}} उपयोगकर्ता द्वारा पूरा किया गया",
+    "challenge_completed_other": "लक्ष्य \"[[V0]]]\" {{count}} उपयोगकर्ताओं द्वारा पूरा किया गया",
     "day_ago_few": "{{count}} दिन पहले",
-    "day_ago_many": "{{count}} दिन पहले",
+    "day_ago_many": "[[V0]]] दिन पहले",
+    "day_ago_one": "{{count}} दिन पहले",
     "day_ago_other": "{{count}} दिन पहले",
-    "hours_ago_one": "{{count}} एक घंटा पहले",
     "hours_ago_few": "{{count}} घंटे पहले",
     "hours_ago_many": "{{count}} घंटे पहले",
+    "hours_ago_one": "{{count}} घंटे पहले",
     "hours_ago_other": "{{count}} घंटे पहले",
-    "new_tier_activated": "नया लॉयल्टी स्तर सक्रिय किया गया",
+    "new_tier_activated": "नया वफादारी स्तर सक्रिय",
     "subtitle": "व्यवस्थापक पैनल में हाल की कार्रवाइयां",
     "title": "हाल की गतिविधि",
-    "users_registered_one": "{{count}} नया उपयोगकर्ता पंजीकृत",
-    "users_registered_few": "{{count}} नया उपयोगकर्ता पंजीकृत",
+    "users_registered_few": "{{count}} नए उपयोगकर्ता पंजीकृत",
     "users_registered_many": "{{count}} नए उपयोगकर्ता पंजीकृत",
+    "users_registered_one": "{{count}} नए उपयोगकर्ता पंजीकृत",
     "users_registered_other": "{{count}} नए उपयोगकर्ता पंजीकृत"
   },
   "stats": {
@@ -54,6 +54,6 @@
     "total_referrals": "कुल रेफरल",
     "total_users": "कुल उपयोगकर्ता"
   },
-  "subtitle": "उपयोगकर्ता, निष्ठा और सहभागिता प्रबंधन",
+  "subtitle": "उपयोगकर्ताओं, वफादारी और जुड़ाव को प्रबंधित करना",
   "title": "कंट्रोल पैनल"
 }

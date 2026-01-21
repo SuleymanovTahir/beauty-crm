@@ -1,63 +1,63 @@
 {
   "buttons": {
     "cancel": "Cancelar",
-    "create_challenge": "Crie uma meta",
+    "create_challenge": "Criar uma meta",
     "update_challenge": "Salvar alterações"
   },
   "card": {
-    "check_progress": "Verifique o progresso",
+    "check_progress": "Check Progress",
     "completed": "concluído",
     "progress": "Progresso",
     "pts": "pontos",
     "reward": "Recompensa",
-    "target": "Alvo"
+    "target": "Meta"
   },
-  "create_challenge": "Crie uma nova meta",
+  "create_challenge": "Criar uma nova meta",
   "dialogs": {
     "create": {
-      "description": "Configure parâmetros de atividade e bônus de conclusão",
+      "description": "Configurar parâmetros de atividade e conclusão bônus",
       "form": {
         "challenge_type": "Tipo de atividade",
         "description": "Descrição da tarefa",
-        "description_placeholder": "Ex: Visite o salão {{count}} vezes este mês",
+        "description_placeholder": "Ex: Visitar o salão {{count}} vezes este mês",
         "end_date": "Data de término",
         "reward_placeholder": "{{points}}",
         "reward_points": "pontos de bônus",
         "start_date": "Data de início",
-        "target_placeholder": "{{points}}",
-        "target_value": "Quantidade desejada",
+        "target_placeholder": "{{count}}",
+        "target_value": "Valor desejado",
         "title": "Nome da meta",
-        "title_placeholder": "Até data exemplo: reforma de verão"
+        "title_placeholder": "Ex: Reforma de verão"
       },
       "title": "Criando uma meta",
-      "title_edit": "Editando um destino"
+      "title_edit": "Editando uma meta"
     },
     "delete": {
       "confirm": "Tem certeza de que deseja excluir esta atividade? Todo o progresso dos participantes será perdido."
     }
   },
   "stats": {
-    "active_challenges": "Alvos ativos",
-    "completions": "Execuções",
+    "active_challenges": "Metas ativas",
+    "completions": "Concluídas",
     "total_participants": "Participantes"
   },
   "statuses": {
-    "active": "Ativo",
-    "completed": "Concluído",
-    "upcoming": "Próximo"
+    "active": "Ativas",
+    "completed": "Concluídas",
+    "upcoming": "Próximas"
   },
   "subtitle": "Gerencie a mecânica e as metas do jogo para aumentar a fidelidade do cliente",
   "title": "Metas e conquistas",
   "toasts": {
     "created": "Atividade criada com sucesso",
     "deleted": "Atividade excluída",
-    "failed_check_progress": "Falha ao atualizar o progresso",
+    "failed_check_progress": "Failed to check progress",
     "failed_create": "Erro ao criar atividade",
-    "failed_delete": "Erro durante a exclusão",
+    "failed_delete": "Erro ao excluir",
     "failed_load": "Falha ao carregar dados",
     "progress_checked_few": "Progresso atualizado para {{count}} participantes",
     "progress_checked_many": "Progresso atualizado para {{count}} participantes",
-    "progress_checked_one": "Progresso atualizado para membro {{count}}",
+    "progress_checked_one": "Progresso atualizado para {{count}} participante",
     "progress_checked_other": "Progresso atualizado para {{count}} participantes"
   },
   "types": {

@@ -1,28 +1,28 @@
 {
   "buttons": {
-    "cancel": "يلغي",
+    "cancel": "إلغاء",
     "save_changes": "حفظ التغييرات"
   },
   "current_settings": {
-    "edit": "يحرر",
-    "min_purchase": "الحد الأدنى لسعر الشراء: <strong>{{amount}} {{currency}}</strong>",
-    "referred_bonus": "مكافأة الصديق: <strong>{{points}} النقاط</strong>",
-    "referrer_bonus": "مكافأة المدعو: <strong>{{points}} النقاط</strong>",
-    "title": "تكوين المكافأة الحالية"
+    "edit": "تحرير",
+    "min_purchase": "الحد الأدنى لقيمة الشراء: <strong>{{amount}} {{currency}}</strong>",
+    "referred_bonus": "مكافأة الأصدقاء: <strong>{{points}} النقاط</strong>",
+    "referrer_bonus": "مكافأة الداعي: <strong>{{points}} نقاط</strong>",
+    "title": "تكوين المكافأة الحالي"
   },
   "dialogs": {
     "settings": {
-      "description": "قم بإعداد نقاط المكافأة والمتطلبات",
-      "min_purchase_amount": "الحد الأدنى لسعر الشراء ({{currency}})",
-      "min_purchase_help": "الحد الأدنى للمبلغ الذي يجب على الصديق إنفاقه لتفعيل مكافأة الإحالة ({{min}} = لا يوجد حد أدنى)",
-      "referred_bonus": "نقاط مكافأة الصديق المُحالة",
+      "description": "تكوين نقاط المكافأة ومتطلباتها",
+      "min_purchase_amount": "الحد الأدنى لقيمة الشراء ({{currency}})",
+      "min_purchase_help": "الحد الأدنى للمبلغ الذي يجب على الصديق إنفاقه لتنشيط مكافأة الإحالة ({{min}} = لا يوجد حد أدنى)",
+      "referred_bonus": "نقاط إضافية للصديق المُحيل",
       "referred_bonus_help": "النقاط الممنوحة لصديق عند التسجيل",
-      "referrer_bonus": "نقاط المكافأة المرجعية",
-      "referrer_bonus_help": "النقاط الممنوحة للمُحيل عندما يقوم أحد الأصدقاء بإجراء أول عملية شراء له",
+      "referrer_bonus": "نقاط إضافية للإحالة",
+      "referrer_bonus_help": "النقاط الممنوحة للإحالة عندما يقوم أحد الأصدقاء بإجراء أول عملية شراء له",
       "title": "إعدادات برنامج الإحالة"
     }
   },
-  "settings": "إعدادات",
+  "settings": "الإعدادات",
   "stats": {
     "completed_referrals": "الإحالات المكتملة",
     "points_distributed": "النقاط الموزعة",
@@ -31,26 +31,26 @@
   "subtitle": "إدارة الإحالات وتتبع فعالية البرنامج",
   "table": {
     "columns": {
-      "date": "تاريخ",
+      "date": "التاريخ",
       "points_awarded": "النقاط الممنوحة",
-      "referred_friend": "صديق مدعو",
+      "referred_friend": "الصديق المدعو",
       "referrer": "المُحيل",
-      "status": "حالة"
+      "status": "الحالة"
     },
-    "description": "تتبع حالة الإحالات وتوزيع النقاط",
+    "description": "تتبع حالة الإحالة وتوزيع النقاط",
     "filters": {
       "all_statuses": "جميع الحالات"
     },
     "search_placeholder": "البحث عن الإحالات...",
     "sort": {
       "date": "حسب التاريخ",
-      "points": "بالنقاط",
+      "points": "حسب النقاط",
       "status": "حسب الحالة"
     },
     "statuses": {
       "cancelled": "تم الإلغاء",
       "completed": "مكتمل",
-      "pending": "منتظر"
+      "pending": "معلق"
     },
     "title": "جميع الإحالات"
   },

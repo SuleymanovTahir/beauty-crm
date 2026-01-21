@@ -2,67 +2,67 @@
   "addProduct": "उत्पाद जोड़ें",
   "allCategories": "सभी श्रेणियां",
   "analytics": {
-    "avgPrice": "बुध. कीमत",
+    "avgPrice": "औसत. मूल्य",
     "last30Days": "{{count}} दिनों के लिए",
-    "revenue": "आय",
+    "revenue": "राजस्व",
     "totalSold": "कुल बेचा गया"
   },
   "createFirst": "सिस्टम में पहला उत्पाद जोड़ें",
-  "delete": "मिटाना",
+  "delete": "हटाएं",
   "detail": {
     "costPriceLabel": "लागत: {{price}} {{currency}}",
-    "inStock_one": "स्टॉक में {{count}} पीसी।",
     "inStock_few": "स्टॉक में {{count}} पीसी।",
     "inStock_many": "स्टॉक में {{count}} पीसी।",
+    "inStock_one": "स्टॉक में {{count}} पीसी।",
     "inStock_other": "स्टॉक में {{count}} पीसी।",
     "loadingData": "डेटा लोड हो रहा है...",
     "movementAdjustment": "समायोजन",
-    "movementHistory": "आंदोलनों का इतिहास",
-    "movementIn": "प्रवेश",
-    "movementOut": "ख़ारिज करना",
-    "noCategory": "अवर्गीकृत",
-    "noMovements": "कोई गतिविधि डेटा नहीं"
+    "movementHistory": "मूवमेंट इतिहास",
+    "movementIn": "रसीद",
+    "movementOut": "राइट-ऑफ",
+    "noCategory": "कोई श्रेणी नहीं",
+    "noMovements": "कोई मूवमेंट डेटा नहीं"
   },
-  "edit": "संपादन करना",
+  "edit": "संपादित करें",
   "form": {
-    "cancel": "रद्द करना",
-    "category": "वर्ग",
-    "costPrice": "लागत मूल्य",
+    "cancel": "रद्द करें",
+    "category": "श्रेणी",
+    "costPrice": "लागत",
     "isActive": "सक्रिय",
-    "minStockLevel": "न्यूनतम शेष",
-    "name": "नाम",
-    "notes": "टिप्पणियाँ",
+    "minStockLevel": "न्यूनतम बैलेंस",
+    "name": "शीर्षक",
+    "notes": "नोट्स",
     "photos": "उत्पाद फोटो",
-    "price": "विक्रय मूल्य",
-    "save": "बचाना",
-    "sku": "लेख",
-    "stockQuantity": "शेष स्टॉक",
-    "upload": "डाउनलोड करना",
-    "uploadError": "फ़ोटो लोड करने में त्रुटि"
+    "price": "मूल्य बिक्री",
+    "save": "सहेजें",
+    "sku": "अनुच्छेद",
+    "stockQuantity": "स्टॉक शेष",
+    "upload": "अपलोड",
+    "uploadError": "फोटो लोड करने में त्रुटि"
   },
   "messages": {
-    "confirmDelete": "क्या आप वाकई इस आइटम को हटाना चाहते हैं?",
-    "noResults": "आपके अनुरोध से मेल खाता कुछ भी नहीं मिला"
+    "confirmDelete": "क्या आप वाकई इस उत्पाद को हटाना चाहते हैं?",
+    "noResults": "आपके अनुरोध के लिए कुछ भी नहीं मिला"
   },
   "movement": {
     "quantity": "मात्रा",
     "reason": "कारण",
-    "title": "माल की आवाजाही",
-    "type": "गतिविधि का प्रकार",
+    "title": "उत्पाद आंदोलन",
+    "type": "आंदोलन प्रकार",
     "types": {
       "adjustment": "समायोजन",
-      "in": "आ रहा",
-      "out": "उपभोग"
+      "in": "आवक",
+      "out": "खर्च"
     }
   },
-  "noProducts": "अभी दिनांक तक कोई उत्पाद नहीं",
-  "search_placeholder": "शीर्षक या श्रेणी के आधार पर खोजें...",
+  "noProducts": "अभी तक कोई उत्पाद नहीं",
+  "search_placeholder": "नाम या श्रेणी के आधार पर खोजें...",
   "stock_status": {
-    "in_stock": "स्टॉक में",
-    "low_stock": "कुछ",
-    "out_of_stock": "उपलब्ध नहीं है"
+    "in_stock": "बी में स्टॉक",
+    "low_stock": "थोड़ा",
+    "out_of_stock": "स्टॉक से बाहर"
   },
-  "subtitle": "उत्पाद और इन्वेंट्री प्रबंधन",
+  "subtitle": "उत्पाद और स्टॉक प्रबंधन",
   "title": "उत्पाद और गोदाम",
-  "unit_pcs": "पीसी."
+  "unit_pcs": "पीसी"
 }

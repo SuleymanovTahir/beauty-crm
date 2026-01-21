@@ -1,12 +1,12 @@
 {
-  "our_services": "Unsere Leistungen",
-  "browse_available_services": "Sehen Sie sich die verfügbaren Salondienste an",
-  "no_services": "Dienste nicht gefunden",
-  "no_services_description": "Derzeit sind keine Dienste zur Anzeige verfügbar.",
-  "service_name": "Dienstname",
-  "description": "Beschreibung",
-  "price": "Preis",
-  "duration": "Dauer",
+  "browse_available_services": "Verfügbare Salondienstleistungen anzeigen",
   "category": "Kategorie",
-  "min": "min"
+  "description": "Beschreibung",
+  "duration": "Dauer",
+  "min": "min",
+  "no_services": "Dienste nicht gefunden",
+  "no_services_description": "Derzeit sind keine Dienste verfügbar, die angezeigt werden können.",
+  "our_services": "Unsere Dienstleistungen",
+  "price": "Preis",
+  "service_name": "Dienstname"
 }

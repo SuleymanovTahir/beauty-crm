@@ -1,12 +1,12 @@
 {
-  "our_services": "Nos prestations",
-  "browse_available_services": "Voir les services de salon disponibles",
-  "no_services": "Services introuvables",
-  "no_services_description": "Aucun service n'est disponible à afficher pour le moment.",
-  "service_name": "Nom du service",
-  "description": "Description",
-  "price": "Prix",
-  "duration": "Durée",
+  "browse_available_services": "Afficher les services de salon disponibles",
   "category": "Catégorie",
-  "min": "min"
+  "description": "Description",
+  "duration": "Durée",
+  "min": "min",
+  "no_services": "Aucun service trouvé",
+  "no_services_description": "Aucun service n'est disponible à afficher pour le moment.",
+  "our_services": "Nos services",
+  "price": "Prix",
+  "service_name": "Nom du service"
 }

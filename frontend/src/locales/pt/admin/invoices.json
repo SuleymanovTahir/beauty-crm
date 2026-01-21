@@ -1,70 +1,70 @@
 {
   "actions": "Ações",
-  "addInvoice": "Crie uma conta",
+  "addInvoice": "Criar fatura",
   "addPayment": "Adicionar pagamento",
-  "allInvoices": "Todas as contas",
-  "allStatuses": "Todos os status",
+  "allInvoices": "Todas as faturas",
+  "allStatuses": "Todas status",
   "board": "Quadro",
   "client": "Cliente",
   "delete": "Excluir",
-  "dueDate": "Data de vencimento",
+  "dueDate": "Data de vencimento do pagamento",
   "errors": {
-    "createError": "Erro ao criar conta.",
-    "deleteError": "Erro ao excluir conta.",
-    "paymentError": "Erro ao adicionar pagamento",
+    "createError": "Erro ao criar a fatura.",
+    "deleteError": "Erro ao excluir a fatura.",
+    "paymentError": "Erro ao adicionar o pagamento",
     "sendError": "Erro ao enviar fatura",
     "updateError": "Falha ao atualizar o status"
   },
   "form": {
-    "addItem": "Adicionar uma posição",
+    "addItem": "Adicionar item",
     "cancel": "Cancelar",
-    "dueDate": "Data de vencimento",
+    "dueDate": "Prazo de pagamento",
     "itemName": "Nome",
     "itemPrice": "Preço",
     "itemQuantity": "Quantidade",
-    "items": "Posições da conta",
+    "items": "Itens da fatura",
     "notes": "Notas",
     "save": "Salvar",
-    "selectClient": "Selecione o cliente"
+    "selectClient": "Selecionar cliente"
   },
-  "invoiceNumber": "Nº da conta",
+  "invoiceNumber": "Nº da fatura",
   "manage_stages": "Colunas",
   "messages": {
-    "confirmDelete": "Tem certeza de que deseja excluir esta conta?",
-    "invoiceCreated": "Conta criada",
+    "confirmDelete": "Tem certeza de que deseja excluir esta fatura?",
+    "invoiceCreated": "Fatura criada",
     "invoiceDeleted": "Conta excluída",
     "invoiceSent": "Fatura enviada",
-    "invoiceUpdated": "Conta atualizada",
+    "invoiceUpdated": "Fatura atualizada",
     "paymentAdded": "Pagamento adicionado"
   },
-  "noInvoices": "Nenhuma conta ainda",
-  "paidAmount": "Pago",
+  "noInvoices": "Nenhuma fatura ainda",
+  "paidAmount": "Paga",
   "payment": {
     "add": "Adicionar",
-    "amount": "Soma",
-    "method": "Método de pagamento",
+    "amount": "Valor",
+    "method": "Forma de pagamento",
     "methods": {
-      "card": "Mapa",
+      "card": "Cartão",
       "cash": "Dinheiro",
-      "online": "On-line",
-      "transfer": "Tradução"
+      "online": "Online",
+      "transfer": "Transferência"
     },
     "notes": "Notas",
     "title": "Adicionar pagamento"
   },
-  "search_placeholder": "Pesquise até número ou cliente...",
+  "search_placeholder": "Pesquisar até data número ou cliente...",
   "sendButton": "Enviar",
   "sendDialog": {
-    "email": "E-mail",
+    "email": "Correio eletrônico",
     "method": "Método de envio",
     "recipient": "Destinatário",
     "sendButton": "Enviar",
     "telegram": "Telegrama",
     "title": "Enviar fatura",
-    "whatsapp": "Whatsapp"
+    "whatsapp": "WhatsApp"
   },
   "status": "Status",
-  "subtitle": "Gerenciamento de contas e pagamentos",
-  "title": "Faturas",
-  "totalAmount": "Soma"
+  "subtitle": "Gerenciar contas e pagamentos",
+  "title": "Contas",
+  "totalAmount": "Valor"
 }

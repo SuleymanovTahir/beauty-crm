@@ -1,21 +1,21 @@
 {
   "about": "À propos de nous",
   "contacts": "Contacts",
-  "faq": "Foire aux questions",
+  "faq": "Questions fréquemment posées",
   "footer": {
     "all_rights": "Tous droits réservés",
     "contacts": "Contacts",
-    "cooperation": "Coopération",
+    "cooperation": "Collaboration",
     "description": "Salon de beauté professionnel à Dubaï",
-    "privacy_policy": "politique de confidentialité",
+    "privacy_policy": "Politique de confidentialité",
     "quick_links": "Liens rapides",
     "terms": "Conditions d'utilisation",
     "weekdays": "Jours de la semaine",
-    "weekends": "Fin de semaine",
-    "working_hours": "Horaires d'ouverture"
+    "weekends": "Week-end",
+    "working_hours": "Heures d'ouverture"
   },
-  "home": "Maison",
-  "login": "Se connecter",
+  "home": "Accueil",
+  "login": "Connexion",
   "personal_cabinet": "Compte personnel",
   "price_list": "Liste de prix"
 }

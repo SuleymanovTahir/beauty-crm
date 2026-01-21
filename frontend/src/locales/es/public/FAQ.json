@@ -1,73 +1,73 @@
 {
-  "answer_1": "Puedes darte de alta a través de nuestra web, llamando o escribiendo a WhatsApp/Instagram.",
-  "answer_2": "Aceptamos pago en efectivo y tarjetas bancarias.",
-  "answer_3": "Sí, puedes cancelar o reprogramar tu cita hasta {{hours}} horas antes de la hora programada.",
-  "answer_4": "Sí, algunos procedimientos tienen contraindicaciones médicas. hasta fecha favor consulte con nuestro especialista antes de grabar.",
-  "answer_5": "El tiempo del trámite depende del servicio elegido. Normalmente, desde {{min}} minutos hasta {{max}} horas.",
-  "answer_6": "Algunos procedimientos requieren una preparación especial. El especialista le informará sobre esto al registrarse.",
+  "answer_1": "Puedes suscribirte a través de nuestra web, llamando o escribiendo a WhatsApp/Instagram.",
+  "answer_2": "Aceptamos pagos en efectivo y con tarjetas bancarias.",
+  "answer_3": "Да, вы можете отменить или перенести встречу не позднее, чем за {{hours}} часа до назначенного времени.",
+  "answer_4": "Да, некоторые процедуры имеют медицинские противопоказания. Прежде чем писать, проконсультируйтесь с нашим специалистом.",
+  "answer_5": "Время процедуры зависит от выбранной услуги. Обычно от {{min}} минут до {{max}} часа.",
+  "answer_6": "Некоторые процедуры требуют специальной подготовки. Об этом специалист сообщит вам при регистрации.",
   "cta": {
-    "bookButton": "Regístrate para el trámite",
-    "contactButton": "Contáctenos",
-    "description": "Contáctanos y estaremos encantados de responder a todas tus preguntas",
-    "title": "¿No encontraste la respuesta a tu pregunta?"
+    "bookButton": "Запишитесь на процедуру",
+    "contactButton": "Связаться с нами",
+    "description": "Свяжитесь с нами, мы будем рады ответить на все ваши вопросы",
+    "title": "Не нашли ответ на свой вопрос?"
   },
   "faq_title": "Preguntas frecuentes",
-  "question_1": "¿Cómo inscribirse en el trámite?",
-  "question_2": "¿Qué métodos de pago aceptan?",
-  "question_3": "¿Puedo cancelar o reprogramar una cita?",
-  "question_4": "¿Tiene alguna contraindicación para los procedimientos?",
-  "question_5": "¿Cuánto tiempo dura el procedimiento?",
-  "question_6": "¿Es necesaria una preparación previa para el procedimiento?",
+  "question_1": "Как записаться на процедуру?",
+  "question_2": "Какие способы оплаты вы принимаете?",
+  "question_3": "Могу ли я отменить или перенести встречу?",
+  "question_4": "Есть ли у вас противопоказания к процедурам?",
+  "question_5": "Сколько времени занимает процедура?",
+  "question_6": "Нужна ли предварительная подготовка к процедуре?",
   "questions": {
     "booking": {
-      "answer": "Puedes apuntarte al trámite a través del formulario de nuestra web{{phone, phone}}, llamando a {{phone}}{{/phone}}{{instagram, instagram}}, o escribiéndonos hasta fecha Instagram {{instagram}}{{/instagram}}. Nos pondremos en contacto contigo para confirmar tu cita.",
-      "question": "¿Cómo inscribirse en el trámite?"
+      "answer": "Записаться на процедуру можно через форму {{phone, phone}} на нашем сайте, позвонив по телефону {{phone}}{{/phone}}{{instagram, instagram}} или написав нам в Instagram {{instagram}}{{/instagram}}. Мы свяжемся с вами для подтверждения записи.",
+      "question": "Как записаться на процедуру?"
     },
     "cancellation": {
-      "answer": "Sí, puedes cancelar o reprogramar tu cita hasta {{hours}} horas antes de la hora programada. Si se cancela en menos de {{hours}} horas, se podrá cobrar una penalización del {{percent}}% del coste del servicio.",
-      "question": "¿Puedo cancelar o reprogramar mi cita?"
+      "answer": "Да, вы можете отменить или перенести встречу не позднее, чем за {{hours}} часа до назначенного времени. При отмене менее чем за {{hours}} часа может взиматься штраф в размере {{percent}}% от стоимости услуги.",
+      "question": "Могу ли я отменить или перенести встречу?"
     },
     "certificates": {
       "answer": "Sí, todos nuestros másteres cuentan con certificados internacionales y realizan periódicamente cursos de formación avanzada.",
-      "question": "¿Tienen sus artesanos certificados?"
+      "question": "Сертифицированы ли ваши мастера?"
     },
     "contraindications": {
-      "answer": "Sí, cada procedimiento tiene sus propias contraindicaciones. Principal: embarazo, lactancia, procesos inflamatorios agudos, enfermedades de la sangre, oncología. Antes del procedimiento es necesaria la consulta con un especialista.",
-      "question": "¿Existe alguna contraindicación para los procedimientos?"
+      "answer": "Да, каждая процедура имеет свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой необходима консультация специалиста.",
+      "question": "Есть ли противопоказания к процедуре?"
     },
     "gift": {
-      "answer": "Sí, ofrecemos certificados de regalo hasta fecha cualquier monto o para servicios específicos. Contáctenos para obtener un certificado.",
-      "question": "¿Puedo dar un certificado de servicios?"
+      "answer": "Да, мы предлагаем подарочные сертификаты на любую сумму или на определенные услуги. Свяжитесь с нами для получения сертификата.",
+      "question": "Могу ли я предоставить сертификат на услуги?"
     },
     "guarantee": {
-      "answer": "Sí, garantizamos la calidad de todos nuestros servicios. Si no está satisfecho con el resultado, contáctenos dentro de los {{count}} días y encontraremos una solución.",
-      "question": "¿Ofrecen garantía hasta fecha los servicios?"
+      "answer": "Да, мы гарантируем качество всех наших услуг. Если вы не удовлетворены результатом, свяжитесь с нами в течение {{count}} дней и мы найдем решение.",
+      "question": "Вы гарантируете услуги?"
     },
     "location": {
-      "answer": "Estamos ubicados en: {{dirección}}. Puede encontrar información detallada sobre cómo llegar en la página de Contactos.",
-      "question": "¿Dónde está ubicado tu salón?"
+      "answer": "Наш адрес: {{address}}. Подробности о том, как добраться, можно найти на странице Контакты.",
+      "question": "Где находится ваш салон?"
     },
     "loyalty": {
-      "answer": "Sí, tenemos un programa de fidelización integral. Después de cada visita, recibirá bonificaciones que podrá utilizar en futuras visitas.",
-      "question": "¿Tienes un programa de fidelización?"
+      "answer": "Да, у нас есть комплексная программа лояльности. После каждого визита вы будете получать бонусы, которые можно использовать для оплаты будущих визитов.",
+      "question": "Есть ли у вас программа лояльности?"
     },
     "materials": {
-      "answer": "Utilizamos únicamente materiales premium certificados de las marcas líderes del mundo. Todos los pigmentos son hipoalergénicos y seguros para la salud.",
-      "question": "¿Qué materiales utilizas?"
+      "answer": "Мы используем только сертифицированные материалы премиум-класса от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья.",
+      "question": "Какие материалы вы используете?"
     },
     "payment": {
       "answer": "Aceptamos pago en efectivo y tarjetas (Visa, MasterCard, American Express). El pago se realiza después de la prestación del servicio.",
-      "question": "¿Qué métodos de pago aceptan?"
+      "question": "Какие способы оплаты вы принимаете?"
     },
     "preparation": {
-      "answer": "Sí, algunos procedimientos requieren preparación. Le proporcionaremos recomendaciones detalladas al registrarse.",
-      "question": "¿Es necesaria preparación antes del procedimiento?"
+      "answer": "Да, некоторые процедуры требуют подготовки. Подробные рекомендации мы предоставим при записи.",
+      "question": "Нужно ли готовиться перед процедурой?"
     },
     "weekends": {
-      "answer": "Sí, estamos abiertos {{count}} días a la semana. {{будние дни, будние дни}}Días laborables {{weekdays}}{{/weekdays}}{{выходные, выходные}}, fines de semana {{weekends}}{{/weekends}}.",
-      "question": "¿Trabajas los fines de semana?"
+      "answer": "Да, мы открыты {{count}} дней в неделю. {{будние дни, будние дни}}Будние дни {{weekdays}}{{/weekdays}}{{выходные, выходные}}, выходные {{weekends}}{{/weekends}}.",
+      "question": "Вы работаете по выходным?"
     }
   },
-  "subtitle": "Respuestas a preguntas populares sobre nuestros servicios.",
+  "subtitle": "Ответы на популярные вопросы о наших услугах",
   "title": "Preguntas frecuentes"
 }

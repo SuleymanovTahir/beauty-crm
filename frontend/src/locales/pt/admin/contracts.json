@@ -1,74 +1,74 @@
 {
   "actions": "Ações",
-  "addContract": "Crie um acordo",
+  "addContract": "Criar um contrato",
   "all": "Todos",
   "allContracts": "Todos os contratos",
   "allStatuses": "Todos os status",
   "board": "Quadro",
   "client": "Cliente",
   "clientContracts": "Cliente",
-  "contractNumber": "Contrato nº.",
+  "contractNumber": "Número do contrato",
   "createdAt": "Data de criação",
   "editContract": "Editar contrato",
   "errors": {
-    "deleteError": "Erro ao excluir contrato.",
+    "deleteError": "Erro ao excluir o contrato.",
     "saveError": "Erro ao salvar o contrato.",
-    "sendError": "Erro ao enviar contrato",
+    "sendError": "Erro ao enviar o contrato",
     "updateError": "Falha ao atualizar o status"
   },
   "form": {
     "cancel": "Cancelar",
     "contractType": "Tipo de contrato",
     "save": "Salvar",
-    "selectClient": "Selecione o cliente"
+    "selectClient": "Selecionar cliente"
   },
-  "internalContracts": "Doméstico",
+  "internalContracts": "Interno",
+  "manageTypes": "Tipos de contrato",
   "manage_stages": "Colunas",
-  "manageTypes": "Tipos de contratos",
   "messages": {
     "confirmDelete": "Tem certeza de que deseja excluir este contrato?",
-    "contractCreated": "O contrato foi criado",
+    "contractCreated": "Contrato criado",
     "contractDeleted": "Contrato excluído",
-    "contractSent": "O contrato foi enviado",
-    "contractUpdated": "O contrato foi atualizado"
+    "contractSent": "Contrato enviado",
+    "contractUpdated": "Contrato atualizado"
   },
-  "noContracts": "Ainda não há contratos",
-  "search_placeholder": "Pesquise até número ou cliente...",
+  "noContracts": "Nenhum contrato ainda",
+  "search_placeholder": "Pesquisar até data número ou cliente...",
   "sendDialog": {
     "email": "E-mail",
     "instagram": "Instagram",
     "method": "Método de envio",
     "recipient": "Destinatário",
     "sendButton": "Enviar",
-    "telegram": "Telegrama",
+    "telegram": "Telegram",
     "title": "Enviar contrato",
-    "whatsapp": "Whatsapp"
+    "whatsapp": "WhatsApp"
   },
   "status": "Status",
-  "subtitle": "Gestão de contratos de clientes",
-  "title": "Tratados",
+  "subtitle": "Gerenciamento de contratos com clientes",
+  "title": "Contratos",
   "type": "Tipo",
   "typeManagement": {
     "add": "Adicionar",
     "code": "Código (lat., único)",
     "confirmDelete": "Confirmar exclusão",
     "createType": "Criar tipo",
-    "deletePrompt": "Você deseja excluir este tipo de contrato. O que fazer com os contratos deste tipo existentes?",
-    "deleteTitle": "Removendo tipo \"{{name}}\"",
+    "deletePrompt": "Você deseja excluir este tipo de contrato. O que fazer com contratos existentes deste tipo?",
+    "deleteTitle": "Excluir o tipo \"{{name}}\"",
     "deleteWithDocs": "Excluir todos os contratos",
     "deleteWithDocsSub": "Todos os documentos deste tipo serão excluídos permanentemente.",
     "description": "Descrição",
-    "editType": "Tipo de edição",
-    "keepDocs": "Deixe contratos sem tipo",
-    "keepDocsSub": "Os contratos permanecerão, mas o campo “Tipo” será limpo.",
+    "editType": "Editar tipo",
+    "keepDocs": "Deixar os contratos sem tipo",
+    "keepDocsSub": "Os contratos permanecerão, mas o campo \"Tipo\" será limpo.",
     "messages": {
       "created": "Tipo criado",
-      "deleted": "Tipo removido",
+      "deleted": "Tipo excluído",
       "updated": "Tipo atualizado"
     },
     "name": "Nome",
     "system": "Sistema",
-    "systemProtected": "O sistema está protegido",
-    "title": "Tipos de contratos"
+    "systemProtected": "Sistema protegido",
+    "title": "Tipos de contrato"
   }
 }

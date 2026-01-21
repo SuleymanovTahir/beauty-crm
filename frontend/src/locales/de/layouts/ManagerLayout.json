@@ -3,10 +3,10 @@
   "logout": "Abmelden",
   "manager": "Manager",
   "menu": {
-    "analytics": "Analytik",
+    "analytics": "Analysen",
     "chat": "Chat",
     "clients": "Kunden",
-    "dashboard": "Armaturenbrett",
+    "dashboard": "Dashboard",
     "funnel": "Trichter",
     "settings": "Einstellungen"
   }

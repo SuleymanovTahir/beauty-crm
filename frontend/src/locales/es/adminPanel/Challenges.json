@@ -1,35 +1,35 @@
 {
   "buttons": {
     "cancel": "Cancelar",
-    "create_challenge": "Crea una meta",
+    "create_challenge": "Crear un objetivo",
     "update_challenge": "Guardar cambios"
   },
   "card": {
-    "check_progress": "Comprobar el progreso",
-    "completed": "terminado",
+    "check_progress": "Check Progress",
+    "completed": "completado",
     "progress": "Progreso",
     "pts": "puntos",
-    "reward": "Premio",
+    "reward": "Recompensa",
     "target": "Objetivo"
   },
-  "create_challenge": "Crea una nueva meta",
+  "create_challenge": "Crear un nuevo objetivo",
   "dialogs": {
     "create": {
-      "description": "Configurar parámetros de actividad y bonificación hasta fecha finalización",
+      "description": "Configurar parámetros de actividad y finalización bonificación",
       "form": {
         "challenge_type": "Tipo de actividad",
         "description": "Descripción de la tarea",
-        "description_placeholder": "Ej: Visita el salón {{count}} veces este mes",
+        "description_placeholder": "Ej: visitar el salón {{count}} veces este mes",
         "end_date": "Fecha de finalización",
         "reward_placeholder": "{{points}}",
         "reward_points": "puntos de bonificación",
         "start_date": "Fecha de inicio",
-        "target_placeholder": "{{points}}",
+        "target_placeholder": "{{count}}",
         "target_value": "Cantidad objetivo",
         "title": "Nombre del objetivo",
-        "title_placeholder": "Hasta fecha ejemplo: cambio de imagen de verano"
+        "title_placeholder": "Ej: cambio de imagen de verano"
       },
-      "title": "Creando una meta",
+      "title": "Crear un objetivo",
       "title_edit": "Editar un objetivo"
     },
     "delete": {
@@ -37,33 +37,33 @@
     }
   },
   "stats": {
-    "active_challenges": "Objetivos activos",
-    "completions": "Ejecuciones",
+    "active_challenges": "Metas activas",
+    "completions": "Completas",
     "total_participants": "Participantes"
   },
   "statuses": {
-    "active": "Activo",
-    "completed": "Completado",
-    "upcoming": "Próximo"
+    "active": "Activas",
+    "completed": "Completas",
+    "upcoming": "Próximas"
   },
-  "subtitle": "Gestionar la mecánica del juego y los objetivos para aumentar la fidelidad de los clientes.",
+  "subtitle": "Administrar mecánicas de juego y objetivos para aumentar la fidelidad de los clientes",
   "title": "Metas y logros",
   "toasts": {
-    "created": "Actividad creada exitosamente",
+    "created": "Actividad creada correctamente",
     "deleted": "Actividad eliminada",
-    "failed_check_progress": "No se pudo actualizar el progreso",
-    "failed_create": "Error al crear actividad",
-    "failed_delete": "Error durante la eliminación",
-    "failed_load": "No se pudieron cargar los datos",
+    "failed_check_progress": "Failed to check progress",
+    "failed_create": "Error al crear la actividad",
+    "failed_delete": "Error al eliminar",
+    "failed_load": "Error al cargar datos",
     "progress_checked_few": "Progreso actualizado para {{count}} participantes",
     "progress_checked_many": "Progreso actualizado para {{count}} participantes",
-    "progress_checked_one": "Progreso actualizado para el miembro {{count}}",
+    "progress_checked_one": "Progreso actualizado para {{count}} participante",
     "progress_checked_other": "Progreso actualizado para {{count}} participantes"
   },
   "types": {
-    "referrals": "Referencias",
+    "referrals": "Recomendaciones",
     "services": "Servicios",
-    "spending": "Gasto",
+    "spending": "Gastos",
     "visits": "Visitas"
   }
 }

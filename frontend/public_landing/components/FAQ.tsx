@@ -11,10 +11,12 @@ import { useTranslation } from "react-i18next";
 import { getApiUrl } from "../utils/apiUtils";
 import { safeFetch } from "../utils/errorHandler";
 import { useSalonInfo } from "../hooks/useSalonInfo";
+import { useAuth } from "../../src/contexts/AuthContext";
 
 export function FAQ() {
   const { t, i18n } = useTranslation(['public_landing', 'common']);
   const { phone: salonPhone } = useSalonInfo();
+  const { user } = useAuth();
 
   // Use translations for FAQs. Ensure your translation files structure matches this.
   const [faqs, setFaqs] = useState<{ id: number; question: string; answer: string }[]>([]);
@@ -25,12 +27,15 @@ export function FAQ() {
       try {
         const API_URL = getApiUrl();
 
-        // Fetch FAQs from DB
-        const resFaq = await safeFetch(`${API_URL}/api/public/faq?language=${i18n.language}`);
+        // Fetch FAQs from DB with optional client_id
+        const clientIdParam = user?.id ? `&client_id=${user.id}` : '';
+        const resFaq = await safeFetch(`${API_URL}/api/public/faq?language=${i18n.language}${clientIdParam}`);
         const dataFaq = await resFaq.json();
 
-        if (dataFaq.faqItems && dataFaq.faqItems.length > 0) {
-          setFaqs(dataFaq.faqItems);
+        const faqData = dataFaq.faqItems || dataFaq.faq || [];
+
+        if (faqData && faqData.length > 0) {
+          setFaqs(faqData);
         } else {
           // Fallback to translations if DB is empty
           const tFaqs = t('faqItems', { returnObjects: true, ns: 'public_landing' }) as Array<any>;
@@ -57,7 +62,7 @@ export function FAQ() {
       }
     };
     fetchData();
-  }, [i18n.language]);
+  }, [i18n.language, user?.id]);
 
   return (
     <section id="faq" className="py-12 sm:py-16 lg:py-20 bg-background">
