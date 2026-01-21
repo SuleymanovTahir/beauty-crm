@@ -1,11 +1,11 @@
 {
-  "create_permission": "Schaffung",
-  "delete_permission": "Entfernung",
-  "edit_permission": "Bearbeitung",
-  "error_changing_permissions": "Fehler beim Ändern der Berechtigungen",
-  "error_loading_permissions": "Fehler beim Laden der Berechtigungen",
+  "create_permission": "Erstellen",
+  "delete_permission": "Löschen",
+  "edit_permission": "Bearbeiten",
+  "error_changing_permissions": "Fehler beim Ändern der Rechte",
+  "error_loading_permissions": "Fehler beim Laden der Zugriffsrechte",
   "error_loading_users": "Fehler beim Laden der Benutzer",
   "permission_granted": "Recht gewährt",
   "permission_revoked": "Recht widerrufen",
-  "view_permission": "Sicht"
+  "view_permission": "Anzeigen"
 }

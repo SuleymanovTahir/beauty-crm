@@ -1,7 +1,7 @@
 {
   "buttons": {
-    "add_challenge": "Erstellen Sie eine Aufgabe",
-    "create_challenge": "Starten Sie eine Herausforderung"
+    "add_challenge": "Aufgabe erstellen",
+    "create_challenge": "Herausforderung ausführen"
   },
   "card": {
     "details": "Weitere Details",
@@ -10,19 +10,19 @@
   },
   "dialogs": {
     "add_title": "Neue Herausforderung",
-    "edit_title": "Bearbeiten einer Herausforderung"
+    "edit_title": "Herausforderung bearbeiten"
   },
   "empty": {
-    "subtitle": "Erstellen Sie Ihre erste Spielherausforderung, um Kunden zu ermutigen, sich häufiger anzumelden.",
-    "title": "Es sind keine Herausforderungen eingerichtet"
+    "subtitle": "Erstellen Sie die erste Spielaufgabe, um Kunden zu ermutigen, sich häufiger anzumelden.",
+    "title": "Herausforderungen sind nicht konfiguriert"
   },
   "fields": {
     "dates": "Zeitlimit",
     "description": "Öffentliche Beschreibung",
-    "reward": "Belohnen",
+    "reward": "Belohnung",
     "target_value": "Plan (Ziel)",
-    "title": "Berufsbezeichnung",
-    "type": "Zielmethodik"
+    "title": "Aufgabe Name",
+    "type": "Zielmethode"
   },
   "placeholders": {
     "description": "Wie wird der Kunde diese Aufgabe sehen?",
@@ -37,14 +37,14 @@
     "active": "AKTIV",
     "inactive": "PAUSE"
   },
-  "subtitle": "Steigern Sie die Kundenbindung mit Spielmechaniken und automatischen Belohnungen.",
+  "subtitle": "Erhöhen Sie die Kundenbindung mit Spielmechaniken und automatischen Belohnungen.",
   "title": "Herausforderungen",
   "toasts": {
     "created": "Aufgabe erstellt",
-    "updated": "Quest aktualisiert"
+    "updated": "Aufgabe aktualisiert"
   },
   "types": {
-    "service": "servicekategorie",
+    "service": "Kategorieservice",
     "spend": "Gesamtausgaben",
     "visits": "Anzahl der Besuche"
   }

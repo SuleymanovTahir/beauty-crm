@@ -1,56 +1,56 @@
 {
   "buttons": {
-    "cancel": "Stornieren",
+    "cancel": "Abbrechen",
     "save_changes": "Änderungen speichern"
   },
   "current_settings": {
     "edit": "Bearbeiten",
     "min_purchase": "Mindestkaufpreis: <strong>{{amount}} {{currency}}</strong>",
     "referred_bonus": "Freundesbonus: <strong>{{points}} Punkte</strong>",
-    "referrer_bonus": "Eingeladener Bonus: <strong>{{points}} Punkte</strong>",
-    "title": "Aktuelle Bonuskonfiguration"
+    "referrer_bonus": "Empfehlungsbonus: <strong>{{points}} Punkte</strong>",
+    "title": "Aktuell Bonuskonfiguration"
   },
   "dialogs": {
     "settings": {
-      "description": "Richten Sie Bonuspunkte und Anforderungen ein",
-      "min_purchase_amount": "Mindesteinkaufspreis ({{currency}})",
-      "min_purchase_help": "Mindestbetrag, den ein Freund ausgeben muss, um den Empfehlungsbonus zu aktivieren ({{min}} = kein Mindestbetrag)",
-      "referred_bonus": "Bonuspunkte für empfohlene Freunde",
-      "referred_bonus_help": "Bei der Registrierung werden einem Freund Punkte gutgeschrieben",
-      "referrer_bonus": "Empfehlungsbonuspunkte",
-      "referrer_bonus_help": "Punkte, die dem Empfehlungsgeber gutgeschrieben werden, wenn ein Freund seinen ersten Einkauf tätigt",
-      "title": "Einstellungen des Empfehlungsprogramms"
+      "description": "Bonuspunkte und Anforderungen konfigurieren",
+      "min_purchase_amount": "Mindestkaufwert ({{currency}})",
+      "min_purchase_help": "Mindestbetrag, den ein Freund ausgeben muss, um den Empfehlungsbonus zu aktivieren ({{min}} = kein Minimum)",
+      "referred_bonus": "Bonuspunkte für einen geworbenen Freund",
+      "referred_bonus_help": "Punkte, die einem Freund zuerkannt werden Registrierung",
+      "referrer_bonus": "Bonuspunkte für einen Empfehlungsgeber",
+      "referrer_bonus_help": "Punkte, die einem Empfehlungsgeber gutgeschrieben werden, wenn ein Freund seinen ersten Einkauf tätigt",
+      "title": "Empfehlungseinstellungsprogramme"
     }
   },
   "settings": "Einstellungen",
   "stats": {
     "completed_referrals": "Abgeschlossene Empfehlungen",
-    "points_distributed": "Punkte verteilt",
-    "total_referrals": "Gesamtzahl der Empfehlungen"
+    "points_distributed": "Verteilte Punkte",
+    "total_referrals": "Gesamt Empfehlungen"
   },
-  "subtitle": "Verwalten datum bis Empfehlungen und Verfolgen der Programmwirksamkeit",
+  "subtitle": "Empfehlungen verwalten und Programmeffektivität verfolgen",
   "table": {
     "columns": {
       "date": "Datum",
-      "points_awarded": "Punkte vergeben",
+      "points_awarded": "Vergebene Punkte",
       "referred_friend": "Eingeladener Freund",
-      "referrer": "Referrer",
+      "referrer": "Empfehler",
       "status": "Status"
     },
-    "description": "Verfolgung des Empfehlungsstatus und der Punkteverteilung",
+    "description": "Empfehlungsstatus und Punkteverteilung verfolgen",
     "filters": {
-      "all_statuses": "Alle Status"
+      "all_statuses": "All Statuses"
     },
     "search_placeholder": "Nach Empfehlungen suchen...",
     "sort": {
-      "date": "Nach Datum",
-      "points": "Nach Punkten",
-      "status": "Nach Status"
+      "date": "Sort by Date",
+      "points": "Sort by Points",
+      "status": "Sort by Status"
     },
     "statuses": {
-      "cancelled": "Abgesagt",
-      "completed": "Vollendet",
-      "pending": "Warten"
+      "cancelled": "Abgebrochen",
+      "completed": "Abgeschlossen",
+      "pending": "Ausstehend"
     },
     "title": "Alle Empfehlungen"
   },

@@ -1,68 +1,68 @@
 {
-  "booking_and_cancellation": "Buchung und Stornierung",
-  "booking_requirements": "Um sich für Verfahren zu registrieren, müssen Sie korrekte Kontaktinformationen angeben. Wir behalten uns das Recht vor, eine Buchung zu bestätigen oder abzulehnen.",
-  "cancellation_policy": "Stornierungsbedingungen",
-  "cancellation_policy_text": "Der Kunde kann den Termin bis spätestens 24 Stunden vor dem vereinbarten Termin absagen. Bei einer Stornierung weniger als 24 Stunden im Voraus kann eine Vertragsstrafe in Höhe datum bis 50 % der Kosten der Dienstleistung erhoben werden.",
-  "client_obligations": "Der Klient ist verpflichtet, den Facharzt vor dem Eingriff über das Vorliegen etwaiger medizinischer Kontraindikationen, Allergien oder Gesundheitszustände zu informieren.",
-  "confidentiality": "Vertraulichkeit",
-  "contact_info": "Bei Fragen zu diesen Bedingungen können Sie uns kontaktieren",
+  "booking_and_cancellation": "Бронирование и отмена",
+  "booking_requirements": "Для регистрации на Процедуры вы должны предоставить действительную контактную информацию. Мы оставляем за собой право подтвердить или отклонить ваше бронирование.",
+  "cancellation_policy": "Политика отмены",
+  "cancellation_policy_text": "Клиент может отменить запись не позднее, чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги.",
+  "client_obligations": "Перед процедурой клиент должен сообщить специалисту о медицинских противопоказаниях, аллергии или состоянии здоровья.",
+  "confidentiality": "Конфиденциальность",
+  "contact_info": "Вы можете связаться с нами по любым вопросам, касающимся настоящих Условий.",
   "contacts": "Kontakte",
-  "dissatisfaction_policy": "Wenn der Kunde mit dem Ergebnis unzufrieden ist, muss er sich innerhalb datum bis 7 Tagen mit dem Salon in Verbindung setzen, um mögliche Lösungen zu besprechen.",
-  "general_provisions": "Allgemeine Bestimmungen",
-  "general_provisions_text": "Diese Nutzungsbedingungen regeln die Nutzung der M Le Diamant-Dienste. Durch die Nutzung unserer Dienste stimmen Sie diesen Bedingungen zu.",
-  "lastUpdated": "Datum der letzten Aktualisierung: {{date}}",
-  "last_update_date": "Datum der letzten Aktualisierung",
-  "late_arrival": "Bei einer Verspätung des Kunden datum bis mehr als 15 Minuten behält sich der Salon das Recht vor, den Termin abzusagen oder die Behandlungszeit zu verkürzen.",
-  "medical_contraindications": "Medizinische Kontraindikationen",
-  "payment_details": "Die Bezahlung erfolgt in bar oder per Karte nach Leistungserbringung. Die Preise für Dienstleistungen sind in der Preisliste angegeben und können ohne vorherige Ankündigung geändert werden.",
-  "payment_for_services": "Bezahlung für Dienstleistungen",
-  "privacy_commitment": "Wir respektieren Ihre Privatsphäre und verpflichten uns, Ihre persönlichen Daten gemäß unserer Datenschutzrichtlinie zu schützen.",
-  "quality_guarantee": "Wir garantieren die Qualität der verwendeten Materialien und die Professionalität unserer Handwerker. Die Ergebnisse der Verfahren können je nach den individuellen Merkmalen des Kunden variieren.",
-  "salon_liability": "Der Salon haftet nicht für die Folgen datum bis Eingriffen, wenn der Kunde Informationen über medizinische Kontraindikationen verheimlicht.",
+  "dissatisfaction_policy": "Если результат не устраивает, клиент должен обратиться в салон в течение 7 дней для обсуждения возможных решений.",
+  "general_provisions": "Общие правила",
+  "general_provisions_text": "Настоящие Условия использования регулируют использование вами Услуг M Le Diamant. Используя наши услуги, вы соглашаетесь с этими условиями.",
+  "lastUpdated": "Дата последнего обновления: {{date}}",
+  "last_update_date": "Дата последнего обновления",
+  "late_arrival": "В случае опоздания клиента более чем на 15 минут салон имеет право отменить запись или сократить время процедуры.",
+  "medical_contraindications": "Медицинские противопоказания",
+  "payment_details": "Оплата производится наличными или картой после оказания услуги. Стоимость услуг указана в прайс-листе и может быть изменена без предварительного уведомления.",
+  "payment_for_services": "Оплата услуг",
+  "privacy_commitment": "Мы уважаем вашу конфиденциальность и обязуемся защищать вашу личную информацию в соответствии с нашей политикой конфиденциальности.",
+  "quality_guarantee": "Мы гарантируем качество используемых материалов и профессионализм наших мастеров. Результаты процедуры могут различаться в зависимости от индивидуальных особенностей клиента.",
+  "salon_liability": "Если клиент скрывает информацию о медицинских противопоказаниях, салон не несет ответственности за последствия процедур.",
   "sections": {
     "booking": {
-      "booking_requirements": "Um sich für Verfahren zu registrieren, müssen Sie korrekte Kontaktinformationen angeben. Wir behalten uns das Recht vor, eine Buchung zu bestätigen oder abzulehnen.",
-      "cancellationText": "Der Kunde kann den Termin bis spätestens 24 Stunden vor dem vereinbarten Termin absagen. Bei einer Stornierung weniger als 24 Stunden im Voraus kann eine Vertragsstrafe in Höhe datum bis 50 % der Kosten der Dienstleistung erhoben werden.",
-      "cancellationTitle": "buchung stornieren:",
-      "title": "2. Buchung und Stornierung"
+      "booking_requirements": "Для регистрации на Процедуры вы должны предоставить действительную контактную информацию. Мы оставляем за собой право подтвердить или отклонить ваше бронирование.",
+      "cancellationText": "Клиент может отменить запись не позднее, чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги.",
+      "cancellationTitle": "Отписаться:",
+      "title": "2. Бронирование и отмена"
     },
     "changes": {
-      "content": "Wir behalten uns das Recht vor, diese Nutzungsbedingungen jederzeit zu ändern. Änderungen treten mit ihrer Veröffentlichung auf der Website in Kraft.",
-      "title": "7. Änderungen der Allgemeinen Geschäftsbedingungen"
+      "content": "Wir behalten uns das Recht vor, diese Nutzungsbedingungen jederzeit zu ändern. Änderungen treten ab dem Zeitpunkt ihrer Veröffentlichung auf der Website in Kraft.",
+      "title": "7. Änderungen der Nutzungsbedingungen"
     },
     "contact": {
       "address": "Adresse",
-      "description": "Bei Fragen zu diesen Bedingungen können Sie uns kontaktieren:",
-      "email": "E-Mail",
+      "description": "Sie können uns bei Fragen zu diesen Bedingungen kontaktieren:",
+      "email": "E-Mail-Adresse",
       "phone": "Telefon",
-      "title": "8. Kontakte"
+      "title": "8. Kontakt"
     },
     "general": {
-      "content": "Diese Nutzungsbedingungen regeln die Nutzung der Dienste datum bis {{salonName}}. Durch die Nutzung unserer Dienste stimmen Sie diesen Bedingungen zu.",
-      "title": "1. Allgemeine Bestimmungen"
+      "content": "Diese Nutzungsbedingungen regeln Ihre Nutzung der {{salonName}}-Dienste. Durch die Nutzung unserer Dienste stimmen Sie diesen Bedingungen zu.",
+      "title": "1. Allgemeine Regeln"
     },
     "medical": {
-      "paragraph1": "Der Klient ist verpflichtet, den Facharzt vor dem Eingriff über das Vorliegen etwaiger medizinischer Kontraindikationen, Allergien oder Gesundheitszustände zu informieren.",
-      "paragraph2": "Der Salon haftet nicht für die Folgen datum bis Eingriffen, wenn der Kunde Informationen über medizinische Kontraindikationen verheimlicht.",
-      "title": "4. Medizinische Kontraindikationen"
+      "paragraph1": "Vor dem Eingriff muss der Kunde den Spezialisten über medizinische Kontraindikationen, Allergien oder Gesundheitszustände informieren.",
+      "paragraph2": "Wenn der Kunde Informationen über medizinische Kontraindikationen verheimlicht, ist der Salon nicht für die Folgen der Eingriffe verantwortlich.",
+      "title": "4. Medizinische Kontraindikationen."
     },
     "payment": {
-      "paragraph1": "Die Bezahlung erfolgt in bar oder per Karte nach Leistungserbringung. Die Preise für Dienstleistungen sind in der Preisliste angegeben und können ohne vorherige Ankündigung geändert werden.",
-      "paragraph2": "Bei einer Verspätung des Kunden datum bis mehr als 15 Minuten behält sich der Salon das Recht vor, den Termin abzusagen oder die Behandlungszeit zu verkürzen.",
-      "title": "3. Bezahlung der Dienstleistungen"
+      "paragraph1": "Die Bezahlung erfolgt in bar oder per Karte nach Leistungserbringung. Die Kosten für die Dienstleistungen sind in der Preisliste angegeben und können ohne vorherige Ankündigung geändert werden.",
+      "paragraph2": "Bei einer Verspätung des Kunden datum bis mehr als 15 Minuten hat der Salon das Recht, den Termin abzusagen oder die Behandlungszeit zu verkürzen.",
+      "title": "3. Zahlung für Dienstleistungen"
     },
     "privacy": {
       "content": "Wir respektieren Ihre Privatsphäre und verpflichten uns, Ihre persönlichen Daten gemäß unserer <link>Datenschutzerklärung</link> zu schützen.",
-      "title": "6. Datenschutz"
+      "title": "6. Vertraulichkeit"
     },
     "warranty": {
-      "paragraph1": "Wir garantieren die Qualität der verwendeten Materialien und die Professionalität unserer Handwerker. Die Ergebnisse der Verfahren können je nach den individuellen Merkmalen des Kunden variieren.",
-      "paragraph2": "Wenn der Kunde mit dem Ergebnis unzufrieden ist, muss er sich innerhalb datum bis 7 Tagen mit dem Salon in Verbindung setzen, um mögliche Lösungen zu besprechen.",
-      "title": "5. Garantien und Haftung"
+      "paragraph1": "Wir garantieren die Qualität der verwendeten Materialien und die Professionalität unserer Handwerker. Die Ergebnisse des Eingriffs können je nach den individuellen Merkmalen des Kunden variieren.",
+      "paragraph2": "Wenn das Ergebnis nicht zufriedenstellend ist, muss sich der Kunde innerhalb datum bis 7 Tagen mit dem Salon in Verbindung setzen, um mögliche Lösungen zu besprechen.",
+      "title": "5. Gewährleistungen und Haftung"
     }
   },
   "terms_changes": "Änderungen der Nutzungsbedingungen",
-  "terms_changes_text": "Wir behalten uns das Recht vor, diese Nutzungsbedingungen jederzeit zu ändern. Änderungen treten mit ihrer Veröffentlichung auf der Website in Kraft.",
+  "terms_changes_text": "Wir behalten uns das Recht vor, diese Nutzungsbedingungen jederzeit zu ändern. Änderungen treten ab dem Zeitpunkt ihrer Veröffentlichung auf der Website in Kraft.",
   "terms_of_use": "Nutzungsbedingungen",
   "title": "Nutzungsbedingungen",
   "warranties_and_liability": "Garantien und Haftung"

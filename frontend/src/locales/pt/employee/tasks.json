@@ -1,12 +1,12 @@
 {
+  "assigned_to": "Atribuído",
+  "due_date": "Data de vencimento",
+  "manage_your_tasks": "Gerenciar tarefas e tarefas",
   "my_tasks": "Minhas tarefas",
-  "manage_your_tasks": "Gerenciando tarefas e atribuições",
   "no_tasks": "Nenhuma tarefa ainda",
   "no_tasks_description": "Você não tem tarefas ativas. Novas tarefas aparecerão aqui quando forem atribuídas.",
-  "task_title": "Nome da tarefa",
-  "task_description": "Descrição",
-  "due_date": "Data de vencimento",
-  "status": "Status",
   "priority": "Prioridade",
-  "assigned_to": "Atribuído"
+  "status": "Status",
+  "task_description": "Descrição",
+  "task_title": "Nome da tarefa"
 }

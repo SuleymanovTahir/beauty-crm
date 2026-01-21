@@ -1,28 +1,28 @@
 {
   "bottomCta": {
-    "bookButton": "Melden Sie sich jetzt an",
-    "description": "Wählen Sie einen passenden Zeitpunkt und genießen Sie unsere Premium-Services",
-    "title": "Bereit, sich anzumelden?"
+    "bookButton": "Jetzt anmelden",
+    "description": "Wählen Sie einen passenden Zeitpunkt und nutzen Sie unsere Premium-Services",
+    "title": "Bereit zur Registrierung?"
   },
   "categories": {
     "facial-care": "Gesichtspflege",
-    "hair": "Haardienstleistungen",
+    "hair": "Friseurservice",
     "lashes": "Wimpern und Augenbrauen",
     "massage": "Massage und Spa",
     "nails": "Nagelservice",
-    "other": "Sonstige Dienstleistungen",
-    "permanent-makeup": "Permanentes Make-up"
+    "other": "Andere Dienstleistungen",
+    "permanent-makeup": "Permanent Make-up"
   },
   "cta": {
-    "bookButton": "Melden Sie sich für das Verfahren an",
-    "ready": "Bereit, sich anzumelden?"
+    "bookButton": "Für einen Eingriff anmelden",
+    "ready": "Bereit zur Anmeldung?"
   },
   "error": "Fehler beim Laden der Dienste.",
   "loading": "Dienste werden geladen...",
-  "noResults": "Es wurden keine Dienste gefunden, die Ihrer Suche entsprechen",
+  "noResults": "Für Ihre Anfrage wurden keine Dienste gefunden",
   "noServices": "Dienste nicht gefunden",
-  "search": "Nach Dienstleistungen suchen...",
-  "services": "Dienstleistungen",
-  "subtitle": "Premium-Beauty-Dienstleistungen zu erschwinglichen Preisen",
-  "title": "Unsere Leistungen und Preise"
+  "search": "Dienste suchen...",
+  "services": "Dienste",
+  "subtitle": "Premium-Kosmetikdienste zu erschwinglichen Preisen.",
+  "title": "Unsere Dienste und Preise"
 }

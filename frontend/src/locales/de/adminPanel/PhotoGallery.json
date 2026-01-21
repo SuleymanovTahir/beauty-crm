@@ -1,71 +1,71 @@
 {
   "actions": {
-    "hide": "Verstecken",
-    "show": "Zeigen"
+    "hide": "Hide",
+    "show": "Show"
   },
   "buttons": {
-    "cancel": "Stornieren",
+    "cancel": "Abbrechen",
     "close": "Schließen",
     "upload": "Herunterladen"
   },
   "card": {
     "featured": "Favoriten",
     "toggle_featured": "Favoriten umschalten",
-    "uploaded_by": "Geladen datum bis {{name}}",
-    "views": "ansichten"
+    "uploaded_by": "Hochgeladen {{name}}",
+    "views": "Ansichten"
   },
   "dialogs": {
     "delete": {
-      "confirm": "Möchten Sie dieses Foto wirklich löschen?"
+      "confirm": "Sind Sie sicher, dass Sie dieses Foto löschen möchten?"
     },
     "upload": {
-      "description": "Fügen Sie der Galerie ein neues Foto hinzu",
+      "description": "Neues Foto zur Galerie hinzufügen",
       "form": {
-        "after_photo": "Foto „Nachher“",
+        "after_photo": "Nachher-Foto",
         "before_after": "Vorher/Nachher",
         "before_photo": "Foto „Vorher“",
         "category": "Kategorie",
         "client": "Kunde",
-        "client_hint": "Das Foto wird in der Galerie des Kunden verfügbar sein",
+        "client_hint": "Foto wird in der Galerie des Kunden verfügbar sein",
         "description": "Beschreibung",
         "description_placeholder": "Fotobeschreibung",
         "photo": "Foto",
-        "select_client": "Wählen Sie den Kunden aus",
+        "select_client": "Kunde auswählen",
         "single_photo": "Ein Foto",
         "title": "Name",
-        "title_placeholder": "Fototitel",
-        "upload_type": "Lasttyp"
+        "title_placeholder": "Fotoname",
+        "upload_type": "Upload-Typ"
       },
       "title": "Foto hochladen"
     }
   },
   "empty": {
-    "description": "Laden Sie Ihre ersten Fotos in die Galerie hoch",
+    "description": "Die ersten Fotos in die Galerie hochladen",
     "title": "Noch keine Fotos"
   },
   "filters": {
     "all_categories": "Alle Kategorien",
-    "search_placeholder": "Suche nach Fotos..."
+    "search_placeholder": "Fotos suchen..."
   },
   "stats": {
-    "featured_photos": "Ausgewählte Fotos",
-    "recent_uploads": "Aktuelle Downloads",
-    "total_photos": "Gesamtfotos",
-    "total_views": "Gesamtansichten"
+    "featured_photos": "Lieblingsfotos",
+    "recent_uploads": "Neueste Uploads",
+    "total_photos": "Fotos insgesamt",
+    "total_views": "Ansichten insgesamt"
   },
-  "subtitle": "Kundenfoto- und Portfoliomanagement",
+  "subtitle": "Kundenfotos und Portfolio verwalten",
   "title": "Fotogalerie",
   "toasts": {
     "deleted": "Foto erfolgreich gelöscht",
     "failed_delete": "Foto konnte nicht gelöscht werden",
-    "failed_featured": "Der Favoritenstatus konnte nicht aktualisiert werden",
+    "failed_featured": "Favoritenstatus konnte nicht aktualisiert werden",
     "failed_load": "Fotos konnten nicht hochgeladen werden",
-    "failed_upload": "Foto konnte nicht hochgeladen werden",
-    "failed_visibility": "Die Sichtbarkeit konnte nicht aktualisiert werden.",
+    "failed_upload": "Hochladen fehlgeschlagen Foto",
+    "failed_visibility": "Failed to update visibility",
     "featured_updated": "Favoritenstatus aktualisiert",
-    "select_both_photos": "Bitte wählen Sie ein Vorher-Nachher-Foto aus",
+    "select_both_photos": "Please select both before and after photos",
     "uploaded": "Foto erfolgreich hochgeladen",
-    "visibility_updated": "Sichtbarkeit aktualisiert"
+    "visibility_updated": "Visibility updated"
   },
   "upload_photo": "Foto hochladen"
 }

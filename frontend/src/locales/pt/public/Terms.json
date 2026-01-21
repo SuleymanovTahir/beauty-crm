@@ -1,69 +1,69 @@
 {
-  "booking_and_cancellation": "Reserva e cancelamento",
-  "booking_requirements": "Para se registrar nos procedimentos, você deve fornecer informações de contato corretas. Reservamo-nos o direito de confirmar ou recusar uma reserva.",
+  "booking_and_cancellation": "Reservas e cancelamentos",
+  "booking_requirements": "Para se registrar em tratamentos, você deve fornecer um contato válido informação. Reservamo-nos o direito de confirmar ou recusar a sua reserva.",
   "cancellation_policy": "Política de Cancelamento",
-  "cancellation_policy_text": "O cliente poderá cancelar a consulta até 24 horas antes do horário agendado. Se cancelado com menos de 24 horas de antecedência poderá ser cobrada uma multa de 50% do custo do serviço.",
-  "client_obligations": "O cliente é obrigado a informar o especialista sobre a presença de quaisquer contra-indicações médicas, alergias ou problemas de saúde antes do procedimento.",
-  "confidentiality": "Confidencialidade",
-  "contact_info": "Para qualquer dúvida relacionada a estes Termos, você pode entrar em contato conosco",
+  "cancellation_policy_text": "Клиент может отменить запись не позднее, чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги.",
+  "client_obligations": "Перед процедурой клиент должен сообщить специалисту о медицинских противопоказаниях, аллергии или состоянии здоровья.",
+  "confidentiality": "Конфиденциальность",
+  "contact_info": "Вы можете связаться с нами по любым вопросам, касающимся настоящих Условий.",
   "contacts": "Contatos",
-  "dissatisfaction_policy": "Caso esteja insatisfeito com o resultado, o cliente deverá entrar em contato com o salão em até 7 dias para discutir possíveis soluções.",
-  "general_provisions": "Disposições gerais",
-  "general_provisions_text": "Estes Termos de Uso regem o uso dos serviços M Le Diamant. Ao utilizar nossos serviços você concorda com estes termos.",
-  "lastUpdated": "Data da última atualização: {{data}}",
-  "last_update_date": "Data da última atualização",
-  "late_arrival": "Caso o cliente se atrase mais de 15 minutos, o salão reserva-se o direito de cancelar a marcação ou encurtar o tempo do procedimento.",
-  "medical_contraindications": "Contra-indicações médicas",
-  "payment_details": "O pagamento é feito em dinheiro ou cartão após a prestação do serviço. Os preços dos serviços estão indicados na tabela de preços e estão sujeitos a alterações sem aviso prévio.",
-  "payment_for_services": "Pagamento até data serviços",
-  "privacy_commitment": "Respeitamos a sua privacidade e estamos empenhados em proteger as suas informações pessoais de acordo com a nossa Política de Privacidade.",
-  "quality_guarantee": "Garantimos a qualidade dos materiais utilizados e o profissionalismo dos nossos artesãos. Os resultados dos procedimentos podem variar dependendo das características individuais do cliente.",
-  "salon_liability": "O salão não se responsabiliza pelas consequências dos procedimentos caso o cliente oculte informações sobre contraindicações médicas.",
+  "dissatisfaction_policy": "Если результат не устраивает, клиент должен обратиться в салон в течение 7 дней для обсуждения возможных решений.",
+  "general_provisions": "Общие правила",
+  "general_provisions_text": "Настоящие Условия использования регулируют использование вами Услуг M Le Diamant. Используя наши услуги, вы соглашаетесь с этими условиями.",
+  "lastUpdated": "Дата последнего обновления: {{date}}",
+  "last_update_date": "Дата последнего обновления",
+  "late_arrival": "В случае опоздания клиента более чем на 15 минут салон имеет право отменить запись или сократить время процедуры.",
+  "medical_contraindications": "Медицинские противопоказания",
+  "payment_details": "Оплата производится наличными или картой после оказания услуги. Стоимость услуг указана в прайс-листе и может быть изменена без предварительного уведомления.",
+  "payment_for_services": "Оплата услуг",
+  "privacy_commitment": "Мы уважаем вашу конфиденциальность и обязуемся защищать вашу личную информацию в соответствии с нашей политикой конфиденциальности.",
+  "quality_guarantee": "Мы гарантируем качество используемых материалов и профессионализм наших мастеров. Результаты процедуры могут различаться в зависимости от индивидуальных особенностей клиента.",
+  "salon_liability": "Если клиент скрывает информацию о медицинских противопоказаниях, салон не несет ответственности за последствия процедур.",
   "sections": {
     "booking": {
-      "booking_requirements": "Para se registrar nos procedimentos, você deve fornecer informações de contato corretas. Reservamo-nos o direito de confirmar ou recusar uma reserva.",
-      "cancellationText": "O cliente poderá cancelar a consulta até 24 horas antes do horário agendado. Se cancelado com menos de 24 horas de antecedência poderá ser cobrada uma multa de 50% do custo do serviço.",
-      "cancellationTitle": "Cancelar uma reserva:",
-      "title": "2. Reserva e cancelamento"
+      "booking_requirements": "Для регистрации на Процедуры вы должны предоставить действительную контактную информацию. Мы оставляем за собой право подтвердить или отклонить ваше бронирование.",
+      "cancellationText": "Клиент может отменить запись не позднее, чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги.",
+      "cancellationTitle": "Отписаться:",
+      "title": "2. Бронирование и отмена"
     },
     "changes": {
-      "content": "Reservamo-nos o direito de alterar estes Termos de Uso a qualquer momento. As alterações entram em vigor a partir do momento em que são publicadas no site.",
-      "title": "7. Alterações nos termos e condições"
+      "content": "Мы оставляем за собой право изменить настоящие Условия использования в любое время. Изменения вступают в силу с момента их размещения на сайте.",
+      "title": "7. Изменение Условий использования"
     },
     "contact": {
-      "address": "Endereço",
-      "description": "Para qualquer dúvida relacionada a estes Termos, você pode entrar em contato conosco:",
-      "email": "E-mail",
+      "address": "Адрес",
+      "description": "Вы можете связаться с нами по любым вопросам, касающимся настоящих Условий:",
+      "email": "Адрес электронной почты",
       "phone": "Telefone",
-      "title": "8. Contatos"
+      "title": "8. Контакты"
     },
     "general": {
-      "content": "Estes Termos de Uso regem o uso dos serviços de {{salonName}}. Ao utilizar nossos serviços você concorda com estes termos.",
-      "title": "1. Disposições gerais"
+      "content": "Настоящие Условия использования регулируют использование вами Услуг {{salonName}}. Используя наши услуги, вы соглашаетесь с этими условиями.",
+      "title": "1. Общие правила"
     },
     "medical": {
-      "paragraph1": "O cliente é obrigado a informar o especialista sobre a presença de quaisquer contra-indicações médicas, alergias ou problemas de saúde antes do procedimento.",
-      "paragraph2": "O salão não se responsabiliza pelas consequências dos procedimentos caso o cliente oculte informações sobre contraindicações médicas.",
-      "title": "4. Contra-indicações médicas"
+      "paragraph1": "Перед процедурой клиент должен сообщить специалисту о медицинских противопоказаниях, аллергии или состоянии здоровья.",
+      "paragraph2": "Если клиент скрывает информацию о медицинских противопоказаниях, салон не несет ответственности за последствия процедур.",
+      "title": "4. Медицинские противопоказания."
     },
     "payment": {
-      "paragraph1": "O pagamento é feito em dinheiro ou cartão após a prestação do serviço. Os preços dos serviços estão indicados na tabela de preços e estão sujeitos a alterações sem aviso prévio.",
-      "paragraph2": "Caso o cliente se atrase mais de 15 minutos, o salão reserva-se o direito de cancelar a marcação ou encurtar o tempo do procedimento.",
-      "title": "3. Pagamento até data serviços"
+      "paragraph1": "Оплата производится наличными или картой после оказания услуги. Стоимость услуг указана в прайс-листе и может быть изменена без предварительного уведомления.",
+      "paragraph2": "В случае опоздания клиента более чем на 15 минут салон имеет право отменить запись или сократить время процедуры.",
+      "title": "3. Оплата услуг"
     },
     "privacy": {
-      "content": "Respeitamos sua privacidade e estamos comprometidos em proteger suas informações pessoais de acordo com nossa <link>Política de Privacidade</link>.",
-      "title": "6. Privacidade"
+      "content": "Мы уважаем вашу конфиденциальность и обязуемся защищать вашу личную информацию в соответствии с нашей <link>Политикой конфиденциальности</link>.",
+      "title": "6. Конфиденциальность"
     },
     "warranty": {
-      "paragraph1": "Garantimos a qualidade dos materiais utilizados e o profissionalismo dos nossos artesãos. Os resultados dos procedimentos podem variar dependendo das características individuais do cliente.",
-      "paragraph2": "Caso esteja insatisfeito com o resultado, o cliente deverá entrar em contato com o salão em até 7 dias para discutir possíveis soluções.",
-      "title": "5. Garantias e responsabilidade"
+      "paragraph1": "Мы гарантируем качество используемых материалов и профессионализм наших мастеров. Результаты процедуры могут различаться в зависимости от индивидуальных особенностей клиента.",
+      "paragraph2": "Если результат не устраивает, клиент должен обратиться в салон в течение 7 дней для обсуждения возможных решений.",
+      "title": "5. Гарантии и ответственность"
     }
   },
-  "terms_changes": "Mudanças nos Termos de Uso",
-  "terms_changes_text": "Reservamo-nos o direito de alterar estes Termos de Uso a qualquer momento. As alterações entram em vigor a partir do momento em que são publicadas no site.",
-  "terms_of_use": "Termos de Uso",
-  "title": "Termos de Uso",
-  "warranties_and_liability": "Garantias e responsabilidade"
+  "terms_changes": "Изменения в Условиях использования",
+  "terms_changes_text": "Мы оставляем за собой право изменить настоящие Условия использования в любое время. Изменения вступают в силу с момента их размещения на сайте.",
+  "terms_of_use": "Условия эксплуатации",
+  "title": "Условия эксплуатации",
+  "warranties_and_liability": "Гарантии и ответственность"
 }

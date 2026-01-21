@@ -1,50 +1,50 @@
 {
   "buttons": {
-    "cancel": "Stornieren",
+    "cancel": "Abbrechen",
     "save_template": "Vorlage speichern",
     "send_notification": "Benachrichtigung senden"
   },
   "dialogs": {
     "send": {
-      "description": "Erstellen Sie eine gezielte Benachrichtigung für Ihre Kunden",
+      "description": "Gezielte Benachrichtigung für Ihre Kunden erstellen",
       "form": {
-        "appointment_date": "Aufnahmedatum",
-        "appointment_filter": "Nach Einträgen filtern",
+        "appointment_date": "Appointment Date",
+        "appointment_filter": "Appointment Filter",
         "appointment_filters": {
-          "date_range": "Datumsbereich",
-          "specific_date": "Spezifisches Datum",
-          "tomorrow": "Morgen"
+          "date_range": "Date Range",
+          "specific_date": "Specific Date",
+          "tomorrow": "Tomorrow"
         },
-        "end_date": "Enddatum",
-        "loyalty_tier": "Treueniveau",
+        "end_date": "End Date",
+        "loyalty_tier": "Treuestufe",
         "message": "Nachricht",
-        "message_placeholder": "Benachrichtigungstext eingeben...",
+        "message_placeholder": "Geben Sie den Benachrichtigungstext ein...",
         "notification_type": "Kanaltyp",
-        "repeat_end_date": "Enddatum der Wiedergabe",
-        "repeat_interval": "Intervall wiederholen",
+        "repeat_end_date": "End Repeat On",
+        "repeat_interval": "Repeat Interval",
         "repeat_intervals": {
-          "daily": "Täglich",
-          "monthly": "Monatlich",
-          "weekly": "Wöchentlich"
+          "daily": "Daily",
+          "monthly": "Monthly",
+          "weekly": "Weekly"
         },
-        "repeat_notification": "Wiederkehrende Benachrichtigung",
-        "schedule_date": "Sendedatum",
-        "schedule_notification": "Versand planen",
-        "schedule_time": "Versandzeit",
+        "repeat_notification": "Repeat Notification",
+        "schedule_date": "Send Date",
+        "schedule_notification": "Schedule Notification",
+        "schedule_time": "Send Time",
         "segments": {
           "active": "Aktive Kunden",
           "all": "Alle Kunden",
-          "appointment_based": "Laut Aufzeichnungen",
+          "appointment_based": "By Appointment",
           "inactive": "Verloren (inaktiv)",
-          "service_based": "Durch Dienstleistungen",
+          "service_based": "By Service",
           "tier": "Nach Treuestufen"
         },
-        "select_filter": "Filter auswählen",
-        "select_tier": "Ebene auswählen",
-        "service_filter": "Service/Verfahren",
-        "service_hint": "Kunden, die sich für den ausgewählten Dienst registriert haben, erhalten eine Benachrichtigung",
-        "service_placeholder": "Geben Sie den Dienstnamen ein",
-        "start_date": "Startdatum",
+        "select_filter": "Select filter",
+        "select_tier": "Stufe auswählen",
+        "service_filter": "Service/Procedure",
+        "service_hint": "Clients who booked this service will receive the notification",
+        "service_placeholder": "Enter service name or ID",
+        "start_date": "Start Date",
         "target_segment": "Zielgruppe (Segment)",
         "tiers": {
           "bronze": "Bronze",
@@ -52,20 +52,20 @@
           "platinum": "Platin",
           "silver": "Silber"
         },
-        "title": "Überschrift",
-        "title_placeholder": "Geben Sie den Haupttitel ein"
+        "title": "Titel",
+        "title_placeholder": "Haupttitel eingeben"
       },
       "title": "Neue Benachrichtigung"
     },
     "template": {
-      "description": "Erstellen Sie eine Vorlage für schnelle Mailings in der Zukunft",
+      "description": "Vorlage für schnelles zukünftiges Mailing erstellen",
       "form": {
         "message": "Nachricht",
-        "message_placeholder": "Verwenden Sie {name}, um den Clientnamen zu ersetzen",
+        "message_placeholder": "Verwenden Sie {name}, um den Kundennamen zu ersetzen",
         "template_name": "Vorlagenname",
-        "template_name_placeholder": "zum Beispiel: Begrüßung eines neuen Kunden",
-        "title": "Überschrift",
-        "title_placeholder": "Titel der Benachrichtigung",
+        "template_name_placeholder": "zum Beispiel: Willkommen neuer Kunde",
+        "title": "Titel",
+        "title_placeholder": "Benachrichtigungstitel",
         "type": "Kanaltyp",
         "types": {
           "email": "E-Mail",
@@ -73,11 +73,11 @@
           "sms": "SMS"
         }
       },
-      "title": "Erstellen Sie eine Vorlage"
+      "title": "Vorlage erstellen"
     }
   },
   "history": {
-    "description": "Liste bisher erstellter und aktueller Mailings",
+    "description": "Liste zuvor erstellter und aktueller Mailings",
     "filters": {
       "all": "Alle Kanäle",
       "email": "E-Mail",
@@ -88,24 +88,24 @@
     "table": {
       "date": "Datum",
       "recipients": "Empfänger",
-      "sent_failed": "Gesendet / Fehler",
+      "sent_failed": "Gesendet/Fehler",
       "status": "Status",
-      "title": "Titel/Betreff",
+      "title": "Kopfzeile/Betreff",
       "type": "Typ"
     },
-    "title": "Mailing-Historie"
+    "title": "Mailmail-Verlauf"
   },
   "save_template": "Vorlage speichern",
-  "send_notification": "Schicken",
+  "send_notification": "Senden",
   "stats": {
     "email_sent": "E-Mail",
     "push_sent": "Push-Benachrichtigung-Benachrichtigung",
     "sms_sent": "SMS",
-    "total_sent": "Insgesamt gesendet"
+    "total_sent": "Gesendet insgesamt"
   },
-  "subtitle": "Kontrollzentrum für Mailings und automatische Benachrichtigungen",
+  "subtitle": "Mailmail- und automatische Control-Center-Benachrichtigungen",
   "templates": {
-    "description": "Vorgefertigte Vorlagen, um Zeit zu sparen",
+    "description": "Vorgefertigte Vorlagen zum Speichern Zeit",
     "title": "Meine Vorlagen",
     "use_template": "Verwenden"
   },

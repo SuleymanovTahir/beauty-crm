@@ -1,11 +1,11 @@
 {
-  "authorization_error": "Авторизация орындалмады",
-  "enter_login": "Логиніңізді енгізіңіз",
-  "fill_both_fields": "Екі өрісті де толтырыңыз",
+  "authorization_error": "Authorization failed",
+  "enter_login": "Enter username",
+  "fill_both_fields": "Please fill in both fields",
   "login": "Кіру",
-  "login_error": "Жүйеге кіру қатесі",
-  "login_title": "Тіркелгіңізге кіріңіз",
-  "password": "Құпия сөз",
+  "login_error": "Login error",
+  "login_title": "Login to your account",
+  "password": "Password",
   "username": "Логин",
-  "welcome": "Қош келдіңіз"
+  "welcome": "Welcome"
 }

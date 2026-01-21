@@ -1,89 +1,89 @@
 {
-  "adjust_points": "अंक संतुलन बदलें",
+  "adjust_points": "बिंदु संतुलन बदलें",
   "buttons": {
-    "add_rule": "एक नियम जोड़ें",
+    "add_rule": "नियम जोड़ें",
     "adjust_points": "संतुलन बदलें",
-    "cancel": "रद्द करना",
-    "save": "बचाना",
-    "save_changes": "परिवर्तनों को सुरक्षित करें"
+    "cancel": "रद्द करें",
+    "save": "सहेजें",
+    "save_changes": "परिवर्तन सहेजें"
   },
   "categories": {
-    "category": "वर्ग",
-    "category_placeholder": "जैसे. मैनीक्योर",
-    "description": "व्यक्तिगत दिनांक सेवा श्रेणियों के लिए पॉइंट मल्टीप्लायर दिनांक सेट करें",
-    "multiplier": "कारक",
+    "category": "श्रेणी",
+    "category_placeholder": "जैसे। मैनीक्योर",
+    "description": "व्यक्तिगत सेवा श्रेणियों के लिए बिंदु गुणक समायोजित करें",
+    "multiplier": "गुणक",
     "title": "श्रेणी गुणक"
   },
   "config": {
     "cashback_hint": "उदाहरण: {{percent}}% कैशबैक ({{points}} प्रत्येक {{unit}} खर्च के लिए अंक)",
     "cashback_rate": "कैशबैक (%)",
-    "description": "लॉयल्टी कार्यक्रम की बुनियादी दिनांक सेटिंग्स",
-    "expiration_days": "अंक वैधता अवधि (दिन)",
-    "expiration_hint": "निर्धारित समय के बाद प्वाइंट स्वत: रद्द हो जायेंगे.",
-    "points_per_unit": "1 इकाई के लिए अंक. मुद्राओं",
-    "title": "वैश्विक दिनांक सेटिंग्स"
+    "description": "बुनियादी वफादारी कार्यक्रम सेटिंग्स",
+    "expiration_days": "अंक वैधता (दिन)",
+    "expiration_hint": "निर्दिष्ट के बाद अंक स्वचालित रूप से रद्द कर दिए जाएंगे समय.",
+    "points_per_unit": "1 इकाई के लिए अंक. मुद्रा",
+    "title": "वैश्विक सेटिंग्स"
   },
   "confirm_delete_rule": "क्या आप वाकई इस नियम को हटाना चाहते हैं?",
   "dialogs": {
     "adjust_points": {
       "client_email": "ग्राहक ईमेल",
-      "client_email_placeholder": "लिंक करने के लिए अपना ईमेल दर्ज करें",
-      "description": "अंक संतुलन का मैन्युअल समायोजन",
-      "points": "बिंदुओं की संख्या",
-      "points_placeholder": "जैसे. 100 या -100",
+      "client_email_placeholder": "बाध्यकारी के लिए ईमेल दर्ज करें",
+      "description": "अंकों के संतुलन का मैन्युअल समायोजन",
+      "points": "अंकों की संख्या",
+      "points_placeholder": "उदा. 100 या -100",
       "reason": "कारण",
-      "reason_placeholder": "कृपया परिवर्तन का कारण बताएं",
-      "title": "संतुलन परिवर्तन"
+      "reason_placeholder": "परिवर्तन का कारण निर्दिष्ट करें",
+      "title": "संतुलन में परिवर्तन"
     },
     "edit_tier": {
-      "description": "विशेषाधिकार स्तर प्राप्त करने के लिए शर्तें निर्धारित करना",
+      "description": "विशेषाधिकार स्तर प्राप्त करने के लिए शर्तें स्थापित करना",
       "discount_percent": "छूट प्रतिशत",
-      "min_points": "न्यूनतम स्कोर सीमा",
-      "tier_name": "स्तर का नाम",
-      "title": "एक स्तर का संपादन"
+      "min_points": "न्यूनतम बिंदु सीमा",
+      "tier_name": "नाम स्तर",
+      "title": "संपादन स्तर"
     },
     "rule": {
-      "description": "श्रेणी के लिए व्यक्तिगत उपार्जन गुणांक",
+      "description": "श्रेणी के लिए व्यक्तिगत संचय गुणांक",
       "title": "श्रेणी नियम"
     }
   },
   "stats": {
-    "active_members": "कार्यक्रम के प्रतिभागी",
-    "points_redeemed": "अंक डेबिट किये गये",
+    "active_members": "कार्यक्रम प्रतिभागी",
+    "points_redeemed": "बट्टे खाते में डाले गए अंक",
     "total_points_issued": "कुल अर्जित"
   },
-  "subtitle": "छूट, लाभ स्तर और अंक नियम प्रबंधित करें",
+  "subtitle": "अंक अर्जित करने के लिए छूट, विशेषाधिकार स्तर और नियम प्रबंधित करें",
   "tiers": {
-    "description": "ग्राहक विभाजन के लिए वफादारी का स्तर",
+    "description": "ग्राहक विभाजन के लिए वफादारी स्तर",
     "discount": "छूट {{percent}}%",
     "from_points": "{{points}} अंक से",
-    "starting_level": "आरंभिक स्तर",
+    "starting_level": "प्रारंभिक स्तर",
     "title": "विशेषाधिकार स्तर"
   },
   "title": "वफादारी कार्यक्रम",
   "toasts": {
-    "config_updated": "दिनांक सेटिंग्स को सहेजा गया",
-    "failed_adjust": "संतुलन बदलने में विफल",
-    "failed_delete": "हटाने के दौरान त्रुटि",
+    "config_updated": "सेटिंग्स सहेजे गए",
+    "failed_adjust": "शेष राशि बदलने में विफल",
+    "failed_delete": "हटाते समय त्रुटि",
     "failed_load": "डेटा लोड करने में विफल",
     "failed_save": "सहेजते समय त्रुटि",
-    "failed_update": "अद्यतन के दौरान त्रुटि",
-    "points_adjusted_add": "उपार्जित {{count}} अंक",
-    "points_adjusted_deduct": "[[V0]]] अंक लिखें",
+    "failed_update": "अपडेट करते समय त्रुटि",
+    "points_adjusted_add": "{{count}} अंक दिए गए",
+    "points_adjusted_deduct": "{{count}} अंक काट दिए गए",
     "rule_deleted": "नियम सफलतापूर्वक हटा दिया गया",
     "rule_saved": "नियम सहेजा गया",
-    "tier_updated": "लेवल डेटा अपडेट किया गया"
+    "tier_updated": "स्तर डेटा अपडेट किया गया"
   },
   "transactions": {
     "description": "वफादारी अंक लेनदेन इतिहास",
     "search_placeholder": "ग्राहक द्वारा खोजें...",
     "table": {
       "client": "ग्राहक",
-      "date": "तारीख",
+      "date": "दिनांक",
       "points": "अंक",
       "reason": "कारण",
       "type": "प्रकार"
     },
-    "title": "नवीनतम लेनदेन"
+    "title": "हाल के लेनदेन"
   }
 }

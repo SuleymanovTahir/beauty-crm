@@ -1,7 +1,7 @@
 {
   "buttons": {
-    "add_challenge": "Crie uma tarefa",
-    "create_challenge": "Comece um desafio"
+    "add_challenge": "Criar tarefa",
+    "create_challenge": "Executar desafio"
   },
   "card": {
     "details": "Mais detalhes",
@@ -10,27 +10,27 @@
   },
   "dialogs": {
     "add_title": "Novo desafio",
-    "edit_title": "Editando um desafio"
+    "edit_title": "Editar desafio"
   },
   "empty": {
-    "subtitle": "Crie seu primeiro desafio de jogo para incentivar os clientes a se inscreverem com mais frequência.",
+    "subtitle": "Crie a primeira tarefa do jogo para incentivar os clientes a se inscreverem com mais frequência.",
     "title": "Os desafios não estão configurados"
   },
   "fields": {
-    "dates": "Limite de tempo",
-    "description": "Descrição pública",
+    "dates": "Limite temporário",
+    "description": "Público descrição",
     "reward": "Recompensa",
     "target_value": "Plano (meta)",
-    "title": "Cargo",
-    "type": "Metodologia de Metas"
+    "title": "Nome da tarefa",
+    "type": "Metodologia da meta"
   },
   "placeholders": {
     "description": "Como o cliente verá esta tarefa?",
-    "title": "Até exemplo: status Ouro"
+    "title": "até data exemplo: Status Ouro"
   },
   "stats": {
     "active_challenges": "TAREFAS ATIVAS",
-    "completed_today": "CONCLUÍDO HOJE",
+    "completed_today": "CONCLUÍDAS HOJE",
     "total_participants": "TOTAL DE PARTICIPANTES"
   },
   "status": {
@@ -40,12 +40,12 @@
   "subtitle": "Aumente a fidelidade do cliente com mecânica de jogo e recompensas automáticas.",
   "title": "Desafios",
   "toasts": {
-    "created": "Tarefa criada",
-    "updated": "Missão atualizada"
+    "created": "Missão criada",
+    "updated": "Tarefa atualizada"
   },
   "types": {
-    "service": "categoria de serviço",
-    "spend": "Gasto total",
+    "service": "serviço de categoria",
+    "spend": "Valor total gasto",
     "visits": "Número de visitas"
   }
 }

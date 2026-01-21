@@ -1,11 +1,11 @@
 {
   "admin_panel": "Panneau d'administration",
-  "go_to_crm": "Aller au CRM",
-  "logout": "Se déconnecter",
+  "go_to_crm": "Accéder au CRM",
+  "logout": "Déconnexion",
   "menu": {
     "challenges": "Défis",
-    "dashboard": "Panneau de contrôle",
-    "feature_management": "Feature Management",
+    "dashboard": "Panneau de configuration",
+    "feature_management": "Gérer Fonctionnalités",
     "loyalty_management": "Gestion de la fidélité",
     "notifications": "Notifications",
     "photo_gallery": "Galerie de photos",
@@ -13,6 +13,6 @@
     "referral_program": "Programme de parrainage",
     "services": "Services",
     "settings": "Paramètres",
-    "user_management": "Gestion des utilisateurs"
+    "user_management": "Utilisateur gestion"
   }
 }

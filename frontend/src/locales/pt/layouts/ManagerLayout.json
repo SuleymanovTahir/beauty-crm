@@ -3,8 +3,8 @@
   "logout": "Sair",
   "manager": "Gerente",
   "menu": {
-    "analytics": "Análise",
-    "chat": "Chat",
+    "analytics": "Analytics",
+    "chat": "Bate-papo",
     "clients": "Clientes",
     "dashboard": "Painel",
     "funnel": "Funil",

@@ -1,71 +1,71 @@
 {
   "actions": {
-    "hide": "Жасыру",
-    "show": "Көрсету"
+    "hide": "Hide",
+    "show": "Show"
   },
   "buttons": {
-    "cancel": "Болдырмау",
-    "close": "Жабу",
-    "upload": "Жүктеп алу"
+    "cancel": "Отмена",
+    "close": "Закрыть",
+    "upload": "Загрузить"
   },
   "card": {
-    "featured": "Таңдаулылар",
-    "toggle_featured": "Таңдаулыларды ауыстырып қосу",
-    "uploaded_by": "Жүктеп салған: {{name}}",
-    "views": "көріністер"
+    "featured": "Избранное",
+    "toggle_featured": "Переключить избранное",
+    "uploaded_by": "Загружено {{name}}",
+    "views": "просмотров"
   },
   "dialogs": {
     "delete": {
-      "confirm": "Бұл фотосуретті шынымен жойғыңыз келе ме?"
+      "confirm": "Вы уверены, что хотите удалить это фото?"
     },
     "upload": {
-      "description": "Галереяға жаңа фотосурет қосыңыз",
+      "description": "Добавить новое фото в галерею",
       "form": {
-        "after_photo": "Фото «Кейін»",
-        "before_after": "Бұрын/Кейін",
-        "before_photo": "«Бұрын» фотосы",
-        "category": "Санат",
+        "after_photo": "Фото \"После\"",
+        "before_after": "До/После",
+        "before_photo": "Фото \"До\"",
+        "category": "Категория",
         "client": "Клиент",
-        "client_hint": "Фотосурет клиенттің галереясында қолжетімді болады",
-        "description": "Сипаттама",
-        "description_placeholder": "Фотосурет сипаттамасы",
+        "client_hint": "Фото будет доступно в галерее клиента",
+        "description": "Описание",
+        "description_placeholder": "Описание фото",
         "photo": "Фото",
-        "select_client": "Клиентті таңдаңыз",
-        "single_photo": "Бір фото",
-        "title": "Аты",
-        "title_placeholder": "Фотосурет атауы",
-        "upload_type": "Жүктеме түрі"
+        "select_client": "Выберите клиента",
+        "single_photo": "Одно фото",
+        "title": "Название",
+        "title_placeholder": "Название фото",
+        "upload_type": "Тип загрузки"
       },
-      "title": "Фотосуретті жүктеп салу"
+      "title": "Загрузить фото"
     }
   },
   "empty": {
-    "description": "Алғашқы фотосуреттеріңізді галереяға жүктеңіз",
-    "title": "Әлі фотосуреттер жоқ"
+    "description": "Загрузите первые фотографии в галерею",
+    "title": "Фотографий пока нет"
   },
   "filters": {
-    "all_categories": "Барлық санаттар",
-    "search_placeholder": "Фотосуреттер ізделуде..."
+    "all_categories": "Все категории",
+    "search_placeholder": "Поиск фотографий..."
   },
   "stats": {
-    "featured_photos": "Таңдаулы фотосуреттер",
-    "recent_uploads": "Соңғы жүктеп алынғандар",
-    "total_photos": "Жалпы фотосуреттер",
-    "total_views": "Жалпы көру саны"
+    "featured_photos": "Избранных фото",
+    "recent_uploads": "Недавних загрузок",
+    "total_photos": "Всего фото",
+    "total_views": "Всего просмотров"
   },
-  "subtitle": "Клиент фотосуреті мен портфолиосын басқару",
-  "title": "Фотогалерея",
+  "subtitle": "Управление фотографиями клиентов и портфолио",
+  "title": "Фото галерея",
   "toasts": {
-    "deleted": "Фотосурет сәтті жойылды",
-    "failed_delete": "Фотосурет жойылмады",
-    "failed_featured": "Таңдаулы күйді жаңарту мүмкін болмады",
-    "failed_load": "Фотосуреттерді жүктеп салу орындалмады",
-    "failed_upload": "Фотосурет жүктеп салынбады",
-    "failed_visibility": "Көріну мүмкіндігін жаңарту мүмкін болмады.",
-    "featured_updated": "Таңдаулы күй жаңартылды",
-    "select_both_photos": "Бұрынғы және кейінгі фотосуретті таңдаңыз",
-    "uploaded": "Фото жүктеп салынды",
-    "visibility_updated": "Көріну мүмкіндігі жаңартылды"
+    "deleted": "Фото успешно удалено",
+    "failed_delete": "Не удалось удалить фото",
+    "failed_featured": "Не удалось обновить статус избранного",
+    "failed_load": "Не удалось загрузить фотографии",
+    "failed_upload": "Не удалось загрузить фото",
+    "failed_visibility": "Failed to update visibility",
+    "featured_updated": "Статус избранного обновлен",
+    "select_both_photos": "Please select both before and after photos",
+    "uploaded": "Фото успешно загружено",
+    "visibility_updated": "Visibility updated"
   },
-  "upload_photo": "Фотосуретті жүктеп салу"
+  "upload_photo": "Загрузить фото"
 }

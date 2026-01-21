@@ -1,58 +1,58 @@
 {
-  "answer_1": "Sie können sich über unsere Website anmelden, indem Sie anrufen oder an WhatsApp/Instagram schreiben.",
+  "answer_1": "Sie können sich anmelden über unsere Website, per Anruf oder per E-Mail an WhatsApp/Instagram.",
   "answer_2": "Wir akzeptieren Zahlungen in bar und mit Bankkarten.",
-  "answer_3": "Ja, Sie können Ihren Termin bis zu {{hours}} Stunden vor Ihrem geplanten Termin absagen oder verschieben.",
-  "answer_4": "Ja, einige Eingriffe haben medizinische Kontraindikationen. Bitte konsultieren Sie vor der Aufnahme unseren Spezialisten.",
-  "answer_5": "Die Dauer des Eingriffs hängt datum bis der gewählten Dienstleistung ab. Typischerweise datum bis {{min}} Minuten bis {{max}} Stunden.",
+  "answer_3": "Ja, Sie können einen Termin spätestens {{hours}} Stunden vor dem vereinbarten Zeitpunkt absagen oder verschieben.",
+  "answer_4": "Ja, bei einigen Eingriffen bestehen medizinische Kontraindikationen. Bevor Sie schreiben, wenden Sie sich an unseren Spezialisten.",
+  "answer_5": "Die Dauer des Verfahrens hängt datum bis der gewählten Dienstleistung ab. Normalerweise zwischen {{min}} Minuten und {{max}} Stunden.",
   "answer_6": "Einige Verfahren erfordern eine besondere Vorbereitung. Darüber informiert Sie der Facharzt bei der Anmeldung.",
   "cta": {
-    "bookButton": "Melden Sie sich für das Verfahren an",
+    "bookButton": "Melden Sie sich für den Eingriff an",
     "contactButton": "Kontaktieren Sie uns",
-    "description": "Kontaktieren Sie uns und wir beantworten gerne alle Ihre Fragen",
-    "title": "Haben Sie die Antwort auf Ihre Frage nicht gefunden?"
+    "description": "Kontaktieren Sie uns, wir beantworten gerne alle Ihre Fragen",
+    "title": "Haben Sie keine Antwort auf Ihre Frage gefunden?"
   },
-  "faq_title": "Häufig gestellte Fragen",
-  "question_1": "Wie melde ich mich für das Verfahren an?",
+  "faq_title": "Häufig gefragt Fragen",
+  "question_1": "Wie melde ich mich für einen Eingriff an?",
   "question_2": "Welche Zahlungsmethoden akzeptieren Sie?",
   "question_3": "Kann ich einen Termin absagen oder verschieben?",
-  "question_4": "Gibt es Kontraindikationen für die Eingriffe?",
-  "question_5": "Wie lange dauert der Eingriff?",
-  "question_6": "Ist für den Eingriff eine vorbereitende Vorbereitung notwendig?",
+  "question_4": "Haben Sie Kontraindikationen für die Eingriffe?",
+  "question_5": "Wie lang? Dauert das Verfahren?",
+  "question_6": "Benötigen Sie eine vorbereitende Vorbereitung für das Verfahren?",
   "questions": {
     "booking": {
-      "answer": "Sie können sich für das Verfahren über das Formular auf unserer Website{{phone, phone}} anmelden, indem Sie {{phone}}{{/phone}}{{instagram, instagram}} anrufen oder uns auf Instagram {{instagram}}{{/instagram}} schreiben. Wir werden Sie kontaktieren, um Ihren Termin zu bestätigen.",
-      "question": "Wie melde ich mich für das Verfahren an?"
+      "answer": "Sie können sich für das Verfahren über das Formular {{phone, phone}} auf unserer Website anmelden, indem Sie {{phone}}{{/phone}}{{instagram, instagram}} anrufen oder uns auf Instagram schreiben {{instagram}}{{/instagram}}. Wir werden uns mit Ihnen in Verbindung setzen, um Ihren Termin zu bestätigen.",
+      "question": "Wie vereinbare ich einen Termin?"
     },
     "cancellation": {
-      "answer": "Ja, Sie können Ihren Termin bis zu {{hours}} Stunden vor Ihrem geplanten Termin absagen oder verschieben. Bei einer Stornierung in weniger als {{hours}} Stunden kann eine Strafe in Höhe datum bis {{percent}} % der Kosten der Dienstleistung erhoben werden.",
-      "question": "Kann ich meinen Termin absagen oder verschieben?"
+      "answer": "Ja, Sie können Ihren Termin bis zu {{hours}} Stunden vor dem geplanten Zeitpunkt absagen oder verschieben. Bei einer Stornierung weniger als {{hours}} Stunden im Voraus kann eine Vertragsstrafe in Höhe datum bis {{percent}} % der Kosten der Dienstleistung erhoben werden.",
+      "question": "Kann ich einen Termin absagen oder verschieben?"
     },
     "certificates": {
       "answer": "Ja, alle unsere Meister verfügen über internationale Zertifikate und nehmen regelmäßig an Fortbildungen teil.",
-      "question": "Verfügen Ihre Handwerker über Zertifikate?"
+      "question": "Sind Ihre Techniker zertifiziert?"
     },
     "contraindications": {
-      "answer": "Ja, jedes Verfahren hat seine eigenen Kontraindikationen. Hauptsächlich: Schwangerschaft, Stillzeit, akute entzündliche Prozesse, Blutkrankheiten, Onkologie. Vor dem Eingriff ist eine Rücksprache mit einem Spezialisten erforderlich.",
-      "question": "Gibt es Kontraindikationen für die Verfahren?"
+      "answer": "Ja, jeder Eingriff hat seine eigenen Kontraindikationen. Hauptsächlich: Schwangerschaft, Stillzeit, akute entzündliche Prozesse, Blutkrankheiten, Onkologie. Vor dem Eingriff ist eine Rücksprache mit einem Facharzt erforderlich.",
+      "question": "Gibt es Kontraindikationen für den Eingriff?"
     },
     "gift": {
       "answer": "Ja, wir bieten Geschenkgutscheine in beliebiger Höhe oder für bestimmte Leistungen an. Kontaktieren Sie uns, um ein Zertifikat zu erhalten.",
-      "question": "Kann ich für Dienstleistungen ein Zertifikat ausstellen?"
+      "question": "Kann ich für Dienstleistungen ein Zertifikat vorlegen?"
     },
     "guarantee": {
       "answer": "Ja, wir garantieren die Qualität aller unserer Dienstleistungen. Wenn Sie mit dem Ergebnis nicht zufrieden sind, kontaktieren Sie uns innerhalb datum bis {{count}} Tagen und wir werden eine Lösung finden.",
-      "question": "Geben Sie eine Garantie für Dienstleistungen?"
+      "question": "Garantien Sie die Dienstleistungen?"
     },
     "location": {
-      "answer": "Wir befinden uns unter: {{address}}. Detaillierte Informationen zur Anfahrt finden Sie auf der Seite Kontakte.",
+      "answer": "Unsere Adresse: {{address}}. Einzelheiten zur Anfahrt finden Sie auf der Seite „Kontakte“.",
       "question": "Wo befindet sich Ihr Salon?"
     },
     "loyalty": {
-      "answer": "Ja, wir haben ein umfassendes Treueprogramm. Nach jedem Besuch erhalten Sie Prämien, die Sie für zukünftige Besuche verwenden können.",
+      "answer": "Ja, wir haben ein umfassendes Treueprogramm. Nach jedem Besuch erhalten Sie Prämien, mit denen Sie zukünftige Besuche bezahlen können.",
       "question": "Haben Sie ein Treueprogramm?"
     },
     "materials": {
-      "answer": "Wir verwenden ausschließlich zertifizierte Premiummaterialien der weltweit führenden Marken. Alle Pigmente sind hypoallergen und gesundheitlich unbedenklich.",
+      "answer": "Wir verwenden ausschließlich zertifizierte Premium-Materialien datum bis weltweit führenden Marken. Alle Pigmente sind hypoallergen und gesundheitlich unbedenklich.",
       "question": "Welche Materialien verwenden Sie?"
     },
     "payment": {
@@ -61,7 +61,7 @@
     },
     "preparation": {
       "answer": "Ja, einige Verfahren erfordern eine Vorbereitung. Detaillierte Empfehlungen geben wir Ihnen bei der Anmeldung.",
-      "question": "Ist vor dem Eingriff eine Vorbereitung notwendig?"
+      "question": "Müssen Sie sich vor dem Eingriff vorbereiten?"
     },
     "weekends": {
       "answer": "Ja, wir haben {{count}} Tage die Woche geöffnet. {{будние дни, будние дни}}Wochentage {{weekdays}}{{/weekdays}}{{выходные, выходные}}, Wochenenden {{weekends}}{{/weekends}}.",
@@ -69,5 +69,5 @@
     }
   },
   "subtitle": "Antworten auf häufig gestellte Fragen zu unseren Dienstleistungen",
-  "title": "Häufig gestellte Fragen"
+  "title": "Häufig gefragt Fragen"
 }

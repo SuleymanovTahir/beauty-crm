@@ -1,20 +1,20 @@
 {
   "Book_a_procedure_right_now_and_feel_the_difference": "Inscreva-se agora mesmo no procedimento e sinta a diferença",
-  "In_our_salon_experienced_masters_with_international_certificates_work_Each_specialist_has_extensive_experience_and_regularly_upgrades_their_qualifications_to_provide_you_with_services_of_the_highest_quality": "Nosso salão emprega profissionais experientes com certificados internacionais. Cada especialista tem uma vasta experiência e aprimora regularmente suas habilidades para lhe fornecer serviços da mais alta qualidade.",
-  "Love_for_our_craft": "Amor pelo seu negócio",
-  "Meet_our_talented_masters": "Conheça nossos talentosos artesãos",
+  "In_our_salon_experienced_masters_with_international_certificates_work_Each_specialist_has_extensive_experience_and_regularly_upgrades_their_qualifications_to_provide_you_with_services_of_the_highest_quality": "Nosso salão conta com profissionais experientes e com certificados internacionais. Cada especialista tem uma vasta experiência e melhora regularmente suas habilidades para fornecer serviços da mais alta qualidade",
+  "Love_for_our_craft": "Ama o que faz",
+  "Meet_our_talented_masters": "Conheça nossos talentosos especialistas",
   "Our_masters_regularly_upgrade_their_qualifications": "Nossos especialistas melhoram regularmente suas habilidades",
   "Our_team_of_professionals": "Nossa equipe de profissionais",
   "Over_the_years_we_have_become_one_of_the_leading_beauty_salons_in_Dubai_having_served_over_10_000_satisfied_clients_Our_reputation_is_built_on_trust_professionalism_and_love_for_our_craft": "Ao longo dos anos, nos tornamos um dos principais salões de beleza em Dubai, atendendo mais de {{count}} clientes satisfeitos. Nossa reputação é construída com base na confiança, profissionalismo e amor pelo nosso trabalho",
   "The_principles_we_are_guided_by": "Os princípios que nos guiam",
-  "We_are_constantly_evolving_following_the_latest_trends_in_the_beauty_industry_and_using_only_proven_high-quality_materials_and_equipment": "Estamos em constante desenvolvimento, seguindo as últimas tendências da indústria da beleza e utilizando apenas materiais e equipamentos comprovados de alta qualidade.",
+  "We_are_constantly_evolving_following_the_latest_trends_in_the_beauty_industry_and_using_only_proven_high-quality_materials_and_equipment": "Estamos em constante evolução, seguindo as últimas tendências da indústria da beleza e usando apenas materiais e equipamentos comprovados de alta qualidade",
   "We_create_beauty_and_confidence_for_over_10_years_Our_mission_-_to_help_every_woman_feel_beautiful_and_special": "Criamos beleza e confiança há mais de {{count}} anos. Nossa missão é ajudar cada mulher a se sentir bonita e especial",
-  "We_love_what_we_do_and_this_is_reflected_in_every_procedure": "Amamos o que fazemos e isso se reflete em cada procedimento",
+  "We_love_what_we_do_and_this_is_reflected_in_every_procedure": "Amamos o que fazemos e isso se reflete em todos os procedimentos",
   "We_use_only_premium_materials_and_equipment": "Usamos apenas materiais e equipamentos premium",
   "Your_comfort_and_satisfaction_-_our_priority": "Seu conforto e satisfação são nossa prioridade",
   "cta": {
-    "book_procedure": "Inscreva-se para o procedimento",
-    "ready_to_transform": "Pronto para transformar?"
+    "book_procedure": "Inscreva-se para um procedimento",
+    "ready_to_transform": "Pronto para se transformar?"
   },
   "master_role": "Mestre",
   "our_salon": "Nosso salão",
@@ -25,7 +25,7 @@
     "awards_and_certificates": "Prêmios e certificados",
     "satisfied_clients": "Clientes satisfeitos",
     "service_types": "Tipos de serviços",
-    "years_experience": "Anos de experiência"
+    "years_experience": "Anos experiência"
   },
   "title": "Sobre nós",
   "values": {

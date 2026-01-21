@@ -1,12 +1,12 @@
 {
-  "my_tasks": "مهامي",
-  "manage_your_tasks": "إدارة المهام والواجبات",
-  "no_tasks": "لا توجد مهام حتى الآن",
-  "no_tasks_description": "ليس لديك أي مهام نشطة. ستظهر المهام الجديدة هنا عند تعيينها.",
-  "task_title": "اسم المهمة",
-  "task_description": "وصف",
+  "assigned_to": "المعيَّنة",
   "due_date": "تاريخ الاستحقاق",
-  "status": "حالة",
-  "priority": "أولوية",
-  "assigned_to": "مُكَلَّف"
+  "manage_your_tasks": "إدارة المهام والمهام",
+  "my_tasks": "مهامي",
+  "no_tasks": "لا توجد مهام بعد",
+  "no_tasks_description": "ليس لديك أي مهام نشطة. ستظهر المهام الجديدة هنا عند تعيينها.",
+  "priority": "الأولوية",
+  "status": "الحالة",
+  "task_description": "الوصف",
+  "task_title": "اسم المهمة"
 }

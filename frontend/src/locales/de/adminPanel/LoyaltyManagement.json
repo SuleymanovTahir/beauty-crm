@@ -1,89 +1,89 @@
 {
   "adjust_points": "Punktestand ändern",
   "buttons": {
-    "add_rule": "Fügen Sie eine Regel hinzu",
-    "adjust_points": "Balance ändern",
-    "cancel": "Stornieren",
+    "add_rule": "Regel hinzufügen",
+    "adjust_points": "Guthaben ändern",
+    "cancel": "Abbrechen",
     "save": "Speichern",
     "save_changes": "Änderungen speichern"
   },
   "categories": {
     "category": "Kategorie",
-    "category_placeholder": "Z.B. Maniküre",
-    "description": "Richten Sie Punktemultiplikatoren für einzelne Servicekategorien ein",
-    "multiplier": "Faktor",
+    "category_placeholder": "z.B. Maniküre",
+    "description": "Punktmultiplikatoren für einzelne Servicekategorien einrichten",
+    "multiplier": "Multiplikator",
     "title": "Kategoriemultiplikatoren"
   },
   "config": {
-    "cashback_hint": "Beispiel: {{percent}}% Cashback ({{points}} Punkte für jeden ausgegebenen {{unit}})",
+    "cashback_hint": "Beispiel: {{percent}} % Cashback ({{points}} Punkte für jeden ausgegebenen {{unit}})",
     "cashback_rate": "Cashback (%)",
     "description": "Grundeinstellungen des Treueprogramms",
     "expiration_days": "Gültigkeitsdauer der Punkte (Tage)",
     "expiration_hint": "Punkte werden nach der angegebenen Zeit automatisch storniert.",
-    "points_per_unit": "punkte für 1 Einheit. Währungen",
+    "points_per_unit": "Punkte für 1 Einheit. Währungen",
     "title": "Globale Einstellungen"
   },
   "confirm_delete_rule": "Sind Sie sicher, dass Sie diese Regel löschen möchten?",
   "dialogs": {
     "adjust_points": {
-      "client_email": "Kunden-E-Mail",
-      "client_email_placeholder": "Geben Sie Ihre E-Mail-Adresse ein, um den Link zu erstellen",
-      "description": "Manuelle Anpassung des Punktestandes",
+      "client_email": "E-Mail-Adresse des Kunden",
+      "client_email_placeholder": "E-Mail-Adresse für die Bindung eingeben",
+      "description": "Manuelle Anpassung des Punktestands",
       "points": "Anzahl der Punkte",
       "points_placeholder": "Z.B. 100 oder -100",
-      "reason": "Ursache",
-      "reason_placeholder": "Bitte geben Sie den Grund für die Änderung an",
-      "title": "Balance-Änderung"
+      "reason": "Grund",
+      "reason_placeholder": "Geben Sie den Grund für die Änderung an",
+      "title": "Änderung des Kontostands"
     },
     "edit_tier": {
-      "description": "Festlegen der Bedingungen für den Erhalt einer Berechtigungsstufe",
+      "description": "Bedingungen für den Erhalt einer Privilegienstufe einrichten",
       "discount_percent": "Rabattprozentsatz",
-      "min_points": "Mindestpunktzahlschwelle",
-      "tier_name": "Levelname",
-      "title": "Bearbeiten eines Levels"
+      "min_points": "Mindestpunktschwelle",
+      "tier_name": "Name Ebene",
+      "title": "Bearbeitungsebene"
     },
     "rule": {
-      "description": "Persönlicher Abgrenzungskoeffizient für die Kategorie",
+      "description": "Persönliche Sammelrate für Kategorie",
       "title": "Kategorieregel"
     }
   },
   "stats": {
     "active_members": "Programmteilnehmer",
-    "points_redeemed": "Punkte abgebucht",
-    "total_points_issued": "Insgesamt aufgelaufen"
+    "points_redeemed": "Eingelöste Punkte",
+    "total_points_issued": "Gesammelte Gesamtsumme"
   },
-  "subtitle": "Verwalten Sie Rabatte, Leistungsstufen und Punkteregeln",
+  "subtitle": "Rabatte, Berechtigungsstufen und Punkteregeln verwalten",
   "tiers": {
-    "description": "Loyalitätsstufen zur Kundensegmentierung",
-    "discount": "rabatt {{percent}}%",
+    "description": "Treuestufen für Kundensegmentierung",
+    "discount": "Rabatt {{percent}} %",
     "from_points": "datum bis {{points}} Punkten",
-    "starting_level": "Ausgangsniveau",
+    "starting_level": "Startstufe",
     "title": "Berechtigungsstufen"
   },
   "title": "Treueprogramm",
   "toasts": {
     "config_updated": "Einstellungen gespeichert",
-    "failed_adjust": "Kontostand konnte nicht geändert werden",
+    "failed_adjust": "Guthaben konnte nicht geändert werden",
     "failed_delete": "Fehler beim Löschen",
     "failed_load": "Daten konnten nicht geladen werden",
     "failed_save": "Fehler beim Speichern",
-    "failed_update": "Fehler beim Update",
-    "points_adjusted_add": "{{count}} Punkte vergeben",
-    "points_adjusted_deduct": "{{count}} Punkte abgeschrieben",
+    "failed_update": "Fehler beim Aktualisieren",
+    "points_adjusted_add": "Aufgelaufene {{count}} Punkte",
+    "points_adjusted_deduct": "{{count}} Punkte abschreiben",
     "rule_deleted": "Regel erfolgreich gelöscht",
     "rule_saved": "Regel gespeichert",
-    "tier_updated": "Leveldaten aktualisiert"
+    "tier_updated": "Stufendaten aktualisiert"
   },
   "transactions": {
-    "description": "Transaktionshistorie für Treuepunkte",
+    "description": "Treuepunkte-Transaktionsverlauf",
     "search_placeholder": "Suche nach Kunde...",
     "table": {
       "client": "Kunde",
       "date": "Datum",
       "points": "Punkte",
-      "reason": "Ursache",
+      "reason": "Grund",
       "type": "Typ"
     },
-    "title": "Neueste Transaktionen"
+    "title": "Letzte Transaktionen"
   }
 }

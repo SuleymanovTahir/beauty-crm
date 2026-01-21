@@ -1,71 +1,71 @@
 {
   "actions": {
-    "hide": "Esconder",
-    "show": "Espectáculo"
+    "hide": "Hide",
+    "show": "Show"
   },
   "buttons": {
     "cancel": "Cancelar",
     "close": "Cerrar",
-    "upload": "Descargar"
+    "upload": "Subir"
   },
   "card": {
     "featured": "Favoritos",
     "toggle_featured": "Alternar favoritos",
-    "uploaded_by": "Cargado hasta fecha {{name}}",
-    "views": "vistas"
+    "uploaded_by": "{{name}} subido",
+    "views": "Vistas"
   },
   "dialogs": {
     "delete": {
-      "confirm": "¿Estás seguro de que quieres eliminar esta foto?"
+      "confirm": "¿Estás seguro de que deseas eliminar esta foto?"
     },
     "upload": {
-      "description": "Añade una nueva foto a la galería.",
+      "description": "Agregar una nueva foto a la galería",
       "form": {
-        "after_photo": "Foto \"después\"",
+        "after_photo": "Foto \"Después\"",
         "before_after": "Antes/Después",
         "before_photo": "Foto \"Antes\"",
         "category": "Categoría",
         "client": "Cliente",
-        "client_hint": "La foto estará disponible en la galería del cliente.",
+        "client_hint": "La foto estará disponible en la galería del cliente",
         "description": "Descripción",
         "description_placeholder": "Descripción de la foto",
         "photo": "Foto",
         "select_client": "Seleccionar cliente",
-        "single_photo": "Una foto",
+        "single_photo": "Uno foto",
         "title": "Nombre",
-        "title_placeholder": "Título de la foto",
+        "title_placeholder": "Nombre de la foto",
         "upload_type": "Tipo de carga"
       },
       "title": "Subir foto"
     }
   },
   "empty": {
-    "description": "Sube tus primeras fotos a la galería.",
+    "description": "Subir las primeras fotos a la galería",
     "title": "Aún no hay fotos"
   },
   "filters": {
-    "all_categories": "Todas las categorias",
-    "search_placeholder": "Buscando fotos..."
+    "all_categories": "Todas las categorías",
+    "search_placeholder": "Buscar fotos..."
   },
   "stats": {
-    "featured_photos": "Fotos destacadas",
-    "recent_uploads": "Descargas recientes",
+    "featured_photos": "Fotos favoritas",
+    "recent_uploads": "Subidas recientes",
     "total_photos": "Fotos totales",
-    "total_views": "Vistas totales"
+    "total_views": "Visitas totales"
   },
-  "subtitle": "Gestión de fotografías y carteras de clientes.",
+  "subtitle": "Administrar fotos y cartera de clientes",
   "title": "Galería de fotos",
   "toasts": {
-    "deleted": "Foto eliminada con éxito",
+    "deleted": "Foto eliminada correctamente",
     "failed_delete": "No se pudo eliminar la foto",
     "failed_featured": "No se pudo actualizar el estado favorito",
-    "failed_load": "No se pudieron subir fotos",
-    "failed_upload": "No se pudo subir la foto",
-    "failed_visibility": "No se pudo actualizar la visibilidad.",
+    "failed_load": "No se pudieron cargar las fotos",
+    "failed_upload": "Error al cargar la foto",
+    "failed_visibility": "Failed to update visibility",
     "featured_updated": "Estado favorito actualizado",
-    "select_both_photos": "Hasta fecha favor seleccione una foto de antes y después",
-    "uploaded": "Foto cargada exitosamente",
-    "visibility_updated": "Visibilidad actualizada"
+    "select_both_photos": "Please select both before and after photos",
+    "uploaded": "Foto cargada correctamente",
+    "visibility_updated": "Visibility updated"
   },
   "upload_photo": "Subir foto"
 }

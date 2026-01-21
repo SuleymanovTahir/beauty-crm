@@ -1,18 +1,18 @@
 {
-  "admin_panel": "Әкімші панелі",
-  "go_to_crm": "CRM жүйесіне өтіңіз",
-  "logout": "Шығу",
+  "admin_panel": "Админ панель",
+  "go_to_crm": "Перейти в CRM",
+  "logout": "Выйти",
   "menu": {
-    "challenges": "Қиындықтар",
-    "dashboard": "Басқару тақтасы",
-    "feature_management": "Feature Management",
-    "loyalty_management": "Адалдықты басқару",
-    "notifications": "Хабарландырулар",
-    "photo_gallery": "Фотогалерея",
-    "public_content": "Қоғамдық мазмұн",
-    "referral_program": "Реферат бағдарламасы",
-    "services": "Қызметтер",
-    "settings": "Параметрлер",
-    "user_management": "Пайдаланушыны басқару"
+    "challenges": "Челленджи",
+    "dashboard": "Панель управления",
+    "feature_management": "Управление функциями",
+    "loyalty_management": "Управление лояльностью",
+    "notifications": "Уведомления",
+    "photo_gallery": "Фото галерея",
+    "public_content": "Публичный контент",
+    "referral_program": "Реферальная программа",
+    "services": "Услуги",
+    "settings": "Настройки",
+    "user_management": "Управление пользователями"
   }
 }

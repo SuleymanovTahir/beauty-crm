@@ -1,9 +1,9 @@
 {
-  "backToHome": "volver a casa",
-  "contactMessage": "Nos comunicaremos contigo en breve para confirmar los detalles de tu cita.",
-  "dateTime": "{{fecha}} a las {{hora}}",
-  "serviceBooked": "Su reserva para <highlight>{{service}}</highlight> se ha creado correctamente.",
-  "thankYou": "¡Gracias, {{nombre}}!",
-  "title": "¡Inscripción confirmada!",
-  "viewServices": "Ver servicios"
+  "backToHome": "Вернуться домой",
+  "contactMessage": "Мы свяжемся с вами в ближайшее время для подтверждения деталей встречи.",
+  "dateTime": "{{дата}}, {{время}}",
+  "serviceBooked": "Ваша запись <highlight>{{service}}</highlight> успешно создана.",
+  "thankYou": "Спасибо, {{name}}!",
+  "title": "Регистрация подтверждена!",
+  "viewServices": "Посмотреть услуги"
 }

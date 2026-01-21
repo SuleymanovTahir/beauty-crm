@@ -1,30 +1,30 @@
 {
   "buttons": {
-    "save": "Änderungen speichern"
+    "save": "Save Changes"
   },
   "scheduling": {
-    "end_date": "Enddatum",
-    "hint": "Für unbestimmte Verfügbarkeit leer lassen.",
-    "label": "Planung (optional)",
-    "start_date": "Startdatum"
+    "end_date": "End Date",
+    "hint": "Leave empty for indefinite availability.",
+    "label": "Scheduling (Optional)",
+    "start_date": "Start Date"
   },
   "status": {
-    "active": "Aktiv",
-    "disabled": "Defekt",
-    "disabled_switch": "Defekt",
-    "enabled": "Im Lieferumfang enthalten",
-    "globally_disabled": "Die Funktion ist derzeit weltweit deaktiviert."
+    "active": "Active",
+    "disabled": "Disabled",
+    "disabled_switch": "Disabled",
+    "enabled": "Enabled",
+    "globally_disabled": "Feature is currently disabled globally."
   },
-  "subtitle": "Kontrollieren Sie die Verfügbarkeit wichtiger Plattformfunktionen",
-  "title": "Funktionsverwaltung",
+  "subtitle": "Manage availability of key platform features",
+  "title": "Feature Management",
   "toasts": {
-    "failed_load": "Die Funktionskonfiguration konnte nicht geladen werden.",
-    "failed_save": "Die Konfiguration konnte nicht gespeichert werden.",
-    "saved": "Konfiguration erfolgreich gespeichert"
+    "failed_load": "Failed to load feature configuration",
+    "failed_save": "Failed to save configuration",
+    "saved": "Configuration saved successfully"
   },
   "whitelist": {
-    "hint": "Durch Kommas getrennte Benutzer-IDs.",
-    "label": "Whitelist (optional)",
-    "placeholder": "z.B. 1, 5, 12"
+    "hint": "Comma-separated User IDs. If set, only these users can access this feature. Leave empty to allow all eligible users.",
+    "label": "Whitelist (Optional)",
+    "placeholder": "e.g. 1, 5, 12"
   }
 }
