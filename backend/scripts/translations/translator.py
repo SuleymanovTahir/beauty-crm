@@ -40,6 +40,8 @@ except ImportError:
 SALON_TERMINOLOGY = {
     # Corrections for Russian (when RU is the target language)
     'ru': {
+        'tursunai': 'Турсунай',
+        'tursunay': 'Турсунай',
         'пост': 'запись',        # 'post' -> 'запись' (booking)
         'записи': 'записи',      # Plural consistency
         'вход': 'запись',        # 'entry' -> 'запись'
