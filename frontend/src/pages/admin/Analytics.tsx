@@ -440,7 +440,7 @@ export default function Analytics() {
 
       {/* Top Services Table */}
       {topServices.length > 0 && (
-        <div className="analytics-table-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="analytics-table-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6 md:mb-8">
           <div className="analytics-table-header p-4 md:p-6 border-b border-gray-200">
             <h2 className="analytics-table-title text-base md:text-xl text-gray-900">{t('analytics:top_services')}</h2>
           </div>
@@ -521,43 +521,42 @@ export default function Analytics() {
                 { name: t('analytics:funnel.stages.booked'), value: funnel.booked, color: 'funnel-stage-booked', desc: t('analytics:funnel.desc.booked') },
                 { name: t('analytics:funnel.stages.completed'), value: funnel.completed, color: 'funnel-stage-completed', desc: t('analytics:funnel.desc.completed') }
               ].map((stage, index, arr) => {
-                const maxValue = Math.max(...arr.map(s => s.value));
-                const percentage = (stage.value / (maxValue || 1)) * 100;
-                const conversionPercent = (stage.value / (funnel.visitors || 1)) * 100;
+                const visitorsCount = funnel.visitors || 1;
+                const percentage = (stage.value / visitorsCount) * 100;
+                const conversionPercent = (stage.value / visitorsCount) * 100;
                 const prevValue = index > 0 ? arr[index - 1].value : 0;
                 const loss = index > 0 ? prevValue - stage.value : 0;
 
                 return (
-                  <div key={index} className="relative">
-                    <div className="flex items-center gap-4">
-                      {/* Funnel Bar */}
-                      <div className="flex-1">
-                        <div
-                          className={`analytics-funnel-bar ${stage.color} text-white p-6 rounded-lg transition-all hover:shadow-lg cursor-pointer`}
-                          style={{
-                            width: `${Math.max(percentage, 5)}%`,
-                            minWidth: '200px'
-                          }}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h3 className="text-lg mb-1">{stage.name}</h3>
-                              <p className="text-sm opacity-90">{stage.desc}</p>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-2xl">{stage.value}</p>
-                              <p className="text-sm opacity-90">{conversionPercent.toFixed(1)}%</p>
-                            </div>
-                          </div>
+                  <div key={index} className="flex flex-col items-center">
+                    <div className="analytics-funnel-row w-full">
+                      <div
+                        className={`analytics-funnel-bar-shape ${stage.color}`}
+                        style={{
+                          width: `${Math.max(percentage, 20)}%`
+                        }}
+                      >
+                        <div className="analytics-funnel-label">
+                          <h3>{stage.name}</h3>
+                          <p className="text-xs font-normal opacity-90">{stage.desc}</p>
+                        </div>
+                        <div className="analytics-funnel-values">
+                          <p className="analytics-funnel-count">{stage.value}</p>
+                          <p className="analytics-funnel-percent">{conversionPercent.toFixed(1)}%</p>
                         </div>
                       </div>
                     </div>
 
-                    {/* Losses */}
-                    {loss > 0 && (
-                      <div className="mt-2 ml-4 flex items-center gap-2 text-red-600 text-sm">
-                        <TrendingDown className="w-4 h-4" />
-                        <span>{t('analytics:funnel.losses', { count: loss })}</span>
+                    {/* Visual Connector & Loss Label */}
+                    {index < arr.length - 1 && (
+                      <div className="flex flex-col items-center my-1 z-0 relative">
+                        <div className="analytics-funnel-connector h-4"></div>
+                        {loss > 0 && (
+                          <div className="absolute left-[calc(100%+10px)] top-0 flex items-center gap-1 text-red-500 text-xs whitespace-nowrap bg-red-50 px-2 py-1 rounded-full border border-red-100 shadow-sm transform -translate-y-1/2">
+                            <TrendingDown className="w-3 h-3" />
+                            -{loss} ({((loss / prevValue) * 100).toFixed(1)}%)
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
