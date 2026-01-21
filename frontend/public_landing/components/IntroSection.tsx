@@ -1,6 +1,6 @@
 export function IntroSection() {
   return (
-    <section className="py-6 sm:py-8 bg-background">
+    <section className="sr-only" aria-hidden="false">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <div className="prose max-w-none text-center">
           <p className="text-sm sm:text-base text-foreground/70 leading-relaxed">
