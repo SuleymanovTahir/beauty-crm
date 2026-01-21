@@ -64,6 +64,14 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Estado",
+  "statuses": {
+    "cancelled": "Cancelado",
+    "draft": "Borrador",
+    "overdue": "Atrasado",
+    "paid": "Pagado",
+    "partial": "Parcialmente pagado",
+    "sent": "Enviado"
+  },
   "subtitle": "Administrar facturas y pagos",
   "title": "Cuentas",
   "totalAmount": "Suma"

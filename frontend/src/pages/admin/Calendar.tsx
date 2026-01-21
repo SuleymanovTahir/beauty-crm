@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import './Calendar.css';
 import { Button } from '../../components/ui/button';
+import { CRMDatePicker } from '../../components/shared/CRMDatePicker';
 import { useTranslation } from 'react-i18next';
 import {
   Select,
@@ -928,7 +929,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 <select
                   value={addForm.master}
                   onChange={(e) => setAddForm({ ...addForm, master: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
+                  className="input-field"
                 >
                   <option value="">{t('calendar:select_master')}</option>
                   {masters.map((m) => (
@@ -949,7 +950,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   placeholder={t('calendar:phone_placeholder')}
                   value={addForm.phone}
                   onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white transition-all"
+                  className="input-field"
                 />
               </div>
 
@@ -959,11 +960,11 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     {t('calendar:date')} *
                   </label>
-                  <input
-                    type="date"
+                  <CRMDatePicker
                     value={addForm.date}
-                    onChange={(e) => setAddForm({ ...addForm, date: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white transition-all"
+                    onChange={(value) => setAddForm({ ...addForm, date: value })}
+                    className="input-field"
+                    required
                   />
                 </div>
                 <div>
@@ -973,7 +974,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   <select
                     value={addForm.time}
                     onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
+                    className="input-field"
                   >
                     {TIME_SLOTS.map((slot, idx) => (
                       <option key={idx} value={slot.display}>

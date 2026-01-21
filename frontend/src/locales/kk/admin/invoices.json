@@ -64,6 +64,14 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Күйі",
+  "statuses": {
+    "cancelled": "Бас тартылды",
+    "draft": "Тод нобай",
+    "overdue": "Мерзімі өткен",
+    "paid": "Төленді",
+    "partial": "Ішінара төленген",
+    "sent": "Жіберілді"
+  },
   "subtitle": "Шот-фактуралар мен төлемдерді басқару",
   "title": "Шоттар",
   "totalAmount": "Сома"

@@ -64,6 +64,14 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Статус",
+  "statuses": {
+    "cancelled": "Отменен",
+    "draft": "Черновик",
+    "overdue": "Просрочен",
+    "paid": "Оплачен",
+    "partial": "Частично оплачен",
+    "sent": "Отправлен"
+  },
   "subtitle": "Управление счетами и платежами",
   "title": "Счета",
   "totalAmount": "Сумма"

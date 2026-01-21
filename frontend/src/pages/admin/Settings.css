@@ -13,11 +13,19 @@
 }
 
 .settings-button-gradient {
-  background: linear-gradient(to right, var(--color-pink-500), var(--color-purple-600));
+  background: linear-gradient(
+    to right,
+    var(--color-pink-500),
+    var(--color-purple-600)
+  );
 }
 
 .settings-card-gradient {
-  background: linear-gradient(to right, var(--color-pink-50), var(--color-purple-50));
+  background: linear-gradient(
+    to right,
+    var(--color-pink-50),
+    var(--color-purple-50)
+  );
   border-color: var(--color-pink-200);
 }
 
@@ -102,4 +110,11 @@
 
 .settings-text-red-dark {
   color: color-mix(in srgb, var(--destructive), black 20%);
+}
+
+.settings-label-spacing {
+  display: block;
+  margin-bottom: 0.5rem !important;
+  font-weight: 600;
+  color: #374151;
 }

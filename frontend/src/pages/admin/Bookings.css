@@ -382,12 +382,13 @@
   background-color: #fff;
   border-radius: 0.75rem;
   border: 1px solid #e5e7eb;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .bookings-table-wrapper {
   overflow-x: auto;
+  overflow-y: visible;
 }
 
 .bookings-table {
@@ -546,12 +547,23 @@
   border-radius: 0.5rem;
   font-size: 0.95rem;
   box-sizing: border-box;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
+  background-color: #fff;
+}
+
+select.input-field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
 }
 
 .input-field:focus {
   outline: none;
   border-color: #db2777;
+  box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.1);
 }
 
 .action-button-group {
@@ -791,4 +803,52 @@
 }
 .messenger-default {
   background-color: #6b7280 !important;
+}
+
+/* CRM DatePicker Styles */
+.crm-datepicker-wrapper {
+  width: 100%;
+}
+
+.crm-datepicker-wrapper .react-datepicker-wrapper {
+  width: 100%;
+}
+
+.crm-datepicker-wrapper .react-datepicker__input-container {
+  width: 100%;
+}
+
+.react-datepicker-popper {
+  z-index: 10000 !important;
+}
+
+.crm-calendar-popper .react-datepicker {
+  font-family: inherit;
+  border-radius: 1rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  font-size: 0.8rem;
+}
+
+.crm-calendar-popper .react-datepicker__header {
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  padding: 0.75rem 0;
+}
+
+.crm-calendar-popper .react-datepicker__current-month {
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
+.crm-calendar-popper .react-datepicker__day--selected {
+  background-color: #db2777 !important;
+  border-radius: 0.5rem;
+}
+
+.crm-calendar-popper .react-datepicker__day:hover {
+  border-radius: 0.5rem;
 }

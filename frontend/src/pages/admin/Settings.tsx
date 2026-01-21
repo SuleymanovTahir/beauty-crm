@@ -52,7 +52,7 @@ import { ManageCurrenciesDialog } from '../../components/admin/ManageCurrenciesD
 import './Settings.css';
 
 export default function AdminSettings() {
-  const { t, i18n } = useTranslation(['admin/settings', 'common']);
+  const { t } = useTranslation(['admin/settings', 'common']);
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав
@@ -1380,8 +1380,8 @@ export default function AdminSettings() {
             ) : (
               <form onSubmit={handleSaveGeneral} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="salonName">{t('settings:salon_name')} *</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="salonName" className="settings-label-spacing">{t('settings:salon_name')} *</Label>
                     <Input
                       id="salonName"
                       value={generalSettings.salonName}
@@ -1391,8 +1391,8 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="language">{t('settings:system_language')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="language" className="settings-label-spacing">{t('settings:system_language')}</Label>
                     <Select
                       value={generalSettings.language}
                       onValueChange={(value: string) =>
@@ -1415,7 +1415,7 @@ export default function AdminSettings() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="city">{t('settings:city')}</Label>
+                    <Label htmlFor="city" className="settings-label-spacing">{t('settings:city')}</Label>
                     <Input
                       id="city"
                       value={generalSettings.city}
@@ -1425,7 +1425,7 @@ export default function AdminSettings() {
                   </div>
 
                   <div>
-                    <Label htmlFor="phone">{t('settings:phone')}</Label>
+                    <Label htmlFor="phone" className="settings-label-spacing">{t('settings:phone')}</Label>
                     <Input
                       id="phone"
                       type="tel"
@@ -1436,8 +1436,8 @@ export default function AdminSettings() {
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="address">{t('settings:address')}</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="address" className="settings-label-spacing">{t('settings:address')}</Label>
                   <Input
                     id="address"
                     value={generalSettings.address}
@@ -1447,8 +1447,8 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="email">{t('settings:email')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="settings-label-spacing">{t('settings:email')}</Label>
                     <Input
                       id="email"
                       type="email"
@@ -1458,8 +1458,8 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="instagram">{t('settings:instagram')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="instagram" className="settings-label-spacing">{t('settings:instagram')}</Label>
                     <Input
                       id="instagram"
                       value={generalSettings.instagram}
@@ -1469,8 +1469,8 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="telegram_chat_id">{t('settings:telegram_manager_chat_id', 'Telegram Manager Chat ID')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="telegram_chat_id" className="settings-label-spacing">{t('settings:telegram_manager_chat_id', 'Telegram Manager Chat ID')}</Label>
                     <Input
                       id="telegram_chat_id"
                       value={generalSettings.telegram_manager_chat_id}
@@ -1485,8 +1485,8 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="weekdays">{t('settings:weekdays_hours')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="weekdays" className="settings-label-spacing">{t('settings:weekdays_hours')}</Label>
                     <Input
                       id="weekdays"
                       value={generalSettings.working_hours.weekdays}
@@ -1499,8 +1499,8 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="weekends">{t('settings:weekends_hours')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="weekends" className="settings-label-spacing">{t('settings:weekends_hours')}</Label>
                     <Input
                       id="weekends"
                       value={generalSettings.working_hours.weekends}
@@ -1515,8 +1515,8 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                  <div>
-                    <Label htmlFor="lunch_start">{t('settings:lunch_start')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="lunch_start" className="settings-label-spacing">{t('settings:lunch_start')}</Label>
                     <Input
                       id="lunch_start"
                       type="time"
@@ -1528,8 +1528,8 @@ export default function AdminSettings() {
                       className="px-3"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="lunch_end">{t('settings:lunch_end')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="lunch_end" className="settings-label-spacing">{t('settings:lunch_end')}</Label>
                     <Input
                       id="lunch_end"
                       type="time"
@@ -1550,8 +1550,8 @@ export default function AdminSettings() {
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="city">{t('settings:city')}</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="city" className="settings-label-spacing">{t('settings:city')}</Label>
                       <Input
                         id="city"
                         value={generalSettings.city}
@@ -1560,8 +1560,8 @@ export default function AdminSettings() {
                       />
                     </div>
 
-                    <div>
-                      <Label htmlFor="currency">{t('settings:currency', 'Валюта')}</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="currency" className="settings-label-spacing">{t('settings:currency', 'Валюта')}</Label>
                       <div className="flex gap-2">
                         <Select
                           value={generalSettings.currency}
@@ -1590,8 +1590,8 @@ export default function AdminSettings() {
                       </div>
                     </div>
 
-                    <div>
-                      <Label htmlFor="timezone_offset">{t('settings:timezone_offset')}</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="timezone_offset" className="settings-label-spacing">{t('settings:timezone_offset')}</Label>
                       <Select
                         value={generalSettings.timezone_offset}
                         onValueChange={(value) => setGeneralSettings({ ...generalSettings, timezone_offset: value })}
@@ -1614,7 +1614,7 @@ export default function AdminSettings() {
                       </Select>
                     </div>
 
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="birthday_discount">{t('settings:birthday_discount')}</Label>
                       <Input
                         id="birthday_discount"
@@ -1712,7 +1712,7 @@ export default function AdminSettings() {
                   </div>
 
                   {notificationSettings.birthdayReminders && (
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="birthdayDays">{t('settings:notify_days')}</Label>
                       <Select
                         value={notificationSettings.birthdayDaysAdvance.toString()}
@@ -1806,7 +1806,7 @@ export default function AdminSettings() {
                       <h3 className="text-xl font-bold text-gray-900 mb-4">{t('settings:new_reminder')}</h3>
 
                       <div className="space-y-4">
-                        <div>
+                        <div className="space-y-2">
                           <Label htmlFor="reminder-name">{t('settings:name')} *</Label>
                           <Input
                             id="reminder-name"
@@ -1817,7 +1817,7 @@ export default function AdminSettings() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                          <div>
+                          <div className="space-y-2">
                             <Label htmlFor="days-before">{t('settings:days_before_booking')}</Label>
                             <Input
                               id="days-before"
@@ -1827,7 +1827,7 @@ export default function AdminSettings() {
                               onChange={(e) => setReminderForm({ ...reminderForm, days_before: parseInt(e.target.value) || 0 })}
                             />
                           </div>
-                          <div>
+                          <div className="space-y-2">
                             <Label htmlFor="hours-before">{t('settings:hours_before_booking')}</Label>
                             <Input
                               id="hours-before"
@@ -1839,7 +1839,7 @@ export default function AdminSettings() {
                           </div>
                         </div>
 
-                        <div>
+                        <div className="space-y-2">
                           <Label htmlFor="notification-type">{t('settings:notification_type')}</Label>
                           <Select
                             value={reminderForm.notification_type}
@@ -2219,7 +2219,7 @@ export default function AdminSettings() {
 
                     <div className="space-y-6">
                       {/* Subscription Type */}
-                      <div>
+                      <div className="space-y-2">
                         <Label htmlFor="subscription_type">{t('settings:subscription_type')} *</Label>
                         <Select
                           value={broadcastForm.subscription_type}
@@ -2239,7 +2239,7 @@ export default function AdminSettings() {
                       </div>
 
                       {/* Channels */}
-                      <div>
+                      <div className="space-y-2">
                         <Label>{t('settings:sending_channels')} *</Label>
                         <div className="flex gap-4 mt-2">
                           <button
@@ -2281,7 +2281,7 @@ export default function AdminSettings() {
                       </div>
 
                       {/* Target Role (optional) */}
-                      <div>
+                      <div className="space-y-2">
                         <Label htmlFor="target_role">{t('settings:target_role_optional')}</Label>
                         <Select
                           value={broadcastForm.target_role}
@@ -3039,8 +3039,8 @@ export default function AdminSettings() {
               </p>
 
               <div className="space-y-4 max-w-md">
-                <div>
-                  <Label htmlFor="deletePassword">{t('your_password')} *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="deletePassword" className="settings-label-spacing">{t('your_password')} *</Label>
                   <Input
                     id="deletePassword"
                     type="password"
@@ -3051,7 +3051,7 @@ export default function AdminSettings() {
                   />
                 </div>
 
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="deleteConfirm">
                     {t('type_delete_to_confirm_label')}
                   </Label>
@@ -3097,8 +3097,8 @@ export default function AdminSettings() {
               </div>
 
               <div className="p-6 space-y-4">
-                <div>
-                  <Label htmlFor="roleKey">{t('settings:role_key')} *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="roleKey" className="settings-label-spacing">{t('settings:role_key')} *</Label>
                   <Input
                     id="roleKey"
                     placeholder="senior_master"
@@ -3107,8 +3107,8 @@ export default function AdminSettings() {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="roleName">{t('settings:role_name')} *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="roleName" className="settings-label-spacing">{t('settings:role_name')} *</Label>
                   <Input
                     id="roleName"
                     placeholder={t('settings:senior_master')}
@@ -3117,8 +3117,8 @@ export default function AdminSettings() {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="roleDesc">{t('settings:role_description')}</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="roleDesc" className="settings-label-spacing">{t('settings:role_description')}</Label>
                   <Textarea
                     id="roleDesc"
                     placeholder={t('settings:role_description_placeholder')}

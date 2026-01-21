@@ -400,7 +400,7 @@ export default function Funnel() {
                                     <div className="p-4 border-b border-gray-200/60 bg-white/50 backdrop-blur-sm rounded-t-xl sticky top-0 z-10">
                                         <div className="flex items-center justify-between mb-2">
                                             <h3 className="font-semibold text-sm text-gray-700 uppercase tracking-wide">
-                                                {stage.name}
+                                                {t(`stages.${stage.key || stage.name.toLowerCase().replace(/\s+/g, '_')}`, { defaultValue: stage.name })}
                                             </h3>
                                             <Badge variant="secondary" className="bg-white text-gray-600 font-mono text-xs border shadow-sm">
                                                 {clients[stage.id]?.length || 0}
@@ -586,7 +586,7 @@ export default function Funnel() {
                                                         </td>
                                                         <td className="px-6 py-4">
                                                             <Badge variant="secondary" className="bg-gray-100 font-normal">
-                                                                {stages.find(s => s.id === client.pipeline_stage_id)?.name}
+                                                                {t(`stages.${stages.find(s => s.id === client.pipeline_stage_id)?.key || stages.find(s => s.id === client.pipeline_stage_id)?.name.toLowerCase().replace(/\s+/g, '_')}`, { defaultValue: stages.find(s => s.id === client.pipeline_stage_id)?.name })}
                                                             </Badge>
                                                         </td>
                                                         <td className="px-6 py-4">

@@ -19,6 +19,30 @@
 | **В ожидании** | Pending | قيد الانتظار | Күтуде | Ausstehend | En espera | En attente | Pendente | लंबित |
 | **Мастер** | Stylist/Master | خبير | Маман/Шебер | Spezialist | Especialista | Spécialiste | Especialista | विशेषज्ञ |
 
+
+## [2026-01-22] UI Spacing & Component Portalling Refinement
+- 🎨 **UI Spacing & Alignment Fixes:**
+  - **Active Settings Page (shared/Settings.tsx):** Implemented `settings-label-spacing` CSS class and added `space-y-2` containers to all form fields (General, Broadcasts, Notifications). This resolves the "glued" labels issue across the entire settings section.
+  - **Broadcast Icons Fix:** Corrected CSS class names in the Broadcasts tab (removed spaces around hyphens like `items - center`) to restore proper icon and button rendering.
+  - **Broadcast Translations:** Added localization for broadcast channel names (Email, Telegram, Instagram).
+- 🏗️ **Component Architecture:**
+  - **Bookings Source Dropdown:** Refactored `SourceSelect` component to use Radix `Popover` (Portal). This ensures the dropdown renders in a layer above the table, completely resolving clipping issues caused by `overflow-hidden` containers in the bookings table.
+- 🧹 **Code Quality:**
+  - **De-duplication:** Identified that `/crm/settings` uses `shared/Settings.tsx` and applied all fixes there as the SSOT.
+  - **Clean Code:** Fixed broken Tailwind classes and removed unused code in `SourceSelect.tsx`.
+
+## [2026-01-22] UI Spacing & Kanban Board Localization Refinement
+- 🎨 **UI Spacing & Alignment Fixes:**
+  - **Settings Page:** Implemented `settings-label-spacing` CSS class to ensure uniform vertical spacing between labels and input fields across all settings tabs (General, Notifications, Broadcasts, Danger Zone, Roles), matching the "Profile" tab's premium styling.
+  - **Bookings Table Clipping:** Resolved a critical UI issue where the "Source" dropdown in the bookings table was being clipped by the table container. Adjusted `overflow` properties in `Bookings.css` to ensure full visibility of selects and popovers.
+- 🌍 **Kanban Board Localization (Zero Hardcode):**
+  - **Dynamic Stage Names:** Refactored Kanban boards in **Funnel**, **Invoices**, **Contracts**, and **Tasks** to use the internationalization system (`t()`) for column headers (stages/statuses). 
+  - **Glossary Expansion:** Populated `ru/admin/` locale files with standard Russian names for all CRM stages (New, In Progress, Paid, Draft, Sent, Signed, etc.).
+  - **Global Sync:** Executed `npm run i18n:sync` to automatically propagate these new translations to all 9 supported languages (EN, AR, DE, ES, FR, HI, KK, PT), ensuring 100% localization of CRM pipelines.
+- 🔧 **Bug Fixes:**
+  - Fixed various labels in `Settings.tsx` that were missing proper spacing or had incorrect styling.
+  - Verified and cleaned up unused `i18n` variables to resolve linting warnings.
+
 ## [2026-01-22] Internationalization (i18n) & UI Consistency Refinement
 - 🌍 **Internationalization (i18n) & UI Fixes:**
   - **Standardized Date Format:** Implemented a unified `DD.MM.YYYY` date format across the entire application (Booking form, Admin panel, Manager chat, Public landing) using `toLocaleDateString('ru-RU')` to ensure consistency regardless of the selected language.

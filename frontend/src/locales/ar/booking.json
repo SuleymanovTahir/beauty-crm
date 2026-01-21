@@ -66,6 +66,7 @@
     "title": "التاريخ والوقت"
   },
   "formDate": "التاريخ",
+  "formDatePlaceholder": "Выберите дату",
   "formName": "الاسم",
   "formNamePlaceholder": "اسمك",
   "formPhone": "الهاتف",

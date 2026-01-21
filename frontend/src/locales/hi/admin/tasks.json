@@ -63,6 +63,13 @@
   "stage_deleted": "स्टेज हटा दिया गया",
   "stage_name": "चरण का नाम",
   "stage_name_placeholder": "उदाहरण के लिए: प्रगति पर",
+  "stages": {
+    "done": "हो गया",
+    "in_progress": "प्रगति पर",
+    "on_hold": "स्थगित किया गया",
+    "review": "जाँच की जा रही है",
+    "todo": "करने के लिए"
+  },
   "status_updated": "स्थिति अपडेट की गई",
   "task_created": "कार्य बनाया गया",
   "task_deleted": "कार्य हटाया गया",

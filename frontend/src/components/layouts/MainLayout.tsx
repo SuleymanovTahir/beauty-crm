@@ -52,7 +52,7 @@ interface MainLayoutProps {
 export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const navigate = useNavigate();
     const location = useLocation();
-    const { t, i18n } = useTranslation(['layouts/mainlayout', 'common']);
+    const { t } = useTranslation(['layouts/mainlayout', 'common']);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
     const [expandedMenu, setExpandedMenu] = useState<string | null>(() => {
@@ -77,6 +77,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const [menuSettings, setMenuSettings] = useState<{ menu_order: string[] | null; hidden_items: string[] | null } | null>(null);
     const activeMenuItemRef = useRef<HTMLButtonElement>(null);
     const navContainerRef = useRef<HTMLDivElement>(null);
+    const expandedMenuRef = useRef<HTMLUListElement>(null);
 
     // Используем централизованную систему прав
     const permissions = usePermissions(user?.role || 'employee');
@@ -154,24 +155,23 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
         };
     }, [user?.role]);
 
-    // Auto-scroll to active menu item
+    // Auto-scroll to expanded menu
     useEffect(() => {
-        if (activeMenuItemRef.current && navContainerRef.current) {
-            const menuItem = activeMenuItemRef.current;
+        if (expandedMenu && expandedMenuRef.current && navContainerRef.current) {
+            const submenu = expandedMenuRef.current;
             const container = navContainerRef.current;
 
-            // Calculate scroll position to center the active item
-            const itemTop = menuItem.offsetTop;
-            const itemHeight = menuItem.offsetHeight;
-            const containerHeight = container.clientHeight;
-            const scrollPosition = itemTop - (containerHeight / 2) + (itemHeight / 2);
+            // Wait a bit for the animation to finish
+            setTimeout(() => {
+                const rect = submenu.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
 
-            container.scrollTo({
-                top: scrollPosition,
-                behavior: 'smooth'
-            });
+                if (rect.bottom > containerRect.bottom) {
+                    submenu.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }, 300);
         }
-    }, [location.pathname]);
+    }, [expandedMenu]);
 
     const loadEnabledMessengers = async () => {
         try {
@@ -548,7 +548,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
 
                                                 {/* Submenu Items */}
                                                 {isExpanded && (
-                                                    <ul className="mt-1 ml-4 border-l border-gray-200 pl-4 space-y-1">
+                                                    <ul ref={expandedMenuRef} className="mt-1 ml-4 border-l border-gray-200 pl-4 space-y-1">
                                                         {item.items.map((subItem: any, subIndex: number) => {
                                                             const isSubActive = location.pathname.startsWith(subItem.path) ||
                                                                 (subItem.path.includes('?') && location.search.includes(subItem.path.split('?')[1]));
