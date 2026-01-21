@@ -227,7 +227,11 @@ def migrate_other_schema():
         c.execute("CREATE INDEX IF NOT EXISTS idx_visitor_visited_at ON visitor_tracking(visited_at)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_visitor_country ON visitor_tracking(country)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_visitor_is_local ON visitor_tracking(is_local)")
-        print("  ✅ visitor_tracking table ensured")
+        # Optimization indexes for analytics
+        c.execute("CREATE INDEX IF NOT EXISTS idx_visitor_city ON visitor_tracking(city)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_visitor_page_url ON visitor_tracking(page_url)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_visitor_distance ON visitor_tracking(distance_km)")
+        print("  ✅ visitor_tracking table ensured with optimized indexes")
         
         print("\n✅ All other tables ensured")
         

@@ -2102,6 +2102,14 @@ def init_database():
     except Exception as e:
         log_warning(f"⚠️ Menu settings migration warning: {e}", "db")
 
+    # Run other schema migration (consolidated)
+    try:
+        from db.migrations.consolidated.schema_other import migrate_other_schema
+        migrate_other_schema()
+        log_info("✅ Other tables migrated (consolidated)", "db")
+    except Exception as e:
+        log_warning(f"⚠️ Other tables migration warning: {e}", "db")
+
     log_info("✅ База данных инициализирована", "db")
 
 if __name__ == "__main__":

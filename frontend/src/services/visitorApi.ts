@@ -1,55 +1,35 @@
-// Visitor Analytics API client
-const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+// /frontend/src/services/visitorApi.ts
+import { api } from './api';
 
 export const visitorApi = {
     async getVisitors(period: string = 'week') {
-        const response = await fetch(
-            `${API_URL}/api/analytics/visitors?period=${period}`,
-            { credentials: 'include' }
-        );
-        if (!response.ok) throw new Error('Failed to load visitors');
-        return response.json();
+        return api.get(`/api/analytics/visitors?period=${period}`);
     },
 
     async getLocationBreakdown(period: string = 'week') {
-        const response = await fetch(
-            `${API_URL}/api/analytics/visitors/location-breakdown?period=${period}`,
-            { credentials: 'include' }
-        );
-        if (!response.ok) throw new Error('Failed to load location breakdown');
-        return response.json();
+        return api.get(`/api/analytics/visitors/location-breakdown?period=${period}`);
     },
 
     async getCountryBreakdown(period: string = 'week') {
-        const response = await fetch(
-            `${API_URL}/api/analytics/visitors/country-breakdown?period=${period}`,
-            { credentials: 'include' }
-        );
-        if (!response.ok) throw new Error('Failed to load country breakdown');
-        return response.json();
+        return api.get(`/api/analytics/visitors/country-breakdown?period=${period}`);
     },
 
     async getCityBreakdown(period: string = 'week') {
-        const response = await fetch(
-            `${API_URL}/api/analytics/visitors/city-breakdown?period=${period}`,
-            { credentials: 'include' }
-        );
-        if (!response.ok) throw new Error('Failed to load city breakdown');
-        return response.json();
+        return api.get(`/api/analytics/visitors/city-breakdown?period=${period}`);
     },
 
     async getDistanceBreakdown(period: string = 'week', maxDistance: number = 50) {
-        const response = await fetch(
-            `${API_URL}/api/analytics/visitors/distance-breakdown?period=${period}&max_distance=${maxDistance}`,
-            { credentials: 'include' }
-        );
-        if (!response.ok) throw new Error('Failed to load distance breakdown');
-        return response.json();
+        return api.get(`/api/analytics/visitors/distance-breakdown?period=${period}&max_distance=${maxDistance}`);
     },
 
     async exportVisitorAnalytics(period: string = 'week') {
+        // For blobs we might need to use the method in api that returns a blob or handle it effectively.
+        // ApiClient returns json by default. We need to handle blob.
+        // Let's use the explicit fetch for blob export or add a blob method to ApiClient.
+        // For now, let's keep the explicit fetch for export to avoid breaking if ApiClient doesn't support blob.
+        // But better to check ApiClient.
         const response = await fetch(
-            `${API_URL}/api/analytics/visitors/export?period=${period}`,
+            `${import.meta.env.VITE_API_URL || window.location.origin}/api/analytics/visitors/export?period=${period}`,
             { credentials: 'include' }
         );
         if (!response.ok) throw new Error('Failed to export visitor analytics');
@@ -57,30 +37,15 @@ export const visitorApi = {
     },
 
     async getVisitorTrend(period: string = 'week') {
-        const response = await fetch(
-            `${API_URL}/api/analytics/visitors/trend?period=${period}`,
-            { credentials: 'include' }
-        );
-        if (!response.ok) throw new Error('Failed to load visitor trend');
-        return response.json();
+        return api.get(`/api/analytics/visitors/trend?period=${period}`);
     },
 
     async getLandingSections(period: string = 'week') {
-        const response = await fetch(
-            `${API_URL}/api/analytics/visitors/landing-sections?period=${period}`,
-            { credentials: 'include' }
-        );
-        if (!response.ok) throw new Error('Failed to load landing sections');
-        return response.json();
+        return api.get(`/api/analytics/visitors/landing-sections?period=${period}`);
     },
 
     async getPeakHours(period: string = 'week') {
-        const response = await fetch(
-            `${API_URL}/api/analytics/visitors/peak-hours?period=${period}`,
-            { credentials: 'include' }
-        );
-        if (!response.ok) throw new Error('Failed to load peak hours');
-        return response.json();
+        return api.get(`/api/analytics/visitors/peak-hours?period=${period}`);
     },
 
     /**
@@ -88,13 +53,11 @@ export const visitorApi = {
      * Поддерживает стандартные периоды и произвольные даты.
      */
     async getDashboard(period: string = 'week', maxDistance: number = 50, dateFrom?: string, dateTo?: string) {
-        let url = `${API_URL}/api/analytics/visitors/dashboard?period=${period}&max_distance=${maxDistance}`;
+        let url = `/api/analytics/visitors/dashboard?period=${period}&max_distance=${maxDistance}`;
         if (dateFrom && dateTo) {
             url += `&date_from=${dateFrom}&date_to=${dateTo}`;
         }
 
-        const response = await fetch(url, { credentials: 'include' });
-        if (!response.ok) throw new Error('Failed to load visitor dashboard');
-        return response.json();
+        return api.get(url);
     }
 };
