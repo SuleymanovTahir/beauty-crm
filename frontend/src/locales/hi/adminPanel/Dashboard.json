@@ -27,24 +27,24 @@
     }
   },
   "recent_activity": {
+    "challenge_completed_one": "लक्ष्य \"{{name}}\" {{count}} उपयोगकर्ता द्वारा पूरा किया गया",
     "challenge_completed_few": "लक्ष्य \"[[V0]]]\" पूरा किया गया {{count}} उपयोगकर्ता",
     "challenge_completed_many": "लक्ष्य \"[[V0]]]\" {{count}} उपयोगकर्ताओं द्वारा पूरा किया गया",
-    "challenge_completed_one": "लक्ष्य \"{{name}}\" {{count}} उपयोगकर्ता द्वारा पूरा किया गया",
     "challenge_completed_other": "लक्ष्य \"[[V0]]]\" {{count}} उपयोगकर्ताओं द्वारा पूरा किया गया",
+    "day_ago_one": "{{count}} दिन पहले",
     "day_ago_few": "{{count}} दिन पहले",
     "day_ago_many": "[[V0]]] दिन पहले",
-    "day_ago_one": "{{count}} दिन पहले",
     "day_ago_other": "{{count}} दिन पहले",
+    "hours_ago_one": "{{count}} घंटे पहले",
     "hours_ago_few": "{{count}} घंटे पहले",
     "hours_ago_many": "{{count}} घंटे पहले",
-    "hours_ago_one": "{{count}} घंटे पहले",
     "hours_ago_other": "{{count}} घंटे पहले",
     "new_tier_activated": "नया वफादारी स्तर सक्रिय",
     "subtitle": "व्यवस्थापक पैनल में हाल की कार्रवाइयां",
     "title": "हाल की गतिविधि",
+    "users_registered_one": "{{count}} नए उपयोगकर्ता पंजीकृत",
     "users_registered_few": "{{count}} नए उपयोगकर्ता पंजीकृत",
     "users_registered_many": "{{count}} नए उपयोगकर्ता पंजीकृत",
-    "users_registered_one": "{{count}} नए उपयोगकर्ता पंजीकृत",
     "users_registered_other": "{{count}} नए उपयोगकर्ता पंजीकृत"
   },
   "stats": {

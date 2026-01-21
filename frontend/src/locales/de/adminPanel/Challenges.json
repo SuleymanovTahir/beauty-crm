@@ -55,9 +55,9 @@
     "failed_create": "Fehler beim Erstellen der Aktivität",
     "failed_delete": "Fehler beim Löschen",
     "failed_load": "Laden fehlgeschlagen Daten",
+    "progress_checked_one": "Fortschritt für {{count}}-Mitglieder aktualisiert",
     "progress_checked_few": "Fortschritt für {{count}}-Mitglieder aktualisiert",
     "progress_checked_many": "Fortschritt für {{count}}-Mitglieder aktualisiert",
-    "progress_checked_one": "Fortschritt für {{count}}-Mitglieder aktualisiert",
     "progress_checked_other": "Fortschritt für {{count}}-Mitglieder aktualisiert"
   },
   "types": {

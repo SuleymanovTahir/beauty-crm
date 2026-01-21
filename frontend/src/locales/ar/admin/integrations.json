@@ -19,11 +19,15 @@
     "daysAgo_many": "{{count}} قبل أيام",
     "daysAgo_one": "{{count}} قبل أيام",
     "daysAgo_other": "{{count}} قبل أيام",
+    "daysAgo_two": "{{count}} дн назад",
+    "daysAgo_zero": "{{count}} дн назад",
     "enableProvider": "تمكين التكامل",
     "hoursAgo_few": "{{count}} قبل ساعات",
     "hoursAgo_many": "{{count}} قبل ساعات",
     "hoursAgo_one": "{{count}} قبل ساعات",
     "hoursAgo_other": "{{count}} قبل ساعات",
+    "hoursAgo_two": "{{count}} ч назад",
+    "hoursAgo_zero": "{{count}} ч назад",
     "inactive": "لم تتم التهيئة",
     "justNow": "الآن",
     "lastSync": "آخر مزامنة",
@@ -32,7 +36,43 @@
     "minutesAgo_many": "{{count}} قبل دقيقة",
     "minutesAgo_one": "{{count}} قبل دقيقة",
     "minutesAgo_other": "{{count}} قبل دقيقة",
+    "minutesAgo_two": "{{count}} мин назад",
+    "minutesAgo_zero": "{{count}} мин назад",
     "neverSynced": "أبدًا",
+    "providers": {
+      "2gis": {
+        "description": "التسجيلات عبر الإنترنت من خلال 2GIS",
+        "name": "2GIS"
+      },
+      "amazon": {
+        "description": "Amazon Marketplace",
+        "name": "Amazon"
+      },
+      "booksy": {
+        "description": "منصة التسجيل عبر الإنترنت",
+        "name": "Booksy"
+      },
+      "google_business": {
+        "description": "التسجيلات والمراجعات على Google",
+        "name": "Google Business"
+      },
+      "ozon": {
+        "description": "Ozon Marketplace",
+        "name": "Ozon"
+      },
+      "wildberries": {
+        "description": "Marketplace WB",
+        "name": "Wildberries"
+      },
+      "yandex_maps": {
+        "description": "السجلات والمراجعات من Yandex.Maps",
+        "name": "Yandex.Maps"
+      },
+      "yclients": {
+        "description": "منصة التسجيل عبر الإنترنت",
+        "name": "YCLIENTS"
+      }
+    },
     "reviews": "المراجعات",
     "serviceMapping": "تخطيط الخدمة",
     "settings": "الإعدادات",

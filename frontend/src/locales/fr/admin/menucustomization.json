@@ -1,7 +1,7 @@
 {
   "drag_hint": "Faites glisser pour modifier l'ordre, cliquez sur l'œil pour masquer/afficher",
   "hint_text": "Les éléments de menu cachés n'apparaîtront pas dans la barre latérale, mais l'accès à ceux-ci via des liens directs restera.",
-  "hint_title": "Astuce :",
+  "hint_title": "Astuce\u00a0:",
   "items": {
     "analytics": "Analytics",
     "bookings": "Messages",
@@ -21,7 +21,7 @@
   },
   "loading": "Chargement en cours...",
   "reset": "Réinitialiser",
-  "reset_confirm": "Réinitialiser les paramètres du menu à la date défaut ?",
+  "reset_confirm": "Réinitialiser les paramètres du menu à la date défaut\u00a0?",
   "reset_error": "Erreur de réinitialisation des paramètres",
   "reset_success": "Réinitialisation des paramètres",
   "save": "Enregistrer",

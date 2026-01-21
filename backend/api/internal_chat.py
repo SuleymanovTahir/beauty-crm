@@ -79,6 +79,7 @@ async def send_chat_email_notification(sender_name: str, recipient_email: str, r
 async def get_internal_messages(
     with_user_id: Optional[int] = None,
     limit: int = 50,
+    language: str = Query('ru', description="Language code"),
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить сообщения внутреннего чата"""
@@ -89,14 +90,22 @@ async def get_internal_messages(
     conn = get_db_connection()
     c = conn.cursor()
 
+    # Determine localized name field
+    lang = language.lower()[:2] if language else 'ru'
+    valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+    if lang not in valid_languages:
+        lang = 'ru'
+    
+    name_field = f'full_name_{lang}'
+
     # Если указан конкретный пользователь, получаем только переписку с ним
     if with_user_id:
-        c.execute("""
+        c.execute(f"""
             SELECT
                 ic.id, ic.sender_id, ic.receiver_id, ic.message,
                 ic.is_read, ic.timestamp, ic.type,
-                u1.full_name as sender_name,
-                u2.full_name as recipient_name,
+                COALESCE(u1.{name_field}, u1.full_name) as sender_name,
+                COALESCE(u2.{name_field}, u2.full_name) as recipient_name,
                 ic.edited, ic.edited_at, ic.deleted_for_sender, ic.deleted_for_receiver, ic.reactions
             FROM internal_chat ic
             LEFT JOIN users u1 ON ic.sender_id = u1.id
@@ -108,12 +117,12 @@ async def get_internal_messages(
         """, (user['id'], with_user_id, with_user_id, user['id'], limit))
     else:
         # Получаем все сообщения пользователя
-        c.execute("""
+        c.execute(f"""
             SELECT
                 ic.id, ic.sender_id, ic.receiver_id, ic.message,
                 ic.is_read, ic.timestamp, ic.type,
-                u1.full_name as sender_name,
-                u2.full_name as recipient_name,
+                COALESCE(u1.{name_field}, u1.full_name) as sender_name,
+                COALESCE(u2.{name_field}, u2.full_name) as recipient_name,
                 ic.edited, ic.edited_at, ic.deleted_for_sender, ic.deleted_for_receiver, ic.reactions
             FROM internal_chat ic
             LEFT JOIN users u1 ON ic.sender_id = u1.id
@@ -235,7 +244,10 @@ async def send_internal_message(
     }
 
 @router.get("/users")
-async def get_chat_users(session_token: Optional[str] = Cookie(None)):
+async def get_chat_users(
+    language: str = Query('ru', description="Language code"),
+    session_token: Optional[str] = Cookie(None)
+):
     """Получить список пользователей для чата"""
     user = require_auth(session_token)
     if not user:
@@ -247,13 +259,22 @@ async def get_chat_users(session_token: Optional[str] = Cookie(None)):
     import time
     start_time = time.time()
 
-    c.execute("""
-        SELECT u.id, u.username, u.full_name, u.role, u.email, u.photo,
+    # Determine localized name field
+    lang = language.lower()[:2] if language else 'ru'
+    valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+    if lang not in valid_languages:
+        lang = 'ru'
+    
+    name_field = f'full_name_{lang}'
+
+    c.execute(f"""
+        SELECT u.id, u.username, COALESCE(u.{name_field}, u.full_name) as full_name, 
+               u.role, u.email, u.photo,
                us.is_online, us.last_seen
         FROM users u
         LEFT JOIN user_status us ON u.id = us.user_id
         WHERE u.id != %s AND u.is_active = TRUE AND u.deleted_at IS NULL
-        ORDER BY u.full_name
+        ORDER BY COALESCE(u.{name_field}, u.full_name)
     """, (user['id'],))
     
     db_duration = time.time() - start_time

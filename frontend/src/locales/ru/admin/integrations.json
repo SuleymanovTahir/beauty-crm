@@ -33,6 +33,40 @@
     "minutesAgo_many": "{{count}} мин назад",
     "minutesAgo_other": "{{count}} мин назад",
     "neverSynced": "Никогда",
+    "providers": {
+      "2gis": {
+        "description": "Онлайн-записи через 2ГИС",
+        "name": "2ГИС"
+      },
+      "amazon": {
+        "description": "Amazon Marketplace",
+        "name": "Amazon"
+      },
+      "booksy": {
+        "description": "Платформа онлайн-записи",
+        "name": "Booksy"
+      },
+      "google_business": {
+        "description": "Записи и отзывы в Google",
+        "name": "Google Business"
+      },
+      "ozon": {
+        "description": "Маркетплейс Ozon",
+        "name": "Ozon"
+      },
+      "wildberries": {
+        "description": "Маркетплейс WB",
+        "name": "Wildberries"
+      },
+      "yandex_maps": {
+        "description": "Записи и отзывы с Яндекс.Карт",
+        "name": "Яндекс.Карты"
+      },
+      "yclients": {
+        "description": "Платформа онлайн-записи",
+        "name": "YCLIENTS"
+      }
+    },
     "reviews": "Отзывов",
     "serviceMapping": "Маппинг услуг",
     "settings": "Настройки",

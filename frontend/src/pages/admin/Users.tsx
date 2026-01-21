@@ -195,7 +195,7 @@ export default function Users() {
       let response;
       if (activeTab === 'employees') {
         // Загружаем сотрудников через CRM API
-        response = await api.getUsers();
+        response = await api.getUsers(i18n.language);
       } else {
         // Загружаем клиентов
         response = await api.getClients();

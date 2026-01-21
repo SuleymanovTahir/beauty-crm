@@ -943,8 +943,8 @@ export class ApiClient {
   }
 
   // ===== ПОЛЬЗОВАТЕЛИ =====
-  async getUsers() {
-    return this.request<any>(`/api/users?_t=${Date.now()}`)
+  async getUsers(language: string = 'ru') {
+    return this.request<any>(`/api/users?language=${language}&_t=${Date.now()}`)
   }
 
   async getPublicEmployees(language: string = 'ru') {

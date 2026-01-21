@@ -11,9 +11,11 @@
   "delete": "حذف",
   "detail": {
     "costPriceLabel": "التكلفة: {{price}} {{currency}}",
+    "inStock_zero": "",
+    "inStock_one": "متوفر في المخزون {{count}} جهاز كمبيوتر.",
+    "inStock_two": "",
     "inStock_few": "في المخزون {{count}} من القطع.",
     "inStock_many": "في المخزون {{count}} من القطع.",
-    "inStock_one": "متوفر في المخزون {{count}} جهاز كمبيوتر.",
     "inStock_other": "في المخزون {{count}} من القطع.",
     "loadingData": "تحميل البيانات...",
     "movementAdjustment": "التعديل",

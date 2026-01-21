@@ -33,6 +33,40 @@
     "minutesAgo_one": "{{count}} मिनट पहले",
     "minutesAgo_other": "{{count}} मिनट पहले",
     "neverSynced": "कभी नहीं",
+    "providers": {
+      "2gis": {
+        "description": "2GIS के माध्यम से ऑनलाइन रिकॉर्डिंग",
+        "name": "2GIS"
+      },
+      "amazon": {
+        "description": "Amazon Marketplace",
+        "name": "Amazon"
+      },
+      "booksy": {
+        "description": "ऑनलाइन रिकॉर्डिंग प्लेटफॉर्म",
+        "name": "Booksy"
+      },
+      "google_business": {
+        "description": "Google पर रिकॉर्डिंग और समीक्षाएं",
+        "name": "Google Business"
+      },
+      "ozon": {
+        "description": "ओजोन मार्केटप्लेस",
+        "name": "Ozon"
+      },
+      "wildberries": {
+        "description": "मार्केटप्लेस WB",
+        "name": "Wildberries"
+      },
+      "yandex_maps": {
+        "description": "Yandex.Maps से रिकॉर्ड और समीक्षाएं",
+        "name": "Yandex.Maps"
+      },
+      "yclients": {
+        "description": "ऑनलाइन रिकॉर्डिंग प्लेटफ़ॉर्म",
+        "name": "YCLIENTS"
+      }
+    },
     "reviews": "समीक्षाएं",
     "serviceMapping": "सेवा मानचित्रण",
     "settings": "सेटिंग्स",

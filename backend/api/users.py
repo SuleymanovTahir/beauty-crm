@@ -102,6 +102,7 @@ async def create_user_api(
 @router.get("/users/{user_id}")
 async def get_user_by_id(
     user_id: int,
+    language: str = Query('ru', description="Language code"),
     session_token: Optional[str] = Cookie(None)
 ):
     """Get single user by ID"""
@@ -113,10 +114,25 @@ async def get_user_by_id(
         conn = get_db_connection()
         c = conn.cursor()
 
-        c.execute("""
+        # Determine localized fields
+        lang = language.lower()[:2] if language else 'ru'
+        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+        if lang not in valid_languages:
+            lang = 'ru'
+        
+        name_field = f'full_name_{lang}'
+        position_field = f'position_{lang}'
+        bio_field = f'bio_{lang}'
+
+        c.execute(f"""
             SELECT
-                id, username, full_name, full_name_ru, email, role, position, 
-                phone, bio, photo, is_active, is_service_provider,
+                id, username, 
+                COALESCE({name_field}, full_name) as full_name,
+                full_name_ru, email, role, 
+                COALESCE({position_field}, position) as position, 
+                phone, 
+                COALESCE({bio_field}, bio) as bio,
+                photo, is_active, is_service_provider,
                 position_ru, position_ar, created_at,
                 years_of_experience, specialization, telegram_username,
                 base_salary, commission_rate
@@ -160,7 +176,10 @@ async def get_user_by_id(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.get("/users")
-async def get_users(current_user: dict = Depends(get_current_user)):
+async def get_users(
+    language: str = Query('ru', description="Language code"),
+    current_user: dict = Depends(get_current_user)
+):
     """Получить всех пользователей"""
     # RBAC: Only staff can see all users
     if current_user["role"] == "client":
@@ -171,17 +190,29 @@ async def get_users(current_user: dict = Depends(get_current_user)):
         c = conn.cursor()
 
         start_time = time.time()
-        c.execute("""
+        # Determine localized fields
+        lang = language.lower()[:2] if language else 'ru'
+        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+        if lang not in valid_languages:
+            lang = 'ru'
+        
+        name_field = f'full_name_{lang}'
+        position_field = f'position_{lang}'
+
+        c.execute(f"""
             SELECT
-                u.id, u.username, u.full_name, u.full_name_ru, u.email, u.role,
-                u.position, u.created_at, u.is_active,
+                u.id, u.username, 
+                COALESCE(u.{name_field}, u.full_name) as full_name,
+                u.full_name_ru, u.email, u.role,
+                COALESCE(u.{position_field}, u.position) as position,
+                u.created_at, u.is_active,
                 u.employee_id,
                 u.position_ru,
                 u.position_ar,
                 COALESCE(u.photo, u.photo_url) as photo,
                 u.position_id,
                 u.is_public_visible,
-                u.is_public_visible,
+                u.is_public_visible, -- redundant in original query but kept for stability
                 u.sort_order
             FROM users u
             WHERE u.deleted_at IS NULL

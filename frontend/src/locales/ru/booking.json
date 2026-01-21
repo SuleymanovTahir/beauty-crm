@@ -57,6 +57,7 @@
   "continue_professional": "Продолжить с выбора мастера",
   "continue_services": "Продолжить с выбора услуг",
   "date_format_hint": "Формат: ДД.ММ.ГГГГ",
+  "date_format_hint_en": "Format: MM/DD/YYYY",
   "datetime": {
     "date": "Выберите дату",
     "noSlots": "Нет доступных окошек",

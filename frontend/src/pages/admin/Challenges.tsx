@@ -38,7 +38,7 @@ interface Challenge {
 }
 
 export default function Challenges() {
-    const { t } = useTranslation(['admin/Challenges', 'common', 'services']);
+    const { t } = useTranslation(['admin/challenges', 'common', 'services']);
     const navigate = useNavigate();
 
     const [challenges, setChallenges] = useState<Challenge[]>([]);
