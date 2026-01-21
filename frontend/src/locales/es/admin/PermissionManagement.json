@@ -26,6 +26,7 @@
   "permissions_subtitle": "Configurar permisos individuales para usuarios",
   "permissions_title": "Administrar permisos",
   "role_label": "Rol:",
+  "saving": "Сохранение...",
   "select_user_prompt": "Seleccionar usuario",
   "users_list_title": "Usuarios",
   "view_permission": "Ver"
