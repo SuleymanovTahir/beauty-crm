@@ -286,7 +286,7 @@ export default function Tasks() {
                                                 className="w-2 h-2 rounded-full"
                                                 style={{ backgroundColor: stage.color?.replace('bg-', '').replace('-500', '') || '#9ca3af' }}
                                             />
-                                            <span className="font-semibold text-gray-700">{stage.name}</span>
+                                            <span className="font-semibold text-gray-700">{t(`stages.${stage.key || stage.name.toLowerCase().replace(/\s+/g, '_')}`, { defaultValue: stage.name })}</span>
                                         </div>
                                         <Badge variant="secondary" className="bg-white text-gray-500 shadow-sm border">
                                             {tasks.filter(t => t.stage_id === stage.id).length}

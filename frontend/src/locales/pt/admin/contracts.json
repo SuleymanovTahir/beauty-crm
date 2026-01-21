@@ -23,8 +23,8 @@
     "selectClient": "Selecionar cliente"
   },
   "internalContracts": "Interno",
-  "manage_stages": "Colunas",
   "manageTypes": "Tipos de contrato",
+  "manage_stages": "Colunas",
   "messages": {
     "confirmDelete": "Tem certeza de que deseja excluir este contrato?",
     "contractCreated": "Contrato criado",
@@ -45,6 +45,12 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Status",
+  "statuses": {
+    "cancelled": "Cancelado",
+    "draft": "Rascunho",
+    "sent": "Enviado",
+    "signed": "Assinado"
+  },
   "subtitle": "Gerenciamento de contratos com clientes",
   "title": "Contratos",
   "type": "Tipo",

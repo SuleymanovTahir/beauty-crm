@@ -66,6 +66,7 @@
     "title": "तिथि और समय"
   },
   "formDate": "तिथि",
+  "formDatePlaceholder": "Выберите дату",
   "formName": "नाम",
   "formNamePlaceholder": "आपका नाम",
   "formPhone": "फोन",

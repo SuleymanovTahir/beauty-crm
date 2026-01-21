@@ -66,6 +66,7 @@
     "title": "Date & Time"
   },
   "formDate": "Fecha",
+  "formDatePlaceholder": "Выберите дату",
   "formName": "Nombre",
   "formNamePlaceholder": "Su nombre",
   "formPhone": "Teléfono",

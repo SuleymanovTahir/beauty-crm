@@ -23,8 +23,8 @@
     "selectClient": "حدد العميل"
   },
   "internalContracts": "داخلي",
-  "manage_stages": "الأعمدة",
   "manageTypes": "أنواع العقود",
+  "manage_stages": "الأعمدة",
   "messages": {
     "confirmDelete": "هل أنت متأكد من أنك تريد حذف هذا العقد؟",
     "contractCreated": "تم إنشاء العقد",
@@ -45,6 +45,12 @@
     "whatsapp": "WhatsApp"
   },
   "status": "الحالة",
+  "statuses": {
+    "cancelled": "تم الإلغاء",
+    "draft": "المسودة",
+    "sent": "تم الإرسال",
+    "signed": "التوقيع"
+  },
   "subtitle": "إدارة العقود من تاريخ العملاء",
   "title": "العقود",
   "type": "النوع",

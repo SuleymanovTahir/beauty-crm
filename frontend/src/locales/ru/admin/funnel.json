@@ -62,6 +62,14 @@
   "stage_deleted": "Стадия удалена",
   "stage_details": "Детализация стадий",
   "stage_name": "Название стадии",
+  "stages": {
+    "booked": "Запись",
+    "contacted": "В работе",
+    "lost": "Потерян",
+    "new": "Новые",
+    "remind_later": "Напомнить позже",
+    "visited": "Визит"
+  },
   "subtitle": "Управление этапами и конверсией",
   "temperature": "Вовлеченность",
   "total": "Итого",

@@ -63,6 +63,13 @@
   "stage_deleted": "تم حذف المرحلة",
   "stage_name": "اسم المرحلة",
   "stage_name_placeholder": "على سبيل المثال: قيد التقدم",
+  "stages": {
+    "done": "تم",
+    "in_progress": "قيد التقدم",
+    "on_hold": "مؤجل",
+    "review": "جاري التحقق",
+    "todo": "المهام"
+  },
   "status_updated": "تم تحديث الحالة",
   "task_created": "تم إنشاء المهمة",
   "task_deleted": "المهمة تم حذفه",

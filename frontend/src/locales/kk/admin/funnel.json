@@ -62,6 +62,14 @@
   "stage_deleted": "Кезең жойылды",
   "stage_details": "Кезең мәліметтері",
   "stage_name": "Сахна аты",
+  "stages": {
+    "booked": "Жазба",
+    "contacted": "Орындалуда",
+    "lost": "Жоғалған",
+    "new": "Жаңа",
+    "remind_later": "Кейінірек еске салу",
+    "visited": "Кіру"
+  },
   "subtitle": "Кезеңді және түрлендіруді басқару",
   "temperature": "Келісім",
   "total": "Барлығы",

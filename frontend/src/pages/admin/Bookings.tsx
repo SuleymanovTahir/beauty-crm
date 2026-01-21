@@ -15,6 +15,7 @@ import { useCurrency } from '../../hooks/useSalonSettings';
 
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { Pagination } from '../../components/shared/Pagination';
+import { CRMDatePicker } from '../../components/shared/CRMDatePicker';
 import './Bookings.css';
 
 
@@ -949,23 +950,21 @@ export default function Bookings() {
                         <div className="border-t border-gray-100 pt-3">
                           <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">{t('common:custom_period')}</p>
                           <div className="grid grid-cols-1 gap-2">
-                            <input
-                              type="date"
+                            <CRMDatePicker
                               value={dateFrom}
-                              onChange={e => {
-                                setDateFrom(e.target.value);
+                              onChange={(value) => {
+                                setDateFrom(value);
                                 setPeriod('custom');
                               }}
-                              className="w-full h-9 px-3 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
+                              className="h-9 px-3 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
                             />
-                            <input
-                              type="date"
+                            <CRMDatePicker
                               value={dateTo}
-                              onChange={e => {
-                                setDateTo(e.target.value);
+                              onChange={(value) => {
+                                setDateTo(value);
                                 setPeriod('custom');
                               }}
-                              className="w-full h-9 px-3 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
+                              className="h-9 px-3 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 focus:outline-none focus:ring-1 focus:ring-pink-500 transition-all"
                             />
                           </div>
                         </div>
@@ -1242,7 +1241,7 @@ export default function Bookings() {
             <div className="modal-body">
               {/* Info Alert */}
               <div className="info-box">
-                <div className="flex gap-3">
+                за                <div className="flex gap-3">
                   <AlertCircle className="w-5 h-5 text-blue-800 shrink-0" />
                   <div className="text-sm text-blue-800">
                     <p className="font-bold mb-2">{t('bookings:file_format')}:</p>
@@ -1341,19 +1340,17 @@ export default function Bookings() {
               </div>
               <div>
                 <label className="input-label">{t('bookings:export_date_from')}</label>
-                <input
-                  type="date"
+                <CRMDatePicker
                   value={exportDateFrom}
-                  onChange={(e) => setExportDateFrom(e.target.value)}
+                  onChange={setExportDateFrom}
                   className="input-field"
                 />
               </div>
               <div>
                 <label className="input-label">{t('bookings:export_date_to')}</label>
-                <input
-                  type="date"
+                <CRMDatePicker
                   value={exportDateTo}
-                  onChange={(e) => setExportDateTo(e.target.value)}
+                  onChange={setExportDateTo}
                   className="input-field"
                 />
               </div>
@@ -1517,15 +1514,14 @@ export default function Bookings() {
                   </p>
                 </div>
 
-                {/* Date & Time */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="input-label">{t('bookings:date')} *</label>
-                    <input
-                      type="date"
+                    <CRMDatePicker
                       value={addForm.date}
-                      onChange={(e) => setAddForm({ ...addForm, date: e.target.value })}
+                      onChange={(value) => setAddForm({ ...addForm, date: value })}
                       className="input-field"
+                      required
                     />
                   </div>
                   <div>
@@ -1598,18 +1594,10 @@ export default function Bookings() {
                 {/* Source */}
                 <div>
                   <label className="input-label">{t('bookings:source.title')}</label>
-                  <select
+                  <SourceSelect
                     value={addForm.source}
-                    onChange={(e) => setAddForm({ ...addForm, source: e.target.value })}
-                    className="input-field bg-white"
-                  >
-                    <option value="manual">{t('bookings:source.manual')}</option>
-                    <option value="account">{t('bookings:source.account')}</option>
-                    <option value="guest_link">{t('bookings:source.guest_link')}</option>
-                    <option value="instagram">{t('bookings:source.instagram')}</option>
-                    <option value="telegram">{t('bookings:source.telegram')}</option>
-                    <option value="whatsapp">{t('bookings:source.whatsapp')}</option>
-                  </select>
+                    onChange={(value) => setAddForm({ ...addForm, source: value })}
+                  />
                 </div>
               </div>
             </div>

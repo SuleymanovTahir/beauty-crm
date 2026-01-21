@@ -63,6 +63,13 @@
   "stage_deleted": "Stage deleted",
   "stage_name": "Сахна аты",
   "stage_name_placeholder": "Мысалы: Орындалуда",
+  "stages": {
+    "done": "Дайын",
+    "in_progress": "Орындалуда",
+    "on_hold": "Кейінге қалдырылды",
+    "review": "Тексеруде",
+    "todo": "Орындалуда"
+  },
   "status_updated": "Күй жаңартылды",
   "task_created": "Тапсырма жасалды",
   "task_deleted": "Тапсырма жойылды",

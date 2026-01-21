@@ -1103,7 +1103,7 @@ export default function AdminSettings() {
               <div className="lg:col-span-2 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="full_name" className="flex items-center gap-2">
+                    <Label htmlFor="full_name" className="flex items-center gap-2 settings-label-spacing">
                       <User className="w-3.5 h-3.5 text-muted-foreground" />
                       {t('settings:full_name')} *
                     </Label>
@@ -1117,7 +1117,7 @@ export default function AdminSettings() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="username" className="flex items-center gap-2">
+                    <Label htmlFor="username" className="flex items-center gap-2 settings-label-spacing">
                       <Briefcase className="w-3.5 h-3.5 text-muted-foreground" />
                       {t('settings:username')} *
                     </Label>
@@ -1131,7 +1131,7 @@ export default function AdminSettings() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="flex items-center gap-2">
+                    <Label htmlFor="email" className="flex items-center gap-2 settings-label-spacing">
                       <Mail className="w-3.5 h-3.5 text-muted-foreground" />
                       Email *
                     </Label>
@@ -1146,7 +1146,7 @@ export default function AdminSettings() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone_number" className="flex items-center gap-2">
+                    <Label htmlFor="phone_number" className="flex items-center gap-2 settings-label-spacing">
                       <Smartphone className="w-3.5 h-3.5 text-muted-foreground" />
                       {t('settings:phone_number')}
                     </Label>
@@ -1307,8 +1307,8 @@ export default function AdminSettings() {
             ) : (
               <form onSubmit={handleSaveGeneral} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="salonName">{t('settings:salon_name')} *</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="salonName" className="settings-label-spacing">{t('settings:salon_name')} *</Label>
                     <Input
                       id="salonName"
                       value={generalSettings.salonName}
@@ -1318,8 +1318,8 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="language">{t('settings:system_language')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="language" className="settings-label-spacing">{t('settings:system_language')}</Label>
                     <Select
                       value={generalSettings.language}
                       onValueChange={(value: string) =>
@@ -1341,8 +1341,8 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="city">{t('settings:city')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="city" className="settings-label-spacing">{t('settings:city')}</Label>
                     <Input
                       id="city"
                       value={generalSettings.city}
@@ -1351,8 +1351,8 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="phone">{t('settings:phone')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="settings-label-spacing">{t('settings:phone')}</Label>
                     <Input
                       id="phone"
                       type="tel"
@@ -1363,8 +1363,8 @@ export default function AdminSettings() {
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="address">{t('settings:address')}</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="address" className="settings-label-spacing">{t('settings:address')}</Label>
                   <Input
                     id="address"
                     value={generalSettings.address}
@@ -1374,8 +1374,8 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="email">{t('settings:email')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="settings-label-spacing">{t('settings:email')}</Label>
                     <Input
                       id="email"
                       type="email"
@@ -1385,8 +1385,8 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="instagram">{t('settings:instagram')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="instagram" className="settings-label-spacing">{t('settings:instagram')}</Label>
                     <Input
                       id="instagram"
                       value={generalSettings.instagram}
@@ -1396,8 +1396,8 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="telegram_chat_id">{t('settings:telegram_manager_chat_id')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="telegram_chat_id" className="settings-label-spacing">{t('settings:telegram_manager_chat_id')}</Label>
                     <Input
                       id="telegram_chat_id"
                       value={generalSettings.telegram_manager_chat_id}
@@ -1412,8 +1412,8 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="weekdays">{t('settings:weekdays_hours')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="weekdays" className="settings-label-spacing">{t('settings:weekdays_hours')}</Label>
                     <Input
                       id="weekdays"
                       value={generalSettings.working_hours.weekdays}
@@ -1426,8 +1426,8 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="weekends">{t('settings:weekends_hours')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="weekends" className="settings-label-spacing">{t('settings:weekends_hours')}</Label>
                     <Input
                       id="weekends"
                       value={generalSettings.working_hours.weekends}
@@ -1442,8 +1442,8 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                  <div>
-                    <Label htmlFor="lunch_start">{t('settings:lunch_start')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="lunch_start" className="settings-label-spacing">{t('settings:lunch_start')}</Label>
                     <Input
                       id="lunch_start"
                       type="time"
@@ -1455,8 +1455,8 @@ export default function AdminSettings() {
                       className="px-3"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="lunch_end">{t('settings:lunch_end')}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="lunch_end" className="settings-label-spacing">{t('settings:lunch_end')}</Label>
                     <Input
                       id="lunch_end"
                       type="time"
@@ -1696,7 +1696,7 @@ export default function AdminSettings() {
                         className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <Bell className={`w - 5 h - 5 ${setting.is_enabled ? 'settings-text-pink' : 'text-gray-400'} `} />
+                          <Bell className={`w-5 h-5 ${setting.is_enabled ? 'settings-text-pink' : 'text-gray-400'}`} />
                           <div>
                             <p className="text-sm font-medium text-gray-900">
                               {t('settings:reminder_label')} {setting.days_before > 0 && `${setting.days_before} ${t('settings:days')} `}{setting.days_before > 0 && setting.hours_before > 0 && ' '}{setting.hours_before > 0 && `${setting.hours_before} ${t('settings:hours')} `}
@@ -2145,8 +2145,8 @@ export default function AdminSettings() {
 
                     <div className="space-y-6">
                       {/* Subscription Type */}
-                      <div>
-                        <Label htmlFor="subscription_type">{t('settings:subscription_type')} *</Label>
+                      <div className="space-y-2">
+                        <Label htmlFor="subscription_type" className="settings-label-spacing">{t('settings:subscription_type')} *</Label>
                         <Select
                           value={broadcastForm.subscription_type}
                           onValueChange={(value) => setBroadcastForm({ ...broadcastForm, subscription_type: value })}
@@ -2165,31 +2165,31 @@ export default function AdminSettings() {
                       </div>
 
                       {/* Channels */}
-                      <div>
-                        <Label>{t('settings:sending_channels')} *</Label>
+                      <div className="space-y-2">
+                        <Label className="settings-label-spacing">{t('settings:sending_channels')} *</Label>
                         <div className="flex gap-4 mt-2">
                           <button
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('email')}
-                            className={`flex items - center gap - 2 px - 4 py - 2 rounded - lg border - 2 transition - all ${broadcastForm.channels.includes('email')
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('email')
                               ? 'border-blue-500 bg-blue-50 text-blue-700'
                               : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                              } `}
+                              }`}
                           >
                             <Mail className="w-5 h-5" />
-                            Email
+                            {t('settings:channel_email', 'Email')}
                           </button>
 
                           <button
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('telegram')}
-                            className={`flex items - center gap - 2 px - 4 py - 2 rounded - lg border - 2 transition - all ${broadcastForm.channels.includes('telegram')
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('telegram')
                               ? 'border-green-500 bg-green-50 text-green-700'
                               : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                              } `}
+                              }`}
                           >
                             <MessageCircle className="w-5 h-5" />
-                            Telegram
+                            {t('settings:channel_telegram', 'Telegram')}
                           </button>
 
                           <button
@@ -2201,7 +2201,7 @@ export default function AdminSettings() {
                               }`}
                           >
                             <Instagram className="w-5 h-5" />
-                            Instagram
+                            {t('settings:channel_instagram', 'Instagram')}
                           </button>
                         </div>
                       </div>

@@ -64,6 +64,14 @@
     "whatsapp": "WhatsApp"
   },
   "status": "الحالة",
+  "statuses": {
+    "cancelled": "ملغاة",
+    "draft": "مسودة",
+    "overdue": "متأخرة",
+    "paid": "مدفوعة",
+    "partial": "مدفوعة جزئيًا",
+    "sent": "مرسلة"
+  },
   "subtitle": "إدارة الفواتير والمدفوعات",
   "title": "الحسابات",
   "totalAmount": "المجموع"
