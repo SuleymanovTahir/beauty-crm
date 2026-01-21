@@ -75,7 +75,9 @@
     "tailwindcss": "*",
     "terser": "*",
     "typescript": "*",
-    "vite": "*"
+    "vite": "*",
+    "vite-plugin-pwa": "^1.2.0",
+    "workbox-window": "^7.4.0"
   },
   "scripts": {
     "dev": "vite",
