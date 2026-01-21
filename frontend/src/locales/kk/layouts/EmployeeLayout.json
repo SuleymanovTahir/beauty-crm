@@ -1,11 +1,11 @@
 {
   "crm": "CRM",
-  "employee": "Сотрудник",
-  "logout": "Выйти",
+  "employee": "Қызметкер",
+  "logout": "Жүйеден шығу",
   "menu": {
-    "calendar": "Календарь",
-    "my_bookings": "Мои бронирования",
+    "calendar": "Күнтізбе",
+    "my_bookings": "Менің тапсырыстарым",
     "profile": "Профиль",
-    "settings": "Настройки"
+    "settings": "Параметрлер"
   }
 }

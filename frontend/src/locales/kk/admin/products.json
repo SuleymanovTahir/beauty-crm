@@ -1,68 +1,68 @@
 {
-  "addProduct": "Добавить товар",
-  "allCategories": "Все категории",
+  "addProduct": "Өнімді қосу",
+  "allCategories": "Барлық санаттар",
   "analytics": {
-    "avgPrice": "Ср. цена",
-    "last30Days": "За {{count}} дней",
-    "revenue": "Выручка",
-    "totalSold": "Продано всего"
+    "avgPrice": "Орт. бағасы",
+    "last30Days": "{{count}} күн ішінде",
+    "revenue": "Табыс",
+    "totalSold": "Барлығы сатылған"
   },
-  "createFirst": "Добавьте первый товар в систему",
-  "delete": "Удалить",
+  "createFirst": "Жүйеге бірінші өнімді қосу",
+  "delete": "Жою",
   "detail": {
     "costPriceLabel": "Құны: {{price}} {{currency}}",
-    "inStock_one": "Қойымда бар {{count}} дана.",
-    "inStock_few": "Қойымда бар {{count}} дана.",
+    "inStock_few": "Қоймада {{count}} дана.",
     "inStock_many": "Қоймада {{count}} дана.",
+    "inStock_one": "Қоймада {{count}} дана.",
     "inStock_other": "Қоймада {{count}} дана.",
-    "loadingData": "Деректерді жүктеу...",
+    "loadingData": "Деректерді жүктеуде...",
     "movementAdjustment": "Реттеу",
-    "movementHistory": "Қозғалыс тарихы",
-    "movementIn": "Түбіртек",
-    "movementOut": "Өшіру",
+    "movementHistory": "Қозғалыс тарихы</z4>",
+    "movementIn": "Қабылдау",
+    "movementOut": "Есептен шығару",
     "noCategory": "Санат жоқ",
     "noMovements": "Қозғалыс деректері жоқ"
   },
-  "edit": "Редактировать",
+  "edit": "Өңдеу",
   "form": {
-    "cancel": "Отмена",
+    "cancel": "Болдырмау",
     "category": "Санат",
-    "costPrice": "Құны",
+    "costPrice": "Шығын",
     "isActive": "Белсенді",
-    "minStockLevel": "Ең төменгі теңгерім",
+    "minStockLevel": "Минималды теңгерім",
     "name": "Аты",
     "notes": "Ескертпелер",
-    "photos": "Өнім фотосы",
+    "photos": "Өнім суреті",
     "price": "Сату бағасы",
-    "save": "Сохранить",
-    "sku": "Элемент",
+    "save": "Сақтау",
+    "sku": "Мақаланың нөмірі",
     "stockQuantity": "Қор балансы",
-    "upload": "Жүктеп салу",
+    "upload": "Жүктеп алу",
     "uploadError": "Фотосуретті жүктеу қатесі"
   },
   "messages": {
-    "confirmDelete": "Осы өнімді шынымен жойғыңыз келе ме?",
-    "noResults": "Сұранысыңыз бойынша ештеңе табылмады"
+    "confirmDelete": "Осы элементті шынымен жойғыңыз келе ме?",
+    "noResults": "Сұрауыңыз бойынша ештеңе табылмады"
   },
   "movement": {
-    "quantity": "Количество",
+    "quantity": "Саны",
     "reason": "Себебі",
-    "title": "Өнім қозғалысы",
+    "title": "Өнімнің қозғалысы",
     "type": "Қозғалыс түрі",
     "types": {
       "adjustment": "Реттеу",
       "in": "Кіріс",
-      "out": "Шығын"
+      "out": "Шығару"
     }
   },
   "noProducts": "Әлі өнім жоқ",
-  "search_placeholder": "Тақырып немесе санат бойынша іздеу...",
+  "search_placeholder": "Аты немесе санат бойынша іздеу...",
   "stock_status": {
-    "in_stock": "Қоймада",
+    "in_stock": "Қойымда бар",
     "low_stock": "Аз",
-    "out_of_stock": "Қойда жоқ"
+    "out_of_stock": "Қорда жоқ"
   },
-  "subtitle": "Тауарлар мен баланстарды басқару",
-  "title": "Өнімдерді және қойманы",
+  "subtitle": "Өнімдер мен қорларды басқару",
+  "title": "Өнімдер мен қойма",
   "unit_pcs": "дана"
 }

@@ -1,18 +1,18 @@
 {
-  "admin_panel": "Админ панель",
-  "go_to_crm": "Перейти в CRM",
-  "logout": "Выйти",
+  "admin_panel": "Әкімші тақтасы",
+  "go_to_crm": "CRM жүйесіне өтіңіз",
+  "logout": "Шығу",
   "menu": {
-    "challenges": "Челленджи",
-    "dashboard": "Панель управления",
-    "feature_management": "Управление функциями",
-    "loyalty_management": "Управление лояльностью",
-    "notifications": "Уведомления",
-    "photo_gallery": "Фото галерея",
-    "public_content": "Публичный контент",
-    "referral_program": "Реферальная программа",
-    "services": "Услуги",
-    "settings": "Настройки",
-    "user_management": "Управление пользователями"
+    "challenges": "Қиындықтар",
+    "dashboard": "Бақылау тақтасы",
+    "feature_management": "Мүмкіндіктерді басқару",
+    "loyalty_management": "Адалдықты басқару",
+    "notifications": "Хабарландырулар",
+    "photo_gallery": "Фото галереясы",
+    "public_content": "Қоғамдық мазмұн",
+    "referral_program": "Бағыттау бағдарламасы",
+    "services": "Қызметтер",
+    "settings": "Параметрлер",
+    "user_management": "Пайдаланушыны басқару"
   }
 }

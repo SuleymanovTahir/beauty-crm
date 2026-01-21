@@ -1,13 +1,13 @@
 {
-  "crm": "CRM Панель",
-  "logout": "Выйти",
+  "crm": "CRM тақтасы",
+  "logout": "Шығу",
   "manager": "Менеджер",
   "menu": {
     "analytics": "Аналитика",
     "chat": "Чат",
-    "clients": "Клиенты",
-    "dashboard": "Дашборд",
-    "funnel": "Воронка",
-    "settings": "Настройки"
+    "clients": "Клиенттер",
+    "dashboard": "Бақылау тақтасы",
+    "funnel": "Шұңқыр",
+    "settings": "Параметрлер"
   }
 }
