@@ -24,7 +24,7 @@ interface Permissions {
 }
 
 export default function PermissionManagement() {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('admin/permissionmanagement');
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [permissions, setPermissions] = useState<Permissions>({});
@@ -33,7 +33,7 @@ export default function PermissionManagement() {
 
   // Function to get permission label with translation
   const getPermissionLabel = (key: string): string => {
-    return t(`permissions:perm_${key}`, key);
+    return t(`perm_${key}`, key);
   };
 
   // List of all permission resources
@@ -64,7 +64,7 @@ export default function PermissionManagement() {
       }
     } catch (error) {
       console.error("Error loading users:", error);
-      toast.error(t('permissions:error_loading_users', 'Ошибка загрузки пользователей'));
+      toast.error(t('error_loading_users', 'Ошибка загрузки пользователей'));
     } finally {
       setLoading(false);
     }
@@ -76,7 +76,7 @@ export default function PermissionManagement() {
       setPermissions(response.permissions || {});
     } catch (error) {
       console.error("Error loading permissions:", error);
-      toast.error(t('permissions:error_loading_permissions', 'Ошибка загрузки прав доступа'));
+      toast.error(t('error_loading_permissions', 'Ошибка загрузки прав доступа'));
     }
   };
 
@@ -91,18 +91,18 @@ export default function PermissionManagement() {
       if (currentValue) {
         // Revoke permission
         await api.revokePermission(selectedUser.id, resource);
-        toast.success(t('permissions:permission_revoked', 'Право отозвано'));
+        toast.success(t('permission_revoked', 'Право отозвано'));
       } else {
         // Grant permission
         await api.grantPermission(selectedUser.id, resource);
-        toast.success(t('permissions:permission_granted', 'Право предоставлено'));
+        toast.success(t('permission_granted', 'Право предоставлено'));
       }
 
       // Reload permissions
       await loadUserPermissions(selectedUser.id);
     } catch (error: any) {
       console.error("Error toggling permission:", error);
-      toast.error(error.message || t('permissions:error_changing_permissions', 'Ошибка изменения прав'));
+      toast.error(error.message || t('error_changing_permissions', 'Ошибка изменения прав'));
     } finally {
       setSaving(false);
     }
@@ -121,10 +121,10 @@ export default function PermissionManagement() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
           <Settings className="w-8 h-8" />
-          Управление правами доступа
+          {t('permissions_title')}
         </h1>
         <p className="text-gray-600">
-          Настройте индивидуальные права для пользователей
+          {t('permissions_subtitle')}
         </p>
       </div>
 
@@ -133,7 +133,7 @@ export default function PermissionManagement() {
         <div className="col-span-12 md:col-span-4">
           <div className="bg-white rounded-xl shadow-sm">
             <div className="p-4 border-b border-gray-200">
-              <h2 className="font-semibold text-gray-900">Пользователи</h2>
+              <h2 className="font-semibold text-gray-900">{t('users_list_title')}</h2>
             </div>
             <div className="max-h-[600px] overflow-y-auto">
               {users.map((user) => (
@@ -162,10 +162,10 @@ export default function PermissionManagement() {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="mb-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-1">
-                  Права доступа: {selectedUser.full_name}
+                  {t('permissions_for_user', { name: selectedUser.full_name })}
                 </h2>
                 <p className="text-sm text-gray-500">
-                  Роль: <span className="capitalize">{selectedUser.role}</span>
+                  {t('role_label')} <span className="capitalize">{selectedUser.role}</span>
                 </p>
               </div>
 
@@ -192,10 +192,10 @@ export default function PermissionManagement() {
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                         {[
-                          { key: "view", label: t('permissions:view_permission', 'Просмотр') },
-                          { key: "create", label: t('permissions:create_permission', 'Создание') },
-                          { key: "edit", label: t('permissions:edit_permission', 'Редактирование') },
-                          { key: "delete", label: t('permissions:delete_permission', 'Удаление') },
+                          { key: "view", label: t('view_permission', 'Просмотр') },
+                          { key: "create", label: t('create_permission', 'Создание') },
+                          { key: "edit", label: t('edit_permission', 'Редактирование') },
+                          { key: "delete", label: t('delete_permission', 'Удаление') },
                         ].map(({ key, label: actionLabel }) => (
                           <button
                             key={key}
@@ -230,14 +230,14 @@ export default function PermissionManagement() {
               {saving && (
                 <div className="mt-4 flex items-center justify-center text-sm text-gray-500">
                   <Loader className="w-4 h-4 animate-spin mr-2" />
-                  Сохранение...
+                  {t('saving', 'Сохранение...')}
                 </div>
               )}
             </div>
           ) : (
             <div className="bg-white rounded-xl shadow-sm p-12 text-center">
               <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Выберите пользователя</p>
+              <p className="text-gray-500">{t('select_user_prompt')}</p>
             </div>
           )}
         </div>
