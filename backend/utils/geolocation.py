@@ -7,9 +7,10 @@ import math
 from typing import Optional, Dict, Tuple
 from utils.logger import log_info, log_error
 
-# Salon location (will be updated from DB in production)
-SALON_LAT = 25.2048
-SALON_LON = 55.2708
+# M Le Diamant - Jumeirah Beach Residence, Dubai coordinates
+# From Google Maps: 25.073873893619908, 55.130208507174196
+SALON_LAT = 25.073874
+SALON_LON = 55.130209
 
 def get_salon_coordinates() -> Tuple[float, float]:
     """Get salon coordinates from database"""
