@@ -7,14 +7,17 @@ export function IntroSection() {
             Welcome to <strong>M Le Diamant</strong>, the premier luxury beauty salon in
             <strong> Jumeirah Beach Residence (JBR), Dubai</strong>. Our premium beauty
             salon specializes in comprehensive beauty services including expert <strong>manicure,
-            pedicure, keratin treatment, permanent makeup, professional haircuts, sugaring,
+            pedicure, keratin treatment, permanent makeup, professional haircuts, hair coloring,
+            balayage, waxing, sugaring, depilation, Moroccan bath, facial cleaning, massage,
             and spa treatments</strong> — all delivered by certified international masters.
           </p>
           <p className="text-base text-foreground/70 leading-relaxed mt-4">
             Located in the heart of JBR Dubai, we offer a complete range of beauty services:
-            from <strong>keratin hair treatment</strong> and <strong>professional haircuts</strong> to
-            <strong> permanent makeup</strong>, <strong>gel polish nails</strong>,
-            <strong> sugaring</strong>, and rejuvenating spa treatments. Our skilled team combines
+            from <strong>keratin hair treatment</strong> (кератиновое выпрямление) and <strong>professional haircuts</strong> (стрижка) to
+            <strong> permanent makeup</strong> (перманентный макияж), <strong>gel polish nails</strong>,
+            <strong> lash extensions</strong> (наращивание ресниц), <strong>waxing and sugaring</strong> (депиляция, шугаринг),
+            <strong> Moroccan bath</strong> (марокканская баня), <strong>facial cleaning</strong> (чистка лица),
+            <strong> deep tissue massage</strong> (массаж), and rejuvenating spa treatments. Our skilled team combines
             modern European techniques with personalized care to create an unforgettable beauty
             experience. Book your appointment online and discover why M Le Diamant is JBR's most
             trusted name in premium beauty services.
