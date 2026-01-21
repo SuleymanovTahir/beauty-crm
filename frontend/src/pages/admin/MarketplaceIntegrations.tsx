@@ -70,50 +70,50 @@ const MarketplaceIntegrations = () => {
 
     const marketplaceInfo = {
         yandex_maps: {
-            name: 'Яндекс.Карты',
-            description: 'Записи и отзывы с Яндекс.Карт',
+            name: t('marketplace.providers.yandex_maps.name', 'Яндекс.Карты'),
+            description: t('marketplace.providers.yandex_maps.description', 'Записи и отзывы с Яндекс.Карт'),
             icon: <Store size={20} />,
             brandClass: 'brand-yandex_maps'
         },
         '2gis': {
-            name: '2ГИС',
-            description: 'Онлайн-записи через 2ГИС',
+            name: t('marketplace.providers.2gis.name', '2ГИС'),
+            description: t('marketplace.providers.2gis.description', 'Онлайн-записи через 2ГИС'),
             icon: <Store size={20} />,
             brandClass: 'brand-2gis'
         },
         google_business: {
-            name: 'Google Business',
-            description: 'Записи и отзывы в Google',
+            name: t('marketplace.providers.google_business.name', 'Google Business'),
+            description: t('marketplace.providers.google_business.description', 'Записи и отзывы в Google'),
             icon: <Store size={20} />,
             brandClass: 'brand-google_business'
         },
         booksy: {
-            name: 'Booksy',
-            description: 'Платформа онлайн-записи',
+            name: t('marketplace.providers.booksy.name', 'Booksy'),
+            description: t('marketplace.providers.booksy.description', 'Платформа онлайн-записи'),
             icon: <Store size={20} />,
             brandClass: 'brand-booksy'
         },
         yclients: {
-            name: 'YCLIENTS',
-            description: 'Платформа онлайн-записи',
+            name: t('marketplace.providers.yclients.name', 'YCLIENTS'),
+            description: t('marketplace.providers.yclients.description', 'Платформа онлайн-записи'),
             icon: <Store size={20} />,
             brandClass: 'brand-yclients'
         },
         wildberries: {
-            name: 'Wildberries',
-            description: 'Маркетплейс WB',
+            name: t('marketplace.providers.wildberries.name', 'Wildberries'),
+            description: t('marketplace.providers.wildberries.description', 'Маркетплейс WB'),
             icon: <Store size={20} />,
             brandClass: 'brand-wildberries'
         },
         ozon: {
-            name: 'Ozon',
-            description: 'Маркетплейс Ozon',
+            name: t('marketplace.providers.ozon.name', 'Ozon'),
+            description: t('marketplace.providers.ozon.description', 'Маркетплейс Ozon'),
             icon: <Store size={20} />,
             brandClass: 'brand-ozon'
         },
         amazon: {
-            name: 'Amazon',
-            description: 'Amazon Marketplace',
+            name: t('marketplace.providers.amazon.name', 'Amazon'),
+            description: t('marketplace.providers.amazon.description', 'Amazon Marketplace'),
             icon: <Store size={20} />,
             brandClass: 'brand-amazon'
         }

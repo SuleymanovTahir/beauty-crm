@@ -537,12 +537,12 @@ def get_salon_news(limit: int = 10, language: str = "ru"):
     from utils.utils import sanitize_url
 
     news = []
+    lang_key = language[:2] if language else 'ru'
     for row in c.fetchall():
-        # Выбираем нужный язык
-        if language == "ar":
-            title = row[3] or row[1]
-            content = row[6] or row[4]
-        elif language == "en":
+        if lang_key == "ar":
+            title = row[3] or row[2] or row[1]
+            content = row[6] or row[5] or row[4]
+        elif lang_key == "en":
             title = row[2] or row[1]
             content = row[5] or row[4]
         else:
@@ -642,34 +642,23 @@ def get_public_faq(language: str = "ru"):
         conn = get_db_connection()
         c = conn.cursor()
         
-        # Select active FAQs ordered by display_order
-        c.execute("""
-            SELECT id, question_ru, question_en, question_ar, 
-                   answer_ru, answer_en, answer_ar, category 
-            FROM public_faq 
-            ORDER BY display_order ASC, id ASC
-        """)
-        
         faqs = []
+        c.execute("SELECT * FROM public_faq WHERE is_active = TRUE ORDER BY display_order ASC, id ASC")
+        columns = [desc[0] for desc in c.description]
         rows = c.fetchall()
+        lang_key = language[:2] if language else 'ru'
         
         for row in rows:
-            # Select language specific content
-            if language == "ar":
-                question = row[3] or row[2] or row[1]
-                answer = row[6] or row[5] or row[4]
-            elif language == "en":
-                question = row[2] or row[1]
-                answer = row[5] or row[4]
-            else: # Default or ru
-                question = row[1]
-                answer = row[4]
+            item = dict(zip(columns, row))
+            
+            question = item.get(f'question_{lang_key}') or item.get('question_en') or item.get('question_ru')
+            answer = item.get(f'answer_{lang_key}') or item.get('answer_en') or item.get('answer_ru')
                 
             faqs.append({
-                "id": row[0],
+                "id": item.get('id'),
                 "question": question,
                 "answer": answer,
-                "category": row[7]
+                "category": item.get('category')
             })
             
         return {"faqItems": faqs}
@@ -721,20 +710,31 @@ def get_initial_load_data(language: str = "ru"):
     try:
         raw_services = get_all_services(active_only=True)
         services = []
+        lang_key = language[:2] if language else 'ru'
+        
+        lang_indices = {
+            'ru': {'name': 3, 'desc': 11},
+            'en': {'name': 20, 'desc': 27},
+            'ar': {'name': 4, 'desc': 12},
+            'de': {'name': 21, 'desc': 28},
+            'es': {'name': 22, 'desc': 29},
+            'fr': {'name': 23, 'desc': 30},
+            'hi': {'name': 24, 'desc': 31},
+            'kk': {'name': 25, 'desc': 32},
+            'pt': {'name': 26, 'desc': 33}
+        }
+        idx = lang_indices.get(lang_key, lang_indices['en'])
+
         for s in raw_services:
-            # Map index-based result from get_all_services to dict
             service_dict = {
                 "id": s[0],
-                "name": s[2],
-                "name_ru": s[3] if len(s) > 3 else None,
-                "name_en": s[20] if len(s) > 20 else None,
+                "name": s[idx['name']] or s[20] or s[3], # Preferred -> EN -> RU
+                "description": s[idx['desc']] or s[27] or s[11] or "",
                 "price": s[5],
                 "currency": s[8],
                 "category": s[9],
                 "duration": s[15],
             }
-            # Add other language names if they exist and are not too many
-            # Focusing on RU and EN for initial load
             services.append(service_dict)
     except Exception:
         services = []
