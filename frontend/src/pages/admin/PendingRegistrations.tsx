@@ -15,7 +15,7 @@ interface PendingUser {
 }
 
 const PendingRegistrations: React.FC = () => {
-    const { t, i18n } = useTranslation('admin/pending_registrations');
+    const { t } = useTranslation('admin/pending_registrations');
     const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

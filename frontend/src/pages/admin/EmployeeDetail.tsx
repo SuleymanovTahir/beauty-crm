@@ -82,7 +82,7 @@ export default function EmployeeDetail() {
 
     const loadAllEmployees = async () => {
         try {
-            const response = await api.getUsers();
+            const response = await api.getUsers(i18n.language);
             const usersArray = Array.isArray(response) ? response : (response?.users || []);
             setAllEmployees(usersArray);
             setFilteredEmployees(usersArray);
@@ -94,7 +94,7 @@ export default function EmployeeDetail() {
     const loadEmployee = async () => {
         try {
             setLoading(true);
-            const data = await api.get(`/api/users/${id}`);
+            const data = await api.get(`/api/users/${id}?language=${i18n.language}`);
             // Map bio to about_me for EmployeeInformation
             if (data && data.bio && !data.about_me) {
                 data.about_me = data.bio;

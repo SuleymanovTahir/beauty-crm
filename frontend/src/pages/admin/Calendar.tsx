@@ -172,9 +172,9 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
       setLoading(true);
       const [bookingsData, servicesData, clientsData, usersData] = await Promise.all([
         api.getBookings(),
-        api.getServices(true),
+        api.getServices(true, i18n.language),
         api.getClients(),
-        api.getUsers()
+        api.getUsers(i18n.language)
       ]);
 
       setBookings(bookingsData.bookings || []);

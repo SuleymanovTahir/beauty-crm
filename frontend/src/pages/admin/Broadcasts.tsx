@@ -141,7 +141,7 @@ export default function Broadcasts() {
     try {
       setLoadingUsers(true);
       console.log('Loading users for broadcast selection...');
-      const response = await api.getUsers();
+      const response = await api.getUsers(i18n.language);
       console.log('Users response:', response);
       const usersArray = Array.isArray(response) ? response : (response?.users || []);
       console.log('Users array:', usersArray);

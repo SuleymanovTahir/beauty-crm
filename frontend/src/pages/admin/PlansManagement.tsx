@@ -193,7 +193,7 @@ export default function PlansManagement() {
 
     const loadUsers = async () => {
         try {
-            const response = await api.getUsers();
+            const response = await api.getUsers(i18n.language);
             setUsers(response.users);
         } catch (error) {
             console.error('Error loading users:', error);

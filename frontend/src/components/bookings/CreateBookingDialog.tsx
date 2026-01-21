@@ -68,7 +68,7 @@ export function CreateBookingDialog({
         try {
             const [servicesData, usersData] = await Promise.all([
                 api.getServices(),
-                api.getUsers()
+                api.getUsers(i18n.language)
             ]);
             setServices(servicesData.services || []);
             const allUsers = Array.isArray(usersData) ? usersData : (usersData.users || []);
@@ -113,7 +113,7 @@ export function CreateBookingDialog({
             if (selectedService) {
                 try {
                     setLoadingMasters(true);
-                    const data = await api.getEmployeesForService(selectedService.id);
+                    const data = await api.getEmployeesForService(selectedService.id, i18n.language);
                     setFilteredMasters(data.employees || []);
                 } catch (err) {
                     console.error('Error loading filtered masters:', err);

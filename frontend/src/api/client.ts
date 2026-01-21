@@ -123,8 +123,8 @@ export const apiClient = {
     }),
 
   // ===== SERVICES =====
-  getServices: (activeOnly: boolean = true) =>
-    apiCall(`/api/services?active_only=${activeOnly}`),
+  getServices: (activeOnly: boolean = true, lang: string = 'ru') =>
+    apiCall(`/api/services?active_only=${activeOnly}&language=${lang}`),
 
   createService: (data: any) =>
     apiCall('/api/services', {
