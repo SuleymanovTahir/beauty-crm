@@ -63,6 +63,13 @@
   "stage_deleted": "Стадия удалена",
   "stage_name": "Название стадии",
   "stage_name_placeholder": "Например: В работе",
+  "stages": {
+    "done": "Готово",
+    "in_progress": "В работе",
+    "on_hold": "Отложено",
+    "review": "Проверка",
+    "todo": "Сделать"
+  },
   "status_updated": "Статус обновлен",
   "task_created": "Задача создана",
   "task_deleted": "Задача удалена",

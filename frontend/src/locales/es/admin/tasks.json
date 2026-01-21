@@ -63,6 +63,13 @@
   "stage_deleted": "Stage deleted",
   "stage_name": "Nombre de la etapa",
   "stage_name_placeholder": "Hasta fecha ejemplo: En curso",
+  "stages": {
+    "done": "Listo",
+    "in_progress": "En curso",
+    "on_hold": "Aplazado",
+    "review": "Comprobando",
+    "todo": "Por hacer"
+  },
   "status_updated": "Estado actualizado",
   "task_created": "Tarea creada",
   "task_deleted": "Tarea eliminada",

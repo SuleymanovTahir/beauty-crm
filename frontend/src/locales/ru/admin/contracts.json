@@ -45,6 +45,12 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Статус",
+  "statuses": {
+    "cancelled": "Отменен",
+    "draft": "Черновик",
+    "sent": "Отправлен",
+    "signed": "Подписан"
+  },
   "subtitle": "Управление договорами с клиентами",
   "title": "Договоры",
   "type": "Тип",

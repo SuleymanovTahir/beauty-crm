@@ -64,6 +64,14 @@
     "whatsapp": "Whatsapp"
   },
   "status": "Status",
+  "statuses": {
+    "cancelled": "Canceled",
+    "draft": "Draft",
+    "overdue": "Overdue",
+    "paid": "Paid",
+    "partial": "Partially paid",
+    "sent": "Sent"
+  },
   "subtitle": "Account and payment management",
   "title": "Invoices",
   "totalAmount": "Sum"

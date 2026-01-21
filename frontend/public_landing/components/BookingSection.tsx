@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Calendar as CalendarIcon, Clock, Loader2, Check, ChevronsUpDown, User, Sparkles } from 'lucide-react';
 import { useTranslation } from "react-i18next";
-import { getTodayDate } from '../utils/dateUtils';
+
 import { useAuth } from '../../src/contexts/AuthContext';
 import { api } from '../../src/services/api';
 import { toast } from 'sonner';
@@ -21,9 +21,26 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "./ui/popover";
+
 import { PhoneInputWithSearch } from './ui/PhoneInputWithSearch';
 import { DEFAULT_VALUES, EXTERNAL_SERVICES } from '../utils/constants';
 import { safeFetch, safeExternalApiCall } from '../utils/errorHandler';
+
+// Import react-datepicker
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+// Import date-fns locales
+import { enUS } from 'date-fns/locale/en-US';
+import { es } from 'date-fns/locale/es';
+import { arSA } from 'date-fns/locale/ar-SA';
+import { de } from 'date-fns/locale/de';
+import { fr } from 'date-fns/locale/fr';
+import { hi } from 'date-fns/locale/hi';
+import { kk } from 'date-fns/locale/kk';
+import { pt } from 'date-fns/locale/pt';
+import { ru } from 'date-fns/locale/ru';
+
 
 export const BookingSection = () => {
   const { t, i18n } = useTranslation(['booking', 'public_landing', 'common']);
@@ -356,26 +373,42 @@ export const BookingSection = () => {
             </Popover>
           </div>
 
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="form-label-custom">{t('formDate', { defaultValue: 'Дата' })}</label>
               <div className="relative">
-                <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  type="date"
+                <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+                <DatePicker
+                  selected={formData.date ? new Date(formData.date) : null}
+                  onChange={(date: Date | null) => {
+                    if (date) {
+                      const year = date.getFullYear();
+                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const day = String(date.getDate()).padStart(2, '0');
+                      setFormData({ ...formData, date: `${year}-${month}-${day}` });
+                    } else {
+                      setFormData({ ...formData, date: '' });
+                    }
+                  }}
+                  minDate={new Date()}
+                  dateFormat="dd/MM/yyyy"
+                  locale={
+                    i18n.language === 'en' ? enUS :
+                      i18n.language === 'es' ? es :
+                        i18n.language === 'ar' ? arSA :
+                          i18n.language === 'de' ? de :
+                            i18n.language === 'fr' ? fr :
+                              i18n.language === 'hi' ? hi :
+                                i18n.language === 'kk' ? kk :
+                                  i18n.language === 'pt' ? pt :
+                                    ru
+                  }
+                  placeholderText={t('formDatePlaceholder', { defaultValue: 'Выберите дату' })}
+                  className="w-full h-10 sm:h-11 pl-10 pr-3 rounded-md border border-primary/20 bg-slate-50 focus:ring-primary/20 focus:border-primary focus:outline-none focus:ring-2 text-base md:text-sm"
                   required
-                  min={getTodayDate()}
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="h-10 sm:h-11 pl-10 form-input-custom"
                 />
               </div>
-              <p className="text-[10px] text-muted-foreground mt-1 ml-1">
-                {i18n.language === 'en'
-                  ? t('date_format_hint_en', { defaultValue: 'Format: MM/DD/YYYY' })
-                  : t('date_format_hint', { defaultValue: 'Формат: ДД.ММ.ГГГГ' })
-                }
-              </p>
             </div>
             <div>
               <label className="form-label-custom">{t('formTime', { defaultValue: 'Время' })}</label>

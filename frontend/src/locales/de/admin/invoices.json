@@ -64,6 +64,14 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Status",
+  "statuses": {
+    "cancelled": "Storniert",
+    "draft": "Entwurf",
+    "overdue": "Überfällig",
+    "paid": "Bezahlt",
+    "partial": "Teilweise bezahlt",
+    "sent": "Gesendet"
+  },
   "subtitle": "Rechnungen und Zahlungen verwalten",
   "title": "Konten",
   "totalAmount": "Summe"

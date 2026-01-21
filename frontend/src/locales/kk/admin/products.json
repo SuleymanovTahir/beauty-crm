@@ -11,9 +11,9 @@
   "delete": "Жою",
   "detail": {
     "costPriceLabel": "Құны: {{price}} {{currency}}",
+    "inStock_one": "Қоймада {{count}} дана.",
     "inStock_few": "Қоймада {{count}} дана.",
     "inStock_many": "Қоймада {{count}} дана.",
-    "inStock_one": "Қоймада {{count}} дана.",
     "inStock_other": "Қоймада {{count}} дана.",
     "loadingData": "Деректерді жүктеуде...",
     "movementAdjustment": "Реттеу",

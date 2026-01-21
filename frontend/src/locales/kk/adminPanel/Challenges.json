@@ -55,9 +55,9 @@
     "failed_create": "Әрекетті жасау кезіндегі қате",
     "failed_delete": "Жою кезіндегі қате",
     "failed_load": "Деректерді жүктеу сәтсіз аяқталды",
+    "progress_checked_one": "{{count}} мүшесі үшін орындалу барысы жаңартылды",
     "progress_checked_few": "{{count}} қатысушылар үшін орындалу барысы жаңартылды",
     "progress_checked_many": "{{count}} қатысушылар үшін орындалу барысы жаңартылды",
-    "progress_checked_one": "{{count}} мүшесі үшін орындалу барысы жаңартылды",
     "progress_checked_other": "{{count}} қатысушылары үшін орындалу барысы жаңартылды"
   },
   "types": {

@@ -23,8 +23,8 @@
     "selectClient": "Kunde auswählen"
   },
   "internalContracts": "Intern",
-  "manage_stages": "Spalten",
   "manageTypes": "Vertragstypen",
+  "manage_stages": "Spalten",
   "messages": {
     "confirmDelete": "Sind Sie sicher, dass Sie diesen Vertrag löschen möchten?",
     "contractCreated": "Vertrag erstellt",
@@ -45,6 +45,12 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Status",
+  "statuses": {
+    "cancelled": "Storniert",
+    "draft": "Entwurf",
+    "sent": "Gesendet",
+    "signed": "Unterzeichnet"
+  },
   "subtitle": "Verträge mit Kunden verwalten",
   "title": "Verträge",
   "type": "Typ",

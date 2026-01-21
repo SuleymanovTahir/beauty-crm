@@ -30,7 +30,7 @@
   "invoiceNumber": "Numéro de compte",
   "manage_stages": "Colonnes",
   "messages": {
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette facture\u00a0?",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette facture ?",
     "invoiceCreated": "Compte créé",
     "invoiceDeleted": "Facture supprimée",
     "invoiceSent": "Facture envoyée",
@@ -64,6 +64,14 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Statut",
+  "statuses": {
+    "cancelled": "Annulé",
+    "draft": "Brouillon",
+    "overdue": "En retard",
+    "paid": "Payé",
+    "partial": "Partiellement payé",
+    "sent": "Envoyé"
+  },
   "subtitle": "Gérer les factures et les paiements",
   "title": "Comptes",
   "totalAmount": "Montant"

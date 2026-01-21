@@ -297,7 +297,7 @@ const Contracts = () => {
                             >
                                 <option value="">{t('allStatuses')}</option>
                                 {contractStages.map(s => (
-                                    <option key={s.key} value={s.key}>{s.name}</option>
+                                    <option key={s.key} value={s.key}>{t(`statuses.${s.key}`, { defaultValue: s.name })}</option>
                                 ))}
                             </select>
                         </div>
@@ -333,7 +333,7 @@ const Contracts = () => {
                                 <div className="p-4 border-b border-gray-200/60 bg-white/50 backdrop-blur-sm rounded-t-xl">
                                     <div className="flex items-center justify-between">
                                         <h3 className="font-semibold text-sm text-gray-700 uppercase tracking-tight">
-                                            {stage.name}
+                                            {t(`statuses.${stage.key}`, { defaultValue: stage.name })}
                                         </h3>
                                         <span className="px-2 py-0.5 rounded-full bg-white border text-xs font-mono text-gray-500 shadow-sm">
                                             {filteredAndSortedContracts.filter(c => c.status === stage.key).length}
