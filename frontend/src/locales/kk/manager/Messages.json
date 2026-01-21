@@ -33,10 +33,10 @@
   "select_all": "Барлығын таңдау",
   "selected_count_one": "{{count}} элемент таңдалды",
   "selected_count_few": "Таңдалған {{count}} элемент",
-  "selected_count_many": "{{count}} элементтері таңдалды",
+  "selected_count_many": "{{count}} элементтер таңдалды",
   "selected_count_other": "{{count}} элементтер таңдалды",
-  "status": "Күйі",
-  "total_clients": "Жалпы клиенттер",
+  "status": "Статус",
+  "total_clients": "Всего клиентов",
   "total_messages_count": "Жалпы хабарлар",
   "try_again": "Қайталап көріңіз",
   "updating": "Жаңартуда..."

@@ -65,12 +65,13 @@
   },
   "status": "الحالة",
   "statuses": {
-    "cancelled": "ملغاة",
+    "cancelled": "تم الإلغاء",
     "draft": "مسودة",
-    "overdue": "متأخرة",
-    "paid": "مدفوعة",
+    "overdue": "تأخرت",
+    "paid": "مدفوع",
     "partial": "مدفوعة جزئيًا",
-    "sent": "مرسلة"
+    "partially_paid": "مدفوعة جزئيا",
+    "sent": "مرسل"
   },
   "subtitle": "إدارة الفواتير والمدفوعات",
   "title": "الحسابات",

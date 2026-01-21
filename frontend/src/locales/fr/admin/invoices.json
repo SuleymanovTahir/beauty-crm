@@ -70,6 +70,7 @@
     "overdue": "En retard",
     "paid": "Payé",
     "partial": "Partiellement payé",
+    "partially_paid": "Partiellement payé",
     "sent": "Envoyé"
   },
   "subtitle": "Gérer les factures et les paiements",

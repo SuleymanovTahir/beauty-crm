@@ -161,21 +161,37 @@ def run_all_fixes():
                 WHERE id = %s
             """, (akbota[0],))
 
-        # 4. Create second admin profile
-        print("🔍 Ensuring second admin profile...")
-        c.execute("SELECT id FROM users WHERE telegram_username = '@user783920'")
-        admin2 = c.fetchone()
-        if not admin2:
-            c.execute("""
-                INSERT INTO users (username, full_name, role, phone, telegram_username, is_active, password_hash)
-                VALUES ('admin2', 'Admin Team', 'admin', '+971 54 797 2882', '@user783920', TRUE, %s)
-            """, (default_hash,))
+        # 4. Cleanup Test Users
+        print("🔍 Cleaning up test users (@test.com)...")
+        # Get IDs of test users to delete their related records first
+        c.execute("SELECT id FROM users WHERE email LIKE '%@test.com' OR username IN ('admin1', 'admin2', 'master1', 'master2', 'master3', 'master4', 'master5', 'director1', 'manager1', 'manager2', 'sales1', 'sales2', 'sales3', 'marketer1')")
+        test_user_ids = [row[0] for row in c.fetchall()]
+        
+        if test_user_ids:
+            # Delete related records
+            tables_with_user_id = ["user_services", "user_schedule", "user_permissions", "audit_log", "internal_chat", "notifications"]
+            for table in tables_with_user_id:
+                try:
+                    c.execute(f"SAVEPOINT cleanup_{table}")
+                    c.execute(f"DELETE FROM {table} WHERE user_id = ANY(%s)", (test_user_ids,))
+                    c.execute(f"RELEASE SAVEPOINT cleanup_{table}")
+                except Exception:
+                    c.execute(f"ROLLBACK TO SAVEPOINT cleanup_{table}")
+            
+            # Additional cleanup for internal_chat where user could be sender or receiver
+            try:
+                c.execute("SAVEPOINT cleanup_internal_chat_ext")
+                c.execute("DELETE FROM internal_chat WHERE sender_id = ANY(%s) OR receiver_id = ANY(%s)", (test_user_ids, test_user_ids))
+                c.execute("RELEASE SAVEPOINT cleanup_internal_chat_ext")
+            except Exception:
+                c.execute(f"ROLLBACK TO SAVEPOINT cleanup_internal_chat_ext")
+            
+            # Finally delete the users
+            c.execute("DELETE FROM users WHERE id = ANY(%s)", (test_user_ids,))
+            deleted_count = c.rowcount
+            print(f"  ✅ Deleted {deleted_count} test users and their related data.")
         else:
-            c.execute("""
-                UPDATE users 
-                SET role = 'admin', phone = '+971 54 797 2882'
-                WHERE id = %s
-            """, (admin2[0],))
+            print("  ℹ️ No test users found to delete.")
 
         # 5. Generate attractive bios
         print("🔍 Generating attractive bios with more variety...")

@@ -65,11 +65,12 @@
   },
   "status": "Status",
   "statuses": {
-    "cancelled": "Canceled",
+    "cancelled": "Cancelled",
     "draft": "Draft",
     "overdue": "Overdue",
     "paid": "Paid",
     "partial": "Partially paid",
+    "partially_paid": "Partially paid",
     "sent": "Sent"
   },
   "subtitle": "Account and payment management",

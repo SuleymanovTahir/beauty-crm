@@ -57,7 +57,7 @@
   "continue_professional": "متابعة اختيار المتخصص",
   "continue_services": "متابعة اختيار الخدمات",
   "date_format_hint": "التنسيق: DD.MM.YYYY",
-  "date_format_hint_en": "Format: MM/DD/YYYY",
+  "date_format_hint_en": "التنسيق: MM/DD/YYYY",
   "datetime": {
     "date": "اختيار التاريخ",
     "noSlots": "لا توجد نوافذ متاحة",
@@ -66,7 +66,7 @@
     "title": "التاريخ والوقت"
   },
   "formDate": "التاريخ",
-  "formDatePlaceholder": "Выберите дату",
+  "formDatePlaceholder": "اختيار التاريخ",
   "formName": "الاسم",
   "formNamePlaceholder": "اسمك",
   "formPhone": "الهاتف",

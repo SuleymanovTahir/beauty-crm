@@ -28,8 +28,12 @@ import {
     AlertCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
+import { ru, enUS, ar, es, de, fr, pt, hi, kk } from 'date-fns/locale';
 import { toast } from 'sonner';
+
+const dateLocales: Record<string, any> = {
+    ru, en: enUS, ar, es, de, fr, pt, hi, kk
+};
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import { Badge } from "../../components/ui/badge";
 import { AddFunnelClientDialog } from "../../components/funnel/AddFunnelClientDialog";
@@ -85,7 +89,7 @@ const analyticsStageColors = [
 ];
 
 export default function UniversalFunnel() {
-    const { t } = useTranslation(['pages/funnel', 'common']);
+    const { t, i18n } = useTranslation(['admin/funnel', 'common']);
     const { currency } = useCurrency();
 
     // View state
@@ -435,7 +439,7 @@ export default function UniversalFunnel() {
                                     <div className="p-4 border-b border-gray-200/60 bg-white/50 backdrop-blur-sm rounded-t-xl sticky top-0 z-10">
                                         <div className="flex items-center justify-between mb-2">
                                             <h3 className="font-semibold text-sm text-gray-700 uppercase tracking-wide">
-                                                {stage.name}
+                                                {t(`stages.${stage.key || stage.name.toLowerCase().replace(/\s+/g, '_')}`, { defaultValue: stage.name })}
                                             </h3>
                                             <Badge variant="secondary" className="bg-white text-gray-600 font-mono text-xs border shadow-sm">
                                                 {clients[stage.id]?.length || 0}
@@ -501,7 +505,7 @@ export default function UniversalFunnel() {
                                                         </div>
                                                         <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
                                                             <Clock className="w-3 h-3 text-gray-400" />
-                                                            {client.last_contact ? format(new Date(client.last_contact), 'dd MMM HH:mm', { locale: ru }) : '-'}
+                                                            {client.last_contact ? format(new Date(client.last_contact), 'dd MMM HH:mm', { locale: dateLocales[i18n.language] || ru }) : '-'}
                                                         </div>
                                                     </div>
 
@@ -515,7 +519,7 @@ export default function UniversalFunnel() {
                                                     {client.reminder_date && (
                                                         <div className="flex items-center gap-1 mt-1.5 text-xs text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full w-fit">
                                                             <Bell className="w-3 h-3" />
-                                                            {format(new Date(client.reminder_date), 'dd MMM HH:mm', { locale: ru })}
+                                                            {format(new Date(client.reminder_date), 'dd MMM HH:mm', { locale: dateLocales[i18n.language] || ru })}
                                                         </div>
                                                     )}
 
@@ -607,7 +611,10 @@ export default function UniversalFunnel() {
                                                         </td>
                                                         <td className="px-6 py-4">
                                                             <Badge variant="secondary" className="bg-gray-100 font-normal">
-                                                                {stages.find(s => s.id === client.pipeline_stage_id)?.name}
+                                                                {(() => {
+                                                                    const s = stages.find(s => s.id === client.pipeline_stage_id);
+                                                                    return s ? t(`stages.${s.key || s.name.toLowerCase().replace(/\s+/g, '_')}`, { defaultValue: s.name }) : '-';
+                                                                })()}
                                                             </Badge>
                                                         </td>
                                                         <td className="px-6 py-4">
@@ -617,7 +624,7 @@ export default function UniversalFunnel() {
                                                             </div>
                                                         </td>
                                                         <td className="px-6 py-4 text-gray-500">
-                                                            {client.last_contact ? format(new Date(client.last_contact), 'dd MMM HH:mm', { locale: ru }) : '-'}
+                                                            {client.last_contact ? format(new Date(client.last_contact), 'dd MMM HH:mm', { locale: dateLocales[i18n.language] || ru }) : '-'}
                                                         </td>
                                                         <td className="px-6 py-4 text-right font-medium text-gray-900">
                                                             {client.total_spend > 0 ? `${client.total_spend} ${currency}` : '-'}

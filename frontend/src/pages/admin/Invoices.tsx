@@ -159,13 +159,23 @@ const Invoices = () => {
         switch (status) {
             case 'draft': return 'draft';
             case 'sent': return 'sent';
-            case 'partial': return 'partial';
+            case 'partial':
+            case 'partially_paid': return 'partial';
             case 'paid': return 'paid';
             case 'overdue': return 'overdue';
             case 'cancelled': return 'cancelled';
             default: return '';
         }
     };
+
+    // Translation markers for i18next-parser
+    t('statuses.draft', { defaultValue: 'Черновик' });
+    t('statuses.sent', { defaultValue: 'Отправлен' });
+    t('statuses.paid', { defaultValue: 'Оплачен' });
+    t('statuses.overdue', { defaultValue: 'Просрочен' });
+    t('statuses.cancelled', { defaultValue: 'Отменен' });
+    t('statuses.partial', { defaultValue: 'Частично' });
+    t('statuses.partially_paid', { defaultValue: 'Частично оплачен' });
 
     const getPaymentProgress = (invoice: Invoice) => {
         if (invoice.total_amount === 0) return 0;
@@ -257,7 +267,9 @@ const Invoices = () => {
                             >
                                 <option value="">{t('allStatuses')}</option>
                                 {invoiceStages.map(s => (
-                                    <option key={s.key} value={s.key}>{s.name}</option>
+                                    <option key={s.key} value={s.key}>
+                                        {t(`statuses.${s.key}`, { defaultValue: s.name })}
+                                    </option>
                                 ))}
                             </select>
                         </div>

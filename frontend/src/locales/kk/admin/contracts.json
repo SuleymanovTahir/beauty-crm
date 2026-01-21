@@ -1,7 +1,7 @@
 {
-  "actions": "Әрекеттер",
+  "actions": "Действия",
   "addContract": "Келісім-шарт жасау",
-  "all": "Барлық",
+  "all": "Все",
   "allContracts": "Барлық келісімшарттар",
   "allStatuses": "Барлық күйлер",
   "board": "Тақта",
@@ -23,8 +23,8 @@
     "selectClient": "Клиент таңдау"
   },
   "internalContracts": "Отандық",
-  "manageTypes": "Келісім түрлері",
   "manage_stages": "Бағандар",
+  "manageTypes": "Келісімшарттардың түрлері",
   "messages": {
     "confirmDelete": "Осы келісімді шынымен жойғыңыз келе ме?",
     "contractCreated": "Келісімшарт жасалды",
@@ -35,7 +35,7 @@
   "noContracts": "Әлі келісім-шарттар жоқ",
   "search_placeholder": "Нөмір немесе клиент бойынша іздеу...",
   "sendDialog": {
-    "email": "Электрондық пошта",
+    "email": "Электронная почта",
     "instagram": "Instagram",
     "method": "Жіберу әдісі",
     "recipient": "Алушы",
@@ -44,11 +44,11 @@
     "title": "Келісімшартты жіберу",
     "whatsapp": "WhatsApp"
   },
-  "status": "Күйі",
+  "status": "Статус",
   "statuses": {
     "cancelled": "Бас тартылды",
-    "draft": "Жоба",
-    "sent": "Жіберілді",
+    "draft": "Нойыз",
+    "sent": "Жіберілген",
     "signed": "Қол қойылған"
   },
   "subtitle": "Клиенттермен келісім-шарттарды басқару",
@@ -63,7 +63,7 @@
     "deleteTitle": "\"{{name}}\" түрін жою",
     "deleteWithDocs": "Барлық келісім-шарттарды жою",
     "deleteWithDocsSub": "Осы түрдегі барлық құжаттар біржола жойылады.",
-    "description": "Сипаттамасы",
+    "description": "Описание",
     "editType": "Түрді өңдеу",
     "keepDocs": "Келісімшарттарды түрінсіз қалдырыңыз",
     "keepDocsSub": "Келісімшарттар қалады, бірақ \"Түрі\" өрісі тазаланады.",

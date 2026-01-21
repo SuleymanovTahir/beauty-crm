@@ -1,7 +1,7 @@
 {
   "crm": "CRM",
-  "employee": "Қызметкер",
-  "logout": "Жүйеден шығу",
+  "employee": "Сотрудник",
+  "logout": "Шығу",
   "menu": {
     "calendar": "Күнтізбе",
     "my_bookings": "Менің тапсырыстарым",

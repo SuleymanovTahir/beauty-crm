@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { ScrollArea } from '../ui/scroll-area';
 import { CalendarDays, Clock, Phone, Trash2, Edit2, Plus, Save, User as UserIcon, Bell, Snowflake, Flame, Zap } from 'lucide-react';
 import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
+import * as dateLocales from 'date-fns/locale';
 import {
     Select,
     SelectContent,
@@ -61,7 +61,7 @@ interface ClientDetailsDialogProps {
 }
 
 export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, stages = [], onAddBooking }: ClientDetailsDialogProps) {
-    const { t } = useTranslation(['admin/funnel', 'common']);
+    const { t, i18n } = useTranslation(['admin/funnel', 'common']);
     const [activeTab, setActiveTab] = useState<'info' | 'bookings'>('info');
 
     // Editable state
@@ -152,7 +152,26 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
 
     if (!client) return null;
 
-    const currentStageName = stages.find(s => s.id === client.pipeline_stage_id)?.name || 'Unknown';
+    const getLocale = () => {
+        const lang = i18n.language || 'ru';
+        const localeMap: Record<string, any> = {
+            'ru': dateLocales.ru,
+            'en': dateLocales.enUS,
+            'ar': dateLocales.ar,
+            'es': dateLocales.es,
+            'de': dateLocales.de,
+            'fr': dateLocales.fr,
+            'pt': dateLocales.pt,
+            'hi': dateLocales.hi,
+            'kk': dateLocales.ru // kkz is not available in some versions, fallback to ru
+        };
+        return localeMap[lang] || dateLocales.ru;
+    };
+
+    const currentStage = stages.find(s => s.id === client.pipeline_stage_id);
+    const currentStageName = currentStage
+        ? t(`stages.${currentStage.key || currentStage.name.toLowerCase().replace(/\s+/g, '_')}`, { defaultValue: currentStage.name })
+        : t('unknown', 'Unknown');
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -262,7 +281,7 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
                                             <SelectContent>
                                                 {stages.map(s => (
                                                     <SelectItem key={s.id} value={s.id.toString()}>
-                                                        {s.name}
+                                                        {t(`stages.${s.key || s.name.toLowerCase().replace(/\s+/g, '_')}`, { defaultValue: s.name })}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -277,7 +296,7 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
                                     <div className="flex items-center gap-2">
                                         <div className={`w-3 h-3 rounded-full ${temperature === 'hot' ? 'bg-red-500' : temperature === 'warm' ? 'bg-orange-500' : 'bg-blue-300'}`} />
                                         <span className="capitalize text-gray-700 font-medium">
-                                            {temperature === 'hot' ? 'Hot' : temperature === 'warm' ? 'Warm' : 'Cold'}
+                                            {temperature === 'hot' ? t('temperature_hot', 'Hot') : temperature === 'warm' ? t('temperature_warm', 'Warm') : t('temperature_cold', 'Cold')}
                                         </span>
                                     </div>
                                 </div>
@@ -316,7 +335,7 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
                                 ) : (
                                     <div className="flex items-center gap-2 text-gray-700">
                                         <Bell className="w-4 h-4 text-gray-400" />
-                                        {reminderDate ? format(new Date(reminderDate), 'dd MMM yyyy HH:mm', { locale: ru }) : <span className="text-gray-400 italic">{t('no_reminder', 'Не установлено')}</span>}
+                                        {reminderDate ? format(new Date(reminderDate), 'dd MMM yyyy HH:mm', { locale: getLocale() }) : <span className="text-gray-400 italic">{t('no_reminder', 'Не установлено')}</span>}
                                     </div>
                                 )}
                             </div>
@@ -365,7 +384,7 @@ export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, sta
                                     </div>
                                     <div className="text-xs text-gray-500 flex items-center gap-2 mb-1">
                                         <CalendarDays className="w-3 h-3" />
-                                        {format(new Date(booking.start_time), 'dd MMM yyyy', { locale: ru })}
+                                        {format(new Date(booking.start_time), 'dd MMM yyyy', { locale: getLocale() })}
                                         <Clock className="w-3 h-3 ml-1" />
                                         {format(new Date(booking.start_time), 'HH:mm')}
                                     </div>

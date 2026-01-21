@@ -1,31 +1,31 @@
 {
-  "actions": "Әрекеттер",
+  "actions": "Действия",
   "addInvoice": "Шот-фактура жасау",
-  "addPayment": "Төлем қосыңыз",
+  "addPayment": "Төлем қосу",
   "allInvoices": "Барлық тіркелгілер",
   "allStatuses": "Барлық күйлер",
   "board": "Тақта",
   "client": "Клиент",
   "delete": "Жою",
-  "dueDate": "Төлемнің аяқталу күні",
+  "dueDate": "Төлем мерзімі",
   "errors": {
     "createError": "Шот-фактураны жасау қатесі.",
     "deleteError": "Есептік жазбаны жою қатесі.",
     "paymentError": "Төлемді қосу қатесі",
     "sendError": "Шот-фактураны жіберу қатесі",
-    "updateError": "Күйін жаңарту мүмкін болмады"
+    "updateError": "Күйді жаңарту орындалмады"
   },
   "form": {
     "addItem": "Элемент қосу",
-    "cancel": "Бас тарту",
+    "cancel": "Болдырмау",
     "dueDate": "Төлем мерзімі",
     "itemName": "Аты",
-    "itemPrice": "Бағасы",
+    "itemPrice": "Цена",
     "itemQuantity": "Саны",
     "items": "Тіркелгі элементтері",
     "notes": "Ескертпелер",
     "save": "Сақтау",
-    "selectClient": "Клиентті таңдау"
+    "selectClient": "Клиент таңдау"
   },
   "invoiceNumber": "Шот-фактураның нөмірі",
   "manage_stages": "Бағандар",
@@ -52,10 +52,10 @@
     "notes": "Ескертпелер",
     "title": "Төлем қосу"
   },
-  "search_placeholder": "Нөмір немесе тұтынушы бойынша іздеу...",
+  "search_placeholder": "Нөмір немесе клиент бойынша іздеу...",
   "sendButton": "Жіберу",
   "sendDialog": {
-    "email": "Электрондық пошта",
+    "email": "Электронная почта",
     "method": "Жіберу әдісі",
     "recipient": "Алушы",
     "sendButton": "Жіберу",
@@ -63,16 +63,17 @@
     "title": "Шот-фактураны жіберу",
     "whatsapp": "WhatsApp"
   },
-  "status": "Күйі",
+  "status": "Статус",
   "statuses": {
     "cancelled": "Бас тартылды",
-    "draft": "Тод нобай",
+    "draft": "Нойыз",
     "overdue": "Мерзімі өткен",
     "paid": "Төленді",
     "partial": "Ішінара төленген",
-    "sent": "Жіберілді"
+    "partially_paid": "Ішінара төленген",
+    "sent": "Жіберілген"
   },
   "subtitle": "Шот-фактуралар мен төлемдерді басқару",
-  "title": "Шоттар",
+  "title": "Тіркелгілер",
   "totalAmount": "Сома"
 }

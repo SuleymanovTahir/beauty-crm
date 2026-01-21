@@ -5,10 +5,10 @@
     "adjust_points": "Балансты өзгерту",
     "cancel": "Болдырмау",
     "save": "Сақтау",
-    "save_changes": "Өзгерістерді сақтау"
+    "save_changes": "Сохранить изменения"
   },
   "categories": {
-    "category": "Санат",
+    "category": "Категория",
     "category_placeholder": "Мыс. Маникюр",
     "description": "Жеке қызмет санаттары үшін ұпай көбейткіштерін орнату",
     "multiplier": "Көбейткіш",
@@ -64,7 +64,7 @@
   "toasts": {
     "config_updated": "Параметрлер сақталды",
     "failed_adjust": "Баланс өзгертілмеді",
-    "failed_delete": "Жою кезіндегі қате",
+    "failed_delete": "Жою",
     "failed_load": "Деректерді жүктеп алу мүмкін болмады",
     "failed_save": "Сақтау кезіндегі қате",
     "failed_update": "Жаңарту кезінде қате",
