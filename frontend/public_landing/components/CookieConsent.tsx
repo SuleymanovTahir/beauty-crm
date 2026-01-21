@@ -78,9 +78,9 @@ export function CookieConsent() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <div className="flex-1 pr-8 sm:pr-0">
             <p className="text-xs sm:text-sm text-foreground leading-relaxed">
-              {t('cookieConsentText', { defaultValue: 'Мы используем файлы cookie для улучшения работы сайта. Продолжая использовать сайт, вы соглашаетесь с нашей' })}{' '}
+              {t('cookieConsentText')}{' '}
               <a href="/privacy-policy" className="text-primary hover:underline font-medium">
-                {t('privacyPolicy', { defaultValue: 'политикой конфиденциальности' })}
+                {t('privacyPolicy')}
               </a>.
             </p>
           </div>
@@ -90,13 +90,13 @@ export function CookieConsent() {
               variant="default" // Using default (outline-like) or secondary
               className="flex-1 sm:flex-none text-xs h-8 border border-input bg-background hover:bg-accent hover:text-accent-foreground text-foreground"
             >
-              {t('decline', { defaultValue: 'Отклонить' })}
+              {t('decline')}
             </Button>
             <Button
               onClick={handleAccept}
               className="flex-1 sm:flex-none hero-button-primary text-xs h-8 text-primary-foreground"
             >
-              {t('accept', { defaultValue: 'Принять' })}
+              {t('accept')}
             </Button>
           </div>
           <button

@@ -100,7 +100,7 @@ export function Hero({ initialBanner }: HeroProps) {
             </h1>
 
             <p className="hero-description">
-              {t('heroDescription', { ns: 'public_landing' }) || "Discover the world of exquisite beauty in an atmosphere of luxury and comfort."}
+              {t('heroDescription', { ns: 'public_landing' })}
             </p>
           </div>
 
@@ -113,7 +113,7 @@ export function Hero({ initialBanner }: HeroProps) {
               size="lg"
             >
               <Calendar className="w-4 h-4" />
-              <span className="text-sm sm:text-base">{t('bookNow', { ns: 'public_landing' }) || "Записаться"}</span>
+              <span className="text-sm sm:text-base">{t('bookNow', { ns: 'public_landing' })}</span>
             </Button>
             <Button
               onClick={() => {
@@ -123,7 +123,7 @@ export function Hero({ initialBanner }: HeroProps) {
               className="border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground px-4 sm:px-6 py-4 sm:py-5 shadow-md hover:shadow-lg transition-all"
               size="lg"
             >
-              <span className="text-sm sm:text-base">{t('ourServices', { ns: 'public_landing' }) || "Услуги"}</span>
+              <span className="text-sm sm:text-base">{t('ourServices', { ns: 'public_landing' })}</span>
             </Button>
           </div>
 
@@ -133,15 +133,15 @@ export function Hero({ initialBanner }: HeroProps) {
           <div className="flex flex-wrap justify-start gap-6 sm:gap-8 lg:gap-12 pt-4 sm:pt-6 border-t border-border/30 animate-fade-in">
             <div className="flex flex-col items-start">
               <span className="hero-stat-value">10+</span>
-              <span className="text-xs sm:text-sm text-muted-foreground">{t('common:yearsExperience') || 'лет опыта'}</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">{t('common:yearsExperience')}</span>
             </div>
             <div className="flex flex-col items-start">
               <span className="hero-stat-value">5000+</span>
-              <span className="text-xs sm:text-sm text-muted-foreground">{t('common:happyClients') || 'довольных клиентов'}</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">{t('common:happyClients')}</span>
             </div>
             <div className="flex flex-col items-start">
               <span className="hero-stat-value">100%</span>
-              <span className="text-xs sm:text-sm text-muted-foreground">{t('common:qualityGuarantee') || 'гарантия качества'}</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">{t('common:qualityGuarantee')}</span>
             </div>
           </div>
         </div>

@@ -7,23 +7,23 @@ export function About() {
   const features = [
     {
       icon: Sparkles,
-      title: t('aboutFeature1Title', { defaultValue: 'Премиальное качество' }),
-      description: t('aboutFeature1Desc', { defaultValue: 'Используем только лучшие продукты и материалы мировых брендов' }),
+      title: t('aboutFeature1Title'),
+      description: t('aboutFeature1Desc'),
     },
     {
       icon: Award,
-      title: t('aboutFeature2Title', { defaultValue: 'Опытные мастера' }),
-      description: t('aboutFeature2Desc', { defaultValue: 'Наша команда - дипломированные специалисты с многолетним опытом' }),
+      title: t('aboutFeature2Title'),
+      description: t('aboutFeature2Desc'),
     },
     {
       icon: Heart,
-      title: t('aboutFeature3Title', { defaultValue: 'Индивидуальный подход' }),
-      description: t('aboutFeature3Desc', { defaultValue: 'Каждый клиент уникален, мы создаем образ специально для вас' }),
+      title: t('aboutFeature3Title'),
+      description: t('aboutFeature3Desc'),
     },
     {
       icon: Users,
-      title: t('aboutFeature4Title', { defaultValue: 'Атмосфера комфорта' }),
-      description: t('aboutFeature4Desc', { defaultValue: 'Уютная обстановка и внимательное отношение к каждой детали' }),
+      title: t('aboutFeature4Title'),
+      description: t('aboutFeature4Desc'),
     },
   ];
 
@@ -32,13 +32,13 @@ export function About() {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
           <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-2 sm:mb-3">
-            {t('aboutTag', { defaultValue: 'О нас' })}
+            {t('aboutTag')}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('aboutTitlePart1', { defaultValue: 'Искусство красоты' })} <span className="text-primary">{t('aboutTitlePart2', { defaultValue: 'в каждой детали' })}</span>
+            {t('aboutTitlePart1')} <span className="text-primary">{t('aboutTitlePart2')}</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
-            {t('aboutDesc', { defaultValue: 'Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.' })}
+            {t('aboutDesc')}
           </p>
         </div>
 

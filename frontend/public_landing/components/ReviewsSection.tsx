@@ -31,10 +31,10 @@ export function ReviewsSection() {
           // Backend returns: id, name (or author_name), avatar_url, rating, employee_position, text (or text_xx), created_at
           const mappedReviews = data.reviews.map((review: any) => ({
             id: review.id,
-            name: review.name || review.author_name || t('common:client', { defaultValue: 'Client' }),
+            name: review.name || review.author_name || t('common:client'),
             avatar_url: review.avatar_url || "",
             rating: review.rating || 5,
-            employee_position: review.employee_position || t('common:service', { defaultValue: 'Service' }),
+            employee_position: review.employee_position || t('common:service'),
             text: review.text || review.text_ru || "",
             created_at: review.created_at || ""
           }));
@@ -93,13 +93,13 @@ export function ReviewsSection() {
       <div className="container mx-auto px-3 sm:px-4 lg:px-6">
         <div className="text-center mb-8 sm:mb-12">
           <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-3">
-            {t('testimonialsOverline', { defaultValue: 'Отзывы' })}
+            {t('testimonialsOverline')}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('testimonialsTitlePart1', { defaultValue: 'Отзывы наших' })} <span className="text-primary">{t('testimonialsTitlePart2', { defaultValue: 'клиентов' })}</span>
+            {t('testimonialsTitlePart1')} <span className="text-primary">{t('testimonialsTitlePart2')}</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
-            {t('testimonialsDesc', { defaultValue: 'Мы гордимся доверием наших клиентов' })}
+            {t('testimonialsDesc')}
           </p>
         </div>
 

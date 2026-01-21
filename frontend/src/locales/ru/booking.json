@@ -25,7 +25,7 @@
   "bookingDesc": "Выберите удобное время для визита",
   "bookingError": "Ошибка при создании записи. Попробуйте позже.",
   "bookingSuccess": "Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.",
-  "bookingTag": "Онлайн запись",
+  "bookingTag": "Запишитесь онлайн",
   "bookingTitlePart1": "Запишитесь",
   "bookingTitlePart2": "на прием",
   "common": {
@@ -57,7 +57,7 @@
   "continue_professional": "Продолжить с выбора мастера",
   "continue_services": "Продолжить с выбора услуг",
   "date_format_hint": "Формат: ДД.ММ.ГГГГ",
-  "date_format_hint_en": "Format: MM/DD/YYYY",
+  "date_format_hint_en": "Формат: ММ/ДД/ГГГГ",
   "datetime": {
     "date": "Выберите дату",
     "noSlots": "Нет доступных окошек",

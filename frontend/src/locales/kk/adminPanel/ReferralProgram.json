@@ -1,7 +1,7 @@
 {
   "buttons": {
-    "cancel": "Бас тарту",
-    "save_changes": "Өзгерістерді сақтау"
+    "cancel": "Болдырмау",
+    "save_changes": "Сохранить изменения"
   },
   "current_settings": {
     "edit": "Өңдеу",
@@ -35,7 +35,7 @@
       "points_awarded": "Берілген ұпайлар",
       "referred_friend": "Шақырылған дос",
       "referrer": "Референт",
-      "status": "Күйі"
+      "status": "Статус"
     },
     "description": "Жолдамалардың күйін қадағалау және ұпайларды бөлу",
     "filters": {
@@ -48,13 +48,13 @@
       "status": "Sort by Status"
     },
     "statuses": {
-      "cancelled": "Тоқтатылды",
+      "cancelled": "Болдырмады",
       "completed": "Аяқталды",
       "pending": "Күтуде"
     },
     "title": "Барлық сілтемелер"
   },
-  "title": "Жіберу бағдарламасы",
+  "title": "Реферальная программа",
   "toasts": {
     "failed_load": "Сілтемелер жүктелмеді",
     "failed_save": "Сақталмады",

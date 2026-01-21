@@ -1,15 +1,15 @@
 {
   "buttons": {
-    "cancel": "Бас тарту",
+    "cancel": "Болдырмау",
     "create_challenge": "Мақсат жасау",
-    "update_challenge": "Өзгерістерді сақтау"
+    "update_challenge": "Сохранить изменения"
   },
   "card": {
     "check_progress": "Check Progress",
     "completed": "орындалды",
-    "progress": "Орындалу",
+    "progress": "Прогресс",
     "pts": "ұпайлар",
-    "reward": "Марапат",
+    "reward": "Награда",
     "target": "Мақсат"
   },
   "create_challenge": "Жаңа мақсат жасаңыз",
@@ -23,7 +23,7 @@
         "end_date": "Аяқтау күні",
         "reward_placeholder": "{{points}}",
         "reward_points": "бонус ұпайлары",
-        "start_date": "Басталу күні",
+        "start_date": "Бастау күні",
         "target_placeholder": "{{count}}",
         "target_value": "Мақсатты мөлшер",
         "title": "Мақсат атауы",
@@ -53,11 +53,11 @@
     "deleted": "Әрекет жойылды",
     "failed_check_progress": "Failed to check progress",
     "failed_create": "Әрекетті жасау кезіндегі қате",
-    "failed_delete": "Жою кезіндегі қате",
-    "failed_load": "Деректерді жүктеу сәтсіз аяқталды",
+    "failed_delete": "Жою",
+    "failed_load": "Деректерді жүктеп алу мүмкін болмады",
     "progress_checked_one": "{{count}} мүшесі үшін орындалу барысы жаңартылды",
-    "progress_checked_few": "{{count}} қатысушылар үшін орындалу барысы жаңартылды",
-    "progress_checked_many": "{{count}} қатысушылар үшін орындалу барысы жаңартылды",
+    "progress_checked_few": "{{count}} қатысушылары үшін орындалу барысы жаңартылды",
+    "progress_checked_many": "{{count}} қатысушылары үшін орындалу барысы жаңартылды",
     "progress_checked_other": "{{count}} қатысушылары үшін орындалу барысы жаңартылды"
   },
   "types": {

@@ -22,7 +22,7 @@ export function Portfolio() {
   // Временно: показываем все портфолио без подкатегорий
   // TODO: Добавить subcategory в gallery_images для фильтрации по типу работ
   const categories = [
-    { id: 'all', label: t('portfolioAll', { defaultValue: 'Все работы' }) },
+    { id: 'all', label: t('portfolioAll') },
   ];
 
   useEffect(() => {
@@ -74,13 +74,13 @@ export function Portfolio() {
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
           <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
             <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-3">
-              {t('portfolioTag', { defaultValue: 'Наши работы' })}
+              {t('portfolioTag')}
             </p>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-              {t('portfolioTitlePart1', { defaultValue: 'Примеры' })} <span className="text-primary">{t('portfolioTitlePart2', { defaultValue: 'преображения' })}</span>
+              {t('portfolioTitlePart1')} <span className="text-primary">{t('portfolioTitlePart2')}</span>
             </h2>
             <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
-              {t('noWorksFound', { defaultValue: 'Работы скоро появятся' })}
+              {t('noWorksFound')}
             </p>
           </div>
         </div>
@@ -93,13 +93,13 @@ export function Portfolio() {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
           <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-3">
-            {t('portfolioTag', { defaultValue: 'Наши работы' })}
+            {t('portfolioTag')}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('portfolioTitlePart1', { defaultValue: 'Примеры' })} <span className="text-primary">{t('portfolioTitlePart2', { defaultValue: 'преображения' })}</span>
+            {t('portfolioTitlePart1')} <span className="text-primary">{t('portfolioTitlePart2')}</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
-            {t('portfolioDesc', { defaultValue: 'Вдохновитесь результатами наших мастеров' })}
+            {t('portfolioDesc')}
           </p>
         </div>
 
@@ -148,7 +148,7 @@ export function Portfolio() {
 
         {displayedItems.length === 0 && (
           <div className="text-center text-muted-foreground py-12">
-            {t('noWorksFound', { defaultValue: 'Работы в этой категории пока не добавлены' })}
+            {t('noWorksFound')}
           </div>
         )}
 
@@ -158,7 +158,7 @@ export function Portfolio() {
               onClick={() => setDisplayCount(prev => Math.min(prev + 12, filteredPortfolio.length))}
               className="px-6 sm:px-8 py-2 sm:py-3 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors text-sm sm:text-base"
             >
-              {t('loading', { defaultValue: 'Показать еще' })} ({filteredPortfolio.length - displayCount})
+              {t('showMore')} ({filteredPortfolio.length - displayCount})
             </button>
           </div>
         )}

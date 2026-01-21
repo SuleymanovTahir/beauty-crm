@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { config } from '../utils/config';
 import { safeFetch } from '../utils/errorHandler';
-import { DEFAULT_VALUES } from '../utils/constants';
 
 export interface SalonInfo {
   name?: string;
@@ -62,15 +61,15 @@ export const useSalonInfo = (initialSalonInfo?: SalonInfo | null) => {
     loading,
     error,
     // Удобные геттеры с fallback значениями из backend
-    salonName: salonInfo?.name || DEFAULT_VALUES.DEFAULT_SALON_NAME,
+    salonName: salonInfo?.name || '',
     logoUrl: salonInfo?.logo_url || '',
-    phone: salonInfo?.phone || DEFAULT_VALUES.DEFAULT_PHONE,
-    email: salonInfo?.email || DEFAULT_VALUES.DEFAULT_EMAIL,
-    address: salonInfo?.address || DEFAULT_VALUES.DEFAULT_ADDRESS,
+    phone: salonInfo?.phone || '',
+    email: salonInfo?.email || '',
+    address: salonInfo?.address || '',
     workingHours: salonInfo?.hours || '',
     mapUrl: salonInfo?.map_url || '',
     googleMapsEmbedUrl: salonInfo?.google_maps_embed_url || '',
-    instagram: salonInfo?.instagram || DEFAULT_VALUES.DEFAULT_INSTAGRAM,
-    whatsapp: salonInfo?.whatsapp || DEFAULT_VALUES.DEFAULT_WHATSAPP,
+    instagram: salonInfo?.instagram || '',
+    whatsapp: salonInfo?.whatsapp || '',
   };
 };

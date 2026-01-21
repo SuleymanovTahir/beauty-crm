@@ -36,7 +36,7 @@ export function Services({ initialServices }: ServicesProps) {
       setServices(data);
 
       const uniqueCategories = new Set(data.map((item: any) => item.category));
-      const cats = [{ id: "all", label: t('allServices', { defaultValue: 'Все услуги' }) }];
+      const cats = [{ id: "all", label: t('allServices') }];
 
       uniqueCategories.forEach(cat => {
         if (cat) {
@@ -60,7 +60,7 @@ export function Services({ initialServices }: ServicesProps) {
       setCategories(cats);
     } else if (data.categories) {
       const flatServices: Service[] = [];
-      const cats = [{ id: "all", label: t('allServices', { defaultValue: 'Все услуги' }) }];
+      const cats = [{ id: "all", label: t('allServices') }];
 
       data.categories.forEach((cat: any) => {
         cats.push({ id: cat.id, label: cat.title });
@@ -115,17 +115,17 @@ export function Services({ initialServices }: ServicesProps) {
 
   const displayedServices = filteredServices.slice(0, displayCount);
 
-  const activeCategoryLabel = categories.find(c => c.id === activeCategory)?.label || t('allServices', { defaultValue: 'Все услуги' });
+  const activeCategoryLabel = categories.find(c => c.id === activeCategory)?.label || t('allServices');
 
   return (
     <section id="services" className="py-12 sm:py-16 lg:py-20 bg-background">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
           <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-2 sm:mb-3">
-            {t('servicesTag', { defaultValue: 'Услуги' })}
+            {t('servicesTag')}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('servicesTitlePart1', { defaultValue: 'Что мы' })} <span className="text-primary">{t('servicesTitlePart2', { defaultValue: 'предлагаем' })}</span>
+            {t('servicesTitlePart1')} <span className="text-primary">{t('servicesTitlePart2')}</span>
           </h2>
         </div>
 
@@ -136,7 +136,7 @@ export function Services({ initialServices }: ServicesProps) {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
             <input
               type="text"
-              placeholder={t('searchServices', { defaultValue: 'Поиск услуг...' })}
+              placeholder={t('searchServices')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full h-12 pl-11 pr-4 rounded-full border border-primary/20 bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
@@ -215,7 +215,7 @@ export function Services({ initialServices }: ServicesProps) {
                 <div className="service-footer">
                   <div className="service-meta">
                     <Clock className="w-4 h-4 mr-2" />
-                    {service.duration && service.duration !== 0 ? `${service.duration} ` : ""}{t('min', { defaultValue: 'мин' })}
+                    {service.duration && service.duration !== 0 ? `${service.duration} ` : ""}{t('min')}
                   </div>
                   <Button
                     size="sm"
@@ -226,7 +226,7 @@ export function Services({ initialServices }: ServicesProps) {
                       document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
                     }}
                   >
-                    {t('book', { defaultValue: 'Записаться' })}
+                    {t('book')}
                   </Button>
 
                 </div>
@@ -237,7 +237,7 @@ export function Services({ initialServices }: ServicesProps) {
 
         {displayedServices.length === 0 && (
           <div className="text-center py-12 text-muted-foreground">
-            {t('noServicesFound', { defaultValue: 'Услуги не найдены' })}
+            {t('noServicesFound')}
           </div>
         )}
 
@@ -248,7 +248,7 @@ export function Services({ initialServices }: ServicesProps) {
               onClick={() => setDisplayCount((prev) => prev + LIMITS.DISPLAY_SERVICES_COUNT)}
               className="rounded-full px-8 border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground"
             >
-              {t('showMore', { defaultValue: 'Показать еще' })} ({filteredServices.length - displayCount})
+              {t('showMore')} ({filteredServices.length - displayCount})
             </Button>
           </div>
         )}

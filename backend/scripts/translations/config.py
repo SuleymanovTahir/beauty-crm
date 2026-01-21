@@ -39,11 +39,6 @@ TRANSLATION_CONFIG = {
         "fields": ["title_ru", "subtitle_ru"],
         "where": "is_active = TRUE"
     },
-    "salon_news": {
-        "id_field": "id",
-        "fields": ["title_ru", "content_ru"],
-        "where": "is_active = TRUE"
-    },
     "active_challenges": {
         "id_field": "id",
         "fields": ["title_ru", "description_ru"],
@@ -53,6 +48,16 @@ TRANSLATION_CONFIG = {
         "id_field": "id",
         "fields": ["title", "description"],
         "where": "is_visible = TRUE"
+    },
+    "pipeline_stages": {
+        "id_field": "id",
+        "fields": ["name"],
+        "where": "is_active = TRUE"
+    },
+    "invoice_stages": {
+        "id_field": "id",
+        "fields": ["name"],
+        "where": "is_active = TRUE"
     }
 }
 

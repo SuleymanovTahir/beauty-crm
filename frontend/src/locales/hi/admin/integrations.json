@@ -39,7 +39,7 @@
         "name": "2GIS"
       },
       "amazon": {
-        "description": "Amazon Marketplace",
+        "description": "Amazon मार्केटप्लेस",
         "name": "Amazon"
       },
       "booksy": {
@@ -52,11 +52,11 @@
       },
       "ozon": {
         "description": "ओजोन मार्केटप्लेस",
-        "name": "Ozon"
+        "name": "ओजोन"
       },
       "wildberries": {
         "description": "मार्केटप्लेस WB",
-        "name": "Wildberries"
+        "name": "वाइल्डबेरी"
       },
       "yandex_maps": {
         "description": "Yandex.Maps से रिकॉर्ड और समीक्षाएं",
@@ -64,7 +64,7 @@
       },
       "yclients": {
         "description": "ऑनलाइन रिकॉर्डिंग प्लेटफ़ॉर्म",
-        "name": "YCLIENTS"
+        "name": "Yग्राहक"
       }
     },
     "reviews": "समीक्षाएं",

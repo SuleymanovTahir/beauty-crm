@@ -3,18 +3,18 @@
   "apply": "Қолдану",
   "avg_check": "Орташа чек",
   "avg_time": "Орташа уақыт",
-  "booked": "Тіркелді",
+  "booked": "Записались",
   "booking_statuses": "Жазба күйлері",
   "bookings": "Жазбалар",
   "bookings_trend": "Жазбалардың динамикасы",
   "clarify_services": "Қызметтерді түсіндіру",
-  "completed": "Барған",
+  "completed": "Посетили",
   "conversation_stage": "Диалог кезеңі",
   "conversion": "Түрлендіру",
   "detailed_analysis": "Салон жұмысының егжей-тегжейлі талдауы",
   "drop_off_analysis": "Үздіксіз оқудан шығуды талдау",
   "drop_offs": "Экспорттан бас тарту",
-  "engaged": "Келушілер</z4> <z5>Тіркелді",
+  "engaged": "Қатысқан",
   "errors": {
     "export_failed": "Файлды экспорттау қатесі",
     "invalid_date_range": "Бастау күні аяқталу күнінен бұрын болуы керек",
@@ -31,8 +31,8 @@
     "conversion": {
       "booked_to_completed": "Тіркелді -> Барды",
       "booking_to_booked": "Басталды -> Тіркелді",
-      "engaged_to_booking": "Қатысты -> Жазуды бастады",
-      "visitor_to_engaged": "Келуші -> Қатысқан"
+      "engaged_to_booking": "Вовлечен -> Начал запись",
+      "visitor_to_engaged": "Посетитель -> Вовлечен"
     },
     "desc": {
       "booked": "Тіркеу аяқталды",
@@ -41,24 +41,24 @@
       "started_booking": "Тіркеу формасын ашты",
       "visitors": "Веб-сайтқа/әлеуметтік желіге кірушілер"
     },
-    "losses_few": "Шығын: {{count}}",
-    "losses_many": "Шығын: {{count}}",
-    "losses_one": "Жоғалту: {{count}}",
-    "losses_other": "Шығын: {{count}}",
+    "losses_few": "Жоғал: {{count}}",
+    "losses_many": "Жоғал: {{count}}",
+    "losses_one": "Жоғал: {{count}}",
+    "losses_other": "Жоғал: {{count}}",
     "stages": {
-      "booked": "Тіркелді",
-      "completed": "Кірді",
+      "booked": "Записались",
+      "completed": "Посетили",
       "engaged": "Қатысқан",
-      "started_booking": "Жазуды бастады",
-      "visitors": "Келушілер"
+      "started_booking": "Начали запись",
+      "visitors": "Посетители"
     }
   },
-  "funnel_chart": "Шұңқыр диаграммасы",
+  "funnel_chart": "График воронки",
   "funnel_overview": "Сату шұңқыры",
   "improve_greeting": "Сәлемдесуді жақсарту",
   "income": "Табыс",
   "min": "min",
-  "name": "Аты",
+  "name": "Имя",
   "need_more_masters": "Қосымша мамандар қажет",
   "optimization_tip": "Оңтайландыру бойынша кеңес",
   "peak_hours": "Пик сағаттар",
@@ -83,7 +83,7 @@
     "completed": "Аяқталды",
     "confirmed": "Расталған",
     "no_show": "Келген жоқ",
-    "pending": "Күтуде"
+    "pending": "Ожидает"
   },
   "success": {
     "file_downloaded": "Файл сәтті жүктелді"
@@ -91,7 +91,7 @@
   "title": "Analytics",
   "top_services": "Танымал қызметтер",
   "try_again": "Қайталап көріңіз",
-  "visitors": "Келушілер",
+  "visitors": "Посетители",
   "where_clients_leave": "Тұтынушылар қайда кетеді?",
   "work_on_objections": "Қарсылықтармен жұмыс істеу"
 }

@@ -4,9 +4,9 @@
   "delete_batch_confirm_one": "Таңдалған {{count}} жазбаларды жою керек пе?",
   "delete_batch_confirm_few": "Таңдалған {{count}} жазбаларды жою қажет пе?",
   "delete_batch_confirm_many": "Таңдалған {{count}} жазбаларды жою керек пе?",
-  "delete_batch_confirm_other": "[[VAR0]]] жазбаларды жою керек пе?",
+  "delete_batch_confirm_other": "{{count}} жазбалар жойылсын ба?",
   "delete_confirm": "Осы жазбаны қалпына келтіру мүмкіндігінсіз жою керек пе?",
-  "delete_selected": "Таңдалған файлды жою",
+  "delete_selected": "Таңдалғандарды жою",
   "details": {
     "ip": "IP",
     "new_data": "Жаңа деректер",
@@ -19,7 +19,7 @@
   "filter_create": "Жасау",
   "filter_delete": "Жою",
   "filter_delete_all": "Журналды тазалау",
-  "filter_login": "Жазу",
+  "filter_login": "Запись",
   "filter_restore": "Қалпына келтіру",
   "filter_update": "Өзгерту",
   "search_placeholder": "Пайдаланушы, нысан немесе әрекет бойынша іздеу...",
@@ -34,16 +34,16 @@
     "entity": "Нысан",
     "error": "ҚАТЕ",
     "loading": "Жүктелуде...",
-    "status": "Күйі",
+    "status": "Статус",
     "success": "СӘТТІЛІК",
     "time": "Уақыт",
-    "user": "Пайдаланушы</z45>"
+    "user": "Пайдаланушы"
   },
   "title": "Аудит журналы",
   "toast": {
     "clear_error": "Журналды тазалау қатесі",
     "clear_success": "Тексеру журналы сәтті тазартылды",
-    "delete_error": "Жою кезіндегі қате",
+    "delete_error": "Жою",
     "delete_success": "Жазба(лар) жойылды",
     "load_error": "Тексеру журналын жүктеу кезіндегі қате"
   }

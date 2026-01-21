@@ -21,7 +21,7 @@ import {
     Bell
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
+import * as dateLocales from 'date-fns/locale';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import { Badge } from "../../components/ui/badge";
@@ -77,6 +77,34 @@ export default function Funnel() {
 
     // View state
     const [viewMode, setViewMode] = useState<'board' | 'list'>('board');
+
+    const { i18n } = useTranslation();
+
+    // Get date-fns locale mapping
+    const getLocale = () => {
+        const lang = i18n.language;
+        if (lang === 'ru') return dateLocales.ru;
+        if (lang === 'ar') return dateLocales.ar;
+        if (lang === 'kk') return dateLocales.kk;
+        if (lang === 'de') return dateLocales.de;
+        if (lang === 'es') return dateLocales.es;
+        if (lang === 'fr') return dateLocales.fr;
+        if (lang === 'hi') return dateLocales.hi;
+        if (lang === 'pt') return dateLocales.pt;
+        return dateLocales.enUS;
+    };
+
+    // Translation markers for i18next-parser
+    // Translation markers for i18next-parser
+    t('stages.new', { defaultValue: 'Новые' });
+    t('stages.contacted', { defaultValue: 'В работе' });
+    t('stages.negotiation', { defaultValue: 'Переговоры' });
+    t('stages.decision', { defaultValue: 'Принимают решение' });
+    t('stages.won', { defaultValue: 'Успешно реализовано' });
+    t('stages.lost', { defaultValue: 'Закрыто и не реализовано' });
+    t('stages.remind_later', { defaultValue: 'Напомнить позже' });
+    t('stages.visited', { defaultValue: 'Визит' });
+    t('stages.booked', { defaultValue: 'Запись' });
 
     useEffect(() => {
         loadData();
@@ -470,7 +498,7 @@ export default function Funnel() {
                                                         </div>
                                                         <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
                                                             <Clock className="w-3 h-3 text-gray-400" />
-                                                            {format(new Date(client.last_contact), 'dd MMM HH:mm', { locale: ru })}
+                                                            {format(new Date(client.last_contact), 'dd MMM HH:mm', { locale: getLocale() })}
                                                         </div>
                                                     </div>
 
@@ -484,7 +512,7 @@ export default function Funnel() {
                                                     {client.reminder_date && (
                                                         <div className="flex items-center gap-1 mt-1.5 text-xs text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full w-fit">
                                                             <Bell className="w-3 h-3" />
-                                                            {format(new Date(client.reminder_date), 'dd MMM HH:mm', { locale: ru })}
+                                                            {format(new Date(client.reminder_date), 'dd MMM HH:mm', { locale: getLocale() })}
                                                         </div>
                                                     )}
 
@@ -596,7 +624,7 @@ export default function Funnel() {
                                                             </div>
                                                         </td>
                                                         <td className="px-6 py-4 text-gray-500">
-                                                            {format(new Date(client.last_contact), 'dd MMM HH:mm', { locale: ru })}
+                                                            {format(new Date(client.last_contact), 'dd MMM HH:mm', { locale: getLocale() })}
                                                         </td>
                                                         <td className="px-6 py-4 text-right font-medium text-gray-900">
                                                             {client.total_spend > 0 ? `${client.total_spend} ${currency}` : '-'}

@@ -7,7 +7,7 @@
   "create_new_plan": "Жаңа жоспар жасау",
   "create_plan": "Жоспар жасау",
   "delete": "Жою",
-  "description": "Сипаттама",
+  "description": "Описание",
   "end_date": "Аяқтау күні",
   "error_creating_plan": "Жоспар құру қатесі",
   "error_deleting_plan": "Жоспарды жою кезіндегі қате",
@@ -29,7 +29,7 @@
     "custom": "Сіздің кезеңіңіз",
     "month": "Ай",
     "quarter": "Тоқсан",
-    "two_weeks": "[[VAR0]]] апта",
+    "two_weeks": "{{count}} апта",
     "week": "Апта",
     "year": "Жыл"
   },
@@ -46,5 +46,5 @@
   "start_date": "Бастау күні",
   "target_value": "Мақсатты мән",
   "unit": "Бірлік. өңдеу",
-  "user": "Қызметкер"
+  "user": "Сотрудник"
 }

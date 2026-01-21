@@ -65,11 +65,12 @@
   },
   "status": "Status",
   "statuses": {
-    "cancelled": "Storniert",
+    "cancelled": "Abgesagt",
     "draft": "Entwurf",
     "overdue": "Überfällig",
     "paid": "Bezahlt",
     "partial": "Teilweise bezahlt",
+    "partially_paid": "Teilweise bezahlt",
     "sent": "Gesendet"
   },
   "subtitle": "Rechnungen und Zahlungen verwalten",

@@ -11,7 +11,7 @@
   "card": {
     "featured": "Таңдаулылар",
     "toggle_featured": "Таңдаулыларды қосу/өшіру",
-    "uploaded_by": "{{name}} жүктеген",
+    "uploaded_by": "Жүктеп салынды {{name}}",
     "views": "көрулер"
   },
   "dialogs": {
@@ -24,19 +24,19 @@
         "after_photo": "Фотосуреттен кейін",
         "before_after": "Фотосуретке дейін/кейін",
         "before_photo": "«Бұрын» фотосы",
-        "category": "Санат",
+        "category": "Категория",
         "client": "Клиент",
         "client_hint": "Фотосурет клиент галереясында қолжетімді болады",
-        "description": "Сипаттамасы",
+        "description": "Описание",
         "description_placeholder": "Фото сипаттамасы",
         "photo": "Фото",
-        "select_client": "Клиентті таңдау",
+        "select_client": "Клиент таңдау",
         "single_photo": "Бір фотосурет",
-        "title": "Тақырып",
+        "title": "Аты",
         "title_placeholder": "Фото атауы",
         "upload_type": "Жүктеп салу түрі"
       },
-      "title": "Фотосуреттерді жүктеп салу"
+      "title": "Фотосуретті жүктеп салу"
     }
   },
   "empty": {
@@ -67,5 +67,5 @@
     "uploaded": "Фотосурет жүктеп салынды",
     "visibility_updated": "Visibility updated"
   },
-  "upload_photo": "Фотосурет жүктеп салу"
+  "upload_photo": "Фотосуретті жүктеп салу"
 }

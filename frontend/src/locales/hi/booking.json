@@ -57,7 +57,7 @@
   "continue_professional": "विशेषज्ञ का चयन करना जारी रखें",
   "continue_services": "सेवाओं का चयन करना जारी रखें",
   "date_format_hint": "प्रारूप: DD.MM.YYYY",
-  "date_format_hint_en": "Format: MM/DD/YYYY",
+  "date_format_hint_en": "प्रारूप: MM/DD/YYYY",
   "datetime": {
     "date": "तिथि चुनें",
     "noSlots": "कोई विंडो उपलब्ध नहीं है",
@@ -66,7 +66,7 @@
     "title": "तिथि और समय"
   },
   "formDate": "तिथि",
-  "formDatePlaceholder": "Выберите дату",
+  "formDatePlaceholder": "तिथि चुनें",
   "formName": "नाम",
   "formNamePlaceholder": "आपका नाम",
   "formPhone": "फोन",

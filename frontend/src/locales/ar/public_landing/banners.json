@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "title": "الجمال والأناقة",
+      "subtitle": "خدمات التجميل المهنية",
+      "image_url": "/static/uploads/images/faces/banner2.webp",
+      "link_url": "/services",
+      "bg_pos_desktop_x": 50,
+      "bg_pos_desktop_y": 50,
+      "bg_pos_mobile_x": 50,
+      "bg_pos_mobile_y": 50,
+      "is_flipped_horizontal": false,
+      "is_flipped_vertical": false
+    },
+    {
+      "title": "خصومات تصل إلى 50%",
+      "subtitle": "لجميع خدمات الصالون",
+      "image_url": "/static/uploads/images/faces/Мароканская баня.webp",
+      "link_url": "/services",
+      "bg_pos_desktop_x": 50,
+      "bg_pos_desktop_y": 50,
+      "bg_pos_mobile_x": 50,
+      "bg_pos_mobile_y": 50,
+      "is_flipped_horizontal": false,
+      "is_flipped_vertical": false
+    }
+  ]
+}
