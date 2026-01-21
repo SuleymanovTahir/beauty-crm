@@ -15,7 +15,7 @@ interface PendingUser {
 }
 
 const PendingRegistrations: React.FC = () => {
-    const { t } = useTranslation('admin/pending_registrations');
+    const { t } = useTranslation(['admin/pending_registrations', 'common']);
     const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -266,10 +266,7 @@ const PendingRegistrations: React.FC = () => {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}>
-                                                    {user.role === 'director' ? t('role_director') :
-                                                        user.role === 'manager' ? t('role_manager') :
-                                                            user.role === 'employee' ? t('role_employee') :
-                                                                user.role === 'admin' ? t('role_admin') : user.role}
+                                                    {t(`common:role_${user.role}`, user.role)}
                                                 </span>
                                                 {user.email_verified && (
                                                     <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">

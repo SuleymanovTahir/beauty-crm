@@ -219,19 +219,19 @@ export default function CreateUser() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="director">{t('role_director')}</SelectItem>
-                  <SelectItem value="admin">{t('role_admin')}</SelectItem>
-                  <SelectItem value="manager">{t('role_manager')}</SelectItem>
-                  <SelectItem value="sales">{t('role_sales')}</SelectItem>
-                  <SelectItem value="marketer">{t('role_marketer')}</SelectItem>
-                  <SelectItem value="employee">{t('role_employee')}</SelectItem>
+                  <SelectItem value="director">{t('common:role_director')}</SelectItem>
+                  <SelectItem value="admin">{t('common:role_admin')}</SelectItem>
+                  <SelectItem value="manager">{t('common:role_manager')}</SelectItem>
+                  <SelectItem value="sales">{t('common:role_sales')}</SelectItem>
+                  <SelectItem value="marketer">{t('common:role_marketer')}</SelectItem>
+                  <SelectItem value="employee">{t('common:role_employee')}</SelectItem>
                 </SelectContent>
               </Select>
               <div className="mt-2 p-4 bg-gray-50 rounded-lg text-sm text-gray-600 space-y-1">
-                <p><strong>{t('role_director')}:</strong> {t('role_director_desc')}</p>
-                <p><strong>{t('role_admin')}:</strong> {t('role_admin_desc')}</p>
-                <p><strong>{t('role_manager')}:</strong> {t('role_manager_desc')}</p>
-                <p><strong>{t('role_employee')}:</strong> {t('role_employee_desc')}</p>
+                <p><strong>{t('common:role_director')}:</strong> {t('role_director_desc')}</p>
+                <p><strong>{t('common:role_admin')}:</strong> {t('role_admin_desc')}</p>
+                <p><strong>{t('common:role_manager')}:</strong> {t('role_manager_desc')}</p>
+                <p><strong>{t('common:role_employee')}:</strong> {t('role_employee_desc')}</p>
               </div>
             </div>
 

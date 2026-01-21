@@ -24,7 +24,7 @@ interface Permissions {
 }
 
 export default function PermissionManagement() {
-  const { t, i18n } = useTranslation('admin/permissionmanagement');
+  const { t, i18n } = useTranslation(['admin/permissionmanagement', 'common']);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [permissions, setPermissions] = useState<Permissions>({});
@@ -148,7 +148,7 @@ export default function PermissionManagement() {
                   <div className="font-medium text-gray-900">{user.full_name}</div>
                   <div className="text-sm text-gray-500">@{user.username}</div>
                   <div className="text-xs text-gray-400 mt-1 capitalize">
-                    {user.role}
+                    {t(`common:role_${user.role}`, user.role)}
                   </div>
                 </button>
               ))}
@@ -165,7 +165,7 @@ export default function PermissionManagement() {
                   {t('permissions_for_user', { name: selectedUser.full_name })}
                 </h2>
                 <p className="text-sm text-gray-500">
-                  {t('role_label')} <span className="capitalize">{selectedUser.role}</span>
+                  {t('role_label')} <span className="capitalize">{t(`common:role_${selectedUser.role}`, selectedUser.role)}</span>
                 </p>
               </div>
 

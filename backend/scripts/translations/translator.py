@@ -567,15 +567,18 @@ class Translator:
         batch_size = 50
         variable_pattern = r'\{\{([^}]+)\}\}'
         for i in range(0, len(to_translate_texts), batch_size):
+            if len(to_translate_texts) > 50:
+                print(f"      Progress ({target}): {i}/{len(to_translate_texts)}...")
             batch = to_translate_texts[i:i+batch_size]; batch_indices = to_translate_indices[i:i+batch_size]
             protected_batch = []; batch_variable_maps = []
             for text in batch:
                 variables = re.findall(variable_pattern, text); var_map = {}; t2t = text
-                for idx, var in enumerate(variables): placeholder = f"[[[V{idx}]]]"; var_map[placeholder] = f"{{{{{var}}}}}"; t2t = t2t.replace(f"{{{{{var}}}}}", placeholder)
+                for idx, var in enumerate(variables): placeholder = f"[[[V{idx}]]]"; var_map[placeholder] = f"{{{{{var}}}}}" ; t2t = t2t.replace(f"{{{{{var}}}}}", placeholder)
                 protected_batch.append(t2t); batch_variable_maps.append(var_map)
             batch_with_tags = "".join([f"<z{j}>{t}</z{j}> " for j, t in enumerate(protected_batch)])
             try:
                 raw = self._translate_via_http(batch_with_tags, source, target, use_context=use_context)
+                time.sleep(0.3) # Anti-rate-limit
                 for j in range(len(batch)):
                     tag_start, tag_end = f"<z{j}>", f"</z{j}>"
                     s_idx = raw.find(tag_start)
