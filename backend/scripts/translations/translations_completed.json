@@ -1,42 +1,6 @@
 {
   "users": [
     {
-      "id": 5,
-      "fields": {
-        "position": {
-          "ru": "Ногти/ваксинг",
-          "key": "users.5.position.0e33fa6b",
-          "en": "Nails/waxing",
-          "ar": "الأظافر/الصبح",
-          "es": "Uñas/Cera",
-          "de": "Nägel/Wachsen",
-          "fr": "Ongle/Épilation",
-          "hi": "नाखून/वैक्सिंग",
-          "kk": "Ногти/ваксинг",
-          "pt": "Prego/Depilação",
-          "detected_language": "en"
-        }
-      }
-    },
-    {
-      "id": 6,
-      "fields": {
-        "position": {
-          "ru": "Мастер ногтевого сервиса/массаж",
-          "key": "users.6.position.d68a2270",
-          "en": "Nail technician/massage",
-          "ar": "ماجستير الأظافر/التدليك",
-          "es": "Maestro de uñas/Masajes",
-          "de": "Nagelmeister/Massagen",
-          "fr": "Maître des Ongles/Massages",
-          "hi": "नेल मास्टर/मालिश",
-          "kk": "Мастер ногтевого сервиса/массаж",
-          "pt": "Mestre de unhas/massagens",
-          "detected_language": "en"
-        }
-      }
-    },
-    {
       "id": 7,
       "fields": {
         "position": {
@@ -73,24 +37,6 @@
       }
     },
     {
-      "id": 4,
-      "fields": {
-        "position": {
-          "ru": "Мастер ногтевого сервиса",
-          "key": "users.4.position.1c34eb1b",
-          "en": "Nail service master",
-          "ar": "سيد الأظافر",
-          "es": "Maestro de uñas",
-          "de": "Nagelmeister",
-          "fr": "Maître des Ongles",
-          "hi": "नेल मास्टर",
-          "kk": "Мастер ногтевого сервиса",
-          "pt": "Mestre de unhas",
-          "detected_language": "en"
-        }
-      }
-    },
-    {
       "id": 2,
       "fields": {
         "position": {
@@ -107,15 +53,69 @@
           "detected_language": "en"
         }
       }
+    },
+    {
+      "id": 5,
+      "fields": {
+        "position": {
+          "ru": "Ногти/ваксинг",
+          "key": "users.5.position.0e33fa6b",
+          "en": "Nails/waxing",
+          "ar": "الأظافر/الصبح",
+          "es": "Uñas/Cera",
+          "de": "Nägel/Wachsen",
+          "fr": "Ongle/Épilation",
+          "hi": "नाखून/वैक्सिंग",
+          "kk": "Ногти/ваксинг",
+          "pt": "Prego/Depilação",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "position": {
+          "ru": "Мастер ногтевого сервиса/массаж",
+          "key": "users.6.position.d68a2270",
+          "en": "Nail technician/massage",
+          "ar": "ماجستير الأظافر/التدليك",
+          "es": "Maestro de uñas/Masajes",
+          "de": "Nagelmeister/Massagen",
+          "fr": "Maître des Ongles/Massages",
+          "hi": "नेल मास्टर/मालिश",
+          "kk": "Мастер ногтевого сервиса/массаж",
+          "pt": "Mestre de unhas/massagens",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "fields": {
+        "position": {
+          "ru": "Мастер ногтевого сервиса",
+          "key": "users.4.position.1c34eb1b",
+          "en": "Nail service master",
+          "ar": "سيد الأظافر",
+          "es": "Maestro de uñas",
+          "de": "Nagelmeister",
+          "fr": "Maître des Ongles",
+          "hi": "नेल मास्टर",
+          "kk": "Мастер ногтевого сервиса",
+          "pt": "Mestre de unhas",
+          "detected_language": "en"
+        }
+      }
     }
   ],
   "public_reviews": [
     {
-      "id": 30,
+      "id": 33,
       "fields": {
         "text_ru": {
           "ru": "Лучший салон красоты в Дубае! ",
-          "key": "public_reviews.30.text_ru.6f00ad70",
+          "key": "public_reviews.33.text_ru.6f00ad70",
           "en": "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!",
           "ar": "أفضل صالون تجميل في دبي! ",
           "es": "¡El mejor salón de belleza en Dubai! ",
@@ -125,6 +125,187 @@
           "kk": "Дубайдағы ең жақсы сұлулық салоны! ",
           "pt": "Melhor salão de beleza em Dubai! ",
           "detected_language": "en"
+        },
+        "author_name": {
+          "ru": "Сара Дженкинс",
+          "key": "public_reviews.33.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins",
+          "detected_language": "en"
+        },
+        "employee_position": {
+          "ru": "Ресницы",
+          "key": "public_reviews.33.employee_position.5b1b1d5e",
+          "en": "Eyelashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 34,
+      "fields": {
+        "text_ru": {
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.34.text_ru.f38138da",
+          "en": "Incredible service. ",
+          "ar": "خدمة لا تصدق. كان لدي وجه وبشرتي تتوهج. سأعود بالتأكيد!",
+          "es": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
+          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
+          "fr": "Service incroyable. J'ai eu un soin du visage et ma peau est éclatante. Je reviendrai c'est sûr !",
+          "hi": "अविश्वसनीय सेवा. मैंने फेशियल कराया और मेरी त्वचा चमक उठी। मै अवश्य ही लौट कर आउंगा!",
+          "kk": "Керемет қызмет. Менде бет күтімі болды, терім жылтырап кетті. Мен міндетті түрде ораламын!",
+          "pt": "Serviço incrível. Fiz um tratamento facial e minha pele brilha. Voltarei com certeza!",
+          "detected_language": "es"
+        },
+        "author_name": {
+          "ru": "Мария Гонсалес",
+          "key": "public_reviews.34.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González",
+          "detected_language": "en"
+        },
+        "employee_position": {
+          "ru": "Уход за лицом",
+          "key": "public_reviews.34.employee_position.9a3a91ca",
+          "en": "Facial Treatment",
+          "ar": "علاج الوجه",
+          "es": "Tratamiento Facial",
+          "de": "Gesichtsbehandlung",
+          "fr": "Traitement du visage",
+          "hi": "चेहरे का उपचार",
+          "kk": "Бет күтімі",
+          "pt": "Tratamento Facial",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 35,
+      "fields": {
+        "text_ru": {
+          "ru": "Отличный сервис и профессиональный персонал. ",
+          "key": "public_reviews.35.text_ru.ae85e84b",
+          "en": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
+          "ar": "خدمة ممتازة وفريق عمل محترف. ",
+          "es": "Excelente servicio y personal profesional. ",
+          "de": "Exzellenter Service und professionelles Personal. ",
+          "fr": "Excellent service et personnel professionnel. ",
+          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी। ",
+          "kk": "Тамаша қызмет көрсету және кәсіби персонал. ",
+          "pt": "Excelente atendimento e equipe profissional. ",
+          "detected_language": "en"
+        },
+        "author_name": {
+          "ru": "Фатима Аль-Сайед",
+          "key": "public_reviews.35.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима Әл-Сайед",
+          "pt": "Fátima Al-Sayed",
+          "detected_language": "en"
+        },
+        "employee_position": {
+          "ru": "Микроблейдинг",
+          "key": "public_reviews.35.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "employee_position": {
+          "ru": "Маникюр и педикюр",
+          "key": "public_reviews.3.employee_position.8e5cfdfa",
+          "en": "Manicure and pedicure",
+          "ar": "مانيكير وباديكير",
+          "es": "Manicura y Pedicura",
+          "de": "Maniküre und Pediküre",
+          "fr": "Manucure et Pédicure",
+          "hi": "मैनीक्योर और पेडीक्योर",
+          "kk": "Маникюр и педикюр",
+          "pt": "Manicura e Pedicura",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "fields": {
+        "author_name": {
+          "ru": "Фатима Аль-Сайед",
+          "key": "public_reviews.8.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима Аль-Сайед",
+          "pt": "Fátima Al-Sayed",
+          "detected_language": "en"
+        },
+        "employee_position": {
+          "ru": "Микроблейдинг",
+          "key": "public_reviews.8.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 30,
+      "fields": {
+        "text_ru": {
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.30.text_ru.d04583b6",
+          "en": "The best beauty salon in Dubai!",
+          "ar": "أفضل صالون تجميل في دبي!",
+          "es": "¡El mejor salón de belleza de Dubai!",
+          "de": "Der beste Schönheitssalon in Dubai!",
+          "fr": "Le meilleur salon de beauté de Dubaï !",
+          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
+          "kk": "Дубайдағы ең жақсы сұлулық салоны!",
+          "pt": "O melhor salão de beleza de Dubai!",
+          "detected_language": "ru"
         },
         "author_name": {
           "ru": "Сара Дженкинс",
@@ -159,16 +340,16 @@
       "fields": {
         "text_ru": {
           "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "key": "public_reviews.31.text_ru.f38138da",
+          "key": "public_reviews.31.text_ru.784d2781",
           "en": "Incredible service. ",
-          "ar": "خدمة لا تصدق. كان لدي وجه وبشرتي تتوهج. سأعود بالتأكيد!",
-          "es": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
+          "ar": "خدمة لا تصدق. كان لدي وجه وبشرتي متوهجة. سأعود بالتأكيد!",
+          "es": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!",
           "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Service incroyable. J'ai eu un soin du visage et ma peau est éclatante. Je reviendrai c'est sûr !",
-          "hi": "अविश्वसनीय सेवा. मैंने फेशियल कराया और मेरी त्वचा चमक उठी। मै अवश्य ही लौट कर आउंगा!",
-          "kk": "Керемет қызмет. Менде бет күтімі болды, терім жылтырап кетті. Мен міндетті түрде ораламын!",
-          "pt": "Serviço incrível. Fiz um tratamento facial e minha pele brilha. Voltarei com certeza!",
-          "detected_language": "es"
+          "fr": "Service incroyable. J'ai eu un soin du visage et ma peau est éclatante. Je reviendrai certainement!",
+          "hi": "अविश्वसनीय सेवा. मैंने फेशियल करवाया और मेरी त्वचा चमक रही है। मैं निश्चित ही वापस आउंगा!",
+          "kk": "Керемет қызмет. Мен бет күтімін жасадым, терім жылтырап жатыр. Мен міндетті түрде қайтамын!",
+          "pt": "Serviço incrível. Fiz um tratamento facial e minha pele está brilhando. Eu definitivamente voltarei!",
+          "detected_language": "ru"
         },
         "author_name": {
           "ru": "Мария Гонсалес",
@@ -203,16 +384,16 @@
       "fields": {
         "text_ru": {
           "ru": "Отличный сервис и профессиональный персонал. ",
-          "key": "public_reviews.32.text_ru.ae85e84b",
-          "en": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
-          "ar": "خدمة ممتازة وفريق عمل محترف. ",
-          "es": "Excelente servicio y personal profesional. ",
-          "de": "Exzellenter Service und professionelles Personal. ",
-          "fr": "Excellent service et personnel professionnel. ",
-          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी। ",
-          "kk": "Тамаша қызмет көрсету және кәсіби персонал. ",
-          "pt": "Excelente atendimento e equipe profissional. ",
-          "detected_language": "en"
+          "key": "public_reviews.32.text_ru.33473c5f",
+          "en": "Excellent service and professional staff.",
+          "ar": "خدمة ممتازة وفريق عمل محترف.",
+          "es": "Excelente servicio y personal profesional.",
+          "de": "Exzellenter Service und professionelles Personal.",
+          "fr": "Excellent service et personnel professionnel.",
+          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी।",
+          "kk": "Тамаша қызмет көрсету және кәсіби персонал.",
+          "pt": "Excelente atendimento e equipe profissional.",
+          "detected_language": "ru"
         },
         "author_name": {
           "ru": "Фатима Аль-Сайед",
@@ -243,39 +424,8 @@
       }
     },
     {
-      "id": 3,
-      "fields": {
-        "employee_position": {
-          "ru": "Маникюр и педикюр",
-          "key": "public_reviews.3.employee_position.8e5cfdfa",
-          "en": "Manicure and pedicure",
-          "ar": "مانيكير وباديكير",
-          "es": "Manicura y Pedicura",
-          "de": "Maniküre und Pediküre",
-          "fr": "Manucure et Pédicure",
-          "hi": "मैनीक्योर और पेडीक्योर",
-          "kk": "Маникюр и педикюр",
-          "pt": "Manicura e Pedicura",
-          "detected_language": "en"
-        }
-      }
-    },
-    {
       "id": 27,
       "fields": {
-        "text_ru": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "key": "public_reviews.27.text_ru.d04583b6",
-          "en": "The best beauty salon in Dubai!",
-          "ar": "أفضل صالون تجميل في دبي!",
-          "es": "¡El mejor salón de belleza de Dubai!",
-          "de": "Der beste Schönheitssalon in Dubai!",
-          "fr": "Le meilleur salon de beauté de Dubaï !",
-          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
-          "kk": "Дубайдағы ең жақсы сұлулық салоны!",
-          "pt": "O melhor salão de beleza de Dubai!",
-          "detected_language": "ru"
-        },
         "author_name": {
           "ru": "Сара Дженкинс",
           "key": "public_reviews.27.author_name.ff715865",
@@ -307,19 +457,6 @@
     {
       "id": 28,
       "fields": {
-        "text_ru": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "key": "public_reviews.28.text_ru.784d2781",
-          "en": "Incredible service. ",
-          "ar": "خدمة لا تصدق. كان لدي وجه وبشرتي متوهجة. سأعود بالتأكيد!",
-          "es": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!",
-          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Service incroyable. J'ai eu un soin du visage et ma peau est éclatante. Je reviendrai certainement!",
-          "hi": "अविश्वसनीय सेवा. मैंने फेशियल करवाया और मेरी त्वचा चमक रही है। मैं निश्चित ही वापस आउंगा!",
-          "kk": "Керемет қызмет. Мен бет күтімін жасадым, терім жылтырап жатыр. Мен міндетті түрде қайтамын!",
-          "pt": "Serviço incrível. Fiz um tratamento facial e minha pele está brilhando. Eu definitivamente voltarei!",
-          "detected_language": "ru"
-        },
         "author_name": {
           "ru": "Мария Гонсалес",
           "key": "public_reviews.28.author_name.653816a6",
@@ -351,19 +488,6 @@
     {
       "id": 29,
       "fields": {
-        "text_ru": {
-          "ru": "Отличный сервис и профессиональный персонал. ",
-          "key": "public_reviews.29.text_ru.33473c5f",
-          "en": "Excellent service and professional staff.",
-          "ar": "خدمة ممتازة وفريق عمل محترف.",
-          "es": "Excelente servicio y personal profesional.",
-          "de": "Exzellenter Service und professionelles Personal.",
-          "fr": "Excellent service et personnel professionnel.",
-          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी।",
-          "kk": "Тамаша қызмет көрсету және кәсіби персонал.",
-          "pt": "Excelente atendimento e equipe profissional.",
-          "detected_language": "ru"
-        },
         "author_name": {
           "ru": "Фатима Аль-Сайед",
           "key": "public_reviews.29.author_name.f26d4aa2",
@@ -512,6 +636,37 @@
           "hi": "पलकें",
           "kk": "Ресницы",
           "pt": "Pestanas",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "fields": {
+        "author_name": {
+          "ru": "Фатима Аль-Сайед",
+          "key": "public_reviews.5.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима Аль-Сайед",
+          "pt": "Fátima Al-Sayed",
+          "detected_language": "en"
+        },
+        "employee_position": {
+          "ru": "Микроблейдинг",
+          "key": "public_reviews.5.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Микроблейдинг",
+          "pt": "Microblading",
           "detected_language": "en"
         }
       }
@@ -1044,37 +1199,6 @@
       }
     },
     {
-      "id": 8,
-      "fields": {
-        "author_name": {
-          "ru": "Фатима Аль-Сайед",
-          "key": "public_reviews.8.author_name.f26d4aa2",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Аль-Сайед",
-          "pt": "Fátima Al-Sayed",
-          "detected_language": "en"
-        },
-        "employee_position": {
-          "ru": "Микроблейдинг",
-          "key": "public_reviews.8.employee_position.65d6c03d",
-          "en": "Microblading",
-          "ar": "ميكروبليدينج",
-          "es": "microblading",
-          "de": "Microblading",
-          "fr": "Microblading",
-          "hi": "माइक्रोब्लैडिंग",
-          "kk": "Микроблейдинг",
-          "pt": "Microblading",
-          "detected_language": "en"
-        }
-      }
-    },
-    {
       "id": 1,
       "fields": {
         "employee_position": {
@@ -1119,37 +1243,6 @@
           "hi": "चेहरे का उपचार",
           "kk": "Уход за лицом",
           "pt": "Tratamento Facial",
-          "detected_language": "en"
-        }
-      }
-    },
-    {
-      "id": 5,
-      "fields": {
-        "author_name": {
-          "ru": "Фатима Аль-Сайед",
-          "key": "public_reviews.5.author_name.f26d4aa2",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Аль-Сайед",
-          "pt": "Fátima Al-Sayed",
-          "detected_language": "en"
-        },
-        "employee_position": {
-          "ru": "Микроблейдинг",
-          "key": "public_reviews.5.employee_position.65d6c03d",
-          "en": "Microblading",
-          "ar": "ميكروبليدينج",
-          "es": "microblading",
-          "de": "Microblading",
-          "fr": "Microblading",
-          "hi": "माइक्रोब्लैडिंग",
-          "kk": "Микроблейдинг",
-          "pt": "Microblading",
           "detected_language": "en"
         }
       }
@@ -1247,6 +1340,24 @@
       }
     },
     {
+      "id": 42,
+      "fields": {
+        "description_ru": {
+          "ru": "Профессиональная глубокая чистка",
+          "key": "services.42.description_ru.964e86eb",
+          "en": "Professional deep cleaning",
+          "ar": "التنظيف العميق الاحترافي",
+          "es": "Limpieza profunda profesional",
+          "de": "Professionelle Tiefenreinigung",
+          "fr": "Nettoyage en profondeur professionnel",
+          "hi": "पेशेवर गहरी सफ़ाई",
+          "kk": "Кәсіби терең тазалау",
+          "pt": "Limpeza profunda profissional",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
       "id": 23,
       "fields": {
         "description_ru": {
@@ -1319,78 +1430,6 @@
       }
     },
     {
-      "id": 12,
-      "fields": {
-        "description_ru": {
-          "ru": "Эпиляция рук до локтя",
-          "key": "services.12.description_ru.e9cb16e1",
-          "en": "Epilation of arms up to the elbow",
-          "ar": "إزالة شعر الذراعين حتى المرفق",
-          "es": "Depilación de brazos hasta el codo.",
-          "de": "Epilation der Arme bis zum Ellenbogen",
-          "fr": "Epilation des bras jusqu'au coude",
-          "hi": "कोहनी तक भुजाओं का एपिलेशन",
-          "kk": "Қолды шынтаққа дейін эпиляциялау",
-          "pt": "Depilação dos braços até o cotovelo",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 19,
-      "fields": {
-        "description_ru": {
-          "ru": "Профессиональная стрижка с укладкой",
-          "key": "services.19.description_ru.5d2597e1",
-          "en": "Professional haircut with styling",
-          "ar": "قصة شعر احترافية من تاريخ التصميم",
-          "es": "Corte de pelo profesional con peinado.",
-          "de": "Professioneller Haarschnitt mit Styling",
-          "fr": "Coupe de cheveux professionnelle avec stylisme",
-          "hi": "स्टाइल के साथ प्रोफेशनल हेयरकट",
-          "kk": "Сәндеумен кәсіби шаш қию",
-          "pt": "Corte de cabelo profissional com estilo",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 20,
-      "fields": {
-        "description_ru": {
-          "ru": "Профессиональная укладка волос",
-          "key": "services.20.description_ru.7cbd9728",
-          "en": "Professional hair styling",
-          "ar": "تصفيف الشعر الاحترافي",
-          "es": "Peinado profesional",
-          "de": "Professionelles Haarstyling",
-          "fr": "Coiffure professionnelle",
-          "hi": "पेशेवर हेयर स्टाइलिंग",
-          "kk": "Кәсіби шаш сәндеу",
-          "pt": "Estilo de cabelo profissional",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 42,
-      "fields": {
-        "description_ru": {
-          "ru": "Профессиональная глубокая чистка",
-          "key": "services.42.description_ru.964e86eb",
-          "en": "Professional deep cleaning",
-          "ar": "التنظيف العميق الاحترافي",
-          "es": "Limpieza profunda profesional",
-          "de": "Professionelle Tiefenreinigung",
-          "fr": "Nettoyage en profondeur professionnel",
-          "hi": "पेशेवर गहरी सफ़ाई",
-          "kk": "Кәсіби терең тазалау",
-          "pt": "Limpeza profunda profissional",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
       "id": 31,
       "fields": {
         "description_ru": {
@@ -1404,6 +1443,24 @@
           "hi": "प्राकृतिक बरौनी एक्सटेंशन",
           "kk": "Табиғи кірпіктерді ұзарту",
           "pt": "Extensões de cílios naturais",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "fields": {
+        "description_ru": {
+          "ru": "Эпиляция рук до локтя",
+          "key": "services.12.description_ru.e9cb16e1",
+          "en": "Epilation of arms up to the elbow",
+          "ar": "إزالة شعر الذراعين حتى المرفق",
+          "es": "Depilación de brazos hasta el codo.",
+          "de": "Epilation der Arme bis zum Ellenbogen",
+          "fr": "Epilation des bras jusqu'au coude",
+          "hi": "कोहनी तक भुजाओं का एपिलेशन",
+          "kk": "Қолды шынтаққа дейін эпиляциялау",
+          "pt": "Depilação dos braços até o cotovelo",
           "detected_language": "ru"
         }
       }
@@ -1427,19 +1484,19 @@
       }
     },
     {
-      "id": 52,
+      "id": 19,
       "fields": {
         "description_ru": {
-          "ru": "Смена обычного лака",
-          "key": "services.52.description_ru.9e0c18fa",
-          "en": "Changing regular varnish",
-          "ar": "تغيير الورنيش العادي",
-          "es": "Cambiar barniz normal",
-          "de": "Normalen Lack wechseln",
-          "fr": "Changer le vernis ordinaire",
-          "hi": "नियमित वार्निश बदलना",
-          "kk": "Кәдімгі лак ауыстыру",
-          "pt": "Troca de verniz normal",
+          "ru": "Профессиональная стрижка с укладкой",
+          "key": "services.19.description_ru.5d2597e1",
+          "en": "Professional haircut with styling",
+          "ar": "قصة شعر احترافية من تاريخ التصميم",
+          "es": "Corte de pelo profesional con peinado.",
+          "de": "Professioneller Haarschnitt mit Styling",
+          "fr": "Coupe de cheveux professionnelle avec stylisme",
+          "hi": "स्टाइल के साथ प्रोफेशनल हेयरकट",
+          "kk": "Сәндеумен кәсіби шаш қию",
+          "pt": "Corte de cabelo profissional com estilo",
           "detected_language": "ru"
         }
       }
@@ -1458,6 +1515,24 @@
           "hi": "कॉम्बो लेमिनेशन",
           "kk": "Комбо ламинация",
           "pt": "Laminação combinada",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 20,
+      "fields": {
+        "description_ru": {
+          "ru": "Профессиональная укладка волос",
+          "key": "services.20.description_ru.7cbd9728",
+          "en": "Professional hair styling",
+          "ar": "تصفيف الشعر الاحترافي",
+          "es": "Peinado profesional",
+          "de": "Professionelles Haarstyling",
+          "fr": "Coiffure professionnelle",
+          "hi": "पेशेवर हेयर स्टाइलिंग",
+          "kk": "Кәсіби шаш сәндеу",
+          "pt": "Estilo de cabelo profissional",
           "detected_language": "ru"
         }
       }
@@ -1494,6 +1569,24 @@
           "hi": "नियमित पॉलिश के साथ मैनीक्योर",
           "kk": "Кәдімгі лакпен маникюр",
           "pt": "Manicure com esmalte normal",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 52,
+      "fields": {
+        "description_ru": {
+          "ru": "Смена обычного лака",
+          "key": "services.52.description_ru.9e0c18fa",
+          "en": "Changing regular varnish",
+          "ar": "تغيير الورنيش العادي",
+          "es": "Cambiar barniz normal",
+          "de": "Normalen Lack wechseln",
+          "fr": "Changer le vernis ordinaire",
+          "hi": "नियमित वार्निश बदलना",
+          "kk": "Кәдімгі лак ауыстыру",
+          "pt": "Troca de verniz normal",
           "detected_language": "ru"
         }
       }
@@ -2023,19 +2116,6 @@
     {
       "id": 45,
       "fields": {
-        "name_ru": {
-          "ru": "пилинг",
-          "key": "services.45.name_ru.6702d959",
-          "en": "peeling",
-          "ar": "تقشير",
-          "es": "peladura",
-          "de": "Peeling",
-          "fr": "peeling",
-          "hi": "छीलना",
-          "kk": "пиллинг",
-          "pt": "peeling",
-          "detected_language": "mk"
-        },
         "description_ru": {
           "ru": "Химический пилинг",
           "key": "services.45.description_ru.8dea543f",
@@ -2072,19 +2152,6 @@
     {
       "id": 26,
       "fields": {
-        "name_ru": {
-          "ru": "балаяж",
-          "key": "services.26.name_ru.b9de746e",
-          "en": "balayage",
-          "ar": "balayage",
-          "es": "balayaje",
-          "de": "Balayage",
-          "fr": "balayage",
-          "hi": "Balayage",
-          "kk": "балажа",
-          "pt": "balayage",
-          "detected_language": "uk"
-        },
         "description_ru": {
           "ru": "Техника балаяж",
           "key": "services.26.description_ru.0d9921e5",
