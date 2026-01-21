@@ -9,6 +9,7 @@ import { formatInstagramUrl, formatWhatsAppUrl } from "../utils/urlUtils";
 import { useSalonInfo } from "../hooks/useSalonInfo";
 import { DEFAULT_VALUES } from "../utils/constants";
 import logo from "../styles/img/logo.png";
+import logoWebp from "../styles/img/logo.webp";
 
 const navigation = [
   { name: "Главная", href: "#home", key: "homeTag" },
@@ -126,17 +127,22 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
           <div className="flex justify-between items-center h-16 sm:h-20">
             <div className="flex-shrink-0">
               <a href="/" className="block">
-                <img
-                  src={logoUrl || logo}
-                  alt={salonName || DEFAULT_VALUES.DEFAULT_SALON_NAME_ALT}
-                  className="h-10 sm:h-12 w-auto object-contain"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    if (target.src !== logo) {
-                      target.src = logo;
-                    }
-                  }}
-                />
+                <picture>
+                  <source srcSet={logoUrl || logoWebp} type="image/webp" />
+                  <img
+                    src={logoUrl || logo}
+                    alt={salonName || DEFAULT_VALUES.DEFAULT_SALON_NAME_ALT}
+                    className="h-10 sm:h-12 w-auto object-contain"
+                    loading="eager"
+                    fetchPriority="high"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (target.src !== logo) {
+                        target.src = logo;
+                      }
+                    }}
+                  />
+                </picture>
               </a>
             </div>
 
