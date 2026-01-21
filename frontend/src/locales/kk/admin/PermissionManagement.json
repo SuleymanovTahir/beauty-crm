@@ -26,6 +26,7 @@
   "permissions_subtitle": "Настройте индивидуальные права для пользователей",
   "permissions_title": "Управление правами доступа",
   "role_label": "Роль:",
+  "saving": "Сохранение...",
   "select_user_prompt": "Выберите пользователя",
   "users_list_title": "Пользователи",
   "view_permission": "Просмотр"
