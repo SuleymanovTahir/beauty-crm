@@ -1,69 +1,69 @@
 {
   "buttons": {
-    "cancel": "Отмена",
-    "create_challenge": "Создать цель",
-    "update_challenge": "Сохранить изменения"
+    "cancel": "Бас тарту",
+    "create_challenge": "Мақсат жасау",
+    "update_challenge": "Өзгерістерді сақтау"
   },
   "card": {
     "check_progress": "Check Progress",
-    "completed": "завершено",
-    "progress": "Прогресс",
-    "pts": "баллов",
-    "reward": "Награда",
-    "target": "Цель"
+    "completed": "орындалды",
+    "progress": "Орындалу",
+    "pts": "ұпайлар",
+    "reward": "Марапат",
+    "target": "Мақсат"
   },
-  "create_challenge": "Создать новую цель",
+  "create_challenge": "Жаңа мақсат жасаңыз",
   "dialogs": {
     "create": {
-      "description": "Настройте параметры активности и бонус за выполнение",
+      "description": "Әрекет параметрлерін және аяқтау бонусын орнатыңыз",
       "form": {
-        "challenge_type": "Тип активности",
-        "description": "Описание задачи",
-        "description_placeholder": "Напр: Посетите салон {{count}} раза в этом месяце",
-        "end_date": "Дата окончания",
+        "challenge_type": "Әрекет түрі",
+        "description": "Тапсырма сипаттамасы",
+        "description_placeholder": "Мысалы: салонға осы айда {{count}} рет бару",
+        "end_date": "Аяқтау күні",
         "reward_placeholder": "{{points}}",
-        "reward_points": "бонусных баллов",
-        "start_date": "Дата начала",
+        "reward_points": "бонус ұпайлары",
+        "start_date": "Басталу күні",
         "target_placeholder": "{{count}}",
-        "target_value": "Целевое количество",
-        "title": "Название цели",
-        "title_placeholder": "Напр: Летнее преображение"
+        "target_value": "Мақсатты мөлшер",
+        "title": "Мақсат атауы",
+        "title_placeholder": "Мысалы: Жазғы өзгерту"
       },
-      "title": "Создание цели",
-      "title_edit": "Редактирование цели"
+      "title": "Мақсат жасау",
+      "title_edit": "Мақсатты өңдеу"
     },
     "delete": {
-      "confirm": "Вы уверены, что хотите удалить эту активность? Весь прогресс участников будет потерян."
+      "confirm": "Бұл әрекетті шынымен жойғыңыз келе ме? Қатысушылардың барлық үлгерімі жоғалады."
     }
   },
   "stats": {
-    "active_challenges": "Активных целей",
-    "completions": "Выполнений",
-    "total_participants": "Участников"
+    "active_challenges": "Белсенді мақсаттар",
+    "completions": "Аяқтады",
+    "total_participants": "Қатысушылар"
   },
   "statuses": {
-    "active": "Активный",
-    "completed": "Завершенный",
-    "upcoming": "Предстоящий"
+    "active": "Белсенді",
+    "completed": "Аяқталды",
+    "upcoming": "Алдағы"
   },
-  "subtitle": "Управление игровыми механиками и целями для повышения лояльности клиентов",
-  "title": "Цели и достижения",
+  "subtitle": "Клиенттер",
+  "title": "Мақсаттар мен жетістіктер",
   "toasts": {
-    "created": "Активность успешно создана",
-    "deleted": "Активность удалена",
+    "created": "Әрекет сәтті жасалды",
+    "deleted": "Әрекет жойылды",
     "failed_check_progress": "Failed to check progress",
-    "failed_create": "Ошибка при создании активности",
-    "failed_delete": "Ошибка при удалении",
-    "failed_load": "Не удалось загрузить данные",
-    "progress_checked_one": "Прогресс обновлен для {{count}} участника",
-    "progress_checked_few": "Прогресс обновлен для {{count}} участников",
-    "progress_checked_many": "Прогресс обновлен для {{count}} участников",
-    "progress_checked_other": "Прогресс обновлен для {{count}} участников"
+    "failed_create": "Әрекетті жасау кезіндегі қате",
+    "failed_delete": "Жою кезіндегі қате",
+    "failed_load": "Деректерді жүктеу сәтсіз аяқталды",
+    "progress_checked_few": "{{count}} қатысушылар үшін орындалу барысы жаңартылды",
+    "progress_checked_many": "{{count}} қатысушылар үшін орындалу барысы жаңартылды",
+    "progress_checked_one": "{{count}} мүшесі үшін орындалу барысы жаңартылды",
+    "progress_checked_other": "{{count}} қатысушылары үшін орындалу барысы жаңартылды"
   },
   "types": {
-    "referrals": "Рефералы",
-    "services": "Услуги",
-    "spending": "Траты",
-    "visits": "Визиты"
+    "referrals": "Референциялар",
+    "services": "Қызметтер",
+    "spending": "Жұмсалу",
+    "visits": "Кіру"
   }
 }

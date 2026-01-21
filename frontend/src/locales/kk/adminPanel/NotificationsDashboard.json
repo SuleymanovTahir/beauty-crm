@@ -1,12 +1,12 @@
 {
   "buttons": {
-    "cancel": "Отмена",
-    "save_template": "Сохранить шаблон",
-    "send_notification": "Отправить уведомление"
+    "cancel": "Бас тарту",
+    "save_template": "Үлгілерді сақтау",
+    "send_notification": "Хабарлама жіберу"
   },
   "dialogs": {
     "send": {
-      "description": "Создайте адресное уведомление для ваших клиентов",
+      "description": "Тұтынушылар үшін мақсатты хабарландыру жасау",
       "form": {
         "appointment_date": "Appointment Date",
         "appointment_filter": "Appointment Filter",
@@ -16,10 +16,10 @@
           "tomorrow": "Tomorrow"
         },
         "end_date": "End Date",
-        "loyalty_tier": "Уровень лояльности",
-        "message": "Сообщение",
-        "message_placeholder": "Введите текст уведомления...",
-        "notification_type": "Тип канала",
+        "loyalty_tier": "Адалдық деңгейі",
+        "message": "Хабарлама",
+        "message_placeholder": "Хабарландыру мәтінін енгізіңіз...",
+        "notification_type": "Арна түрі",
         "repeat_end_date": "End Repeat On",
         "repeat_interval": "Repeat Interval",
         "repeat_intervals": {
@@ -32,94 +32,94 @@
         "schedule_notification": "Schedule Notification",
         "schedule_time": "Send Time",
         "segments": {
-          "active": "Активные клиенты",
-          "all": "Все клиенты",
+          "active": "Белсенді тұтынушылар",
+          "all": "Барлық тұтынушылар",
           "appointment_based": "By Appointment",
-          "inactive": "Потерянные (неактивные)",
+          "inactive": "Жоғалған (белсенді емес)",
           "service_based": "By Service",
-          "tier": "По уровням лояльности"
+          "tier": "Адалдық деңгейлері бойынша"
         },
         "select_filter": "Select filter",
-        "select_tier": "Выберите уровень",
+        "select_tier": "Деңгейді таңдау",
         "service_filter": "Service/Procedure",
         "service_hint": "Clients who booked this service will receive the notification",
         "service_placeholder": "Enter service name or ID",
         "start_date": "Start Date",
-        "target_segment": "Целевая аудитория (сегмент)",
+        "target_segment": "Мақсатты аудитория (сегмент)",
         "tiers": {
-          "bronze": "Бронза",
-          "gold": "Золото",
+          "bronze": "Қола",
+          "gold": "Алтын",
           "platinum": "Платина",
-          "silver": "Серебро"
+          "silver": "Күміс"
         },
-        "title": "Заголовок",
-        "title_placeholder": "Введите основной заголовок"
+        "title": "Тақырып",
+        "title_placeholder": "Негізгі тақырыпты енгізіңіз"
       },
-      "title": "Новое уведомление"
+      "title": "Жаңа хабарландыру"
     },
     "template": {
-      "description": "Создайте шаблон для быстрой рассылки в будущем",
+      "description": "Болашақта жылдам жіберу үшін үлгі жасаңыз",
       "form": {
-        "message": "Сообщение",
-        "message_placeholder": "Используйте {name} для подстановки имени клиента",
-        "template_name": "Название шаблона",
-        "template_name_placeholder": "например: Приветствие нового клиента",
-        "title": "Заголовок",
-        "title_placeholder": "Заголовок уведомления",
-        "type": "Тип канала",
+        "message": "Хабарлама",
+        "message_placeholder": "Клиент атауын ауыстыру үшін {name} пайдаланыңыз",
+        "template_name": "Үлгі атауы",
+        "template_name_placeholder": "мысалы: Жаңа клиентке қош келдіңіз",
+        "title": "Тақырып",
+        "title_placeholder": "Хабарлама тақырыбы",
+        "type": "Арна түрі",
         "types": {
-          "email": "Электронная почта",
-          "push": "Push хабарлама-уведомление",
+          "email": "Электрондық пошта",
+          "push": "Push хабарлама хабарландыруы",
           "sms": "SMS"
         }
       },
-      "title": "Создание шаблона"
+      "title": "Үлгі жасау"
     }
   },
   "history": {
-    "description": "Список ранее созданных и текущих рассылок",
+    "description": "Бұрын жасалған және ағымдағы жіберулер тізімі",
     "filters": {
-      "all": "Все каналы",
-      "email": "Электронная почта",
-      "push": "Push хабарлама-уведомление",
+      "all": "Барлық арналар",
+      "email": "Электрондық пошта",
+      "push": "Push хабарлама хабарландыруы",
       "sms": "SMS"
     },
-    "scheduled": "Запланировано",
+    "scheduled": "Жоспарланған",
     "table": {
-      "date": "Дата",
-      "recipients": "Получатели",
-      "sent_failed": "Отправлено / Ошибки",
-      "status": "Статус",
-      "title": "Заголовок / Тема",
-      "type": "Тип"
+      "date": "Күні",
+      "recipients": "Алушылар",
+      "sent_failed": "Жіберілген/Қателер",
+      "status": "Күй",
+      "title": "Тақырып / Тақырып",
+      "type": "Түрі"
     },
-    "title": "История рассылок"
+    "title": "Хатты жіберу журналы"
   },
-  "save_template": "Сохранить шаблон",
-  "send_notification": "Отправить",
+  "save_template": "Үлгілерді сақтау",
+  "send_notification": "Жіберу",
   "stats": {
-    "email_sent": "Электронная почта",
-    "push_sent": "Push хабарлама-уведомление",
+    "email_sent": "Электрондық пошта",
+    "push_sent": "Push хабарлама хабарландыруы",
     "sms_sent": "SMS",
-    "total_sent": "Всего отправлено"
+    "total_sent": "Жіберілгендердің жалпы саны"
   },
-  "subtitle": "Центр управления рассылками и автоматическими уведомлениями",
+  "subtitle": "Хабарламалар мен автоматты хабарландыруларға арналған басқару орталығы",
   "templates": {
-    "description": "Готовые шаблоны для экономии времени",
-    "title": "Мои шаблоны",
-    "use_template": "Использовать"
+    "description": "Уақытты үнемдеуге арналған дайын үлгілер",
+    "title": "Менің үлгілерім",
+    "use_template": "Пайдалану"
   },
-  "title": "Уведомления",
+  "title": "Хабарландырулар",
   "toasts": {
-    "failed_load": "Ошибка при загрузке уведомлений",
-    "failed_save_template": "Не удалось сохранить шаблон",
-    "failed_send": "Ошибка при отправке уведомления",
-    "sent": "Уведомление успешно отправлено",
-    "template_saved": "Шаблон сохранен"
+    "failed_load": "Қателік жүктелмеді",
+    "failed_save_template": "Үлгіні сақтау сәтсіз аяқталды",
+    "failed_send": "Хабарламаны жіберу қатесі",
+    "sent": "Хабарландыру сәтті жіберілді",
+    "template_saved": "Үлгі сақталды"
   },
   "types": {
-    "email": "Электронная почта",
-    "push": "Push хабарлама-уведомление",
+    "email": "Электрондық пошта",
+    "push": "Push хабарлама хабарландыруы",
     "sms": "SMS"
   }
 }
