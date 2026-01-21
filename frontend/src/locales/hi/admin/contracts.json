@@ -23,8 +23,8 @@
     "selectClient": "चयन करें ग्राहक"
   },
   "internalContracts": "आंतरिक",
-  "manageTypes": "अनुबंध प्रकार",
   "manage_stages": "कॉलम",
+  "manageTypes": "अनुबंध प्रकार",
   "messages": {
     "confirmDelete": "क्या आप वाकई इस अनुबंध को हटाना चाहते हैं?",
     "contractCreated": "अनुबंध बनाया गया",

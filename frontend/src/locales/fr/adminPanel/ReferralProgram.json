@@ -5,9 +5,9 @@
   },
   "current_settings": {
     "edit": "Modifier",
-    "min_purchase": "Prix d'achat minimum : <strong>{{amount}} {{currency}}</strong>",
-    "referred_bonus": "Bonus ami : <strong>{{points}} points</strong>",
-    "referrer_bonus": "Bonus invité : <strong>{{points}} points</strong>",
+    "min_purchase": "Prix d'achat minimum\u00a0: <strong>{{amount}} {{currency}}</strong>",
+    "referred_bonus": "Bonus ami\u00a0: <strong>{{points}} points</strong>",
+    "referrer_bonus": "Bonus invité\u00a0: <strong>{{points}} points</strong>",
     "title": "Configuration actuelle du bonus"
   },
   "dialogs": {

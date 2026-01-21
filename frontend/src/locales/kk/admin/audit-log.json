@@ -1,9 +1,9 @@
 {
   "clear_all": "Очистить всё",
   "clear_confirm": "Вы уверены, что хотите полностью очистить журнал аудита? Это действие необратимо.",
+  "delete_batch_confirm_one": "Удалить {{count}} выбранную запись?",
   "delete_batch_confirm_few": "Удалить {{count}} выбранные записи?",
   "delete_batch_confirm_many": "Удалить {{count}} выбранных записей?",
-  "delete_batch_confirm_one": "Удалить {{count}} выбранную запись?",
   "delete_batch_confirm_other": "Удалить {{count}} записей?",
   "delete_confirm": "Удалить эту запись без возможности восстановления?",
   "delete_selected": "Удалить выбранные",

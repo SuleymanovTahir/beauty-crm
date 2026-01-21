@@ -63,7 +63,7 @@
         "message": "Message",
         "message_placeholder": "Utilisez {nom} pour remplacer le nom du client",
         "template_name": "Nom du modèle",
-        "template_name_placeholder": "à la date exemple : Bienvenue sur un nouveau client",
+        "template_name_placeholder": "à la date exemple\u00a0: Bienvenue sur un nouveau client",
         "title": "Titre",
         "title_placeholder": "Titre de la notification",
         "type": "Type de canal",

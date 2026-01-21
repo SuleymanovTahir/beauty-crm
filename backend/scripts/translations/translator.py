@@ -417,16 +417,34 @@ class Translator:
             print(f"⚠️  Could not save cache: {e}")
 
     def detect_language(self, text: str) -> str:
+        if not text or not text.strip(): return 'ru'
+        
+        # Try cache first
+        cache_key = self._get_cache_key(text[:200], "auto", "detect")
+        with self.lock:
+            if cache_key in self.cache_data:
+                return self.cache_data[cache_key]
+                
         try:
             encoded_text = urllib.parse.quote(text[:200])
             url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q={encoded_text}"
             req = urllib.request.Request(url)
             req.add_header('User-Agent', 'Mozilla/5.0')
-            with urllib.request.urlopen(req, timeout=10) as response:
+            
+            context = ssl._create_unverified_context() if hasattr(ssl, '_create_unverified_context') else None
+            
+            with urllib.request.urlopen(req, timeout=5, context=context) as response:
                 parsed = json.loads(response.read().decode('utf-8'))
-                if parsed and len(parsed) > 2 and parsed[2]: return parsed[2]
+                if parsed and len(parsed) > 2 and parsed[2]:
+                    detected = parsed[2]
+                    # Save to cache
+                    with self.lock:
+                        self.cache_data[cache_key] = detected
+                    return detected
                 return 'ru'
-        except: return 'ru'
+        except Exception as e:
+            # print(f"⚠️  Detection error: {e}")
+            return 'ru'
 
     def transliterate(self, text: str, source: str, target: str) -> str:
         if not text: return text
@@ -472,6 +490,11 @@ class Translator:
 
     def translate(self, text: str, source: str, target: str, use_context: bool = False, key_path: str = None) -> str:
         if source == target or not text or not text.strip(): return text
+        
+        # Special logic for payment providers: transliterate name, translate description
+        if key_path and 'payment.providers' in key_path and key_path.endswith('.name'):
+            return self.transliterate(text, source, target)
+            
         if key_path and target in self.key_glossary:
             if key_path in self.key_glossary[target]: return self.key_glossary[target][key_path]
         month_res = self._handle_months(text, source, target)

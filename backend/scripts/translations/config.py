@@ -38,6 +38,21 @@ TRANSLATION_CONFIG = {
         "id_field": "id",
         "fields": ["title_ru", "subtitle_ru"],
         "where": "is_active = TRUE"
+    },
+    "salon_news": {
+        "id_field": "id",
+        "fields": ["title_ru", "content_ru"],
+        "where": "is_active = TRUE"
+    },
+    "active_challenges": {
+        "id_field": "id",
+        "fields": ["title_ru", "description_ru"],
+        "where": "is_active = TRUE"
+    },
+    "gallery_images": {
+        "id_field": "id",
+        "fields": ["title", "description"],
+        "where": "is_visible = TRUE"
     }
 }
 

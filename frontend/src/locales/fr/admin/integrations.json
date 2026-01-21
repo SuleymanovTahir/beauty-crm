@@ -33,6 +33,40 @@
     "minutesAgo_one": "{{count}} il y a min",
     "minutesAgo_other": "{{count}} il y a min",
     "neverSynced": "Jamais",
+    "providers": {
+      "2gis": {
+        "description": "Réservations en ligne via 2GIS",
+        "name": "2GIS"
+      },
+      "amazon": {
+        "description": "Amazon Marketplace",
+        "name": "Amazon"
+      },
+      "booksy": {
+        "description": "Plateforme d'réservation en ligne",
+        "name": "Booksy"
+      },
+      "google_business": {
+        "description": "Réservations et avis sur Google",
+        "name": "Google Business"
+      },
+      "ozon": {
+        "description": "Marketplace Ozon",
+        "name": "Ozon"
+      },
+      "wildberries": {
+        "description": "Marketplace WB",
+        "name": "Wildberries"
+      },
+      "yandex_maps": {
+        "description": "Réservations et critiques de Yandex.Maps",
+        "name": "Yandex.Maps"
+      },
+      "yclients": {
+        "description": "Plateforme d'réservation en ligne",
+        "name": "YCLIENTS"
+      }
+    },
     "reviews": "Avis",
     "serviceMapping": "Mappage des services",
     "settings": "Paramètres",

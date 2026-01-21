@@ -11,9 +11,9 @@
   "delete": "हटाएं",
   "detail": {
     "costPriceLabel": "लागत: {{price}} {{currency}}",
+    "inStock_one": "स्टॉक में {{count}} पीसी।",
     "inStock_few": "स्टॉक में {{count}} पीसी।",
     "inStock_many": "स्टॉक में {{count}} पीसी।",
-    "inStock_one": "स्टॉक में {{count}} पीसी।",
     "inStock_other": "स्टॉक में {{count}} पीसी।",
     "loadingData": "डेटा लोड हो रहा है...",
     "movementAdjustment": "समायोजन",

@@ -33,6 +33,40 @@
     "minutesAgo_one": "Vor {{count}} Min.",
     "minutesAgo_other": "vor {{count}} Min.",
     "neverSynced": "Nie",
+    "providers": {
+      "2gis": {
+        "description": "Online-Aufnahmen über 2GIS",
+        "name": "2GIS"
+      },
+      "amazon": {
+        "description": "Amazon Marketplace",
+        "name": "Amazon"
+      },
+      "booksy": {
+        "description": "Online-Aufnahmeplattform",
+        "name": "Booksy"
+      },
+      "google_business": {
+        "description": "Aufnahmen und Rezensionen auf Google",
+        "name": "Google Business"
+      },
+      "ozon": {
+        "description": "Marketplace Ozon",
+        "name": "Ozon"
+      },
+      "wildberries": {
+        "description": "Marketplace WB",
+        "name": "Wildberries"
+      },
+      "yandex_maps": {
+        "description": "Aufzeichnungen und Rezensionen datum bis Yandex.Maps",
+        "name": "Yandex.Maps"
+      },
+      "yclients": {
+        "description": "Online-Aufzeichnungsplattform",
+        "name": "YCLIENTS"
+      }
+    },
     "reviews": "Bewertungen",
     "serviceMapping": "Dienstzuordnung",
     "settings": "Einstellungen",

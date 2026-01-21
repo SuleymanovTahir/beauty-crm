@@ -23,8 +23,8 @@
     "selectClient": "Kunde auswählen"
   },
   "internalContracts": "Intern",
-  "manageTypes": "Vertragstypen",
   "manage_stages": "Spalten",
+  "manageTypes": "Vertragstypen",
   "messages": {
     "confirmDelete": "Sind Sie sicher, dass Sie diesen Vertrag löschen möchten?",
     "contractCreated": "Vertrag erstellt",
