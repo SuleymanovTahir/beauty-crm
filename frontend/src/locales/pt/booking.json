@@ -57,7 +57,7 @@
   "continue_professional": "Select Professional",
   "continue_services": "Continue with Services",
   "date_format_hint": "Formato: DD.MM.AAAA",
-  "date_format_hint_en": "Format: MM/DD/YYYY",
+  "date_format_hint_en": "Formato: MM/DD/AAAA",
   "datetime": {
     "date": "1. Select Date",
     "noSlots": "No slots available",
@@ -66,7 +66,7 @@
     "title": "Date & Time"
   },
   "formDate": "Data",
-  "formDatePlaceholder": "Выберите дату",
+  "formDatePlaceholder": "Selecione a data",
   "formName": "Nome",
   "formNamePlaceholder": "Seu nome",
   "formPhone": "Telefone",

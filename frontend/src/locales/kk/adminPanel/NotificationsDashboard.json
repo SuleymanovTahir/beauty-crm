@@ -1,6 +1,6 @@
 {
   "buttons": {
-    "cancel": "Бас тарту",
+    "cancel": "Болдырмау",
     "save_template": "Үлгілерді сақтау",
     "send_notification": "Хабарлама жіберу"
   },
@@ -17,7 +17,7 @@
         },
         "end_date": "End Date",
         "loyalty_tier": "Адалдық деңгейі",
-        "message": "Хабарлама",
+        "message": "Хабар",
         "message_placeholder": "Хабарландыру мәтінін енгізіңіз...",
         "notification_type": "Арна түрі",
         "repeat_end_date": "End Repeat On",
@@ -32,8 +32,8 @@
         "schedule_notification": "Schedule Notification",
         "schedule_time": "Send Time",
         "segments": {
-          "active": "Белсенді тұтынушылар",
-          "all": "Барлық тұтынушылар",
+          "active": "Белсенді клиенттер",
+          "all": "Барлық клиенттер",
           "appointment_based": "By Appointment",
           "inactive": "Жоғалған (белсенді емес)",
           "service_based": "By Service",
@@ -60,7 +60,7 @@
     "template": {
       "description": "Болашақта жылдам жіберу үшін үлгі жасаңыз",
       "form": {
-        "message": "Хабарлама",
+        "message": "Хабар",
         "message_placeholder": "Клиент атауын ауыстыру үшін {name} пайдаланыңыз",
         "template_name": "Үлгі атауы",
         "template_name_placeholder": "мысалы: Жаңа клиентке қош келдіңіз",
@@ -68,8 +68,8 @@
         "title_placeholder": "Хабарлама тақырыбы",
         "type": "Арна түрі",
         "types": {
-          "email": "Электрондық пошта",
-          "push": "Push хабарлама хабарландыруы",
+          "email": "Электронная почта",
+          "push": "Push хабарлама хабарлама хабарландыруы",
           "sms": "SMS"
         }
       },
@@ -80,8 +80,8 @@
     "description": "Бұрын жасалған және ағымдағы жіберулер тізімі",
     "filters": {
       "all": "Барлық арналар",
-      "email": "Электрондық пошта",
-      "push": "Push хабарлама хабарландыруы",
+      "email": "Электронная почта",
+      "push": "Push хабарлама хабарлама хабарландыруы",
       "sms": "SMS"
     },
     "scheduled": "Жоспарланған",
@@ -89,17 +89,17 @@
       "date": "Күні",
       "recipients": "Алушылар",
       "sent_failed": "Жіберілген/Қателер",
-      "status": "Күй",
+      "status": "Статус",
       "title": "Тақырып / Тақырып",
       "type": "Түрі"
     },
-    "title": "Хатты жіберу журналы"
+    "title": "Хатты жіберу тарихы"
   },
   "save_template": "Үлгілерді сақтау",
   "send_notification": "Жіберу",
   "stats": {
-    "email_sent": "Электрондық пошта",
-    "push_sent": "Push хабарлама хабарландыруы",
+    "email_sent": "Электронная почта",
+    "push_sent": "Push хабарлама хабарлама хабарландыруы",
     "sms_sent": "SMS",
     "total_sent": "Жіберілгендердің жалпы саны"
   },
@@ -109,7 +109,7 @@
     "title": "Менің үлгілерім",
     "use_template": "Пайдалану"
   },
-  "title": "Хабарландырулар",
+  "title": "Уведомления",
   "toasts": {
     "failed_load": "Қателік жүктелмеді",
     "failed_save_template": "Үлгіні сақтау сәтсіз аяқталды",
@@ -118,8 +118,8 @@
     "template_saved": "Үлгі сақталды"
   },
   "types": {
-    "email": "Электрондық пошта",
-    "push": "Push хабарлама хабарландыруы",
+    "email": "Электронная почта",
+    "push": "Push хабарлама хабарлама хабарландыруы",
     "sms": "SMS"
   }
 }

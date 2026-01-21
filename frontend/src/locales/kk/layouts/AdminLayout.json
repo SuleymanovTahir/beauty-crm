@@ -1,28 +1,28 @@
 {
-  "admin": "Әкімші",
-  "admin_panel": "Әкімші панелі",
+  "admin": "Администратор",
+  "admin_panel": "Әкімші тақтасы",
   "crm": "CRM тақтасы",
   "logout": "Шығу",
-  "logout_success": "Сіз жүйеден сәтті шықтыңыз",
+  "logout_success": "Жүйелерден сәтті шықтыңыз",
   "menu": {
     "analytics": "Analytics",
     "audit_log": "Тексеру журналдары",
-    "bookings": "Посттар",
+    "bookings": "Жазбалар",
     "bot_settings": "Бот параметрлері",
     "calendar": "Күнтізбе",
     "chat": "Чат",
     "clients": "Клиенттер",
     "dashboard": "Бақылау тақтасы",
     "feedback": "Кері байланыс",
-    "funnel": "Шұңқыр",
+    "funnel": "Воронка",
     "plans": "Жоспарлар",
-    "public_content": "Жалпыға ортақ мазмұн",
+    "public_content": "Қоғамдық мазмұн",
     "services": "Қызметтер",
     "settings": "Параметрлер",
     "tasks": "Тапсырмалар",
     "telephony": "Телефония",
     "trash": "Себет",
     "users": "Пайдаланушылар",
-    "visitors": "Келушілер"
+    "visitors": "Посетители"
   }
 }

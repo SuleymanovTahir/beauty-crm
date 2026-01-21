@@ -42,9 +42,9 @@ def get_salon_settings() -> dict:
                 "google_maps": row_dict.get("google_maps", ""),
                 "google_place_id": row_dict.get("google_place_id", ""),
                 "google_api_key": row_dict.get("google_api_key", ""),
-                "hours": f"Daily {DEFAULT_HOURS_WEEKDAYS}",  # ✅ Используем константу
-                "hours_ru": f"Ежедневно {DEFAULT_HOURS_WEEKDAYS}",  # ✅ Используем константу
-                "hours_ar": f"يوميًا {DEFAULT_HOURS_WEEKDAYS}",  # ✅ Используем константу
+                "hours": row_dict.get("hours", f"Daily {DEFAULT_HOURS_WEEKDAYS}"),
+                "hours_ru": row_dict.get("hours_ru", f"Ежедневно {DEFAULT_HOURS_WEEKDAYS}"),
+                "hours_ar": row_dict.get("hours_ar", f"يوميًا {DEFAULT_HOURS_WEEKDAYS}"),
                 "booking_url": row_dict.get("booking_url", ""),
                 "phone": row_dict.get("phone", ""),
                 "email": row_dict.get("email"),
@@ -53,12 +53,12 @@ def get_salon_settings() -> dict:
                 "bot_name": row_dict.get("bot_name", "Assistant"),
                 "bot_name_en": row_dict.get("bot_name_en", "Assistant"),
                 "bot_name_ar": row_dict.get("bot_name_ar", "مساعد"),
-                "city": row_dict.get("city", "Dubai"),
-                "country": row_dict.get("country", "UAE"),
-                "timezone": row_dict.get("timezone", "Asia/Dubai"),
-                "timezone_offset": row_dict.get("timezone_offset", "UTC+4"),
-                "currency": row_dict.get("currency", "AED"),
-                "birthday_discount": row_dict.get("birthday_discount", "15%"),
+                "city": row_dict.get("city", ""),
+                "country": row_dict.get("country", ""),
+                "timezone": row_dict.get("timezone", "UTC"),
+                "timezone_offset": row_dict.get("timezone_offset", "UTC+0"),
+                "currency": row_dict.get("currency", ""),
+                "birthday_discount": row_dict.get("birthday_discount", ""),
                 "updated_at": row_dict.get("updated_at"),
                 "hours_weekdays": row_dict.get("hours_weekdays", DEFAULT_HOURS_WEEKDAYS),  # ✅ Используем константу
                 "hours_weekends": row_dict.get("hours_weekends", DEFAULT_HOURS_WEEKENDS),  # ✅ Используем константу
@@ -103,41 +103,41 @@ def _get_default_salon_settings() -> dict:
     """Дефолтные настройки салона"""
     return {
         "id": 1,
-        "name": os.getenv('SALON_NAME', 'Beauty Salon'),  # Fallback only
+        "name": os.getenv('SALON_NAME', 'Beauty Salon'),
         "name_ar": None,
-        "address": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
+        "address": "",
         "address_ar": None,
-        "google_maps": "https://maps.app.goo.gl/BTw4X1gzgyFhmkYF8",
-        "hours": "Daily 10:30 - 21:00",
-        "hours_ru": "Ежедневно 10:30 - 21:00",
-        "hours_ar": "يوميًا 10:30 - 21:00",
-        "hours_weekdays": DEFAULT_HOURS_WEEKDAYS,  # ✅ Используем константу
-        "hours_weekends": DEFAULT_HOURS_WEEKENDS,  # ✅ Используем константу
-        "lunch_start": DEFAULT_LUNCH_START,  # ✅ Используем константу
-        "lunch_end": DEFAULT_LUNCH_END,  # ✅ Используем константу
-        "booking_url": "https://n1314037.alteg.io",
-        "phone": os.getenv('SALON_PHONE', ''),  # Fallback only
-        "email": os.getenv('SALON_EMAIL', ''),  # Fallback only
-        "instagram": "https://www.instagram.com/mlediamant/",
+        "google_maps": "",
+        "hours": f"Daily {DEFAULT_HOURS_WEEKDAYS}",
+        "hours_ru": f"Ежедневно {DEFAULT_HOURS_WEEKDAYS}",
+        "hours_ar": f"يوميًا {DEFAULT_HOURS_WEEKDAYS}",
+        "hours_weekdays": DEFAULT_HOURS_WEEKDAYS,
+        "hours_weekends": DEFAULT_HOURS_WEEKENDS,
+        "lunch_start": DEFAULT_LUNCH_START,
+        "lunch_end": DEFAULT_LUNCH_END,
+        "booking_url": "",
+        "phone": os.getenv('SALON_PHONE', ''),
+        "email": os.getenv('SALON_EMAIL', ''),
+        "instagram": "",
         "whatsapp": None,
-        "bot_name": os.getenv('BOT_NAME', 'Beauty Assistant'),
-        "bot_name_en": os.getenv('BOT_NAME_EN', 'Beauty Assistant'),
-        "bot_name_ar": os.getenv('BOT_NAME_AR', 'مساعد الجمال'),
-        "city": "Dubai",
-        "country": "UAE",
-        "timezone": "Asia/Dubai",
-        "timezone_offset": "UTC+4",
-        "currency": "AED",
-        "birthday_discount": "15%",
+        "bot_name": os.getenv('BOT_NAME', 'Assistant'),
+        "bot_name_en": os.getenv('BOT_NAME_EN', 'Assistant'),
+        "bot_name_ar": os.getenv('BOT_NAME_AR', 'مساعد'),
+        "city": "",
+        "country": "",
+        "timezone": "UTC",
+        "timezone_offset": "UTC+0",
+        "currency": "",
+        "birthday_discount": "",
         "updated_at": None,
         "promo_end_date": None,
         # SEO & Analytics fields
         "google_analytics_id": None,
         "facebook_pixel_id": None,
-        "latitude": 25.0744782,  # M Le Diamant
-        "longitude": 55.1317665,  # M Le Diamant
+        "latitude": None,
+        "longitude": None,
         "logo_url": "/static/uploads/images/salon/logo.webp",
-        "base_url": "https://mlediamant.com",
+        "base_url": os.getenv('BASE_URL', ''),
         "points_expiration_days": 365,
         "feature_flags": "{}"
     }

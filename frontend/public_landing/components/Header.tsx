@@ -11,13 +11,13 @@ import { DEFAULT_VALUES } from "../utils/constants";
 import logo from "../styles/img/logo.png";
 
 const navigation = [
-  { name: "Главная", href: "#home", key: "homeTag", defaultText: "Главная" },
-  { name: "Услуги", href: "#services", key: "servicesTag", defaultText: "Услуги" },
-  { name: "Портфолио", href: "#portfolio", key: "portfolioTag", defaultText: "Портфолио" },
-  { name: "Команда", href: "#team", key: "teamTag", defaultText: "Команда" },
-  { name: "Отзывы", href: "#testimonials", key: "testimonialsTag", defaultText: "Отзывы" },
-  { name: "FAQ", href: "#faq", key: "faqTag", defaultText: "FAQ" },
-  { name: "Контакты", href: "#map-section", key: "contactsTag", defaultText: "Контакты" },
+  { name: "Главная", href: "#home", key: "homeTag" },
+  { name: "Услуги", href: "#services", key: "servicesTag" },
+  { name: "Портфолио", href: "#portfolio", key: "portfolioTag" },
+  { name: "Команда", href: "#team", key: "teamTag" },
+  { name: "Отзывы", href: "#testimonials", key: "testimonialsTag" },
+  { name: "FAQ", href: "#faq", key: "faqTag" },
+  { name: "Контакты", href: "#map-section", key: "contactsTag" },
 ];
 
 // Derive languages from utils
@@ -142,35 +142,15 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-6">
-              <style>{`
-                .nav-item {
-                  position: relative;
-                  padding-bottom: 4px;
-                }
-                .nav-item::after {
-                  content: '';
-                  position: absolute;
-                  bottom: 0;
-                  left: 0;
-                  width: 0;
-                  height: 2px;
-                  background-color: #db2777;
-                  transition: width 0.3s ease-in-out;
-                }
-                .nav-item:hover::after,
-                .nav-item.active::after {
-                  width: 100%;
-                }
-              `}</style>
               {navigation.map((item) => (
                 <a
-                  key={item.name}
+                  key={item.href}
                   href={item.href}
                   onClick={(e) => handleScrollTo(e, item.href)}
                   className={`nav-item text-xs xl:text-sm transition-colors duration-200 ${activeSection === item.href ? "active text-primary" : "text-primary hover:text-primary/80"
                     }`}
                 >
-                  {t(item.key, { defaultValue: item.defaultText }) || item.name}
+                  {t(item.key)}
                 </a>
               ))}
 
@@ -256,7 +236,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                         className="absolute right-0 top-full mt-2 w-48 bg-white/95 backdrop-blur-md border border-gray-100 rounded-2xl shadow-2xl overflow-hidden z-50 py-1.5"
                       >
                         <div className="px-4 py-2 border-b border-gray-50 mb-1">
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('account:user_role', 'Клиент')}</p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('account:user_role')}</p>
                           <p className="text-xs font-bold text-gray-900 truncate">{user.full_name || user.username}</p>
                         </div>
 
@@ -265,7 +245,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-gray-600 hover:text-primary hover:bg-primary/5 transition-all"
                         >
                           <LayoutDashboard className="w-4 h-4" />
-                          <span>{t('account:tabs.dashboard', 'Личный кабинет')}</span>
+                          <span>{t('account:tabs.dashboard')}</span>
                         </button>
 
                         <button
@@ -273,7 +253,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-gray-600 hover:text-primary hover:bg-primary/5 transition-all"
                         >
                           <Calendar className="w-4 h-4" />
-                          <span>{t('account:tabs.appointments', 'Мои записи')}</span>
+                          <span>{t('account:tabs.appointments')}</span>
                         </button>
 
                         <div className="h-px bg-gray-50 my-1" />
@@ -286,7 +266,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-red-500 hover:bg-red-50 transition-all font-medium"
                         >
                           <LogOut className="w-4 h-4" />
-                          <span>{t('common:logout', 'Выйти')}</span>
+                          <span>{t('common:logout')}</span>
                         </button>
                       </motion.div>
                     )}
@@ -300,7 +280,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   className="border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-8 text-xs rounded-full px-4"
                 >
                   <User className="w-3.5 h-3.5 mr-1.5" />
-                  {t('login', { defaultValue: 'Войти' })}
+                  {t('login')}
                 </Button>
               )}
 
@@ -370,7 +350,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                       className="block w-full px-3 py-2.5 rounded-lg hover:bg-black/5 text-primary transition-all group"
                     >
                       <span className="flex items-center justify-between">
-                        <span className="text-lg font-medium">{t(item.key, { defaultValue: item.defaultText }) || item.name}</span>
+                        <span className="text-lg font-medium">{t(item.key)}</span>
                         <span className="text-primary/50 group-hover:text-primary group-hover:translate-x-1 transition-all text-sm">
                           →
                         </span>
@@ -385,7 +365,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                     className="w-full flex items-center justify-between mb-2 group"
                   >
                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
-                      {t('common:language', 'Язык / Language')}
+                      {t('common:language')}
                     </p>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-primary uppercase">

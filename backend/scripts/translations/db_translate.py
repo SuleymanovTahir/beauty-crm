@@ -28,7 +28,7 @@ from translator import Translator
 
 def translate_content():
     """
-    Translate all missing translations from extracted data
+    Translate all missing translations from extracted data using batch translation
     """
     import re
     
@@ -54,94 +54,81 @@ def translate_content():
     
     # Helper function to check if field should be skipped
     def should_skip_translation(table_name: str, field_name: str, text: str) -> bool:
-        """Check if this field should skip translation"""
-        # Check if field is in skip list for this table
         if table_name in SKIP_TRANSLATION_FIELDS:
             if field_name in SKIP_TRANSLATION_FIELDS[table_name]:
                 return True
-        
-        # Check if text matches any skip patterns
         for pattern in SKIP_TRANSLATION_PATTERNS:
             if re.match(pattern, text.strip()):
                 return True
-        
         return False
     
-    # Process each table
-    total_translated = 0
+    # Collect all missing translations grouped by (detected_lang, target_lang)
+    # Map: (source_lang, target_lang) -> list of (text, field_data_ptr, is_name)
+    translation_queue = {}
     
     for table_name, records in data.items():
-        print(f"\n📋 Translating {table_name}...")
-        
         for record in records:
-            record_id = record["id"]
-            print(f"  🔄 Record ID {record_id}:")
-            
             for field_name, field_data in record["fields"].items():
-                # Get the source text (from _ru field or base field)
                 source_text = field_data.get(SOURCE_LANGUAGE)
-                
                 if not source_text or not source_text.strip():
                     continue
                 
-                # Check if this field should be skipped
                 if should_skip_translation(table_name, field_name, source_text):
-                    print(f"    ⏭️  {field_name}: '{source_text}' [SKIPPED - technical field or proper noun]")
-                    # Copy source text to all languages as-is
                     for lang in LANGUAGES:
                         if field_data.get(lang) is None:
                             field_data[lang] = source_text
                     continue
                 
-                # Detect actual language of the source text
                 detected_lang = translator.detect_language(source_text)
-                print(f"    • {field_name}: '{source_text}' [detected: {detected_lang}]")
-                
-                # Store detected language in field data
                 field_data['detected_language'] = detected_lang
                 
-                # Translate to ALL languages
+                is_name_field = field_name in ['full_name', 'author_name', 'employee_name', 'client_name'] or field_name.endswith('_name')
+                
                 for lang in LANGUAGES:
-                    should_translate = False
-                    
-                    if field_data.get(lang) is None:
-                        should_translate = True
-                    elif lang == SOURCE_LANGUAGE and detected_lang != SOURCE_LANGUAGE:
-                        # If target is RU but detected is EN, we must translate EN -> RU
-                        # and OVERWRITE the existing value (which is EN)
-                        should_translate = True
-                         # elif field_data.get(lang) == source_text and lang != detected_lang:
-                         #      # If the target language field has the SAME content as the source text
-                         #      # but the language is different (e.g. title_en == title_ru (Russian text))
-                         #      # then it's likely a copy-paste error or untranslated content. Force translate.
-                         #      print(f"      ⚠️  Force translating {lang} because it matches source text...")
-                         #      should_translate = True
-                    
-                    if should_translate:
-                        # Use context injection NO MORE - user requested removal for all fields
-                        use_context = False
-                        
-                        # Special handling for names (transliteration)
-                        is_name_field = field_name in ['full_name', 'author_name', 'employee_name', 'client_name'] or field_name.endswith('_name')
-                        
-                        if is_name_field:
-                            # Ensure source is title cased first
-                            source_clean = source_text.strip().title()
+                    if field_data.get(lang) is None or (lang == SOURCE_LANGUAGE and detected_lang != SOURCE_LANGUAGE):
+                        if detected_lang == lang:
+                            field_data[lang] = source_text
+                            continue
                             
-                            translated = translator.transliterate(source_clean, detected_lang, lang)
-                            print(f"      → {lang}: '{translated}' (transliterated)")
-                            
-                            # Ensure result is title cased
-                            if translated:
-                                translated = translated.title()
-                        else:
-                            # Standard translation for other fields
-                            translated = translator.translate(source_text, detected_lang, lang, use_context=use_context)
-                            print(f"      → {lang}: '{translated}'")
-                        
-                        field_data[lang] = translated
-                        total_translated += 1
-    
+                        pair = (detected_lang, lang)
+                        if pair not in translation_queue:
+                            translation_queue[pair] = []
+                        translation_queue[pair].append({
+                            "text": source_text,
+                            "field_data": field_data,
+                            "lang": lang,
+                            "is_name": is_name_field
+                        })
+
+    # Process queue using batches
+    total_translated = 0
+    for (src_lang, tgt_lang), items in translation_queue.items():
+        if not items: continue
+        
+        print(f"\n📋 Batch translating {src_lang} -> {tgt_lang} ({len(items)} strings)...")
+        
+        # Split into name and non-name groups as names use transliteration
+        names = [item for item in items if item["is_name"]]
+        others = [item for item in items if not item["is_name"]]
+        
+        # Translate regular content
+        if others:
+            texts = [item["text"] for item in others]
+            translated_texts = translator.translate_batch(texts, src_lang, tgt_lang)
+            for i, item in enumerate(others):
+                item["field_data"][tgt_lang] = translated_texts[i]
+            total_translated += len(others)
+            
+        # Transliterate names
+        if names:
+            for item in names:
+                source_clean = item["text"].strip().title()
+                translated = translator.transliterate(source_clean, src_lang, tgt_lang)
+                if translated:
+                    translated = translated.title()
+                item["field_data"][tgt_lang] = translated
+                total_translated += 1
+
     # Save translated data
     output_path = Path(TRANSLATE_OUTPUT)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -155,8 +142,6 @@ def translate_content():
     print(f"\n✅ Translation complete!")
     print(f"   Total translations: {total_translated}")
     print(f"   Output saved to: {TRANSLATE_OUTPUT}")
-    print(f"\n💡 Next step: Sync translations to database")
-    print(f"   npm run db:i18n:sync")
 
 if __name__ == "__main__":
     translate_content()

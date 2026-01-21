@@ -210,7 +210,8 @@ def extract_translatable_content():
 
         
         except Exception as e:
-            print(f"  ⚠️  Error: {e}")
+            conn.rollback()
+            print(f"  ⚠️  Error processing {table_name}: {e}")
             print(f"  💡 Hint: Check table/column names in config")
     
     conn.close()

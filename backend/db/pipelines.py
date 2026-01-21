@@ -118,11 +118,11 @@ def get_funnel_stats(start_date: str = None, end_date: str = None) -> Dict:
     try:
         # Simplest stat: count per stage
         c.execute("""
-            SELECT ps.id, ps.name, COUNT(c.instagram_id), SUM(NULLIF(c.total_spend, 0))
+            SELECT ps.id, ps.name, COUNT(c.instagram_id), SUM(NULLIF(c.total_spend, 0)), ps.key
             FROM pipeline_stages ps
             LEFT JOIN clients c ON c.pipeline_stage_id = ps.id
             WHERE ps.is_active = TRUE
-            GROUP BY ps.id, ps.name, ps.order_index
+            GROUP BY ps.id, ps.name, ps.order_index, ps.key
             ORDER BY ps.order_index
         """)
         rows = c.fetchall()
@@ -132,7 +132,8 @@ def get_funnel_stats(start_date: str = None, end_date: str = None) -> Dict:
                 "stage_id": row[0],
                 "stage_name": row[1],
                 "count": row[2],
-                "total_value": row[3] or 0
+                "total_value": row[3] or 0,
+                "key": row[4]
             }
             for row in rows
         ]

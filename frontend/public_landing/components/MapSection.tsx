@@ -17,10 +17,10 @@ export function MapSection({ salonInfo: initialSalonInfo }: MapSectionProps) {
       <div className="container mx-auto max-w-7xl px-3 sm:px-4 lg:px-6">
         <div className="text-center mb-8 sm:mb-12">
           <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-3">
-            {t('mapTag', { defaultValue: 'Наше местоположение' })}
+            {t('mapTag')}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('mapTitlePart1', { defaultValue: 'Посетите' })} <span className="text-primary">{t('mapTitlePart2', { defaultValue: 'наш салон' })}</span>
+            {t('mapTitlePart1')} <span className="text-primary">{t('mapTitlePart2')}</span>
           </h2>
         </div>
 
@@ -32,7 +32,7 @@ export function MapSection({ salonInfo: initialSalonInfo }: MapSectionProps) {
                   <Phone className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">{t('phone', { defaultValue: 'Телефон' })}</h3>
+                  <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">{t('phone')}</h3>
                   <a href={`tel:${phone}`} className="text-xs sm:text-sm text-foreground/70 hover:underline truncate block">
                     {phone}
                   </a>
@@ -60,7 +60,7 @@ export function MapSection({ salonInfo: initialSalonInfo }: MapSectionProps) {
                   <MapPin className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">{t('address', { defaultValue: 'Адрес' })}</h3>
+                  <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">{t('address')}</h3>
                   <p className="text-xs sm:text-sm text-foreground/70">{address}</p>
                 </div>
               </div>
@@ -72,7 +72,7 @@ export function MapSection({ salonInfo: initialSalonInfo }: MapSectionProps) {
                   <Clock className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">{t('workingHours', { defaultValue: 'Часы работы' })}</h3>
+                  <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">{t('workingHours')}</h3>
                   <p className="text-xs sm:text-sm text-foreground/70">{workingHours}</p>
                 </div>
               </div>
@@ -84,13 +84,13 @@ export function MapSection({ salonInfo: initialSalonInfo }: MapSectionProps) {
                 variant="outline"
                 className="flex-1 border-primary text-primary hover:bg-primary hover:text-primary-foreground h-9 sm:h-10 text-xs sm:text-sm"
               >
-                {t('getDirections', { defaultValue: 'Маршрут' })}
+                {t('getDirections')}
               </Button>
               <Button
                 onClick={() => window.location.href = `tel:${phone}`}
                 className="flex-1 hero-button-primary h-9 sm:h-10 text-xs sm:text-sm"
               >
-                {t('callUs', { defaultValue: 'Позвонить' })}
+                {t('callUs')}
               </Button>
             </div>
           </div>

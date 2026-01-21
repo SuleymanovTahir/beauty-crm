@@ -29,7 +29,7 @@
           "de": "Friseur",
           "fr": "Coiffeur",
           "hi": "बालों की स्टाइल बनाने वाला",
-          "kk": "Стилист-парикмахер",
+          "kk": "Шаштараз",
           "pt": "Cabeleireiro"
         }
       }
@@ -46,7 +46,7 @@
           "de": "Friseur",
           "fr": "Coiffeur",
           "hi": "बालों की स्टाइल बनाने वाला",
-          "kk": "Стилист-парикмахер",
+          "kk": "Шаштараз",
           "pt": "Cabeleireiro"
         }
       }
@@ -63,25 +63,8 @@
           "de": "Nägel/Wachsen",
           "fr": "Ongle/Épilation",
           "hi": "नाखून/वैक्सिंग",
-          "kk": "Ногти/ваксинг",
+          "kk": "Тырнақ/балауыз",
           "pt": "Prego/Depilação"
-        }
-      }
-    },
-    {
-      "id": 6,
-      "fields": {
-        "position": {
-          "ru": "Nail Master/Massages",
-          "key": "users.6.position.d68a2270",
-          "en": "Nail technician/massage",
-          "ar": "ماجستير الأظافر/التدليك",
-          "es": "Maestro de uñas/Masajes",
-          "de": "Nagelmeister/Massagen",
-          "fr": "Maître des Ongles/Massages",
-          "hi": "नेल मास्टर/मालिश",
-          "kk": "Мастер ногтевого сервиса/массаж",
-          "pt": "Mestre de unhas/massagens"
         }
       }
     },
@@ -97,19 +80,36 @@
           "de": "Nagelmeister",
           "fr": "Maître des Ongles",
           "hi": "नेल मास्टर",
-          "kk": "Мастер ногтевого сервиса",
+          "kk": "Тырнақ күтімі шебері",
           "pt": "Mestre de unhas"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "position": {
+          "ru": "Nail Master/Massages",
+          "key": "users.6.position.d68a2270",
+          "en": "Nail technician/massage",
+          "ar": "ماجستير الأظافر/التدليك",
+          "es": "Maestro de uñas/Masajes",
+          "de": "Nagelmeister/Massagen",
+          "fr": "Maître des Ongles/Massages",
+          "hi": "नेल मास्टर/मालिश",
+          "kk": "Тырнақ қызметінің шебері/массажы",
+          "pt": "Mestre de unhas/massagens"
         }
       }
     }
   ],
   "public_reviews": [
     {
-      "id": 33,
+      "id": 48,
       "fields": {
         "text_ru": {
-          "ru": "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!",
-          "key": "public_reviews.33.text_ru.6f00ad70",
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.48.text_ru.d04583b6",
           "en": null,
           "ar": null,
           "es": null,
@@ -121,7 +121,7 @@
         },
         "author_name": {
           "ru": "Sarah Jenkins",
-          "key": "public_reviews.33.author_name.ff715865",
+          "key": "public_reviews.48.author_name.ff715865",
           "en": null,
           "ar": null,
           "es": null,
@@ -133,7 +133,7 @@
         },
         "employee_position": {
           "ru": "Eyelashes",
-          "key": "public_reviews.33.employee_position.5b1b1d5e",
+          "key": "public_reviews.48.employee_position.5b1b1d5e",
           "en": null,
           "ar": null,
           "es": null,
@@ -146,11 +146,11 @@
       }
     },
     {
-      "id": 34,
+      "id": 49,
       "fields": {
         "text_ru": {
-          "ru": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
-          "key": "public_reviews.34.text_ru.f38138da",
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.49.text_ru.784d2781",
           "en": null,
           "ar": null,
           "es": null,
@@ -162,7 +162,7 @@
         },
         "author_name": {
           "ru": "Maria Gonzalez",
-          "key": "public_reviews.34.author_name.653816a6",
+          "key": "public_reviews.49.author_name.653816a6",
           "en": null,
           "ar": null,
           "es": null,
@@ -174,7 +174,7 @@
         },
         "employee_position": {
           "ru": "Facial Treatment",
-          "key": "public_reviews.34.employee_position.9a3a91ca",
+          "key": "public_reviews.49.employee_position.9a3a91ca",
           "en": null,
           "ar": null,
           "es": null,
@@ -187,11 +187,11 @@
       }
     },
     {
-      "id": 35,
+      "id": 50,
       "fields": {
         "text_ru": {
-          "ru": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
-          "key": "public_reviews.35.text_ru.ae85e84b",
+          "ru": "Отличный сервис и профессиональный персонал. ",
+          "key": "public_reviews.50.text_ru.33473c5f",
           "en": null,
           "ar": null,
           "es": null,
@@ -203,7 +203,7 @@
         },
         "author_name": {
           "ru": "Fatima Al-Sayed",
-          "key": "public_reviews.35.author_name.f26d4aa2",
+          "key": "public_reviews.50.author_name.f26d4aa2",
           "en": null,
           "ar": null,
           "es": null,
@@ -215,7 +215,130 @@
         },
         "employee_position": {
           "ru": "Microblading",
-          "key": "public_reviews.35.employee_position.65d6c03d",
+          "key": "public_reviews.50.employee_position.65d6c03d",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 45,
+      "fields": {
+        "text_ru": {
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.45.text_ru.d04583b6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.45.author_name.ff715865",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.45.employee_position.5b1b1d5e",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 46,
+      "fields": {
+        "text_ru": {
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.46.text_ru.784d2781",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.46.author_name.653816a6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.46.employee_position.9a3a91ca",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 47,
+      "fields": {
+        "text_ru": {
+          "ru": "Отличный сервис и профессиональный персонал. ",
+          "key": "public_reviews.47.text_ru.33473c5f",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.47.author_name.f26d4aa2",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.47.employee_position.65d6c03d",
           "en": null,
           "ar": null,
           "es": null,
@@ -239,8 +362,522 @@
           "de": "Maniküre und Pediküre",
           "fr": "Manucure et Pédicure",
           "hi": "मैनीक्योर और पेडीक्योर",
-          "kk": "Маникюр и педикюр",
+          "kk": "Маникюр және педикюр",
           "pt": "Manicura e Pedicura"
+        }
+      }
+    },
+    {
+      "id": 42,
+      "fields": {
+        "text_ru": {
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.42.text_ru.d04583b6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.42.author_name.ff715865",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.42.employee_position.5b1b1d5e",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 43,
+      "fields": {
+        "text_ru": {
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.43.text_ru.784d2781",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.43.author_name.653816a6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.43.employee_position.9a3a91ca",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 44,
+      "fields": {
+        "text_ru": {
+          "ru": "Отличный сервис и профессиональный персонал. ",
+          "key": "public_reviews.44.text_ru.33473c5f",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.44.author_name.f26d4aa2",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.44.employee_position.65d6c03d",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 39,
+      "fields": {
+        "text_ru": {
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.39.text_ru.d04583b6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.39.author_name.ff715865",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.39.employee_position.5b1b1d5e",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 40,
+      "fields": {
+        "text_ru": {
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.40.text_ru.784d2781",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.40.author_name.653816a6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.40.employee_position.9a3a91ca",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 41,
+      "fields": {
+        "text_ru": {
+          "ru": "Отличный сервис и профессиональный персонал. ",
+          "key": "public_reviews.41.text_ru.33473c5f",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.41.author_name.f26d4aa2",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.41.employee_position.65d6c03d",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 9,
+      "fields": {
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.9.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.9.employee_position.5b1b1d5e",
+          "en": "Lashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas"
+        }
+      }
+    },
+    {
+      "id": 36,
+      "fields": {
+        "text_ru": {
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.36.text_ru.d04583b6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.36.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.36.employee_position.5b1b1d5e",
+          "en": "Eyelashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "fields": {
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.14.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима Әл-Сайед",
+          "pt": "Fátima Al-Sayed"
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.14.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Microblading",
+          "pt": "Microblading"
+        }
+      }
+    },
+    {
+      "id": 37,
+      "fields": {
+        "text_ru": {
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.37.text_ru.784d2781",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.37.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González"
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.37.employee_position.9a3a91ca",
+          "en": "Facial Treatment",
+          "ar": "علاج الوجه",
+          "es": "Tratamiento Facial",
+          "de": "Gesichtsbehandlung",
+          "fr": "Traitement du visage",
+          "hi": "चेहरे का उपचार",
+          "kk": "Бет күтімі",
+          "pt": "Tratamento Facial"
+        }
+      }
+    },
+    {
+      "id": 38,
+      "fields": {
+        "text_ru": {
+          "ru": "Отличный сервис и профессиональный персонал. ",
+          "key": "public_reviews.38.text_ru.33473c5f",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.38.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима Әл-Сайед",
+          "pt": "Fátima Al-Sayed"
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.38.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Microblading",
+          "pt": "Microblading"
+        }
+      }
+    },
+    {
+      "id": 33,
+      "fields": {
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.33.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.33.employee_position.5b1b1d5e",
+          "en": "Eyelashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas"
+        }
+      }
+    },
+    {
+      "id": 34,
+      "fields": {
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.34.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González"
+        },
+        "employee_position": {
+          "ru": "Facial Treatment",
+          "key": "public_reviews.34.employee_position.9a3a91ca",
+          "en": "Facial Treatment",
+          "ar": "علاج الوجه",
+          "es": "Tratamiento Facial",
+          "de": "Gesichtsbehandlung",
+          "fr": "Traitement du visage",
+          "hi": "चेहरे का उपचार",
+          "kk": "Бет күтімі",
+          "pt": "Tratamento Facial"
+        }
+      }
+    },
+    {
+      "id": 35,
+      "fields": {
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.35.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима Әл-Сайед",
+          "pt": "Fátima Al-Sayed"
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.35.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Microblading",
+          "pt": "Microblading"
         }
       }
     },
@@ -256,7 +893,7 @@
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Аль-Сайед",
+          "kk": "Фатима Әл-Сайед",
           "pt": "Fátima Al-Sayed"
         },
         "employee_position": {
@@ -268,7 +905,7 @@
           "de": "Microblading",
           "fr": "Microblading",
           "hi": "माइक्रोब्लैडिंग",
-          "kk": "Микроблейдинг",
+          "kk": "Microblading",
           "pt": "Microblading"
         }
       }
@@ -276,18 +913,6 @@
     {
       "id": 30,
       "fields": {
-        "text_ru": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "key": "public_reviews.30.text_ru.d04583b6",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "author_name": {
           "ru": "Sarah Jenkins",
           "key": "public_reviews.30.author_name.ff715865",
@@ -315,20 +940,37 @@
       }
     },
     {
+      "id": 2,
+      "fields": {
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.2.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.2.employee_position.5b1b1d5e",
+          "en": "Lashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas"
+        }
+      }
+    },
+    {
       "id": 31,
       "fields": {
-        "text_ru": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "key": "public_reviews.31.text_ru.784d2781",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "author_name": {
           "ru": "Maria Gonzalez",
           "key": "public_reviews.31.author_name.653816a6",
@@ -358,18 +1000,6 @@
     {
       "id": 32,
       "fields": {
-        "text_ru": {
-          "ru": "Отличный сервис и профессиональный персонал. ",
-          "key": "public_reviews.32.text_ru.33473c5f",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "author_name": {
           "ru": "Fatima Al-Sayed",
           "key": "public_reviews.32.author_name.f26d4aa2",
@@ -391,7 +1021,7 @@
           "de": "Microblading",
           "fr": "Microblading",
           "hi": "माइक्रोब्लैडिंग",
-          "kk": "Микроблейдинг",
+          "kk": "Microblading",
           "pt": "Microblading"
         }
       }
@@ -420,7 +1050,7 @@
           "de": "Wimpern",
           "fr": "Cils",
           "hi": "पलकें",
-          "kk": "Ресницы",
+          "kk": "Кірпіктер",
           "pt": "Pestanas"
         }
       }
@@ -449,7 +1079,7 @@
           "de": "Gesichtsbehandlung",
           "fr": "Traitement du visage",
           "hi": "चेहरे का उपचार",
-          "kk": "Уход за лицом",
+          "kk": "Бет күтімі",
           "pt": "Tratamento Facial"
         }
       }
@@ -466,7 +1096,7 @@
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Аль-Сайед",
+          "kk": "Фатима Әл-Сайед",
           "pt": "Fátima Al-Sayed"
         },
         "employee_position": {
@@ -478,7 +1108,7 @@
           "de": "Microblading",
           "fr": "Microblading",
           "hi": "माइक्रोब्लैडिंग",
-          "kk": "Микроблейдинг",
+          "kk": "Microblading",
           "pt": "Microblading"
         }
       }
@@ -507,8 +1137,37 @@
           "de": "Wimpern",
           "fr": "Cils",
           "hi": "पलकें",
-          "kk": "Ресницы",
+          "kk": "Кірпіктер",
           "pt": "Pestanas"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "fields": {
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.11.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима Әл-Сайед",
+          "pt": "Fátima Al-Sayed"
+        },
+        "employee_position": {
+          "ru": "Microblading",
+          "key": "public_reviews.11.employee_position.65d6c03d",
+          "en": "Microblading",
+          "ar": "ميكروبليدينج",
+          "es": "microblading",
+          "de": "Microblading",
+          "fr": "Microblading",
+          "hi": "माइक्रोब्लैडिंग",
+          "kk": "Microblading",
+          "pt": "Microblading"
         }
       }
     },
@@ -536,7 +1195,7 @@
           "de": "Gesichtsbehandlung",
           "fr": "Traitement du visage",
           "hi": "चेहरे का उपचार",
-          "kk": "Уход за лицом",
+          "kk": "Бет күтімі",
           "pt": "Tratamento Facial"
         }
       }
@@ -553,7 +1212,7 @@
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Аль-Сайед",
+          "kk": "Фатима Әл-Сайед",
           "pt": "Fátima Al-Sayed"
         },
         "employee_position": {
@@ -565,7 +1224,7 @@
           "de": "Microblading",
           "fr": "Microblading",
           "hi": "माइक्रोब्लैडिंग",
-          "kk": "Микроблейдинг",
+          "kk": "Microblading",
           "pt": "Microblading"
         }
       }
@@ -594,7 +1253,7 @@
           "de": "Wimpern",
           "fr": "Cils",
           "hi": "पलकें",
-          "kk": "Ресницы",
+          "kk": "Кірпіктер",
           "pt": "Pestanas"
         }
       }
@@ -611,7 +1270,7 @@
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Аль-Сайед",
+          "kk": "Фатима Әл-Сайед",
           "pt": "Fátima Al-Sayed"
         },
         "employee_position": {
@@ -623,8 +1282,37 @@
           "de": "Microblading",
           "fr": "Microblading",
           "hi": "माइक्रोब्लैडिंग",
-          "kk": "Микроблейдинг",
+          "kk": "Microblading",
           "pt": "Microblading"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.6.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        },
+        "employee_position": {
+          "ru": "Eyelashes",
+          "key": "public_reviews.6.employee_position.5b1b1d5e",
+          "en": "Lashes",
+          "ar": "الرموش",
+          "es": "Pestañas",
+          "de": "Wimpern",
+          "fr": "Cils",
+          "hi": "पलकें",
+          "kk": "Кірпіктер",
+          "pt": "Pestanas"
         }
       }
     },
@@ -652,7 +1340,7 @@
           "de": "Gesichtsbehandlung",
           "fr": "Traitement du visage",
           "hi": "चेहरे का उपचार",
-          "kk": "Уход за лицом",
+          "kk": "Бет күтімі",
           "pt": "Tratamento Facial"
         }
       }
@@ -669,7 +1357,7 @@
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Аль-Сайед",
+          "kk": "Фатима Әл-Сайед",
           "pt": "Fátima Al-Sayed"
         },
         "employee_position": {
@@ -681,7 +1369,7 @@
           "de": "Microblading",
           "fr": "Microblading",
           "hi": "माइक्रोब्लैडिंग",
-          "kk": "Микроблейдинг",
+          "kk": "Microblading",
           "pt": "Microblading"
         }
       }
@@ -710,7 +1398,7 @@
           "de": "Gesichtsbehandlung",
           "fr": "Traitement du visage",
           "hi": "चेहरे का उपचार",
-          "kk": "Уход за лицом",
+          "kk": "Бет күтімі",
           "pt": "Tratamento Facial"
         }
       }
@@ -739,7 +1427,7 @@
           "de": "Wimpern",
           "fr": "Cils",
           "hi": "पलकें",
-          "kk": "Ресницы",
+          "kk": "Кірпіктер",
           "pt": "Pestanas"
         }
       }
@@ -768,7 +1456,7 @@
           "de": "Gesichtsbehandlung",
           "fr": "Traitement du visage",
           "hi": "चेहरे का उपचार",
-          "kk": "Уход за лицом",
+          "kk": "Бет күтімі",
           "pt": "Tratamento Facial"
         }
       }
@@ -785,7 +1473,7 @@
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Аль-Сайед",
+          "kk": "Фатима Әл-Сайед",
           "pt": "Fátima Al-Sayed"
         },
         "employee_position": {
@@ -797,7 +1485,7 @@
           "de": "Microblading",
           "fr": "Microblading",
           "hi": "माइक्रोब्लैडिंग",
-          "kk": "Микроблейдинг",
+          "kk": "Microblading",
           "pt": "Microblading"
         }
       }
@@ -814,7 +1502,7 @@
           "de": "Fatima Al-Sayed",
           "fr": "Fatima Al-Sayed",
           "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Аль-Сайед",
+          "kk": "Фатима Әл-Сайед",
           "pt": "Fátima Al-Sayed"
         },
         "employee_position": {
@@ -826,7 +1514,7 @@
           "de": "Microblading",
           "fr": "Microblading",
           "hi": "माइक्रोब्लैडिंग",
-          "kk": "Микроблейдинг",
+          "kk": "Microblading",
           "pt": "Microblading"
         }
       }
@@ -855,7 +1543,7 @@
           "de": "Wimpern",
           "fr": "Cils",
           "hi": "पलकें",
-          "kk": "Ресницы",
+          "kk": "Кірпіктер",
           "pt": "Pestanas"
         }
       }
@@ -884,7 +1572,7 @@
           "de": "Gesichtsbehandlung",
           "fr": "Traitement du visage",
           "hi": "चेहरे का उपचार",
-          "kk": "Уход за лицом",
+          "kk": "Бет күтімі",
           "pt": "Tratamento Facial"
         }
       }
@@ -913,7 +1601,7 @@
           "de": "Wimpern",
           "fr": "Cils",
           "hi": "पलकें",
-          "kk": "Ресницы",
+          "kk": "Кірпіктер",
           "pt": "Pestanas"
         }
       }
@@ -942,95 +1630,8 @@
           "de": "Gesichtsbehandlung",
           "fr": "Traitement du visage",
           "hi": "चेहरे का उपचार",
-          "kk": "Уход за лицом",
+          "kk": "Бет күтімі",
           "pt": "Tratamento Facial"
-        }
-      }
-    },
-    {
-      "id": 14,
-      "fields": {
-        "author_name": {
-          "ru": "Fatima Al-Sayed",
-          "key": "public_reviews.14.author_name.f26d4aa2",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Аль-Сайед",
-          "pt": "Fátima Al-Sayed"
-        },
-        "employee_position": {
-          "ru": "Microblading",
-          "key": "public_reviews.14.employee_position.65d6c03d",
-          "en": "Microblading",
-          "ar": "ميكروبليدينج",
-          "es": "microblading",
-          "de": "Microblading",
-          "fr": "Microblading",
-          "hi": "माइक्रोब्लैडिंग",
-          "kk": "Микроблейдинг",
-          "pt": "Microblading"
-        }
-      }
-    },
-    {
-      "id": 9,
-      "fields": {
-        "author_name": {
-          "ru": "Sarah Jenkins",
-          "key": "public_reviews.9.author_name.ff715865",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins"
-        },
-        "employee_position": {
-          "ru": "Eyelashes",
-          "key": "public_reviews.9.employee_position.5b1b1d5e",
-          "en": "Lashes",
-          "ar": "الرموش",
-          "es": "Pestañas",
-          "de": "Wimpern",
-          "fr": "Cils",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Pestanas"
-        }
-      }
-    },
-    {
-      "id": 11,
-      "fields": {
-        "author_name": {
-          "ru": "Fatima Al-Sayed",
-          "key": "public_reviews.11.author_name.f26d4aa2",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Аль-Сайед",
-          "pt": "Fátima Al-Sayed"
-        },
-        "employee_position": {
-          "ru": "Microblading",
-          "key": "public_reviews.11.employee_position.65d6c03d",
-          "en": "Microblading",
-          "ar": "ميكروبليدينج",
-          "es": "microblading",
-          "de": "Microblading",
-          "fr": "Microblading",
-          "hi": "माइक्रोब्लैडिंग",
-          "kk": "Микроблейдинг",
-          "pt": "Microblading"
         }
       }
     },
@@ -1058,66 +1659,8 @@
           "de": "Gesichtsbehandlung",
           "fr": "Traitement du visage",
           "hi": "चेहरे का उपचार",
-          "kk": "Уход за лицом",
+          "kk": "Бет күтімі",
           "pt": "Tratamento Facial"
-        }
-      }
-    },
-    {
-      "id": 2,
-      "fields": {
-        "author_name": {
-          "ru": "Sarah Jenkins",
-          "key": "public_reviews.2.author_name.ff715865",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins"
-        },
-        "employee_position": {
-          "ru": "Eyelashes",
-          "key": "public_reviews.2.employee_position.5b1b1d5e",
-          "en": "Lashes",
-          "ar": "الرموش",
-          "es": "Pestañas",
-          "de": "Wimpern",
-          "fr": "Cils",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Pestanas"
-        }
-      }
-    },
-    {
-      "id": 6,
-      "fields": {
-        "author_name": {
-          "ru": "Sarah Jenkins",
-          "key": "public_reviews.6.author_name.ff715865",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins"
-        },
-        "employee_position": {
-          "ru": "Eyelashes",
-          "key": "public_reviews.6.employee_position.5b1b1d5e",
-          "en": "Lashes",
-          "ar": "الرموش",
-          "es": "Pestañas",
-          "de": "Wimpern",
-          "fr": "Cils",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Pestanas"
         }
       }
     },
@@ -1133,7 +1676,7 @@
           "de": "Permanentes Make-up",
           "fr": "Maquillage permanent",
           "hi": "स्थायी श्रृंगार",
-          "kk": "Перманентный макияж",
+          "kk": "Тұрақты макияж",
           "pt": "Maquiagem Permanente"
         }
       }
@@ -1162,71 +1705,20 @@
           "de": "Gesichtsbehandlung",
           "fr": "Traitement du visage",
           "hi": "चेहरे का उपचार",
-          "kk": "Уход за лицом",
+          "kk": "Бет күтімі",
           "pt": "Tratamento Facial"
         }
       }
     }
   ],
-  "services": [
+  "pipeline_stages": [
     {
-      "id": 4,
+      "id": 1,
       "fields": {
-        "description_ru": {
-          "ru": "Перманентная подводка глаз",
-          "key": "services.4.description_ru.3dea7e3c",
-          "en": "Permanent eyeliner",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 38,
-      "fields": {
-        "description_ru": {
-          "ru": "Ламинирование ресниц",
-          "key": "services.38.description_ru.6a9d6c82",
-          "en": "Lamination of eyelashes",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 8,
-      "fields": {
-        "description_ru": {
-          "ru": "Бразильская эпиляция бикини",
-          "key": "services.8.description_ru.199d9108",
-          "en": "Brazilian bikini hair removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 43,
-      "fields": {
-        "description_ru": {
-          "ru": "Медицинская чистка",
-          "key": "services.43.description_ru.1340aaab",
-          "en": "Medical cleaning",
+        "name": {
+          "ru": "Неразобранное",
+          "key": "pipeline_stages.1.name.838c9e3c",
+          "en": null,
           "ar": null,
           "es": null,
           "de": null,
@@ -1240,316 +1732,10 @@
     {
       "id": 2,
       "fields": {
-        "description_ru": {
-          "ru": "Микроблейдинг или пудровые брови",
-          "key": "services.2.description_ru.d9f305a2",
-          "en": "Microblading or powder brows",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 42,
-      "fields": {
-        "description_ru": {
-          "ru": "Профессиональная глубокая чистка",
-          "key": "services.42.description_ru.964e86eb",
-          "en": "Professional deep cleaning",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 23,
-      "fields": {
-        "description_ru": {
-          "ru": "Осветление корней с укладкой",
-          "key": "services.23.description_ru.785f83b1",
-          "en": "Root lightening with styling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 34,
-      "fields": {
-        "description_ru": {
-          "ru": "Мега объем ресниц",
-          "key": "services.34.description_ru.0a54c5b1",
-          "en": "Mega volume eyelashes",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 1,
-      "fields": {
-        "description_ru": {
-          "ru": "Стойкий цвет губ",
-          "key": "services.1.description_ru.2c7149ec",
-          "en": "Long lasting lip color",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 11,
-      "fields": {
-        "description_ru": {
-          "ru": "Полная эпиляция рук",
-          "key": "services.11.description_ru.7168d5eb",
-          "en": "Full arm hair removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 31,
-      "fields": {
-        "description_ru": {
-          "ru": "Натуральное наращивание ресниц",
-          "key": "services.31.description_ru.1cb01f28",
-          "en": "Natural eyelash extensions",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 12,
-      "fields": {
-        "description_ru": {
-          "ru": "Эпиляция рук до локтя",
-          "key": "services.12.description_ru.e9cb16e1",
-          "en": "Epilation of arms up to the elbow",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 24,
-      "fields": {
-        "description_ru": {
-          "ru": "Тонирование волос с укладкой",
-          "key": "services.24.description_ru.837dbffc",
-          "en": "Hair tinting with styling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 19,
-      "fields": {
-        "description_ru": {
-          "ru": "Профессиональная стрижка с укладкой",
-          "key": "services.19.description_ru.5d2597e1",
-          "en": "Professional haircut with styling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 39,
-      "fields": {
-        "description_ru": {
-          "ru": "Комбо ламинирование",
-          "key": "services.39.description_ru.c37d7e65",
-          "en": "Combo lamination",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 20,
-      "fields": {
-        "description_ru": {
-          "ru": "Профессиональная укладка волос",
-          "key": "services.20.description_ru.7cbd9728",
-          "en": "Professional hair styling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 40,
-      "fields": {
-        "description_ru": {
-          "ru": "Профессиональное окрашивание",
-          "key": "services.40.description_ru.fcb57901",
-          "en": "Professional coloring",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 48,
-      "fields": {
-        "description_ru": {
-          "ru": "Маникюр с обычным лаком",
-          "key": "services.48.description_ru.b2902707",
-          "en": "Manicure with regular polish",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 52,
-      "fields": {
-        "description_ru": {
-          "ru": "Смена обычного лака",
-          "key": "services.52.description_ru.9e0c18fa",
-          "en": "Changing regular varnish",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 49,
-      "fields": {
-        "description_ru": {
-          "ru": "Маникюр с гель-лаком",
-          "key": "services.49.description_ru.eb95d49c",
-          "en": "Manicure with gel polish",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 50,
-      "fields": {
-        "description_ru": {
-          "ru": "Японский маникюр",
-          "key": "services.50.description_ru.4fec55b5",
-          "en": "Japanese manicure",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 13,
-      "fields": {
-        "description_ru": {
-          "ru": "Полная эпиляция тела",
-          "key": "services.13.description_ru.187ce3b9",
-          "en": "Full body hair removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 18,
-      "fields": {
-        "description_ru": {
-          "ru": "Простой срез без мытья",
-          "key": "services.18.description_ru.6a0312d4",
-          "en": "Easy cutting without washing",
+        "name": {
+          "ru": "Первичный контакт",
+          "key": "pipeline_stages.2.name.566332d6",
+          "en": null,
           "ar": null,
           "es": null,
           "de": null,
@@ -1563,10 +1749,10 @@
     {
       "id": 3,
       "fields": {
-        "description_ru": {
-          "ru": "Подчеркивание линии роста ресниц",
-          "key": "services.3.description_ru.b4db8982",
-          "en": "Emphasizing the lash line",
+        "name": {
+          "ru": "Переговоры",
+          "key": "pipeline_stages.3.name.2671dd03",
+          "en": null,
           "ar": null,
           "es": null,
           "de": null,
@@ -1578,63 +1764,12 @@
       }
     },
     {
-      "id": 6,
+      "id": 4,
       "fields": {
-        "description_ru": {
-          "ru": "Полная эпиляция зоны бикини",
-          "key": "services.6.description_ru.568f1503",
-          "en": "Complete epilation of the bikini area",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 32,
-      "fields": {
-        "description_ru": {
-          "ru": "Наращивание 2D",
-          "key": "services.32.description_ru.b4b7781e",
-          "en": "2D extension",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 33,
-      "fields": {
-        "description_ru": {
-          "ru": "Наращивание 3D",
-          "key": "services.33.description_ru.9088ab16",
-          "en": "3D extension",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 51,
-      "fields": {
-        "description_ru": {
-          "ru": "Маникюр для детей",
-          "key": "services.51.description_ru.650bd84f",
-          "en": "Manicure for children",
+        "name": {
+          "ru": "Принимают решение",
+          "key": "pipeline_stages.4.name.7c75218b",
+          "en": null,
           "ar": null,
           "es": null,
           "de": null,
@@ -1648,10 +1783,10 @@
     {
       "id": 5,
       "fields": {
-        "description_ru": {
-          "ru": "Коррекция существующего перманента",
-          "key": "services.5.description_ru.c816bc6a",
-          "en": "Correction of an existing permanent",
+        "name": {
+          "ru": "Успешно реализовано",
+          "key": "pipeline_stages.5.name.a742487f",
+          "en": null,
           "ar": null,
           "es": null,
           "de": null,
@@ -1663,12 +1798,31 @@
       }
     },
     {
-      "id": 7,
+      "id": 6,
       "fields": {
-        "description_ru": {
-          "ru": "Эпиляция по линии бикини",
-          "key": "services.7.description_ru.078dcd37",
-          "en": "Epilation along the bikini line",
+        "name": {
+          "ru": "Закрыто и не реализовано",
+          "key": "pipeline_stages.6.name.0275e06b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    }
+  ],
+  "invoice_stages": [
+    {
+      "id": 1,
+      "fields": {
+        "name": {
+          "ru": "Черновик",
+          "key": "invoice_stages.1.name.30ab6155",
+          "en": null,
           "ar": null,
           "es": null,
           "de": null,
@@ -1680,12 +1834,12 @@
       }
     },
     {
-      "id": 37,
+      "id": 2,
       "fields": {
-        "description_ru": {
-          "ru": "Ламинирование бровей",
-          "key": "services.37.description_ru.c66b6652",
-          "en": "Eyebrow lamination",
+        "name": {
+          "ru": "Отправлен",
+          "key": "invoice_stages.2.name.8496c7e8",
+          "en": null,
           "ar": null,
           "es": null,
           "de": null,
@@ -1697,12 +1851,12 @@
       }
     },
     {
-      "id": 10,
+      "id": 3,
       "fields": {
-        "description_ru": {
-          "ru": "Эпиляция ног до колен",
-          "key": "services.10.description_ru.3bad9c89",
-          "en": "Epilation of legs up to the knees",
+        "name": {
+          "ru": "Оплачен",
+          "key": "invoice_stages.3.name.1ec8bd15",
+          "en": null,
           "ar": null,
           "es": null,
           "de": null,
@@ -1714,12 +1868,12 @@
       }
     },
     {
-      "id": 44,
+      "id": 4,
       "fields": {
-        "description_ru": {
-          "ru": "Подтягивающий массаж",
-          "key": "services.44.description_ru.da76e7a6",
-          "en": "Firming massage",
+        "name": {
+          "ru": "Частично оплачен",
+          "key": "invoice_stages.4.name.4a8dac5c",
+          "en": null,
           "ar": null,
           "es": null,
           "de": null,
@@ -1731,12 +1885,12 @@
       }
     },
     {
-      "id": 46,
+      "id": 5,
       "fields": {
-        "description_ru": {
-          "ru": "Базовый маникюр",
-          "key": "services.46.description_ru.0079cd02",
-          "en": "Basic manicure",
+        "name": {
+          "ru": "Просрочен",
+          "key": "invoice_stages.5.name.0a04820f",
+          "en": null,
           "ar": null,
           "es": null,
           "de": null,
@@ -1748,301 +1902,12 @@
       }
     },
     {
-      "id": 22,
+      "id": 6,
       "fields": {
-        "description_ru": {
-          "ru": "Окрашивание корней с укладкой",
-          "key": "services.22.description_ru.2ad52607",
-          "en": "Root coloring with styling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 25,
-      "fields": {
-        "description_ru": {
-          "ru": "Полное окрашивание с укладкой",
-          "key": "services.25.description_ru.d5d8904e",
-          "en": "Full coloring with styling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 47,
-      "fields": {
-        "description_ru": {
-          "ru": "Спа-маникюр",
-          "key": "services.47.description_ru.b7551641",
-          "en": "Spa manicure",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 27,
-      "fields": {
-        "description_ru": {
-          "ru": "Техники градиентного окрашивания",
-          "key": "services.27.description_ru.596e8006",
-          "en": "Gradient coloring techniques",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 28,
-      "fields": {
-        "description_ru": {
-          "ru": "Коррекция цвета из темного",
-          "key": "services.28.description_ru.32fb73b4",
-          "en": "Color correction from dark",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 29,
-      "fields": {
-        "description_ru": {
-          "ru": "Натуральный уход за волосами",
-          "key": "services.29.description_ru.2777cc29",
-          "en": "Natural hair care",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 30,
-      "fields": {
-        "description_ru": {
-          "ru": "Наращивание за капсулу",
-          "key": "services.30.description_ru.7295515b",
-          "en": "Extension per capsule",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 41,
-      "fields": {
-        "description_ru": {
-          "ru": "Профессиональное оформление",
-          "key": "services.41.description_ru.dd9e95fb",
-          "en": "Professional design",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 15,
-      "fields": {
-        "description_ru": {
-          "ru": "Полная эпиляция лица",
-          "key": "services.15.description_ru.67086220",
-          "en": "Full facial hair removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 16,
-      "fields": {
-        "description_ru": {
-          "ru": "Эпиляция верхней губы",
-          "key": "services.16.description_ru.c364dec1",
-          "en": "Epilation of the upper lip",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 17,
-      "fields": {
-        "description_ru": {
-          "ru": "Эпиляция подбородка",
-          "key": "services.17.description_ru.3e342887",
-          "en": "Chin hair removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 9,
-      "fields": {
-        "description_ru": {
-          "ru": "Полная эпиляция ног",
-          "key": "services.9.description_ru.0ccc7a02",
-          "en": "Full leg hair removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 35,
-      "fields": {
-        "description_ru": {
-          "ru": "Специальный изгиб",
-          "key": "services.35.description_ru.cc8b3435",
-          "en": "Special bend",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 36,
-      "fields": {
-        "description_ru": {
-          "ru": "Безопасное снятие",
-          "key": "services.36.description_ru.4610f41a",
-          "en": "Safe removal",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 45,
-      "fields": {
-        "description_ru": {
-          "ru": "Химический пилинг",
-          "key": "services.45.description_ru.8dea543f",
-          "en": "Chemical peeling",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 21,
-      "fields": {
-        "description_ru": {
-          "ru": "Стрижка для детей",
-          "key": "services.21.description_ru.aaee775a",
-          "en": "Haircut for children",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 26,
-      "fields": {
-        "description_ru": {
-          "ru": "Техника балаяж",
-          "key": "services.26.description_ru.0d9921e5",
-          "en": "Balayage technique",
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 14,
-      "fields": {
-        "description_ru": {
-          "ru": "Эпиляция подмышек",
-          "key": "services.14.description_ru.3186a3c3",
-          "en": "Armpit hair removal",
+        "name": {
+          "ru": "Отменен",
+          "key": "invoice_stages.6.name.3062e6f9",
+          "en": null,
           "ar": null,
           "es": null,
           "de": null,

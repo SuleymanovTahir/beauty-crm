@@ -20,18 +20,17 @@ export const EXTERNAL_SERVICES = {
 } as const;
 
 // Значения по умолчанию
-// Взяты из backend/db/init.py и backend/db/settings.py
 export const DEFAULT_VALUES = {
-  COUNTRY_CODE: 'ae', // UAE
+  COUNTRY_CODE: '',
   PHONE_MIN_LENGTH: 5,
-  CURRENCY: 'AED',
-  DEFAULT_EMAIL: 'mladiamontuae@gmail.com', // Из backend/db/init.py
-  DEFAULT_SALON_NAME: 'M Le Diamant', // Из backend/db/init.py
-  DEFAULT_SALON_NAME_ALT: 'M Le Diamant', // Из backend/db/init.py
-  DEFAULT_PHONE: '+971526961100', // Из backend/db/init.py
-  DEFAULT_ADDRESS: 'Shop 13, Amwaj 3 Plaza Level, JBR, Dubai', // Из backend/db/init.py
-  DEFAULT_WHATSAPP: '+971526961100', // Из backend/db/init.py
-  DEFAULT_INSTAGRAM: 'www.instagram.com/mlediamant/', // Из backend/db/init.py
+  CURRENCY: '',
+  DEFAULT_EMAIL: '',
+  DEFAULT_SALON_NAME: '',
+  DEFAULT_SALON_NAME_ALT: '',
+  DEFAULT_PHONE: '',
+  DEFAULT_ADDRESS: '',
+  DEFAULT_WHATSAPP: '',
+  DEFAULT_INSTAGRAM: '',
 } as const;
 
 // Магические числа

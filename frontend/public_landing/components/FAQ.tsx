@@ -69,13 +69,13 @@ export function FAQ() {
       <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
         <div className="text-center mb-8 sm:mb-12">
           <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-3">
-            {t('faqTag', { defaultValue: 'FAQ' })}
+            {t('faqTag')}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('faqTitlePart1', { defaultValue: 'Часто задаваемые' })} <span className="text-primary">{t('faqTitlePart2', { defaultValue: 'вопросы' })}</span>
+            {t('faqTitlePart1')} <span className="text-primary">{t('faqTitlePart2')}</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
-            {t('faqDesc', { defaultValue: 'Ответы на популярные вопросы' })}
+            {t('faqDesc')}
           </p>
         </div>
 
@@ -99,13 +99,13 @@ export function FAQ() {
           </Accordion>
         ) : (
           <div className="text-center text-muted-foreground py-8">
-            {t('noFaqAvailable', { defaultValue: 'Вопросы скоро появятся' })}
+            {t('noFaqAvailable')}
           </div>
         )}
 
         <div className="mt-6 sm:mt-8 lg:mt-12 text-center space-y-4 p-4 sm:p-6 lg:p-8 glass-panel transition-colors">
           <p className="text-sm sm:text-base text-foreground/70">
-            {t('faqContactPrompt', { defaultValue: 'Не нашли ответ на свой вопрос?' })}
+            {t('faqContactPrompt')}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-w-xl mx-auto">
             <Button
@@ -114,14 +114,14 @@ export function FAQ() {
               className="w-full bg-background border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-10 text-sm"
             >
               <Phone className="w-4 h-4 mr-2" />
-              {t('callUs', { defaultValue: 'Позвонить' })}
+              {t('callUs')}
             </Button>
             <Button
               onClick={() => document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" })}
               className="w-full hero-button-primary h-10 text-sm"
             >
               <Calendar className="w-4 h-4 mr-2" />
-              {t('bookNow', { defaultValue: 'Записаться онлайн' })}
+              {t('bookNow')}
             </Button>
           </div>
         </div>

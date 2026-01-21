@@ -457,7 +457,13 @@
       "update_error": "Ошибка обновления",
       "upload_error": "Ошибка загрузки файла",
       "client": "Клиент",
-      "service": "Служба"
+      "service": "Служба",
+      "role_admin": "Администратор",
+      "role_director": "Директор",
+      "role_employee": "Сотрудник",
+      "role_manager": "Менеджер",
+      "role_marketer": "Маркетолог",
+      "role_sales": "Продажи"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -890,7 +896,34 @@
       "public_reviews.31.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
       "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. ",
       "services.45.name_ru.6702d959": "пилинг",
-      "services.26.name_ru.b9de746e": "балаяж"
+      "services.26.name_ru.b9de746e": "балаяж",
+      "users.307.full_name.5f17e491": "Федорова Наталья",
+      "users.307.position.5808e954": "Мастер бровист",
+      "users.307.bio.aa13b138": "Оформление бровей и ресниц",
+      "users.306.full_name.257200e4": "Лебедева Татьяна",
+      "users.306.position.a4e20702": "Косметолог",
+      "users.306.bio.6ef3bfcd": "Уход за лицом и телом",
+      "users.305.full_name.dfcc4b09": "Смирнова Екатерина",
+      "users.305.position.b8d173e8": "Парикмахер-стилист",
+      "users.305.bio.4a81806f": "Стрижки, окрашивание, укладки",
+      "users.308.full_name.d3255765": "Ирина Павлова",
+      "users.308.position.bc063e06": "Визажист",
+      "users.308.bio.9379f3b7": "Профессиональный макияж",
+      "users.304.full_name.214f5191": "Кузнецова Виктория",
+      "users.304.position.e36b15b4": "Мастер маникюра",
+      "users.304.bio.7ef1954e": "Специалист по нейл-арту",
+      "public_reviews.36.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.36.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.36.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.37.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.37.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.37.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.38.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.38.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.38.employee_position.65d6c03d": "Микроблейдинг",
+      "public_reviews.33.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
+      "public_reviews.34.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.35.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -1397,7 +1430,8 @@
       "phone_too_short_many": "",
       "phone_too_short_other": "",
       "date_format_hint": "Формат: ДД.ММ.ГГГГ",
-      "date_format_hint_en": "Format: MM/DD/YYYY"
+      "date_format_hint_en": "Format: MM/DD/YYYY",
+      "formDatePlaceholder": "Выберите дату"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -2883,7 +2917,14 @@
       "status": "Статус",
       "subtitle": "Управление счетами и платежами",
       "title": "Счета",
-      "totalAmount": "Сумма"
+      "totalAmount": "Сумма",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.overdue": "Просрочен",
+      "statuses.paid": "Оплачен",
+      "statuses.partial": "Частично оплачен",
+      "statuses.partially_paid": "Частично оплачен",
+      "statuses.sent": "Отправлен"
     },
     "admin/bookings.json": {
       "source.account": "ЛК",
@@ -4004,7 +4045,11 @@
       "typeManagement.name": "Название",
       "typeManagement.system": "Система",
       "typeManagement.systemProtected": "Система защищена",
-      "typeManagement.title": "Типы договоров"
+      "typeManagement.title": "Типы договоров",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.sent": "Отправлен",
+      "statuses.signed": "Подписан"
     },
     "admin/clients.json": {
       "actions": "Действия",
@@ -4263,7 +4308,16 @@
       "total_losses_one": "Потеря: {{count}}",
       "total_losses_few": "Потери: {{count}}",
       "total_losses_many": "Потери: {{count}}",
-      "total_losses_other": "Потери: {{count}}"
+      "total_losses_other": "Потери: {{count}}",
+      "stages.contacted": "В работе",
+      "stages.decision": "Принимают решение",
+      "stages.lost": "Потерян",
+      "stages.negotiation": "Переговоры",
+      "stages.new": "Новые",
+      "stages.remind_later": "Напомнить позже",
+      "stages.visited": "Визит",
+      "stages.won": "Успешно реализовано",
+      "stages.booked": "Запись"
     },
     "admin/bookingdetail.json": {
       "actions": "Действия",
@@ -4375,7 +4429,9 @@
       "total_visits": "Всего визитов",
       "upload_error": "Ошибка загрузки",
       "visits_dynamics": "Динамика посещений",
-      "years": "лет"
+      "years": "лет",
+      "phone_not_specified": "Номер телефона не указан",
+      "tiktok_in_development": "TikTok интеграция в разработке"
     },
     "admin/trash.json": {
       "confirm_empty_trash": "Вы уверены, что хотите безвозвратно удалить все объекты из корзины?",
@@ -4611,7 +4667,12 @@
       "tasks_for_today": "Дела на сегодня",
       "title": "Заголовок",
       "unassigned": "Не назначен",
-      "update_failed": "Ошибка обновления задачи"
+      "update_failed": "Ошибка обновления задачи",
+      "stages.done": "Готово",
+      "stages.in_progress": "В работе",
+      "stages.on_hold": "Отложено",
+      "stages.review": "Проверка",
+      "stages.todo": "Сделать"
     },
     "admin/plans.json": {
       "add_metric": "Добавить метрику",
@@ -6456,7 +6517,13 @@
       "update_error": "Ошибка обновления",
       "upload_error": "Ошибка загрузки файла",
       "client": "Клиент",
-      "service": "Служба"
+      "service": "Служба",
+      "role_admin": "Администратор",
+      "role_director": "Директор",
+      "role_employee": "Сотрудник",
+      "role_manager": "Менеджер",
+      "role_marketer": "Маркетолог",
+      "role_sales": "Продажи"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -6889,7 +6956,34 @@
       "public_reviews.35.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.30.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.31.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
+      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. ",
+      "users.307.full_name.5f17e491": "Федорова Наталья",
+      "users.307.position.5808e954": "Мастер бровист",
+      "users.307.bio.aa13b138": "Оформление бровей и ресниц",
+      "users.306.full_name.257200e4": "Лебедева Татьяна",
+      "users.306.position.a4e20702": "Косметолог",
+      "users.306.bio.6ef3bfcd": "Уход за лицом и телом",
+      "users.305.full_name.dfcc4b09": "Смирнова Екатерина",
+      "users.305.position.b8d173e8": "Парикмахер-стилист",
+      "users.305.bio.4a81806f": "Стрижки, окрашивание, укладки",
+      "users.308.full_name.d3255765": "Ирина Павлова",
+      "users.308.position.bc063e06": "Визажист",
+      "users.308.bio.9379f3b7": "Профессиональный макияж",
+      "users.304.full_name.214f5191": "Кузнецова Виктория",
+      "users.304.position.e36b15b4": "Мастер маникюра",
+      "users.304.bio.7ef1954e": "Специалист по нейл-арту",
+      "public_reviews.36.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.36.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.36.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.37.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.37.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.37.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.38.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.38.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.38.employee_position.65d6c03d": "Микроблейдинг",
+      "public_reviews.33.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
+      "public_reviews.34.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.35.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -7396,7 +7490,8 @@
       "phone_too_short_many": "Минимум {{count}} цифр",
       "phone_too_short_other": "Минимум {{count}} цифр",
       "date_format_hint": "Формат: ДД.ММ.ГГГГ",
-      "date_format_hint_en": "Format: MM/DD/YYYY"
+      "date_format_hint_en": "Format: MM/DD/YYYY",
+      "formDatePlaceholder": "Выберите дату"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -8882,7 +8977,14 @@
       "status": "Статус",
       "subtitle": "Управление счетами и платежами",
       "title": "Счета",
-      "totalAmount": "Сумма"
+      "totalAmount": "Сумма",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.overdue": "Просрочен",
+      "statuses.paid": "Оплачен",
+      "statuses.partial": "Частично оплачен",
+      "statuses.partially_paid": "Частично оплачен",
+      "statuses.sent": "Отправлен"
     },
     "admin/bookings.json": {
       "source.account": "ЛК",
@@ -10003,7 +10105,11 @@
       "typeManagement.name": "Название",
       "typeManagement.system": "Система",
       "typeManagement.systemProtected": "Система защищена",
-      "typeManagement.title": "Типы договоров"
+      "typeManagement.title": "Типы договоров",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.sent": "Отправлен",
+      "statuses.signed": "Подписан"
     },
     "admin/clients.json": {
       "actions": "Действия",
@@ -10262,7 +10368,16 @@
       "total_losses_one": "Потеря: {{count}}",
       "total_losses_few": "Потери: {{count}}",
       "total_losses_many": "Потери: {{count}}",
-      "total_losses_other": "Потери: {{count}}"
+      "total_losses_other": "Потери: {{count}}",
+      "stages.booked": "Запись",
+      "stages.contacted": "В работе",
+      "stages.decision": "Принимают решение",
+      "stages.lost": "Потерян",
+      "stages.negotiation": "Переговоры",
+      "stages.new": "Новые",
+      "stages.remind_later": "Напомнить позже",
+      "stages.visited": "Визит",
+      "stages.won": "Успешно реализовано"
     },
     "admin/bookingdetail.json": {
       "actions": "Действия",
@@ -10374,7 +10489,9 @@
       "total_visits": "Всего визитов",
       "upload_error": "Ошибка загрузки",
       "visits_dynamics": "Динамика посещений",
-      "years": "лет"
+      "years": "лет",
+      "phone_not_specified": "Номер телефона не указан",
+      "tiktok_in_development": "TikTok интеграция в разработке"
     },
     "admin/trash.json": {
       "confirm_empty_trash": "Вы уверены, что хотите безвозвратно удалить все объекты из корзины?",
@@ -10610,7 +10727,12 @@
       "tasks_for_today": "Дела на сегодня",
       "title": "Заголовок",
       "unassigned": "Не назначен",
-      "update_failed": "Ошибка обновления задачи"
+      "update_failed": "Ошибка обновления задачи",
+      "stages.done": "Готово",
+      "stages.in_progress": "В работе",
+      "stages.on_hold": "Отложено",
+      "stages.review": "Проверка",
+      "stages.todo": "Сделать"
     },
     "admin/plans.json": {
       "add_metric": "Добавить метрику",
@@ -12455,7 +12577,13 @@
       "update_error": "Ошибка обновления",
       "upload_error": "Ошибка загрузки файла",
       "client": "Клиент",
-      "service": "Служба"
+      "service": "Служба",
+      "role_admin": "Администратор",
+      "role_director": "Директор",
+      "role_employee": "Сотрудник",
+      "role_manager": "Менеджер",
+      "role_marketer": "Маркетолог",
+      "role_sales": "Продажи"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -12888,7 +13016,34 @@
       "public_reviews.35.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.30.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.31.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
+      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. ",
+      "users.307.full_name.5f17e491": "Федорова Наталья",
+      "users.307.position.5808e954": "Мастер бровист",
+      "users.307.bio.aa13b138": "Оформление бровей и ресниц",
+      "users.306.full_name.257200e4": "Лебедева Татьяна",
+      "users.306.position.a4e20702": "Косметолог",
+      "users.306.bio.6ef3bfcd": "Уход за лицом и телом",
+      "users.305.full_name.dfcc4b09": "Смирнова Екатерина",
+      "users.305.position.b8d173e8": "Парикмахер-стилист",
+      "users.305.bio.4a81806f": "Стрижки, окрашивание, укладки",
+      "users.308.full_name.d3255765": "Ирина Павлова",
+      "users.308.position.bc063e06": "Визажист",
+      "users.308.bio.9379f3b7": "Профессиональный макияж",
+      "users.304.full_name.214f5191": "Кузнецова Виктория",
+      "users.304.position.e36b15b4": "Мастер маникюра",
+      "users.304.bio.7ef1954e": "Специалист по нейл-арту",
+      "public_reviews.36.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.36.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.36.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.37.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.37.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.37.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.38.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.38.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.38.employee_position.65d6c03d": "Микроблейдинг",
+      "public_reviews.33.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
+      "public_reviews.34.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.35.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -13395,7 +13550,8 @@
       "phone_too_short_many": "Минимум {{count}} цифр",
       "phone_too_short_other": "Минимум {{count}} цифр",
       "date_format_hint": "Формат: ДД.ММ.ГГГГ",
-      "date_format_hint_en": "Format: MM/DD/YYYY"
+      "date_format_hint_en": "Format: MM/DD/YYYY",
+      "formDatePlaceholder": "Выберите дату"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -14881,7 +15037,14 @@
       "status": "Статус",
       "subtitle": "Управление счетами и платежами",
       "title": "Счета",
-      "totalAmount": "Сумма"
+      "totalAmount": "Сумма",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.overdue": "Просрочен",
+      "statuses.paid": "Оплачен",
+      "statuses.partial": "Частично оплачен",
+      "statuses.partially_paid": "Частично оплачен",
+      "statuses.sent": "Отправлен"
     },
     "admin/bookings.json": {
       "source.account": "ЛК",
@@ -16002,7 +16165,11 @@
       "typeManagement.name": "Название",
       "typeManagement.system": "Система",
       "typeManagement.systemProtected": "Система защищена",
-      "typeManagement.title": "Типы договоров"
+      "typeManagement.title": "Типы договоров",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.sent": "Отправлен",
+      "statuses.signed": "Подписан"
     },
     "admin/clients.json": {
       "actions": "Действия",
@@ -16261,7 +16428,16 @@
       "total_losses_one": "Потеря: {{count}}",
       "total_losses_few": "Потери: {{count}}",
       "total_losses_many": "Потери: {{count}}",
-      "total_losses_other": "Потери: {{count}}"
+      "total_losses_other": "Потери: {{count}}",
+      "stages.booked": "Запись",
+      "stages.contacted": "В работе",
+      "stages.decision": "Принимают решение",
+      "stages.lost": "Потерян",
+      "stages.negotiation": "Переговоры",
+      "stages.new": "Новые",
+      "stages.remind_later": "Напомнить позже",
+      "stages.visited": "Визит",
+      "stages.won": "Успешно реализовано"
     },
     "admin/bookingdetail.json": {
       "actions": "Действия",
@@ -16373,7 +16549,9 @@
       "total_visits": "Всего визитов",
       "upload_error": "Ошибка загрузки",
       "visits_dynamics": "Динамика посещений",
-      "years": "лет"
+      "years": "лет",
+      "phone_not_specified": "Номер телефона не указан",
+      "tiktok_in_development": "TikTok интеграция в разработке"
     },
     "admin/trash.json": {
       "confirm_empty_trash": "Вы уверены, что хотите безвозвратно удалить все объекты из корзины?",
@@ -16609,7 +16787,12 @@
       "tasks_for_today": "Дела на сегодня",
       "title": "Заголовок",
       "unassigned": "Не назначен",
-      "update_failed": "Ошибка обновления задачи"
+      "update_failed": "Ошибка обновления задачи",
+      "stages.done": "Готово",
+      "stages.in_progress": "В работе",
+      "stages.on_hold": "Отложено",
+      "stages.review": "Проверка",
+      "stages.todo": "Сделать"
     },
     "admin/plans.json": {
       "add_metric": "Добавить метрику",
@@ -18454,7 +18637,13 @@
       "update_error": "Ошибка обновления",
       "upload_error": "Ошибка загрузки файла",
       "client": "Клиент",
-      "service": "Служба"
+      "service": "Служба",
+      "role_admin": "Администратор",
+      "role_director": "Директор",
+      "role_employee": "Сотрудник",
+      "role_manager": "Менеджер",
+      "role_marketer": "Маркетолог",
+      "role_sales": "Продажи"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -18887,7 +19076,34 @@
       "public_reviews.35.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.30.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.31.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
+      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. ",
+      "users.307.full_name.5f17e491": "Федорова Наталья",
+      "users.307.position.5808e954": "Мастер бровист",
+      "users.307.bio.aa13b138": "Оформление бровей и ресниц",
+      "users.306.full_name.257200e4": "Лебедева Татьяна",
+      "users.306.position.a4e20702": "Косметолог",
+      "users.306.bio.6ef3bfcd": "Уход за лицом и телом",
+      "users.305.full_name.dfcc4b09": "Смирнова Екатерина",
+      "users.305.position.b8d173e8": "Парикмахер-стилист",
+      "users.305.bio.4a81806f": "Стрижки, окрашивание, укладки",
+      "users.308.full_name.d3255765": "Ирина Павлова",
+      "users.308.position.bc063e06": "Визажист",
+      "users.308.bio.9379f3b7": "Профессиональный макияж",
+      "users.304.full_name.214f5191": "Кузнецова Виктория",
+      "users.304.position.e36b15b4": "Мастер маникюра",
+      "users.304.bio.7ef1954e": "Специалист по нейл-арту",
+      "public_reviews.36.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.36.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.36.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.37.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.37.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.37.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.38.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.38.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.38.employee_position.65d6c03d": "Микроблейдинг",
+      "public_reviews.33.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
+      "public_reviews.34.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.35.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -19394,7 +19610,8 @@
       "phone_too_short_many": "Минимум {{count}} цифр",
       "phone_too_short_other": "Минимум {{count}} цифр",
       "date_format_hint": "Формат: ДД.ММ.ГГГГ",
-      "date_format_hint_en": "Format: MM/DD/YYYY"
+      "date_format_hint_en": "Format: MM/DD/YYYY",
+      "formDatePlaceholder": "Выберите дату"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -20880,7 +21097,14 @@
       "status": "Статус",
       "subtitle": "Управление счетами и платежами",
       "title": "Счета",
-      "totalAmount": "Сумма"
+      "totalAmount": "Сумма",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.overdue": "Просрочен",
+      "statuses.paid": "Оплачен",
+      "statuses.partial": "Частично оплачен",
+      "statuses.partially_paid": "Частично оплачен",
+      "statuses.sent": "Отправлен"
     },
     "admin/bookings.json": {
       "source.account": "ЛК",
@@ -22001,7 +22225,11 @@
       "typeManagement.name": "Название",
       "typeManagement.system": "Система",
       "typeManagement.systemProtected": "Система защищена",
-      "typeManagement.title": "Типы договоров"
+      "typeManagement.title": "Типы договоров",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.sent": "Отправлен",
+      "statuses.signed": "Подписан"
     },
     "admin/clients.json": {
       "actions": "Действия",
@@ -22260,7 +22488,16 @@
       "total_losses_one": "Потеря: {{count}}",
       "total_losses_few": "Потери: {{count}}",
       "total_losses_many": "Потери: {{count}}",
-      "total_losses_other": "Потери: {{count}}"
+      "total_losses_other": "Потери: {{count}}",
+      "stages.booked": "Запись",
+      "stages.contacted": "В работе",
+      "stages.decision": "Принимают решение",
+      "stages.lost": "Потерян",
+      "stages.negotiation": "Переговоры",
+      "stages.new": "Новые",
+      "stages.remind_later": "Напомнить позже",
+      "stages.visited": "Визит",
+      "stages.won": "Успешно реализовано"
     },
     "admin/bookingdetail.json": {
       "actions": "Действия",
@@ -22372,7 +22609,9 @@
       "total_visits": "Всего визитов",
       "upload_error": "Ошибка загрузки",
       "visits_dynamics": "Динамика посещений",
-      "years": "лет"
+      "years": "лет",
+      "phone_not_specified": "Номер телефона не указан",
+      "tiktok_in_development": "TikTok интеграция в разработке"
     },
     "admin/trash.json": {
       "confirm_empty_trash": "Вы уверены, что хотите безвозвратно удалить все объекты из корзины?",
@@ -22608,7 +22847,12 @@
       "tasks_for_today": "Дела на сегодня",
       "title": "Заголовок",
       "unassigned": "Не назначен",
-      "update_failed": "Ошибка обновления задачи"
+      "update_failed": "Ошибка обновления задачи",
+      "stages.done": "Готово",
+      "stages.in_progress": "В работе",
+      "stages.on_hold": "Отложено",
+      "stages.review": "Проверка",
+      "stages.todo": "Сделать"
     },
     "admin/plans.json": {
       "add_metric": "Добавить метрику",
@@ -24453,7 +24697,13 @@
       "update_error": "Ошибка обновления",
       "upload_error": "Ошибка загрузки файла",
       "client": "Клиент",
-      "service": "Служба"
+      "service": "Служба",
+      "role_admin": "Администратор",
+      "role_director": "Директор",
+      "role_employee": "Сотрудник",
+      "role_manager": "Менеджер",
+      "role_marketer": "Маркетолог",
+      "role_sales": "Продажи"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -24886,7 +25136,34 @@
       "public_reviews.35.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.30.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.31.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
+      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. ",
+      "users.307.full_name.5f17e491": "Федорова Наталья",
+      "users.307.position.5808e954": "Мастер бровист",
+      "users.307.bio.aa13b138": "Оформление бровей и ресниц",
+      "users.306.full_name.257200e4": "Лебедева Татьяна",
+      "users.306.position.a4e20702": "Косметолог",
+      "users.306.bio.6ef3bfcd": "Уход за лицом и телом",
+      "users.305.full_name.dfcc4b09": "Смирнова Екатерина",
+      "users.305.position.b8d173e8": "Парикмахер-стилист",
+      "users.305.bio.4a81806f": "Стрижки, окрашивание, укладки",
+      "users.308.full_name.d3255765": "Ирина Павлова",
+      "users.308.position.bc063e06": "Визажист",
+      "users.308.bio.9379f3b7": "Профессиональный макияж",
+      "users.304.full_name.214f5191": "Кузнецова Виктория",
+      "users.304.position.e36b15b4": "Мастер маникюра",
+      "users.304.bio.7ef1954e": "Специалист по нейл-арту",
+      "public_reviews.36.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.36.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.36.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.37.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.37.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.37.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.38.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.38.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.38.employee_position.65d6c03d": "Микроблейдинг",
+      "public_reviews.33.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
+      "public_reviews.34.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.35.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -25393,7 +25670,8 @@
       "phone_too_short_many": "Минимум {{count}} цифр",
       "phone_too_short_other": "Минимум {{count}} цифр",
       "date_format_hint": "Формат: ДД.ММ.ГГГГ",
-      "date_format_hint_en": "Format: MM/DD/YYYY"
+      "date_format_hint_en": "Format: MM/DD/YYYY",
+      "formDatePlaceholder": "Выберите дату"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -26879,7 +27157,14 @@
       "status": "Статус",
       "subtitle": "Управление счетами и платежами",
       "title": "Счета",
-      "totalAmount": "Сумма"
+      "totalAmount": "Сумма",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.overdue": "Просрочен",
+      "statuses.paid": "Оплачен",
+      "statuses.partial": "Частично оплачен",
+      "statuses.partially_paid": "Частично оплачен",
+      "statuses.sent": "Отправлен"
     },
     "admin/bookings.json": {
       "source.account": "ЛК",
@@ -28000,7 +28285,11 @@
       "typeManagement.name": "Название",
       "typeManagement.system": "Система",
       "typeManagement.systemProtected": "Система защищена",
-      "typeManagement.title": "Типы договоров"
+      "typeManagement.title": "Типы договоров",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.sent": "Отправлен",
+      "statuses.signed": "Подписан"
     },
     "admin/clients.json": {
       "actions": "Действия",
@@ -28259,7 +28548,16 @@
       "total_losses_one": "Потеря: {{count}}",
       "total_losses_few": "Потери: {{count}}",
       "total_losses_many": "Потери: {{count}}",
-      "total_losses_other": "Потери: {{count}}"
+      "total_losses_other": "Потери: {{count}}",
+      "stages.contacted": "В работе",
+      "stages.decision": "Принимают решение",
+      "stages.lost": "Потерян",
+      "stages.negotiation": "Переговоры",
+      "stages.new": "Новые",
+      "stages.remind_later": "Напомнить позже",
+      "stages.visited": "Визит",
+      "stages.won": "Успешно реализовано",
+      "stages.booked": "Запись"
     },
     "admin/bookingdetail.json": {
       "actions": "Действия",
@@ -28371,7 +28669,9 @@
       "total_visits": "Всего визитов",
       "upload_error": "Ошибка загрузки",
       "visits_dynamics": "Динамика посещений",
-      "years": "лет"
+      "years": "лет",
+      "phone_not_specified": "Номер телефона не указан",
+      "tiktok_in_development": "TikTok интеграция в разработке"
     },
     "admin/trash.json": {
       "confirm_empty_trash": "Вы уверены, что хотите безвозвратно удалить все объекты из корзины?",
@@ -28607,7 +28907,12 @@
       "tasks_for_today": "Дела на сегодня",
       "title": "Заголовок",
       "unassigned": "Не назначен",
-      "update_failed": "Ошибка обновления задачи"
+      "update_failed": "Ошибка обновления задачи",
+      "stages.done": "Готово",
+      "stages.in_progress": "В работе",
+      "stages.on_hold": "Отложено",
+      "stages.review": "Проверка",
+      "stages.todo": "Сделать"
     },
     "admin/plans.json": {
       "add_metric": "Добавить метрику",
@@ -30452,7 +30757,13 @@
       "update_error": "Ошибка обновления",
       "upload_error": "Ошибка загрузки файла",
       "client": "Клиент",
-      "service": "Служба"
+      "service": "Служба",
+      "role_admin": "Администратор",
+      "role_director": "Директор",
+      "role_employee": "Сотрудник",
+      "role_manager": "Менеджер",
+      "role_marketer": "Маркетолог",
+      "role_sales": "Продажи"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -30885,7 +31196,34 @@
       "public_reviews.35.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.30.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.31.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
+      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. ",
+      "users.307.full_name.5f17e491": "Федорова Наталья",
+      "users.307.position.5808e954": "Мастер бровист",
+      "users.307.bio.aa13b138": "Оформление бровей и ресниц",
+      "users.306.full_name.257200e4": "Лебедева Татьяна",
+      "users.306.position.a4e20702": "Косметолог",
+      "users.306.bio.6ef3bfcd": "Уход за лицом и телом",
+      "users.305.full_name.dfcc4b09": "Смирнова Екатерина",
+      "users.305.position.b8d173e8": "Парикмахер-стилист",
+      "users.305.bio.4a81806f": "Стрижки, окрашивание, укладки",
+      "users.308.full_name.d3255765": "Ирина Павлова",
+      "users.308.position.bc063e06": "Визажист",
+      "users.308.bio.9379f3b7": "Профессиональный макияж",
+      "users.304.full_name.214f5191": "Кузнецова Виктория",
+      "users.304.position.e36b15b4": "Мастер маникюра",
+      "users.304.bio.7ef1954e": "Специалист по нейл-арту",
+      "public_reviews.36.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.36.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.36.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.37.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.37.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.37.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.38.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.38.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.38.employee_position.65d6c03d": "Микроблейдинг",
+      "public_reviews.33.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
+      "public_reviews.34.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.35.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -31392,7 +31730,8 @@
       "phone_too_short_many": "Минимум {{count}} цифр",
       "phone_too_short_other": "Минимум {{count}} цифр",
       "date_format_hint": "Формат: ДД.ММ.ГГГГ",
-      "date_format_hint_en": "Format: MM/DD/YYYY"
+      "date_format_hint_en": "Format: MM/DD/YYYY",
+      "formDatePlaceholder": "Выберите дату"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -32878,7 +33217,14 @@
       "status": "Статус",
       "subtitle": "Управление счетами и платежами",
       "title": "Счета",
-      "totalAmount": "Сумма"
+      "totalAmount": "Сумма",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.overdue": "Просрочен",
+      "statuses.paid": "Оплачен",
+      "statuses.partial": "Частично оплачен",
+      "statuses.partially_paid": "Частично оплачен",
+      "statuses.sent": "Отправлен"
     },
     "admin/bookings.json": {
       "source.account": "ЛК",
@@ -33999,7 +34345,11 @@
       "typeManagement.name": "Название",
       "typeManagement.system": "Система",
       "typeManagement.systemProtected": "Система защищена",
-      "typeManagement.title": "Типы договоров"
+      "typeManagement.title": "Типы договоров",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.sent": "Отправлен",
+      "statuses.signed": "Подписан"
     },
     "admin/clients.json": {
       "actions": "Действия",
@@ -34258,7 +34608,16 @@
       "total_losses_one": "Потеря: {{count}}",
       "total_losses_few": "Потери: {{count}}",
       "total_losses_many": "Потери: {{count}}",
-      "total_losses_other": "Потери: {{count}}"
+      "total_losses_other": "Потери: {{count}}",
+      "stages.contacted": "В работе",
+      "stages.decision": "Принимают решение",
+      "stages.lost": "Потерян",
+      "stages.negotiation": "Переговоры",
+      "stages.new": "Новые",
+      "stages.remind_later": "Напомнить позже",
+      "stages.visited": "Визит",
+      "stages.won": "Успешно реализовано",
+      "stages.booked": "Запись"
     },
     "admin/bookingdetail.json": {
       "actions": "Действия",
@@ -34370,7 +34729,9 @@
       "total_visits": "Всего визитов",
       "upload_error": "Ошибка загрузки",
       "visits_dynamics": "Динамика посещений",
-      "years": "лет"
+      "years": "лет",
+      "phone_not_specified": "Номер телефона не указан",
+      "tiktok_in_development": "TikTok интеграция в разработке"
     },
     "admin/trash.json": {
       "confirm_empty_trash": "Вы уверены, что хотите безвозвратно удалить все объекты из корзины?",
@@ -34606,7 +34967,12 @@
       "tasks_for_today": "Дела на сегодня",
       "title": "Заголовок",
       "unassigned": "Не назначен",
-      "update_failed": "Ошибка обновления задачи"
+      "update_failed": "Ошибка обновления задачи",
+      "stages.done": "Готово",
+      "stages.in_progress": "В работе",
+      "stages.on_hold": "Отложено",
+      "stages.review": "Проверка",
+      "stages.todo": "Сделать"
     },
     "admin/plans.json": {
       "add_metric": "Добавить метрику",
@@ -36451,7 +36817,13 @@
       "update_error": "Ошибка обновления",
       "upload_error": "Ошибка загрузки файла",
       "client": "Клиент",
-      "service": "Служба"
+      "service": "Служба",
+      "role_admin": "Администратор",
+      "role_director": "Директор",
+      "role_employee": "Сотрудник",
+      "role_manager": "Менеджер",
+      "role_marketer": "Маркетолог",
+      "role_sales": "Продажи"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -36884,7 +37256,34 @@
       "public_reviews.35.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.30.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.31.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
+      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. ",
+      "users.307.full_name.5f17e491": "Федорова Наталья",
+      "users.307.position.5808e954": "Мастер бровист",
+      "users.307.bio.aa13b138": "Оформление бровей и ресниц",
+      "users.306.full_name.257200e4": "Лебедева Татьяна",
+      "users.306.position.a4e20702": "Косметолог",
+      "users.306.bio.6ef3bfcd": "Уход за лицом и телом",
+      "users.305.full_name.dfcc4b09": "Смирнова Екатерина",
+      "users.305.position.b8d173e8": "Парикмахер-стилист",
+      "users.305.bio.4a81806f": "Стрижки, окрашивание, укладки",
+      "users.308.full_name.d3255765": "Ирина Павлова",
+      "users.308.position.bc063e06": "Визажист",
+      "users.308.bio.9379f3b7": "Профессиональный макияж",
+      "users.304.full_name.214f5191": "Кузнецова Виктория",
+      "users.304.position.e36b15b4": "Мастер маникюра",
+      "users.304.bio.7ef1954e": "Специалист по нейл-арту",
+      "public_reviews.36.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.36.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.36.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.37.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.37.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.37.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.38.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.38.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.38.employee_position.65d6c03d": "Микроблейдинг",
+      "public_reviews.33.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
+      "public_reviews.34.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.35.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -37391,7 +37790,8 @@
       "phone_too_short_many": "Минимум {{count}} цифр",
       "phone_too_short_other": "Минимум {{count}} цифр",
       "date_format_hint": "Формат: ДД.ММ.ГГГГ",
-      "date_format_hint_en": "Format: MM/DD/YYYY"
+      "date_format_hint_en": "Format: MM/DD/YYYY",
+      "formDatePlaceholder": "Выберите дату"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -38877,7 +39277,14 @@
       "status": "Статус",
       "subtitle": "Управление счетами и платежами",
       "title": "Счета",
-      "totalAmount": "Сумма"
+      "totalAmount": "Сумма",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.overdue": "Просрочен",
+      "statuses.paid": "Оплачен",
+      "statuses.partial": "Частично оплачен",
+      "statuses.partially_paid": "Частично оплачен",
+      "statuses.sent": "Отправлен"
     },
     "admin/bookings.json": {
       "source.account": "ЛК",
@@ -39998,7 +40405,11 @@
       "typeManagement.name": "Название",
       "typeManagement.system": "Система",
       "typeManagement.systemProtected": "Система защищена",
-      "typeManagement.title": "Типы договоров"
+      "typeManagement.title": "Типы договоров",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.sent": "Отправлен",
+      "statuses.signed": "Подписан"
     },
     "admin/clients.json": {
       "actions": "Действия",
@@ -40257,7 +40668,16 @@
       "total_losses_one": "Потеря: {{count}}",
       "total_losses_few": "Потери: {{count}}",
       "total_losses_many": "Потери: {{count}}",
-      "total_losses_other": "Потери: {{count}}"
+      "total_losses_other": "Потери: {{count}}",
+      "stages.booked": "Запись",
+      "stages.contacted": "В работе",
+      "stages.decision": "Принимают решение",
+      "stages.lost": "Потерян",
+      "stages.negotiation": "Переговоры",
+      "stages.new": "Новые",
+      "stages.remind_later": "Напомнить позже",
+      "stages.visited": "Визит",
+      "stages.won": "Успешно реализовано"
     },
     "admin/bookingdetail.json": {
       "actions": "Действия",
@@ -40369,7 +40789,9 @@
       "total_visits": "Всего визитов",
       "upload_error": "Ошибка загрузки",
       "visits_dynamics": "Динамика посещений",
-      "years": "лет"
+      "years": "лет",
+      "phone_not_specified": "Номер телефона не указан",
+      "tiktok_in_development": "TikTok интеграция в разработке"
     },
     "admin/trash.json": {
       "confirm_empty_trash": "Вы уверены, что хотите безвозвратно удалить все объекты из корзины?",
@@ -40605,7 +41027,12 @@
       "tasks_for_today": "Дела на сегодня",
       "title": "Заголовок",
       "unassigned": "Не назначен",
-      "update_failed": "Ошибка обновления задачи"
+      "update_failed": "Ошибка обновления задачи",
+      "stages.done": "Готово",
+      "stages.in_progress": "В работе",
+      "stages.on_hold": "Отложено",
+      "stages.review": "Проверка",
+      "stages.todo": "Сделать"
     },
     "admin/plans.json": {
       "add_metric": "Добавить метрику",
@@ -42450,7 +42877,13 @@
       "update_error": "Ошибка обновления",
       "upload_error": "Ошибка загрузки файла",
       "client": "Клиент",
-      "service": "Служба"
+      "service": "Служба",
+      "role_admin": "Администратор",
+      "role_director": "Директор",
+      "role_employee": "Сотрудник",
+      "role_manager": "Менеджер",
+      "role_marketer": "Маркетолог",
+      "role_sales": "Продажи"
     },
     "dynamic.json": {
       "users.5.full_name.f27f2d3f": "Касымова Гульчере",
@@ -42883,7 +43316,34 @@
       "public_reviews.35.employee_position.65d6c03d": "Микроблейдинг",
       "public_reviews.30.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
       "public_reviews.31.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
+      "public_reviews.32.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. ",
+      "users.307.full_name.5f17e491": "Федорова Наталья",
+      "users.307.position.5808e954": "Мастер бровист",
+      "users.307.bio.aa13b138": "Оформление бровей и ресниц",
+      "users.306.full_name.257200e4": "Лебедева Татьяна",
+      "users.306.position.a4e20702": "Косметолог",
+      "users.306.bio.6ef3bfcd": "Уход за лицом и телом",
+      "users.305.full_name.dfcc4b09": "Смирнова Екатерина",
+      "users.305.position.b8d173e8": "Парикмахер-стилист",
+      "users.305.bio.4a81806f": "Стрижки, окрашивание, укладки",
+      "users.308.full_name.d3255765": "Ирина Павлова",
+      "users.308.position.bc063e06": "Визажист",
+      "users.308.bio.9379f3b7": "Профессиональный макияж",
+      "users.304.full_name.214f5191": "Кузнецова Виктория",
+      "users.304.position.e36b15b4": "Мастер маникюра",
+      "users.304.bio.7ef1954e": "Специалист по нейл-арту",
+      "public_reviews.36.text_ru.6f00ad70": "Лучший салон красоты в Дубае! ",
+      "public_reviews.36.author_name.ff715865": "Сара Дженкинс",
+      "public_reviews.36.employee_position.5b1b1d5e": "Ресницы",
+      "public_reviews.37.text_ru.f38138da": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.37.author_name.653816a6": "Мария Гонсалес",
+      "public_reviews.37.employee_position.9a3a91ca": "Уход за лицом",
+      "public_reviews.38.text_ru.ae85e84b": "Отличный сервис и профессиональный персонал. ",
+      "public_reviews.38.author_name.f26d4aa2": "Фатима Аль-Сайед",
+      "public_reviews.38.employee_position.65d6c03d": "Микроблейдинг",
+      "public_reviews.33.text_ru.d04583b6": "Лучший салон красоты в Дубае! ",
+      "public_reviews.34.text_ru.784d2781": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+      "public_reviews.35.text_ru.33473c5f": "Отличный сервис и профессиональный персонал. "
     },
     "account.json": {
       "achievements.achievements": "достижений",
@@ -43390,7 +43850,8 @@
       "phone_too_short_many": "Минимум {{count}} цифр",
       "phone_too_short_other": "Минимум {{count}} цифр",
       "date_format_hint": "Формат: ДД.ММ.ГГГГ",
-      "date_format_hint_en": "Format: MM/DD/YYYY"
+      "date_format_hint_en": "Format: MM/DD/YYYY",
+      "formDatePlaceholder": "Выберите дату"
     },
     "public_landing.json": {
       "aboutDesc": "Colour Studio – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.",
@@ -44876,7 +45337,14 @@
       "status": "Статус",
       "subtitle": "Управление счетами и платежами",
       "title": "Счета",
-      "totalAmount": "Сумма"
+      "totalAmount": "Сумма",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.overdue": "Просрочен",
+      "statuses.paid": "Оплачен",
+      "statuses.partial": "Частично оплачен",
+      "statuses.partially_paid": "Частично оплачен",
+      "statuses.sent": "Отправлен"
     },
     "admin/bookings.json": {
       "source.account": "ЛК",
@@ -45997,7 +46465,11 @@
       "typeManagement.name": "Название",
       "typeManagement.system": "Система",
       "typeManagement.systemProtected": "Система защищена",
-      "typeManagement.title": "Типы договоров"
+      "typeManagement.title": "Типы договоров",
+      "statuses.cancelled": "Отменен",
+      "statuses.draft": "Черновик",
+      "statuses.sent": "Отправлен",
+      "statuses.signed": "Подписан"
     },
     "admin/clients.json": {
       "actions": "Действия",
@@ -46256,7 +46728,16 @@
       "total_losses_one": "Потеря: {{count}}",
       "total_losses_few": "Потери: {{count}}",
       "total_losses_many": "Потери: {{count}}",
-      "total_losses_other": "Потери: {{count}}"
+      "total_losses_other": "Потери: {{count}}",
+      "stages.booked": "Запись",
+      "stages.contacted": "В работе",
+      "stages.decision": "Принимают решение",
+      "stages.lost": "Потерян",
+      "stages.negotiation": "Переговоры",
+      "stages.new": "Новые",
+      "stages.remind_later": "Напомнить позже",
+      "stages.visited": "Визит",
+      "stages.won": "Успешно реализовано"
     },
     "admin/bookingdetail.json": {
       "actions": "Действия",
@@ -46368,7 +46849,9 @@
       "total_visits": "Всего визитов",
       "upload_error": "Ошибка загрузки",
       "visits_dynamics": "Динамика посещений",
-      "years": "лет"
+      "years": "лет",
+      "phone_not_specified": "Номер телефона не указан",
+      "tiktok_in_development": "TikTok интеграция в разработке"
     },
     "admin/trash.json": {
       "confirm_empty_trash": "Вы уверены, что хотите безвозвратно удалить все объекты из корзины?",
@@ -46604,7 +47087,12 @@
       "tasks_for_today": "Дела на сегодня",
       "title": "Заголовок",
       "unassigned": "Не назначен",
-      "update_failed": "Ошибка обновления задачи"
+      "update_failed": "Ошибка обновления задачи",
+      "stages.done": "Готово",
+      "stages.in_progress": "В работе",
+      "stages.on_hold": "Отложено",
+      "stages.review": "Проверка",
+      "stages.todo": "Сделать"
     },
     "admin/plans.json": {
       "add_metric": "Добавить метрику",

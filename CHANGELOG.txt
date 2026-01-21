@@ -20,6 +20,29 @@
 | **Мастер** | Stylist/Master | خبير | Маман/Шебер | Spezialist | Especialista | Spécialiste | Especialista | विशेषज्ञ |
 
 
+## [2026-01-22] Оптимизация скорости перевода и локализация воронки
+- 🚀 **Оптимизация скорости**: Перевел `db_translate.py` и `Translator.py` на пакетную (batch) обработку. Теперь до 120 строк переводятся за один HTTP-запрос к Google Translate.
+- 🚀 **Ускорение экспорта**: Оптимизировал `export_db_to_locales.py`, внедрив использование единого соединения с БД для всех этапов экспорта.
+- 🛠 **Исправление аналитики**: Добавил поле `key` в результат `get_funnel_stats`, что позволило автоматически локализовать заголовки карточек аналитики на Funnel page.
+- 🌐 **Полная локализация UI**: 
+  - В `ClientDetailsDialog.tsx` добавлены вызовы `t()` для всех названий стадий, уровней температуры и дат (с учетом системного языка).
+  - В `Invoices.tsx` локализованы названия статусов в выпадающих списках фильтрации.
+  - Внедрена динамическая локализация `date-fns` для корректного отображения дат на 9 языках.
+- 🧹 **Чистка кода**: Удалены неиспользуемые переменные и исправлены ошибки линтинга.
+
+
+## [2026-01-21] Localization & Funnel Refinement
+- [Localization] Fully automated Funnel and Invoices stage translations (DB -> JSON sync).
+- [Database] Added translation columns (name_en, name_ar, etc.) for `pipeline_stages` and `invoice_stages`.
+- [I18n] Integrated DB stage names into the auto-translation cycle (`npm run db:i18n:auto`).
+- 🌐 **Internationalization (i18n):**
+  - **Funnel Page:** Replaced hardcoded Russian locale for date formatting with a dynamic locale based on user settings.
+  - **Invoice Statuses:** Synchronized status keys between frontend and backend (`partially_paid`). Added translation markers for all invoice statuses to ensure they are picked up by the translation engine.
+  - **Funnel Stages:** Added translation markers for all system pipeline stages (`new`, `contacted`, `negotiation`, `decision`, `won`, `lost`).
+- 🎨 **UI Fixes:**
+  - Resolved "Partial Payment" block translation issue in the Invoices board view.
+  - Ensured all funnel analytics cards and column headers use the translation system with proper fallbacks.
+
 ## [2026-01-22] UI Spacing & Component Portalling Refinement
 - 🎨 **UI Spacing & Alignment Fixes:**
   - **Active Settings Page (shared/Settings.tsx):** Implemented `settings-label-spacing` CSS class and added `space-y-2` containers to all form fields (General, Broadcasts, Notifications). This resolves the "glued" labels issue across the entire settings section.
@@ -269,7 +292,6 @@
 - 🗺 **Maps Fix**: Исправлена неработающая карта; короткая ссылка заменена на валидный Google Maps Embed URL.
 - 🚀 **Nginx Performance**: Настроена стратегия "мгновенного обновления" для статики бэкенда (`expires -1`) и исправлены Rewrite-правила для корректной отдачи файлов.
 - ✅ **SSOT Fixes**: Обновлен `scripts/maintenance/fix_data.py` для автоматической очистки дубликатов и коррекции путей при каждом запуске.
-
 ## [2026-01-10] - Оптимизация сервера и исправление БД (Production)
 - ✅ Исправлена критическая ошибка БД: добавлена колонка `reminder_date` в таблицу `clients`.
 - 🚀 Настроено Gzip сжатие в Nginx (ускорение загрузки JS/CSS в 4-5 раз).

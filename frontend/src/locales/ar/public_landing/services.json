@@ -1,13 +1,543 @@
 {
-  "haircutsStyling": "قصات الشعر وتصفيفه",
-  "manicurePedicure": "مانيكير وباديكير",
-  "master": "ماجستير",
-  "mastersDescription": "الحرفيون المحترفون لدينا الذين يتمتعون بسنوات عديدة من الخبرة على استعداد لتزويدك بأعلى جودة من الخدمات",
-  "minutes": "دقيقة",
-  "ourMasters": "سادتنا",
-  "portfolioTitle": "محفظة الأعمال",
-  "service1Desc": "خدمات احترافية للعناية بالأظافر.",
-  "service2Desc": "تصفيف احترافي وعناية بالشعر.",
-  "service3Desc": "مكياج احترافي وتشكيل حواجب.",
-  "service3Title": "المكياج والحواجب"
+  "categories": {
+    "brows": "Brows",
+    "facial": "Facial",
+    "hair": "Hair",
+    "lashes": "Lashes",
+    "nails": "Nails",
+    "permanent_makeup": "Permanent Makeup",
+    "waxing": "Waxing"
+  },
+  "items": {
+    "2d_volume": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "تمديد ثنائي الأبعاد",
+      "duration": "",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "حجم رمش ثنائي الأبعاد",
+      "price": 230
+    },
+    "3d_volume": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "تمديد ثلاثي الأبعاد",
+      "duration": "",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "حجم رمش ثلاثي الأبعاد",
+      "price": 260
+    },
+    "baby_cut": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "قص شعر للأطفال",
+      "duration": "",
+      "max_price": 80,
+      "min_price": 60,
+      "name": "قصة شعر الاطفال",
+      "price": 70
+    },
+    "baby_manicure": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "مانيكير للأطفال",
+      "duration": "",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "مانيكير الأطفال",
+      "price": 50
+    },
+    "balayage": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "تقنية البلاياج",
+      "duration": "2h",
+      "max_price": 1200,
+      "min_price": 700,
+      "name": "balayage",
+      "price": 950
+    },
+    "bikini_line": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "إزالة الشعر على طول خط البيكيني",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": null,
+      "name": "خط بيكيني",
+      "price": 100
+    },
+    "bleach_hair": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "تصحيح الألوان من الظلام",
+      "duration": "",
+      "max_price": 2300,
+      "min_price": 1300,
+      "name": "يخرج من الأسود",
+      "price": 1800
+    },
+    "blowdry": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "تصفيف الشعر الاحترافي",
+      "duration": "1h",
+      "max_price": 150,
+      "min_price": 100,
+      "name": "وضع",
+      "price": 125
+    },
+    "brazilian": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "إزالة شعر البيكيني البرازيلي",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "بيكيني برازيلي",
+      "price": 120
+    },
+    "brow_coloring": {
+      "category": "brows",
+      "currency": "AED",
+      "description": "تلوين احترافي",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": "فارغة",
+      "name": "تلوين الحاجب",
+      "price": 40
+    },
+    "brow_lamination": {
+      "category": "brows",
+      "currency": "AED",
+      "description": "تصفيح الحاجب",
+      "duration": "",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "تصفيح الحاجب",
+      "price": 200
+    },
+    "brow_shaping": {
+      "category": "brows",
+      "currency": "AED",
+      "description": "تصميم احترافي",
+      "duration": "",
+      "max_price": "خالية",
+      "min_price": "خالية",
+      "name": "تشكيل الحاجب",
+      "price": 40
+    },
+    "change_classic_polish": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "تغيير الورنيش العادي",
+      "duration": "30min",
+      "max_price": 90,
+      "min_price": 40,
+      "name": "تغيير الورنيش العادي",
+      "price": 65
+    },
+    "chin": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "إزالة شعر الذقن",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "ذقن",
+      "price": 30
+    },
+    "classic_volume": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "تطويل الرموش بشكل طبيعي",
+      "duration": "",
+      "max_price": "فارغة",
+      "min_price": null,
+      "name": "حجم الرموش الكلاسيكي",
+      "price": 180
+    },
+    "combo_lamination": {
+      "category": "brows",
+      "currency": "AED",
+      "description": "التصفيح التحرير والسرد",
+      "duration": "",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "تصفيح الحواجب والرموش",
+      "price": 300
+    },
+    "deep_facial_cleaning": {
+      "category": "facial",
+      "currency": "AED",
+      "description": "التنظيف العميق الاحترافي",
+      "duration": "1h",
+      "max_price": "خالية",
+      "min_price": "خالية",
+      "name": "تنظيف عميق للوجه",
+      "price": 400
+    },
+    "eyeliner": {
+      "category": "permanent_makeup",
+      "currency": "AED",
+      "description": "كحل دائم",
+      "duration": "",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "كحل",
+      "price": 1000
+    },
+    "face_lift_massage": {
+      "category": "facial",
+      "currency": "AED",
+      "description": "تدليك ثبات",
+      "duration": "30min",
+      "max_price": "خالية",
+      "min_price": "خالية",
+      "name": "ثبات تدليك الوجه بالقناع",
+      "price": 250
+    },
+    "full_arms": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "إزالة شعر الذراع بالكامل",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "أيدي كاملة",
+      "price": 80
+    },
+    "full_bikini": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "إزالة الشعر بالكامل في منطقة البكيني",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "بيكيني عميق",
+      "price": 150
+    },
+    "full_body": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "إزالة شعر الجسم بالكامل",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "إزالة شعر الجسم بالكامل",
+      "price": 400
+    },
+    "full_color": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "تلوين كامل من تاريخ التصميم",
+      "duration": "2h",
+      "max_price": 500,
+      "min_price": 350,
+      "name": "تلوين لهجة واحدة + التصميم",
+      "price": 425
+    },
+    "full_face": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "إزالة شعر الوجه بالكامل",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "وجه كامل",
+      "price": 90
+    },
+    "full_legs": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "إزالة شعر الساق بالكامل",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "أرجل كاملة",
+      "price": 150
+    },
+    "gelish_manicure": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "مانيكير من تاريخ طلاء هلام",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة l",
+      "name": "طلاء جل مانيكير",
+      "price": 130
+    },
+    "hair_cut_blowdry": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "قصة شعر احترافية من تاريخ التصميم",
+      "duration": "",
+      "max_price": 300,
+      "min_price": 250,
+      "name": "قص شعر + تصفيف",
+      "price": 275
+    },
+    "hair_extension_capsule": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "تمديد لكل كبسولة",
+      "duration": "",
+      "max_price": 12,
+      "min_price": 10,
+      "name": "وصلات شعر لكل كبسولة",
+      "price": 11
+    },
+    "hair_trim": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "قطع سهل بدون غسل",
+      "duration": "",
+      "max_price": 100,
+      "min_price": 80,
+      "name": "حتى قطع النهايات",
+      "price": 90
+    },
+    "half_arms": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "إزالة شعر الذراعين حتى المرفق",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "نو ليرة لبنانية",
+      "name": "الأيدي حتى الكوع",
+      "price": 50
+    },
+    "half_legs": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "إزالة شعر الساقين حتى الركبتين",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "الساقين حتى الركبتين",
+      "price": 80
+    },
+    "japanese_manicure": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "مانيكير ياباني",
+      "duration": "1h 30min",
+      "max_price": "فارغة",
+      "min_price": null,
+      "name": "مانيكير ياباني",
+      "price": 100
+    },
+    "key_test_manicure": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "",
+      "duration": "60",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "فارغة",
+      "price": 100
+    },
+    "lash_lamination": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "تصفيح الرموش",
+      "duration": "",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "تصفيح الرموش",
+      "price": 200
+    },
+    "lashliner": {
+      "category": "permanent_makeup",
+      "currency": "AED",
+      "description": "التأكيد على خط الرموش",
+      "duration": "",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "سهم بيني",
+      "price": 500
+    },
+    "manicure_no_polish": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "مانيكير أساسي",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "مانيكير بدون طلاء",
+      "price": 80
+    },
+    "manicure_normal": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "مانيكير من تاريخ طلاء عادي",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "مانيكير من تاريخ لمسة نهائية عادية",
+      "price": 100
+    },
+    "medical_facial": {
+      "category": "facial",
+      "currency": "AED",
+      "description": "التنظيف الطبي",
+      "duration": "1h",
+      "max_price": "خالية l",
+      "min_price": "خالية",
+      "name": "التطهير الطبي للبشرة المشكلة",
+      "price": 450
+    },
+    "mega_volume": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "رموش ضخمة الحجم",
+      "duration": "",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "حجم 4-5D (ميجا)",
+      "price": 290
+    },
+    "ml_curl": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "الانحناء الخاص",
+      "duration": "",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "ML حليقة / أسلوب كيم",
+      "price": 30
+    },
+    "natural_treatment": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "العناية بالشعر الطبيعي",
+      "duration": "1h",
+      "max_price": "خالية l",
+      "min_price": "خالية",
+      "name": "الرعاية الطبيعية",
+      "price": 200
+    },
+    "ombre": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "تقنيات التلوين المتدرج",
+      "duration": "2h",
+      "max_price": 1500,
+      "min_price": 1000,
+      "name": "أومبير/شاتوش/إيرتاش",
+      "price": 1250
+    },
+    "peeling": {
+      "category": "facial",
+      "currency": "AED",
+      "description": "التقشير الكيميائي",
+      "duration": "1h",
+      "max_price": 400,
+      "min_price": 300,
+      "name": "تقشير",
+      "price": 350
+    },
+    "permanent_brows": {
+      "category": "permanent_makeup",
+      "currency": "AED",
+      "description": "ميكروبليدنج أو بودرة الحواجب",
+      "duration": "",
+      "max_price": null,
+      "min_price": "فارغة",
+      "name": "مكياج الحواجب الدائم",
+      "price": 1100
+    },
+    "permanent_correction": {
+      "category": "permanent_makeup",
+      "currency": "AED",
+      "description": "تصحيح الدائم الموجود",
+      "duration": "",
+      "max_price": null,
+      "min_price": "فارغة",
+      "name": "تصحيح المكياج الدائم",
+      "price": 500
+    },
+    "permanent_lips": {
+      "category": "permanent_makeup",
+      "currency": "AED",
+      "description": "لون شفاه يدوم طويلاً",
+      "duration": "",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "مكياج الشفاه الدائم",
+      "price": 1200
+    },
+    "remove_lashes": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "إزالة آمنة",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "إزالة الرموش",
+      "price": 50
+    },
+    "roots_bleach": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "تفتيح الجذور من تاريخ التصفيف",
+      "duration": "",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "تفتيح الجذور + التصفيف",
+      "price": 350
+    },
+    "roots_color": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "تلوين الجذر من تاريخ التصميم",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "تلوين الجذر + التصميم",
+      "price": 200
+    },
+    "spa_manicure": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "مانيكير سبا",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "مانيكير سبا",
+      "price": 50
+    },
+    "toner_blowdry": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "صبغ الشعر من تاريخ التصفيف",
+      "duration": "",
+      "max_price": 450,
+      "min_price": 300,
+      "name": "التنغيم + التصميم",
+      "price": 375
+    },
+    "underarms": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "إزالة شعر الإبط",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "الإبطين",
+      "price": 50
+    },
+    "upper_lips": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "إزالة الشعر من الشفة العليا",
+      "duration": "1h",
+      "max_price": "فارغة",
+      "min_price": "فارغة",
+      "name": "الشفة العليا",
+      "price": 30
+    }
+  }
 }

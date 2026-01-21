@@ -34,7 +34,7 @@ export function TeamSection() {
       if (n1 === 1) return `${age} год`;
       return `${age} лет`;
     }
-    return `${age} ${t('age_years', { defaultValue: 'years old' })}`;
+    return `${age} ${t('age_years')}`;
   };
 
   useEffect(() => {
@@ -81,13 +81,13 @@ export function TeamSection() {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
           <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-3">
-            {t('teamTag', { defaultValue: 'Наша команда' })}
+            {t('teamTag')}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('teamTitlePart1', { defaultValue: 'Мастера' })} <span className="text-primary">{t('teamTitlePart2', { defaultValue: 'своего дела' })}</span>
+            {t('teamTitlePart1')} <span className="text-primary">{t('teamTitlePart2')}</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
-            {t('teamDesc', { defaultValue: 'Профессионалы с многолетним опытом' })}
+            {t('teamDesc')}
           </p>
         </div>
 
@@ -136,7 +136,7 @@ export function TeamSection() {
               onClick={() => setDisplayCount(prev => Math.min(prev + 8, team.length))}
               className="px-6 sm:px-8 py-2 sm:py-3 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors text-sm sm:text-base"
             >
-              {t('loading', { defaultValue: 'Показать еще' })} ({team.length - displayCount})
+              {t('showMore')} ({team.length - displayCount})
             </button>
           </div>
         )}

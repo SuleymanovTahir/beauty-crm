@@ -566,10 +566,10 @@ class Translator:
             if cached: results[i] = self._apply_terminology_corrections(cached, target); continue
             to_translate_indices.append(i); to_translate_texts.append(text)
         if not to_translate_texts: return results
-        batch_size = 50
+        batch_size = 80
         variable_pattern = r'\{\{([^}]+)\}\}'
         for i in range(0, len(to_translate_texts), batch_size):
-            if len(to_translate_texts) > 50:
+            if len(to_translate_texts) > batch_size:
                 print(f"      Progress ({target}): {i}/{len(to_translate_texts)}...")
             batch = to_translate_texts[i:i+batch_size]; batch_indices = to_translate_indices[i:i+batch_size]
             protected_batch = []; batch_variable_maps = []
@@ -580,7 +580,7 @@ class Translator:
             batch_with_tags = "".join([f"<z{j}>{t}</z{j}> " for j, t in enumerate(protected_batch)])
             try:
                 raw = self._translate_via_http(batch_with_tags, source, target, use_context=use_context)
-                time.sleep(0.3) # Anti-rate-limit
+                time.sleep(0.1) # Anti-rate-limit (decreased from 0.3)
                 for j in range(len(batch)):
                     tag_start, tag_end = f"<z{j}>", f"</z{j}>"
                     s_idx = raw.find(tag_start)

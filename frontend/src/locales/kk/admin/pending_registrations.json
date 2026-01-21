@@ -21,7 +21,7 @@
   "pending_approval_title": "Мақұлдау күтілуде",
   "pending_count_one": "{{count}} тіркеулер сіздің мақұлдауыңызды күтуде",
   "pending_count_few": "{{count}} тіркеулер сіздің мақұлдауыңызды күтуде",
-  "pending_count_many": "[[VAR0]]] тіркеулер сіздің мақұлдауыңызды күтуде",
+  "pending_count_many": "{{count}} тіркеулер мақұлдауыңызды күтуде",
   "pending_count_other": "{{count}} тіркеулер мақұлдауыңызды күтуде",
   "refresh": "Жаңарту",
   "reject": "Қабылдамау",

@@ -57,7 +57,7 @@
   "continue_professional": "Select Professional",
   "continue_services": "Continue with Services",
   "date_format_hint": "Пішім: КК.АА.ЖЖЖЖ.",
-  "date_format_hint_en": "Format: MM/DD/YYYY",
+  "date_format_hint_en": "Пішім: АА/КК/ЖЖЖЖ",
   "datetime": {
     "date": "1. Select Date",
     "noSlots": "No slots available",
@@ -66,9 +66,9 @@
     "title": "Date & Time"
   },
   "formDate": "Күні",
-  "formDatePlaceholder": "Выберите дату",
-  "formName": "Аты-жөні",
-  "formNamePlaceholder": "Сіздің атыңыз",
+  "formDatePlaceholder": "Күнді таңдау",
+  "formName": "Имя",
+  "formNamePlaceholder": "Аты-жөніңіз",
   "formPhone": "Телефон",
   "formService": "Қызметтер",
   "formServicePlaceholder": "Қызметтерді таңдау",
@@ -101,7 +101,7 @@
     "availableOn": "Қолжетімді",
     "availableToday": "Бүгін қол жетімді",
     "notAvailableToday": "Бүгін қол жетімді емес",
-    "title": "Маманды таңдау"
+    "title": "Выберите мастера"
   },
   "searchCountry": "Елді іздеу...",
   "searchService": "Қызметті табыңыз...",
