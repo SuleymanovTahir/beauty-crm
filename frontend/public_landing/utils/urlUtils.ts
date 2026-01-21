@@ -12,17 +12,17 @@ import { validatePhone, validateUrl, validateInstagramUsername } from './validat
  */
 export const formatWhatsAppUrl = (phone: string): string => {
   if (!phone) return '';
-  
+
   // Удаляем все нецифровые символы
   const cleanedPhone = phone.replace(/\D/g, '');
-  
+
   // Валидация
   const validation = validatePhone(phone);
   if (!validation.valid) {
     console.warn('Invalid phone number for WhatsApp:', validation.error);
     return '';
   }
-  
+
   return `${EXTERNAL_SERVICES.WHATSAPP_BASE}${cleanedPhone}`;
 };
 
@@ -41,23 +41,28 @@ export const formatWhatsAppUrlWithText = (phone: string, text: string): string =
  */
 export const formatInstagramUrl = (username: string): string => {
   if (!username) return '';
-  
+
   // Если уже полный URL, валидируем и возвращаем
   if (username.startsWith('http')) {
     const validation = validateUrl(username);
     return validation.valid ? username : '';
   }
-  
+
+  // Handle www. start
+  if (username.startsWith('www.')) {
+    return `https://${username}`;
+  }
+
   // Убираем @ если есть
   const cleanUsername = username.replace(/^@?/, '').replace(/^(https?:\/\/)?(www\.)?instagram\.com\//, '');
-  
+
   // Валидация username
   const validation = validateInstagramUsername(cleanUsername);
   if (!validation.valid) {
     console.warn('Invalid Instagram username:', validation.error);
     return '';
   }
-  
+
   return `https://instagram.com/${cleanUsername}`;
 };
 
@@ -91,12 +96,12 @@ export interface GoogleCalendarParams {
  */
 export const formatGoogleCalendarUrl = (params: GoogleCalendarParams): string => {
   const urlParams = new URLSearchParams();
-  
+
   if (params.action) urlParams.set('action', params.action);
   if (params.text) urlParams.set('text', params.text);
   if (params.dates) urlParams.set('dates', params.dates);
   if (params.details) urlParams.set('details', params.details);
   if (params.location) urlParams.set('location', params.location);
-  
+
   return `${EXTERNAL_SERVICES.GOOGLE_CALENDAR}?${urlParams.toString()}`;
 };
