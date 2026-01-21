@@ -90,6 +90,7 @@ const AccountPage = React.lazy(() => import('../public_landing/pages/account/Acc
 const UserBookingWizard = React.lazy(() => import('../public_landing/pages/account/UserBookingWizard').then(module => ({ default: module.UserBookingWizard })));
 const DataDeletionNew = React.lazy(() => import('../public_landing/pages/DataDeletion'));
 const Unsubscribe = React.lazy(() => import('./pages/public/Unsubscribe'));
+const NotFound = React.lazy(() => import('../public_landing/pages/NotFound').then(module => ({ default: module.NotFound })));
 
 const Login = React.lazy(() => import('../public_landing/pages/LoginPage').then(module => ({ default: module.LoginPage })));
 const AdminLogin = React.lazy(() => import('./pages/auth/Login'));
@@ -491,8 +492,8 @@ export default function App() {
                 />
               </Route> */}
 
-              {/* Redirect to home by default */}
-              <Route path="*" element={<Navigate to="/" replace />} />
+              {/* 404 Page - Returns 404 status for SEO */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </React.Suspense>
           <Toaster />
