@@ -1,6 +1,6 @@
 {
   "my_bookings": "Meine buchungen",
-  "no_bookings_today": "Für heute sind keine buchungen vorhanden",
-  "schedule_for_today": "Zeitplan für heute",
-  "today_bookings": "buchungen heute"
+  "no_bookings_today": "Keine buchungen für heute",
+  "schedule_for_today": "Terminplan für heute",
+  "today_bookings": "buchungen für heute"
 }

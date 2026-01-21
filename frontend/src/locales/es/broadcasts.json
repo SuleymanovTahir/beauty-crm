@@ -1,7 +1,7 @@
 {
-  "click_preview_to_see": "Haga clic en \"Vista previa\" para ver los destinatarios",
+  "click_preview_to_see": "Haga clic en Vista previa para ver los destinatarios",
   "placeholder_all_users": "Todos los usuarios",
-  "placeholder_message": "Introduce el texto de tu mensaje...",
-  "placeholder_subject": "¡Oferta especial para ti!",
-  "select_type": "Seleccionar tipo"
+  "placeholder_message": "Ingrese el texto de su mensaje...",
+  "placeholder_subject": "Oferta especial para ¡tú!",
+  "select_type": "Seleccione tipo"
 }

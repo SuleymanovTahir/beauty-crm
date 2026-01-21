@@ -1,11 +1,11 @@
 {
-  "authorization_error": "فشل التفويض",
-  "enter_login": "أدخل تسجيل الدخول الخاص بك",
+  "authorization_error": "التفويض فشل",
+  "enter_login": "أدخل معلومات تسجيل الدخول الخاصة بك",
   "fill_both_fields": "يرجى ملء كلا الحقلين",
   "login": "تسجيل الدخول",
-  "login_error": "خطأ في تسجيل الدخول",
+  "login_error": "فشل تسجيل الدخول",
   "login_title": "تسجيل الدخول إلى حسابك",
   "password": "كلمة المرور",
   "username": "اسم المستخدم",
-  "welcome": "مرحباً"
+  "welcome": "مرحبًا"
 }

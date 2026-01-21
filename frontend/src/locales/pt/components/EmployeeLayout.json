@@ -1,11 +1,11 @@
 {
   "crm": "CRM",
   "employee": "Funcionário",
-  "logout": "Sair",
+  "logout": "Выход из системы",
   "menu": {
     "calendar": "Calendário",
     "my_bookings": "Minhas reservas",
-    "profile": "Perfil",
-    "settings": "Configurações"
+    "profile": "Профиль",
+    "settings": "Настройки"
   }
 }

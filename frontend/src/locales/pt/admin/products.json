@@ -2,32 +2,32 @@
   "addProduct": "Adicionar produto",
   "allCategories": "Todas as categorias",
   "analytics": {
-    "avgPrice": "Qua. preço",
-    "last30Days": "Até data {{count}} dias",
+    "avgPrice": "Méd. preço",
+    "last30Days": "até data {{count}} dias",
     "revenue": "Receita",
     "totalSold": "Total vendido"
   },
-  "createFirst": "Adicione o primeiro produto ao sistema",
+  "createFirst": "Adicionar o primeiro produto ao sistema",
   "delete": "Excluir",
   "detail": {
     "costPriceLabel": "Custo: {{price}} {{currency}}",
-    "inStock_one": "Em estoque {{count}} unid.",
-    "inStock_few": "Em estoque {{count}} unid.",
-    "inStock_many": "Em estoque {{count}} unid.",
-    "inStock_other": "Em estoque {{count}} unid.",
+    "inStock_few": "B em estoque {{count}} peças.",
+    "inStock_many": "Em estoque {{count}} peças.",
+    "inStock_one": "Em estoque {{count}} unidades.",
+    "inStock_other": "Em estoque {{count}} peças.",
     "loadingData": "Carregando dados...",
     "movementAdjustment": "Ajuste",
-    "movementHistory": "História dos movimentos",
-    "movementIn": "Admissão",
-    "movementOut": "Eliminar",
+    "movementHistory": "Histórico de movimentos",
+    "movementIn": "Recebimento",
+    "movementOut": "Baixa",
     "noCategory": "Sem categoria",
-    "noMovements": "Nenhum dado de movimento"
+    "noMovements": "Sem dados sobre movimentos"
   },
   "edit": "Editar",
   "form": {
     "cancel": "Cancelar",
     "category": "Categoria",
-    "costPrice": "Preço de custo",
+    "costPrice": "Custo",
     "isActive": "Ativo",
     "minStockLevel": "Saldo mínimo",
     "name": "Nome",
@@ -35,34 +35,34 @@
     "photos": "Foto do produto",
     "price": "Preço de venda",
     "save": "Salvar",
-    "sku": "Artigo",
-    "stockQuantity": "Estoque restante",
-    "upload": "Download",
+    "sku": "Número do artigo",
+    "stockQuantity": "Saldo de estoque",
+    "upload": "Enviar",
     "uploadError": "Erro ao carregar a foto"
   },
   "messages": {
-    "confirmDelete": "Tem certeza de que deseja remover este item?",
-    "noResults": "Nada encontrado que corresponda à sua solicitação"
+    "confirmDelete": "Tem certeza de que deseja excluir este produto?",
+    "noResults": "Nada encontrado para sua solicitação"
   },
   "movement": {
     "quantity": "Quantidade",
-    "reason": "Causa",
-    "title": "Movimento de mercadorias",
+    "reason": "Motivo",
+    "title": "Movimentação do produto",
     "type": "Tipo de movimento",
     "types": {
       "adjustment": "Ajuste",
-      "in": "Chegando",
+      "in": "Recebimento",
       "out": "Consumo"
     }
   },
   "noProducts": "Nenhum produto ainda",
-  "search_placeholder": "Pesquise até título ou categoria...",
+  "search_placeholder": "Pesquisar até data nome ou categoria...",
   "stock_status": {
     "in_stock": "Em estoque",
-    "low_stock": "Alguns",
-    "out_of_stock": "Não disponível"
+    "low_stock": "Pouco",
+    "out_of_stock": "Esgotado"
   },
-  "subtitle": "Gerenciamento de produtos e estoque",
+  "subtitle": "Gestão de mercadorias e saldos",
   "title": "Produtos e armazém",
-  "unit_pcs": "peças."
+  "unit_pcs": "pcs"
 }

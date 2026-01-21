@@ -1,7 +1,7 @@
 {
-  "browse_available_services": "Қолжетімді қызметтерді көру",
+  "browse_available_services": "Просмотрите доступные услуги",
   "min": "Мин",
-  "no_services": "Қызметтер жоқ",
-  "no_services_description": "Қызметтердің сипаттамасы жоқ",
-  "our_services": "Біздің қызметтеріміз"
+  "no_services": "Нет услуг",
+  "no_services_description": "Нет описания услуг",
+  "our_services": "Наши услуги"
 }

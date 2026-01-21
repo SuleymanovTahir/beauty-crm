@@ -370,7 +370,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                       className="block w-full px-3 py-2.5 rounded-lg hover:bg-black/5 text-primary transition-all group"
                     >
                       <span className="flex items-center justify-between">
-                        <span className="lowercase text-lg font-medium">{t(item.key, { defaultValue: item.defaultText }) || item.name}</span>
+                        <span className="text-lg font-medium">{t(item.key, { defaultValue: item.defaultText }) || item.name}</span>
                         <span className="text-primary/50 group-hover:text-primary group-hover:translate-x-1 transition-all text-sm">
                           →
                         </span>

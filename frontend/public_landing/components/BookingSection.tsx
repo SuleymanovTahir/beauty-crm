@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Calendar, Clock, Loader2, Check, ChevronsUpDown, User, Sparkles } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, Loader2, Check, ChevronsUpDown, User, Sparkles } from 'lucide-react';
 import { useTranslation } from "react-i18next";
+import { getTodayDate } from '../utils/dateUtils';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { api } from '../../src/services/api';
 import { toast } from 'sonner';
@@ -23,7 +24,6 @@ import {
 import { PhoneInputWithSearch } from './ui/PhoneInputWithSearch';
 import { DEFAULT_VALUES, EXTERNAL_SERVICES } from '../utils/constants';
 import { safeFetch, safeExternalApiCall } from '../utils/errorHandler';
-import { getTodayDate } from '../utils/dateUtils';
 
 export const BookingSection = () => {
   const { t, i18n } = useTranslation(['booking', 'public_landing', 'common']);
@@ -360,17 +360,22 @@ export const BookingSection = () => {
             <div>
               <label className="form-label-custom">{t('formDate', { defaultValue: 'Дата' })}</label>
               <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   type="date"
                   required
+                  min={getTodayDate()}
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="h-10 sm:h-11 pl-10 form-input-custom [color-scheme:light]"
-                  min={getTodayDate()}
+                  className="h-10 sm:h-11 pl-10 form-input-custom"
                 />
               </div>
-              <p className="text-[10px] text-muted-foreground mt-1 ml-1">{t('date_format_hint', { defaultValue: 'Формат: ДД.ММ.ГГГГ' })}</p>
+              <p className="text-[10px] text-muted-foreground mt-1 ml-1">
+                {i18n.language === 'en'
+                  ? t('date_format_hint_en', { defaultValue: 'Format: MM/DD/YYYY' })
+                  : t('date_format_hint', { defaultValue: 'Формат: ДД.ММ.ГГГГ' })
+                }
+              </p>
             </div>
             <div>
               <label className="form-label-custom">{t('formTime', { defaultValue: 'Время' })}</label>
@@ -388,7 +393,7 @@ export const BookingSection = () => {
           </div>
 
           <Button type="submit" disabled={loading} className="w-full hero-button-primary h-11 sm:h-12 text-sm sm:text-base">
-            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CalendarIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />}
             {t('submitBooking', { defaultValue: 'Отправить заявку' })}
           </Button>
 

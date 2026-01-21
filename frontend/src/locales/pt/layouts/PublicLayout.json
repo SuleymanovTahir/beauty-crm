@@ -1,21 +1,21 @@
 {
   "about": "Sobre nós",
   "contacts": "Contatos",
-  "faq": "Perguntas frequentes",
+  "faq": "Perguntas frequentes Perguntas",
   "footer": {
     "all_rights": "Todos os direitos reservados",
     "contacts": "Contatos",
-    "cooperation": "Cooperação",
+    "cooperation": "Colaboração",
     "description": "Salão de beleza profissional em Dubai",
-    "privacy_policy": "política de Privacidade",
+    "privacy_policy": "Política de privacidade",
     "quick_links": "Links rápidos",
-    "terms": "Termos de Uso",
-    "weekdays": "Dias da semana",
+    "terms": "Uso dos termos",
+    "weekdays": "Dias úteis",
     "weekends": "Fim de semana",
     "working_hours": "Horário de funcionamento"
   },
-  "home": "Lar",
-  "login": "Conecte-se",
+  "home": "Página inicial",
+  "login": "Login",
   "personal_cabinet": "Conta pessoal",
   "price_list": "Lista de preços"
 }

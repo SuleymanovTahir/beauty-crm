@@ -1,11 +1,11 @@
 {
   "crm": "Panneau CRM",
-  "logout": "Se déconnecter",
-  "manager": "Directeur",
+  "logout": "Déconnexion",
+  "manager": "Gestionnaire",
   "menu": {
-    "analytics": "Analytique",
+    "analytics": "Analytics",
     "chat": "Chat",
-    "clients": "Clientèle",
+    "clients": "Clients",
     "dashboard": "Tableau de bord",
     "funnel": "Entonnoir",
     "settings": "Paramètres"

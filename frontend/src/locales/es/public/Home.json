@@ -3,53 +3,53 @@
     "description": "Rellena el formulario y nos pondremos en contacto contigo para confirmar",
     "form": {
       "date": "Fecha *",
-      "name": "Su nombre *",
-      "namePlaceholder": "Anna Ivánova",
+      "name": "Tu nombre *",
+      "namePlaceholder": "Anna Ivanova",
       "phone": "Teléfono *",
-      "phonePlaceholder": "{{points}}",
+      "phonePlaceholder": "{{phone_placeholder}}",
       "service": "Servicio *",
       "servicePlaceholder": "Seleccione un servicio",
-      "submit": "Inscribirse",
-      "time": "Tiempo *"
+      "submit": "Regístrese",
+      "time": "Hora *"
     },
     "loading": "Cargando servicios...",
-    "title": "Regístrate para el trámite",
-    "validation": "hasta fecha favor complete todos los campos"
+    "title": "Regístrese para el procedimiento",
+    "validation": "Rellene todos los campos"
   },
   "features": {
     "items": {
       "masters": {
-        "description": "Nuestros especialistas cuentan con certificados internacionales y muchos años de experiencia.",
+        "description": "Nuestros especialistas cuentan con certificados internacionales y muchos años de experiencia. experiencia.",
         "title": "Artesanos experimentados"
       },
       "materials": {
-        "description": "Utilizamos sólo materiales seguros y de alta calidad de marcas líderes.",
+        "description": "Utilizamos solo materiales seguros y de alta calidad de marcas líderes.",
         "title": "Materiales de primera calidad"
       },
       "schedule": {
-        "description_few": "Estamos abiertos {{count}} días a la semana a la hora que sea conveniente para usted.",
-        "description_many": "Estamos abiertos {{count}} días a la semana a la hora que sea conveniente para usted.",
-        "description_one": "Estamos abiertos {{count}} días a la semana a la hora que sea conveniente para usted.",
-        "description_other": "Estamos abiertos {{count}} días a la semana a la hora que sea conveniente para usted para ti.",
-        "title": "Horario conveniente"
+        "description_few": "Estamos abiertos {{count}} días a la semana a una hora conveniente para usted.",
+        "description_many": "Estamos abiertos {{count}} días a la semana a una hora conveniente para usted. usted.",
+        "description_one": "Estamos abiertos {{count}} días a la semana a una hora conveniente para usted.",
+        "description_other": "Estamos abiertos {{count}} días a la semana a una hora conveniente para usted.",
+        "title": "Horarios convenientes"
       }
     },
-    "subtitle": "Ofrecemos el mejor servicio en la industria de la belleza.",
-    "title": "¿hasta fecha qué elegirnos?"
+    "subtitle": "Ofrecemos el mejor servicio en la industria de la belleza",
+    "title": "hasta fecha qué nos elige"
   },
   "gallery": {
     "items": {
-      "facial": "cuidado facial",
+      "facial": "Cuidado facial",
       "makeup": "Maquillaje permanente",
       "salon": "Nuestro salón"
     },
-    "subtitle": "Resultados de los que estamos orgullosos",
-    "title": "Nuestros trabajos"
+    "subtitle": "Los resultados de los que estamos orgullosos",
+    "title": "Nuestro trabajo"
   },
   "hero": {
-    "badge": "Servicios de belleza premium",
-    "bookButton": "Inscríbete ahora",
-    "description": "Artesanos profesionales, trato individual y materiales de alta calidad. Tu belleza es nuestra pasión.",
+    "badge": "Servicios de cosmética premium",
+    "bookButton": "Regístrese ahora",
+    "description": "Artesanos profesionales, enfoque individual y materiales de calidad. Tu belleza es nuestra pasión.",
     "servicesButton": "Nuestros servicios",
     "title": "Descubre un nuevo nivel de belleza"
   },
@@ -62,19 +62,19 @@
       "Extensiones de pestañas",
       "Corte y peinado",
       "Coloración del cabello",
-      "Limpieza facial"
+      "Facial limpieza"
     ]
   },
   "team": {
-    "description": "Profesionales en su campo que te ayudarán a revelar tu belleza natural.",
-    "noTeamAvailable": "Actualmente se está actualizando la lista de especialistas.",
+    "description": "Los profesionales te ayudarán a revelar tu belleza natural",
+    "noTeamAvailable": "La lista de especialistas se está ultimando actualmente.",
     "tag": "EQUIPO",
     "title": "Nuestros especialistas"
   },
   "testimonials": {
     "items": [],
-    "master": "Maestro",
-    "subtitle": "lo que dicen de nosotros",
-    "title": "Opiniones de nuestros clientes"
+    "master": "Propietario",
+    "subtitle": "¿Qué dicen sobre nosotros?",
+    "title": "Reseñas de nuestros clientes"
   }
 }

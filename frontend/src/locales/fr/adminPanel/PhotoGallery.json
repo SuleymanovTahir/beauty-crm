@@ -1,7 +1,7 @@
 {
   "actions": {
-    "hide": "Cacher",
-    "show": "Montrer"
+    "hide": "Hide",
+    "show": "Show"
   },
   "buttons": {
     "cancel": "Annuler",
@@ -11,61 +11,61 @@
   "card": {
     "featured": "Favoris",
     "toggle_featured": "Basculer les favoris",
-    "uploaded_by": "Chargé à la date {{name}}",
-    "views": "vues"
+    "uploaded_by": "Chargé {{name}}",
+    "views": "Vues"
   },
   "dialogs": {
     "delete": {
-      "confirm": "Êtes-vous sûr de vouloir supprimer cette photo\u00a0?"
+      "confirm": "Êtes-vous sûr de vouloir supprimer cette photo ?"
     },
     "upload": {
       "description": "Ajouter une nouvelle photo à la galerie",
       "form": {
-        "after_photo": "Photo \"Après\"",
+        "after_photo": "Photo après",
         "before_after": "Avant/Après",
-        "before_photo": "Photo \"Avant\"",
+        "before_photo": "Photo avant",
         "category": "Catégorie",
         "client": "Client",
-        "client_hint": "La photo sera disponible dans la galerie du client",
+        "client_hint": "La photo sera disponible dans la galerie client",
         "description": "Description",
-        "description_placeholder": "Description des photos",
+        "description_placeholder": "Description de la photo",
         "photo": "Photo",
-        "select_client": "Sélectionner un client",
+        "select_client": "Sélectionner le client",
         "single_photo": "Une photo",
         "title": "Nom",
-        "title_placeholder": "Titre de la photo",
-        "upload_type": "Type de charge"
+        "title_placeholder": "Nom de la photo",
+        "upload_type": "Type de téléchargement"
       },
       "title": "Télécharger une photo"
     }
   },
   "empty": {
-    "description": "Téléchargez vos premières photos dans la galerie",
-    "title": "Pas encore de photos"
+    "description": "Télécharger les premières photos dans la galerie",
+    "title": "Aucune photo pour le moment"
   },
   "filters": {
     "all_categories": "Toutes les catégories",
-    "search_placeholder": "Recherche de photos..."
+    "search_placeholder": "Rechercher des photos..."
   },
   "stats": {
-    "featured_photos": "Photos en vedette",
+    "featured_photos": "Photos préférées",
     "recent_uploads": "Téléchargements récents",
-    "total_photos": "Photos totales",
+    "total_photos": "Total de photos",
     "total_views": "Vues totales"
   },
-  "subtitle": "Gestion de photos et portfolio clients",
+  "subtitle": "Gérer les photos et le portfolio des clients",
   "title": "Galerie de photos",
   "toasts": {
     "deleted": "Photo supprimée avec succès",
-    "failed_delete": "Échec de la suppression de la photo",
-    "failed_featured": "Échec de la mise à jour du statut de favori",
+    "failed_delete": "Échec de la suppression photo",
+    "failed_featured": "Échec de la mise à jour du statut des favoris",
     "failed_load": "Échec du téléchargement des photos",
     "failed_upload": "Échec du téléchargement de la photo",
-    "failed_visibility": "Échec de la mise à jour de la visibilité.",
-    "featured_updated": "Statut de favori mis à jour",
-    "select_both_photos": "Veuillez sélectionner une photo avant et après",
+    "failed_visibility": "Failed to update visibility",
+    "featured_updated": "Statut des favoris mis à jour",
+    "select_both_photos": "Please select both before and after photos",
     "uploaded": "Photo téléchargée avec succès",
-    "visibility_updated": "Visibilité mise à jour"
+    "visibility_updated": "Visibility updated"
   },
-  "upload_photo": "Télécharger une photo"
+  "upload_photo": "Télécharger la photo"
 }

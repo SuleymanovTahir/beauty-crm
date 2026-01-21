@@ -6,45 +6,45 @@
   },
   "dialogs": {
     "send": {
-      "description": "Cree una notificación dirigida a sus clientes",
+      "description": "Crea una notificación dirigida a tus clientes",
       "form": {
-        "appointment_date": "Fecha de grabación",
-        "appointment_filter": "Filtrar hasta fecha reservas",
+        "appointment_date": "Appointment Date",
+        "appointment_filter": "Appointment Filter",
         "appointment_filters": {
-          "date_range": "Rango de fechas",
-          "specific_date": "Fecha especifica",
-          "tomorrow": "Mañana"
+          "date_range": "Date Range",
+          "specific_date": "Specific Date",
+          "tomorrow": "Tomorrow"
         },
-        "end_date": "Fecha de finalización",
+        "end_date": "End Date",
         "loyalty_tier": "Nivel de fidelidad",
         "message": "Mensaje",
-        "message_placeholder": "Introduzca el texto de notificación...",
+        "message_placeholder": "Ingresa el texto de la notificación...",
         "notification_type": "Tipo de canal",
-        "repeat_end_date": "Fecha de finalización de la repetición",
-        "repeat_interval": "Intervalo de repetición",
+        "repeat_end_date": "End Repeat On",
+        "repeat_interval": "Repeat Interval",
         "repeat_intervals": {
-          "daily": "A diario",
-          "monthly": "Mensual",
-          "weekly": "Semanalmente"
+          "daily": "Daily",
+          "monthly": "Monthly",
+          "weekly": "Weekly"
         },
-        "repeat_notification": "Notificación recurrente",
-        "schedule_date": "Fecha de envío",
-        "schedule_notification": "Programar envío",
-        "schedule_time": "Tiempo de envío",
+        "repeat_notification": "Repeat Notification",
+        "schedule_date": "Send Date",
+        "schedule_notification": "Schedule Notification",
+        "schedule_time": "Send Time",
         "segments": {
           "active": "Clientes activos",
           "all": "Todos los clientes",
-          "appointment_based": "Según reservas",
-          "inactive": "Perdido (inactivo)",
-          "service_based": "Hasta fecha servicios",
-          "tier": "Hasta fecha niveles de fidelidad"
+          "appointment_based": "By Appointment",
+          "inactive": "Perdidos (inactivo)",
+          "service_based": "By Service",
+          "tier": "hasta fecha niveles de fidelidad"
         },
-        "select_filter": "Seleccionar filtro",
+        "select_filter": "Select filter",
         "select_tier": "Seleccionar nivel",
-        "service_filter": "Servicio/Procedimiento",
-        "service_hint": "Los clientes registrados en el servicio seleccionado recibirán una notificación",
-        "service_placeholder": "Introduzca el nombre del servicio",
-        "start_date": "Fecha de inicio",
+        "service_filter": "Service/Procedure",
+        "service_hint": "Clients who booked this service will receive the notification",
+        "service_placeholder": "Enter service name or ID",
+        "start_date": "Start Date",
         "target_segment": "Público objetivo (segmento)",
         "tiers": {
           "bronze": "Bronce",
@@ -58,12 +58,12 @@
       "title": "Nueva notificación"
     },
     "template": {
-      "description": "Cree una plantilla para envíos rápidos hasta fecha correo en el futuro",
+      "description": "Crear una plantilla para envíos rápidos en el futuro",
       "form": {
         "message": "Mensaje",
         "message_placeholder": "Utilice {nombre} para sustituir el nombre del cliente",
         "template_name": "Nombre de la plantilla",
-        "template_name_placeholder": "hasta fecha ejemplo: Saludar a un nuevo cliente",
+        "template_name_placeholder": "hasta fecha ejemplo: Bienvenido nuevo cliente",
         "title": "Título",
         "title_placeholder": "Título de la notificación",
         "type": "Tipo de canal",
@@ -73,24 +73,24 @@
           "sms": "SMS"
         }
       },
-      "title": "Crear una plantilla"
+      "title": "Creación de una plantilla"
     }
   },
   "history": {
-    "description": "Lista de correos creados anteriormente y actuales",
+    "description": "Lista de correos actuales y creados previamente",
     "filters": {
       "all": "Todos los canales",
       "email": "Correo electrónico",
       "push": "Notificación notificación push",
       "sms": "SMS"
     },
-    "scheduled": "Planificado",
+    "scheduled": "Programado",
     "table": {
       "date": "Fecha",
       "recipients": "Destinatarios",
-      "sent_failed": "Enviados/Errores",
+      "sent_failed": "Enviado / Errores",
       "status": "Estado",
-      "title": "Título/Asunto",
+      "title": "Encabezado/Asunto",
       "type": "Tipo"
     },
     "title": "Historial de correo"
@@ -103,7 +103,7 @@
     "sms_sent": "SMS",
     "total_sent": "Total enviado"
   },
-  "subtitle": "Centro de control de mailings y notificaciones automáticas",
+  "subtitle": "Centro de gestión de mailings y automáticos notificaciones",
   "templates": {
     "description": "Plantillas listas para usar para ahorrar tiempo",
     "title": "Mis plantillas",

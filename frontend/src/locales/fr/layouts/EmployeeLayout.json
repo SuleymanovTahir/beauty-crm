@@ -1,7 +1,7 @@
 {
-  "crm": "GRC",
+  "crm": "CRM",
   "employee": "Employé",
-  "logout": "Se déconnecter",
+  "logout": "Déconnexion",
   "menu": {
     "calendar": "Calendrier",
     "my_bookings": "Mes réservations",

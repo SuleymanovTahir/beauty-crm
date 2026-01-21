@@ -1,43 +1,43 @@
 {
-  "actions": "Actes",
-  "addContract": "Créer un accord",
+  "actions": "Actions",
+  "addContract": "Créer un contrat",
   "all": "Tous",
   "allContracts": "Tous les contrats",
   "allStatuses": "Tous les statuts",
-  "board": "Conseil",
+  "board": "Tableau",
   "client": "Client",
   "clientContracts": "Client",
-  "contractNumber": "Numéro de contrat",
+  "contractNumber": "N° du contrat",
   "createdAt": "Date de création",
   "editContract": "Modifier le contrat",
   "errors": {
     "deleteError": "Erreur lors de la suppression du contrat.",
-    "saveError": "Erreur lors de la sauvegarde du contrat.",
+    "saveError": "Erreur lors de l'réservation du contrat.",
     "sendError": "Erreur lors de l'envoi du contrat",
     "updateError": "Échec de la mise à jour du statut"
   },
   "form": {
     "cancel": "Annuler",
     "contractType": "Type de contrat",
-    "save": "Sauvegarder",
-    "selectClient": "Sélectionner un client"
+    "save": "Enregistrer",
+    "selectClient": "Sélectionner le client"
   },
-  "internalContracts": "Domestique",
+  "internalContracts": "Interne",
+  "manageTypes": "Types de contrat",
   "manage_stages": "Colonnes",
-  "manageTypes": "Types de contrats",
   "messages": {
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet accord\u00a0?",
-    "contractCreated": "Le contrat a été créé",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce contrat ?",
+    "contractCreated": "Contrat créé",
     "contractDeleted": "Contrat supprimé",
-    "contractSent": "Le contrat a été envoyé",
-    "contractUpdated": "Le contrat a été mis à jour"
+    "contractSent": "Contrat envoyé",
+    "contractUpdated": "Contrat mis à jour"
   },
-  "noContracts": "Pas encore de contrats",
-  "search_placeholder": "Recherche à numéro ou client...",
+  "noContracts": "Aucun contrat pour l'instant",
+  "search_placeholder": "Recherche à la date numéro ou client...",
   "sendDialog": {
     "email": "E-mail",
     "instagram": "Instagram",
-    "method": "Méthode d'expédition",
+    "method": "Méthode d'envoi",
     "recipient": "Destinataire",
     "sendButton": "Envoyer",
     "telegram": "Télégramme",
@@ -45,22 +45,22 @@
     "whatsapp": "WhatsApp"
   },
   "status": "Statut",
-  "subtitle": "Gestion des contrats clients",
-  "title": "Traités",
-  "type": "Taper",
+  "subtitle": "Gestion des contrats avec les clients",
+  "title": "Contrats",
+  "type": "Type",
   "typeManagement": {
     "add": "Ajouter",
     "code": "Code (lat., unique)",
     "confirmDelete": "Confirmer la suppression",
     "createType": "Créer un type",
     "deletePrompt": "Vous souhaitez supprimer ce type de contrat. Que faire des contrats existants de ce type ?",
-    "deleteTitle": "Suppression du type \"{{name}}\"",
+    "deleteTitle": "Supprimer le type \"{{name}}\"",
     "deleteWithDocs": "Supprimer tous les contrats",
-    "deleteWithDocsSub": "Tous les documents de ce type seront définitivement supprimés.",
+    "deleteWithDocsSub": "Tous les documents de ce type seront supprimés définitivement.",
     "description": "Description",
     "editType": "Modifier le type",
     "keepDocs": "Laisser les contrats sans type",
-    "keepDocsSub": "Les contrats resteront, mais le champ « Type » sera vidé.",
+    "keepDocsSub": "Les contrats resteront, mais le champ \"Type\" sera effacé.",
     "messages": {
       "created": "Type créé",
       "deleted": "Type supprimé",
@@ -68,7 +68,7 @@
     },
     "name": "Nom",
     "system": "Système",
-    "systemProtected": "Le système est protégé",
-    "title": "Types de contrats"
+    "systemProtected": "Système protégé",
+    "title": "Types de contrat"
   }
 }

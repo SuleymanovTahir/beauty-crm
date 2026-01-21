@@ -1,69 +1,69 @@
 {
   "buttons": {
-    "cancel": "Болдырмау",
-    "create_challenge": "Мақсат қойыңыз",
-    "update_challenge": "Өзгерістерді сақтау"
+    "cancel": "Отмена",
+    "create_challenge": "Создать цель",
+    "update_challenge": "Сохранить изменения"
   },
   "card": {
-    "check_progress": "Орындалу барысын тексеріңіз",
-    "completed": "аяқталды",
+    "check_progress": "Check Progress",
+    "completed": "завершено",
     "progress": "Прогресс",
-    "pts": "ұпай",
-    "reward": "Сыйақы",
-    "target": "Мақсат"
+    "pts": "баллов",
+    "reward": "Награда",
+    "target": "Цель"
   },
-  "create_challenge": "Жаңа мақсат жасаңыз",
+  "create_challenge": "Создать новую цель",
   "dialogs": {
     "create": {
-      "description": "Әрекет параметрлерін және аяқтау бонусын орнатыңыз",
+      "description": "Настройте параметры активности и бонус за выполнение",
       "form": {
-        "challenge_type": "Әрекет түрі",
-        "description": "Тапсырманың сипаттамасы",
-        "description_placeholder": "Мысалы: салонға осы айда {{count}} рет бару",
-        "end_date": "Аяқталу күні",
+        "challenge_type": "Тип активности",
+        "description": "Описание задачи",
+        "description_placeholder": "Напр: Посетите салон {{count}} раза в этом месяце",
+        "end_date": "Дата окончания",
         "reward_placeholder": "{{points}}",
-        "reward_points": "бонус ұпайлары",
-        "start_date": "Басталу күні",
-        "target_placeholder": "{{points}}",
-        "target_value": "Мақсатты мөлшер",
-        "title": "Мақсат атауы",
-        "title_placeholder": "Мысалы: Жазғы макияж"
+        "reward_points": "бонусных баллов",
+        "start_date": "Дата начала",
+        "target_placeholder": "{{count}}",
+        "target_value": "Целевое количество",
+        "title": "Название цели",
+        "title_placeholder": "Напр: Летнее преображение"
       },
-      "title": "Мақсат құру",
-      "title_edit": "Мақсатты өңдеу"
+      "title": "Создание цели",
+      "title_edit": "Редактирование цели"
     },
     "delete": {
-      "confirm": "Бұл әрекетті шынымен жойғыңыз келе ме? Қатысушылардың барлық үлгерімі жоғалады."
+      "confirm": "Вы уверены, что хотите удалить эту активность? Весь прогресс участников будет потерян."
     }
   },
   "stats": {
-    "active_challenges": "Белсенді мақсаттар",
-    "completions": "Өлім жазалары",
-    "total_participants": "Қатысушылар"
+    "active_challenges": "Активных целей",
+    "completions": "Выполнений",
+    "total_participants": "Участников"
   },
   "statuses": {
-    "active": "Белсенді",
-    "completed": "Аяқталды",
-    "upcoming": "Алдағы"
+    "active": "Активный",
+    "completed": "Завершенный",
+    "upcoming": "Предстоящий"
   },
-  "subtitle": "Клиенттердің адалдығын арттыру үшін ойын механикасы мен мақсаттарын басқарыңыз",
-  "title": "Мақсаттар мен жетістіктер",
+  "subtitle": "Управление игровыми механиками и целями для повышения лояльности клиентов",
+  "title": "Цели и достижения",
   "toasts": {
-    "created": "Әрекет сәтті жасалды",
-    "deleted": "Әрекет жойылды",
-    "failed_check_progress": "Орындалу барысын жаңарту мүмкін болмады",
-    "failed_create": "Әрекетті жасау қатесі",
-    "failed_delete": "Жою кезінде қате",
-    "failed_load": "Деректерді жүктеу сәтсіз аяқталды",
-    "progress_checked_one": "{{count}} мүшелері үшін орындалу барысы жаңартылды",
-    "progress_checked_few": "{{count}} мүшелері үшін орындалу барысы жаңартылды",
-    "progress_checked_many": "{{count}} мүшелері үшін орындалу барысы жаңартылды",
-    "progress_checked_other": "{{count}} мүшелері үшін орындалу барысы жаңартылды"
+    "created": "Активность успешно создана",
+    "deleted": "Активность удалена",
+    "failed_check_progress": "Failed to check progress",
+    "failed_create": "Ошибка при создании активности",
+    "failed_delete": "Ошибка при удалении",
+    "failed_load": "Не удалось загрузить данные",
+    "progress_checked_few": "Прогресс обновлен для {{count}} участников",
+    "progress_checked_many": "Прогресс обновлен для {{count}} участников",
+    "progress_checked_one": "Прогресс обновлен для {{count}} участника",
+    "progress_checked_other": "Прогресс обновлен для {{count}} участников"
   },
   "types": {
-    "referrals": "Референциялар",
-    "services": "Қызметтер",
-    "spending": "Шығындар",
-    "visits": "Сапарлар"
+    "referrals": "Рефералы",
+    "services": "Услуги",
+    "spending": "Траты",
+    "visits": "Визиты"
   }
 }

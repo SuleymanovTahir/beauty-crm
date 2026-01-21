@@ -1,17 +1,17 @@
 {
   "admin_panel": "Admin-Panel",
-  "go_to_crm": "Gehen Sie zu CRM",
+  "go_to_crm": "Gehe zu CRM",
   "logout": "Abmelden",
   "menu": {
     "challenges": "Herausforderungen",
-    "dashboard": "Bedienfeld",
-    "feature_management": "Feature Management",
+    "dashboard": "Panel-Steuerelemente",
+    "feature_management": "Funktionsverwaltung",
     "loyalty_management": "Treuemanagement",
     "notifications": "Benachrichtigungen",
     "photo_gallery": "Fotogalerie",
     "public_content": "Öffentlicher Inhalt",
     "referral_program": "Empfehlungsprogramm",
-    "services": "Dienstleistungen",
+    "services": "Dienste",
     "settings": "Einstellungen",
     "user_management": "Benutzerverwaltung"
   }

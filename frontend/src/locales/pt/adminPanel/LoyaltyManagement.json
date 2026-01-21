@@ -1,7 +1,7 @@
 {
   "adjust_points": "Alterar saldo de pontos",
   "buttons": {
-    "add_rule": "Adicionar uma regra",
+    "add_rule": "Adicionar regra",
     "adjust_points": "Alterar saldo",
     "cancel": "Cancelar",
     "save": "Salvar",
@@ -9,13 +9,13 @@
   },
   "categories": {
     "category": "Categoria",
-    "category_placeholder": "Até data exemplo. Manicure",
+    "category_placeholder": "Ex.: Manicure",
     "description": "Configure multiplicadores de pontos para categorias de serviço individuais",
-    "multiplier": "Fator",
+    "multiplier": "Multiplicador",
     "title": "Multiplicadores de categoria"
   },
   "config": {
-    "cashback_hint": "Exemplo: {{percent}}% de cashback ({{points}} pontos para cada {{unit}} gasto)",
+    "cashback_hint": "Exemplo: {{percent}}% de reembolso ({{points}} pontos para cada {{unit}} gasto)",
     "cashback_rate": "Reembolso (%)",
     "description": "Configurações básicas do programa de fidelidade",
     "expiration_days": "Período de validade dos pontos (dias)",
@@ -27,35 +27,35 @@
   "dialogs": {
     "adjust_points": {
       "client_email": "E-mail do cliente",
-      "client_email_placeholder": "Digite seu e-mail para vincular",
+      "client_email_placeholder": "Insira o e-mail para vincular",
       "description": "Ajuste manual do saldo de pontos",
       "points": "Número de pontos",
-      "points_placeholder": "Até data exemplo. 100 ou -100",
-      "reason": "Causa",
-      "reason_placeholder": "Indique o motivo da alteração",
-      "title": "Mudança de saldo"
+      "points_placeholder": "Ex. 100 ou -100",
+      "reason": "Motivo",
+      "reason_placeholder": "Especifique o motivo da alteração",
+      "title": "Alteração de saldo"
     },
     "edit_tier": {
-      "description": "Definir as condições para obter um nível de privilégio",
+      "description": "Configuração de condições para obtenção de um nível de privilégio",
       "discount_percent": "Porcentagem de desconto",
-      "min_points": "Limite mínimo de pontuação",
+      "min_points": "Limite mínimo de pontos",
       "tier_name": "Nome do nível",
-      "title": "Editando um nível"
+      "title": "Nível de edição"
     },
     "rule": {
-      "description": "Coeficiente de acumulação pessoal para a categoria",
-      "title": "Regra de categoria"
+      "description": "Coeficiente de acúmulo pessoal para a categoria",
+      "title": "Regra da categoria"
     }
   },
   "stats": {
     "active_members": "Participantes do programa",
-    "points_redeemed": "Pontos debitados",
+    "points_redeemed": "pontos deduzidos",
     "total_points_issued": "Total acumulado"
   },
-  "subtitle": "Gerencie descontos, níveis de benefícios e regras de pontos",
+  "subtitle": "Gerenciar descontos, níveis de privilégio e regras de acúmulo de pontos",
   "tiers": {
     "description": "Níveis de fidelidade para segmentação de clientes",
-    "discount": "desconto {{percent}}%",
+    "discount": "{{percent}}% de desconto",
     "from_points": "de {{points}} pontos",
     "starting_level": "Nível inicial",
     "title": "Níveis de privilégio"
@@ -63,25 +63,25 @@
   "title": "Programa de fidelidade",
   "toasts": {
     "config_updated": "Configurações salvas",
-    "failed_adjust": "Não foi possível alterar o saldo",
-    "failed_delete": "Erro durante a exclusão",
+    "failed_adjust": "Falha ao alterar o saldo",
+    "failed_delete": "Erro ao excluir",
     "failed_load": "Falha ao carregar dados",
     "failed_save": "Erro ao salvar",
-    "failed_update": "Erro durante atualização",
-    "points_adjusted_add": "{{count}} pontos concedidos",
-    "points_adjusted_deduct": "{{count}} pontos anulados",
-    "rule_deleted": "Regra excluída com sucesso",
+    "failed_update": "Erro ao atualizar",
+    "points_adjusted_add": "{{count}} pontos acumulados",
+    "points_adjusted_deduct": "{{count}} pontos amortizados",
+    "rule_deleted": "Regra com sucesso excluída",
     "rule_saved": "Regra salva",
     "tier_updated": "Dados de nível atualizados"
   },
   "transactions": {
     "description": "Histórico de transações de pontos de fidelidade",
-    "search_placeholder": "Pesquisar até data cliente...",
+    "search_placeholder": "Pesquisa até data cliente...",
     "table": {
       "client": "Cliente",
       "date": "Data",
       "points": "Pontos",
-      "reason": "Causa",
+      "reason": "Motivo",
       "type": "Tipo"
     },
     "title": "Últimas transações"

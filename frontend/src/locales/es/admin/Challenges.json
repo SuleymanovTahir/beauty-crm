@@ -1,7 +1,7 @@
 {
   "buttons": {
-    "add_challenge": "Crear una tarea",
-    "create_challenge": "Iniciar un desafío"
+    "add_challenge": "Crear tarea",
+    "create_challenge": "Ejecutar desafío"
   },
   "card": {
     "details": "Más detalles",
@@ -10,42 +10,42 @@
   },
   "dialogs": {
     "add_title": "Nuevo desafío",
-    "edit_title": "Editar un desafío"
+    "edit_title": "Editar desafío"
   },
   "empty": {
-    "subtitle": "Crea tu primer desafío de juego para animar a los clientes a registrarse con más frecuencia.",
+    "subtitle": "Crea la primera tarea del juego para alentar a los clientes a registrarse con más frecuencia.",
     "title": "Los desafíos no están configurados"
   },
   "fields": {
-    "dates": "Límite de tiempo",
-    "description": "Descripción pública",
-    "reward": "Premio",
-    "target_value": "Plan (meta)",
-    "title": "Título profesional",
-    "type": "Metodología de objetivos"
+    "dates": "Límite temporal",
+    "description": "Público descripción",
+    "reward": "Recompensa",
+    "target_value": "Plan (objetivo)",
+    "title": "Nombre de la tarea",
+    "type": "Metodología del objetivo"
   },
   "placeholders": {
     "description": "¿Cómo verá el cliente esta tarea?",
-    "title": "Hasta ejemplo: estado oro"
+    "title": "hasta fecha ejemplo: estado Gold"
   },
   "stats": {
     "active_challenges": "TAREAS ACTIVAS",
-    "completed_today": "COMPLETADO HOY",
+    "completed_today": "COMPLETADAS HOY",
     "total_participants": "TOTAL DE PARTICIPANTES"
   },
   "status": {
-    "active": "ACTIVO",
+    "active": "ACTIVOS",
     "inactive": "PAUSA"
   },
-  "subtitle": "Aumente la fidelidad de los clientes con mecánicas de juego y recompensas automáticas.",
+  "subtitle": "Aumenta la fidelidad de los clientes con mecánicas de juego y recompensas automáticas.",
   "title": "Desafíos",
   "toasts": {
-    "created": "Tarea creada",
-    "updated": "Misión actualizada"
+    "created": "Misión creada",
+    "updated": "Tarea actualizada"
   },
   "types": {
     "service": "categoría de servicio",
-    "spend": "Gasto total",
+    "spend": "Total cantidad gastada",
     "visits": "Número de visitas"
   }
 }

@@ -5,56 +5,56 @@
   },
   "current_settings": {
     "edit": "Editar",
-    "min_purchase": "Preço mínimo de compra: <strong>{{amount}} {{currency}}</strong>",
+    "min_purchase": "Custo mínimo de compra: <strong>{{amount}} {{currency}}</strong>",
     "referred_bonus": "Bônus de amigo: <strong>{{points}} pontos</strong>",
-    "referrer_bonus": "Bônus do convidado: <strong>{{points}} pontos</strong>",
+    "referrer_bonus": "Bônus de convite: <strong>{{points}} pontos</strong>",
     "title": "Configuração de bônus atual"
   },
   "dialogs": {
     "settings": {
-      "description": "Configure pontos de bônus e requisitos",
-      "min_purchase_amount": "Preço mínimo de compra ({{currency}})",
-      "min_purchase_help": "Valor mínimo que um amigo deve gastar para ativar o bônus de indicação ({{min}} = sem mínimo)",
-      "referred_bonus": "Pontos de bônus de amigos indicados",
-      "referred_bonus_help": "Pontos atribuídos a um amigo no ato da inscrição",
-      "referrer_bonus": "Pontos de bônus de referência",
-      "referrer_bonus_help": "Pontos concedidos ao indicador quando um amigo faz sua primeira compra",
-      "title": "Configurações do programa de referência"
+      "description": "Configuração de pontos de bônus e requisitos",
+      "min_purchase_amount": "Valor mínimo de compra ({{currency}})",
+      "min_purchase_help": "O valor mínimo que um amigo deve gastar para ativar o bônus de indicação ({{min}} = sem mínimo)",
+      "referred_bonus": "pontos de bônus de amigos convidados",
+      "referred_bonus_help": "pontos concedidos a um amigo no momento do reserva",
+      "referrer_bonus": "pontos de bônus do indicado",
+      "referrer_bonus_help": "pontos concedidos a um indicado quando um amigo faz sua primeira compra",
+      "title": "Configurações do programa de indicações"
     }
   },
   "settings": "Configurações",
   "stats": {
-    "completed_referrals": "Referências concluídas",
-    "points_distributed": "Pontos distribuídos",
-    "total_referrals": "Total de referências"
+    "completed_referrals": "Indicações concluídas",
+    "points_distributed": "pontos distribuídos",
+    "total_referrals": "Total de indicações"
   },
-  "subtitle": "Gerenciando referências e monitorando a eficácia do programa",
+  "subtitle": "Gerenciar indicações e monitorar a eficácia do programa",
   "table": {
     "columns": {
       "date": "Data",
-      "points_awarded": "Pontos atribuídos",
+      "points_awarded": "pontos concedidos",
       "referred_friend": "Amigo convidado",
-      "referrer": "Referenciador",
+      "referrer": "Indicador",
       "status": "Status"
     },
-    "description": "Acompanhamento do status das referências e distribuição de pontos",
+    "description": "Acompanhamento do status de indicação e distribuição de pontos",
     "filters": {
-      "all_statuses": "Todos os status"
+      "all_statuses": "All Statuses"
     },
-    "search_placeholder": "Procure referências...",
+    "search_placeholder": "Procurando referências...",
     "sort": {
-      "date": "Até data",
-      "points": "Até data pontos",
-      "status": "Até data status"
+      "date": "Sort by Date",
+      "points": "Sort by Points",
+      "status": "Sort by Status"
     },
     "statuses": {
       "cancelled": "Cancelado",
       "completed": "Concluído",
-      "pending": "Esperando"
+      "pending": "Pendente"
     },
     "title": "Todas as referências"
   },
-  "title": "Programa de referência",
+  "title": "Programa de indicações",
   "toasts": {
     "failed_load": "Falha ao carregar referências",
     "failed_save": "Falha ao salvar",

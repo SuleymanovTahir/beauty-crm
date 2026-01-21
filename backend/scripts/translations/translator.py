@@ -97,6 +97,15 @@ SALON_TERMINOLOGY = {
         'nfc apple/google wallet': 'NFC Apple/Google Wallet',
         'ламинирование ресниц': 'ламинирование ресниц',
         'ламинирование бровей': 'ламинирование бровей',
+        'ламинирование бровей и ресниц': 'ламинирование бровей и ресниц',
+        'окрашивание бровей': 'окрашивание бровей',
+        'оформление бровей': 'оформление бровей',
+        'глубокая чистка лица': 'глубокая чистка лица',
+        'подтягивающий массаж лица с маской': 'подтягивающий массаж лица с маской',
+        'медицинская чистка для проблемной кожи': 'медицинская чистка для проблемной кожи',
+        'пилинг': 'пилинг',
+        'балаяж': 'балаяж',
+        'выход из черного': 'выход из черного',
         'наращивание ногтей': 'наращивание ногтей',
         'коррекция ногтей': 'коррекция ногтей',
         'укрепление ногтей': 'укрепление ногтей',
@@ -123,6 +132,15 @@ SALON_TERMINOLOGY = {
         'lash lift': 'lash lift',
         'lash lamination': 'lash lift',
         'brow lift': 'brow lamination',
+        'brow and lash lamination': 'brow and lash lamination',
+        'eyebrow tinting': 'eyebrow tinting',
+        'eyebrow shaping': 'eyebrow shaping',
+        'deep facial cleansing': 'deep facial cleansing',
+        'lifting facial massage with mask': 'lifting facial massage with mask',
+        'medical cleansing for problem skin': 'medical cleansing for problem skin',
+        'peeling': 'peeling',
+        'balayage': 'balayage',
+        'black color removal': 'hair color correction',
         'nail infill': 'nail refill',
         'nail overlay': 'nail overlay',
         'vaxing': 'waxing',
@@ -149,7 +167,7 @@ SALON_TERMINOLOGY = {
         'charlar': 'chat',
         'comportamiento': 'acciones',
         'de acuerdo': 'cuenta',
-        'cualquier máster': 'cualquier профессионал',
+        'cualquier máster': 'cualquier especialista',
         'rechazado': 'cancelado',
         'él se lo perdió': 'omitido',
         'pendiente': 'en espera',
@@ -523,7 +541,7 @@ class Translator:
             if cached: results[i] = self._apply_terminology_corrections(cached, target); continue
             to_translate_indices.append(i); to_translate_texts.append(text)
         if not to_translate_texts: return results
-        batch_size = 150
+        batch_size = 50
         variable_pattern = r'\{\{([^}]+)\}\}'
         for i in range(0, len(to_translate_texts), batch_size):
             batch = to_translate_texts[i:i+batch_size]; batch_indices = to_translate_indices[i:i+batch_size]

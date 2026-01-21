@@ -1,12 +1,12 @@
 {
-  "browse_available_services": "Қол жетімді салон қызметтерін қараңыз",
-  "category": "Санат",
-  "description": "Сипаттама",
-  "duration": "Ұзақтығы",
+  "browse_available_services": "Просмотр доступных услуг салона",
+  "category": "Категория",
+  "description": "Описание",
+  "duration": "Длительность",
   "min": "мин",
-  "no_services": "Қызметтер табылмады",
-  "no_services_description": "Қазіргі уақытта көрсетілетін қызметтер жоқ.",
-  "our_services": "Біздің қызметтеріміз",
-  "price": "Бағасы",
-  "service_name": "Қызмет атауы"
+  "no_services": "Услуги не найдены",
+  "no_services_description": "В данный момент нет доступных услуг для отображения.",
+  "our_services": "Наши услуги",
+  "price": "Цена",
+  "service_name": "Название услуги"
 }

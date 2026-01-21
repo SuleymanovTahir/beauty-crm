@@ -1,7 +1,7 @@
 {
-  "click_preview_to_see": "Алушыларды көру үшін «Алдын ала қарау» түймесін басыңыз",
-  "placeholder_all_users": "Барлық пайдаланушылар",
-  "placeholder_message": "Хабарлама мәтінін енгізіңіз...",
-  "placeholder_subject": "Сізге арнайы ұсыныс!",
-  "select_type": "Түрді таңдаңыз"
+  "click_preview_to_see": "Нажмите \"Предпросмотр\" чтобы увидеть получателей",
+  "placeholder_all_users": "Все пользователи",
+  "placeholder_message": "Введите текст вашего сообщения...",
+  "placeholder_subject": "Специальное предложение для вас!",
+  "select_type": "Выберите тип"
 }
