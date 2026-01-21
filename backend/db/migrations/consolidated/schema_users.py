@@ -57,7 +57,12 @@ def migrate_users_schema():
             
             'full_name_ru': 'TEXT', 'full_name_en': 'TEXT', 'full_name_ar': 'TEXT',
             'full_name_es': 'TEXT', 'full_name_de': 'TEXT', 'full_name_fr': 'TEXT',
+            'full_name_es': 'TEXT', 'full_name_de': 'TEXT', 'full_name_fr': 'TEXT',
             'full_name_hi': 'TEXT', 'full_name_kk': 'TEXT', 'full_name_pt': 'TEXT',
+
+            'specialization_ru': 'TEXT', 'specialization_en': 'TEXT', 'specialization_ar': 'TEXT',
+            'specialization_es': 'TEXT', 'specialization_de': 'TEXT', 'specialization_fr': 'TEXT',
+            'specialization_hi': 'TEXT', 'specialization_kk': 'TEXT', 'specialization_pt': 'TEXT',
         }
         
         # Add missing columns
