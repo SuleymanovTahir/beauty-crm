@@ -54,7 +54,7 @@ interface CreateTaskDialogProps {
 }
 
 export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaultStageId, taskToEdit, isEmployee = false }: CreateTaskDialogProps) {
-    const { t } = useTranslation(['admin/tasks', 'common']);
+    const { t, i18n } = useTranslation(['admin/tasks', 'common']);
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState<Array<{ id: number; username: string; full_name: string; role: string }>>([]);
 
@@ -62,7 +62,7 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
     useEffect(() => {
         const loadUsers = async () => {
             try {
-                const response = await api.getUsers();
+                const response = await api.getUsers(i18n.language);
                 const usersArray = Array.isArray(response) ? response : (response?.users || []);
                 setUsers(usersArray);
             } catch (err) {

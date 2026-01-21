@@ -905,8 +905,8 @@ export class ApiClient {
   }
 
   // ===== УСЛУГИ =====
-  async getServices(activeOnly: boolean = true) {
-    return this.request<any>(`/api/services?active_only=${activeOnly}`)
+  async getServices(activeOnly: boolean = true, language: string = 'ru') {
+    return this.request<any>(`/api/services?active_only=${activeOnly}&language=${language}`)
   }
 
   async getPublicServices() {
@@ -934,8 +934,8 @@ export class ApiClient {
   }
 
   // ===== СОТРУДНИКИ =====
-  async getEmployeesForService(serviceId: number) {
-    return this.request<{ employees: Array<{ id: number; full_name: string; position: string; photo: string | null; is_active: boolean }> }>(`/api/services/${serviceId}/employees`)
+  async getEmployeesForService(serviceId: number, language: string = 'ru') {
+    return this.request<{ employees: Array<{ id: number; full_name: string; position: string; photo: string | null; is_active: boolean }> }>(`/api/services/${serviceId}/employees?language=${language}`)
   }
 
   async getEmployeeBusySlots(employeeId: number, date: string) {

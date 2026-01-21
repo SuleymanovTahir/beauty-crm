@@ -52,7 +52,7 @@ import { ManageCurrenciesDialog } from '../../components/admin/ManageCurrenciesD
 import './Settings.css';
 
 export default function AdminSettings() {
-  const { t } = useTranslation(['admin/settings', 'common']);
+  const { t, i18n } = useTranslation(['admin/settings', 'common']);
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав
@@ -219,7 +219,7 @@ export default function AdminSettings() {
 
   const loadUsers = async () => {
     try {
-      const data = await api.getUsers();
+      const data = await api.getUsers(i18n.language);
       setUsers(data?.users || data || []);
     } catch (error) {
       console.error('Failed to load users:', error);

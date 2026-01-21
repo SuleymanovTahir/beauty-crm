@@ -43,8 +43,8 @@ const api = {
     return res.json();
   },
 
-  async getServices() {
-    const res = await fetch(`${this.baseURL}/api/services`, { credentials: 'include' });
+  async getServices(lang: string = 'ru') {
+    const res = await fetch(`${this.baseURL}/api/services?language=${lang}`, { credentials: 'include' });
     return res.json();
   },
 
@@ -100,8 +100,8 @@ const api = {
     return res.json();
   },
 
-  async getUsers() {
-    const res = await fetch(`${this.baseURL}/api/users`, { credentials: 'include' });
+  async getUsers(lang: string = 'ru') {
+    const res = await fetch(`${this.baseURL}/api/users?language=${lang}`, { credentials: 'include' });
     return res.json();
   },
 
@@ -125,8 +125,8 @@ const api = {
     return res.json();
   },
 
-  async getEmployeesForService(serviceId: number) {
-    const res = await fetch(`${this.baseURL}/api/services/${serviceId}/employees`, {
+  async getEmployeesForService(serviceId: number, lang: string = 'ru') {
+    const res = await fetch(`${this.baseURL}/api/services/${serviceId}/employees?language=${lang}`, {
       credentials: 'include'
     });
     return res.json();
@@ -304,7 +304,7 @@ export default function Bookings() {
       if (selectedService) {
         try {
           setLoadingMasters(true);
-          const data = await api.getEmployeesForService(selectedService.id);
+          const data = await api.getEmployeesForService(selectedService.id, i18n.language);
           setFilteredMasters(data.employees || []);
         } catch (err) {
           console.error('Error loading filtered masters:', err);
@@ -400,9 +400,9 @@ export default function Bookings() {
           // Keep creating errors
           return { clients: [] };
         }),
-        api.getServices().catch(_ => []),
+        api.getServices(i18n.language).catch(_ => []),
         (async () => {
-          try { return await api.getUsers(); } catch { return { users: [] }; }
+          try { return await api.getUsers(i18n.language); } catch { return { users: [] }; }
         })()
       ]);
 

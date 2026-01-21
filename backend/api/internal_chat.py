@@ -1,7 +1,7 @@
 """
 API для внутреннего чата между сотрудниками
 """
-from fastapi import APIRouter, Request, Cookie
+from fastapi import APIRouter, Request, Cookie, Query
 from fastapi.responses import JSONResponse
 from typing import Optional
 

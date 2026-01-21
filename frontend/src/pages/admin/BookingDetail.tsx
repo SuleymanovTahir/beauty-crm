@@ -97,8 +97,8 @@ export default function BookingDetail() {
       // Загружаем букинги, пользователей и услуги
       const [bookingsResponse, usersResponse, servicesResponse] = await Promise.all([
         apiClient.getBookings(),
-        apiClient.getUsers(),
-        apiClient.getServices()
+        apiClient.getUsers(i18n.language),
+        apiClient.getServices(true, i18n.language)
       ]);
 
       const found = bookingsResponse.bookings.find((b: Booking) => b.id === parseInt(id!));

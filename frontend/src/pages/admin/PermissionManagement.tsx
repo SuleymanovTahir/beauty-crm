@@ -1,7 +1,5 @@
-// /frontend/src/pages/admin/PermissionManagement.tsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Shield, Loader, Check, X, Settings } from "lucide-react";
-import { Button } from "../../components/ui/button";
 import { toast } from "sonner";
 import { api } from "../../services/api";
 import { useTranslation } from "react-i18next";
@@ -26,7 +24,7 @@ interface Permissions {
 }
 
 export default function PermissionManagement() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [permissions, setPermissions] = useState<Permissions>({});
@@ -59,7 +57,7 @@ export default function PermissionManagement() {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const response = await api.getUsers();
+      const response = await api.getUsers(i18n.language);
       setUsers(response.users || []);
       if (response.users && response.users.length > 0) {
         setSelectedUser(response.users[0]);
@@ -142,11 +140,10 @@ export default function PermissionManagement() {
                 <button
                   key={user.id}
                   onClick={() => setSelectedUser(user)}
-                  className={`w-full p-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 ${
-                    selectedUser?.id === user.id
-                      ? "bg-pink-50 border-l-4 border-l-pink-500"
-                      : ""
-                  }`}
+                  className={`w-full p-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 ${selectedUser?.id === user.id
+                    ? "bg-pink-50 border-l-4 border-l-pink-500"
+                    : ""
+                    }`}
                 >
                   <div className="font-medium text-gray-900">{user.full_name}</div>
                   <div className="text-sm text-gray-500">@{user.username}</div>
@@ -209,11 +206,10 @@ export default function PermissionManagement() {
                               )
                             }
                             disabled={saving}
-                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                              perm[key as keyof Permission]
-                                ? "bg-green-100 text-green-700 hover:bg-green-200"
-                                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                            }`}
+                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${perm[key as keyof Permission]
+                              ? "bg-green-100 text-green-700 hover:bg-green-200"
+                              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                              }`}
                           >
                             <div className="flex items-center justify-center gap-1">
                               {perm[key as keyof Permission] ? (
