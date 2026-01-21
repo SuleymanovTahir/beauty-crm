@@ -40,7 +40,7 @@ interface Referral {
 }
 
 export default function Referrals() {
-    const { t } = useTranslation(['adminPanel/ReferralProgram', 'common', 'services']);
+    const { t } = useTranslation(['adminpanel/referralprogram', 'common', 'services']);
     const navigate = useNavigate();
 
     const [referrals, setReferrals] = useState<Referral[]>([]);

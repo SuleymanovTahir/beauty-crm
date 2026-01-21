@@ -144,8 +144,8 @@ export const apiClient = {
     }),
 
   // ===== USERS =====
-  getUsers: () =>
-    apiCall('/api/users'),
+  getUsers: (lang: string = 'ru') =>
+    apiCall(`/api/users?language=${lang}`),
 
   deleteUser: (id: number) =>
     apiCall(`/api/users/${id}/delete`, {

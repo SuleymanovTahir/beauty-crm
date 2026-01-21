@@ -1,13 +1,13 @@
 {
   "actions": "Actions",
-  "all_good": "Tout est génial ! Votre entonnoir affiche de bons résultats.",
+  "all_good": "Tout est génial\u00a0! Votre entonnoir affiche de bons résultats.",
   "client": {
     "name": "Nom"
   },
   "client_added": "Client ajouté",
   "client_deleted": "Client supprimé",
   "client_updated": "Données client mises à jour",
-  "confirm_delete_client": "Êtes-vous sûr de vouloir supprimer ce client ?",
+  "confirm_delete_client": "Êtes-vous sûr de vouloir supprimer ce client\u00a0?",
   "conversion": {
     "booked_to_completed": "Enregistré -> Terminé",
     "booking_to_booked": "Réservation commencé -> Signé up",

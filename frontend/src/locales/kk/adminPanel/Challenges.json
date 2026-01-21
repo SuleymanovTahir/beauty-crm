@@ -55,9 +55,9 @@
     "failed_create": "Ошибка при создании активности",
     "failed_delete": "Ошибка при удалении",
     "failed_load": "Не удалось загрузить данные",
+    "progress_checked_one": "Прогресс обновлен для {{count}} участника",
     "progress_checked_few": "Прогресс обновлен для {{count}} участников",
     "progress_checked_many": "Прогресс обновлен для {{count}} участников",
-    "progress_checked_one": "Прогресс обновлен для {{count}} участника",
     "progress_checked_other": "Прогресс обновлен для {{count}} участников"
   },
   "types": {

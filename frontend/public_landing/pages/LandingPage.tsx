@@ -38,7 +38,7 @@ export function LandingPage() {
     // 2. Fetch fresh data from unified endpoint
     const fetchInitialData = async () => {
       try {
-        const response = await fetch('/api/public/initial-load');
+        const response = await fetch(`/api/public/initial-load?language=${localStorage.getItem('i18nextLng') || 'ru'}`);
         const data = await response.json();
 
         setInitialData(data);

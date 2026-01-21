@@ -11,9 +11,9 @@
   "delete": "Удалить",
   "detail": {
     "costPriceLabel": "Құны: {{price}} {{currency}}",
+    "inStock_one": "Қойымда бар {{count}} дана.",
     "inStock_few": "Қойымда бар {{count}} дана.",
     "inStock_many": "Қоймада {{count}} дана.",
-    "inStock_one": "Қойымда бар {{count}} дана.",
     "inStock_other": "Қоймада {{count}} дана.",
     "loadingData": "Деректерді жүктеу...",
     "movementAdjustment": "Реттеу",

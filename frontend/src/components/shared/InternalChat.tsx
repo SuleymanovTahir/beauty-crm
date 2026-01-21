@@ -370,7 +370,7 @@ export default function InternalChat() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('/api/internal-chat/users', { credentials: 'include' });
+      const response = await fetch(`/api/internal-chat/users?language=${i18n.language}`, { credentials: 'include' });
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -413,7 +413,7 @@ export default function InternalChat() {
 
   const loadMessagesWithUser = async (userId: number) => {
     try {
-      const response = await fetch(`/api/internal-chat/messages?with_user_id=${userId}`, {
+      const response = await fetch(`/api/internal-chat/messages?with_user_id=${userId}&language=${i18n.language}`, {
         credentials: 'include'
       });
       const data = await response.json();

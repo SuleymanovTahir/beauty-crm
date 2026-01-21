@@ -1,9 +1,9 @@
 {
   "clear_all": "Borrar todo",
   "clear_confirm": "¿Está seguro de que desea borrar completamente el reserva de auditoría? Esta acción es irreversible.",
+  "delete_batch_confirm_one": "¿Eliminar {{count}} reservas seleccionadas?",
   "delete_batch_confirm_few": "¿Eliminar {{count}} reservas seleccionadas?",
   "delete_batch_confirm_many": "¿Eliminar {{count}} reservas seleccionadas?",
-  "delete_batch_confirm_one": "¿Eliminar {{count}} reservas seleccionadas?",
   "delete_batch_confirm_other": "¿Eliminar reservas {{count}}?",
   "delete_confirm": "¿Eliminar este reserva permanentemente?",
   "delete_selected": "Eliminar los seleccionados",
