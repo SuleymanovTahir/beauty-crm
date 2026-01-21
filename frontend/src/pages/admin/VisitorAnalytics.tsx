@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 import { useTranslation } from 'react-i18next';
-import * as Flags from 'country-flag-icons/react/3x2';
+// Removed heavy import: import * as Flags from 'country-flag-icons/react/3x2';
 import { getCountryCode } from '../../utils/countryCodes';
 import './VisitorAnalytics.css';
 
@@ -33,17 +33,22 @@ const COLORS = [
     '#14b8a6'  // teal
 ];
 
-// Country code to flag component mapping
+// Optimized: Uses CDN images instead of bundling 200+ React components
 const CountryFlag = ({ countryName, className }: { countryName: string, className?: string }) => {
     const code = getCountryCode(countryName);
     if (!code) return <Globe className={className || "w-4 h-4 text-gray-400"} />;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const FlagComponent = (Flags as any)[code];
-    return FlagComponent ? (
-        <FlagComponent className={className || "w-4 h-4 rounded-sm shadow-sm"} title={countryName} />
-    ) : (
-        <Globe className={className || "w-4 h-4 text-gray-400"} />
+    return (
+        <img
+            src={`https://flagcdn.com/w40/${code.toLowerCase()}.png`}
+            srcSet={`https://flagcdn.com/w80/${code.toLowerCase()}.png 2x`}
+            width="20"
+            height="15"
+            alt={countryName}
+            className={`${className || "w-5 h-4"} object-cover rounded-sm`}
+            // @ts-ignore
+            loading="lazy"
+        />
     );
 };
 
@@ -177,16 +182,7 @@ export default function VisitorAnalytics() {
         }
     };
 
-    if (loading) {
-        return (
-            <div className="visitor-analytics-loader-container p-4 md:p-8 flex items-center justify-center h-screen">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader className="visitor-analytics-loader-icon w-8 h-8 text-pink-600 animate-spin" />
-                    <p className="visitor-analytics-loader-text text-base text-gray-600">{t('loading')}</p>
-                </div>
-            </div>
-        );
-    };
+
 
     // Prepare chart data with memoization
     const distanceChartData = useMemo(() => {
@@ -263,6 +259,17 @@ export default function VisitorAnalytics() {
         const currentVisitors = visitors.slice(startIndex, endIndex);
         return { totalPages, currentVisitors, startIndex, endIndex };
     }, [visitors, currentPage, itemsPerPage]);
+
+    if (loading) {
+        return (
+            <div className="visitor-analytics-loader-container p-4 md:p-8 flex items-center justify-center h-screen">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader className="visitor-analytics-loader-icon w-8 h-8 text-pink-600 animate-spin" />
+                    <p className="visitor-analytics-loader-text text-base text-gray-600">{t('loading')}</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="visitor-analytics-container p-4 md:p-8 pb-20 md:pb-8">
