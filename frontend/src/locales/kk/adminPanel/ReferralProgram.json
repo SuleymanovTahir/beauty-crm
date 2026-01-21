@@ -1,63 +1,63 @@
 {
   "buttons": {
-    "cancel": "Отмена",
-    "save_changes": "Сохранить изменения"
+    "cancel": "Бас тарту",
+    "save_changes": "Өзгерістерді сақтау"
   },
   "current_settings": {
-    "edit": "Редактировать",
-    "min_purchase": "Минимальная стоимость покупки: <strong>{{amount}} {{currency}}</strong>",
-    "referred_bonus": "Бонус друга: <strong>{{points}} баллов</strong>",
-    "referrer_bonus": "Бонус пригласившего: <strong>{{points}} баллов</strong>",
-    "title": "Текущая конфигурация бонусов"
+    "edit": "Өңдеу",
+    "min_purchase": "Ең төменгі сатып алу бағасы: <strong>{{amount}} {{currency}}</strong>",
+    "referred_bonus": "Досына бонус: <strong>{{points}} ұпайлары</strong>",
+    "referrer_bonus": "Шақырушы бонусы: <strong>{{points}} ұпай</strong>",
+    "title": "Ағымдағы бонус конфигурациясы"
   },
   "dialogs": {
     "settings": {
-      "description": "Настройка бонусных баллов и требований",
-      "min_purchase_amount": "Минимальная стоимость покупки ({{currency}})",
-      "min_purchase_help": "Минимальная сумма, которую должен потратить друг для активации реферального бонуса ({{min}} = нет минимума)",
-      "referred_bonus": "Бонусные баллы приглашенного друга",
-      "referred_bonus_help": "Баллы, начисляемые другу при регистрации",
-      "referrer_bonus": "Бонусные баллы реферера",
-      "referrer_bonus_help": "Баллы, начисляемые рефереру, когда друг совершает первую покупку",
-      "title": "Настройки реферальной программы"
+      "description": "Бонустық ұпайлар мен талаптарды орнату",
+      "min_purchase_amount": "Ең төменгі сатып алу құны ({{currency}})",
+      "min_purchase_help": "Жіберу бонусын белсендіру үшін дос жұмсауы керек ең аз сома ({{min}} = ең аз емес)",
+      "referred_bonus": "Досқа ұсынылған бонустық ұпайлар",
+      "referred_bonus_help": "Тіркелген кезде досыңызға ұпай беріледі",
+      "referrer_bonus": "Сілтеме берушінің бонустық ұпайлары",
+      "referrer_bonus_help": "Дос алғашқы сатып алуды жасаған кезде сілтеме берушіге берілетін ұпайлар",
+      "title": "Жолдау бағдарламасының параметрлері"
     }
   },
-  "settings": "Настройки",
+  "settings": "Параметрлер",
   "stats": {
-    "completed_referrals": "Завершенных рефералов",
-    "points_distributed": "Распределено баллов",
-    "total_referrals": "Всего рефералов"
+    "completed_referrals": "Аяқталған сілтемелер",
+    "points_distributed": "Таратылған ұпайлар",
+    "total_referrals": "Жалпы сілтемелер"
   },
-  "subtitle": "Управление рефералами и отслеживание эффективности программы",
+  "subtitle": "Жіберулерді басқару және бағдарламаның тиімділігін қадағалау",
   "table": {
     "columns": {
-      "date": "Дата",
-      "points_awarded": "Начислено баллов",
-      "referred_friend": "Приглашенный друг",
-      "referrer": "Реферер",
-      "status": "Статус"
+      "date": "Күні",
+      "points_awarded": "Берілген ұпайлар",
+      "referred_friend": "Шақырылған дос",
+      "referrer": "Референт",
+      "status": "Күйі"
     },
-    "description": "Отслеживание статуса рефералов и распределения баллов",
+    "description": "Жолдамалардың күйін қадағалау және ұпайларды бөлу",
     "filters": {
       "all_statuses": "All Statuses"
     },
-    "search_placeholder": "Поиск рефералов...",
+    "search_placeholder": "Сілтемелерді іздеу...",
     "sort": {
       "date": "Sort by Date",
       "points": "Sort by Points",
       "status": "Sort by Status"
     },
     "statuses": {
-      "cancelled": "Отменено",
-      "completed": "Завершено",
-      "pending": "В ожидании"
+      "cancelled": "Тоқтатылды",
+      "completed": "Аяқталды",
+      "pending": "Күтуде"
     },
-    "title": "Все рефералы"
+    "title": "Барлық сілтемелер"
   },
-  "title": "Реферальная программа",
+  "title": "Жіберу бағдарламасы",
   "toasts": {
-    "failed_load": "Не удалось загрузить рефералов",
-    "failed_save": "Не удалось сохранить",
-    "settings_saved": "Настройки успешно сохранены"
+    "failed_load": "Сілтемелер жүктелмеді",
+    "failed_save": "Сақталмады",
+    "settings_saved": "Параметрлер сәтті сақталды"
   }
 }

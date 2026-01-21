@@ -3,7 +3,7 @@
   "category": "Категория",
   "description": "Описание",
   "duration": "Длительность",
-  "min": "мин",
+  "min": "min",
   "no_services": "Услуги не найдены",
   "no_services_description": "В данный момент нет доступных услуг для отображения.",
   "our_services": "Наши услуги",

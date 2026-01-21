@@ -4,68 +4,68 @@
     "show": "Show"
   },
   "buttons": {
-    "cancel": "Отмена",
-    "close": "Закрыть",
-    "upload": "Загрузить"
+    "cancel": "Болдырмау",
+    "close": "Жабу",
+    "upload": "Жүктеп алу"
   },
   "card": {
-    "featured": "Избранное",
-    "toggle_featured": "Переключить избранное",
-    "uploaded_by": "Загружено {{name}}",
-    "views": "просмотров"
+    "featured": "Таңдаулылар",
+    "toggle_featured": "Таңдаулыларды қосу/өшіру",
+    "uploaded_by": "{{name}} жүктеген",
+    "views": "көрулер"
   },
   "dialogs": {
     "delete": {
-      "confirm": "Вы уверены, что хотите удалить это фото?"
+      "confirm": "Осы фотосуретті шынымен жойғыңыз келе ме?"
     },
     "upload": {
-      "description": "Добавить новое фото в галерею",
+      "description": "Галереяға жаңа фотосурет қосу",
       "form": {
-        "after_photo": "Фото \"После\"",
-        "before_after": "До/После",
-        "before_photo": "Фото \"До\"",
-        "category": "Категория",
+        "after_photo": "Фотосуреттен кейін",
+        "before_after": "Фотосуретке дейін/кейін",
+        "before_photo": "«Бұрын» фотосы",
+        "category": "Санат",
         "client": "Клиент",
-        "client_hint": "Фото будет доступно в галерее клиента",
-        "description": "Описание",
-        "description_placeholder": "Описание фото",
+        "client_hint": "Фотосурет клиент галереясында қолжетімді болады",
+        "description": "Сипаттамасы",
+        "description_placeholder": "Фото сипаттамасы",
         "photo": "Фото",
-        "select_client": "Выберите клиента",
-        "single_photo": "Одно фото",
-        "title": "Название",
-        "title_placeholder": "Название фото",
-        "upload_type": "Тип загрузки"
+        "select_client": "Клиентті таңдау",
+        "single_photo": "Бір фотосурет",
+        "title": "Тақырып",
+        "title_placeholder": "Фото атауы",
+        "upload_type": "Жүктеп салу түрі"
       },
-      "title": "Загрузить фото"
+      "title": "Фотосуреттерді жүктеп салу"
     }
   },
   "empty": {
-    "description": "Загрузите первые фотографии в галерею",
-    "title": "Фотографий пока нет"
+    "description": "Алғашқы фотосуреттерді галереяға жүктеп салу",
+    "title": "Әлі ешқандай фотосуреттер жоқ"
   },
   "filters": {
-    "all_categories": "Все категории",
-    "search_placeholder": "Поиск фотографий..."
+    "all_categories": "Барлық санаттар",
+    "search_placeholder": "Фотосуреттерді іздеу..."
   },
   "stats": {
-    "featured_photos": "Избранных фото",
-    "recent_uploads": "Недавних загрузок",
-    "total_photos": "Всего фото",
-    "total_views": "Всего просмотров"
+    "featured_photos": "Таңдаулы фотосуреттер",
+    "recent_uploads": "Соңғы жүктеп алулар",
+    "total_photos": "Жалпы фотосурет",
+    "total_views": "Жалпы көрулер"
   },
-  "subtitle": "Управление фотографиями клиентов и портфолио",
-  "title": "Фото галерея",
+  "subtitle": "Клиент фотосуреттері мен портфолиосын басқару",
+  "title": "Фото галереясы",
   "toasts": {
-    "deleted": "Фото успешно удалено",
-    "failed_delete": "Не удалось удалить фото",
-    "failed_featured": "Не удалось обновить статус избранного",
-    "failed_load": "Не удалось загрузить фотографии",
-    "failed_upload": "Не удалось загрузить фото",
+    "deleted": "Фотосурет сәтті жойылды",
+    "failed_delete": "Фотосурет жойылмады",
+    "failed_featured": "Таңдаулы күйді жаңарту мүмкін болмады",
+    "failed_load": "Фотосуреттерді жүктеп салу сәтсіз аяқталды",
+    "failed_upload": "Фотосуретті жүктеп салу орындалмады",
     "failed_visibility": "Failed to update visibility",
-    "featured_updated": "Статус избранного обновлен",
+    "featured_updated": "Таңдаулы күй жаңартылды",
     "select_both_photos": "Please select both before and after photos",
-    "uploaded": "Фото успешно загружено",
+    "uploaded": "Фотосурет жүктеп салынды",
     "visibility_updated": "Visibility updated"
   },
-  "upload_photo": "Загрузить фото"
+  "upload_photo": "Фотосурет жүктеп салу"
 }
