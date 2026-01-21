@@ -204,8 +204,10 @@ def add_review(data: Dict) -> Optional[int]:
                 author_name, rating, text_ru, text_en, text_ar, text_de, text_es, 
                 text_fr, text_hi, text_kk, text_pt, avatar_url, is_active, display_order,
                 employee_name, employee_name_ru, employee_name_en, employee_name_ar,
-                employee_position, employee_position_ru, employee_position_en, employee_position_ar
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                employee_position, employee_position_ru, employee_position_en, employee_position_ar,
+                employee_position_es, employee_position_de, employee_position_fr, employee_position_hi,
+                employee_position_kk, employee_position_pt
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             data.get('author_name'),
             data.get('rating', 5),
@@ -225,10 +227,22 @@ def add_review(data: Dict) -> Optional[int]:
             data.get('employee_name_ru'),
             data.get('employee_name_en'),
             data.get('employee_name_ar'),
+            data.get('employee_name_es'),
+            data.get('employee_name_de'),
+            data.get('employee_name_fr'),
+            data.get('employee_name_hi'),
+            data.get('employee_name_kk'),
+            data.get('employee_name_pt'),
             data.get('employee_position'),
             data.get('employee_position_ru'),
             data.get('employee_position_en'),
-            data.get('employee_position_ar')
+            data.get('employee_position_ar'),
+            data.get('employee_position_es'),
+            data.get('employee_position_de'),
+            data.get('employee_position_fr'),
+            data.get('employee_position_hi'),
+            data.get('employee_position_kk'),
+            data.get('employee_position_pt')
         ))
         
         conn.commit()
@@ -259,17 +273,29 @@ def add_faq(data: Dict) -> Optional[int]:
     try:
         cursor.execute("""
             INSERT INTO public_faq (
-                question_ru, question_en, question_ar,
-                answer_ru, answer_en, answer_ar,
+                question_ru, question_en, question_ar, question_de, question_es, question_fr, question_hi, question_kk, question_pt,
+                answer_ru, answer_en, answer_ar, answer_de, answer_es, answer_fr, answer_hi, answer_kk, answer_pt,
                 category, is_active, display_order
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             data.get('question_ru'),
             data.get('question_en'),
             data.get('question_ar'),
+            data.get('question_de'),
+            data.get('question_es'),
+            data.get('question_fr'),
+            data.get('question_hi'),
+            data.get('question_kk'),
+            data.get('question_pt'),
             data.get('answer_ru'),
             data.get('answer_en'),
             data.get('answer_ar'),
+            data.get('answer_de'),
+            data.get('answer_es'),
+            data.get('answer_fr'),
+            data.get('answer_hi'),
+            data.get('answer_kk'),
+            data.get('answer_pt'),
             data.get('category', 'general'),
             data.get('is_active', 1),
             data.get('display_order', 0)
@@ -303,17 +329,29 @@ def add_gallery_item(data: Dict) -> Optional[int]:
     try:
         cursor.execute("""
             INSERT INTO public_gallery (
-                title_ru, title_en, title_ar,
-                description_ru, description_en, description_ar,
+                title_ru, title_en, title_ar, title_de, title_es, title_fr, title_hi, title_kk, title_pt,
+                description_ru, description_en, description_ar, description_de, description_es, description_fr, description_hi, description_kk, description_pt,
                 image_url, category, is_active, display_order
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             data.get('title_ru'),
             data.get('title_en'),
             data.get('title_ar'),
+            data.get('title_de'),
+            data.get('title_es'),
+            data.get('title_fr'),
+            data.get('title_hi'),
+            data.get('title_kk'),
+            data.get('title_pt'),
             data.get('description_ru'),
             data.get('description_en'),
             data.get('description_ar'),
+            data.get('description_de'),
+            data.get('description_es'),
+            data.get('description_fr'),
+            data.get('description_hi'),
+            data.get('description_kk'),
+            data.get('description_pt'),
             data.get('image_url'),
             data.get('category', 'works'),
             data.get('is_active', 1),

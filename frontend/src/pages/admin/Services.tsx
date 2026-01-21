@@ -832,7 +832,7 @@ export default function Services() {
                 }`}
             >
               <Users className="w-5 h-5 inline-block mr-2" />
-              {t('services:referral_programs')}
+              {t('services:referral_programs', 'Реферальная программа')}
             </button>
             <button
               onClick={() => handleTabChange('challenges')}
@@ -842,7 +842,7 @@ export default function Services() {
                 }`}
             >
               <Target className="w-5 h-5 inline-block mr-2" />
-              {t('services:challenges')}
+              {t('services:challenges', 'Челленджи')}
             </button>
           </div>
         </div>
