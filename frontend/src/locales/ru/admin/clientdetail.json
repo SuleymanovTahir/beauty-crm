@@ -64,5 +64,7 @@
   "total_visits": "Всего визитов",
   "upload_error": "Ошибка загрузки",
   "visits_dynamics": "Динамика посещений",
-  "years": "лет"
+  "years": "лет",
+  "phone_not_specified": "Номер телефона не указан",
+  "tiktok_in_development": "TikTok интеграция в разработке"
 }

@@ -63,7 +63,7 @@ interface ClientStats {
 export default function ClientDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation(['admin/clientdetail', 'common']);
+  const { t } = useTranslation(['admin/clientdetail', 'common']);
   const { formatCurrency } = useCurrency();
 
   const [client, setClient] = useState<Client | null>(null);
@@ -678,12 +678,12 @@ export default function ClientDetail() {
                         if (phone) {
                           window.open(`https://wa.me/${phone}`, '_blank');
                         } else {
-                          toast.error('Номер телефона не указан');
+                          toast.error(t('phone_not_specified'));
                         }
                       } else if (messenger.type === 'telegram') {
                         navigate(`/crm/chat?messenger=telegram&client_id=${client.id}`);
                       } else if (messenger.type === 'tiktok') {
-                        toast.info('TikTok интеграция в разработке');
+                        toast.info(t('tiktok_in_development'));
                       }
                     }}
                     className={`gap-2 ${messenger.type === 'instagram' ? 'bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700' :
