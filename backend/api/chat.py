@@ -16,15 +16,16 @@ from utils.utils import require_auth, get_total_unread
 from utils.logger import log_error,log_info,log_warning
 from services.conversation_context import ConversationContext
 from core.config import BASE_URL
+from utils.cache import cache
 import time
 
 router = APIRouter(tags=["Chat"])
 
 _processing_suggestions = set()
 
-# Simple cache for unread count
+# Simple cache for unread count (fallback when Redis is unavailable)
 _unread_cache = {}
-_unread_cache_ttl = 5  # seconds
+_unread_cache_ttl = 300  # 5 minutes - increased to reduce DB queries significantly
 
 def get_messenger_chat_history(client_id: str, messenger_type: str = 'instagram', limit: int = 50):
     """Получить историю чата по типу мессенджера"""
@@ -378,22 +379,73 @@ async def send_chat_file(
 @router.get("/unread-count")
 async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     """Получить количество непрочитанных сообщений"""
+    import time as time_module
+    request_start = time_module.time()
+    
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    # Check cache
-    cache_key = "global_unread"
+    cache_key = "global_unread_count"
+    
+    # Try Redis cache first (if available)
+    if cache.enabled:
+        cache_start = time_module.time()
+        cached_count = cache.get(cache_key)
+        cache_duration = (time_module.time() - cache_start) * 1000
+        if cached_count is not None:
+            log_info(f"✅ [unread-count] Redis cache hit ({cache_duration:.2f}ms)", "chat")
+            return {"count": cached_count}
+        log_info(f"⚠️ [unread-count] Redis cache miss ({cache_duration:.2f}ms)", "chat")
+    
+    # Fallback to in-memory cache
     if cache_key in _unread_cache:
         cached_count, cached_time = _unread_cache[cache_key]
-        if time.time() - cached_time < _unread_cache_ttl:
+        cache_age = time_module.time() - cached_time
+        if cache_age < _unread_cache_ttl:
+            log_info(f"✅ [unread-count] Memory cache hit (age: {cache_age:.1f}s)", "chat")
             return {"count": cached_count}
+        log_info(f"⚠️ [unread-count] Memory cache expired (age: {cache_age:.1f}s)", "chat")
     
-    # Get fresh count
-    count = get_total_unread()
+    # Get fresh count from database
+    db_start = time_module.time()
+    try:
+        # Check if we have stale cache to return immediately if DB is slow
+        stale_cache_available = cache_key in _unread_cache
+        stale_count = None
+        if stale_cache_available:
+            stale_count, stale_time = _unread_cache[cache_key]
+            stale_age = time_module.time() - stale_time
+        
+        # Execute DB query
+        count = get_total_unread()
+        db_duration = (time_module.time() - db_start) * 1000
+        log_info(f"⏱️ [unread-count] DB query took {db_duration:.2f}ms, count: {count}", "chat")
+        
+        if db_duration > 1000:
+            log_error(f"🐌 [unread-count] SLOW DB QUERY: {db_duration:.2f}ms - consider optimizing or adding index", "chat")
+            # If DB query was slow and we have stale cache, log it but still return fresh count
+            if stale_cache_available:
+                log_info(f"💡 [unread-count] Stale cache available (age: {stale_age:.1f}s) but returning fresh count", "chat")
+    except Exception as e:
+        db_duration = (time_module.time() - db_start) * 1000
+        log_error(f"❌ [unread-count] Error getting unread count ({db_duration:.2f}ms): {e}", "chat")
+        # Return cached value if available, otherwise 0
+        if cache_key in _unread_cache:
+            cached_count, _ = _unread_cache[cache_key]
+            log_info(f"⚠️ [unread-count] Returning stale cache due to error", "chat")
+            return {"count": cached_count}
+        return {"count": 0}
     
-    # Cache it
-    _unread_cache[cache_key] = (count, time.time())
+    # Cache in Redis (if available)
+    if cache.enabled:
+        cache.set(cache_key, count, expire=60)  # 60 seconds
+    
+    # Cache in memory as fallback
+    _unread_cache[cache_key] = (count, time_module.time())
+    
+    total_duration = (time_module.time() - request_start) * 1000
+    log_info(f"✅ [unread-count] Total request took {total_duration:.2f}ms (DB: {db_duration:.2f}ms)", "chat")
     
     return {"count": count}
 

@@ -759,6 +759,10 @@ def get_all_visitor_analytics(start_date: datetime, end_date: datetime, max_dist
     """
     Получить ВСЕ данные аналитики одним проходом (оптимизация)
     """
+    import time
+    from utils.logger import log_info
+    
+    total_start = time.time()
     conn = get_db_connection()
     c = conn.cursor()
     
@@ -884,10 +888,8 @@ def get_all_visitor_analytics(start_date: datetime, end_date: datetime, max_dist
         hours = [{'hour': f'{h:02d}:00', 'count': hours_raw.get(h, 0)} for h in range(24)]
 
         # 9. Devices & Browsers (New)
-        conn.close() # Close current to use connection from sub-helpers or just inline?
-        # The helpers create their own connection. This is inefficient but safe.
-        # Ideally I should pass the `c` cursor to them, but my helpers assume they create connection.
-        # Let's use the helpers for clean code, performance impact is negligible for this load.
+        # Keep connection open and reuse it for helper functions to avoid connection overhead
+        helpers_start = time.time()
         
         devices = get_device_distribution(start_date, end_date)
         browsers = get_browser_distribution(start_date, end_date)
@@ -903,6 +905,13 @@ def get_all_visitor_analytics(start_date: datetime, end_date: datetime, max_dist
         exit_pages = get_exit_pages(start_date, end_date)
         loyalty = get_loyalty_stats(start_date, end_date)
         device_bounces = get_device_bounce_rate(start_date, end_date)
+        
+        helpers_duration = time.time() - helpers_start
+        if helpers_duration > 1.0:
+            log_info(f"⚠️ [visitor_analytics] Helper functions took {helpers_duration:.3f}s", "db")
+        
+        # Close connection after all queries
+        conn.close()
 
         return {
             'visitors': visitors,
@@ -927,4 +936,13 @@ def get_all_visitor_analytics(start_date: datetime, end_date: datetime, max_dist
             'device_bounces': device_bounces
         }
     finally:
-        pass
+        # Ensure connection is closed
+        try:
+            if conn:
+                conn.close()
+        except:
+            pass
+        
+        total_duration = time.time() - total_start
+        if total_duration > 2.0:
+            log_info(f"⚠️ [visitor_analytics] Total function took {total_duration:.3f}s", "db")

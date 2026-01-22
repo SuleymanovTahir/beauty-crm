@@ -105,7 +105,12 @@ export default defineConfig({
         ws: true, // Enable WebSocket for /api/* endpoints (like /api/ws/notifications)
         configure: (proxy, _options) => {
           proxy.on('error', (err, _req, _res) => {
-            // Ignore WebSocket connection errors
+            // Ignore noisy dev-time WS proxy errors (backend restart, dropped sockets)
+            // ECONNRESET/EPIPE are expected when backend restarts while Vite is proxying WS.
+            const anyErr = err as any;
+            if (anyErr?.code === 'ECONNRESET' || anyErr?.code === 'EPIPE') {
+              return;
+            }
             if (err.message && err.message.includes('socket')) {
               return;
             }
@@ -118,7 +123,11 @@ export default defineConfig({
         ws: true,
         configure: (proxy, _options) => {
           proxy.on('error', (err, _req, _res) => {
-            // Ignore WebSocket connection errors
+            // Ignore noisy dev-time WS proxy errors (backend restart, dropped sockets)
+            const anyErr = err as any;
+            if (anyErr?.code === 'ECONNRESET' || anyErr?.code === 'EPIPE') {
+              return;
+            }
             if (err.message && err.message.includes('socket')) {
               return;
             }

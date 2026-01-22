@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from db.visitor_tracking import get_visitor_stats, get_location_distribution, get_country_distribution, get_city_distribution, get_distance_distribution, get_visitor_trend, get_landing_sections, get_peak_hours
 from utils.utils import require_auth
 from utils.logger import log_info, log_error
+from utils.cache import cache
 import csv
 import io
 from db.migrations.consolidated.schema_cookies import log_cookie_consent, create_cookie_consents_table, check_cookie_consent
@@ -15,9 +16,9 @@ import time
 
 router = APIRouter(tags=["Analytics"])
 
-# Simple in-memory cache for dashboard data
+# Simple in-memory cache for dashboard data (fallback when Redis is unavailable)
 _dashboard_cache = {}
-_cache_ttl = 30  # seconds
+_cache_ttl = 300  # 5 minutes - increased to reduce DB load
 
 @router.get("/cookies/check")
 async def check_cookies(request: Request):
@@ -420,18 +421,29 @@ async def get_visitor_dashboard(
     start_time = time.time()
     
     # Generate cache key
-    cache_key = f"{period}_{date_from}_{date_to}_{max_distance}"
+    cache_key = f"visitor_dashboard_{period}_{date_from}_{date_to}_{max_distance}"
     
-    # Check cache
+    # Try Redis cache first (if available)
+    cache_check_start = time.time()
+    if cache.enabled:
+        cached_data = cache.get(cache_key)
+        if cached_data is not None:
+            duration = time.time() - start_time
+            log_info(f"⚡ Dashboard Redis cache HIT ({duration:.4f}s) for {period}", "api")
+            return cached_data
+    
+    # Fallback to in-memory cache
     if cache_key in _dashboard_cache:
         cached_data, cached_time = _dashboard_cache[cache_key]
         if time.time() - cached_time < _cache_ttl:
             duration = time.time() - start_time
-            log_info(f"⚡ Dashboard cache HIT ({duration:.4f}s) for {period}", "api")
+            log_info(f"⚡ Dashboard memory cache HIT ({duration:.4f}s) for {period}", "api")
             return cached_data
+    cache_check_duration = time.time() - cache_check_start
     
     try:
         # Calculate date range
+        date_calc_start = time.time()
         end_date = datetime.now()
         if date_from and date_to:
             try:
@@ -450,13 +462,16 @@ async def get_visitor_dashboard(
             start_date = end_date - timedelta(days=30)
         else:
             start_date = end_date - timedelta(weeks=1)
+        date_calc_duration = time.time() - date_calc_start
 
         # Используем одну функцию для получения всех данных
+        data_fetch_start = time.time()
         from db.visitor_tracking import get_all_visitor_analytics
         data = get_all_visitor_analytics(start_date, end_date, max_distance)
+        data_fetch_duration = time.time() - data_fetch_start
 
         duration = time.time() - start_time
-        log_info(f"⏱️ Dashboard computed in {duration:.4f}s for {period}", "api")
+        log_info(f"⏱️ Dashboard computed in {duration:.4f}s for {period} (cache_check: {cache_check_duration:.3f}s, date_calc: {date_calc_duration:.3f}s, data_fetch: {data_fetch_duration:.3f}s)", "api")
 
         response = {
             "success": True,
@@ -466,11 +481,15 @@ async def get_visitor_dashboard(
             "data": data
         }
         
-        # Cache the response
+        # Cache in Redis (if available)
+        if cache.enabled:
+            cache.set(cache_key, response, expire=300)  # 5 minutes
+        
+        # Cache in memory as fallback
         _dashboard_cache[cache_key] = (response, time.time())
         
-        # Clean old cache entries (simple cleanup)
-        if len(_dashboard_cache) > 50:
+        # Clean old cache entries (keep only last 20)
+        if len(_dashboard_cache) > 20:
             oldest_key = min(_dashboard_cache.keys(), key=lambda k: _dashboard_cache[k][1])
             del _dashboard_cache[oldest_key]
 

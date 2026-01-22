@@ -13,8 +13,8 @@ def init_connection_pool():
     if _connection_pool is None:
         try:
             _connection_pool = pool.ThreadedConnectionPool(
-                minconn=10,  # Увеличено с 5 для снижения задержек
-                maxconn=50,
+                minconn=5,  # Минимум соединений - создаются при инициализации (не блокируем старт)
+                maxconn=100,  # Максимум соединений для параллелизма
                 host=os.getenv('POSTGRES_HOST', 'localhost'),
                 port=os.getenv('POSTGRES_PORT', '5432'),
                 database=os.getenv('POSTGRES_DB', 'beauty_crm'),
@@ -24,7 +24,7 @@ def init_connection_pool():
                 connect_timeout=5,  # Таймаут подключения
                 options='-c statement_timeout=30000'  # 30 секунд на запрос
             )
-            log_info("✅ Database connection pool initialized (10-50 connections)", "db")
+            log_info("✅ Database connection pool initialized (5-100 connections)", "db")
         except Exception as e:
             log_error(f"❌ Failed to initialize connection pool: {e}", "db")
             raise
@@ -111,34 +111,46 @@ class ConnectionWrapper:
             self.close()
 
 def get_db_connection():
-    """Get a database connection from the pool"""
+    """Get a database connection from the pool.
+
+    IMPORTANT: Do NOT wrap pool.getconn() in threads/timeouts.
+    If the pool is exhausted, psycopg2 raises PoolError; it does not "hang".
+    Thread-based timeouts can leak connections (a background thread may still
+    acquire a connection and never return it).
+    """
     global _connection_pool
     if _connection_pool is None:
         init_connection_pool()
-    
+
     import time
     start_time = time.time()
     try:
         conn = _connection_pool.getconn()
         duration = (time.time() - start_time) * 1000
-        if duration > 500:
+        if duration > 100:
             log_warning(f"🕒 Connection acquisition took {duration:.2f}ms", "db")
         return ConnectionWrapper(conn)
-    except Exception as e:
-        log_error(f"Failed to get connection from pool: {e} (Attempt took {(time.time()-start_time)*1000:.2f}ms)", "db")
-        # Fallback to direct connection if pool fails
+    except pool.PoolError as e:
+        # Pool exhausted - fallback to a direct connection quickly
+        duration = (time.time() - start_time) * 1000
+        log_warning(f"⚠️ Pool exhausted after {duration:.2f}ms: {e}", "db")
         try:
             direct_conn = psycopg2.connect(
                 host=os.getenv('POSTGRES_HOST', 'localhost'),
                 port=os.getenv('POSTGRES_PORT', '5432'),
                 database=os.getenv('POSTGRES_DB', 'beauty_crm'),
                 user=os.getenv('POSTGRES_USER', 'beauty_crm_user'),
-                password=os.getenv('POSTGRES_PASSWORD', '')
+                password=os.getenv('POSTGRES_PASSWORD', ''),
+                connect_timeout=1,
             )
-            log_warning("⚠️ Using direct connection fallback", "db")
+            log_warning("⚠️ Using direct connection fallback (pool exhausted)", "db")
             return ConnectionWrapper(direct_conn)
-        except:
-            raise e
+        except Exception as direct_e:
+            log_error(f"❌ Direct connection fallback failed: {direct_e}", "db")
+            raise
+    except Exception as e:
+        log_error(f"Failed to get connection from pool: {e}", "db")
+        raise
 
 def get_cursor(conn, dict_cursor=False):
     """Get a cursor from connection"""
