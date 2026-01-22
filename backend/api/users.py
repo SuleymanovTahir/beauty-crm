@@ -17,6 +17,51 @@ import psycopg2
 
 router = APIRouter(tags=["Users"])
 
+@router.get("/me")
+async def get_current_user_api(
+    session_token: Optional[str] = Cookie(None)
+):
+    """API: Получить данные текущего пользователя (для мобильного приложения)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT id, username, full_name, email, role, phone, photo, position,
+                   is_active, created_at, last_login
+            FROM users WHERE id = %s
+        """, (user["id"],))
+
+        result = c.fetchone()
+        conn.close()
+
+        if not result:
+            return JSONResponse({"error": "User not found"}, status_code=404)
+
+        return {
+            "user": {
+                "id": result[0],
+                "username": result[1],
+                "full_name": result[2],
+                "email": result[3],
+                "role": result[4],
+                "phone": result[5],
+                "photo": sanitize_url(result[6]),
+                "position": result[7],
+                "is_active": bool(result[8]),
+                "created_at": result[9],
+                "last_login": result[10]
+            }
+        }
+
+    except Exception as e:
+        log_error(f"Error in /me endpoint: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
 @router.post("/users")
 async def create_user_api(
     request: Request,
