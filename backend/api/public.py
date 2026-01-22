@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 
 from db.settings import get_salon_settings
 from db.services import get_all_services
+from db.services import get_service
 from db.employees import get_all_employees
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -321,6 +322,38 @@ def get_public_services():
             "description_pt": s[33] if len(s) > 33 else None
         } for s in services
     ]
+
+
+@router.get("/services/{service_id}")
+def get_public_service(service_id: int, language: str = "ru"):
+    """
+    Публичная карточка одной услуги (для SEO-страницы процедуры).
+    Возвращает локализованные поля name/description в зависимости от language.
+    """
+    service = get_service(service_id)
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+
+    lang_key = (language or "ru")[:2]
+    # Prefer language-specific field -> EN -> RU -> base
+    def pick(field: str):
+        return (
+            service.get(f"{field}_{lang_key}")
+            or service.get(f"{field}_en")
+            or service.get(f"{field}_ru")
+            or service.get(field)
+        )
+
+    return {
+        "id": service.get("id"),
+        "category": service.get("category"),
+        "service_key": service.get("service_key"),
+        "name": pick("name"),
+        "description": pick("description") or "",
+        "price": service.get("price"),
+        "currency": service.get("currency"),
+        "duration": service.get("duration"),
+    }
 
 @router.get("/available-slots")
 def get_available_slots(
