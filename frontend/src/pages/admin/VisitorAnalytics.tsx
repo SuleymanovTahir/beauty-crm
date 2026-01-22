@@ -1,5 +1,5 @@
 // /frontend/src/pages/admin/VisitorAnalytics.tsx
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, startTransition } from 'react';
 import { MapPin, RefreshCw, Download, Loader, ChevronLeft, ChevronRight, Home, Globe, ArrowUpDown, ArrowUp, ArrowDown, X } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { visitorApi } from '../../services/visitorApi';
@@ -117,7 +117,11 @@ export default function VisitorAnalytics() {
 
     useEffect(() => {
         if (period !== 'custom') {
-            loadData();
+            // Use startTransition to mark data loading as non-urgent
+            // This prevents blocking the initial render
+            startTransition(() => {
+                loadData();
+            });
         }
     }, [period, distanceTo]);
 
@@ -153,17 +157,12 @@ export default function VisitorAnalytics() {
             const endTime = performance.now();
             console.log(`⏱️ [VisitorAnalytics] Request took ${(endTime - startTime).toFixed(2)}ms`);
 
+            // Hide loading immediately after API response - BEFORE processing data
+            setLoading(false);
+
             if (dashboardData.success && dashboardData.data) {
                 const data = dashboardData.data;
-                setVisitors(data.visitors || []);
-                setLocationBreakdown(data.location_breakdown);
-                setCountryBreakdown(data.countries || []);
-                setCityBreakdown(data.cities || []);
-                setDistanceBreakdown(data.distance_breakdown);
-                setVisitorTrend(data.trend || []);
-                setLandingSections(data.sections || []);
-                setPeakHours(data.hours || []);
-
+                
                 // Helper to translate chart data
                 const translateData = (arr: any[], keyMap: Record<string, string>) =>
                     arr.map(item => ({
@@ -177,71 +176,93 @@ export default function VisitorAnalytics() {
                         step: keyMap[item.step] ? t(keyMap[item.step]) : (item.step)
                     }));
 
-                const deviceMap: Record<string, string> = {
-                    'Desktop': 'desktop', 'Mobile': 'mobile', 'Tablet': 'tablet', 'Other': 'other'
-                };
-                setDeviceBreakdown(translateData(data.devices || [], deviceMap));
+                // Use startTransition to mark state updates as non-urgent
+                // This allows React to keep UI responsive while processing data
+                startTransition(() => {
+                    const deviceMap: Record<string, string> = {
+                        'Desktop': 'desktop', 'Mobile': 'mobile', 'Tablet': 'tablet', 'Other': 'other'
+                    };
+                    
+                    setVisitors(data.visitors || []);
+                    setLocationBreakdown(data.location_breakdown);
+                    setCountryBreakdown(data.countries || []);
+                    setCityBreakdown(data.cities || []);
+                    setDistanceBreakdown(data.distance_breakdown);
+                    setVisitorTrend(data.trend || []);
+                    setLandingSections(data.sections || []);
+                    setPeakHours(data.hours || []);
+                    setDeviceBreakdown(translateData(data.devices || [], deviceMap));
+                    setBrowserBreakdown((data.browsers || []).map((b: any) => ({
+                        ...b,
+                        name: b.name === 'Other' || b.name === 'Unknown' ? t('other') : b.name
+                    })));
 
-                // Browsers usually don't need translation (Chrome, Safari), but "Other" does
-                setBrowserBreakdown((data.browsers || []).map((b: any) => ({
-                    ...b,
-                    name: b.name === 'Other' || b.name === 'Unknown' ? t('other') : b.name
-                })));
+                    const retentionMap: Record<string, string> = {
+                        'New Visitors': 'new_visitors',
+                        'Returning Visitors': 'returning_visitors'
+                    };
+                    setRetentionStats(translateData(data.retention || [], retentionMap));
 
-                const retentionMap: Record<string, string> = {
-                    'New Visitors': 'new_visitors',
-                    'Returning Visitors': 'returning_visitors'
-                };
-                setRetentionStats(translateData(data.retention || [], retentionMap));
+                    const funnelMap: Record<string, string> = {
+                        'Landed': 'landed',
+                        'Viewed Services': 'viewed_services',
+                        'Clicked Book': 'clicked_book',
+                        'Completed': 'completed'
+                    };
+                    setFunnelStats(translateFunnel(data.funnel || [], funnelMap));
 
-                const funnelMap: Record<string, string> = {
-                    'Landed': 'landed',
-                    'Viewed Services': 'viewed_services',
-                    'Clicked Book': 'clicked_book',
-                    'Completed': 'completed'
-                };
-                setFunnelStats(translateFunnel(data.funnel || [], funnelMap));
+                    const loyaltyMap: Record<string, string> = {
+                        '1_visit': '1_visit',
+                        '2_4_visits': '2_4_visits',
+                        '5_plus_visits': '5_plus_visits'
+                    };
+                    setLoyaltyStats(translateData(data.loyalty || [], loyaltyMap));
 
-                const loyaltyMap: Record<string, string> = {
-                    '1_visit': '1_visit',
-                    '2_4_visits': '2_4_visits',
-                    '5_plus_visits': '5_plus_visits'
-                };
-                setLoyaltyStats(translateData(data.loyalty || [], loyaltyMap));
+                    setDeviceBounces(data.device_bounces || []);
+                    setHeatmapData(data.heatmap || []);
+                    setSourceConversion(data.source_conversion || []);
+                    setExitPages(data.exit_pages || []);
 
-                setDeviceBounces(data.device_bounces || []);
-                setHeatmapData(data.heatmap || []);
-                setSourceConversion(data.source_conversion || []);
-                setExitPages(data.exit_pages || []);
+                    const durationMap: Record<string, string> = {
+                        'single_page': 'single_page',
+                        'less_30s': 'less_30s',
+                        '1_5m': '1_5m',
+                        '5_10m': '5_10m',
+                        '10_15m': '10_15m',
+                        'more_15m': 'more_15m'
+                    };
+                    setDurationStats(translateData(data.durations || [], durationMap));
 
-                const durationMap: Record<string, string> = {
-                    'single_page': 'single_page',
-                    'less_30s': 'less_30s',
-                    '1_5m': '1_5m',
-                    '5_10m': '5_10m',
-                    '10_15m': '10_15m',
-                    'more_15m': 'more_15m'
-                };
-                setDurationStats(translateData(data.durations || [], durationMap));
-
-                setReferrers(data.referrers || []);
-                setRealtimeVisitors(data.realtime_visitors || 0);
+                    setReferrers(data.referrers || []);
+                    setRealtimeVisitors(data.realtime_visitors || 0);
+                    setCurrentPage(1);
+                    // Reset filters on reload
+                    setDistanceFilter(null);
+                    setDateFilter(null);
+                    setHourFilter(null);
+                    setSectionFilter(null);
+                    setCityFilter(null);
+                    setCountryFilter(null);
+                    setSourceFilter(null);
+                    setDeviceFilter(null);
+                    setBrowserFilter(null);
+                });
+            } else {
+                setCurrentPage(1);
+                // Reset filters on reload
+                setDistanceFilter(null);
+                setDateFilter(null);
+                setHourFilter(null);
+                setSectionFilter(null);
+                setCityFilter(null);
+                setCountryFilter(null);
+                setSourceFilter(null);
+                setDeviceFilter(null);
+                setBrowserFilter(null);
             }
-            setCurrentPage(1);
-            // Reset filters on reload
-            setDistanceFilter(null);
-            setDateFilter(null);
-            setHourFilter(null);
-            setSectionFilter(null);
-            setCityFilter(null);
-            setCountryFilter(null);
-            setSourceFilter(null);
-            setDeviceFilter(null);
-            setBrowserFilter(null);
         } catch (error) {
             console.error('Error loading visitor data:', error);
             toast.error(t('error_loading'));
-        } finally {
             setLoading(false);
         }
     };

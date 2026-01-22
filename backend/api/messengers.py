@@ -71,14 +71,35 @@ async def get_messenger_settings(
     finally:
         conn.close()
 
+# Simple cache for enabled messengers (fallback when Redis is unavailable)
+_messengers_cache = {}
+_messengers_cache_ttl = 300  # 5 minutes
+
 @router.get("/messengers/enabled")
 async def get_enabled_messengers(
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить список включенных мессенджеров (для фронтенда)"""
+    from utils.cache import cache
+    import time
+    
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    cache_key = "enabled_messengers"
+    
+    # Try Redis cache first (if available)
+    if cache.enabled:
+        cached_messengers = cache.get(cache_key)
+        if cached_messengers is not None:
+            return cached_messengers
+    
+    # Fallback to in-memory cache
+    if cache_key in _messengers_cache:
+        cached_data, cached_time = _messengers_cache[cache_key]
+        if time.time() - cached_time < _messengers_cache_ttl:
+            return cached_data
 
     conn = get_db_connection()
     c = conn.cursor()
@@ -105,11 +126,24 @@ async def get_enabled_messengers(
                 "name": row[1]
             })
 
-        return {
+        result = {
             "enabled_messengers": enabled
         }
+        
+        # Cache in Redis (if available)
+        if cache.enabled:
+            cache.set(cache_key, result, expire=300)  # 5 minutes
+        
+        # Cache in memory as fallback
+        _messengers_cache[cache_key] = (result, time.time())
+        
+        return result
     except Exception as e:
         log_error(f"Error getting enabled messengers: {e}", "messengers")
+        # Return cached value if available
+        if cache_key in _messengers_cache:
+            cached_data, _ = _messengers_cache[cache_key]
+            return cached_data
         return JSONResponse({"error": str(e)}, status_code=500)
     finally:
         conn.close()

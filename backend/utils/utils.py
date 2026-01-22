@@ -120,9 +120,19 @@ def require_auth(session_token: Optional[str] = Cookie(None)):
     Returns:
         dict или None: Данные пользователя или None если не авторизован
     """
+    import time
+    from utils.logger import log_info
+    
     if not session_token:
         return None
+    
+    auth_start = time.time()
     user = get_user_by_session(session_token)
+    auth_duration = (time.time() - auth_start) * 1000
+    
+    if auth_duration > 500:
+        log_info(f"⚠️ [require_auth] Slow auth check: {auth_duration:.2f}ms", "auth")
+    
     return user if user else None
 
 # После функции require_auth (строка ~60)
@@ -214,13 +224,21 @@ def get_current_user(session_token: Optional[str] = Cookie(None)):
     Raises:
         HTTPException: Если не авторизован или сессия истекла
     """
+    import time
+    from utils.logger import log_info
+    
     if not session_token:
         raise HTTPException(
             status_code=401,
             detail="Не авторизован. Пожалуйста, войдите в систему."
         )
     
+    auth_start = time.time()
     user = get_user_by_session(session_token)
+    auth_duration = (time.time() - auth_start) * 1000
+    
+    if auth_duration > 500:
+        log_info(f"⚠️ [get_current_user] Slow auth check: {auth_duration:.2f}ms", "auth")
     
     if not user:
         raise HTTPException(

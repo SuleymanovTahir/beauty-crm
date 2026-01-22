@@ -5,9 +5,16 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict
 import hashlib
 import secrets
+import time
 
 from db.connection import get_db_connection
+from utils.cache import cache
+from utils.logger import log_error
 import psycopg2
+
+# In-memory cache for session verification (fallback when Redis is unavailable)
+_session_cache = {}
+_session_cache_ttl = 300  # 5 minutes - cache session verification to reduce DB load
 
 def get_all_users():
     """Получить всех пользователей"""
@@ -156,54 +163,107 @@ def create_session(user_id: int) -> str:
     now = datetime.now()
     expires = (now + timedelta(days=7)).isoformat()
     
-    c.execute("""INSERT INTO sessions (user_id, session_token, created_at, expires_at)
-                 VALUES (%s, %s, %s, %s)""",
-              (user_id, session_token, now.isoformat(), expires))
-    
-    # Обновить last_login
-    c.execute("UPDATE users SET last_login = %s WHERE id = %s",
-              (now.isoformat(), user_id))
-    
-    conn.commit()
-    conn.close()
+    try:
+        c.execute("""INSERT INTO sessions (user_id, session_token, created_at, expires_at)
+                     VALUES (%s, %s, %s, %s)""",
+                  (user_id, session_token, now.isoformat(), expires))
+        
+        # Обновить last_login
+        c.execute("UPDATE users SET last_login = %s WHERE id = %s",
+                  (now.isoformat(), user_id))
+        
+        conn.commit()
+    finally:
+        conn.close()
     
     return session_token
 
 def get_user_by_session(session_token: str) -> Optional[Dict]:
-    """Получить пользователя по токену сессии"""
+    """Получить пользователя по токену сессии (с кэшированием)"""
+    if not session_token:
+        return None
+    
+    cache_key = f"session_user_{session_token}"
+    
+    # Try Redis cache first (if available)
+    if cache.enabled:
+        cached_user = cache.get(cache_key)
+        if cached_user is not None:
+            return cached_user
+    
+    # Fallback to in-memory cache
+    if cache_key in _session_cache:
+        cached_user, cached_time = _session_cache[cache_key]
+        if time.time() - cached_time < _session_cache_ttl:
+            return cached_user
+    
+    # Query database
     conn = get_db_connection()
     c = conn.cursor()
     
-    now = datetime.now().isoformat()
-    
-    c.execute("""SELECT u.id, u.username, u.full_name, u.email, u.role, u.employee_id, u.phone
-                 FROM users u
-                 JOIN sessions s ON u.id = s.user_id
-                 WHERE s.session_token = %s AND s.expires_at > %s AND u.is_active = TRUE""",
-              (session_token, now))
-    
-    user = c.fetchone()
-    conn.close()
-    
-    if user:
-        return {
-            "id": user[0],
-            "username": user[1],
-            "full_name": user[2],
-            "email": user[3],
-            "role": user[4],
-            "employee_id": user[5],
-            "phone": user[6]
-        }
-    return None
+    try:
+        now = datetime.now().isoformat()
+        
+        # Query with proper index usage (idx_sessions_token_expires covers this)
+        c.execute("""SELECT u.id, u.username, u.full_name, u.email, u.role, u.employee_id, u.phone
+                     FROM users u
+                     INNER JOIN sessions s ON u.id = s.user_id
+                     WHERE s.session_token = %s 
+                     AND s.expires_at > %s 
+                     AND u.is_active = TRUE
+                     LIMIT 1""",
+                  (session_token, now))
+        
+        user = c.fetchone()
+        
+        if user:
+            user_dict = {
+                "id": user[0],
+                "username": user[1],
+                "full_name": user[2],
+                "email": user[3],
+                "role": user[4],
+                "employee_id": user[5],
+                "phone": user[6]
+            }
+            
+            # Cache in Redis (if available)
+            if cache.enabled:
+                cache.set(cache_key, user_dict, expire=300)  # 5 minutes
+            
+            # Cache in memory as fallback
+            _session_cache[cache_key] = (user_dict, time.time())
+            
+            # Clean old cache entries (keep only last 100)
+            if len(_session_cache) > 100:
+                sorted_items = sorted(_session_cache.items(), key=lambda x: x[1][1])
+                for key, _ in sorted_items[:len(_session_cache) - 100]:
+                    del _session_cache[key]
+            
+            return user_dict
+        return None
+    except Exception as e:
+        log_error(f"Error getting user by session: {e}", "users")
+        return None
+    finally:
+        conn.close()
 
 def delete_session(session_token: str):
     """Удалить сессию (выход)"""
+    # Invalidate cache
+    cache_key = f"session_user_{session_token}"
+    if cache_key in _session_cache:
+        del _session_cache[cache_key]
+    if cache.enabled:
+        cache.delete(cache_key)
+    
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("DELETE FROM sessions WHERE session_token = %s", (session_token,))
-    conn.commit()
-    conn.close()
+    try:
+        c.execute("DELETE FROM sessions WHERE session_token = %s", (session_token,))
+        conn.commit()
+    finally:
+        conn.close()
 
 # ===== СБРОС ПАРОЛЯ =====
 

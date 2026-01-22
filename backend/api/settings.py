@@ -415,16 +415,51 @@ async def download_backup(session_token: Optional[str] = Cookie(None)):
 
 # ===== SALON SETTINGS =====
 
+# Simple cache for salon settings (fallback when Redis is unavailable)
+_salon_settings_cache = None
+_salon_settings_cache_time = None
+_salon_settings_cache_ttl = 300  # 5 minutes
+
 @router.get("/salon-settings")
 async def get_salon_settings_api():
     """
     Получить настройки салона
     """
+    from utils.cache import cache
+    import time
+    
+    cache_key = "salon_settings"
+    
+    # Try Redis cache first (if available)
+    if cache.enabled:
+        cached_settings = cache.get(cache_key)
+        if cached_settings is not None:
+            return cached_settings
+    
+    # Fallback to in-memory cache
+    global _salon_settings_cache, _salon_settings_cache_time
+    if _salon_settings_cache is not None and _salon_settings_cache_time is not None:
+        cache_age = time.time() - _salon_settings_cache_time
+        if cache_age < _salon_settings_cache_ttl:
+            return _salon_settings_cache
+    
     try:
         settings = get_salon_settings()
+        
+        # Cache in Redis (if available)
+        if cache.enabled:
+            cache.set(cache_key, settings, expire=300)  # 5 minutes
+        
+        # Cache in memory as fallback
+        _salon_settings_cache = settings
+        _salon_settings_cache_time = time.time()
+        
         return settings
     except Exception as e:
         log_error(f"Error loading salon settings: {e}", "settings")
+        # Return cached value if available
+        if _salon_settings_cache is not None:
+            return _salon_settings_cache
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/salon-settings")
@@ -432,11 +467,21 @@ async def update_salon_settings_api(request: Request):
     """
     Обновить настройки салона
     """
+    from utils.cache import cache
+    
     try:
         data = await request.json()
         success = update_salon_settings(data)
 
         if success:
+            # Invalidate cache after successful update
+            cache_key = "salon_settings"
+            global _salon_settings_cache, _salon_settings_cache_time
+            _salon_settings_cache = None
+            _salon_settings_cache_time = None
+            if cache.enabled:
+                cache.delete(cache_key)
+            
             log_info("Salon settings updated successfully", "settings")
             return {"success": True, "message": "Salon settings updated"}
         else:
