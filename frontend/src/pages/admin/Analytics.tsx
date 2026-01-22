@@ -8,6 +8,8 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 import { useCurrency } from '../../hooks/useSalonSettings';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../utils/permissions';
 import './Analytics.css';
 
 interface AnalyticsData {
@@ -56,6 +58,8 @@ export default function Analytics() {
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const { t, i18n: i18nInstance } = useTranslation(['analytics', 'common']);
+  const { user } = useAuth();
+  const permissions = usePermissions(user?.role || 'employee');
   const { currency, formatCurrency } = useCurrency();
 
   useEffect(() => {
@@ -294,7 +298,9 @@ export default function Analytics() {
 
           <div className="analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
             <h3 className="analytics-stat-value text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
-              {isMobile ? `${(stats.total_revenue / 1000).toFixed(1)}k ${currency}` : formatCurrency(stats.total_revenue)}
+              {permissions.canViewFinancials ? (
+                isMobile ? `${(stats.total_revenue / 1000).toFixed(1)}k ${currency}` : formatCurrency(stats.total_revenue)
+              ) : '---'}
             </h3>
             <p className="analytics-stat-label text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:revenue')}</p>
             <div className="analytics-stat-note text-xs md:text-sm text-green-600">
@@ -304,7 +310,9 @@ export default function Analytics() {
 
           <div className="analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
             <h3 className="analytics-stat-value text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
-              {stats.total_revenue > 0 ? formatCurrency(stats.total_revenue / stats.total_bookings) : formatCurrency(0)}
+              {permissions.canViewFinancials ? (
+                stats.total_revenue > 0 ? formatCurrency(stats.total_revenue / stats.total_bookings) : formatCurrency(0)
+              ) : '---'}
             </h3>
             <p className="analytics-stat-label text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:avg_check')}</p>
             <div className="analytics-stat-note text-xs md:text-sm text-green-600">
@@ -387,7 +395,7 @@ export default function Analytics() {
                         {entry.name}
                       </div>
                       <div className="text-gray-600">
-                        {entry.value} • {formatCurrency(entry.revenue)}
+                        {entry.value} {permissions.canViewFinancials && `• ${formatCurrency(entry.revenue)}`}
                       </div>
                     </div>
                   </div>
@@ -463,7 +471,7 @@ export default function Analytics() {
                       {service.count}
                     </td>
                     <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-green-600 font-medium">
-                      {formatCurrency(service.revenue || 0)}
+                      {permissions.canViewFinancials ? formatCurrency(service.revenue || 0) : '---'}
                     </td>
                   </tr>
                 ))}
