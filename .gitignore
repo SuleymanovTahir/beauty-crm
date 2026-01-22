@@ -58,3 +58,5 @@ frontend/.puppeteer-user-data/
 frontend/.puppeteer-cache/
 frontend/.tmp/
 frontend/.home/
+staff_credentials.txt
+config.py
