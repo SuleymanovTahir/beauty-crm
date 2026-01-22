@@ -61,12 +61,12 @@ export default function Register() {
     }
 
     if (formData.username.length < 3) {
-      setError(t('error_username_too_short'));
+      setError(t('error_username_too_short', { count: 3 }));
       return;
     }
 
     if (formData.password.length < 6) {
-      setError(t('error_password_too_short'));
+      setError(t('error_password_too_short', { count: 6 }));
       return;
     }
 

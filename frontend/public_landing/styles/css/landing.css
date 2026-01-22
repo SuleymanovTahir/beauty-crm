@@ -55,13 +55,14 @@
   left: 0;
   width: 0;
   height: 2px;
-  background-color: var(--primary);
+  background-color: #db2777;
   transition: width 0.3s ease-in-out;
 }
 
 .nav-item:hover::after,
 .nav-item.active::after {
   width: 100%;
+  background-color: #db2777;
 }
 
 .hero-button-primary {

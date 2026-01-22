@@ -8,6 +8,7 @@
     "permanent_makeup": "Permanent Makeup",
     "waxing": "Waxing"
   },
+  "haircutsStyling": "Haircuts & Styling",
   "items": {
     "2d_volume": {
       "category": "lashes",
@@ -65,7 +66,7 @@
       "description": "Depilación a lo largo de la línea del bikini.",
       "duration": "1h",
       "max_price": "nulo",
-      "min_price": null,
+      "min_price": "nulo",
       "name": "línea del bikini",
       "price": 100
     },
@@ -104,7 +105,7 @@
       "currency": "AED",
       "description": "Coloración profesional",
       "duration": "1h",
-      "max_price": null,
+      "max_price": "nulo",
       "min_price": "nulo",
       "name": "tinte de cejas",
       "price": 40
@@ -155,7 +156,7 @@
       "description": "Extensiones de pestañas naturales",
       "duration": "",
       "max_price": "nulo",
-      "min_price": null,
+      "min_price": "nulo",
       "name": "Volumen de pestañas clásico",
       "price": 180
     },
@@ -325,7 +326,7 @@
       "description": "manicura japonesa",
       "duration": "1h 30min",
       "max_price": "nulo",
-      "min_price": null,
+      "min_price": "nulo",
       "name": "manicura japonesa",
       "price": 100
     },
@@ -444,7 +445,7 @@
       "currency": "AED",
       "description": "Microblading o cejas en polvo",
       "duration": "",
-      "max_price": null,
+      "max_price": "nulo",
       "min_price": "nulo",
       "name": "Maquillaje permanente de cejas",
       "price": 1100
@@ -454,7 +455,7 @@
       "currency": "AED",
       "description": "Corrección de una permanente existente.",
       "duration": "",
-      "max_price": null,
+      "max_price": "nulo",
       "min_price": "nulo",
       "name": "Corrección de maquillaje permanente",
       "price": 500
@@ -539,5 +540,15 @@
       "name": "labio superior",
       "price": 30
     }
-  }
+  },
+  "manicurePedicure": "Manicure & Pedicure",
+  "master": "Мастер",
+  "mastersDescription": "Наши профессиональные мастера с многолетним опытом работы готовы предоставить вам услуги высочайшего качества",
+  "minutes": "мин",
+  "ourMasters": "Наши мастера",
+  "portfolioTitle": "Портфолио",
+  "service1Desc": "Professional nail care services.",
+  "service2Desc": "Expert hair styling and treatments.",
+  "service3Desc": "Professional makeup and brow styling.",
+  "service3Title": "Makeup & Brows"
 }

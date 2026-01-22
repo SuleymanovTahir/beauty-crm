@@ -7,7 +7,35 @@ from utils.logger import log_info, log_error
 from typing import Optional, List, Dict
 from datetime import datetime, timedelta
 
-def track_visitor(ip: str, user_agent: str, page_url: str) -> bool:
+def parse_user_agent(ua_string):
+    """Simple heuristic to parse User-Agent string"""
+    ua = ua_string.lower()
+    browser = 'Other'
+    device_type = 'Desktop'
+    
+    # Detect Browser
+    if 'edg/' in ua:
+        browser = 'Edge'
+    elif 'chrome' in ua and 'edg' not in ua:
+        browser = 'Chrome'
+    elif 'safari' in ua and 'chrome' not in ua:
+        browser = 'Safari'
+    elif 'firefox' in ua:
+        browser = 'Firefox'
+    elif 'opera' in ua or 'opr' in ua:
+        browser = 'Opera'
+    
+    # Detect Device
+    if 'mobile' in ua:
+        device_type = 'Mobile'
+    elif 'tablet' in ua or 'ipad' in ua:
+        device_type = 'Tablet'
+    elif 'android' in ua:
+        device_type = 'Mobile'
+        
+    return device_type, browser
+
+def track_visitor(ip: str, user_agent: str, page_url: str, referrer: str = None) -> bool:
     """
     Track a visitor by IP address with geolocation
     Deduplicates visits from the same IP within 10 seconds
@@ -18,9 +46,6 @@ def track_visitor(ip: str, user_agent: str, page_url: str) -> bool:
         c = conn.cursor()
         
         # Check if this IP was already tracked on THIS SAME URL in the last 10 seconds
-        # This prevents duplicate records from simultaneous API calls
-        # but allows tracking section transitions (hero -> services -> gallery)
-        # when the URL changes (including anchors)
         c.execute("""
             SELECT id FROM visitor_tracking 
             WHERE ip_address = %s 
@@ -32,14 +57,13 @@ def track_visitor(ip: str, user_agent: str, page_url: str) -> bool:
         recent_visit = c.fetchone()
         
         if recent_visit:
-            # Already tracked recently on the same page/section, skip
             conn.close()
             return False
         
         # Get location data
         location_data = get_visitor_location_data(ip)
         
-        # If geolocation failed (e.g., localhost), still track with minimal data
+        # Helper for location
         if not location_data:
             location_data = {
                 'ip_hash': None,
@@ -50,11 +74,14 @@ def track_visitor(ip: str, user_agent: str, page_url: str) -> bool:
                 'distance_km': None,
                 'is_local': None
             }
+            
+        # Parse UA
+        device_type, browser = parse_user_agent(user_agent)
         
         c.execute("""
             INSERT INTO visitor_tracking 
-            (ip_address, ip_hash, latitude, longitude, city, country, distance_km, is_local, user_agent, page_url)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            (ip_address, ip_hash, latitude, longitude, city, country, distance_km, is_local, user_agent, page_url, referrer, device_type, browser)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             ip,
             location_data['ip_hash'],
@@ -65,12 +92,15 @@ def track_visitor(ip: str, user_agent: str, page_url: str) -> bool:
             location_data['distance_km'],
             location_data['is_local'],
             user_agent,
-            page_url
+            page_url,
+            referrer,
+            device_type,
+            browser
         ))
         
         conn.commit()
         conn.close()
-        log_info(f"Tracked new visitor from {ip} ({location_data.get('city', 'Unknown')})", "visitor_tracking")
+        log_info(f"Tracked new visitor from {ip} ({location_data.get('city', 'Unknown')}) on {device_type}/{browser}", "visitor_tracking")
         return True
         
     except Exception as e:
@@ -160,6 +190,52 @@ def get_location_distribution(start_date: Optional[datetime] = None, end_date: O
         'local_percentage': round((local_count / total * 100) if total > 0 else 0, 1),
         'non_local_percentage': round((non_local_count / total * 100) if total > 0 else 0, 1)
     }
+
+def get_duration_distribution(start_date: datetime, end_date: datetime) -> List[Dict]:
+    """Estimate session duration distribution (Bounce, <30s, 1-5m, >5m)"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    # Postgres interval comparison
+    # Group by ip_hash and a 30-minute window or just DATE for simplicity? 
+    # Let's use DATE(visited_at) and ip_hash as a "session" proxy.
+    c.execute("""
+        WITH sessions AS (
+            SELECT 
+                ip_hash, 
+                MAX(visited_at) - MIN(visited_at) as duration
+            FROM visitor_tracking
+            WHERE visited_at >= %s AND visited_at <= %s
+            GROUP BY ip_hash, DATE(visited_at)
+        )
+        SELECT 
+            CASE 
+                WHEN duration <= INTERVAL '0 seconds' THEN 'single_page'
+                WHEN duration < INTERVAL '30 seconds' THEN 'less_30s'
+                WHEN duration < INTERVAL '5 minutes' THEN '1_5m'
+                WHEN duration < INTERVAL '10 minutes' THEN '5_10m'
+                WHEN duration < INTERVAL '15 minutes' THEN '10_15m'
+                ELSE 'more_15m'
+            END as bucket,
+            COUNT(*)
+        FROM sessions
+        GROUP BY bucket
+    """, (start_date, end_date))
+    
+    rows = dict(c.fetchall())
+    # Ensure all buckets exist
+    buckets = ['single_page', 'less_30s', '1_5m', '5_10m', '10_15m', 'more_15m']
+    return [{'name': b, 'value': rows.get(b, 0)} for b in buckets]
+
+def get_realtime_visitors() -> int:
+    """Get visitors in last 5 minutes"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT COUNT(DISTINCT ip_hash) 
+        FROM visitor_tracking 
+        WHERE visited_at >= NOW() - INTERVAL '5 minutes'
+    """)
+    return c.fetchone()[0] or 0   
 
 def get_country_distribution(start_date: Optional[datetime] = None, end_date: Optional[datetime] = None) -> List[Dict]:
     """
@@ -439,6 +515,246 @@ def get_peak_hours(start_date: Optional[datetime] = None, end_date: Optional[dat
     
     return peak_hours
 
+
+def get_device_distribution(start_date, end_date):
+    """Get device type distribution"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT device_type, COUNT(*) as count
+        FROM visitor_tracking
+        WHERE visited_at >= %s AND visited_at <= %s
+        GROUP BY device_type
+        ORDER BY count DESC
+    """, (start_date, end_date))
+    return [{'name': row[0] or 'Unknown', 'value': row[1]} for row in c.fetchall()]
+
+def get_browser_distribution(start_date, end_date):
+    """Get browser distribution"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT browser, COUNT(*) as count
+        FROM visitor_tracking
+        WHERE visited_at >= %s AND visited_at <= %s
+        GROUP BY browser
+        ORDER BY count DESC
+    """, (start_date, end_date))
+    return [{'name': row[0] or 'Unknown', 'value': row[1]} for row in c.fetchall()]
+
+def get_retention_stats(start_date, end_date):
+    """Get new vs returning visitors"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+def get_retention_stats(start_date, end_date):
+    """Get new vs returning sessions (Daily Unique Visits)"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    # 1. Total Daily Sessions in Period
+    c.execute("""
+        SELECT COUNT(*) FROM (
+            SELECT DISTINCT ip_hash, DATE(visited_at)
+            FROM visitor_tracking
+            WHERE visited_at >= %s AND visited_at <= %s
+        ) as total
+    """, (start_date, end_date))
+    total_sessions = c.fetchone()[0] or 0
+    
+    # 2. New Users (First visit ever is in this period)
+    # They contribute exactly 1 "New Session" each.
+    c.execute("""
+        SELECT COUNT(*) FROM (
+            SELECT ip_hash
+            FROM visitor_tracking
+            GROUP BY ip_hash
+            HAVING MIN(visited_at) >= %s AND MIN(visited_at) <= %s
+        ) as new_users
+    """, (start_date, end_date))
+    new_sessions = c.fetchone()[0] or 0
+    
+    returning_sessions = max(0, total_sessions - new_sessions)
+    
+    return [
+        {'name': 'New Visitors', 'value': new_sessions},
+        {'name': 'Returning Visitors', 'value': returning_sessions}
+    ]
+
+def get_referrers(start_date, end_date):
+    """Get top referrers"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT referrer, COUNT(*) as count
+        FROM visitor_tracking
+        WHERE visited_at >= %s AND visited_at <= %s
+        AND referrer IS NOT NULL AND referrer != ''
+        GROUP BY referrer
+        ORDER BY count DESC
+        LIMIT 10
+    """, (start_date, end_date))
+    return [{'name': row[0], 'value': row[1]} for row in c.fetchall()]
+
+def get_funnel_stats(start_date, end_date):
+    """Get conversion funnel"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    # 1. Landed (All unique IPs)
+    c.execute("""
+        SELECT COUNT(DISTINCT ip_hash) 
+        FROM visitor_tracking 
+        WHERE visited_at >= %s AND visited_at <= %s
+    """, (start_date, end_date))
+    landed = c.fetchone()[0] or 0
+    
+    # 2. Viewed Service (IPs on /#services or similar)
+    c.execute("""
+        SELECT COUNT(DISTINCT ip_hash) 
+        FROM visitor_tracking 
+        WHERE visited_at >= %s AND visited_at <= %s
+        AND (page_url LIKE '%%service%%' OR page_url LIKE '%%#services%%')
+    """, (start_date, end_date))
+    viewed_service = c.fetchone()[0] or 0
+    
+    # 3. Clicked Book (IPs on /#booking or similar)
+    c.execute("""
+        SELECT COUNT(DISTINCT ip_hash) 
+        FROM visitor_tracking 
+        WHERE visited_at >= %s AND visited_at <= %s
+        AND (page_url LIKE '%%booking%%' OR page_url LIKE '%%#booking%%')
+    """, (start_date, end_date))
+    clicked_book = c.fetchone()[0] or 0
+    
+    # 4. Completed Booking (From bookings table)
+    c.execute("""
+        SELECT COUNT(*) 
+        FROM bookings 
+        WHERE created_at >= %s::text AND created_at <= %s::text
+    """, (start_date, end_date))
+    completed = c.fetchone()[0] or 0
+    
+    return [
+        {'step': 'Landed', 'value': landed},
+        {'step': 'Viewed Services', 'value': viewed_service},
+        {'step': 'Clicked Book', 'value': clicked_book},
+        {'step': 'Completed', 'value': completed}
+    ]
+
+
+def get_source_conversion(start_date, end_date):
+    """Get conversion (clicked booking) by source"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT referrer, COUNT(DISTINCT ip_hash)
+        FROM visitor_tracking
+        WHERE visited_at >= %s AND visited_at <= %s
+        AND (page_url LIKE '%%booking%%' OR page_url LIKE '%%#booking%%')
+        AND referrer IS NOT NULL AND referrer != ''
+        GROUP BY referrer
+        ORDER BY count DESC
+        LIMIT 10
+    """, (start_date, end_date))
+    return [{'name': row[0], 'value': row[1]} for row in c.fetchall()]
+
+def get_heatmap_data(start_date, end_date):
+    """Get activity heatmap (Day of Week x Hour)"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    # Postgres DOW: 0=Sunday, 6=Saturday.
+    c.execute("""
+        SELECT EXTRACT(DOW FROM visited_at) as dow, EXTRACT(HOUR FROM visited_at) as hour, COUNT(*)
+        FROM visitor_tracking
+        WHERE visited_at >= %s AND visited_at <= %s
+        GROUP BY dow, hour
+    """, (start_date, end_date))
+    data = []
+    for row in c.fetchall():
+        data.append({'day': int(row[0]), 'hour': int(row[1]), 'value': row[2]})
+    return data
+
+def get_exit_pages(start_date, end_date):
+    """Get top exit pages"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("""
+        WITH last_visits AS (
+            SELECT DISTINCT ON (ip_hash, DATE(visited_at)) 
+                COALESCE(NULLIF(page_url, ''), '/') as page_url
+            FROM visitor_tracking
+            WHERE visited_at >= %s AND visited_at <= %s
+            ORDER BY ip_hash, DATE(visited_at), visited_at DESC
+        )
+        SELECT page_url, COUNT(*) as count
+        FROM last_visits
+        GROUP BY page_url
+        ORDER BY count DESC
+        LIMIT 10
+    """, (start_date, end_date))
+    return [{'name': row[0], 'value': row[1]} for row in c.fetchall()]
+
+def get_loyalty_stats(start_date, end_date):
+    """Get visitor frequency stats"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("""
+        WITH visits AS (
+            SELECT ip_hash, COUNT(*) as visit_count
+            FROM (
+                SELECT DISTINCT ip_hash, DATE(visited_at)
+                FROM visitor_tracking
+                WHERE visited_at >= %s AND visited_at <= %s
+            ) as distinct_days
+            GROUP BY ip_hash
+        )
+        SELECT 
+            CASE 
+                WHEN visit_count = 1 THEN '1_visit'
+                WHEN visit_count BETWEEN 2 AND 4 THEN '2_4_visits'
+                ELSE '5_plus_visits'
+            END as bucket,
+            COUNT(*)
+        FROM visits
+        GROUP BY bucket
+    """, (start_date, end_date))
+    return [{'name': row[0], 'value': row[1]} for row in c.fetchall()]
+
+def get_device_bounce_rate(start_date, end_date):
+    """Get bounce rate by device"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("""
+        WITH sessions AS (
+            SELECT 
+                ip_hash, 
+                DATE(visited_at) as visit_date,
+                COUNT(*) as pages,
+                MAX(device_type) as device
+            FROM visitor_tracking
+            WHERE visited_at >= %s AND visited_at <= %s
+            GROUP BY ip_hash, DATE(visited_at)
+        )
+        SELECT 
+            device,
+            COUNT(*) as total_sessions,
+            SUM(CASE WHEN pages = 1 THEN 1 ELSE 0 END) as bounces
+        FROM sessions
+        WHERE device IS NOT NULL
+        GROUP BY device
+    """, (start_date, end_date))
+    
+    data = []
+    for row in c.fetchall():
+        device = row[0]
+        total = row[1]
+        bounces = row[2]
+        rate = round((bounces / total * 100), 1) if total > 0 else 0
+        data.append({'name': device, 'rate': rate, 'total': total})
+        
+    return data
+
 def get_all_visitor_analytics(start_date: datetime, end_date: datetime, max_distance: float = 50) -> Dict:
     """
     Получить ВСЕ данные аналитики одним проходом (оптимизация)
@@ -449,15 +765,17 @@ def get_all_visitor_analytics(start_date: datetime, end_date: datetime, max_dist
     try:
         # 1. Основные посетители
         c.execute("""
-            SELECT ip_hash, city, country, distance_km, is_local, page_url, visited_at, ip_address
+            SELECT ip_hash, city, country, distance_km, is_local, page_url, visited_at, ip_address, referrer, device_type, browser
             FROM visitor_tracking
             WHERE visited_at >= %s AND visited_at <= %s
-            ORDER BY visited_at DESC LIMIT 100
+            ORDER BY visited_at DESC
+            LIMIT 5000
         """, (start_date, end_date))
         visitors = [{
             'ip_hash': r[0], 'city': r[1], 'country': r[2], 'distance_km': r[3],
             'is_local': r[4], 'page_url': r[5], 'visited_at': r[6].isoformat() if r[6] else None,
-            'ip_address': r[7]
+            'ip_address': r[7],
+            'referrer': r[8], 'device_type': r[9], 'browser': r[10]
         } for r in c.fetchall()]
 
         # 2. Распределение local/non-local
@@ -565,6 +883,27 @@ def get_all_visitor_analytics(start_date: datetime, end_date: datetime, max_dist
         hours_raw = {int(r[0]): r[1] for r in c.fetchall()}
         hours = [{'hour': f'{h:02d}:00', 'count': hours_raw.get(h, 0)} for h in range(24)]
 
+        # 9. Devices & Browsers (New)
+        conn.close() # Close current to use connection from sub-helpers or just inline?
+        # The helpers create their own connection. This is inefficient but safe.
+        # Ideally I should pass the `c` cursor to them, but my helpers assume they create connection.
+        # Let's use the helpers for clean code, performance impact is negligible for this load.
+        
+        devices = get_device_distribution(start_date, end_date)
+        browsers = get_browser_distribution(start_date, end_date)
+        retention = get_retention_stats(start_date, end_date)
+        funnel = get_funnel_stats(start_date, end_date)
+        referrers = get_referrers(start_date, end_date)
+        realtime = get_realtime_visitors()
+        durations = get_duration_distribution(start_date, end_date)
+        
+        # New charts
+        source_conversion = get_source_conversion(start_date, end_date)
+        heatmap = get_heatmap_data(start_date, end_date)
+        exit_pages = get_exit_pages(start_date, end_date)
+        loyalty = get_loyalty_stats(start_date, end_date)
+        device_bounces = get_device_bounce_rate(start_date, end_date)
+
         return {
             'visitors': visitors,
             'location_breakdown': location_breakdown,
@@ -573,7 +912,19 @@ def get_all_visitor_analytics(start_date: datetime, end_date: datetime, max_dist
             'distance_breakdown': distance_breakdown,
             'trend': trend,
             'sections': sections,
-            'hours': hours
+            'hours': hours,
+            'devices': devices,
+            'browsers': browsers,
+            'retention': retention,
+            'funnel': funnel,
+            'referrers': referrers,
+            'realtime_visitors': realtime,
+            'durations': durations,
+            'source_conversion': source_conversion,
+            'heatmap': heatmap,
+            'exit_pages': exit_pages,
+            'loyalty': loyalty,
+            'device_bounces': device_bounces
         }
     finally:
-        conn.close()
+        pass

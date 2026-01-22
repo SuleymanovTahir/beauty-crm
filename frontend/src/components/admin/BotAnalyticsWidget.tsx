@@ -102,7 +102,7 @@ const BotAnalyticsWidget: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle>{t('analytics.activity_30_days', 'Activity 30 Days')}</CardTitle>
+                        <CardTitle>{t('analytics.activity_30_days', { count: 30 })}</CardTitle>
                         <CardDescription>{t('analytics.dialogs_and_bookings_count', 'Dialogs and bookings count')}</CardDescription>
                     </CardHeader>
                     <CardContent className="h-64">

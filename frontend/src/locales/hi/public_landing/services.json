@@ -8,6 +8,7 @@
     "permanent_makeup": "Permanent Makeup",
     "waxing": "Waxing"
   },
+  "haircutsStyling": "Haircuts & Styling",
   "items": {
     "2d_volume": {
       "category": "lashes",
@@ -65,7 +66,7 @@
       "description": "बिकनी लाइन के साथ एपिलेशन",
       "duration": "1h",
       "max_price": "शून्य",
-      "min_price": null,
+      "min_price": "शून्य",
       "name": "बिकनी लाइन",
       "price": 100
     },
@@ -104,7 +105,7 @@
       "currency": "AED",
       "description": "पेशेवर रंग-रोगन",
       "duration": "1h",
-      "max_price": null,
+      "max_price": "शून्य",
       "min_price": "शून्य",
       "name": "भौंहों का रंगना",
       "price": 40
@@ -155,7 +156,7 @@
       "description": "प्राकृतिक बरौनी एक्सटेंशन",
       "duration": "",
       "max_price": "शून्य",
-      "min_price": null,
+      "min_price": "शून्य",
       "name": "क्लासिक बरौनी मात्रा",
       "price": 180
     },
@@ -325,7 +326,7 @@
       "description": "जापानी मैनीक्योर",
       "duration": "1h 30min",
       "max_price": "शून्य",
-      "min_price": null,
+      "min_price": "शून्य",
       "name": "जापानी मैनीक्योर",
       "price": 100
     },
@@ -444,7 +445,7 @@
       "currency": "AED",
       "description": "माइक्रोब्लैडिंग या पाउडर आइब्रो",
       "duration": "",
-      "max_price": null,
+      "max_price": "शून्य",
       "min_price": "शून्य",
       "name": "स्थायी भौं मेकअप",
       "price": 1100
@@ -454,7 +455,7 @@
       "currency": "AED",
       "description": "मौजूदा स्थाई का सुधार",
       "duration": "",
-      "max_price": null,
+      "max_price": "शून्य",
       "min_price": "शून्य",
       "name": "स्थायी मेकअप सुधार",
       "price": 500
@@ -539,5 +540,15 @@
       "name": "होंठ के ऊपर का हिस्सा",
       "price": 30
     }
-  }
+  },
+  "manicurePedicure": "Manicure & Pedicure",
+  "master": "Мастер",
+  "mastersDescription": "Наши профессиональные мастера с многолетним опытом работы готовы предоставить вам услуги высочайшего качества",
+  "minutes": "мин",
+  "ourMasters": "Наши мастера",
+  "portfolioTitle": "Портфолио",
+  "service1Desc": "Professional nail care services.",
+  "service2Desc": "Expert hair styling and treatments.",
+  "service3Desc": "Professional makeup and brow styling.",
+  "service3Title": "Makeup & Brows"
 }

@@ -8,536 +8,547 @@
     "permanent_makeup": "Permanent Makeup",
     "waxing": "Waxing"
   },
+  "haircutsStyling": "Haircuts & Styling",
   "items": {
-    "brow_lamination": {
-      "name": "Ламинирование бровей",
-      "description": "Ламинирование бровей",
-      "price": 200.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "brows"
-    },
-    "combo_lamination": {
-      "name": "Ламинирование бровей и ресниц",
-      "description": "Комбо ламинирование",
-      "price": 300.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "brows"
-    },
-    "brow_coloring": {
-      "name": "Окрашивание бровей",
-      "description": "Профессиональное окрашивание",
-      "price": 40.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "brows"
-    },
-    "brow_shaping": {
-      "name": "Оформление бровей",
-      "description": "Профессиональное оформление",
-      "price": 40.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "brows"
-    },
-    "deep_facial_cleaning": {
-      "name": "Глубокая чистка лица",
-      "description": "Профессиональная глубокая чистка",
-      "price": 400.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "facial"
-    },
-    "medical_facial": {
-      "name": "Медицинская чистка для проблемной кожи",
-      "description": "Медицинская чистка",
-      "price": 450.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "facial"
-    },
-    "peeling": {
-      "name": "пилинг",
-      "description": "Химический пилинг",
-      "price": 350.0,
-      "min_price": 300.0,
-      "max_price": 400.0,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "facial"
-    },
-    "face_lift_massage": {
-      "name": "Подтягивающий массаж лица с маской",
-      "description": "Подтягивающий массаж",
-      "price": 250.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "30min",
-      "category": "facial"
-    },
-    "balayage": {
-      "name": "балаяж",
-      "description": "Техника балаяж",
-      "price": 950.0,
-      "min_price": 700.0,
-      "max_price": 1200.0,
-      "currency": "AED",
-      "duration": "2h",
-      "category": "hair"
-    },
-    "bleach_hair": {
-      "name": "Выход из черного",
-      "description": "Коррекция цвета из темного",
-      "price": 1800.0,
-      "min_price": 1300.0,
-      "max_price": 2300.0,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "baby_cut": {
-      "name": "Детская стрижка",
-      "description": "Стрижка для детей",
-      "price": 70.0,
-      "min_price": 60.0,
-      "max_price": 80.0,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "hair_extension_capsule": {
-      "name": "Наращивание волос за капсулу",
-      "description": "Наращивание за капсулу",
-      "price": 11.0,
-      "min_price": 10.0,
-      "max_price": 12.0,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "natural_treatment": {
-      "name": "Натуральный уход",
-      "description": "Натуральный уход за волосами",
-      "price": 200.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "hair"
-    },
-    "full_color": {
-      "name": "Окрашивание в один тон + Укладка",
-      "description": "Полное окрашивание с укладкой",
-      "price": 425.0,
-      "min_price": 350.0,
-      "max_price": 500.0,
-      "currency": "AED",
-      "duration": "2h",
-      "category": "hair"
-    },
-    "roots_color": {
-      "name": "Окрашивание корней + Укладка",
-      "description": "Окрашивание корней с укладкой",
-      "price": 200.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "hair"
-    },
-    "ombre": {
-      "name": "Омбре/Шатуш/Аиртач",
-      "description": "Техники градиентного окрашивания",
-      "price": 1250.0,
-      "min_price": 1000.0,
-      "max_price": 1500.0,
-      "currency": "AED",
-      "duration": "2h",
-      "category": "hair"
-    },
-    "roots_bleach": {
-      "name": "Осветление корней + Укладка",
-      "description": "Осветление корней с укладкой",
-      "price": 350.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "hair_trim": {
-      "name": "Ровный срез кончиков",
-      "description": "Простой срез без мытья",
-      "price": 90.0,
-      "min_price": 80.0,
-      "max_price": 100.0,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "hair_cut_blowdry": {
-      "name": "Стрижка + Укладка",
-      "description": "Профессиональная стрижка с укладкой",
-      "price": 275.0,
-      "min_price": 250.0,
-      "max_price": 300.0,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "toner_blowdry": {
-      "name": "Тонирование + Укладка",
-      "description": "Тонирование волос с укладкой",
-      "price": 375.0,
-      "min_price": 300.0,
-      "max_price": 450.0,
-      "currency": "AED",
-      "duration": "",
-      "category": "hair"
-    },
-    "blowdry": {
-      "name": "Укладка",
-      "description": "Профессиональная укладка волос",
-      "price": 125.0,
-      "min_price": 100.0,
-      "max_price": 150.0,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "hair"
-    },
     "2d_volume": {
-      "name": "2D объем ресниц",
-      "description": "Наращивание 2D",
-      "price": 230.0,
-      "min_price": null,
-      "max_price": null,
+      "category": "lashes",
       "currency": "AED",
+      "description": "Наращивание 2D",
       "duration": "",
-      "category": "lashes"
+      "max_price": null,
+      "min_price": null,
+      "name": "2D объем ресниц",
+      "price": 230
     },
     "3d_volume": {
-      "name": "3D объем ресниц",
+      "category": "lashes",
+      "currency": "AED",
       "description": "Наращивание 3D",
-      "price": 260.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
       "duration": "",
-      "category": "lashes"
-    },
-    "mega_volume": {
-      "name": "4-5D объем (Мега)",
-      "description": "Мега объем ресниц",
-      "price": 290.0,
-      "min_price": null,
       "max_price": null,
+      "min_price": null,
+      "name": "3D объем ресниц",
+      "price": 260
+    },
+    "baby_cut": {
+      "category": "hair",
       "currency": "AED",
+      "description": "Стрижка для детей",
       "duration": "",
-      "category": "lashes"
-    },
-    "ml_curl": {
-      "name": "ML локон / Стиль Ким",
-      "description": "Специальный изгиб",
-      "price": 30.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "lashes"
-    },
-    "classic_volume": {
-      "name": "Классический объем ресниц",
-      "description": "Натуральное наращивание ресниц",
-      "price": 180.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "lashes"
-    },
-    "lash_lamination": {
-      "name": "Ламинирование ресниц",
-      "description": "Ламинирование ресниц",
-      "price": 200.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "lashes"
-    },
-    "remove_lashes": {
-      "name": "Снятие ресниц",
-      "description": "Безопасное снятие",
-      "price": 50.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "lashes"
+      "max_price": 80,
+      "min_price": 60,
+      "name": "Детская стрижка",
+      "price": 70
     },
     "baby_manicure": {
-      "name": "Детский маникюр",
+      "category": "nails",
+      "currency": "AED",
       "description": "Маникюр для детей",
-      "price": 50.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
       "duration": "",
-      "category": "nails"
-    },
-    "manicure_no_polish": {
-      "name": "Маникюр без покрытия",
-      "description": "Базовый маникюр",
-      "price": 80.0,
-      "min_price": null,
       "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "nails"
-    },
-    "gelish_manicure": {
-      "name": "Маникюр гель-лак",
-      "description": "Маникюр с гель-лаком",
-      "price": 130.0,
       "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "nails"
+      "name": "Детский маникюр",
+      "price": 50
     },
-    "manicure_normal": {
-      "name": "Маникюр с обычным покрытием",
-      "description": "Маникюр с обычным лаком",
-      "price": 100.0,
-      "min_price": null,
-      "max_price": null,
+    "balayage": {
+      "category": "hair",
       "currency": "AED",
-      "duration": "1h",
-      "category": "nails"
-    },
-    "change_classic_polish": {
-      "name": "Смена обычного лака",
-      "description": "Смена обычного лака",
-      "price": 65.0,
-      "min_price": 40.0,
-      "max_price": 90.0,
-      "currency": "AED",
-      "duration": "30min",
-      "category": "nails"
-    },
-    "spa_manicure": {
-      "name": "Спа-маникюр",
-      "description": "Спа-маникюр",
-      "price": 50.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "nails"
-    },
-    "japanese_manicure": {
-      "name": "Японский маникюр",
-      "description": "Японский маникюр",
-      "price": 100.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h 30min",
-      "category": "nails"
-    },
-    "key_test_manicure": {
-      "name": null,
-      "description": "",
-      "price": 100.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "nails"
-    },
-    "permanent_correction": {
-      "name": "Коррекция перманентного макияжа",
-      "description": "Коррекция существующего перманента",
-      "price": 500.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "permanent_makeup"
-    },
-    "lashliner": {
-      "name": "Межресничная стрелка",
-      "description": "Подчеркивание линии роста ресниц",
-      "price": 500.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "permanent_makeup"
-    },
-    "permanent_brows": {
-      "name": "Перманентный макияж бровей",
-      "description": "Микроблейдинг или пудровые брови",
-      "price": 1100.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "permanent_makeup"
-    },
-    "permanent_lips": {
-      "name": "Перманентный макияж губ",
-      "description": "Стойкий цвет губ",
-      "price": 1200.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "permanent_makeup"
-    },
-    "eyeliner": {
-      "name": "Подводка для глаз",
-      "description": "Перманентная подводка глаз",
-      "price": 1000.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "",
-      "category": "permanent_makeup"
-    },
-    "brazilian": {
-      "name": "Бразильское бикини",
-      "description": "Бразильская эпиляция бикини",
-      "price": 120.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
-    },
-    "upper_lips": {
-      "name": "Верхняя губа",
-      "description": "Эпиляция верхней губы",
-      "price": 30.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
-    },
-    "full_bikini": {
-      "name": "Глубокое бикини",
-      "description": "Полная эпиляция зоны бикини",
-      "price": 150.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
+      "description": "Техника балаяж",
+      "duration": "2h",
+      "max_price": 1200,
+      "min_price": 700,
+      "name": "балаяж",
+      "price": 950
     },
     "bikini_line": {
-      "name": "Линия бикини",
+      "category": "waxing",
+      "currency": "AED",
       "description": "Эпиляция по линии бикини",
-      "price": 100.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
       "duration": "1h",
-      "category": "waxing"
+      "max_price": null,
+      "min_price": null,
+      "name": "Линия бикини",
+      "price": 100
     },
-    "full_face": {
-      "name": "Лицо полностью",
-      "description": "Полная эпиляция лица",
-      "price": 90.0,
-      "min_price": null,
-      "max_price": null,
+    "bleach_hair": {
+      "category": "hair",
       "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
+      "description": "Коррекция цвета из темного",
+      "duration": "",
+      "max_price": 2300,
+      "min_price": 1300,
+      "name": "Выход из черного",
+      "price": 1800
     },
-    "half_legs": {
-      "name": "Ноги до колен",
-      "description": "Эпиляция ног до колен",
-      "price": 80.0,
-      "min_price": null,
-      "max_price": null,
+    "blowdry": {
+      "category": "hair",
       "currency": "AED",
+      "description": "Профессиональная укладка волос",
       "duration": "1h",
-      "category": "waxing"
+      "max_price": 150,
+      "min_price": 100,
+      "name": "Укладка",
+      "price": 125
     },
-    "full_legs": {
-      "name": "Ноги полностью",
-      "description": "Полная эпиляция ног",
-      "price": 150.0,
-      "min_price": null,
-      "max_price": null,
+    "brazilian": {
+      "category": "waxing",
       "currency": "AED",
+      "description": "Бразильская эпиляция бикини",
       "duration": "1h",
-      "category": "waxing"
+      "max_price": null,
+      "min_price": null,
+      "name": "Бразильское бикини",
+      "price": 120
+    },
+    "brow_coloring": {
+      "category": "brows",
+      "currency": "AED",
+      "description": "Профессиональное окрашивание",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Окрашивание бровей",
+      "price": 40
+    },
+    "brow_lamination": {
+      "category": "brows",
+      "currency": "AED",
+      "description": "Ламинирование бровей",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Ламинирование бровей",
+      "price": 200
+    },
+    "brow_shaping": {
+      "category": "brows",
+      "currency": "AED",
+      "description": "Профессиональное оформление",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Оформление бровей",
+      "price": 40
+    },
+    "change_classic_polish": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Смена обычного лака",
+      "duration": "30min",
+      "max_price": 90,
+      "min_price": 40,
+      "name": "Смена обычного лака",
+      "price": 65
     },
     "chin": {
-      "name": "Подбородок",
+      "category": "waxing",
+      "currency": "AED",
       "description": "Эпиляция подбородка",
-      "price": 30.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
       "duration": "1h",
-      "category": "waxing"
+      "max_price": null,
+      "min_price": null,
+      "name": "Подбородок",
+      "price": 30
     },
-    "underarms": {
-      "name": "Подмышки",
-      "description": "Эпиляция подмышек",
-      "price": 50.0,
-      "min_price": null,
-      "max_price": null,
+    "classic_volume": {
+      "category": "lashes",
       "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
+      "description": "Натуральное наращивание ресниц",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Классический объем ресниц",
+      "price": 180
     },
-    "half_arms": {
-      "name": "Руки до локтя",
-      "description": "Эпиляция рук до локтя",
-      "price": 50.0,
-      "min_price": null,
-      "max_price": null,
+    "combo_lamination": {
+      "category": "brows",
       "currency": "AED",
+      "description": "Комбо ламинирование",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Ламинирование бровей и ресниц",
+      "price": 300
+    },
+    "deep_facial_cleaning": {
+      "category": "facial",
+      "currency": "AED",
+      "description": "Профессиональная глубокая чистка",
       "duration": "1h",
-      "category": "waxing"
+      "max_price": null,
+      "min_price": null,
+      "name": "Глубокая чистка лица",
+      "price": 400
+    },
+    "eyeliner": {
+      "category": "permanent_makeup",
+      "currency": "AED",
+      "description": "Перманентная подводка глаз",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Подводка для глаз",
+      "price": 1000
+    },
+    "face_lift_massage": {
+      "category": "facial",
+      "currency": "AED",
+      "description": "Подтягивающий массаж",
+      "duration": "30min",
+      "max_price": null,
+      "min_price": null,
+      "name": "Подтягивающий массаж лица с маской",
+      "price": 250
     },
     "full_arms": {
-      "name": "Руки полностью",
-      "description": "Полная эпиляция рук",
-      "price": 80.0,
-      "min_price": null,
-      "max_price": null,
+      "category": "waxing",
       "currency": "AED",
+      "description": "Полная эпиляция рук",
       "duration": "1h",
-      "category": "waxing"
+      "max_price": null,
+      "min_price": null,
+      "name": "Руки полностью",
+      "price": 80
+    },
+    "full_bikini": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "Полная эпиляция зоны бикини",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Глубокое бикини",
+      "price": 150
     },
     "full_body": {
-      "name": "Эпиляция всего тела",
-      "description": "Полная эпиляция тела",
-      "price": 400.0,
-      "min_price": null,
-      "max_price": null,
+      "category": "waxing",
       "currency": "AED",
+      "description": "Полная эпиляция тела",
       "duration": "1h",
-      "category": "waxing"
+      "max_price": null,
+      "min_price": null,
+      "name": "Эпиляция всего тела",
+      "price": 400
+    },
+    "full_color": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Полное окрашивание с укладкой",
+      "duration": "2h",
+      "max_price": 500,
+      "min_price": 350,
+      "name": "Окрашивание в один тон + Укладка",
+      "price": 425
+    },
+    "full_face": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "Полная эпиляция лица",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Лицо полностью",
+      "price": 90
+    },
+    "full_legs": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "Полная эпиляция ног",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Ноги полностью",
+      "price": 150
+    },
+    "gelish_manicure": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Маникюр с гель-лаком",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Маникюр гель-лак",
+      "price": 130
+    },
+    "hair_cut_blowdry": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Профессиональная стрижка с укладкой",
+      "duration": "",
+      "max_price": 300,
+      "min_price": 250,
+      "name": "Стрижка + Укладка",
+      "price": 275
+    },
+    "hair_extension_capsule": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Наращивание за капсулу",
+      "duration": "",
+      "max_price": 12,
+      "min_price": 10,
+      "name": "Наращивание волос за капсулу",
+      "price": 11
+    },
+    "hair_trim": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Простой срез без мытья",
+      "duration": "",
+      "max_price": 100,
+      "min_price": 80,
+      "name": "Ровный срез кончиков",
+      "price": 90
+    },
+    "half_arms": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "Эпиляция рук до локтя",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Руки до локтя",
+      "price": 50
+    },
+    "half_legs": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "Эпиляция ног до колен",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Ноги до колен",
+      "price": 80
+    },
+    "japanese_manicure": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Японский маникюр",
+      "duration": "1h 30min",
+      "max_price": null,
+      "min_price": null,
+      "name": "Японский маникюр",
+      "price": 100
+    },
+    "key_test_manicure": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "",
+      "duration": "60",
+      "max_price": null,
+      "min_price": null,
+      "name": null,
+      "price": 100
+    },
+    "lash_lamination": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "Ламинирование ресниц",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Ламинирование ресниц",
+      "price": 200
+    },
+    "lashliner": {
+      "category": "permanent_makeup",
+      "currency": "AED",
+      "description": "Подчеркивание линии роста ресниц",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Межресничная стрелка",
+      "price": 500
+    },
+    "manicure_no_polish": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Базовый маникюр",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Маникюр без покрытия",
+      "price": 80
+    },
+    "manicure_normal": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Маникюр с обычным лаком",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Маникюр с обычным покрытием",
+      "price": 100
+    },
+    "medical_facial": {
+      "category": "facial",
+      "currency": "AED",
+      "description": "Медицинская чистка",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Медицинская чистка для проблемной кожи",
+      "price": 450
+    },
+    "mega_volume": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "Мега объем ресниц",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "4-5D объем (Мега)",
+      "price": 290
+    },
+    "ml_curl": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "Специальный изгиб",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "ML локон / Стиль Ким",
+      "price": 30
+    },
+    "natural_treatment": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Натуральный уход за волосами",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Натуральный уход",
+      "price": 200
+    },
+    "ombre": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Техники градиентного окрашивания",
+      "duration": "2h",
+      "max_price": 1500,
+      "min_price": 1000,
+      "name": "Омбре/Шатуш/Аиртач",
+      "price": 1250
+    },
+    "peeling": {
+      "category": "facial",
+      "currency": "AED",
+      "description": "Химический пилинг",
+      "duration": "1h",
+      "max_price": 400,
+      "min_price": 300,
+      "name": "пилинг",
+      "price": 350
+    },
+    "permanent_brows": {
+      "category": "permanent_makeup",
+      "currency": "AED",
+      "description": "Микроблейдинг или пудровые брови",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Перманентный макияж бровей",
+      "price": 1100
+    },
+    "permanent_correction": {
+      "category": "permanent_makeup",
+      "currency": "AED",
+      "description": "Коррекция существующего перманента",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Коррекция перманентного макияжа",
+      "price": 500
+    },
+    "permanent_lips": {
+      "category": "permanent_makeup",
+      "currency": "AED",
+      "description": "Стойкий цвет губ",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Перманентный макияж губ",
+      "price": 1200
+    },
+    "remove_lashes": {
+      "category": "lashes",
+      "currency": "AED",
+      "description": "Безопасное снятие",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Снятие ресниц",
+      "price": 50
+    },
+    "roots_bleach": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Осветление корней с укладкой",
+      "duration": "",
+      "max_price": null,
+      "min_price": null,
+      "name": "Осветление корней + Укладка",
+      "price": 350
+    },
+    "roots_color": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Окрашивание корней с укладкой",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Окрашивание корней + Укладка",
+      "price": 200
+    },
+    "spa_manicure": {
+      "category": "nails",
+      "currency": "AED",
+      "description": "Спа-маникюр",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Спа-маникюр",
+      "price": 50
+    },
+    "toner_blowdry": {
+      "category": "hair",
+      "currency": "AED",
+      "description": "Тонирование волос с укладкой",
+      "duration": "",
+      "max_price": 450,
+      "min_price": 300,
+      "name": "Тонирование + Укладка",
+      "price": 375
+    },
+    "underarms": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "Эпиляция подмышек",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Подмышки",
+      "price": 50
+    },
+    "upper_lips": {
+      "category": "waxing",
+      "currency": "AED",
+      "description": "Эпиляция верхней губы",
+      "duration": "1h",
+      "max_price": null,
+      "min_price": null,
+      "name": "Верхняя губа",
+      "price": 30
     }
-  }
+  },
+  "manicurePedicure": "Manicure & Pedicure",
+  "master": "Мастер",
+  "mastersDescription": "Наши профессиональные мастера с многолетним опытом работы готовы предоставить вам услуги высочайшего качества",
+  "minutes": "мин",
+  "ourMasters": "Наши мастера",
+  "portfolioTitle": "Портфолио",
+  "service1Desc": "Professional nail care services.",
+  "service2Desc": "Expert hair styling and treatments.",
+  "service3Desc": "Professional makeup and brow styling.",
+  "service3Title": "Makeup & Brows"
 }

@@ -6,9 +6,14 @@ from db.connection import get_db_connection
 from utils.utils import get_current_user
 import json
 import logging
+import time
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+# Simple cache for menu settings
+_menu_cache = {}
+_cache_ttl = 60  # seconds
 
 class MenuSettings(BaseModel):
     menu_order: Optional[List[str]] = None
@@ -21,6 +26,14 @@ class MenuSettingsResponse(BaseModel):
 @router.get("/menu-settings", response_model=MenuSettingsResponse)
 async def get_menu_settings(current_user: dict = Depends(get_current_user)):
     """Get menu settings for current user or their role"""
+    
+    # Check cache
+    cache_key = f"menu_{current_user['id']}_{current_user['role']}"
+    if cache_key in _menu_cache:
+        cached_data, cached_time = _menu_cache[cache_key]
+        if time.time() - cached_time < _cache_ttl:
+            return cached_data
+    
     conn = get_db_connection()
     c = conn.cursor()
     try:
@@ -42,17 +55,20 @@ async def get_menu_settings(current_user: dict = Depends(get_current_user)):
             """, (current_user['role'],))
             row = c.fetchone()
         
-        if row:
-            return {
-                "menu_order": row[0] if row[0] else None,
-                "hidden_items": row[1] if row[1] else None
-            }
-        
-        # Return defaults if no settings found
-        return {
-            "menu_order": None,
-            "hidden_items": None
+        result = {
+            "menu_order": row[0] if row and row[0] else None,
+            "hidden_items": row[1] if row and row[1] else None
         }
+        
+        # Cache the result
+        _menu_cache[cache_key] = (result, time.time())
+        
+        # Clean old cache entries
+        if len(_menu_cache) > 100:
+            oldest_key = min(_menu_cache.keys(), key=lambda k: _menu_cache[k][1])
+            del _menu_cache[oldest_key]
+        
+        return result
     except Exception as e:
         logger.error(f"Error fetching menu settings: {e}")
         return {"menu_order": None, "hidden_items": None}
@@ -87,6 +103,11 @@ async def save_menu_settings(
                     hidden_items = EXCLUDED.hidden_items,
                     updated_at = CURRENT_TIMESTAMP
             """, (current_user['role'], menu_order_json, hidden_items_json))
+            
+            # Invalidate cache for all users with this role
+            keys_to_delete = [k for k in _menu_cache.keys() if k.endswith(f"_{current_user['role']}")]
+            for k in keys_to_delete:
+                del _menu_cache[k]
         else:
             # Save for specific user
             c.execute("""
@@ -98,6 +119,11 @@ async def save_menu_settings(
                     hidden_items = EXCLUDED.hidden_items,
                     updated_at = CURRENT_TIMESTAMP
             """, (current_user['id'], menu_order_json, hidden_items_json))
+            
+            # Invalidate cache for this user
+            cache_key = f"menu_{current_user['id']}_{current_user['role']}"
+            if cache_key in _menu_cache:
+                del _menu_cache[cache_key]
         
         conn.commit()
         return {"success": True, "message": "Menu settings saved"}
@@ -118,6 +144,12 @@ async def reset_menu_settings(current_user: dict = Depends(get_current_user)):
     try:
         c.execute("DELETE FROM menu_settings WHERE user_id = %s", (current_user['id'],))
         conn.commit()
+        
+        # Invalidate cache
+        cache_key = f"menu_{current_user['id']}_{current_user['role']}"
+        if cache_key in _menu_cache:
+            del _menu_cache[cache_key]
+        
         return {"success": True, "message": "Menu settings reset to default"}
     except Exception as e:
         conn.rollback()
