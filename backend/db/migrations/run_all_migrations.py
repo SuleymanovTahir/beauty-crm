@@ -212,7 +212,14 @@ def run_all_migrations():
         migrate_other_schema,
         "Все остальные таблицы"
     )
-    
+
+    # Добавление недостающих колонок в visitor_tracking (referrer, device_type, browser)
+    from db.migrations.add_analytics_columns import run_migration as add_analytics_columns
+    results["visitor_tracking/analytics_columns"] = run_migration_function(
+        add_analytics_columns,
+        "Колонки referrer, device_type, browser в visitor_tracking"
+    )
+
     results["consolidated/gallery"] = run_migration_function(
         migrate_gallery_schema,
         "Все изменения таблицы gallery_images"
