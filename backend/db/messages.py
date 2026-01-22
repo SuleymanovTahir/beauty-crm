@@ -96,16 +96,33 @@ def get_unread_messages_count(instagram_id: str) -> int:
 
 def get_global_unread_count() -> int:
     """Получить общее количество непрочитанных сообщений (оптимизировано)"""
+    import time
+    from utils.logger import log_error, log_info
+    
+    conn_start = time.time()
     conn = get_db_connection()
+    conn_duration = (time.time() - conn_start) * 1000
+    if conn_duration > 100:
+        log_info(f"⚠️ [unread-count] Connection acquisition took {conn_duration:.2f}ms", "db")
+    
     c = conn.cursor()
     
     try:
+        query_start = time.time()
+        # Optimized query - uses partial index idx_chat_unread_count_optimized
+        # This index only contains rows where is_read = FALSE AND sender = 'client'
+        # So COUNT(*) will be very fast as it only scans the index, not the table
         c.execute("""SELECT COUNT(*) FROM chat_history 
-                     WHERE sender = 'client' AND is_read = FALSE""")
+                     WHERE is_read = FALSE AND sender = 'client'""")
         count = c.fetchone()[0]
-        return count
+        query_duration = (time.time() - query_start) * 1000
+        
+        if query_duration > 500:
+            log_info(f"⚠️ [unread-count] Query took {query_duration:.2f}ms - consider optimizing", "db")
+        
+        return count or 0
     except Exception as e:
-        print(f"❌ Error getting global unread count: {e}")
+        log_error(f"❌ Error getting global unread count: {e}", "db")
         return 0
     finally:
         conn.close()

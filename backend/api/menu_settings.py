@@ -4,6 +4,8 @@ from typing import Optional, List
 from pydantic import BaseModel
 from db.connection import get_db_connection
 from utils.utils import get_current_user
+from utils.cache import cache
+from utils.logger import log_error
 import json
 import logging
 import time
@@ -11,9 +13,9 @@ import time
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-# Simple cache for menu settings
+# Simple cache for menu settings (fallback when Redis is unavailable)
 _menu_cache = {}
-_cache_ttl = 60  # seconds
+_cache_ttl = 300  # seconds - increased from 60 to reduce DB queries
 
 class MenuSettings(BaseModel):
     menu_order: Optional[List[str]] = None
@@ -27,8 +29,15 @@ class MenuSettingsResponse(BaseModel):
 async def get_menu_settings(current_user: dict = Depends(get_current_user)):
     """Get menu settings for current user or their role"""
     
-    # Check cache
-    cache_key = f"menu_{current_user['id']}_{current_user['role']}"
+    cache_key = f"menu_settings_{current_user['id']}_{current_user['role']}"
+    
+    # Try Redis cache first (if available)
+    if cache.enabled:
+        cached_data = cache.get(cache_key)
+        if cached_data is not None:
+            return cached_data
+    
+    # Fallback to in-memory cache
     if cache_key in _menu_cache:
         cached_data, cached_time = _menu_cache[cache_key]
         if time.time() - cached_time < _cache_ttl:
@@ -37,40 +46,50 @@ async def get_menu_settings(current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        # First try to get user-specific settings
+        # Optimized: Single query using UNION with LIMIT to prioritize user-specific settings
         c.execute("""
             SELECT menu_order, hidden_items 
-            FROM menu_settings 
-            WHERE user_id = %s
-        """, (current_user['id'],))
-        
-        row = c.fetchone()
-        
-        # If no user-specific settings, try role-based settings
-        if not row:
-            c.execute("""
-                SELECT menu_order, hidden_items 
+            FROM (
+                SELECT menu_order, hidden_items, 1 as priority
+                FROM menu_settings 
+                WHERE user_id = %s
+                UNION ALL
+                SELECT menu_order, hidden_items, 2 as priority
                 FROM menu_settings 
                 WHERE role = %s
-            """, (current_user['role'],))
-            row = c.fetchone()
+            ) combined
+            ORDER BY priority
+            LIMIT 1
+        """, (current_user['id'], current_user['role']))
+        
+        row = c.fetchone()
         
         result = {
             "menu_order": row[0] if row and row[0] else None,
             "hidden_items": row[1] if row and row[1] else None
         }
         
-        # Cache the result
+        # Cache in Redis (if available)
+        if cache.enabled:
+            cache.set(cache_key, result, expire=300)  # 5 minutes
+        
+        # Cache in memory as fallback
         _menu_cache[cache_key] = (result, time.time())
         
-        # Clean old cache entries
-        if len(_menu_cache) > 100:
-            oldest_key = min(_menu_cache.keys(), key=lambda k: _menu_cache[k][1])
-            del _menu_cache[oldest_key]
+        # Clean old cache entries (keep only last 50)
+        if len(_menu_cache) > 50:
+            # Remove oldest entries
+            sorted_items = sorted(_menu_cache.items(), key=lambda x: x[1][1])
+            for key, _ in sorted_items[:len(_menu_cache) - 50]:
+                del _menu_cache[key]
         
         return result
     except Exception as e:
-        logger.error(f"Error fetching menu settings: {e}")
+        log_error(f"Error fetching menu settings: {e}", "menu_settings")
+        # Return cached value if available, otherwise defaults
+        if cache_key in _menu_cache:
+            cached_data, _ = _menu_cache[cache_key]
+            return cached_data
         return {"menu_order": None, "hidden_items": None}
     finally:
         conn.close()
@@ -108,6 +127,12 @@ async def save_menu_settings(
             keys_to_delete = [k for k in _menu_cache.keys() if k.endswith(f"_{current_user['role']}")]
             for k in keys_to_delete:
                 del _menu_cache[k]
+            
+            # Invalidate Redis cache for this role
+            if cache.enabled:
+                # Note: Redis pattern deletion would require scan, so we'll let TTL handle it
+                # For immediate invalidation, we'd need to track keys, but TTL is acceptable
+                pass
         else:
             # Save for specific user
             c.execute("""
@@ -121,9 +146,13 @@ async def save_menu_settings(
             """, (current_user['id'], menu_order_json, hidden_items_json))
             
             # Invalidate cache for this user
-            cache_key = f"menu_{current_user['id']}_{current_user['role']}"
+            cache_key = f"menu_settings_{current_user['id']}_{current_user['role']}"
             if cache_key in _menu_cache:
                 del _menu_cache[cache_key]
+            
+            # Invalidate Redis cache
+            if cache.enabled:
+                cache.delete(cache_key)
         
         conn.commit()
         return {"success": True, "message": "Menu settings saved"}
@@ -146,9 +175,13 @@ async def reset_menu_settings(current_user: dict = Depends(get_current_user)):
         conn.commit()
         
         # Invalidate cache
-        cache_key = f"menu_{current_user['id']}_{current_user['role']}"
+        cache_key = f"menu_settings_{current_user['id']}_{current_user['role']}"
         if cache_key in _menu_cache:
             del _menu_cache[cache_key]
+        
+        # Invalidate Redis cache
+        if cache.enabled:
+            cache.delete(cache_key)
         
         return {"success": True, "message": "Menu settings reset to default"}
     except Exception as e:

@@ -20,32 +20,47 @@ class Cache:
                 db=REDIS_DB,
                 password=REDIS_PASSWORD,
                 decode_responses=True,
-                socket_timeout=2
+                socket_timeout=1,  # Reduced from 2 to fail faster
+                socket_connect_timeout=1,  # Connection timeout
+                retry_on_timeout=False,  # Don't retry on timeout
+                health_check_interval=30  # Check connection health periodically
             )
-            # Тестовое подключение
+            # Тестовое подключение с коротким таймаутом
             self.client.ping()
             self.enabled = True
             log_info(f"🚀 Redis connected: {REDIS_HOST}:{REDIS_PORT}", "cache")
         except Exception as e:
             log_error(f"❌ Redis connection failed: {e}", "cache")
+            log_info("⚠️ Continuing without Redis cache - using in-memory fallback", "cache")
             self.enabled = False
+            self.client = None
 
     def get(self, key: str):
-        if not self.enabled:
+        if not self.enabled or self.client is None:
             return None
         try:
             data = self.client.get(key)
             return json.loads(data) if data else None
+        except (redis.ConnectionError, redis.TimeoutError) as e:
+            # Connection lost - disable Redis for this session
+            log_error(f"Redis connection lost ({key}): {e}", "cache")
+            self.enabled = False
+            return None
         except Exception as e:
             log_error(f"Redis get error ({key}): {e}", "cache")
             return None
 
     def set(self, key: str, value, expire: int = 3600):
-        if not self.enabled:
+        if not self.enabled or self.client is None:
             return False
         try:
             self.client.set(key, json.dumps(value), ex=expire)
             return True
+        except (redis.ConnectionError, redis.TimeoutError) as e:
+            # Connection lost - disable Redis for this session
+            log_error(f"Redis connection lost ({key}): {e}", "cache")
+            self.enabled = False
+            return False
         except Exception as e:
             log_error(f"Redis set error ({key}): {e}", "cache")
             return False

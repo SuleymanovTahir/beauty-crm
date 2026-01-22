@@ -124,14 +124,17 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     });
 
     useEffect(() => {
-        loadEnabledMessengers();
-        loadSalonSettings();
-        loadUserProfile();
-        loadMenuSettings();
-
-        // Загружаем уведомления один раз при загрузке
-        loadNotifications();
-        loadUnreadCount();
+        // Загружаем все данные параллельно для ускорения загрузки
+        Promise.all([
+            loadEnabledMessengers(),
+            loadSalonSettings(),
+            loadUserProfile(),
+            loadMenuSettings(),
+            loadNotifications(),
+            loadUnreadCount()
+        ]).catch(error => {
+            console.error('Error loading initial data:', error);
+        });
 
         // Слушаем событие для немедленного обновления уведомлений
         const handleNotificationsUpdate = () => {

@@ -581,8 +581,46 @@ async def startup_event():
     # ПОЛУЧЕНИЕ НАСТРОЕК САЛОНА
     # ================================
     # Инициализация пула соединений
-    from db.connection import init_connection_pool
+    from db.connection import init_connection_pool, get_db_connection
+    log_info("🔌 Инициализация connection pool...", "startup")
     init_connection_pool()
+    
+    # Предварительное "прогревание" pool - создаем несколько соединений заранее
+    # чтобы первый запрос не ждал создания соединений
+    log_info("🔥 Прогревание connection pool...", "startup")
+    try:
+        import threading
+        warmup_connections = []
+        warmup_lock = threading.Lock()
+        
+        def warmup_connection(i):
+            try:
+                conn = get_db_connection()
+                with warmup_lock:
+                    warmup_connections.append(conn)
+                # Делаем простой запрос для проверки соединения
+                c = conn.cursor()
+                c.execute("SELECT 1")
+                c.fetchone()
+                conn.close()
+            except Exception as e:
+                log_error(f"⚠️ Ошибка при прогревании соединения {i+1}: {e}", "startup")
+        
+        # Прогреваем параллельно для ускорения
+        threads = []
+        for i in range(10):  # Увеличено до 10 соединений
+            thread = threading.Thread(target=warmup_connection, args=(i+1,))
+            thread.daemon = True
+            thread.start()
+            threads.append(thread)
+        
+        # Ждем завершения всех потоков (максимум 5 секунд)
+        for thread in threads:
+            thread.join(timeout=5.0)
+        
+        log_info(f"✅ Connection pool прогрет: {len(warmup_connections)} соединений готовы", "startup")
+    except Exception as e:
+        log_error(f"⚠️ Ошибка при прогревании pool: {e}", "startup")
     
     # Получаем настройки ПОСЛЕ миграций
     global salon
