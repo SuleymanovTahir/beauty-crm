@@ -81,10 +81,15 @@ export default function Broadcasts() {
   const [errors, setErrors] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    loadSubscriptions();
-    loadHistory();
-    loadUsers();
-    loadRoles();
+    // Параллельная загрузка для ускорения
+    Promise.all([
+      loadSubscriptions(),
+      loadHistory(),
+      loadUsers(),
+      loadRoles()
+    ]).catch(error => {
+      console.error('Error loading broadcasts data:', error);
+    });
   }, []);
 
   const loadRoles = async () => {

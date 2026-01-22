@@ -101,8 +101,13 @@ export default function Users() {
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
 
   useEffect(() => {
-    loadUsers();
-    loadAvailableRoles();
+    // Параллельная загрузка для ускорения
+    Promise.all([
+      loadUsers(),
+      loadAvailableRoles()
+    ]).catch(error => {
+      console.error('Error loading users data:', error);
+    });
   }, []);
 
   // Reload when tab changes
