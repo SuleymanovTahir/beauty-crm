@@ -8,6 +8,7 @@
     "permanent_makeup": "Permanent Makeup",
     "waxing": "Waxing"
   },
+  "haircutsStyling": "Haircuts & Styling",
   "items": {
     "2d_volume": {
       "category": "lashes",
@@ -65,7 +66,7 @@
       "description": "إزالة الشعر على طول خط البيكيني",
       "duration": "1h",
       "max_price": "فارغة",
-      "min_price": null,
+      "min_price": "فارغة",
       "name": "خط بيكيني",
       "price": 100
     },
@@ -104,7 +105,7 @@
       "currency": "AED",
       "description": "تلوين احترافي",
       "duration": "1h",
-      "max_price": null,
+      "max_price": "فارغة",
       "min_price": "فارغة",
       "name": "تلوين الحاجب",
       "price": 40
@@ -155,7 +156,7 @@
       "description": "تطويل الرموش بشكل طبيعي",
       "duration": "",
       "max_price": "فارغة",
-      "min_price": null,
+      "min_price": "فارغة",
       "name": "حجم الرموش الكلاسيكي",
       "price": 180
     },
@@ -325,7 +326,7 @@
       "description": "مانيكير ياباني",
       "duration": "1h 30min",
       "max_price": "فارغة",
-      "min_price": null,
+      "min_price": "خالية",
       "name": "مانيكير ياباني",
       "price": 100
     },
@@ -444,7 +445,7 @@
       "currency": "AED",
       "description": "ميكروبليدنج أو بودرة الحواجب",
       "duration": "",
-      "max_price": null,
+      "max_price": "خالية",
       "min_price": "فارغة",
       "name": "مكياج الحواجب الدائم",
       "price": 1100
@@ -454,7 +455,7 @@
       "currency": "AED",
       "description": "تصحيح الدائم الموجود",
       "duration": "",
-      "max_price": null,
+      "max_price": "خالية",
       "min_price": "فارغة",
       "name": "تصحيح المكياج الدائم",
       "price": 500
@@ -539,5 +540,15 @@
       "name": "الشفة العليا",
       "price": 30
     }
-  }
+  },
+  "manicurePedicure": "Manicure & Pedicure",
+  "master": "Мастер",
+  "mastersDescription": "Наши профессиональные мастера с многолетним опытом работы готовы предоставить вам услуги высочайшего качества",
+  "minutes": "мин",
+  "ourMasters": "Наши мастера",
+  "portfolioTitle": "Портфолио",
+  "service1Desc": "Professional nail care services.",
+  "service2Desc": "Expert hair styling and treatments.",
+  "service3Desc": "Professional makeup and brow styling.",
+  "service3Title": "Makeup & Brows"
 }

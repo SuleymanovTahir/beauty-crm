@@ -8,6 +8,7 @@
     "permanent_makeup": "Permanent Makeup",
     "waxing": "Waxing"
   },
+  "haircutsStyling": "Haircuts & Styling",
   "items": {
     "2d_volume": {
       "category": "lashes",
@@ -65,7 +66,7 @@
       "description": "Épilation le long de la ligne du bikini",
       "duration": "1h",
       "max_price": "nul",
-      "min_price": null,
+      "min_price": "nul",
       "name": "Ligne de bikini",
       "price": 100
     },
@@ -104,7 +105,7 @@
       "currency": "AED",
       "description": "Coloration professionnelle",
       "duration": "1h",
-      "max_price": null,
+      "max_price": "nul",
       "min_price": "null",
       "name": "Teinture des sourcils",
       "price": 40
@@ -155,7 +156,7 @@
       "description": "Extensions de cils naturels",
       "duration": "",
       "max_price": "nul",
-      "min_price": null,
+      "min_price": "nul",
       "name": "Volume des cils classique",
       "price": 180
     },
@@ -325,7 +326,7 @@
       "description": "Manucure japonaise",
       "duration": "1h 30min",
       "max_price": "nul",
-      "min_price": null,
+      "min_price": "nul",
       "name": "Manucure japonaise",
       "price": 100
     },
@@ -444,7 +445,7 @@
       "currency": "AED",
       "description": "Microblading ou sourcils en poudre",
       "duration": "",
-      "max_price": null,
+      "max_price": "nul",
       "min_price": "nul",
       "name": "Maquillage permanent des sourcils",
       "price": 1100
@@ -454,7 +455,7 @@
       "currency": "AED",
       "description": "Correction d'un permanent existant",
       "duration": "",
-      "max_price": null,
+      "max_price": "nul",
       "min_price": "nul",
       "name": "Correction permanente du maquillage",
       "price": 500
@@ -539,5 +540,15 @@
       "name": "Lèvre supérieure",
       "price": 30
     }
-  }
+  },
+  "manicurePedicure": "Manicure & Pedicure",
+  "master": "Мастер",
+  "mastersDescription": "Наши профессиональные мастера с многолетним опытом работы готовы предоставить вам услуги высочайшего качества",
+  "minutes": "мин",
+  "ourMasters": "Наши мастера",
+  "portfolioTitle": "Портфолио",
+  "service1Desc": "Professional nail care services.",
+  "service2Desc": "Expert hair styling and treatments.",
+  "service3Desc": "Professional makeup and brow styling.",
+  "service3Title": "Makeup & Brows"
 }

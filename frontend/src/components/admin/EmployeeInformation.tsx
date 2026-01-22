@@ -87,7 +87,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
         if (!file) return;
 
         if (file.size > 5 * 1024 * 1024) {
-            toast.error(t('file_too_large', 'File too large (max 5MB)'));
+            toast.error(t('file_too_large', { max: 5 }));
             return;
         }
 
@@ -119,12 +119,12 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
 
     const handleSave = async () => {
         if (form.username.length < 3) {
-            toast.error(t('error_username_too_short', 'Username too short'));
+            toast.error(t('error_username_too_short', { count: 3 }));
             return;
         }
 
         if (form.full_name.length < 2) {
-            toast.error(t('error_name_too_short', 'Name too short'));
+            toast.error(t('error_name_too_short', { count: 2 }));
             return;
         }
 
@@ -140,7 +140,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
             }
 
             if (form.new_password.length < 6) {
-                toast.error(t('error_password_too_short', 'Password too short'));
+                toast.error(t('error_password_too_short', { count: 6 }));
                 return;
             }
 

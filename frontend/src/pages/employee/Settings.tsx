@@ -52,7 +52,7 @@ export default function EmployeeSettings() {
     e.preventDefault();
 
     if (formData.full_name.length < 2) {
-      toast.error(t('settings:full_name_validation'));
+      toast.error(t('settings:full_name_validation', { count: 2 }));
       return;
     }
 
@@ -80,7 +80,7 @@ export default function EmployeeSettings() {
     }
 
     if (formData.new_password.length < 6) {
-      toast.error(t('settings:password_min_length'));
+      toast.error(t('settings:password_min_length', { count: 6 }));
       return;
     }
 
@@ -215,7 +215,7 @@ export default function EmployeeSettings() {
                   disabled={saving}
                   value={formData.new_password}
                   onChange={(e) => setFormData({ ...formData, new_password: e.target.value })}
-                  placeholder={t('settings:enter_new_password')}
+                  placeholder={t('settings:enter_new_password', { count: 6 })}
                   minLength={6}
                 />
               </div>

@@ -37,11 +37,11 @@ export function PeriodFilter({
         <SelectContent>
           {showAllOption && <SelectItem value="all">{t('all_periods')}</SelectItem>}
           <SelectItem value="today">{t('today')}</SelectItem>
-          <SelectItem value="3">{t('last_3_days')}</SelectItem>
-          <SelectItem value="7">{t('last_7_days')}</SelectItem>
-          <SelectItem value="14">{t('last_14_days')}</SelectItem>
+          <SelectItem value="3">{t('last_3_days', { count: 3 })}</SelectItem>
+          <SelectItem value="7">{t('last_7_days', { count: 7 })}</SelectItem>
+          <SelectItem value="14">{t('last_14_days', { count: 14 })}</SelectItem>
           <SelectItem value="30">{t('last_month')}</SelectItem>
-          <SelectItem value="90">{t('last_3_months')}</SelectItem>
+          <SelectItem value="90">{t('last_3_months', { count: 3 })}</SelectItem>
           <SelectItem value="custom">{t('custom_period')}</SelectItem>
         </SelectContent>
       </Select>

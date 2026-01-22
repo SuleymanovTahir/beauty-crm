@@ -43,7 +43,7 @@ export function DateFilterDropdown({ value, onChange }: DateFilterDropdownProps)
             case 'custom':
                 return t('filter_custom', 'Свой период');
             default:
-                return t('filter_last30days', 'Последние 30 дней');
+                return t('filter_last30days', { count: 30, defaultValue: 'Последние 30 дней' });
         }
     };
 

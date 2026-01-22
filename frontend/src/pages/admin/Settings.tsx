@@ -366,7 +366,7 @@ export default function AdminSettings() {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error(t('file_too_large'));
+      toast.error(t('file_too_large', { max: 5 }));
       return;
     }
 
@@ -393,12 +393,12 @@ export default function AdminSettings() {
 
   const handleSaveProfile = async () => {
     if (profileForm.username.length < 3) {
-      toast.error(t('error_username_too_short'));
+      toast.error(t('error_username_too_short', { count: 3 }));
       return;
     }
 
     if (profileForm.full_name.length < 2) {
-      toast.error(t('error_name_too_short'));
+      toast.error(t('error_name_too_short', { count: 2 }));
       return;
     }
 
@@ -414,7 +414,7 @@ export default function AdminSettings() {
       }
 
       if (profileForm.new_password.length < 6) {
-        toast.error(t('error_password_too_short'));
+        toast.error(t('error_password_too_short', { count: 6 }));
         return;
       }
 

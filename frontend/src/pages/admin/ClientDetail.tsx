@@ -580,7 +580,7 @@ export default function ClientDetail() {
               {/* Top 3 Procedures */}
               {stats?.top_procedures && stats.top_procedures.length > 0 ? (
                 <div>
-                  <p className="text-sm text-gray-600 mb-2">{t('top_3_procedures', 'Top-3 procedures')}</p>
+                  <p className="text-sm text-gray-600 mb-2">{t('top_3_procedures', { count: 3 })}</p>
                   <div className="space-y-2">
                     {stats.top_procedures.map((proc, idx) => (
                       <div key={idx} className="flex justify-between text-sm">
@@ -595,7 +595,7 @@ export default function ClientDetail() {
               {/* Top 3 Masters */}
               {stats?.top_masters && stats.top_masters.length > 0 ? (
                 <div>
-                  <p className="text-sm text-gray-600 mb-2">{t('top_3_masters', 'Top-3 masters')}</p>
+                  <p className="text-sm text-gray-600 mb-2">{t('top_3_masters', { count: 3 })}</p>
                   <div className="space-y-2">
                     {stats.top_masters.map((master, idx) => (
                       <div key={idx} className="flex justify-between text-sm">
