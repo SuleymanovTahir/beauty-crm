@@ -57,8 +57,12 @@ def anonymize_analytics_data(data: dict, access_level: str) -> dict:
             elif access_level == "stats_only" and key in ['total_revenue', 'avg_booking_value', 'revenue', 'total_spend', 'lifetime_value', 'avg_revenue_per_client']:
                 anonymized[key] = 0
             
-            # Обработка списков
-            elif key in ['clients', 'bookings', 'items', 'growth'] and isinstance(value, (list, dict)):
+            # Обработка списков (рекурсивно)
+            elif isinstance(value, list) and key in ['clients', 'bookings', 'items']:
+                anonymized[key] = [anonymize_analytics_data(item, access_level) for item in value]
+
+            # Обработка вложенных словарей (рекурсивно)
+            elif isinstance(value, dict) and key in ['growth']:
                 anonymized[key] = anonymize_analytics_data(value, access_level)
 
             # Обработка services_stats (список кортежей: name, count, revenue)

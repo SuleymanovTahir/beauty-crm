@@ -208,7 +208,9 @@ def list_bookings(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
     # RBAC: Clients cannot see all bookings
-    if user["role"] == "client":
+    # Also restrict roles that strictly don't have access (like marketer)
+    allowed_roles = ["director", "admin", "manager", "sales", "employee"]
+    if user["role"] not in allowed_roles:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     offset = (page - 1) * limit
@@ -251,6 +253,12 @@ def list_bookings(
         date_to=date_to,
         user_id=filter_user_id
     )
+    
+    # Scrub financial stats for Sales role (they see individual bookings but not aggregate revenue)
+    if user["role"] == "sales":
+        if 'total_revenue' in stats: stats['total_revenue'] = 0
+        if 'avg_check' in stats: stats['avg_check'] = 0
+        
     log_info(f"⏱️ get_booking_stats took {time.time() - t1:.4f}s", "perf")
 
     # Добавляем информацию о мессенджерах для каждой записи
