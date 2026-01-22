@@ -358,6 +358,10 @@ export class PermissionChecker {
     return ['director', 'admin'].includes(role);
   }
 
+  static canViewFinancials(role: string): boolean {
+    return ['director', 'admin', 'manager'].includes(role);
+  }
+
   // === УСЛУГИ ===
 
   static canViewServices(role: string): boolean {
@@ -404,8 +408,8 @@ export class PermissionChecker {
 
   static canViewTasks(role: string): boolean {
     return ['director', 'admin', 'manager'].includes(role) ||
-           RoleHierarchy.hasPermission(role, 'tasks_view') ||
-           RoleHierarchy.hasPermission(role, 'tasks_view_own');
+      RoleHierarchy.hasPermission(role, 'tasks_view') ||
+      RoleHierarchy.hasPermission(role, 'tasks_view_own');
   }
 
   // === ВНУТРЕННЯЯ СВЯЗЬ ===
@@ -477,6 +481,9 @@ export function usePermissions(role: string) {
 
     // Внутренняя связь
     canUseStaffChat: PermissionChecker.canUseStaffChat(role),
+
+    // Финансы
+    canViewFinancials: PermissionChecker.canViewFinancials(role),
 
     // Дополнительно
     roleLevel: ROLES[role]?.hierarchy_level || 0,
