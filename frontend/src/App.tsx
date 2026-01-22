@@ -86,6 +86,7 @@ const LandingPage = React.lazy(() => import('../public_landing/pages/LandingPage
 const PrivacyPolicyNew = React.lazy(() => import('../public_landing/pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
 const TermsOfUseNew = React.lazy(() => import('../public_landing/pages/TermsOfUse').then(module => ({ default: module.TermsOfUse })));
 const ServiceDetail = React.lazy(() => import('../public_landing/pages/ServiceDetail').then(module => ({ default: module.ServiceDetail })));
+const ProcedureDetail = React.lazy(() => import('../public_landing/pages/ProcedureDetail').then(module => ({ default: module.ProcedureDetail })));
 const AccountPage = React.lazy(() => import('../public_landing/pages/account/AccountPage').then(module => ({ default: module.AccountPage })));
 const UserBookingWizard = React.lazy(() => import('../public_landing/pages/account/UserBookingWizard').then(module => ({ default: module.UserBookingWizard })));
 const DataDeletionNew = React.lazy(() => import('../public_landing/pages/DataDeletion'));
@@ -455,6 +456,7 @@ export default function App() {
               <Route element={<Outlet />}>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/service/:category" element={<ServiceDetail />} />
+                  <Route path="/service/:category/:service" element={<ProcedureDetail />} />
                 <Route path="/terms" element={<TermsOfUseNew />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
                 <Route path="/data-deletion" element={<DataDeletionNew />} />
