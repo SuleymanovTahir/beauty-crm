@@ -465,10 +465,15 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
         display_date = datetime.strptime(m, "%Y-%m").strftime("%b %Y")
         visits_chart.append({"date": display_date, "count": visits_by_month[m]})
     
+    # RBAC: Marketer cannot view client details
+    if user["role"] == "marketer":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
     conn.close()
 
     # Определяем, нужно ли скрывать конфиденциальные данные
-    hide_sensitive_data = user["role"] == "employee"
+    # Sales и Employee не видят телефон и финансы
+    hide_sensitive_data = user["role"] in ["employee", "sales"]
     
     return {
         "success": True,
