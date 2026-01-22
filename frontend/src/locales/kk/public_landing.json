@@ -189,5 +189,14 @@
   "transfer": "Трансфер",
   "validity": "Жарамдылық",
   "valuables": "Мәндер",
-  "workingHours": "Жұмыс уақыты"
+  "workingHours": "Жұмыс уақыты",
+  "notFoundTitle": "Бет табылмады",
+  "notFoundDescription": "Кешіріңіз, сіз іздеген бет жоқ немесе жылжытылған.",
+  "goToHomepage": "Басты бетке өту",
+  "goBack": "Артқа",
+  "popularPages": "Танымал беттер:",
+  "home": "Басты бет",
+  "services": "Қызметтер",
+  "myAccount": "Менің аккаунтым",
+  "bookNow": "Қазір брондау"
 }

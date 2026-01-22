@@ -189,5 +189,14 @@
   "transfer": "Broadcast",
   "validity": "Reality",
   "valuables": "Values",
-  "workingHours": "Opening hours"
+  "workingHours": "Opening hours",
+  "notFoundTitle": "Page Not Found",
+  "notFoundDescription": "Sorry, the page you're looking for doesn't exist or has been moved.",
+  "goToHomepage": "Go to Homepage",
+  "goBack": "Go Back",
+  "popularPages": "Popular pages:",
+  "home": "Home",
+  "services": "Services",
+  "myAccount": "My Account",
+  "bookNow": "Book Now"
 }
