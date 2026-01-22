@@ -81,5 +81,8 @@
   "tasks_for_today": "Дела на сегодня",
   "title": "Заголовок",
   "unassigned": "Не назначен",
-  "update_failed": "Ошибка обновления задачи"
+  "update_failed": "Ошибка обновления задачи",
+  "created_by": "Создал",
+  "assignees": "Ответственные",
+  "selected_count": "Выбрано: {{count}}"
 }

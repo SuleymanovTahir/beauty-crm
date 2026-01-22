@@ -21,19 +21,43 @@ class ChatConnectionManager:
 
     async def connect_admin(self, user_id: int, websocket: WebSocket):
         """Добавить новое соединение админа"""
-        if user_id not in self.admin_connections:
+        is_first_connection = user_id not in self.admin_connections
+        
+        if is_first_connection:
             self.admin_connections[user_id] = set()
+            
         self.admin_connections[user_id].add(websocket)
+        
+        if is_first_connection:
+            # Уведомляем других, что этот пользователь теперь онлайн
+            await self.broadcast_user_status(user_id, "online")
+            
         log_info(f"💬 Chat WS: Admin {user_id} connected. Active admins: {len(self.admin_connections)}", "chat")
 
-    def disconnect_admin(self, user_id: int, websocket: WebSocket):
+    async def disconnect_admin(self, user_id: int, websocket: WebSocket):
         """Удалить соединение админа"""
         if user_id in self.admin_connections:
             if websocket in self.admin_connections[user_id]:
                 self.admin_connections[user_id].remove(websocket)
+            
             if not self.admin_connections[user_id]:
                 del self.admin_connections[user_id]
+                # Уведомляем других, что пользователь ушел в оффлайн
+                await self.broadcast_user_status(user_id, "offline")
                 log_info(f"💬 Chat WS: Admin {user_id} disconnected. Active admins: {len(self.admin_connections)}", "chat")
+
+    async def broadcast_user_status(self, user_id: int, status: str):
+        """Разослать изменение статуса пользователя"""
+        await self.notify_admins({
+            "type": "user_status",
+            "user_id": user_id,
+            "status": status,
+            "timestamp": datetime.now().isoformat()
+        })
+
+    def get_online_users(self):
+        """Получить список ID всех онлайн пользователей"""
+        return list(self.admin_connections.keys())
 
     async def notify_admins(self, message: dict):
         """Отправить сообщение всем подключенным админам"""
@@ -82,6 +106,13 @@ async def chat_websocket(websocket: WebSocket):
             "user_id": user_id,
             "timestamp": datetime.now().isoformat()
         })
+        
+        # Отправляем список онлайн пользователей
+        online_users = chat_manager.get_online_users()
+        await websocket.send_json({
+            "type": "online_users",
+            "users": online_users
+        })
 
         while True:
             try:
@@ -95,10 +126,12 @@ async def chat_websocket(websocket: WebSocket):
                 break
 
     except WebSocketDisconnect:
+        # Это исключение может быть поймано тут, если оно произошло до входа в цикл while (например при send_json)
+        # Но основная обработка disconnect внутри finally
         pass
     finally:
         if user_id:
-            chat_manager.disconnect_admin(user_id, websocket)
+            await chat_manager.disconnect_admin(user_id, websocket)
 
 async def notify_new_message(client_id: str, message_data: dict):
     """

@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "expo-localization": "^17.0.8",
+    "react-native-uuid": "^2.0.3"
+  }
+}

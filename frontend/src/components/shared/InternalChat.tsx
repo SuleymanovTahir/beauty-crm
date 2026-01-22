@@ -120,122 +120,9 @@ export default function InternalChat() {
   const callRecorderRef = useRef<MediaRecorder | null>(null);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Audio context and oscillators need to be persistent for stopping loops
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const activeOscillatorsRef = useRef<any[]>([]);
-  const activeAudioElementsRef = useRef<HTMLAudioElement[]>([]); // For custom audio
+  // Audio refs and functions removed in favor of WebRTCService
 
-  const stopSounds = () => {
-    activeOscillatorsRef.current.forEach(osc => {
-      try {
-        osc.stop();
-        osc.disconnect();
-      } catch (e) { /* ignore */ }
-    });
-    activeOscillatorsRef.current = [];
 
-    activeAudioElementsRef.current.forEach(audio => {
-      try {
-        audio.pause();
-        audio.currentTime = 0;
-      } catch (e) { /* ignore */ }
-    });
-    activeAudioElementsRef.current = [];
-  };
-
-  const playSound = (type: 'incoming' | 'outgoing' | 'end') => {
-    try {
-      if (type === 'incoming' && customRingtone) {
-        stopSounds();
-        const audio = new Audio(customRingtone);
-        audio.loop = true;
-        audio.play().catch(e => console.error("Custom ringtone play failed", e));
-        activeAudioElementsRef.current.push(audio);
-        return;
-      }
-
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioContext) return;
-
-      if (!audioContextRef.current) {
-        audioContextRef.current = new AudioContext();
-      }
-      const ctx = audioContextRef.current;
-
-      // Resume context if suspended (browser policy)
-      if (ctx.state === 'suspended') {
-        ctx.resume();
-      }
-
-      stopSounds(); // Stop previous sounds
-
-      if (type === 'incoming') {
-        // Rhythmic ringing loop (Default)
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.frequency.setValueAtTime(800, ctx.currentTime);
-        osc.frequency.setValueAtTime(1000, ctx.currentTime + 0.4);
-
-        // Simple manual loop simulation using interval is better than overly complex scheduling
-        // But for web audio, we can just start an oscillator.
-        // Let's use a simpler approach: create a repeating beep pattern
-        const startBeep = (time: number) => {
-          const o = ctx.createOscillator();
-          const g = ctx.createGain();
-          o.connect(g);
-          g.connect(ctx.destination);
-          o.frequency.value = 800;
-          g.gain.setValueAtTime(0.1, time);
-          g.gain.linearRampToValueAtTime(0, time + 1);
-          o.start(time);
-          o.stop(time + 1);
-          activeOscillatorsRef.current.push(o);
-        };
-
-        // Schedule 10 seconds of ringing
-        for (let i = 0; i < 10; i++) {
-          startBeep(ctx.currentTime + i * 2);
-        }
-
-      } else if (type === 'outgoing') {
-        // Dial tone (long intermittent beep)
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.frequency.value = 440;
-        gain.gain.value = 0.05;
-
-        // Pulse it
-        const lfo = ctx.createOscillator();
-        lfo.type = 'square';
-        lfo.frequency.value = 0.5; // 2 seconds period (1 sec on, 1 sec off)
-        const lfoGain = ctx.createGain();
-        lfoGain.gain.value = 500; // ample modulation
-
-        osc.start();
-        activeOscillatorsRef.current.push(osc);
-      } else if (type === 'end') {
-        // Disconnect tone
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.frequency.value = 300;
-        gain.gain.setValueAtTime(0.1, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.3);
-      }
-    } catch (e) {
-      console.error('Audio playback failed', e);
-    }
-  };
 
   const currentUserData = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -294,20 +181,22 @@ export default function InternalChat() {
   // ... (existing useEffects)
 
   // Initialize WebRTC service
+  // Initialize WebRTC service
   useEffect(() => {
     if (currentUserData?.id) {
+      // Инициализация безопасна для повторного вызова
       webrtcService.initialize(currentUserData.id).catch(err => {
         console.error('Failed to initialize WebRTC:', err);
       });
 
-      webrtcService.onIncomingCall = (fromUserId: number, type: CallType) => {
+      const handleIncomingCall = (fromUserId: number, type: CallType) => {
         setIncomingCallFrom(fromUserId);
         setIncomingCallType(type);
         setIncomingCall({ from: fromUserId, type });
-        playSound('incoming');
+        webrtcService.playRingtone('incoming');
       };
 
-      webrtcService.onUserStatusChange = (userId, isOnline, lastSeen) => {
+      const handleUserStatusChange = (userId: number, isOnline: boolean, lastSeen: string | null) => {
         setUsers(prevUsers => prevUsers.map(u => {
           if (u.id === userId) {
             return { ...u, is_online: isOnline, last_seen: lastSeen || null };
@@ -316,26 +205,26 @@ export default function InternalChat() {
         }));
       };
 
-      webrtcService.onQualityChange = (quality, stats) => {
+      const handleQualityChange = (quality: ConnectionQuality, stats: any) => {
         setConnectionQuality(quality);
         setQualityStats(stats);
       };
 
-      webrtcService.onCallAccepted = () => {
-        stopSounds(); // Stop ringing
+      const handleCallAccepted = () => {
+        webrtcService.stopRingtone(); // Stop ringing
         setIsInCall(true);
         setCallStartTime(Date.now());
         toast.success(t('calls.call_accepted', 'Звонок принят'));
       };
 
-      webrtcService.onCallRejected = () => {
-        stopSounds();
+      const handleCallRejected = () => {
+        webrtcService.stopRingtone();
         setIsInCall(false);
         setIncomingCall(null);
         toast.error(t('calls.call_rejected', 'Звонок отклонен'));
       };
 
-      webrtcService.onRemoteStream = (stream: MediaStream) => {
+      const handleRemoteStream = (stream: MediaStream) => {
         // Always attach to audio ref first to ensure sound works regardless of video call or audio call
         if (remoteAudioRef.current) {
           remoteAudioRef.current.srcObject = stream;
@@ -348,18 +237,39 @@ export default function InternalChat() {
         }
       };
 
-      webrtcService.onCallEnded = () => {
-        stopSounds();
+      const handleCallEnded = () => {
+        webrtcService.stopRingtone();
         handleCallEndedByRemote();
       };
 
-      webrtcService.onError = (error: string) => {
+      const handleError = (error: string) => {
         toast.error(error);
       };
 
+      // Add listeners
+      webrtcService.addEventListener('incomingCall', handleIncomingCall);
+      webrtcService.addEventListener('userStatus', handleUserStatusChange);
+      webrtcService.addEventListener('qualityChange', handleQualityChange);
+      webrtcService.addEventListener('callAccepted', handleCallAccepted);
+      webrtcService.addEventListener('callRejected', handleCallRejected);
+      webrtcService.addEventListener('remoteStream', handleRemoteStream);
+      webrtcService.addEventListener('callEnded', handleCallEnded);
+      webrtcService.addEventListener('error', handleError);
+
       return () => {
-        stopSounds();
-        webrtcService.disconnect();
+        webrtcService.stopRingtone();
+        // Remove listeners
+        webrtcService.removeEventListener('incomingCall', handleIncomingCall);
+        webrtcService.removeEventListener('userStatus', handleUserStatusChange);
+        webrtcService.removeEventListener('qualityChange', handleQualityChange);
+        webrtcService.removeEventListener('callAccepted', handleCallAccepted);
+        webrtcService.removeEventListener('callRejected', handleCallRejected);
+        webrtcService.removeEventListener('remoteStream', handleRemoteStream);
+        webrtcService.removeEventListener('callEnded', handleCallEnded);
+        webrtcService.removeEventListener('error', handleError);
+
+        // DO NOT disconnect here anymore to keep socket alive for global status
+        // webrtcService.disconnect();
       };
     }
   }, [currentUserData?.id]);
@@ -561,7 +471,9 @@ export default function InternalChat() {
       let isCancelled = false; // Flag to track if recording was cancelled
 
       mediaRecorder.ondataavailable = (event) => {
-        audioChunks.push(event.data);
+        if (event.data && event.data.size > 0) {
+          audioChunks.push(event.data);
+        }
       };
 
       mediaRecorder.onstop = async () => {
@@ -571,8 +483,20 @@ export default function InternalChat() {
           return;
         }
 
-        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        const file = new File([audioBlob], `voice-${Date.now()}.webm`, { type: 'audio/webm' });
+        const mimeType = mediaRecorder.mimeType || 'audio/webm';
+        // Determine extension based on mimeType
+        const ext = mimeType.includes('mp4') ? 'm4a' : 'webm';
+
+        const audioBlob = new Blob(audioChunks, { type: mimeType });
+
+        if (audioBlob.size === 0) {
+          console.error("Empty audio blob recorded");
+          toast.error(t('chat.voice_error', 'Ошибка записи: пустой файл'));
+          stream.getTracks().forEach(track => track.stop());
+          return;
+        }
+
+        const file = new File([audioBlob], `voice-${Date.now()}.${ext}`, { type: mimeType });
 
         try {
           setIsUploadingFile(true);
@@ -595,9 +519,8 @@ export default function InternalChat() {
           toast.error(t('chat.voice_error', 'Ошибка отправки голосового'));
         } finally {
           setIsUploadingFile(false);
+          stream.getTracks().forEach(track => track.stop());
         }
-
-        stream.getTracks().forEach(track => track.stop());
       };
 
       mediaRecorder.start();
@@ -753,6 +676,7 @@ export default function InternalChat() {
     try {
       setCallType(type);
       await webrtcService.startCall(selectedUser.id, type);
+      webrtcService.playRingtone('outgoing');
 
       // Local video will be attached by useEffect
 
@@ -791,7 +715,7 @@ export default function InternalChat() {
     setIncomingCall(null);
     setIncomingCallFrom(null);
     setIncomingCallType(null);
-    stopSounds(); // Ensure sound stops
+    webrtcService.stopRingtone(); // Ensure sound stops
   };
 
   const handleAcceptCall = acceptCall;
@@ -814,7 +738,7 @@ export default function InternalChat() {
     setIsMicMuted(false);
     setIsVideoOff(false);
     setIsMinimized(false);
-    playSound('end');
+    webrtcService.playRingtone('end');
 
     if (callStartTime && selectedUser) {
       const duration = Date.now() - callStartTime;
