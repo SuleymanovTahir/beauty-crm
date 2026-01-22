@@ -150,8 +150,7 @@ async function main() {
   await fs.access(distDir);
   await fs.mkdir(process.env.TMPDIR, { recursive: true });
   await fs.mkdir(process.env.HOME, { recursive: true });
-  const userDataDir = path.resolve(rootDir, ".puppeteer-user-data");
-  await fs.mkdir(userDataDir, { recursive: true });
+  const userDataDir = await fs.mkdtemp(path.join(process.env.TMPDIR, "puppeteer-user-data-"));
 
   const preview = await startPreview();
   log(`✅ Preview started at ${PREVIEW_BASE}`);
@@ -193,6 +192,12 @@ async function main() {
   } finally {
     await browser.close();
     preview.kill("SIGTERM");
+    // Cleanup temp profile to avoid creating lots of files in repo
+    try {
+      await fs.rm(userDataDir, { recursive: true, force: true });
+    } catch {
+      // ignore cleanup errors
+    }
   }
 
   log("✅ Prerender complete.");
