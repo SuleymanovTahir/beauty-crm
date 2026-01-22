@@ -52,3 +52,9 @@ node_modules/
 
 # Local npm cache (frontend)
 frontend/.npm-cache/
+
+# Puppeteer/Chromium local artifacts (frontend)
+frontend/.puppeteer-user-data/
+frontend/.puppeteer-cache/
+frontend/.tmp/
+frontend/.home/
