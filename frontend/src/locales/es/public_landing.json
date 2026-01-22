@@ -189,5 +189,14 @@
   "transfer": "Transferencia",
   "validity": "Validez",
   "valuables": "Valores",
-  "workingHours": "Horario de apertura"
+  "workingHours": "Horario de apertura",
+  "notFoundTitle": "Página no encontrada",
+  "notFoundDescription": "Lo sentimos, la página que buscas no existe o ha sido movida.",
+  "goToHomepage": "Ir a la página principal",
+  "goBack": "Volver",
+  "popularPages": "Páginas populares:",
+  "home": "Inicio",
+  "services": "Servicios",
+  "myAccount": "Mi cuenta",
+  "bookNow": "Reservar ahora"
 }

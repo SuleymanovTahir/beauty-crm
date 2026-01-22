@@ -141,6 +141,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     if (currentRole === 'admin') return <Navigate to="/crm/dashboard" replace />;
     if (currentRole === 'manager') return <Navigate to="/manager/dashboard" replace />;
     if (currentRole === 'sales') return <Navigate to="/sales/clients" replace />;
+    if (currentRole === 'marketer') return <Navigate to="/marketer/analytics" replace />;
     if (currentRole === 'employee') return <Navigate to="/employee/dashboard" replace />;
     return <Navigate to="/" replace />;
   }
@@ -456,7 +457,7 @@ export default function App() {
               <Route element={<Outlet />}>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/service/:category" element={<ServiceDetail />} />
-                  <Route path="/service/:category/:service" element={<ProcedureDetail />} />
+                <Route path="/service/:category/:service" element={<ProcedureDetail />} />
                 <Route path="/terms" element={<TermsOfUseNew />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
                 <Route path="/data-deletion" element={<DataDeletionNew />} />

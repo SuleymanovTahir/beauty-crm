@@ -189,5 +189,14 @@
   "transfer": "Transfert",
   "validity": "Validité",
   "valuables": "Valeurs",
-  "workingHours": "Heures d'ouverture"
+  "workingHours": "Heures d'ouverture",
+  "notFoundTitle": "Page non trouvée",
+  "notFoundDescription": "Désolé, la page que vous recherchez n'existe pas ou a été déplacée.",
+  "goToHomepage": "Aller à la page d'accueil",
+  "goBack": "Retour",
+  "popularPages": "Pages populaires:",
+  "home": "Accueil",
+  "services": "Services",
+  "myAccount": "Mon compte",
+  "bookNow": "Réserver maintenant"
 }
