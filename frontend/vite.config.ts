@@ -9,7 +9,11 @@ export default defineConfig({
   plugins: [
     react(),
     filterPreloadsPlugin(),
-    VitePWA({
+    // PWA generation can be flaky in CI/sandboxed environments and is not needed for SEO prerender.
+    // Enable it by default, but allow disabling via env: PRERENDER=1
+    ...(process.env.PRERENDER === '1'
+      ? []
+      : [VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.webp', 'apple-touch-icon.png', 'logo.webp'],
       manifest: {
@@ -90,7 +94,7 @@ export default defineConfig({
           }
         ]
       }
-    })
+    })])
   ],
   resolve: {
     alias: {
